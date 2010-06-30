@@ -131,7 +131,7 @@ ORDER BY 3,1
               <?/MISQL>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>expression for <A HREF="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> genes<?/MIVAR>
+                <?MIVAR>expression for <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> genes<?/MIVAR>
               <?MIELSE>
 	        <label class="error">no expression data</label>
               <?/MIBLOCK>
@@ -209,7 +209,7 @@ ORDER BY 3,1
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>phenotypes in <A HREF="/cgi-bin/webdriver?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> lines <?/MIVAR>
+                <?MIVAR>phenotypes in <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> lines <?/MIVAR>
               <?MIELSE>                  
 	        <label class="error">no mutant/transgenic data</label>
               <?/MIBLOCK>

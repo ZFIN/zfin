@@ -20,7 +20,9 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/chapt1
 STATICS = 1-1.gif anim-zeb.pdf image1.gif image1.jpg image2.gif \
 	image3.gif image4.gif image5.gif image6.gif image7.gif image8.gif \
 	label1.jpg label2.jpg 1.1.html 1.2.html 1.3.html 1.4.html 1.5.html 1.6.html \
-	1.8.html 1.9.html 1.7.html
+	1.8.html 1.9.html
+
+GENERICS = 1.7.html
 
 
 # ---------------  Production Rules  ------------------------------------

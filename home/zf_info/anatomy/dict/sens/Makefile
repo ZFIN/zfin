@@ -21,8 +21,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/sens
 
-STATICS  = icon10.jpg icon11.jpg icon12.jpg icon13.jpg icon14.jpg \
-icon15.jpg sens.html
+GENERICS = sens.html
+STATICS  = icon10.jpg icon11.jpg icon12.jpg icon13.jpg icon14.jpg icon15.jpg
+
+
 
 
 # ---------------  Production Rules  ------------------------------------

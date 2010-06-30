@@ -92,7 +92,7 @@ VARIABLES:
         <?MIVAR NAME=$pnote_text>$(URLDECODE,$pnote_text)<?/MIVAR>
       <?/MIVAR>
 
-    <form method=post action="/cgi-bin/webdriver">
+    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-pnote_editor.apg>
 	<input type=hidden name=OID value=$OID>

@@ -75,7 +75,7 @@ EFFECTS
    	    <?/MIVAR>
    	  <?/MIBLOCK>    	  
              <DIV class="show_pubs">
- 		<A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$pubrd_pub_zdb_id">$pubrd_pub_authors ($pubrd_pub_pyear) $pubrd_title. $pubrd_jrnl_abbrev $pubrd_pub_volume$pubrd_pub_pages</A>
+ 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pubrd_pub_zdb_id">$pubrd_pub_authors ($pubrd_pub_pyear) $pubrd_title. $pubrd_jrnl_abbrev $pubrd_pub_volume$pubrd_pub_pages</A>
 		<?MIVAR COND="$(EC,$ZDB_access,root)">
   		$(IF,$(NE,$pubrd_pub_completion_date,),&nbsp;&nbsp;&nbsp;CLOSED,&nbsp;&nbsp;&nbsp;OPEN)
 		<?/MIVAR>
@@ -96,4 +96,4 @@ EFFECTS
       
   <?MIVAR>  
     $(UNSETVAR,$pubrd_previous_pub)  
-<?/MIVAR>
+  <?/MIVAR>

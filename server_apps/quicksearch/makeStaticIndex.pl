@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#! /private/bin/perl -w 
 #------------------------------------------------------------------------
 #
 # Script that generates a new list of all data pages for the indexer.
@@ -6,9 +6,9 @@
 #   http://quark.zfin.org/action/anatomy/tem-detail/anatomyItem.zdbID=ZDB-ANAT-010921-404
 #   http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-markerview.apg&OID=ZDB-BAC-050218-3566
 #
-# These URLS are then used by the # These URLS are then used by the
+# These URLS are then used by the # These URLS are then used by the 
 # regenerateindex.pl program to create the QuickSearch indexes.
-#
+# 
 # Usage:
 #
 #   makeStaticIndex.pl
@@ -24,8 +24,8 @@ use DBI;
 #------------------------------
 # Abort the program with an error message to STDERR
 #
-# Params
-#  $ $abortStatus
+# Params 
+#  $ $abortStatus 
 #  $ $errorText
 
 sub abort($$) {
@@ -45,7 +45,7 @@ sub abort($$) {
 # using RegEx
 sub trim(@) {
 	my $str = shift @_;
-	for ($str) {
+	for ($str) {           
 	  s/^\s+//;
 	  s/\s+$//;
 	}
@@ -64,12 +64,12 @@ $uniqueryDir = "<!--|ROOT_PATH|-->/server_apps/quicksearch";
 $filename    = "$uniqueryDir/etc/allAPPPagesList.txt";
 
 # single quotes on purpose (ignores special characters such as '?')
-$urlHead     = 'http://<!--|DOMAIN_NAME|-->/cgi-bin/webdriver?MIval=aa-';
+$urlHead     = 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-'; 
 $urlTail     = '.apg';
 
 
 #------------------------------
-# The following section of code creates a SQL query
+# The following section of code creates a SQL query 
 # that gets all app-pages and corresponding
 # object id (OID) for each data page in ZFIN.
 #
@@ -165,7 +165,7 @@ WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
 -- transcript's have all sequences displayed on their main page
 -- and don't use sequence.apg
  AND   dblink_linked_recid[1,11] <> "ZDB-TSCRIPT"
-
+   
 
 
 UNION
@@ -179,7 +179,7 @@ ENDSQL
 #------------------------------
 # END of SQL query, ENDSQL is necessary to close the print stream.
 # Also, the blank line before and after ENDSQL is required syntax.
-
+ 
 #------------------------------
 # Set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -200,9 +200,9 @@ print ("$dateTime: Regenerating static index listing.\n");
 
 #------------------------------
 # Connect to SQL ZFIN database
-$dbh = DBI->connect("DBI:Informix:$dbName",
-			      $dbUsername,
-			      $dbPassword)
+$dbh = DBI->connect("DBI:Informix:$dbName", 
+			      $dbUsername, 
+			      $dbPassword) 
        or die "Cannot connect to Informix database $dbName:$DBI::errstr\n";
 
 
@@ -234,15 +234,15 @@ else {
     		$url = $urlHead . $app_page . $urlTail . $idName . $oid;
 }
 }
-          else {
+          else { 
 	        # hardcode the path for Java page. When Java file path name gets standalized,
             # will update here.
 	        $url = "http://<!--|DOMAIN_NAME|-->/action/anatomy/term-detail?anatomyItem.zdbID=".$oid;
-	   }
+	   } 
 }
 else{
 	    #if the url was populated by the query, it won't contain the first bit of the url...
-	    $url = "http://<!--|DOMAIN_NAME|-->" . $url;
+	    $url = "http://<!--|DOMAIN_NAME|-->" . $url; 
 	}
 	# write URL to file
 	print RESULT "$url\n";
@@ -250,7 +250,7 @@ else{
 
 
 
-#The reason we include these in this file is simply so that all the indexed
+#The reason we include these in this file is simply so that all the indexed 
 #pages are generated from and maintained in this single file.
 
 print RESULT $urlHead . "fxassayabbrev" . $urlTail . "\n";

@@ -58,14 +58,14 @@
     <td width=85%><font><b>
         <?MIVAR>
 	  Gene Name:  <i>$mrkr_name</i><br>
-	  Gene Symbol: <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID"><i>$mrkr_abbrev</i></a>
+	  Gene Symbol: <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$mrkr_abbrev</i></a>
 	<?/MIVAR>
         </b></font>	
     </td>
     <td width="15%" align=right> 
       <?MIVAR>
         <form method=post 
-              action="/cgi-bin/webdriver" 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
               target=comments>
            <input type=hidden name=subject value="$mrkr_abbrev">
            <input type=hidden name=marker_id value="$OID">
@@ -99,7 +99,7 @@
 <?/MISQL>
 
 <table> <tr>
-   <td> This information was provided by UniProt through a collaboration with ZFIN. (<a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
+   <td> This information was provided by UniProt through a collaboration with ZFIN. (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
    </td>
   </tr>
 </table>

@@ -20,9 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/image_files
 
 SUBDIRS = UPDATING
 
-GENERICS = image-upload.apg imageview.apg 
-
-STATICS =  new-image.apg
+GENERICS = image-upload.apg imageview.apg new-image.apg
 
 
 # Use default rules for app page directories

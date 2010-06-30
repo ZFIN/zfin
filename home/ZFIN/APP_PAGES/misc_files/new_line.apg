@@ -74,7 +74,7 @@ If you have a ZFIN <a href="/action/login">login</a>, this page will be accessib
 <?MIVAR>
 <FORM NAME=input
       METHOD=post
-      ACTION="/cgi-bin/new_line.cgi"
+      ACTION="/<!--|CGI_BIN_DIR_NAME|-->/new_line.cgi"
       ONSUBMIT="return validateForm();">
 <?/MIVAR>
 
@@ -87,7 +87,7 @@ Before proposing and reserving a name, review the current guidelines and search 
 
   <li><a href="../../zf_info/zfbook/lab_desig.html">Laboratory Allele
       Designations</a></li>
-  <li><a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg">Search
+  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Search
       Existing Lines in ZFIN</a></li>
 </ul>
 <hr>

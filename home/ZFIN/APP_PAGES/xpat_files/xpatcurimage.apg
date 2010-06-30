@@ -39,7 +39,7 @@ EFFECTS
 
   <script>
     function setRedirectUrl() {
-      document.new_image.redirect_url.value = "/cgi-bin/webdriver?MIval=aa-curation.apg";
+      document.new_image.redirect_url.value = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg";
 //      alert("redirect value = " + document.new_image.redirect_url.value );
       return true;
     }
@@ -65,7 +65,7 @@ EFFECTS
       <?MIVAR name=xpcurimg_image_zdb_id>$4<?/MIVAR>
       <?MIVAR name=xpcurimg_image_label>$5<?/MIVAR>
       
-<form name=image action="/cgi-bin/webdriver#image" method=post ENCTYPE="multipart/form-data"> 
+<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" method=post ENCTYPE="multipart/form-data"> 
 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">     
@@ -88,7 +88,7 @@ EFFECTS
     </td>
     <td>  
       <?MIVAR COND=$(NC,$xpcurimg_thumbnail,NULL)>
-        <a href="/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=$xpcurimg_image_zdb_id">
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$xpcurimg_image_zdb_id">
         <img src="<!--|IMAGE_LOAD|-->/$xpcurimg_thumbnail"></a>
       <?/MIVAR>
         <input name="xpcur_G_image_label" type=textbox size=5 value="$xpcurimg_image_label">
@@ -102,7 +102,7 @@ EFFECTS
 </form>
 <?/MISQL>    
 
-  <FORM ACTION="/cgi-bin/upload.cgi" method=post NAME=new_image ENCTYPE="multipart/form-data">
+  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" method=post NAME=new_image ENCTYPE="multipart/form-data">
     <?MIVAR>
       <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="">
       <INPUT TYPE=HIDDEN NAME=redirect_OID VALUE="$OID"> 

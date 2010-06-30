@@ -27,11 +27,11 @@
 <SCRIPT> <!-- functions for undate--------------------->
    <?MIVAR COND="$(XST,$UPDATE)">
 	function doit(attr,attr_type,print_name) {
-		window.location.replace('/cgi-bin/webdriver?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table&caller=sequence.apg');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table&caller=sequence.apg');
 	}
 
 	function Delete_listitem(item_name,item_id) {
-		window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&caller=sequence.apg');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&caller=sequence.apg');
 	}	
 
         <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted__caller=sequence.apg__target_table=$target_table') 
@@ -42,7 +42,7 @@
 		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase().strip() ;
 		var fdb_id = document.updater.attrib_seq_fdb.value.toUpperCase().strip() ;
 		if((seq_acc != '')&&(pub_id != '')) {
-			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc&caller=sequence.apg&xtra_param='+fdb_id);
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc&caller=sequence.apg&xtra_param='+fdb_id);
 		}
 	}
 
@@ -94,7 +94,7 @@
 			var attribution_type = "special-check-newseqnum";
 		   }
 
-  		   window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&xtra_param='+fdb_id+'&caller=sequence.apg');
+  		   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&xtra_param='+fdb_id+'&caller=sequence.apg');
   		}
 	
 	}
@@ -106,13 +106,13 @@
 		var dbind=document.updater.upd_seq_type.selectedIndex;
 		var seq_type=document.updater.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
-		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&caller=sequence.apg&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type+'&caller=sequence.apg');
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&caller=sequence.apg&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type+'&caller=sequence.apg');
 		}
 	}
   <?/MIVAR>
 
     function start_help() {
-     top.zfinhelp=open('/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
+     top.zfinhelp=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
     }
 </SCRIPT>
 
@@ -217,7 +217,7 @@
        <a 
        style="font-size: large;"
        href="javascript:" 
-        onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-sequence.apg&OID=$OID')"
+        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')"
        >[View Sequences]</a>
       </center>
 
@@ -245,7 +245,7 @@
              <tr>
              <?MIVAR>
                   <form method=post
-                        action="/cgi-bin/webdriver"
+                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
                         target=comments>
                      <input type=hidden name=subject value="$mrkr_abbrev">
                      <input type=hidden name=marker_id value="$OID">

@@ -12,7 +12,7 @@ Expected vars: link_id, pair_id
           
        if (metric==1)metric='cR';
        if (metric==0)metric='cM';
-       window.location.href="/cgi-bin/webdriver?MIval=aa-modify_linkage.apg&link_id="+link_id+"&pair_id="+pair_id+"&calling_form=update_distance&distance="+distance+"&lod="+lod+"&metric="+metric;
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&pair_id="+pair_id+"&calling_form=update_distance&distance="+distance+"&lod="+lod+"&metric="+metric;
        }
 
 </SCRIPT>
@@ -21,7 +21,7 @@ Expected vars: link_id, pair_id
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<form name=modify_distance method=post action="/cgi-bin/webdriver">
+<form name=modify_distance method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <TABLE>
 <center>
@@ -82,7 +82,7 @@ Expected vars: link_id, pair_id
       <?MIVAR>
         <input type=button value="Submit" onClick=modify_update('$link_id','$pair_id',document.modify_distance.distance.value,document.modify_distance.lod.value,document.modify_distance.metric.selectedIndex) > &nbsp; &nbsp;
 
-      <input type=button value="Cancel" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-edit_linkage.apg&link_id=$link_id'">
+      <input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id'">
     <?/MIVAR>
     </b>
   </TD>

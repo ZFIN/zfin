@@ -6,16 +6,16 @@
       <h3>Curation</h3>
       <ul>
         <?MIVAR>
-        <li>View <a href="/cgi-bin/webdriver?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
+        <li>View <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
         <?/MIVAR>
         <li>
           Add 
-          <a href="/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
-          <a href="/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=GENEP"><em>pseudogene</em></a>,
-          <a href="/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENEP"><em>pseudogene</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/cgi-bin/webdriver?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
-          <a href="/cgi-bin/webdriver?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
           <a href="/action/antibody/create"><em>antibody</em></a>,
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -31,7 +31,7 @@
                         <a href="javascript:document.maps.submit();"><em>Maps</em></a>,
                         <a href="javascript:document.orthologue.submit();"><em>Orthologue</em></a>
 
-            <form name="fishsearch" action='/cgi-bin/runSPL.cgi' 
+            <form name="fishsearch" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 
 			<input type=hidden 
@@ -39,7 +39,7 @@
 			       value="regen_fishsearch">
 		      </form>
 
-		      <form name="maps" action='/cgi-bin/runSPL.cgi' method="GET" >
+		      <form name="maps" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
 
 			<input type=hidden
 			       name="run"
@@ -49,7 +49,7 @@
 		      </form>
 
 
-		      <form name="orthologue" action='/cgi-bin/runSPL.cgi' 
+		      <form name="orthologue" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 			<input type=hidden 
 			       name="run" 
@@ -68,13 +68,13 @@
         }
         </script>
         
-        <form name="quickpub" action="/cgi-bin/webdriver" method="get" onsubmit="handleOID() ; ">
+        <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get" onsubmit="handleOID() ; ">
                <input type="hidden" name="MIval" value="aa-curation.apg">
                <input type="hidden" name="OID">
                <label for="OIDpart"> Curate ZDB-PUB-</label><input name="OIDpart" id="OIDpart" size="15">
              </form>
         </li>
-        <li> <form name="quickacc" action="/cgi-bin/webdriver" method="get">
+        <li> <form name="quickacc" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get">
                   <input type="hidden" name="MIval" value="aa-accessionselect.apg">
                   <input type="hidden" name="query_results" value="exists">
                   Search Acc# <input type="text" name="aname" size="20"></form>
@@ -84,19 +84,19 @@
       <h3>Administration</h3>
       <ul>
 	<li> Add
-	  <a href="/cgi-bin/webdriver?rtype=person&MIval=aa-new_person.apg"><em>person</em></a>,
-          <a href="/cgi-bin/webdriver?rtype=lab&MIval=aa-new_lab.apg"><em>lab</em></a>,
-          <a href="/cgi-bin/webdriver?rtype=company&MIval=aa-new_company.apg"><em>company</em></a>,
+	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=person&MIval=aa-new_person.apg"><em>person</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=lab&MIval=aa-new_lab.apg"><em>lab</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=company&MIval=aa-new_company.apg"><em>company</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/cgi-bin/webdriver?MIval=aa-image-upload.apg"><em>image</em></a>,
-          <a href="/cgi-bin/webdriver?rtype=publication&MIval=aa-edit_pub.apg"><em>pub</em></a>,
-	  <a href="/cgi-bin/webdriver?MIval=aa-new_journal.apg"><em>journal</em></a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><em>pub</em></a>,
+	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>
         </li>
         <li> 
-          Find <a href="/cgi-bin/webdriver?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
+          Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
         <li>
-          Generate <a href="/cgi-bin/webdriver?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>, 
-	  <a href="/cgi-bin/webdriver?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>, <a href="/cgi-bin/webdriver?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><em>PI dist. list</em></a>
+          Generate <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>, 
+	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><em>PI dist. list</em></a>
         </li>
       </ul>
 
@@ -139,7 +139,7 @@
       <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>
     </li>
     <li>
-      View <a href="/cgi-bin/mapper_select.cgi" 
+      View <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" 
               title="View genetic, radiation hybrid or consolidated maps">
            Genetic Maps</a>
     </li>
@@ -234,3 +234,4 @@
 
 
      <?MICOMMENT> ** Adjust the number of breaks here to keep the columns
+                     roughtly the same height ** <?/MICOMMENT>

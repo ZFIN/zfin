@@ -52,7 +52,7 @@
    <tr>
    <?MIVAR>
         <form method=post
-              action="/cgi-bin/webdriver"
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
               target=comments>
            <input type=hidden name=subject value="$gene">
            <input type=hidden name=marker_id value="$OID">
@@ -77,7 +77,7 @@
         </TD>
       </TR>
     </TABLE>
-<?MIVAR NAME=link_backto_OID><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
+<?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
 <!------------- Title display------------>
     <table border=0 width=100%>
       <tr>
@@ -96,7 +96,7 @@
              <tr>
 <?MIVAR>
                   <form method=post
-                        action="/cgi-bin/webdriver"
+                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
                         target=comments>
                      <input type=hidden name=subject value="$gene">
                      <input type=hidden name=marker_id value="$OID">
@@ -120,7 +120,7 @@
    <tr>
    <?MIVAR>
         <form method=post
-              action="/cgi-bin/webdriver"
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
               target=comments>
            <input type=hidden name=subject value="$gene">
            <input type=hidden name=marker_id value="$OID">
@@ -259,7 +259,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
            <?MIELSE>
 	      <?MIVAR NAME=inf_mem_sym>$inf_mem_sym<?/MIVAR>	
            <?/MIBLOCK>
-           <?MIVAR NAME=$currinflink><a href="/cgi-bin/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
+           <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
     	<?MIELSE COND="$(EC,$dbase,GO)">
          	<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name ='QuickGO'"><?/MISQL>
           	<?MIVAR NAME=query>$1<?/MIVAR>
@@ -365,12 +365,12 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
 
 
 <?MIBLOCK COND="$(EC,$pubcount,1)">
-      <td align=center><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$pubcount<?/MIVAR></a></td></tr>
+      <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$pubcount<?/MIVAR></a></td></tr>
 <?MIELSE>
        <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
        <?MIVAR NAME=$name><?/MIVAR>
        <?MIVAR>
-         <td align=center><a href="/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
+         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
 <?/MIBLOCK>
 
     <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>

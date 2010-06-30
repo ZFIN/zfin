@@ -19,9 +19,10 @@
     where recattrib_data_zdb_id = '$temp_oid'
       and recattrib_source_zdb_id = zdb_id 
       ;">
-  <li> <A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+  <li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
   <?/MISQL>
 </ul>
 
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
 </TD></TR>
+</TABLE>

@@ -16,7 +16,7 @@
 
     All data presented here is for wild-type fish under standard conditions - 28.5 degrees Celsius, 14 hours light, 10
     hours dark. A complete list of WT strains is available
-    <a href="/cgi-bin/webdriver?MIval=aa-wtlist.apg"> here </a>
+    <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-wtlist.apg"> here </a>
     <p>
         If you have questions or suggestions, please <a href="mailto:zfinadmn@zfin.org">contact us</a>.
 </div>

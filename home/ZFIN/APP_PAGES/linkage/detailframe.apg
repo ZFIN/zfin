@@ -11,7 +11,7 @@
 
 <?MIVAR>
 
-<FRAME NAME="label" scrolling=no SRC="/cgi-bin/webdriver?MIval=aa-detailview.apg&link_id=$link_id&marker_id=$marker_id&marker_abbrev=$marker_abbrev&marker2_abbrev=$marker2_abbrev" MARGINWIDTH=1 MARGINHEIGHT=1>
+<FRAME NAME="label" scrolling=no SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-detailview.apg&link_id=$link_id&marker_id=$marker_id&marker_abbrev=$marker_abbrev&marker2_abbrev=$marker2_abbrev" MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <FRAME NAME="helpcontent" SRC="/ZFIN/misc_html/saycomposing.html">
 <?/MIVAR>

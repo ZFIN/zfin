@@ -65,7 +65,7 @@ the form below to select the image file, and specify its type.
   </TR>
   <TR>
    <TD colspan=2 align=center><b>THEN</B> 
-<INPUT TYPE=hidden name="redirect_url" value="/cgi-bin/webdriver?MIval=aa-new-image.apg">
+<INPUT TYPE=hidden name="redirect_url" value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-image.apg">
        click <INPUT type=submit value=Submit Form>
 
        to go to the next step of 
@@ -75,3 +75,4 @@ the form below to select the image file, and specify its type.
  </TABLE>
 </FORM>
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

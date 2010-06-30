@@ -21,7 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/lat_line
 
-STATICS  = icon5.jpg icon6.jpg icon7.jpg icon8.jpg lat_line.html
+GENERICS = lat_line.html
+STATICS  = icon5.jpg icon6.jpg icon7.jpg icon8.jpg
 
 
 

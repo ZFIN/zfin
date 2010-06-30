@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/home
 # of this directory.  However they are not stored as subdirectories in the
 # file system.
 
-SUBDIRS  = javadoc
+SUBDIRS  = javadoc #schemaSpy AWstats
 POSTLOADDB_SUBDIRS = 
 
 GENERICS = 

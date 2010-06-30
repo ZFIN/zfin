@@ -180,7 +180,7 @@ print "<Td class=titlebar colspan=2>";
 print "<a name=modify></a>Modify your search.";
 print "</Td>";
 print "</TR>";
-print "<FORM  METHOD=get action='/cgi-bin/searchwww.cgi'>";
+print "<FORM  METHOD=get action='/<!--|CGI_BIN_DIR_NAME|-->/searchwww.cgi'>";
 
 print "<TR>";
 print "<TD>";

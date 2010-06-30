@@ -29,7 +29,7 @@ declare jsdelete_Mival if it isn't passed in
 <?MIVAR NAME=jsdelatt_page_var>$(REPLACE,$jsdelatt_page_var,__,&)<?/MIVAR>
 <?MIVAR>
 	function Delete_attrib(subattr,data_zdbId,source_zdbId,info,source_type) {
-		window.location.replace('/cgi-bin/webdriver?MIval=$jsdelatt_Mival&OID=$jsdelatt_OID&dataOID='+data_zdbId+'&attr='+subattr+'&old_value='+source_zdbId+'&info='+info+'&source_type='+source_type+'$jsdelatt_page_var$(IF,$(XST,$jsdelatt_caller),&caller=$jsdelatt_caller)');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$jsdelatt_Mival&OID=$jsdelatt_OID&dataOID='+data_zdbId+'&attr='+subattr+'&old_value='+source_zdbId+'&info='+info+'&source_type='+source_type+'$jsdelatt_page_var$(IF,$(XST,$jsdelatt_caller),&caller=$jsdelatt_caller)');
 	}
 <?/MIVAR>
 

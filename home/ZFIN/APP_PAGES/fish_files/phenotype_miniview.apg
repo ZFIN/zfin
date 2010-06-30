@@ -94,7 +94,7 @@
 
   <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
     $(SETVAR,$phmview_pato_source_desc,$1)
-    <?MIVAR NAME=$phmview_pato_source_desc><a href=/webdriver?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
+    <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
   <?/MIVAR>
   <?MIBLOCK COND="$(=,$phmview_pato_fig_count,1)">      
     <?MIVAR>$(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)<?/MIVAR>
@@ -110,7 +110,7 @@
     <tr>
       <td width="15%"><b>&nbsp;&nbsp;Data: </b>
       <td width="85%">
-        <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
       </td>
     </tr>
 

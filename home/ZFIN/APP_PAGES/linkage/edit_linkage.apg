@@ -14,34 +14,34 @@ Expected vars: link_id
 
      function modify_update(link_id,lg,comments) {
            if (comments==''){
-         window.location.href="/cgi-bin/webdriver?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage&lg="+lg+"&comments="+comments;
+         window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage&lg="+lg+"&comments="+comments;
        }
        else {
          replaced_comments = comments.replace(/ /g,plus);
 	 replaced_comments = comments.replace(/'/g,quotes);
-         window.location.href="/cgi-bin/webdriver?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage&lg="+lg+"&comments="+replaced_comments;
+         window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage&lg="+lg+"&comments="+replaced_comments;
        }
      }
 
 
      function modify_delete(calling_form,link_id,pair_id,marker_id) {
-       window.location.href="/cgi-bin/webdriver?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form="+calling_form+"&pair_id="+pair_id+"&marker_id="+marker_id;
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form="+calling_form+"&pair_id="+pair_id+"&marker_id="+marker_id;
      }
 
      function modify_distance(calling_form,link_id,pair_id) {
-       window.location.href="/cgi-bin/webdriver?MIval=aa-modify_distance.apg&link_id="+link_id+"&calling_form="+calling_form+"&pair_id="+pair_id;
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_distance.apg&link_id="+link_id+"&calling_form="+calling_form+"&pair_id="+pair_id;
      }
 
      function add_members(link_id) {
-       window.location.href="/cgi-bin/webdriver?MIval=aa-add_linkage_members.apg&link_id="+link_id+"&update=true";
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_members.apg&link_id="+link_id+"&update=true";
      }
 
      function add_distance(link_id) {
-       window.location.href="/cgi-bin/webdriver?MIval=aa-add_linkage_distance.apg&link_id="+link_id+"&update=true";
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_distance.apg&link_id="+link_id+"&update=true";
      }
 
      function update_source(link_id) {
-       window.location.href="/cgi-bin/webdriver?MIval=aa-add_linkage.apg&link_id="+link_id+"&update=true";
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&link_id="+link_id+"&update=true";
      }
 
   </SCRIPT>
@@ -50,7 +50,7 @@ Expected vars: link_id
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<form name=edit_linkage method=post action="/cgi-bin/webdriver">
+<form name=edit_linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-modify_linkage.apg>
 
 <TABLE width="100%">
@@ -206,7 +206,7 @@ Expected vars: link_id
 	  <input type=button value="Entry Complete" onClick=modify_update('$link_id',document.edit_linkage.lg.options[document.edit_linkage.lg.selectedIndex].value,document.edit_linkage.comments.value) > &nbsp; &nbsp;
 
 	<input type=button value="Delete Linkage" onClick=modify_delete('delete_linkage','$link_id','','')>  &nbsp;  &nbsp; 
-	<input type=button value="Cancel" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-ZDB_home.apg'">
+	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
       <?/MIVAR>
       </b>
     </TD>
@@ -214,3 +214,4 @@ Expected vars: link_id
 </TABLE>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+</HTML>

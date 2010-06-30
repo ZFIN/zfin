@@ -30,7 +30,7 @@ OID:  the markrgoev id
 	where mrkrgoev_zdb_id='$OID';"><?/MISQL>
 
     <?MIVAR NAME=$notes>$1<?/MIVAR>  
-    <form method=post action="/cgi-bin/webdriver">
+    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <input type=hidden name=MIval value=aa-gonotes.apg>
     <input type=hidden name=OID value=$OID>
 

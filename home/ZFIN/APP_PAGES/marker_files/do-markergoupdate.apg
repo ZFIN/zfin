@@ -88,7 +88,7 @@ PREFIX: mkrgoupdate_
    	    <SCRIPT>
     		 window.alert('This annotation already exists. Please enter another annotation.');
                <?MIVAR>  
-  		 window.location.replace("/cgi-bin/webdriver?MIval=aa-markergoentry.apg&OID=$OID&go_term=$go_term$return_info")
+  		 window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID&go_term=$go_term$return_info")
                <?/MIVAR>
     	    </SCRIPT>
             <?MIVAR NAME=$mkrgoupdate_annexist>t<?/MIVAR>
@@ -159,7 +159,7 @@ PREFIX: mkrgoupdate_
    <!-- okay, now just bail back to the markergoentry to view results -->
    <?MIVAR>
       <SCRIPT>
-   	location.replace("/cgi-bin/webdriver?MIval=aa-markergoentry.apg&OID=$OID")
+   	location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID")
       </SCRIPT>
    <?/MIVAR>
   <?/MIBLOCK> <!-- end if valid --->

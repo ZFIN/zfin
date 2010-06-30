@@ -25,7 +25,7 @@ document.critform.START.value = "";
 }
 
 function start_help(anchor) {
-   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
 </SCRIPT>
@@ -110,7 +110,7 @@ function start_help(anchor) {
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
 
-<form method=post action="/cgi-bin/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
 <TR>
 <td width=90% align=center>
@@ -168,13 +168,13 @@ Lab Search Results
       <TD valign=top>
 	<?MIVAR COND=$(XST,$return_rec)>
 	  <FONT SIZE=-1> 
-	  <A HREF="/cgi-bin/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A> 
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A> 
 	  </FONT>
 	<?/MIVAR>
       </TD>
       <TD valign=top> 
 	<FONT SIZE=-1> 
-	<A HREF="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$3">$1</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">$1</A>
 	</FONT> 
       </TD>  
       <TD> 
@@ -227,7 +227,7 @@ Lab Search Results
 
   <form name="critform" 
 	method="get" 
-	action="/cgi-bin/webdriver" >
+	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
 
   <input type=hidden name=MIval value=aa-labselect.apg>
   <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
@@ -339,3 +339,4 @@ Lab Search Results
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
+</HTML>

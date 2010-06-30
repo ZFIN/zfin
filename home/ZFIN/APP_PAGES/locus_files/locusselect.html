@@ -12,7 +12,7 @@ document.ldata.submit();
 }
 
 function show_doc(docpath) {
-   top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-docframes.apg&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-docframes.apg&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
   top.zfinhelp.focus();
 }
 
@@ -75,7 +75,7 @@ if (authorization != 'root'){
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<form name=ldata  method=post  action="/cgi-bin/webdriver">
+<form name=ldata  method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <center>
 <FONT SIZE=3 color="#ff0000" > <B>REGISTER Locus and/or Allele designations</B></font>

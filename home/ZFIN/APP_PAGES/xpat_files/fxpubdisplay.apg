@@ -125,7 +125,7 @@ to display the "Additional figures" link
 
   <?MIVAR>
 
-  <tr><td><big><b><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $(CONCAT,$fxpubdis_title,.) $fxpubdis_source </big>
+  <tr><td><big><b><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$fxpubdis_zdb_id">$fxpubdis_mini_ref </b></a> - $(CONCAT,$fxpubdis_title,.) $fxpubdis_source </big>
     
 
     <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
@@ -153,7 +153,7 @@ to display the "Additional figures" link
              and ids_source_zdb_id = zdb_id
 	     and xpatex_source_zdb_id = '$fxpubdis_zdb_id'
              ORDER by 1;">
-             <?MIVAR NAME=fxpubdis_auth_link><a href="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+             <?MIVAR NAME=fxpubdis_auth_link><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
              <?MIVAR>
                $(IF,$(=,$MI_CURRENTROW,1),$fxpubdis_auth_link,", "$fxpubdis_auth_link)
              <?/MIVAR>
@@ -164,7 +164,7 @@ to display the "Additional figures" link
            <?MIBLOCK COND="$(EQ, $fxpubdis_source, ZFIN Direct Data Submission)">
               <?MIVAR>
                $(IF,$(=,0,$MI_ROWCOUNT),<TD>)
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=/webdriver?MIval=aa-pubprintable.apg&OID=$fxpubdis_zdb_id&printable=yes>(Citing this work)</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubprintable.apg&OID=$fxpubdis_zdb_id&printable=yes>(Citing this work)</a>
               <?/MIVAR>
            <?/MIBLOCK> 
 	  </td>
@@ -177,12 +177,12 @@ to display the "Additional figures" link
          <?/MIBLOCK>
          <?MIBLOCK COND="$(XST,$fxpubdis_is_figure)"><?MICOMMENT>Display Additional Figures link only in fxfigureview.apg page but with probe<?/MICOMMENT>
            <tr><td>
-            <?MIVAR> <tr><td><a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$fxpubdis_zdb_id&fxallfig_probe_zdb_id=$fxpubdis_probe_zdb_id"><b>ADDITIONAL FIGURES</a></b><?/MIVAR>
+            <?MIVAR> <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fxpubdis_zdb_id&fxallfig_probe_zdb_id=$fxpubdis_probe_zdb_id"><b>ADDITIONAL FIGURES</a></b><?/MIVAR>
          <?/MIBLOCK>
      <?MIELSE>
         <?MIBLOCK COND="$(XST,$fxpubdis_is_figure)"><?MICOMMENT>Display Additional Figures link only in fxfigureview.apg page but no probe<?/MICOMMENT>
             <tr><td>
-             <?MIVAR> <tr><td><a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$fxpubdis_zdb_id"><b>ADDITIONAL FIGURES</b></a><?/MIVAR>
+             <?MIVAR> <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fxpubdis_zdb_id"><b>ADDITIONAL FIGURES</b></a><?/MIVAR>
         <?/MIBLOCK>
      <?/MIBLOCK> <?MICOMMENT>end probe condition<?/MICOMMENT>
     <?/MIBLOCK>  <?MICOMMENT>end figure count condition <?/MICOMMENT>

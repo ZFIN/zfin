@@ -7,14 +7,14 @@
     OID (REQUIRED) -- the ZFIN id of the record to delete.
     rtype (REQUIRED) -- the data type of the record.
     merge_oid (REQUIRED) -- the zdb id of the record that the current OID would be
-                          merged into.
+                          merged into. 
     return_page (OPTIONAL) -- the page to return to after the deletion, by default,
-                             it is the ZDB_home.apg
+                             it is the ZDB_home.apg    
 
   NOTE:
     Because this page drops temporary tables it cannot be webexploded from
-    inside a select statement.  This page must first be retrieved with a
-    select statement and then passed to webexplode from an execute function
+    inside a select statement.  This page must first be retrieved with a 
+    select statement and then passed to webexplode from an execute function 
     statement.  See discussion of the MIqry2pass variable in the Web
     Datablade documentation.
 
@@ -29,12 +29,12 @@
 
   Code: $MI_ERRORCODE
   State: $MI_ERRORSTATE
-  Message: $MI_ERRORMSG
+  Message: $MI_ERRORMSG 
 <?/MIERROR>
 
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=root')
+  select WebExplode(object,'permission=root') 
     from webPages where ID='aa-secure_navigation.apg';">
     $1
 <?/MISQL>
@@ -54,21 +54,21 @@
       <?MIBLOCK COND="$(NC,$merge_oid,none)">
 
          <?MICOMMENT> ====== Common action ====== <?/MICOMMENT>
-         <?MICOMMENT> ------    Alias   -----------
+         <?MICOMMENT> ------    Alias   -----------  
                       -- a. get rid of duplication
-                      -- b. update the data id
+                      -- b. update the data id 
                       -- c. add mergee as a new alias
          <?/MICOMMENT>
          <?MISQL SQL="
-                 SELECT dbinfo('sessionid')
+                 SELECT dbinfo('sessionid') 
                    FROM single;">
          <?/MISQL>
       	 <?MIVAR NAME=$dalias_session_id>$1<?/MIVAR>
          <?MIVAR NAME=$tmp_delete_these_aliases>$(CONCAT,tmp_delete_these_aliases_,$dalias_session_id)<?/MIVAR>
-
+   	    
          <?MISQL SQL="
                 execute function table_exists('$tmp_delete_these_aliases')">
-         <?/MISQL>
+         <?/MISQL>  
          <?MISQL COND=$(EC,$1,f) SQL="
         	create temp table $tmp_delete_these_aliases (
           	   tmpdalias_zdb_id varchar(50),
@@ -81,7 +81,7 @@
 			    (tmpdalias_zdb_id, tmpdalias_alias_name,
 			     tmpdalias_data_zdb_id)
 	  	     SELECT dalias_zdb_id, dalias_alias, dalias_data_zdb_id
-		       FROM data_alias
+		       FROM data_alias 
 		      WHERE dalias_data_zdb_id = '$merge_oid';">
 	 <?/MISQL>
 	 <?MISQL SQL="
@@ -98,10 +98,10 @@
    	 <?/MISQL>
 
      	 <?MISQL SQL="
-                 UPDATE data_alias
-                    SET dalias_data_zdb_id = '$merge_oid'
+                 UPDATE data_alias 
+                    SET dalias_data_zdb_id = '$merge_oid' 
                   WHERE dalias_data_zdb_id = '$OID';">
-         <?/MISQL>
+         <?/MISQL>  
 
          <?MISQL SQL="
 		EXECUTE FUNCTION get_id('DALIAS');">
@@ -114,13 +114,13 @@
                  INSERT INTO data_alias (
                      		dalias_zdb_id, dalias_data_zdb_id,
                     		dalias_alias, dalias_group_id,
-		     		dalias_alias_lower )
+		     		dalias_alias_lower ) 
                       SELECT '$dalias_id','$merge_oid',mrkr_abbrev,(select aliasgrp_pk_id from alias_group where aliasgrp_name ='alias'),
 			      lower(mrkr_abbrev)
                         FROM marker
                        WHERE mrkr_zdb_id = '$OID';">
          <?/MISQL>
-
+              
 
 	 <?MICOMMENT> --- Mapping & Linkage ---  <?/MICOMMENT>
 	 <?MISQL SQL="
@@ -129,9 +129,9 @@
 	       where marker_id = '$OID';">
          <?/MISQL>
 
-	 <?MICOMMENT>update independent linkage for id that is being replaced
-	         The "set explain off" is required to avoid a bug with the
-	         "set constraints" statement below.  The "set explain" statement was
+	 <?MICOMMENT>update independent linkage for id that is being replaced  
+	         The "set explain off" is required to avoid a bug with the 
+	         "set constraints" statement below.  The "set explain" statement was 
 	         picked because it was the most innoccuous statement I could think of.
          <?/MICOMMENT>
 	 <?MISQL SQL="
@@ -139,13 +139,13 @@
 	         set constraints lpmem_linkage_member_foreign_key deferred;">
 	 <?/MISQL>
 	 <?MISQL SQL="
-                 update linkage_member
-                    set lnkgmem_member_zdb_id = '$merge_oid'
+                 update linkage_member 
+                    set lnkgmem_member_zdb_id = '$merge_oid' 
                   where lnkgmem_member_zdb_id = '$OID';">
          <?/MISQL>
 	 <?MISQL SQL="
-                 update linkage_pair_member
-                    set lpmem_member_zdb_id = '$merge_oid'
+                 update linkage_pair_member 
+                    set lpmem_member_zdb_id = '$merge_oid' 
                   where lpmem_member_zdb_id = '$OID';">
          <?/MISQL>
 	 <?MISQL SQL="
@@ -153,7 +153,7 @@
          <?/MISQL>
 
 
- 	 <?MICOMMENT>-----------  Others  ----------------
+ 	 <?MICOMMENT>-----------  Others  ---------------- 
                      -- a. data_note
                      -- b. external_note
          <?/MICOMMENT>
@@ -175,44 +175,44 @@
 
             <?MICOMMENT> --- get marker name --- <?/MICOMMENT>
 	    <?MISQL SQL="
-	         select mrkr_name
-                   from marker
+	         select mrkr_name 
+                   from marker 
                   where mrkr_zdb_id = '$OID';">
 	    <?/MISQL>
             <?MIVAR NAME=old_name>$1<?/MIVAR>
 
 
-	   <?MICOMMENT> --- update primer set ---  <?/MICOMMENT>
+	   <?MICOMMENT> --- update primer set ---  <?/MICOMMENT> 
 	   <?MISQL SQL="
-                 update primer_set
-                    set marker_id = '$merge_oid'
+                 update primer_set 
+                    set marker_id = '$merge_oid' 
                   where marker_id = '$OID';">
 
            <?/MISQL>
 
 	   <?MICOMMENT> --- update marker_go_term_evidence --- <?/MICOMMENT>
            <?MISQL SQL="
-                 update marker_go_term_evidence
-                    set mrkrgoev_mrkr_zdb_id = '$merge_oid'
+                 update marker_go_term_evidence 
+                    set mrkrgoev_mrkr_zdb_id = '$merge_oid' 
                   where mrkrgoev_mrkr_zdb_id = '$OID'">
-           <?/MISQL>
+           <?/MISQL>  
 
 	   <?MICOMMENT> --- update expression_experiment--- <?/MICOMMENT>
 	   <?MISQL SQL="
                  UPDATE expression_experiment
-                    SET xpatex_gene_zdb_id = '$merge_oid'
+                    SET xpatex_gene_zdb_id = '$merge_oid' 
                   WHERE xpatex_gene_zdb_id = '$OID';">
-           <?/MISQL>
-
+           <?/MISQL>  
+ 
 	   <?MICOMMENT> --- update feature_marker_relationship --- <?/MICOMMENT>
            <?MISQL SQL="
                  UPDATE feature_marker_relationship
-                    SET fmrel_mrkr_zdb_id = '$merge_oid'
-                  WHERE fmrel_mrkr_zdb_id = '$OID';">
-           <?/MISQL>
+                    SET fmrel_mrkr_zdb_id = '$merge_oid' 
+                  WHERE fmrel_mrkr_zdb_id = '$OID';">	
+           <?/MISQL>  
 
            <?MICOMMENT> --- marker_history --- <?/MICOMMENT>
-
+        
            <?MISQL SQL="
                 EXECUTE FUNCTION get_id('NOMEN');">
            <?/MISQL>
@@ -221,33 +221,33 @@
               INSERT INTO zdb_active_data VALUES('$mhist_id');">
            <?/MISQL>
            <?MISQL SQL="
-              INSERT INTO marker_history (
-                     mhist_zdb_id, mhist_mrkr_zdb_id,
+              INSERT INTO marker_history (  
+                     mhist_zdb_id, mhist_mrkr_zdb_id, 
                      mhist_event, mhist_reason, mhist_date,
                      mhist_mrkr_name_on_mhist_date,
                      mhist_mrkr_abbrev_on_mhist_date,
                      mhist_comments,mhist_dalias_zdb_id )
-                  SELECT
+                  SELECT 
                        '$mhist_id',  mrkr_zdb_id,
-                       'merged','same marker', CURRENT,
+                       'merged','same marker', CURRENT, 
                         mrkr_name,  mrkr_abbrev,
                         'none', '$dalias_id'
                     FROM marker
                    WHERE mrkr_zdb_id = '$merge_oid';">
-           <?/MISQL>
+           <?/MISQL>  
 
            <?MISQL SQL="
-                 UPDATE marker_history
-                    SET mhist_mrkr_zdb_id = '$merge_oid'
+                 UPDATE marker_history 
+                    SET mhist_mrkr_zdb_id = '$merge_oid' 
                   WHERE mhist_mrkr_zdb_id = '$OID';">
 	   <?/MISQL>
-
+	
            <?MICOMMENT> --- regen_names_marker --- <?/MICOMMENT>
            <?MISQL SQL="
               execute procedure regen_names_marker('$merge_oid');">
-            <?/MISQL>
+            <?/MISQL>  
 
-          <?/MIBLOCK>
+          <?/MIBLOCK> 
           <?MICOMMENT> ========= end Marker ============== <?/MICOMMENT>
 
 
@@ -263,29 +263,29 @@
              <?MIVAR NAME=$old_name>$1<?/MIVAR>
 
              <?MICOMMENT>
-                      -- for now, we decided that
+                      -- for now, we decided that 
                       -- no action beside the common actions
              <?/MICOMMENT>
-             <?MICOMMENT> ---  genotype_feature  --- <?/MICOMMENT>
+             <?MICOMMENT> ---  genotype_feature  --- <?/MICOMMENT>            
              <?MISQL SQL="
                      update genotype_feature
                         set genofeat_geno_zdb_id = '$merge_oid'
                       where genofeat_geno_zdb_id = '$OID' ;">
-             <?/MISQL>
+             <?/MISQL>    
 
-             <?MICOMMENT> ---  genotype_experiment  --- <?/MICOMMENT>
+             <?MICOMMENT> ---  genotype_experiment  --- <?/MICOMMENT>            
              <?MISQL SQL="
                      update genotype_experiment
                         set genox_geno_zdb_id = '$merge_oid'
                       where genox_geno_zdb_id = '$OID' ;">
-             <?/MISQL>
+             <?/MISQL>    
          <?/MIBLOCK>
          <?MICOMMENT> ========  end Genotype ============ <?/MICOMMENT>
-
-
+   
+        
          <?MICOMMENT> ========  Common Action (cont) ========= <?/MICOMMENT>
 	 <?MISQL SQL="
-                   update zdb_replaced_data
+                   update zdb_replaced_data 
 	              set zrepld_new_zdb_id = '$merge_oid',
 		          zrepld_old_name = '$old_name'
 	            where zrepld_new_zdb_id = '$OID';">
@@ -296,12 +296,12 @@
 	            where zactvd_zdb_id = '$OID';">
 	 <?/MISQL>
 	 <?MISQL SQL="
-	      insert into zdb_replaced_data
+	      insert into zdb_replaced_data 
                           (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
                    values ('$OID','$merge_oid','$old_name');">
-	 <?/MISQL>
+	 <?/MISQL>  
          <?MICOMMENT> ====== end Common Action (cont) ========= <?/MICOMMENT>
-
+     
          <?MICOMMENT> ========  end  MERGE  ======== <?/MICOMMENT>
 
 
@@ -316,19 +316,19 @@
       <?/MIBLOCK> <?MICOMMENT> == end of Marker,Genotype Delete/Merge == <?/MICOMMENT>
 
 
-    <?MICOMMENT>===============================================
-                ===  Feature  (deletion only)      ========
+    <?MICOMMENT>=============================================== 
+                ===  Feature  (deletion only)      ======== 
                 ===============================================
     <?/MICOMMENT>
     <?MIELSE COND="$(EC,$rtype,feature)">
       	  <?MISQL SQL="
 	       delete from zdb_active_data
 	             where zactvd_zdb_id = '$OID';">
-          <?/MISQL>
+          <?/MISQL>	
 
 
-    <?MICOMMENT>===============================================
-                ===  Data Source  (deletion only)      ========
+    <?MICOMMENT>=============================================== 
+                ===  Data Source  (deletion only)      ======== 
                 ===============================================
     <?/MICOMMENT>
     <?MIELSE COND="$(OR,$(EC,$rtype,company),
@@ -340,23 +340,23 @@
 	    delete from zdb_active_source
 	          where zactvs_zdb_id = '$OID';">
         <?/MISQL>
-    <?MICOMMENT>===========================================================
+    <?MICOMMENT>=========================================================== 
                 If current kind is image then we need to be explicit.
-                ===========================================================
+                =========================================================== 
     <?/MICOMMENT>
     <?MIELSE COND="$(OR,$(EC,$rtype,image))">
         <?MISQL SQL="
-	     delete from $rtype
+	     delete from $rtype 
 	           where img_zdb_id='$OID';">
         <?/MISQL>
-    <?MICOMMENT>===========================================================
-	        ==  Other than Marker,Feature, Genotype,Data Source =======
+    <?MICOMMENT>=========================================================== 
+	        ==  Other than Marker,Feature, Genotype,Data Source ======= 
                 == delete from base table (currently used??)
-                ===========================================================
+                =========================================================== 
     <?/MICOMMENT>
     <?MIELSE>
         <?MISQL SQL="
-	     delete from $rtype
+	     delete from $rtype 
 	           where zdb_id='$OID';">
         <?/MISQL>
     <?/MIBLOCK>
@@ -369,8 +369,8 @@
     <?MIVAR NAME=returnOIDstring COND="$(XST,$returnOID)">&OID=$returnOID<?/MIVAR>
 
     <SCRIPT>
-        <?MIVAR> window.location.href='/cgi-bin/webdriver?MIval=aa-$return_page$returnOIDstring'<?/MIVAR>;
-    </SCRIPT>
+        <?MIVAR> window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page$returnOIDstring'<?/MIVAR>;
+    </SCRIPT> 
 
   <?/MIBLOCK> <?MICOMMENT> ====  end OID & rtype Exist  ===== <?/MICOMMENT>
 

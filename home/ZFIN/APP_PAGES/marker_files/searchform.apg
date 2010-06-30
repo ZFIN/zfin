@@ -35,7 +35,7 @@ Input:
      <?/MICOMMENT>
 
     </TR>
-     <FORM name="critform" method="post" action="/cgi-bin/webdriver" >
+     <FORM name="critform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
         <input type=hidden name=MIval value=aa-newmrkrselect.apg>
       <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
       <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>

@@ -7,7 +7,7 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-$dir = "cgi-bin";
+$dir = "<!--|CGI_BIN_DIR_NAME|-->";
 chdir "$dir";
 
 sub sendLoadReport ($) { # send email on error or completion

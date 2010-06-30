@@ -34,7 +34,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
         $xac_anatitem_name <BR>
       </TD>
       <TD>
-        <FORM method="get" action="/cgi-bin/webdriver">
+        <FORM method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 	  <INPUT type="hidden" name="MIval" value="aa-anatomy_captures.apg">
 	  <INPUT type="hidden" name="delete_term" value="$xac_anatitem_name">
 	  <INPUT type="submit" value="delete">
@@ -81,7 +81,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
         $xac_anatitem_name <BR>
       </TD>
       <TD>
-        <FORM method="get" action="/cgi-bin/webdriver">
+        <FORM method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 	  <INPUT type="hidden" name="MIval" value="aa-anatomy_captures.apg">
 	  <INPUT type="hidden" name="delete_term" value="$xac_anatitem_name">
 	  <INPUT type="submit" value="delete">
@@ -128,7 +128,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
         $xac_anatitem_name <BR>
       </TD>
       <TD>
-        <FORM method="get" action="/cgi-bin/webdriver">
+        <FORM method="get" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 	  <INPUT type="hidden" name="MIval" value="aa-anatomy_captures.apg">
 	  <INPUT type="hidden" name="delete_term" value="$xac_anatitem_name">
 	  <INPUT type="submit" value="delete">

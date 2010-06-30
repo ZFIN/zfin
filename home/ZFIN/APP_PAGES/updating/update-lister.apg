@@ -72,7 +72,7 @@
 	  <tr>
 	    <td width=30%>
               <b>Submitter:</b> 
-              <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$updlister_submitter_id">$updlister_submitter_name</A>
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$updlister_submitter_id">$updlister_submitter_name</A>
             </td>
 	    <td> <b>Changed field:</b> $updlister_field_name </td> 
 	    <td> <b>Date:</b> $updlister_date </td> 

@@ -82,7 +82,7 @@ to a browser -->
       METHOD=post ENCTYPE="multipart/form-data">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-imageupdate.apg>
-	<INPUT TYPE=hidden name=redirect_url value="/cgi-bin/webdriver?MIval=aa-do-imageupdate.apg">
+	<INPUT TYPE=hidden name=redirect_url value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-imageupdate.apg">
 	<INPUT TYPE=hidden name=OID Value=$OID>
 	<INPUT TYPE=hidden name=old_value Value="$current_value">
 	<INPUT TYPE=hidden name=attr Value=$attr>

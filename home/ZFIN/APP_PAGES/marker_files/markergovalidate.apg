@@ -74,7 +74,7 @@ used URLENCODE
       <?MIVAR COND="$(OR,$(EC,$goterm_id,0005554),$(EC,$goterm_id,0000004),$(EC,$goterm_id,0008372))">
      	<script>
        		window.alert("Please use the corresponding root term instead of the unknown term."); 
-		window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value'); 
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value'); 
 
      	</script>   
       <?/MIVAR>
@@ -99,18 +99,18 @@ used URLENCODE
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	    <script>
 	 	window.alert("There is already a non-root GO term in the same ontology for this gene.")
-	        <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id&go_id=$value'); <?/MIVAR>
+	        <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value'); <?/MIVAR>
             </script>
         <?MIELSE>
 	    <script><?MIVAR>
-	        window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name&evidence_code=ND&pub_id=ZDB-PUB-031118-1'); <?/MIVAR>
+	        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name&evidence_code=ND&pub_id=ZDB-PUB-031118-1'); <?/MIVAR>
             </script>
          <?/MIBLOCK>  
 	
       <?MIELSE>
       <?MIVAR NAME=$goterm_name>$(URLENCODE,$goterm_name)<?/MIVAR>
         <script><?MIVAR>
-	   window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
+	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
         </script>
       <?/MIBLOCK>	
 
@@ -125,7 +125,7 @@ used URLENCODE
 	   <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
 	   <script>
        		window.alert("Please enter a valid pub ID");               
-                <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
+                <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
      	   </script>      
       <?/MIBLOCK>
    <?/MIBLOCK>   <!-- end of pubid validataion -->
@@ -137,7 +137,7 @@ used URLENCODE
 	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
       		 <SCRIPT>
          	    window.alert('LOCUS IDs are no longer valid.  Please use the proper ZDB-GENO ID instead.'); 
-		    <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
+		    <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
       		 </SCRIPT>
 
                <?/MIBLOCK> 
@@ -145,7 +145,7 @@ used URLENCODE
 	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
       		 <SCRIPT>
          	    window.alert('FISH IDs are no longer valid.  Please use theproper ZDB-GENO ID instead.'); 
-		    <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
+		    <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
       		 </SCRIPT>
 
                <?/MIBLOCK> 
@@ -154,7 +154,7 @@ used URLENCODE
 	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
 	    <SCRIPT>
          	window.alert('Evidence code IC has to be accompanied by GO inference');
-		<?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
+		<?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
             </SCRIPT>
      	<?/MIBLOCK>
 
@@ -164,7 +164,7 @@ used URLENCODE
 		 <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
       		 <SCRIPT>
          	     window.alert('A GO inference can only be used if the evidence code is IC');
-		     <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
+		     <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
       		 </SCRIPT>
      	   <?/MIBLOCK>
 
@@ -191,7 +191,7 @@ used URLENCODE
 	 	 <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
       		 <SCRIPT>
          	    window.alert('Only GO terms that have been assigned to this gene can be used in the infered from field. Please correct your entry and resubmit'); 
-		    <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
+		    <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
       		 </SCRIPT>
      	       <?/MIBLOCK>
              <?/MIBLOCK><!-- end of if go_num not null -->
@@ -211,7 +211,7 @@ used URLENCODE
 			<?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>        
                  	<SCRIPT>
                    	   window.alert('Please enter a valid ZDB ID in the inference field');   
-			   <?MIVAR>window.location.replace('/cgi-bin/webdriver?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
+			   <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>
           		 </SCRIPT>         
              	   <?/MIBLOCK>
 

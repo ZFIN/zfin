@@ -3,18 +3,18 @@
 FILE: delete_record.html
 PREFIX: delrec_
 
-This page is used by root to delete some ZFIN record. The goal is to
-provide an intermediate step, warning of impending doom, so as to avoid
+This page is used by root to delete some ZFIN record. The goal is to 
+provide an intermediate step, warning of impending doom, so as to avoid 
 accidental deletions.
 
-It is called via a link, visible to 'root' only, on the data_manager.html
+It is called via a link, visible to 'root' only, on the data_manager.html 
 bar that appears at the top of each viewing page.
 
-Variables expected:
+Variables expected:  
   OID (REQUIRED) -- the zdb_id of the record to delete.
   rtype (REQUIRED) -- the data type of the record to delete.
   return_page (OPTIONAL) -- the page to return to after the deletion. The
-                            default is ZDB_home.apg.
+                            default is ZDB_home.apg. 
   returnOID -- pub ZDB ID
 <?/MICOMMENT>
 
@@ -27,7 +27,7 @@ SQL: $MI_SQL
 
 Code: $MI_ERRORCODE
 State: $MI_ERRORSTATE
-Message: $MI_ERRORMSG
+Message: $MI_ERRORMSG 
 <?/MIERROR>
 
 <HTML>
@@ -47,17 +47,17 @@ Message: $MI_ERRORMSG
     }
 
     function validateAction(oid) {
-
+	
 	 var merge_oid = oid;
          if (oid == "none")  {
 		var actionType = "delete";
 	 }else {
 		var actionType = "merge";
    	 }
-
+	
          <?MIVAR NAME=checker_id>$OID<?/MIVAR>
 
-         <?MICOMMENT> ------- Genotype ------- <?/MICOMMENT>
+         <?MICOMMENT> ------- Genotype ------- <?/MICOMMENT>          
          <?MIBLOCK COND="$(EC,$rtype,genotype)">
             <?MISQL SQL="
   		select genox_zdb_id
@@ -70,7 +70,7 @@ Message: $MI_ERRORMSG
                                  from atomic_phenotype
                                 where apato_genox_zdb_id = genox_zdb_id)
 			) ;">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> has expression/pato data and cannot be deleted or merged.");
 		return false;
@@ -80,16 +80,16 @@ Message: $MI_ERRORMSG
                   from inference_group_member
                  where 'ZFIN:$checker_id'= infgrmem_inferred_from
 			 ;">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
             <?MISQL SQL="
-  		select mrkr_abbrev
+  		select mrkr_abbrev 
                   from inference_group_member, marker_go_term_evidence, marker
                  where 'ZFIN:$checker_id'= infgrmem_inferred_from
                  and infgrmem_mrkrgoev_zdb_id=mrkrgoev_zdb_id
                  and mrkrgoev_mrkr_zdb_id=mrkr_zdb_id
 			 ;">
-            <?/MISQL>
+            <?/MISQL>         
              <?MIVAR NAME=delrec_mrkr_abbrev>$1<?/MIVAR>
 		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> is used as a GO inference for <?MIVAR>$delrec_mrkr_abbrev<?/MIVAR> and cannot be deleted or merged.");
 		return false;
@@ -100,7 +100,7 @@ Message: $MI_ERRORMSG
                      where geno_zdb_id = '$checker_id'">
 		   <?MIVAR NAME=$checker_name>$1<?/MIVAR>
 		<?/MISQL>
-
+                
 		var agree = confirm ("You are about to "+actionType+" <?MIVAR>$checker_id [$checker_name]<?/MIVAR>. Do you wish to take this action?");
 	        if (agree) {
 		   return true;
@@ -121,7 +121,7 @@ Message: $MI_ERRORMSG
           <?MICOMMENT> don't delete transcripts with dblinks <?/MICOMMENT>
           <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,7),TSCRIPT)">
             <?MISQL SQL="
-              select 'x' from single
+              select 'x' from single 
                 where exists (select 'x'
                               from db_link
                               where dblink_linked_recid = '$OID');">
@@ -139,7 +139,7 @@ Message: $MI_ERRORMSG
   		select xpatex_zdb_id
                   from expression_experiment
                  where xpatex_gene_zdb_id = '$checker_id';">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 		alert("Sorry, the gene has expression data and cannot be deleted.");
 		return false;
@@ -150,7 +150,7 @@ Message: $MI_ERRORMSG
   		select fmrel_zdb_id
                   from feature_marker_relationship
                  where fmrel_mrkr_zdb_id = '$checker_id';">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 		alert("Sorry, the gene is related to some feature and cannot be deleted.");
 		return false;
@@ -178,7 +178,7 @@ Message: $MI_ERRORMSG
   		select fmrel_zdb_id
                   from feature_marker_relationship
                  where fmrel_mrkr_zdb_id = '$checker_id';">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 		alert("Sorry, the construct is related to some feature and cannot be deleted.");
 		return false;
@@ -194,7 +194,7 @@ Message: $MI_ERRORMSG
   		select genofeat_zdb_id
                   from genotype_feature
                  where genofeat_feature_zdb_id = '$checker_id';">
-            <?/MISQL>
+            <?/MISQL>         
             <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 		alert("Sorry, the feature is associated with genotype and cannot be deleted.");
 		return false;
@@ -209,8 +209,8 @@ Message: $MI_ERRORMSG
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)')
-    from webPages
+  select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)') 
+    from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
 <?/MISQL>
@@ -221,7 +221,7 @@ Message: $MI_ERRORMSG
   <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
     <!-- form posts to itself if merge record if requested -->
-    <form name=merge method=post action="/cgi-bin/webdriver">
+    <form name=merge method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
      <?MICOMMENT> -- this is defined for the "Search" button <?/MICOMMENT>
      <input type=hidden name=MIval value="aa-delete_record.apg">
      <?MIVAR>
@@ -230,7 +230,7 @@ Message: $MI_ERRORMSG
        <input type=hidden name=merge_oid value='none'>
      <?/MIVAR>
      <?MIVAR COND="$(XST,$return_page)">
-       <input type=hidden name=return_page value=$return_page>
+       <input type=hidden name=return_page value=$return_page>	
        <input type=hidden name=returnOID value=$returnOID>
      <?/MIVAR>
 
@@ -240,7 +240,7 @@ Message: $MI_ERRORMSG
 
   <?MIVAR>
     <h1 align=center><font color="#ff0000">CAUTION</font></h1>
-    You are about to <b>DELETE</b>
+    You are about to <b>DELETE</b> 
 
     <ul>
     <b>$(UPPER,$rtype)</b> record with ZFIN id: <b>$OID</b>
@@ -249,7 +249,7 @@ Message: $MI_ERRORMSG
   <p>
 
  Click "Cancel" if you are unsure that this is what you want to do. <p>
-
+ 
 <?MIBLOCK COND="$(=,$(POSITION,$OID,-ATB-),0)">
 	To merge this record, select a record for merging then click on "Delete or Merge".<p>
 <?/MIBLOCK>
@@ -260,13 +260,13 @@ Message: $MI_ERRORMSG
     And <B>MERGE</B> with<br>
     <?MIVAR>
       <ul>
-        <b>$(UPPER,$mtype)</b> record $(URLDECODE,$merge): <b>$merge_oid</b>
+        <b>$(UPPER,$mtype)</b> record $(URLDECODE,$merge): <b>$merge_oid</b> 
       </ul>
     <?/MIVAR>
     <p>
-  <?/MIBLOCK>
-
-
+  <?/MIBLOCK> 
+ 
+ 
 <?MIBLOCK COND="$(=,$(POSITION,$OID,-ATB-),0)">
   <?MIBLOCK COND="$(EC,$merge_oid,none)">
     <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
@@ -290,7 +290,7 @@ Message: $MI_ERRORMSG
 		<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
 		<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
 	      </select>  and its abbrev/handle contains:
-	      <input type=text name=merge value="$nsearch" size=8>
+	      <input type=text name=merge value="$nsearch" size=8>  
 	      <input type=submit name=do_search value="Search">
 	    </TR>
 	  </TABLE>
@@ -302,12 +302,12 @@ Message: $MI_ERRORMSG
 	  <TABLE cols=3>
             <TR><TD></TD><TD><b>Marker Name</b></TD><TD><b>Marker Type</b></TD></TR>
             <?MISQL SQL="
-              select distinct mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev
+              select distinct mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev 
                 from marker, all_map_names, all_name_ends
-                where mrkr_type = '$mtype'
-                  and mrkr_zdb_id = allmapnm_zdb_id
+                where mrkr_type = '$mtype' 
+                  and mrkr_zdb_id = allmapnm_zdb_id 
                   and allmapnm_serial_id = allnmend_allmapnm_serial_id
-                  and allnmend_name_end_lower like '%$(LOWER,$merge)%'
+                  and allnmend_name_end_lower like '%$(LOWER,$merge)%' 
                 order by mrkr_abbrev;">
               <?MIVAR NAME=$delrec_mrkrZdbId>$1<?/MIVAR>
               <?MIVAR NAME=$delrec_mrkrName>$2<?/MIVAR>
@@ -316,7 +316,7 @@ Message: $MI_ERRORMSG
               <TR>
                 <TD width=15%>
                   <?MIVAR>
-                    <input type=button value="Select"
+                    <input type=button value="Select" 
                       onClick=set_values('$delrec_mrkrZdbId','$(URLENCODE,$delrec_mrkrName)');document.merge.submit();>
                   <?/MIVAR>
                 </TD>
@@ -340,14 +340,14 @@ Message: $MI_ERRORMSG
 	     <?MISQL SQL="
                select geno_zdb_id, geno_display_name, geno_handle
 	         from genotype
-		where lower(geno_handle) like '%$(LOWER,$merge)%'
+		where lower(geno_handle) like '%$(LOWER,$merge)%' 
                 order by geno_handle;">
 	       <TR>
 		 <TD>
 		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)');document.merge.submit();>
 		 </TD>
 		 <TD>
-		   $2
+		   $2 
 		 </TD>
 		 <TD>
 		   $3
@@ -355,15 +355,15 @@ Message: $MI_ERRORMSG
 	       </TR>
 	     <?/MISQL>
 	     </TABLE>
-	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No genotype matches.<?/MIVAR>
+	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No genotype matches.<?/MIVAR> 
 	   <p>
       <?/MIBLOCK>
 
 
     <?MIELSE>
-      	<input type=hidden name=merge value="" >
+      	<input type=hidden name=merge value="" >  
     <?/MIBLOCK>
-  <?/MIBLOCK>
+  <?/MIBLOCK>  
 <?/MIBLOCK>
   <!-- present option to cancel or delete -->
 

@@ -36,7 +36,7 @@ attr_type -- the type of attr being updated. Either 'text','textarea','pic' or '
 <p>
 
 
-<FORM ACTION="/cgi-bin/webdriver" METHOD=post ENCTYPE="multipart/form-data">
+<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
 
 
 
@@ -47,7 +47,7 @@ attr_type -- the type of attr being updated. Either 'text','textarea','pic' or '
 <TD valign=middle><b>Current Snapshot:</B></TD>
 <TD>
 <?MIVAR COND="$(NC,$current_value,NULL)">
-<IMG align=center hspace=5 SRC=/webdriver?LO=$current_value&type=image/gif>
+<IMG align=center hspace=5 SRC=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$current_value&type=image/gif>
 <?/MIVAR>
 <?MIVAR COND="$(EC,$current_value,NULL)">
 No image currently specified.

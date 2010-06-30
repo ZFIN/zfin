@@ -1128,7 +1128,7 @@ function doValidateAndSubmit(currentTime ){
 	      </font>
   <form name=critform 
         method=get
-        action="/cgi-bin/webdriver">
+        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <input type=hidden name=MIval value=aa-xpatselect.apg>
     <input type=hidden name=query_results value="exist">
     <input type=hidden name=START value="0">
@@ -1413,7 +1413,7 @@ function doValidateAndSubmit(currentTime ){
         <?MIBLOCK COND="$(=,$fsel_fig_count,1)">
           <?MIVAR>
             <span title="Phenotype observed in: $fsel_separate_anat_list">
-              <A HREF='/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+              <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
             </span>
           <?/MIVAR>
         <?MIELSE>
@@ -1421,13 +1421,13 @@ function doValidateAndSubmit(currentTime ){
             <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
               <?MIVAR>
               <span title="Phenotype observed in: $fsel_separate_anat_list">
-                <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
               </span>
               <?/MIVAR>
             <?MIELSE>
               <?MIVAR>
               <span title="Phenotype observed in: $fsel_separate_anat_list">
-                <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
               </span>
               <?/MIVAR>
             <?/MIBLOCK>
@@ -1436,13 +1436,13 @@ function doValidateAndSubmit(currentTime ){
               <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>
               <?MIELSE>
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&morphantsOnly=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR> 
               <?/MIBLOCK>
@@ -1450,13 +1450,13 @@ function doValidateAndSubmit(currentTime ){
               <?MIBLOCK COND="$(AND,$(EC,$innocuous,t),$(XST,$fsel_processed_selected_structures))">
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&phenosum_concted_AO_IDs=$fsel_anatomy_ids_concted&phenosum_include_substructures=$include_substructures&phenosum_structure_bool=$structure_bool&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>              
               <?MIELSE>
                 <?MIVAR>
                 <span title="Phenotype observed in: $fsel_separate_anat_list">
-                  <A HREF='/cgi-bin/webdriver?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+                  <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid&includingMO=$fsel_includingMO&split=yes&moTargetGeneID=$matchedTargetGene'>$fsel_fig_count figures $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
                 </span>
                 <?/MIVAR>
               <?/MIBLOCK>
@@ -1754,7 +1754,7 @@ function doValidateAndSubmit(currentTime ){
  <?MICOMMENT>
   ================== Form Content ==============================
  <?/MICOMMENT>
-<form name="BrowserForm" method=get action="/cgi-bin/webdriver" 
+<form name="BrowserForm" method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
 onSubmit="
 // we need to cancel submit, as Safari wants to go ahead and submit this form any type return is pressed
 // we only want input to go forward when going through call_submit

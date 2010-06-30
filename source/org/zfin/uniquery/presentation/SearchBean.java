@@ -465,7 +465,7 @@ public class SearchBean extends PaginationBean {
             String viewPageUrl;
             if (theMatchId.startsWith("ZDB-GENO")) {
 
-                viewPageUrl = "/" + webdriverLocation + "/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+                viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ATB")) {

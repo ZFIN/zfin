@@ -28,7 +28,7 @@ target_table -- marker
 <SCRIPT>
 function make_correction(mrkr_id,old_v,attr) {
   var new_v = document.updater.new_value.value;
-  window.location.replace('/cgi-bin/webdriver?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
+  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
 }
 </SCRIPT>
 
@@ -85,7 +85,7 @@ function make_correction(mrkr_id,old_v,attr) {
       </font></center>
     <?/MIVAR>
     <p>
-    <FORM NAME="updater" ACTION="/cgi-bin/webdriver" METHOD="post">
+    <FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD="post">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
 	<INPUT TYPE=hidden name=OID Value=$OID>

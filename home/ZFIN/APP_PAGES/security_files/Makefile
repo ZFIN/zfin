@@ -21,7 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/security_files
 
-STATICS = identify.apg unauth.apg secure_navigation.apg
+GENERICS = secure_navigation.apg
+STATICS = identify.apg unauth.apg
 
 # ---------------  Production Rules  ------------------------------------
 

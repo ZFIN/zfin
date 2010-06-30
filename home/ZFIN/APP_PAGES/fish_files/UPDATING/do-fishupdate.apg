@@ -264,6 +264,6 @@ dataOID --zdb id of data item that attributed
 <?MIVAR COND="$(XST,$caller)">$(SETVAR,$return_page,$caller)<?/MIVAR>
 <?MIVAR>
   <SCRIPT>
-     location.replace("/cgi-bin/webdriver?MIval=aa-$return_page&OID=$OID&UPDATE=1")
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$OID&UPDATE=1")
   </SCRIPT>
 <?/MIVAR>

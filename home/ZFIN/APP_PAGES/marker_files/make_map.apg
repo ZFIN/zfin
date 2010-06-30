@@ -24,7 +24,7 @@ showlist -- a parenthesized list of marker types that should be visible.
 <TR $(IF,$(EC,$1,$marker),"bgcolor=#F9A9BE")>
 <TD ><font size=2>
 $(IF,$(EC,$1,$marker),$(SETVAR,$focus,$MI_CURRENTROW))
-<A HREF="javascript:top.lghomewin.content.location='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$1';top.lghomewin.content.focus();">$2</A></font>
+<A HREF="javascript:top.lghomewin.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1';top.lghomewin.content.focus();">$2</A></font>
 <font size=1>($3)</font>
 </TD>
 <TD><font size=2>$4 $5</font></TD>
@@ -42,5 +42,3 @@ var y_offset=$focus * 9;
 window.scroll(0,y_offset);
 </SCRIPT>
 <?/MIVAR>
-
-

@@ -1,7 +1,7 @@
 
 
  document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
- document.write('<LINK rel=stylesheet type="text/css" href="/css/header.css">');
+ document.write('<LINK rel=stylesheet type="text/css" href="/css/header.css">'); 
 
 
 
@@ -17,22 +17,22 @@ function addScript(url) {
 addScript("/javascript/prototype.js");
 
 
-/** mostly this kind of thing is bad, but thers a
+/** mostly this kind of thing is bad, but thers a 
     tiny bit of css we want for IE only  **/
 
 if (navigator.appName == 'Microsoft Internet Explorer') {
-  document.write("<style type='text/css'>");
+  document.write("<style type='text/css'>"); 
 //  document.write("body { width:expression(document.body.clientWidth < 600? '600px': 'auto' );}  ");
-//  document.write("#hdr-banner {   width:expression(document.body.clientWidth < 580? '580px': 'auto' );  } ");
+//  document.write("#hdr-banner {   width:expression(document.body.clientWidth < 580? '580px': 'auto' );  } "); 
 
 
   /** if (IE version > 7) **/
   if (!window.XMLHttpRequest) {
-    document.write("#hdr-tabs { margin-left: 95px; } ");
-  }
-  document.write("</style>");
-
-}
+    document.write("#hdr-tabs { margin-left: 95px; } ");  
+  } 
+  document.write("</style>"); 
+  
+} 
 
 
 
@@ -80,7 +80,7 @@ function hdrDeleteCookie(name, path, domain) {
 
 function hdrSetTabs() {
 
-	/** this requires conversion from the apg version of the header,
+	/** this requires conversion from the apg version of the header, 
         show_motto is always false here, because the home page never
         calls the js version of the header **/
    var hdr_showmotto = false;
@@ -193,7 +193,7 @@ function showGeneralLinks() {
 
 
 function showZIRCLinks() {
-
+  
   hdrSetCookie("tabCookie","Products","","/");
 
   deselectTabs();
@@ -227,7 +227,7 @@ function showMotto() {
 
 
 document.write(" <body id=\"body\" onload=\"hdrSetTabs();\">");
-document.write("   <a href=\"/cgi-bin/webdriver?MIval=aa-ZDB_home.apg\">");
+document.write("   <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg\">");
 document.write("    <img id=\"logo-img\" src=\"/images/zfinlogo.png\"> ");
 document.write("    <img id=\"logo-text\" src=\"/images/zfintxt.png\">");
 document.write("   </a>");
@@ -303,30 +303,30 @@ document.write("     </div>");
 document.write("     <div id=\"hdr-zfinlinks\" class=\"hdr-linkbar\"> ");
 document.write("       <a href=\"/\">Home</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg\" title=\"Search by name, accession number, LG, vector or sequence type\">Genes / Markers / Clones</a>");
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg\" title=\"Search by name, accession number, LG, vector or sequence type\">Genes / Markers / Clones</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("        <a href=\"/action/blast/blast\" title=\"Search for sequence alignment against ZFIN datasets and zebrafish datasets\">BLAST</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("        <a href=\"/cgi-perl/gbrowse/current/\">GBrowse</a> ");
+document.write("        <a href=\"/<!--|GBROWSE_PATH_FROM_ROOT|-->\">GBrowse</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/cgi-bin/webdriver?MIval=aa-xpatselect.apg\" title=\"Search by gene, developmental stage, anatomy and other attributes\">Expression</a>");
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg\" title=\"Search by gene, developmental stage, anatomy and other attributes\">Expression</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/action/antibody/search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 
-document.write("       <a href=\"/cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Morphants / Tg</a>");
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Morphants / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("      <a href=\"/action/anatomy/search\" title=\"Search the zebrafish anatomical ontology\">Anatomy</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/cgi-bin/webdriver?MIval=aa-pubselect2.apg&select_from=PUBLICATION\" title=\"Search for zebrafish research publications by author, title or citation\">Publications</a>");
+document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&select_from=PUBLICATION\" title=\"Search for zebrafish research publications by author, title or citation\">Publications</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/cgi-bin/mapper_select.cgi\" title=\"View genetic, radiation hybrid or consolidated maps\">Maps</a>");
+document.write("       <a href=\"/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi\" title=\"View genetic, radiation hybrid or consolidated maps\">Maps</a>");
 document.write("     </div>");
 document.write("     <div id=\"hdr-generallinks\" style=\"display: none;\" class=\"hdr-linkbar\">");
 document.write("     <a href=\"/\"></a> ");
 
 
-document.write("     <a href=\"/\">Home</a> ");
+document.write("     <a href=\"/\">Home</a> "); 
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"http://wiki.zfin.org/display/general/ZFIN+Community+Wiki\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
@@ -336,11 +336,11 @@ document.write("     <a href=\"/zf_info/news/mtgs.html\" title=\"Zebrafish-relat
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
  document.write("    <a href=\"/zf_info/news/newsgroup.html\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/cgi-bin/webdriver?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75\" title=\"Search for zebrafish researchers by name or address\">People</a>");
+document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75\" title=\"Search for zebrafish researchers by name or address\">People</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/cgi-bin/webdriver?MIval=aa-labselect.apg&select_from=LAB\" title=\"Search for laboratories by name, address or research interests\">Labs</a>");
+document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB\" title=\"Search for laboratories by name, address or research interests\">Labs</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/cgi-bin/webdriver?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230\" title=\"Search for companies supplying zebrafish reagents\">Companies</a>");
+document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230\" title=\"Search for companies supplying zebrafish reagents\">Companies</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/zf_info/news/education.html\" title=\"Educational websites for students and educators\">Education</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
@@ -350,7 +350,7 @@ document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact i
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN and citing ZFIN resources in publications\">About</A>");
 document.write("    </div>");
-document.write("    <div id=\"hdr-motto\" style=\"display:none;\"  class=\"hdr-linkbar\">   ");
+document.write("    <div id=\"hdr-motto\" style=\"display:none;\"  class=\"hdr-linkbar\">   ");  
 document.write("      The Zebrafish Model Organism Database");
 document.write("    </div>");
 document.write("  </div> <!-- navlinks -->");

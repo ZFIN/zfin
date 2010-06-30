@@ -351,7 +351,7 @@ EFFECTS
     <td colspan=2>Env.</td>
     <td>Condition</td>
     <td>
-      <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-new_marker.apg&newmrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
+      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
     </td>
     <td>Value</td>
     <td>Units</td> 
@@ -359,7 +359,7 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 
-<form action="/cgi-bin/webdriver#condition" method=post name=condition ">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition ">
 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_zdb_id>
     <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_comments>
@@ -408,8 +408,8 @@ EFFECTS
     <td> $(SUBSTR,$xpcurcond_cdt,1,30)
     </td>
     <td>
-      <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
-      <?MIVAR COND=$(NC,$xpcurcond_gene_abbrev,NULL)>(<a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$xpcurcond_gene_zdb_id">$xpcurcond_gene_abbrev</a>)<?/MIVAR>
+      <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
+      <?MIVAR COND=$(NC,$xpcurcond_gene_abbrev,NULL)>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpcurcond_gene_zdb_id">$xpcurcond_gene_abbrev</a>)<?/MIVAR>
     </td>
     <td> $xpcurcond_expcond_value
     </td>
@@ -453,7 +453,7 @@ EFFECTS
   </tr>
 
 <?MICOMMENT> ==| Enter a New Condition |== <?/MICOMMENT>
-<form action="/cgi-bin/webdriver#condition" method=post name=condition_new >
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition_new >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_cond_add VALUE="Add"> 

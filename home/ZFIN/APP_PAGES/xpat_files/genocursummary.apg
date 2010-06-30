@@ -147,7 +147,7 @@ PREFIX:   genocursum_
       </td>
       
       <td>
-        <a href="/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id" target=notes>Edit</a>
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id" target=notes>Edit</a>
       </td>
 
       

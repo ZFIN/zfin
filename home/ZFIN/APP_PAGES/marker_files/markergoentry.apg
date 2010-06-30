@@ -50,11 +50,11 @@
  }
 
  function view_notes(mrkrgoevid) {
-     helpwin=open("/cgi-bin/webdriver?MIval=aa-gonotes.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=200,width=300,resizable=yes");
+     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gonotes.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=200,width=300,resizable=yes");
  }
 
  function delete_rec(mrkrgoevid) {
-    window.location.replace('/cgi-bin/webdriver?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
  }
 
 function new_GO(mrkrzdbid){
@@ -68,7 +68,7 @@ function new_GO(mrkrzdbid){
   <?MIVAR>
   <form name=newdata method = post>
   <INPUT TYPE="hidden" name="MIval" value="aa-markergoentry.apg">
-  <center><b>GO annotations for <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
+  <center><b>GO annotations for <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
   <p>
   <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
   <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
@@ -235,7 +235,7 @@ function new_GO(mrkrzdbid){
 		 where mrkr_zdb_id = '$accID'">
 	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
 	    <?/MISQL>
-            <?MIVAR NAME=$currinflink><a href="/cgi-bin/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
+            <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
             
          <?MIELSE COND="$(EC,$dbase,GO)">
               <?MISQL SQL="select fdb_db_query from foreign_db  where fdb_db_name ='QuickGO';"><?/MISQL>
@@ -257,7 +257,7 @@ function new_GO(mrkrzdbid){
     <td nowrap><?MIVAR>$infs<?/MIVAR></td>
 
 
-    <td nowrap><a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$sourcezdbid<?/MIVAR></a></td>
+    <td nowrap><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$sourcezdbid<?/MIVAR></a></td>
     <?MIBLOCK COND="$(NC,$markergonotes,)">
       <?MIVAR><td><input type = button value = "Notes" name = notes onClick=view_notes('$markergoevid')></td><?/MIVAR>
     <?MIELSE>

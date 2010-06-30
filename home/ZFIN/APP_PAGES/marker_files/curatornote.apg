@@ -40,15 +40,15 @@ Optional Vars:
   }
 
   function editNote(dnote_zdb_id) {
-    helpwin=open("/cgi-bin/webdriver?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
+    helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
     <?MIVAR>
-      replaceLocation("/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID#notes");
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID#notes");
     <?/MIVAR>
   }
       
   function deleteNote(dnote_zdb_id) {
     <?MIVAR>
-      replaceLocation("/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID&delete_dnote="+dnote_zdb_id+"#notes");
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&delete_dnote="+dnote_zdb_id+"#notes");
     <?/MIVAR>
   }
 
@@ -134,7 +134,7 @@ Optional Vars:
               <?MIBLOCK COND="$(EC,$heading,Feature)">
                <?MIVAR>$data_name<?/MIVAR> 
               <?MIELSE>
-              <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
+              <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
               <?/MIBLOCK>
             <?/MIVAR>
           </td>
@@ -151,12 +151,12 @@ Optional Vars:
             <?/MIBLOCK>
 
             <p>
-            <form action="/cgi-bin/webdriver" method=post name=new_notes>
+            <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
               <?MIVAR>
                 <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curatornote.apg">
                 <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
                 <INPUT TYPE=HIDDEN NAME=OID_page VALUE="$OID_page"> 
-                <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID&OID_page=$OID_page">
+                <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=$OID_page">
               <?/MIVAR>
   
               <font color="black"><b> Curator Notes </b></font><a name=notes></a>  

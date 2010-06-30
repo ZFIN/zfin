@@ -167,7 +167,7 @@ EFFECTS
   <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
-<form action="/cgi-bin/webdriver#figure" method=post name=figureUpdate> 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
@@ -177,7 +177,7 @@ EFFECTS
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','$xpcurfig_fig_zdb_id','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Only</font></a>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','$xpcurfig_fig_zdb_id','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Only</font></a>
     </td>
     <td valign=top> 
        $xpcurfig_fig_label
@@ -212,7 +212,7 @@ EFFECTS
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
       <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();document.figureUpdate.submit();}"><br>
-      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','','/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Show All</font></a>
+      <a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','FIGURE_ID','','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');"><font color=blue>Show All</font></a>
     </td>
     <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
@@ -258,7 +258,7 @@ EFFECTS
   </tr>
   
 <?MICOMMENT> ==| Enter a New Figure |== <?/MICOMMENT>
-<form action="/cgi-bin/webdriver#figure" method=post name=figure_new>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figure_new>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_c_xpatcuration_update VALUE="update">

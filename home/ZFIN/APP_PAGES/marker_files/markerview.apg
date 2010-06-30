@@ -83,7 +83,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
    }
 
   function start_note(ref_page) {
-    top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
   }
 
   function call_mapplet() {
@@ -91,23 +91,23 @@ for antibody: added meta redirect at the beginning and the end of the file.
   }
 
   function call_zmapplet() {
-	document.mapper.action='/cgi-bin/view_zmapplet.cgi';
+	document.mapper.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
 	document.mapper.submit();
   }
 
   function edit_linkage(link_id,oid) {
-	window.location.replace('/cgi-bin/webdriver?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid)
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid)
   }
 
   function edit_go(oid) {
-	window.location.replace('/cgi-bin/webdriver?MIval=aa-markergoentry.apg&OID='+oid)
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID='+oid)
   }
 
   function get_spdesc(oid) {
-	window.location.replace('/cgi-bin/webdriver?MIval=aa-markerspcomments.apg&OID='+oid)
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerspcomments.apg&OID='+oid)
   }
   function start_help() {
-   top.zfinhelp=open('/cgi-bin/webdriver?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
+   top.zfinhelp=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
   }
 
   </SCRIPT>
@@ -245,22 +245,22 @@ function jump(form_select){
 		doit(attr,attr_type,print_name,'');
 	}
 	function doit(attr,attr_type,print_name,xtra_param) {
-		window.location.replace('/cgi-bin/webdriver?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&xtra_param='+xtra_param+'&target_table=marker');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&xtra_param='+xtra_param+'&target_table=marker');
 	}
 
 	function Delete_listitem(item_name,item_id) {
-		window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&comments=Deleted&target_table=marker');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&comments=Deleted&target_table=marker');
 	}
 
 	function Delete_alias(alias,marker_id) {
- 		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&comments=Deleted&target_table=marker');
+ 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&comments=Deleted&target_table=marker');
 	}
 
         <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__comments=Deleted__target_table=marker')
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 	function Delete_mrel(mrel_partner_id, type) {
- 		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
+ 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
 	}
 
 	function new_ortho() {
@@ -269,7 +269,7 @@ function jump(form_select){
 		var oname=document.updater1.oname.value;
 		var oabbrev=document.updater1.oabbrev.value;
 		if ((oname != '') && (oabbrev != '')) {
-  		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=marker&info='+oabbrev);
+  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=marker&info='+oabbrev);
   		}
 	}
 
@@ -325,7 +325,7 @@ function jump(form_select){
 			var attribution_type = "special-check-newseqnum";
 		   }
 
-  		   window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&xtra_param='+fdb_id);
+  		   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=sequence&OID=$OID&attr=seqnum&attr_type='+attribution_type+'&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&xtra_param='+fdb_id);
   		}
 
 	}
@@ -337,7 +337,7 @@ function jump(form_select){
 		var dbind=document.updateseq.upd_seq_type.selectedIndex;
 		var seq_type=document.updateseq.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
-  		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&anchor=sequence&OID=$OID&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type);
+  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=sequence&OID=$OID&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type);
   		}
 	}
 	function new_othernum() {
@@ -347,7 +347,7 @@ function jump(form_select){
 		var dbind=document.updateother.seq_super.selectedIndex;
 		var seq_type=document.updateother.seq_super[dbind].value.strip();
 		if (seq_acc != '') {
-		 window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
 		}
 	}
 
@@ -357,14 +357,14 @@ function jump(form_select){
 		var dbname=document.updateps.prt_seqdb[dbind].value;
 		var seq_acc=document.updateps.prt_seq_acc.value.strip() ;
 		if (seq_acc != ''){
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
 		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
   		}
 	}
 
@@ -372,7 +372,7 @@ function jump(form_select){
 	function update_nomen_comments(nomen_zdb,comments_obj) {
         	var new_comments = escape(comments_obj.value);
 		if ((nomen_zdb != '') && (new_comments != '')) {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID='+nomen_zdb+'&attr=comments&attr_type=textarea&old_value=$OID&new_value='+new_comments+'&target_table=marker_history&info=mhist_');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID='+nomen_zdb+'&attr=comments&attr_type=textarea&old_value=$OID&new_value='+new_comments+'&target_table=marker_history&info=mhist_');
   		}
 	}
 
@@ -384,7 +384,7 @@ function jump(form_select){
  	        if (note == '') {note = 'Sequence Modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
- 		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
  		}
         }
 
@@ -394,14 +394,14 @@ function jump(form_select){
         new_value.replace(/ /, "%20") ;
  	    new_value = escape(new_value);
         if(old_value!=new_value){
-           window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&anchor=top&OID=$OID&attr=clone_problem_type&attr_type=boolean&old_value='+old_value+'&new_value='+new_value+'&target_table=clone');
+           window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=top&OID=$OID&attr=clone_problem_type&attr_type=boolean&old_value='+old_value+'&new_value='+new_value+'&target_table=clone');
         }
 	}
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
         	var pub_id = escape(pub_obj.value.strip());
 		if ((nomen_zdb != '') && (pub_id != '')) {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+nomen_zdb+'&new_value='+pub_id+'&target_table=marker&info=nomen');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+nomen_zdb+'&new_value='+pub_id+'&target_table=marker&info=nomen');
   		}
 	}
 
@@ -409,7 +409,7 @@ function jump(form_select){
 		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.strip());
 		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().strip();
 		if ((mrkr_abbrev != '') && (pub_id != '')) {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
   		}
 	}
 
@@ -417,7 +417,7 @@ function jump(form_select){
 		var prev_name=escape(objform.attrib_ssprevname.value.strip());
 		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase().strip();
 		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
 	}
 
@@ -426,7 +426,7 @@ function jump(form_select){
 		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase().strip() ;
 
 		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
 	}
 
@@ -434,7 +434,7 @@ function jump(form_select){
 		var seq_acc = document.updateps.attrib_prtn_seqacc.value.strip() ;
 		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase().strip() ;
 		if((seq_acc != '')&&(pub_id != '')) {
-			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 	function new_attrib_seq() {
@@ -442,28 +442,28 @@ function jump(form_select){
 		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase().strip();
 		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase().strip();
 		if((seq_acc != '')&&(pub_id != '')) {
-			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc&xtra_param='+fdb_id);
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc&xtra_param='+fdb_id);
 		}
 	}
 	function new_attrib_other() {
 		var seq_acc = document.updateother.attrib_seq_acc.value.strip();
 		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase().strip();
 		if((seq_acc != '')&&(pub_id != '')) {
-			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 
 	function new_attrib_mutant(dataid, objform) {
 		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase().strip();
 		if((dataid != '')&&(pub_id != '')) {
-			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
 		}
 	}
 
  	function new_attrib_mrkrseq(dataid) {
  		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().strip();
  		if((dataid != '')&&(pub_id != '')) {
- 			window.location.replace('/cgi-bin/webdriver?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
+ 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
  		}
  	}
 
@@ -541,7 +541,7 @@ function jump(form_select){
        <a 
        style="font-size: large;"
        href="javascript:" 
-        onClick="document.location.replace('/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$OID')"
+        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
        >[View Marker]</a>
      </center>
    </form>
@@ -577,7 +577,7 @@ function jump(form_select){
     <td width=15% align=right>
      <?MIVAR>
         <form method=post
-              action="/cgi-bin/webdriver"
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
               target=comments>
            <input type=hidden name=subject value="$abbrev">
            <input type=hidden name=marker_id value="$OID">
@@ -980,7 +980,7 @@ Only need to update clones, etc., which should be the only things that will have
          onClick="Delete_mrel('$mrkrview_trg_gene_zdb_id','knockdown reagent targets gene')">
     <?/MIVAR>
     $mrkrview_trg_gene_link
-    <!-- <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a> -->
+    <!-- <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a> -->
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
@@ -999,7 +999,7 @@ Only need to update clones, etc., which should be the only things that will have
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
 <?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))">
-    <font size=-1><A HREF="/cgi-bin/webdriver?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A>
+    <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A>
     </font>
     <br>
 <?/MIVAR>
@@ -1031,7 +1031,7 @@ Only need to update clones, etc., which should be the only things that will have
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   <br>
   <B>Curator Notes:</B>
-    <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID">(View/Add Notes)</a><?/MIVAR>
+    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">(View/Add Notes)</a><?/MIVAR>
   <?MISQL SQL="select count(*)
 		from data_note
 		where dnote_data_zdb_id = '$OID' ;">
@@ -1393,7 +1393,7 @@ SQL="
          <tr><td><b>All expression data: </b> </td>
 
            <td> <?MIVAR>
-     	       <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
 	        <?/MIVAR>
            </td>
          </tr>
@@ -1485,7 +1485,7 @@ SQL="
 	   <?/MISQL>
 
            <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-	     <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
@@ -1505,7 +1505,7 @@ SQL="
           <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 
           <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-	     <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
@@ -1557,9 +1557,9 @@ SQL="
 <?MIVAR NAME=mrkrview_xpat_resulttytpe>Unpublished<?/MIVAR>
 
          <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-     	       <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a> 
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a> 
 <?MICOMMENT>
-	   <a href="/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 <?/MICOMMENT>
 	 <?/MIVAR>
 
@@ -2032,7 +2032,7 @@ union
          onClick="Delete_mrel('$mrkrview_agt_zdb_id','knockdown reagent targets gene')">
     <?/MIVAR>
 
-    <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
 	$mrkrview_agt_name
     </a>
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -2196,12 +2196,12 @@ union
 
    <?MIBLOCK COND="$(>,$anncount,1)">
        <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$(TRIM,$molterm)</a>
-     (<a href="/cgi-bin/webdriver?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
+     (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
    <?/MIBLOCK>
 
    <?MIBLOCK COND="$(=,$anncount,1)">
      <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$molterm</a>
-     <a href="/cgi-bin/webdriver?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
    <?/MIBLOCK>
    </TR>
 <?/MIBLOCK>  <?MICOMMENT> end for each ontoloty <?/MICOMMENT>
@@ -2209,7 +2209,7 @@ union
 </TABLE>
   <?MIBLOCK COND="$(>,$rowcount,0)">
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
-	<?MIVAR><TR><TD><A HREF="/cgi-bin/webdriver?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
+	<?MIVAR><TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
 </TR></TABLE>
   <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT> end rowcount > 0 (found some go terms) <?/MICOMMENT>
@@ -2323,7 +2323,7 @@ union
   		<b>GENE PRODUCTS: </b>
 		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
-	<p><?MIVAR><A HREF=/webdriver?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
+	<p><?MIVAR><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
 
   <?/MIBLOCK>
   <!-----------end of Gene Product Description ------->
@@ -2367,7 +2367,7 @@ union
 	   <?MIBLOCK COND="$(=,$mrkrvw_antibody_pub_count,0)">
 	       <?MIVAR NAME=mrkrvw_antibody_pub><?/MIVAR>
 	   <?MIELSE COND="$(=,$mrkrvw_antibody_pub_count,1)">
-	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/webdriver?MIval=aa-pubview2.apg&OID=$mrkrvw_antibody_pub_id>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
+	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrvw_antibody_pub_id>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
 	   <?MIELSE>
 	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/action/antibody/publication-list?antibody.zdbID=$mrkrvw_antibody_id&orderBy=author>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
            <?/MIBLOCK>
@@ -2862,7 +2862,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
                   select mrkr_abbrev, mrkr_zdb_id
                     from marker
                     where mrkr_zdb_id = '$related_zdb_id'; ">
-                  ( <A HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
+                  ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
                 <?/MISQL>
 
                 <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
@@ -2901,7 +2901,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
       <TR>
         <TD colspan=4>
           <?MIVAR>
-            <A HREF="/cgi-bin/webdriver?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($mrkrview_nSequenceLinks)</a>
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($mrkrview_nSequenceLinks)</a>
           <?/MIVAR>
         </TD>
       </TR>
@@ -2989,7 +2989,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           <?MIBLOCK COND="$(NE,$snp_ensembl_accnum,)">
              <td><nobr><li>
             <?MIVAR> <A HREF="$snp_db_query$snp_ensembl_accnum">$snp_db_name:$snp_ensembl_accnum</a><?/MIVAR>
-    (<a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-080313-1">1</a>)
+    (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-080313-1">1</a>)
 </li></nobr></td>
           <?/MIBLOCK>
         <?/MIBLOCK>

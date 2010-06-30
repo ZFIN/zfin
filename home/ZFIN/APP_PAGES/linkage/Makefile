@@ -21,11 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/linkage
 
-GENERICS = detailview.apg 
-
-STATICS = showdetails.apg add_linkage.apg add_linkage_members.apg insert_linkage.apg \
-	add_linkage_distance.apg detailframe.apg edit_linkage.apg modify_linkage.apg \
-	modify_distance.apg
+GENERICS = add_linkage.apg add_linkage_members.apg insert_linkage.apg add_linkage_distance.apg detailview.apg detailframe.apg edit_linkage.apg modify_linkage.apg modify_distance.apg
+STATICS =showdetails.apg 
 
 # Use default rules for app page directories.
 

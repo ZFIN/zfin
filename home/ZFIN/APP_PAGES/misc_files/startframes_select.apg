@@ -37,7 +37,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 
 <?MIVAR>
-<!-- <FRAME NAME="criteria" SRC="/cgi-bin/webdriver?MIval=$selector$constraint"> -->
+<!-- <FRAME NAME="criteria" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint"> -->
   <SCRIPT>
     window.location.search='?MIval=$selector$constraint';
   </SCRIPT>

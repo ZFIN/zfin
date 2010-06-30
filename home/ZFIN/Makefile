@@ -23,9 +23,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN
 
-SUBDIRS = APP_PAGES help_files misc_html Workgroup_dirs Methods 
+SUBDIRS = APP_PAGES help_files misc_html Workgroup_dirs Methods
 
-STATICS = index.html
+GENERICS = index.html
 
 
 # --------------------------  Rules  ------------------------------------

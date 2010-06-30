@@ -59,7 +59,7 @@ We welcome your input and comments. Please use this form to recommend updates to
 <?MIVAR>
 <FORM NAME=input 
       METHOD=post 
-      ACTION="/cgi-bin/input_welcome.cgi"
+      ACTION="/<!--|CGI_BIN_DIR_NAME|-->/input_welcome.cgi"
       ONSUBMIT="return validateForm();">
 <TABLE>
   <TR>
@@ -100,3 +100,4 @@ We welcome your input and comments. Please use this form to recommend updates to
 
 <br>
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

@@ -13,7 +13,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
   <?MIVAR>
     <SCRIPT>
       function update_species(organism) {
-	 document.location='/cgi-bin/webdriver?MIval=aa-markerview.apg&UPDATE=1&OID=$OID&species_selected='+organism+'#orthologue';
+	 document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&UPDATE=1&OID=$OID&species_selected='+organism+'#orthologue';
       }
     </SCRIPT>
   <?/MIVAR>
@@ -29,7 +29,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 
   <!--------------- on the scene ----------------------------->
 
-    <form method="post" action="/cgi-bin/webdriver">
+    <form method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-do-markerupdate.apg>
 	<input type=hidden name=OID value=$OID> 

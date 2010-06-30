@@ -20,7 +20,7 @@
     <Path>
         <Server name="localhost" port="80" securePort="443"></Server>
         <cookiePath>/</cookiePath>
-        <Webdriver>cgi-bin/webdriver</Webdriver>
+        <Webdriver><!--|WEBDRIVER_PATH_FROM_ROOT|--></Webdriver>
         <FtpRootPath>/ftp/zfin</FtpRootPath>
         <imageLoadPath>/image/load</imageLoadPath>
         <loadUpFull>/image/full</loadUpFull>

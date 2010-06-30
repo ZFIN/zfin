@@ -21,7 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/stato
 
-STATICS  = icon16.jpg icon17.jpg stato.html
+GENERICS = stato.html
+STATICS  = icon16.jpg icon17.jpg
 
 
 

@@ -120,7 +120,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 
       <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
-      <form method=post name=mapview  action="/cgi-bin/view_mapplet.cgi" >
+      <form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" >
       <input type=hidden name=view_map  value='viewmap'>
       <INPUT TYPE=hidden name=loc_lg value=0 >
       <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
@@ -144,7 +144,7 @@ ERROR -- something bad happened -- no OID passed in!
       <TD><b>Panel Producer:</b>
       <?MIBLOCK COND="$(NC,$panel_producer,NULL)">
       <?MISQL SQL="select full_name from person where zdb_id='$panel_producer';">
-      <A HREF="/cgi-bin/webdriver?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
       <?/MISQL>
       <?/MIBLOCK>
       <?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
@@ -182,7 +182,7 @@ ERROR -- something bad happened -- no OID passed in!
 		union
 		   select name from company where zdb_id = '$source'
 		;">
-      <A HREF="/cgi-bin/webdriver?MIval=aa-sourceview.apg&OID=$source">$1</A>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$source">$1</A>
       <?/MISQL>
       <?/MIBLOCK>
       <?MIVAR COND="$(EC,$source,NULL)"> UNKNOWN. <?/MIVAR>
@@ -264,14 +264,14 @@ ERROR -- something bad happened -- no OID passed in!
         <p>
         <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
          <B>NOTE:</B> There is too much data to display an entire Linkage Group <br>
-         Please use <A HREF="/cgi-bin/view_zmapplet.cgi?marker="> Search ZMap </A>
+         Please use <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?marker="> Search ZMap </A>
          to restrict the query.
         <?MIELSE>
          Click "View Map" in table at right to see a graphical map of an individual linkage group.
         <?/MIBLOCK>
         <p align=center>OR</p>
         <?MIVAR>
-         Click to <A HREF="/cgi-bin/webdriver?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
+         Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
         <?/MIVAR>
         </TD>
         <TD>

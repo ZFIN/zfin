@@ -41,7 +41,7 @@ Datablade documentation.
 <script>
       
     function start_note(ref_page) {
-       top.zfinhelp=open("/cgi-bin/webdriver?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+       top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
     }
 
     function popup_url(url) {
@@ -71,7 +71,7 @@ Datablade documentation.
 <SCRIPT>
 function Delete_alias(aliaszdb,ftrzdb) {
    <?MIVAR>
-window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&delete_item="+aliaszdb);
+window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg &OID=$OID&delete_item="+aliaszdb);
    <?/MIVAR>
 }
 </SCRIPT>
@@ -270,7 +270,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
      <?MIVAR>
 	  <table width = 15% align=right><tr>	
            <form method=post 
-                 action="/cgi-bin/webdriver" 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
                  target=comments>
            <input type=hidden name=subject value="$genovw_display_name">
            <input type=hidden name=marker_id value="$OID">
@@ -287,7 +287,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
   <?MICOMMENT> ==== BACK Button ==== <?/MICOMMENT>
 
   <?MIVAR COND="$(XST,$UPDATE)">
-  <form name=updater ACTION="/cgi-bin/webdriver">
+  <form name=updater ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <input type=hidden name=MIval Value=aa-genotypeview.apg>	
     <center><font size=+2> 
     <input type=submit value=" DONE UPDATING. Back to Viewing! ">
@@ -432,7 +432,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
     <?/MISQL>  
     <?MIBLOCK COND="$(NC,$1,0)">
     <?MIVAR>
-      <A HREF="/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Notes</A>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Notes</A>
     <?/MIVAR>
     <?MISQL SQL="select count(*)
 		from data_note
@@ -458,7 +458,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
     <?/MIBLOCK>
 
     <?MIVAR COND="$(EC,$1,0)">
-      <a href="/cgi-bin/webdriver?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Add Notes</a> 
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Add Notes</a> 
     <?/MIVAR>
     <br>
   <?/MIBLOCK>
@@ -526,7 +526,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
       <tr>
         <td width="15%"><b>&nbsp;&nbsp;Data: </b>
         <td width="85%">
-          <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-$genovw_pato_link1">$genovw_pato_fig_count1<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count1,1),s,)<?/MIVAR></a> from <?MIVAR>$genovw_pato_source_desc1<?/MIVAR>
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link1">$genovw_pato_fig_count1<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count1,1),s,)<?/MIVAR></a> from <?MIVAR>$genovw_pato_source_desc1<?/MIVAR>
         </td>
       </tr>
    
@@ -618,7 +618,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
       <tr>
         <td width="15%"><b>&nbsp;&nbsp;Data: </b>
         <td width="85%">
-          <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-$genovw_pato_link2">$genovw_pato_fig_count2<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count2,1),s,)<?/MIVAR><img src="/images/MO_icon.gif" border="0" alt="MO image"></a> from <?MIVAR>$genovw_pato_source_desc2<?/MIVAR>
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$genovw_pato_link2">$genovw_pato_fig_count2<?/MIVAR> figure<?MIVAR>$(IF,$(>,$genovw_pato_fig_count2,1),s,)<?/MIVAR><img src="/images/MO_icon.gif" border="0" alt="MO image"></a> from <?MIVAR>$genovw_pato_source_desc2<?/MIVAR>
         </td>
       </tr>
 
@@ -746,9 +746,9 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
          <tr bgcolor=<?MIVAR>$highlight<?/MIVAR>>
           <td>&nbsp;&nbsp;&nbsp;
 
-            <?MIVAR COND="$(>,$genovw_num_of_xpat_fig,1)"> <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=$OID">$genovw_num_of_xpat_fig figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
+            <?MIVAR COND="$(>,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=$OID">$genovw_num_of_xpat_fig figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
 
-	    <?MIVAR COND="$(=,$genovw_num_of_xpat_fig,1)"> <a href="/cgi-bin/webdriver?MIval=aa-fxfigureview.apg&OID=$1">1 figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
+	    <?MIVAR COND="$(=,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$1">1 figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
        
          </td></tr>
        </table>
@@ -810,7 +810,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
  
       	   <td>
             <?MIVAR>
-             <a href="/cgi-bin/webdriver?MIval=aa-sourceview.apg&OID=$genovw_sup_zdb_id">$genovw_sup_name</a>
+             <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$genovw_sup_zdb_id">$genovw_sup_name</a>
             <?/MIVAR> 
             <?MIVAR COND="$(NC,$genovw_sup_state,)">
 	      ($genovw_sup_state)
@@ -885,7 +885,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
 	   <td>&nbsp;</td>
          <?/MIBLOCK>
          <td>
-           <?MIVAR><a href="/cgi-bin/webdriver?MIval=aa-sourceview.apg&OID=$genovw_ftr_sup_zdb_id">$genovw_ftr_sup_name</a><?/MIVAR>
+           <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$genovw_ftr_sup_zdb_id">$genovw_ftr_sup_name</a><?/MIVAR>
            <?MIVAR COND="$(NC,$genovw_ftr_sup_state,)">
 	     	($genovw_ftr_sup_state)
            <?/MIVAR>
@@ -950,7 +950,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
       <tr>
         <td>&nbsp;&nbsp;
         <?MIVAR>
-            <a href="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$genovw_wt_orign_lab_zdb_id">$genovw_wt_orign_lab_name</a>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$genovw_wt_orign_lab_zdb_id">$genovw_wt_orign_lab_name</a>
         <?/MIVAR>
 	<?MIVAR COND="$(NC,$genovw_stock_num,)">
 	   (Stock#: $genovw_stock_num)
@@ -1018,7 +1018,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
  <?MIVAR><i><a href=/action/feature/detail?feature.zdbID=$genovw_ftr_zdb_id>$genovw_ftr_name<i></a><?/MIVAR>
 
           <?MIVAR COND="$(>,$genovw_ftr_all_geno_count,1)">
-		<br>(<a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg&query_results=exists&compareAllele=starts&fsel_allele_id=$genovw_ftr_zdb_id">in $genovw_ftr_all_geno_count genotypes</a>)
+		<br>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exists&compareAllele=starts&fsel_allele_id=$genovw_ftr_zdb_id">in $genovw_ftr_all_geno_count genotypes</a>)
 	  <?/MIVAR>
         </td>
 
@@ -1027,7 +1027,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
 
           <?MICOMMENT> -------  Previous Name(s) added ability to add an alias (FB 1577)--------<?/MICOMMENT>
           <?MIVAR COND="$(XST,$UPDATE)">
-          <form name=updatealias method=get action="/cgi-bin/webdriver"
+          <form name=updatealias method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
     <input type=hidden name=genovw_ftr_zdb_id value=$genovw_ftr_zdb_id>
               <b>Add Previous Name:</b>
              <INPUT TYPE=text name=new_value SIZE=50>
@@ -1075,7 +1075,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
  	    <?/MISQL>
 	    <?MIVAR COND="$(>,$1,0)">     
 	       &nbsp; &nbsp; 
-	       <a href="/cgi-bin/webdriver?MIval=aa-nomenview.apg&OID=$genovw_ftr_zdb_id">Nomenclature History</a>
+	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$genovw_ftr_zdb_id">Nomenclature History</a>
 	    <?/MIVAR>
 
             </td></tr> 
@@ -1247,7 +1247,7 @@ window.location.replace("/cgi-bin/webdriver?MIval=aa-genotypeview.apg &OID=$OID&
                <tr>
                 <td nowrap><b>Lab of Origin: </b> </td>
                 <td>
-                  <a href="/cgi-bin/webdriver?MIval=aa-labview.apg&OID=$genovw_ftr_lab_zdb_id">$genovw_ftr_lab_name</a> 
+                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$genovw_ftr_lab_zdb_id">$genovw_ftr_lab_name</a> 
 		  <?MIVAR COND="$(NC,$genovw_stock_num,)">(Stock#: $genovw_stock_num)<?/MIVAR>
 		 </td>
                </tr>

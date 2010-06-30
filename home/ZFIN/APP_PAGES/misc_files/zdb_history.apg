@@ -72,7 +72,7 @@ EFFECTS:
                  and allmapnm_precedence in 
                       ( 'Current symbol');">
 	     <?MIVAR NAME=$new_name>$1<?/MIVAR>
-	       <a href="/cgi-bin/webdriver?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
+	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
 
        <?MIELSE COND="$(EQ,$zdbhist_newObjType,GENO)">
@@ -81,7 +81,7 @@ EFFECTS:
 	       from genotype
 	       where geno_zdb_id ='$new_oid';">
              <?MIVAR NAME=$new_name>$1<?/MIVAR>
-	       <a href="/cgi-bin/webdriver?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
+	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
 
        <?MIELSE> 
@@ -92,7 +92,7 @@ EFFECTS:
 	    <?MISQL COND="$(NE,$zdbhist_appPage,NULL)" SQL="
               execute function get_obj_name('$new_oid');">
 	      <?MIVAR NAME=$new_name>$1<?/MIVAR>
-		<a href="/cgi-bin/webdriver?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
+		<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	    <?/MISQL>
        <?/MIBLOCK>  <?MICOMMENT> end if-then-else on replacement object type <?/MICOMMENT>
 

@@ -101,10 +101,10 @@ We only want to display marker_rlation if there are multiple relations,
 
     <?MIBLOCK COND=$(EC,$fxfigge_display_option,anchor)>
       <?MIVAR NAME=$fxfigge_down_arrow>&nbsp;<a href="#$2"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border=0 title="Jump to GENE data."></a><?/MIVAR>
-      <?MIVAR NAME=fxfigge_gene_href><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
+      <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=$fxfigge_down_arrow><?/MIVAR>
-      <?MIVAR NAME=fxfigge_gene_href><a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
+      <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
     <?/MIBLOCK>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>

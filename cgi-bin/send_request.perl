@@ -32,7 +32,7 @@ Content-type: text/HTML\n\n
 The nomenclature committee will review the proposed name.  Assuming there are no problems, you should receive confirmation of registration within the next week or two. If you do not receive a confirmation, please <A HREF="mailto:<!--|LOCUS_REGISTRATION_EMAIL|-->">Contact the ZFIN staff</A>.
 <p>
 <form>
-<input type=button value="Go to ZFIN HOME Page" onClick="window.location.replace('/cgi-bin/webdriver?MIval=aa-ZDB_home.apg')">
+<input type=button value="Go to ZFIN HOME Page" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg')">
 </form>
 </BODY></HTML>
 EOA

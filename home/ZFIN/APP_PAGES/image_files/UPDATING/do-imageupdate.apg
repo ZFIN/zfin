@@ -115,7 +115,7 @@ imageupdate.html. Also files update record.
 <!-- okay, now just bail back to the imageupdate to view results -->
 <?MIVAR>
   <SCRIPT>
-    location.replace('/cgi-bin/webdriver?MIval=aa-imageview.apg&OID=$OID$(IF,$(NC,$attr_type,special-done),&UPDATE=1)')
+    location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$OID$(IF,$(NC,$attr_type,special-done),&UPDATE=1)')
   </SCRIPT>
 <?/MIVAR>
 

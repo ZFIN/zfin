@@ -53,7 +53,7 @@ $(IF,$(NC,$last,$1),$(SETVAR,$count,0))
 <?/MIVAR>
 
 $(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="$highlight"><td colspan=3><b>"$4" Panels</b></TD></TR>")
-$(IF,$(NC,$last,$1),"<TR><TD><font size=3><A HREF=/webdriver?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR><TD><font size=2><b>Marker types on panel:</b> "$5)
+$(IF,$(NC,$last,$1),"<TR><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR><TD><font size=2><b>Marker types on panel:</b> "$5)
 
 $(SETVAR,$count,$(+,$count,$7))
 $(IF,$(EC,$last,$1),","$5)
@@ -82,7 +82,7 @@ $(SETVAR,$lasttype,$4)
 <?MISQL SQL="select zdb_id,name,panel_date,ptype,abbrev from panels where status='incomplete';">
 
 
-<TR><TD><font size=3><A HREF=/webdriver?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
+<TR><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
 
 <?/MISQL>
 

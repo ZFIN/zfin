@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/sdb
 
-STATICS = dbs.html
+GENERICS = dbs.html
 
 
 # ---------------  Production Rules  ------------------------------------

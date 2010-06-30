@@ -35,7 +35,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
 
-chdir "<!--|ROOT_PATH|-->/cgi-bin/";
+chdir "<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/";
 
 openReport();
 

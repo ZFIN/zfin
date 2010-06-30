@@ -1,7 +1,7 @@
 document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
 document.write("   <div id=\"footerlinks\"> ");
-document.write("     <a href=\"/cgi-bin/webdriver?MIval=aa-ZDB_home.apg\">Home</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg\">Home</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/ZFIN/misc_html/tips.html\" title=\"Frequently asked questions\">Help and Tips</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/glossary.html\" title=\"Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics\">Glossary</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/news/committees.html\" title=\"Committees and working groups\">Committees</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
@@ -30,9 +30,10 @@ document.write("</script>");
 
 
 <!-- Start GOOGLE Analytics -->
-document.write('<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">') ;
+document.write('<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">') ; 
 document.write("</script>");
 document.write('<script type="text/javascript">');
 document.write('_uacct = "UA-2417927-1";');
 document.write("urchinTracker();");
 document.write("</script>");
+<!-- End GOOGLE Analytics -->

@@ -33,7 +33,7 @@ Expected vars:  None.
 
 <TITLE> Add ZFIN Linkage </TITLE>
 
-<form name=linkage method="post" action="/cgi-bin/webdriver">
+<form name=linkage method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
   <input type="hidden" NAME="MIval" value="aa-add_linkage.apg">
   <input type=hidden name=calling_form value="linkage">
@@ -263,7 +263,7 @@ Expected vars:  None.
 </form>
 
  
-<form name=linkage1 method="post" action="/cgi-bin/webdriver" >
+<form name=linkage1 method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
   <input type=hidden name=MIval value="aa-insert_linkage.apg">
   <input type=hidden name=calling_form value="linkage">
  
@@ -319,7 +319,7 @@ Expected vars:  None.
 	<input type=submit value="Submit Updates" >
       <?/MIBLOCK>  
 
-      <input type=button value="Cancel" onClick="window.location.href='/cgi-bin/webdriver?MIval=aa-ZDB_home.apg'"> 
+      <input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'"> 
  
 
   </form>

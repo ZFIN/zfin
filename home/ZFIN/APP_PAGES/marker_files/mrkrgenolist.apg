@@ -67,7 +67,7 @@ EFFECTS
           where mrel_mrkr_2_zdb_id = '$mrkr_id'
             and mrel_mrkr_1_zdb_id = mrkr_zdb_id
             and mrel_type in ('promoter of','coding sequence of','contains other feature')">
-    <?MIVAR NAME="$mrkrgeno_mrkr_html"><span nowrap><a href=/webdriver?MIval=aa-markerview.apg&OID=$1>$2</a></span><?/MIVAR>
+    <?MIVAR NAME="$mrkrgeno_mrkr_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1>$2</a></span><?/MIVAR>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
       <?MIVAR NAME=mrkrgeno_short_list> $mrkrgeno_mrkr_html<?/MIVAR>

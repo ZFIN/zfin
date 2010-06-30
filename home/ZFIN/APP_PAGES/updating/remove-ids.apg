@@ -55,7 +55,7 @@ returnTo -- after updating, send user to this page
 <!-- jump user to destination -->
 <?MIVAR>
   <SCRIPT>
-  location.replace("/cgi-bin/webdriver?MIval=$returnTo")
+  location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$returnTo")
   </SCRIPT>
 <?/MIVAR>
 

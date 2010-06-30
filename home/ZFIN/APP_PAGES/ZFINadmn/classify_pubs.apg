@@ -23,12 +23,12 @@ When you click "Doit", the database searches the SOURCE attribute of publication
 <p>
 
 <font size=2>
-<form method=post action="/cgi-bin/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-classify_pubs.apg>
-<b>Look for</b> pubs whose SOURCE contains the phrase:
+<b>Look for</b> pubs whose SOURCE contains the phrase: 
 <input size=30 type=text name=jname>
 <br>
-... and <b>set their publication types</b> to:
+... and <b>set their publication types</b> to: 
 <SELECT name=jtype>
 <option value=Journal>Journal
 <option value=Review>Review
@@ -69,7 +69,7 @@ When you click "Doit", the database searches the SOURCE attribute of publication
 <?/MIVAR>
 
 <form>
-<input type=button value="do some more updating" onClick="location='/cgi-bin/webdriver?MIval=aa-classify_pubs.apg';">
+<input type=button value="do some more updating" onClick="location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-classify_pubs.apg';">
 
 <input type=button value="Done" onClick="window.close();">
 
@@ -77,3 +77,4 @@ When you click "Doit", the database searches the SOURCE attribute of publication
 
 <?/MIBLOCK> <!-- ends params passed in -->
 
+<?/MIBLOCK> <!-- ends authorized -->

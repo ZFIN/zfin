@@ -127,10 +127,10 @@ EFFECTS:
 		<?MIVAR NAME=cdp_morph_name>$3<?/MIVAR>
       
                 <?MIVAR NAME=cdp_gene_html>
-		   <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$cdp_gene_zdb_id">$cdp_gene_syb</a>
+		   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cdp_gene_zdb_id">$cdp_gene_syb</a>
 	        <?/MIVAR> 
   		<?MIVAR NAME=cdp_morph_html>
-		   <a href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$cdp_morph_zdb_id">$cdp_morph_name</a>
+		   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cdp_morph_zdb_id">$cdp_morph_name</a>
 	        <?/MIVAR> 
 
 		<tr bgcolor=$highlight>

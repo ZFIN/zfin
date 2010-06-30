@@ -5,7 +5,7 @@
 rm -f <!--|ROOT_PATH|-->/server_apps/WebSiteTools/report
 
 <!--|ROOT_PATH|-->/server_apps/WebSiteTools/checklinks -h -v \
-  'http://<!--|DOMAIN_NAME|-->/cgi-bin/webdriver?MIval=aa-ZDB_home.apg' \
+  'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg' \
   > <!--|ROOT_PATH|-->/server_apps/WebSiteTools/report 2>&1
 
 echo 'Subject: Checklinks Report\n\n<!--|DOMAIN_NAME|--> has been scanned for broken links. See\n\n  <!--|ROOT_PATH|-->/server_apps/WebSiteTools/report\n\nfor details.' | rmail -t <!--|CHECKLINKS_EMAILS|-->

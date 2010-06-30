@@ -21,7 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/hair_cell
 
-STATICS  = icon7.jpg icon8.jpg hair_cell.html
+GENERICS = hair_cell.html
+STATICS  = icon7.jpg icon8.jpg
 
 
 

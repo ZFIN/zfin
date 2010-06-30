@@ -10,7 +10,7 @@
 # If there is anything non-standard about any of the rules in a makefile
 # then that makefile should not include either of the rules.
 #
-# This include file expects to have the calling makefile define these 
+# This include file expects to have the calling makefile define these
 # variables.
 #
 #  TOP        This must be defined.  This file also expects $(TOP)/make.include
@@ -49,13 +49,14 @@ $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR);
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
-	-$(WEBLINTIFMX) $<
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	-$(WEBLINTIFMX) $@
 	$(LOADAPPPAGE) $(DBNAME) $@
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
-	$(TOUCH) $@
+	@$(TOUCH) $@
+	-$(WEBLINTIFMX) $@
 	$(LOADAPPPAGE) $(DBNAME) $@
 
 $(SUBDIRS) :

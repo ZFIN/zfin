@@ -522,7 +522,7 @@ PREFIX: msegsel_
 <!-- Stuff to control retrieval volume -->
 <form method=post 
       name=mseglister 
-      action="/cgi-bin/webdriver">
+      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <?MIVAR>
     <input type=hidden name=MIval value=aa-msegselect.apg>    
     <input type=hidden name=userid value="$userid">
@@ -599,7 +599,7 @@ PREFIX: msegsel_
       <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
 
       <form method=post  
-	    action="/cgi-bin/view_mapplet.cgi"
+	    action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"
 	    name="$form_name">
 
 	<?MIVAR name=$first_row>1<?/MIVAR>
@@ -614,7 +614,7 @@ PREFIX: msegsel_
 	      <TD valign=top> 
               <?MIVAR> 
                 <font size=2>
-                  $(IF,$(XST,$return_rec),<A HREF=/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+                  $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
                 </font>
 
 		$(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)

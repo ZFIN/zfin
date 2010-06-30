@@ -30,49 +30,49 @@ Datablade documentation.
 has no attribution, the gene record has no references.  (There should 
 not be any in this category)
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=0&O_ATTRIB_COUNT=0">Query 1</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=0&O_ATTRIB_COUNT=0">Query 1</a>
 
 <p>
 5) A gene record has orthology information, the orthology information 
 has attribution, the gene record has no references.  (There should not 
 be any in this category)
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=0&O_ATTRIB_COUNT=1">Query 2</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=0&O_ATTRIB_COUNT=1">Query 2</a>
 
 <p>2) A gene record has orthology information, the orthology information 
 has no attribution, the gene record has one reference.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=1&O_ATTRIB_COUNT=0">Query 3</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=1&O_ATTRIB_COUNT=0">Query 3</a>
 
 <p>3) A gene record has orthology information, the orthology information 
 has no attribution, the gene record has two references.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=2&O_ATTRIB_COUNT=0">Query 4</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=2&O_ATTRIB_COUNT=0">Query 4</a>
 
 <p>4) A gene record has orthology information, the orthology information 
 has no attribution, the gene record has more than two references.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=3&O_ATTRIB_COUNT=0">Query 5</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=3&O_ATTRIB_COUNT=0">Query 5</a>
 
 <p>6) A gene record has orthology information, the orthology information 
 has attribution, the gene record has one reference that is not 
 associated with the orthology attribution.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=1&O_ATTRIB_COUNT=1">Query 6</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=1&O_ATTRIB_COUNT=1">Query 6</a>
 
 <p>7) A gene record has orthology information, the orthology information 
 has attribution, the gene record has two references that is not 
 associated with the orthology attribution.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=2&O_ATTRIB_COUNT=1">Query 7</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=2&O_ATTRIB_COUNT=1">Query 7</a>
 
 <p>8) A gene record has orthology information, the orthology information 
 has attribution, the gene record has more than one reference that is not 
 associated with the orthology attribution.
 <br>
-<a href="/cgi-bin/webdriver?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=3&O_ATTRIB_COUNT=1">Query 8</a>
+<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=3&O_ATTRIB_COUNT=1">Query 8</a>
 
-<form method=post action="/cgi-bin/webdriver" >
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
   <input type=hidden name=MIval value=aa-curate_ortho_select.apg>
 <p>9) A Gene record has an orthologue without an OEV for species:
 <select name=ORGANISM>
@@ -291,7 +291,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1;">
 	<tr>
 	<td>
-	  <font size=-1><A HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2">$2</A></font>
+	  <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A></font>
 	</td>
 	<td>
 	  <font size=+1><b><i>$1</i></b></font> 
@@ -321,7 +321,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1 desc;">
 	
 	<b><i>$1</i></b> 
-	<A HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
  	<br>
   <?/MISQL>
 
@@ -347,7 +347,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1 desc;">
 	
 	<b><i>$1</i></b> 
-	<A HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
  	<br>
   <?/MISQL>
 
@@ -387,7 +387,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	<?MIVAR NAME=curorthosel_mrkr_zdb_id>$2<?/MIVAR>
 	
 	<b><i>$1</i></b> 
-	<A HREF="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
  	<br><ul>
 	
 	<?MISQL SQL="
@@ -406,7 +406,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
                     )
 		  order by 2 desc;">
 		
-		<li><A HREF="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=$6">$1 ($5) $3. $4.</A> $6
+		<li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$6">$1 ($5) $3. $4.</A> $6
 	<?/MISQL>
 	</ul>
   <?/MISQL>

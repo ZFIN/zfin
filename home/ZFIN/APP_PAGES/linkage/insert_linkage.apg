@@ -29,7 +29,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
 
  <?MIVAR>
     <SCRIPT>
-      window.location.href='/cgi-bin/webdriver?MIval=aa-add_linkage_members.apg&link_id=$link_id&lg=$lg&usercomments=$(URLENCODE,$usercomments)&source=$source';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_members.apg&link_id=$link_id&lg=$lg&usercomments=$(URLENCODE,$usercomments)&source=$source';
     </SCRIPT>
   <?/MIVAR> 
 
@@ -47,7 +47,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
 
   <?MIVAR>
     <SCRIPT>
-      window.location.href='/cgi-bin/webdriver?MIval=aa-edit_linkage.apg&link_id=$link_id$lg';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id$lg';
     </SCRIPT>
   <?/MIVAR> 
 
@@ -86,7 +86,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
   <?/MISQL>
   <?MIVAR>
     <SCRIPT>
-      window.location.href='/cgi-bin/webdriver?MIval=aa-add_linkage_members.apg&link_id=$link_id';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_members.apg&link_id=$link_id';
     </SCRIPT>
   <?/MIVAR>
  
@@ -107,7 +107,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
 
   <?MIVAR>
     <SCRIPT>
-      window.location.href='/cgi-bin/webdriver?MIval=aa-add_linkage_distance.apg&link_id=$link_id';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_distance.apg&link_id=$link_id';
     </SCRIPT>
   <?/MIVAR>
   

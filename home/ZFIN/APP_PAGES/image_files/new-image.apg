@@ -103,7 +103,7 @@ SUBMITTER COMMENTS:
 
   <SCRIPT>
     <?MIVAR>
-      window.location.replace('/cgi-bin/webdriver?MIval=aa-imageview.apg&UPDATE=1&OID=$OID');
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&UPDATE=1&OID=$OID');
     <?/MIVAR>
   </SCRIPT>
 

@@ -48,7 +48,7 @@ document.getcrits.submit();
 </SCRIPT>
 
 
-<form name=getcrits method=post TARGET="updates" action="/cgi-bin/webdriver">
+<form name=getcrits method=post TARGET="updates" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <TABLE width=100%>
 <TR><TD colspan=2 align=center>

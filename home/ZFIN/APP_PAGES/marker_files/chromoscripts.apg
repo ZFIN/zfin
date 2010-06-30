@@ -14,7 +14,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
 
-    top.lgwin=open("/cgi-bin/webdriver?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg+"&marker_id="+marker+"&marker_abbrev="+abbrev,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+    top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg+"&marker_id="+marker+"&marker_abbrev="+abbrev,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
 
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;
@@ -40,7 +40,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
 
-    top.lgwin=open("/cgi-bin/webdriver?MIval=aa-detailframe.apg&link_id="+link_id+"&marker_id="+marker_id+"&marker_abbrev="+marker_abbrev+"&marker2_abbrev="+marker2_abbrev,"detailwindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+    top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-detailframe.apg&link_id="+link_id+"&marker_id="+marker_id+"&marker_abbrev="+marker_abbrev+"&marker2_abbrev="+marker2_abbrev,"detailwindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
 
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;

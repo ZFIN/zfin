@@ -70,7 +70,7 @@ marker table.
   <?MIBLOCK COND="$(NXST,$marker_type)">
     <h1>Create new marker</h1>
 
-    <form name=newdata method=post action="/cgi-bin/webdriver">
+    <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <input type=hidden name=MIval value=aa-new_marker.apg>
       <?MIVAR COND=$(XST,$newmrkrSource)><input type=hidden name=newmrkrSource value=$newmrkrSource><?/MIVAR>
 
@@ -335,7 +335,7 @@ var ENTER_KEY = 13;
     </SCRIPT>
 
     <?MIVAR>
-      <form name=newdata  method=post action="/cgi-bin/webdriver"
+      <form name=newdata  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
             onSubmit="return validate(this);">
         <input type=hidden name=MIval value=aa-new_marker.apg>
         <input type=hidden name=marker_type value="$marker_type">
@@ -675,10 +675,10 @@ var ENTER_KEY = 13;
     <?MIVAR>
       <h1>Confirmation: $marker_type_display record added</h1>
 
-      Click <A href="/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=$new_id">here</A>
+      Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_id">here</A>
       to view the new $marker_type_display record.
       <p>
-      Click <A href="/cgi-bin/webdriver?MIval=aa-ZDB_home.apg">here</A> 
+      Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> 
       to return to the ZFIN home page.
     <?/MIVAR>
 

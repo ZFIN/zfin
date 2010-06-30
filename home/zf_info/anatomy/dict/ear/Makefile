@@ -21,7 +21,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/ear
 
-STATICS  = 3d_mov.avi icon1.jpg icon2.jpg icon3.jpg icon4.jpg z_sect_mov.avi ear.html
+GENERICS = ear.html
+STATICS  = 3d_mov.avi icon1.jpg icon2.jpg icon3.jpg icon4.jpg z_sect_mov.avi
+
+
 
 # ---------------  Production Rules  ------------------------------------
 

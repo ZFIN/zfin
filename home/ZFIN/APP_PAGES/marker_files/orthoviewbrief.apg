@@ -222,7 +222,7 @@ display summarized orthology data on gene page.
   <TR>
     <?MIVAR>
     <TD colspan=$codeNum align="left">
-      <A HREF="/cgi-bin/webdriver?MIval=aa-orthoviewdetailed.apg&OID=$OID&abbrev=$abbrev&userid=$userid">
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoviewdetailed.apg&OID=$OID&abbrev=$abbrev&userid=$userid">
         <b>Orthology Details</b>
       </A>
     </TD>

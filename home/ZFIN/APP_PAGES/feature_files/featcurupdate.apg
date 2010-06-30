@@ -388,7 +388,7 @@ PREFIX:   featcurup_
 
 <?MIBLOCK COND=$(XST,$featedit_delete_ftr)>
 <SCRIPT><?MIVAR>
-      location.replace("/cgi-bin/webdriver?MIval=aa-delete_record.apg&rtype=feature&return_page=curation.apg&returnOID=$OID&OID=$featcur_featedit_feature_zdb_id#$anchor");
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&return_page=curation.apg&returnOID=$OID&OID=$featcur_featedit_feature_zdb_id#$anchor");
            <?/MIVAR>
    </SCRIPT>
 
@@ -562,7 +562,7 @@ PREFIX:   featcurup_
   <?/MIBLOCK>
 <SCRIPT>
 <?MIVAR>
-      location.replace("/cgi-bin/webdriver?MIval=aa-curation.apg&OID=$OID");
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID");
 <?/MIVAR>
 </SCRIPT>
 

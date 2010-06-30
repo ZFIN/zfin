@@ -24,7 +24,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
     <?MIVAR NAME=$SOURCE>
 
-      <a href="/cgi-bin/webdriver?MIval=aa-$viewpage&OID=$1">$2</a>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
       <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$OID') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
     
     <?/MIVAR>
@@ -105,7 +105,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
         probelib_name,     --2
         case when probelib_strain_zdb_id is not null
         then 
-            '<a href=/webdriver?MIval=aa-genotypeview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
+            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
             (select geno_display_name from genotype where geno_zdb_id = probelib_strain_zdb_id) || '</a>'
         else
             probelib_non_zfin_strain_name

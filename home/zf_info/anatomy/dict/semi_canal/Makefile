@@ -21,7 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/semi_canal
 
-STATICS = semi.html
+GENERICS = semi.html
+STATICS  =
 
 
 

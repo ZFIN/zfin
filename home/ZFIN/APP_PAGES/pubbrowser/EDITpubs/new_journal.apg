@@ -90,7 +90,7 @@ a new journal record in table journal
     <?MIVAR NAME=$newjrnl_jrnl_is_nice><?/MIVAR>
     <?MIVAR NAME=$newjrnl_jrnl_publisher><?/MIVAR>
 
-    <FORM NAME="process_form" METHOD=POST ACTION="/cgi-bin/webdriver" onSubmit="return validate(this);">
+    <FORM NAME="process_form" METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="return validate(this);">
     <p>
      <?MIVAR> 
      <b>Journal name</b> (required):

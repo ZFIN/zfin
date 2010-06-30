@@ -31,7 +31,7 @@ OUTPUT:
 <SCRIPT>
    function addNotifNote(note){
       <?MIVAR>
-	opener.location.replace("/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=$OID&pnote="+note)
+	opener.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&pnote="+note)
       <?/MIVAR>  
    }
 
@@ -135,7 +135,7 @@ OUTPUT:
 <?/MICOMMENT> 
 
 <?MIBLOCK COND="$(EC,$status,preview)">
-  <FORM ACTION="/cgi-bin/send_notification.cgi" 
+  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/send_notification.cgi" 
 	METHOD=post 
 	NAME=send_mail">
 

@@ -24,7 +24,7 @@
 <?MIVAR COND="$(NXST,$temp_oid)" NAME=$temp_oid><?/MIVAR>
 
   <?MIVAR>
-    <FORM METHOD=POST ACTION="/cgi-bin/webdriver">
+    <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
     <INPUT type=hidden NAME=MIval VALUE="aa-process-company.apg">
   <?/MIVAR>

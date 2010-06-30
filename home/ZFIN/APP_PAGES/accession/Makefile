@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/accession
 
-STATICS =  accessionselect.apg
+GENERICS =  accessionselect.apg
 
 
 # Use default rules for app page directories.
