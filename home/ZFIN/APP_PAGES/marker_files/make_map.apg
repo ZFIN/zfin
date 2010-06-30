@@ -41,3 +41,6 @@ $(IF,$(EC,$1,$marker),$(SETVAR,$focus,$MI_CURRENTROW))
 var y_offset=$focus * 9;
 window.scroll(0,y_offset);
 </SCRIPT>
+<?/MIVAR>
+
+

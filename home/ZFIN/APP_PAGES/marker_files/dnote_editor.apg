@@ -112,3 +112,5 @@ VARIABLES:
 window.alert('Exiting. Please return to the main window.\n Note that your updates will not be reflected there until that\n window is reloaded (so do not panic!)\Just continue working and all will be well!');
 window.close();
 </SCRIPT>
+<?/MIVAR>
+

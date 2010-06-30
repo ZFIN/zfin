@@ -296,3 +296,5 @@ OUTPUT:
   <?/MIVAR>
 </SCRIPT>
 
+<?/MIBLOCK> <?MICOMMENT>-- end $AUTHORIZED check --<?/MICOMMENT>
+

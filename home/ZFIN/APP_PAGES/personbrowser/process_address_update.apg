@@ -333,4 +333,5 @@ an updated person record
      <?/MIVAR> 
 
    <?/MIBLOCK> <?MICOMMENT> ends authorization as root check <?/MICOMMENT>
+<?/MIBLOCK>  <?MICOMMENT> ends OID exists and is not empty <?/MICOMMENT>
 
