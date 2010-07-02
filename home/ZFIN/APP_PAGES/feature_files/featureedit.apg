@@ -103,15 +103,17 @@ EFFECTS: Edits a feature/marker
                          <?MIVAR NAME=featcur_feat_publicnote>$7<?/MIVAR>
                          <?MIVAR NAME=featcur_feat_abbrev>$8<?/MIVAR>
                          <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_lab_id><?/MIVAR>
                          <?MIVAR NAME=featcur_feat_lab><?/MIVAR>
                   <?/MISQL>
 
-                  <?MISQL SQL="select name
+                  <?MISQL SQL="select zdb_id, name
                         from lab, int_data_source
                         where ids_data_zdb_id = '$featedit_feature_zdb_id'
                         and ids_source_zdb_id = zdb_id">
   
-                        <?MIVAR NAME=featcur_feat_lab>$1<?/MIVAR>
+                        <?MIVAR NAME=featcur_feat_lab_id>$1<?/MIVAR>
+                        <?MIVAR NAME=featcur_feat_lab>$2<?/MIVAR>
                   <?/MISQL>
             <?MIELSE>
 
@@ -135,6 +137,7 @@ EFFECTS: Edits a feature/marker
                          <?MIVAR NAME=featcur_feat_mutagen><?/MIVAR>
                          <?MIVAR NAME=featcur_feat_mutagee><?/MIVAR>
                          <?MIVAR NAME=featcur_feat_lab><?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_lab_id><?/MIVAR>
                          <?MIVAR NAME=featcur_feat_publicnote>$5<?/MIVAR>
                          <?MIVAR NAME=featcur_feat_abbrev>$6<?/MIVAR>
                          <?MIVAR NAME=featcur_feat_isfeature>no<?/MIVAR>
@@ -146,12 +149,13 @@ EFFECTS: Edits a feature/marker
                           <?MIVAR NAME=featcur_feat_mutagen>$1<?/MIVAR>
                           <?MIVAR NAME=featcur_feat_mutagee>$2<?/MIVAR>
                  <?/MISQL>
-                 <?MISQL SQL="select name
+                 <?MISQL SQL="select zdb_id, name
                                from lab, int_data_source
                                 where ids_data_zdb_id = '$featedit_feature_zdb_id'
                                 and ids_source_zdb_id = zdb_id">
   
-                            <?MIVAR NAME=featcur_feat_lab>$1<?/MIVAR>
+                            <?MIVAR NAME=featcur_feat_lab_id>$1<?/MIVAR>
+                            <?MIVAR NAME=featcur_feat_lab>$2<?/MIVAR>
                  <?/MISQL>
           <?/MIBLOCK>
 <?MICOMMENT> end of if marker/feature block <?/MICOMMENT>
@@ -248,8 +252,8 @@ EFFECTS: Edits a feature/marker
 
       <tr><td><b>Lab of Origin</b>
       <td> <select name=featedit_feature_lab>
-             <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
-             <?MISQL SQL="select distinct zdb_id, name from lab">
+             <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab_id'>$featcur_feat_lab<?/MIVAR>
+             <?MISQL SQL="select distinct zdb_id, name from lab  where name is not null order by name">
                <OPTION value='$1'>$2
              <?/MISQL>
           </select>
