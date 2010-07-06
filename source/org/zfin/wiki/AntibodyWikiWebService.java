@@ -37,6 +37,8 @@ public class AntibodyWikiWebService extends WikiWebService {
     private final static File ANTIBODY_TEMPLATE_FILE = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(),"WEB-INF","conf","antibody.template");
     private String antibodyTemplateData = null;
 
+
+
     enum ReturnStatus {
         ERROR, CREATE, UPDATE, DROP, NOCHANGE
     }
@@ -103,7 +105,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     private String getWikiTitleFromAntibody(Antibody antibody) {
-        return antibody.getAbbreviation().replaceAll("\\/", "-");
+        return antibody.getName().replaceAll("\\/", "-");
     }
 
 
@@ -376,6 +378,29 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
 
+
+    public void replaceAntibodiesOnWikiWithZFIN() throws Exception{
+        if (false == ZfinProperties.isPushToWiki()) {
+            logger.info("not authorized to push antibodies to wiki");
+            return;
+        }
+        RemoteSearchResult[] results = service.getLabelContentByName(token,"zfin_antibody") ;
+        for(RemoteSearchResult result: results){
+            logger.info("removing: "+ result.getTitle());
+            if(service.getComments(token,result.getId()).length==0){
+                service.removePage(token,result.getId()) ;
+            }
+            else{
+                logger.warn("can not remove: "+ result.getTitle() + " has comments");
+            }
+        }
+
+
+        synchronizeAntibodiesOnWikiWithZFIN();
+    }
+
+
+
     /**
      * Synchronizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
      *
@@ -553,10 +578,10 @@ public class AntibodyWikiWebService extends WikiWebService {
         return wikiSynchronizationReport;
     }
 
-    public void dropPageIndividually(String antibodyAbbreviation) throws Exception{
-        RemoteSearchResult[] searchResults = service.search(token,antibodyAbbreviation,2);
+    public void dropPageIndividually(String antibodyName) throws Exception{
+        RemoteSearchResult[] searchResults = service.search(token,antibodyName,2);
         if(searchResults.length!=1){
-            logger.error("wrong number of search results for["+antibodyAbbreviation+"]: "+ searchResults.length);
+            logger.error("wrong number of search results for["+antibodyName+"]: "+ searchResults.length);
             return ;
         }
         service.removePage(token,searchResults[1].getId()) ;

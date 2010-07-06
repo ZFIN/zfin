@@ -39,6 +39,26 @@ public class WikiScriptRunner {
         }
     }
 
+    /**
+     * Adds a web page for a single antibody.
+     * @param antibodyName antibody name
+     */
+    public void replaceWebPage(String antibodyName) {
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByName(antibodyName);
+        if (antibody != null) {
+//            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+            try {
+                AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getName());
+                AntibodyWikiWebService.getInstance().createPageForAntibody(antibody);
+            } catch (Exception e) {
+                e.fillInStackTrace() ;
+                e.printStackTrace();
+            }
+        } else {
+            logger.warn("no antibody found for[" + antibodyName + "]");
+        }
+    }
+
 
     public static void main(String args[]) {
         String[] confFiles = {
@@ -67,8 +87,11 @@ public class WikiScriptRunner {
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
-            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
+//            wikiScriptRunner.replaceWebPage("Ab1-tuba");
+//            wikiScriptRunner.addWebPage("Ab1-tuba");
 //            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+//            AntibodyWikiWebService.getInstance().replaceAntibodiesOnWikiWithZFIN();
+            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
 
 //            AntibodyWikiWebService.login();
 //            wikiScriptRunner.addWebPage("Ab-2F11");

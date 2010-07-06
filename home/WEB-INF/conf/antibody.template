@@ -1,3 +1,7 @@
+{show-to:users=@authenticated}
+{add-page:template=antibody|parent=@home|labels=community_antibody|allowRename=true|live=true}Create New Antibody{add-page}
+{show-to}
+
 {link-to:add comment}Add Comment{link-to}
 
 {table-plus:columnAttributes=style=width:20%|sortIcon=true}
