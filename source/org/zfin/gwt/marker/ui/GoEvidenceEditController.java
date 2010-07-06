@@ -19,7 +19,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
     private DockPanel mainPanel = new DockPanel();
     private final PublicationLookupBox publicationLookupBox = new PublicationLookupBox(null);
     private final AbstractGoEvidenceHeader headerEdit;
-    private final TermInfoComposite termInfoComposite = new TermInfoComposite();
+//    private final TermInfoComposite termInfoComposite = new TermInfoComposite();
     private final Dictionary dictionary = Dictionary.getDictionary("MarkerProperties");
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
@@ -60,7 +60,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
                 "<strong><font color=red>Please select a valid pub to display available inferences</font></strong>");
         // center panel
         mainPanel.add(headerEdit, DockPanel.CENTER);
-        mainPanel.add(termInfoComposite, DockPanel.SOUTH);
+//        mainPanel.add(termInfoComposite, DockPanel.SOUTH);
         RootPanel.get(StandardDivNames.viewDiv).add(mainPanel);
     }
 
@@ -87,13 +87,13 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
             }
         });
 
-        headerEdit.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
-            @Override
-            public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID = dataChangedEvent.getDTO().getGoTerm().getTermID();
-                lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
-            }
-        });
+//        headerEdit.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
+//            @Override
+//            public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
+//                String termID = dataChangedEvent.getDTO().getGoTerm().getTermID();
+//                lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
+//            }
+//        });
 
     }
 
@@ -176,7 +176,7 @@ public final class GoEvidenceEditController extends AbstractRelatedEntityEditCon
         super.setDTO(dto);
         headerEdit.setDTO(dto);
         String termID = dto.getGoTerm().getTermID();
-        lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
+//        lookupRPC.getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
         validateGoEvidence();
     }
 }

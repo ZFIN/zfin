@@ -7,6 +7,8 @@
 
 
 <link rel="stylesheet" type="text/css" href="/css/zfin.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <table cellpadding="10">

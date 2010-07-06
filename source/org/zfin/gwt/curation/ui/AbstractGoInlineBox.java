@@ -23,7 +23,6 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
 
     protected ListBoxWrapper geneBox = new ListBoxWrapper();
     // http://tntluoma.com/sidebars/codes/
-    protected final TermInfoComposite termInfoComposite = new TermInfoComposite(false, "&nbsp;&bull;&nbsp;", false);
     protected HorizontalPanel buttonPanel = new HorizontalPanel();
     protected Button goTermButton = new Button("<<--Use&nbsp;GO&nbsp;Term");
     protected HorizontalPanel mainPanel = new HorizontalPanel();
@@ -94,51 +93,10 @@ public abstract class AbstractGoInlineBox extends AbstractGoEvidenceHeader {
         termInfoComposite.setWidth("400px");
     }
 
-    protected class GoTermInfoCallBack extends TermInfoCallBack {
-        public GoTermInfoCallBack(TermInfoComposite termInfoComposite, String termID) {
-            super(termInfoComposite, termID);
-        }
-
-        @Override
-        public void onSuccess(TermInfo result) {
-            super.onSuccess(result);
-            updateQualifiers(result);
-        }
-
-        private void updateQualifiers(TermInfo result) {
-            if(result!=null){
-                evidenceFlagBox.clear();
-                evidenceFlagBox.addItem("NONE", "null");
-                if (result.getOntology() == OntologyDTO.GO_MF) {
-                    evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
-                }
-                evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
-            }
-        }
-    }
-
 
     @Override
     protected void addInternalListeners(final HandlesError handlesError) {
         super.addInternalListeners(handlesError);
-
-
-        goTermBox.setHighlightAction(new HighlightAction() {
-            @Override
-            public void onHighlight(String termID) {
-                if(false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
-                    LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
-                }
-            }
-        });
-
-        addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
-            @Override
-            public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
-                LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
-            }
-        });
 
 
         // TODO: maybe this should go into revertGUI

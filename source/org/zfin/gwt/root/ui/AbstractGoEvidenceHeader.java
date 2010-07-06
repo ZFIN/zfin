@@ -7,10 +7,12 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +37,7 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
     protected AbstractInferenceListBox inferenceListBox = new InferenceListBox(null);
     protected LookupComposite goTermBox = new LookupComposite();
     protected TermDTO temporaryGoTermDTO = null;
+    protected final TermInfoComposite termInfoComposite = new TermInfoComposite(false, "&nbsp;&bull;&nbsp;", false);
 
     // listeners
     protected List<RelatedEntityChangeListener<GoEvidenceDTO>> goTermChangeListeners = new ArrayList<RelatedEntityChangeListener<GoEvidenceDTO>>();
@@ -50,6 +53,26 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
 
     protected void addInternalListeners(final HandlesError handlesError) {
         super.addInternalListeners(this);
+
+
+        goTermBox.setHighlightAction(new HighlightAction() {
+            @Override
+            public void onHighlight(String termID) {
+                if(false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+//                    fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(createDTOFromGUI()));
+                    LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
+                }
+            }
+        });
+
+        addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
+            @Override
+            public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
+                String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
+                LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
+            }
+        });
+
 
         inferenceListBox.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
@@ -143,9 +166,13 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         goTermBox.setOntology(OntologyDTO.GO);
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
+        goTermBox.setShowTermDetail(false);
+        goTermBox.setTermInfoTable(termInfoComposite);
         goTermBox.setSubmitOnEnter(true);
         goTermBox.setUseIdAsValue(true);
+        goTermBox.setLimit(30);
         goTermBox.initGui();
+
         table.setHTML(rowCount, 0, "<b>GO Term:</b>");
         table.setWidget(rowCount, 1, goTermBox);
 
@@ -185,6 +212,12 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         errorLabel.setStyleName("error");
         panel.add(errorLabel);
 
+
+        ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
+        scrollPanel.setAlwaysShowScrollBars(false);
+        scrollPanel.setSize("500px","300px");
+        panel.add(scrollPanel);
+        panel.setWidth("500px");
 
     }
 
@@ -344,6 +377,29 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
     protected void fireGoTermChanged(RelatedEntityEvent<GoEvidenceDTO> relatedEntityDTO) {
         for (RelatedEntityChangeListener<GoEvidenceDTO> relatedEntityChangeListener : this.goTermChangeListeners) {
             relatedEntityChangeListener.dataChanged(relatedEntityDTO);
+        }
+    }
+
+    protected class GoTermInfoCallBack extends TermInfoCallBack {
+        public GoTermInfoCallBack(TermInfoComposite termInfoComposite, String termID) {
+            super(termInfoComposite, termID);
+        }
+
+        @Override
+        public void onSuccess(TermInfo result) {
+            super.onSuccess(result);
+            updateQualifiers(result);
+        }
+
+        private void updateQualifiers(TermInfo result) {
+            if(result!=null){
+                evidenceFlagBox.clear();
+                evidenceFlagBox.addItem("NONE", "null");
+                if (result.getOntology() == OntologyDTO.GO_MF) {
+                    evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
+                }
+                evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
+            }
         }
     }
 
