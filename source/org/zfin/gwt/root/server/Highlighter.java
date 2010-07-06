@@ -1,7 +1,5 @@
 package org.zfin.gwt.root.server;
 
-import org.zfin.ontology.OntologyTokenizer;
-
 import java.util.regex.Pattern;
 
 /**
@@ -13,20 +11,20 @@ public class Highlighter {
     private String match ;
     private String[] matches ;
     private String matchPattern ;
+    protected static final String illegalCharacters = "[\\\\,(,)]";
     private Pattern contiguousPattern;
-
-    private OntologyTokenizer tokenizer = new OntologyTokenizer();
 
     public Highlighter(){ }
 
-    public Highlighter(String match){
+    protected Highlighter(String match){
         setMatch(match);
     }
 
     public void setMatch(String match){
-        this.match = match ;
-        if(match.trim().contains(" ")){
-            matches = match.split("\\s+") ;
+        this.match = match.replaceAll(illegalCharacters,"\\\\$0") ;
+//        this.match = match ;
+        if(this.match.trim().contains(" ")){
+            matches = this.match.split("\\s+") ;
             matchPattern = "" ;
             for(int i = 0 ; i < matches.length ; i++){
                 matchPattern += matches[i] ;
@@ -37,22 +35,15 @@ public class Highlighter {
             contiguousPattern = Pattern.compile("("+matchPattern+")",Pattern.CASE_INSENSITIVE);
         }
         else{
-            contiguousPattern = Pattern.compile("("+match+")",Pattern.CASE_INSENSITIVE);
+            contiguousPattern = Pattern.compile("("+this.match+")",Pattern.CASE_INSENSITIVE);
         }
     }
 
+    protected boolean contains(String s) {
+        return contiguousPattern.matcher(s).find();
+    }
 
     public String highlight(String s) {
-        String returnPattern = contiguousPattern.matcher(s).replaceAll(prefix+"$1"+suffix) ;
-
-        // if there are no contiguous hits, assume that its split up, so split up
-        if(returnPattern.equalsIgnoreCase(s)){
-            Pattern splitPattern;
-            for(String word: s.split("\\s+")){
-                splitPattern = Pattern.compile("("+match+")",Pattern.CASE_INSENSITIVE);
-            }
-        }
-
-        return returnPattern ;
+        return  contiguousPattern.matcher(s).replaceAll(prefix+"$1"+suffix) ;
     }
 }
