@@ -7,7 +7,6 @@ import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.OntologyLoadingEntity;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
-import org.zfin.util.NumberAwareStringComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,14 +86,6 @@ public class OntologyManager {
         return ontologyManager;
     }
 
-    public static OntologyManager getInstanceFromFile(Ontology ontology) throws Exception {
-        if(ontologyManager == null){
-            ontologyManager = new OntologyManager() ;
-        }
-        ontologyManager.deserializeOntology(ontology);
-        return ontologyManager;
-    }
-
 
     public static OntologyManager getInstance(Ontology ontology) {
         singleOntology = ontology;
@@ -170,25 +161,34 @@ public class OntologyManager {
 
     private void loadDefaultOntologies() {
         initSingleOntologyMap(Ontology.STAGE);
-        serializeOntology(Ontology.STAGE);
+        serializeOntologyInThread(Ontology.STAGE);
         initSingleOntologyMap(Ontology.ANATOMY);
-        serializeOntology(Ontology.ANATOMY);
+        serializeOntologyInThread(Ontology.ANATOMY);
         initSingleOntologyMap(Ontology.QUALITY);
-        serializeOntology(Ontology.QUALITY);
+        serializeOntologyInThread(Ontology.QUALITY);
 
         // Quality  Processes and Objects
         initRootOntologyMap(Ontology.QUALITY_PROCESSES, Ontology.QUALITY, "PATO:0001236");
-        serializeOntology(Ontology.QUALITY_PROCESSES);
+        serializeOntologyInThread(Ontology.QUALITY_PROCESSES);
         initRootOntologyMap(Ontology.QUALITY_QUALITIES, Ontology.QUALITY, "PATO:0001241");
-        serializeOntology(Ontology.QUALITY_QUALITIES);
+        serializeOntologyInThread(Ontology.QUALITY_QUALITIES);
 
         // GO ontology
         initSingleOntologyMap(Ontology.GO_CC);
-        serializeOntology(Ontology.GO_CC);
+        serializeOntologyInThread(Ontology.GO_CC);
         initSingleOntologyMap(Ontology.GO_MF);
-        serializeOntology(Ontology.GO_MF);
+        serializeOntologyInThread(Ontology.GO_MF);
         initSingleOntologyMap(Ontology.GO_BP);
-        serializeOntology(Ontology.GO_BP);
+        serializeOntologyInThread(Ontology.GO_BP);
+    }
+
+    private void serializeOntologyInThread(final Ontology stage) {
+        new Thread(){
+            @Override
+            public void run() {
+                serializeOntology(stage);
+            }
+        }.start();
     }
 
     private void initRootOntologyMap(Ontology subOntology, Ontology rootOntology, String... rootOboIDs) {
@@ -225,7 +225,6 @@ public class OntologyManager {
                 children.addAll(newChildren);
             }
             Term term  = getTermByID(currentTerm.getOntology(),currentTerm.getID()) ;
-//            Term term = termMap.get(currentTerm.getID()).iterator().next();
             if (term == null)
                 logger.error("Child Term <" + currentTerm.getID() + "> not found in Root ontology " + rootOntology.getOntologyName());
             else {
@@ -236,9 +235,8 @@ public class OntologyManager {
                 else{
                     ++activeCount ;
                 }
-                for (TermAlias alias : currentTerm.getAliases()) {
-                    tokenizer.tokenizeTerm(alias.getTerm(),termMap) ;
-                    ++aliasCount ;
+                if(term.getAliases()!=null){
+                    aliasCount += term.getAliases().size() ;
                 }
             }
         }
@@ -265,7 +263,6 @@ public class OntologyManager {
         logger.debug("time to load from DB: "+ (nextTime - startTime) );
 
         PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>();
-        Map<String, Term> termNameIDMap = new TreeMap<String, Term>(new NumberAwareStringComparator());
         if (terms == null) {
             logger.info("No terms for ontology <" + ontology.getOntologyName() + "> found.");
             return;
@@ -282,11 +279,11 @@ public class OntologyManager {
             else{
                 ++activeCount ;
             }
-            for (TermAlias alias : term.getAliases()) {
-                tokenizer.tokenizeTerm(alias.getTerm(),termMap) ;
-                ++aliasCount ;
+
+            if(term.getAliases()!=null){
+                aliasCount += term.getAliases().size() ;
             }
-            termNameIDMap.put(term.getID(), term);
+
         }
         logger.debug("to put in hashmap: "+ (System.currentTimeMillis() - nextTime) );
         nextTime = System.currentTimeMillis() ;
@@ -301,7 +298,6 @@ public class OntologyManager {
         populateStageInformation(ontology);
 
         logger.info("populate stage info: "+ (System.currentTimeMillis() - nextTime) );
-        nextTime = System.currentTimeMillis() ;
 
         long endTime = System.currentTimeMillis();
         logLoading(ontology, startTime, endTime, dateStarted, activeCount, obsoleteCount, aliasCount,
@@ -347,7 +343,7 @@ public class OntologyManager {
      * @return map
      */
     public PatriciaTrieMultiMap<Term> getTermOntologyMap(Ontology ontology) {
-        PatriciaTrieMultiMap<Term> map = null ;
+        PatriciaTrieMultiMap<Term> map ;
         if(ontology.isComposedOntologies()){
             // now we construct a map
             map = new PatriciaTrieMultiMap<Term>() ;
@@ -423,6 +419,7 @@ public class OntologyManager {
      *
      * @param ontology ontology
      * @param termName term name
+     * @param allowObsolete Indicates if obsoletes will be returned.
      * @return term
      */
     public Term getTermByName(Ontology ontology, String termName,boolean allowObsolete) {
@@ -510,7 +507,8 @@ public class OntologyManager {
      */
     public synchronized void reLoadOntologies() {
         loadOntologiesFromDatabase();
-        serializeOntologies();
+        // currently done after each load
+//        serializeOntologies();
     }
 
     final private static String NEWLINE = System.getProperty("line.separator");
@@ -535,17 +533,13 @@ public class OntologyManager {
 
     public void serializeOntologies(){
         for(Ontology ontology : Ontology.getSerializableOntologies()){
-            if(!ontology.isComposedOntologies()){
-                serializeOntology(ontology);
-            }
+            serializeOntology(ontology);
         }
     }
 
     public void deserializeOntologies() throws Exception{
         for(Ontology ontology : Ontology.getSerializableOntologies()){
-            if(!ontology.isComposedOntologies()){
-                deserializeOntology(ontology);
-            }
+            deserializeOntology(ontology);
         }
     }
 
@@ -553,7 +547,9 @@ public class OntologyManager {
     /**
      * Here, we serialize 2 objects
      * @param ontology Ontology.
+     * @throws IOException Thrown if problem writing to file.
      */
+    @SuppressWarnings("unchecked")
     public void deserializeOntology(Ontology ontology) throws Exception{
         long start = System.currentTimeMillis();
         File lookupFile ;
@@ -570,7 +566,7 @@ public class OntologyManager {
             ontologyTermMap.remove(ontology);
             ontologyTermMap.put(ontology,lookupMap) ;
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to deserialize the files",e);
             throw e;
         }
@@ -613,6 +609,7 @@ public class OntologyManager {
      *
      * @param ontologies collection of ontologies
      * @param termName   term name
+     * @param allowObsolete True if an obsolete term may be returned.
      * @return term object
      */
     public Term getTermByName(List<Ontology> ontologies, String termName,boolean allowObsolete) {

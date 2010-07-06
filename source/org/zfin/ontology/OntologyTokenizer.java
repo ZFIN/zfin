@@ -46,30 +46,36 @@ public class OntologyTokenizer {
         return tokens ;
     }
 
-    public void tokenizeTerm(Term term, PatriciaTrieMultiMap<Term> termMap) {
+    public int tokenizeTerm(Term term, PatriciaTrieMultiMap<Term> termMap) {
         String exactTerm = term.getTermName().toLowerCase() ;
 
-        tokenizeTerm(exactTerm,term,termMap) ;
+        int count = 0 ;
+
+        count += tokenizeTerm(exactTerm,term,termMap) ;
+
 
         // handle aliases
         if(term.getAliases()!=null){
             // handle alias tokens
             for(TermAlias alias : term.getAliases()){
                 String aliasTerm = alias.getAlias().toLowerCase()  ;
-                tokenizeTerm(aliasTerm,alias.getTerm(),termMap);
+                count+= tokenizeTerm(aliasTerm,alias.getTerm(),termMap);
             }
 
         }
 
+        return count ;
 
     }
 
-    private void tokenizeTerm(String exactTerm, Term term, PatriciaTrieMultiMap<Term> termMap) {
+    private int tokenizeTerm(String exactTerm, Term term, PatriciaTrieMultiMap<Term> termMap) {
+        int count = 0 ;
 
         // handle tokens
         for(String termName : tokenize(exactTerm)){
             try {
                 termMap.put(termName,term);
+                ++count ;
             } catch (Exception e) {
                 logger.error("failed to add tokenized word: ["+termName+"] from ["+exactTerm+"]",e);
             }
@@ -78,11 +84,14 @@ public class OntologyTokenizer {
         try {
             if(term.getID()!=null){
                 termMap.put(term.getID(),term) ;
+                ++count ;
             }
             termMap.put(exactTerm,term) ;
+            ++count ;
         } catch (Exception e) {
             logger.error("failed to add word: ["+exactTerm+"] from term["+term+"]",e);
         }
+        return count ;
     }
 
 }
