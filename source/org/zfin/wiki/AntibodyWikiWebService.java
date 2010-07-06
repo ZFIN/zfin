@@ -187,7 +187,6 @@ public class AntibodyWikiWebService extends WikiWebService {
         content = content.replace("{text-data:AntibodyName}{page-info:title}{text-data}", antibodyNameString.toString());
 
         // aliases
-        String userFriendlyAntibodyName = getUserFriendlyAntibodyName(antibody) ;
         StringBuilder aliasStringBuilder = new StringBuilder();
         if (antibody.getAliases() != null) {
             Iterator<MarkerAlias> markerAliasIterator = antibody.getAliases().iterator();
@@ -197,9 +196,10 @@ public class AntibodyWikiWebService extends WikiWebService {
                     aliasStringBuilder.append(" , ");
                 }
             }
-
         }
 
+
+        String userFriendlyAntibodyName = getUserFriendlyAntibodyName(antibody) ;
         if (userFriendlyAntibodyName != null) {
             if(aliasStringBuilder.length()>0){
                 aliasStringBuilder.append(" , ");
@@ -212,6 +212,13 @@ public class AntibodyWikiWebService extends WikiWebService {
                 aliasStringBuilder.append("{hidden-data}") ;
                 aliasStringBuilder.append(" ");
             }
+        }
+
+        // since we are using the name now, we should always add the abbreviation
+        if(false==antibody.getAbbreviation().equals(antibody.getName())){
+            aliasStringBuilder.append(" {hidden-data}");
+            aliasStringBuilder.append(antibody.getAbbreviation()) ;
+            aliasStringBuilder.append("{hidden-data} ") ;
         }
 
         if(StringUtils.isNotEmpty(aliasStringBuilder.toString())){

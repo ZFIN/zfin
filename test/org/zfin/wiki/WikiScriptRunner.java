@@ -91,7 +91,9 @@ public class WikiScriptRunner {
 //            wikiScriptRunner.addWebPage("Ab1-tuba");
 //            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
 //            AntibodyWikiWebService.getInstance().replaceAntibodiesOnWikiWithZFIN();
-            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
+//            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
+//            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
+            wikiScriptRunner.synchronizeWebPage("anti-Tbx16");
 
 //            AntibodyWikiWebService.login();
 //            wikiScriptRunner.addWebPage("Ab-2F11");
