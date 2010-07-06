@@ -230,6 +230,14 @@
                 <key column="dblink_linked_recid"/>
                 <one-to-many class="org.zfin.sequence.TranscriptDBLink"/>
             </set>
+        </joined-subclass>
+
+        <joined-subclass name="org.zfin.marker.MarkerSequenceMarker" table="marker_sequence">
+            <key column="mrkrseq_mrkr_zdb_id" />
+            <set name="sequences" lazy="true">
+                <key column="mrkrseq_mrkr_zdb_id"/>
+                <one-to-many class="org.zfin.sequence.MarkerSequence"/>
+            </set>
 
         </joined-subclass>
     </class>

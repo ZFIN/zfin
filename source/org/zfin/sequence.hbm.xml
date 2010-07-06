@@ -145,6 +145,21 @@
         
     </class>
 
+    <class name="org.zfin.sequence.MarkerSequence" table="marker_sequence">
+        <id name="zdbID" type="string">
+            <column name="mrkrseq_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DBLINK</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <many-to-one name="marker" column="mrkrseq_mrkr_zdb_id" class="org.zfin.marker.Marker"/>
+        <property name="sequence" column="mrkrseq_sequence" type="string" />
+        <property name="offsetStart" column="mrkrseq_offset_start" type="long" not-null="false"/>
+        <property name="offsetStop" column="mrkrseq_offset_stop" type="long" not-null="false"/>
+        <property name="variation" column="mrkrseq_variation" type="string" not-null="false"/>
+    </class>
+
 
     <class name="org.zfin.sequence.DBLink" table="db_link" abstract="true">
         <id name="zdbID" type="string">

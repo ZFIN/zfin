@@ -1,0 +1,6 @@
+Files in these directories are now defunct and no longer used.
+
+- push4genomix.pl is now howed largely in BlastResultMapper.java
+- function of the other files is now housed in DownloadableSequencesController.java
+
+

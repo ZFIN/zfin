@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
@@ -56,6 +57,23 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return getReferenceDatabase(foreignDBName, type, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
     }
 
+    public List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName name, ForeignDBDataType.DataType type){
+
+        String hql = " from ReferenceDatabase referenceDatabase " +
+                " where referenceDatabase.foreignDB.dbName = :dbName " +
+                " and referenceDatabase.foreignDBDataType.dataType = :type" +
+                " and referenceDatabase.foreignDBDataType.superType = :superType" +
+                " and referenceDatabase.organism  = :organism" +
+                " ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("dbName", name.toString());
+        query.setString("type", type.toString());
+        query.setString("superType", ForeignDBDataType.SuperType.SEQUENCE.toString());
+        query.setString("organism", Species.ZEBRAFISH.toString());
+
+        return (List<ReferenceDatabase>) query.list();
+    };
+
     public Accession getAccessionByAlternateKey(String number, ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Accession.class);
@@ -77,7 +95,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     /**
      * Explicitly do not get transcripts.
      *
-     * @param referenceDatabases
+     * @param referenceDatabases Reference databases to view.
      * @return
      */
     public Map<String, MarkerDBLink> getUniqueMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
@@ -105,6 +123,24 @@ public class HibernateSequenceRepository implements SequenceRepository {
         }
 
         return returnMap;
+    }
+
+    /**
+     * Get unique acccessions for a given set of databases.
+     * @param referenceDatabases
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Set<String> getAccessions(ReferenceDatabase... referenceDatabases){
+        Set<String> results = new HashSet<String>() ;
+
+        String hql = "" +
+                " select dbl.accessionNumber from DBLink dbl where dbl.referenceDatabase in (:referenceDatabases) " ;
+        results.addAll(HibernateUtil.currentSession().createQuery(hql)
+                .setParameterList("referenceDatabases",referenceDatabases)
+                .list());
+
+        return results ;
     }
 
     public MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
@@ -167,6 +203,87 @@ public class HibernateSequenceRepository implements SequenceRepository {
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("accessionNumber"));
         return criteria.list();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public List<String> getGenbankCdnaDBLinks(){
+        return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
+                "select " +
+                "dblink_acc_num " +
+                "from db_link " +
+                "where dblink_fdbcont_zdb_id in " +
+                "( " +
+                "   select " +
+                "   fdbcont_zdb_id " +
+                "   from foreign_db_contains, foreign_db, foreign_db_data_type " +
+                "   where (fdb_db_name = 'GenBank' or fdb_db_name = 'RefSeq') " +
+                "   and fdbdt_data_type = 'RNA' " +
+                "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
+                ")   " +
+                "").list() ;
+    }
+
+    /**
+     * from getZfinGbAcc.pl, sql_xpat
+     *
+     * Select cDNA that is encoded by genes with expression (that are not microRNA).
+     *
+     * 1 - select genes with expression that are not microRNA (~10K)
+     * 2 - select small segments encoded by those genes (??) 
+     * 3 - return RNA for a small set of databases (GenBank, Vega_Trans, PREVEGA, RefSeq) (~ 41K) (of 131K)
+     * @return List of DBLink accessions.
+     */
+    @SuppressWarnings("unchecked")
+    public Set<String> getGenbankXpatCdnaDBLinks(){
+        // this currently takes 30 seconds, returns about 41K records
+        Set<String> results = new HashSet<String>();
+        results.addAll((List<String>) HibernateUtil.currentSession().createSQLQuery("" +
+                "     select dbl.dblink_acc_num  from db_link dbl, foreign_db_contains, foreign_db, foreign_db_data_type  " +
+                "      where dblink_fdbcont_zdb_id = fdbcont_zdb_id  " +
+                "      and fdb_db_name in ('GenBank','Vega_Trans','PREVEGA','RefSeq')  " +
+                "      and fdbdt_data_type = 'RNA' " +
+                "      and fdbcont_fdbdt_id = fdbdt_pk_id " +
+                "      and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                "      and  " +
+                "      exists ( " +
+                "      select mr.mrel_mrkr_1_zdb_id " +
+                "      from marker_relationship mr, marker g,  expression_experiment ee " +
+                "      where dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id " +
+                "      and g.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id " +
+                "      and mr.mrel_type='gene encodes small segment' " +
+                "      and g.mrkr_name[1,8] <> 'microRNA' " +
+                "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
+                "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
+                "      union " +
+                "      select g.mrkr_zdb_id " +
+                "      from expression_experiment ee, marker g " +
+                "      where dbl.dblink_linked_recid = ee.xpatex_gene_zdb_id " +
+                "      and g.mrkr_name[1,8] <> 'microRNA' " +
+                "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
+                "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
+                "     ) " +
+                "").list()) ;
+        return results ;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getGenbankSequenceDBLinks(){
+        return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
+                " select dblink_acc_num " +
+                "from db_link " +
+                "where dblink_fdbcont_zdb_id in " +
+                "(" +
+                "   select " +
+                "   fdbcont_zdb_id " +
+                "   from foreign_db_contains, foreign_db, foreign_db_data_type " +
+                "   where fdb_db_name = 'GenBank' " +
+                "   and fdbdt_super_type = 'sequence' " +
+                "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
+                "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                ")   " +
+                "").list() ;
     }
 
     public List<DBLink> getDBLinks(String accessionString, ReferenceDatabase... referenceDatabases) {

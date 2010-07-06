@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -16,11 +17,13 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerSequenceMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +34,8 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
 public class MutantRepositoryTest {
+
+    private final Logger logger = Logger.getLogger(MutantRepositoryTest.class) ;
 
     private final static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
@@ -247,7 +252,7 @@ public class MutantRepositoryTest {
             newMarkerGoTermEvidence.setGoTerm(markerGoTermEvidence.getGoTerm());
             newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
 
-            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence)); 
+            assertEquals(1,mutantRepository.getNumberMarkerGoTermEvidences( newMarkerGoTermEvidence));
 
             GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
             ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
@@ -275,6 +280,15 @@ public class MutantRepositoryTest {
         finally{
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+    @Test
+    public void getMorpholinosWithMarkerRelationships(){
+        List<MorpholinoSequence> morpholinos = mutantRepository.getMorpholinosWithMarkerRelationships();
+        assertNotNull(morpholinos);
+        logger.info("# of morpholinos: "+ morpholinos.size());
+        assertTrue(morpholinos.size()>3000);
+        assertNotNull(morpholinos.get(0).getSequence());
     }
 
 }

@@ -1,11 +1,12 @@
 package org.zfin.mutant;
 
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerSequenceMarker;
 
 /**
  * ToDo: Please add documentation for this class.
  */
-public class Morpholino extends Marker {
+public class Morpholino extends MarkerSequenceMarker {
 
     private Marker targetGene;
 

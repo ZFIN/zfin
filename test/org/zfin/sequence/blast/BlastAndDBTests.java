@@ -13,7 +13,8 @@ import org.zfin.TestConfiguration;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         BlastAccessTest.class ,
-        ExecuteBlastTest.class
+        ExecuteBlastTest.class,
+        BlastDownloadsTest.class
         })
 
 public class BlastAndDBTests {

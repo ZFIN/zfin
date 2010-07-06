@@ -13,6 +13,7 @@
                 <prop key="/blast/download-sequence">downloadBlastSequence</prop>
                 <prop key="/blast/external-blast">externalBlast</prop>
                 <prop key="/blast/include-external-blast">includeExternalBlast</prop>
+                <prop key="/blast/blast-files">downloadableBlastFiles</prop>
                 <prop key="/blast/blast">blastXML</prop>
                 <prop key="/blast/blast-smp">blastSMP</prop>
                 <prop key="/blast/blast-ncbi">blastNCBI</prop>
@@ -24,6 +25,12 @@
     <bean name="includeExternalBlast" class="org.zfin.sequence.blast.presentation.IncludeExternalBlastController">
         <property name="commandClass" value="org.zfin.sequence.blast.presentation.IncludeExternalBlastBean"/>
         <property name="commandName" value="formBean"/>
+    </bean>
+
+    <bean name="downloadableBlastFiles" class="org.zfin.sequence.blast.presentation.DownloadableSequencesController">
+        <property name="commandClass" value="org.zfin.sequence.blast.presentation.BlastDownloadBean"/>
+        <property name="commandName" value="formBean"/>
+        <property name="view" value="downloadable-sequences.page"/>
     </bean>
 
     <bean name="blastDefinitions" class="org.zfin.sequence.blast.presentation.BlastDatabaseInfoController">

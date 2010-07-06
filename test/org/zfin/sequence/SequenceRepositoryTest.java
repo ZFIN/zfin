@@ -11,13 +11,15 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -147,8 +149,50 @@ public class SequenceRepositoryTest {
         assertTrue("should be at least 10 of these things", referenceDatabases.size()> 10) ;
         for(ReferenceDatabase referenceDatabase : referenceDatabases){
             assertNotNull("must have blast databases", referenceDatabase.getPrimaryBlastDatabase());
-            Database database = referenceDatabase.getPrimaryBlastDatabase() ;
         }
+    }
+
+    @Test
+    public void getMarkerSequenceForMorpholino(){
+        MarkerSequence markerSequence = (MarkerSequence) HibernateUtil.currentSession()
+                .createCriteria(MarkerSequence.class)
+                .setMaxResults(1)
+                .uniqueResult()
+                ;
+        assertNotNull(markerSequence);
+        assertNotNull(markerSequence.getSequence());
+        assertNotNull(markerSequence.getZdbID());
+        assertNotNull(markerSequence.getMarker());
+        logger.debug(markerSequence.getSequence());
+        logger.debug(markerSequence.getZdbID());
+        logger.debug(markerSequence.getMarker());
+    }
+
+    @Test
+    public void testGenbankAllDownload(){
+        List<String> dblinks = repository.getGenbankSequenceDBLinks();
+        assertNotNull(dblinks);
+        assertTrue(dblinks.size()>1000);
+        assertTrue(dblinks.contains("AY627769"));
+    }
+
+
+    @Test
+    public void getGenbankCdnaDBLinks(){
+        List<String> dblinks = repository.getGenbankCdnaDBLinks();
+        assertNotNull(dblinks);
+        assertTrue(dblinks.size()>1000);
+        assertTrue(dblinks.contains("NM_131644"));
+    }
+
+//    @Test
+    public void getGenbankXpatCdnaDBLinks(){
+        Set<String> dblinks = repository.getGenbankXpatCdnaDBLinks();
+        assertNotNull(dblinks);
+        logger.info("size: "+ dblinks.size());
+        assertTrue(dblinks.size()>40000);
+        assertTrue(dblinks.size()<50000);
+        assertTrue(dblinks.contains("AB000218"));
     }
 
 }

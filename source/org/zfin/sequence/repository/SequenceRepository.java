@@ -35,6 +35,8 @@ public interface SequenceRepository {
 
     MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases);
 
+    Set<String> getAccessions(ReferenceDatabase... referenceDatabases);
+
     List<DBLink> getDBLinksForAccession(String accessionString);
 
     List<DBLink> getDBLinksForAccession(String accessionString, boolean include, ReferenceDatabase... referenceDatabases);
@@ -63,11 +65,10 @@ public interface SequenceRepository {
     int removeAccessionByNumber(String accessionNumber);
 
     MarkerDBLinkList getAllSequencesForMarkerAndType(Marker marker, ForeignDBDataType.DataType referenceDatabaseType);
-//    TreeSet<MarkerDBLink> getSequenceDBLinksForMarker(Marker marker) ;
 
-    //    TreeSet<TranscriptDBLink> getSequenceDBLinksForTranscript(Transcript transcript) ;
     List<DBLink> getDBLinks(String accession, ReferenceDatabase... referenceDatabase);
 
+    List<String> getGenbankSequenceDBLinks();
 
     MarkerDBLinkList getNonSequenceMarkerDBLinksForMarker(Marker marker);
 
@@ -79,7 +80,11 @@ public interface SequenceRepository {
 
     Map<String, List<DBLink>> getDBLinksForAccessions(Collection<String> accessionNumbers);
 
+    List<String> getGenbankCdnaDBLinks();
 
+    Set<String> getGenbankXpatCdnaDBLinks();
+
+    List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName genbank, ForeignDBDataType.DataType genomic);
 }
 
 

@@ -62,10 +62,26 @@
     </tr>
     <tr>
         <td valign=top class="listContentBold">
-            Blast Databases:
+            Blast Database Groups:
         </td>
         <td colspan="2" class="listContent">
-            <a href="/action/dev-tools/blastable-databases">Blastabase Databases</a>
+            <a href="/action/dev-tools/blastable-databases">Blast Database Groups</a>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Blast Contents:
+        </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/blast/blast-definitions">Blast Contents</a>
+        </td>
+    </tr>
+    <tr>
+        <td valign=top class="listContentBold">
+            Downloadable Blast Files:
+        </td>
+        <td colspan="2" class="listContent">
+            <a href="/action/blast/blast-files">Downloadable Blast Files</a>
         </td>
     </tr>
     <tr>

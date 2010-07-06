@@ -66,5 +66,10 @@
         <put name="body" value="/WEB-INF/jsp/blast/bad_ticket.jsp"/>
     </definition>
 
+    <definition name="downloadable-sequences.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: Sequences Download" />
+        <put name="body" value="/WEB-INF/jsp/blast/sequences_download.jsp"/>
+    </definition>
+
 </tiles-definitions>
 

@@ -19,6 +19,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerSequenceMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -26,6 +27,7 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.*;
 
@@ -807,5 +809,30 @@ public class HibernateMutantRepository implements MutantRepository {
     public void invalidateCachedObjects() {
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
+
+        // using this type of query for both speed (an explicit join)
+        // and becaues createSQLQuery had trouble binding the lvarchar of s.sequence
+        List<Object[]> sequences =  HibernateUtil.currentSession().createQuery(
+                "select m.zdbID ,m.abbreviation, s.sequence   from MarkerSequenceMarker m  " +
+                        "inner join m.sequences s " +
+                        "inner join m.firstMarkerRelationships  " +
+                        "where m.markerType =  '" + Marker.Type.MRPHLNO + "' " +
+                        "")
+                .list()
+                ;
+
+        List<MorpholinoSequence> morpholinoSequences = new ArrayList<MorpholinoSequence>();
+        for(Object[] seqObjects : sequences){
+            MorpholinoSequence morpholinoSequence = new MorpholinoSequence();
+            morpholinoSequence.setZdbID(seqObjects[0].toString());
+            morpholinoSequence.setName(seqObjects[1].toString());
+            morpholinoSequence.setSequence(seqObjects[2].toString());
+            morpholinoSequences.add(morpholinoSequence);
+        }
+        return morpholinoSequences;
+    }
 
 }

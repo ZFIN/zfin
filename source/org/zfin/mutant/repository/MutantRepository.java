@@ -4,10 +4,12 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerSequenceMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -229,5 +231,7 @@ public interface MutantRepository {
     int getZFINInferences(String zdbID, String zdbID1);
 
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
+
+    List<MorpholinoSequence> getMorpholinosWithMarkerRelationships();
 }
 
