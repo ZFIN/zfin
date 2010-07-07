@@ -16,7 +16,7 @@ open (INDEXFILE, "go.zfin") or die "open failed";
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
 print UNL "!gaf-version: 2.0\n";
-print UNL "!Version: " . $rev. "\n";
+printf UNL "!Version: %.3f\n", $rev;
 print UNL "!Date: ".`/usr/bin/date +%Y/%m/%d`;
 print UNL "!From: ZFIN (zfin.org) \n";
 print UNL "! \n";
