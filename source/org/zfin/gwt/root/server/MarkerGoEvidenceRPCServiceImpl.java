@@ -86,13 +86,10 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 //
-//        if(person==null){
-//            person = RepositoryFactory.getProfileRepository().getPersonB(goEvidenceDTO.getModifiedPersonName());
-//        }
         if (person != null) {
             markerGoTermEvidence.setModifiedBy(person.getName());
         }
-        markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
+        markerGoTermEvidence.setModifiedWhen(new Date());
 
 
         // set source
@@ -344,9 +341,11 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
         if (person != null) {
             markerGoTermEvidence.setModifiedBy(person.getName());
+            markerGoTermEvidence.setCreatedBy(person.getName());
             infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidence.toString(), "Created new MarkerGoTermEvidence record", person);
         }
-        markerGoTermEvidence.setModifiedWhen(goEvidenceDTO.getModifiedDate());
+        markerGoTermEvidence.setModifiedWhen(new Date());
+        markerGoTermEvidence.setCreatedWhen(new Date());
 
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656

@@ -277,7 +277,10 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         goEvidenceDTO.setPublicationZdbID(pubLabel.getBoxValue());
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(evidenceCodeBox.getSelected()));
         goEvidenceDTO.setNote(noteBox.getText());
+
+        // these are only used on the client-side
         goEvidenceDTO.setModifiedDate(new Date());
+        goEvidenceDTO.setCreatedDate(new Date());
         goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
 
         if (inferenceListBox.createDTOFromGUI() != null) {
