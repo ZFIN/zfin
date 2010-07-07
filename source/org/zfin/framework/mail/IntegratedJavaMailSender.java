@@ -19,7 +19,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 //    private JavaMailSender mailSender = new JavaMailSenderImpl();
 //    private String mailHost = "mailhost.cs.uoregon.edu";
 
-    private final String DEFAULT_MAILHOST = "mailhost.cs.uoregon.edu";
+    private final String DEFAULT_MAILHOST = "smtp.uoregon.edu";
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private String mailHost = DEFAULT_MAILHOST;
 
