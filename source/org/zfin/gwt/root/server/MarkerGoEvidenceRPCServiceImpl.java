@@ -395,8 +395,6 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             ontology = iterator.next() ;
             goTerm = OntologyManager.getInstance().getTermByName(ontology,value,true) ;
         }
-//        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
-//                add(Restrictions.eq("termName", value)).uniqueResult();
         if (goTerm == null) {
             throw new RuntimeException("Failed to find GO term[" + value + "]");
         } else {
