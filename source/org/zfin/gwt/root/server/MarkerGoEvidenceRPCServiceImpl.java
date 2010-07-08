@@ -383,20 +383,11 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
     @Override
     public TermDTO getGOTermByName(String value) {
-        // going to be faster to go to the DB
-        Term goTerm = null ;
-        if(value.startsWith("ZDB-TERM")){
-            goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
-                    add(Restrictions.eq("ID", value)).uniqueResult();
-        }
-        Ontology ontology ;
-        for(Iterator<Ontology> iterator = Ontology.GO.getIndividualOntologies().iterator()  ;
-            iterator.hasNext() && goTerm==null  ; ){
-            ontology = iterator.next() ;
-            goTerm = OntologyManager.getInstance().getTermByName(ontology,value,true) ;
-        }
+        Term goTerm = OntologyManager.getInstance().getTermByName(Ontology.GO,value,true) ;
+//        Term goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
+//                add(Restrictions.eq("termName", value)).uniqueResult();
         if (goTerm == null) {
-            throw new RuntimeException("Failed to find GO term[" + value + "]");
+            throw new RuntimeException("Failed to find termp" + value + "]");
         } else {
             return DTOConversionService.convertToTermDTO(goTerm);
         }
