@@ -296,8 +296,13 @@ public class BlastResultMapper {
             // well, then its a morpholino
             else if (hitAccessionID.startsWith("ZDB-MRPHLNO")) {
                 hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(hitAccessionID);
-                genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-                hitViewBean.setMarkerIsHit(true);
+                if(hitMarker!=null){
+                    genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                    hitViewBean.setMarkerIsHit(true);
+                }
+                else{
+                    logger.error("blast DB has a bad morpholino: "+ hitAccessionID);
+                }
             }
             // if there is no hit dblink, then use an accession
             else {
