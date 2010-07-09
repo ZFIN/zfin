@@ -11,7 +11,7 @@ public class Highlighter {
     private String match ;
     private String[] matches ;
     private String matchPattern ;
-    protected static final String illegalCharacters = "[\\\\,(,)]";
+    protected static final String illegalCharacters = "[\\\\,(,),\\[,\\],|,+,?,*,{,}]";
     private Pattern contiguousPattern;
 
     public Highlighter(){ }

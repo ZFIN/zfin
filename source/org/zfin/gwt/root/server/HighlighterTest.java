@@ -49,5 +49,19 @@ public class HighlighterTest {
         assertEquals("<strong>spinal</strong>chord\\",new Highlighter("spinal").highlight("spinalchord\\"));
         assertEquals("<strong>spinal</strong> <strong>cord</strong>\\",new Highlighter("spinal cord").highlight("spinal cord\\"));
         assertEquals("<strong>Tg(</strong>",new Highlighter("Tg(").highlight("Tg("));
+        assertEquals("<strong>floor</strong> plate",new Highlighter("floor").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floors").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor[").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor]").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor|").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor+").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor?").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor&").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor*").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor\\").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor{").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor}").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor^").highlight("floor plate"));
+        assertEquals("floor plate",new Highlighter("floor$").highlight("floor plate"));
     }
 }
