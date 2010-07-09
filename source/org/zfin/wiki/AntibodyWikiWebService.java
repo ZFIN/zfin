@@ -258,8 +258,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         });
         for (AnatomyLabel anatomyLabel : antibodyService.getAntibodyLabelings()) {
-            antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()));
-            if(anatomyLabel.getSuperterm()!=null){
+            if(anatomyLabel.getSuperterm()!=null && AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm())!=null){
                 antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()));
             }
         }
@@ -591,7 +590,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             logger.error("wrong number of search results for["+antibodyName+"]: "+ searchResults.length);
             return ;
         }
-        service.removePage(token,searchResults[1].getId()) ;
+        service.removePage(token,searchResults[0].getId()) ;
 
     }
 

@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.ontology.Ontology;
@@ -9,6 +10,8 @@ import org.zfin.ontology.Term;
  * Presentation Class to create output from a Run object.
  */
 public class AnatomyItemPresentation extends EntityPresentation {
+
+    private final static Logger logger = Logger.getLogger(AnatomyItemPresentation.class) ;
 
     private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
     public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
@@ -43,8 +46,10 @@ public class AnatomyItemPresentation extends EntityPresentation {
             return getWikiLink("/action/" + uri, term.getOboID(), term.getTermName());
         else if (Ontology.isGoOntology(term.getOntology()))
             return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
-        else
+        else{
+            logger.error("unable to process term: "+ term + " while generating wiki link");
             return null;
+        }
     }
 
 }

@@ -32,7 +32,7 @@ public class AntibodyPresentation extends EntityPresentation {
      * @return A rendered wiki link.
      */
     public static String getWikiLink(Antibody antibody) {
-        return getWikiLink("/action/" + uri, antibody.getZdbID(), antibody.getAbbreviation(), antibody.getName());
+        return getWikiLink("/action/" + uri, antibody.getZdbID(), antibody.getName(), antibody.getName());
     }
 
 }
