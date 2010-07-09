@@ -140,8 +140,7 @@
 <!-- an easy to remember tag that should always be kept up to date to match whatever
 test(s) need to be run before committing changes or pushing files to production -->
 <!--Test for notproduction and the run tests.  This allows production to run the test if using runtests-quiet-->
-<target name="test" if="notproduction" depends="runtests-quiet"
-        description="Runs full suite of tests if in mode if not production">
+<target name="test" depends="runtests-quiet" description="Runs full suite of tests if in mode if not production">
 </target>
 
 
@@ -154,7 +153,7 @@ test(s) need to be run before committing changes or pushing files to production 
           value="Failed to connect to external services.  See ${serviceTestFile}.txt for more information.  Please try connecting again, later."/>
 
 
-<target name="runtests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
+<target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
 
     <junit fork="yes"
            printsummary="yes"
