@@ -3,6 +3,7 @@ package org.zfin.ontology;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.OntologyLoadingEntity;
 import org.zfin.repository.RepositoryFactory;
@@ -180,13 +181,16 @@ public class OntologyManager {
         serializeOntologyInThread(Ontology.GO_MF);
         initSingleOntologyMap(Ontology.GO_BP);
         serializeOntologyInThread(Ontology.GO_BP);
+        HibernateUtil.currentSession().clear();
+
     }
 
-    private void serializeOntologyInThread(final Ontology stage) {
+
+    private void serializeOntologyInThread(final Ontology ontology) {
         new Thread(){
             @Override
             public void run() {
-                serializeOntology(stage);
+                serializeOntology(ontology);
             }
         }.start();
     }
