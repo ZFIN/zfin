@@ -35,6 +35,7 @@ public class MatchingTermServiceTest {
         for(String key: termMap.keySet()){
             logger.debug(key);
         }
+        
     }
 
     // for hit "A B C", should find (in this order) "A B C" (first), "A B" (second), "A","B", "C", "A C" (any order), "B C" (last)
@@ -367,6 +368,34 @@ public class MatchingTermServiceTest {
         assertTrue(service.containsAllTokens("abcd defg",new String[]{"ab","de"})) ;
         assertFalse(service.containsAllTokens("cat",new String[]{"dog","cat"})); ;
         assertFalse(service.containsAllTokens("cat d",new String[]{"dog","cat"})); ;
+    }
+
+    @Test
+    public void sortNumbers(){
+        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        tokenizer.tokenizeTerm(createTermWithName("cat 1"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 2"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 10"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 20"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 21"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 100"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 201"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 110"),termMap);
+        tokenizer.tokenizeTerm(createTermWithName("cat 0"),termMap);
+
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"ca") ;
+        assertEquals(9,matchingTerms.size());
+        Iterator<MatchingTerm> matchingTermIterator = matchingTerms.iterator();
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 0") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 1") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 2") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 10") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 20") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 21") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 100") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 110") ;
+        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 201") ; 
+
     }
 
     @Test

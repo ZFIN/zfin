@@ -1,7 +1,5 @@
 package org.zfin.util;
 
-import org.zfin.ontology.Term;
-
 import java.io.Serializable;
 import java.util.Comparator;
 

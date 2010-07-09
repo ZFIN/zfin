@@ -1,6 +1,8 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.ontology.MatchingTerm;
+import org.zfin.util.AlphanumComparator;
+import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.Comparator;
 
@@ -9,6 +11,8 @@ import java.util.Comparator;
 public class MatchingTermComparator implements Comparator<MatchingTerm> {
 
     private String query ;
+    private Comparator comparator = new NumberAwareStringComparator();
+//    private Comparator comparator = new AlphanumComparator();
 
     public MatchingTermComparator(String query){
         this.query = query ;
@@ -48,7 +52,8 @@ public class MatchingTermComparator implements Comparator<MatchingTerm> {
         }
 
 
-        return lhs.getTerm().getTermName().toLowerCase().compareTo(rhs.getTerm().getTermName().toLowerCase()) ;
+//        return lhs.getTerm().getTermName().toLowerCase().compareTo(rhs.getTerm().getTermName().toLowerCase()) ;
+        return comparator.compare(lhs.getTerm().getTermName().toLowerCase(),rhs.getTerm().getTermName().toLowerCase()) ;
     }
 
     protected int scoreTerm(MatchingTerm term) {

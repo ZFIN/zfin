@@ -4,8 +4,11 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.infrastructure.TrieMultiMap;
+import org.zfin.util.AlphanumComparator;
+import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -14,6 +17,7 @@ import static org.junit.Assert.*;
 public class OntologyPerformanceTest extends AbstractOntologyTest{
 
     private final static Logger logger = Logger.getLogger(OntologyPerformanceTest.class) ;
+    private final Pattern numberPattern = Pattern.compile("\\p{Digit}");
 
     @Override
     protected Ontology[] getOntologiesToLoad() {
@@ -349,5 +353,94 @@ public class OntologyPerformanceTest extends AbstractOntologyTest{
         }
 
         logger.info("Search Avg: " + (float) totalTimeToSearch  / (float) (numIterations*numQueries) + "ms");
+    }
+
+    public List<String> getRandomWordSets(Ontology ontology, int number,int minWordLength,int maxWordLength){
+        List<String> queries1 = new ArrayList<String>() ;
+        String word ;
+        do{
+            word =  getRandomWordFromSet(ontologyManager.getOntologyMap().get(ontology).keySet());
+//            if( numberPattern.matcher(word).find() && word.length()>minWordLength && word.length()<maxWordLength){
+            if( word.length()>minWordLength && word.length()<maxWordLength){
+                queries1.add(word) ;
+            }
+        }
+        while(  queries1.size()<number ) ;
+        return queries1 ;
+    }
+
+    @Test
+    public void compareAlphaNumericComparators(){
+        long startTime , endTime ;
+        int numQueries = 100 ; // this should be a relatively standard list to sort
+        int numIterations = 10 ;
+        long numawareTime = 0 , alphanumTime = 0 ;
+        int minWordLength = 0 ;
+        int maxWordLength = 200 ;
+
+        float totalWordLength = 0 ;
+        float totalWordsThatHaveNumbers = 0 ;
+        NumberAwareStringComparator numberAwareStringComparator = new NumberAwareStringComparator();
+        AlphanumComparator<String> alphanumComparator = new AlphanumComparator<String>();
+
+        for(int i = 0 ; i < numIterations ; i++){
+
+            List<String> queries1 = getRandomWordSets(Ontology.GO_BP, numQueries,minWordLength,maxWordLength) ;
+            List<String> queries2 = new ArrayList<String>(queries1) ;
+
+            float wordLength = getAverageWordLength(queries1) ;
+            totalWordLength += wordLength ;
+            logger.debug("\nword length: "+ wordLength);
+
+            int wordsThatHaveNumbers= getWordsThatHaveNumbers(queries1) ;
+            totalWordsThatHaveNumbers += wordsThatHaveNumbers ;
+            logger.debug("\nwords that have nubmers: "+ wordsThatHaveNumbers);
+
+            startTime = System.currentTimeMillis();
+            for(String query1 : queries1){
+                for(String query2 : queries2){
+                    numberAwareStringComparator.compare(query1,query2) ;
+                }
+            }
+            endTime = System.currentTimeMillis();
+            numawareTime += endTime - startTime ;
+            logger.debug("numawaretime time " + (float) (endTime - startTime)+ " ms");
+
+            startTime = System.currentTimeMillis();
+            for(String query1 : queries1){
+                for(String query2 : queries2){
+                    alphanumComparator.compare(query1,query2) ;
+                }
+            }
+            endTime = System.currentTimeMillis();
+            alphanumTime += endTime - startTime ;
+            logger.debug("alphanum time " + (float) (endTime - startTime)   + " ms" );
+
+        }
+
+        logger.info("\navg word length" + totalWordLength / (float) numIterations + " chars");
+        logger.info("\nwords that have numbers: "+ ( totalWordsThatHaveNumbers / ((float) numIterations * (float) numQueries))  );
+        logger.info("numawaretime time " + (float) numawareTime + " ms");
+        logger.info("alphanum time " + (float) alphanumTime   + " ms");
+
+    }
+
+    private int getWordsThatHaveNumbers(List<String> queries1) {
+        int counter = 0 ;
+        for(String query: queries1){
+            if(numberPattern.matcher(query).find()){
+                ++counter ;
+            }
+        }
+        return counter ;
+    }
+
+    private float getAverageWordLength(List<String> queries1) {
+        int sum = 0 ;
+        for(String query : queries1){
+            sum += query.length();
+        }
+
+        return (float ) sum / (float) queries1.size();
     }
 }

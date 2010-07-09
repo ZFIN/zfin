@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -81,7 +82,9 @@ public abstract class AbstractOntologyTest {
 
     protected String getRandomWordFromSet(Set<String> strings) {
         String testWord ;
-        int randomLength = (int) (Math.random() * (strings.size()-1)) ;
+        Random r = new Random() ;
+        r.setSeed(System.currentTimeMillis());
+        int randomLength = (int) (r.nextDouble() * (strings.size()-1)) ;
         int counter = 0 ;
         for(Iterator<String> iterator = strings.iterator() ; iterator.hasNext() ; ){
             testWord = iterator.next() ;
