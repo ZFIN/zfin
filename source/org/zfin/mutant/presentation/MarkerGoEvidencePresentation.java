@@ -127,6 +127,9 @@ public class MarkerGoEvidencePresentation {
             case ZFIN_GENE:
                 if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-GENE-")) {
                     Marker morpholino = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                    if(morpholino==null){
+                        return "<span class=error>"+accession+" is a bad link</span>" ;
+                    }
                     return MarkerPresentation.getLink(morpholino);
                 } else if (accession.startsWith("ZDB-GENO-")) {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
