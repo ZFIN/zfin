@@ -35,8 +35,6 @@ public class OntologyPerformanceTest extends AbstractOntologyTest{
 
 
     /**
-     * Note that this test is not exactly fair as the patriciatrie and hashmap are using
-     * their only a single term.
      */
     @Test
     public void ontologyPerfomanceTest() {

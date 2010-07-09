@@ -7,12 +7,12 @@ import org.zfin.util.NumberAwareStringComparator;
 import java.util.Comparator;
 
 /**
+ * The other comparator (see fogbugz case 5820) that could be used is AlphanumComparator
  */
 public class MatchingTermComparator implements Comparator<MatchingTerm> {
 
     private String query ;
     private Comparator comparator = new NumberAwareStringComparator();
-//    private Comparator comparator = new AlphanumComparator();
 
     public MatchingTermComparator(String query){
         this.query = query ;
@@ -51,16 +51,13 @@ public class MatchingTermComparator implements Comparator<MatchingTerm> {
             return lhsCompare - rhsCompare;
         }
 
-
-//        return lhs.getTerm().getTermName().toLowerCase().compareTo(rhs.getTerm().getTermName().toLowerCase()) ;
         return comparator.compare(lhs.getTerm().getTermName().toLowerCase(),rhs.getTerm().getTermName().toLowerCase()) ;
     }
 
     protected int scoreTerm(MatchingTerm term) {
         int score = 0 ;
+        
         // for each token that hits the first
-
-
         if(!term.startsWithQuery()) score += 100 ;
         if(term.isHitAlias()) score += 10000 ;
         if(term.getTerm().isObsolete()) score += 100000 ;
