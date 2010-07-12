@@ -71,11 +71,14 @@ public class AntibodySearchController extends SimpleFormController {
         int numberOfRecords = antibodyRepository.getNumberOfAntibodies(antibodyCriteria);
         antibodySearchFormBean.setTotalRecords(numberOfRecords);
         List<Antibody> antibodies = antibodyRepository.getAntibodies(antibodyCriteria);
-        antibodySearchFormBean.setAntibodies(antibodies);
-        ModelAndView view = new ModelAndView(getSuccessView());
-        view.addAllObjects(referenceData(request, command, errors));
-        return view;
-
+        if (numberOfRecords != 1) {
+            antibodySearchFormBean.setAntibodies(antibodies);
+            ModelAndView view = new ModelAndView(getSuccessView());
+            view.addAllObjects(referenceData(request, command, errors));
+            return view;
+        } else {
+            return AntibodyDetailController.getModelAndViewForSingleAntibody(antibodies.get(0), true);
+        }
     }
 
 

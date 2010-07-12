@@ -75,10 +75,28 @@ public abstract class EntityPresentation {
         sb.append(uri);
         sb.append(zdbID);
         sb.append("\"");
-        sb.append(" name=\"");
-        if (name != null)
+        if (name != null) {
+            sb.append(" name=\"");
             sb.append(name);
-        sb.append("\">");
+            sb.append("\"");
+        }
+        sb.append(" id='" + abbreviation + "'>");
+        sb.append(abbreviation);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
+    protected static String getTomcatLink(String uri, String zdbID, String abbreviation, String name, String idName) {
+        StringBuilder sb = getTomcatHyperLinkStart();
+        sb.append(uri);
+        sb.append(zdbID);
+        sb.append("\"");
+        if (name != null) {
+            sb.append(" name=\"");
+            sb.append(name);
+            sb.append("\"");
+        }
+        sb.append(" id='" + idName + "'>");
         sb.append(abbreviation);
         sb.append("</a>");
         return sb.toString();
@@ -112,6 +130,16 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    protected static String getWebdriverLink(String uri, String zdbID, String abbreviation, String idName) {
+        StringBuilder sb = getWebdriverHyperLinkStart();
+        sb.append(uri);
+        sb.append(zdbID);
+        sb.append("\" id='"+idName+"'>");
+        sb.append(abbreviation);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
     protected static String getWebdriverUrl(String uri, String zdbID) {
         StringBuilder sb = new StringBuilder("/");
         sb.append(ZfinProperties.getWebDriver());
@@ -129,6 +157,7 @@ public abstract class EntityPresentation {
 
     /* I made this method public because it won't generally be necessary for
      * underlying entities to override this method */
+
     public static String getLinkEndTag() {
         return "</a>";
     }

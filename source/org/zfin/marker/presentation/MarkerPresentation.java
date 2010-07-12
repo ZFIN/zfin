@@ -45,7 +45,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     /**
      * Generates a Marker link using the Abbreviation, splits based on marker type because
-     * isntanceof doesn't reliably know when it's a more specific class
+     * instanceof doesn't reliably know when it's a more specific class
      *
      * @param marker Marker
      * @return html for marker link
@@ -81,7 +81,7 @@ public class MarkerPresentation extends EntityPresentation {
 
 
     public static String getMarkerLink(Marker marker) {
-        return getWebdriverLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
+        return getWebdriverLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getZdbID());
     }
 
     public static String getTranscriptLink(Transcript transcript) {
@@ -94,7 +94,7 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getTomcatLink(antibody_uri, marker.getZdbID(), getAbbreviation(marker), null);
+        return getTomcatLink(antibody_uri, marker.getZdbID(), marker.getName(), null,marker.getAbbreviation()); 
     }
 
     /**

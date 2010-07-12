@@ -57,7 +57,7 @@ EFFECTS
     <?MIVAR NAME=featrel_row_color>#FFFFFF<?/MIVAR>
 
     <?MISQL SQL="
-               select 
+               select distinct
                  mrel_mrkr_1_zdb_id,mrel_mrkr_2_zdb_id, mrel_type, m1.mrkr_name,
                  m2.mrkr_abbrev, mrkrtype_type_display, mrel_zdb_id
                 from   

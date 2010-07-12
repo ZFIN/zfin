@@ -7,7 +7,7 @@
 <div>
     <b>Alias:</b>
 <c:forEach  var="markerAlias" items="${entity.aliases}" varStatus="loop">
-    ${markerAlias.alias} <zfin:attribution entity="${markerAlias}"/><c:if test="${!loop.last}">, </c:if>
+    <span id="${markerAlias.alias}">${markerAlias.alias}</span> <zfin:attribution entity="${markerAlias}"/><c:if test="${!loop.last}">, </c:if>
 </c:forEach>
 </div>
 </c:if>

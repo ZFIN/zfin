@@ -14,7 +14,7 @@
             <b> Host Organism: </b>
         </td>
         <td>
-            ${antibody.hostSpecies}
+            <span id="host organism">${antibody.hostSpecies}</span>
         </td>
     </tr>
 
@@ -23,7 +23,7 @@
             <b> Immunogen Organism: </b>
         </td>
         <td>
-            ${antibody.immunogenSpecies}
+            <span id="immunogen organism">${antibody.immunogenSpecies}</span>
         </td>
     </tr>
 
@@ -44,7 +44,7 @@
             <b> Type: </b>
         </td>
         <td>
-            ${antibody.clonalType}
+            <span id="clonal type">${antibody.clonalType}</span>
         </td>
     </tr>
     <tr>

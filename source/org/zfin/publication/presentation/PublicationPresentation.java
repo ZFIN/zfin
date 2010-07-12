@@ -18,7 +18,7 @@ public class PublicationPresentation extends EntityPresentation {
      * @return html for Publication link
      */
     public static String getLink(Publication publication) {
-        return getWebdriverLink(uri, publication.getZdbID(), publication.getShortAuthorList());
+        return getWebdriverLink(uri, publication.getZdbID(), publication.getShortAuthorList(), publication.getZdbID());
     }
 
     public static String getLink(Publication publication, String linkContent) {

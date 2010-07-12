@@ -56,12 +56,13 @@
                     <td>
                         <c:choose>
                             <c:when test="${supplier.organization.url == null}">
-                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}">
+                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                                   id="${supplier.organization.zdbID}">
                                         ${supplier.organization.name}
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a href="${supplier.organization.url}">${supplier.organization.name}</a>
+                                <a href="${supplier.organization.url}" id="${supplier.organization.zdbID}">${supplier.organization.name}</a>
                             </c:otherwise>
                         </c:choose>
                             <%--

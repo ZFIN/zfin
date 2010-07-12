@@ -38,7 +38,8 @@ public class MarkerPresentationTest {
     @Test
     public void markerLink() {
         String link = MarkerPresentation.getLink(marker);
-	    assertTrue(link.endsWith("?MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\"><span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"));
+	    assertTrue(link.endsWith("MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\" id='ZDB-GENE-081507-1'>" +
+                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"));
 
     }
 

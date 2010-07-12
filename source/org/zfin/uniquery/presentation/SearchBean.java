@@ -61,6 +61,8 @@ public class SearchBean extends PaginationBean {
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
     public static final String WEBDRIVER_LOCATION = System.getenv("WEBDRIVER_LOC");
+    public static final String ALTERNATIVE_SEARCH_ID = "alternative-search";
+    public static final String ALIAS_TERM_ID = "alias-term";
 
     /**
      * For a given user query (and a set of indexes), search for the resulting hits.
@@ -421,8 +423,8 @@ public class SearchBean extends PaginationBean {
         Map<String, List<String[]>> aliasHits = terms.getAllAliasHits(getQueryTerm());
         String returnResults = "";
         if (aliasHits != null && !aliasHits.isEmpty()) {
-            returnResults += "<div class='related_terms'>";
-            returnResults += "<span class='alias_list_header'>Alternative search: </span>";
+            returnResults += "<div class='related_terms' id='related-terms'>";
+            returnResults += "<span class='alias_list_header' id='" + ALTERNATIVE_SEARCH_ID + "'>Alternative search: </span>";
             Vector<String> keys = new Vector<String>(aliasHits.keySet());
             Collections.sort(keys);
             Iterator aliasKeys = keys.iterator();
@@ -438,7 +440,8 @@ public class SearchBean extends PaginationBean {
                     if (separator) {
                         returnResults += " or ";
                     }
-                    returnResults += "<a title='" + matchedText + "' href=\"?query=" + newTermFiltered + "\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
+                    returnResults += "<a title='" + matchedText + "' href=\"?query=" + newTermFiltered + "\" id='" + ALIAS_TERM_ID + "'><em>" + 
+                            newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
                     separator = true;
                 }
                 returnResults += "</span>";
@@ -466,7 +469,7 @@ public class SearchBean extends PaginationBean {
             if (theMatchId.startsWith("ZDB-GENO")) {
 
                 viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
-            } else if (theMatchId.startsWith("ZDB-ANAT")) {
+            } else if (theMatchId.startsWith("ZDB-ANAT")|| theMatchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ATB")) {
                 viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;

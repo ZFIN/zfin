@@ -55,7 +55,8 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
+                                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
+                                    id="${detailedLabeling.singleFigure.zdbID}">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>

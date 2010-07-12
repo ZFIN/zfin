@@ -187,7 +187,7 @@ FILTER  section
     <?/MIVAR>
       <option value="">ALL</option>
       <?MISQL SQL="
-        select mrkr_zdb_id, mrkr_name
+        select distinct mrkr_zdb_id, mrkr_name
         from marker, record_attribution 
         where recattrib_data_zdb_id=mrkr_zdb_id
         and recattrib_source_zdb_id='$OID'

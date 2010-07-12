@@ -22,7 +22,7 @@ import java.util.List;
  * Action class that serves the anatomy search page.
  * 1) Search for a single string
  * 2) Search by developmental stage
- * 3) List all anaotmy items.
+ * 3) List all anatomy items.
  */
 public class AnatomySearchController extends AbstractCommandController {
 

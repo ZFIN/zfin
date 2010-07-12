@@ -3,9 +3,11 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.gwt.ExpressionJWebUnitTest;
 import org.zfin.gwt.GeneralSecureJWebUnitTest;
 import org.zfin.gwt.marker.AntibodyGWTEditTest;
+import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 import org.zfin.httpunittest.SmokeTest;
 
 /**
@@ -16,7 +18,9 @@ import org.zfin.httpunittest.SmokeTest;
         SmokeTest.class,
         GeneralSecureJWebUnitTest.class,
         AntibodyGWTEditTest.class,
-        ExpressionJWebUnitTest.class
+        ExpressionJWebUnitTest.class,
+        AntibodySmokeTest.class,
+        SiteSearchSmokeTest.class
 //        GOEvidenceUnitTest.class
 })
 public class SmokeTests {

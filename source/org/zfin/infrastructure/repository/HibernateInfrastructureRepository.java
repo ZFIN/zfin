@@ -608,12 +608,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return list of strings
      */
     @SuppressWarnings("unchecked")
-    public List<String> getDataAliasesWithAbbreviation(String zdbID) {
+    public List<String> getDataAliasesWithAbbreviation(String aliasName) {
         Session session = HibernateUtil.currentSession();
-        SQLQuery sqlQuery = session.createSQLQuery("select get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
-                "from data_alias where dalias_alias_lower = :id ");
+        SQLQuery sqlQuery = session.createSQLQuery("select distinct get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
+                "from data_alias, alias_group " +
+                "where dalias_alias_lower = :id and dalias_group_id = aliasgrp_pk_id " +
+                "                and aliasgrp_name != :aliasGroup ");
         sqlQuery.addScalar("abbreviation");
-        sqlQuery.setParameter("id", zdbID);
+        sqlQuery.setParameter("id", aliasName);
+        sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
         return (List<String>) sqlQuery.list();
     }
 
