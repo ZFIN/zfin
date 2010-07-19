@@ -50,11 +50,12 @@
             Iterator clickstreamIt = stream.getStream().iterator();
 
             while (clickstreamIt.hasNext()) {
-                String click = ((ClickstreamRequest) clickstreamIt.next()).toString();
+                ClickstreamRequest clickstreamRequest = ((ClickstreamRequest) clickstreamIt.next());
+                String click = clickstreamRequest.toString();
     %>
     <li><a href="http://<%= click %>"><%= click %></a></li>
     <%
             }
         }
     %>
-</table>
+</ol>
