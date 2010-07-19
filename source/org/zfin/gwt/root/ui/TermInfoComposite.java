@@ -27,7 +27,7 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
     private TermInfo currentTermInfo;
     private ErrorHandler errorElement = new SimpleErrorElement();
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
-    private final String DEFAULT_DIVIDER = "&nbsp;&nbsp;";
+    private final String DEFAULT_DIVIDER = "&nbsp;&bull;&nbsp;";
     private String divider = DEFAULT_DIVIDER;
     private boolean noWrap = true;
 
