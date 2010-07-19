@@ -108,7 +108,7 @@
 
     <?MIVAR><table width="100%" border="0" bgcolor="$highlight"><?/MIVAR>        
     <tr>
-      <td width="15%"><b>&nbsp;&nbsp;Data: </b>
+      <td width="15%"><b>&nbsp;&nbsp;Data: </b>  </td>
       <td width="85%">
         <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
       </td>
@@ -148,8 +148,10 @@
   <?MICOMMENT> *** display the phenotype block for gene or MO page <?/MICOMMENT>
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
-    <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
     <?MISQL SQL="$phmview_entity_sql order by lower(term_name);">
+    
+      <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
+      
         <?MISQL SQL="execute function get_entity_name_html('$1')">
                  <?MIVAR NAME=phmview_anatitem_html><span nowrap>$1</span><?/MIVAR>
          <?/MISQL>
