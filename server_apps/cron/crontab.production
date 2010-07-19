@@ -174,35 +174,20 @@
 # 
 #
 # Nights   When      Comments
-# SMTWT     11:45pm   Run regen functions.
+# SMTWT     11:45pm   Run regen functions. Then sequentialy run scrub and validate                                                   
+# SMTWT    after     Scan of char/varchar fields for bad stuff                                                                      
+# SMTWT    after     Validate data, daily + orphans                                                                                 
 #
-45 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/regen.sh
+45 23 * * 0-4 cd <!--|ROOT_PATH|-->/server_apps/DB_maintenance;regen.sh;scrubscan.pl;validatedata.pl -d -o <!--|DB_NAME|-->
+#
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
 #
-# Nights   When      Comments
-# SMTWT     2:20am   Scan of char/varchar fields for bad stuff
-#
-20 02 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
-#
 #
 # S         3:00am   Validate data, daily + orphans + weekly
 #
-00 03 * * 1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o -w <!--|DB_NAME|--> 
-#
-#
-#  MTWT     3:30am   Validate data, daily + orphans
-#
-30 03 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
-#
-#
-# moved to quartz as part of fogbugz 4910
-# MTWTFSaSu  4:00am   Populate DOIS with pmid only reporting thise added, daily
-#00 4 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/DOI/daily-doi-update.sh
-#
-#
-#
+00 03 * * 6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o -w <!--|DB_NAME|--> 
 #
 #
 # ========================================================================

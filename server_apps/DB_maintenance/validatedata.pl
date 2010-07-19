@@ -230,7 +230,7 @@ sub sendMail(@) {
      open MAIL, "|/usr/lib/sendmail -t";
 
      print MAIL "To: $sendToAddress\n";
-     print MAIL "Subject: $subject\n";
+     print MAIL "Subject: validatedata: $subject\n";
 
      print MAIL "$msg\n";
 

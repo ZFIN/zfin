@@ -167,6 +167,8 @@ while (my $line = <TABLESFILE>) {
 				# write tablename and rest of results to output.
 				if ($firstLineOut) {
 				    $firstLineOut = 0;
+				  print("\n############################################################################\n");
+				    print("########################### SCRUBSCAN ######################################\n\n");
 				    print("                                                                      # Rows\n");
 				    print("Table Name                  Column Name                    Test       Failed\n");
 				    print("--------------------------- ------------------------------ ---------- ------\n");
@@ -177,12 +179,12 @@ while (my $line = <TABLESFILE>) {
 		    } # end foreach test
 		} # end if not avoiding this column
 	    } # end if column name found
-	} # end while more lines in column file.
+	} # end while more lines in column file.	
 	close(COLUMNSFILE);
     } # end if found a table name
 } # end while still more input from tables file
 close (TABLESFILE);
-
+print("--------------------------- ------------------------------ ---------- ------\n\n");
 system("/bin/rm -r $tmpDir");
 
 exit 0;
