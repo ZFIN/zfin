@@ -325,7 +325,37 @@
     </target>
 
 
-    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,restart,smokeTests,test"
+    <target name="notify-deploy" if="isproduction">
+        <emailMessage message="Production is beginning the deployment cycle." email="curators@zfin.org"/>
+    </target>
+
+    <target name="notify-up" if="isproduction">
+        <emailMessage message="Production should now be available." email="curators@zfin.org"/>
+    </target>
+
+    <target name="notify-restart" if="isproduction">
+        <emailMessage message="Production is restarting and will be available momentarily." email="curators@zfin.org"/>
+    </target>
+
+
+    <macrodef name="emailMessage">
+        <attribute name="message"/>
+        <attribute name="email"/>
+        <sequential>
+            <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+                  fork="yes"
+                  classpathref="classpath">
+                <!-- subject -->
+                <arg value="@{message}"/>
+                <!-- message -->
+                <arg value="@{message}"/>
+                <!-- email -->
+                <arg value="@{email}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="deploy" depends="has-tomcat-symlink,notify-deploy,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,smokeTests,test"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="pre-deploy" depends="do,unittests-quiet,prepareDeploy,gwt,copy-to-pre-release"

@@ -87,19 +87,24 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         String dir = dirRel + "/" + "home/WEB-INF/";
         ZfinProperties.init(dir, file);
 
-        String messageText ;
-        String subjectText ;
-        System.out.println(args.length);
-        if(args.length!=2){
+        String messageText = null ;
+        String subjectText = null ;
+        String[] emailAddresses = ZfinProperties.getAdminEmailAddresses();
+        System.out.println(args.length + " argumemnts provided: " + args);
+        if(args.length<2){
             subjectText = "test email from IntegratedJavaMailSender: " + new Date();
             messageText = "javamail message of test email: " + new Date() ;
         }
-        else{
+        else
+        if(args.length>=2){
             subjectText = args[0] + " - " + new Date();
             messageText = args[1] + " - " + new Date();
+            if(args.length>2){
+                emailAddresses = args[2].split(" ");
+            }
         }
 
         MailSender sender = new IntegratedJavaMailSender();
-        sender.sendMail(subjectText, messageText , ZfinProperties.getAdminEmailAddresses());
+        sender.sendMail(subjectText, messageText , emailAddresses);
     }
 }
