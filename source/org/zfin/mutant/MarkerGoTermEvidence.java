@@ -193,12 +193,13 @@ public class MarkerGoTermEvidence {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("MarkerGoTermEvidence");
-        sb.append("{zdbID='").append(zdbID).append('\'');
-        sb.append(", marker=").append(marker);
-        sb.append(", evidenceCode=").append(evidenceCode);
-        sb.append(", flag=").append(flag);
-        sb.append(", source=").append(source);
-        sb.append(", goTerm=").append(goTerm);
+        sb.append('{');
+        sb.append("zdbID='").append(zdbID).append('\'');
+        sb.append(", marker='").append(marker.getAbbreviation()).append('\'');
+        sb.append(", evidenceCode='").append(evidenceCode.getName()).append('\'');
+        sb.append(", flag='").append( (flag!=null ? flag.name() : "null ")).append('\'');
+        sb.append(", source='").append( source.getZdbID()).append('\'');
+        sb.append(", goTerm='").append( goTerm.getTermName()).append('\'');
         sb.append(", note='").append(note).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
         sb.append(", createdWhen=").append(createdWhen);
@@ -207,10 +208,13 @@ public class MarkerGoTermEvidence {
         sb.append(", inferredFrom=");
         if(inferredFrom!=null){
             for(InferenceGroupMember inferenceGroupMember: inferredFrom){
-                sb.append(inferredFrom).append("\n");
+                sb.append(inferenceGroupMember.getInferredFrom()).append(",");
             }
+        }else{
+            sb.append("none");
         }
         sb.append('}');
         return sb.toString();
     }
+
 }
