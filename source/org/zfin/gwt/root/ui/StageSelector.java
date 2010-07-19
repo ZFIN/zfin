@@ -5,8 +5,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.gwt.root.ui.SessionSaveServiceAsync;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.util.WidgetUtil;
 

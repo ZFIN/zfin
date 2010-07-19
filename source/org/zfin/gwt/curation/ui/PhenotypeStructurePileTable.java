@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.HashMap;

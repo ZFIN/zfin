@@ -80,9 +80,7 @@ public interface InfrastructureRepository {
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
-    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person);
-
-    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName);
+    void insertUpdatesTable(String recID, String fieldName, String new_value, String comments);
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
 

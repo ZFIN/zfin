@@ -27,7 +27,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static org.zfin.repository.RepositoryFactory.*;
 

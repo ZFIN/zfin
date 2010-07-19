@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,7 +25,7 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
     protected int selectionCheckBoxColumn;
     private UncheckAllExperimentsHandler uncheckAllExperimentsHandler = null;
 
-    ZfinFlexTable(int numberOfColumns, int selectionCheckBoxColumn) {
+    public ZfinFlexTable(int numberOfColumns, int selectionCheckBoxColumn) {
         super();
         this.numberOfColumns = numberOfColumns;
         this.selectionCheckBoxColumn = selectionCheckBoxColumn;
@@ -148,7 +148,7 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
         setHeaderRow();
     }
 
-    protected void uncheckAllRecords() {
+    public void uncheckAllRecords() {
         int rowCount = getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             Widget widget = getWidget(rowIndex, selectionCheckBoxColumn);
@@ -167,7 +167,7 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
      * otherwise do nothing.
      * Also, display the toggle link as needed.
      */
-    protected void showHideClearAllLink() {
+    public void showHideClearAllLink() {
         int rowCount = getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             Widget widget = getWidget(rowIndex, selectionCheckBoxColumn);
@@ -227,7 +227,7 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
         }
     }
 
-    protected void showClearAllLink() {
+    public void showClearAllLink() {
         uncheckExperimentsTop.setVisible(true);
         uncheckExperimentsBottom.setVisible(true);
     }

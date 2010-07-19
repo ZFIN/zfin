@@ -899,7 +899,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
          * Save the checkbox status in session.
          */
         @Override
-        protected void uncheckAllRecords() {
+        public void uncheckAllRecords() {
             super.uncheckAllRecords();
             uncheckAllCheckStatusInSession();
         }

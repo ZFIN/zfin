@@ -27,7 +27,12 @@ public class NumberAwareStringComparatorDTO implements Comparator<String> {
         if (termName == null)
             return null;
 
-        StringBuilder builder = new StringBuilder(termName.length() + 10);
+        // not in the jme emulation library
+        // a patch can be found here: http://code.google.com/p/google-web-toolkit/source/browse/releases/1.5/user/super/com/google/gwt/emul/java/lang/StringBuilder.java?r=2940
+        // from here: http://sinnema313.wordpress.com/2008/11/16/performance-tuning-a-gwt-application/
+        // and here: http://development.lombardi.com/?p=1073 (uses gwt2 stringbuilder)
+        // string += may be just as fast
+        String builder = new String();
         char[] characters = termName.toCharArray();
         boolean lastCharacterIsNumeral = false;
         StringBuilder numeralBuffer = new StringBuilder(4);
@@ -42,21 +47,21 @@ public class NumberAwareStringComparatorDTO implements Comparator<String> {
                     // reset the number string buffer
                     numeralBuffer = new StringBuilder(4);
                 }
-                builder.append(character);
+                builder += character;
                 lastCharacterIsNumeral = false;
             }
         }
         if(lastCharacterIsNumeral){
             addPaddedNumeral(builder, numeralBuffer);
         }
-        return builder.toString();
+        return builder;
 
     }
 
-    private static void addPaddedNumeral(StringBuilder builder, StringBuilder numeralBuffer) {
+    private static void addPaddedNumeral(String builder, StringBuilder numeralBuffer) {
         int numberOfZerosToPad = numberOfDigits - numeralBuffer.length();
         for (int index = 0; index < numberOfZerosToPad; index++)
-            builder.append(0);
-        builder.append(numeralBuffer);
+            builder += 0;
+        builder += numeralBuffer;
     }
 }

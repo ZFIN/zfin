@@ -48,7 +48,7 @@ public class IntegerListBox extends AbstractListBox<Integer> {
         }
     }
 
-    public void setIndexForText(Integer value) {
+    public int setIndexForText(Integer value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
@@ -57,13 +57,14 @@ public class IntegerListBox extends AbstractListBox<Integer> {
                             (value == null && (getItemText(i) == null || getItemText(i).equals(EMPTY_CHOICE)))
                     ) {
                 setItemSelected(i, true);
-                return;
+                return 1;
             }
         }
+        return -1 ;
     }
 
     @Override
-    public void setIndexForValue(Integer value) {
+    public int setIndexForValue(Integer value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
@@ -72,9 +73,10 @@ public class IntegerListBox extends AbstractListBox<Integer> {
                             (value == null && (getValue(i).equals(EMPTY_CHOICE) || getValue(i).equals(NONE) || getValue(i) == null))
                     ) {
                 setItemSelected(i, true);
-                return;
+                return i ;
             }
         }
+        return -1 ;
     }
 
     public boolean isDirty(Integer value) {

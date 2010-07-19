@@ -184,7 +184,7 @@ public class GoEvidenceTest {
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);
 
         try {
-            goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+            goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
             System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
         } catch (DuplicateEntryException e) {
             fail("Should have allowed this as it was not duplicate: " + e.toString());
@@ -215,7 +215,7 @@ public class GoEvidenceTest {
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
         try {
-            markerRPCService.createMarkerGoTermEvidenceDTO(goEvidenceDTO) ;
+            markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
             fail("Should not allow a duplicate alternate key entry") ;
         } catch (DuplicateEntryException e) {
             HibernateUtil.rollbackTransaction();

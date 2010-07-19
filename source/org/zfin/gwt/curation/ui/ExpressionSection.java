@@ -1,6 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.AbstractFigureStageDTO;
+import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
 
 import java.util.List;
 import java.util.Set;

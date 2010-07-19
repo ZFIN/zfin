@@ -93,12 +93,12 @@
         <many-to-one name="goTerm" column="mrkrgoev_term_zdb_id" not-null="true"/>
         <property name="note" column="mrkrgoev_notes" not-null="false"/>
         <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode"
-                     not-null="false"/>
+                     not-null="true"/>
 
         <property name="createdBy" column="mrkrgoev_contributed_by" not-null="false"/>
-        <property name="createdWhen" column="mrkrgoev_date_entered" not-null="false"/>
+        <property name="createdWhen" column="mrkrgoev_date_entered" not-null="true"/>
         <property name="modifiedBy" column="mrkrgoev_modified_by" not-null="false"/>
-        <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="false"/>
+        <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="true"/>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
 

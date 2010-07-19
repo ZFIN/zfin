@@ -31,7 +31,7 @@ public class PublicationDisplayPanel extends VerticalPanel {
 
         zdbIDLink.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                Window.open("http://zfin.org/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=" + publicationAbstractDTO.getZdbID(), "", "");
+                Window.open("/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=" + publicationAbstractDTO.getZdbID(), "", "");
             }
         });
 

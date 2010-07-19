@@ -48,7 +48,7 @@ public class StringListBox extends AbstractListBox<String>{
         }
     }
 
-    public void setIndexForText(String value) {
+    public int setIndexForText(String value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
@@ -57,13 +57,14 @@ public class StringListBox extends AbstractListBox<String>{
                             (value == null && (getItemText(i).equals(EMPTY_CHOICE) || getItemText(i).equals(NONE) || getItemText(i) == null))
                     ) {
                 setItemSelected(i, true);
-                return;
+                return i;
             }
         }
+        return -1 ;
     }
 
     @Override
-    public void setIndexForValue(String value) {
+    public int setIndexForValue(String value) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (
@@ -72,13 +73,14 @@ public class StringListBox extends AbstractListBox<String>{
                             (value == null && (getValue(i).equals(EMPTY_CHOICE) || getValue(i).equals(NONE) || getValue(i) == null))
                     ) {
                 setItemSelected(i, true);
-                return;
+                return i;
             }
         }
+        return -1 ;
     }
 
     public boolean isDirty(String value) {
-        if(isFieldEqual(value)){
+        if(getItemCount()==0 || isFieldEqual(value)){
             setStyleName(CLEAN_STYLE);
             return false ;
         }

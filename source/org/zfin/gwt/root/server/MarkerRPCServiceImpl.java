@@ -121,11 +121,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
     public void addAttribution(String markerZdbID, String pubZdbID) {
         HibernateUtil.createTransaction();
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
-        if (Person.getCurrentSecurityUser() == null) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
-        } else {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "Added direct attribution", Person.getCurrentSecurityUser());
-        }
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -136,11 +132,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
         HibernateUtil.createTransaction();
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(markerZdbID, pubZdbID);
-        if (Person.getCurrentSecurityUser() == null) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
-        } else {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "removed", "Removed direct attribution", Person.getCurrentSecurityUser());
-        }
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
         return null;
     }
@@ -1042,11 +1034,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
         HibernateUtil.createTransaction();
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
-        if (Person.getCurrentSecurityUser() == null) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
-        } else {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "Added direct attribution", Person.getCurrentSecurityUser());
-        }
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -1062,11 +1050,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
         HibernateUtil.createTransaction();
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(featureZdbID, pubZdbID);
-        if (Person.getCurrentSecurityUser() == null) {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
-        } else {
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution", Person.getCurrentSecurityUser());
-        }
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 

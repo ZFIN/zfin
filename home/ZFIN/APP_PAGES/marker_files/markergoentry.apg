@@ -1,9 +1,6 @@
 <?MICOMMENT>
   OID:  mrkr_zdb_id
-  
- optional:
-  go_term:  passed in from the markergovalidate.apg after go id validation.
-  
+ 
 <?/MICOMMENT>
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
@@ -43,26 +40,6 @@
   <title>ZFIN GO for <?MIVAR>$mrkr_sym<?/MIVAR></title>
 </head>
 
-<SCRIPT>
-
- function edit_rec(mrkrgoevid) {
-     helpwin = open("/action/marker/go-edit?zdbID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
- }
-
- function view_notes(mrkrgoevid) {
-     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gonotes.apg&OID="+mrkrgoevid,"helpwindow","scrollbars=yes,height=200,width=300,resizable=yes");
- }
-
- function delete_rec(mrkrgoevid) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+mrkrgoevid+'&attr=delall'); 
- }
-
-function new_GO(mrkrzdbid){
-     helpwin = open("/action/marker/go-edit?zdbID=ADD-MRKRGOEV&geneZdbID="+mrkrzdbid+"&state=ADD","helpwindow","scrollbars=yes,height=650,width=900,resizable=yes");
-}
- 
-
-</SCRIPT>  
 
 <?MIBLOCK COND="$(XST,$OID)">
   <?MIVAR>
@@ -70,219 +47,47 @@ function new_GO(mrkrzdbid){
   <INPUT TYPE="hidden" name="MIval" value="aa-markergoentry.apg">
   <center><b>GO annotations for <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
   <p>
-  <?MIVAR COND="$(NXST,$inf_db)" NAME=$inf_db><?/MIVAR>
-  <?MIVAR COND="$(NXST,$evidence_code)" NAME=$evidence_code><?/MIVAR>
-  <?MIVAR COND="$(NXST,$go_term)" NAME=$go_term><?/MIVAR>
-  <?MIVAR COND="$(NXST,$pub_id)" NAME=$pub_id><?/MIVAR>
-  <?MIVAR COND="$(NXST,$notes)" NAME=$notes><?/MIVAR>
-  <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
-  <?MIBLOCK COND="$(EC,$notes,)">
-  <?MISQL COND="$(XST,$clone_note_id)" NAME=$clone_note_id SQL="
-  select mgte.mrkrgoev_notes from 
-  marker_go_term_evidence mgte
-  where mgte.mrkrgoev_zdb_id='$clone_note_id'
-  ">
-  <?MIVAR NAME=$notes>$1<?/MIVAR>
-  <?/MISQL>
-  <?/MIBLOCK>
-  <?MIVAR COND="$(NXST,$clone_note_id)" NAME=$clone_note_id><?/MIVAR>
 
-  <p>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <?MIVAR>
-<a href="javascript:;" onClick=new_GO('$OID') >[Add New GO for <i>$mrkr_sym</i>]</a>
-  <?/MIVAR>
-
-  <p>
   <hr><!--------------------  the second half is display section --------------------------------->
 
-
-
-  <?MIVAR NAME=qualifier>false<?/MIVAR>
-  
-  <?MISQL SQL="
-        select fdb_db_query from foreign_db where fdb_db_name='QuickGO';">
-   <?MIVAR NAME=$dbquery>$1<?/MIVAR>
-  <?/MISQL>
-
- <!--determining if there is atleast one term with a qualifier-->
-
-
-  <?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_gflag_name from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID'">
-   <?MIVAR NAME=evid>$1<?/MIVAR>
-   <?MIBLOCK COND="$(NE,$2,)">
-    <?MIVAR NAME=qualifier>true<?/MIVAR>
-   <?/MIBLOCK>
-  <?/MISQL>
-
-<?/MISQL>
-
-
-<!--creating table to display added GO annotations-->
-
-  <table border = 0 cellspacing = 0 width = 100% cellpadding = 0>
-  <tr bgcolor=#cccccc height=28><td><b>Ontology</b>
-  <?MIBLOCK COND="$(EC,$qualifier,true)">
-    <td><b>Qualifier</b>
-  <?/MIBLOCK>
-  <!--<td width=10%><b>Is NOT</b>-->
-  <td nowrap ><b>GO Term</b>
-  <td><b>Evidence</b></td>
-  <td nowrap ><b>Inferred From</b>
-  <td><b>Reference(s)</b>
-  <td><b>Notes</b>
-  <td></td> <!--For Edit button-->
-  <td></td> <!--For Delete button-->
-  </tr>
-  <?MIVAR name=$row_color>$white<?/MIVAR>
-
-  <?MIVAR NAME=$lastonto><?/MIVAR>
-  <?MIVAR NAME=$lastgoterm><?/MIVAR>
-  <?MIVAR NAME=lastevidence><?/MIVAR>
-  <?MIVAR NAME=$lastpub><?/MIVAR>
-  <?MIVAR NAME=infvector><?/MIVAR>
-
-
-<?MISQL SQL="
-       select gont_ontology_name,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,mrkrgoev_term_zdb_id,
-	      mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_notes,mrkrgoev_gflag_name
-	 from term g, marker_go_term_evidence e, go_ontology o
-	where mrkrgoev_mrkr_zdb_id='$OID' 
-	  and mrkrgoev_term_zdb_id=term_zdb_id
-	  and g.term_ontology=o.gont_ontology_internal_name 
-        order by 4,2,3 ">
-
-   <?MIVAR NAME=$ontology>$1<?/MIVAR>
-   <?MIVAR NAME=$goterm>$2<?/MIVAR>
-   <?MIVAR NAME=$evidence>$(TRIM,$3)<?/MIVAR>
-   <?MIVAR NAME=$goid>$5<?/MIVAR>
-   <?MIVAR NAME=$gozdbid>$6<?/MIVAR>
-   <?MIVAR NAME=$markergoevid>$7<?/MIVAR>
-   <?MIVAR NAME=$sourcezdbid>$8<?/MIVAR>
-   <?MIVAR NAME=$markergonotes>$9<?/MIVAR>
-   <?MIVAR NAME=$flag>$10<?/MIVAR>
-
-  <?MIVAR NAME=isnot>f<?/MIVAR>
-  <?MIVAR NAME=contribs>f<?/MIVAR>
-
- 
-  <?MIVAR COND="$(EC,$flag,not)" NAME=$isnot>t<?/MIVAR>
-  <?MIVAR COND="$(EC,$flag,contributes to)" NAME=$contribs>t<?/MIVAR>
-
-
-  <?MIBLOCK COND="$(EC,$isnot,t)">
-  	<?MIVAR NAME=not>NOT<?/MIVAR>
-  <?MIELSE>
-  	<?MIVAR NAME=not><?/MIVAR>
-  <?/MIBLOCK>
-
-  <!--now displaying annotations-->
-
-  <?MIBLOCK COND="$(AND,$(NC,$ontology,$lastonto),$(NC,$lastonto,))">
-      <tr bgcolor=#aaaaaa>
-      <?MIVAR COND="$(EC,$qualifier,true)"><td colspan=9><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
-      <?MIVAR COND="$(NC,$qualifier,true)"><td colspan=8><img src="/images/transp.gif" width="1" height="1"></td><?/MIVAR>
-      </tr>
-  <?/MIBLOCK>
-
-  <tr height=28 bgcolor=<?MIVAR>$row_color<?/MIVAR>>
-
 <?MIVAR>
-     <td nowrap>$(IF,$(NC,$ontology,$lastonto),$ontology)</td> 
-     <?MIBLOCK COND="$(EC,$qualifier,true)">
-       <?MIBLOCK COND="$(EC,$contribs,t)">
-        	<td nowrap><i><?MIVAR><i>$not</i><?/MIVAR> Contributes to<i></td>
-       <?MIELSE>
-        	<td nowrap><i><?MIVAR><i>$not</i><?/MIVAR></td>
-       <?/MIBLOCK>
-     <?/MIBLOCK>
-     <?MIVAR><td><A HREF=$dbquery$goid>$goterm</A></TD><?/MIVAR>
+<script type="text/javascript">
+    var MarkerProperties= {
+        state: "go-evidence-display",
+        zdbID : "$OID"
+    } 
+</script>
+<?/MIVAR>
 
-     <TD><A HREF="http://www.geneontology.org/GO.evidence.shtml#$(LOWER,$evidence)">$evidence</A></TD>
-     <?MIVAR NAME=currinfs><?/MIVAR>
-     <?MIVAR NAME=inferid><?/MIVAR>
+<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
+<script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
-     <?MIVAR NAME=infername><?/MIVAR>
-
-     <!--getting inferences for a particular annotation-->
-
-     <?MIVAR NAME=$infs><?/MIVAR>
-     <?MISQL SQL="select infgrmem_inferred_from from inference_group_member where infgrmem_mrkrgoev_zdb_id='$markergoevid'"><?/MISQL>
-     <?MIVAR NAME=$infcount>$MI_ROWCOUNT<?/MIVAR>
-     <?MISQL SQL="select infgrmem_inferred_from from inference_group_member where infgrmem_mrkrgoev_zdb_id='$markergoevid'">
-	 <?MIVAR NAME=$infername>$1<?/MIVAR>
-
-         <?MIVAR NAME=$colon>:<?/MIVAR>
-
-         <?MIVAR NAME=$comma>,<?/MIVAR>
-         <?MIVAR NAME=$pos>$(POSITION,$infername,$colon)<?/MIVAR>
-         <?MIVAR NAME=$posn>$(-,$pos,1)<?/MIVAR>
-         <?MIVAR NAME=$dbase>$(SUBSTR,$infername,1,$posn)<?/MIVAR>
-         <?MIVAR NAME=$currinflength>$(STRLEN,$infername)<?/MIVAR>
-         <?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
- 	 <?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
-         <?MIBLOCK COND="$(EC,$dbase,ZFIN)">
-	    <?MISQL COND="$(>,$(POSITION,$accID,GENO),0)" SQL="
-		select geno_display_name
-		  from genotype
-		 where geno_zdb_id = '$accID'">
-	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
-	    <?/MISQL>
- 	    <?MISQL COND="$(=,$(POSITION,$accID,GENO),0)" 
-		   SQL="
-		select mrkr_abbrev
-		  from marker
-		 where mrkr_zdb_id = '$accID'">
-	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
-	    <?/MISQL>
-            <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
-            
-         <?MIELSE COND="$(EC,$dbase,GO)">
-              <?MISQL SQL="select fdb_db_query from foreign_db  where fdb_db_name ='QuickGO';"><?/MISQL>
-              <?MIVAR NAME=query>$1<?/MIVAR>
-              <?MIVAR NAME=GO_Prefix>GO:<?/MIVAR>
-              <?MIVAR NAME=$link>$query$GO_Prefix$accID<?/MIVAR>
-              <?MISQL SQL="select t.term_name from term t where t.term_ont_id = '$GO_Prefix$accID';"><?/MISQL>
-              <?MIVAR NAME=linkDisplay>$1<?/MIVAR>
-              <?MIVAR NAME=$currinflink><a href=$link>$linkDisplay</a><?/MIVAR>
-          <?MIELSE>
-	      <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$dbase'"><?/MISQL>
-              <?MIVAR NAME=query>$1<?/MIVAR>
-              <?MIVAR NAME=$link>$query$accID<?/MIVAR>
-              <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
-          <?/MIBLOCK>
-         
-         <?MIVAR NAME=infs>$(IF,$(>,$infcount,1),$currinflink<br>$infs,$(TRIM,$infs)$currinflink)<?/MIVAR>
-    <?/MISQL>
-    <td nowrap><?MIVAR>$infs<?/MIVAR></td>
-
-
-    <td nowrap><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$sourcezdbid<?/MIVAR></a></td>
-    <?MIBLOCK COND="$(NC,$markergonotes,)">
-      <?MIVAR><td><input type = button value = "Notes" name = notes onClick=view_notes('$markergoevid')></td><?/MIVAR>
-    <?MIELSE>
-      <td></td>
-    <?/MIBLOCK>
-
-    <td><input type = button value = "Edit" name = edit onClick=edit_rec('$markergoevid')></td>
-    <?MIVAR NAME=$sourcezdbid>$(TRIM,$sourcezdbid)<?/MIVAR>
-    <!--Add evidence code as a parameter here-->
-    <td><input type = button value = "Delete" name = edit onClick=delete_rec('$markergoevid')></td></tr>
-
-
-    <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
-  <?/MIVAR>
-
-  $(SETVAR,$lastonto,$ontology)
-  $(SETVAR,$lastgoterm,$goterm)
-  $(SETVAR,$lastevidence,$evidence)
-  $(SETVAR,$lastpub,$sourcezdbid)
-<?/MISQL>
+<table cellpadding="10">
+    <tr align="left">
+        <td colspan="1">
+            <div id="go-add-link"></div>
+            <div id="go-evidence-add"></div>
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">
+            <div id="viewName"></div>
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">
+            <div id="go-evidence-display"></div>
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">
+            <div id="directAttributionName"></div>
+        </td>
+    </tr>
 </table>
-<hr>
-<p>
 
-</form>
+
 <?/MIVAR>
 <?/MIBLOCK>
 <?/MIBLOCK>

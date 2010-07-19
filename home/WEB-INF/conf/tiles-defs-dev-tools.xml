@@ -173,16 +173,6 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_edit.jsp"/>
     </definition>
 
-    <definition name="go-add" extends="dev_layout">
-        <put name="staticTitle" value="GWT GO Add"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_add.jsp"/>
-    </definition>
-
-    <definition name="go-clone" extends="dev_layout">
-        <put name="staticTitle" value="GWT GO Clone"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_clone.jsp"/>
-    </definition>
-
     <definition name="curation-base" extends="dev_layout">
         <put name="staticTitle" value=""/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/curation_base.jsp"/>

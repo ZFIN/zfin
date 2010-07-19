@@ -8,9 +8,9 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
-import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -68,6 +68,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         criteria.add(Restrictions.eq("zdbID", goEvidenceDTO.getZdbID()));
         criteria.setMaxResults(1);
         MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) criteria.uniqueResult();
+        String oldValueString = markerGoTermEvidence.toString();
 
         HibernateUtil.createTransaction();
         // set modified by
@@ -123,6 +124,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             mutantRepository.removeInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
         }
 
+        infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", oldValueString , markerGoTermEvidence.toString(), "Updated MarkerGoTermEvidence record");
 
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656
@@ -132,6 +134,13 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
+
+        try {
+            PublicationService.addRecentPublications(getServletContext(),publication,PublicationSessionKey.GOCURATION) ;
+        } catch (Exception e) {
+            logger.debug("Unable to add a recent pub, should only be a problem in test mode",e);
+        }
+
         // do a safe return this way
         return getMarkerGoTermEvidenceDTO(goEvidenceDTO.getZdbID());
     }
@@ -293,7 +302,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     }
 
     @Override
-    public GoEvidenceDTO createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
+    public GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
 
         HibernateUtil.createTransaction();
         // set modified by
@@ -330,6 +339,16 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         markerGoTermEvidence.setFlag(goEvidenceDTO.getFlag());
         markerGoTermEvidence.setNote(goEvidenceDTO.getNote());
 
+
+        if (person != null) {
+            markerGoTermEvidence.setModifiedBy(person.getName());
+            markerGoTermEvidence.setCreatedBy(person.getName());
+        }
+
+        Date rightNow = new Date() ;
+        markerGoTermEvidence.setModifiedWhen(rightNow);
+        markerGoTermEvidence.setCreatedWhen(rightNow);
+
         // implies that the ID is set here
         HibernateUtil.currentSession().save(markerGoTermEvidence);
 
@@ -339,13 +358,8 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             mutantRepository.addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
         }
 
-        if (person != null) {
-            markerGoTermEvidence.setModifiedBy(person.getName());
-            markerGoTermEvidence.setCreatedBy(person.getName());
-            infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidence.toString(), "Created new MarkerGoTermEvidence record", person);
-        }
-        markerGoTermEvidence.setModifiedWhen(new Date());
-        markerGoTermEvidence.setCreatedWhen(new Date());
+        infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidence.toString(), "Created new MarkerGoTermEvidence record");
+
 
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656
@@ -356,12 +370,17 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
 
         HibernateUtil.flushAndCommitCurrentSession();
+
+        try{
+            PublicationService.addRecentPublications(getServletContext(),publication,PublicationSessionKey.GOCURATION) ;
+        } catch (Exception e) {
+            logger.debug("Unable to add a recent pub, should only be a problem in test mode",e);
+        }
         // do a safe return this way
         return getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID());
     }
 
     /**
-     * From do-go-edit.apg:
      * delete from zdb_active_data where zactvd_zdb_id='$OID';
      * execute procedure p_drop_go_unknown_attribution('$mrkrzdbid'); # NOT FOUND
      * insert into updates (submitter_id,submitter_name, rec_id, old_value,field_name, comments,when)
@@ -373,11 +392,8 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     public void deleteMarkerGoTermEvidence(String zdbID) {
         HibernateUtil.createTransaction();
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
-        if (Person.getCurrentSecurityUser() == null) {
-            infrastructureRepository.insertUpdatesTable(zdbID, "annotation", "delete this annotation via GO gwt", "marker go evidence annotation", "");
-        } else {
-            infrastructureRepository.insertUpdatesTable(zdbID, "delete this annotation", null, "delete this annotation via GO gwt", Person.getCurrentSecurityUser());
-        }
+        Person person = Person.getCurrentSecurityUser();
+        infrastructureRepository.insertUpdatesTable(zdbID, "MarkerGoTermEvidence",zdbID, "",  "delete this annotation via GO gwt");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -412,6 +428,26 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
                         " order by ev.marker.abbreviation , ev.goTerm.termName " +
                         "")
                         .setString("pubZdbID", publicationID)
+                        .list();
+
+        List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();
+        for (MarkerGoTermEvidence markerGoTermEvidence : evidences) {
+            goEvidenceDTOs.add(DTOConversionService.convertToGoEvidenceDTO(markerGoTermEvidence));
+        }
+
+        return goEvidenceDTOs;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<GoEvidenceDTO> getMarkerGoTermEvidencesForMarker(String markerID) {
+        HibernateUtil.currentSession();
+        List<MarkerGoTermEvidence> evidences = (List<MarkerGoTermEvidence>)
+                HibernateUtil.currentSession().createQuery(" " +
+                        " from MarkerGoTermEvidence ev where ev.marker.zdbID = :markerZdbID " +
+                        " order by ev.goTerm.ontology , marker.abbreviation , ev.goTerm.termName " +
+                        "")
+                        .setString("markerZdbID", markerID)
                         .list();
 
         List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();

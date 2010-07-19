@@ -53,7 +53,6 @@ public class ZfinActionServlet extends DispatcherServlet {
         config.getServletContext().setAttribute("webdriverURL", ZfinProperties.getWebDriver());
         initDatabase();
         startupTests();
-        initOntologies() ;
         initBlast();
     }
 

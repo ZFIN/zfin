@@ -5,20 +5,20 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Entry Point for GO curation tab module.
@@ -26,10 +26,10 @@ import java.util.TreeMap;
 public class GoCurationModule extends ConstructionZoneAdapater {
 
     private AttributionModule attributionModule = new AttributionModule();
-    private GoViewTable goViewTable = new GoViewTable();
+    private GoCurationViewTable goViewTable = new GoCurationViewTable();
     public static final String GO_EVIDENCE_DISPLAY = "go-evidence-display";
     public static final String GO_EVIDENCE_DISPLAY_FILTER = "go-evidence-display-filter";
-    private GoAddBox goAddBox = new GoAddBox(goViewTable);
+    private GoCurationAddBox goAddBox = new GoCurationAddBox(goViewTable);
     public static final String GO_EVIDENCE_ADD = "go-evidence-add";
     public static final String GO_ADD_LINK = "go-add-link";
 
@@ -61,7 +61,7 @@ public class GoCurationModule extends ConstructionZoneAdapater {
         openBox(false);
     }
 
-    private void addInternalListeners(HandlesError handlesError) {
+    protected void addInternalListeners(HandlesError handlesError) {
         goAddBox.addChangeListener(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
@@ -109,7 +109,7 @@ public class GoCurationModule extends ConstructionZoneAdapater {
 
         goAddBox.setDTO(goEvidenceDTO);
         attributionModule.setDTO(goEvidenceDTO);
-        goViewTable.setPublicationZdbID(publicationID);
+        goViewTable.setZdbID(publicationID);
         updateGeneFilter() ;
     }
 

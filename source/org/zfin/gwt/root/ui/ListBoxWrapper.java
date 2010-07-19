@@ -1,10 +1,11 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import com.google.gwt.user.client.ui.ListBox;
 
 import java.util.List;
 
 /**
+// * @deprecated Use StringListBox or IntegerListBox instead.
  */
 public class ListBoxWrapper extends ListBox {
 

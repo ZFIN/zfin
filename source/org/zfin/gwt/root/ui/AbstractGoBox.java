@@ -1,13 +1,8 @@
 package org.zfin.gwt.root.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
@@ -19,19 +14,30 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This code header houses 4 things
+ * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
+ * This code header houses 4 things:
  * 1 - qualifier widget
  * 2 - lookup name box
  * 4 - pubs
  * 3 - evidence codes
  */
-public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvidenceDTO> {
+public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
+
+    // http://tntluoma.com/sidebars/codes/
+    protected HorizontalPanel buttonPanel = new HorizontalPanel();
+    protected Button goTermButton = new Button("<<--Use&nbsp;GO&nbsp;Term");
+    protected HorizontalPanel mainPanel = new HorizontalPanel();
+    protected HorizontalPanel zdbIDPanel = new HorizontalPanel();
+    protected VerticalPanel eastPanel = new VerticalPanel();
+    protected HorizontalPanel northEastPanel = new HorizontalPanel();
 
     // GUI name/type elements
     protected FlexTable table;
     protected final HTML geneHTML = new HTML();
     protected final StringListBox evidenceFlagBox = new StringListBox(false);
-    protected final StringTextBox pubLabel = new StringTextBox();
+    protected final HorizontalPanel pubPanel = new HorizontalPanel();
+    protected final Label pubLabel = new HTML("<b>Publication:</b>");
+    protected final StringTextBox pubText = new StringTextBox();
     protected final StringListBox evidenceCodeBox = new StringListBox(false);
     protected final RevertibleTextArea noteBox = new RevertibleTextArea();
     protected AbstractInferenceListBox inferenceListBox = new InferenceListBox(null);
@@ -42,24 +48,166 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
     // listeners
     protected List<RelatedEntityChangeListener<GoEvidenceDTO>> goTermChangeListeners = new ArrayList<RelatedEntityChangeListener<GoEvidenceDTO>>();
 
-    @Override
-    protected void setValues() {
+    // data
+    protected AbstractGoViewTable parent;
+    protected int tabIndex ;
 
-        evidenceCodeBox.clear();
-        for (GoEvidenceCodeEnum evidenceCodeEnum : GoEvidenceCodeEnum.values()) {
-            evidenceCodeBox.addItem(evidenceCodeEnum.name());
-        }
+    protected void initGUI() {
+
+        inferenceListBox = null;
+        inferenceListBox = new GoCurationInferenceListBox();
+
+        table = new GoEditTable(getTabIndex());
+
+        ((GoEditTable) table).setQualifiers(evidenceFlagBox);
+        ((GoEditTable) table).setEvidence(evidenceCodeBox);
+        ((GoEditTable) table).setNote(noteBox);
+        ((GoEditTable) table).setInference(inferenceListBox);
+        ((GoEditTable) table).setButtonPanel(buttonPanel);
+        ((GoEditTable) table).setErrorLabel(errorLabel);
+
+        goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
+        goTermBox.setOntology(OntologyDTO.GO);
+        goTermBox.setWildCard(false);
+        goTermBox.setSuggestBoxWidth(60);
+        goTermBox.setShowTermDetail(false);
+        goTermBox.setTermInfoTable(termInfoComposite);
+        goTermBox.setSubmitOnEnter(true);
+        goTermBox.setUseIdAsValue(true);
+        goTermBox.setLimit(30);
+        goTermBox.initGui();
+
+        ((GoEditTable) table).setGoLookup(goTermBox);
+
+        pubText.setEnabled(false);
+
+        northEastPanel.add(goTermButton);
+        zdbIDPanel.add(new HTML("<b style=\"font-size: small;\">ZdbID: </b>"));
+        zdbIDPanel.add(zdbIDHTML);
+        northEastPanel.add(zdbIDPanel);
+        eastPanel.add(northEastPanel);
+        ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
+        scrollPanel.setAlwaysShowScrollBars(false);
+        scrollPanel.setSize("500px","300px");
+        eastPanel.add(scrollPanel);
+        eastPanel.setWidth("500px");
+
+        mainPanel.add(table);
+        mainPanel.add(eastPanel);
+        panel.add(mainPanel);
+        pubPanel.setVisible(false);
+        pubPanel.add(pubLabel);
+        pubPanel.add(pubText);
+        panel.add(pubPanel);
+
+        buttonPanel.add(saveButton);
+        buttonPanel.add(revertButton);
+
+        panel.setStyleName("gwt-editbox");
+        panel.add(new HTML("<br>")); // spacer
+
+        errorLabel.setStyleName("error");
+        saveButton.setText("Save");
+        revertButton.setText("Cancel");
+        zdbIDHTML.setHTML("");
+        termInfoComposite.setWidth("400px");
     }
 
+    @Override
+    protected void revertGUI() {
+
+        if (dto.getMarkerDTO() != null) {
+            geneHTML.setHTML("<a class='external' href='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + dto.getMarkerDTO().getZdbID() + "'>" +
+                    dto.getMarkerDTO().getName() + "</a>");
+        }
+        if (dto.getZdbID() == null || dto.getZdbID().equals("null")) {
+            zdbIDHTML.setHTML("<font color=red>Not Created</font>");
+        } else {
+            zdbIDHTML.setHTML("<div style=\"font-size: small;\">" + dto.getZdbID() + "</font>");
+
+        }
+        if (dto.getGoTerm() != null) {
+            nameBox.setText(dto.getGoTerm().getName());
+        }
+        if (dto.getEvidenceCode() != null) {
+            evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
+        }
+        else{
+            evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
+        }
+
+
+        evidenceFlagBox.clear();
+        evidenceFlagBox.addItem("NONE", "null");
+        // contributes to only for molecular function
+        if (dto.getGoTerm() != null) {
+            if (dto.getGoTerm().getOntology().equals(OntologyDTO.GO_MF)) {
+                evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
+            }
+        }
+        evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
+
+        if (dto.getFlag() == null) {
+            evidenceFlagBox.setItemSelected(0, true);
+        } else {
+            evidenceFlagBox.setIndexForText(dto.getFlag().toString());
+        }
+        pubText.setText(dto.getPublicationZdbID());
+        noteBox.setText(dto.getNote());
+        inferenceListBox.setDTO(dto);
+        if (dto.getGoTerm() != null) {
+            goTermBox.setText(dto.getGoTerm().getName());
+        }
+
+
+        handleDirty();
+
+        goTermBox.setText("");
+        evidenceFlagBox.setSelectedIndex(0);
+        termInfoComposite.clear();
+    }
+
+    @Override
     protected void addInternalListeners(final HandlesError handlesError) {
-        super.addInternalListeners(this);
+        super.addInternalListeners(handlesError);
+
+
+        // TODO: maybe this should go into revertGUI
+        revertButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                parent.hideNewGoRow();
+            }
+        });
+
+        goTermButton.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
+                if(termInfo!=null){
+                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(),new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value",handlesError) {
+                        @Override
+                        public void onSuccess(TermDTO result) {
+                            temporaryGoTermDTO = result;
+                            GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
+                            goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
+                            fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
+                            goTermBox.setText(result.getName());
+                            handleDirty();
+                        }
+                    });
+                }
+                else{
+                    setError("Term details box must be empty.");
+                }
+            }
+        });
 
 
         goTermBox.setHighlightAction(new HighlightAction() {
             @Override
             public void onHighlight(String termID) {
                 if(false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
-//                    fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(createDTOFromGUI()));
                     LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
                 }
             }
@@ -72,7 +220,6 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
                 LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
             }
         });
-
 
         inferenceListBox.addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
@@ -149,121 +296,39 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
         });
     }
 
-    protected void initGUI() {
+    @Override
+    protected void setValues() {
+        if (dto == null) return ;
 
-        int rowCount = 0;
-//        table = new Grid(8,2) ;
-        table = new FlexTable();
-        table.setHTML(rowCount, 0, "<b>GENE:</b>");
-        table.setWidget(rowCount, 1, geneHTML);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b>Qualifiers:</b>");
-        table.setWidget(rowCount, 1, evidenceFlagBox);
-
-        ++rowCount;
-        goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
-        goTermBox.setOntology(OntologyDTO.GO);
-        goTermBox.setWildCard(false);
-        goTermBox.setSuggestBoxWidth(60);
-        goTermBox.setShowTermDetail(false);
-        goTermBox.setTermInfoTable(termInfoComposite);
-        goTermBox.setSubmitOnEnter(true);
-        goTermBox.setUseIdAsValue(true);
-        goTermBox.setLimit(30);
-        goTermBox.initGui();
-
-        table.setHTML(rowCount, 0, "<b>GO Term:</b>");
-        table.setWidget(rowCount, 1, goTermBox);
-
-        nameBox.setEnabled(false);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b>Reference:</b>");
-        table.setWidget(rowCount, 1, pubLabel);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b>EvidenceCode:</b>");
-        table.setWidget(rowCount, 1, evidenceCodeBox);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b>Private Note: </b>");
-        table.setWidget(rowCount, 1, noteBox);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b>Inferences: </b>");
-        table.setWidget(rowCount, 1, inferenceListBox);
-
-        ++rowCount;
-        table.setHTML(rowCount, 0, "<b style=\"font-size: small;\">ZdbID: </b>");
-        table.setWidget(rowCount, 1, zdbIDHTML);
-
-        pubLabel.setEnabled(false);
-        panel.add(table);
-
-        buttonPanel.add(saveButton);
-        buttonPanel.add(new HTML("&nbsp;"));
-        buttonPanel.add(revertButton);
-        panel.add(buttonPanel);
-
-        panel.setStyleName("gwt-editbox");
-        panel.add(new HTML("<br>")); // spacer
-
-        errorLabel.setStyleName("error");
-        panel.add(errorLabel);
-
-
-        ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
-        scrollPanel.setAlwaysShowScrollBars(false);
-        scrollPanel.setSize("500px","300px");
-        panel.add(scrollPanel);
-        panel.setWidth("500px");
-
-    }
-
-
-    protected void revertGUI() {
-        if (dto.getMarkerDTO() != null) {
-            geneHTML.setHTML("<a class='external' href='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + dto.getMarkerDTO().getZdbID() + "'>" +
-                    dto.getMarkerDTO().getName() + "</a>");
+        evidenceCodeBox.clear();
+        if(dto.getPublicationZdbID()!=null){
+            for (GoEvidenceCodeEnum evidenceCodeEnum : GoEvidenceCodeEnum.getCodeEnumForPub(dto.getPublicationZdbID())) {
+                evidenceCodeBox.addItem(evidenceCodeEnum.name());
+            }
         }
-        if (dto.getZdbID() == null || dto.getZdbID().equals("null")) {
-            zdbIDHTML.setHTML("<font color=red>Not Created</font>");
-        } else {
-            zdbIDHTML.setHTML("<div style=\"font-size: small;\">" + dto.getZdbID() + "</font>");
+        if(dto.getEvidenceCode()==GoEvidenceCodeEnum.NAS){
+            evidenceCodeBox.addItem(dto.getEvidenceCode().name());
+        }
 
-        }
-        if (dto.getGoTerm() != null) {
-            nameBox.setText(dto.getGoTerm().getName());
-        }
-        if (dto.getEvidenceCode() != null) {
+        if(dto.getEvidenceCode()!=null){
             evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
+            inferenceListBox.setDTO(dto);
         }
-
 
         evidenceFlagBox.clear();
         evidenceFlagBox.addItem("NONE", "null");
-        // contributes to only for molecular function
-        if (dto.getGoTerm() != null) {
-            if (dto.getGoTerm().getOntology().equals(OntologyDTO.GO_MF)) {
-                evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
-            }
+        if (dto.getGoTerm() != null && dto.getGoTerm().getOntology().equals(OntologyDTO.GO_MF)) {
+            evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
         }
         evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
-
-        if (dto.getFlag() == null) {
-            evidenceFlagBox.setItemSelected(0, true);
-        } else {
-            evidenceFlagBox.setIndexForText(dto.getFlag().toString());
+        if (dto.getFlag() != null) {
+            evidenceFlagBox.setIndexForValue(dto.getFlag().toString());
         }
-        pubLabel.setText(dto.getPublicationZdbID());
-        noteBox.setText(dto.getNote());
-        inferenceListBox.setDTO(dto);
+
+
         if (dto.getGoTerm() != null) {
-            goTermBox.setText(dto.getGoTerm().getName());
+            LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, dto.getGoTerm().getName(), new TermInfoCallBack(termInfoComposite, dto.getGoTerm().getName()));
         }
-
-        handleDirty();
     }
 
     public GoEvidenceDTO createDTOFromGUI() {
@@ -274,8 +339,10 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
             goEvidenceDTO = new GoEvidenceDTO();
         }
         goEvidenceDTO.setFlag(evidenceFlagBox.getItemCount() == 0 || evidenceFlagBox.getSelected() == null ? null : GoEvidenceQualifier.getType(evidenceFlagBox.getSelected()));
-        goEvidenceDTO.setPublicationZdbID(pubLabel.getBoxValue());
-        goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(evidenceCodeBox.getSelected()));
+        goEvidenceDTO.setPublicationZdbID(pubText.getBoxValue());
+        if(evidenceCodeBox.getItemCount()>0){
+            goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(evidenceCodeBox.getSelected()));
+        }
         goEvidenceDTO.setNote(noteBox.getText());
 
         // these are only used on the client-side
@@ -287,37 +354,31 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
             goEvidenceDTO.setInferredFrom(inferenceListBox.createDTOFromGUI().getInferredFrom());
         }
 
+        goEvidenceDTO.setPublicationZdbID(dto.getPublicationZdbID());
         return goEvidenceDTO;
     }
 
 
+    @Override
     public boolean isDirty() {
-        if (dto == null) return false;
-        boolean isDirty = false;
-        isDirty = nameBox.isDirty(dto.getName()) || isDirty;
-        isDirty = evidenceCodeBox.isDirty(dto.getEvidenceCode().name()) || isDirty;
-        isDirty = pubLabel.isDirty(dto.getPublicationZdbID()) || isDirty;
-        isDirty = evidenceFlagBox.isDirty((dto.getFlag() == null ? null : dto.getFlag().toString())) || isDirty;
-        isDirty = noteBox.isDirty((dto.getNote() == null ? null : dto.getNote().toString())) || isDirty;
-        isDirty = inferenceListBox.isDirty() || isDirty;
-        if (temporaryGoTermDTO != null) {
-            if (false == dto.getGoTerm().getName().equals(temporaryGoTermDTO.getName())) {
-                goTermBox.setStyleName(IsDirty.DIRTY_STYLE);
-                isDirty = true;
-            } else {
-                goTermBox.setStyleName(IsDirty.CLEAN_STYLE);
-                isDirty = false || isDirty;
-            }
-        }
-        return isDirty;
+        return true ;
     }
+
+    public int getTabIndex() {
+        return tabIndex;
+    }
+
+    public void setPubVisible(boolean pubVisible) {
+        pubPanel.setVisible(pubVisible);
+    }
+
 
 
     @Override
     public void working() {
         super.working();
         evidenceCodeBox.setEnabled(false);
-        pubLabel.setEnabled(false);
+        pubText.setEnabled(false);
         evidenceFlagBox.setEnabled(false);
         inferenceListBox.working();
     }
@@ -336,7 +397,8 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
     public void onPublicationChanged(PublicationChangeEvent event) {
         if (event.isNotEmpty()) {
             super.onPublicationChanged(event);
-            pubLabel.setText(publicationZdbID);
+            pubText.setText(publicationZdbID);
+            dto.setPublicationZdbID(publicationZdbID);
 
             GoCurationDefaultPublications goPubEnum = GoCurationDefaultPublications.getPubForZdbID(publicationZdbID);
             if (goPubEnum != null) {
@@ -405,5 +467,4 @@ public abstract class AbstractGoEvidenceHeader extends AbstractHeaderEdit<GoEvid
             }
         }
     }
-
 }

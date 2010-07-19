@@ -39,10 +39,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
-
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Implementation of RPC calls from the client.

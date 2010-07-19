@@ -930,7 +930,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
          * Uncheck all checked records.
          * Save the checkbox status in session.
          */
-        protected void uncheckAllRecords() {
+        public void uncheckAllRecords() {
             super.uncheckAllRecords();
             unceckAllCheckStatusInSession();
         }

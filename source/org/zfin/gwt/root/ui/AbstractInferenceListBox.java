@@ -287,7 +287,6 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                 return;
             }
         } else if (availableList.isVisible() && false == lookupBox.isVisible()) {
-            // see do-goedit.apg
             if (availableList.isSelectedNull()) {
                 setError("Need to choose a valid ID");
                 notWorking();

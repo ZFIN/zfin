@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.ui.AbstractGoViewTable;
 import org.zfin.gwt.root.ui.GoEvidenceValidator;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
@@ -14,9 +14,9 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoInlineCloneBox extends GoInlineAddBox{
+public class GoInlineCurationCloneBox extends GoInlineCurationAddBox {
 
-    public GoInlineCloneBox(GoViewTable goViewTable) {
+    public GoInlineCurationCloneBox(AbstractGoViewTable goViewTable) {
         super();
         this.parent = goViewTable;
         tabIndex = 50 ;
@@ -25,7 +25,7 @@ public class GoInlineCloneBox extends GoInlineAddBox{
         initWidget(panel);
     }
 
-    public GoInlineCloneBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
+    public GoInlineCurationCloneBox(AbstractGoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this(goViewTable);
         setDTO(goEvidenceDTO);
         dto.setZdbID(null);
@@ -50,21 +50,21 @@ public class GoInlineCloneBox extends GoInlineAddBox{
                 return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO,
+            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
                     new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    super.onFailure(throwable);
-                    notWorking();
-                }
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            notWorking();
+                        }
 
-                @Override
-                public void onSuccess(final GoEvidenceDTO result) {
-                    notWorking();
-                    revertGUI();
-                    parent.clearError();
-                }
-            });
+                        @Override
+                        public void onSuccess(final GoEvidenceDTO result) {
+                            notWorking();
+                            revertGUI();
+                            parent.clearError();
+                        }
+                    });
         }
     }
 }

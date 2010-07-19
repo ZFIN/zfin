@@ -1,8 +1,6 @@
 package org.zfin.gwt.root.event;
 
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.event.RelatedEntityListener;
 
 /**
  * A convenience class.

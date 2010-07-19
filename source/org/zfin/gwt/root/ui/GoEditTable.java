@@ -1,10 +1,6 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.ui.AbstractInferenceListBox;
-import org.zfin.gwt.root.ui.LookupComposite;
-import org.zfin.gwt.root.ui.RevertibleTextArea;
-import org.zfin.gwt.root.ui.StringListBox;
 
 /**
  */
@@ -16,6 +12,13 @@ public class GoEditTable extends FlexTable {
     public GoEditTable(int initTabIndex) {
         setCellFormatter(formatter);
         this.initTabIndex = initTabIndex ;
+    }
+
+    public void setGeneLabel(HTML html) {
+//        html.setTabIndex(initTabIndex + Rows.GENE.tabIndex);
+        formatter.setHorizontalAlignment(Rows.GENE.row, Rows.GENE.columnLabel, HasHorizontalAlignment.ALIGN_RIGHT);
+        setHTML(Rows.GENE.row, Rows.GENE.columnLabel, "<b>GENE:</b>");
+        setWidget(Rows.GENE.row, Rows.GENE.columnData, html);
     }
 
     public void setGeneBox(ListBoxWrapper geneBox) {

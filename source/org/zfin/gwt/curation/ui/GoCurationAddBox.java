@@ -6,10 +6,7 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.GoEvidenceValidator;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.List;
 
@@ -20,10 +17,10 @@ import java.util.List;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoAddBox extends AbstractGoInlineBox {
+public class GoCurationAddBox extends GoInlineCurationAddBox{
 
 
-    public GoAddBox(GoViewTable goViewTable) {
+    public GoCurationAddBox(AbstractGoViewTable goViewTable) {
         this.parent = goViewTable;
         tabIndex = 10 ; 
         initGUI();
@@ -38,6 +35,7 @@ public class GoAddBox extends AbstractGoInlineBox {
         revertButton.setText("Cancel");
         zdbIDHTML.setHTML("<font color=red>Not Saved</font>");
     }
+
 
 
     public void updateGenes() {
@@ -70,7 +68,6 @@ public class GoAddBox extends AbstractGoInlineBox {
         super.addInternalListeners(handlesError);
 
 
-        // TODO: maybe this should go into revertGUI
         revertButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -81,31 +78,6 @@ public class GoAddBox extends AbstractGoInlineBox {
         });
     }
 
-    @Override
-    protected void setValues() {
-        if (dto != null) {
-            evidenceCodeBox.clear();
-            for (GoEvidenceCodeEnum evidenceCodeEnum : GoEvidenceCodeEnum.getCodeEnumForPub(dto.getPublicationZdbID())) {
-                evidenceCodeBox.addItem(evidenceCodeEnum.name());
-            }
-
-            evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
-            inferenceListBox.setDTO(dto);
-        }
-
-    }
-
-    @Override
-    protected void revertGUI() {
-        super.revertGUI();
-        goTermBox.setText("");
-        saveButton.setText("Create");
-        revertButton.setText("Cancel");
-        geneBox.setSelectedIndex(0);
-        evidenceFlagBox.setSelectedIndex(0);
-        evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
-        termInfoComposite.clear();
-    }
 
     protected void sendUpdates() {
         if (isDirty()) {
@@ -118,7 +90,7 @@ public class GoAddBox extends AbstractGoInlineBox {
                 return;
             }
             working();
-            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidenceDTO(goEvidenceDTO, 
+            MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
                     new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
                 @Override
                 public void onFailure(Throwable throwable) {

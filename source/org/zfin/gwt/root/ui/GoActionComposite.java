@@ -1,4 +1,4 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -7,9 +7,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
-import org.zfin.gwt.root.ui.Revertible;
 
 
 /**
@@ -25,10 +22,10 @@ public class GoActionComposite extends Composite implements Revertible {
 
     // data
     protected GoEvidenceDTO dto;
-    private GoViewTable parent;
+    private AbstractGoViewTable parent;
     private int rowNumber;
 
-    public GoActionComposite(GoViewTable parent, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
+    public GoActionComposite(AbstractGoViewTable parent, GoEvidenceDTO goEvidenceDTO, int rowNumber) {
         this.parent = parent;
         this.dto = goEvidenceDTO;
         this.rowNumber = rowNumber;

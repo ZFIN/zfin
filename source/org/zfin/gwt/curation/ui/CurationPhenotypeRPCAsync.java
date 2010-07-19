@@ -2,7 +2,9 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExperimentDTO;
+import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 
 import java.util.List;
 

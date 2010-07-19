@@ -1,10 +1,8 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.event.RelatedEntityAdapter;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.AbstractInferenceListBox;
-import org.zfin.gwt.root.ui.StackComposite;
 
 import java.util.Set;
 import java.util.TreeSet;

@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.ui.AbstractGoViewTable;
 import org.zfin.gwt.root.ui.GoEvidenceValidator;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
@@ -13,9 +14,9 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoInlineEditBox extends AbstractGoInlineBox {
+public class GoInlineCurationEditBox extends AbstractGoCurationBox{
 
-    public GoInlineEditBox(GoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
+    public GoInlineCurationEditBox(AbstractGoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this.parent = goViewTable;
         tabIndex = 50 ;
 
@@ -47,8 +48,6 @@ public class GoInlineEditBox extends AbstractGoInlineBox {
         goTermBox.setText(dto.getGoTerm().getName());
         evidenceCodeBox.setIndexForValue(dto.getEvidenceCode().name());
         inferenceListBox.setDTO(dto);
-
-
     }
 
 

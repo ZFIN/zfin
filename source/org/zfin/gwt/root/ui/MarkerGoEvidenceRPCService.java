@@ -44,13 +44,15 @@ public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     boolean validateAccession(String accession, String inferenceCategory);
 
-    GoEvidenceDTO createMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException ;
+    GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException ;
 
     void deleteMarkerGoTermEvidence(String zdbID);
 
     TermDTO getGOTermByName(String value);
 
     List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID);
+
+    List<GoEvidenceDTO> getMarkerGoTermEvidencesForMarker(String markerID);
 
     List<MarkerDTO> getGenesForPub(String publicationID);
 

@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 <h1> Expression (FX) Curation Application</h1>

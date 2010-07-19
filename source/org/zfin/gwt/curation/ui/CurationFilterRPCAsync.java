@@ -1,11 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.util.StageRangeIntersection;
-
-import java.util.List;
+import org.zfin.gwt.root.dto.FilterValuesDTO;
 
 /**
  * RPC Async Class for the Curation module: Filter bar being shared by FX and Pheno tab.

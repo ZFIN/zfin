@@ -130,13 +130,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return publicationAttribution;
     }
 
-    @Override
-    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, Person person) {
-        insertUpdatesTable(recID, fieldName, new_value, comments, person.getZdbID(), person.getFullName());
-    }
-
     //retrieve a dataNote by its zdb_id
-
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
@@ -397,14 +391,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (DataAliasGroup) query.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-    private Set<TermAlias> getTermSynonyms(GenericTerm term) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(TermAlias.class);
-        criteria.add(Restrictions.eq("term", term));
-        return (Set<TermAlias>) criteria.list();
-    }
-
 
     public PublicationAttribution getStandardPublicationAttribution(String dataZdbID, String pubZdbID) {
         Session session = HibernateUtil.currentSession();
@@ -414,48 +400,46 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteria.add(Restrictions.eq("sourceType", RecordAttribution.SourceType.STANDARD.toString()));
         return (PublicationAttribution) criteria.uniqueResult();
     }
-//
-//    public RecordAttribution getRecordAttribution(String zdbID){
-//        Session session = HibernateUtil.currentSession();
-//        Criteria criteria = session.createCriteria(RecordAttribution.class);
-//        criteria.add(Restrictions.eq("zdbID", zdbID));
-//        return (RecordAttribution) criteria.uniqueResult() ;
-//    }
-//
-//    public void deleteRecordAttribution(RecordAttribution recordAttribution){
-//        Session session = HibernateUtil.currentSession();
-//        session.delete(recordAttribution);
-//    }
 
-    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments, String submitterID, String submitterName) {
+    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments) {
         Session session = HibernateUtil.currentSession();
 
         Updates up = new Updates();
         Date date = new Date();
         up.setRecID(recID);
         up.setFieldName(fieldName);
-        up.setSubmitterID(submitterID);
-        up.setSubmitterName(submitterName);
+
+        Person person = Person.getCurrentSecurityUser();
+        if(person!=null){
+            up.setSubmitterID(person.getZdbID());
+            up.setSubmitterName(person.getFullName());
+        }
+
         up.setComments(comments);
         up.setNewValue(new_value);
         up.setWhenUpdated(date);
         session.save(up);
     }
 
-    public void insertUpdatesTable(String recID, String fieldName, String comments, String newValue, String oldValue) {
+    @Override
+    public void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments) {
         Session session = HibernateUtil.currentSession();
 
         Updates update = new Updates();
         update.setRecID(recID);
         update.setFieldName(fieldName);
-//        update.setSubmitterID(submitter.getZdbID());
-//        update.setSubmitterName(submitter.getFullName());
+        Person person = Person.getCurrentSecurityUser();
+        if(person!=null){
+            update.setSubmitterID(person.getZdbID());
+            update.setSubmitterName(person.getFullName());
+        }
         update.setComments(comments);
         update.setNewValue(newValue);
         update.setOldValue(oldValue);
         update.setWhenUpdated(new Date());
         session.save(update);
     }
+
 
     public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();

@@ -1,9 +1,6 @@
-package org.zfin.gwt.curation.ui;
+package org.zfin.gwt.root.ui;
 
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
-import org.zfin.gwt.root.ui.StackComposite;
 
 /**
  */

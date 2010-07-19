@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.util.StringUtils;
 
 /**

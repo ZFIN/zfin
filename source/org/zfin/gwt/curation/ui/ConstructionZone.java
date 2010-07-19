@@ -1,6 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PostComposedPart;
 
 /**
  * Defines a Construction zone, such as for FX and PATO.

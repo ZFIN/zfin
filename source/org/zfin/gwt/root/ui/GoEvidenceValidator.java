@@ -73,6 +73,17 @@ public class GoEvidenceValidator {
             viewClickLabel.setError("GO Term must not be obsolete.");
             return false;
         }
+
+        if(dto.getPublicationZdbID()==null){
+            viewClickLabel.setError("Publication must be selected.");
+            return false;
+        }
+
+        if(dto.getEvidenceCode()==null){
+            viewClickLabel.setError("Evidence code must be selected.");
+            return false;
+        }
+
         if (false == validateInferenceCardinality(viewClickLabel, dto)) {
             return false;
         }
