@@ -16,6 +16,8 @@
     <property name="gwt.lib" value="${lib}/gwt"/>
     <property name="jwebunit.lib" value="${lib}/jwebunit"/>
     <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
+    <property name="reports.dir" value="${basedir}/reports"/>
+    <property name="test.reports.dir" value="${reports.dir}/tests"/>
     <!-- path to servlet jar file -->
     <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
     <property environment="env"/>
@@ -168,6 +170,9 @@
         </or>
     </condition>
 
+    <condition property="isproduction">
+        <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+    </condition>
 
     <condition property="notproduction">
         <not>

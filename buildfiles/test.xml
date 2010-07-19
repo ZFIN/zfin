@@ -27,7 +27,7 @@
                maxmemory="1024m"
                 >
             <classpath refid="extended.classpath"/>
-            <test name="@{testClass}" outfile="@{outFile}">
+            <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
                 <formatter type="plain"/>
             </test>
         </junit>
@@ -56,7 +56,7 @@
             <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
             <jvmarg value="-DWEBINF=${web-inf.target}"/>
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <test name="@{testClass}" outfile="@{outFile}">
+            <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
                 <formatter type="plain"/>
             </test>
         </junit>
@@ -160,24 +160,26 @@ test(s) need to be run before committing changes or pushing files to production 
            haltonfailure="yes"
            haltonerror="yes"
            showoutput="false">
-        <test name="org.zfin.UnitTests" outfile="unit-result">
+        <test name="org.zfin.UnitTests" todir="${test.reports.dir}" outfile="unit-result">
             <formatter type="plain"/>
         </test>
 
-        <test name="org.zfin.DbUnitTests" outfile="db-result">
+        <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="db-result">
             <formatter type="plain"/>
         </test>
 
-        <test name="org.zfin.sequence.blast.BlastAndDBTests" outfile="blast-results">
+        <test name="org.zfin.sequence.blast.BlastAndDBTests" todir="${test.reports.dir}"
+              outfile="blast-results">
             <formatter type="plain"/>
         </test>
 
-        <test name="org.zfin.ThirdPartyServiceTests" outfile="${serviceTestFile}"
+        <test name="org.zfin.ThirdPartyServiceTests" todir="${test.reports.dir}"
+              outfile="${serviceTestFile}"
               haltonerror="false" haltonfailure="false" failureproperty="service.failure" >
             <formatter type="plain"/>
         </test>
 
-        <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-pre"
+        <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}-pre"
               haltonerror="false" haltonfailure="false"
               failureproperty="smoke.failure">
             <formatter type="plain"/>
@@ -326,7 +328,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <jvmarg line="${junit.jvmargs}"/>
         <classpath refid="extended.classpath"/>
         <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <test name="org.zfin.ontology.OntologyPerformanceTest"  >
+        <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
             <formatter type="plain"/>
         </test>
     </junit>
@@ -351,7 +353,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
         <jvmarg value="-DWEBINF=${web-inf.target}"/>
         <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-        <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-post"
+        <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-post" todir="${test.reports.dir}"
               haltonerror="false" haltonfailure="true"
               failureproperty="smoke.failure" >
             <formatter type="plain"/>
