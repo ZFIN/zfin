@@ -59,6 +59,10 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
 
     let entityNameHtml = '<a href=' || goUrl || entityOntologyId || '>' || entityName || '</a>';
 
+  elif(entityOntologyName = "spatial") then
+
+    let entityNameHtml = '<span>' || entityName || '</span>';  
+
   else
      let entityNameHtml = entityName;
   end if

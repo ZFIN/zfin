@@ -1,8 +1,10 @@
 package org.zfin.infrastructure;
 
+import java.io.Serializable;
+
 /**
  */
-public class ActiveSource implements ZdbID {
+public class ActiveSource implements ZdbID, Serializable {
     private String zdbID;
     public static final String ZDB = "ZDB-";
 
@@ -36,7 +38,7 @@ public class ActiveSource implements ZdbID {
         return type;
     }
 
-    public enum Type {
+    public enum Type implements Serializable{
         COMPANY,
         JRNL,
         LAB,

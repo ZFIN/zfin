@@ -267,7 +267,8 @@
             <one-to-many class="org.zfin.ontology.TermAlias"/>
         </set>
 
-        <subclass name="org.zfin.ontology.GenericTerm" discriminator-value="Generic-Term"/>
+        <subclass name="org.zfin.ontology.GenericTerm" discriminator-value="Generic-Term">
+        </subclass>
 
     </class>
 
@@ -283,6 +284,18 @@
         <many-to-one name="termOne" class="org.zfin.ontology.GenericTerm" column="termrel_term_1_zdb_id" />
         <many-to-one name="termTwo" class="org.zfin.ontology.GenericTerm" column="termrel_term_2_zdb_id" />
 
+    </class>
+
+    <class name="org.zfin.ontology.TermRelationshipHelper" table="TERM_RELATIONSHIP">
+        <id name="ID">
+            <column name="termrel_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">TERMREL</param>
+            </generator>
+        </id>
+        <property name="type" column="termrel_type" />
+        <property name="termOneID" column="termrel_term_1_zdb_id" />
+        <property name="termTwoID" column="termrel_term_2_zdb_id" />
     </class>
 
     <class name="org.zfin.ontology.TransitiveClosure" table="all_term_contains">

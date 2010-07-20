@@ -1,6 +1,10 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
+
+import java.util.Set;
 
 /**
  * Class that is called from JSP through a function call.
@@ -179,4 +183,15 @@ public class ZfinJSPFunctions {
         return visibility.isVisible(sectionName);
     }
 
+    public static boolean isOntologyLoaded(OntologyManager manager, Ontology ontology){
+        if(manager == null || ontology == null)
+            return false;
+        return manager.isOntologyLoaded(ontology);
+    } 
+
+    public static Set<String> getDistinctRelationshipTypes(OntologyManager manager, Ontology ontology){
+        if(manager == null || ontology == null)
+            return null;
+        return manager.getDistinctRelationshipTypes(ontology);
+    }
 }

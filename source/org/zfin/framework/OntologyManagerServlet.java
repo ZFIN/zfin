@@ -32,8 +32,7 @@ public class OntologyManagerServlet extends HttpServlet {
         if (servletName == null)
             servletName = "";
         if (servletName.startsWith("org.apache.catalina.INVOKER."))
-            throw new UnavailableException
-                    ("Called through Invoker Servlet");
+            throw new UnavailableException("Called through Invoker Servlet");
         ReadOntologiesThread thread = new ReadOntologiesThread();
         thread.start();
         LOG.info("Ontology Manager Thread started: ");
@@ -42,7 +41,7 @@ public class OntologyManagerServlet extends HttpServlet {
 
     private void reLoadFormDatabase() {
         try {
-            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE).serializeOntologies();
+            OntologyManager.getInstance(OntologyManager.LoadingMode.DATABASE);
         } catch (Exception e) {
             LOG.error("Problem during re-loading ontologies from database", e);
         }
@@ -80,7 +79,7 @@ public class OntologyManagerServlet extends HttpServlet {
      */
     @Override
     public void destroy() {
-        LOG.info("Servlet is decomissioned.");
+        LOG.info("Ontology Servlet is decomissioned.");
     }
 
 }

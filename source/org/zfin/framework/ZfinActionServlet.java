@@ -5,7 +5,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
-import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.RelationshipDisplayNames;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.uniquery.categories.SiteSearchCategories;
@@ -15,12 +15,12 @@ import javax.servlet.ServletException;
 import java.io.File;
 
 /**
- * Master Servlet that controls each request and resonse.
+ * Master Servlet that controls each request and response.
  * 1) Initialize Hibernate
  * 2) Initialize ZFIN properties
  * 3) Runs db dictionary consistency tests
  * <p/>
- * //ToDo: the different initializations could be done in a better way by registering
+ * ToDo: the different initializations could be done in a better way by registering
  * plug-in classes whose init() methods all get called. Inherit from
  * PlugIn class.
  */
@@ -53,27 +53,13 @@ public class ZfinActionServlet extends DispatcherServlet {
         config.getServletContext().setAttribute("webdriverURL", ZfinProperties.getWebDriver());
         initDatabase();
         startupTests();
+        // Note: Ontologies are loaded through the OntologyManagerServlet
         initBlast();
+        initRelationshipDisplayNames();
     }
 
-    private void initOntologies() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE)  ;
-                } catch (Exception e) {
-                    logger.error("Failed to load ontologies from serial file, loading from database",e);
-                }
-                
-                try {
-                    OntologyManager.getInstance().reLoadOntologies();
-                } catch (Exception e1) {
-                    logger.fatal("Failed to load ontologies from the database",e1);
-                }
-            }
-        };
-        t.start();
+    private void initRelationshipDisplayNames() {
+        new RelationshipDisplayNames();
     }
 
     private void initBlast() {

@@ -58,9 +58,10 @@ public class FxCurationModule implements HandlesError {
         superterm.add(OntologyDTO.ANATOMY);
         termEntryMap.put(PostComposedPart.SUPERTERM, superterm);
 
-        List<OntologyDTO> subterm = new ArrayList<OntologyDTO>(2);
+        List<OntologyDTO> subterm = new ArrayList<OntologyDTO>(3);
         subterm.add(OntologyDTO.ANATOMY);
         subterm.add(OntologyDTO.GO_CC);
+        subterm.add(OntologyDTO.SPATIAL);
         termEntryMap.put(PostComposedPart.SUBTERM, subterm);
 
         return termEntryMap;

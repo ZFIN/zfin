@@ -1,13 +1,11 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
+import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -18,33 +16,58 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test the OntologyManager class.
  */
-public class OntologyManagerTest extends AbstractOntologyTest{
+@SuppressWarnings({"FeatureEnvy"})
+public class OntologyManagerTest extends AbstractOntologyTest {
 
     private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
 
+    @Before
+    public void setup() {
+    }
+
     @Override
     protected Ontology[] getOntologiesToLoad() {
-        Ontology[] ontologies = new Ontology[3];
-        ontologies[0] =  Ontology.ANATOMY;
-        ontologies[1] =  Ontology.QUALITY;
-        ontologies[2] =  Ontology.STAGE;
-        return ontologies ;
+        Ontology[] ontologies = new Ontology[4];
+        ontologies[0] = Ontology.ANATOMY;
+        ontologies[1] = Ontology.QUALITY;
+        ontologies[2] = Ontology.STAGE;
+        ontologies[3] = Ontology.SPATIAL;
+        return ontologies;
     }
 
     @Test
-    public void testTermByID(){
-        assertNotNull(ontologyManager.getTermByID(Ontology.STAGE,"ZDB-TERM-100331-2430")) ;
-        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-2430")) ;
-        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-1001")) ;
-        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-070117-73")) ;
+    public void testTermByID() {
+        assertNotNull(ontologyManager.getTermByID(Ontology.STAGE, "ZDB-TERM-100331-2430"));
+        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-2430"));
+        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-1001"));
+        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-070117-73"));
     }
 
     @Test
-    public void testTermByName(){
-        assertNull(ontologyManager.getTermByName(Ontology.ANATOMY,"bad bad term")) ;
-        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY,"pelvic fin bud")) ;
-        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY,"Brachet's cleft")) ;
-        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY,"Cajal-Retzius cell")) ;
+    public void testTermByName() {
+        ontologyManager.getTermByName(Ontology.ANATOMY, "B cell");
+        assertNull(ontologyManager.getTermByName(Ontology.ANATOMY, "bad bad term"));
+        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "pelvic fin bud"));
+        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "Brachet's cleft"));
+        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "Cajal-Retzius cell"));
+        assertNotNull(ontologyManager.getTermByName(Ontology.SPATIAL, "dorsal region"));
+    }
+
+    @Test
+    public void testTermByOboID() {
+        // retrieve term by obo ID
+        // melanocyte
+        assertNotNull(ontologyManager.getTermByID(Ontology.ANATOMY, "ZFA:0009091"));
+    }
+
+    @Test
+    public void testRelatedTerms() {
+        Term term = ontologyManager.getTermByName(Ontology.ANATOMY, "B cell");
+        List<TermRelationship> relatedTerms = term.getRelatedTerms();
+        assertEquals(7, relatedTerms.size());
+        assertEquals(3, term.getChildrenTerms().size());
+        Term childTerm = term.getChildrenTerms().get(0);
+        assertEquals("mature B cell", childTerm.getTermName());
     }
 
 
@@ -81,21 +104,22 @@ public class OntologyManagerTest extends AbstractOntologyTest{
         MatchingTermService matcher = new MatchingTermService();
         Set<MatchingTerm> anatomyList = matcher.getMatchingTerms(Ontology.ANATOMY, query);
         Iterator<MatchingTerm> iter = anatomyList.iterator();
-        assertEquals("retina",iter.next().getTerm().getTermName()) ;
-        assertEquals("retinal bipolar neuron",iter.next().getTerm().getTermName()) ;
+        assertEquals("retina", iter.next().getTerm().getTermName());
+        assertEquals("retinal bipolar neuron", iter.next().getTerm().getTermName());
     }
 
     // only works for QUALITY
+
     @Test
-    public void testBadSearches(){
+    public void testBadSearches() {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> matches = service.getMatchingTerms(Ontology.QUALITY,"decreased p") ;
-        assertEquals(13,matches.size());
+        Set<MatchingTerm> matches = service.getMatchingTerms(Ontology.QUALITY, "decreased p");
+        assertEquals(13, matches.size());
 
         // can not find decreased
-        matches = service.getMatchingTerms(Ontology.QUALITY,"decreased") ;
-        assertEquals(service.getMaximumNumberOfMatches(),matches.size());
+        matches = service.getMatchingTerms(Ontology.QUALITY, "decreased");
+        assertEquals(service.getMaximumNumberOfMatches(), matches.size());
     }
 
 

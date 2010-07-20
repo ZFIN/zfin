@@ -90,10 +90,10 @@ public enum OntologyDTO implements IsSerializable {
             return QUALITY_PROCESSES;
         }
     },
-    SPATIAL(13, "spatial", "spatial"){
+    SPATIAL(13, "Spatial", "spatial"){
         @Override
         public OntologyDTO getAssociatedQualityOntology(){
-            return null;
+            return QUALITY_QUALITIES;
         }
     },
     STAGE(14, "stages", "zebrafish_stages"){

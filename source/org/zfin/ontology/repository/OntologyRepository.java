@@ -51,6 +51,12 @@ public interface OntologyRepository {
     List<TermRelationship> getAllRelationships(Ontology ontology);
 
     /**
+     * Retrieve all Relationships.
+     * @return list of relationships
+     */
+    List<TermRelationshipHelper> getAllRelationships();
+
+    /**
      * Retrieve Term by OBO ID.
      *
      * @param termID term id

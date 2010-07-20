@@ -67,6 +67,8 @@ public class OntologyTermController extends AbstractCommandController {
                     break ;
             }
         }
+        form.setOntology(ontology);
+        form.setOntologyManager(OntologyManager.getInstance());
         return new ModelAndView(viewName, LookupStrings.FORM_BEAN, form);
     }
 

@@ -321,8 +321,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
     /**
      * Retrieve the Term Info of a given term.
-     * ToDo: This has logic to go out for ANAT and GO to different tables.
-     * Need to consolidate this into one table TERM.
      *
      * @param termID   Term ID
      * @param ontology Ontology
@@ -330,13 +328,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     private TermInfo getGenericTermInfo(String termID, OntologyDTO ontology) {
         Term term;
-        if (termID.indexOf(ActiveData.Type.TERM.toString()) > -1)
-            term = getInfrastructureRepository().getTermByID(termID);
-        else if (termID.indexOf(ActiveData.Type.ANAT.toString()) > -1) {
+        if (termID.indexOf(ActiveData.Type.ANAT.toString()) > -1) {
             term = getAnatomyRepository().getAnatomyTermByID(termID);
-            term = getOntologyRepository().getTermByOboID(term.getOboID());
         } else {
-            term = getOntologyRepository().getTermByOboID(termID);
+            term = OntologyManager.getInstance().getTermByID(termID);
         }
 
         if (term == null) {

@@ -83,8 +83,10 @@ public class OntologyTokenizer {
 
         try {
             if(term.getID()!=null){
+                // add internal ID and OBO id to map for lookup purposes.
                 termMap.put(term.getID(),term) ;
                 ++count ;
+                termMap.put(term.getOboID(),term) ;
             }
             termMap.put(exactTerm,term) ;
             ++count ;

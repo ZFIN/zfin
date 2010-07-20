@@ -646,6 +646,8 @@ public class DTOConversionService {
                 return OntologyDTO.GO;
             case STAGE:
                 return OntologyDTO.STAGE;
+            case SPATIAL:
+                return OntologyDTO.SPATIAL;
         }
         return null;
     }
@@ -678,13 +680,16 @@ public class DTOConversionService {
                 return Ontology.GO;
             case STAGE:
                 return Ontology.STAGE;
+            case SPATIAL:
+                return Ontology.SPATIAL;
         }
         return null;
     }
 
     public static TermInfo convertToTermInfo(Term term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
         TermInfo info = new TermInfo();
-        info.setID(term.getOboID());
+        info.setID(term.getID());
+        info.setOboID(term.getOboID());
         info.setName(term.getTermName());
         if (includeSynonyms) {
             info.setSynonyms(OntologyService.createSortedSynonymsFromTerm(term));

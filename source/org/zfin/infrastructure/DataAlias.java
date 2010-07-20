@@ -32,7 +32,7 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     protected Set<ActiveSource> sources;
 
-    protected Set<PublicationAttribution> publications;
+    transient protected Set<PublicationAttribution> publications;
 
     public String getZdbID() {
         return zdbID;

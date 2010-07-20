@@ -32,6 +32,7 @@
         <property name="otherFeature" column="stg_other_features" not-null="false"/>
         <property name="abbreviation" column="stg_abbrev" not-null="false"/>
         <property name="timeString" column="stg_name_ext"/>
+        <property name="oboID" column="stg_obo_id"/>
 
     </class>
 

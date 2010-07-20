@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.anatomy.presentation.RelationshipSorting;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
 
@@ -129,16 +127,31 @@ public final class OntologyService {
     }
 
     public static List<RelationshipPresentation> getRelatedTerms(Term term) {
-        Set<String> types = new HashSet<String>(5);
+        Map<String, RelationshipPresentation> types = new HashMap<String, RelationshipPresentation>(5);
         List<TermRelationship> relatedItems = term.getRelatedTerms();
-        List<String> uniqueTypes = new ArrayList<String>(5);
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
-                types.add(rel.getRelationshipType().getTypeName());
+                String displayName;
+                if (rel.getTermTwo().equals(term)) {
+                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
+                } else {
+                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), false);
+                }
+                RelationshipPresentation presentation = types.get(displayName);
+                if (presentation == null) {
+                    presentation = new RelationshipPresentation();
+                    presentation.setType(displayName);
+                }
+                presentation.addTerm(rel.getRelatedTerm(term));
+                types.put(displayName, presentation);
             }
         }
-        Collections.sort(uniqueTypes, new RelationshipSorting());
-        return createRelationshipPresentation(types, term);
+        List<RelationshipPresentation> relPresentations = new ArrayList<RelationshipPresentation>(types.size());
+        for (String type : types.keySet()) {
+            relPresentations.add(types.get(type));
+        }
+        Collections.sort(relPresentations);
+        return relPresentations;
     }
 
     /**
@@ -161,7 +174,7 @@ public final class OntologyService {
             List<Term> items = new ArrayList<Term>(10);
             rel.setType(type);
             for (TermRelationship relatedItem : term.getRelatedTerms()) {
-                if (relatedItem.getRelationshipType().getTypeName().equals(type)) {
+                if (relatedItem.getType().equals(type)) {
                     items.add(relatedItem.getRelatedTerm(term));
                 }
             }
@@ -173,21 +186,15 @@ public final class OntologyService {
         return relList;
     }
 
-    public static Ontology convertOntology(OntologyDTO ontology) {
-        if (ontology == null)
-            return null;
-
-        switch (ontology) {
-            case ANATOMY:
-                return Ontology.ANATOMY;
-            case GO_CC:
-                return Ontology.GO_CC;
-            case GO:
-                return org.zfin.ontology.Ontology.GO;
-        }
-        return null;
+    /**
+     * Retrieve a list of distinct relationships used in a given ontology.
+     *
+     * @param ontology Ontology
+     * @return set if relationship strings
+     */
+    public static Set<String> getDistinctRelationships(Ontology ontology) {
+        return OntologyManager.getInstance().getDistinctRelationshipTypes(ontology);
     }
-
 
     /**
      * Inner class: Comparator that compares the alias names of the AnatomySynonym

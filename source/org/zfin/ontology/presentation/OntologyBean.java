@@ -2,6 +2,7 @@ package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.infrastructure.TrieMultiMap;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.TransitiveClosure;
@@ -17,6 +18,7 @@ public class OntologyBean {
     private boolean ontologiesLoaded = true;
     private OntologyManager ontologyManager;
     private String ontologyName;
+    private Ontology ontology;
     private Set<Term> terms;
     private String termID;
     private Term term;
@@ -93,6 +95,12 @@ public class OntologyBean {
         return terms;
     }
 
+    public List<Term> getOrderedTerms(){
+        List<Term> termList = new ArrayList<Term>(terms);
+        Collections.sort(termList);
+        return termList;
+    }
+
     public void setTerms(Set<Term> terms) {
         this.terms = terms;
     }
@@ -117,6 +125,14 @@ public class OntologyBean {
         this.valueMap = valueMap ;
     }
 
+    public Ontology getOntology() {
+        return ontology;
+    }
+
+    public void setOntology(Ontology ontology) {
+        this.ontology = ontology;
+    }
+
     public static enum ActionType {
         SERIALIZE_ONTOLOGIES,
         LOAD_FROM_DATABASE,
@@ -125,7 +141,10 @@ public class OntologyBean {
         SHOW_EXACT,
         SHOW_OBSOLETE_TERMS,
         SHOW_ALL_TERMS,
-        SHOW_TERM, SHOW_KEYS, SHOW_VALUES;
+        SHOW_TERM,
+        SHOW_KEYS,
+        SHOW_VALUES,
+        SHOW_RELATIONSHIP_TYPES;
 
         public static ActionType getActionType(String type) {
             for (ActionType t : values()) {

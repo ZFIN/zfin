@@ -1,18 +1,19 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.anatomy.presentation.RelationshipSorting;
+import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
+import org.zfin.gwt.root.util.RelationshipComparatorDTO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ToDo: ADD DOCUMENTATION!
  */
-public class TermInfo implements IsSerializable {
+public class TermInfo implements IsSerializable, Comparable<TermInfo> {
 
     private String ID;
+    private String oboID;
     private String name;
     private List<String> synonyms;
     private String definition;
@@ -21,7 +22,7 @@ public class TermInfo implements IsSerializable {
     private OntologyDTO ontology;
     private String comment;
     private boolean obsolete;
-    private Map<String, List<TermInfo>> relatedTermInfos = new HashMap<String, List<TermInfo>>();
+    private Map<String, List<TermInfo>> relatedTermInfos = new TreeMap<String, List<TermInfo>>(new RelationshipComparatorDTO());
 
     public String getID() {
         return ID;
@@ -29,6 +30,14 @@ public class TermInfo implements IsSerializable {
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public String getOboID() {
+        return oboID;
+    }
+
+    public void setOboID(String oboID) {
+        this.oboID = oboID;
     }
 
     public String getName() {
@@ -110,5 +119,11 @@ public class TermInfo implements IsSerializable {
 
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
+    }
+
+    @Override
+    public int compareTo(TermInfo o) {
+        NumberAwareStringComparatorDTO comparator = new NumberAwareStringComparatorDTO();
+        return comparator.compare(getName(), o.getName());
     }
 }

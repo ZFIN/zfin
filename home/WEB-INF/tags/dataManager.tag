@@ -5,8 +5,9 @@
               rtexprvalue="true" required="true" %>
 <%@ attribute name="editURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
-<%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false"  %>
+<%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
+<%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 
@@ -22,20 +23,28 @@
                 <b>OBO ID:</b> ${oboID}
             </td>
         </c:if>
+        <c:if test="${!empty termID}">
+            <authz:authorize ifAnyGranted="root">
+                <td>
+                    <b>Term ID:</b> ${termID}
+                </td>
+            </authz:authorize>
+        </c:if>
 
         <authz:authorize ifAnyGranted="root">
             <script>
-                function confirmDelete(){
-                    if(confirm('Delete: ${zdbID}')){
-                        location.replace('${deleteURL}') ;
+                function confirmDelete() {
+                    if (confirm('Delete: ${zdbID}')) {
+                        location.replace('${deleteURL}');
                     }
                 }
 
-                function confirmMerge(){
+                function confirmMerge() {
                     // not confirming here
-                    // if(confirm('Merge: ${zdbID}'))
-                        location.replace('${mergeURL}') ;
-//                    }
+                    // if(confirm('Merge:
+                ${zdbID}'))
+                    location.replace('${mergeURL}');
+                    //                    }
                 }
             </script>
 
@@ -54,8 +63,8 @@
             </c:if>
             <c:if test="${!empty mergeURL}">
                 <td>
-                    <%--<a href="javascript:;" class="root" onclick="confirmMerge();">Merge</a>--%>
-                    <a href="${mergeURL}" class="root" >Merge</a>
+                        <%--<a href="javascript:;" class="root" onclick="confirmMerge();">Merge</a>--%>
+                    <a href="${mergeURL}" class="root">Merge</a>
                 </td>
             </c:if>
 

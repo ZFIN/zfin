@@ -27,7 +27,9 @@ public class GenericTerm implements Term, Serializable {
     private String definition;
 
     // attribute that is populated lazily
-    private List<TermRelationship> relationships;
+    // transient modifier because we do not want to serialize the whole relationship tree
+    // (would lead to a StackOverflowError)
+    transient private List<TermRelationship> relationships;
     private List<Term> children;
     // These attributes are set during object creation through a service.
     // they are currently not mapped.
@@ -106,8 +108,8 @@ public class GenericTerm implements Term, Serializable {
         this.synonyms = synonyms;
     }
 
-    public boolean isAliasesExist(){
-        return (synonyms!=null && !synonyms.isEmpty()) ;
+    public boolean isAliasesExist() {
+        return (synonyms != null && !synonyms.isEmpty());
     }
 
     public String getDefinition() {
@@ -119,22 +121,29 @@ public class GenericTerm implements Term, Serializable {
     }
 
     public List<TermRelationship> getRelatedTerms() {
-        if (relationships != null)
-            return relationships;
-
-        relationships = new ArrayList<TermRelationship>();
-        OntologyRepository ontolgoyOntologyRepository = RepositoryFactory.getOntologyRepository();
-        relationships.addAll(ontolgoyOntologyRepository.getTermRelationships(this));
         return relationships;
+    }
+
+    @Override
+    public void setRelatedTerms(List<TermRelationship> relationships) {
+        this.relationships = relationships;
     }
 
     public List<Term> getChildrenTerms() {
         if (children != null)
             return children;
 
+        if(relationships == null)
+        return null;
+
         children = new ArrayList<Term>();
-        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-        children.addAll(ontologyRepository.getChildren(ID));
+        for(TermRelationship rel: relationships){
+            Term relatedTerm = rel.getRelatedTerm(this);
+            // the null check comes from the AO which has start and end relationship to stage terms which are not yet set
+            // upon deserialization of the obo files.
+            if(relatedTerm != null && relatedTerm.equals(rel.getTermTwo()))
+                children.add(relatedTerm);
+        }
         return children;
     }
 
@@ -167,12 +176,12 @@ public class GenericTerm implements Term, Serializable {
 
         GenericTerm genericTerm = (GenericTerm) o;
 
-        if (ID != null &&  genericTerm.getID() != null) {
-            return ID.equals(genericTerm.getID()) ;
+        if (ID != null && genericTerm.getID() != null) {
+            return ID.equals(genericTerm.getID());
         }
         if (termName != null ? !termName.equals(genericTerm.getTermName()) : genericTerm.getTermName() != null)
             return false;
-        if (oboID != null ? !oboID.equals(genericTerm.oboID) : genericTerm.oboID != null) 
+        if (oboID != null ? !oboID.equals(genericTerm.oboID) : genericTerm.oboID != null)
             return false;
 
         return true;

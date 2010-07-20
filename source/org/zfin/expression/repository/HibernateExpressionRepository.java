@@ -315,7 +315,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
         hql += "     where result.expressionExperiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
-            hql += "           and result.expressionExperiment.marker.zdbID = :geneID ";
+            hql += "           and result.expressionExperiment.gene.zdbID = :geneID ";
         if (fishID != null)
             hql += "           and geno.zdbID = :fishID ";
         if (figureID != null)

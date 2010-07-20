@@ -36,6 +36,8 @@ public class CreateAlternateTRTag extends TagSupport {
     private String groupByBean;
     // the collection object
     private List groupBeanCollection;
+    // class names for the tr-element
+    private String trClassNames;
 
     // this index is used to indicate if a new group is started with a new element
     private int groupIndex;
@@ -71,13 +73,15 @@ public class CreateAlternateTRTag extends TagSupport {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<tr class=\"");
+        if (trClassNames != null)
+            sb.append(trClassNames);
 
         if (loopIndex % 2 != 0)
             sb.append(" odd ");
         else
             sb.append(" even ");
 
-        if (isNewGroup && groupByBean!= null) {
+        if (isNewGroup && groupByBean != null) {
             sb.append(" newgroup ");
             groupIndex++;
         }
@@ -129,6 +133,7 @@ public class CreateAlternateTRTag extends TagSupport {
         loopName = null;
         groupBeanCollection = null;
         groupByBean = null;
+        trClassNames = null;
     }
 
 
@@ -156,4 +161,11 @@ public class CreateAlternateTRTag extends TagSupport {
         this.groupBeanCollection = groupBeanCollection;
     }
 
+    public String getTrClassNames() {
+        return trClassNames;
+    }
+
+    public void setTrClassNames(String trClassNames) {
+        this.trClassNames = trClassNames;
+    }
 }

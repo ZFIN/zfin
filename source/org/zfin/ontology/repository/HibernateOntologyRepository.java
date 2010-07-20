@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.*;
 
@@ -43,7 +44,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     /**
      * Retrieve all terms from a given ontology that are not obsoleted
      * and are not marked as secondary (which means the term has been merged with
-     * another term and can be found in the alias table now. 
+     * another term and can be found in the alias table now.
      *
      * @return list of terms
      */
@@ -51,11 +52,12 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<Term> getAllTermsFromOntology(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
-        //criteria.add(Restrictions.ne("obsolete", true));
         criteria.add(Restrictions.eq("ontology", ontology));
         criteria.add(Restrictions.eq("secondary", false));
         criteria.addOrder(Order.asc("termName"));
         criteria.setFetchMode("aliases", FetchMode.JOIN);
+        criteria.setFetchMode("aliases.aliasGroup", FetchMode.JOIN);
+        criteria.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         return (List<Term>) criteria.list();
     }
 
@@ -82,11 +84,26 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @SuppressWarnings({"unchecked"})
     public List<TermRelationship> getAllRelationships(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
-        String hql = " from TermRelationship where " +
-                "          termOne.ontology = :ontology";
+        String hql = " select distinct relationships from TermRelationship as relationships";
+        if (ontology != null)
+            hql += " where   termOne.ontology = :ontology OR termTwo.ontology = :ontology";
         Query query = session.createQuery(hql);
-        query.setParameter("ontology", ontology);
+        if (ontology != null)
+            query.setParameter("ontology", ontology);
         return (List<TermRelationship>) query.list();
+    }
+
+    /**
+     * Retrieve all Relationships.
+     * @return list of relationships
+     */
+    @SuppressWarnings({"unchecked"})
+    @Override
+    public List<TermRelationshipHelper> getAllRelationships() {
+        Session session = HibernateUtil.currentSession();
+        String hql = " select distinct relationships from TermRelationshipHelper as relationships";
+        Query query = session.createQuery(hql);
+        return (List<TermRelationshipHelper>) query.list();
     }
 
     /**
@@ -147,6 +164,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     /**
      * Retrieve all Children terms from a given term.
      * Does not include obsolete terms.
+     *
      * @param termID ID
      * @return list of terms
      */
@@ -171,6 +189,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve a term by name and ontology.
+     *
      * @param termName term name
      * @param ontology Ontology
      * @return term
@@ -186,6 +205,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve all parent/child relationships.
+     *
      * @return List of transitive closure
      */
     @SuppressWarnings({"unchecked"})

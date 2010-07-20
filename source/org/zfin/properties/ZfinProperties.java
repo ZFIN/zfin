@@ -37,7 +37,7 @@ public final class ZfinProperties {
     /**
      * Initialize properties via property file import.
      *
-     * @param properties onfiguration data from the zfin-properties.xml file
+     * @param properties configuration data from the zfin-properties.xml file
      */
     public static void init(ApplicationProperties properties) {
         props = properties;

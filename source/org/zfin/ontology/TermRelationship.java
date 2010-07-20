@@ -46,7 +46,7 @@ public class TermRelationship implements Serializable {
     }
 
     public RelationshipType getRelationshipType() {
-        return relationshipType;
+        return RelationshipType.getRelationshipTypeByRelName(type);
     }
 
     public void setRelationshipType(RelationshipType relationshipType) {

@@ -249,7 +249,7 @@
     <tr>
         <td>Ontology Caching:</td>
         <td colspan="2">
-            <a href="/action/dev-tools/ontology-caching">Check Ontology Status</a>
+            <a href="/action/dev-tools/ontology/summary">Check Ontology Status</a>
         </td>
     </tr>
 </table>

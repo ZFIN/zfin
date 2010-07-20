@@ -57,6 +57,8 @@ public interface Term extends Comparable<Term>{
 
     List<TermRelationship> getRelatedTerms();
 
+    void setRelatedTerms(List<TermRelationship> relationships);
+
     /**
      * Retrieves all terms that are immediate children of this term.
      * @return list of children terms

@@ -27,6 +27,11 @@
                 <include name="*.hbm.xml"/>
             </fileset>
         </copy>
+        <copy todir="${classbin.dir}">
+            <fileset dir="${source.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
         <!--
                 <copy file="${conf.dir}/application.properties" todir="${classbin.dir}/resources"/>
         -->

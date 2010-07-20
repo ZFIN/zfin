@@ -95,4 +95,28 @@
     </example>
   </function>
 
+  <function>
+    <description>
+      Check if a given ontology is already loaded.
+    </description>
+    <name>isOntologyLoaded</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>boolean isOntologyLoaded(org.zfin.ontology.OntologyManager, org.zfin.ontology.Ontology)</function-signature>
+    <example>
+      ${fn:isOntologyLoaded(ontologyManager, ontology))}">
+    </example>
+  </function>
+
+<function>
+    <description>
+      Retrieve a set of Relationship Types
+    </description>
+    <name>getDistinctRelationshipTypes</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.util.Set getDistinctRelationshipTypes(org.zfin.ontology.OntologyManager,org.zfin.ontology.Ontology)</function-signature>
+    <example>
+      ${fn:getDistinctRelationshipTypes(ontologyManager, ontology))}">
+    </example>
+  </function>
+
 </taglib>

@@ -199,8 +199,6 @@ public class InfrastructureRepositoryTest {
         String queryString = "mitochondrion";
         GenericTerm term = getInfrastructureRepository().getTermByName(queryString, Ontology.GO_CC);
         assertNotNull(term);
-        List<TermRelationship> relationships = term.getRelatedTerms();
-        assertNotNull(relationships);
     }
 
 

@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
@@ -35,8 +36,15 @@ abstract public class AbstractPileStructureValidator<T extends ExpressedTermDTO>
      */
     public boolean isValidNewPileStructure(T expressedTerm) {
         errorMessages.clear();
-        if (expressedTerm == null || StringUtils.isEmpty(expressedTerm.getSuperterm().getTermName())) {
-            errorMessages.add("No Superterm provided");
+        TermDTO superTerm = expressedTerm.getSuperterm();
+        if (superTerm == null || StringUtils.isEmpty(expressedTerm.getSuperterm().getTermName())) {
+            errorMessages.add("No Superterm provided.");
+            return false;
+        }
+        TermDTO subTerm = expressedTerm.getSubterm();
+        if (subTerm != null && subTerm.getOntology().equals(OntologyDTO.SPATIAL) &&
+                !superTerm.getOntology().equals(OntologyDTO.ANATOMY)) {
+            errorMessages.add("A spatial modifier (ontology) can only be combined with a super term from the anatomical ontology.");
             return false;
         }
         List<OntologyDTO> validSupertermOntologies = termEntryMap.get(PostComposedPart.SUPERTERM);

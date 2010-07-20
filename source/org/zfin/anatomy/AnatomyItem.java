@@ -268,6 +268,11 @@ public class AnatomyItem implements Term {
         return relationships;
     }
 
+    @Override
+    public void setRelatedTerms(List<TermRelationship> relationships) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public int compareTo(Term term) {
         if (term == null)
             return +1;

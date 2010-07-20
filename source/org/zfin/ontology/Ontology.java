@@ -71,7 +71,7 @@ public enum Ontology implements Serializable {
     }
 
     public static Ontology[] getSerializableOntologies(){
-        Ontology[] ontologies = new Ontology[8];
+        Ontology[] ontologies = new Ontology[9];
         int i = 0 ;
         ontologies[i++] = Ontology.STAGE ;
         ontologies[i++] = Ontology.ANATOMY;
@@ -81,6 +81,7 @@ public enum Ontology implements Serializable {
         ontologies[i++] = Ontology.GO_CC;
         ontologies[i++] = Ontology.GO_MF;
         ontologies[i++] = Ontology.GO_BP;
+        ontologies[i] = Ontology.SPATIAL;
 
         return ontologies ;
     }

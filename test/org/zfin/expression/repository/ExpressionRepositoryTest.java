@@ -171,6 +171,13 @@ public class ExpressionRepositoryTest {
 
         List<ExperimentFigureStage> experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         assertNotNull(experiment);
+
+        // mir122
+        String markerID = "ZDB-GENE-050609-27";
+        String genoID = "ZDB-GENO-030619-2";
+        String figureID = "ZDB-FIG-041119-4";
+        experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, markerID, genoID, figureID);
+        assertNotNull(experiment);
     }
 
     @Test

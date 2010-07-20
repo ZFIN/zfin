@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
-<%@ page import="org.zfin.util.FileUtil" %>
 <%@ page import="org.zfin.ontology.OntologyManager" %>
+<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
@@ -9,29 +9,7 @@
 <span style="width:300px">
 </span>
 
-<table width="100%">
-<tr>
-        <td colspan="2">
-		Ontologies available within the VM. (${fn:length(formBean.ontologyManager.ontologyMap)} of <%=OntologyManager.NUMBER_OF_SERIALIZABLE_ONTOLOGIES%>)
-        </td>
-		</tr>
-    <tr class="search-result-table-header left-top-aligned">
-        <td class="sectionTitle">Ontology Name </td>
-        <td class="sectionTitle">Availability</td>
-        </tr>
-    <c:forEach var="availableMap" items="${formBean.ontologyManager.ontologyMap}" varStatus="index">
-    <tr class="search-result-table-entries left-top-aligned">
-        <td class="listContentBold">
-                ${availableMap.key}
-        </td>
-        <td>
-				${fn:length(availableMap.value)}
-        </td>
-        </c:forEach>
-</table>
-
-<br><br>
-
+Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.ontologyMap)} of <%=OntologyManager.NUMBER_OF_SERIALIZABLE_ONTOLOGIES%>)
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <table width="100%">
@@ -59,56 +37,74 @@
                 <td class="sectionTitle">Number of Distinct Aliases</td>
                 <td class="sectionTitle">Number of Lookup Keys</td>
                 <td class="sectionTitle">Number of Unique Values</td>
+                <td class="sectionTitle">Number of Distinct Relations</td>
                 <td class="sectionTitle">Auto-complete</td>
             </tr>
 
             <c:forEach var="value" items="${formBean.ontologyManager.loadingData}" varStatus="loop">
-                <tr class="search-result-table-entries left-top-aligned">
-                    <td class="listContentBold">
-                            ${value.value.ontology.commonName}
-                    </td>
-                    <td class="listContentBold">
-                        <c:forEach var="individualOntologyName" items="${value.value.ontology.individualOntologies}">
-                            ${individualOntologyName.ontologyName}<br/>
-                        </c:forEach>
-                    </td>
-                    <td class="listContentBold">
-                        <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="MM/dd/yyyy"/>
-                    </td>
-                    <td class="listContentBold">
-                        <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="hh:mm:ss"/>
-                    </td>
-                    <td class="listContentBold">
-                            ${value.value.timeLastLoaded}
-                    </td>
-                    <td class="listContentBold">
-                            ${value.value.lastLoad.totalNumberOfTerms}
-                    </td>
-                    <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
-                           target="term-window">${value.value.lastLoad.numberOfTerms}</a>
-                    </td>
-                    <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
-                           target="term-window">${value.value.lastLoad.numberOfObsoletedTerms}</a>
-                    </td>
-                    <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${value.value.ontology.ontologyName}"
-                           target="term-window">${value.value.lastLoad.numberOfAliases}</a>
-                    </td>
-                    <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_KEYS%>&ontologyName=${value.value.ontology.ontologyName}"
-                           target="term-window">${value.value.lastLoad.numberOfKeys}</a>
-                    </td>
-                    <td class="listContentBold">
-                        <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_VALUES%>&ontologyName=${value.value.ontology.ontologyName}"
-                           target="term-window">${value.value.lastLoad.numberOfValues}</a>
-                    </td>
-                    <td>
-                        <zfin2:lookup ontology="${value.value.ontology}" id="${loop.count}" showTermDetail="true"
-                                      wildcard="false"/>
-                    </td>
-                </tr>
+                <c:if test="${zfn:isOntologyLoaded(formBean.ontologyManager,value.value.ontology)}">
+                    <tr class="search-result-table-entries left-top-aligned">
+                        <td class="listContentBold">
+                                ${value.value.ontology.commonName}
+                        </td>
+                        <td class="listContentBo
+                    ld">
+                            <c:forEach var="individualOntologyName"
+                                       items="${value.value.ontology.individualOntologies}">
+                                ${individualOntologyName.ontologyName}<br/>
+                            </c:forEach>
+                        </td>
+                        <td class="listContentBold">
+                            <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="MM/dd/yyyy"/>
+                        </td>
+                        <td class="listContentBold">
+                            <fmt:formatDate value="${value.value.dateLastLoaded}" pattern="hh:mm:ss"/>
+                        </td>
+                        <td class="listContentBold">
+                                ${value.value.timeLastLoaded}
+                        </td>
+                        <td class="listContentBold">
+                            <fmt:formatNumber value="${value.value.lastLoad.totalNumberOfTerms}" />
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <fmt:formatNumber value="${value.value.lastLoad.numberOfTerms}" /></a>
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <fmt:formatNumber value="${value.value.lastLoad.numberOfObsoletedTerms}" /></a>
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <fmt:formatNumber value="${value.value.lastLoad.numberOfAliases}" /></a>
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_KEYS%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <fmt:formatNumber value="${value.value.lastLoad.numberOfKeys}" />
+                            </a>
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_VALUES%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <fmt:formatNumber value="${value.value.lastLoad.numberOfValues}" />
+                               </a>
+                        </td>
+                        <td class="listContentBold">
+                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_RELATIONSHIP_TYPES%>&ontologyName=${value.value.ontology.ontologyName}"
+                               target="term-window">
+                               <c:out value="${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontologyManager ,value.value.ontology))}" />
+                               </a>
+                        </td>
+                        <td>
+                            <zfin2:lookup ontology="${value.value.ontology}" id="${loop.count}" showTermDetail="true"
+                                          wildcard="false"/>
+                        </td>
+                    </tr>
+                </c:if>
             </c:forEach>
             <tr>
                 <td colspan="7" style="text-align:right;">

@@ -13,6 +13,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Filter that checks if the database is in Update mode and thus does not allow
@@ -24,6 +26,13 @@ public class UpdatesCheckFilter implements Filter {
     private static ZdbFlag systemUpdates;
     private static final String REDIRECT_URL = "/action/login";
     private ZfinSecurityContextLogoutHandler securityHandler;
+    private static final List<String> readOnlyUrls = new ArrayList<String>();
+
+    static {
+        readOnlyUrls.add("/ontology/");
+        readOnlyUrls.add("/anatomy/");
+        readOnlyUrls.add("/ajax/anatomylookup");
+    }
 
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG.info("Start Updates Check Filter");
@@ -36,18 +45,29 @@ public class UpdatesCheckFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         String url = request.getRequestURI();
-        InfrastructureRepository infrastructure = RepositoryFactory.getInfrastructureRepository();
-        systemUpdates = infrastructure.getUpdatesFlag();
+        boolean readOnlyUrl = isReadOnlyUrl(url);
+        if (!readOnlyUrl) {
+            InfrastructureRepository infrastructure = RepositoryFactory.getInfrastructureRepository();
+            systemUpdates = infrastructure.getUpdatesFlag();
+        }
         Person person = Person.getCurrentSecurityUser();
 
-        // redirect if user is logged in and database is locked 
-        if (systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {
+        // redirect if user is logged in and database is locked
+        if (systemUpdates != null && systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {
             logoutUser(request, response);
             response.sendRedirect(response.encodeRedirectURL(REDIRECT_URL));
             LOG.info("System is currently being updated. No login session are allowed.");
-        } else{
+        } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
+    }
+
+    private boolean isReadOnlyUrl(String url) {
+        for (String value : readOnlyUrls) {
+            if (url.contains(value))
+                return true;
+        }
+        return false;
     }
 
     private void logoutUser(HttpServletRequest request, HttpServletResponse response) {

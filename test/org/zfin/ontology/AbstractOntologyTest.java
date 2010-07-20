@@ -36,8 +36,8 @@ public abstract class AbstractOntologyTest {
 
     protected void loadOntologyManager(){
         try {
-//                ontologyManager = OntologyManager.getInstanceFromFile() ;
             ontologyManager = OntologyManager.getEmptyInstance();
+            ontologyManager.deserializeRelationships();
             for(Ontology ontology: getOntologiesToLoad()){
                 ontologyManager.deserializeOntology(ontology);
             }
@@ -45,8 +45,6 @@ public abstract class AbstractOntologyTest {
             logger.error("failed to load from file: " + ontologyManager,e);
             initHibernate();
             ontologyManager.reLoadOntologies();
-//            ontologyManager = OntologyManager.getInstance(ontology) ;
-//            ontologyManager = OntologyManager.
         }
     }
 

@@ -8,6 +8,7 @@
 
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
                    oboID="${formBean.anatomyItem.oboID}"
+                   termID="${formBean.aoTerm.ID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="anatomy_item"/>
 
@@ -34,7 +35,7 @@
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontology="<%= Ontology.ANATOMY%>"
                               action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>" showTermDetail="false"
-                         wildcard="true"/>
+                              wildcard="true"/>
             </td>
         </tr>
         <c:if test="${formBean.anatomyItem.synonyms != null  }">

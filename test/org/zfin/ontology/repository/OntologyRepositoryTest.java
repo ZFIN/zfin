@@ -19,7 +19,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 /**
  * Repository for Ontology-related actions: mostly lookup.
  */
-public class OntologyRepositoryTest {
+public class OntologyRepositoryTest extends AbstractOntologyTest{
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -79,5 +79,23 @@ public class OntologyRepositoryTest {
         Assert.assertNotNull(term);
     }
 
+    @Test
+    public void loadAllTermsFromFiles() throws Exception{
+        OntologyManager manager = OntologyManager.getInstanceFromFile(Ontology.ANATOMY);
+        Assert.assertNotNull(manager);
+    }
+
+    @Test
+    public void loadAllTermsOfOntology() throws Exception{
+        List<Term> terms = getOntologyRepository().getAllTermsFromOntology(Ontology.ANATOMY);
+        Assert.assertNotNull(terms);
+    }
+
+    @Override
+    protected Ontology[] getOntologiesToLoad() {
+        Ontology[] ontologies = new Ontology[1];
+        ontologies[0] =  Ontology.ANATOMY;
+        return ontologies ;
+    }
 
 }

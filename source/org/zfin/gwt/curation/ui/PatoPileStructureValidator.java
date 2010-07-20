@@ -4,6 +4,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,13 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
     public boolean isValidNewPileStructure(PhenotypeTermDTO phenotypeTerm) {
         if (!super.isValidNewPileStructure(phenotypeTerm))
             return false;
+        TermDTO qualityTerm = phenotypeTerm.getQuality();
+        if (qualityTerm == null || StringUtils.isEmpty(qualityTerm.getTermName())) {
+            errorMessages.add("No Quality term provided.");
+            return false;
+        }
         OntologyDTO superTerm = phenotypeTerm.getSuperterm().getOntology();
-        OntologyDTO quality = phenotypeTerm.getQuality().getOntology();
+        OntologyDTO quality = qualityTerm.getOntology();
         TermDTO subterm = phenotypeTerm.getSubterm();
         if (subterm != null) {
             if (subterm.getOntology().getAssociatedQualityOntology() != quality && quality != OntologyDTO.QUALITY) {

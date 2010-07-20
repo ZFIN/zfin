@@ -39,4 +39,9 @@
     <zfin-ontology:showTerms formBean="${formBean}" action="${formBean.actionType.name}"/>
 </c:if>
 
+<%-- display all relationships --%>
+<c:if test="${formBean.actionType.name eq 'SHOW_RELATIONSHIP_TYPES'}" >
+    <zfin-ontology:showRelationshipTypes formBean="${formBean}" action="${formBean.actionType.name}"/>
+</c:if>
+
 

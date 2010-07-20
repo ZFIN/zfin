@@ -11,8 +11,6 @@ import java.util.HashMap;
  * is part of, has parts
  * is a type of, has subtype
  *
- * ToDo: Relationships are hard-coded. Need to make it more generic.
- * wait until we have a unique gDAG to get terms from.
  */
 public class RelationshipSorting implements Comparator<String> {
 
@@ -22,6 +20,8 @@ public class RelationshipSorting implements Comparator<String> {
     public static final String DEVELOPS_FROM = "develops from";
     public static final String HAS_SUBTYPE = "has subtype";
     public static final String IS_A_TYPE_OF = "is a type of";
+    public static final String START = "start";
+    public static final String END = "end";
 
     public static final HashMap<String, Integer> order = new HashMap<String, Integer>(6);
     {
@@ -34,10 +34,12 @@ public class RelationshipSorting implements Comparator<String> {
     }
 
     public int compare(String relationTypeOne, String relationTypeTwo) {
-        if(!order.containsKey(relationTypeOne))
-            throw new RuntimeException("Type '"+ relationTypeOne+" not found");
-        if(!order.containsKey(relationTypeTwo))
-            throw new RuntimeException("Type '"+ relationTypeTwo+" not found");
+        if(!order.containsKey(relationTypeOne) && order.containsKey(relationTypeTwo))
+            return +1;
+        if(order.containsKey(relationTypeOne) && !order.containsKey(relationTypeTwo))
+            return -1;
+        if(!order.containsKey(relationTypeOne) && !order.containsKey(relationTypeTwo))
+            return relationTypeOne.compareTo(relationTypeTwo);
 
         Integer one = order.get(relationTypeOne);
         Integer two = order.get(relationTypeTwo);

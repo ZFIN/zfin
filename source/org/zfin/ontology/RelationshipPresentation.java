@@ -1,11 +1,15 @@
 package org.zfin.ontology;
 
+import org.zfin.anatomy.presentation.RelationshipSorting;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Please provide JavaDoc info!!!
  */
-public class RelationshipPresentation {
+public class RelationshipPresentation implements Comparable<RelationshipPresentation> {
 
     String type;
     List<Term> items;
@@ -24,5 +28,16 @@ public class RelationshipPresentation {
 
     public void setItems(List<Term> items) {
         this.items = items;
+    }
+
+    public void addTerm(Term term){
+        if(items == null)
+            items = new ArrayList<Term>();
+        items.add(term);
+    }
+    @Override
+    public int compareTo(RelationshipPresentation o) {
+        Comparator<String> comp = new RelationshipSorting();
+        return comp.compare(getType(), o.getType());
     }
 }

@@ -39,7 +39,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         genes = new TreeSet<Marker>();
     }
 
-    static public ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
+     public static final ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
     static public ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
 
     public Term getSuperterm() {

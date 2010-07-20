@@ -13,6 +13,7 @@ import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,11 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         getCellFormatter().addStyleName(rowIndex++, headerColumn, WidgetUtil.BOLD);
 
         addHeaderEntry(TerminfoTableHeader.ID.getName(), rowIndex);
-        setWidget(rowIndex++, dataColumn, new Label(termInfo.getID()));
+        String idDisplay = termInfo.getOboID();
+        idDisplay += " [";
+        idDisplay += termInfo.getID();
+        idDisplay += "]";
+        setWidget(rowIndex++, dataColumn, new Label(idDisplay));
 
         if (termInfo.getSynonyms() != null && termInfo.getSynonyms().size() > 0) {
             addHeaderEntry(TerminfoTableHeader.SYNONYMS.getName(), rowIndex);
@@ -107,6 +112,7 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
                 FlowPanel panel = new FlowPanel();
                 addHeaderEntry(type, rowIndex);
                 List<TermInfo> relatedTerms = relatedTermsMap.get(type);
+                Collections.sort(relatedTerms);
                 for (int i = 0; i < relatedTerms.size(); i++) {
                     panel.add(createHyperlink(relatedTerms.get(i)));
                     if (i < relatedTerms.size() - 1) {
@@ -194,7 +200,7 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
 
     public enum TerminfoTableHeader implements TableHeader {
         TERM(0, "TERM:"),
-        ID(1, "ID:"),
+        ID(1, "OBO ID [ID]:"),
         SYNONYMS(2, "Synonyms:"),
         DEFINITION(3, "Definition:"),
         PARENTS(4, "PARENTS:"),
