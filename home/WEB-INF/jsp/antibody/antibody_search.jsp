@@ -228,7 +228,7 @@ function start_tips() {
                     width: 40,
                     wildcard: false,
                     useTermTable: true,
-                    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: false,
+                    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: false
                 }
             </script>
             <style type="text/css">

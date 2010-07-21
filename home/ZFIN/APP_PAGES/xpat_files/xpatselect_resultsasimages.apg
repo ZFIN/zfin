@@ -70,7 +70,7 @@ OUTPUT VARS:
      <?MIVAR>$(IF,$(NE,$MI_CURRENTROW,1),",")<?/MIVAR>
      {{
        "imgThumb":"$xpresimg_imgThumb",
-       "imgZdbId":"$xpresimg_imgZdbId",
+       "imgZdbId":"$xpresimg_imgZdbId"
      }}
    <?/MISQL> ];
 
