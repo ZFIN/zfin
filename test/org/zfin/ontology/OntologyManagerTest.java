@@ -44,6 +44,28 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     }
 
     @Test
+    public void dontTokenizeSmallWords(){
+//        ontologyManager.initSingleOntologyMap(Ontology.QUALITY);
+        Set<Term> terms ;
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("disease") ;
+        assertTrue(terms.size()>5) ;
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("(for") ;
+        assertNull(terms) ;
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("a") ;
+        if(terms!=null){
+            for(Term term:terms){
+                assertTrue(term.getTermName().startsWith("a")) ;
+                assertTrue(term.getTermName().length()>2) ;
+            }
+        }
+        else{
+            assertNull(terms) ;
+        }
+
+    }
+
+
+    @Test
     public void testTermByName() {
         ontologyManager.getTermByName(Ontology.ANATOMY, "B cell");
         assertNull(ontologyManager.getTermByName(Ontology.ANATOMY, "bad bad term"));

@@ -44,6 +44,31 @@ public class OntologyTokenizationTest {
     }
 
     @Test
+    public void shortTokenizer(){
+        String matchString = "sensitivity of a process" ;
+        Set<String> strings ;
+        strings = tokenizer.tokenizeWords(matchString)  ;
+        assertEquals(2,strings.size()) ;
+        strings = tokenizer.tokenize(matchString)  ;
+        assertEquals(2,strings.size());
+        assertTrue(strings.contains("sensitivity")) ;
+        assertTrue(strings.contains("process")) ;
+    }
+
+    @Test
+    public void testBadParens(){
+        String matchString = "aerobic (for occurrence)" ;
+        Set<String> strings ;
+        strings = tokenizer.tokenizeWords(matchString)  ;
+        assertEquals(3,strings.size()) ;
+        strings = tokenizer.tokenize(matchString)  ;
+        assertEquals(3,strings.size());
+        assertTrue(strings.contains("aerobic")) ;
+        assertTrue(strings.contains("for")) ;
+        assertTrue(strings.contains("occurrence")) ;
+    }
+
+    @Test
     public void matchterTest2(){
         String matcherString = "3,10-dog,food(kittens)stuff" ;
         Set<String> strings = tokenizer.tokenize(matcherString) ;

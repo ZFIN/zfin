@@ -299,7 +299,7 @@ public class OntologyManager {
      *
      * @param ontology Ontology
      */
-    private void initSingleOntologyMap(Ontology ontology) {
+    public void initSingleOntologyMap(Ontology ontology) {
         long startTime = System.currentTimeMillis();
         Date dateStarted = new Date();
         List<Term> terms = getOntologyRepository().getAllTermsFromOntology(ontology);

@@ -5,6 +5,7 @@ import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,8 +25,29 @@ public class OntologyTokenizer {
     private final Pattern pattern = Pattern.compile(DEFAULT_STRING_REGEXP) ;
 
 
+    // this generates words of the form:
+    // expression: 'a-b c-d'
+    //  tokenizeString: 'a' and 'b' and 'c' and 'd'
+    //  tokenizeWords: 'a-b' and 'c-d'
+    // where 'a-b' is larger than 3 letters
     protected Set<String> tokenizeWords(String string){
-        return new HashSet<String>(Arrays.asList(string.split(DEFAULT_WORD_REGEXP)));
+        Set<String> strings = new HashSet<String>(Arrays.asList(string.split(DEFAULT_WORD_REGEXP)));
+        Iterator<String> iter = strings.iterator() ;
+        Set<String> returnStrings = new HashSet<String>();
+        String word ;
+        while(iter.hasNext()){
+            word = iter.next();
+            if(word.startsWith("(")){
+                word = word.substring(1) ;
+            }
+            if(word.endsWith(")")){
+                word = word.substring(0,word.length()-1) ;
+            }
+            if(word.trim().length()>2 ){
+                returnStrings.add(word) ;
+            }
+        }
+        return returnStrings ;
     }
 
     protected Set<String> tokenizeStrings(String string){

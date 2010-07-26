@@ -14,6 +14,8 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
