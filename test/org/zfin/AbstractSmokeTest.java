@@ -1,32 +1,37 @@
-package org.zfin.gwt;
+package org.zfin;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import net.sourceforge.jwebunit.junit.WebTestCase;
 import net.sourceforge.jwebunit.util.TestingEngineRegistry;
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.hibernate.SessionFactory;
-import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.AccountInfo;
-import org.zfin.people.Person;
-
-import java.util.Date;
 
 /**
  * This class uses the more raw HtmlUnit protocols.
  */
-public class AbstractJWebUnitTest extends WebTestCase{
+public class AbstractSmokeTest extends WebTestCase {
 
     protected String mutant = System.getenv("MUTANT_NAME");
-//    protected String mutant = "almost" ;
+//    protected String mutant = "ogon" ;
     protected String domain = System.getenv("DOMAIN_NAME");
-//    protected String domain = "almost.zfin.org" ;
-    protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
+//    protected String domain = "ogon.zfin.org" ;
+    protected WebClient webClient;
+
+    protected final WebClient[] curationWebClients = {
+            new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
+//            new WebClient(BrowserVersion.SAFARI),  // 20%
+    };
+
+    protected final WebClient[] publicWebClients = {
+            new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_6),  // 10%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_7),  // 10%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
+//            new WebClient(BrowserVersion.SAFARI),  // 20%
+    };
 
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -43,7 +48,9 @@ public class AbstractJWebUnitTest extends WebTestCase{
 
     @Override
     protected void tearDown() throws Exception {
-        webClient.closeAllWindows();
+        if(webClient!=null){
+            webClient.closeAllWindows();
+        }
     }
 
 }

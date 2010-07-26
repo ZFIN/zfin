@@ -3,25 +3,28 @@ package org.zfin;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
-import org.zfin.gwt.ExpressionJWebUnitTest;
-import org.zfin.gwt.GeneralSecureJWebUnitTest;
-import org.zfin.gwt.marker.AntibodyGWTEditTest;
+import org.zfin.gwt.ExpressionSmokeTest;
+import org.zfin.gwt.SimpleSmokeTest;
+import org.zfin.gwt.marker.AntibodyEditSmokeTest;
+import org.zfin.gwt.marker.GeneEditSmokeTest;
+import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
-import org.zfin.httpunittest.SmokeTest;
 
 /**
  * Smoke tests: Integration tests.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        SmokeTest.class,
-        GeneralSecureJWebUnitTest.class,
-        AntibodyGWTEditTest.class,
-        ExpressionJWebUnitTest.class,
+//        MarkerViewSmokeTest.class,
+        SimpleSmokeTest.class,
+        AnatomySmokeTest.class,
+//        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
+        ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
+        GeneEditSmokeTest.class,
         SiteSearchSmokeTest.class
-//        GOEvidenceUnitTest.class
 })
 public class SmokeTests {
 

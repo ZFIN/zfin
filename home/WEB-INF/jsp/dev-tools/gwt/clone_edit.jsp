@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="/Marker.css"/>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ page import="org.zfin.gwt.marker.ui.CloneEditController" %>
@@ -26,6 +25,7 @@
 
 <%--Adds the CloneEditController.--%>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <table cellpadding="10">

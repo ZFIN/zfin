@@ -2,8 +2,6 @@
 <%@ page import="org.zfin.gwt.marker.ui.TranscriptEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="/Marker.css"/>
-
 
 <%--<authz:authorize ifAnyGranted="root">--%>
 

@@ -358,7 +358,7 @@ public class RenoRepositoryTest {
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
             Hit hit1 = (Hit) returnMap.get("hit1");
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue());
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(),0.001f);
             assertEquals(bestHit.getScore(), hit1.getScore());
 
             // should choose the same score, because still has the best expect value
@@ -367,7 +367,7 @@ public class RenoRepositoryTest {
             runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue());
+            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(),0.001f);
             assertEquals(bestHit.getScore(), hit1.getScore());
 
             // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
@@ -377,7 +377,7 @@ public class RenoRepositoryTest {
             runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
             runCandidate = (RunCandidate) runCandidates.get(0);
             bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue());// would work for either hit1 or hit2
+            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(),0.001f);// would work for either hit1 or hit2
             assertEquals(bestHit.getScore(), hit2.getScore());
         }
         catch (Exception e) {

@@ -1,16 +1,10 @@
-package org.zfin.gwt;
+package org.zfin;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import net.sourceforge.jwebunit.junit.WebTestCase;
-import net.sourceforge.jwebunit.util.TestingEngineRegistry;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
-import org.hibernate.SessionFactory;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.people.AccountInfo;
@@ -22,35 +16,23 @@ import java.util.Date;
 /**
  * This class uses the more raw HtmlUnit protocols.
  */
-public class AbstractSecureJWebUnitTest extends WebTestCase{
+public class AbstractSecureSmokeTest extends AbstractSmokeTest {
 
-    protected String mutant = System.getenv("MUTANT_NAME");
-    protected String domain = System.getenv("DOMAIN_NAME");
-//    protected String domain = "ogon.zfin.org" ;
-    protected final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-    protected Person person = null ;
+    protected Person person = null;
     protected String password = "veryeasypass";
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
-        }
-    }
+    private final Logger logger = Logger.getLogger(AbstractSecureSmokeTest.class) ;
 
     @Override
     public void setUp() {
-        TestConfiguration.configure();
-        setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
+        super.setUp();
         createPerson();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        webClient.closeAllWindows();
-        deletePerson() ;
+        deletePerson();
+        super.tearDown();
     }
-
 
 
     public Person getTestPerson() {
@@ -61,7 +43,7 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
         accountInfo.setLogin("newUser");
         accountInfo.setRole("root");
 
-        String saltedPassword = new Md5PasswordEncoder().encodePassword(password,"dedicated to George Streisinger");
+        String saltedPassword = new Md5PasswordEncoder().encodePassword(password, "dedicated to George Streisinger");
         accountInfo.setPassword(saltedPassword);
         accountInfo.setName("Test Person");
         accountInfo.setLoginDate(new Date());
@@ -81,21 +63,28 @@ public class AbstractSecureJWebUnitTest extends WebTestCase{
         HibernateUtil.currentSession().evict(person);
 
         // because persons add active source is added with person, need to evict it, too
-        ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID()) ;
+        ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
         assertNotNull(activeSource);
         HibernateUtil.currentSession().evict(activeSource);
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    protected void deletePerson(){
+    protected void deletePerson() {
+        ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().delete(person);
+        if(activeSource!=null){
+            HibernateUtil.currentSession().delete(activeSource);
+        }
+        else{
+            logger.error("unable to delete user: "+ person.getZdbID() + " "+ person.getName());
+        }
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    public void login() throws Exception{
+    public void login() throws Exception {
         webClient.setRedirectEnabled(true);
-        HtmlPage page = webClient.getPage("http://"+domain +"/action/login");
+        HtmlPage page = webClient.getPage("http://" + domain + "/action/login");
         HtmlForm loginForm = page.getFormByName("login");
         HtmlInput nameField = loginForm.getInputByName("j_username");
         nameField.setValueAttribute(person.getAccountInfo().getLogin());

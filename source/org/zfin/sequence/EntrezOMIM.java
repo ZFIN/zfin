@@ -1,8 +1,5 @@
 package org.zfin.sequence;
 
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.SequenceRepository;
-
 import java.io.Serializable;
 
 
@@ -10,7 +7,6 @@ public class EntrezOMIM implements Serializable {
 
     private Entrez entrezAccession;
     private String omimAccession;
-    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private String entrezAccessionNum;
 
 

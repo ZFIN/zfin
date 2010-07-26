@@ -264,7 +264,7 @@ public class MultiRunTest {
             session.refresh(runCandidate2) ;
             assertEquals("runCandidate1 occurrs 1st",1,runCandidate1.getOccurrenceOrder()) ;
             assertEquals("runCandidate2 occurrs 2nd",2,runCandidate2.getOccurrenceOrder()) ;
-            assertEquals("run count should be 2",2,runCandidate1.getCandidate().getRunCount()) ;
+            assertEquals("run count should be 2",2,(int) runCandidate1.getCandidate().getRunCount()) ;
 
 
             NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController() ;
@@ -280,8 +280,8 @@ public class MultiRunTest {
             assertFalse("runCandidate2 is NOT done",runCandidate2.isDone()) ;
 
             session.refresh(runCandidate1.getCandidate()) ;
-            assertEquals("run count should be 2",2,runCandidate1.getCandidate().getRunCount()) ;
-            assertEquals("run count should be 2",2,runCandidate1.getCandidate().getRunCount()) ;
+            assertEquals("run count should be 2",2,(int) runCandidate1.getCandidate().getRunCount()) ;
+            assertEquals("run count should be 2",2,(int) runCandidate1.getCandidate().getRunCount()) ;
         }
         catch (Exception e) {
             java.lang.StackTraceElement[] elements = e.getStackTrace();

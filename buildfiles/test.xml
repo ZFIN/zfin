@@ -336,6 +336,8 @@ test(s) need to be run before committing changes or pushing files to production 
 
 
 
+    <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
+    <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
 <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
 
     <junit fork="yes"
@@ -346,6 +348,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <jvmarg line="${junit.jvmargs}"/>
         <classpath refid="extended.classpath"/>
         <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+        <jvmarg value="-Xmx1024m"/>
         <jvmarg value="-DDBNAME=${dbname}"/>
         <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
         <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>

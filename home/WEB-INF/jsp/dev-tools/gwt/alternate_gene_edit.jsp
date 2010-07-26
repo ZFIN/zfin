@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="/Marker.css"/>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ page import="org.zfin.gwt.marker.ui.AlternateGeneEditController" %>

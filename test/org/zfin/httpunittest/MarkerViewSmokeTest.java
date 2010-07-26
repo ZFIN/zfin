@@ -1,14 +1,8 @@
 package org.zfin.httpunittest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.junit.Before;
-import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.AbstractSmokeTest;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -23,22 +17,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
-
 /**
  * Main Integration Test class.
  * Tests main pages of ZFIN.
- * ToDo: Use HTMLUnit test. Need to figure out the library dependency.
+ * @deprecated  Use JWebUnit style smoke test.
  */
-public class SmokeTest {
+public class MarkerViewSmokeTest extends AbstractSmokeTest{
 
 
-    private static final Logger LOG = Logger.getLogger(SmokeTest.class);
-
-    private String mutant = System.getenv("MUTANT_NAME");
-
-    private String domain = System.getenv("DOMAIN_NAME");
+    private static final Logger LOG = Logger.getLogger(MarkerViewSmokeTest.class);
 
     static private HashMap<String, Object> mimeTypes = new HashMap<String, Object>();
 
@@ -48,6 +35,8 @@ public class SmokeTest {
     }
 
     static HashMap<String, String> markerTypes = new HashMap<String, String>();
+
+    private StringBuffer testUrl = new StringBuffer();
 
     static {
         markerTypes.put("fgf8a", "Gene");
@@ -67,18 +56,10 @@ public class SmokeTest {
 //        markerTypes.put("Tg(kdr:GFP)", "Transgenic Construct");
     }
 
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
-        }
-    }
-
-    private StringBuffer testUrl = new StringBuffer();
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
+        super.setUp();
         testUrl.append("http://").append(domain);
     }
 
@@ -112,71 +93,6 @@ public class SmokeTest {
             LOG.info(page);
         }
 
-    }
-
-    @Test
-    public void anatomySearchPages() throws Exception {
-        String searchPage = "/action/anatomy/search";
-        testUrl.append(searchPage);
-
-        String contents = loadURL(testUrl.toString());
-        if (contents == null)
-            fail("No body returned");
-        String title = "Anatomical Ontology Browser";
-        if (contents.indexOf(title) == -1)
-            fail("No title :" + title + " found.");
-        LOG.info(searchPage);
-
-    }
-
-    @Test
-    public void anatomyDetailPage() throws Exception {
-        String searchPage = "/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415";
-        testUrl.append(searchPage);
-
-        String contents = loadURL(testUrl.toString());
-        if (contents == null)
-            fail("No body returned");
-        String title = "ZFIN: Anatomical Structure:";
-        if (contents.indexOf(title) == -1)
-            fail("No title :" + title + " found.");
-        LOG.info(searchPage);
-    }
-
-    @Test
-    public void antibodySearchPages() throws Exception {
-        String searchPage = "/action/antibody/search";
-        testUrl.append(searchPage);
-
-        String contents = loadURL(testUrl.toString());
-        if (contents == null)
-            fail("No body returned");
-        String title = "Antibody Search";
-        if (contents.indexOf(title) == -1)
-            fail("No title :" + title + " found.");
-        LOG.info(searchPage);
-    }
-
-    @Test
-    public void antibodyDetailPage() throws Exception {
-        String searchPage = "/action/antibody/detail?antibody.zdbID=";
-        testUrl.append(searchPage);
-
-        String antibodyName = "anti-Tbx16";
-        AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
-        Antibody antibody = ar.getAntibodyByName(antibodyName);
-        if (antibody == null) {
-            LOG.error("No Antibody found with name: " + antibodyName);
-            return;
-        }
-
-        String contents = loadURL(testUrl.toString() + antibody.getZdbID());
-        if (contents == null)
-            fail("No body returned");
-        String title = "Antibody:";
-        if (contents.indexOf(title) == -1)
-            fail("No title :" + title + " found.");
-        LOG.info(searchPage);
     }
 
     private String loadURL(String url) throws IOException {
