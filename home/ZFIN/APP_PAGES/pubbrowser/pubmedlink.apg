@@ -1,16 +1,14 @@
 <?MICOMMENT>*** START EXTERNAL LINK ***<?/MICOMMENT>
 
-<?MIVAR COND="$(NC,$accession_no,)">
+<?MIBLOCK COND="$(AND, $(XST,$accession_no),$(NC,$accession_no,),$(ISINT,$accession_no))">
   <b>PubMed:</b> 
-  <?MIBLOCK COND="$(ISINT,$accession_no)">
-    <?MIVAR>
-<?MIVAR NAME=$externallink>http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no<?/MIVAR>
-<a href="$externallink">$accession_no</a>
-    <?/MIVAR>
+  <?MIVAR NAME=$externallink>http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no<?/MIVAR>
+  <?MIVAR>
+    <a href="$externallink">$accession_no</a>
+  <?/MIVAR>
   <?MIELSE>
-    <?MIVAR>$accession_no<?/MIVAR>
-  <?/MIBLOCK>
+  <b>PubMed:</b> none  
+<?/MIBLOCK>
   &nbsp;&nbsp;&nbsp;  
-<?/MIVAR>
 <?MICOMMENT>*** END EXTERNAL LINK ***<?/MICOMMENT>
 
