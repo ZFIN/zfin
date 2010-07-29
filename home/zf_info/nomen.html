@@ -266,18 +266,26 @@ separated by semicolons.
 
 <blockquote> <a name="4.1"></a><b>4.1. Deficiencies</b> <br>
 The general format for naming a deficiency is: <br>
-<I>Df(Chr<sup>##</sup>)xxx<sup>allele</sup></I>
+<I>Df(Chr##:xxx)<sup>allele</sup></I>
 
-<p><I>Df</I> indicated deficiency. The term <I>xxx</I> should describe the salient features of the deficiency, as determined by the investigator. In cases where the deficiency removes sequences from a named gene, it should contain the standard symbol for that <a href="http://zfin.org/zf_info/nomen.html#1.">gene</a>. The <a href="http://zfin.org/zf_info/nomen.html#2.">allele name</a> should follow standard nomenclature conventions (laboratory designation followed by allele name).
+<p><I>Df</I> indicates deficiency. The chromosome where the deficiency maps should be specified by its number (##) using two digits (i.e., 03 for Chr 3) so that
+computers will order them properly. The term xxx should describe the salient
+features of the deficiency, as determined by the investigator. In cases
+where the deficiency removes sequences from a named gene, it should contain
+the standard symbol for that gene.  The allele name should follow standard
+nomenclature conventions (laboratory designation followed by allele name).
 
-<p>The chromosome where the deficiency maps should be specified by its number (##) using two digits (i.e., 03 for Chr 3) so that computers will order them properly. 
+<p><b>Example:</b> <i>Df(Chr03:sox8,sox9b)<sup>b971</sup></i>
 
-<p><b>Example:</b> <i>Df(Chr12)dlx3<sup>b380</sup></i>
+<p>Deficiencies are written as an allele of a gene when the gene is disrupted
+at one of the two breakpoints of the deficiency. The omitted genes are
+listed as missing.
 
-<p>Deficiencies are written as an allele of a gene when the gene is disrupted at one of the two breakpoints of the deficiency.   The omitted genes are listed as missing.
 
-<p>Example:
-<i>ndr2<sup>b16</sup></i> is a deficiency in which a portion of ndr2 is missing, causing the deficiency to be an allele of ndr2. 
+<p><b>Example: </b><i>ndr2<sup>b16</sup></i>
+<br>This is a deficiency in which a portion of
+ndr2 is missing, causing the deficiency to be an allele of ndr2.
+
 
   
 <p> <a name="4.2"></a><b>4.2. Translocations</b> <br>
