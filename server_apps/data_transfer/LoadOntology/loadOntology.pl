@@ -21,7 +21,7 @@ my $fileName = $ARGV[1];
 sub downloadOntologyTermFiles () { # download the obo file from passed in fileUrl
 
 
-    system("/local/bin/curl -s $fileUrl -o $fileName") and die "can not download $fileName";
+    system("/local/bin/curl -sL $fileUrl -o $fileName") and die "can not download $fileName";
 }
 
 sub sendLoadReport ($) { # send email on error or completion
