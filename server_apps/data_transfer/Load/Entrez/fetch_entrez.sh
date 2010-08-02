@@ -6,13 +6,23 @@ test ${?prompt} -eq 1 && set prompt = "cron %c2$Prompt"
 
 setenv PATH "/usr/bin/:/local/bin/"
 cd  <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/
+if ($?) then
+        echo "ERROR:  cant get to <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/"
+        exit $status;
+endif
+
 
 # get human and mouse entrez-id related  nt & aa accessions, symbol and name
-#output is 
+#output is
 
 #taxid|entrez_id|aa_acc|nt_acc|
 rm -f gene2accession.gz
 wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz
+set err = $?
+if ($err) then
+        echo "ERROR:  cant wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz"
+        exit $err;
+endif
 
 cp gene2accession.gz gene2accession.gz.hold
 
@@ -21,24 +31,29 @@ cp gene2accession.gz gene2accession.gz.hold
 
 rm -f gene_info.gz
 wget -q ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
+set err = $?
+if ($err) then
+        echo "ERROR:  cant wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz"
+        exit $err
+endif
 cp gene_info.gz gene_info.gz.hold
 
 # bail if gunzip fails
 gunzip -f gene2accession.gz
-if($status != "0") then
-	echo "ERROR gunzip gene2accession failed" 
+set err = $?
+if($err) then
+	echo "ERROR gunzip gene2accession failed"
 	rm -f gene2accession.gz
-	exit 1
-endif 
-
-gunzip -f gene_info.gz
-if($status != "0") then     
-        echo "ERROR gunzip gene_info failed"
-        rm -f gene_ino.gz
-	exit 1  
+	exit $err
 endif
 
-
+gunzip -f gene_info.gz
+set err = $?
+if($err) then
+        echo "ERROR gunzip gene_info failed"
+        rm -f gene_info.gz
+	exit $err
+endif
 
 #Homo sapiens (Human)	 [TaxID: 9606]
 #Mus musculus (Mouse)	 [TaxID: 10090]

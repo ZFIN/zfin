@@ -32,5 +32,6 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-
+run:	all
+	$(TARGETROOT)/server_apps/data_transfer/Load/Entrez/fetch_entrez.sh
 
