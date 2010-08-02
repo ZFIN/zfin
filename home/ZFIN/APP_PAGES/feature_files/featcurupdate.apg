@@ -365,23 +365,14 @@ PREFIX:   featcurup_
                 from record_attribution 
                 where recattrib_data_zdb_id = '$featcur_featedit_feature_zdb_id'
                 and recattrib_source_type='feature type'">
+   <?MIVAR NAME=$typereccount>$1<?/MIVAR>
    <?/MISQL>
-   <?MIBLOCK COND="$(!=,0,$1)">
-      <?MIBLOCK COND="$(EC,$new_feat_type,$featedit_feature_type)">
 
       <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id,recattrib_source_type) 
                 values ('$featcur_featedit_feature_zdb_id','$OID', 'feature type')">
       <?/MISQL>
-      <?MIELSE>
 
-      <?MISQL SQL="update record_attribution 
-                   set recattrib_source_zdb_id='$OID'
-                   where recattrib_data_zdb_id='$featcur_featedit_feature_zdb_id'
-                   and recattrib_source_type='feature type'"><?/MISQL>
 
-      <?/MIBLOCK>
-
-   <?/MIBLOCK>
 <?/MIBLOCK>
 <?/MIBLOCK>
 
