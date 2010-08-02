@@ -36,7 +36,7 @@ public interface LookupRPCServiceAsync {
 
     // validation methods
 
-    void validateAnatomyTerm(String term, AsyncCallback<TermStatus> async);
+    void validateTerm(String term, OntologyDTO ontology, AsyncCallback<TermStatus> async);
 
     void validateMarkerTerm(String term, AsyncCallback<TermStatus> async);
 

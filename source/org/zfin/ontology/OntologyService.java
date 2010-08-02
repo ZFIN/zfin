@@ -196,6 +196,20 @@ public final class OntologyService {
         return OntologyManager.getInstance().getDistinctRelationshipTypes(ontology);
     }
 
+    public static List<Term> getAllChildren(Term term){
+        List<Term> allChildren = new ArrayList<Term>();
+        List<Term> childrenTerms = term.getChildrenTerms();
+        while (!childrenTerms.isEmpty()) {
+            Term currentTerm = childrenTerms.get(0);
+            childrenTerms.remove(0);
+            allChildren.add(currentTerm);
+            List<Term> newChildren = currentTerm.getChildrenTerms();
+            if (newChildren != null && !newChildren.isEmpty()) {
+                childrenTerms.addAll(newChildren);
+            }
+        }
+        return allChildren;
+    }
     /**
      * Inner class: Comparator that compares the alias names of the AnatomySynonym
      * and orders them alphabetically.

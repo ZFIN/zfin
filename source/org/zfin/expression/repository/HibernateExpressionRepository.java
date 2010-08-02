@@ -825,6 +825,50 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         session.save(structure);
     }
 
+    /**
+     * Retrieve Expressions for a given term.
+     * @param term term
+     * @return list of expressions
+     */
+    @Override
+    public List<ExpressionResult> getExpressionsWithEntity(Term term) {
+        String hql = "select distinct expression from ExpressionResult expression where " +
+                "(superterm = :term OR subterm = :term) " +
+                " AND expressionFound = :expressionFound ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+        query.setBoolean("expressionFound", true);
+        return (List<ExpressionResult>) query.list();
+    }
+
+    /**
+     * Retrieve Expressions for a given list of terms.
+     * @param terms term
+     * @return list of expressions
+     */
+    @Override
+    public List<ExpressionResult> getExpressionsWithEntity(List<Term> terms) {
+        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>(50);
+        for (Term term : terms) {
+            List<ExpressionResult> phenotypes = getExpressionsWithEntity(term);
+            allExpressions.addAll(phenotypes);
+        }
+        List<ExpressionResult> nonDuplicateExpressions = removeDuplicateExpressions(allExpressions);
+        Collections.sort(nonDuplicateExpressions);
+        return nonDuplicateExpressions;
+    }
+
+    private List<ExpressionResult> removeDuplicateExpressions(List<ExpressionResult> allExpressions) {
+        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
+        for (ExpressionResult result : allExpressions) {
+            results.add(result);
+        }
+        List<ExpressionResult> expressionResults = new ArrayList<ExpressionResult>(results.size());
+        expressionResults.addAll(results);
+        return expressionResults;
+    }
+
+
     private void validateFigureAnnotationKey(String experimentZdbID, String figureID, String startStageID, String endStageID) {
         ActiveData data = new ActiveData();
         // these calls validate the keys according to zdb id syntax.

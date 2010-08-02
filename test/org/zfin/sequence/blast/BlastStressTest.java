@@ -33,7 +33,7 @@ public abstract class BlastStressTest {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

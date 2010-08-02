@@ -197,6 +197,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve a genotype experiment by PK.
+     *
      * @param genotypeExperimentID pk
      * @return genotype experiment
      */
@@ -206,6 +207,7 @@ public interface MutantRepository {
      * Remove a mutant figure stage record:
      * 1) All phenotypes and their association to figures.
      * 2) the genotype experiment if unused any more
+     *
      * @param mutant Mutants
      */
     void deleteMutantFigureStage(MutantFigureStage mutant);
@@ -233,5 +235,26 @@ public interface MutantRepository {
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 
     List<MorpholinoSequence> getMorpholinosWithMarkerRelationships();
+
+    /**
+     * Retrieve phenotypes that have an annotation to a given term
+     * with tag=abnormal and the term either in super or sub position
+     *
+     * @param term Term
+     * @return list of phenotypes
+     */
+    List<Phenotype> getPhenotypeWithEntity(Term term);
+
+    /**
+     * Retrieve all distinct marker go evidence objects for a given term.
+     *
+     * @param term term
+     * @return list of marker go
+     */
+    List<MarkerGoTermEvidence> getMarkerGoEvidence(Term term);
+
+    List<Phenotype> getPhenotypeWithEntity(List<Term> terms);
+
+    List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms);
 }
 

@@ -51,7 +51,7 @@ public class RedundancyCandidateControllerTest {
         SessionFactory sessionFactory = getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

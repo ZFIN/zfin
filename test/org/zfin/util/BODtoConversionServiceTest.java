@@ -22,7 +22,7 @@ public class BODtoConversionServiceTest {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

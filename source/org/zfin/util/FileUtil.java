@@ -326,7 +326,7 @@ public final class FileUtil {
 
     public static File serializeObject(Object object, File file) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file) ;
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
             outputStream.writeObject(object);
             outputStream.close();
@@ -334,7 +334,7 @@ public final class FileUtil {
             e.printStackTrace();
             LOG.error("Error during serialization of file " + file.getAbsolutePath(), e);
         }
-        return file ;
+        return file;
     }
 
 
@@ -344,11 +344,30 @@ public final class FileUtil {
     }
 
     public static Object deserializeOntologies(File file) throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(file) ;
-        ObjectInputStream inputStream = new ObjectInputStream(fileInputStream) ;
+        FileInputStream fileInputStream = new FileInputStream(file);
+        ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
 //        BufferedReader reader = new BufferedReader(new FileReader(file)) ;
 //        xStream.setMode(XStream.ID_REFERENCES) ;
 //        ObjectInputStream inputStream = xStream.createObjectInputStream(reader) ;
-        return inputStream.readObject() ;
+        return inputStream.readObject();
+    }
+
+    /**
+     * Create a File from an array of strings that define a path.
+     * @param pathElements strings in the order of the file path
+     * @return file to the concatenated file or directory
+     */
+    public static File getFileFromPath(String... pathElements) {
+        if (pathElements == null || pathElements.length == 0)
+            return null;
+
+        File file = new File(pathElements[0]);
+        if (pathElements.length == 1)
+            return file;
+
+        for (int index = 1; index < pathElements.length; index++) {
+            file = new File(file, pathElements[index]);
+        }
+        return file;
     }
 }

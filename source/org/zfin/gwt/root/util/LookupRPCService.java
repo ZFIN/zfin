@@ -74,7 +74,7 @@ public interface LookupRPCService extends RemoteService {
 
     // validation methods
 
-    TermStatus validateAnatomyTerm(String term);
+    TermStatus validateTerm(String term,  OntologyDTO ontology);
 
     TermStatus validateMarkerTerm(String term);
 

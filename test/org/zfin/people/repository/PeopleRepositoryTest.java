@@ -36,7 +36,7 @@ public class PeopleRepositoryTest {
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

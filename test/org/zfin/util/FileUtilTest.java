@@ -90,26 +90,58 @@ public class FileUtilTest {
     }
 
     @Test
-    public void fileBuilderFromString(){
+    public void fileBuilderFromString() {
 
         assertNull(FileUtil.createFileFromStrings());
         File file1 = new File("file1");
         assertEquals(file1.getAbsolutePath(),
                 FileUtil.createFileFromStrings("file1").getAbsolutePath());
-        File file2 =  new File("file1"+
-                System.getProperty("file.separator")+
-                "file2.txt") ;
+        File file2 = new File("file1" +
+                System.getProperty("file.separator") +
+                "file2.txt");
         assertEquals(file2.getAbsolutePath(),
-                FileUtil.createFileFromStrings("file1","file2.txt").getAbsolutePath());
+                FileUtil.createFileFromStrings("file1", "file2.txt").getAbsolutePath());
 
         ZfinProperties.setWebRootDirectory(".");
         File testFile1 = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(),
-                "WEB-INF","conf","antibody.template") ;
-        File file3 = new File(ZfinProperties.getWebRootDirectory()+System.getProperty("file.separator")+
-                "WEB-INF"+System.getProperty("file.separator")+
-                "conf"+System.getProperty("file.separator")+
-                "antibody.template"+System.getProperty("file.separator")) ;
-        assertEquals(file3.getAbsolutePath(),testFile1.getAbsolutePath());
+                "WEB-INF", "conf", "antibody.template");
+        File file3 = new File(ZfinProperties.getWebRootDirectory() + System.getProperty("file.separator") +
+                "WEB-INF" + System.getProperty("file.separator") +
+                "conf" + System.getProperty("file.separator") +
+                "antibody.template" + System.getProperty("file.separator"));
+        assertEquals(file3.getAbsolutePath(), testFile1.getAbsolutePath());
+    }
+
+    @Test
+    public void fileFromPaths() {
+        File file = FileUtil.createFileFromStrings();
+        assertNull(file);
+
+        file = FileUtil.createFileFromStrings("source");
+        assertNotNull(file);
+        assertTrue(file.exists());
+        assertTrue(file.getAbsolutePath().contains("source"));
+
+        file = FileUtil.createFileFromStrings("source","org");
+        assertNotNull(file);
+        assertTrue(file.exists());
+        assertTrue(file.getAbsolutePath().contains("source"));
+        assertTrue(file.getAbsolutePath().contains("org"));
+
+        file = FileUtil.createFileFromStrings("source","org","zfin");
+        assertNotNull(file);
+        assertTrue(file.exists());
+        assertTrue(file.getAbsolutePath().contains("source"));
+        assertTrue(file.getAbsolutePath().contains("org"));
+        assertTrue(file.getAbsolutePath().contains("zfin"));
+
+        file = FileUtil.createFileFromStrings("source","org","zfin","marker.hbm.xml");
+        assertNotNull(file);
+        assertTrue(file.exists());
+        assertTrue(file.getAbsolutePath().contains("source"));
+        assertTrue(file.getAbsolutePath().contains("org"));
+        assertTrue(file.getAbsolutePath().contains("zfin"));
+        assertTrue(file.getAbsolutePath().contains("marker.hbm.xml"));
     }
 
     private void setTestDirectories() {
@@ -129,7 +161,7 @@ public class FileUtilTest {
         testPurgeFile.delete();
         testLoadDirectory.delete();
         File[] files = testArchiveDir.listFiles();
-        if(files!=null){
+        if (files != null) {
             for (File file : files) {
                 file.delete();
             }

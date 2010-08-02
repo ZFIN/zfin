@@ -26,6 +26,9 @@
                 <prop key="/anatomy/show-phenotype-morpholinos">ajaxAnatomy</prop>
                 <prop key="/anatomy/show-phenotype-non-wildtype-morpholinos">ajaxAnatomy</prop>
                 <prop key="/ontology/term-detail">showTermDetail</prop>
+                <prop key="/anatomy/expression-report">expressionReport</prop>
+                <prop key="/anatomy/phenotype-report">phenotypeReport</prop>
+                <prop key="/anatomy/go-evidence-report">goEvidenceReport</prop>
             </props>
         </property>
     </bean>
@@ -36,6 +39,27 @@
     <bean name="antibodySummary" class="org.zfin.anatomy.presentation.AntibodySummaryController" autowire="byName"/>
 
     <bean name="showTermDetail" class="org.zfin.ontology.presentation.OntologyTermDetailController" autowire="byName"/>
+
+    <bean name="expressionReport" class="org.zfin.anatomy.presentation.ExpressionPhenotypeReportController" autowire="byName">
+        <property name="successView" value="expression-report.page"/>
+        <property name="formView" value="expression-report.page"/>
+        <property name="commandClass" value="org.zfin.anatomy.presentation.ExpressionPhenotypeReportBean"/>
+        <property name="reportType" value="EXPRESSION" />
+    </bean>
+
+    <bean name="phenotypeReport" class="org.zfin.anatomy.presentation.ExpressionPhenotypeReportController" autowire="byName">
+        <property name="successView" value="phenotype-report.page"/>
+        <property name="formView" value="phenotype-report.page"/>
+        <property name="commandClass" value="org.zfin.anatomy.presentation.ExpressionPhenotypeReportBean"/>
+        <property name="reportType" value="PHENOTYPE" />
+    </bean>
+
+    <bean name="goEvidenceReport" class="org.zfin.anatomy.presentation.ExpressionPhenotypeReportController" autowire="byName">
+        <property name="successView" value="go-evidence-report.page"/>
+        <property name="formView" value="go-evidence-report.page"/>
+        <property name="commandClass" value="org.zfin.anatomy.presentation.ExpressionPhenotypeReportBean"/>
+        <property name="reportType" value="GO_EVIDENCE" />
+    </bean>
 
     <bean name="anatomySearch" class="org.zfin.anatomy.presentation.AnatomySearchController" autowire="byName">
         <property name="redirectUrlIfSingleResult">

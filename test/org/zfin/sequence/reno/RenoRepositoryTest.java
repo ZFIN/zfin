@@ -41,7 +41,7 @@ public class RenoRepositoryTest {
 
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

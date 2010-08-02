@@ -22,7 +22,7 @@ public class CurationRPCTest {
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

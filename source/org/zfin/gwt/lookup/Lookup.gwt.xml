@@ -4,7 +4,7 @@
     <inherits name="org.zfin.gwt.root.Root" />
     <source path='ui'/>
 
-    <entry-point class='org.zfin.gwt.lookup.ui.LookupTable'/>
+    <entry-point class='org.zfin.gwt.lookup.ui.GeneralLookup'/>
 
     <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
 </module>

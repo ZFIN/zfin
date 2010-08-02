@@ -41,23 +41,23 @@ public class MapAccessionDbLinkTest {
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
-    private ReferenceDatabase refSeqReferenceDatabase ;
+    private ReferenceDatabase refSeqReferenceDatabase;
 
-    private static String  ACCESSION_NUM1 = "AC:TEST1" ; 
-    private static String  ACCESSION_NUM2 = "AC:TEST2" ; 
-    private static String  ACCESSION_NUM3 = "AC:TEST3" ; 
-    private static String  ACCESSION_NUM4 = "AC:TEST4" ; 
-    private static String  ACCESSION_NUM5 = "AC:TEST5" ; 
+    private static String ACCESSION_NUM1 = "AC:TEST1";
+    private static String ACCESSION_NUM2 = "AC:TEST2";
+    private static String ACCESSION_NUM3 = "AC:TEST3";
+    private static String ACCESSION_NUM4 = "AC:TEST4";
+    private static String ACCESSION_NUM5 = "AC:TEST5";
 
-    private static String  CDNA_NAME = "MGC:test" ; 
-    private static String  GENE_NAME = "renogene" ;
-    private static String  TEST_DEFLINE = "defline jam" ;
+    private static String CDNA_NAME = "MGC:test";
+    private static String GENE_NAME = "renogene";
+    private static String TEST_DEFLINE = "defline jam";
 
-    static{
+    static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-        if(sessionFactory == null){
-            new HibernateSessionCreator( TestConfiguration.getHibernateConfiguration() ) ;
+        if (sessionFactory == null) {
+            new HibernateSessionCreator();
         }
     }
 
@@ -73,12 +73,12 @@ public class MapAccessionDbLinkTest {
     }
 
 
-
     /**
      * Makes the new candidate, run, accessions, run_candidate, and dblinks.
      * Note: Dblinks have to be saved BEFORE their associated Accession or else
-     *        a trigger will reassign the Dblink referenceDatabase to GenBank
-     *        and assign the length. 
+     * a trigger will reassign the Dblink referenceDatabase to GenBank
+     * and assign the length.
+     *
      * @return String runcandidate zdb_id
      */
     private String insertMarkerDBLinkRunCandidate() {
@@ -106,13 +106,13 @@ public class MapAccessionDbLinkTest {
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
 
         // get references DBs
-        ReferenceDatabase genBankRefDB =sequenceRepository.getReferenceDatabase(
+        ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
-        refSeqReferenceDatabase =sequenceRepository.getReferenceDatabase(
+        refSeqReferenceDatabase = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.REFSEQ,
                 ForeignDBDataType.DataType.RNA,
                 ForeignDBDataType.SuperType.SEQUENCE,
@@ -120,8 +120,8 @@ public class MapAccessionDbLinkTest {
 
 
         // ADD ACCESSIONS and associated DBLINKS
-          
-          
+
+
         // should find the cdna marker for accession1
         Accession accession1 = new Accession();
         accession1.setNumber(ACCESSION_NUM1);
@@ -129,11 +129,11 @@ public class MapAccessionDbLinkTest {
         accession1.setLength(12);
         accession1.setReferenceDatabase(genBankRefDB);
 
-        MarkerDBLink dblink1 = new MarkerDBLink() ;
+        MarkerDBLink dblink1 = new MarkerDBLink();
         dblink1.setAccessionNumber(ACCESSION_NUM1);
         dblink1.setAccessionNumberDisplay(ACCESSION_NUM1);
         dblink1.setReferenceDatabase(genBankRefDB);
-        dblink1.setMarker( cDNA) ;  
+        dblink1.setMarker(cDNA);
         session.save(dblink1);
         session.save(accession1);
 
@@ -144,11 +144,11 @@ public class MapAccessionDbLinkTest {
         accession2.setLength(17);
         accession2.setReferenceDatabase(genBankRefDB);
 
-        MarkerDBLink dblink2 = new MarkerDBLink() ;
+        MarkerDBLink dblink2 = new MarkerDBLink();
         dblink2.setAccessionNumber(ACCESSION_NUM2);
         dblink2.setAccessionNumberDisplay(ACCESSION_NUM2);
         dblink2.setReferenceDatabase(refSeqReferenceDatabase);
-        dblink2.setMarker( gene ) ;  
+        dblink2.setMarker(gene);
         session.save(dblink2);
         session.save(accession2);
 
@@ -159,17 +159,17 @@ public class MapAccessionDbLinkTest {
         accession3.setLength(5);
         accession3.setReferenceDatabase(genBankRefDB);
 
-        MarkerDBLink dblink3a = new MarkerDBLink() ;
+        MarkerDBLink dblink3a = new MarkerDBLink();
         dblink3a.setAccessionNumber(ACCESSION_NUM3);
         dblink3a.setAccessionNumberDisplay(ACCESSION_NUM3);
         dblink3a.setReferenceDatabase(genBankRefDB);
-        dblink3a.setMarker( cDNA ) ;  
+        dblink3a.setMarker(cDNA);
 
-        MarkerDBLink dblink3b = new MarkerDBLink() ;
+        MarkerDBLink dblink3b = new MarkerDBLink();
         dblink3b.setAccessionNumber(ACCESSION_NUM3);
         dblink3b.setAccessionNumberDisplay(ACCESSION_NUM3);
         dblink3b.setReferenceDatabase(genBankRefDB);
-        dblink3b.setMarker( gene) ;  
+        dblink3b.setMarker(gene);
 
         session.save(dblink3a);
         session.save(dblink3b);
@@ -182,11 +182,11 @@ public class MapAccessionDbLinkTest {
         accession4.setLength(13);
         accession4.setReferenceDatabase(refSeqReferenceDatabase);
 
-        MarkerDBLink dblink4 = new MarkerDBLink() ;
+        MarkerDBLink dblink4 = new MarkerDBLink();
         dblink4.setAccessionNumber(ACCESSION_NUM4);
         dblink4.setAccessionNumberDisplay(ACCESSION_NUM4);
         dblink4.setReferenceDatabase(refSeqReferenceDatabase);
-        dblink4.setMarker( gene) ;  
+        dblink4.setMarker(gene);
 
         session.save(dblink4);
         session.save(accession4);
@@ -199,11 +199,11 @@ public class MapAccessionDbLinkTest {
         accession5.setLength(97);
         accession5.setReferenceDatabase(genBankRefDB);
 
-        MarkerDBLink dblink5 = new MarkerDBLink() ;
+        MarkerDBLink dblink5 = new MarkerDBLink();
         dblink5.setAccessionNumber(ACCESSION_NUM5);
         dblink5.setAccessionNumberDisplay(ACCESSION_NUM5);
         dblink5.setReferenceDatabase(refSeqReferenceDatabase);
-        dblink5.setMarker( gene) ;  
+        dblink5.setMarker(gene);
 
         session.save(dblink5);
         session.save(accession5);
@@ -217,7 +217,7 @@ public class MapAccessionDbLinkTest {
         run.setProgram("BLASTN");
         run.setBlastDatabase("zfin_cdna_");
         Date date = new Date();
-        logger.debug("date: "+date);
+        logger.debug("date: " + date);
         run.setDate(date);
 //        run.setType(Run.Type.REDUNDANCY);
         session.save(run);
@@ -311,10 +311,10 @@ public class MapAccessionDbLinkTest {
         query.getBlastHits().add(hit5);
         session.save(hit5);
 
-        List<MarkerDBLink> linksEnd = session.createQuery("from MarkerDBLink mdbl where mdbl.accessionNumber like 'AC:TEST%'").list() ;
-        logger.info("End number of links: " + linksEnd.size()) ; 
-        for(MarkerDBLink aLink : linksEnd){
-            logger.info(aLink.getAccessionNumber() +"   "+aLink.getReferenceDatabase().getZdbID() ) ;
+        List<MarkerDBLink> linksEnd = session.createQuery("from MarkerDBLink mdbl where mdbl.accessionNumber like 'AC:TEST%'").list();
+        logger.info("End number of links: " + linksEnd.size());
+        for (MarkerDBLink aLink : linksEnd) {
+            logger.info(aLink.getAccessionNumber() + "   " + aLink.getReferenceDatabase().getZdbID());
         }
 
 
@@ -328,82 +328,82 @@ public class MapAccessionDbLinkTest {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
         try {
-            insertMarkerDBLinkRunCandidate() ;
+            insertMarkerDBLinkRunCandidate();
             // test accession1
-            List<Hit> hits1  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM1+"'").list() ;
-            assertEquals("hits1 for "+ACCESSION_NUM1+" is 1",1,hits1.size());
+            List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
+            assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
 
 
-            Accession acc1 = hits1.get(0).getTargetAccession() ;
-            Set<DBLink> dbLinks1 = acc1.getDbLinks() ;
-            assertEquals("number of dblinks for "+ ACCESSION_NUM1,1,dbLinks1.size()) ;
+            Accession acc1 = hits1.get(0).getTargetAccession();
+            Set<DBLink> dbLinks1 = acc1.getDbLinks();
+            assertEquals("number of dblinks for " + ACCESSION_NUM1, 1, dbLinks1.size());
 
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM1,dbLinks1.iterator().next() instanceof MarkerDBLink) ;
-            MarkerDBLink markerLink1 = (MarkerDBLink) dbLinks1.iterator().next() ;
-            assertEquals("marker name for " + ACCESSION_NUM1,CDNA_NAME,(markerLink1.getMarker().getName())) ;
-            Set<MarkerDBLink> blastableMarkerDBLinks1 = hits1.get(0).getTargetAccession().getBlastableMarkerDBLinks() ;
-            assertEquals("should be 0 because available from GenBank is Genomic anot not blastable: " + ACCESSION_NUM1,0,blastableMarkerDBLinks1.size()) ;
+            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
+            MarkerDBLink markerLink1 = (MarkerDBLink) dbLinks1.iterator().next();
+            assertEquals("marker name for " + ACCESSION_NUM1, CDNA_NAME, (markerLink1.getMarker().getName()));
+            Set<MarkerDBLink> blastableMarkerDBLinks1 = hits1.get(0).getTargetAccession().getBlastableMarkerDBLinks();
+            assertEquals("should be 0 because available from GenBank is Genomic anot not blastable: " + ACCESSION_NUM1, 0, blastableMarkerDBLinks1.size());
 
-            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("number of marker via dblinks "+ ACCESSION_NUM1,1,markers1.size()) ;
-            
+            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
+            assertEquals("number of marker via dblinks " + ACCESSION_NUM1, 1, markers1.size());
+
 
             // test accession2
-            List<Hit> hits2  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM2+"'").list() ;
-            assertEquals("hits2 for "+ACCESSION_NUM2+" is 1",1,hits2.size());
+            List<Hit> hits2 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM2 + "'").list();
+            assertEquals("hits2 for " + ACCESSION_NUM2 + " is 1", 1, hits2.size());
 
-            Hit hit2 = hits2.get(0) ;
-            Set<DBLink> dbLinks2 = hit2.getTargetAccession().getDbLinks() ;
+            Hit hit2 = hits2.get(0);
+            Set<DBLink> dbLinks2 = hit2.getTargetAccession().getDbLinks();
 
-            assertEquals("hit number is 2",2,hit2.getHitNumber()) ;
-            assertEquals("should be 0 because not in refSeq "+ ACCESSION_NUM2,0,dbLinks2.size()) ;
-            Set<MarkerDBLink> blastableMarkerDBLinks2 = hit2.getTargetAccession().getBlastableMarkerDBLinks() ;
-            assertEquals("should be 1 blastable markers because we don't care about DB mismatch: "+ ACCESSION_NUM2,1,blastableMarkerDBLinks2.size()) ;
+            assertEquals("hit number is 2", 2, hit2.getHitNumber());
+            assertEquals("should be 0 because not in refSeq " + ACCESSION_NUM2, 0, dbLinks2.size());
+            Set<MarkerDBLink> blastableMarkerDBLinks2 = hit2.getTargetAccession().getBlastableMarkerDBLinks();
+            assertEquals("should be 1 blastable markers because we don't care about DB mismatch: " + ACCESSION_NUM2, 1, blastableMarkerDBLinks2.size());
 
-            List<Marker> markers2 = hits2.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("number of marker via dblinks should be 1"+ ACCESSION_NUM2,0,markers2.size()) ;
+            List<Marker> markers2 = hits2.get(0).getTargetAccession().getMarkers();
+            assertEquals("number of marker via dblinks should be 1" + ACCESSION_NUM2, 0, markers2.size());
 
             // test accession3
-            List<Hit> hits3  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM3+"'").list() ;
-            Hit hit3 = hits3.get(0) ;
-            Set<DBLink> dbLinks3 = hit3.getTargetAccession().getDbLinks() ;
+            List<Hit> hits3 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM3 + "'").list();
+            Hit hit3 = hits3.get(0);
+            Set<DBLink> dbLinks3 = hit3.getTargetAccession().getDbLinks();
 
-            assertEquals("hit number is 3",3,hit3.getHitNumber()) ;
-            assertEquals("should be 2 markers with GenBank for "+ ACCESSION_NUM3,2,dbLinks3.size()) ;
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM3,dbLinks3.iterator().next() instanceof MarkerDBLink) ;
-            Set<MarkerDBLink> blastableMarkerDBLinks3 = hit3.getTargetAccession().getBlastableMarkerDBLinks() ;
-            assertEquals("should be 2 because is in GenBank "+ ACCESSION_NUM3,0,blastableMarkerDBLinks3.size()) ;
+            assertEquals("hit number is 3", 3, hit3.getHitNumber());
+            assertEquals("should be 2 markers with GenBank for " + ACCESSION_NUM3, 2, dbLinks3.size());
+            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM3, dbLinks3.iterator().next() instanceof MarkerDBLink);
+            Set<MarkerDBLink> blastableMarkerDBLinks3 = hit3.getTargetAccession().getBlastableMarkerDBLinks();
+            assertEquals("should be 2 because is in GenBank " + ACCESSION_NUM3, 0, blastableMarkerDBLinks3.size());
 
-            List<Marker> markers3 = hits3.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("number of marker via dblinks "+ ACCESSION_NUM3,2,markers3.size()) ;
+            List<Marker> markers3 = hits3.get(0).getTargetAccession().getMarkers();
+            assertEquals("number of marker via dblinks " + ACCESSION_NUM3, 2, markers3.size());
 
             // test accession4
-            List<Hit> hits4  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM4+"'").list() ;
-            Hit hit4 = hits4.get(0) ;
-            Set<DBLink> dbLinks4 = hit4.getTargetAccession().getDbLinks() ;
-            assertEquals("hit number is 4",4,hit4.getHitNumber()) ;
-            assertEquals("should be 1 markers for "+ ACCESSION_NUM4,1,dbLinks4.size()) ;
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM4,dbLinks4.iterator().next() instanceof MarkerDBLink) ;
-            assertEquals("is refSeq database for "+ ACCESSION_NUM4,refSeqReferenceDatabase.getZdbID(),dbLinks4.iterator().next().getReferenceDatabase().getZdbID()) ;
-            Set<MarkerDBLink> blastableMarkerDBLinks4 = hit4.getTargetAccession().getBlastableMarkerDBLinks() ;
-            logger.info("hit 4 accession: "+ hit4.getTargetAccession().getID()) ;
-            assertEquals("should be 1 blastable marker for "+ ACCESSION_NUM4,1,blastableMarkerDBLinks4.size()) ;
+            List<Hit> hits4 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM4 + "'").list();
+            Hit hit4 = hits4.get(0);
+            Set<DBLink> dbLinks4 = hit4.getTargetAccession().getDbLinks();
+            assertEquals("hit number is 4", 4, hit4.getHitNumber());
+            assertEquals("should be 1 markers for " + ACCESSION_NUM4, 1, dbLinks4.size());
+            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM4, dbLinks4.iterator().next() instanceof MarkerDBLink);
+            assertEquals("is refSeq database for " + ACCESSION_NUM4, refSeqReferenceDatabase.getZdbID(), dbLinks4.iterator().next().getReferenceDatabase().getZdbID());
+            Set<MarkerDBLink> blastableMarkerDBLinks4 = hit4.getTargetAccession().getBlastableMarkerDBLinks();
+            logger.info("hit 4 accession: " + hit4.getTargetAccession().getID());
+            assertEquals("should be 1 blastable marker for " + ACCESSION_NUM4, 1, blastableMarkerDBLinks4.size());
 
-            List<Marker> markers4 = hits4.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("number of marker via dblinks "+ ACCESSION_NUM4,1,markers4.size()) ;
+            List<Marker> markers4 = hits4.get(0).getTargetAccession().getMarkers();
+            assertEquals("number of marker via dblinks " + ACCESSION_NUM4, 1, markers4.size());
 
 
             // test accession5
-            List<Hit> hits5  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM5+"'").list() ;
-            Hit hit5 = hits5.get(0) ;
-            Set<DBLink> dbLinks5 = hit5.getTargetAccession().getDbLinks() ;
-            assertEquals("hit number is 5",5,hit5.getHitNumber()) ;
-            assertEquals("should be 0 marker DBLink for because of db mismatch"+ ACCESSION_NUM5,0,dbLinks5.size()) ;
-            Set<MarkerDBLink> blastableMarkerDBLinks5 = hit5.getTargetAccession().getBlastableMarkerDBLinks() ;
-            assertEquals("one available DBLink  "+ ACCESSION_NUM5,1,blastableMarkerDBLinks5.size()) ;
+            List<Hit> hits5 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM5 + "'").list();
+            Hit hit5 = hits5.get(0);
+            Set<DBLink> dbLinks5 = hit5.getTargetAccession().getDbLinks();
+            assertEquals("hit number is 5", 5, hit5.getHitNumber());
+            assertEquals("should be 0 marker DBLink for because of db mismatch" + ACCESSION_NUM5, 0, dbLinks5.size());
+            Set<MarkerDBLink> blastableMarkerDBLinks5 = hit5.getTargetAccession().getBlastableMarkerDBLinks();
+            assertEquals("one available DBLink  " + ACCESSION_NUM5, 1, blastableMarkerDBLinks5.size());
 
-            List<Marker> markers5 = hits5.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("number of marker is 1 via dblinks "+ ACCESSION_NUM5,0,markers5.size()) ;
+            List<Marker> markers5 = hits5.get(0).getTargetAccession().getMarkers();
+            assertEquals("number of marker is 1 via dblinks " + ACCESSION_NUM5, 0, markers5.size());
 
         }
         catch (Exception e) {
@@ -430,25 +430,25 @@ public class MapAccessionDbLinkTest {
 //    }
 
     @Test
-    public void testOrthologueDBLink(){
+    public void testOrthologueDBLink() {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
         try {
-            insertOrthologueDBLinkRunCandidate() ;
+            insertOrthologueDBLinkRunCandidate();
 
-            List<Hit> hits1  = session.createQuery("from Hit h where h.targetAccession.number='"+ACCESSION_NUM1+"'").list() ;
-            assertEquals("hits1 for "+ACCESSION_NUM1+" is 1",1,hits1.size());
-            Accession acc1 = hits1.get(0).getTargetAccession() ;
-            Set<DBLink> dbLinks1 = acc1.getDbLinks() ;
-            assertEquals("number of orthologues for "+ ACCESSION_NUM1,1,dbLinks1.size()) ;
-            assertTrue("link is instance of OrthologueDBLink" + ACCESSION_NUM1,dbLinks1.iterator().next() instanceof OrthologueDBLink) ;
-            assertFalse("link is instance of MarkerDBLink" + ACCESSION_NUM1,dbLinks1.iterator().next() instanceof MarkerDBLink) ;
+            List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
+            assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
+            Accession acc1 = hits1.get(0).getTargetAccession();
+            Set<DBLink> dbLinks1 = acc1.getDbLinks();
+            assertEquals("number of orthologues for " + ACCESSION_NUM1, 1, dbLinks1.size());
+            assertTrue("link is instance of OrthologueDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof OrthologueDBLink);
+            assertFalse("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
 
-            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers() ;
-            assertEquals("orthologues should not be returned as markers "+ ACCESSION_NUM1,0,markers1.size()) ;
+            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
+            assertEquals("orthologues should not be returned as markers " + ACCESSION_NUM1, 0, markers1.size());
 
         }
-        catch(Exception e){
+        catch (Exception e) {
             java.lang.StackTraceElement[] elements = e.getStackTrace();
             String errorString = "";
             for (StackTraceElement element : elements) {
@@ -457,26 +457,26 @@ public class MapAccessionDbLinkTest {
             e.printStackTrace();
             fail(errorString);
         }
-        finally{
-            session.getTransaction().rollback() ;
+        finally {
+            session.getTransaction().rollback();
         }
     }
 
 
-    private void insertOrthologueDBLinkRunCandidate(){
+    private void insertOrthologueDBLinkRunCandidate() {
         Session session = HibernateUtil.currentSession();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
 
 
         // get references DBs
-        ReferenceDatabase genBankRefDB =sequenceRepository.getReferenceDatabase(
+        ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.ZEBRAFISH);
 
-        refSeqReferenceDatabase =sequenceRepository.getReferenceDatabase(
+        refSeqReferenceDatabase = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENBANK,
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
@@ -530,10 +530,10 @@ public class MapAccessionDbLinkTest {
         accession1.setLength(12);
         accession1.setReferenceDatabase(genBankRefDB);
 
-        OrthologueDBLink dblink1 = new OrthologueDBLink() ;
+        OrthologueDBLink dblink1 = new OrthologueDBLink();
         dblink1.setAccessionNumber(ACCESSION_NUM1);
         dblink1.setReferenceDatabase(genBankRefDB);
-        dblink1.setOrthologue( orthology1 ) ;
+        dblink1.setOrthologue(orthology1);
 
         session.save(dblink1);
         session.save(accession1);
@@ -545,10 +545,10 @@ public class MapAccessionDbLinkTest {
         accession2.setLength(22);
         accession2.setReferenceDatabase(genBankRefDB);
 
-        OrthologueDBLink dblink2 = new OrthologueDBLink() ;
+        OrthologueDBLink dblink2 = new OrthologueDBLink();
         dblink2.setAccessionNumber(ACCESSION_NUM2);
         dblink2.setReferenceDatabase(genBankRefDB);
-        dblink2.setOrthologue( orthology2 ) ;
+        dblink2.setOrthologue(orthology2);
 
         session.save(dblink2);
         session.save(accession2);
@@ -561,7 +561,7 @@ public class MapAccessionDbLinkTest {
         run.setProgram("BLASTN");
         run.setBlastDatabase("zfin_cdna");
         Date date = new Date();
-        logger.debug("date: "+date);
+        logger.debug("date: " + date);
         run.setDate(date);
         session.save(run);
 

@@ -30,7 +30,7 @@ public abstract class AbstractOntologyTest {
     protected void initHibernate(){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

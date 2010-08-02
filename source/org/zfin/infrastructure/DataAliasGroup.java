@@ -44,7 +44,8 @@ public class DataAliasGroup implements Serializable {
         SEQUENCE_SIMILARITY("sequence similarity"),
         NARROW_ALIAS("narrow alias"),
         BROAD_ALIAS("broad alias"),
-        SYSTEMATIC_SYNONYM("systematic_synonym");
+	SYSTEMATIC_SYNONYM("systematic_synonym"),
+	VERTEBRATE("vertebrate");
 
         private String value;
 

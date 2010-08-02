@@ -9,6 +9,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -610,8 +611,8 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "select f from PublicationAttribution pa , Feature f " +
                 " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
                 " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
     }
@@ -620,7 +621,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
                 " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                " and pa.sourceType= :sourceType  "+
+                " and pa.sourceType= :sourceType  " +
                 " order by g.handle ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
@@ -631,7 +632,8 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Go terms attributed as evidence to this marker by this pub.
      * todo: Don't include IEA, IC .
-     * @param marker marker
+     *
+     * @param marker      marker
      * @param publication publication
      * @return collection of terms
      */
@@ -645,10 +647,10 @@ public class HibernateMutantRepository implements MutantRepository {
                 " and g.ID= ev.goTerm.ID " +
                 " and pa.sourceType= :sourceType  " +
                 " order by g.termName  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
-        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()} );
-        query.setString("markerZdbID",marker.getZdbID());
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
+        query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
+        query.setString("markerZdbID", marker.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
         return query.list();
     }
@@ -665,9 +667,9 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "select distinct phenotype from Phenotype phenotype , GenericTerm g  " +
                 " where phenotype.publication.zdbID= :pubZdbID  " +
                 " and ( phenotype.subterm = g and g.oboID like :oboIDLike" +
-                " or phenotype.superterm = g )" ;
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setString("pubZdbID",publication.getZdbID());
+                " or phenotype.superterm = g )";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
         query.setString("oboIDLike", "GO:%");
         return query.list();
     }
@@ -738,8 +740,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 ;
     }
 
-    public int getZFINInferences(String zdbID, String publicationZdbID){
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery( "" +
+    public int getZFINInferences(String zdbID, String publicationZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
                 " select count(*) from marker_go_term_evidence  ev  " +
                 " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
                 " where " +
@@ -747,7 +749,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 " and " +
                 " inf.infgrmem_inferred_from=:zdbID " +
                 " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix()+zdbID)
+                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
                 .setString("pubZdbID", publicationZdbID)
                 .uniqueResult().toString()
         );
@@ -756,6 +758,7 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Uses an alternate key that also includes the "inferrence" field, as well, which makes things kind
      * of tricky.
+     *
      * @param markerGoTermEvidence Evidence to check against.
      * @return True if the exact version exists for this alternate key.
      */
@@ -767,42 +770,41 @@ public class HibernateMutantRepository implements MutantRepository {
                 " where ev.marker = :marker " +
                 " and ev.goTerm = :goTerm " +
                 " and ev.source = :publication " +
-                " and ev.evidenceCode = :evidenceCode " ;
+                " and ev.evidenceCode = :evidenceCode ";
 
-        if(markerGoTermEvidence.getFlag()!=null){
-            hql +=  " and ev.flag = :flag "  ;
-        }else{
-            hql +=  " and ev.flag is null "  ;
+        if (markerGoTermEvidence.getFlag() != null) {
+            hql += " and ev.flag = :flag ";
+        } else {
+            hql += " and ev.flag is null ";
         }
 
         Query query = HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("marker",markerGoTermEvidence.getMarker())
-                .setParameter("goTerm",markerGoTermEvidence.getGoTerm())
-                .setParameter("publication",markerGoTermEvidence.getSource())
-                .setString("evidenceCode",markerGoTermEvidence.getEvidenceCode().getCode())
-                ;
+                .setParameter("marker", markerGoTermEvidence.getMarker())
+                .setParameter("goTerm", markerGoTermEvidence.getGoTerm())
+                .setParameter("publication", markerGoTermEvidence.getSource())
+                .setString("evidenceCode", markerGoTermEvidence.getEvidenceCode().getCode());
 
-        if(markerGoTermEvidence.getFlag()!=null){
-            query.setParameter("flag",markerGoTermEvidence.getFlag());
+        if (markerGoTermEvidence.getFlag() != null) {
+            query.setParameter("flag", markerGoTermEvidence.getFlag());
         }
         List<MarkerGoTermEvidence> evidences = (List<MarkerGoTermEvidence>) query.list();
 
-        if(evidences==null || evidences.size()==0){
-            return 0 ;
+        if (evidences == null || evidences.size() == 0) {
+            return 0;
         }
 
-        int returnCount = 0 ;
+        int returnCount = 0;
 
         // compare the inferences
         // could use equals, but if an update has been flushed, the zdbIDs will be set, so can't use
         // that comparison anymore.
-        for(MarkerGoTermEvidence evidence : evidences){
-            if(markerGoTermEvidence.sameInferences(evidence.getInferredFrom())) {
-                ++returnCount ;
+        for (MarkerGoTermEvidence evidence : evidences) {
+            if (markerGoTermEvidence.sameInferences(evidence.getInferredFrom())) {
+                ++returnCount;
             }
         }
 
-        return returnCount ;
+        return returnCount;
     }
 
 
@@ -814,18 +816,17 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
 
         // using this type of query for both speed (an explicit join)
-        // and becaues createSQLQuery had trouble binding the lvarchar of s.sequence
-        List<Object[]> sequences =  HibernateUtil.currentSession().createQuery(
+        // and because createSQLQuery had trouble binding the lvarchar of s.sequence
+        List<Object[]> sequences = HibernateUtil.currentSession().createQuery(
                 "select m.zdbID ,m.abbreviation, s.sequence   from MarkerSequenceMarker m  " +
                         "inner join m.sequences s " +
                         "inner join m.firstMarkerRelationships  " +
                         "where m.markerType =  '" + Marker.Type.MRPHLNO + "' " +
                         "")
-                .list()
-                ;
+                .list();
 
         List<MorpholinoSequence> morpholinoSequences = new ArrayList<MorpholinoSequence>();
-        for(Object[] seqObjects : sequences){
+        for (Object[] seqObjects : sequences) {
             MorpholinoSequence morpholinoSequence = new MorpholinoSequence();
             morpholinoSequence.setZdbID(seqObjects[0].toString());
             morpholinoSequence.setName(seqObjects[1].toString());
@@ -834,5 +835,88 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         return morpholinoSequences;
     }
+
+    /**
+     * Retrieve phenotypes that have an annotation to a given term
+     * with tag=abnormal and the term either in super or sub position
+     *
+     * @param term Term
+     * @return list of phenotypes
+     */
+    @Override
+    public List<Phenotype> getPhenotypeWithEntity(Term term) {
+        String hql = "select distinct pheno from Phenotype pheno where " +
+                "(superterm = :term OR subterm = :term) " +
+                "AND tag = :tag";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+        query.setString("tag", Phenotype.Tag.ABNORMAL.toString());
+        return (List<Phenotype>) query.list();
+    }
+
+    /**
+     * Retrieve all distinct marker go evidence objects for a given term.
+     *
+     * @param term term
+     * @return list of marker go
+     */
+    @Override
+    public List<MarkerGoTermEvidence> getMarkerGoEvidence(Term term) {
+        String hql = "select distinct evidence from MarkerGoTermEvidence evidence where " +
+                " goTerm = :term ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+        return (List<MarkerGoTermEvidence>) query.list();
+    }
+
+    @Override
+    public List<Phenotype> getPhenotypeWithEntity(List<Term> terms) {
+        List<Phenotype> allPhenotypes = new ArrayList<Phenotype>(50);
+        for (Term term : terms) {
+            List<Phenotype> phenotypes = getPhenotypeWithEntity(term);
+            allPhenotypes.addAll(phenotypes);
+        }
+        List<Phenotype> nonDuplicateExpressions = removeDuplicates(allPhenotypes);
+        Collections.sort(nonDuplicateExpressions);
+        return nonDuplicateExpressions;
+
+    }
+
+    @Override
+    public List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms) {
+        List<MarkerGoTermEvidence> allMarkerGo = new ArrayList<MarkerGoTermEvidence>();
+        for (Term term : terms) {
+            List<MarkerGoTermEvidence> goTermEvidences = getMarkerGoEvidence(term);
+            allMarkerGo.addAll(goTermEvidences);
+        }
+        List<MarkerGoTermEvidence> uniqueMarkerGo = removeDuplicateMarker(allMarkerGo);
+        Collections.sort(uniqueMarkerGo);
+        return uniqueMarkerGo;
+    }
+
+    private List<MarkerGoTermEvidence> removeDuplicateMarker(List<MarkerGoTermEvidence> goTermEvidences) {
+        List<MarkerGoTermEvidence> phenotypeArrayList = new ArrayList<MarkerGoTermEvidence>(goTermEvidences.size());
+        Set<String> uniqueID = new HashSet<String>();
+        for (MarkerGoTermEvidence evidence : goTermEvidences) {
+            String id = evidence.getMarker().getZdbID() + ":" + evidence.getGoTerm().getID();
+            if (!uniqueID.contains(id)) {
+                phenotypeArrayList.add(evidence);
+                uniqueID.add(id);
+            }
+        }
+        return phenotypeArrayList;
+    }
+
+
+    private List<Phenotype> removeDuplicates(List<Phenotype> allPhenotypes) {
+        Set<Phenotype> phenos = new HashSet<Phenotype>();
+        for (Phenotype pheno : allPhenotypes) {
+            phenos.add(pheno);
+        }
+        ArrayList<Phenotype> phenotypeArrayList = new ArrayList<Phenotype>(phenos.size());
+        phenotypeArrayList.addAll(phenos);
+        return phenotypeArrayList;
+    }
+
 
 }

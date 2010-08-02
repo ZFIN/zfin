@@ -50,13 +50,13 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     private LookupComposite lookup;
 
-    public void onModuleLoad() {
+    public void onModuleLoad(Dictionary dictionary) {
 
         lookup = new LookupInTableComposite(this);
         lookup.setSubmitOnEnter(true);
-        handleProperties();
-        if(!useTermTable){
-            super.onModuleLoad();
+        handleProperties(dictionary);
+        if (!useTermTable) {
+            super.onModuleLoad(dictionary);
             return;
         }
         // init gui
@@ -78,14 +78,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         exposeMethodToJavascript(this);
     }
 
-    private void handleProperties() {
-        Dictionary lookupProperties = null;
-        try {
-            lookupProperties = Dictionary.getDictionary(JavaScriptPropertyReader.LOOKUP_STRING);
-        } catch (Exception e) {
-            // no lookup properties found.ignore
-            return;
-        }
+    private void handleProperties(Dictionary lookupProperties) {
         Set keySet = lookupProperties.keySet();
         if (keySet.contains(JSREF_INPUT_NAME)) {
             lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
@@ -200,7 +193,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         if (term != null && term.length() >= lookup.getMinLookupLength() && false == termStatus.isLooking()) {
 //            Window.alert("term status making call: "+ termStatus.getStatus());
             termStatus.setStatus(TermStatus.Status.LOOKING);
-            LookupRPCService.App.getInstance().validateAnatomyTerm(term, new AsyncCallback<TermStatus>() {
+            LookupRPCService.App.getInstance().validateTerm(term, lookup.getOntology(), new AsyncCallback<TermStatus>() {
                 public void onFailure(Throwable throwable) {
 //                    lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.Status.FAILURE);
@@ -332,6 +325,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     /**
      * Called externally to use the current Phenote term.
+     *
      * @param term term name
      */
     public void useTerm(String term) {
@@ -358,7 +352,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         final Set<String> termsFoundMany = new HashSet<String>(5);
 
         for (String tokenizedTerm : terms) {
-            LookupRPCService.App.getInstance().validateAnatomyTerm(tokenizedTerm, new AsyncCallback<TermStatus>() {
+            LookupRPCService.App.getInstance().validateTerm(tokenizedTerm, lookup.getOntology(), new AsyncCallback<TermStatus>() {
                 public void onFailure(Throwable throwable) {
                     lookup.setErrorString(throwable.toString());
                     termStatus.setStatus(TermStatus.Status.FAILURE);

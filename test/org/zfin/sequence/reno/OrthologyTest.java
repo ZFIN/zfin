@@ -45,7 +45,7 @@ public class OrthologyTest {
     static {
         SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

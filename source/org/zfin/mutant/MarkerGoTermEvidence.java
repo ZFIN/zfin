@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  */
-public class MarkerGoTermEvidence {
+public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private String zdbID;
     private Marker marker;
 
@@ -135,8 +135,8 @@ public class MarkerGoTermEvidence {
         MarkerGoTermEvidence that = (MarkerGoTermEvidence) o;
 
         // check the zdbID
-        if(zdbID!=null && that.zdbID!=null){
-            return zdbID.equals(that.zdbID) ;
+        if (zdbID != null && that.zdbID != null) {
+            return zdbID.equals(that.zdbID);
         }
 
         if (evidenceCode != null ? !evidenceCode.equals(that.evidenceCode) : that.evidenceCode != null) return false;
@@ -162,30 +162,30 @@ public class MarkerGoTermEvidence {
     }
 
     public boolean sameInferences(Set<InferenceGroupMember> inferredFrom1) {
-        if(CollectionUtils.isEmpty(inferredFrom)  &&
-                CollectionUtils.isEmpty(inferredFrom1)){
-            return true ;
+        if (CollectionUtils.isEmpty(inferredFrom) &&
+                CollectionUtils.isEmpty(inferredFrom1)) {
+            return true;
         }
-        if( (inferredFrom!=null && inferredFrom1==null)
-                || (inferredFrom==null && inferredFrom1!=null)){
-            return false ;
+        if ((inferredFrom != null && inferredFrom1 == null)
+                || (inferredFrom == null && inferredFrom1 != null)) {
+            return false;
         }
 
-        if(inferredFrom.size()==inferredFrom1.size()){
-            for(InferenceGroupMember inferenceGroupMember : inferredFrom){
-                boolean hasMatchingInference = false ;
-                for(InferenceGroupMember inferenceGroupMember1: inferredFrom1){
-                    if(inferenceGroupMember.getInferredFrom().equals(inferenceGroupMember1.getInferredFrom())){
-                        hasMatchingInference = true ;
+        if (inferredFrom.size() == inferredFrom1.size()) {
+            for (InferenceGroupMember inferenceGroupMember : inferredFrom) {
+                boolean hasMatchingInference = false;
+                for (InferenceGroupMember inferenceGroupMember1 : inferredFrom1) {
+                    if (inferenceGroupMember.getInferredFrom().equals(inferenceGroupMember1.getInferredFrom())) {
+                        hasMatchingInference = true;
                     }
                 }
-                if(false==hasMatchingInference){
-                    return false ;
+                if (false == hasMatchingInference) {
+                    return false;
                 }
             }
-            return true ;
+            return true;
         }
-        return false ;
+        return false;
     }
 
 
@@ -197,24 +197,32 @@ public class MarkerGoTermEvidence {
         sb.append("zdbID='").append(zdbID).append('\'');
         sb.append(", marker='").append(marker.getAbbreviation()).append('\'');
         sb.append(", evidenceCode='").append(evidenceCode.getName()).append('\'');
-        sb.append(", flag='").append( (flag!=null ? flag.name() : "null ")).append('\'');
-        sb.append(", source='").append( source.getZdbID()).append('\'');
-        sb.append(", goTerm='").append( goTerm.getTermName()).append('\'');
+        sb.append(", flag='").append((flag != null ? flag.name() : "null ")).append('\'');
+        sb.append(", source='").append(source.getZdbID()).append('\'');
+        sb.append(", goTerm='").append(goTerm.getTermName()).append('\'');
         sb.append(", note='").append(note).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
         sb.append(", createdWhen=").append(createdWhen);
         sb.append(", modifiedBy='").append(modifiedBy).append('\'');
         sb.append(", modifiedWhen=").append(modifiedWhen);
         sb.append(", inferredFrom=");
-        if(inferredFrom!=null){
-            for(InferenceGroupMember inferenceGroupMember: inferredFrom){
+        if (inferredFrom != null) {
+            for (InferenceGroupMember inferenceGroupMember : inferredFrom) {
                 sb.append(inferenceGroupMember.getInferredFrom()).append(",");
             }
-        }else{
+        } else {
             sb.append("none");
         }
         sb.append('}');
         return sb.toString();
     }
 
+    @Override
+    public int compareTo(MarkerGoTermEvidence o) {
+        String nameOne = getMarker().getAbbreviation();
+        String nameTwo = o.getMarker().getAbbreviation();
+        if (!nameOne.equals(nameTwo))
+            return nameOne.compareTo(nameTwo);
+        return 0;
+    }
 }

@@ -1,19 +1,17 @@
 package org.zfin.gwt.lookup.ui;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.ui.LookupComposite;
-import org.zfin.gwt.root.util.JavaScriptPropertyReader;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
  * As this uses a "GET" encoding we can be a bit more
  */
-public class Lookup implements EntryPoint {
+public class Lookup extends Composite {
 
     public static final String JSREF_DIV_NAME = "divName";
     public static final String JSREF_INPUT_NAME = "inputName";
@@ -29,15 +27,9 @@ public class Lookup implements EntryPoint {
     public static final String JSREF_ONTOLOGY_NAME = "ontologyName";
     public static final String JSREF_SHOW_TERM_DETAIL = "showTermDetail";
 
-    public void onModuleLoad() {
+    public void onModuleLoad(Dictionary lookupProperties) {
 
-        List<Dictionary> dictionaries = JavaScriptPropertyReader.getDictionaries();
-        if (dictionaries == null || dictionaries.isEmpty())
-            return;
-
-        LookupComposite lookup = null;
-        for (Dictionary lookupProperties : dictionaries) {
-            lookup = new LookupComposite();
+            LookupComposite lookup = new LookupComposite();
             // set options
             Set keySet = lookupProperties.keySet();
             if (keySet.contains(JSREF_INPUT_NAME)) {
@@ -90,7 +82,6 @@ public class Lookup implements EntryPoint {
             if (keySet.contains(JSREF_DIV_NAME)) {
                 RootPanel.get(lookupProperties.get(JSREF_DIV_NAME)).add(lookup);
             }
-        }
         exposeJavaScriptMethods(lookup);
     }
 

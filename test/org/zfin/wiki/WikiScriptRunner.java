@@ -76,7 +76,7 @@ public class WikiScriptRunner {
                 "infrastructure.hbm.xml",
                 "expression.hbm.xml"
         };
-        new HibernateSessionCreator(false, confFiles);
+        new HibernateSessionCreator(false);
         File file = new File("test", "log4j.xml");
         DOMConfigurator.configure(file.getAbsolutePath());
         ZfinProperties.init("test", "zfin-properties-test.xml");

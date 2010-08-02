@@ -55,6 +55,21 @@
         <put name="body" value="/WEB-INF/jsp/auditLog/audit_log_details.jsp"/>
     </definition>
 
+    <definition name="expression-report.page" extends="main_layout">
+        <put name="staticTitle" value="Expression Report"/>
+        <put name="body" value="/WEB-INF/jsp/anatomy/expression_report.jsp"/>
+    </definition>
+
+    <definition name="phenotype-report.page" extends="main_layout">
+        <put name="staticTitle" value="Phenotype Report"/>
+        <put name="body" value="/WEB-INF/jsp/anatomy/phenotype_report.jsp"/>
+    </definition>
+
+    <definition name="go-evidence-report.page" extends="main_layout">
+        <put name="staticTitle" value="Go Evidence Report"/>
+        <put name="body" value="/WEB-INF/jsp/anatomy/go_evidence_report.jsp"/>
+    </definition>
+
     <definition name="anatomy-show-expression-genes.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp"/>
     <definition name="anatomy-show-expression-insitu-probes.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp"/>
     <definition name="anatomy-show-expression-antibodies.ajax" path="/WEB-INF/jsp/anatomy/anatomy_term_detail_antibodies.jsp"/>

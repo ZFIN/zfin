@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -130,18 +131,18 @@ public class GenericTerm implements Term, Serializable {
     }
 
     public List<Term> getChildrenTerms() {
-        if (children != null)
+        if (CollectionUtils.isNotEmpty(children))
             return children;
 
-        if(relationships == null)
-        return null;
+        if (relationships == null)
+            return null;
 
         children = new ArrayList<Term>();
-        for(TermRelationship rel: relationships){
+        for (TermRelationship rel : relationships) {
             Term relatedTerm = rel.getRelatedTerm(this);
             // the null check comes from the AO which has start and end relationship to stage terms which are not yet set
             // upon deserialization of the obo files.
-            if(relatedTerm != null && relatedTerm.equals(rel.getTermTwo()))
+            if (relatedTerm != null && relatedTerm.equals(rel.getTermTwo()))
                 children.add(relatedTerm);
         }
         return children;

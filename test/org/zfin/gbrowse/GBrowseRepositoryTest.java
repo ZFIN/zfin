@@ -33,7 +33,7 @@ public class GBrowseRepositoryTest {
             GBrowseHibernateUtil.initForTest();
         }
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator(false);
         }
     }
 

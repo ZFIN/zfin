@@ -37,7 +37,7 @@ public class TranscriptRepositoryTest {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator(false);
         }
     }
 

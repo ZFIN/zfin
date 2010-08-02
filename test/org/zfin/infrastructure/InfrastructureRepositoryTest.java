@@ -44,7 +44,7 @@ public class InfrastructureRepositoryTest {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator(false);
         }
     }
 

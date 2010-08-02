@@ -52,7 +52,7 @@
                             <label class="indented-label">Anatomical Term</label><br>
                             <zfin2:lookup ontology="<%=Ontology.ANATOMY%>"
                                           action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>" showTermDetail="false"
-                                    wildcard="true"/>
+                                          wildcard="true"/>
                         </TD>
                         <TD width=10%>
                             <span class="bold">or</span>
@@ -150,6 +150,11 @@
     </c:if>
 </form:form>
 
-
-
+<authz:authorize ifAnyGranted="root">
+    <a href="expression-report">Expression Report</a>
+    ||
+    <a href="phenotype-report">Phenotype Report</a>
+    ||
+    <a href="go-evidence-report">Go Evidence Report</a>
+</authz:authorize>
 

@@ -111,10 +111,11 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param term term name
      * @return TermStatus
      */
-    public TermStatus validateAnatomyTerm(String term) {
+    public TermStatus validateTerm(String term,  OntologyDTO ontologyDto) {
 
+        Ontology ontology  = DTOConversionService.convertToOntology(ontologyDto);
         MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> terms = service.getMatchingTerms(Ontology.ANATOMY, term);
+        Set<MatchingTerm> terms = service.getMatchingTerms(ontology, term);
 
         int foundInexactMatch = 0;
         for (MatchingTerm anatomyItem : terms) {

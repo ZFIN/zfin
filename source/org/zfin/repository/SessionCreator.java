@@ -25,7 +25,7 @@ public class SessionCreator {
     /**
      * Only creates session if in hosted mode.
      *
-     * @return boolean Instatiation success
+     * @return boolean Instantiation success
      */
     public static synchronized boolean instantiateDBForHostedMode() {
         String gwtArgs = System.getProperty("gwt.args");
@@ -51,23 +51,7 @@ public class SessionCreator {
 
     public static boolean createSession() {
         try {
-            String[] confFiles = {
-                    "filters.hbm.xml",
-                    "anatomy.hbm.xml",
-                    "antibody.hbm.xml",
-                    "mutant.hbm.xml",
-                    "orthology.hbm.xml",
-                    "people.hbm.xml",
-                    "sequence.hbm.xml",
-                    "blast.hbm.xml",
-                    "reno.hbm.xml",
-                    "publication.hbm.xml",
-                    "marker.hbm.xml",
-                    "mapping.hbm.xml",
-                    "infrastructure.hbm.xml",
-                    "expression.hbm.xml"
-            };
-            new HibernateSessionCreator(false, confFiles);
+            new HibernateSessionCreator();
             return true;
         }
         catch (Exception e) {

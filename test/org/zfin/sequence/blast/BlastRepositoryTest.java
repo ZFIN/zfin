@@ -33,7 +33,7 @@ public class BlastRepositoryTest {
         SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
 
         if(sessionFactory == null){
-            new HibernateSessionCreator(false, TestConfiguration.getHibernateConfiguration() ) ;
+            new HibernateSessionCreator() ;
         }
     }
 

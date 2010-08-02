@@ -9,6 +9,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -234,4 +235,18 @@ public interface ExpressionRepository {
     void createExpressionPile(String publicationID);
 
     void createPileStructure(ExpressionStructure structure);
+
+    /**
+     * Retrieve Expressions for a given term.
+     * @param term term
+     * @return list of expressions
+     */
+    List<ExpressionResult> getExpressionsWithEntity(Term term);
+
+    /**
+     * Retrieve Expressions for a given list of terms.
+     * @param terms term
+     * @return list of expressions
+     */
+    List<ExpressionResult> getExpressionsWithEntity(List<Term> terms);
 }

@@ -66,7 +66,7 @@ public class ValidateBlastDatabases extends QuartzJobBean {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
-            new HibernateSessionCreator(false, hibernateConfiguration);
+            new HibernateSessionCreator(false);
 
             ZfinProperties.init("test", "zfin-properties-test.xml");
         }

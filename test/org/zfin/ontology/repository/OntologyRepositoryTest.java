@@ -26,7 +26,7 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

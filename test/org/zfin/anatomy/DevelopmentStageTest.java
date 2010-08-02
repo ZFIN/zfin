@@ -21,7 +21,7 @@ public class DevelopmentStageTest  {
     static {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
-            new HibernateSessionCreator(TestConfiguration.getHibernateConfiguration());
+            new HibernateSessionCreator();
         }
     }
 

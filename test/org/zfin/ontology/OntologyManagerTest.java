@@ -144,5 +144,10 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertEquals(service.getMaximumNumberOfMatches(), matches.size());
     }
 
+    @Test
+    public void getAllRelationshipsPerOntology(){
+        Set<String> relationships = OntologyService.getDistinctRelationships(Ontology.ANATOMY);
+        assertNotNull(relationships);
+    }
 
 }

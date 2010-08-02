@@ -1,5 +1,6 @@
 <%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.gwt.lookup.ui.Lookup" %>
+<%@ tag import="org.zfin.gwt.lookup.ui.LookupTable" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -31,6 +32,7 @@
     </c:when>
     </c:choose>
     <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
+    <%= LookupTable.JSREF_USE_TERM_TABLE%>: false,
     <%= Lookup.JSREF_LIMIT%>: 25,
     <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: ${showTermDetail}
     }

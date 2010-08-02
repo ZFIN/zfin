@@ -607,6 +607,16 @@
         </java>
     </target>
 
+    <target name="report" depends="compile">
+        <java classname="org.zfin.expression.EQReport" fork="yes"
+              classpathref="extended.classpath">
+            <jvmarg value="-DDBNAME=fstdb"/>
+            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
+            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
+            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
+            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
+        </java>
+    </target>
 </project>
 
 

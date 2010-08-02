@@ -29,26 +29,6 @@ public class TestConfiguration {
         DOMConfigurator.configure(file.getAbsolutePath());
     }
 
-    public static String[] getHibernateConfiguration() {
-        return new String[]{
-                "filters.hbm.xml",
-                "antibody.hbm.xml",
-                "anatomy.hbm.xml",
-                "blast.hbm.xml",
-                "expression.hbm.xml",
-                "general.hbm.xml",
-                "infrastructure.hbm.xml",
-                "mapping.hbm.xml",
-                "marker.hbm.xml",
-                "mutant.hbm.xml",
-                "orthology.hbm.xml",
-                "people.hbm.xml",
-                "publication.hbm.xml",
-                "reno.hbm.xml",
-                "sequence.hbm.xml",
-        };
-    }
-
     /**
      * Creates a default ApplicationProperties object.
      */

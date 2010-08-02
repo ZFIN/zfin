@@ -20,22 +20,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 public class HibernateStandaloneUtil {
 
     public static void main(String[] arguments){
-        String[] confFiles = {
-            "filters.hbm.xml",
-            "anatomy.hbm.xml",
-            "mutant.hbm.xml",
-            "orthology.hbm.xml",
-            "people.hbm.xml",
-            "sequence.hbm.xml",
-            "blast.hbm.xml",
-            "reno.hbm.xml",
-            "publication.hbm.xml",
-            "marker.hbm.xml",
-            "mapping.hbm.xml",
-            "infrastructure.hbm.xml",
-            "expression.hbm.xml"
-        };
-        new HibernateSessionCreator(false, confFiles);
+        new HibernateSessionCreator();
         callPersistence();
         HibernateUtil.closeSession();
     }

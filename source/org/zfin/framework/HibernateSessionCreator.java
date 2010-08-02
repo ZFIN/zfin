@@ -1,6 +1,10 @@
 package org.zfin.framework;
 
 import org.hibernate.cfg.Configuration;
+import org.zfin.util.FileUtil;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 /**
  * Class HibernateSessionCreator.  Used to handle connections without going through Tomcat explicitly.
@@ -21,29 +25,52 @@ public class HibernateSessionCreator {
 
     private boolean showSql = false;
 
-    public HibernateSessionCreator(String... hbmFiles) {
-        this(false, hbmFiles);
+    public HibernateSessionCreator() {
+        this(false);
     }
-
-    public HibernateSessionCreator(boolean showSql, String... hbmFiles) {
+    public HibernateSessionCreator(boolean showSql) {
         this.showSql = showSql;
         String db = System.getProperty(INPUT_DBNAME);
         String configDirectory = System.getProperty(INPUT_CONFIGURATION_DIRECTORY);
         String showSqlString = System.getProperty(SHOW_SQL);
-        if (showSqlString != null && showSqlString.equals("true")){
+        if (showSqlString != null && showSqlString.equals("true")) {
             this.showSql = true;
         }
         if (db == null || configDirectory == null) {
             throw new RuntimeException("Failed to instantiate the the db-name [" + db + "] and configDirectory[" + configDirectory + "]");
         }
         Configuration config = createConfiguration(db);
+        File[] hbmFiles = getHibernateConfigurationFiles();
         if (hbmFiles != null) {
-            for (String confFile : hbmFiles) {
-                config.addFile(configDirectory + FILE_SEP + confFile);
+            // first add filter.hbm.xml bug in Hibernate!!
+            for (File configurationFile : hbmFiles) {
+                if (configurationFile.getName().startsWith("filters.")) {
+                    config.addFile(configurationFile);
+                    break;
+                }
             }
+            // now add the others
+            for (File configurationFile : hbmFiles) {
+                if (!configurationFile.getName().startsWith("filter.")) {
+                    config.addFile(configurationFile);
+                }
+            }
+            HibernateUtil.init(config.buildSessionFactory());
         }
-        HibernateUtil.init(config.buildSessionFactory());
     }
+
+    private static File[] getHibernateConfigurationFiles() {
+        File hibernateConfDir = FileUtil.createFileFromStrings("source", "org", "zfin");
+        return hibernateConfDir.listFiles(new HibernateFilenameFilter());
+    }
+
+    static class HibernateFilenameFilter implements FilenameFilter {
+
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".hbm.xml");
+        }
+    }
+
 
     public void initHibernate() {
 

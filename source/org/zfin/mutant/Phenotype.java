@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * ZFIN Domain object.
  */
-public class Phenotype {
+public class Phenotype implements Comparable<Phenotype> {
 
 
     private String zdbID;
@@ -118,8 +118,18 @@ public class Phenotype {
     }
 
     public void removeFigure(Figure figure) {
-        if(figures != null)
+        if (figures != null)
             figures.remove(figure);
+    }
+
+    @Override
+    public int compareTo(Phenotype o) {
+        String o1GenotypeName = getGenotypeExperiment().getGenotype().getName();
+        final String o2GenotypeName = o.getGenotypeExperiment().getGenotype().getName();
+        if (!o1GenotypeName.equals(o2GenotypeName))
+            return o1GenotypeName.compareTo(o2GenotypeName);
+        return 0;
+
     }
 
     public static enum Tag {
