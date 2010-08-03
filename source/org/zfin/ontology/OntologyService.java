@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import org.apache.log4j.Logger;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
 
@@ -10,6 +11,8 @@ import java.util.*;
  * developmental stage objects according to certain presentation rules.
  */
 public final class OntologyService {
+
+    private static final Logger log = Logger.getLogger(OntologyService.class);
 
     /**
      * Generate a comma (including a white space) delimited list of synomys of an anatomy item.
@@ -132,6 +135,8 @@ public final class OntologyService {
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;
+		if(rel.getTermTwo() == null)
+		    log.error("No term two found for: " +rel.getID());
                 if (rel.getTermTwo().equals(term)) {
                     displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
                 } else {
