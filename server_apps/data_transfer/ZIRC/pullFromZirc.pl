@@ -17,7 +17,7 @@
 #     There are no arguments to the script, and the script assumes
 #     that no environment variables are set.
 #
-#     This writes a report to STDOUT and to a file so that we can send
+#     This writes a report to a file so that we can send
 #     the file to Ron H. at ZIRC.
 #
 #     Returns
@@ -28,7 +28,7 @@
 use DBI;
 use MIME::Lite;
 #----------------------------------------------------------------------
-# Write a line to the report (STDOUT)
+# Write a line to the report 
 #
 # Params
 #  @     Lines to write out.
@@ -39,7 +39,6 @@ sub writeReport(@) {
     my $line;
 
     foreach $line (@_) {
-	print(STDOUT "$line\n");
 	print(ZIRCREPORT "$line\n");
     }
     return ();
