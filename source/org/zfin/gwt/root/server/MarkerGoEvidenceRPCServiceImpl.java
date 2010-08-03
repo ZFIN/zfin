@@ -13,6 +13,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -62,7 +63,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
 
     @Override
-    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException{
+    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
         // retrieve
         Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class);
         criteria.add(Restrictions.eq("zdbID", goEvidenceDTO.getZdbID()));
@@ -124,21 +125,21 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             mutantRepository.removeInferenceToGoMarkerTermEvidence(markerGoTermEvidence, inference);
         }
 
-        infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", oldValueString , markerGoTermEvidence.toString(), "Updated MarkerGoTermEvidence record");
+        infrastructureRepository.insertUpdatesTable(markerGoTermEvidence.getZdbID(), "MarkerGoTermEvidence", oldValueString, markerGoTermEvidence.toString(), "Updated MarkerGoTermEvidence record");
 
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656
-        if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence)>1 ){
-            logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
-            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.") ;
+        if (mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) > 1) {
+            logger.warn("Duplicate marker go evidence attempted: " + markerGoTermEvidence);
+            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.");
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
 
         try {
-            PublicationService.addRecentPublications(getServletContext(),publication,PublicationSessionKey.GOCURATION) ;
+            PublicationService.addRecentPublications(getServletContext(), publication, PublicationSessionKey.GOCURATION);
         } catch (Exception e) {
-            logger.debug("Unable to add a recent pub, should only be a problem in test mode",e);
+            logger.debug("Unable to add a recent pub, should only be a problem in test mode", e);
         }
 
         // do a safe return this way
@@ -345,7 +346,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             markerGoTermEvidence.setCreatedBy(person.getName());
         }
 
-        Date rightNow = new Date() ;
+        Date rightNow = new Date();
         markerGoTermEvidence.setModifiedWhen(rightNow);
         markerGoTermEvidence.setCreatedWhen(rightNow);
 
@@ -363,18 +364,18 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
 
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656
-        if(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) >1){
-            logger.warn("Duplicate marker go evidence attempted: "+ markerGoTermEvidence);
-            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.") ;
+        if (mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) > 1) {
+            logger.warn("Duplicate marker go evidence attempted: " + markerGoTermEvidence);
+            throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.");
         }
 
 
         HibernateUtil.flushAndCommitCurrentSession();
 
-        try{
-            PublicationService.addRecentPublications(getServletContext(),publication,PublicationSessionKey.GOCURATION) ;
+        try {
+            PublicationService.addRecentPublications(getServletContext(), publication, PublicationSessionKey.GOCURATION);
         } catch (Exception e) {
-            logger.debug("Unable to add a recent pub, should only be a problem in test mode",e);
+            logger.debug("Unable to add a recent pub, should only be a problem in test mode", e);
         }
         // do a safe return this way
         return getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID());
@@ -392,30 +393,31 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     public void deleteMarkerGoTermEvidence(String zdbID) {
         HibernateUtil.createTransaction();
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
-        Person person = Person.getCurrentSecurityUser();
-        infrastructureRepository.insertUpdatesTable(zdbID, "MarkerGoTermEvidence",zdbID, "",  "delete this annotation via GO gwt");
+        infrastructureRepository.insertUpdatesTable(zdbID, "MarkerGoTermEvidence", zdbID, "", "delete this annotation via GO gwt");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
     @Override
     public TermDTO getGOTermByName(String value) {
         // going to be faster to go to the DB
-        Term goTerm = null ;
-        if(value.startsWith("ZDB-TERM")){
-            goTerm = (Term) HibernateUtil.currentSession().createCriteria(GenericTerm.class).
-                    add(Restrictions.eq("ID", value)).uniqueResult();
-        }
-        Ontology ontology ;
-        for(Iterator<Ontology> iterator = Ontology.GO.getIndividualOntologies().iterator()  ;
-            iterator.hasNext() && goTerm==null  ; ){
-            ontology = iterator.next() ;
-            goTerm = OntologyManager.getInstance().getTermByName(ontology,value,true) ;
+        Term goTerm = null;
+        Ontology ontology;
+        for (Iterator<Ontology> iterator = Ontology.GO.getIndividualOntologies().iterator();
+             iterator.hasNext() && goTerm == null;) {
+            ontology = iterator.next();
+            goTerm = OntologyManager.getInstance().getTermByName(ontology, value, true);
         }
         if (goTerm == null) {
-            throw new RuntimeException("Failed to find GO term[" + value + "]");
-        } else {
-            return DTOConversionService.convertToTermDTO(goTerm);
+            if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
+                logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
+                goTerm = infrastructureRepository.getTermByID(value);
+            }
+            if (goTerm == null) {
+                logger.info("Failed to find GO term[" + value + "]");
+                return null;
+            }
         }
+        return DTOConversionService.convertToTermDTO(goTerm);
     }
 
     @Override

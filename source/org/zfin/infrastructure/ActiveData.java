@@ -14,6 +14,30 @@ public class ActiveData implements ZdbID {
         validateID();
     }
 
+    public static boolean validateActiveData(String id) {
+        if (id == null) {
+            return false;
+        }
+
+        if (!id.startsWith(ActiveSource.ZDB))
+            return false;
+
+        Type type = null;
+        for (Type zdbType : Type.values()) {
+            if (id.contains(zdbType.name())) {
+                type = zdbType;
+            }
+        }
+        return type != null;
+    }
+
+    public static boolean isValidActiveData(String id, Type type) {
+        if (type == null || id == null) {
+            return false;
+        }
+        return id.contains(type.name());
+    }
+
     public Type validateID() {
         if (zdbID == null) {
             throw new InvalidZdbID();

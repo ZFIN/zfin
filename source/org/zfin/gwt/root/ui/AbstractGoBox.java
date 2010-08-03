@@ -216,8 +216,10 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
-                LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
+                if(dataChangedEvent.getDTO().getGoTerm()!=null){
+                    String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
+                    LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
+                }
             }
         });
 
@@ -260,7 +262,12 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         });
 
         goTermBox.setAction(new SubmitAction() {
-            public void doSubmit(String value) {
+            private boolean isSubmitting = false ;
+            public void doSubmit(final String value) {
+                if(isSubmitting){
+                    return ;
+                }
+                isSubmitting = true ;
                 if (value.isEmpty()) {
                     setError("Go term is invalid [" + value + "].  Please add a valid go term.");
                     return;
@@ -276,13 +283,17 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                                 super.onFailure(throwable);
                                 goTermBox.setEnabled(true);
                                 goTermBox.clearNote();
+                                isSubmitting =  false;
                             }
 
                             @Override
                             public void onSuccess(TermDTO result) {
                                 goTermBox.setEnabled(true);
-                                goTermBox.clearError();
                                 goTermBox.clearNote();
+                                if(result==null) {
+                                    goTermBox.setErrorString("Unable to find term["+value+"]");
+                                    return ;
+                                }
                                 temporaryGoTermDTO = result;
                                 GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                                 goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
@@ -290,6 +301,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                                 handleDirty();
                                 goTermBox.setText(temporaryGoTermDTO.getTermName());
                                 clearError();
+                                isSubmitting =  false;
                             }
                         });
             }

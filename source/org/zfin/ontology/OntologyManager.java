@@ -565,7 +565,7 @@ public class OntologyManager {
     public Term getTermByName(Ontology ontology, String termName,boolean allowObsolete) {
         Collection<Term> terms =   getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
         if(terms==null){
-            logger.warn("No terms for term: "+ termName + " and ontology: "+ ontology.getOntologyName());
+            logger.info("No terms for term: "+ termName + " and ontology: "+ ontology.getOntologyName());
             return null ;
         }
         else{
