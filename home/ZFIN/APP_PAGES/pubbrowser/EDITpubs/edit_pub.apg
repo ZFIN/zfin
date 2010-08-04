@@ -155,7 +155,7 @@ a new or updated existing pub
     </SELECT>
     </font><br><br>	
     <b>PubMed ID:</B>
-    <br>
+    <br>Enter "none" if this publication does not exist in PubMed.  
     Leave it blank if you don't know.
     <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
     <p>

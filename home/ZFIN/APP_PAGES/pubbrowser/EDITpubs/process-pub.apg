@@ -69,7 +69,6 @@ OUTPUT:
 	
     <?MIVAR NAME=$q_title>$(REPLACE,$q_title,','')<?/MIVAR>
     <?MIVAR NAME=$q_authors>$(REPLACE,$q_authors,','')<?/MIVAR>
-    <?MIVAR NAME=$editpub_jrnl_abbrev>$(TRIM,$editpub_jrnl_abbrev)<?/MIVAR>
     <?MIVAR NAME=$editpub_jrnl_abbrev>$(REPLACE,$editpub_jrnl_abbrev,','')<?/MIVAR>
 
     <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords>$(REPLACE,$q_keywords,','')<?/MIVAR>
@@ -183,11 +182,7 @@ OUTPUT:
       <?MIVAR NAME=$procpub_jrnl_zdb_id>$1<?/MIVAR>
 
 
-    <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths', pub_jrnl_zdb_id = '$procpub_jrnl_zdb_id', keywords='$q_keywords', pub_abstract='$q_pub_abstract', pub_doi='$q_doi_no', pub_volume='$editpub_pub_volume', pub_pages='$editpub_pub_pages', pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
-
-    <?MICOMMENT> only set the accession number if it's not empty
-                 (if it's null, it gets set to empty above)   <?/MICOMMENT>
-    <?MIVAR NAME="$setvalues" COND="$(NE,$q_accession_no,'')">$setvalues, accession_no='$q_accession_no'<?/MIVAR>
+    <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths', pub_jrnl_zdb_id = '$procpub_jrnl_zdb_id', keywords='$q_keywords', pub_abstract='$q_pub_abstract', accession_no='$q_accession_no', pub_doi='$q_doi_no', pub_volume='$editpub_pub_volume', pub_pages='$editpub_pub_pages', pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
 
     <?MICOMMENT> *** OKAY, now just do the update! *** <?/MICOMMENT>
 
@@ -301,6 +296,4 @@ OUTPUT:
   <?/MIVAR>
 </SCRIPT>
 
-
-<?/MIBLOCK> <?MICOMMENT>-- end $AUTHORIZED check --<?/MICOMMENT> 
-
+<?/MIBLOCK> <?MICOMMENT>-- end $AUTHORIZED check --<?/MICOMMENT>
