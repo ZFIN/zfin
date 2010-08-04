@@ -132,7 +132,7 @@ public class AnatomyRepositoryTest {
         // 2- get by synonym
         terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
         assertNotNull(terms);
-        assertTrue(terms.size() == 2);
+        assertTrue(terms.size() > 2);
 
         // 3- get by data alias
         terms = getAnatomyRepository().getAnatomyItemsByName("413", false);
