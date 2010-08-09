@@ -315,7 +315,7 @@
         <move todir="${post-home.target}" failonerror="false" verbose="false">
             <fileset dir="${home.target}"/>
         </move>
-        <move todir="${home.target}" verbose="true">
+        <move todir="${home.target}" verbose="false">
             <fileset dir="${pre-home.target}"/>
         </move>
 
@@ -356,7 +356,7 @@
         <move todir="${post-home.target}" failonerror="false" verbose="false">
             <fileset dir="${home.target}"/>
         </move>
-        <move todir="${home.target}" verbose="true">
+        <move todir="${home.target}" verbose="false">
             <fileset dir="${pre-home.target}"/>
         </move>
 
