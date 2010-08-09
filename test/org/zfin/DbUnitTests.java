@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
+import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.infrastructure.EnumValidationTest;
@@ -16,8 +17,8 @@ import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
 import org.zfin.ontology.OntologyManagerTest;
+import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
-import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.people.repository.PeopleRepositoryTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
@@ -67,6 +68,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         LinkageRepositoryTest.class,
         SingleCandidateRepositoryTest.class,
         OntologyManagerTest.class,
+        OntologyRepositoryTest.class,
         TranscriptRepositoryTest.class,
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,

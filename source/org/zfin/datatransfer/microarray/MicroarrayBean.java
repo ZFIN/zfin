@@ -2,11 +2,9 @@ package org.zfin.datatransfer.microarray ;
 
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.util.Collection;
 import java.io.*;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Keeps statistics about microarray job and write them to file.

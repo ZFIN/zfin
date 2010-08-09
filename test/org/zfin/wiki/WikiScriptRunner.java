@@ -5,6 +5,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
@@ -13,7 +14,6 @@ import java.io.File;
  * This class is used to run wiki code once (as opposed to out of a cron job.
  * Note that the parameters for execution come from "zfin-properties-test.xml".
  * There is no ant target for this and this is generally run from an IDE with the parameters:
- * -DDBNAME= -DCONFIGURATION_DIRECTORY= -DINFORMIX_SERVER= -DINFORMIX_PORT= -DSQLHOSTS_HOST=
  **/
 public class WikiScriptRunner {
 
@@ -79,9 +79,11 @@ public class WikiScriptRunner {
         new HibernateSessionCreator(false);
         File file = new File("test", "log4j.xml");
         DOMConfigurator.configure(file.getAbsolutePath());
-        ZfinProperties.init("test", "zfin-properties-test.xml");
+        ZfinProperties.init();
+//        LoadPropertiesTask.loadProperties();
+//        ZfinProperties.init("test", "zfin-properties-test.xml");
 //        ZfinProperties.setWebRootDirectory(new File(".").getAbsolutePath());
-        ZfinProperties.setWebRootDirectory("home");
+        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
         try {
             WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
 //            wikiScriptRunner.addWebPage("zn-5");

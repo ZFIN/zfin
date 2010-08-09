@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.framework.presentation.ZfinStatisticsBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table cellpadding="2" cellspacing="1" border="0" width="90%">

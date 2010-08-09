@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
 
@@ -70,17 +70,17 @@
             <% } %>
             <td>
                 <c:if test="${status.index == 0 || formBean.antibodyStat.figureSummary[status.index].publication.zdbID ne formBean.antibodyStat.figureSummary[status.index-1].publication.zdbID}">
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${figureData.publication.zdbID}">
+                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${figureData.publication.zdbID}">
                             ${figureData.publication.shortAuthorList}
                     </a>
                 </c:if>
             </td>
             <td>
-                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${figureData.figure.zdbID}">${figureData.figure.label}</a>
+                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${figureData.figure.zdbID}">${figureData.figure.label}</a>
             </td>
             <td>
                 <c:if test="${figureData.thumbnail != null}">
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${figureData.figure.zdbID}">
+                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${figureData.figure.zdbID}">
                         <img border="1" src="/imageLoadUp/${figureData.thumbnail}" height="50"
                              title='${figureData.imgCount} image<c:if test="${figureData.imgCount > 1}">s</c:if>'
                                 />

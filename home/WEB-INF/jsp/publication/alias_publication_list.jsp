@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <table bgcolor="#eeeeee" border="0" width="100%">
     <tbody>
@@ -52,7 +52,7 @@
             <zfin:alternating-tr loopName="loop">
                 <td align=left>
                     <div class="show_pubs">
-                        <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}">${publishedPublication.authors}
+                        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}">${publishedPublication.authors}
                             &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
                         </a>
                     </div>
@@ -71,7 +71,7 @@
                 <zfin:alternating-tr loopName="loop">
                     <td align=left>
                         <div class="show_pubs">
-                            <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
+                            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
                                 &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
                             </a>
                         </div>

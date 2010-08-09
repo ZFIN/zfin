@@ -1,7 +1,6 @@
 package org.zfin.gwt.root.util;
 
 import org.junit.Test;
-import org.zfin.gwt.root.util.WidgetUtil;
 
 import static junit.framework.Assert.assertEquals;
 //import com.google.gwt.junit.client.GWTTestCase;

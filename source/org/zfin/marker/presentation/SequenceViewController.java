@@ -2,7 +2,6 @@ package org.zfin.marker.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-import org.zfin.expression.ExpressionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;

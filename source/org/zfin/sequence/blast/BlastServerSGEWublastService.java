@@ -4,6 +4,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.Sequence;
 
 import java.io.ByteArrayOutputStream;
@@ -20,7 +21,7 @@ public abstract class BlastServerSGEWublastService extends AbstractWublastBlastS
     protected List<String> getPrefixCommands() {
         List<String> prefixCommands = getPrefixCommands();
         if (prefixCommands.size() == 0) {
-            prefixCommands.add(ZfinProperties.getBlastServerAccessBinary());
+            prefixCommands.add(ZfinPropertiesEnum.SSH.value());
             prefixCommands.add(ZfinProperties.getBlastServerUserAtHost());
             // I don't think that this needs to be queued, but it couldn't hurt
             prefixCommands.add("qrsh");
@@ -37,12 +38,12 @@ public abstract class BlastServerSGEWublastService extends AbstractWublastBlastS
 
     @Override
     public String getBlastGetBinary() {
-        return getKeyPath() + ZfinProperties.getBlastServerGetBinary();
+        return getKeyPath() + ZfinPropertiesEnum.WEBHOST_XDGET;
     }
 
     @Override
     public String getBlastPutBinary() {
-        return getKeyPath() + ZfinProperties.getBlastServerPutBinary();
+        return getKeyPath() + ZfinPropertiesEnum.WEBHOST_XDFORMAT;
     }
 
     @Override
@@ -115,7 +116,7 @@ public abstract class BlastServerSGEWublastService extends AbstractWublastBlastS
 
 
     protected File generateFileName(File fastaFile, int sliceNumber) throws IOException {
-        return new File(ZfinProperties.getDistributedQueryPath() + "/" + (sliceNumber >= 0 ? sliceNumber + "/" : "") + fastaFile.getName());
+        return new File(ZfinPropertiesEnum.BLASTSERVER_DISTRIBUTED_QUERY_PATH + "/" + (sliceNumber >= 0 ? sliceNumber + "/" : "") + fastaFile.getName());
     }
 
     public List<File> backupDatabase(Database database) throws IOException {

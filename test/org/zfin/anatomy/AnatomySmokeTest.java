@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import org.zfin.AbstractSecureSmokeTest;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
  */
@@ -14,7 +15,7 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
             webClient = aWebClient;
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/anatomy/search");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/anatomy/search");
                 assertEquals("Anatomical Ontology Browser", page.getTitleText());
                 assertNotNull(page.getByXPath("//label[. = 'Anatomical Term']").get(0));
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
@@ -33,7 +34,7 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
             webClient = aWebClient;
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT-010921-415");
                 assertEquals("ZFIN: Anatomical Structure: brain", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0)) ;
                 assertNotNull(page.getByXPath("//a[. = 'PHENOTYPE']").get(0)) ;
@@ -49,7 +50,7 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
             try {
                 login();
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -75,7 +76,7 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
             try {
                 login();
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 final HtmlForm form = page.getFormByName("lookupTable");

@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -13,7 +13,7 @@ public class GBrowseTag extends TagSupport {
     public int doStartTag() throws JspException {
 
         try {
-            pageContext.getOut().print(ZfinProperties.getGBrowse());
+            pageContext.getOut().print(ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value());
         } catch (IOException ioe) {
             throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }

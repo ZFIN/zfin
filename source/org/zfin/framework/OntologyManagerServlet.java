@@ -2,12 +2,10 @@ package org.zfin.framework;
 
 import org.apache.log4j.Logger;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.util.FileUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
-import java.io.File;
 
 /**
  * Background Servlet that should not be called directly.

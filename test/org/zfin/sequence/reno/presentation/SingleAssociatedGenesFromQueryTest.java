@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -68,9 +67,6 @@ public class SingleAssociatedGenesFromQueryTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.initApplicationProperties();
-
-
         MarkerType geneType = new MarkerType();
         geneType.setType(Marker.Type.GENE);
         Set<Marker.TypeGroup> groups = new HashSet<Marker.TypeGroup>();

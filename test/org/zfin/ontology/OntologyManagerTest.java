@@ -1,7 +1,6 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -20,10 +19,6 @@ import static org.junit.Assert.assertTrue;
 public class OntologyManagerTest extends AbstractOntologyTest {
 
     private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
-
-    @Before
-    public void setup() {
-    }
 
     @Override
     protected Ontology[] getOntologiesToLoad() {

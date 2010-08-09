@@ -5,13 +5,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.util.FileWrapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
@@ -96,13 +93,6 @@ public class DatabaseInfoController extends MultiActionController {
         modelAndView.setViewName("svn-version");
 
         return modelAndView;
-    }
-
-    public ModelAndView zfinPropertyHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        File zfinPropertyFile = ZfinProperties.getZfinPropertyFile();
-        FileWrapper wrapper = new FileWrapper(zfinPropertyFile, "ZFIN Properties");
-        return new ModelAndView("file-content", "fileWrapper", wrapper);
     }
 
     public ModelAndView threadInfoHandler(HttpServletRequest request, HttpServletResponse response)

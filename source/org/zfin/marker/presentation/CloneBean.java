@@ -2,8 +2,6 @@ package org.zfin.marker.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.expression.presentation.MarkerExpression;
-import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Clone;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;

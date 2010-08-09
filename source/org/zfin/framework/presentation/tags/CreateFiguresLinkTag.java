@@ -2,7 +2,7 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -118,7 +118,7 @@ public class CreateFiguresLinkTag extends TagSupport {
     protected StringBuilder getWebdriverHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href='/");
-        sb.append(ZfinProperties.getWebDriver());
+        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         return sb;
     }
 

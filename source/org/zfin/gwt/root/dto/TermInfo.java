@@ -1,11 +1,13 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
 import org.zfin.gwt.root.util.RelationshipComparatorDTO;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * ToDo: ADD DOCUMENTATION!

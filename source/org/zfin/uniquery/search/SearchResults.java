@@ -1,6 +1,7 @@
 package org.zfin.uniquery.search;
 
 import org.apache.lucene.document.Document;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.presentation.SearchBean;
 
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class SearchResults {
             // there is no mutant name for production, and we want to redirect to cgi-bin/
             //System.out.println(envWebdriverPathFromRoot);
 
-            String envWebdriverLoc = System.getenv("WEBDRIVER_LOC");
+            String envWebdriverLoc = ZfinPropertiesEnum.WEBDRIVER_LOC.value() ;
             // this replacement for webdriver URLs only (java does not encode an instance-specific string in
             // the url.
             // Assumes /<mutant-name>/webdriver?xxx syntax

@@ -2,7 +2,6 @@ package org.zfin.ontology.repository;
 
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
@@ -14,8 +13,6 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
@@ -24,15 +21,11 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 public class OntologyRepositoryTest extends AbstractOntologyTest{
 
     static {
+        TestConfiguration.configure();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
         }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
     }
 
     @Test
@@ -41,7 +34,14 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
         MatchingTermService matcher = new MatchingTermService();
         Set<MatchingTerm> qualities = matcher.getMatchingTerms(Ontology.QUALITY, query);
         assertNotNull(qualities);
-        assertEquals(23, qualities.size());
+        assertEquals(14, qualities.size());
+
+        int count = 0 ;
+        for(MatchingTerm matchingTerm : qualities){
+            count += (matchingTerm.getTerm().isObsolete() ? 1 : 0) ;
+        }
+        assertEquals(4, count);
+
     }
 
     //@Test
@@ -89,14 +89,15 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
 
     @Test
     public void loadAllTermsOfOntology() throws Exception{
-        List<Term> terms = getOntologyRepository().getAllTermsFromOntology(Ontology.ANATOMY);
+        List<Term> terms = getOntologyRepository().getAllTermsFromOntology(Ontology.QUALITY);
         Assert.assertNotNull(terms);
     }
 
     @Override
     protected Ontology[] getOntologiesToLoad() {
-        Ontology[] ontologies = new Ontology[1];
+        Ontology[] ontologies = new Ontology[2];
         ontologies[0] =  Ontology.ANATOMY;
+        ontologies[1] =  Ontology.QUALITY;
         return ontologies ;
     }
 

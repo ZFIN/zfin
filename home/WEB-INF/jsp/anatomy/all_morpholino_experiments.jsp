@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
@@ -71,13 +71,13 @@
                 <td>
                     <c:if test="${morpholinoStat.numberOfFigures > 0}">
                         <c:if test="${morpholinoStat.numberOfFigures > 1}">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${morpholinoStat.genoExperiment.genotype.zdbID}&anatID=${formBean.aoTerm.ID}&envID=${morpholinoStat.genoExperiment.experiment.zdbID}'>
+                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${morpholinoStat.genoExperiment.genotype.zdbID}&anatID=${formBean.aoTerm.ID}&envID=${morpholinoStat.genoExperiment.experiment.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${morpholinoStat.numberOfFigures}" includeNumber="true"/>
                             </a>
                         </c:if>
                         <c:if test="${morpholinoStat.numberOfFigures == 1 }">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${morpholinoStat.figure.zdbID}'>
+                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${morpholinoStat.figure.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${morpholinoStat.numberOfFigures}" includeNumber="true"/>
                             </a>

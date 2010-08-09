@@ -5,6 +5,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
@@ -83,9 +84,10 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
      */
     public static void main(String args[]) {
         String file = "zfin-properties.xml";
-        String dirRel = System.getenv("TARGETROOT");
+        String dirRel = ZfinPropertiesEnum.TARGETROOT.value() ;
         String dir = dirRel + "/" + "home/WEB-INF/";
-        ZfinProperties.init(dir, file);
+        ZfinProperties.init();
+//        ZfinProperties.init(dir, file);
 
         String messageText = null ;
         String subjectText = null ;

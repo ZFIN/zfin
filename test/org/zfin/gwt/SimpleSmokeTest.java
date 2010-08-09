@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.AbstractSecureSmokeTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 /**
@@ -21,7 +21,7 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
             webClient = aWebClient;
             try {
                 login();
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/modules");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/modules");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Modules", page.getTitleText());
@@ -71,7 +71,7 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
                 }
 
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/alternate-gene-edit");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/alternate-gene-edit");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Gene Edit", page.getTitleText());

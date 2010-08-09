@@ -2,16 +2,12 @@ package org.zfin.sequence.reno;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.ModelAndView;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -38,7 +34,7 @@ import static org.junit.Assert.*;
 /**
 Tests the AlignmentController.
  */
-public class AlignmentsControllerTest {
+public class AlignmentsControllerTest extends AbstractDatabaseTest{
 
     private static Logger logger = Logger.getLogger(AlignmentsControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
@@ -46,27 +42,6 @@ public class AlignmentsControllerTest {
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-
-    }
-
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
 
         /**
      * To add hits, needs query , needs runcand, needs run, needs publication

@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,7 +79,7 @@ public class ClasspathInfoController extends AbstractCommandController {
     }
 
     private void retrieveWebInfClasses(ClasspathInfoBean classpathForm) {
-        String webDir = ZfinProperties.getWebRootDirectory();
+        String webDir = ZfinPropertiesEnum.WEBROOT_DIRECTORY.value();
         File webInf = new File(webDir, "WEB-INF");
         File classes = new File(webInf, "classes");
         File lib = new File(webInf, "lib");

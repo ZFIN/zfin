@@ -7,6 +7,7 @@ import org.zfin.infrastructure.EnumValidationException;
 import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.ontology.RelationshipDisplayNames;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
@@ -43,18 +44,20 @@ public class ZfinActionServlet extends DispatcherServlet {
         super.init(config);
         webRoot = getServletContext().getRealPath("/");
         // make web root dir available to the application
-        ZfinProperties.setWebRootDirectory(webRoot);
-        ZfinProperties.setIndexDirectory(getServletContext().getInitParameter("quicksearch-index-directory"));
+        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(webRoot);
+        ZfinPropertiesEnum.INDEXER_DIRECTORY.setValue(getServletContext().getInitParameter("quicksearch-index-directory"));
         initProperties();
         initCategories();
         // Added this to the application context to make it easier to use global values.
         // ToDo: Should add all global parameters into application context and have it added
         // to the right context. There might be parameters that should only apply on a session scope...
-        config.getServletContext().setAttribute("webdriverURL", ZfinProperties.getWebDriver());
+        config.getServletContext().setAttribute("webdriverURL", ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         initDatabase();
         startupTests();
-        // Note: Ontologies are loaded through the OntologyManagerServlet
-        initBlast();
+        if(Boolean.valueOf(ZfinPropertiesEnum.BLAST_CACHE_AT_STARTUP.value())){
+            initBlast();
+        }
+        initRelationshipDisplayNames();
         initRelationshipDisplayNames();
     }
 
@@ -127,10 +130,11 @@ public class ZfinActionServlet extends DispatcherServlet {
      * making the parameters available.
      */
     private void initProperties() {
-        String file = getInitParameter(PROPERTY_FILE_NAME_PARAM);
-        String dirRel = getInitParameter(PROPERTY_FILE_DIR_PARAM);
-        String dir = getConcatenatedDir(webRoot, dirRel);
-        ZfinProperties.init(dir, file);
+//        String file = getInitParameter(PROPERTY_FILE_NAME_PARAM);
+//        String dirRel = getInitParameter(PROPERTY_FILE_DIR_PARAM);
+//        String dir = getConcatenatedDir(webRoot, dirRel);
+        ZfinProperties.init();
+//        ZfinProperties.init(dir, file);
     }
 
     /**

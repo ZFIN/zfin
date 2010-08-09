@@ -1,42 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="properties" basedir=".">
 
-    <!-- today -->
-    <tstamp prefix="today"/>
-
-    <!-- the destination directory for building a deploy tar -->
-    <property name="deploy.dir" value="deploy"/>
-    <property name="web.dir" value="${basedir}/home"/>
-    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
-    <property name="web.lib" value="${web-inf.dir}/lib"/>
-    <property name="web.conf" value="${web-inf.dir}/conf"/>
-    <property name="lib" value="${basedir}/lib/Java"/>
-    <property name="static-version.file.name" value="java-deploy-version.html"/>
-    <property name="jsp-version.file.name" value="svn_version.jsp"/>
-    <property name="gwt.lib" value="${lib}/gwt"/>
-    <property name="jwebunit.lib" value="${lib}/jwebunit"/>
-    <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
     <property name="reports.dir" value="${basedir}/reports"/>
-    <property name="test.reports.dir" value="${reports.dir}/tests"/>
-    <!-- path to servlet jar file -->
-    <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
-    <property environment="env"/>
-
-
-    <property name="hibernate.exists" value="hibernate.properties.exists"/>
-
-    <!-- directory in which the unit test coverage is generated and kept-->
-    <property name="unit.test.coverage" value="${basedir}/unit-test-coverage"/>
-
-    <!-- The destination directory for all the compiled classes. -->
-    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
-
-    <!-- The destination directory for all the compiled classes. -->
+    <property name="test.reports.dir" value="${reports.dir}/tests"/>    
+<!-- The destination directory for all the compiled classes. -->
     <!-- home targets -->
-    <property name="home.target" value="${env.TARGETROOT}/home"/>
-    <property name="pre-home.target" value="${env.TARGETROOT}/pre-home"/>
-    <property name="post-home.target" value="${env.TARGETROOT}/post-home"/>
-    <property name="archive-home.target" value="${env.TARGETROOT}/archive${today.DSTAMP}-home"/>
+    <property name="home.target" value="${TARGETROOT}/home"/>
+    <property name="pre-home.target" value="${TARGETROOT}/pre-home"/>
+    <property name="post-home.target" value="${TARGETROOT}/post-home"/>
+    <property name="archive-home.target" value="${TARGETROOT}/archive${today.DSTAMP}-home"/>
 
     <!-- static-version file targets -->
     <property name="static-version.file" value="${home.target}/${static-version.file.name}"/>
@@ -63,19 +35,13 @@
     <property name="post-web-inf" value="${post-home.target}/WEB-INF"/>
     <property name="archive-web-inf" value="${archive-home.target}/WEB-INF"/>
 
-    <property name="tomcat-temp" value="${env.CATALINA_BASE}/temp"/>
-    <property name="tomcat-work" value="${env.CATALINA_BASE}/work/Catalina/${env.DOMAIN_NAME}/_"/>
+    <property name="tomcat-temp" value="${CATALINA_BASE}/temp"/>
+    <property name="tomcat-work" value="${CATALINA_BASE}/work/Catalina/${DOMAIN_NAME}/_"/>
     <property name="pre.jsp-compile" value="${pre-web-inf}/classes/jsp-compile"/>
     <property name="jsp-compile" value="${web-inf.target}/classes/jsp-compile"/>
 
     <!-- The destination directory for tagunit web root -->
-    <property name="tagunit-root.dir" value="${env.TAGUNIT_HOME}"/>
-
-    <!-- Source Path. -->
-    <property name="source.dir" value="source"/>
-
-    <!-- The destination directory for all the javadocs. -->
-    <property name="java-doc.dir" value="${web.dir}/util/javadoc"/>
+    <property name="tagunit-root.dir" value="${TAGUNIT_HOME}"/>
 
 
     <!-- extended classpath for unit tests and other commands. -->
@@ -91,9 +57,9 @@
         <fileset dir="${jwebunit.lib}">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${env.CATALINA_HOME}/common/lib">
-            <include name="ifxjdbc.jar"/>
-        </fileset>
+        <!--<fileset dir="${CATALINA_HOME}/common/lib">-->
+            <!--<include name="ifxjdbc.jar"/>-->
+        <!--</fileset>-->
     </path>
 
 
@@ -105,6 +71,7 @@
 
     <!-- JVM args for all forked processes relating to unit tests -->
     <property name="junit.jvmargs" value="-Xmx128m"/>
+    <property name="tab" value="&#x0009;"/>
 
     <property name="target.dir" value="${basedir}"/>
 
@@ -122,44 +89,34 @@
 
 
     <!-- Tomcat related environment variables -->
-    <property name="webdriver-loc" value="${env.WEBDRIVER_LOC}"/>
-    <property name="mutant-name" value="${env.MUTANT_NAME}"/>
-    <property name="dbname" value="${env.DBNAME}"/>
-    <property name="domain-name" value="${env.DOMAIN_NAME}"/>
-    <property name="non-secureport" value="${env.NON_SECUREPORT}"/>
-    <property name="secureport" value="${env.SECUREPORT}"/>
-    <property name="shutdownport" value="${env.SHUTDOWNPORT}"/>
-    <property name="tomcat-conf" value="${env.CATALINA_BASE}/conf"/>
-    <property name="domain-conf" value="${env.CATALINA_BASE}/conf/Catalina/${env.DOMAIN_NAME}"/>
-    <property name="informixserver" value="${env.INFORMIXSERVER}"/>
-    <property name="informixport" value="${env.INFORMIX_PORT}"/>
-    <property name="sqlhosts-host" value="${env.SQLHOSTS_HOST}"/>
+    <property name="tomcat-conf" value="${CATALINA_BASE}/conf"/>
+    <property name="domain-conf" value="${CATALINA_BASE}/conf/Catalina/${DOMAIN_NAME}"/>
 
     <property name="template-dir" value="lib/Java/tomcat"/>
     <property name="host-dir" value="${template-dir}/conf/Catalina"/>
-    <property name="domain-host-dir" value="${env.CATALINA_BASE}/conf/Catalina"/>
+    <property name="domain-host-dir" value="${CATALINA_BASE}/conf/Catalina"/>
 
     <condition property="isinformix">
-        <equals arg1="${env.USER}" arg2="informix"/>
+        <equals arg1="${USER}" arg2="informix"/>
     </condition>
 
     <condition property="isalmost">
-        <equals arg1="${env.DBNAME}" arg2="almdb"/>
+        <equals arg1="${DBNAME}" arg2="almdb"/>
     </condition>
 
     <condition property="iszfinonembryonix">
         <and>
-            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
-            <equals arg1="${env.INFORMIX_SERVER}" arg2="wanda"/>
-            <equals arg1="${env.USER}" arg2="informix"/>
+            <equals arg1="${DBNAME}" arg2="zfindb"/>
+            <equals arg1="${INFORMIX_SERVER}" arg2="wanda"/>
+            <equals arg1="${USER}" arg2="informix"/>
         </and>
     </condition>
 
     <condition property="iszfinonhelix">
         <and>
-            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
-            <equals arg1="${env.INFORMIX_SERVER}" arg2="wildtype"/>
-            <equals arg1="${env.USER}" arg2="informix"/>
+            <equals arg1="${DBNAME}" arg2="zfindb"/>
+            <equals arg1="${INFORMIX_SERVER}" arg2="wildtype"/>
+            <equals arg1="${USER}" arg2="informix"/>
         </and>
     </condition>
 
@@ -176,13 +133,13 @@
 
     <condition property="notproduction">
         <not>
-            <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+            <equals arg1="${DBNAME}" arg2="zfindb"/>
         </not>
     </condition>
 
     <condition property="ismutant">
         <not>
-            <equals arg1="${env.USER}" arg2="informix"/>
+            <equals arg1="${USER}" arg2="informix"/>
         </not>
     </condition>
 

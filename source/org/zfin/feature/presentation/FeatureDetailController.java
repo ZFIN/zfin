@@ -7,8 +7,6 @@ import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;

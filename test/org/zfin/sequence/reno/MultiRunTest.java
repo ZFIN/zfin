@@ -3,13 +3,11 @@ package org.zfin.sequence.reno;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
@@ -26,10 +24,9 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 
-public class MultiRunTest {
+public class MultiRunTest extends AbstractDatabaseTest {
 
     private final Logger logger = Logger.getLogger(MultiRunTest.class) ;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -42,25 +39,6 @@ public class MultiRunTest {
     private CandidateBean candidateBean ;
     private String cdnaName = "mgc:test";
 
-    static {
-        SessionFactory sessionFactory = getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-        TestConfiguration.setAuthenticatedUser();
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-        //TestConfiguration.unsetAuthenticatedUser();
-    }
 
     private void insert2NomenWithSharedCandidate(){
         Session session = HibernateUtil.currentSession();

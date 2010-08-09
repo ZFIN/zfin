@@ -2,18 +2,18 @@ package org.zfin.marker;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.*;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.expression.ExpressionAssay;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
@@ -28,28 +28,14 @@ import static org.junit.Assert.*;
 
 /**
  */
-public class MergeMarkerDBTest {
+public class MergeMarkerDBTest extends AbstractDatabaseTest {
+    
     private Logger logger = Logger.getLogger(MergeMarkerDBTest.class) ;
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
     }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
-
 
     @Test
     public void mergeRealAntibodies(){

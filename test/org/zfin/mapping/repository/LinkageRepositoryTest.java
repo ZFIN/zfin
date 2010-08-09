@@ -1,13 +1,10 @@
 package org.zfin.mapping.repository;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
@@ -18,27 +15,11 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
-public class LinkageRepositoryTest {
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
-        }
-    }
+public class LinkageRepositoryTest extends AbstractDatabaseTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-        // TODO: this should load a specific database instance for testing purposes
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
     }
 
     @Test

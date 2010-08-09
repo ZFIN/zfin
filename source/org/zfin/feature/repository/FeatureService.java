@@ -1,14 +1,10 @@
 package org.zfin.feature.repository;
 
-import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Feature;
 import org.zfin.mutant.FeatureMarkerRelationship;

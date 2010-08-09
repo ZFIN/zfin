@@ -28,7 +28,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 
 /**
@@ -184,11 +185,9 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         if (query.length() > 2) {
             MatchingTermService matcher = new MatchingTermService(request.getLimit());
             highlighter.setMatch(query);
-//            Pattern p = Pattern.compile("("+query+")",Pattern.CASE_INSENSITIVE);
             for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion) ;
-//                String displayName = p.matcher(suggestion).replaceAll("<strong>$1</strong>") ;
                 String termValue = (useIDAsValue ?  term.getTerm().getID() : term.getTerm().getTermName()) ;
                 if (showTermDetail){
                     displayName = createListItem(displayName, term.getTerm());
@@ -450,6 +449,16 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
 
         return relatedEntityDTOs;
+    }
+
+
+    public Map<String,String> getAllZfinProperties(){
+        Map<String,String> allZfinProperties = new HashMap<String,String>() ;
+//        for(ZfinPropertiesEnum zfinProperties:ZfinPropertiesEnum.values()){
+//            allZfinProperties.put(zfinProperties.name(),zfinProperties.value()) ;
+//        }
+
+        return allZfinProperties ;
     }
 }
 

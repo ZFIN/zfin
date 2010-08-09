@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
 
@@ -56,7 +56,7 @@
                     <td>
                         <c:choose>
                             <c:when test="${supplier.organization.url == null}">
-                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
                                    id="${supplier.organization.zdbID}">
                                         ${supplier.organization.name}
                                 </a>

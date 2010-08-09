@@ -1,13 +1,10 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.RecordAttribution;
@@ -26,13 +23,12 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 
 /**
  * Tests the RedundancyCandidateController methods for redundancy runs.
  */
-public class RedundancyCandidateControllerTest {
+public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
     private final RenoTestData renoTestData = new RenoTestData() ;
 
@@ -47,24 +43,10 @@ public class RedundancyCandidateControllerTest {
     private final static String RENAME = "stest";
 
 
-    static {
-        SessionFactory sessionFactory = getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-        //TestConfiguration.unsetAuthenticatedUser();
     }
 
     /**
@@ -76,10 +58,9 @@ public class RedundancyCandidateControllerTest {
    @Test
     public void moveNoteToGeneForRedundancy() {
 
-        Session session = currentSession();
-        session.beginTransaction();
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBeanRedun = setUpBasicBeanRedunDoneSubmission();
             RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
             RunCandidate runCandidate = candidateBeanRedun.getRunCandidate();
@@ -134,7 +115,7 @@ public class RedundancyCandidateControllerTest {
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
@@ -142,12 +123,11 @@ public class RedundancyCandidateControllerTest {
 
     @Test
     public void associateWithExistingGeneNoRename() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
         logger.debug("Enter associateWithExistingGeneNoRename()");
 
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();        
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
@@ -204,19 +184,18 @@ public class RedundancyCandidateControllerTest {
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
 
     @Test
     public void associateWithExistingGeneWithRename() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
 
 
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
@@ -312,18 +291,17 @@ public class RedundancyCandidateControllerTest {
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
     public void associateNovelGeneWithIdentifiedMarker() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
 
 
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
@@ -392,18 +370,15 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
     public void associateWithNovelGeneNoIdentifiedMarker() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
-
-
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
@@ -481,19 +456,16 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
 
     @Test 
     public void testProblemFlag() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
-
-
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
@@ -530,18 +502,15 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test 
     public void testIgnoreFlag() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
-
-
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
@@ -572,16 +541,15 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
     public void testZdbIdFieldNotNull() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
             RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
@@ -638,17 +606,15 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test 
     public void testRedunBeanSetUp() {
-        Session session = currentSession();
-        session.beginTransaction() ; 
-
 
         try {
+            HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
             logger.info("assume we have at least one runCandidate for at least 1 redundancy run" + runCandidate.getZdbID());
@@ -665,7 +631,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
         }
         finally {
             // rollback on success or exception
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 

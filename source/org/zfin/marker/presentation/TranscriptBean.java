@@ -10,9 +10,6 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.Sequence;
-import org.zfin.gbrowse.GBrowseFeature;
-import org.zfin.gbrowse.presentation.GBrowseImage;
-import org.apache.commons.collections.map.MultiValueMap;
 
 import java.util.List;
 import java.util.Set;

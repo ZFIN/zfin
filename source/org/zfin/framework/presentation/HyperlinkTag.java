@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -26,7 +27,7 @@ public class HyperlinkTag extends TagSupport {
             sb.append("<a href='");
             sb.append(serverName);
             if (apgFileName != null)
-                sb.append(ZfinProperties.getWebDriver());
+                sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
             sb.append("?");
             sb.append(apgFileName + "'>");
             sb.append(name);

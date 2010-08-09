@@ -14,6 +14,11 @@
             gwt: Compile gwt targets to the pre-directory
             jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference
 
+            PROPERTIES:
+            createEnum: Rebuild java class ZfinPropertiesEnum.
+            createPropertiesFiles: Creates TT file (createTTFile) and env file (createEnvFile) for given INSTANCE.
+            exportAllInstances: Exports all instances defined by instances.properties.
+
             DEVELOPMENT:
             dirtydeploy: Deploys entire WEB-INF environment changes without cleaning
             dirty-gwt: Deploys all gwt instances into the active target directory

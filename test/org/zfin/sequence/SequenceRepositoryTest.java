@@ -4,17 +4,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.ArrayList;
@@ -27,33 +22,10 @@ import static org.junit.Assert.*;
  *  Class SequenceRepositoryTest.
  */
 
-public class SequenceRepositoryTest {
+public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     private final static Logger logger = Logger.getLogger(SequenceRepositoryTest.class) ;
-
-    private static SequenceRepository repository ;
-
-    static{
-        if(repository==null){
-            repository = new HibernateSequenceRepository() ;
-        }
-
-        SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
-
-        if(sessionFactory == null){
-            new HibernateSessionCreator( ) ;
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-    @After
-    public void closeSession(){
-        HibernateUtil.closeSession();
-    }
+    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository() ;
 
 
     @Test
@@ -170,7 +142,7 @@ public class SequenceRepositoryTest {
 
     @Test
     public void testGenbankAllDownload(){
-        List<String> dblinks = repository.getGenbankSequenceDBLinks();
+        List<String> dblinks = sequenceRepository.getGenbankSequenceDBLinks();
         assertNotNull(dblinks);
         assertTrue(dblinks.size()>1000);
         assertTrue(dblinks.contains("AY627769"));
@@ -179,7 +151,7 @@ public class SequenceRepositoryTest {
 
     @Test
     public void getGenbankCdnaDBLinks(){
-        List<String> dblinks = repository.getGenbankCdnaDBLinks();
+        List<String> dblinks = sequenceRepository.getGenbankCdnaDBLinks();
         assertNotNull(dblinks);
         assertTrue(dblinks.size()>1000);
         assertTrue(dblinks.contains("NM_131644"));
@@ -187,7 +159,7 @@ public class SequenceRepositoryTest {
 
 //    @Test
     public void getGenbankXpatCdnaDBLinks(){
-        Set<String> dblinks = repository.getGenbankXpatCdnaDBLinks();
+        Set<String> dblinks = sequenceRepository.getGenbankXpatCdnaDBLinks();
         assertNotNull(dblinks);
         logger.info("size: "+ dblinks.size());
         assertTrue(dblinks.size()>40000);

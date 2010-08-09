@@ -3,6 +3,7 @@ package org.zfin.wiki;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.GregorianCalendar;
 
@@ -18,10 +19,10 @@ public class WikiWebService {
     protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
     protected final String WEBSERVICE_PROTOCOL = "https://";
 
-    protected String wikiUserName = ZfinProperties.getWikiUserName();
-    protected String wikiPassword = ZfinProperties.getWikiPassword();
-    protected String wikiHost = ZfinProperties.getWikiHostname();
-    protected String domainName = ZfinProperties.getDomain();
+    protected String wikiUserName = ZfinPropertiesEnum.WIKI_USER.value();
+    protected String wikiPassword = ZfinPropertiesEnum.WIKI_PASS.value();
+    protected String wikiHost = ZfinPropertiesEnum.WIKI_HOST.value();
+    protected String domainName = ZfinPropertiesEnum.DOMAIN_NAME.value();
 
     private final Logger logger = Logger.getLogger(WikiWebService.class);
 
@@ -75,10 +76,10 @@ public class WikiWebService {
             if (token != null) {
                 try {
 //                    return ( service.hasUser(token,ZfinProperties.getWikiUserName()) ) ;
-                    if (service.hasUser(token, ZfinProperties.getWikiUserName())) {
+                    if (service.hasUser(token, ZfinPropertiesEnum.WIKI_USER.value())) {
                         return true;
                     } else {
-                        throw new WikiLoginException("Failed to find webservice user: "+ZfinProperties.getWikiUserName());
+                        throw new WikiLoginException("Failed to find webservice user: "+ZfinPropertiesEnum.WIKI_USER.value());
                     }
                 } catch (InvalidSessionException e) {
                     return doLogin();

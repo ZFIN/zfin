@@ -17,7 +17,7 @@ import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
@@ -456,7 +456,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getExpressionSearchLink(boolean includeSubstructures) {
-        URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
+        URLCreator url = new URLCreator(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         url.addNamevaluePair("MIval", "aa-xpatselect.apg");
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "0");
@@ -475,7 +475,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getMutantSearchLink(boolean includeSubstructures) {
-        URLCreator url = new URLCreator(ZfinProperties.getWebDriver());
+        URLCreator url = new URLCreator(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         url.addNamevaluePair("MIval", "aa-fishselect.apg");
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "1");

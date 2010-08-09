@@ -15,7 +15,7 @@ import org.zfin.marker.Marker;
 import org.zfin.people.Lab;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.util.FileUtil;
@@ -222,8 +222,8 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         config.setProperty("hibernate.connection.isolation", "1");
         config.setProperty("hibernate.show_sql", "true");
 
-        String absolutePathAnat = FileUtil.createAbsolutePath(ZfinProperties.CONFIGURATION_DIRECTORY, "anatomy.hbm.xml");
-        String absolutePathPeople = FileUtil.createAbsolutePath(ZfinProperties.CONFIGURATION_DIRECTORY, "people.hbm.xml");
+        String absolutePathAnat = FileUtil.createAbsolutePath(ZfinPropertiesEnum.CONFIGURATION_DIRECTORY.value(), "anatomy.hbm.xml");
+        String absolutePathPeople = FileUtil.createAbsolutePath(ZfinPropertiesEnum.CONFIGURATION_DIRECTORY.value(), "people.hbm.xml");
 //        String absolutePathDb = FileUtil.createAbsolutePath(ZfinProperties.CONFIGURATION_DIRECTORY, "schema-info.hbm.xml");
         config.addFile(absolutePathAnat);
         config.addFile(absolutePathPeople);

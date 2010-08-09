@@ -2,11 +2,8 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.presentation.BlastPresentationService;
@@ -24,28 +21,16 @@ import static org.junit.Assert.*;
 /**
  * Tests blast repository methods.
  */
-public class BlastRepositoryTest {
+public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     private final static Logger logger = Logger.getLogger(BlastRepositoryTest.class) ;
     private final BlastRepository blastRepository = RepositoryFactory.getBlastRepository() ;
 
-    static{
-        SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
-
-        if(sessionFactory == null){
-            new HibernateSessionCreator() ;
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
 
     @Test
     public void getSingleBlastRepository(){
-        HibernateUtil.currentSession() ;
         Database database= blastRepository.getDatabase(Database.AvailableAbbrev.RNASEQUENCES) ;
+        assertNotNull(database);
     }
 
     @Test

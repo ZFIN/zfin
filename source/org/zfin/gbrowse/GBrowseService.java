@@ -5,7 +5,7 @@ import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gbrowse.repository.GBrowseRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -85,14 +85,14 @@ public class GBrowseService {
 
         StringBuffer imageURL = new StringBuffer();
         imageURL.append("/");
-        imageURL.append(ZfinProperties.getGBrowseImg());
+        imageURL.append(ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT);
         imageURL.append("?grid=0");
         imageURL.append("&options=mRNA 0");
         imageURL.append("&type=mRNA");
 
         StringBuffer linkURL = new StringBuffer();
         linkURL.append("/");
-        linkURL.append(ZfinProperties.getGBrowse());
+        linkURL.append(ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT);
 
         String region = getRegion(features, contig);
 

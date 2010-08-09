@@ -870,8 +870,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
-<div id="directAttributionName"></div>
-
 
 
 <?MISQL COND=$(XST,$debug_timing) SQL="

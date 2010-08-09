@@ -10,6 +10,8 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
+import org.zfin.gbrowse.repository.GBrowseRepository;
+import org.zfin.gbrowse.repository.HibernateGBrowseRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.repository.HibernateLinkageRepository;
@@ -38,8 +40,6 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.gbrowse.repository.GBrowseRepository;
-import org.zfin.gbrowse.repository.HibernateGBrowseRepository;
 
 /**
  * Please provide JavaDoc info!!!

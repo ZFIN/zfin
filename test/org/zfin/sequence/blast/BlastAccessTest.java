@@ -15,7 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
@@ -35,6 +35,7 @@ public class BlastAccessTest {
     private Logger logger = Logger.getLogger(BlastAccessTest.class);
 
     static {
+        TestConfiguration.configure();
         SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
@@ -43,12 +44,6 @@ public class BlastAccessTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
-
-//        String file = "zfin-properties.xml";
-//        String dirRel = System.getProperty("WEBINF") ;
-//        ZfinProperties.init(dirRel, file);
         RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 
@@ -60,8 +55,8 @@ public class BlastAccessTest {
 
     @Test
     public void getBlastPath() {
-        assertNotNull("blast path should not be null", ZfinProperties.getWebHostDatabasePath());
-        assertFalse("blast path should not be whats in test", ZfinProperties.getWebHostDatabasePath().equals("/research/zunloads/test_blastfiles"));
+        assertNotNull("blast path should not be null", ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());
+        assertFalse("blast path should not be whats in test", ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value().equals("/research/zunloads/test_blastfiles"));
     }
 
     /**

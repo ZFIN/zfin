@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.anatomy.presentation.AnatomyLabel" %>
 <%@ tag import="org.zfin.expression.Figure" %>
 <%@ tag body-content="scriptless" %>
 <%@ attribute name="figure" type="org.zfin.expression.Figure" %>

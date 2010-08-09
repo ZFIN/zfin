@@ -68,7 +68,7 @@ public class ValidateBlastDatabases extends QuartzJobBean {
         if (sessionFactory == null) {
             new HibernateSessionCreator(false);
 
-            ZfinProperties.init("test", "zfin-properties-test.xml");
+            ZfinProperties.init();
         }
     }
 

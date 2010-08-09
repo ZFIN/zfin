@@ -44,7 +44,6 @@ public class BlastHeuristicsEvaluator {
     @Before
     public void setUp() {
         TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
 
         accessionList.clear();
         accessionList.add("NM_131304") ;

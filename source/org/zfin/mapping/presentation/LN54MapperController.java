@@ -9,6 +9,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,8 +66,8 @@ public class LN54MapperController extends SimpleFormController {
         String[] emails = new String[3];
 //        emails[0] = "ndunn@uoregon.edu" ; // the contact person! from zfin admin
 //        ZfinProperties.getLN54ContactEmail() ;
-        emails[0] = ZfinProperties.getLN54ContactEmail(); // the contact person! from zfin admin
-        logger.debug("ZfinProperties.getLN54ContactEmail(): " + ZfinProperties.getLN54ContactEmail());
+        emails[0] = ZfinPropertiesEnum.LN54_CONTACT_EMAIL.value(); // the contact person! from zfin admin
+        logger.debug("ZfinPropertiesEnum.LN54_CONTACT_EMAIL.value(): " + ZfinPropertiesEnum.LN54_CONTACT_EMAIL.value());
         int commaIndex = form.getEmail().indexOf(",");
         // in the case where both the command and request object gethte same data
         if (commaIndex > 0) {
@@ -78,7 +79,7 @@ public class LN54MapperController extends SimpleFormController {
         emails[2] = ZfinProperties.getAdminEmailAddresses()[0]; // zfin admin
         logger.debug("ZfinProperties.getAdminEmailAddresses(): " + ZfinProperties.getAdminEmailAddresses());
         logger.debug("ZfinProperties.getAdminEmailAddresses()[0]: " + ZfinProperties.getAdminEmailAddresses()[0]);
-        mailSender.sendMail("Request for new LN 54 mapping", emailContents.toString(), false, ZfinProperties.getLN54ContactEmail(), emails);
+        mailSender.sendMail("Request for new LN 54 mapping", emailContents.toString(), false, ZfinPropertiesEnum.LN54_CONTACT_EMAIL.value(), emails);
 
         return modelAndView;
     }

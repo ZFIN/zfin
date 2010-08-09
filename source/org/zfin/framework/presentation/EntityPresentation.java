@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.apache.log4j.Logger;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.AntibodyWikiWebService;
 import org.zfin.wiki.WikiLoginException;
 
@@ -23,7 +23,7 @@ public abstract class EntityPresentation {
     protected static StringBuilder getWebdriverHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"/");
-        sb.append(ZfinProperties.getWebDriver());
+        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         return sb;
     }
 
@@ -142,7 +142,7 @@ public abstract class EntityPresentation {
 
     protected static String getWebdriverUrl(String uri, String zdbID) {
         StringBuilder sb = new StringBuilder("/");
-        sb.append(ZfinProperties.getWebDriver());
+        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         sb.append(uri);
         sb.append(zdbID);
         return sb.toString();

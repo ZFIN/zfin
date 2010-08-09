@@ -9,6 +9,7 @@ import org.zfin.AbstractSmokeTest;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                     fail("No Antibody found with name: " + antibodyName);
                 }
                 String uri = "/action/antibody/detail?antibody.zdbID="+antibody.getZdbID();
-                HtmlPage page = webClient.getPage(ZfinProperties.NON_SECURE_HTTP + domain + uri);
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + uri);
                 assertEquals("Antibody: "+antibodyName, page.getTitleText());
                 assertNotNull("renders the end of the page sources " , page.getByXPath("//a[@id='ZDB-LAB-991005-53']"));
                 assertNotNull("renders the end of the page citations " , page.getByXPath("//a[. ='CITATIONS']"));

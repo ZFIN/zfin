@@ -1,13 +1,12 @@
 package org.zfin.datatransfer.doi;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
-import org.hibernate.Session;
 
 import java.util.List;
 

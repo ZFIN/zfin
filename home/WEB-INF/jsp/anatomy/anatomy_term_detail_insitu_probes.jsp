@@ -1,11 +1,11 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
 <c:if test="${formBean.inSituProbesExist}">
     <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
-    <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
         Thisse lab</a>
 
     <TABLE width="100%">
@@ -39,7 +39,7 @@
                             </c:if>
                             <!-- If only one figure available go directly to the figure page -->
                             <c:if test="${probeStats.numberOfFigures == 1}">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${probeStats.figure.zdbID}'>
+                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${probeStats.figure.zdbID}'>
                                     <zfin2:figureOrTextOnlyLink figure="${probeStats.figure}"
                                                                 integerEntity="${probeStats.numberOfFigures}"/>
                                 </a>

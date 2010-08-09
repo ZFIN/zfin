@@ -1,6 +1,7 @@
 package org.zfin.framework;
 
 import org.hibernate.cfg.Configuration;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
 import java.io.File;
@@ -9,19 +10,10 @@ import java.io.FilenameFilter;
 /**
  * Class HibernateSessionCreator.  Used to handle connections without going through Tomcat explicitly.
  * <p/>
- * Java environment parameters:
- * -DDBNAME=<mutant_db> -DCONFIGURATION_DIRECTORY=<directory of hbm-files> -DINFORMIXSERVER=<informix server, devel is wanda> -DSQLHOSTS_HOST=<informix host machine> -DINFORMIXPORT=<database listening port> -DshowSQL=true
  */
 public class HibernateSessionCreator {
 
     private static String FILE_SEP = System.getProperty("file.separator");
-
-    private static final String INPUT_DBNAME = "DBNAME";
-    private static final String INPUT_CONFIGURATION_DIRECTORY = "CONFIGURATION_DIRECTORY";
-    private static final String INPUT_INFORMIX_SERVER = "INFORMIX_SERVER";
-    private static final String INPUT_INFORMIX_PORT = "INFORMIX_PORT";
-    private static final String INPUT_SQLHOSTS_HOST = "SQLHOSTS_HOST";
-    private static final String SHOW_SQL = "showSQL";
 
     private boolean showSql = false;
 
@@ -30,9 +22,9 @@ public class HibernateSessionCreator {
     }
     public HibernateSessionCreator(boolean showSql) {
         this.showSql = showSql;
-        String db = System.getProperty(INPUT_DBNAME);
-        String configDirectory = System.getProperty(INPUT_CONFIGURATION_DIRECTORY);
-        String showSqlString = System.getProperty(SHOW_SQL);
+        String db = ZfinPropertiesEnum.DB_NAME.value() ;
+        String configDirectory = ZfinPropertiesEnum.HIBERNATE_CONFIGURATION_DIRECTORY.value() ;
+        String showSqlString = ZfinPropertiesEnum.SHOW_SQL.value() ;
         if (showSqlString != null && showSqlString.equals("true")) {
             this.showSql = true;
         }
@@ -71,18 +63,13 @@ public class HibernateSessionCreator {
         }
     }
 
-
-    public void initHibernate() {
-
-    }
-
     private Configuration createConfiguration(String db) {
         Configuration config = new Configuration();
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.InformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
-        String informixServer = System.getProperty(INPUT_INFORMIX_SERVER);
-        String informixPort = System.getProperty(INPUT_INFORMIX_PORT);
-        String sqlHostsHost = System.getProperty(INPUT_SQLHOSTS_HOST);
+        String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value() ;
+        String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value() ;
+        String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value() ;
         String connectionString = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
 //        System.out.println("connectionString: " + connectionString) ; 
         config.setProperty("hibernate.connection.url", connectionString);

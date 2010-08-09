@@ -83,6 +83,7 @@ PREFIX:   genocur_
         </script>
         <?/MIVAR>
 
+        <div id="directAttributionName"></div>
 
   <br>
   <?MISQL COND=$(=,1,1) SQL="select WebExplode(object,'') from webPages where ID='aa-genocursearch.apg';">$1<?/MISQL>

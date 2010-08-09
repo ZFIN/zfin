@@ -1,7 +1,5 @@
 package org.zfin.util;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Utilities that are not in StringUtils.
  */

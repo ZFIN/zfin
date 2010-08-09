@@ -83,4 +83,6 @@ public interface LookupRPCService extends RemoteService {
     PublicationDTO addRecentPublication(String zdbID, String key);
 
     List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID);
+
+    Map<String,String> getAllZfinProperties();
 }

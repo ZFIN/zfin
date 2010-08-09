@@ -3,9 +3,11 @@ package org.zfin.ontology;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.MatchingTermComparator;
-
-import java.util.*;
 import java.util.regex.Pattern;
+
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Service class to obtain a list of matching terms for a given search string and

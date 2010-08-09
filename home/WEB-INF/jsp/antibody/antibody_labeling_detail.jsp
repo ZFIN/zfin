@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
@@ -11,7 +11,7 @@
             <tr bgcolor="#ccccc0">
                 <th>Anatomy : Substructure</th>
                 <th>Stage</th>
-                <th><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+                <th><a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
                 <th>Gene</th>
                 <th>Data</th>
             </tr>
@@ -55,7 +55,7 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
+                                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
                                     id="${detailedLabeling.singleFigure.zdbID}">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
@@ -100,7 +100,7 @@
             <tr bgcolor="#ccccc0">
                 <th>Anatomy</th>
                 <th>Stage</th>
-                <th><a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+                <th><a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
                 <th>Gene</th>
                 <th>Data</th>
             </tr>
@@ -144,9 +144,7 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/<%= ZfinProperties.getWebDriver
-                                        (
-                                        )%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
+                                    <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>

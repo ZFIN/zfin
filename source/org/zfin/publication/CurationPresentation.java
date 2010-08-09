@@ -1,7 +1,6 @@
 package org.zfin.publication;
 
 import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.properties.ZfinProperties;
 
 /**
  * Presentation Class to create output from a Publication object.

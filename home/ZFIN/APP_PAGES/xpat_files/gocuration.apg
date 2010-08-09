@@ -26,6 +26,7 @@
         </script>
         <?/MIVAR>
 
+        <div id="directAttributionName"></div>
 
         <div id="go-add-link"></div>
 

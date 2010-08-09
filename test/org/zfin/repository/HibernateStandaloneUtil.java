@@ -14,8 +14,6 @@ import org.zfin.sequence.repository.SequenceRepository;
  * Utility class that can be used to run persistence layer classes
  * without using the Tomcat environment.
  * <p/>
- * Java environment parameters:
- * -DDBNAME=<mutant_db> -DCONFIGURATION_DIRECTORY=<directory of hbm-files>
  */
 public class HibernateStandaloneUtil {
 

@@ -2,7 +2,6 @@ package org.zfin.mutant;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 

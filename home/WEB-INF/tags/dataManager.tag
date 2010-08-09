@@ -1,4 +1,4 @@
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="zdbID" type="java.lang.String"
@@ -73,7 +73,7 @@
                      even try to look for a last update..  (it could also be an explicit flag)--%>
             <c:if test="${!empty rtype}">
                 <td>
-                    <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${zdbID}&rtype=${rtype}">
+                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${zdbID}&rtype=${rtype}">
 
                         Last Update:
                         <c:choose>

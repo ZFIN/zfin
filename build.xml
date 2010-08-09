@@ -3,6 +3,27 @@
 
     <property name="buildfiles.dir" value="buildfiles"/>
 
+
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <taskdef name="createEnum"
+             classname="org.zfin.properties.ant.CreateEnumTask"
+             classpathref="classpath"/>
+
+    <taskdef name="exportProperties"
+             classname="org.zfin.properties.ant.ExportPropertiesTask"
+             classpathref="classpath"/>
+
+    <property name="commons.dir" value="${basedir}/externals/properties"/>
+
+    <!--here, we are only loading property files into ant, not into the enum -->
+    <loadProperties file="${commons.dir}/${INSTANCE}.properties" />
+
+
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>
     <import file="${buildfiles.dir}/test.xml"/>
@@ -49,11 +70,59 @@
 
 
     <target name="do"
-            depends="clean, construct-ncbi-dtd-classes,construct-xsd-classes, create-site-search-categories-classes, compile, prepare-properties"
+            depends="cleanClasses, construct-ncbi-dtd-classes,create-site-search-categories-classes, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
     <target name="install" depends="deploy" description="Same as deploy."/>
+
+    <target name="loadPropertiesIntoEnum">
+        <loadProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                enumClass="${enum.class}"
+                />
+    </target>
+
+    <target name="createEnum">
+        <createEnum file="${commons.dir}/${INSTANCE}.properties"
+                    sourceDir="source"
+                    enumClass="${enum.class}"
+                />
+    </target>
+
+    <target  name="exportAllInstances" description="Exports all instances defined in instances.properties">
+        <taskdef name="exportAllInstances"
+                 classname="org.zfin.properties.ExportAllInstancesTask"
+                 classpathref="classpath"/>
+        <exportAllInstances instancesFile="${commons.dir}/instances.properties"/>
+    </target>
+
+    <target name="createEnvFile">
+        <exportProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                target="${commons.dir}/${INSTANCE}.env"
+                header="#!/local/bin/tcsh${line.separator}"
+                keyPrefix="setenv "
+                keySuffix=" "
+                valuePrefix="&quot;"
+                valueSuffix="&quot;"
+                footerFile="${commons.dir}/${INFORMIXSERVER}-footer.env"                
+                exportPropertyFile="${commons.dir}/env-exports.properties" />
+    </target>
+
+    <target name="createTTFile">
+        <exportProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                target="${commons.dir}/${INSTANCE}.tt"
+                keyPrefix="&lt;!--|"
+                keySuffix="|--&gt;${tab}"
+                exportPropertyFile="${commons.dir}/tt-exports.properties"
+                />
+    </target>
+
+    <target name="createPropertiesFiles" depends="compile,createEnvFile,createTTFile"
+            description="Exports properties to env and tt files.">
+    </target>
 
 
     <target name="compile" depends="prepare"
@@ -104,7 +173,7 @@
         </delete>
     </target>
 
-    <target name="clean" description="Remove java classes directory contents. ">
+    <target name="cleanClasses" description="Remove java classes directory contents. ">
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${classbin.dir}" includes="**/*"/>
         </delete>
@@ -112,6 +181,12 @@
         <!--<fileset dir="${domain-work}" includes="**/*"/>-->
         <!--</delete>-->
     </target>
+
+    <target name="cleanTarget" description="Remove target values. ">
+        <removeWebApp location="${home.target}"/>
+    </target>
+
+    <target name="clobber" depends="cleanTarget" description="Remove target values. "/>
 
     <target name="clean-javadoc" description="Cleans javadoc">
         <delete dir="${java-doc.dir}"/>
@@ -138,8 +213,8 @@
 
 
     <target name="deploy-javadoc" depends="javadocs" description="Deploy the Javadoc into webroot/util/javadoc/zfin">
-        <mkdir dir="${env.TARGETROOT}/${zfin-javadoc}"/>
-        <copy todir="${env.TARGETROOT}/${zfin-javadoc}">
+        <mkdir dir="${TARGETROOT}/${zfin-javadoc}"/>
+        <copy verbose="true" todir="${TARGETROOT}/${zfin-javadoc}">
             <fileset dir="${java-doc.dir}/zfin">
                 <include name="**/"/>
             </fileset>
@@ -191,15 +266,6 @@
         </xjc>
     </target>
 
-    <target name="construct-xsd-classes" description="Run xjc to generate Java files for DX jobs">
-        <echo message="Generating Properties source files ..."/>
-        <echo message="${web.conf}"/>
-        <xjc schema="${web.conf}/properties.xsd" binding="${web.conf}/properties.xjb" target="source"
-             package="org.zfin.properties">
-            <produces dir="source" includes="org.zfin.properties/*.java"/>
-        </xjc>
-    </target>
-
     <target name="create-site-search-categories-classes" description="Run xsd to generate Java files for DX jobs">
         <echo message="Generating Site Search Categories source files ..."/>
         <echo message="${web.conf}"/>
@@ -222,7 +288,7 @@
 
     <target name="remove-archives" description="Removes archived builds (older than post-builds)">
         <delete verbose="true" includeemptydirs="true">
-            <fileset dir="${env.TARGETROOT}/home" includes="archive*/**"/>
+            <fileset dir="${TARGETROOT}/home" includes="archive*/**"/>
         </delete>
     </target>
 
@@ -241,47 +307,37 @@
                 </not>
             </condition>
         </fail>
+
+
+        <move todir="${archive-home.target}" failonerror="false" verbose="false" overwrite="true">
+            <fileset dir="${post-home.target}"/>
+        </move>
+        <move todir="${post-home.target}" failonerror="false" verbose="false">
+            <fileset dir="${home.target}"/>
+        </move>
+        <move todir="${home.target}" verbose="true">
+            <fileset dir="${pre-home.target}"/>
+        </move>
+
         <!-- move web-inf -->
         <echo message="reverting build"/>
-        <delete dir="${pre-web-inf}" verbose="false"/>
-        <move todir="${pre-web-inf}" verbose="true">
-            <fileset dir="${web-inf.target}"/>
+        <move todir="${pre-home.target}" verbose="fales" overwrite="true">
+            <fileset dir="${home.target}"/>
         </move>
-        <move todir="${web-inf.target}" verbose="true">
-            <fileset dir="${post-web-inf}"/>
+        <move todir="${home.target}" verbose="true">
+            <fileset dir="${post-home.target}"/>
         </move>
-        <move todir="${post-web-inf}" failonerror="false" verbose="true">
-            <fileset dir="${archive-web-inf}"/>
-        </move>
-
-        <!-- move the gwt -->
-        <delete dir="${gwt.pre-target}" verbose="true"/>
-        <move todir="${gwt.pre-target}" verbose="true">
-            <fileset dir="${gwt.target}"/>
-        </move>
-        <move todir="${gwt.target}" failonerror="false" verbose="true">
-            <fileset dir="${gwt.post-target}"/>
-        </move>
-        <move todir="${gwt.post-target}" failonerror="false" verbose="true">
-            <fileset dir="${gwt.archive-target}"/>
+        <move todir="${post-home.target}" failonerror="false" verbose="true">
+            <fileset dir="${archive-home.target}"/>
         </move>
 
-        <!-- move static version file-->
-        <delete file="${pre.static-version.file}" verbose="true" failonerror="false"/>
-        <move tofile="${pre.static-version.file}" file="${static-version.file}" verbose="true" failonerror="false"/>
-        <move tofile="${static-version.file}" file="${post.static-version.file}" verbose="true" failonerror="false"/>
-        <echo append="true" file="${static-version.file}">REVERTED DEPLOYMENT!!!</echo>
-        <echo append="true" file="${jsp-version.file}">REVERTED DEPLOYMENT!!!</echo>
-        <move tofile="${post.static-version.file}" file="${archive.static-version.file}" failonerror="false"
-              verbose="true"/>
-
-        <echo message=":WEB-INF, GWT, VERSION DIRS REVERTED SUCCESSFUL:"/>
+        <echo message=":REVERTED BUILD SUCCESSFULY:"/>
     </target>
 
 
     <!-- removed the has.pre-directories clause, as we shouldn't get here unless the pre-compile has been built -->
     <target name="advance-build"
-            description="For WEB-INF and GWT, Deletes archives, moves post to archive, most current to post, and pre to current.">
+            description="Moves build from post-home to archive-home, home to post-home, and pre-home to home">
         <echo message="advancing build"/>
         <fail message=":FAIL TO ADVANCE BUILD.  PRE DIRECTORIES DO NOT EXIST TO MOVE:">
             <condition>
@@ -294,41 +350,18 @@
                 </not>
             </condition>
         </fail>
-        <!-- move the WEB-INF -->
-        <delete dir="${archive-web-inf}" verbose="false"/>
-        <move todir="${archive-web-inf}" failonerror="false" verbose="true">
-            <fileset dir="${post-web-inf}"/>
+        <move todir="${archive-home.target}" failonerror="false" verbose="false" overwrite="true">
+            <fileset dir="${post-home.target}"/>
         </move>
-        <move todir="${post-web-inf}" failonerror="false" verbose="true">
-            <fileset dir="${web-inf.target}"/>
+        <move todir="${post-home.target}" failonerror="false" verbose="false">
+            <fileset dir="${home.target}"/>
         </move>
-        <move todir="${web-inf.target}" verbose="true">
-            <fileset dir="${pre-web-inf}"/>
+        <move todir="${home.target}" verbose="true">
+            <fileset dir="${pre-home.target}"/>
         </move>
 
-        <!-- move the gwt -->
-        <delete dir="${gwt.archive-target}" verbose="true"/>
-        <move todir="${gwt.archive-target}" failonerror="false" verbose="true">  <!-- add date here -->
-            <fileset dir="${gwt.post-target}"/>
-        </move>
-        <move todir="${gwt.post-target}" failonerror="false" verbose="true">
-            <fileset dir="${gwt.target}"/>
-        </move>
-        <move todir="${gwt.target}" verbose="true">
-            <fileset dir="${gwt.pre-target}"/>
-        </move>
-
-        <!-- move the static version file-->
-        <delete file="${archive.static-version.file}" verbose="true" failonerror="false"/>
-        <move tofile="${archive.static-version.file}" file="${post.static-version.file}" failonerror="false"
-              verbose="true"/>
-        <move tofile="${post.static-version.file}" file="${static-version.file}" failonerror="false" verbose="true"/>
-        <move tofile="${static-version.file}" file="${pre.static-version.file}" verbose="true" failonerror="false"/>
-
-
-        <echo message=":WEB-INF, GWT, VERSION DIRS MOVE SUCCESSFUL:"/>
+        <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
     </target>
-
 
     <target name="notify-deploy" if="isproduction">
         <emailMessage message="Production is beginning the deployment cycle." email="curators@zfin.org"/>
@@ -365,156 +398,103 @@
 
     <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
-        <antcall target="copyZfinPropertiesWithEnv">
-            <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
-            <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
-        </antcall>
         <antcall target="copy-indexer-build-file-with-env-variables"/>
-        <exec executable="perl" output="output.log">
-            <!-- on embryonix should be the following -->
-            <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->
-            <arg value="${env.MAKESPECIFIC}"/>
-            <arg value="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
-            <arg value="${env.TRANSLATETABLE}"/>
-            <arg value="${pre-web-inf}/zfin-properties.xml"/>
-        </exec>
-        <delete file="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
         <!-- Generate last jsp file before compiling -->
         <antcall target="generateJSPVersionFile"/>
         <!-- Want to call at the same time in order match -->
         <antcall target="generateStaticHTMLVersionFile"/>
-        <antcall target="jsp-compile"/>
+        <antcall target="jsp-compile"/> 
     </target>
+
+    <filterset id="cssfilters">
+        <filter token="SITE_BACKGROUND" value="${SITE_BACKGROUND}"/>
+        <filter token="ZDBHOME_BACKGROUND" value="${ZDBHOME_BACKGROUND}"/>
+        <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
+    </filterset>
+
+    <filterset id="javascriptfilters">
+        <filter token="WEBDRIVER_PATH_FROM_ROOT" value="${WEBDRIVER_PATH_FROM_ROOT}"/>
+        <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
+        <filter token="CGI_BIN_DIR_NAME" value="${CGI_BIN_DIR_NAME}"/>
+    </filterset>
+
+    <filterset id="webdriverfilters">
+        <filter token="TARGETCGIBIN" value="${TARGETCGIBIN}"/>
+        <filter token="WEBDRIVER_LOC" value="${WEBDRIVER_LOC}"/>
+    </filterset>
+
+    <filterset id="quartzfilters">
+        <filter token="RUN_QUARTZ_JOBS" value="${RUN_QUARTZ_JOBS}"/>
+    </filterset>
+
+    <macrodef name="removeWebApp">
+        <attribute name="location"/>
+        <sequential>
+            <delete dir="@{location}/css"/>
+            <delete dir="@{location}/javascript"/>
+            <delete dir="@{location}/images"/>
+            <delete dir="@{location}/WEB-INF"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copyWebApp">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="false"/>
+        <sequential>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**/css/*.css"/>
+                    <include name="**/javascript/**/*.js"/>
+                    <include name="**/javascript/**/*.html"/>
+                    <include name="**/WEB-INF/**/*"/>
+                    <exclude name="**/*.jar"/>
+                    <exclude name="**/*.zip"/>
+                    <exclude name="**/*.class"/>
+                    <exclude name="**/*.ser"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+                <filterset refid="cssfilters"/>
+                <filterset refid="javascriptfilters"/>
+                <filterset refid="webdriverfilters"/>
+                <filterset refid="quartzfilters"/>
+            </copy>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**/images/**"/>
+                    <include name="**/WEB-INF/**/*.jar"/>
+                    <include name="**/WEB-INF/**/*.zip"/>
+                    <include name="**/WEB-INF/**/*.class"/>
+                    <include name="**/WEB-INF/**/*.ser"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="dirtydeploy" depends="compile"
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
+        <copyWebApp from="${web.dir}" to="${home.target}"/>
+
+        <antcall target="copy-indexer-build-file-with-env-variables"/>
+    </target>
+
 
     <target name="copy-to-pre-release" description="Copies built files to pre-release area">
         <!-- move non-binary files in order to not replace any characters in Binary files -->
-        <copy todir="${pre-web-inf}">
-            <fileset dir="${web-inf.dir}">
-                <include name="**/*"/>
-                <exclude name="**/*.jar"/>
-                <exclude name="**/*.zip"/>
-                <exclude name="**/*.class"/>
-                <exclude name="**/*.ser"/>
-                <exclude name="**/*.svn"/>
-            </fileset>
-            <filterset>
-                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
-                <filter token="WEBDRIVER_LOC" value="${env.WEBDRIVER_LOC}"/>
-                <filter token="RUN_QUARTZ_JOBS" value="${env.RUN_QUARTZ_JOBS}"/>
-            </filterset>
-        </copy>
-        <copy todir="${pre-web-inf}">
-            <fileset dir="${web-inf.dir}">
-                <include name="**/*.jar"/>
-                <include name="**/*.zip"/>
-                <include name="**/*.class"/>
-                <include name="**/*.ser"/>
-                <exclude name="**/*.svn"/>
-            </fileset>
-        </copy>
+        <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
     </target>
 
     <target name="copy-indexer-build-file-with-env-variables">
         <copy file="buildfiles/indexer.xml"
-              tofile="${env.TARGETROOT}/server_apps/quicksearch/build.xml"
+              tofile="${TARGETROOT}/server_apps/quicksearch/build.xml"
               overwrite="true">
             <filterset>
-                <filter token="INDEXER_WIKI_HOSTNAME" value="${env.INDEXER_WIKI_HOSTNAME}"/>
+                <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
             </filterset>
         </copy>
     </target>
 
-
-    <target name="copyZfinPropertiesWithEnv">
-        <copy file="${from-zfin-properties-file}"
-              tofile="${to-zfin-properties-file}"
-              overwrite="true">
-            <filterset>
-                <!--not sure if this is still used-->
-                <filter token="SECUREPORT" value="${secureport}"/>
-
-                <filter token="DOMAIN" value="${env.DOMAIN_NAME}"/>
-                <filter token="WIKI_USERNAME" value="${env.WIKI_USER}"/>
-                <filter token="WIKI_PASSWORD" value="${env.WIKI_PASS}"/>
-                <filter token="WIKI_HOSTNAME" value="${env.WIKI_HOST}"/>
-                <filter token="WIKI_PUSH_TO_WIKI" value="${env.WIKI_PUSH_TO_WIKI}"/>
-                <!--<filter token="INDEXER_WIKI_USERNAME" value="${env.INDEXER_WIKI_USERNAME}"/>-->
-                <!--<filter token="INDEXER_WIKI_PASSWORD" value="${env.INDEXER_WIKI_PASSWORD}"/>-->
-                <filter token="INDEXER_WIKI_HOSTNAME" value="${env.INDEXER_WIKI_HOSTNAME}"/>
-
-                <!--web host variables-->
-                <filter token="WEBHOST_BLAST_DATABASE_PATH" value="${env.WEBHOST_BLAST_DATABASE_PATH}"/>
-                <filter token="WEBHOST_XDGET" value="${env.WEBHOST_XDGET}"/>
-                <filter token="WEBHOST_XDFORMAT" value="${env.WEBHOST_XDFORMAT}"/>
-                <filter token="WEBHOST_USER" value="${env.WEBHOST_USER}"/>
-                <filter token="WEBHOST_HOSTNAME" value="${env.WEBHOST_HOSTNAME}"/>
-                <filter token="WEBHOST_BINARY_PATH" value="${env.WEBHOST_BINARY_PATH}"/>
-                <filter token="WEBHOST_KEY_PATH" value="${env.WEBHOST_KEY_PATH}"/>
-
-                <!--gbrowse variables -->
-                <filter token="GBROWSE_DB" value="${env.GBROWSE_DB}"/>
-                <filter token="GBROWSE_DB_HOST" value="${env.GBROWSE_DB_HOST}"/>
-
-                <!--blast server variables-->
-                <filter token="BLASTSERVER_BLAST_DATABASE_PATH" value="${env.BLASTSERVER_BLAST_DATABASE_PATH}"/>
-                <filter token="BLASTSERVER_XDGET" value="${env.BLASTSERVER_XDGET}"/>
-                <filter token="BLASTSERVER_XDFORMAT" value="${env.BLASTSERVER_XDFORMAT}"/>
-                <filter token="BLASTSERVER_USER" value="${env.BLASTSERVER_USER}"/>
-                <filter token="BLASTSERVER_HOSTNAME" value="${env.BLASTSERVER_HOSTNAME}"/>
-                <filter token="BLASTSERVER_DISTRIBUTED_QUERY_PATH" value="${env.BLASTSERVER_DISTRIBUTED_QUERY_PATH}"/>
-                <filter token="BLASTSERVER_BINARY_PATH" value="${env.BLASTSERVER_BINARY_PATH}"/>
-                <!--script variable-->
-                <filter token="BLASTSCRIPT_TARGET_PATH" value="${env.BLASTSCRIPT_TARGET_PATH}"/>
-
-                <!--jobs variables-->
-                <filter token="RUN_QUARTZ_JOBS" value="${env.RUN_QUARTZ_JOBS}"/>
-            </filterset>
-        </copy>
-    </target>
-
-    <target name="dirtydeploy" depends="compile"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
-        <copy todir="${env.TARGETROOT}">
-            <fileset dir="${basedir}">
-                <include name="home/WEB-INF/web.xml"/>
-                <include name="home/WEB-INF/**/*.jsp"/>
-                <include name="${source.dir}/**/*.gwt.xml"/>
-                <include name="home/index-java.html"/>
-                <include name="home/WEB-INF/conf/*.xml"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-            <filterset>
-                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
-                <filter token="RUN_QUARTZ_JOBS" value="${env.RUN_QUARTZ_JOBS}"/>
-            </filterset>
-        </copy>
-        <copy todir="${env.TARGETROOT}">
-            <fileset dir="${basedir}">
-                <include name="home/*.jsp"/>
-                <include name="home/WEB-INF/**"/>
-                <include name="home/dev/**"/>
-                <include name="home/tiles/**"/>
-                <include name="home/anatomy/**"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-
-
-        <antcall target="copyZfinPropertiesWithEnv">
-            <param name="from-zfin-properties-file" value="${web-inf.dir}/zfin-properties.xml"/>
-            <param name="to-zfin-properties-file" value="${web-inf.dir}/zfin-change-properties.xml"/>
-        </antcall>
-
-        <antcall target="copy-indexer-build-file-with-env-variables"/>
-        <exec executable="perl" output="output.log">
-            <!-- on embryonix should be the following -->
-            <!-- <arg value="/private/ZfinLinks/Commons/bin/makespecific.pl"/>  -->
-            <arg value="${env.MAKESPECIFIC}"/>
-            <arg value="${basedir}/home/WEB-INF/zfin-change-properties.xml"/>
-            <arg value="${env.TRANSLATETABLE}"/>
-            <arg value="${env.TARGETROOT}/home/WEB-INF/zfin-properties.xml"/>
-        </exec>
-    </target>
 
     <target name="prepareDeploy" description="Remove existin pre-release folder">
         <delete dir="${pre-web-inf}"/>
@@ -598,23 +578,14 @@
 
     <target name="validateDatabases" depends="compile,build-tests">
         <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
-              classpathref="extended.classpath">
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
+              classpathref="extended.classpath"
+                >
         </java>
     </target>
 
     <target name="report" depends="compile">
         <java classname="org.zfin.expression.EQReport" fork="yes"
               classpathref="extended.classpath">
-            <jvmarg value="-DDBNAME=fstdb"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
         </java>
     </target>
 </project>

@@ -2,19 +2,17 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.presentation.TranscriptAddBean;
-import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
@@ -24,34 +22,13 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TranscriptRepositoryTest {
+public class TranscriptRepositoryTest extends AbstractDatabaseTest {
+
     private Logger logger = Logger.getLogger(TranscriptRepositoryTest.class) ;
-
-    private static MarkerRepository markerRepository;
-
-    static {
-        if (markerRepository == null) {
-            markerRepository = new HibernateMarkerRepository();
-        }
-
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
-        }
-    }
 
    @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-        // TODO: this should load a specific database instance for testing purposes
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
     }
 
     @Test

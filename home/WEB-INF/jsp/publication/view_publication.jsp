@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table bgcolor="#eeeeee" border="0" width="100%">
@@ -43,12 +43,12 @@
     <TR>
         <TD>
             <B>REGISTERED AUTHORS:</B>
-            <A HREF="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-labview.apg&OID=$2">$1</A>
-            <A HREF="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=$2">$1</A>,
+            <A HREF="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-labview.apg&OID=$2">$1</A>
+            <A HREF="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-persview.apg&OID=$2">$1</A>,
         </TD>
 
         <TD align=right>
-            <form method=post action="/<%=ZfinProperties.getWebDriver()%>">
+            <form method=post action="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>">
                 <input type=hidden name=MIval value=aa-pubprintable.apg>
                 <input type=hidden name=constraint value="where zdb_id='$OID'">
                 <input type=submit name=printable value="Generate reference">
@@ -67,11 +67,11 @@ Create Publication accession
     Create Publication File name from publication pdf file
 
     Upload a PDF from the
-    <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubcuration.apg&OID=$OID">Curation</a>
+    <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubcuration.apg&OID=$OID">Curation</a>
 
 <P>
 
-    <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-fxallfigures.apg&OID=$OID">
+    <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxallfigures.apg&OID=$OID">
         <b>FIGURES</b>
     </a> &nbsp;
     <font size=-1>(<a href="javascript:start_note();">current status</a>)</font>
@@ -96,7 +96,7 @@ Create Publication accession
     -->
     <B>ADDITIONAL INFORMATION: </B>
 
-    <br><br><a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
+    <br><br><a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
 
 
 

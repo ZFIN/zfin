@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileWrapper;
 
 import java.io.File;
@@ -30,7 +30,7 @@ public class FileContentBean {
     }
 
     public File getFile() {
-        String webRootDir = ZfinProperties.getWebRootDirectory();
+        String webRootDir = ZfinPropertiesEnum.WEBROOT_DIRECTORY.value();
         File webFile = new File(webRootDir, fileName);
         return webFile;
     }

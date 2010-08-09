@@ -9,7 +9,7 @@
         margin-right: 0;
 
         min-width: 580px;
-	background: <!--|HEADER_BACKGROUND|-->;
+	background: @HEADER_BACKGROUND@;
 
 }
 

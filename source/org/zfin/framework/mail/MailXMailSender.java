@@ -82,10 +82,7 @@ public class MailXMailSender extends AbstractZfinMailSender {
 //        MailSender sender = new MailXMailSender() ;
 //        sender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), "ndunn@uoregon.edu","ndunn@mac.com");
 
-        String file = "zfin-properties.xml";
-        String dirRel = System.getenv("TARGETROOT");
-        String dir = dirRel + "/" + "home/WEB-INF/";
-        ZfinProperties.init(dir, file);
+        ZfinProperties.init();
 
         MailSender sender = new MailXMailSender();
         sender.sendMail("test email from MailXMailSender: " + new Date(), "javamail message of test email: " +

@@ -224,7 +224,7 @@
 TOP = .
 include $(TOP)/make.include
 
-SUBDIRS = lib client_apps server_apps home cgi-bin j2ee 
+SUBDIRS = lib client_apps server_apps home cgi-bin 
 POSTLOADDB_SUBDIRS = home server_apps lib
 
 

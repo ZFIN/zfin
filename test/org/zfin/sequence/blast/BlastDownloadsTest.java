@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -25,22 +26,12 @@ import static org.zfin.framework.HibernateUtil.getSessionFactory;
  * Tests blast file generation from downloads file.
  * Specifically tests BlastDownloadService.
  */
-public class BlastDownloadsTest {
+public class BlastDownloadsTest extends AbstractDatabaseTest{
 
     private Logger logger = Logger.getLogger(BlastDownloadsTest.class);
 
-    static {
-        SessionFactory sessionFactory = getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
     @Before
     public void setUp() {
-        TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
-
         RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 

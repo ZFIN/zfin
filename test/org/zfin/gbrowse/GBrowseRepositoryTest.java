@@ -2,50 +2,40 @@ package org.zfin.gbrowse;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.zfin.framework.GBrowseHibernateUtil;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.gbrowse.repository.GBrowseRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.TestConfiguration;
-import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.GBrowseHibernateUtil;
+import org.zfin.gbrowse.repository.GBrowseRepository;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.repository.RepositoryFactory;
+
+import java.util.Map;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
-import java.util.Set;
-import java.util.Map;
-
-public class GBrowseRepositoryTest {
+public class GBrowseRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(GBrowseRepositoryTest.class);
 
     static SessionFactory gbrowseSessionFactory = GBrowseHibernateUtil.getSessionFactory();
-    static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
     static GBrowseRepository gbrowseRepository = RepositoryFactory.getGBrowseRepository();
     static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
     static {
+        TestConfiguration.configure();
         if (gbrowseSessionFactory == null) {
-            TestConfiguration.initApplicationProperties();            
             GBrowseHibernateUtil.initForTest();
-        }
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
         }
     }
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-    }
-
-    @After
-    public void closeSession() {
-        GBrowseHibernateUtil.closeSession();        
     }
 
 

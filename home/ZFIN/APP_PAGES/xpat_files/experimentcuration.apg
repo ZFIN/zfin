@@ -42,6 +42,7 @@ PREFIX:   expcur_
         </script>
         <?/MIVAR>
 
+        <div id="directAttributionName"></div>
 
 
     <?MISQL SQL="

@@ -57,6 +57,7 @@
                 <prop key="/dev-tools/ontology/summary">ontologyCaching</prop>
                 <prop key="/ontology/terms">ontologyTerms</prop>
                 <prop key="/ontology/term-detail">ontologyTerm</prop>
+                <prop key="/dev-tools/zfin-properties">zfinProperties</prop>
             </props>
         </property>
     </bean>
@@ -178,6 +179,13 @@
         <property name="scheduler" ref="scheduler"/>
     </bean>
 
+
+    <bean name="zfinProperties" class="org.zfin.properties.presentation.ZfinPropertiesController" scope="prototype">
+        <property name="commandName" value="formBean"/>
+        <property name="commandClass" value="java.util.TreeMap"/>
+        <property name="view" value="zfin-properties.page"/>
+    </bean>
+
     <bean name="blastableDatabases" class="org.zfin.framework.presentation.BlastableDatabasesController"/>
 
     <bean name="errorPageHandler" class="org.zfin.framework.presentation.TestErrorPageController">
@@ -198,7 +206,6 @@
                 <prop key="/dev-tools/jdbc-driver-info">jdbcDriverHandler</prop>
                 <prop key="/dev-tools/java-properties">javaPropertiesHandler</prop>
                 <prop key="/dev-tools/thread-info">threadInfoHandler</prop>
-                <prop key="/dev-tools/zfin-properties">zfinPropertyHandler</prop>
                 <prop key="/dev-tools/test-browser">testBrowserHandler</prop>
                 <prop key="/dev-tools/view-session-info">viewSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>

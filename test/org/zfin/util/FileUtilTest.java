@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +22,7 @@ public class FileUtilTest {
     private static final File testLoadDirectory = new File("test", "test-load-dir");
     private File testLoadFile;
     private File testPurgeFile;
+    private final static String FILE_SEPARATOR = System.getProperty("file.separator");
 
     @Before
     public void setUp() {
@@ -83,7 +84,7 @@ public class FileUtilTest {
 
     @Ignore
     public void apgFiles() {
-        ZfinProperties.setWebRootDirectory("home");
+        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
         List<File> apgFiles = FileUtil.countApgFiles();
 
         assertEquals("Number of apg files", 200, apgFiles.size());
@@ -96,20 +97,18 @@ public class FileUtilTest {
         File file1 = new File("file1");
         assertEquals(file1.getAbsolutePath(),
                 FileUtil.createFileFromStrings("file1").getAbsolutePath());
-        File file2 = new File("file1" +
-                System.getProperty("file.separator") +
-                "file2.txt");
+        File file2 =  new File("file1"+ FILE_SEPARATOR +  "file2.txt") ;
         assertEquals(file2.getAbsolutePath(),
                 FileUtil.createFileFromStrings("file1", "file2.txt").getAbsolutePath());
 
-        ZfinProperties.setWebRootDirectory(".");
-        File testFile1 = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(),
-                "WEB-INF", "conf", "antibody.template");
-        File file3 = new File(ZfinProperties.getWebRootDirectory() + System.getProperty("file.separator") +
-                "WEB-INF" + System.getProperty("file.separator") +
-                "conf" + System.getProperty("file.separator") +
-                "antibody.template" + System.getProperty("file.separator"));
-        assertEquals(file3.getAbsolutePath(), testFile1.getAbsolutePath());
+        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(".");
+        File testFile1 = FileUtil.createFileFromStrings(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(),
+                "WEB-INF","conf","antibody.template") ;
+        File file3 = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY+FILE_SEPARATOR+
+                "WEB-INF"+FILE_SEPARATOR+
+                "conf"+FILE_SEPARATOR+
+                "antibody.template"+FILE_SEPARATOR) ;
+        assertEquals(file3.getAbsolutePath(),testFile1.getAbsolutePath());
     }
 
     @Test

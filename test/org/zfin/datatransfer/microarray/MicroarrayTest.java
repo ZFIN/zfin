@@ -1,32 +1,32 @@
 package org.zfin.datatransfer.microarray;
 
-import org.junit.Test;
-import org.junit.Before;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
-import static org.junit.Assert.* ;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.orthology.Species;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.orthology.Species;
-import org.zfin.TestConfiguration;
-import org.hibernate.*;
-import org.hibernate.criterion.Restrictions;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  *  Related to FogBugz 909, 2008, 2009.

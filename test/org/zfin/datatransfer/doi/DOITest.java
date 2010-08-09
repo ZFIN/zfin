@@ -1,7 +1,6 @@
 package org.zfin.datatransfer.doi;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;

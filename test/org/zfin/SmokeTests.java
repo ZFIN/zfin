@@ -7,9 +7,7 @@ import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
-import org.zfin.gwt.marker.AntibodyEditSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
-import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 
 /**

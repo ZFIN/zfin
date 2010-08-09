@@ -3,11 +3,6 @@ package org.zfin.framework.mail;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.properties.ApplicationProperties;
-import org.zfin.properties.Path;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.impl.ApplicationPropertiesImpl;
-import org.zfin.properties.impl.PathImpl;
 
 import static org.junit.Assert.assertTrue;
 
@@ -30,19 +25,19 @@ public class MailTest {
 //    }
 
     public void initRealApplicationProperties(){
-        ZfinProperties.init(APP_SETUP_REPOSITORY_DIRECTORY, APP_SETUP_MASTER_FILE);
-        ApplicationProperties properties = new ApplicationPropertiesImpl();
-        Path path = new PathImpl();
-        path.setWebdriver("cgi-bin/webdriver");
-        properties.setPath(path);
-        ZfinProperties.init(properties);
+//        ZfinProperties.init(APP_SETUP_REPOSITORY_DIRECTORY, APP_SETUP_MASTER_FILE);
+//        ApplicationProperties properties = new ApplicationPropertiesImpl();
+//        Path path = new PathImpl();
+//        path.setWebdriver("cgi-bin/webdriver");
+//        properties.setPath(path);
+//        ZfinProperties.init(properties);
+//        ZfinProperties.init();
     }
 
     @Test
     public void sending(){
         TestConfiguration.configure();
-        initRealApplicationProperties() ;
-        TestConfiguration.initApplicationProperties();
+//        initRealApplicationProperties() ;
         IntegratedJavaMailSender mailSender = new IntegratedJavaMailSender() ;
         assertTrue(mailSender.sendMail("test subject","test message",new String[]{"ndunn@uoregon.edu"})) ;                
     }

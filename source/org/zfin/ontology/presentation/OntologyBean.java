@@ -1,7 +1,6 @@
 package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.infrastructure.TrieMultiMap;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;

@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ page import="org.zfin.gwt.marker.ui.CloneEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>

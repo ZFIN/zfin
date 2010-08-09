@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.gwt.marker.ui.SequenceValidator;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;
 
@@ -405,14 +406,14 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
 
 
     public List<File> backupDatabase(final Database database) throws IOException {
-        File fromDirectory = new File(ZfinProperties.getWebHostDatabasePath() + "/" + CURRENT_DIRECTORY);
-        File toDirectory = new File(ZfinProperties.getWebHostDatabasePath() + "/" + BACKUP_DIRECTORY);
+        File fromDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + CURRENT_DIRECTORY);
+        File toDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BACKUP_DIRECTORY);
         return copyFiles(fromDirectory, toDirectory, database.getAbbrev().toString());
     }
 
     public List<File> restoreDatabase(final Database database) throws IOException {
-        File fromDirectory = new File(ZfinProperties.getWebHostDatabasePath() + "/" + BACKUP_DIRECTORY);
-        File toDirectory = new File(ZfinProperties.getWebHostDatabasePath() + "/" + CURRENT_DIRECTORY);
+        File fromDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + BACKUP_DIRECTORY);
+        File toDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + CURRENT_DIRECTORY);
         return copyFiles(fromDirectory, toDirectory, database.getAbbrev().toString());
     }
 

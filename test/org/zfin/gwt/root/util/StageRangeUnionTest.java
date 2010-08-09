@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
 import org.zfin.gwt.root.dto.StageDTO;
-import org.zfin.gwt.root.util.StageRangeUnion;
 
 import java.util.ArrayList;
 import java.util.List;

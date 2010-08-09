@@ -2,7 +2,6 @@ package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.throwaway.ThrowawayController;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 

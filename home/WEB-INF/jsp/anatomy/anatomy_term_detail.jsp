@@ -1,6 +1,6 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -124,7 +124,7 @@
 <hr width="80%">
 <div class="summary">
     <%// Number of Publications with an abstract that contains the anatomical structure %>
-    <A HREF='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search
+    <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search
         for publications with '${formBean.anatomyItem.name}' in abstract</A>
 </div>
 

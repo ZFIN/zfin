@@ -3,7 +3,10 @@ package org.zfin.infrastructure;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * From here:

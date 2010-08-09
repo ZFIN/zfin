@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class ZfinStaticLogger {
         String absoluteFilePath = getFullLogFileName(logFileName);
         RollingFileAppender appender = null;
         try {
-            String logFilePattern = ZfinProperties.getLogFilePattern();
+            String logFilePattern = ZfinPropertiesEnum.LOG_FILE_PATTERN.value();
             appender = new RollingFileAppender(new PatternLayout(logFilePattern), absoluteFilePath);
             appender.setMaximumFileSize(ZfinProperties.getLogFileSize());
             appender.setAppend(true);
@@ -92,7 +93,7 @@ public class ZfinStaticLogger {
 
     private static String getFullLogFileName(String logFileName) {
 
-        String absoluteFilePath = FileUtil.createAbsolutePath(ZfinProperties.CATALINA_BASE, "logs", logFileName);
+        String absoluteFilePath = FileUtil.createAbsolutePath(ZfinPropertiesEnum.CATALINA_BASE.value(), "logs", logFileName);
         return absoluteFilePath;
     }
 

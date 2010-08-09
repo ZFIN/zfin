@@ -2,6 +2,7 @@ package org.zfin.sequence;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gbrowse.GBrowseService;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -10,10 +11,6 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.gbrowse.GBrowseService;
-import org.apache.log4j.Logger;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;

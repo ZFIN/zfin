@@ -222,7 +222,7 @@ EFFECTS
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
 
 <TEXTAREA name="xpcur_G_fig_caption" cols=80 rows=10
-          <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
+          <?MIBLOCK COND="$(OR,$(NXST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,f))">
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
        >$xpcur_G_fig_caption</TEXTAREA>
@@ -275,7 +275,7 @@ EFFECTS
     </td>
     <td>
         <TEXTAREA name="xpcur_G_fig_add_caption" cols=70 rows=10
-          <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
+          <?MIBLOCK COND="$(OR,$(NXST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,f))">
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
         ></TEXTAREA>

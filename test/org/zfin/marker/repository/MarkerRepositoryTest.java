@@ -2,16 +2,15 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -38,7 +37,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 
-public class MarkerRepositoryTest {
+public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(MarkerRepositoryTest.class) ;
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
@@ -46,27 +45,10 @@ public class MarkerRepositoryTest {
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
-        }
-    }
-
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
     }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
-
-
-
 
     @Test
     public void testMarkerLoad() {

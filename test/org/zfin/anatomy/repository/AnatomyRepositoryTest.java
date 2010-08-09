@@ -1,21 +1,15 @@
 package org.zfin.anatomy.repository;
 
-import org.hibernate.SessionFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.*;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
-import org.zfin.publication.repository.PublicationRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -23,19 +17,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
-public class AnatomyRepositoryTest {
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
+public class AnatomyRepositoryTest extends AbstractDatabaseTest{
 
     /**
      * Check that synonyms are not of group 'secondary id'

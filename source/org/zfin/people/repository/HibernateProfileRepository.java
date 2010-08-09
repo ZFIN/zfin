@@ -6,7 +6,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.CuratorSession;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.people.*;

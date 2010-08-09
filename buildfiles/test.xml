@@ -1,374 +1,335 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="test" basedir=".">
-<!-- ====================================================================== -->
-<!-- TESTING TASKS                                                          -->
-<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- TESTING TASKS                                                          -->
+    <!-- ====================================================================== -->
 
-<target name="echoProps" description="Simple target to dump all ant properties">
-    <echoproperties/>
-</target>
+    <target name="echoProps" depends="loadPropertiesIntoEnum" description="Simple target to dump all ant properties">
+        <echoproperties/>
+    </target>
 
-<target name="jversion" description="Prints out java version in use">
-    <java fork="yes" classname="ignoreMe">
-        <jvmarg line="-version"/>
-    </java>
-</target>
+    <target name="jversion" description="Prints out java version in use">
+        <java fork="yes" classname="ignoreMe">
+            <jvmarg line="-version"/>
+        </java>
+    </target>
 
-<macrodef name="runTest">
-    <attribute name="verbose"/>
-    <attribute name="testClass"/>
-    <attribute name="outFile"/>
-    <sequential>
+    <macrodef name="runTest">
+        <attribute name="verbose"/>
+        <attribute name="testClass"/>
+        <attribute name="outFile"/>
+        <sequential>
+            <junit fork="yes"
+                   printsummary="yes"
+                   haltonfailure="yes"
+                   haltonerror="yes"
+                   showoutput="@{verbose}"
+                   maxmemory="1024m"
+                    >
+                <classpath refid="extended.classpath"/>
+                <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
+                    <formatter type="plain"/>
+                </test>
+            </junit>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="runDBTest">
+        <attribute name="verbose"/>
+        <attribute name="testClass"/>
+        <attribute name="outFile"/>
+        <sequential>
+            <junit fork="yes"
+                   printsummary="yes"
+                   haltonfailure="yes"
+                   haltonerror="yes"
+                   showoutput="@{verbose}"
+                   maxmemory="1024m"
+                    >
+                <classpath refid="extended.classpath"/>
+                <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+                <jvmarg value="-Xmx1024m"/>
+                <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
+                    <formatter type="plain"/>
+                </test>
+            </junit>
+        </sequential>
+    </macrodef>
+
+    <target name="unittests" depends="compile,build-tests" description="Unit tests.">
+        <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="true"/>
+        <echo message=":UNIT TESTS SUCCESSFUL:"/>
+    </target>
+
+    <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
+        <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
+    </target>
+
+
+    <target name="runDBtests" depends="compile,build-tests"
+            description="Tests that involve access to the informix database.">
+        <runDBTest testclass="org.zfin.DbUnitTests" outfile="${dbTestFile}" verbose="true"/>
+        <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
+    </target>
+
+    <target name="blastHeuristics" depends="compile,build-tests"
+            description="Calculates all of the blast heuristics">
+        <runDBTest testclass="org.zfin.sequence.blast.BlastHeuristicsEvaluatorSuite" outfile="blast-heuristics-results" verbose="true"/>
+        <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
+    </target>
+
+    <target name="blastStressTest" depends="compile,build-tests"
+            description="Calculates all of the blast heuristics">
+        <runDBTest testclass="org.zfin.sequence.blast.BlastStressSuite" outfile="blast-stress-results" verbose="true"/>
+        <echo message=":BLAST STRESS EVALUATION SUCCESSFUL:"/>
+    </target>
+
+    <target name="runBlasttests" depends="compile,build-tests"
+            description="Tests that involve access to the informix and blast databases.">
+        <runDBTest testclass="org.zfin.sequence.blast.BlastAndDBTests" outfile="${blastTestFile}" verbose="true"/>
+        <echo message=":BLAST TESTS SUCCESSFUL:"/>
+    </target>
+
+    <target name="enumtests" depends="compile,build-tests" description="Unit tests for DataExchange module">
+        <runDBTest testclass="org.zfin.EnumValidationTestSuite" outfile="enum-results" verbose="true"/>
+        <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
+    </target>
+
+    <target name="compile-tagunit" description="Compiles classes for jsp tag unit tests">
+        <javac srcdir="source"
+               destdir="${tagunit-root.dir}/WEB-INF/classes"
+               classpathref="extended.classpath"
+               fork="true"
+               includeAntRuntime="no"
+               memoryMaximumSize="256m"
+               debug="true"
+               target="1.6"/>
+    </target>
+
+    <target name="preptagunit" depends="compile-tagunit" description="Prepares to run the unit test related to JSP tags.
+               Deployes it into an app server root directory specified by the environment variable TAGUNIT_HOME ">
+        <delete dir="${tagunit-root.dir}/test/zfin"/>
+        <copy file="${web-inf.dir}/tld/zfin-tags.tld" todir="${tagunit-root.dir}/WEB-INF/tld/"/>
+        <copy todir="${tagunit-root.dir}/test/zfin">
+            <fileset dir="test/jsp-tags" defaultexcludes="true">
+                <include name="**"/>
+            </fileset>
+            <filterset>
+                <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
+            </filterset>
+        </copy>
+    </target>
+
+    <!--
+        <taskdef name="tagunit" classname="org.tagunit.ant.TagUnitTask" />
+    -->
+
+    <target name="runTagTests" depends="preptagunit" description="Run the actual tagunit tests. You need to have
+            a tagunit context setup in a tomcat server.">
+        <tagunit url="http://localhost:8081/" ignorewarnings="true"/>
+    </target>
+
+
+    <!-- an easy to remember tag that should always be kept up to date to match whatever
+test(s) need to be run before committing changes or pushing files to production -->
+    <!--Test for notproduction and the run tests.  This allows production to run the test if using runtests-quiet-->
+    <target name="test" depends="runtests-quiet" description="Runs full suite of tests if in mode if not production">
+    </target>
+
+
+    <property name="smokeTestFile" value="smoke-results"/>
+    <property name="serviceTestFile" value="service-results"/>
+
+    <property name="smokeFailureMessage"
+              value="Failed internal smoke test.  See ${smokeTestFile}.txt for more information.  Please confirm that the web client is running properly."/>
+    <property name="serviceFailureMessage"
+              value="Failed to connect to external services.  See ${serviceTestFile}.txt for more information.  Please try connecting again, later."/>
+
+
+    <target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
+
         <junit fork="yes"
                printsummary="yes"
                haltonfailure="yes"
                haltonerror="yes"
-               showoutput="@{verbose}"
-               maxmemory="1024m"
-                >
-            <classpath refid="extended.classpath"/>
-            <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
+               showoutput="false">
+            <test name="org.zfin.UnitTests" todir="${test.reports.dir}" outfile="${unitTestFile}">
                 <formatter type="plain"/>
             </test>
-        </junit>
-    </sequential>
-</macrodef>
 
-<macrodef name="runDBTest">
-    <attribute name="verbose"/>
-    <attribute name="testClass"/>
-    <attribute name="outFile"/>
-    <sequential>
-        <junit fork="yes"
-               printsummary="yes"
-               haltonfailure="yes"
-               haltonerror="yes"
-               showoutput="@{verbose}"
-               maxmemory="1024m"
-                >
+            <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="${dbTestFile}">
+                <formatter type="plain"/>
+            </test>
+
+            <test name="org.zfin.sequence.blast.BlastAndDBTests" todir="${test.reports.dir}"
+                  outfile="${blastTestFile}">
+                <formatter type="plain"/>
+            </test>
+
+            <test name="org.zfin.ThirdPartyServiceTests" todir="${test.reports.dir}"
+                  outfile="${serviceTestFile}"
+                  haltonerror="false" haltonfailure="false" failureproperty="service.failure" >
+                <formatter type="plain"/>
+            </test>
+
+            <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}-pre"
+                  haltonerror="false" haltonfailure="false"
+                  failureproperty="smoke.failure">
+                <formatter type="plain"/>
+            </test>
+
             <classpath refid="extended.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg value="-Xmx1024m"/>
-            <jvmarg value="-DDBNAME=${dbname}"/>
-            <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-            <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-            <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-            <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-            <jvmarg value="-DWEBINF=${web-inf.target}"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <!-- <arg value="${junit.test.class.name}"/>-->
+
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
+        </junit>
+        <antcall target="handleSmokeFailure">
+            <param name="test.output.file" value="${smokeTestFile}-pre"/>
+        </antcall>
+        <antcall target="handleServiceFailure"/>
+        <echo message=":ALL UNIT TESTS PASSED:"/>
+    </target>
+
+    <target name="handleServiceFailure" if="service.failure">
+        <echo message="${serviceFailureMessage}"/>
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+              fork="yes"
+              classpathref="classpath">
+            <!--subject -->
+            <arg value="Failed service tests.  See ${serviceTestFile}.txt."/>
+            <!--message-->
+            <arg value="${serviceFailureMessage}"/>
+        </java>
+    </target>
+
+    <target name="build-tests" depends="loadPropertiesIntoEnum" description="Target to compile all test classes">
+        <javac srcdir="test"
+               destdir="${classbin.dir}"
+               classpathref="extended.classpath"
+               fork="yes"
+               includeAntRuntime="no"
+               memoryMaximumSize="256m"
+               source="1.6"
+               debug="true"
+               target="1.6"/>
+        <!--
+                        deprecation="${javac.deprecation}"
+                        debug="${javac.debug}"/>
+        -->
+    </target>
+
+    <target name="testsingleclass" depends="build-tests" description="Runs a database tests for a single class specified in this target" >
+        <java fork="yes" classname="org.zfin.sequence.reno.RenoControllerTest" taskname="junit" failonerror="true">
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <arg value="${junit.test.class.name}"/>
+            <classpath refid="extended.classpath"/>
+
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+        </java>
+    </target>
+
+    <target name="runatest" depends="build-tests"  description="Runs a test for a single database test specified by junit.test.class.name" >
+        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true" maxmemory="1024">
+            <!--
+                       <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
+           -->
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <arg value="${junit.test.class.name}"/>
+            <classpath refid="extended.classpath"/>
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+        </java>
+    </target>
+
+    <target name="singletest" depends="build-tests"  description="Executes a single test">
+        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+            <!--
+                        <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
+            -->
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <arg value="org.zfin.util.ListFormatterTest"/>
+            <classpath refid="extended.classpath"/>
+        </java>
+    </target>
+
+    <target name="runHibernate" depends="compile,compile-tests"
+            description="Run the Hibernate standalone class for persistence checking">
+        <java classname="org.zfin.repository.HibernateStandaloneUtil"
+              fork="yes"
+              classpathref="extended.classpath">
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+        </java>
+    </target>
+
+    <target name="testMail" depends=""
+            description="Runs the mail testing code.">
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+              fork="yes"
+              classpathref="classpath">
+        </java>
+    </target>
+
+    <target name="handleSmokeFailure" if="smoke.failure">
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+              fork="yes"
+              classpathref="classpath">
+            <arg value="Failed smoke tests.  See ${smokeTestFile}.txt."/>
+            <arg value="${serviceFailureMessage}"/>
+        </java>
+    </target>
+
+    <target name="orthologyPerformance" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               showoutput="true">
+            <jvmarg line="${junit.jvmargs}"/>
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
                 <formatter type="plain"/>
             </test>
         </junit>
-    </sequential>
-</macrodef>
-
-<target name="unittests" depends="compile,build-tests" description="Unit tests for DataExchange module">
-    <runTest testclass="org.zfin.UnitTests" outfile="unit-result" verbose="true"/>
-    <echo message=":UNIT TESTS SUCCESSFUL:"/>
-</target>
-
-<target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
-    <runTest testclass="org.zfin.UnitTests" outfile="unit-result" verbose="false"/>
-</target>
-
-
-<target name="runDBtests" depends="compile,build-tests"
-        description="Tests that involve access to the informix database.">
-    <runDBTest testclass="org.zfin.DbUnitTests" outfile="db-result" verbose="true"/>
-    <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
-</target>
-
-<target name="blastHeuristics" depends="compile,build-tests"
-        description="Calculates all of the blast heuristics">
-    <runDBTest testclass="org.zfin.sequence.blast.BlastHeuristicsEvaluatorSuite" outfile="blast-heuristics-result" verbose="true"/>
-    <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
-</target>
-
-<target name="blastStressTest" depends="compile,build-tests"
-        description="Calculates all of the blast heuristics">
-    <runDBTest testclass="org.zfin.sequence.blast.BlastStressSuite" outfile="blast-stress-result" verbose="true"/>
-    <echo message=":BLAST STRESS EVALUATION SUCCESSFUL:"/>
-</target>
-
-<target name="runBlasttests" depends="compile,build-tests"
-        description="Tests that involve access to the informix and blast databases.">
-    <runDBTest testclass="org.zfin.sequence.blast.BlastAndDBTests" outfile="blast-result" verbose="true"/>
-    <echo message=":BLAST TESTS SUCCESSFUL:"/>
-</target>
-
-<target name="enumtests" depends="compile,build-tests" description="Unit tests for DataExchange module">
-    <runDBTest testclass="org.zfin.EnumValidationTestSuite" outfile="enum-result" verbose="true"/>
-    <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
-</target>
-
-<target name="compile-tagunit" description="Compiles classes for jsp tag unit tests">
-    <javac srcdir="source"
-           destdir="${tagunit-root.dir}/WEB-INF/classes"
-           classpathref="extended.classpath"
-           fork="true"
-           includeAntRuntime="no"
-           memoryMaximumSize="256m"
-           debug="true"
-           target="1.6"/>
-</target>
-
-<target name="preptagunit" depends="compile-tagunit" description="Prepares to run the unit test related to JSP tags.
-               Deployes it into an app server root directory specified by the environment variable TAGUNIT_HOME ">
-    <delete dir="${tagunit-root.dir}/test/zfin"/>
-    <copy file="${web-inf.dir}/tld/zfin-tags.tld" todir="${tagunit-root.dir}/WEB-INF/tld/"/>
-    <copy todir="${tagunit-root.dir}/test/zfin">
-        <fileset dir="test/jsp-tags" defaultexcludes="true">
-            <include name="**"/>
-        </fileset>
-        <filterset>
-            <filter token="TARGETCGIBIN" value="${env.TARGETCGIBIN}"/>
-        </filterset>
-    </copy>
-</target>
-
-<!--
-    <taskdef name="tagunit" classname="org.tagunit.ant.TagUnitTask" />
--->
-
-<target name="runTagTests" depends="preptagunit" description="Run the actual tagunit tests. You need to have
-            a tagunit context setup in a tomcat server.">
-    <tagunit url="http://localhost:8081/" ignorewarnings="true"/>
-</target>
-
-
-<!-- an easy to remember tag that should always be kept up to date to match whatever
-test(s) need to be run before committing changes or pushing files to production -->
-<!--Test for notproduction and the run tests.  This allows production to run the test if using runtests-quiet-->
-<target name="test" depends="runtests-quiet" description="Runs full suite of tests if in mode if not production">
-</target>
-
-
-<property name="smokeTestFile" value="smoke-results"/>
-<property name="serviceTestFile" value="service-results"/>
-
-<property name="smokeFailureMessage"
-          value="Failed internal smoke test.  See ${smokeTestFile}.txt for more information.  Please confirm that the web client is running properly."/>
-<property name="serviceFailureMessage"
-          value="Failed to connect to external services.  See ${serviceTestFile}.txt for more information.  Please try connecting again, later."/>
-
-
-<target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
-
-    <junit fork="yes"
-           printsummary="yes"
-           haltonfailure="yes"
-           haltonerror="yes"
-           showoutput="false">
-        <test name="org.zfin.UnitTests" todir="${test.reports.dir}" outfile="unit-result">
-            <formatter type="plain"/>
-        </test>
-
-        <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="db-result">
-            <formatter type="plain"/>
-        </test>
-
-        <test name="org.zfin.sequence.blast.BlastAndDBTests" todir="${test.reports.dir}"
-              outfile="blast-results">
-            <formatter type="plain"/>
-        </test>
-
-        <test name="org.zfin.ThirdPartyServiceTests" todir="${test.reports.dir}"
-              outfile="${serviceTestFile}"
-              haltonerror="false" haltonfailure="false" failureproperty="service.failure" >
-            <formatter type="plain"/>
-        </test>
-
-        <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}-pre"
-              haltonerror="false" haltonfailure="false"
-              failureproperty="smoke.failure">
-            <formatter type="plain"/>
-        </test>
-
-        <classpath refid="extended.classpath"/>
-        <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <jvmarg line="${junit.jvmargs}"/>
-        <!-- <arg value="${junit.test.class.name}"/>-->
-
-        <jvmarg value="-DDBNAME=${dbname}"/>
-        <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-        <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-        <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-        <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        <jvmarg value="-DWEBINF=${web-inf.target}"/>
-        <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-    </junit>
-    <antcall target="handleSmokeFailure">
-        <param name="test.output.file" value="${smokeTestFile}-pre"/>
-    </antcall>
-    <antcall target="handleServiceFailure"/>
-    <echo message=":ALL UNIT TESTS PASSED:"/>
-</target>
-
-<target name="handleServiceFailure" if="service.failure">
-    <echo message="${serviceFailureMessage}"/>
-    <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
-          fork="yes"
-          classpathref="classpath">
-        <!--subject -->
-        <arg value="Failed service tests.  See ${serviceTestFile}.txt."/>
-        <!--message-->
-        <arg value="${serviceFailureMessage}"/>
-    </java>
-</target>
-
-<target name="build-tests" description="Target to compile all test classes">
-    <javac srcdir="test"
-           destdir="${classbin.dir}"
-           classpathref="extended.classpath"
-           fork="yes"
-           includeAntRuntime="no"
-           memoryMaximumSize="256m"
-           source="1.6"
-           debug="true"
-           target="1.6"/>
-    <!--
-                    deprecation="${javac.deprecation}"
-                    debug="${javac.debug}"/>
-    -->
-    <antcall target="copyZfinPropertiesWithEnv">
-        <param name="from-zfin-properties-file" value="test/zfin-properties-test-init.xml"/>
-        <param name="to-zfin-properties-file" value="test/zfin-properties-test.xml"/>
-    </antcall>
-</target>
-
-<target name="testsingleclass" depends="build-tests" description="Runs a database tests for a single class specified in this target" >
-    <java fork="yes" classname="org.zfin.sequence.reno.RenoControllerTest" taskname="junit" failonerror="true">
-        <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <jvmarg line="${junit.jvmargs}"/>
-        <arg value="${junit.test.class.name}"/>
-        <classpath refid="extended.classpath"/>
-
-        <jvmarg value="-DDBNAME=${dbname}"/>
-        <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-        <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-        <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-        <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-    </java>
-</target>
-
-<target name="runatest" depends="build-tests"  description="Runs a test for a single database test specified by junit.test.class.name" >
-	<java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true" maxmemory="1024">
-		<!--
-					<sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
-		-->
-		<sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-		<jvmarg line="${junit.jvmargs}"/>
-		<arg value="${junit.test.class.name}"/>
-		<classpath refid="extended.classpath"/>
-
-<!--            <jvmarg value="-Xmx1024m"/>-->
-		<jvmarg value="-DDBNAME=${dbname}"/>
-		<jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-		<jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-		<jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-		<jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-		<jvmarg value="-DWEBINF=${web-inf.target}"/>
-		<jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-	</java>
-</target>
-
-<target name="singletest" depends="build-tests"  description="Executes a single test">
-    <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-        <!--
-                    <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
-        -->
-        <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <jvmarg line="${junit.jvmargs}"/>
-        <arg value="org.zfin.util.ListFormatterTest"/>
-        <classpath refid="extended.classpath"/>
-    </java>
-</target>
-
-<target name="runHibernate" depends="compile,compile-tests"
-        description="Run the Hibernate standalone class for persistence checking">
-    <java classname="org.zfin.repository.HibernateStandaloneUtil"
-          fork="yes"
-          classpathref="extended.classpath">
-        <jvmarg value="-DDBNAME=${dbname}"/>
-        <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-        <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-        <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-        <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        <jvmarg value="-DWEBINF=${web-inf.target}"/>
-        <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-    </java>
-</target>
-
-<target name="testMail" depends=""
-        description="Runs the mail testing code.">
-    <!-- <java classname="org.zfin.framework.mail.MailXMailSender" -->
-    <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
-          fork="yes"
-          classpathref="classpath">
-    </java>
-</target>
-
-<target name="handleSmokeFailure" if="smoke.failure">
-    <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
-          fork="yes"
-          classpathref="classpath">
-        <arg value="Failed smoke tests.  See ${smokeTestFile}.txt."/>
-        <arg value="${serviceFailureMessage}"/>
-    </java>
-</target>
-
-<target name="orthologyPerformance" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
-    <junit fork="yes"
-           printsummary="yes"
-           haltonfailure="false"
-           haltonerror="false"
-           showoutput="true">
-        <jvmarg line="${junit.jvmargs}"/>
-        <classpath refid="extended.classpath"/>
-        <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
-            <formatter type="plain"/>
-        </test>
-    </junit>
-</target>
+    </target>
 
 
 
     <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
-<target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
+    <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
 
-    <junit fork="yes"
-           printsummary="yes"
-           haltonfailure="false"
-           haltonerror="false"
-           showoutput="false">
-        <jvmarg line="${junit.jvmargs}"/>
-        <classpath refid="extended.classpath"/>
-        <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-        <jvmarg value="-Xmx1024m"/>
-        <jvmarg value="-DDBNAME=${dbname}"/>
-        <jvmarg value="-DCONFIGURATION_DIRECTORY=${classbin.dir}/org/zfin"/>
-        <jvmarg value="-DINFORMIX_SERVER=${informixserver}"/>
-        <jvmarg value="-DINFORMIX_PORT=${informixport}"/>
-        <jvmarg value="-DSQLHOSTS_HOST=${sqlhosts-host}"/>
-        <jvmarg value="-DWEBINF=${web-inf.target}"/>
-        <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-        <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-post" todir="${test.reports.dir}"
-              haltonerror="false" haltonfailure="true"
-              failureproperty="smoke.failure" >
-            <formatter type="plain"/>
-        </test>
-    </junit>
-    <antcall target="handleSmokeFailure">
-        <param name="test.output.file" value="${smokeTestFile}-post"/>
-    </antcall>
-</target>
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               showoutput="false">
+            <jvmarg line="${junit.jvmargs}"/>
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+            <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-post"
+                  todir="${test.reports.dir}"
+                  haltonerror="false" haltonfailure="true"
+                  failureproperty="smoke.failure" >
+                <formatter type="plain"/>
+            </test>
+        </junit>
+        <antcall target="handleSmokeFailure">
+            <param name="test.output.file" value="${smokeTestFile}-post"/>
+        </antcall>
+    </target>
 
-<target name="serviceTests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
-    <runDBTest testclass="org.zfin.ThirdPartyServiceTests" outfile="service-result" verbose="true"/>
-</target>
+    <target name="serviceTests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
+        <runDBTest testclass="org.zfin.ThirdPartyServiceTests" outfile="service-result" verbose="true"/>
+    </target>
 
 </project>

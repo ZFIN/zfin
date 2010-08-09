@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="org.zfin.antibody.presentation.AntibodyBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <script type="text/javascript">
 
@@ -55,7 +55,7 @@
 		              &nbsp;
                             </td>
                             <td>
-                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
+                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
                                     <font size=-1><b>Updated:</b>
                                         <c:choose>
                                             <c:when test="${formBean.latestUpdate != null}">
@@ -134,7 +134,7 @@
                         </c:if>
 
                         <div class="show_pubs">
-                            <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}">${publishedPublication.authors}
+                            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}">${publishedPublication.authors}
                                 &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
                             </a>
                         </div>
@@ -159,7 +159,7 @@
                             </c:if>
 
                             <div class="show_pubs">
-                                <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
+                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
                                     &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
                                 </a>
                             </div>

@@ -6,12 +6,9 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.TranscriptService;
-import org.zfin.gbrowse.GBrowseFeature;
-import org.zfin.gbrowse.GBrowseService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 public class RelatedTranscriptsController extends AbstractController {
 

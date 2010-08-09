@@ -1,5 +1,3 @@
-<link rel="stylesheet" type="text/css" href="/Marker.css"/>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -17,6 +15,7 @@
 
 <%--Adds the CloneEditController.--%>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <table cellpadding="10">

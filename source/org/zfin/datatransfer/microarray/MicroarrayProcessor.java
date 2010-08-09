@@ -1,27 +1,27 @@
 package org.zfin.datatransfer.microarray ;
 
 
-import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
-
-import java.util.*;
-import java.io.File;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import org.apache.log4j.Logger;
+import org.hibernate.CacheMode;
+import org.hibernate.Session;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.marker.Marker;
+import org.zfin.orthology.Species;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.orthology.Species;
-import org.zfin.publication.Publication;
-import org.zfin.marker.Marker;
-import org.zfin.properties.ZfinProperties;
-import org.hibernate.Session;
-import org.hibernate.CacheMode;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /** Class UpdateMicroarrayMain processes platform documentation for microarrays which we will provide links to
  *  within markerview.  See case
@@ -394,7 +394,8 @@ public final class MicroarrayProcessor {
             processor.init() ;
             MicroarrayBean microarrayBean = processor.run() ;
             (new IntegratedJavaMailSender()).sendMail("microarray updates for: "+(new Date()).toString()
-                    , microarrayBean.toString(), ZfinProperties.getValidationOtherEmailAddresses());
+                    , microarrayBean.toString()
+                    , ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER));
         }
         catch(Exception e){
             // the error should already be logged

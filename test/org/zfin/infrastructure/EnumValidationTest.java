@@ -1,13 +1,8 @@
 package org.zfin.infrastructure ;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.presentation.QuartzJobsBean;
 
 import java.util.ArrayList;
@@ -18,30 +13,12 @@ import static org.junit.Assert.*;
 /**  Tests MarkerEnum
  *
  */
-public class EnumValidationTest {
-
+public class EnumValidationTest extends AbstractDatabaseTest {
 
 
     private static Logger logger = Logger.getLogger(EnumValidationTest.class);
 
     private EnumValidationService enumValidationService = new EnumValidationService(); 
-
-    static{
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory() ;
-        if(sessionFactory == null){
-            new HibernateSessionCreator(false);
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
 
     @Test
     public void validateAllServices(){

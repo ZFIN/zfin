@@ -1,8 +1,11 @@
 package org.zfin.antibody.repository;
 
-import org.hibernate.*;
-import org.junit.Before;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
@@ -16,7 +19,6 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -49,19 +51,7 @@ import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @SuppressWarnings({"FeatureEnvy"})
-public class AntibodyRepositoryTest {
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
+public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
     /**
      * Retrieving an antibody by ID'
@@ -566,7 +556,7 @@ public class AntibodyRepositoryTest {
     public void getImmunogenSpeciesList() {
 
         List<Species> species = getAntibodyRepository().getImmunogenSpeciesList();
-        assertTrue(species != null);
+        assertNotNull(species);
 
     }
 
@@ -575,10 +565,11 @@ public class AntibodyRepositoryTest {
         String abName = "zn-5";
 
         Antibody ab = getAntibodyRepository().getAntibodyByName(abName);
-        assertTrue(ab != null);
+        assertNotNull(ab);
 
         List<Marker> markers = ab.getAllRelatedMarker();
-        assertTrue(markers != null);
+        assertNotNull(markers);
+        assertTrue(markers.size()>0);
 
     }
 

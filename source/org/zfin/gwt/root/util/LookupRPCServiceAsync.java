@@ -64,4 +64,6 @@ public interface LookupRPCServiceAsync {
     void addRecentPublication(String zdbID, String key, AsyncCallback<PublicationDTO> async);
 
     void getAttributionsForPub(String publicationZdbID, AsyncCallback<List<RelatedEntityDTO>> markerEditCallBack);
+
+    void getAllZfinProperties(AsyncCallback<Map<String, String>> async);
 }

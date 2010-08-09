@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
                   latestUpdate="${formBean.latestUpdate}"
@@ -45,7 +45,7 @@
                 <c:if test="${featureAlias.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${featureAlias.publicationCount == 1}">
-                            (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
                             (<a href="alias-publication-list?featureAlias.zdbID=${featureAlias.zdbID}&orderBy=author">${featureAlias.publicationCount}</a>)
@@ -72,7 +72,7 @@
                     <c:if test="${fmRel.publicationCount > 0}">
                         <c:choose>
                             <c:when test="${fmRel.publicationCount == 1}">
-                                (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
+                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
                             </c:when>
                             <c:otherwise>
                                 (<a href="relationship-publication-list?featuremarkerRelationship.zdbID=${fmRel.zdbID}&orderBy=author">${fmRel.publicationCount}</a>)
@@ -110,13 +110,13 @@ This feature is representative of one or more unknown insertion sites.
     </td>
     <td>
         <c:forEach var="mRel" items="${formBean.featureStat.sortedConstructRelationships}" varStatus="loop">
-            <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&OID=${mRel.marker.zdbID}">${mRel.marker.name}</a>
+            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-markerview.apg&OID=${mRel.marker.zdbID}">${mRel.marker.name}</a>
             <%--//<zfin:name entity="${mRel.marker}"/>--%>
                                                
             <c:if test="${mRel.publicationCount > 0}">
                 <c:choose>
                     <c:when test="${mRel.publicationCount == 1}">
-                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
                     </c:when>
                     <c:otherwise>
                         (<a href="relationship-publication-list?featuremarkerRelationship.zdbID=${mRel.zdbID}&orderBy=author">${mRel.publicationCount}</a>)
@@ -139,10 +139,10 @@ This feature is representative of one or more unknown insertion sites.
         <c:if test="${fn:length(formBean.featureStat.ftrTypeAttr) > 0 }">
          <c:choose>
                     <c:when test="${fn:length(formBean.featureStat.ftrTypeAttr)== 1 }">
-                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${formBean.featureStat.singlePublication}">${1}</a>)
+                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${formBean.featureStat.singlePublication}">${1}</a>)
                     </c:when>
                     <c:otherwise>
-                        (<a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureStat.ftrTypeAttr)}</a>)
+                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureStat.ftrTypeAttr)}</a>)
                     </c:otherwise>
         </c:choose>
         </c:if>
@@ -202,7 +202,7 @@ This feature is representative of one or more unknown insertion sites.
 
     <td>
 
-        <a href="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
+        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
                 ${source.organization.name}
         </a>
 
@@ -234,7 +234,7 @@ This feature is representative of one or more unknown insertion sites.
                                            </c:if>
                           </c:if>
                               </c:forEach>
-                              &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+                              &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
                           </td>
 
@@ -255,7 +255,7 @@ This feature is representative of one or more unknown insertion sites.
                 ,&nbsp;
             </c:if>
                 </c:forEach>
-                &nbsp;<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+                &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
             </td>
 
@@ -357,12 +357,12 @@ This feature is representative of one or more unknown insertion sites.
                     <td>
                         <c:if test="${featgenoStat.numberOfFigures > 0}">
                             <c:if test="${featgenoStat.numberOfFigures > 1}">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
+                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${featgenoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>
                             <c:if test="${featgenoStat.numberOfFigures == 1 }">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.figure.zdbID}'>
+                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.figure.zdbID}'>
                                     <zfin2:figureOrTextOnlyLink figure="${featgenoStat.figure}"
                                                                 integerEntity="${featgenoStat.numberOfFigures}"/>
                                 </a>
@@ -394,12 +394,12 @@ This feature is representative of one or more unknown insertion sites.
                     <td>
                         <c:if test="${featgenoStat.numberOfExpFigures > 0}">
                             <c:if test="${featgenoStat.numberOfExpFigures > 1}">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
+                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${featgenoStat.numberOfExpFigures}" includeNumber="true"/></a>
                             </c:if>
                             <c:if test="${featgenoStat.numberOfExpFigures == 1 }">
-                                <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
+                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
                                     <zfin2:figureOrTextOnlyLink figure="${featgenoStat.expFigure}"
                                                                 integerEntity="${featgenoStat.numberOfExpFigures}"/>
                                 </a>
@@ -493,12 +493,12 @@ This feature is representative of one or more unknown insertion sites.
             <td>
                 <c:if test="${featgenoStat.numberOfFigures > 0}">
                     <c:if test="${featgenoStat.numberOfFigures > 1}">
-                        <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
                             <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                          integerEntity="${featgenoStat.numberOfFigures}" includeNumber="true"/></a>
                     </c:if>
                     <c:if test="${featgenoStat.numberOfFigures == 1 }">
-                        <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.figure.zdbID}'>
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.figure.zdbID}'>
                             <zfin2:figureOrTextOnlyLink figure="${featgenoStat.figure}"
                                                         integerEntity="${featgenoStat.numberOfFigures}"/>
                         </a>
@@ -530,12 +530,12 @@ This feature is representative of one or more unknown insertion sites.
             <td>
                 <c:if test="${featgenoStat.numberOfExpFigures > 0}">
                     <c:if test="${featgenoStat.numberOfExpFigures > 1}">
-                        <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
                             <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                          integerEntity="${featgenoStat.numberOfExpFigures}" includeNumber="true"/></a>
                     </c:if>
                     <c:if test="${featgenoStat.numberOfExpFigures == 1 }">
-                        <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
                             <zfin2:figureOrTextOnlyLink figure="${featgenoStat.expFigure}"
                                                         integerEntity="${featgenoStat.numberOfExpFigures}"/>
                         </a>
@@ -585,7 +585,7 @@ This feature is representative of one or more unknown insertion sites.
 
 
 <hr width="80%">
-<a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
+<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
     function expand() {

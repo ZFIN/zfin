@@ -1,6 +1,5 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Figure;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;

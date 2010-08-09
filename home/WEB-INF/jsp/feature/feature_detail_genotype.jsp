@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <b>Mutant and Transgenic Lines</b>
@@ -53,12 +53,12 @@
                 <td>
                    <%-- <c:if test="${genoStat.numberOfFigures > 0}">
                         <c:if test="${genoStat.numberOfFigures > 1}">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.anatomyItem.zdbID}'>
+                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.anatomyItem.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                         </c:if>
                         <c:if test="${genoStat.numberOfFigures == 1 }">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${genoStat.figure.zdbID}'>
+                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genoStat.figure.zdbID}'>
                                 <zfin2:figureOrTextOnlyLink figure="${genoStat.figure}"
                                                             integerEntity="${genoStat.numberOfFigures}"/>
                             </a>

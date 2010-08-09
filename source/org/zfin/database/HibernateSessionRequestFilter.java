@@ -1,9 +1,9 @@
 package org.zfin.database;
 
 import org.apache.log4j.Logger;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.GBrowseHibernateUtil;
-import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateUtil;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

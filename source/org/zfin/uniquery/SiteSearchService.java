@@ -7,7 +7,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class SiteSearchService {
 
     private static final Logger LOG = Logger.getLogger(SiteSearchService.class);
     private static ZfinAnalyzer analyzer = new ZfinAnalyzer();
-    private static String indexDirectory = ZfinProperties.getIndexDirectory();
+    private static String indexDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
 
     /**
      * Check if a given query string produces at least one hit, i.e. at least one page

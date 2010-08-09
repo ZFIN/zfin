@@ -1,13 +1,8 @@
 package org.zfin.wiki;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.properties.ZfinProperties;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +13,6 @@ public class WikiConnectTest {
     @Before
     public void setUp() throws Exception {
         TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
     }
 
 

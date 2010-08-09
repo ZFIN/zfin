@@ -1,14 +1,9 @@
 package org.zfin;
 
 import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.repository.PaginationResultFactory;
@@ -17,36 +12,11 @@ import static org.junit.Assert.assertEquals;
 
 /**
  */
-public class PaginationResultTest {
-
-    private Session session ;
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-
-    }
-
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-        session = HibernateUtil.currentSession() ;
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
-
+public class PaginationResultTest extends AbstractDatabaseTest{
 
     @Test
     public void paginationWithMax(){
-        Criteria criteria = session.createCriteria(DevelopmentStage.class) ;
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(DevelopmentStage.class) ;
         criteria.addOrder(Order.asc("hoursEnd")) ;
         PaginationResult<DevelopmentStage> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(3,criteria.scroll()) ;
         assertEquals(45,paginationResult.getTotalCount()) ;
@@ -58,7 +28,7 @@ public class PaginationResultTest {
 
     @Test
     public void paginationWithFirstAndLast(){
-        Criteria criteria = session.createCriteria(DevelopmentStage.class) ;
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(DevelopmentStage.class) ;
         criteria.addOrder(Order.asc("hoursEnd")) ;
         PaginationResult<DevelopmentStage> results1 = PaginationResultFactory.createResultFromScrollableResultAndClose(1,5,criteria.scroll()) ;
         assertEquals(45,results1.getTotalCount()) ;

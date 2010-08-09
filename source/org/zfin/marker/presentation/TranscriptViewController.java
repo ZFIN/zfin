@@ -9,9 +9,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.TranscriptService;
-import org.zfin.sequence.Sequence;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 

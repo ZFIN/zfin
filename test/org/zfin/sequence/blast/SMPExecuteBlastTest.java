@@ -43,7 +43,6 @@ public class SMPExecuteBlastTest {
     @Before
     public void setUp() {
         TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
     }
 
     @After

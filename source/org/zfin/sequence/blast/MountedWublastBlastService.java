@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.File;
@@ -46,15 +47,15 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
 
         // file is already written
         // just replace the name here
-        File remoteFile = new File(ZfinProperties.getBlastServerDatabasePath() + "/" + fastaFile.getName());
+        File remoteFile = new File(ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + fastaFile.getName());
 
         // execute forced ssh copy from mounted to qrsh_available shared (BLASTSERVER . . . )
         List<String> commandList = new ArrayList<String>();
-        commandList.add(ZfinProperties.getBlastServerAccessBinary());
+        commandList.add(ZfinPropertiesEnum.SSH.value());
         commandList.add("-x");
         commandList.add(ZfinProperties.getBlastServerUserAtHost());
         commandList.add("-i");
-        commandList.add(ZfinProperties.getKeyPath() + "/" + "cp");
+        commandList.add(ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/" + "cp");
         commandList.add(fastaFile.getAbsolutePath());
         commandList.add(remoteFile.getAbsolutePath());
 
@@ -95,11 +96,11 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         List<String> commandLine = new ArrayList<String>();
 
         try {
-            commandLine.add(ZfinProperties.getBlastServerAccessBinary());
+            commandLine.add(ZfinPropertiesEnum.SSH.value());
             commandLine.add("-x");
             commandLine.add(ZfinProperties.getBlastServerUserAtHost());
             commandLine.add("-i");
-            commandLine.add(ZfinProperties.getKeyPath() + "/" + xmlBlastBean.getProgram());
+            commandLine.add(ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/" + xmlBlastBean.getProgram());
 
 
             // handle database

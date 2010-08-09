@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -162,19 +162,19 @@ public class Database {
     }
 
     public String getBackupWebHostDatabasePath(){
-        return ZfinProperties.getWebHostDatabasePath()  + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString() ;
+        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString() ;
     }
 
     public String getBackupBlastServerDatabasePath(){
-        return ZfinProperties.getBlastServerDatabasePath() + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString()  ;
+        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString()  ;
     }
 
     public String getCurrentWebHostDatabasePath(){
-        return ZfinProperties.getWebHostDatabasePath()  + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString() ;
+        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString() ;
     }
 
     public String getCurrentBlastServerDatabasePath(){
-        return ZfinProperties.getBlastServerDatabasePath() + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString()  ;
+        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString()  ;
     }
 
     public String getView(){

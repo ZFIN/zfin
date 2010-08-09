@@ -11,6 +11,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
@@ -21,19 +22,14 @@ import java.io.File;
  */
 public class TestConfiguration {
 
-    public static final String APP_SETUP_REPOSITORY_DIRECTORY = "test";
-    public static final String APP_SETUP_MASTER_FILE = "zfin-properties-test.xml";
-
     public static void configure() {
+        // setup log file
         File file = new File("test", "log4j.xml");
         DOMConfigurator.configure(file.getAbsolutePath());
-    }
 
-    /**
-     * Creates a default ApplicationProperties object.
-     */
-    public static void initApplicationProperties() {
-        ZfinProperties.init(APP_SETUP_REPOSITORY_DIRECTORY, APP_SETUP_MASTER_FILE);
+        // set tomcat temp directory
+        ZfinProperties.init();
+        System.setProperty("java.io.tmpdir", ZfinPropertiesEnum.CATALINA_BASE.value()+"/temp") ;
     }
 
     public static void setAuthenticatedUser() {

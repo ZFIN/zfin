@@ -2,7 +2,7 @@ package org.zfin.util;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -126,11 +126,7 @@ public final class FileUtil {
     }
 
     public static String getCatalinaLogDirectory() {
-        return FileUtil.createAbsolutePath(getCatalinaHomeDirectory(), "logs");
-    }
-
-    public static String getCatalinaHomeDirectory() {
-        return System.getProperty("catalina.base");
+        return FileUtil.createAbsolutePath(ZfinPropertiesEnum.CATALINA_BASE.value(), "logs");
     }
 
 
@@ -250,20 +246,20 @@ public final class FileUtil {
     }
 
     public static List<File> countApgFiles() {
-        File dir = new File(ZfinProperties.getWebRootDirectory(), "ZFIN");
+        File dir = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "ZFIN");
         File appDir = new File(dir, "APP_PAGES");
         FilenameFilter filter = new ZfinFilenameFilter(".apg");
         return getAllFiles(appDir, filter);
     }
 
     public static List<File> countJspFiles() {
-        File dir = new File(ZfinProperties.getWebRootDirectory());
+        File dir = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value());
         FilenameFilter filter = new ZfinFilenameFilter(".jsp");
         return getAllFiles(dir, filter);
     }
 
     public static List<File> countClassFiles() {
-        File web = new File(ZfinProperties.getWebRootDirectory());
+        File web = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value());
         File webInf = new File(web, WEB_INF);
         File classesDir = new File(webInf, "classes");
         File org = new File(classesDir, "org");

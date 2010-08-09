@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="allcontent" >
@@ -8,7 +8,7 @@
       <p>
       <form:form>
 
-        <a href="javascript:" onClick="window.location.href='/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">[View Person]</a>
+        <a href="javascript:" onClick="window.location.href='/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">[View Person]</a>
 
       </form:form>
       <script>document.success_form.done.focus() </script>

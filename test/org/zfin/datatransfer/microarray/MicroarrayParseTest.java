@@ -1,15 +1,17 @@
 package org.zfin.datatransfer.microarray;
 
-import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.zfin.TestConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests parsing for microarrays
@@ -17,6 +19,11 @@ import static junit.framework.Assert.assertEquals;
 public class MicroarrayParseTest {
 
     File file = new File("test/GPLTest_family.soft");
+
+    @Before
+    public void setup(){
+        TestConfiguration.configure();
+    }
 
     @Test
     public void parseLine(){
@@ -115,6 +122,7 @@ public class MicroarrayParseTest {
     @Test
     public void microarrayBeanTest(){
         try {
+            System.out.println(System.getProperty("java.io.tmpdir"));
             MicroarrayBean microarrayBean = new MicroarrayBean();
             File file = microarrayBean.getFile();
             microarrayBean.addMessage("asdfa");
@@ -131,6 +139,7 @@ public class MicroarrayParseTest {
             String retrieve2 = microarrayBean.finishReadingAndRetrieve() ;
             assertEquals(validString,retrieve2) ;
         } catch (IOException e) {
+            e.printStackTrace();
             fail(e.toString()) ;
         }
 

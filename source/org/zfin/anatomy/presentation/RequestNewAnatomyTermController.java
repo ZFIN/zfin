@@ -7,6 +7,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +54,8 @@ public class RequestNewAnatomyTermController extends SimpleFormController {
             emailContents.append(formBean.getEmail());
             emailContents.append(NEWLINE);
         }
-        mailSender.sendMail("Request for new Anatomical Structure", emailContents.toString(), ZfinProperties.getRequestNewAnatomyTermEmailAddresses());
+        mailSender.sendMail("Request for new Anatomical Structure", emailContents.toString(),
+                ZfinProperties.splitValues(ZfinPropertiesEnum.REQUEST_NEW_ANATOMY_EMAIL));
         return new ModelAndView("request-term-feedback.page", LookupStrings.FORM_BEAN, formBean);
     }
 

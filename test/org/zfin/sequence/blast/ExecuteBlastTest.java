@@ -10,7 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.orthology.Species;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -37,6 +37,7 @@ public class ExecuteBlastTest {
 
 
     static {
+        TestConfiguration.configure();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
         if (sessionFactory == null) {
@@ -47,8 +48,6 @@ public class ExecuteBlastTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
     }
 
     @After
@@ -813,8 +812,8 @@ public class ExecuteBlastTest {
     @Test
     public void testSendFASTA(){
         try {
-            logger.error("enter: "+ ZfinProperties.getWebHostDatabasePath());
-            File localFile = File.createTempFile("test",".fa",new File(ZfinProperties.getWebHostDatabasePath())) ;
+            logger.error("enter: "+ ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH);
+            File localFile = File.createTempFile("test",".fa",new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value())) ;
             logger.debug("local: " + localFile);
 //            localFile.deleteOnExit();
             BufferedWriter writer = new BufferedWriter(new FileWriter(localFile)) ;

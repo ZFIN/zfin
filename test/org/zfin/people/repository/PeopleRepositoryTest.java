@@ -1,21 +1,14 @@
 package org.zfin.people.repository;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.CuratorSession;
 import org.zfin.people.AccountInfo;
+import org.zfin.people.CuratorSession;
 import org.zfin.people.Organization;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.security.repository.UserRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -26,39 +19,17 @@ import static org.junit.Assert.*;
  * Class PeopleRepositoryTest.
  */
 
-public class PeopleRepositoryTest {
+public class PeopleRepositoryTest extends AbstractDatabaseTest{
     private static String REAL_PERSON_1_ZDB_ID = "ZDB-PERS-960805-676"; //Monte;
     private static String REAL_PERSON_2_ZDB_ID = "ZDB-PERS-970321-3"; //George S.
 
-    private static UserRepository userRepository = RepositoryFactory.getUserRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
-
 
     @Test
     public void createAndUpdateCuratorSession() {
 
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            HibernateUtil.createTransaction();
 
             Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
             Person person2 = profileRepository.getPerson(REAL_PERSON_2_ZDB_ID);
@@ -84,7 +55,7 @@ public class PeopleRepositoryTest {
         }
         finally {
             // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
 
     }
@@ -92,10 +63,8 @@ public class PeopleRepositoryTest {
     @Test
     public void createAndUpdateCuratorSessionWithNoPublication() {
 
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
+            HibernateUtil.createTransaction() ;
 
             Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
             String field = "This is my field";
@@ -116,7 +85,7 @@ public class PeopleRepositoryTest {
         }
         finally {
             // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
 
     }
@@ -130,11 +99,9 @@ public class PeopleRepositoryTest {
     public void createPersonWithAccountInfo() {
         Person person = getTestPerson();
 
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
-            session.save(person);
+            HibernateUtil.createTransaction();
+            HibernateUtil.currentSession().save(person);
 
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
@@ -142,7 +109,7 @@ public class PeopleRepositoryTest {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            tx.rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 
@@ -154,11 +121,9 @@ public class PeopleRepositoryTest {
     public void createPersonOnly() {
         Person person = getTestPerson();
         person.setAccountInfo(null);
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
-            session.save(person);
+            HibernateUtil.createTransaction();
+            HibernateUtil.currentSession().save(person);
 
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
@@ -166,7 +131,7 @@ public class PeopleRepositoryTest {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            tx.rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 

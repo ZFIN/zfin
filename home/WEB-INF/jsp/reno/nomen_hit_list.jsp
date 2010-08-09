@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ page import="org.zfin.sequence.reno.presentation.CandidateBean" %>
-
 
 
 <!-- called by candidate_view.jsp -->

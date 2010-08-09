@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="profileForm" class="org.zfin.people.presentation.ProfileBean" scope="request"/>
@@ -6,11 +6,11 @@
 <SCRIPT type="text/javascript">
 
     function doit(attr, attr_type) {
-        window.location.replace("/<%= ZfinProperties.getWebDriver()%>/webdriver?MIval=aa-persupdate.apg&OID=ZDB-PERS-000914-2&attr=" + attr + "&attr_type=" + attr_type)
+        window.location.replace("/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>/webdriver?MIval=aa-persupdate.apg&OID=ZDB-PERS-000914-2&attr=" + attr + "&attr_type=" + attr_type)
     }
 
     function subscribe(curr_value) {
-        window.location.replace("/<%= ZfinProperties.getWebDriver()%>/webdriver?MIval=aa-update-person.apg&OID=ZDB-PERS-000914-2&attr=on_dist_list&attr_type=subscription&old_value=" + curr_value)
+        window.location.replace("/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>/webdriver?MIval=aa-update-person.apg&OID=ZDB-PERS-000914-2&attr=on_dist_list&attr_type=subscription&old_value=" + curr_value)
     }
 </SCRIPT>
 
@@ -29,7 +29,7 @@
                     <zfin:authorize role="root,adminasst" entityZdbID="${profileForm.person.zdbID}" owner="true"
                                     className="org.zfin.people.Person">
                     <td>
-                        <A HREF="/<%= ZfinProperties.getWebDriver()%>?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font
+                        <A HREF="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font
                                 size=-1
                                 color=red>
                             Update this Record</font></A>
@@ -38,7 +38,7 @@
                     <zfin:authorize entityZdbID="${profileForm.person.zdbID}" owner="true"
                                     className="org.zfin.people.Person">
                     <td>
-                        <A HREF="/<%= ZfinProperties.getWebDriver()%>?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font
+                        <A HREF="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID"><font
                                 size=-1
                                 color=red>
                             Change Password</font></A>
@@ -51,7 +51,7 @@
                         </font></A>
                     </td>
                     <td>
-                        <A HREF="/<%= ZfinProperties.getWebDriver()%>?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font
+                        <A HREF="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font
                                 size=-1
                                 color=red>
                             Delete this record

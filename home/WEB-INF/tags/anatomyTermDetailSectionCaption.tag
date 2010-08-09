@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="anatomyStatistics" type="org.zfin.anatomy.AnatomyStatistics" required="true" %>

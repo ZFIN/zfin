@@ -1,21 +1,10 @@
 package org.zfin.sequence.blast;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.datatransfer.webservice.NCBIEfetch;
-import org.zfin.marker.Marker;
-import org.zfin.sequence.Defline;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.MarkerDefline;
-import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import static org.junit.Assert.*;
@@ -81,11 +70,6 @@ public class BlastNonDBTest {
 
     private final String seq6 = ">ga17 CAATATAGATAGATAGATAGATATACWBZJXlsefavgktrpdiqnfyhmcwbzjx-*ACAC   TCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATAC ACACTCCCTACATACGATA" ;
     private final String seq6result = ">ga17\nCAATATAGATAGATAGATAGATATACWBZJXlsefavgktrpdiqnfyhmcwbzjx-*ACACTCCCTACATACGATATATAGATAGATAGATAGATATATAGAGATAGATATATAGATATATAGTAGATATACACACTCCCTACATACGATA\n" ;
-
-    @Before
-    public void setUp() {
-        TestConfiguration.initApplicationProperties();
-    }
 
     @Test
     public void removeSpacesFromSequence(){

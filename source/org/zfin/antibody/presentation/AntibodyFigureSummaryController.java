@@ -10,11 +10,12 @@ import org.zfin.antibody.AntibodyService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
-import static org.zfin.repository.RepositoryFactory.*;
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 
 /**
  * Controller class that serves a figure summary page for a given antibody and labeling structure,

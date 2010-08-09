@@ -11,7 +11,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
@@ -323,7 +323,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         if (false == fastaSequence.startsWith(">")) {
             throw new BlastDatabaseException("dumped fasta sequences must begin with defline: " + fastaSequence);
         }
-        File tempFile = File.createTempFile("dump", ".fa", new File(ZfinProperties.getWebHostDatabasePath()));
+        File tempFile = File.createTempFile("dump", ".fa", new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()));
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tempFile));
 
         int endOfDefline = fastaSequence.indexOf("\n");

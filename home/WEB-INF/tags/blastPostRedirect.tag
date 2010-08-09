@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
-<%@ tag import="org.zfin.sequence.blast.Database" %>
 
 <%-- Display of marker relationships for the transcript page --%>
 
@@ -19,7 +17,6 @@
 //        alert(thisForm) ;
         //            handles internal blast here
         if(thisForm.action == '' ){
-            <%--thisForm.action='/<%= ZfinProperties.getWebDriver()%>' ;--%>
             thisForm.action='/action/blast/blast' ;
         }
         thisForm.submit() ;

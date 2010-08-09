@@ -1,11 +1,12 @@
 package org.zfin.datatransfer.microarray ;
 
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
-import org.apache.log4j.Logger;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.Date;
 
@@ -21,7 +22,8 @@ public class MicroarrayJob implements Job {
             processor.init() ;
             MicroarrayBean microarrayBean = processor.run() ;
             (new IntegratedJavaMailSender()).sendMail("microarray updates for: "+(new Date()).toString()
-                    , microarrayBean.finishReadingAndRetrieve(), ZfinProperties.getValidationOtherEmailAddresses());
+                    , microarrayBean.finishReadingAndRetrieve(),
+                    ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER));
         }
         catch(Exception e){
             // the error should already be logged

@@ -1,5 +1,4 @@
 <link rel="stylesheet" type="text/css" href="/Marker.css"/>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 

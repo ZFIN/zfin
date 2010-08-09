@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.people.presentation.ProfileBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -103,7 +103,7 @@
     }
 
     function cancel() {
-        window.location.replace("/<%=ZfinProperties.getWebDriver()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}");
+        window.location.replace("/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}");
     }
 
     function vet_pw(str) {

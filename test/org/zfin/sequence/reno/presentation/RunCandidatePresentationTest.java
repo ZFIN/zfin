@@ -2,7 +2,6 @@ package org.zfin.sequence.reno.presentation;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
@@ -27,7 +26,6 @@ public class RunCandidatePresentationTest extends EntityPresentation {
 
     @Before
     public void setUp() {
-        TestConfiguration.initApplicationProperties();
         Marker marker = new Marker();
         marker.setZdbID("ZDB-GENE-081507-1");
         marker.setAbbreviation("fgf8");

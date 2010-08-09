@@ -1,10 +1,3 @@
-<%@ tag import="org.zfin.anatomy.AnatomyItem" %>
-<%@ tag import="org.zfin.anatomy.DevelopmentStage" %>
-<%@ tag import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
-<%@ tag import="org.zfin.anatomy.presentation.StagePresentation" %>
-<%@ tag import="org.zfin.framework.presentation.SectionVisibility" %>
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
-<%@ tag import="static org.zfin.framework.presentation.SectionVisibility.Action.SHOW_ALL" %>
 <%
     /*
     This tag is used to expand those sections that are marked as visible in the form bean.

@@ -1,6 +1,8 @@
 package org.zfin.framework.mail;
 
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
+
 
 /**
  */
@@ -12,6 +14,6 @@ public abstract class AbstractZfinMailSender implements MailSender {
 
 
     public String prependSubject(String initialSubject) {
-        return "From [" + System.getenv("DOMAIN_NAME") + "] on [" + System.getenv("HOST") + "]: " + initialSubject;
+        return "From [" + ZfinPropertiesEnum.DOMAIN_NAME + "] on [" + ZfinPropertiesEnum.HOSTNAME + "]: " + initialSubject;
     }
 }

@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="marker" type="org.zfin.marker.Marker"

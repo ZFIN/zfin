@@ -45,6 +45,20 @@ PREFIX:
 <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 <META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
 
+        <?MIVAR>
+        <script type="text/javascript">
+        var curationProperties = {
+        zdbID : "$OID",
+        moduleType: "FEATURE_CURATION",
+        debug: "false"
+        }
+        </script>
+        <?/MIVAR>
+
+        <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+        <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+
+
 <?MIVAR NAME=featcur_mrkr_type><?/MIVAR>
 <?MICOMMENT>This comma delimited list of markers is created for use in the 
 FILTERs section
@@ -111,19 +125,6 @@ FILTERs section
 	  =  Feature creation  =
 	  =================
 <?/MICOMMENT>
-
-        <?MIVAR>
-        <script type="text/javascript">
-        var curationProperties = {
-        zdbID : "$OID",
-        moduleType: "FEATURE_CURATION",
-        debug: "false"
-        }
-        </script>
-        <?/MIVAR>
-
-        <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
-        <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
         <div id="directAttributionName"></div>
 

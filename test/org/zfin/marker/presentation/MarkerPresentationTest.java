@@ -2,7 +2,6 @@ package org.zfin.marker.presentation;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 
@@ -18,7 +17,6 @@ public class MarkerPresentationTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.initApplicationProperties();
         marker = new Marker();
         marker.setZdbID("ZDB-GENE-081507-1");
         marker.setAbbreviation("fgf8");

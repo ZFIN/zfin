@@ -1,18 +1,21 @@
 package org.zfin.datatransfer.microarray ;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTP;
+import org.apache.log4j.Logger;
 
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.net.SocketException;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
-import java.io.*;
-import java.text.NumberFormat;
-import java.net.SocketException;
 
 
 public abstract class AbstractGEOSoftProcessor implements SoftParser{

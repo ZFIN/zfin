@@ -1,7 +1,6 @@
 package org.zfin.marker;
 
 import org.junit.Test;
-import org.zfin.antibody.Antibody;
 import org.zfin.marker.presentation.MergeMarkerValidator;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.presentation.RelatedMarkerDisplay;
@@ -10,9 +9,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests for org.zfin.marker.MarkerService

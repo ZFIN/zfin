@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="clone" type="org.zfin.marker.Clone"

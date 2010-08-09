@@ -1,5 +1,4 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
-<%@ page import="org.zfin.framework.presentation.CurationTestController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 

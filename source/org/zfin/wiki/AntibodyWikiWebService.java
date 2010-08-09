@@ -16,6 +16,7 @@ import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
@@ -34,7 +35,8 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     // from the "antibody" template in the antibody space
     // todo: move to a file
-    private final static File ANTIBODY_TEMPLATE_FILE = FileUtil.createFileFromStrings(ZfinProperties.getWebRootDirectory(), "WEB-INF", "conf", "antibody.template");
+    private final static File ANTIBODY_TEMPLATE_FILE =
+            FileUtil.createFileFromStrings(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(),"WEB-INF","conf","antibody.template");
     private String antibodyTemplateData = null;
 
 

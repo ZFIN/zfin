@@ -10,7 +10,6 @@ import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;

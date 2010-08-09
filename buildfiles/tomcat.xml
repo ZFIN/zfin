@@ -85,60 +85,60 @@
                 <exclude name="Catalina/**"/>
             </fileset>
             <filterset>
-                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
-                <filter token="DBNAME" value="${dbname}"/>
-                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
-                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
-                <filter token="SECUREPORT" value="${secureport}"/>
-                <filter token="DOMAIN-NAME" value="${domain-name}"/>
+                <filter token="TARGETROOT" value="${TARGETROOT}"/>
+                <filter token="DBNAME" value="${DBNAME}"/>
+                <filter token="SERVER-SHUTDOWN-PORT" value="${SHUTDOWNPORT}"/>
+                <filter token="Non-SECUREPORT" value="${NON_SECUREPORT}"/>
+                <filter token="SECUREPORT" value="${SECUREPORT}"/>
+                <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
             </filterset>
         </copy>
         <!--        Copy the  context files-->
         <copy todir="${domain-conf}">
             <fileset dir="${template-dir}/conf/Catalina/mutant"/>
             <filterset>
-                <filter token="TARGETROOT" value="${env.TARGETROOT}"/>
-                <filter token="DBNAME" value="${dbname}"/>
-                <filter token="SERVER-SHUTDOWN-PORT" value="${shutdownport}"/>
-                <filter token="Non-SECUREPORT" value="${non-secureport}"/>
-                <filter token="SECUREPORT" value="${secureport}"/>
-                <filter token="SQLHOSTSHOST" value="${sqlhosts-host}"/>
-                <filter token="INFORMIXSERVER" value="${informixserver}"/>
-                <filter token="INFORMIXPORT" value="${informixport}"/>
-                <filter token="DOMAIN-NAME" value="${domain-name}"/>
-                <filter token="GBROWSE_DB" value="${env.GBROWSE_DB}"/>
-                <filter token="GBROWSE_DB_HOST" value="${env.GBROWSE_DB_HOST}"/>
+                <filter token="TARGETROOT" value="${TARGETROOT}"/>
+                <filter token="DBNAME" value="${DBNAME}"/>
+                <filter token="SERVER-SHUTDOWN-PORT" value="${SHUTDOWNPORT}"/>
+                <filter token="Non-SECUREPORT" value="${NON_SECUREPORT}"/>
+                <filter token="SECUREPORT" value="${SECUREPORT}"/>
+                <filter token="SQLHOSTSHOST" value="${SQLHOSTS_HOST}"/>
+                <filter token="INFORMIXSERVER" value="${INFORMIXSERVER}"/>
+                <filter token="INFORMIXPORT" value="${INFORMIX_PORT}"/>
+                <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
+                <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
+                <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
             </filterset>
         </copy>
         <antcall target="set-catalina-base-perms"/>
     </target>
 
     <target name="set-catalina-base-perms"  if="isinformix"  description="Sets permissions for tomcat">
-        <echo message="chmod a+rX for ${env.CATALINA_BASE}"/>
+        <echo message="chmod a+rX for ${CATALINA_BASE}"/>
         <chmod perm="a+rX" type="both" verbose="true">
-            <fileset dir="${env.CATALINA_BASE}"/>
+            <fileset dir="${CATALINA_BASE}"/>
         </chmod>
 
-        <echo message="chmod a+rwX for ${env.CATALINA_BASE}/work"/>
+        <echo message="chmod a+rwX for ${CATALINA_BASE}/work"/>
         <chmod perm="a+rwX" type="both" verbose="true">
-            <fileset dir="${env.CATALINA_BASE}/work"/>
+            <fileset dir="${CATALINA_BASE}/work"/>
         </chmod>
         <echo message="***********************************************************************"/>
         <echo message=" As yourself, please do: "/>
-        <echo message="    sudo chown -R zfishweb ${env.CATALINA_BASE}/logs "/>
-        <echo message="    sudo -u zfishweb touch ${env.CATALINA_BASE}/logs/catalina.out "/>
+        <echo message="    sudo chown -R zfishweb ${CATALINA_BASE}/logs "/>
+        <echo message="    sudo -u zfishweb touch ${CATALINA_BASE}/logs/catalina.out "/>
         <echo message="************************************************************************"/>
     </target>
 
     <target name="create-tomcat-dirs" description="Creates tomcat directories">
-        <mkdir dir="${env.CATALINA_BASE}"/>
-        <mkdir dir="${env.CATALINA_BASE}/conf"/>
-        <mkdir dir="${env.CATALINA_BASE}/conf/Catalina"/>
+        <mkdir dir="${CATALINA_BASE}"/>
+        <mkdir dir="${CATALINA_BASE}/conf"/>
+        <mkdir dir="${CATALINA_BASE}/conf/Catalina"/>
         <mkdir dir="${domain-conf}"/>
-        <mkdir dir="${env.CATALINA_BASE}/logs"/>
-        <mkdir dir="${env.CATALINA_BASE}/webapps"/>
-        <mkdir dir="${env.CATALINA_BASE}/work"/>
-        <mkdir dir="${env.CATALINA_BASE}/temp"/>
+        <mkdir dir="${CATALINA_BASE}/logs"/>
+        <mkdir dir="${CATALINA_BASE}/webapps"/>
+        <mkdir dir="${CATALINA_BASE}/work"/>
+        <mkdir dir="${CATALINA_BASE}/temp"/>
     </target>
 
     <target name="jsp-compile" description="Compiles jsp files using jspc">
@@ -148,13 +148,13 @@
             <classpath id="jspc.classpath">
                 <path refid="classpath"/>
                 <pathelement location="${pre-web-inf}"/>
-                <fileset dir="${env.CATALINA_HOME}/bin">
+                <fileset dir="${CATALINA_HOME}/bin">
                     <include name="*.jar"/>
                 </fileset>
-                <fileset dir="${env.CATALINA_HOME}/server/lib">
+                <fileset dir="${CATALINA_HOME}/server/lib">
                     <include name="*.jar"/>
                 </fileset>
-                <fileset dir="${env.CATALINA_HOME}/common/lib">
+                <fileset dir="${CATALINA_HOME}/common/lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>

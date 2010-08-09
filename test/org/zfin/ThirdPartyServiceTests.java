@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.datatransfer.doi.DOITest;
 import org.zfin.datatransfer.microarray.MicroarrayServiceTest;
-import org.zfin.sequence.PostForeignTest;
 import org.zfin.sequence.blast.BlastServiceTest;
 import org.zfin.wiki.WikiConnectTest;
 

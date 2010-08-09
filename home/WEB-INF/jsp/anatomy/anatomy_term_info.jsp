@@ -15,6 +15,7 @@
             background: transparent url(/images/external.png) no-repeat scroll right center ;
             padding-right: 13px;
         }
+
         a.close_link {
             color:#333333;
             font-family:sans-serif;

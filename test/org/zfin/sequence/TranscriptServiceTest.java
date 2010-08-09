@@ -1,56 +1,23 @@
 package org.zfin.sequence;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.HibernateSequenceRepository;
-import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
 
-public class TranscriptServiceTest {
+public class TranscriptServiceTest extends AbstractDatabaseTest {
 
     private final static Logger logger = Logger.getLogger(SequenceRepositoryTest.class) ;
-
-    private static SequenceRepository repository ;
-
-    static{
-        if(repository==null){
-            repository = new HibernateSequenceRepository() ;
-        }
-
-        SessionFactory sessionFactory=HibernateUtil.getSessionFactory();
-
-        if(sessionFactory == null){
-            new HibernateSessionCreator() ;
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-    @After
-    public void closeSession(){
-        HibernateUtil.closeSession();
-    }
-
-
 
     @Test
     public void relatedTranscriptDisplayTest() {

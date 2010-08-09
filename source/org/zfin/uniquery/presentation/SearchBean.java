@@ -10,7 +10,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.ReplacementZdbID;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
@@ -57,10 +57,10 @@ public class SearchBean extends PaginationBean {
 
     // ***********************************
 
-    private static String indexDirectory = ZfinProperties.getIndexDirectory();
+    private static String indexDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
-    public static final String WEBDRIVER_LOCATION = System.getenv("WEBDRIVER_LOC");
+    public static final String WEBDRIVER_LOCATION = ZfinPropertiesEnum.WEBDRIVER_LOC.value() ;
     public static final String ALTERNATIVE_SEARCH_ID = "alternative-search";
     public static final String ALIAS_TERM_ID = "alias-term";
 

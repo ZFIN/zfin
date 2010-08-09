@@ -1,22 +1,19 @@
 package org.zfin.marker;
 
 import org.junit.Test;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.*;
-import org.zfin.gwt.root.ui.StageSelector;
+import org.zfin.expression.ExpressionAssay;
+import org.zfin.expression.ExpressionExperiment;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 
-import static org.junit.Assert.*;
-
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  */

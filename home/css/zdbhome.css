@@ -6,7 +6,7 @@
 }
 
 #zdbhome-container {
-  background: <!--|ZDBHOME_BACKGROUND|-->; 
+  background: @ZDBHOME_BACKGROUND@; 
   padding: .5em; 
 }
 

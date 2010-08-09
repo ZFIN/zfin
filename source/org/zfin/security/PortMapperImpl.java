@@ -2,7 +2,7 @@ package org.zfin.security;
 
 import org.acegisecurity.util.PortMapper;
 import org.springframework.util.Assert;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class PortMapperImpl implements PortMapper {
     }
 
     public Integer lookupHttpPort(Integer httpsPort) {
-        int insecurePort = ZfinProperties.getInsecureServerPort();
+        int insecurePort = Integer.valueOf(ZfinPropertiesEnum.APACHE_PORT.value());
         if (insecurePort != 0)
             return insecurePort;
 
@@ -54,7 +54,7 @@ public class PortMapperImpl implements PortMapper {
     }
 
     public Integer lookupHttpsPort(Integer httpPort) {
-        int securePort = ZfinProperties.getSecureServerPort();
+        int securePort = Integer.valueOf(ZfinPropertiesEnum.APACHE_PORT_SECURE.value());
         if (securePort != 0)
             return securePort;
         return httpsPortMappings.get(httpPort);

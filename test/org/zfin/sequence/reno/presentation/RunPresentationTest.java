@@ -2,7 +2,6 @@ package org.zfin.sequence.reno.presentation;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.Run;
 
@@ -14,7 +13,6 @@ public class RunPresentationTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.initApplicationProperties();
         run = new RedundancyRun() ;
         run.setZdbID("ZDB-RUN-090227278-0");
         run.setName("Test Run");

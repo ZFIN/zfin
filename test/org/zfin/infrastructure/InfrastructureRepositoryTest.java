@@ -3,23 +3,17 @@ package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
-import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.TermRelationship;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -36,37 +30,14 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
  * Class InfrastructureRepositoryTest.
  */
 
-public class InfrastructureRepositoryTest {
+public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
-    private static Session session;
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator(false);
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-        session = HibernateUtil.currentSession();
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
 
 
     //@Test
-
     public void persistActiveData() {
-        Transaction tx = null;
-
         try {
-            tx = session.beginTransaction();
+            HibernateUtil.createTransaction();
 
             String testZdbID = "ZDB-GENE-123";
             ActiveData testActiveData = getInfrastructureRepository().getActiveData(testZdbID);
@@ -81,7 +52,7 @@ public class InfrastructureRepositoryTest {
             fail("failed");
             e.printStackTrace();
         } finally {
-            tx.rollback();
+            HibernateUtil.rollbackTransaction();
         }
 
     }
@@ -90,7 +61,7 @@ public class InfrastructureRepositoryTest {
     public void persistRecordAttribution() {
 
         try {
-            session.beginTransaction();
+            HibernateUtil.createTransaction();
             String dataZdbID = "ZDB-DALIAS-uuiouy";
             String sourceZdbID = "ZDB-PUB-000104-1";
             getInfrastructureRepository().insertActiveData(dataZdbID);
@@ -107,7 +78,7 @@ public class InfrastructureRepositoryTest {
         }
         finally {
             // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 

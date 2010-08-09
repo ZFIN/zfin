@@ -1,19 +1,16 @@
 package org.zfin.expression.repository;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.MarkerExpressionInstance;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
@@ -37,32 +34,16 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test the ExpressionRepository class.
  */
-public class ExpressionRepositoryTest {
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-        TestConfiguration.setAuthenticatedUser();
-        // TODO: this should load a specific database instance for testing purposes
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
+public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
     private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private PublicationRepository pubRep = RepositoryFactory.getPublicationRepository();
+
+    @Before
+    public void setUp() {
+        TestConfiguration.setAuthenticatedUser();
+    }
 
     @Test
     public void getExperimentByID() {

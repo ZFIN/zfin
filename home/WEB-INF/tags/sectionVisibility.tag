@@ -1,9 +1,4 @@
-<%@ tag import="org.zfin.anatomy.AnatomyItem" %>
-<%@ tag import="org.zfin.anatomy.DevelopmentStage" %>
-<%@ tag import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
-<%@ tag import="org.zfin.anatomy.presentation.StagePresentation" %>
 <%@ tag import="org.zfin.framework.presentation.SectionVisibility" %>
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
 <%
     /*
     This tag is used to display show/hide links on a given section.

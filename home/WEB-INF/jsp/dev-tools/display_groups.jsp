@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

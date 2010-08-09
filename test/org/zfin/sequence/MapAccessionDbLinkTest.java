@@ -2,12 +2,8 @@ package org.zfin.sequence;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -35,7 +31,7 @@ import static org.junit.Assert.*;
 /**
  * This class tests setting AccessionLink
  */
-public class MapAccessionDbLinkTest {
+public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
     private static final Logger logger = Logger.getLogger(MapAccessionDbLinkTest.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
@@ -52,25 +48,6 @@ public class MapAccessionDbLinkTest {
     private static String CDNA_NAME = "MGC:test";
     private static String GENE_NAME = "renogene";
     private static String TEST_DEFLINE = "defline jam";
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
 
 
     /**

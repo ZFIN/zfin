@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
  * Based on HibernateUtil, but greatly simplified since our GBrowse
@@ -13,7 +13,6 @@ import org.zfin.properties.ZfinProperties;
 
 public class GBrowseHibernateUtil {
 
-    private static final String INPUT_CONFIGURATION_DIRECTORY = "CONFIGURATION_DIRECTORY";
     private static String FILE_SEP = System.getProperty("file.separator");
 
 
@@ -30,8 +29,6 @@ public class GBrowseHibernateUtil {
             if (gbrowseSessionFactory != null) {
                 throw new RuntimeException("GBrowse SessionFactory already instatiated.");
             }
-
-            String configDirectory = System.getProperty(INPUT_CONFIGURATION_DIRECTORY);
 
             Configuration config = new Configuration().configure("hibernate-gbrowse.cfg.xml");
 
@@ -54,15 +51,13 @@ public class GBrowseHibernateUtil {
                 throw new RuntimeException("GBrowse SessionFactory already instatiated.");
             }
 
-            String configDirectory = System.getProperty(INPUT_CONFIGURATION_DIRECTORY);
-
             Configuration config = new Configuration();
 
 
-            String mysqlServer = ZfinProperties.getGBrowseDBHost();
+            String mysqlServer = ZfinPropertiesEnum.GBROWSE_DB_HOST.value();
             String mysqlPort = "3306"; //the default, we're unlikely to stray from it
 
-            String mysqlDB = ZfinProperties.getGBrowseDB();
+            String mysqlDB = ZfinPropertiesEnum.GBROWSE_DB.value();
             String connectionString = "jdbc:mysql://" + mysqlServer + ":" + mysqlPort + "/" + mysqlDB;
             log.debug(connectionString);
             config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
@@ -75,7 +70,7 @@ public class GBrowseHibernateUtil {
 
             config.setProperty("hibernate.show_sql", "true");
             config.setProperty("hibernate.format_sql", "true");
-            config.addFile(configDirectory + FILE_SEP + "gbrowse.hbm.xml");
+            config.addFile(ZfinPropertiesEnum.HIBERNATE_CONFIGURATION_DIRECTORY+ FILE_SEP + "gbrowse.hbm.xml");
 
 
             gbrowseSessionFactory = config.buildSessionFactory();

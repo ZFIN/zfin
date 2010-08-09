@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.uniquery.presentation.SearchBean" scope="request"/>

@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.expression.presentation.ExpressionSummaryBean" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

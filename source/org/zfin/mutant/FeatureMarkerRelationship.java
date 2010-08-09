@@ -2,7 +2,6 @@ package org.zfin.mutant;
 
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;

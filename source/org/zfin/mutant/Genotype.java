@@ -1,9 +1,5 @@
 package org.zfin.mutant;
 
-import org.apache.commons.collections.CollectionUtils;
-
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**

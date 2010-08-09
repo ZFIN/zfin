@@ -41,6 +41,7 @@ PREFIX:   figcur_
         </script>
         <?/MIVAR>
 
+        <div id="directAttributionName"></div>
 
 
 <a name=figure>

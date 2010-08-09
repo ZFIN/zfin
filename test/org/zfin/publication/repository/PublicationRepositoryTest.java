@@ -1,10 +1,8 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -12,7 +10,6 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureService;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -37,23 +34,11 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
 
-public class PublicationRepositoryTest {
+public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
 
 
     //    @Test

@@ -15,6 +15,7 @@ import org.zfin.mutant.Feature;
 import org.zfin.mutant.FeatureAssay;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.OrthoEvidence;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -24,7 +25,9 @@ import org.zfin.sequence.reno.Run;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Service validates java Enumerations versus their database counterparts for controlled vocabulary clases.
@@ -35,6 +38,7 @@ public class EnumValidationService {
     protected static String DATABASE_VALUE_NOT_FOUND_IN_JAVA = "Database value not mapped to java enum: ";
     protected static String DOMAIN = "Domain: ";
     protected static String DOMAIN_NAME = "DOMAIN_NAME";
+    private final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private static final Logger logger = Logger.getLogger(EnumValidationService.class);
 
@@ -340,10 +344,10 @@ public class EnumValidationService {
         for (String enumString : enumList) {
             if (!databaseList.contains(enumString)) {
                 String message = "Enum " + enumString + " is present in the code but not in the database.";
-                String reason = System.getProperty("line.separator") + "*******************************************************************************";
-                reason += System.getProperty("line.separator");
-                reason += "ENUMERATION VALIDATION REPORT: " + System.getProperty("line.separator") + message;
-                reason += System.getProperty("line.separator") + "*******************************************************************************";
+                String reason = LINE_SEPARATOR + "*******************************************************************************";
+                reason += LINE_SEPARATOR;
+                reason += "ENUMERATION VALIDATION REPORT: " + LINE_SEPARATOR + message;
+                reason += LINE_SEPARATOR + "*******************************************************************************";
                 logger.warn(reason);
                 report.append(message);
             }
@@ -373,10 +377,10 @@ public class EnumValidationService {
 
         String message = getCollectionDifferenceReport(enumList, databaseStringList, enumType.getClass());
         if (message != null) {
-            String reason = System.getProperty("line.separator") + "*******************************************************************************";
-            reason += System.getProperty("line.separator");
-            reason += "ENUMERATION VALIDATION REPORT: " + System.getProperty("line.separator") + message;
-            reason += System.getProperty("line.separator") + "*******************************************************************************";
+            String reason = LINE_SEPARATOR + "*******************************************************************************";
+            reason += LINE_SEPARATOR;
+            reason += "ENUMERATION VALIDATION REPORT: " + LINE_SEPARATOR + message;
+            reason += LINE_SEPARATOR + "*******************************************************************************";
             logger.warn(reason);
             if (report == null)
                 report = new StringBuilder();
@@ -409,9 +413,9 @@ public class EnumValidationService {
             if (enumList != null && enumList.contains(name)) {
                 sb.append(ENUM_NOT_FOUND_IN_DATABASE);
                 sb.append(name);
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
                 sb.append("You may wish to add " + name + " to the database. The enumeration");
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
             }
         }
         // add unmatched databaseList entries to report
@@ -419,13 +423,13 @@ public class EnumValidationService {
             if (databaseList != null && databaseList.contains(name)) {
                 sb.append(DATABASE_VALUE_NOT_FOUND_IN_JAVA);
                 sb.append(name);
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
                 sb.append("You may wish to add " + name + " to the class: " + clazz.getName());
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
             }
         }
 
-        String domain = System.getenv(DOMAIN_NAME);
+        String domain = ZfinPropertiesEnum.DOMAIN_NAME.value() ;
         if (sb.length() > 0) {
             if (domain != null) {
                 sb.insert(0, DOMAIN + domain + "\n");

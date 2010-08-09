@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
@@ -39,7 +39,7 @@
                         </c:if>
                         <!-- If only one figure available go directly to the figure page -->
                         <c:if test="${antibodyStats.numberOfFigures == 1}">
-                            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-fxfigureview.apg&OID=${antibodyStats.figure.zdbID}'>
+                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${antibodyStats.figure.zdbID}'>
                                 <zfin2:figureOrTextOnlyLink figure="${antibodyStats.figure}"
                                                             integerEntity="${antibodyStats.numberOfFigures}"/>
                             </a>

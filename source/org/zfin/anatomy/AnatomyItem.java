@@ -3,8 +3,10 @@ package org.zfin.anatomy;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.ontology.*;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 

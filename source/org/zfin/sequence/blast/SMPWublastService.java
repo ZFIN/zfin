@@ -3,7 +3,7 @@ package org.zfin.sequence.blast;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class SMPWublastService extends WebHostWublastBlastService {
         List<String> commandLine = new ArrayList<String>();
 
         try {
-            commandLine.add(ZfinProperties.getBlastAllBinary()) ;
+            commandLine.add(ZfinPropertiesEnum.WEBHOST_BLASTALL.value()) ;
             commandLine.add("-p") ;
             commandLine.add(xmlBlastBean.getProgram()) ;
 
@@ -230,7 +230,7 @@ public class SMPWublastService extends WebHostWublastBlastService {
         StringBuilder sb = new StringBuilder("");
         while(iter.hasNext()){
             Database database = iter.next();
-            sb.append(ZfinProperties.getWebHostDatabasePath()).append("/Current/").append(database.getAbbrev()) ;
+            sb.append(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH).append("/Current/").append(database.getAbbrev()) ;
             if(iter.hasNext()){
                 sb.append(" ") ;
             }

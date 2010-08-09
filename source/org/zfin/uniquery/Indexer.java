@@ -782,7 +782,8 @@ public class Indexer implements Runnable {
             } else if (argv[i].equals("-categoryDir")) {
                 initSiteSearchCategories(argv[++i]);
             } else if (argv[i].equals("-zfinPropertiesDir")) {
-                ZfinProperties.init(argv[++i], "zfin-properties.xml");
+//                ZfinProperties.init(argv[++i], "zfin-properties.xml");
+                ZfinProperties.init(argv[++i] );
             } else if (argv[i].equals("-l")) {
                 StringBuffer buf = new StringBuffer(argv[++i]);
                 if (buf.charAt(buf.length() - 1) == '/') {

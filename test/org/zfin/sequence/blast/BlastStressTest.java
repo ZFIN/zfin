@@ -41,7 +41,6 @@ public abstract class BlastStressTest {
     @Before
     public void setUp() {
         TestConfiguration.configure();
-        TestConfiguration.initApplicationProperties();
 
         xmlBlastBean = new XMLBlastBean() ;
         xmlBlastBean.setProgram("blastn");

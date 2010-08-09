@@ -8,9 +8,6 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
 
-    <!--
-        <property name="uniqueryDir" value="${env.TARGETROOT}/server_apps/quicksearch"/>
-    -->
     <property name="uniqueryDir" value="${basedir}/server_apps/quicksearch"/>
     <property name="newIndexDir" value="${uniqueryDir}/new_indexes"/>
     <property name="oldIndexDir" value="${uniqueryDir}/old_indexes"/>

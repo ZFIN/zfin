@@ -2,13 +2,8 @@ package org.zfin.sequence.reno;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.people.Person;
@@ -30,39 +25,16 @@ import static org.junit.Assert.*;
  * Class RenoRepositoryTest.
  */
 
-public class RenoRepositoryTest {
+public class RenoRepositoryTest extends AbstractDatabaseTest {
 
-    private static RenoRepository repository;
-
-    static {
-        if (repository == null) {
-            repository = RepositoryFactory.getRenoRepository();
-        }
-
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
+    private static RenoRepository repository= RepositoryFactory.getRenoRepository();;
 
 
     @Test
     // Test that there are Redundancy runs in the database
     // Test the test redundancy run
     public void getRedundancyRuns() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
+        HibernateUtil.createTransaction();
         try {
             List<RedundancyRun> redundancyRuns = repository.getRedundancyRuns();
             int oldSize = redundancyRuns.size();
@@ -87,7 +59,7 @@ public class RenoRepositoryTest {
         }
         finally {
             // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
+            HibernateUtil.rollbackTransaction();
         }
     }
 

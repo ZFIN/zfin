@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <TABLE width="100%">
@@ -35,7 +35,7 @@
             <zfin:abbrev entity="${marker.markerStat.gene}"/>
         </TD>
         <td>
-            <a href='/<%= ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg&query_results=true&gene_name=<c:out value="${marker.markerStat.gene.abbreviation}" />&xpatsel_geneZdbId=<c:out value="${marker.markerStat.gene.zdbID}" />'>
+            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&gene_name=<c:out value="${marker.markerStat.gene.abbreviation}" />&xpatsel_geneZdbId=<c:out value="${marker.markerStat.gene.zdbID}" />'>
                 <c:out value="${marker.markerStat.numberOfFigures}"/>
             </a>
         </TD>

@@ -3,16 +3,10 @@ package org.zfin.sequence;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.HibernateSequenceRepository;
-import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -24,34 +18,9 @@ import static org.junit.Assert.*;
  * Class SequenceRepositoryTest.
  */
 
-public class DisplayGroupRepositoryTest {
+public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(DisplayGroupRepositoryTest.class);
-
-    private static SequenceRepository repository;
-
-    static {
-        if (repository == null) {
-            repository = new HibernateSequenceRepository();
-        }
-
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
-
 
     @Test
     public void testDisplayGroupMapping() {

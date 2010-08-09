@@ -1,12 +1,9 @@
 package org.zfin.util;
 
-import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.MutantFigureStage;
@@ -16,27 +13,12 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Test class for service class.
  */
-public class BODtoConversionServiceTest {
+public class BODtoConversionServiceTest extends AbstractDatabaseTest{
 
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
         TestConfiguration.setAuthenticatedUser();
-        // TODO: this should load a specific database instance for testing purposes
-
-    }
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
     }
 
     @Test

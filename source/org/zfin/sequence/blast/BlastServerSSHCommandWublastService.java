@@ -4,6 +4,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.ByteArrayOutputStream;
@@ -48,7 +49,7 @@ public final class BlastServerSSHCommandWublastService extends BlastServerSGEWub
      */
     protected List<String> getPrefixCommands() {
         if (prefixCommands.size() == 0) {
-            prefixCommands.add(ZfinProperties.getBlastServerAccessBinary());
+            prefixCommands.add(ZfinPropertiesEnum.SSH.value());
             prefixCommands.add(ZfinProperties.getBlastServerUserAtHost());
             prefixCommands.add("-i");
         }
@@ -57,7 +58,7 @@ public final class BlastServerSSHCommandWublastService extends BlastServerSGEWub
 
     @Override
     public String getKeyPath() {
-        return ZfinProperties.getKeyPath() + "/";    //To change body of overridden methods use File | Settings | File Templates.
+        return ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/";    //To change body of overridden methods use File | Settings | File Templates.
     }
 
 

@@ -2,9 +2,10 @@ package org.zfin.datatransfer.doi;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.Date;
 
@@ -24,7 +25,7 @@ public class UpdateDOIJob extends QuartzJobBean {
 
             if (reportAll == true || driver.isDoisUpdated()) {
                 (new IntegratedJavaMailSender()).sendMail("doi updates for: " + (new Date()).toString()
-                        , driver.getMessage().toString(), ZfinProperties.getValidationOtherEmailAddresses());
+                        , driver.getMessage().toString(), ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER));
             }
         }
         catch (Exception e) {
