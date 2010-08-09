@@ -27,8 +27,8 @@ function ImageBox() {
 
     this.IMG_URL = "/imageLoadUp/";
     this.POPUP_URL = "/action/publication/image-popup?image.zdbID=";
-    this.FIG_URL = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=";
-    this.IMG_PAGE_URL = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&image_table=image&OID=";
+    this.FIG_URL = "/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-fxfigureview.apg&OID=";
+    this.IMG_PAGE_URL = "/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-imageview.apg&image_table=image&OID=";
 
     this.max_images = 100; //a default that should get set by the page
 

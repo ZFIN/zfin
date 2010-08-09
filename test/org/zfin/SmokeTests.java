@@ -7,6 +7,7 @@ import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
+import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 
@@ -18,6 +19,7 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 //        MarkerViewSmokeTest.class,
         SimpleSmokeTest.class,
         AnatomySmokeTest.class,
+        LookupSmokeTest.class,
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
         ExpressionSmokeTest.class,
         AntibodySmokeTest.class,

@@ -1,7 +1,7 @@
 document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
 document.write("   <div id=\"footerlinks\"> ");
-document.write("     <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg\">Home</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-ZDB_home.apg\">Home</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/ZFIN/misc_html/tips.html\" title=\"Frequently asked questions\">Help and Tips</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/glossary.html\" title=\"Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics\">Glossary</A><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/news/committees.html\" title=\"Committees and working groups\">Committees</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");

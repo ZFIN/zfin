@@ -9,6 +9,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Date;
@@ -84,7 +85,7 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
 
     public void login() throws Exception {
         webClient.setRedirectEnabled(true);
-        HtmlPage page = webClient.getPage("http://" + domain + "/action/login");
+        HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/login");
         HtmlForm loginForm = page.getFormByName("login");
         HtmlInput nameField = loginForm.getInputByName("j_username");
         nameField.setValueAttribute(person.getAccountInfo().getLogin());
