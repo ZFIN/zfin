@@ -1,19 +1,10 @@
 package org.zfin.gwt.lookup.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.Dictionary;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.TermStatus;
-import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.JavaScriptPropertyReader;
-import org.zfin.gwt.root.util.LookupRPCService;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 
 /**

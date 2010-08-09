@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.ontology.presentation.MatchingTermComparator;
-
 /**
  * COnvenience class to hold matching terms, the match type and the term alias if the match
  * was on an alias.

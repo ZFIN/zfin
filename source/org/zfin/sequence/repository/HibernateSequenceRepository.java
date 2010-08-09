@@ -14,7 +14,6 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;

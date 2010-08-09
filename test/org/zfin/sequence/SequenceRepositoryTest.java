@@ -7,12 +7,10 @@ import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

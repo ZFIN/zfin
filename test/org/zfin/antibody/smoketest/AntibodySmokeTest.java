@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.zfin.AbstractSmokeTest;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 

@@ -7,16 +7,17 @@ import net.sourceforge.jwebunit.util.TestingEngineRegistry;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
  * This class uses the more raw HtmlUnit protocols.
  */
 public class AbstractSmokeTest extends WebTestCase {
 
-    protected String mutant = System.getenv("MUTANT_NAME");
-//    protected String mutant = "ogon" ;
-    protected String domain = System.getenv("DOMAIN_NAME");
-//    protected String domain = "ogon.zfin.org" ;
+    private static boolean initDatabase = false ;
+
+    protected String mutant ;
+    protected String domain ;
     protected WebClient webClient;
 
     protected final WebClient[] curationWebClients = {
@@ -33,7 +34,7 @@ public class AbstractSmokeTest extends WebTestCase {
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
     };
 
-    static {
+    private void initDatabase(){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator(false);
@@ -43,6 +44,12 @@ public class AbstractSmokeTest extends WebTestCase {
     @Override
     public void setUp() {
         TestConfiguration.configure();
+        domain = ZfinPropertiesEnum.DOMAIN_NAME.toString() ;
+        mutant = ZfinPropertiesEnum.MUTANT_NAME.toString() ;
+        if (!initDatabase){
+            initDatabase();
+        }
+        initDatabase = true ;
         setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
     }
 

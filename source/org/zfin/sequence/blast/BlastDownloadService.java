@@ -8,7 +8,10 @@ import org.biojava.bio.seq.db.HashSequenceDB;
 import org.biojava.bio.seq.db.SequenceDB;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.sequence.ReferenceDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

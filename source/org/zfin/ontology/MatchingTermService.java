@@ -3,7 +3,6 @@ package org.zfin.ontology;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.MatchingTermComparator;
-import java.util.regex.Pattern;
 
 import java.util.Iterator;
 import java.util.Set;

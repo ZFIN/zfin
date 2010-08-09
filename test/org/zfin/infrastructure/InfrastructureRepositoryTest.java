@@ -3,7 +3,6 @@ package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;

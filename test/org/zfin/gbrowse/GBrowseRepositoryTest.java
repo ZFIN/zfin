@@ -2,7 +2,6 @@ package org.zfin.gbrowse;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;

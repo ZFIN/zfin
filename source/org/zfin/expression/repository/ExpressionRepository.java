@@ -9,7 +9,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 

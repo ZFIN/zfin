@@ -10,7 +10,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.LookupComposite;
-import org.zfin.gwt.root.util.JavaScriptPropertyReader;
 import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.*;

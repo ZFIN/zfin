@@ -3,24 +3,16 @@ package org.zfin.sequence.blast;
 import org.apache.log4j.Logger;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
-import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 /**
  * Tests blast file generation from downloads file.

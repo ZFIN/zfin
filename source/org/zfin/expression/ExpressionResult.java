@@ -5,7 +5,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 

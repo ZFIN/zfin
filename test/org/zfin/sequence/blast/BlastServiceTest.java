@@ -1,20 +1,14 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.AlphabetManager;
-import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.RichSequenceIterator;
 import org.junit.Test;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.sequence.Defline;
 import org.zfin.sequence.Sequence;
 
-import java.io.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**

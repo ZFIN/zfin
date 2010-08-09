@@ -1,11 +1,10 @@
 package org.zfin.infrastructure;
 
-import java.util.*;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * From here:

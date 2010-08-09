@@ -11,13 +11,14 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * FB Case: 5868!

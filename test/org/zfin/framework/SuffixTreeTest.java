@@ -4,7 +4,8 @@ import org.biojava.bio.Annotation;
 import org.biojava.bio.symbol.*;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.fail;
 

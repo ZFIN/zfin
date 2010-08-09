@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.*;

@@ -3,7 +3,10 @@ package org.zfin.infrastructure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.OntologyTokenizer;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
 import org.zfin.util.FileUtil;
 
 import java.io.File;

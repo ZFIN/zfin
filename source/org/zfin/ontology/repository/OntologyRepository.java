@@ -2,9 +2,7 @@ package org.zfin.ontology.repository;
 
 import org.zfin.ontology.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.

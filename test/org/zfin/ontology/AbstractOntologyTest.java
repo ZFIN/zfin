@@ -4,11 +4,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;

@@ -2,9 +2,6 @@ package org.zfin.gwt.root.util;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static junit.framework.Assert.assertEquals;
 
 public class CustomizableComparatorDTOTest {

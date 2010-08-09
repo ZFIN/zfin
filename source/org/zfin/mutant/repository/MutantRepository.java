@@ -4,7 +4,6 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerSequenceMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;

@@ -2,9 +2,11 @@ package org.zfin.infrastructure;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.zfin.ontology.Term;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 

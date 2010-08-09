@@ -1,6 +1,5 @@
 package org.zfin.gwt.marker.ui;
 
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.ui.AbstractGoViewTable;
 import org.zfin.gwt.root.ui.GoEvidenceValidator;

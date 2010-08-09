@@ -4,8 +4,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.event.PublicationChangeEvent;
-import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.*;
 
 import java.util.List;

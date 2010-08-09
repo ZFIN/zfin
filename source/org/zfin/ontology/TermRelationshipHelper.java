@@ -1,8 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.ontology.RelationshipType;
-import org.zfin.ontology.Term;
-
 import java.io.Serializable;
 
 /**

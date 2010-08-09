@@ -1,12 +1,7 @@
 package org.zfin.ontology;
 
-import com.google.gwt.benchmarks.client.Setup;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

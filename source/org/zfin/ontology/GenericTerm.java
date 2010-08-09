@@ -3,7 +3,6 @@ package org.zfin.ontology;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.util.NumberAwareStringComparator;
-import org.zfin.util.NumberAwareStringComparator;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -2,13 +2,12 @@ package org.zfin.anatomy;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-import org.zfin.AbstractSecureSmokeTest;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.AbstractSmokeTest;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
  */
-public class AnatomySmokeTest extends AbstractSecureSmokeTest {
+public class AnatomySmokeTest extends AbstractSmokeTest {
 
     public void testAnatomyLookupFormExists() {
         for (WebClient aWebClient : publicWebClients) {
@@ -48,9 +47,8 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
         for (WebClient aWebClient : publicWebClients) {
             webClient = aWebClient;
             try {
-                login();
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/anatomy/search");
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -74,9 +72,8 @@ public class AnatomySmokeTest extends AbstractSecureSmokeTest {
         for (WebClient aWebClient : publicWebClients) {
             webClient = aWebClient;
             try {
-                login();
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/anatomy/search");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 final HtmlForm form = page.getFormByName("lookupTable");

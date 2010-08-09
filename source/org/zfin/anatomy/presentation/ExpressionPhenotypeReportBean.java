@@ -8,7 +8,6 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.Phenotype;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

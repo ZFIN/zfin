@@ -1,7 +1,6 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.ontology.MatchingTerm;
-import org.zfin.util.AlphanumComparator;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.Comparator;
