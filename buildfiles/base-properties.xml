@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="base-properties" basedir=".">
+
+    <!-- today -->
+    <tstamp prefix="today"/>
+
+    <!-- the destination directory for building a deploy tar -->
+    <property name="deploy.dir" value="deploy"/>
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="web.conf" value="${web-inf.dir}/conf"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="static-version.file.name" value="java-deploy-version.html"/>
+    <property name="jsp-version.file.name" value="svn_version.jsp"/>
+    <property name="gwt.lib" value="${lib}/gwt"/>
+    <property name="jwebunit.lib" value="${lib}/jwebunit"/>
+    <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
+    <!-- path to servlet jar file -->
+    <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>
+
+    <property name="hibernate.exists" value="hibernate.properties.exists"/>
+
+    <!-- directory in which the unit test coverage is generated and kept-->
+    <property name="unit.test.coverage" value="${basedir}/unit-test-coverage"/>
+
+    <!-- The destination directory for all the compiled classes. -->
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+
+    <!-- Source Path. -->
+    <property name="source.dir" value="source"/>
+
+    <!-- The destination directory for all the javadocs. -->
+    <property name="java-doc.dir" value="${web.dir}/util/javadoc"/>
+
+    <!-- where all of the static xml data files are -->
+    <property name="conf.dir" value="${basedir}/conf"/>
+
+    <!-- directory of the hibernate configuration files. -->
+    <property name="hibernate.conf.dir" value="${basedir}/source/org/zfin"/>
+
+    <!-- JVM args for all forked processes relating to unit tests -->
+    <property name="junit.jvmargs" value="-Xmx128m"/>
+
+    <property name="target.dir" value="${basedir}"/>
+
+    <!-- war file name-->
+    <property name="zfin.war" value="${basedir}/zfin.war"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- javadoc diectory -->
+    <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
+    <property name="enum.class" value="org.zfin.properties.ZfinPropertiesEnum"/>
+
+</project>
