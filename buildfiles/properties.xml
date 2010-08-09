@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="properties" basedir=".">
 
-    <property name="reports.dir" value="${basedir}/reports"/>
-    <property name="test.reports.dir" value="${reports.dir}/tests"/>    
 <!-- The destination directory for all the compiled classes. -->
     <!-- home targets -->
     <property name="home.target" value="${TARGETROOT}/home"/>
@@ -43,6 +41,20 @@
     <!-- The destination directory for tagunit web root -->
     <property name="tagunit-root.dir" value="${TAGUNIT_HOME}"/>
 
+    <!--test properties-->
+    <property name="reports.dir" value="${basedir}/reports"/>
+    <property name="test.reports.dir" value="${reports.dir}/tests"/>
+
+    <property name="unitTestFile" value="unit-results"/>
+    <property name="dbTestFile" value="db-results"/>
+    <property name="blastTestFile" value="blast-results"/>
+    <property name="smokeTestFile" value="smoke-results"/>
+    <property name="serviceTestFile" value="service-results"/>
+
+    <property name="smokeFailureMessage"
+              value="Failed internal smoke test.  See ${smokeTestFile}.txt for more information.  Please confirm that the web client is running properly."/>
+    <property name="serviceFailureMessage"
+              value="Failed to connect to external services.  See ${serviceTestFile}.txt for more information.  Please try connecting again, later."/>
 
     <!-- extended classpath for unit tests and other commands. -->
     <path id="extended.classpath">

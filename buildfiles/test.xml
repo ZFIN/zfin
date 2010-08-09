@@ -137,14 +137,6 @@ test(s) need to be run before committing changes or pushing files to production 
     </target>
 
 
-    <property name="smokeTestFile" value="smoke-results"/>
-    <property name="serviceTestFile" value="service-results"/>
-
-    <property name="smokeFailureMessage"
-              value="Failed internal smoke test.  See ${smokeTestFile}.txt for more information.  Please confirm that the web client is running properly."/>
-    <property name="serviceFailureMessage"
-              value="Failed to connect to external services.  See ${serviceTestFile}.txt for more information.  Please try connecting again, later."/>
-
 
     <target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
 
