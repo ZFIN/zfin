@@ -90,14 +90,8 @@
                 />
     </target>
 
-    <target  name="exportAllInstances" description="Exports all instances defined in instances.properties">
-        <taskdef name="exportAllInstances"
-                 classname="org.zfin.properties.ExportAllInstancesTask"
-                 classpathref="classpath"/>
-        <exportAllInstances instancesFile="${commons.dir}/instances.properties"/>
-    </target>
-
     <target name="createEnvFile">
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.env"
@@ -111,6 +105,7 @@
     </target>
 
     <target name="createTTFile">
+        <echo message="creating TT file for ${INSTANCE}"></echo>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.tt"
@@ -120,8 +115,21 @@
                 />
     </target>
 
-    <target name="createPropertiesFiles" depends="compile,createEnvFile,createTTFile"
+    <!--is referenced in ExportAllInstancesTask, so if renamed, please change there-->
+    <target name="createPropertiesFiles" depends="compile"
             description="Exports properties to env and tt files.">
+        <echo message="Creating properties file: ${INSTANCE}"></echo>
+        <antcall target="createEnvFile"/>
+        <antcall target="createTTFile"/>
+        <echo message="Created properties file: ${INSTANCE}"></echo>
+    </target>
+
+
+    <target  name="exportAllInstances" description="Exports all instances defined in instances.properties">
+        <taskdef name="exportAllInstances"
+                 classname="org.zfin.properties.ExportAllInstancesTask"
+                 classpathref="classpath"/>
+        <exportAllInstances instancesFile="${commons.dir}/instances.properties" target="createPropertiesFiles" />
     </target>
 
 

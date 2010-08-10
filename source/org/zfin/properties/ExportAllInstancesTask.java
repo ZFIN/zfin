@@ -19,8 +19,9 @@ public class ExportAllInstancesTask extends Task {
 
     private final static String COMMENT = "#" ;
     private final static String INSTANCE = "INSTANCE" ;
-    private final static String TARGET = "exportPropertiesToEnvTT" ;
+    private final static String DEFAULT_TARGET = "createPropertiesFiles" ;
     private String instancesFile;
+    private String target = DEFAULT_TARGET;
 
     @Override
     public void execute(){
@@ -29,7 +30,7 @@ public class ExportAllInstancesTask extends Task {
             for(String instance : instances) {
                 logger.info("exporting properties for: " + instance);
                 getProject().setProperty(INSTANCE,instance);
-                ((Target) getProject().getTargets().get(TARGET)).execute();
+                ((Target) getProject().getTargets().get(target)).execute();
             }
         } catch (IOException e) {
             logger.error(e);
@@ -58,5 +59,9 @@ public class ExportAllInstancesTask extends Task {
 
     public void setInstancesFile(String instancesFile) {
         this.instancesFile = instancesFile;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 }
