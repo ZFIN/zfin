@@ -144,6 +144,7 @@ test(s) need to be run before committing changes or pushing files to production 
                printsummary="yes"
                haltonfailure="yes"
                haltonerror="yes"
+               maxmemory="1024m"
                showoutput="false">
             <test name="org.zfin.UnitTests" todir="${test.reports.dir}" outfile="${unitTestFile}">
                 <formatter type="plain"/>
@@ -164,7 +165,7 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="plain"/>
             </test>
 
-            <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}-pre"
+            <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}"
                   haltonerror="false" haltonfailure="false"
                   failureproperty="smoke.failure">
                 <formatter type="plain"/>
@@ -179,7 +180,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
         </junit>
         <antcall target="handleSmokeFailure">
-            <param name="test.output.file" value="${smokeTestFile}-pre"/>
+            <param name="test.output.file" value="${smokeTestFile}"/>
         </antcall>
         <antcall target="handleServiceFailure"/>
         <echo message=":ALL UNIT TESTS PASSED:"/>
@@ -310,7 +311,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}-post"
+            <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"
                   failureproperty="smoke.failure" >
@@ -318,7 +319,7 @@ test(s) need to be run before committing changes or pushing files to production 
             </test>
         </junit>
         <antcall target="handleSmokeFailure">
-            <param name="test.output.file" value="${smokeTestFile}-post"/>
+            <param name="test.output.file" value="${smokeTestFile}"/>
         </antcall>
     </target>
 

@@ -401,7 +401,7 @@
         </sequential>
     </macrodef>
 
-    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,smokeTests,test"
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,test"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release"
