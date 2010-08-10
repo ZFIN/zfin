@@ -302,8 +302,10 @@ test(s) need to be run before committing changes or pushing files to production 
                printsummary="yes"
                haltonfailure="false"
                haltonerror="false"
-               showoutput="false">
-            <jvmarg line="${junit.jvmargs}"/>
+               showoutput="true"
+               maxmemory="1024m"
+               >
+<!--            <jvmarg line="${junrt.jvmargs}"/>-->
             <classpath refid="extended.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->

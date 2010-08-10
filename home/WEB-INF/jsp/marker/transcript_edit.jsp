@@ -13,6 +13,7 @@
 </script>
 
 <%--Adds the TranscriptEditController.--%>
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
