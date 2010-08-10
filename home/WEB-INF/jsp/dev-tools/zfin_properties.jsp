@@ -10,7 +10,7 @@
         <tr><td>
             <%=zfinPropertiesEnum.name() %>
         </td>
-            <td><input name="<%=zfinPropertiesEnum.name()%>" value="<%=zfinPropertiesEnum.value()%>"/>
+            <td><input name="<%=zfinPropertiesEnum.name()%>" value="<%=zfinPropertiesEnum.value()%>" size="120"/>
             </td>
         </tr>
         <% } %>

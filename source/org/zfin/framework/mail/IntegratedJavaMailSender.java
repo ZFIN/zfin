@@ -8,6 +8,7 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -83,16 +84,16 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
      *             Note: Set email to the one you want it to go to.
      */
     public static void main(String args[]) {
-        String file = "zfin-properties.xml";
-        String dirRel = ZfinPropertiesEnum.TARGETROOT.value() ;
-        String dir = dirRel + "/" + "home/WEB-INF/";
         ZfinProperties.init();
-//        ZfinProperties.init(dir, file);
 
         String messageText = null ;
         String subjectText = null ;
         String[] emailAddresses = ZfinProperties.getAdminEmailAddresses();
-        System.out.println(args.length + " argumemnts provided: " + args);
+        StringBuilder stringBuilder = new StringBuilder() ;
+        for(String arg : args){
+            stringBuilder.append(arg).append(" ") ;
+        }
+        System.out.println("Sending mail with arguments: " + stringBuilder.toString() + " to "+ emailAddresses[0]) ;
         if(args.length<2){
             subjectText = "test email from IntegratedJavaMailSender: " + new Date();
             messageText = "javamail message of test email: " + new Date() ;
