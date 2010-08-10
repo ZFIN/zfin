@@ -20,6 +20,7 @@ import java.net.URLDecoder;
 public class HibernateSessionRequestFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(HibernateSessionRequestFilter.class);
+    private final static String NEWLINE = System.getProperty("line.separator") ;
 
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -35,9 +36,9 @@ public class HibernateSessionRequestFilter implements Filter {
         } catch (Exception e) {
             HttpServletRequest req = (HttpServletRequest) request;
             StringBuffer message = new StringBuffer("Unhandled Exception in Servlet Filter found: ");
-            message.append(System.getProperty("line.separator"));
+            message.append(NEWLINE);
             message.append("Request URL: ").append(req.getRequestURL());
-            message.append(System.getProperty("line.separator"));
+            message.append(NEWLINE);
             String requestQueryString = req.getQueryString();
             if (requestQueryString != null) {
                 message.append("Query parameters: ").append(URLDecoder.decode(requestQueryString));

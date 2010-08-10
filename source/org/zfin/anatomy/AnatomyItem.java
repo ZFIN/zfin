@@ -43,6 +43,10 @@ public class AnatomyItem implements Term {
 
     private List<TermRelationship> relationships;
 
+
+    private static final String NEWLINE = System.getProperty("line.separator");
+    private static final String NEWLINE_PLUS_INDENT = NEWLINE + "    ";
+
     public String getZdbID() {
         return zdbID;
     }
@@ -225,9 +229,6 @@ public class AnatomyItem implements Term {
     public void setTermName(String termName) {
         // Todo when Ao goes into term table
     }
-
-    private static final String NEWLINE = System.getProperty("line.separator");
-    private static final String NEWLINE_PLUS_INDENT = NEWLINE + "    ";
 
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -140,7 +140,7 @@
     </condition>
 
     <condition property="isproduction">
-        <equals arg1="${env.DBNAME}" arg2="zfindb"/>
+        <equals arg1="${DBNAME}" arg2="zfindb"/>
     </condition>
 
     <condition property="notproduction">
@@ -154,6 +154,20 @@
             <equals arg1="${USER}" arg2="informix"/>
         </not>
     </condition>
+
+    <target name="dumpMachine" description="Dump machine type.">
+        <echo message="INSTANCE:             ${INSTANCE}"/>
+        <echo message="USER:                 ${USER}"/>
+        <echo message="DBNAME:               ${DBNAME}"/>
+        <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
+        <echo message="isinformix:           ${isinformix}"/>
+        <echo message="isalmost:             ${isalmost}"/>
+        <echo message="iszfinonhelix:        ${iszfinonhelix}"/>
+        <echo message="isalmostorproduction: ${isalmostorproduction}"/>
+        <echo message="isproduction:         ${isproduction}"/>
+        <echo message="notproduction:        ${notproduction}"/>
+        <echo message="ismutant:             ${ismutant}"/>
+    </target>
 
     <!-- javadoc diectory -->
     <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
