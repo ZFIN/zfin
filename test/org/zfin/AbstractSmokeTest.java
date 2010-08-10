@@ -28,9 +28,9 @@ public class AbstractSmokeTest extends WebTestCase {
 
     protected final WebClient[] publicWebClients = {
             new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
-//            new WebClient(BrowserVersion.INTERNET_EXPLORER_6),  // 10%
-//            new WebClient(BrowserVersion.INTERNET_EXPLORER_7),  // 10%
-//            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_6),  // 10%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_7),  // 10%
+            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
     };
 
