@@ -125,7 +125,7 @@
     </target>
 
 
-    <target  name="exportAllInstances" description="Exports all instances defined in instances.properties">
+    <target  name="createAllPropertiesFiles" description="Exports all instances defined in instances.properties">
         <taskdef name="exportAllInstances"
                  classname="org.zfin.properties.ExportAllInstancesTask"
                  classpathref="classpath"/>
