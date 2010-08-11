@@ -91,7 +91,7 @@
     </target>
 
     <target name="createEnvFile">
-        <echo message="creating ENV file for ${INSTANCE}"></echo>
+        <echo message="creating ENV file for ${INSTANCE} and server ${INFORMIXSERVER}"></echo>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.env"
