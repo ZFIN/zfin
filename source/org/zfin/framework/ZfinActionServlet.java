@@ -27,10 +27,8 @@ import java.io.File;
  */
 public class ZfinActionServlet extends DispatcherServlet {
 
-    public static final String PROPERTY_FILE_NAME = "zfin-properties.xml";
     private String webRoot;
 
-    private static final String PROPERTY_FILE_NAME_PARAM = "property-file";
     private static final String PROPERTY_FILE_DIR_PARAM = "property-file-directory";
     private static final String SITE_SEARCH_CATEGORIES_FILE = "site-search-category-file";
 
@@ -42,11 +40,11 @@ public class ZfinActionServlet extends DispatcherServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        webRoot = getServletContext().getRealPath("/");
         // make web root dir available to the application
+        initProperties();
+        webRoot = getServletContext().getRealPath("/");
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(webRoot);
         ZfinPropertiesEnum.INDEXER_DIRECTORY.setValue(getServletContext().getInitParameter("quicksearch-index-directory"));
-        initProperties();
         initCategories();
         // Added this to the application context to make it easier to use global values.
         // ToDo: Should add all global parameters into application context and have it added
