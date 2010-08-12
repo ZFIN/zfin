@@ -171,7 +171,7 @@ $count++ while <DEFS_PARSED>;
 
 if ($count < 10) {
 
-    &sendLoadReport("parseObo.pl failed","<!--|VALIDATION_EMAIL_DBA|-->\@cs.uoregon.edu", "./term_parsed.unl") ;
+    &sendLoadReport("parseObo.pl failed","<!--|VALIDATION_EMAIL_DBA|-->", "./term_parsed.unl") ;
 
 }
 else {	 
