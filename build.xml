@@ -91,7 +91,7 @@
     </target>
 
     <target name="createEnvFile">
-        <echo message="creating ENV file for ${INSTANCE} and server ${INFORMIXSERVER}"></echo>
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.env"
@@ -100,7 +100,7 @@
                 keySuffix=" "
                 valuePrefix="&quot;"
                 valueSuffix="&quot;"
-                footerFile="${commons.dir}/${INFORMIXSERVER}-footer.env"                
+                footerFile="${commons.dir}/footer.env"                
                 exportPropertyFile="${commons.dir}/env-exports.properties" />
     </target>
 
