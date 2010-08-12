@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,9 +34,9 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
         try {
-            helper.setTo(recipients);
+            helper.setTo(filterEmail(recipients));
             // can only handle first
-            helper.setFrom(fromEmail);
+            helper.setFrom(filterEmail(fromEmail));
 //            helper.setFrom(ZfinProperties.getAdminEmailAddresses()[0]);
 
             if (doDefaultSubjectHeader) {
@@ -59,6 +60,19 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             return false;
         }
 
+    }
+
+    protected String[] filterEmail(String... emailAddresses) {
+        String[] returnEmails = new String[emailAddresses.length] ;
+        int i = 0 ;
+        for(String emailAddress : emailAddresses){
+            returnEmails[i++] = filterEmail(emailAddress) ;
+        }
+        return returnEmails ;
+    }
+
+    protected String filterEmail(String emailAddress) {
+        return emailAddress.replaceAll("\\\\@","@") ;
     }
 
     public JavaMailSender getMailSender() {

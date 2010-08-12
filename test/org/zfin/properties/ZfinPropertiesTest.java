@@ -5,34 +5,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
 
 import static org.junit.Assert.*;
 
 /**
  * Test if the property file can be read.
  */
-public class ZfinPropertiesTest {
-
-    public static final String TEST_PROPERTIES_FILE = "./externals/properties/test-properties.properties";
-    private String currentPropertyFile ;
-
-    /**
-     * We init to get the mutant, but we re-init in order to evaluate our "test" case.
-     */
-    @Before
-    public void setUp() throws Exception {
-        currentPropertyFile = ZfinProperties.getCurrentPropertyFile() ;
-        TestConfiguration.configure();
-        ZfinProperties.init(TEST_PROPERTIES_FILE) ;
-    }
-
-    /**
-     * This cleans up the property file to the old one.
-     */
-    @After
-    public void cleanup(){
-        ZfinProperties.init(currentPropertyFile);
-    }
+public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
 
     /**
      * Test the test properties, coming from a test file.
@@ -43,12 +23,12 @@ public class ZfinPropertiesTest {
         Assert.assertEquals("Highlight Color", "#4437", ZfinPropertiesEnum.HIGHLIGHT_COLOR.value());
         assertEquals("Highlighter Color", "#7743", ZfinPropertiesEnum.HIGHLIGHTER_COLOR.value());
         assertEquals("Link Color", "#9980", ZfinPropertiesEnum.LINKBAR_COLOR.value());
-        assertEquals("Email Address", "test@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
+        assertEquals("Email Address", "test\\@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
         assertEquals("FTP Path", "/research/zcentral/ftp/test/test", ZfinPropertiesEnum.FTP_ROOT.value());
         assertEquals("Image Load Path", "/imageLoadUp", ZfinPropertiesEnum.IMAGE_LOAD.value());
         assertEquals("Load Up Path", "/image/full", ZfinPropertiesEnum.LOADUP_FULL.value());
         assertEquals("PDF Path", "/pdf/", ZfinPropertiesEnum.PDF_PATH.value());
-        assertEquals("test@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());
+        assertEquals("test\\@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());
     }
 
     @Test
@@ -71,5 +51,4 @@ public class ZfinPropertiesTest {
         assertFalse("BlastServer Distributed Query Path", ZfinPropertiesEnum.BLASTSERVER_DISTRIBUTED_QUERY_PATH.value().contains("@"));
         assertEquals("BlastServer Blast Access", "ssh", ZfinPropertiesEnum.SSH.value());
     }
-
 }

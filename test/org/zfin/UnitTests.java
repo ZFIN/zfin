@@ -11,6 +11,7 @@ import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
 import org.zfin.framework.ExecProcessTest;
+import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.FunctionsTest;
 import org.zfin.framework.presentation.PaginationBeanTest;
 import org.zfin.framework.presentation.SectionVisibilityTest;
@@ -73,6 +74,7 @@ import org.zfin.util.*;
         HighlightUtilTest.class,
         HighlighterTest.class,
         ListFormatterTest.class,
+        MailTest.class,
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
         MatchingTermServiceTest.class,
