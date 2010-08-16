@@ -112,6 +112,7 @@
                 keyPrefix="&lt;!--|"
                 keySuffix="|--&gt;${tab}"
                 exportPropertyFile="${commons.dir}/tt-exports.properties"
+                footerFile="${commons.dir}/footer.tt"                
                 />
     </target>
 
