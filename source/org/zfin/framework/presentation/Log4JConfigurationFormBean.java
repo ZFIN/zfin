@@ -1,5 +1,6 @@
 package org.zfin.framework.presentation;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ public class Log4JConfigurationFormBean  {
     private String newLoggerLevel;
     private String[] level;
     private String[] loggerName;
+    private List<Appender> appenders;
 
     public List<Logger> getAllLoggers() {
         return allLoggers;
@@ -101,5 +103,13 @@ public class Log4JConfigurationFormBean  {
         entries.put("DEBUG", "DEBUG");
         entries.put("DEFAULT", "DEFAULT");
         return entries;
+    }
+
+    public void setAppenders(List<Appender> appenders) {
+        this.appenders = appenders;
+    }
+
+    public List<Appender> getAppenders() {
+        return appenders;
     }
 }

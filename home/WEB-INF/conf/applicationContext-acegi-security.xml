@@ -89,7 +89,7 @@
     </bean>
 
     <bean id="logoutHandler" class="org.zfin.security.ZfinSecurityContextLogoutHandler">
-        <property name="ur" ref="userRepository"/>
+        <property name="userRepository" ref="userRepository"/>
     </bean>
 
     <bean id="userRepository" class="org.zfin.security.repository.HibernateUserRepository"/>

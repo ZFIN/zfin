@@ -91,12 +91,7 @@
 
     <filter-mapping>
         <filter-name>clickstream</filter-name>
-        <url-pattern>/action/*</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>clickstream</filter-name>
-        <url-pattern>/ajax/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <listener>

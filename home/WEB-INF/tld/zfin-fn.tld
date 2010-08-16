@@ -119,4 +119,40 @@
     </example>
   </function>
 
+<function>
+    <description>
+      Turn the difference of date and time into a time string
+    </description>
+    <name>getTimeDuration</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String getTimeDuration(java.util.Date,java.util.Date)</function-signature>
+    <example>
+      ${fn:getTimeDuration(start, end))}">
+    </example>
+  </function>
+
+<function>
+    <description>
+      Turn the difference of date and time into a time string
+    </description>
+    <name>getTimeBetweenRequests</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String getTimeBetweenRequests(java.util.List, int)</function-signature>
+    <example>
+      ${fn:getTimeBetweenRequests(start, end))}">
+    </example>
+  </function>
+
+<function>
+    <description>
+      Turn the difference of date and time into a time string
+    </description>
+    <name>getPerson</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String getPerson(javax.servlet.http.HttpSession)</function-signature>
+    <example>
+      ${fn:getPerson(session))}">
+    </example>
+  </function>
+
 </taglib>

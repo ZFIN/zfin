@@ -5,6 +5,7 @@ import org.acegisecurity.ui.logout.SecurityContextLogoutHandler;
 import org.springframework.util.Assert;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.security.repository.UserRepository;
+import org.zfin.util.servlet.ServletService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ZfinSecurityContextLogoutHandler extends SecurityContextLogoutHandler {
 
-    private UserRepository ur;
+    private UserRepository userRepository;
     public static final String GUEST = "GUEST_";
 
     /**
@@ -30,26 +31,25 @@ public class ZfinSecurityContextLogoutHandler extends SecurityContextLogoutHandl
         super.logout(request, response, authentication);
 
         Cookie[] cookies = request.getCookies();
+        if (cookies == null)
+            return;
+
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.ZFIN_LOGIN)) {
+            if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.APG_ZFIN_LOGIN)) {
                 String id = GUEST + cookie.getValue();
                 String value = id.substring(0, 19);
                 cookie.setValue(value);
                 cookie.setPath(ZfinProperties.getCookiePath());
                 response.addCookie(cookie);
             }
-            if (cookie.getName().equals(ZfinAuthenticationProcessingFilter.JSESSIONID)) {
+            if (cookie.getName().equals(ServletService.JSESSIONID)) {
                 ZfinAuthenticationProcessingFilter.removeSession(cookie.getValue());
             }
         }
 
     }
 
-    public UserRepository getUr() {
-        return ur;
-    }
-
-    public void setUr(UserRepository ur) {
-        this.ur = ur;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 }

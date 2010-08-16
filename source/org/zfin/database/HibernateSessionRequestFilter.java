@@ -1,13 +1,18 @@
 package org.zfin.database;
 
 import org.apache.log4j.Logger;
-import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.GBrowseHibernateUtil;
+import org.zfin.util.log4j.Log4jService;
+import org.zfin.util.servlet.RequestBean;
+import org.zfin.util.servlet.ServletService;
+import org.zfin.util.ZfinSMTPAppender;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Enumeration;
 
 /**
  * This servlet filter creates a Hibernate session for each incoming request
@@ -48,7 +53,16 @@ public class HibernateSessionRequestFilter implements Filter {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
-	        GBrowseHibernateUtil.closeSession();
+            GBrowseHibernateUtil.closeSession();
+            callSmtpAppender((HttpServletRequest) request);
+        }
+    }
+
+    private void callSmtpAppender(HttpServletRequest request) {
+        ZfinSMTPAppender smtpAppender = Log4jService.getSmtpAppender();
+        if (smtpAppender != null) {
+            RequestBean bean = ServletService.getRequestBean(request);
+            smtpAppender.sendEmailOfEvents(bean);
         }
     }
 

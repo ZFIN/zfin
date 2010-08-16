@@ -1,14 +1,15 @@
 <%@ page import="java.util.Date"%>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table cellpadding="2" cellspacing="1" border="0" width="50%">
+<table cellpadding="2" cellspacing="1" border="0" width="75%">
 
-    <tr><td colspan="3" class="sectionTitle">Test Browser: Request Information</td></tr>
+    <tr class="search-result-table-header">
+        <td colspan="2" class="sectionTitle">Test Browser: Request Information</td></tr>
     <tr>
-        <td width="100" class="sectionTitle">Property Key</td>
+        <td width="300" class="sectionTitle">Property Key</td>
         <td class="sectionTitle">Property value</td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Host: </td>
         <td colspan="2" class="listContent">
@@ -22,9 +23,9 @@
              <%= request.getMethod() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
-            Protocoll: </td>
+            Protocol: </td>
         <td colspan="2" class="listContent">
              <%= request.getProtocol() %>
         </td>
@@ -36,7 +37,7 @@
              <%= request.getPathInfo() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Remote Address: </td>
         <td colspan="2" class="listContent">
@@ -50,7 +51,7 @@
              <%= request.getRemoteHost() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Remote Port: </td>
         <td colspan="2" class="listContent">
@@ -64,7 +65,7 @@
              <%= request.getRemoteUser() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Channel: </td>
         <td colspan="2" class="listContent">
@@ -78,7 +79,7 @@
              <%= request.getServerName() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Server Port: </td>
         <td colspan="2" class="listContent">
@@ -92,7 +93,7 @@
              <%= request.getServletPath() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Authorization Type: </td>
         <td colspan="2" class="listContent">
@@ -106,7 +107,7 @@
              <%= request.isRequestedSessionIdFromCookie() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Is Requested Session ID from URL: </td>
         <td colspan="2" class="listContent">
@@ -120,7 +121,7 @@
              <%= request.isRequestedSessionIdValid() %>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <td valign=top class="listContentBold">
             Is Secure: </td>
         <td colspan="2" class="listContent">
@@ -134,7 +135,8 @@
              <%= new Date(request.getSession().getCreationTime()) %>
         </td>
     </tr>
-    <tr><td colspan="3" class="sectionTitle">HTTP Header Information</td></tr>
+    <tr class="search-result-table-header">
+        <td colspan="2" class="sectionTitle">HTTP Header Information</td></tr>
     <c:forEach var="item" items="${form}">
         <tr>
             <td class="listContentBold">

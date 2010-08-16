@@ -2,110 +2,113 @@
                  com.opensymphony.clickstream.Clickstream" %>
 <%@ page import="org.acegisecurity.context.SecurityContext" %>
 <%@ page import="org.zfin.people.Person" %>
+<%@ page import="org.zfin.framework.presentation.UserRequestTrackBean" %>
+<%@ page import="org.zfin.framework.presentation.UserRequestTrackController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <jsp:useBean id="formBean" class="org.zfin.framework.presentation.UserRequestTrackBean" scope="request"/>
-<%
-    final Map clickstreams = (Map) application.getAttribute("clickstreams");
 
-    String showbots = "false";
-    if ("true".equalsIgnoreCase(request.getParameter("showbots")))
-        showbots = "true";
-    else if ("both".equalsIgnoreCase(request.getParameter("showbots")))
-        showbots = "both";
-%>
-<h3>Active Clickstreams</h3>
+<hr style="background-color:green; width:100%"/>
 
-<form:form commandName="formBean" method="get">
-    <form:input path="searchString"/>
-    <input type="submit"/>
-</form:form>
+<span class="bold">Active Clickstreams</span>
+<c:if test="${!empty formBean.urlSearchString}">
+    <span class="red">
+    that have [${formBean.urlSearchString}] in any URL request.
+    </span>
 
-<c:if test="${!empty formBean.searchString}">
-    Searching for [${formBean.searchString}].
+    <p/>
+    <a href="view-user-request-tracks">Show All</a>
+</c:if>
+<c:if test="${!empty formBean.showBots}">
+    <span class="red">
+        <c:if test="${formBean.showBots eq 'TRUE'}">
+            Robot requests only
+        </c:if>
+        <c:if test="${formBean.showBots eq 'FALSE'}">
+            Excluding Robot requests
+        </c:if>
+    </span>
+
+    <p/>
+    <a href="view-user-request-tracks">Show All</a>
 </c:if>
 
+<c:choose>
+    <c:when test="${formBean.clickStreams == null or fn:length(formBean.clickStreams) == 0 }">
+        <p>No clickstreams in progress.</p>
+    </c:when>
+    <c:otherwise>
+        <table class="search groupstripes staticcontent">
+            <tbody>
+            <tr bgcolor="#ccccc0">
+                <th width="45">ID</th>
+                <th>Owner</th>
+                <th>Requests</th>
+                <th>Start Time
+                </th>
+                <th>Time Last Accessed
+                </th>
+                <th>Active Session Duration</th>
+                <th>Session Idle</th>
+                <th>Session ID</th>
+                <th>Robot</th>
+            </tr>
+            </tbody>
+            <c:forEach var="singleStream" items="${formBean.clickStreams}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop" groupByBean="sessionID"
+                                     groupBeanCollection="${formBean.clickStreams}">
+                    <td>${loop.index+1}</td>
+                    <td>
+                        <a href="/action/dev-tools/view-single-user-request-tracking?sid=${singleStream.sessionID}">
+                                ${zfn:getPerson(singleStream.clickstream.session)}
+                        </a>
+                    </td>
+                    <td width=50>
+                            ${fn:length(singleStream.clickstream.stream)}
+                    </td>
+                    <td width="35">
+                        <span title="<fmt:formatDate value="${singleStream.clickstream.start}" pattern="MMM d, yyyy"/>">
+                        <fmt:formatDate value="${singleStream.clickstream.start}" pattern="hh:mm:ss"/>
+                            </span>
+                    </td>
+                    <td width="35">
+                        <span title="<fmt:formatDate value="${singleStream.clickstream.lastRequest}" pattern="MMM d, yyyy"/>">
+                        <fmt:formatDate value="${singleStream.clickstream.lastRequest}" pattern="hh:mm:ss"/>
+                           </span>
+                    </td>
+                    <td>
+                            ${zfn:getTimeDuration(singleStream.clickstream.start, singleStream.clickstream.lastRequest)}
+                    </td>
+                    <td>
+                            ${zfn:getTimeDuration(singleStream.clickstream.lastRequest, null)}
+                    </td>
+                    <td>
+                            ${singleStream.sessionID}
+                    </td>
+                    <td>
+                            ${singleStream.clickstream.bot}
+                    </td>
+                </zfin:alternating-tr>
+            </c:forEach>
+        </table>
+    </c:otherwise>
+</c:choose>
+
+<hr style="background-color:green; width:100%"/>
+
 <p>
-    <a href="?showbots=false">User Streams</a> |
-    <a href="?showbots=true">Bot Streams</a> |
-    <a href="?showbots=both">Both</a>
+    <a href="?showBots=<%=UserRequestTrackController.ShowBot.FALSE%>">User Streams</a> |
+    <a href="?showBots=<%=UserRequestTrackController.ShowBot.TRUE%>">Bot Streams</a> |
+    <a href="?showBots=<%=UserRequestTrackController.ShowBot.BOTH%>">Both</a>
 </p>
 
-<% if (clickstreams.isEmpty()) { %>
-<p>No clickstreams in progress.</p>
-<% } else { %>
-<ol>
-    <%
+<hr style="background-color:green; width:100%"/>
 
-        synchronized (clickstreams) {
-            Iterator it = clickstreams.keySet().iterator();
-            while (it.hasNext()) {
-                String key = (String) it.next();
-                Clickstream stream = (Clickstream) clickstreams.get(key);
-
-                if (showbots.equals("false") && stream.isBot()) {
-                    continue;
-                } else if (showbots.equals("true") && !stream.isBot()) {
-                    continue;
-                }
-
-                try {
-    %>
-    <li>
-        <%--<ul>--%>
-        <%--ACEGI_SECURITY_LAST_USERNAME--%>
-        <%--ACEGI_SECURITY_CONTEXT--%>
-        <%
-            HttpSession sessionStream = stream.getSession();
-            Object name = sessionStream.getAttribute("ACEGI_SECURITY_LAST_USERNAME");
-            SecurityContext securityContext = (SecurityContext)sessionStream.getAttribute("ACEGI_SECURITY_CONTEXT");
-        %>
-        <a href="/action/dev-tools/view-single-user-request-tracking?sid=<%= key %>"
-                ><%= (name==null ? "Guest" : name) %></a>
-        <small>
-            <%
-                if(name!=null){
-                    out.println("("+((Person)securityContext.getAuthentication().getPrincipal()).getFullName() +")");
-                }
-            %>
-            [
-            <c:if test="${!empty formBean.searchString}">
-                <%
-                    int count = 0 ;
-                    for(Iterator iterator = stream.getStream().iterator() ; iterator.hasNext(); ){
-                        if(iterator.next().toString().toLowerCase().contains(formBean.getSearchString())) {
-                            ++count ;
-                        }
-                    }
-                    if(count>0){
-                        out.println("<font color=red>"+count+" matches</font>");
-                    }
-                %>
-            </c:if>
+<span class="bold">Search Clickstream that contains URL request:</span>
+<form:form commandName="formBean" method="GET">
+    URL contains:
+    <form:input path="urlSearchString"/>
+    <input type="submit" name="Search"/>
+</form:form>
 
 
-            <%= stream.getStream().size() %> reqs]
-
-
-            <%
-                out.println("from[" + stream.getHostname()+"]") ;
-                int timeDif = (int) (stream.getLastRequest().getTime() - stream.getStart().getTime()) / (1000*60);
-                out.println(stream.getStart() + " to " + stream.getLastRequest()  + ": " + timeDif + " (min)") ;
-                // should never be null
-                out.println("session [" + sessionStream.getId()+"]") ;
-            %>
-        </small></li>
-    <%
-    }
-    catch (Exception e) {
-    %>
-    An error occurred - <%= e %><br>
-    <%
-                    }
-                }
-            }
-        }
-    %>
-</ol>

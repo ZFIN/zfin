@@ -193,8 +193,12 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
             return null;
         }
         Authentication authentication = context.getAuthentication();
-        if (authentication == null)
-            return null;
+        if (authentication == null) {
+            Person person = new Person();
+            person.setName("Guest");
+            person.setFullName("Guest User");
+            return person;
+        }
         Object principal = authentication.getPrincipal();
         // ToDo: Annonymous user should also be a Person object opposed to a String object
         if (principal instanceof String)

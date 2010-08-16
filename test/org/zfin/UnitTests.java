@@ -101,6 +101,7 @@ import org.zfin.util.*;
         StagePresentationTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
+        ZfinStringUtilsTest.class,
         TrieMapTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,

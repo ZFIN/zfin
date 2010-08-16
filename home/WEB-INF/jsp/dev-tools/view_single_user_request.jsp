@@ -1,61 +1,110 @@
-<%@ page import="java.util.*,
-                 com.opensymphony.clickstream.Clickstream,
-                 com.opensymphony.clickstream.ClickstreamRequest" %>
-<%
-    if (request.getParameter("sid") == null) {
-        response.sendRedirect("clickstreams.jsp");
-        return;
-    }
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-    Map clickstreams = (Map) application.getAttribute("clickstreams");
+<jsp:useBean id="formBean" class="org.zfin.framework.presentation.UserRequestTrackBean" scope="request"/>
 
-    Clickstream stream = null;
+<c:set var="clickstream" value="${formBean.clickstream}"/>
 
-    if (clickstreams.get(request.getParameter("sid")) != null) {
-        stream = (Clickstream) clickstreams.get(request.getParameter("sid"));
-    }
+<p><a href="/action/dev-tools/view-user-request-tracks">Back to all streams</a></p>
 
-    if (stream == null) {
-        response.sendRedirect("clickstreams.jsp");
-        return;
-    }
-%>
-<p align="right"><a href="/action/dev-tools/view-user-request-tracks">All streams</a></p>
 
-<h3>Clickstream for <%= stream.getHostname() %></h3>
+<h3>User Requests for: ${zfn:getPerson(clickstream.session)}</h3>
 
-<b>Initial Referrer</b>: <a href="<%= stream.getInitialReferrer() %>"><%= stream.getInitialReferrer() %></a><br>
-<b>Hostname</b>: <%= stream.getHostname() %><br>
-<b>Session ID</b>: <%= request.getParameter("sid") %><br>
-<b>Bot</b>: <%= stream.isBot() ? "Yes" : "No" %><br>
-<b>Stream Start</b>: <%= stream.getStart() %><br>
-<b>Last Request</b>: <%= stream.getLastRequest() %><br>
+<table>
+    <tr class="search-result-table-entries">
+        <td class="bold" width="150"> Initial Referrer</td>
+        <td><a href="${clickstream.initialReferrer}">${clickstream.initialReferrer}</a></td>
+    </tr>
+    <tr>
+        <td class="bold"> Hostname</td>
+        <td> ${clickstream.hostname}</td>
+    </tr>
+    <tr class="search-result-table-entries">
+        <td class="bold"> Session ID</td>
+        <td> ${formBean.sid}</td>
+    </tr>
+    <tr>
+        <td class="bold"> Bot</td>
+        <td> ${clickstream.bot}</td>
+    </tr>
+    <tr class="search-result-table-entries">
+        <td class="bold"> Stream Start</td>
+        <td><fmt:formatDate value="${clickstream.start}" pattern="yyyy/MM/dd hh:mm:ss"/></td>
+    </tr>
+    <tr>
+        <td class="bold"> Last Request</td>
+        <td><fmt:formatDate value="${clickstream.lastRequest}" pattern="yyyy/MM/dd hh:mm:ss"/></td>
+    </tr>
+    <tr class="search-result-table-entries">
+        <td class="bold"> Session Length</td>
+        <td> ${zfn:getTimeDuration(clickstream.start, clickstream.lastRequest)} </td>
+    </tr>
+    <tr>
+        <td class="bold"> Session Idle</td>
+        <td> ${zfn:getTimeDuration(clickstream.lastRequest, null)} </td>
+    </tr>
+    <tr class="search-result-table-entries">
+        <td class="bold"> # of Requests</td>
+        <td> ${fn:length(clickstream.stream)} </td>
+    </tr>
+    <c:if test="${formBean.time > 0}">
+        <tr>
+            <td class="bold"> Specific Request Time</td>
+            <td>
+            <fmt:formatDate value="${formBean.specificTimeOfRequest}" pattern="MMM d, yyyy"/> &nbsp;
+            <fmt:formatDate value="${formBean.specificTimeOfRequest}" pattern="hh:mm:ss"/>
+            </td>
+        </tr>
+    </c:if>
+</table>
 
-<% long streamLength = stream.getLastRequest().getTime() - stream.getStart().getTime(); %>
-<b>Session Length</b>:
-<%= (streamLength > 3600000 ?
-        " " + (streamLength / 3600000) + " hours" : "") +
-        (streamLength > 60000 ?
-                " " + ((streamLength / 60000) % 60) + " minutes" : "") +
-        (streamLength > 1000 ?
-                " " + ((streamLength / 1000) % 60) + " seconds" : "") %><br>
+<h3>Click Stream:</h3>
+<table class="search groupstripes staticcontent">
+    <tbody>
+    <tr class="search-result-table-header">
+        <th width="35">ID</th>
+        <th style="display:none">Date</th>
+        <th>Access Time</th>
+        <th>Idle time between Requests</th>
+        <th>URL</th>
+    </tr>
+    <c:forEach var="singleStream" items="${clickstream.stream}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop" groupBeanCollection="${clickstream.stream}" groupByBean="timestamp">
+            <td> ${loop.index+1}</td>
+            <td style="display:none;">
+                <fmt:formatDate value="${singleStream.timestamp}" pattern="MM/dd/yyyy"/>
+            </td>
+            <td>
+                <span title="<fmt:formatDate value="${singleStream.timestamp}" pattern="MMM d, yyyy hh:mm:ss,SSS"/>">
+                <fmt:formatDate value="${singleStream.timestamp}" pattern="hh:mm:ss"/>
+                    </span>
+            </td>
+            <td>
+                ${zfn:getTimeBetweenRequests(clickstream.stream, loop.index)}
+            </td>
+            <c:choose>
+                <c:when test="${loop.index eq formBean.indexOfRequest}">
+                    <td style="background-color:#ff8c00;">
+                </c:when>
+                <c:otherwise>
+                    <td>
+                </c:otherwise>
+            </c:choose>
+            <a href="http://${singleStream}">${singleStream}</a>
+            </td>
+        </zfin:alternating-tr>
+    </c:forEach>
+    </tbody>
+</table>
 
-<b># of Requests</b>: <%= stream.getStream().size() %>
+<hr style="background-color:green; width:100%"/>
 
-<h3>Click stream:</h3>
+<span class="bold">Search:</span>
+<form:form commandName="formBean" method="GET">
+    URL contains:
+    <form:input path="urlSearchString"/>
+    <input type="submit"/>
+</form:form>
 
-<ol>
-    <%
-        synchronized (stream) {
-            Iterator clickstreamIt = stream.getStream().iterator();
-
-            while (clickstreamIt.hasNext()) {
-                ClickstreamRequest clickstreamRequest = ((ClickstreamRequest) clickstreamIt.next());
-                String click = clickstreamRequest.toString();
-    %>
-    <li><a href="http://<%= click %>"><%= click %></a></li>
-    <%
-            }
-        }
-    %>
-</ol>
+<c:if test="${!empty formBean.urlSearchString}">
+    Searching for [${formBean.urlSearchString}].
+</c:if>

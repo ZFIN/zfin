@@ -16,7 +16,7 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
     <tr>
         <td colspan="3">
             Ontologies are loaded from the TERM table and cached within the OntologyManager class in sorted maps for
-            fast lookup purposes. There is a <a href="quartz-jobs">quartz job</a> that is configured to reload the
+            fast lookup purposes. There is a <a href="/action/dev-tools/quartz-jobs">quartz job</a> that is configured to reload the
             ontologies nightly to
             ensure that the cache is synchronized with the TERM table.
 

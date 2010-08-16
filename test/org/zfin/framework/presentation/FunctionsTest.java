@@ -1,7 +1,18 @@
 package org.zfin.framework.presentation;
 
+import com.opensymphony.clickstream.Clickstream;
+import com.opensymphony.clickstream.ClickstreamRequest;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.ontology.TermRelationship;
+import org.zfin.people.AccountInfo;
+import org.zfin.people.Lab;
+import org.zfin.people.Person;
+
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -79,4 +90,17 @@ public class FunctionsTest {
 
     }
 
+    @Test
+    public void getTimeDurationToNextElement() {
+/*
+        ClickstreamRequest streamTwo = new ClickstreamRequest(new MockHttpServletRequest("GET", "action"), new Date());
+        ClickstreamRequest streamOne = new ClickstreamRequest(new MockHttpServletRequest("GET", "action"), new Date());
+*/
+        Clickstream stream = new Clickstream();
+        stream.addRequest(new MockHttpServletRequest("GET", "action"));
+        stream.addRequest(new MockHttpServletRequest("GET", "action zwei"));
+        String durationString = ZfinJSPFunctions.getTimeBetweenRequests(stream.getStream(), 0);
+    }
+
 }
+

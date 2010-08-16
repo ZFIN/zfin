@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.security.ZfinAuthenticationProcessingFilter;
+import org.zfin.util.servlet.ServletService;
 import org.zfin.webdriver.WebExplode;
 import org.zfin.webdriver.repository.WebExplodeRepository;
 
@@ -92,7 +92,7 @@ public class WebdriverController extends AbstractCommandController {
             return;
         for (Cookie cookie : cookies) {
             String cookieName = cookie.getName();
-            if (ZfinAuthenticationProcessingFilter.JSESSIONID.equals(cookieName))
+            if (ServletService.JSESSIONID.equals(cookieName))
                 continue;
             String value = cookie.getValue();
             parameters.append("&");

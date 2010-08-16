@@ -1,15 +1,25 @@
 package org.zfin.framework.presentation;
 
+import com.opensymphony.clickstream.ClickstreamRequest;
+import org.acegisecurity.context.SecurityContext;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.people.Person;
 
+import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Class that is called from JSP through a function call.
  */
 public class ZfinJSPFunctions {
+    public static final int MILLISECONDS_PER_HOUR = 3600000;
+    public static final int MILLISECONDS_PER_MINUTE = 60000;
+    public static final int MILLISECONDS_PER_SECOND = 1000;
 
     /**
      * Escape characters to valid HTML code
@@ -124,7 +134,7 @@ public class ZfinJSPFunctions {
      * the ampersand.
      *
      * @param queryString  query string from request
-     * @param prefix       to visiblity action string
+     * @param prefix       to visibility action string
      * @param enumerations enumerations implementing Values interface
      * @return string
      */
@@ -183,15 +193,62 @@ public class ZfinJSPFunctions {
         return visibility.isVisible(sectionName);
     }
 
-    public static boolean isOntologyLoaded(OntologyManager manager, Ontology ontology){
-        if(manager == null || ontology == null)
+    public static boolean isOntologyLoaded(OntologyManager manager, Ontology ontology) {
+        if (manager == null || ontology == null)
             return false;
         return manager.isOntologyLoaded(ontology);
-    } 
+    }
 
-    public static Set<String> getDistinctRelationshipTypes(OntologyManager manager, Ontology ontology){
-        if(manager == null || ontology == null)
+    public static Set<String> getDistinctRelationshipTypes(OntologyManager manager, Ontology ontology) {
+        if (manager == null || ontology == null)
             return null;
         return manager.getDistinctRelationshipTypes(ontology);
+    }
+
+    public static String getTimeDuration(Date start, Date end) {
+        if (end == null)
+            end = new Date();
+        long streamLength = end.getTime() - start.getTime();
+        StringBuffer dateDisplay = new StringBuffer();
+        if (streamLength > MILLISECONDS_PER_HOUR) {
+            dateDisplay.append(streamLength / MILLISECONDS_PER_HOUR);
+            dateDisplay.append(" hours ");
+        }
+        if (streamLength > MILLISECONDS_PER_MINUTE) {
+            dateDisplay.append((streamLength / MILLISECONDS_PER_MINUTE) % 60);
+            dateDisplay.append(" minutes ");
+        }
+        if (streamLength > MILLISECONDS_PER_SECOND) {
+            dateDisplay.append((streamLength / MILLISECONDS_PER_SECOND) % 60);
+            dateDisplay.append(" seconds ");
+        }
+        if (dateDisplay.length() == 0)
+            dateDisplay.append("0 seconds");
+        return dateDisplay.toString();
+    }
+
+    public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
+        if (loopIndex < 0 || list == null)
+            return "";
+
+        if (list.size() <= loopIndex + 1)
+            return "";
+
+        Date start = list.get(loopIndex).getTimestamp();
+        Date end = list.get(loopIndex + 1).getTimestamp();
+        return getTimeDuration(start, end);
+    }
+
+    public static String getPerson(HttpSession session) {
+        if (session == null)
+            return null;
+        String name = (String) session.getAttribute("ACEGI_SECURITY_LAST_USERNAME");
+        SecurityContext securityContext = (SecurityContext) session.getAttribute("ACEGI_SECURITY_CONTEXT");
+        if (StringUtils.isNotEmpty(name) && securityContext != null) {
+            name = ((Person) securityContext.getAuthentication().getPrincipal()).getFullName();
+        } else {
+            name = "Guest";
+        }
+        return name;
     }
 }

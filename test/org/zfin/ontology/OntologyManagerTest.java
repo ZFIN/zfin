@@ -145,4 +145,14 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNotNull(relationships);
     }
 
+    @Test
+    public void testObsoleteTerm() {
+        String termName = "stomach";
+        String termID = "ZDB-TERM-100331-416";
+        Term term = ontologyManager.getTermByName(Ontology.ANATOMY, termName);
+        assertNull(term);
+        term = ontologyManager.getTermByID(Ontology.ANATOMY, termID);
+        assertNotNull(term);
+    }
+
 }

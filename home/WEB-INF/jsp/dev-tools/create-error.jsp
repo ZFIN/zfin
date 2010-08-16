@@ -4,6 +4,7 @@
     <li><a href="/action/dev-tools/page-is-not-there">Page not found1</a>
     <li><a href="basdfasdf">Page not found2</a>
     <li><a href="/action/notthere">Page not found3</a>
+    <li><a href="/action/dev-tools/test-error-page">Runtime Exception</a>
 </ul>
 
 <form:form>

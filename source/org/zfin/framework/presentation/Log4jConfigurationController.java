@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -38,7 +39,12 @@ public class Log4jConfigurationController extends AbstractCommandController {
         CollectionUtils.addAll(allLoggers, enumLoggers);
         Collections.sort(allLoggers, new Log4jComparator());
         form.setAllLoggers(allLoggers);
-
+        Enumeration allAppenders = Logger.getRootLogger().getAllAppenders();
+        List<Appender> appenders = new ArrayList<Appender>(5);
+        while( allAppenders.hasMoreElements()){
+            appenders.add((Appender) allAppenders.nextElement());
+        }
+        form.setAppenders(appenders);
         return new ModelAndView("log4j-configuration", "loggerForm", form);
     }
 

@@ -4,8 +4,8 @@
 <%@ attribute name="requestID" type="java.lang.String" %>
 
 
-<table>
-    <tr>
+<table width="80%">
+    <tr bgcolor="#ccccc0" class="left-align">
         <th>Job Name</th>
         <th>Last Run</th>
         <th>Next Run</th>
