@@ -14,9 +14,8 @@
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
         </layout>
     </appender>
-
-        <appender name="mail" class="org.zfin.util.ZfinSMTPAppender">
-                <param name="SMTPHost" value="localhost" />
+-->
+        <appender name="email" class="org.zfin.util.ZfinSMTPAppender">
                 <param name="From" value="cmpich@zfin.org" />
                 <param name="To" value="cmpich@zfin.org" />
                 <param name="Subject" value="[Tomcat Error] " />
@@ -25,7 +24,6 @@
             </appender>
     
 
--->
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
@@ -39,19 +37,20 @@
 
 -->
     <category name="org.hibernate.SQL" additivity="true">
-        <priority value="debug"/>
+        <priority value="warn"/>
     </category>
 
     <category name="org.hibernate.type" additivity="true">
-        <priority value="debug"/>
+        <priority value="warn"/>
     </category>
 
     <category name="org.zfin" additivity="true">
-        <priority value="debug"/>
+        <priority value="warn"/>
     </category>
 
     <root>
-        <priority value="info"/>
+        <priority value="warn"/>
         <appender-ref ref="console" />
+        <appender-ref ref="email" />
     </root>
 </log4j:configuration>

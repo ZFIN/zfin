@@ -10,6 +10,7 @@
         </layout>
     </appender>
 
+<!--
     <appender name="MAIN" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="./zfin_log4j.log"/>
         <param name="Append" value="true"/>
@@ -19,15 +20,16 @@
             <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
         </layout>
     </appender>
+-->
 
     <category name="org.zfin.properties" additivity="true">
 		<!--<priority value="DEBUG"/>-->
-        <priority value="INFO"/>
+        <priority value="warn"/>
     </category>
 
     <category name="org.zfin" additivity="false">
 <!--		<priority value="DEBUG"/> -->
-		<priority value="INFO"/>
+		<priority value="warn"/>
         <appender-ref ref="stdout"/>
     </category>
 
@@ -44,13 +46,13 @@
 
     <!-- Log the real SQL -->
     <category name="org.hibernate.SQL">
-		<priority value="INFO"/>
+		<priority value="warn"/>
 <!--        <priority value="DEBUG"/> -->
     </category>
 
     <category name="org.hibernate.type">
 <!--        <priority value="trace"/> -->
-		<priority value="info"/>
+		<priority value="warn"/>
     </category>
 
 	<category name="com.gargoylesoftware.htmlunit">
@@ -65,7 +67,7 @@
     </category>
     
     <root>
-        <priority value="info"/>
+        <priority value="warn"/>
         <appender-ref ref="stdout"/>
         <!--        <appender-ref ref="MAIN" />-->
     </root>
