@@ -32,7 +32,7 @@
         </c:if>
 
         <authz:authorize ifAnyGranted="root">
-            <script>
+            <script type="text/javascript">
                 function confirmDelete() {
                     if (confirm('Delete: ${zdbID}')) {
                         location.replace('${deleteURL}');
@@ -41,10 +41,8 @@
 
                 function confirmMerge() {
                     // not confirming here
-                    // if(confirm('Merge:
-                ${zdbID}'))
-                    location.replace('${mergeURL}');
-                    //                    }
+                    if (confirm('Merge:${zdbID}'))
+                        location.replace('${mergeURL}');
                 }
             </script>
 
