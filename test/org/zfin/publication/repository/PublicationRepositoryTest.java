@@ -634,6 +634,16 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(liver.getImages().contains(image));
         assertTrue(brain.getImages().contains(image));     
 
+        image.getTerms().remove(liver);
+        image.getTerms().remove(brain);
+
+        session.flush();
+        session.refresh(liver);
+        session.refresh(brain);
+
+        assertFalse(liver.getImages().contains(image));
+        assertFalse(brain.getImages().contains(image)); 
+
     }
 
 }

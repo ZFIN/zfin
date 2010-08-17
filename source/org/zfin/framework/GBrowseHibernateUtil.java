@@ -68,7 +68,7 @@ public class GBrowseHibernateUtil {
             config.setProperty("hibernate.connection.username", "nobody");
             config.setProperty("hibernate.connection.pool_size", "1");
 
-            config.setProperty("hibernate.show_sql", "true");
+            config.setProperty("hibernate.show_sql", "false");
             config.setProperty("hibernate.format_sql", "true");
             config.addFile(ZfinPropertiesEnum.HIBERNATE_CONFIGURATION_DIRECTORY+ FILE_SEP + "gbrowse.hbm.xml");
 
