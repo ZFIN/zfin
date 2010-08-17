@@ -35,7 +35,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNotNull(ontologyManager.getTermByID(Ontology.STAGE, "ZDB-TERM-100331-2430"));
         assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-2430"));
         assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-1001"));
-        assertNotNull(ontologyManager.getTermByID("ZDB-TERM-070117-73"));
+        assertNull(ontologyManager.getTermByID("ZDB-TERM-070117-73"));
     }
 
     @Test
