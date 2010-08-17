@@ -23,7 +23,7 @@ public class MicroarrayJob implements Job {
             MicroarrayBean microarrayBean = processor.run() ;
             (new IntegratedJavaMailSender()).sendMail("microarray updates for: "+(new Date()).toString()
                     , microarrayBean.finishReadingAndRetrieve(),
-                    ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER));
+                    ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
         }
         catch(Exception e){
             // the error should already be logged
