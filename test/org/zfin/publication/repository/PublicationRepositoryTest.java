@@ -4,12 +4,15 @@ import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureService;
+import org.zfin.expression.Image;
+import org.zfin.expression.ImageStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -39,6 +42,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private static AnatomyRepository anatomyRepository  = RepositoryFactory.getAnatomyRepository();
+
 
 
     //    @Test
@@ -572,6 +577,64 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(figures);
     }
 
+    @Test
+    public void testImageStage() {
+        String imageZdbID = "ZDB-IMAGE-091217-4";
+        String imageWithoutStagesZdbID = "ZDB-IMAGE-020322-107";
+
+        Image image = publicationRepository.getImageById(imageZdbID);
+        Image imageWithoutStages = publicationRepository.getImageById(imageWithoutStagesZdbID);
+
+        ImageStage imageStage;
+
+        DevelopmentStage start = anatomyRepository.getStageByID(DevelopmentStage.ZYGOTE_STAGE_ZDB_ID);
+        DevelopmentStage end = anatomyRepository.getStageByID(DevelopmentStage.ADULT_STAGE_ZDB_ID);
+
+        if (image.getImageStage() == null) {
+            imageStage = new ImageStage();
+            imageStage.setZdbID(image.getZdbID());
+        } else {
+            imageStage = image.getImageStage();
+        }
+
+        imageStage.setStart(start);
+        imageStage.setEnd(end);
+
+        image.setImageStage(imageStage);
+
+        assertNotNull("image has start stage", image.getStart());
+        assertNotNull("image has end stage", image.getEnd());
+        assertNull("image without stages has null start stage", imageWithoutStages.getStart());
+        assertNull("image without stages has null end stage",imageWithoutStages.getEnd()); 
+
+    }
+
+    @Test
+    public void testImageAnatomy() {
+
+        Session session = HibernateUtil.currentSession();        
+
+        String imageZdbID = "ZDB-IMAGE-080219-1";
+
+        //this image is a table, ensuring that it should start out without any anatomy
+        Image image = publicationRepository.getImageById(imageZdbID);
+
+        assertTrue(image.getTerms().size() == 0);
+
+        Term liver = ontologyRepository.getTermByName("liver",Ontology.ANATOMY);
+        Term brain = ontologyRepository.getTermByName("brain", Ontology.ANATOMY);
+
+        image.getTerms().add(liver);
+        image.getTerms().add(brain);
+
+        session.flush();
+        session.refresh(liver);
+        session.refresh(brain);
+
+        assertTrue(liver.getImages().contains(image));
+        assertTrue(brain.getImages().contains(image));     
+
+    }
 
 }
 

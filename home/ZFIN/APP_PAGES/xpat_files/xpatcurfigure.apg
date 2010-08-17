@@ -234,15 +234,35 @@ EFFECTS
     </td>
     <td valign=top>
       <?MISQL SQL="
-          select img_thumbnail, img_label
+          select img_thumbnail, img_label, img_zdb_id
           from image
           where img_fig_zdb_id = '$xpcurfig_fig_zdb_id'
           order by img_label;">
+          <?MIVAR NAME="$xpatcurfig_img_zdb_id">$3<?/MIVAR>
           <?MIVAR COND=$(NC,$1,NULL)>
             <img src="<!--|IMAGE_LOAD|-->/$1">$2 
           <?/MIVAR>
       <?/MISQL>
+
     </td>
+    <?MICOMMENT> ** only show the image association bit if an image exists) ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(XST,$xpatcurfig_img_zdb_id)">
+    <td>   
+    <?MIVAR>
+      <div>Image Anatomy</div>
+      <script type="text/javascript">
+                var MarkerProperties = { zdbID : "$xpatcurfig_img_zdb_id",
+                                         imageEditDiv : "imageTermBox",
+                                         imageStageEditDiv: "imageStageBox"} ;
+              </script>
+              <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+              <script language="javascript"
+                     src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
+              <div id="imageTermBox"></div>
+              <div id="imageStageBox"></div>
+      <?/MIVAR>
+    </td>
+    <?/MIBLOCK>
   </tr> 
   <?/MIVAR>
 <?/MIBLOCK>

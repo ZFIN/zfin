@@ -153,6 +153,12 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_curation.jsp"/>
     </definition>
 
+    <definition name="image-edit-test" extends="dev_layout">
+        <put name="stcitle" value="GWT Image Edit Test Page"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/image_edit_test.jsp"/>
+    </definition>
+
+
     <definition name="transcript-edit" extends="dev_layout">
         <put name="staticTitle" value="GWT Transcript Edit"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>

@@ -87,6 +87,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
             link = FigurePresentation.getLink((Figure) o);
+        else if (o instanceof Image)
+            link = ImagePresentation.getLink((Image) o);
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof Genotype)

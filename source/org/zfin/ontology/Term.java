@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.Image;
 
 import java.util.List;
 import java.util.Set;
@@ -73,5 +74,8 @@ public interface Term extends Comparable<Term>{
 
     void setEnd(DevelopmentStage stage);
 
+    Set<Image> getImages();
+
+    void setImages(Set<Image> images);
 
 }

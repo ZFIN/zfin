@@ -33,6 +33,7 @@
                 <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
                 <prop key="/dev-tools/gwt/modules">gwtModules</prop>
                 <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
+                <prop key="/dev-tools/gwt/image-edit-test">imageEditTest</prop>
                 <prop key="/dev-tools/gwt/phenotype-curation">phenotypeCuration</prop>
                 <prop key="/dev-tools/gwt/go-curation">goCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
@@ -90,6 +91,10 @@
 
     <bean name="ontologyTerm" class="org.zfin.ontology.presentation.OntologyTermController" scope="prototype">
         <property name="viewName" value="ontology-term"/>
+    </bean>
+
+    <bean name="imageEditTest" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
+        <property name="viewName" value="image-edit-test"/>
     </bean>
 
     <bean name="lookup" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">

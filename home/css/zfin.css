@@ -2,6 +2,7 @@
 @import url("summary.css");
 @import url("spiffycorners.css");
 @import url("footer.css");
+@import url("Lookup.css");
 
 .sidebar, .content, .header .acknowledgement {
     font-family: arial, sans-serif;
@@ -485,7 +486,20 @@ a.wiki-link {
 }
 
 .gwt-editbox{
-    background-color: lightgray;
+    background-color: #eee;
+}
+
+table.gwt-stack-composite {
+    background-color: #eee;
+}
+
+
+table.gwt-stack-composite td {
+    padding: 1px;
+}
+
+table.gwt-stack-composite gwt-delete-button {
+    margin-right: 5px;
 }
 
 .dots {

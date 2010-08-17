@@ -466,7 +466,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
               ******************
         <?/MICOMMENT>
 
-        <?MIBLOCK COND=$(NXST,$UPDATE)>
+
           <?MICOMMENT> 
               *** This image may be one of many images for a figure. 	
               *** Add the text "<b>One of multiple images for</b>" when 
@@ -500,7 +500,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
           <?/MISQL> <?MICOMMENT> end of expression pattern query <?/MICOMMENT>
           
-        <?/MIBLOCK>
+
         		
 	<?MIBLOCK COND=$(OR,$(XST,$UPDATE),$(AND,$(NXST,$fimgview_caption_display),$(NC,$fimgview_fimg_comments,NULL)))>
 	  <?MIVAR NAME=$fimgview_caption_display>$fimgview_fimg_comments<?/MIVAR>
@@ -511,7 +511,11 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
             <textarea name=caption cols=85 rows=5>$fimgview_caption_display</textarea>
             <br>
             <input type=button value="submit" onClick="dopopup(document.updater.caption.value,'$fimgview_caption_display','img_comments','image','img_zdb_id');">
-
+            <?MICOMMENT> ** Show the fig caption in an uneditable way, since a curator might 
+                            want that information while they're editing other info ** <?/MICOMMENT>
+            <?MIBLOCK COND="$(XST,$fimgview_fig_caption)">
+              <?MIVAR> <div><b>$fimgview_fig_label</b> $fimgview_fig_caption</div> <?/MIVAR>
+            <?/MIBLOCK>
           <?/MIVAR>
         <?/MIVAR>
           
@@ -578,7 +582,10 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  <?MIVAR NAME=$fimgview_end_stg_name>$4<?/MIVAR>
 	  <?MIVAR NAME=$fimgview_start_stg_name_long_html>$7<?/MIVAR>
 	  <?MIVAR NAME=$fimgview_end_stg_name_long_html>$8<?/MIVAR>
-	  
+        <?/MISQL> 
+
+        <?MICOMMENT> ** Display stage info, or if in update mode, show the edit widget ** <?/MICOMMENT>
+        <?MIBLOCK COND="$(OR,$(XST,$fimgview_start_stg_zdb_id),$(XST,$UPDATE))">
 	  <p>
 	  <table width=100% cellspacing=0>
 	    <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
@@ -589,7 +596,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
             <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
               <td>
 
-	  <?MIBLOCK COND=$(NXST,$UPDATE)>
+	  <?MIBLOCK COND="$(NXST,$UPDATE)">
 	    <?MIVAR>
 	      $fimgview_start_stg_name_long_html
 	    <?/MIVAR>
@@ -597,33 +604,76 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	      to $fimgview_end_stg_name_long_html
 	    <?/MIVAR>
 	  <?MIELSE>
-	    <?MIVAR>
-	      <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_start_stg_zdb_id','imgstg_start_stg_zdb_id','image_stage','imgstg_img_zdb_id')">
-		<?MISQL SQL="
-		  select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
-		    from stage 
-		    order by stg_hours_start, stg_hours_end desc;">
-		  <option $(IF,$(EC,$fimgview_start_stg_name,$1),SELECTED) value="$4">$1
-		<?/MISQL>
-	      </SELECT>
-	      to 
-	      <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_end_stg_zdb_id','imgstg_end_stg_zdb_id','image_stage','imgstg_img_zdb_id')">
-		<?MISQL SQL="
-		  select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
-		    from stage 
-		    order by stg_hours_start, stg_hours_end desc;">
-		  <option $(IF,$(EC,$fimgview_end_stg_name,$1),SELECTED) value="$4">$1
-		<?/MISQL>
-	      </SELECT>
-	    <?/MIVAR>
+              <div id="imageStageBox"></div>
+
 	  <?/MIBLOCK>
 
               </td>
             </tr>
           </table>
-        <?/MISQL> <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
+        <?/MIBLOCK>
+        <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
 
-	  
+        <?MICOMMENT>
+              ***********
+              * Anatomy *
+              ***********
+        <?/MICOMMENT>         
+
+        <?MIBLOCK COND="$(XST,$UPDATE)">
+        <br>
+        
+        <table class="summary">
+          <tr>
+             <th>Anatomy</th>
+          </tr>
+          <tr>
+            <td>
+              <?MICOMMENT> for some reason, putting this input here means that the
+                           LookupComposite won't automatically submit.
+              <?/MICOMMENT>
+              <div style="display: none;"><input type="text" name="magicvoodoo"></div>
+              <script type="text/javascript">
+                var MarkerProperties= { zdbID : "<?MIVAR>$OID<?/MIVAR>",
+                                        imageEditDiv: "imageTermBox",
+                                        imageStageEditDiv: "imageStageBox"} ;
+              </script>
+              <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+              <script language="javascript"
+                     src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
+              <div id="imageTermBox"></div>
+            </td>
+          </tr>
+        </table>
+
+        <?MIELSE>
+          <?MIVAR NAME="$fimgview_term_links"><?/MIVAR>
+          <?MISQL SQL="select get_entity_name_html(term_zdb_id), lower(term_name) as term_name_order
+                     from int_image_term, term
+                     where iit_img_zdb_id = '$OID'
+                       and iit_term_zdb_id = term_zdb_id
+                     order by term_name_order;">
+            <?MIBLOCK COND="$(NE,$fimgview_term_links,)">
+              <?MIVAR NAME="$fimgview_term_links">$fimgview_term_links, $1<?/MIVAR>
+            <?MIELSE>
+              <?MIVAR NAME="$fimgview_term_links">$1<?/MIVAR>
+            <?/MIBLOCK>
+          <?/MISQL>
+
+          <?MIBLOCK COND="$(NE,$fimgview_term_links,)">
+              <br> 
+                <table class="summary">
+                <tr> <th> Anatomy </th> </tr>
+                <tr> <td>
+                   <?MIVAR>$fimgview_term_links<?/MIVAR>
+                </td> </tr> </table>
+          <?/MIBLOCK>
+
+
+        <?/MIBLOCK>
+
+
+
 
         <?MICOMMENT>
               ***************

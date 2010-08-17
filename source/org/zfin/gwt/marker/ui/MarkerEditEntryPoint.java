@@ -46,6 +46,10 @@ public class MarkerEditEntryPoint implements EntryPoint {
             (new AntibodyEditController()).initGUI();
         }
         else
+        if (zdbID.indexOf("IMAGE")>=0) {
+           (new ImageEditController()).initGUI();
+        }
+        else
         if(zdbID.equals("test")){
             (new TestComposite()).initGUI();
         }

@@ -23,24 +23,25 @@ import java.util.List;
  */
 public class StageSelector extends VerticalPanel {
 
-    private static final String SELECT_MULTIPLE_STAGES = "Select Multiple Stages";
-    private static final String SELECT_SINGLE_STAGE = "Select a Stage Range";
-    private static final String STAGE_RANGE = "Stage Range";
-    private static final String MULTIPLE_STAGES = "Multiple Stages";
-    private static final String START = "Start:";
-    private static final String END = "End:";
+    protected static final String SELECT_MULTIPLE_STAGES = "Select Multiple Stages";
+    protected static final String SELECT_SINGLE_STAGE = "Select a Stage Range";
+    protected static final String STAGE_RANGE = "Stage Range";
+    protected static final String MULTIPLE_STAGES = "Multiple Stages";
+    protected static final String START = "Start:";
+    protected static final String END = "End:";
 
-    private HorizontalPanel startStage = new HorizontalPanel();
-    private HorizontalPanel endStage = new HorizontalPanel();
-    private ListBox startStageList = new ListBox();
-    private ListBox endStageList = new ListBox();
-    private ListBox multiStartStageList = new ListBox(true);
-    private Button multiStageButton = new Button(SELECT_MULTIPLE_STAGES);
-    private Label panelTitle;
-    private HorizontalPanel toggleRow = new HorizontalPanel();
+    protected HorizontalPanel startStage = new HorizontalPanel();
+    protected HorizontalPanel endStage = new HorizontalPanel();
+    protected ListBox startStageList = new ListBox();
+    protected ListBox endStageList = new ListBox();
+    protected ListBox multiStartStageList = new ListBox(true);
+    protected Button multiStageButton = new Button(SELECT_MULTIPLE_STAGES);
+    protected Label panelTitle;
+    protected HTML multiStageLabel;
+    protected HorizontalPanel toggleRow = new HorizontalPanel();
 
-    private String publicationID;
-    private SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
+    protected String publicationID;
+    protected SessionSaveServiceAsync sessionRPC = SessionSaveService.App.getInstance();
 
 
     public StageSelector() {
@@ -62,9 +63,16 @@ public class StageSelector extends VerticalPanel {
         add(startStage);
         add(endStage);
         add(multiStartStageList);
-        toggleRow.add(new HTML("&nbsp; or ... &nbsp;"));
+        multiStageLabel = new HTML("&nbsp; or ... &nbsp;");
+        toggleRow.add(multiStageLabel);
         toggleRow.add(multiStageButton);
         add(toggleRow);
+        addHandlers();
+        setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+        setGuiToDefault();
+    }
+
+    public void addHandlers() {
         startStageList.addChangeHandler(new StartStageChangeHandler());
         multiStageButton.addClickHandler(new MultiStageButtonClickHandler());
         setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
@@ -215,7 +223,7 @@ public class StageSelector extends VerticalPanel {
         return multiStartStageList;
     }
 
-    void setMultiStageMode() {
+    protected void setMultiStageMode() {
         startStage.setVisible(false);
         endStage.setVisible(false);
         multiStartStageList.setVisible(true);
@@ -223,7 +231,7 @@ public class StageSelector extends VerticalPanel {
         panelTitle.setText(MULTIPLE_STAGES);
     }
 
-    void setSingleStageMode() {
+    protected void setSingleStageMode() {
         multiStageButton.setText(SELECT_MULTIPLE_STAGES);
         panelTitle.setText(STAGE_RANGE);
         multiStartStageList.setVisible(false);
@@ -239,6 +247,12 @@ public class StageSelector extends VerticalPanel {
 
     public enum Mode {
         SINGLE_MODE, MULTI_MODE
+    }
+
+    public void hideMultiSelect() {
+        multiStageButton.setVisible(false);
+        multiStageLabel.setVisible(false);
+        
     }
 
 // ************  Event Handlers ***********************************************************

@@ -2,6 +2,7 @@ package org.zfin.ontology;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.Image;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class GenericTerm implements Term, Serializable {
     private String comment;
     private Set<TermAlias> synonyms;
     private String definition;
+    private Set<Image> images;
 
     // attribute that is populated lazily
     // transient modifier because we do not want to serialize the whole relationship tree
@@ -164,6 +166,14 @@ public class GenericTerm implements Term, Serializable {
     @Override
     public void setEnd(DevelopmentStage stage) {
         this.end = stage;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 
     @Override

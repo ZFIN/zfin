@@ -1,18 +1,29 @@
 package org.zfin.expression;
 
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
+
+import java.io.Serializable;
+import java.util.Set;
+
 /**
  * Image domain business object. This is an actual image in ZFIN being referenced
  * in a figure and a publication.
  */
-public class Image {
+public class Image implements Serializable {
 
-    String zdbID;
-    Figure figure;
-    String imageFilename;
-    String imageWithAnnotationsFilename;
-    Integer width;
-    Integer height;
-    String thumbnail;
+    private String zdbID;
+    private Figure figure;
+    private String imageFilename;
+    private String imageWithAnnotationsFilename;
+    private Integer width;
+    private Integer height;
+    private String thumbnail;
+    private Set<Term> terms;
+
+    private ImageStage imageStage;
 
 
     public Figure getFigure() {
@@ -70,7 +81,34 @@ public class Image {
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
-    
+
+    public Set<Term> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(Set<Term> terms) {
+        this.terms = terms;
+    }
+
+    public DevelopmentStage getStart() {
+        if (imageStage == null)
+            return null;
+        else return imageStage.getStart();
+    }
+
+    public DevelopmentStage getEnd() {
+        if (imageStage == null) 
+            return null;
+        else return imageStage.getEnd();
+    }
+
+    public ImageStage getImageStage() {
+        return imageStage;
+    }
+
+    public void setImageStage(ImageStage imageStage) {
+        this.imageStage = imageStage;
+    }
 
     public boolean equals(Object otherImage) {
         if (!(otherImage instanceof Image))

@@ -162,6 +162,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         List<AnatomyRelationship> relationships = anatomyRepository.getAnatomyRelationships(ai);
         ai.setRelatedItems(relationships);
         form.setAnatomyItem(ai);
+        Term term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
+        ai.setImages(term.getImages());
+
         return ai;
     }
 

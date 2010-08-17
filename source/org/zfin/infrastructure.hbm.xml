@@ -267,6 +267,11 @@
             <one-to-many class="org.zfin.ontology.TermAlias"/>
         </set>
 
+        <set name="images" lazy="true" table="int_image_term">
+  	            <key column="iit_term_zdb_id"/>
+  	            <many-to-many column="iit_img_zdb_id" class="org.zfin.expression.Image"/>
+        </set>
+
         <subclass name="org.zfin.ontology.GenericTerm" discriminator-value="Generic-Term">
         </subclass>
 

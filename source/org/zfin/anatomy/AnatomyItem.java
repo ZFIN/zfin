@@ -3,6 +3,7 @@ package org.zfin.anatomy;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Image;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.TermAlias;
@@ -40,6 +41,9 @@ public class AnatomyItem implements Term {
     private String nameOrder;
     private List<AnatomyRelationship> relatedItems;
     private Set<AnatomySynonym> synonyms;
+
+    //not mapped in hibernate, must be inserted via the term.
+    private Set<Image> images;
 
     private List<TermRelationship> relationships;
 
@@ -228,6 +232,14 @@ public class AnatomyItem implements Term {
 
     public void setTermName(String termName) {
         // Todo when Ao goes into term table
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 
     public String toString() {

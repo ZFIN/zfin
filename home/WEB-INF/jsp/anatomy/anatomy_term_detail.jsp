@@ -62,6 +62,14 @@
     </table>
 </div>
 
+<c:if test="${!empty formBean.anatomyItem.images}">
+   <div class="summary">
+       <c:forEach var="image" items="${formBean.anatomyItem.images}">
+           <zfin:link entity="${image}"/>
+       </c:forEach>
+   </div>
+</c:if>
+
 <div class="summary">
     <TABLE width="100%">
         <TR>

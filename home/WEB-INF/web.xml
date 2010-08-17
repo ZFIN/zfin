@@ -271,6 +271,16 @@
         <url-pattern>/ajax/antibodyservice</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ImageService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.ImageRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ImageService</servlet-name>
+        <url-pattern>/ajax/imageservice</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>
         <url-pattern>/ajax/curation</url-pattern>

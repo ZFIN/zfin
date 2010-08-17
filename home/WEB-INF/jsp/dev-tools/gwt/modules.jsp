@@ -76,6 +76,12 @@
         </td>
     </tr>
     <tr>
+        <td class="sectionTitle">Image Edit Test</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/image-edit-test">Image Edit Test</a>
+        </td>
+    </tr>
+    <tr>
         <td class="sectionTitle">GO/Go Edit</td>
         <td width="120" colspan="2" class="sectionTitle">
             <a href="/action/dev-tools/gwt/go-edit">GO: GO Edit</a>

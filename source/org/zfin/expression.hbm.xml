@@ -85,6 +85,24 @@
         <property name="thumbnail">
             <column name="img_thumbnail"/>
         </property>
+
+        <set name="terms" lazy="true" table="int_image_term">
+  	            <key column="iit_img_zdb_id"/>
+  	            <many-to-many column="iit_term_zdb_id" class="org.zfin.ontology.Term"/>
+  	    </set>
+        
+        <join table="image_stage" optional="true">
+            <key column="imgstg_img_zdb_id"/>
+            <component name="imageStage">                
+                <many-to-one name="start" column="imgstg_start_stg_zdb_id"
+                             class="org.zfin.anatomy.DevelopmentStage"
+                             lazy="proxy"/>
+                <many-to-one name="end" column="imgstg_end_stg_zdb_id"
+                             class="org.zfin.anatomy.DevelopmentStage"
+                             lazy="proxy"/>
+            </component>
+         </join>
+        
     </class>
 
     <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given
