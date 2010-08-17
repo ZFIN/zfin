@@ -223,15 +223,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void testExpressionFigures() {
-        Session session = HibernateUtil.currentSession();
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90");
-
-        int numFigs = expRep.getExpressionFigureCount(marker);
-        assertTrue(numFigs > 0);
-    }
-
-    @Test
     public void testDirectlySubmittedExpression() {
         Session session = HibernateUtil.currentSession();
         Marker marker = (Marker) session.get(Marker.class, "ZDB-CDNA-040425-873");
