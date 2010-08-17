@@ -48,7 +48,7 @@
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="alias-publication-list?featureAlias.zdbID=${featureAlias.zdbID}&orderBy=author">${featureAlias.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}">${featureAlias.publicationCount}</a>)
                         </c:otherwise>
                     </c:choose>
                 </c:if>
