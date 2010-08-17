@@ -223,16 +223,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void testExpressionPubs() {
-        Session session = HibernateUtil.currentSession();
-//        Marker marker = (Marker) session.get(Marker.class, "ZDB-GENE-990415-72" ) ;
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90");
-
-        int numPubs = expRep.getExpressionPubCount(marker);
-        assertTrue(numPubs > 0);
-    }
-
-    @Test
     public void testExpressionFigures() {
         Session session = HibernateUtil.currentSession();
         Marker marker = (Marker) session.get(Marker.class, "ZDB-EST-010914-90");
