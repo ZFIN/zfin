@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 
-GENERICS = checklinks run.checklinks run.checklinks.mirror signsoflife.sh \
+GENERICS = signsoflife.sh \
            webrotate.pl gen-jobs-rss.r gen-meetings-rss.r gen-news-rss.r
 
 STATICS = makemirror.csh domainlookup.pl rss-util.r
@@ -33,25 +33,6 @@ include $(TOP)/make.default.rules
 
 
 # ---------------  Misc Targets  ----------------------------------------
-
-# Run the checklinks script, which scans the website looking for broken
-# links.  Invoke checklinks with different options depending on if you 
-# are in a
-#   non-mirror site: check the entire web site, including the home page, 
-#                    the static pages, and any dynamic pages that are 
-#                    pointed to by the static pages.  This can run for
-#		     several hours.
-#   mirror site:     Check only the static pages.  This runs in under 
-#		     2 minutes.
-#
-
-runchecklinks : $(TARGETDIR)/checklinks $(TARGETDIR)/run.checklinks $(TARGETDIR)/run.checklinks.mirror
-  ifneq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
-	$(TARGETDIR)/run.checklinks 	
-  else
-	$(TARGETDIR)/run.checklinks.mirror 
-  endif
-
 
 # Run the script that updates the mirror.zfin.org web site.
 
