@@ -301,7 +301,7 @@ div.auto_complete ul strong.highlight {
 
 .small-curation-box {
     overflow: auto;
-    height: 150;
+    height: 150px;
     border: 1px solid black;
     width: 98%;
     margin-left: 1%;
@@ -309,7 +309,7 @@ div.auto_complete ul strong.highlight {
 
 .medium-curation-box {
     overflow: auto;
-    height: 350;
+    height: 350px;
     border: 1px solid black;
     width: 98%;
     margin-left: 1%;
@@ -317,7 +317,7 @@ div.auto_complete ul strong.highlight {
 
 .large-curation-box {
     overflow: auto;
-    height: 650;
+    height: 650px;
     border: 1px solid black;
     width: 98%;
     margin-left: 1%;
