@@ -23,7 +23,6 @@
     <!--here, we are only loading property files into ant, not into the enum -->
     <loadProperties file="${commons.dir}/${INSTANCE}.properties" />
 
-
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>
     <import file="${buildfiles.dir}/test.xml"/>
@@ -42,7 +41,6 @@
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/ehcache.xml" todir="${classbin.dir}"/>
-        <copy file="${conf.dir}/log4j.xml" todir="${classbin.dir}" failonerror="false"/>
         <copy todir="${classbin.dir}/org/zfin">
             <fileset dir="${hibernate.conf.dir}">
                 <include name="*.hbm.xml"/>
@@ -368,6 +366,7 @@
         <move todir="${home.target}" verbose="false">
             <fileset dir="${pre-home.target}"/>
         </move>
+        <copy file="${conf.dir}/log4j.xml" todir="${home.target}/WEB-INF/classes/" failonerror="false"/>
 
         <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
     </target>
