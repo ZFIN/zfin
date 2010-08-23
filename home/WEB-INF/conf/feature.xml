@@ -8,10 +8,13 @@
         <property name="mappings">
             <props>
                <prop key="/feature/detail">detailFeature</prop>
+               <prop key="/genotype/detail">detailGenotype</prop>
+               <prop key="/genotype/show_all_phenotype">allPhenotypeGenotype</prop>
             </props>
         </property>
     </bean>
     <bean name="detailFeature" class="org.zfin.feature.presentation.FeatureDetailController"/>
-
+    <bean name="detailGenotype" class="org.zfin.feature.presentation.GenotypeDetailController"/>
+    <bean name="allPhenotypeGenotype" class="org.zfin.feature.presentation.AllPhenotypeController"/>
 
 </beans>

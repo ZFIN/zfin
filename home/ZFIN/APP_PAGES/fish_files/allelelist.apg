@@ -1,26 +1,6 @@
 <?MICOMMENT>
- file: phenotype_miniview.apg
- prefix: phmview_
- 
- This page is webexploded from markerview.apg and genotypeview.apg.
- If called from gene or MO page, displays the mini format of Phenotype section. 
- If called from genotype page, output the figure and pub counts, link, and sql for affected entities.
-
- INPUT:
-    a temp table with one column - t_pato_zdb_id 
-
- INPUT VAR:
-    phmview_input_table : the temp table passed from gene or MO page
-    phmview_input_figentity_table: the temp table passed from genotype page
-    phmview_morphant : yes or no
-
- OUTPUT (for gene or MO page):
-    PHENOTYPE:
-      Data:              xx figure(s) from xx publication(s)
-      Affecting: entity1, entity2, entity3, entity4, entity5 ... (all xx)
-
- OUTPUT VAR (for genotype page): 
-     $phmview_pato_fig_count, $phmview_pato_source_desc, $phmview_pato_link
+ file: allelelist.apg
+ prefix: allele_
 
 <?/MICOMMENT>
 

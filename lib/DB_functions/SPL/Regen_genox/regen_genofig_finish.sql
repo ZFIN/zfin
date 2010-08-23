@@ -36,8 +36,8 @@ create procedure regen_genofig_finish()
   delete from genotype_figure_fast_search_new;
 
   insert into genotype_figure_fast_search_new
-      ( gffs_geno_zdb_id, gffs_fig_zdb_id, gffs_superterm_zdb_id, gffs_subterm_zdb_id, gffs_morph_zdb_id )
-    select rgf_geno_zdb_id, rgf_fig_zdb_id, rgf_superterm_zdb_id, rgf_subterm_zdb_id, rgf_morph_zdb_id
+      (gffs_geno_zdb_id,gffs_fig_zdb_id,gffs_superterm_zdb_id,gffs_subterm_zdb_id,gffs_quality_zdb_id,gffs_tag,gffs_morph_zdb_id)
+    select rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id
       from regen_genofig_temp;
      
   delete from regen_genofig_temp;

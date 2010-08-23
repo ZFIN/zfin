@@ -7,14 +7,18 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.ExperimentCondition;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
+import org.zfin.ontology.presentation.ExpressionResultPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.FeaturePresentation;
 import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -93,6 +97,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof Genotype)
             link = GenotypePresentation.getLink((Genotype) o);
+        else if (o instanceof Feature)
+            link = FeaturePresentation.getLink((Feature) o);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o);
         else if (o instanceof DevelopmentStage)
@@ -101,6 +107,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = SourcePresentation.getLink((Organization) o);
         else if (o instanceof Term)
             link = TermPresentation.getLink((Term) o);
+        else if (o instanceof ExpressionResult)
+            link = ExpressionResultPresentation.getLink((ExpressionResult) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;

@@ -11,6 +11,15 @@
         <put name="body" value="/WEB-INF/jsp/feature/feature_detail.jsp"/>
     </definition>
 
+    <definition name="genotype-detail.page" extends="main_layout">
+        <put name="staticTitle" value="Genotype: "/>
+        <put name="body" value="/WEB-INF/jsp/feature/genotype_detail.jsp"/>
+    </definition>
 
- </tiles-definitions>
+    <definition name="genotype_all_phenotype.page" extends="main_layout">
+        <put name="staticTitle" value="ZFIN: All Phenotypes with " />
+        <put name="body" value="/WEB-INF/jsp/feature/genotype_all_phenotype.jsp"/>
+    </definition>
+    
+</tiles-definitions>
 

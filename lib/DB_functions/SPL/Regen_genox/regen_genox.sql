@@ -231,7 +231,10 @@ create dba function regen_genox() returning integer
         gffs_fig_zdb_id varchar(50) not null,
         gffs_superterm_zdb_id varchar(50) not null,
         gffs_subterm_zdb_id varchar(50),
-        gffs_morph_zdb_id varchar(50)
+        gffs_quality_zdb_id varchar(50) not null,
+        gffs_tag varchar(25) not null,
+        gffs_morph_zdb_id varchar(50),
+        gffs_serial_id serial8 not null
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
@@ -319,7 +322,7 @@ create dba function regen_genox() returning integer
 
     let errorHint = "genotype_figure_fast_search_new create PK index";
     create unique index genotype_figure_fast_search_primary_key_index_transient
-      on genotype_figure_fast_search_new (gffs_geno_zdb_id, gffs_fig_zdb_id, gffs_superterm_zdb_id, gffs_subterm_zdb_id, gffs_morph_zdb_id)
+      on genotype_figure_fast_search_new (gffs_serial_id)
       fillfactor 100
       in idxdbs1;
 
@@ -340,7 +343,7 @@ create dba function regen_genox() returning integer
       on genotype_figure_fast_search_new (gffs_morph_zdb_id)
       fillfactor 100
       in idxdbs1;
-
+        
     update statistics high for table genotype_figure_fast_search_new;
 
     -- --------------------------------------------------------------------
@@ -434,9 +437,26 @@ create dba function regen_genox() returning integer
       rename index genotype_figure_fast_search_morph_foreign_key_index_transient 
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
 
+
+      let errorHint = "genotype_figure_fast_search add PK";
+      alter table genotype_figure_fast_search add constraint primary key 
+      (gffs_serial_id) constraint gffs_primary_key ;
+
+      let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
+      delete cascade constraint gffs_geno_zdb_id_foreign_key);
+    
+      let errorHint = "genotype_figure_fast_search add foreign key to reference figure";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_fig_zdb_id) references figure on 
+      delete cascade constraint gffs_fig_zdb_id_foreign_key);
+    
+      let errorHint = "genotype_figure_fast_search add foreign key to reference marker";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_morph_zdb_id) references marker on 
+      delete cascade constraint gffs_morph_zdb_id_foreign_key);
+
       grant select on genotype_figure_fast_search to "public";
 
-      --trace off;
+     --trace off;
     end -- Local exception handler
 
     commit work;

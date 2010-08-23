@@ -21,6 +21,10 @@ public class GenotypeStatistics extends EntityStatistics {
     private Term anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
 
+    public GenotypeStatistics(Genotype genotype) {
+        this.genotype = genotype;
+    }
+
     public GenotypeStatistics(Genotype genotype, Term anatomyItem) {
         this.genotype = genotype;
         this.anatomyItem = anatomyItem;

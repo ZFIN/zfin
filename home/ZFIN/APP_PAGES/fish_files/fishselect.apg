@@ -7,7 +7,7 @@ The goal is to display the genotypes as search result according to the search cr
 and display genotype list when called from other pages, such as marker page, pub page.
 
 Variables THAT MIGHT BE Expected: 
- -- fsel_allele_id        -- from genotypeview .apg and jump_to.apg
+ -- fsel_allele_id        -- from genotype detail JSP and jump_to.apg
  -- fsel_marker_id        -- from markerview.apg
  -- fsel_anatomy_item_id  -- from action/anatomy/term-detail
  -- fsel_inputname     -- from search form and markerview and markerselect page
@@ -997,7 +997,7 @@ function doValidateAndSubmit(currentTime ){
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$fsel_allele_id)">
-<?MICOMMENT> ============= from genotypeview and jump_to page =============  <?/MICOMMENT>
+<?MICOMMENT> ============= from genotype detail JSP and jump_to page =============  <?/MICOMMENT>
 
   <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_result 
                        (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)

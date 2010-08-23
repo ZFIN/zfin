@@ -13,6 +13,7 @@ public abstract class ObjectSupplier implements Serializable {
     protected Organization organization;
 
     protected String accNum;
+    protected String availState;
 
     public String getOrderURL() {
         if (organization.getOrganizationOrderURL() != null && organization.getOrganizationOrderURL().getUrlPrefix() != null && accNum != null)
@@ -34,6 +35,14 @@ public abstract class ObjectSupplier implements Serializable {
 
     public void setAccNum(String accNum) {
         this.accNum = accNum;
+    }
+
+    public String getAvailState() {
+        return availState;
+    }
+
+    public void setAvailState(String availState) {
+        this.availState = availState;
     }
 
     public Organization getOrganization() {

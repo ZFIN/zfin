@@ -633,8 +633,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
   "      pheno.tag <> 'normal' "+
   "order by figure.orderingLabel    ";*/
         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
-                "where genofig.genozdbID = :genoID AND " +
-                "      genofig.figzdbID=figure.id " +
+                "where genofig.genotype.zdbID = :genoID AND " +
+                "      genofig.figure.zdbID=figure.id " +
                 "order by figure.orderingLabel    ";
 
         Query query = session.createQuery(hql);
@@ -658,9 +658,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
   "      figure member of pheno.figures  " +
   "order by figure.orderingLabel    ";*/
         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
-                "where genofig.genozdbID = :genoID AND " +
-                "      genofig.figzdbID=figure.id AND " +
-                " genofig.morphzdbID is not null " +
+                "where genofig.genotype.zdbID = :genoID AND " +
+                "      genofig.figure.zdbID=figure.id AND " +
+                " genofig.morpholino.zdbID is not null " +
                 "order by figure.orderingLabel    ";
 
         Query query = session.createQuery(hql);
@@ -725,8 +725,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);*/
         String hql = "select distinct figure.publication  from Figure figure, GenotypeFigure genofig " +
-                "where genofig.genozdbID = :genoID AND " +
-                "      genofig.figzdbID=figure.id ";
+                "where genofig.genotype.zdbID = :genoID AND " +
+                "      genofig.figure.zdbID=figure.id ";
 
         Query query = session.createQuery(hql);
         query.setString("genoID", genotype.getZdbID());
@@ -1519,5 +1519,41 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return publicationList ;
     }
 
+    public PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs) {
+
+        PaginationResult<Publication> paginationResult = new PaginationResult<Publication>();
+        Set<Publication> pubList = new HashSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :genotypeZdbID ";
+        query = session.createQuery(hql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p, DataAlias da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :genotypeZdbID ";
+        query = session.createQuery(hql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        if (maxPubs >= 0) {
+            paginationResult.setPopulatedResults((new ArrayList<Publication>(pubList)).subList(0, maxPubs));
+        } else {
+            paginationResult.setPopulatedResults(new ArrayList<Publication>(pubList));
+        }
+        paginationResult.setTotalCount(pubList.size());
+        return paginationResult;
+    }
 
 }

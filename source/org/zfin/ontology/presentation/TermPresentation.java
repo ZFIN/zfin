@@ -1,6 +1,7 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 
 /**
@@ -19,7 +20,10 @@ public class TermPresentation extends EntityPresentation {
     public static String getLink(Term term) {
         if (term == null)
             return null;
-        return getLink(term, term.getTermName());
+        if (term.getOntology().equals(Ontology.SPATIAL))
+            return term.getTermName();
+        else
+            return getLink(term, term.getTermName());
     }
 
     /**

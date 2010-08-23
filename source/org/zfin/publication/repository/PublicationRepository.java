@@ -490,4 +490,7 @@ public interface PublicationRepository extends PaginationParameter {
     List<Publication> getPublicationsWithAccessionButNoDOIAndLessAttempts(int maxAttempts, int maxProcesses);
 
     List<Publication> addDOIAttempts(List<Publication> publicationList);
+
+    PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
+
 }

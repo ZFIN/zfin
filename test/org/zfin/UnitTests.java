@@ -36,6 +36,7 @@ import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
+import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
 import org.zfin.properties.ZfinPropertiesTest;
@@ -66,6 +67,7 @@ import org.zfin.util.*;
         CurationExperimentTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
+        ExpressionResultPresentationTest.class,
         ExperimentDTOTest.class,
         FileUtilTest.class,
         FunctionsTest.class,

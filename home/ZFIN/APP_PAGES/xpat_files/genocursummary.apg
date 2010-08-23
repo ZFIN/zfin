@@ -30,7 +30,7 @@ PREFIX:   genocursum_
     <td>
 
 
-      <b>Genotype Handle</b>
+      <b>Genotype Nickname</b>
       
     </td>
     <td>
@@ -45,17 +45,12 @@ PREFIX:   genocursum_
     </td>
     <td>
     
-      <b>Zygosity</b>
+      <b>Public Notes</b>
       
     </td>
     <td>
     
-      <b>Background</b>
-      
-    </td>
-    <td>
-    
-      <b>Notes</b>
+      <b>Curator Notes</b>
       
     </td>
   </tr>
@@ -120,7 +115,7 @@ PREFIX:   genocursum_
       </td>
       <td valign=top>
       
-        $genocursum_geno_display
+        $genocursum_geno_display &nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$genocursum_geno_zdb_id&rtype=genotype" title="Delete this genotype from ZFIN"><img src="/images/delete-button.png" border="0" alt="delete genotype"></a>
       
       </td>
                 
@@ -131,23 +126,13 @@ PREFIX:   genocursum_
         </table>
         
       </td>
-
+      
       <td>
-        
-        <table border=0>
-          $genocursum_zyg_col
-        </table>
-        
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id&type=genonote&dnote_pubID=$pubcur_pubID" target=genonotes>Edit</a>
       </td>
       
       <td>
-      
-        $genocursum_backgrd_display        
-      
-      </td>
-      
-      <td>
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id" target=notes>Edit</a>
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id&type=curnote" target=notes&dnote_pubID=$pubcur_pubID>Edit</a>
       </td>
 
       

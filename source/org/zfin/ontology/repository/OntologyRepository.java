@@ -34,7 +34,7 @@ public interface OntologyRepository {
      * An alias has to be unique within an ontology.
      * Aliases to be considered:
      * 1) alias of terms that are not obsoleted
-     * 2) alias is not of type 'secondary id' 
+     * 2) alias is not of type 'secondary id'
      *
      * @param ontology Ontology
      * @return list of term aliases
@@ -90,4 +90,12 @@ public interface OntologyRepository {
      * @return List of transitive closure
      */
     List<TransitiveClosure> getTransitiveClosure();
+
+    /**
+     * Retrieve Term by term zdb ID.
+     *
+     * @param termZdbID term id
+     * @return Generic Term
+     */
+    GenericTerm getTermByZdbID(String termZdbID);
 }

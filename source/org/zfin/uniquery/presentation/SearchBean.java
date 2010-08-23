@@ -440,7 +440,7 @@ public class SearchBean extends PaginationBean {
                     if (separator) {
                         returnResults += " or ";
                     }
-                    returnResults += "<a title='" + matchedText + "' href=\"?query=" + newTermFiltered + "\" id='" + ALIAS_TERM_ID + "'><em>" + 
+                    returnResults += "<a title='" + matchedText + "' href=\"?query=" + newTermFiltered + "\" id='" + ALIAS_TERM_ID + "'><em>" +
                             newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
                     separator = true;
                 }
@@ -468,7 +468,8 @@ public class SearchBean extends PaginationBean {
             String viewPageUrl;
             if (theMatchId.startsWith("ZDB-GENO")) {
 
-                viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+               // viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+               viewPageUrl = "/action/genotype/detail?genotype.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")|| theMatchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ATB")) {

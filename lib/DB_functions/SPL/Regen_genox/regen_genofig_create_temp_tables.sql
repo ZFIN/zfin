@@ -74,7 +74,9 @@ create procedure regen_genofig_create_temp_tables()
 	rgfnna_apato_zdb_id		varchar(50),
 	rgfnna_apato_genox_zdb_id	varchar(50),
 	rgfnna_apato_superterm_zdb_id	varchar(50),
-	rgfnna_apato_subterm_zdb_id	varchar(50)
+	rgfnna_apato_subterm_zdb_id	varchar(50),
+	rgfnna_apato_quality_zdb_id	varchar(50),
+	rgfnna_apato_tag	        varchar(25)
       ) with NO LOG;
 
     create index regen_genofig_not_normal_apato_temp_primary_foreign_key 
@@ -93,6 +95,8 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_fig_zdb_id		varchar(50) not null,
 	rgf_superterm_zdb_id	varchar(50) not null,
 	rgf_subterm_zdb_id	varchar(50),
+	rgf_quality_zdb_id	varchar(50) not null,
+	rgf_tag 	        varchar(25) not null,
 	rgf_morph_zdb_id	varchar(50)
       ) with no log;
 

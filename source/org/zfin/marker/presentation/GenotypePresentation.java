@@ -11,8 +11,7 @@ import org.zfin.mutant.Genotype;
  */
 public class GenotypePresentation extends EntityPresentation {
 
-    private static final String uri = "?MIval=aa-genotypeview.apg&OID=";
-
+    private static final String uri = "genotype/detail?genotype.zdbID=";
     /**
      * Generates an html formatted Genotype name
      *
@@ -31,7 +30,7 @@ public class GenotypePresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Genotype genotype) {
-        return getWebdriverLink(uri, genotype.getZdbID(), genotype.getName());
+        return getTomcatLink(uri, genotype.getZdbID(), genotype.getName(), null);
     }
 
 }

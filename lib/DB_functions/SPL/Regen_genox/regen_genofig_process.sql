@@ -42,8 +42,8 @@ create procedure regen_genofig_process()
 
 
 -- Any genotype which has a morpholino environment
-insert into regen_genofig_temp (rgf_geno_zdb_id, rgf_fig_zdb_id, rgf_superterm_zdb_id, rgf_subterm_zdb_id, rgf_morph_zdb_id)
-  select distinct genoZdbId, apatofig_fig_zdb_id, rgfnna_apato_superterm_zdb_id, rgfnna_apato_subterm_zdb_id, rgfcx_morph_zdb_id
+insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id)
+  select distinct genoZdbId,apatofig_fig_zdb_id,rgfnna_apato_superterm_zdb_id,rgfnna_apato_subterm_zdb_id,rgfnna_apato_quality_zdb_id,rgfnna_apato_tag,rgfcx_morph_zdb_id
     from genotype_experiment, 
          regen_genofig_clean_exp_with_morph_temp, 
          regen_genofig_not_normal_apato_temp,
@@ -54,8 +54,8 @@ insert into regen_genofig_temp (rgf_geno_zdb_id, rgf_fig_zdb_id, rgf_superterm_z
      and apatofig_apato_zdb_id = rgfnna_apato_zdb_id;
 
 -- Any which has a standard or genetic control environment
-insert into regen_genofig_temp (rgf_geno_zdb_id, rgf_fig_zdb_id, rgf_superterm_zdb_id, rgf_subterm_zdb_id)
-  select distinct genoZdbId, apatofig_fig_zdb_id, rgfnna_apato_superterm_zdb_id, rgfnna_apato_subterm_zdb_id
+insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag)
+  select distinct genoZdbId,apatofig_fig_zdb_id,rgfnna_apato_superterm_zdb_id,rgfnna_apato_subterm_zdb_id,rgfnna_apato_quality_zdb_id,rgfnna_apato_tag
     from genotype_experiment, 
          experiment, 
          regen_genofig_not_normal_apato_temp,

@@ -79,7 +79,7 @@ delete from uniprot_records_without_attri;
 insert into uniprot_records_without_attri (uniprot_records_zdb_id)     
 select extnote_zdb_id 
 from external_note, db_link 
-where extnote_zdb_id like "ZDB-EXTNOTE-100107-%"
+where extnote_zdb_id like "ZDB-EXTNOTE-10081%"
 and extnote_data_zdb_id = dblink_zdb_id 
 and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-47" 
 and not exists (select * from record_attribution where recattrib_data_zdb_id = extnote_zdb_id);

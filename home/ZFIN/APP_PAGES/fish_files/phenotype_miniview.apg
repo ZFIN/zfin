@@ -2,7 +2,7 @@
  file: phenotype_miniview.apg
  prefix: phmview_
  
- This page is webexploded from markerview.apg and genotypeview.apg.
+ This page is webexploded from markerview.apg and genotypeview.apg (no longer used, since replaced by genotype detail JSP).
  If called from gene or MO page, displays the mini format of Phenotype section. 
  If called from genotype page, output the figure and pub counts, link, and sql for affected entities.
 
@@ -108,7 +108,7 @@
 
     <?MIVAR><table width="100%" border="0" bgcolor="$highlight"><?/MIVAR>        
     <tr>
-      <td width="15%"><b>&nbsp;&nbsp;Data: </b>  </td>
+      <td width="15%"><b>&nbsp;&nbsp;Data: </b> </td>
       <td width="85%">
         <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
       </td>
@@ -149,9 +149,8 @@
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
     <?MISQL SQL="$phmview_entity_sql order by lower(term_name);">
+        <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
     
-      <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
-      
         <?MISQL SQL="execute function get_entity_name_html('$1')">
                  <?MIVAR NAME=phmview_anatitem_html><span nowrap>$1</span><?/MIVAR>
          <?/MISQL>

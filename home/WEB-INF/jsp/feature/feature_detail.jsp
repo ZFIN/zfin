@@ -3,6 +3,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
+<jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
+
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
                   latestUpdate="${formBean.latestUpdate}"
         rtype="feature"/>
@@ -275,6 +277,36 @@ This feature is representative of one or more unknown insertion sites.
 
 </tr>
 
+  <tr>
+    <td width="150" valign="top">
+      <c:choose>
+        <c:when test="${fn:length(formBean.feature.suppliers) ne null && fn:length(formBean.feature.suppliers) > 1}">
+          <b>Current Sources:</b>
+        </c:when>
+        <c:otherwise>  
+          <b>Current Source:</b>
+        </c:otherwise>
+      </c:choose>
+    </td><td valign="top"> 
+  <c:choose>
+    <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
+      <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">         
+        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
+	   ${supplier.organization.name}</a>
+        <c:if test="${supplier.zirc}">&nbsp;(<a href="http://zebrafish.org/zirc/fish/lineAll.php?Allele=${formBean.feature.name}"><font size="-1">order this</font></a>)
+        </c:if>
+        <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
+        </c:if>        
+        <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGeno.zdbID}"><font size="-1">order this</font></a>)
+        </c:if>
+        <c:if test="${!status.last}"><br/></c:if>
+      </c:forEach>
+    </c:when>
+    <c:otherwise>
+      No data available
+    </c:otherwise>
+  </c:choose>
+  </td></tr>
 
 <tr>
     <td width="180">

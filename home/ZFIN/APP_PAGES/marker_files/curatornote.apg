@@ -2,7 +2,7 @@
 An apg page for curators to enter notes about publications.  Previously,
 this page is only accessible via markerview.apg.
 Now it's not only for data note of markers, it's also for feature and
-genotype data.
+genotype data (for genotype, can edit curator notes or genotype notes).
 
 This page is only accessable as root.
 
@@ -10,7 +10,8 @@ Expected Vars:
   $OID :: the ZDB of a Data for which a note is being added
 
 Optional Vars: 
-  $dnote :: a new data_note
+  $dnote :: a new data_note (or new genotype note)
+  $type :: for genotype only, curator note type (cur) or genotype note type (note)
   $delete_dnote :: set if delete button is clicked
   $calling_apg :: if this page is called from another location, this is
 	set to go back to that location.
@@ -19,6 +20,7 @@ Optional Vars:
   $dnote_text :: holds the text from the note box in the form
   $dnote_date :: date of annotation, set to current
   $dnote_zdb_id :: id of the existing dnotes for marker of interest.
+  $dnote_pubID :: zdb id of the publication.
   $OID_page :: the primary data page for this OID (default is markerview.apg)
 <?/MICOMMENT>
 
@@ -31,6 +33,12 @@ Optional Vars:
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
+
+<?MIVAR COND="$(NXST,$type)" NAME=$type>none<?/MIVAR>
+<?MIVAR COND="$(NXST,$notetype)" NAME=$notetype>$type<?/MIVAR>
+<?MIVAR COND="$(NXST,$dnote_pubID)" NAME=$dnote_pubID>none<?/MIVAR>
+<?MIVAR COND="$(NXST,$pubID)" NAME=$pubID>$dnote_pubID<?/MIVAR>
+
 <SCRIPT>
   function replaceLocation(url) {
     if (navigator.userAgent.indexOf("Safari") >= 0) 
@@ -42,13 +50,20 @@ Optional Vars:
   function editNote(dnote_zdb_id) {
     helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
     <?MIVAR>
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID#notes");
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&dnote_pubID=$pubID&type=$notetype#notes");
     <?/MIVAR>
   }
+  
+  function editGenoNote(dnote_zdb_id,pubID) {
+    helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id+"&publicationID="+pubID,"helpwindow","scrollbars=yes,width=800,height=500");
+    <?MIVAR>
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&dnote_pubID=$pubID&type=$notetype#notes");
+    <?/MIVAR>
+  }  
       
   function deleteNote(dnote_zdb_id) {
     <?MIVAR>
-      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&delete_dnote="+dnote_zdb_id+"#notes");
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&dnote_pubID=$dnote_pubID&type=$type&delete_dnote="+dnote_zdb_id+"#notes");
     <?/MIVAR>
   }
 
@@ -79,7 +94,6 @@ Optional Vars:
   <?/MIVAR>
 </SCRIPT>
 
-
 <!-------------------------Curation Notes Header-------------->
  
 <?MIVAR COND="$(NXST,$OID_page)" NAME=OID_page>markerview.apg<?/MIVAR>
@@ -100,7 +114,7 @@ Optional Vars:
       <?MIBLOCK COND="$(EC,$zdbType,ZDB-GENO)">
         <?MIVAR>
 	  $(SETVAR,$heading,Genotype)
-          $(SETVAR,$OID_page,genotypeview.apg)
+          $(SETVAR,$OID_page,genotype_detail)
         <?/MIVAR>
         <?MISQL SQL="SELECT geno_display_name FROM genotype WHERE geno_zdb_id='$OID'">
             <?MIVAR NAME=$data_name>$1<?/MIVAR>
@@ -113,9 +127,11 @@ Optional Vars:
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(XST,$data_name)">
-      <?MIVAR>
-        <TITLE>ZFIN Curation Notes: $data_name</TITLE>
-      <?/MIVAR>
+      <?MIBLOCK COND="$(NE,$type,genonote)">
+        <?MIVAR><TITLE>ZFIN Curation Notes: $data_name</TITLE><?/MIVAR>
+      <?MIELSE>
+        <?MIVAR><TITLE>ZFIN Genotype Notes: $data_name</TITLE><?/MIVAR>
+      <?/MIBLOCK>
   
       <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
             
@@ -134,7 +150,11 @@ Optional Vars:
               <?MIBLOCK COND="$(EC,$heading,Feature)">
                <?MIVAR>$data_name<?/MIVAR> 
               <?MIELSE>
-              <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
+                <?MIBLOCK COND="$(EC,$zdbType,ZDB-GENO)">
+                   <?MIVAR><a href="/action/genotype/detail?genotype.zdbID=$OID">$data_name</a><?/MIVAR>  
+                <?MIELSE>
+                   <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
+                <?/MIBLOCK>
               <?/MIBLOCK>
             <?/MIVAR>
           </td>
@@ -143,7 +163,7 @@ Optional Vars:
           <td>
             <?MIBLOCK COND=$(XST,$dnote)>
               <?MIVAR NAME=encoded_note>$(URLENCODE,$dnote)<?/MIVAR>
-              <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+              <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note&dnotenew_type=$notetype&dnotenew_pubID=$pubID') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
             <?/MIBLOCK>
 
             <?MIBLOCK COND=$(XST,$delete_dnote)>
@@ -155,11 +175,17 @@ Optional Vars:
               <?MIVAR>
                 <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curatornote.apg">
                 <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+                <INPUT TYPE=HIDDEN NAME=type VALUE="$type"> 
+                <INPUT TYPE=HIDDEN NAME=dnote_pubID VALUE="$dnote_pubID">
                 <INPUT TYPE=HIDDEN NAME=OID_page VALUE="$OID_page"> 
-                <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=$OID_page">
+                <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=$OID_page&type=$type&dnote_pubID=$dnote_pubID">
               <?/MIVAR>
-  
-              <font color="black"><b> Curator Notes </b></font><a name=notes></a>  
+              
+              <?MIBLOCK COND="$(NE,$type,genonote)">
+                <font color="black"><b> Curator Notes </b></font><a name=notes></a> 
+              <?MIELSE>            
+	        <font color="black"><b> Public Notes </b></font><a name=notes></a>
+              <?/MIBLOCK>
               <br><TEXTAREA NAME="dnote" rows="4" cols="70" wrap="virtual"></TEXTAREA> 
               <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.dnote)";> 
             </form>
@@ -171,28 +197,36 @@ Optional Vars:
         <tr>
           <td>
             <form name=edit_notes>
-              <?MISQL SQL="SELECT p.zdb_id, p.name, dnote_text, dnote_date, dnote_zdb_id
+              <?MIBLOCK COND="$(NE,$type,genonote)">
+                <?MISQL SQL="SELECT p.zdb_id, p.name, dnote_text, dnote_date, dnote_zdb_id
                              FROM data_note, person p
                              WHERE dnote_data_zdb_id = '$OID'
                                AND dnote_curator_zdb_id = p.zdb_id
                              ORDER BY dnote_date desc;">
                  
-                <?MIVAR NAME=dnote_curator_id>$1<?/MIVAR>
-                <?MIVAR NAME=dnote_curator_name>$2<?/MIVAR>
-                <?MIVAR NAME=dnote_text>$3<?/MIVAR>
-                <?MIVAR NAME=dnote_date>$4<?/MIVAR>
-                <?MIVAR NAME=dnote_zdb_id>$5<?/MIVAR>
+                  <?MIVAR NAME=dnote_curator_id>$1<?/MIVAR>
+                  <?MIVAR NAME=dnote_curator_name>$2<?/MIVAR>
+                  <?MIVAR NAME=dnote_text>$3<?/MIVAR>
+                  <?MIVAR NAME=dnote_date>$4<?/MIVAR>
+                  <?MIVAR NAME=dnote_zdb_id>$5<?/MIVAR>
       
-                <?MIVAR>
-                  <p>
-                  $dnote_curator_name - $(SUBSTR,$dnote_date,1,10)
+                  <?MIVAR><p>$dnote_curator_name - $(SUBSTR,$dnote_date,1,10)<?/MIVAR>
                   <?MIVAR COND="$(EC,$ZDB_ident,$dnote_curator_id)">
                     <input type=button value=edit onClick=editNote('$dnote_zdb_id');>
                     <input type=button value=delete onClick=deleteNote('$dnote_zdb_id');>
                   <?/MIVAR>
-                  <br><UL>$dnote_text</UL>
-                <?/MIVAR>
-              <?/MISQL>
+                  <?MIVAR><br><UL>$dnote_text</UL><?/MIVAR>
+                <?/MISQL>
+              <?MIELSE>
+                <?MISQL SQL="SELECT extnote_note, extnote_zdb_id
+                             FROM external_note
+                             WHERE extnote_data_zdb_id = '$OID';">      
+                  <?MIVAR>$1<?/MIVAR>&nbsp;&nbsp;
+                  <input type=button value=edit onClick=editGenoNote('$2','$pubID');>
+                  <input type=button value=delete onClick=deleteNote('$2');> 
+                  <br/><br/>
+                <?/MISQL>
+              <?/MIBLOCK>
             </form>
           </td>
         </tr>

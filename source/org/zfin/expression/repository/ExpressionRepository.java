@@ -248,4 +248,12 @@ public interface ExpressionRepository {
      * @return list of expressions
      */
     List<ExpressionResult> getExpressionsWithEntity(List<Term> terms);
+
+    /**
+     * Retrieve all expression results for a given genotype
+     *
+     * @param genotype genotype
+     * @return list of expression results
+     */
+    List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
 }

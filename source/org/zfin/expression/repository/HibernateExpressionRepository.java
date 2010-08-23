@@ -785,7 +785,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Set<ExpressionStructure> distinctStructures = new HashSet<ExpressionStructure>();
         for (ExpressionResult expressionResult : expressionResults) {
             ExpressionStructure expressionStructure = instantiateExpressionStructure(expressionResult, publication);
-            // only create structures that are not already on the pile. 
+            // only create structures that are not already on the pile.
             if (distinctStructures.add(expressionStructure))
                 createPileStructure(expressionStructure);
         }
@@ -903,5 +903,24 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
         }
         return efses;
+    }
+
+    /**
+     * Retrieve all expression results for a given genotype
+     *
+     * @param genotype genotype
+     * @return list of expression results
+     */
+    public List<ExpressionResult> getExpressionResultsByGenotype(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, GenotypeExperiment genox " +
+                "      where genox.genotype.zdbID = :genotypeID " +
+                "        and genox = xpExp.genotypeExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp ";
+        Query query = session.createQuery(hql);
+        query.setString("genotypeID", genotype.getZdbID());
+
+        return (List<ExpressionResult>) query.list();
     }
 }

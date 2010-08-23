@@ -25,7 +25,6 @@ public class Phenotype implements Comparable<Phenotype> {
     private Set<Figure> figures;
     private Publication publication;
 
-    //private GenotypeExperiment
     // ToDo: Needs to be of type Tag once the tag field in the atomic_phenotype table is being cleaned up
     private String tag;
 

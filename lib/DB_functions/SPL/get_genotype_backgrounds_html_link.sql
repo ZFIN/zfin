@@ -38,11 +38,11 @@ create function get_genotype_backgrounds_html_link( genoZdbId varchar(50) )
              
       -- if background(wildtype) abbrev is the same as name, then only show name
       if (backNameDisplay == backHandle) then
-	let backName = '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' ||
+	let backName = '<a href="/action/genotype/detail?genotype.zdbID=' ||
 		backZdbId || '">' || '<span class="wildtype">' || backNameDisplay || '</span>' || '</a>';
       -- otherwise, show abbrev in parenthesis after name
       else
-	let backName = '<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' ||
+	let backName = '<a href="/action/genotype/detail?genotype.zdbID=' ||
 		backZdbId || '">' || '<span class="wildtype">' || backNameDisplay || '</span>' || '</a>' ||
 		' (' || backHandle || ')';
       end if 

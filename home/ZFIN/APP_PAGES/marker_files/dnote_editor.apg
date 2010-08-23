@@ -19,6 +19,10 @@ VARIABLES:
   $1
 <?/MISQL>
 
+<?MIVAR NAME=$noteType>$(SUBSTR,$OID,1,8)<?/MIVAR>
+<?MIVAR COND=$(NXST,$publicationID) NAME=$publicationID><?/MIVAR>
+<?MIVAR NAME=$pubID>$publicationID<?/MIVAR>
+
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIBLOCK COND="$(NC,AUTHORIZED,false)">
@@ -39,13 +43,41 @@ VARIABLES:
         <?MIVAR NAME=$NOTE>$(REPLACE,$NOTE,++,&nbsp;&nbsp;)<?/MIVAR>
         <?MIVAR NAME=$NOTE>$(URLDECODE,$NOTE)<?/MIVAR>
       <?/MIVAR>
-  
-      <?MICOMMENT> ==| Update Note |== <?/MICOMMENT>
-      <?MISQL SQL="
-	UPDATE data_note
-	  SET dnote_text='$NOTE'
-	  WHERE dnote_zdb_id='$OID';">
-      <?/MISQL>
+
+      <?MIBLOCK COND="$(EC,$noteType,ZDB-EXTN)">
+      
+        <?MICOMMENT> ==| Update Genotype Note |== <?/MICOMMENT>
+        <?MISQL SQL="
+	  UPDATE external_note
+	    SET extnote_note='$NOTE'
+	    WHERE extnote_zdb_id ='$OID';">
+        <?/MISQL>
+        
+        <?MISQL SQL="SELECT recattrib_data_zdb_id from record_attribution WHERE recattrib_data_zdb_id = '$OID';">
+          <?MIVAR NAME=$rec_attr>$1<?/MIVAR>
+        <?/MISQL>
+        
+        <?MISQL COND="$(NXST,$rec_attr)"
+                 SQL="
+            INSERT INTO record_attribution (
+                            recattrib_data_zdb_id,
+                            recattrib_source_zdb_id,
+                            recattrib_source_type)
+            VALUES ( 
+                     '$OID',
+                     '$pubID',
+                     'standard');">                   
+        <?/MISQL> 
+        
+      <?MIELSE>
+      
+        <?MICOMMENT> ==| Update Curation Note |== <?/MICOMMENT>
+        <?MISQL SQL="
+	  UPDATE data_note
+	    SET dnote_text='$NOTE'
+	    WHERE dnote_zdb_id='$OID';">
+        <?/MISQL>
+      <?/MIBLOCK>
       
       <?MICOMMENT> ==| Close Window |== <?/MICOMMENT>      
       <?MIVAR>
@@ -59,11 +91,18 @@ VARIABLES:
   <?/MIBLOCK> <!-- end updating -->
 
   <?MIBLOCK COND="$(XST,$DELETE)">
-    <?MISQL SQL="
-      DELETE FROM data_note
-      WHERE dnote_zdb_id='$OID';">
-    <?/MISQL>
-      
+    <?MIBLOCK COND="$(EC,$noteType,ZDB-EXTN)">
+      <?MISQL SQL="
+        DELETE FROM external_note
+        WHERE extnote_zdb_id='$OID';">
+      <?/MISQL>    
+    <?MIELSE>
+      <?MISQL SQL="
+        DELETE FROM data_note
+        WHERE dnote_zdb_id='$OID';">
+      <?/MISQL>
+    <?/MIBLOCK>
+    
     <?MICOMMENT> ==| Close Window Quietly |== <?/MICOMMENT>
     <?MIVAR>
       <SCRIPT>
@@ -75,14 +114,25 @@ VARIABLES:
 
 
   <?MIBLOCK COND="$(NXST,$exiter)">
+    <?MIBLOCK COND="$(EC,$noteType,ZDB-EXTN)">
+      <h1 align=center>Genotype Note Editor</h1>
+    <?MIELSE>
+      <h1 align=center>Data Note Editor</h1>
+    <?/MIBLOCK>
 
-    <h1 align=center>Data Note Editor</h1>
-
-    <?MISQL SQL="
-      select dnote_text
-	from data_note
-	where dnote_zdb_id = '$OID';">
-    <?/MISQL>
+    <?MIBLOCK COND="$(EC,$noteType,ZDB-EXTN)">
+      <?MISQL SQL="
+        select extnote_note
+	  from external_note
+	  where extnote_zdb_id = '$OID';">
+      <?/MISQL>
+    <?MIELSE>
+      <?MISQL SQL="
+        select dnote_text
+	  from data_note
+	  where dnote_zdb_id = '$OID';">
+      <?/MISQL>
+    <?/MIBLOCK>
     
     <?MIVAR NAME=dnote_text>$1<?/MIVAR>
       <?MICOMMENT> ==| Replace <br> with line returns |== <?/MICOMMENT>
@@ -95,6 +145,9 @@ VARIABLES:
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-dnote_editor.apg>
 	<input type=hidden name=OID value=$OID>
+	<input type=hidden name=noteType value=$noteType>
+	<input type=hidden name=publicationID value=$publicationID>
+	<input type=hidden name=pubID value=$pubID>
 	<input type=hidden name=UPDATE value=1>
 
         <p>
@@ -113,3 +166,4 @@ window.alert('Exiting. Please return to the main window.\n Note that your update
 window.close();
 </SCRIPT>
 <?/MIVAR>
+

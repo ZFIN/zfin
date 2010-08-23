@@ -4,8 +4,8 @@ FILE: fishview.apg
 Variables Expected: 
  -- OID -- the OID of the fish record to view
 
-This page is replaced by genotypeview.apg. For users that bookmarked
-this page before, redirect to genotypeview.apg.
+This page is replaced by by genotype detail JSP. For users that bookmarked
+this page before, redirect to genotype detail JSP.
 
 <?/MICOMMENT>
 
@@ -31,7 +31,7 @@ this page before, redirect to genotypeview.apg.
   <?/MISQL>
   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
     <script>
-      <?MIVAR>location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$1')
+      <?MIVAR>location.replace('/action/genotype/detail?genotype.zdbID=$1')
       <?/MIVAR>
     </script>
  

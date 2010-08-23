@@ -112,7 +112,7 @@ FROM panels
 UNION
 
 -- genotypeview
-SELECT "genotypeview" AS app_file, geno_zdb_id AS oid, "" as url
+SELECT "genotype" AS app_file, geno_zdb_id AS oid, "" as url
 FROM genotype
 
 UNION
@@ -229,6 +229,9 @@ while (my @row = $sth->fetchrow_array()) {
               if ($app_page eq "feature") {
 	        $url = "http://<!--|DOMAIN_NAME|-->/action/feature/detail?feature.zdbID=".$oid;
 }
+elsif ($app_page eq "genotype") {
+                $url = "http://<!--|DOMAIN_NAME|-->/action/genotype/detail?genotype.zdbID=".$oid;
+              }
 else {
     		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
     		$url = $urlHead . $app_page . $urlTail . $idName . $oid;

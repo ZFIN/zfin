@@ -138,8 +138,8 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">aa-genotypeview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-genotypeview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">/action/genotype/detail?genotype.zdbID=$OID<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">/action/genotype/detail?genotype.zdbID=$OID<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
 
 <?MICOMMENT>

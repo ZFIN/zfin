@@ -125,6 +125,7 @@
                                     WHEN 'GENE' THEN 'Marker'
                                     WHEN 'ATB' THEN  'Marker'
                                     WHEN 'TERM' THEN 'Term  '
+                                    WHEN 'GENO' THEN 'Genoty'
                                     ELSE             'Marker'
                                  END)"/>
 
@@ -160,6 +161,10 @@
             <many-to-one name="term" column="dalias_data_zdb_id" class="org.zfin.ontology.GenericTerm"/>
         </subclass>
 
+        <subclass name="org.zfin.mutant.GenotypeAlias" discriminator-value="Genoty">
+            <many-to-one name="genotype" column="dalias_data_zdb_id" class="org.zfin.mutant.Genotype"/>
+        </subclass>
+
     </class>
 
     <class name="org.zfin.ExternalNote" abstract="true" table="external_note">
@@ -175,6 +180,7 @@
                        formula="(CASE extnote_note_type
                                     WHEN 'antibody' THEN    'Antibody '
                                     WHEN 'orthology' THEN   'Orthology'
+                                    WHEN 'genotype' THEN 'Genotype '
                                     ELSE                    'other    '
                                  END)"/>
 
@@ -201,7 +207,11 @@
         </subclass>
 
         <subclass name="org.zfin.marker.OrthologyNote" discriminator-value="Orthology">
-            <many-to-one name="marker" column="extnote_data_zdb_id"/>
+	    <many-to-one name="marker" column="extnote_data_zdb_id"/>
+        </subclass>
+        
+        <subclass name="org.zfin.mutant.GenotypeExternalNote" discriminator-value="Genotype ">
+	    <many-to-one name="genotype" column="extnote_data_zdb_id"/>
         </subclass>
 
     </class>

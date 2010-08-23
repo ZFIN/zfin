@@ -1,54 +1,84 @@
 package org.zfin.mutant;
 
 import java.io.Serializable;
+import org.zfin.expression.Figure;
+import org.zfin.marker.Marker;
+import org.zfin.anatomy.AnatomyItem;
+import org.zfin.ontology.Term;
 
 
 public class GenotypeFigure implements Serializable {
-    public String getGenozdbID() {
-        return genozdbID;
+
+    private int id;
+    private Genotype genotype;
+    private Figure figure;
+    private Term superTerm;
+    private Term subTerm;
+    private Term qualityTerm;
+    private String tag;
+    private Marker morpholino;
+
+    public int getId() {
+        return id;
     }
 
-    public void setGenozdbID(String genozdbID) {
-        this.genozdbID = genozdbID;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getFigzdbID() {
-        return figzdbID;
+    public Genotype getGenotype() {
+        return genotype;
     }
 
-    public void setFigzdbID(String figzdbID) {
-        this.figzdbID = figzdbID;
+    public void setGenotype(Genotype genotype) {
+        this.genotype = genotype;
     }
 
-    public String getMorphzdbID() {
-        return morphzdbID;
+    public Figure getFigure() {
+        return figure;
     }
 
-    public void setMorphzdbID(String morphzdbID) {
-        this.morphzdbID = morphzdbID;
+    public void setFigure(Figure figure) {
+        this.figure = figure;
     }
 
-    public String getSubtermzdbID() {
-        return subtermzdbID;
+    public Marker getMorpholino() {
+        return morpholino;
     }
 
-    public void setSubtermzdbID(String subtermzdbID) {
-        this.subtermzdbID = subtermzdbID;
+    public void setMorpholino(Marker morpholino) {
+        this.morpholino = morpholino;
     }
 
-    public String getSupertermzdbID() {
-        return supertermzdbID;
+    public String getTag() {
+        return tag;
     }
 
-    public void setSupertermzdbID(String supertermzdbID) {
-        this.supertermzdbID = supertermzdbID;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
-    private String genozdbID;
-    private String figzdbID;
-    private String morphzdbID;
-    private String subtermzdbID;
-    private String supertermzdbID;
+    public Term getSuperTerm() {
+        return superTerm;
+    }
 
+    public void setSuperTerm(Term superTerm) {
+        this.superTerm = superTerm;
+    }
 
+    public Term getSubTerm() {
+        return subTerm;
+    }
+
+    public void setSubTerm(Term subTerm) {
+        this.subTerm = subTerm;
+    }
+
+    public Term getQualityTerm() {
+        return qualityTerm;
+    }
+
+    public void setQualityTerm(Term qualityTerm) {
+        this.qualityTerm = qualityTerm;
+    }
 }

@@ -9,7 +9,12 @@ Display phenotype summary by publication and figure, for a gene, MO, or genotype
 INPUT VARS:  
 	$OID:    ZDB ID of a gene, MO, or genotype
 	$envID:  ZDB ID of an experiment.
-	$anatID: ZDB ID of a term. 
+	$anatID: ZDB ID of an entity term.
+	$entID:  ZDB ID of an superterm entity term.    from genotype detail jsp
+	$entIDsub: ZDB ID of an subterm entity term.    from genotype detail jsp
+	$moID:   ZDB ID of a MO.                        from genotype detail jsp
+	$qualityID: ZDB ID of a quality term.           from genotype detail jsp
+	$tag:    tag of a phenotype.                    from genotype detail jsp
 	
 	&phenosum_concted_AO_IDs
 	$phenosum_include_substructures
@@ -148,9 +153,26 @@ DEBUGGING:
     <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_fig_zdb_id = apatofig_fig_zdb_id and apatofig_apato_zdb_id = apato_zdb_id and $phenosum_getPheno_sql_leftPar apato_subterm_zdb_id = '$anatID' or apato_superterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar and apato_genox_zdb_id = genox_zdb_id and genox_exp_zdb_id = '$envID' and not exists $phenosum_getPheno_sql_leftPar select 'x' from experiment_condition where expcond_exp_zdb_id = genox_exp_zdb_id and expcond_mrkr_zdb_id = '' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
   <?/MIBLOCK>
 
+  <?MIBLOCK COND="$(AND,$(XST,$entID),$(NE,$entID,)$(XST,$qualityID),$(NE,$qualityID,),$(XST,$tag),$(NE,$tag,))">
+    <?MIBLOCK COND="$(AND,$(XST,$entIDsub),$(NE,$entIDsub,))">
+      <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_superterm_zdb_id = '$entID' and gffs_subterm_zdb_id = '$entIDsub' $phenosum_getPheno_sql_space))<?/MIVAR>     
+    <?MIELSE>
+      <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and $phenosum_getPheno_sql_leftPar gffs_superterm_zdb_id = '$entID' or gffs_subterm_zdb_id = '$entID' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR> 
+    <?/MIBLOCK>
+    
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_quality_zdb_id = '$qualityID' $phenosum_getPheno_sql_space))<?/MIVAR>  
+
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_tag = '$tag' $phenosum_getPheno_sql_space))<?/MIVAR>  
+
+    <?MIBLOCK COND="$(AND,$(XST,$moID),$(NE,$moID,))">
+      <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_morph_zdb_id = '$moID' $phenosum_getPheno_sql_space))<?/MIVAR>  
+    <?/MIBLOCK>
+  <?/MIBLOCK>
+
   <?MIBLOCK COND="$(AND,$(XST,$anatID),$(NE,$anatID,),$(NXST,$envID))">
     <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and $phenosum_getPheno_sql_leftPar gffs_superterm_zdb_id = '$anatID' or gffs_subterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
   <?/MIBLOCK>
+  
  <?/MIBLOCK>
  
  <?MIVAR NAME="$phenosum_getPheno_sql">
@@ -227,15 +249,37 @@ DEBUGGING:
     <td> <?MICOMMENT> ** beginning of page header ** <?/MICOMMENT>
       <b>
         Phenotype Summary for <?MIVAR>$phenosum_header<?/MIVAR>
-    <?MIBLOCK COND="$(AND,$(XST,$includingMO),$(EC,$includingMO,yes))">
-      <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
-        and 
-        <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moTargetGeneID';">
-          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moTargetGeneID">$1</a><?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(XST,$entID),$(NE,$entID,),$(XST,$qualityID),$(NE,$qualityID,),$(XST,$tag),$(NE,$tag,))">
+      <?MIBLOCK COND="$(AND,$(XST,$entIDsub),$(NE,$entIDsub,))">
+        <?MISQL SQL="select term_name, get_postcomposed_term_html('$entID', '$entIDsub') from term where term_zdb_id = '$qualityID';">
+          <?MIVAR NAME=phenosum_quality_name>$1<?/MIVAR>
+          <?MIVAR NAME=phenosum_entity_name_and_link>$2<?/MIVAR>
         <?/MISQL>
-        targeting morpholinos
-      <?MIELSE COND="$(NXST,$anatID)">
-        with morphants <?MIVAR COND="$(AND,$(XST,$morphantsOnly),$(EC,$morphantsOnly,yes))">only<?/MIVAR>
+      <?MIELSE>
+        <?MISQL SQL="select term_name, get_entity_name_html('$entID') from term where term_zdb_id = '$qualityID';">
+          <?MIVAR NAME=phenosum_quality_name>$1<?/MIVAR>
+          <?MIVAR NAME=phenosum_entity_name_and_link>$2<?/MIVAR>
+        <?/MISQL>
+      <?/MIBLOCK>
+      observed in <?MIVAR> $phenosum_entity_name_and_link with $phenosum_quality_name, $tag<?/MIVAR>      
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(AND,$(XST,$includingMO),$(EC,$includingMO,yes))">
+      <?MIBLOCK COND="$(AND,$(XST,$moID),$(NE,$moID,))">
+        and 
+        <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moID';">
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moID">$1</a><?/MIVAR>
+        <?/MISQL>
+      <?MIELSE>
+        <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
+          and 
+          <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moTargetGeneID';">
+            <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moTargetGeneID">$1</a><?/MIVAR>
+          <?/MISQL>
+          targeting morpholinos
+        <?MIELSE COND="$(NXST,$anatID)">
+          with morphants <?MIVAR COND="$(AND,$(XST,$morphantsOnly),$(EC,$morphantsOnly,yes))">only<?/MIVAR>
+        <?/MIBLOCK>
       <?/MIBLOCK>
     <?/MIBLOCK>
         

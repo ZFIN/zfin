@@ -102,6 +102,8 @@
                                     WHEN 'EST' THEN 'Marker'
                                     WHEN 'FOSMID' THEN 'Marker'
                                     WHEN 'PAC' THEN 'Marker'
+                                    WHEN 'GENO' THEN 'Genoty'
+                                    WHEN 'ALT' THEN 'Featu'
                                     ELSE             'other-'
                                  END)"/>
 
@@ -109,8 +111,20 @@
             <column name="idsup_acc_num"/>
         </property>
 
+        <property name="availState">
+            <column name="idsup_avail_state"/>
+        </property>
+
         <subclass name="org.zfin.people.MarkerSupplier" discriminator-value="Marker">
             <many-to-one name="marker" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+        
+        <subclass name="org.zfin.people.GenotypeSupplier" discriminator-value="Genoty">
+            <many-to-one name="genotype" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.people.FeatureSupplier" discriminator-value="Featu">
+            <many-to-one name="feature" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
 

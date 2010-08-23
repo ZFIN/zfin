@@ -210,4 +210,5 @@ public class GenericTerm implements Term, Serializable {
         NumberAwareStringComparator comparator = new NumberAwareStringComparator();
         return comparator.compare(termName, compTerm.getTermName());
     }
+
 }

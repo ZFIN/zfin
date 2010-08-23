@@ -2,10 +2,11 @@ package org.zfin.mutant;
 
 import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.MappedDeletion;
+import org.zfin.marker.Marker;
 import org.zfin.people.FeatureSource;
+import org.zfin.people.FeatureSupplier;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,6 +23,8 @@ public class Feature {
     private Set<MappedDeletion> mappedDeletions;
     private Date dateEntered;
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
+    private Set<GenotypeFeature> genotypeFeatures;
+    private Set<FeatureSupplier> suppliers;
 
     public FeatureType getFeatureType() {
         return featureType;
@@ -161,14 +164,79 @@ public class Feature {
 
 
     public Set<FeatureMarkerRelationship> getFeatureMarkerRelations() {
-        return featureMarkerRelations;
+	        return featureMarkerRelations;
+	}
+
+	public void setFeatureMarkerRelations(Set<FeatureMarkerRelationship> featureMarkerRelations) {
+	        this.featureMarkerRelations = featureMarkerRelations;
     }
 
-    public void setFeatureMarkerRelations(Set<FeatureMarkerRelationship> featureMarkerRelations) {
-        this.featureMarkerRelations = featureMarkerRelations;
+    public Set<GenotypeFeature> getGenotypeFeatures() {
+	        return genotypeFeatures;
+	}
+
+	public void setGenotypeFeatures(Set<GenotypeFeature> genotypeFeatures) {
+	        this.genotypeFeatures = genotypeFeatures;
     }
 
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
     }
+
+    public Set<FeatureMarkerRelationship> getConstructs() {
+        if (!featureType.getDispName().equals("Transgenic Insertion")) {
+            return null;
+        }
+        if (featureMarkerRelations == null) {
+            return new TreeSet<FeatureMarkerRelationship>();
+        }
+        SortedSet<FeatureMarkerRelationship> constructs = new TreeSet<FeatureMarkerRelationship>();
+        for (FeatureMarkerRelationship ftrmrkrRelation : featureMarkerRelations) {
+            if (ftrmrkrRelation != null) {
+                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
+                  || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
+                    constructs.add(ftrmrkrRelation);
+                }
+            }
+        }
+        return constructs;
+    }
+
+    public int getNumberOfRelatedGenotypes() {
+	        if (genotypeFeatures == null || genotypeFeatures.size() == 0) {
+	            return 0;
+	        }
+
+	        Set<Genotype> relatedGenotypes = new HashSet<Genotype>();
+	        for (GenotypeFeature genoFtr : genotypeFeatures) {
+	            if (genoFtr != null) {
+	                relatedGenotypes.add(genoFtr.getGenotype());
+	            }
+	        }
+	        return relatedGenotypes.size();
+    }
+
+    public Set<FeatureSupplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<FeatureSupplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public Marker getSingleRelatedMarker() {
+        if (featureMarkerRelations != null && featureMarkerRelations.size() != 0) {
+		  for (FeatureMarkerRelationship ftrMrkrRel : featureMarkerRelations)
+		    return ftrMrkrRel.getMarker();
+        }
+        return null;
+	}
+
+    public Genotype getSingleRelatedGeno() {
+        if (genotypeFeatures != null && genotypeFeatures.size() != 0) {
+		  for (GenotypeFeature genoFtr : genotypeFeatures)
+		    return genoFtr.getGenotype();
+        }
+        return null;
+	}
 }

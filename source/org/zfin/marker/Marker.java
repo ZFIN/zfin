@@ -322,6 +322,10 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     }
 
     public int compareTo(Object otherMarker) {
+		if (otherMarker == null)
+            return 1;
+        if (((Marker)otherMarker).getAbbreviationOrder() == null)
+            return 1;
         return getAbbreviationOrder().compareTo(((Marker) otherMarker).getAbbreviationOrder());
     }
 

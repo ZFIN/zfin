@@ -18,9 +18,19 @@ select statement and then passed to webexplode from an execute function
 statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
 
+As of August, 2010, this page is replaced by / redirected to genotype details JSP. 
+
 <?/MICOMMENT>
 
 <HTML>
+
+      <head>
+   	    <?MIVAR>
+   	      <meta http-equiv="Refresh" content="0; url=/action/genotype/detail?genotype.zdbID=$OID">
+   	    <?/MIVAR>
+      </head>
+      
+      <body>
 
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
@@ -1341,6 +1351,8 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
 <?/MIBLOCK> <?MICOMMENT> === end of Authorization check  === <?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</body>
 
 </HTML>
 

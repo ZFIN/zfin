@@ -1,6 +1,14 @@
 package org.zfin.mutant;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.zfin.infrastructure.DataNote;
+import org.zfin.people.GenotypeSupplier;
+
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * This class defines a genotype, typically provided if at least one allele
@@ -21,11 +29,16 @@ public class Genotype implements Comparable {
     private String handle;
     private String nickname;
     private boolean wildtype;
+    private boolean extinct;
     private Set<GenotypeExperiment> genotypeExperiments;
     // This attribute is used only for storage purposes.
     // as the background is stored as a many-to-many relationship.
     private Set<Genotype> associatedGenotypes;
     private Set<GenotypeFeature> genotypeFeatures;
+    private Set<GenotypeExternalNote> externalNotes;
+    private Set<DataNote> dataNotes;
+    private Set<GenotypeSupplier> suppliers;
+    private Set<GenotypeAlias> aliases;
 
     public String getZdbID() {
         return zdbID;
@@ -138,6 +151,45 @@ public class Genotype implements Comparable {
         return getNameOrder().compareTo(otherGenotype.getNameOrder());
     }
 
+    public Set<GenotypeExternalNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(Set<GenotypeExternalNote> externalNotes) {
+        this.externalNotes = externalNotes;
+    }
+
+    public Set<DataNote> getDataNotes() {
+        if (dataNotes == null) {
+            return new HashSet<DataNote>();
+        }
+        return dataNotes;
+    }
+
+    public void setDataNotes(Set<DataNote> dataNotes) {
+        this.dataNotes = dataNotes;
+    }
+
+    public SortedSet<DataNote> getSortedDataNotes() {
+        return new TreeSet(this.getDataNotes());
+    }
+
+    public Set<GenotypeSupplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<GenotypeSupplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public Set<GenotypeAlias> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(Set<GenotypeAlias> aliases) {
+        this.aliases = aliases;
+    }
+
 
     /* Only putting TU in for now, since it's the only wildtype that's specified by name
      * rather than generically looking at the isWildtype boolean */
@@ -164,5 +216,11 @@ public class Genotype implements Comparable {
 
     }
 
+    public boolean isExtinct() {
+        return extinct;
+    }
 
+    public void setExtinct(boolean extinct) {
+        this.extinct = extinct;
+    }
 }

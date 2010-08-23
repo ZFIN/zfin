@@ -14,17 +14,17 @@ public enum Ontology implements Serializable {
     // full GO ontology
     GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true),
     // Subset of GO: Cellular Components
-    GO_CC("cellular_component", "Gene Ontology: Cellular Components", false),
+    GO_CC("cellular_component", "Gene Ontology: Cellular Component", false),
     // Subset of GO: Molecular Function
-    GO_MF("molecular_function", "Gene Ontology: Molecular Functions", false),
+    GO_MF("molecular_function", "Gene Ontology: Molecular Function", false),
     // Subset of GO: Biological Process
-    GO_BP("biological_process", "Gene Ontology: Biological Processes", false),
+    GO_BP("biological_process", "Gene Ontology: Biological Process", false),
     // PATO
     QUALITY("quality", "Phenotype and Trait Ontology", false),
     // PATO: Processes
-    QUALITY_PROCESSES("quality.process", "Phenotype and Trait Ontology: Quality of Processes", false),
+    QUALITY_PROCESSES("quality.process", "Phenotype and Trait Ontology: Quality of Process", false),
     // PATO: Processes
-    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "Phenotype and Trait Ontology: Relation of Processes", false),
+    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "Phenotype and Trait Ontology: Relation of Process", false),
     // PATO: Qualities
     QUALITY_QUALITIES("quality.quality", "Phenotype and Trait Ontology: Quality of Qualities", false),
     // PATO: Qualitative
@@ -32,7 +32,7 @@ public enum Ontology implements Serializable {
     // BP and MF
     // PATO: Processes
     QUALITY_OBJECT_RELATIONAL("pato.eq.quality.object.relational", "Phenotype and Trait Ontology: Relation of Object", false),
-    GO_BP_MF(GO_BP.getOntologyName() + "," + GO_MF.getOntologyName(), "Gene Ontology: Biological Processes and Molecular Functions", true),
+    GO_BP_MF(GO_BP.getOntologyName() + "," + GO_MF.getOntologyName(), "Gene Ontology: Biological Process and Molecular Function", true),
     // Spatial
     SPATIAL("spatial", "Spatial Ontology", false);
 
@@ -151,5 +151,13 @@ public enum Ontology implements Serializable {
             return +1;
 
         return this.getOntologyName().compareTo(o.getOntologyName());
+    }
+
+    public static boolean isSpatial(Ontology ontology) {
+        if (ontology == null)
+            return false;
+        if (ontology.equals(SPATIAL))
+            return true;
+        return false;
     }
 }

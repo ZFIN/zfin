@@ -10,6 +10,8 @@ INPUT VARS:
   dnotenew_DATA - data ZDB ID
   dnotenew_CUR - curator's person ZDB ID
   dnotenew_NOTE - the text message
+  dnotenew_type - curation note or genotype note
+  dnotenew_pubID - publication id
 
 OUTPUT VARS: 
   none
@@ -18,7 +20,7 @@ OUTPUT:
   None (white space).
 
 EFFECTS:
-  Insert a data_note record.
+  Insert a data_note record (or an external_note record for genotype).
   
 <?/MICOMMENT>
 
@@ -36,6 +38,8 @@ EFFECTS:
   
   <?MICOMMENT> ==| Replace ' with '' |== <?/MICOMMENT>
   <?MIVAR NAME=$dnotenew_NOTE DELIMIT="'" REPLACE="''">$dnotenew_NOTE<?/MIVAR>
+
+ <?MIBLOCK COND="$(NE,$dnotenew_type,genonote)">
 
   <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
   <?MISQL SQL="execute function get_id('DNOTE');">$(SETVAR,$dnotenew_ZDB,$1)<?/MISQL>
@@ -56,6 +60,33 @@ EFFECTS:
           '$dnotenew_NOTE',
           CURRENT);">                   
   <?/MISQL>
+ <?MIELSE>
+  <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+  <?MISQL SQL="execute function get_id('EXTNOTE');">$(SETVAR,$dnotenew_ZDB,$1)<?/MISQL>
+  
+  <?MICOMMENT> ==| Add New ExtNote |== <?/MICOMMENT>  
+  <?MISQL SQL="INSERT INTO zdb_active_data VALUES('$dnotenew_ZDB');"><?/MISQL>
+  <?MISQL SQL="
+      INSERT INTO external_note (
+          extnote_zdb_id,
+          extnote_data_zdb_id,
+          extnote_note)
+      VALUES ( 
+          '$dnotenew_ZDB',
+          '$dnotenew_DATA',
+          '$dnotenew_NOTE');">                   
+  <?/MISQL>
+  <?MISQL SQL="
+      INSERT INTO record_attribution (
+          recattrib_data_zdb_id,
+          recattrib_source_zdb_id,
+          recattrib_source_type)
+      VALUES ( 
+          '$dnotenew_ZDB',
+          '$dnotenew_pubID',
+          'standard');">                   
+  <?/MISQL> 
+ <?/MIBLOCK>
 
 <?MIELSE>
   <p>Authorization failed for dnote_new.apg

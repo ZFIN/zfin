@@ -58,7 +58,7 @@ EFFECTS
 <?MIVAR NAME=debugg>false<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$OID)">
-
+  <?MIVAR NAME=pubcur_pubID>$OID<?/MIVAR>
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MISQL SQL="select jtype from publication where zdb_id = '$OID';">
@@ -337,6 +337,7 @@ function setMarkerTarget(featreli,anchor){
        2. clean table expression_pattern_infrastructure
        3. insert records for the structure list
     <?/MICOMMENT>
+    
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurreset.apg';">$1<?/MISQL>
 
 

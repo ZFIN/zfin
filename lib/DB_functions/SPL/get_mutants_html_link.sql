@@ -43,16 +43,14 @@ create function get_mutants_html_link
 	   into genoCount
            from feature_marker_relationship, genotype_feature
           where fmrel_mrkr_zdb_id = geneZdbId
-            and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-            and fmrel_type in ('is allele of', 'markers missing', 'markers present');
+            and fmrel_ftr_zdb_id = genofeat_feature_zdb_id;
 
 	if ( genoCount == 1 ) then 
 		select genofeat_geno_zdb_id
 		  into genoZdbId
            	  from feature_marker_relationship, genotype_feature
           	 where fmrel_mrkr_zdb_id = geneZdbId
-            	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-            	   and fmrel_type in ('is allele of', 'markers missing', 'markers present');
+            	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id;
 	end if 
 
 
@@ -73,7 +71,7 @@ create function get_mutants_html_link
 	elif (genoCount == 1 ) then
 	-- in this case, the genoZdbId would either be filled with either of the two queris
         -- above but not both in which case genoCount would be 2.
-		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
+		return '<A HREF="/action/genotype/detail?genotype.zdbID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
 
         else
 		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exist&fsel_marker_id=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || '</A>';

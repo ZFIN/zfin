@@ -29,7 +29,7 @@
     <Category ID="MUTANTS" order="20">
         <DisplayName>Mutants/Transgenics</DisplayName>
         <UrlMapping>
-            <urlPattern type="MutantGenoView">genotypeview.apg</urlPattern>
+            <urlPattern type="MutantGenoView">genotype/detail</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="Expression" order="30">

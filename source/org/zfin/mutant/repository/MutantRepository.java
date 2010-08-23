@@ -35,6 +35,8 @@ public interface MutantRepository {
     List<Genotype> getGenotypesByFeature(Feature feature);
 
 
+    List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
+
     /**
      * Retrieve the number of images associated to a mutant marker and a given
      * anatomy structure.
@@ -255,5 +257,7 @@ public interface MutantRepository {
     List<Phenotype> getPhenotypeWithEntity(List<Term> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms);
+
+    List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
 }
 

@@ -42,8 +42,8 @@ create procedure regen_genofig_clean_exp()
 
   -- gather the "not normal" apato records
   insert into regen_genofig_not_normal_apato_temp
-    (rgfnna_apato_zdb_id, rgfnna_apato_genox_zdb_id, rgfnna_apato_superterm_zdb_id, rgfnna_apato_subterm_zdb_id)
-    select distinct apato_zdb_id, apato_genox_zdb_id, apato_superterm_zdb_id, apato_subterm_zdb_id
+    (rgfnna_apato_zdb_id,rgfnna_apato_genox_zdb_id,rgfnna_apato_superterm_zdb_id,rgfnna_apato_subterm_zdb_id,rgfnna_apato_quality_zdb_id,rgfnna_apato_tag)
+    select distinct apato_zdb_id,apato_genox_zdb_id,apato_superterm_zdb_id,apato_subterm_zdb_id,apato_quality_zdb_id,apato_tag
       from atomic_phenotype
      where apato_tag != 'normal';
 

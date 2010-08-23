@@ -82,6 +82,23 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
+    public List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql =
+                "select genoFeat from GenotypeFeature genoFeat, Genotype geno, Feature feat " +
+                        "WHERE  geno.zdbID= :zdbID " +
+                        "AND genoFeat.genotype =geno " +
+                        "AND genoFeat.feature =feat " +
+                        "ORDER by feat.abbreviationOrder";
+
+
+        Query query = session.createQuery(hql);
+        query.setString("zdbID", genotype.getZdbID());
+        List<GenotypeFeature> genotypeFeatures = query.list();
+        return genotypeFeatures;
+    }
+
     public int getNumberOfImagesPerAnatomyAndMutant(Term term, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
@@ -914,5 +931,14 @@ public class HibernateMutantRepository implements MutantRepository {
         return phenotypeArrayList;
     }
 
+    public List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
 
+        String hql = "select cleanPheno from GenotypeFigure cleanPheno " +
+                "     where cleanPheno.genotype.zdbID = :genotypeID";
+        Query query = session.createQuery(hql);
+        query.setString("genotypeID", genotype.getZdbID());
+
+        return (List<GenotypeFigure>) query.list();
+    }
 }
