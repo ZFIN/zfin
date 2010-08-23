@@ -757,12 +757,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
+    /**
+     * Unused.
+     * Retrieve # of related markers (in the first position) that are attributed to to this pub.
+     * @param zdbID
+     * @param pubZdbID
+     * @return
+     */
     public int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "select count(*)" +
-                " from record_attribution, db_link, marker_relationship " +
-                "      where recattrib_data_zdb_id = mrel_zdb_id " +
-                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                " from record_attribution, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_mrkr_1_zdb_id " +
+                "      and mrel_mrkr_2_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
                 .setString("zdbID", zdbID)
@@ -771,12 +778,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
+    /**
+     * Retrieve # of related markers (in the second position) that are attributed to to this pub.
+     * @param zdbID
+     * @param pubZdbID
+     * @return
+     */
     public int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "select count(*)" +
-                " from record_attribution, db_link, marker_relationship " +
-                "      where recattrib_data_zdb_id = mrel_zdb_id " +
-                "      and mrel_mrkr_2_zdb_id = :zdbID" +
+                " from record_attribution, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_mrkr_2_zdb_id " +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
                 .setString("zdbID", zdbID)
@@ -789,7 +802,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public int getMorpholinoRelatedMarkerAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "select count(*)" +
-                " from record_attribution, db_link, marker_relationship " +
+                " from record_attribution, marker_relationship " +
                 "      where recattrib_data_zdb_id = mrel_zdb_id " +
                 "      and mrel_mrkr_1_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +

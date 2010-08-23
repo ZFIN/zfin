@@ -120,8 +120,8 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
     public void addAttribution(String markerZdbID, String pubZdbID) {
         HibernateUtil.createTransaction();
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
+        infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
+        infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -131,8 +131,8 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return returnMessage;
         }
         HibernateUtil.createTransaction();
-        RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(markerZdbID, pubZdbID);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
+        infrastructureRepository.deleteRecordAttribution(markerZdbID, pubZdbID);
+        infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
         return null;
     }
@@ -153,7 +153,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
 
         // always check db-links first
-        if (RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions(zdbID, pubZdbID) > 0) {
+        if (infrastructureRepository.getDBLinkAttributions(zdbID, pubZdbID) > 0) {
             return createMessage(zdbID,"is associated via a dblink that is") ;
         }
 
@@ -181,11 +181,11 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         // if anything else
         // direct association
-        if (false == zdbID.startsWith("ZDB-GENO") && RepositoryFactory.getInfrastructureRepository().
+        if (false == zdbID.startsWith("ZDB-GENO") && infrastructureRepository.
                 getRecordAttribution(zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
             return createMessage(zdbID,"is directly ") ;
         }
-//            if (RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions(zdbID, pubZdbID) > 0) {
+//            if (infrastructureRepository.getDataAliasesAttributions(zdbID, pubZdbID) > 0) {
 //                return createMessage(zdbID,"has data aliases") ;
 //            }
 
@@ -198,11 +198,11 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return createMessage(genotype.getHandle(),"is inferred as GO evidence that is") ;
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getGenotypeExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getGenotypeExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(genotype.getHandle(),"is used in an experiment that is") ;
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getGenotypePhenotypeRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getGenotypePhenotypeRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(genotype.getHandle(),"is used in phenotype that is") ;
         }
 
@@ -219,44 +219,48 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             return createMessage(marker.getAbbreviation(), "is inferred as GO evidence that is ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getGoRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has GO annotations ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getOrthologueRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getOrthologueRecordAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has been annotated with orthologs ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getMarkerFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getMarkerFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has a related feature ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getMarkerGenotypeFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(marker.getAbbreviation(), "its relationship to a feature and genotype is ");
+        if (infrastructureRepository.getMarkerGenotypeFeatureRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(marker.getAbbreviation(), "has a relationship to a feature and genotype is ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getDBLinkAssociatedToGeneAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(marker.getAbbreviation(), "it is related to a dblink that is ");
+        if (infrastructureRepository.getDBLinkAssociatedToGeneAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(marker.getAbbreviation(), "is related to a dblink that is ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getFirstMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(marker.getAbbreviation(), "its relation to another marker (first position) is ");
+        // see fogbugz 5872
+        // we can not remove a gene if it has related markers that are attributed to this pub
+        if(marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+            if (infrastructureRepository.getFirstMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+                return createMessage(marker.getAbbreviation(), "is related to a marker (in the second position) that is ");
+            }
+
+            if (infrastructureRepository.getSecondMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+                return createMessage(marker.getAbbreviation(), "is related a marker (in the first position) that is ");
+            }
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getSecondMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(marker.getAbbreviation(), "its relation to another marker (second position) is ");
-        }
-
-//        if (RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+//        if (infrastructureRepository.getMorpholinoRelatedMarkerAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
 //            return createMessage(marker.getAbbreviation(), "its relation to another marker (second position) is attibuted in this pub");
 //            return marker.getAbbreviation() + " attributed by marker relationship where knocked down by morpholino.";
 //        }
 
-        if (RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(marker, publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getExpressionExperimentMarkerAttributions(marker, publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has expression data ");
         }
 
-        if (RepositoryFactory.getInfrastructureRepository().getMorpholinoEnvironmentAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getMorpholinoEnvironmentAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "is present in an environment");
         }
 
@@ -265,7 +269,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
     private String createRemoveAttributionMessageForFeature(Feature feature, Publication publication) {
 
-        if (RepositoryFactory.getInfrastructureRepository().getFeatureGenotypeAttributions(feature.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getFeatureGenotypeAttributions(feature.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(feature.getAbbreviation(), "used in a genotype");
         }
 
@@ -523,7 +527,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         if (StringUtils.isNotEmpty(dbLinkDTO.getPublicationZdbID())) {
             Set<PublicationAttribution> publications = new HashSet<PublicationAttribution>();
             PublicationAttribution publicationAttribution =
-                    RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dbLinkDTO.getZdbID(),
+                    infrastructureRepository.insertPublicAttribution(dbLinkDTO.getZdbID(),
                             dbLinkDTO.getPublicationZdbID());
             publications.add(publicationAttribution);
             dbLink.setPublications(publications);
@@ -563,13 +567,12 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             dblinkZdbID = dbLink.getZdbID();
             sequenceDTO.setZdbID(dblinkZdbID);
         }
-        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         List<PublicationAttribution> publicationAttributions = infrastructureRepository.getPublicationAttributions(dblinkZdbID);
         if (publicationAttributions.size() > 0) {
-            RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dblinkZdbID, sequenceDTO.getPublicationZdbID());
+            infrastructureRepository.insertPublicAttribution(dblinkZdbID, sequenceDTO.getPublicationZdbID());
             sequenceDTO.setAttributionType(RecordAttribution.SourceType.STANDARD.toString());
         } else {
-            RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dblinkZdbID, sequenceDTO.getPublicationZdbID(), RecordAttribution.SourceType.FIRST_CURATED_SEQUENCE_PUB);
+            infrastructureRepository.insertPublicAttribution(dblinkZdbID, sequenceDTO.getPublicationZdbID(), RecordAttribution.SourceType.FIRST_CURATED_SEQUENCE_PUB);
             sequenceDTO.setAttributionType(RecordAttribution.SourceType.FIRST_CURATED_SEQUENCE_PUB.toString());
         }
 
@@ -599,7 +602,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             dbLinkDTO.setZdbID(dblinkZdbID);
         }
 
-        RepositoryFactory.getInfrastructureRepository().insertPublicAttribution(dblinkZdbID, dbLinkDTO.getPublicationZdbID());
+        infrastructureRepository.insertPublicAttribution(dblinkZdbID, dbLinkDTO.getPublicationZdbID());
         session.flush();
 
         DTOConversionService.convertToDBLinkDTO(dbLink, dbLinkDTO.getDataZdbID(), dbLinkDTO.getDataName(), dbLinkDTO.getPublicationZdbID());
@@ -622,7 +625,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
         }
 
         // remove attributions
-        RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionsForData(dbLink.getZdbID());
+        infrastructureRepository.deleteRecordAttributionsForData(dbLink.getZdbID());
 
         // remove objects
         session.delete(dbLink);
@@ -644,7 +647,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 //                                dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
 
         dbLinkDTO.setZdbID(dbLink.getZdbID());
-        RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(dbLink.getZdbID(), dbLinkDTO.getPublicationZdbID());
+        infrastructureRepository.deleteRecordAttribution(dbLink.getZdbID(), dbLinkDTO.getPublicationZdbID());
         session.flush();
 
         // if it fails, it will automatically roll-back and automatically throws exception up
@@ -1029,12 +1032,12 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             throw new TermNotFoundException(markerAbbrev, "Marker");
         }
         String markerZdbID = m.getZdbID();
-        if(RepositoryFactory.getInfrastructureRepository().getRecordAttribution(markerZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
+        if(infrastructureRepository.getRecordAttribution(markerZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
             throw new DuplicateEntryException(m.getAbbreviation()+ " is already attributed.") ;
         }
         HibernateUtil.createTransaction();
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerZdbID, pubZdbID);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
+        infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
+        infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -1045,12 +1048,12 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             throw new TermNotFoundException(featureAbbrev, "Feature");
         }
         String featureZdbID = f.getZdbID();
-        if(RepositoryFactory.getInfrastructureRepository().getRecordAttribution(featureZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
+        if(infrastructureRepository.getRecordAttribution(featureZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
             throw new DuplicateEntryException(f.getAbbreviation()+ " is already attributed as "+f.getName()) ;
         }
         HibernateUtil.createTransaction();
-        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(featureZdbID, pubZdbID);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
+        infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
+        infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
