@@ -63,8 +63,8 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
 
                 // the very first element is selected by default
                 assertEquals(1, page.getByXPath("//td[@class='item item-selected']").size());
-                assertEquals(19, page.getByXPath("//td[@class='item']").size());
-                assertNotSame("...", ((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(18)).getTextContent());
+                assertEquals(20, page.getByXPath("//td[@class='item']").size());
+                assertNotSame("...", ((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(19)).getTextContent());
 
             } catch (Exception e) {
                 fail(e.toString());

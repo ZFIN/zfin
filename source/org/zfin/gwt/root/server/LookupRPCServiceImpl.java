@@ -183,7 +183,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
         Collection<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
-            MatchingTermService matcher = new MatchingTermService(request.getLimit());
+            // We add one in order to add an additional term that is not displayed.
+            // When it comes back we can add the '...' implying that there are more.
+            // Unfortunately, Response does not have an easy fix for this other than exceeding the Response. 
+            MatchingTermService matcher = new MatchingTermService(request.getLimit()+1);
             highlighter.setMatch(query);
             for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
                 String suggestion = term.getMatchingTermDisplay();
