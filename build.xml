@@ -372,15 +372,15 @@
     </target>
 
     <target name="notify-deploy" if="isproduction">
-        <emailMessage message="Production is beginning the deployment cycle." email="curators@zfin.org"/>
+        <emailMessage message="Production is beginning the deployment cycle and will be restarted within a few minutes." email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
     <target name="notify-up" if="isproduction">
-        <emailMessage message="Production should now be available." email="curators@zfin.org"/>
+        <emailMessage message="Production should now be available." email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
     <target name="notify-restart" if="isproduction">
-        <emailMessage message="Production is restarting and will be available momentarily." email="curators@zfin.org"/>
+        <emailMessage message="Production is restarting and will be available momentarily." email="${PRODUCTION_NOTIFICATION_EMAIL}"/>
     </target>
 
 
@@ -401,7 +401,7 @@
         </sequential>
     </macrodef>
 
-    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,test"
+    <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release"
