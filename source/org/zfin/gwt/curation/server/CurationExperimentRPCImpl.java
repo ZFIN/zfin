@@ -76,7 +76,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             genes.add(gene);
         }
 
-        return genes;  //To change body of implemented methods use File | Settings | File Templates.
+        return genes;  
     }
 
     /**
@@ -438,7 +438,8 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             if (marker.getType().equals(Marker.Type.EST) ||
                     marker.getType().equals(Marker.Type.CDNA)) {
                 // TOdo: Change to setClone(clone) when clone is subclassed from Marker
-                expressionExperiment.setProbe((Clone) marker);
+				Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(marker.getZdbID()) ; 
+                expressionExperiment.setProbe(clone);
             }
         } else {
             expressionExperiment.setMarkerDBLink(null);
