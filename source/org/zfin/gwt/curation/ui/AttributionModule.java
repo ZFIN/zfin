@@ -24,6 +24,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private LookupComposite featureLookupComposite = new LookupComposite();
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
+    private boolean working = false ;
 
     public static enum RemoveHeader {
         MARKER,
@@ -195,6 +196,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     }
 
     private void addMarkerAttribution(final String value) {
+        // should cancel second submit (case 5943)
+        if (isWorking()) return ;
         if (checkAttributionExists(value)) return;
         working();
         MarkerRPCService.App.getInstance().addAttributionForMarkerName(value, dto.getPublicationZdbID(),
@@ -226,6 +229,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     }
 
     private void addFeatureAttribution(final String value) {
+        // should cancel second submit (case 5943)
+        if (isWorking()) return ;
         if (checkAttributionExists(value)) return;
         working();
         MarkerRPCService.App.getInstance().addAttributionForFeatureName(value, dto.getPublicationZdbID(),
@@ -261,6 +266,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     public void working() {
+        working = true ;
         super.working();
         markerLookupComposite.working();
         featureLookupComposite.working();
@@ -269,9 +275,14 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     public void notWorking() {
+        working = false ;
         super.notWorking();
         markerLookupComposite.notWorking();
         featureLookupComposite.notWorking();
         removeListBox.setEnabled(true);
+    }
+
+    public boolean isWorking() {
+        return working;
     }
 }
