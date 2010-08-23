@@ -40,7 +40,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void dontTokenizeSmallWords(){
-//        ontologyManager.initSingleOntologyMap(Ontology.QUALITY);
         Set<Term> terms ;
         terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("disease") ;
         assertTrue(terms.size()>5) ;
@@ -50,7 +49,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         if(terms!=null){
             for(Term term:terms){
                 assertTrue(term.getTermName().startsWith("a")) ;
-                assertTrue(term.getTermName().length()>2) ;
             }
         }
         else{
@@ -62,11 +60,12 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void testTermByName() {
-        ontologyManager.getTermByName(Ontology.ANATOMY, "B cell");
+        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "B cell"));
         assertNull(ontologyManager.getTermByName(Ontology.ANATOMY, "bad bad term"));
         assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "pelvic fin bud"));
         assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "Brachet's cleft"));
         assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "Cajal-Retzius cell"));
+        assertNotNull(ontologyManager.getTermByName(Ontology.ANATOMY, "nucleus of the medial longitudinal fasciculus medulla oblongata"));
         assertNotNull(ontologyManager.getTermByName(Ontology.SPATIAL, "dorsal region"));
     }
 
@@ -99,6 +98,20 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         logger.info("Search Duration: " + timeToSearch);
         assertNotNull(qualityList);
         assertEquals(13, qualityList.size());
+
+    }
+
+    @Test
+    public void getMatchingShortTerms() {
+        String query = "nucleus of a";
+        long startTime = System.currentTimeMillis();
+        MatchingTermService matcher = new MatchingTermService();
+        Set<MatchingTerm> qualityList = matcher.getMatchingTerms(Ontology.ANATOMY, query);
+        long endTime = System.currentTimeMillis();
+        long timeToSearch = endTime - startTime;
+        logger.info("Search Duration: " + timeToSearch);
+        assertNotNull(qualityList);
+        assertTrue(qualityList.size()>0);
 
     }
 

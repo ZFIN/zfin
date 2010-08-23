@@ -35,7 +35,7 @@ public class OntologyManager {
     private Map<String, List<TermRelationshipHelper>> allRelationships;
     // distinct relationship Types used in an ontology
     private Map<Ontology, Set<String>> distinctRelationshipTypes = new HashMap<Ontology, Set<String>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
-    private OntologyTokenizer tokenizer = new OntologyTokenizer();
+    private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
     // name of serialized file.
 
     /**

@@ -45,11 +45,12 @@ public class OntologyTokenizationTest {
 
     @Test
     public void shortTokenizer(){
+        OntologyTokenizer shortTokenizer = new OntologyTokenizer(3) ;
         String matchString = "sensitivity of a process" ;
         Set<String> strings ;
-        strings = tokenizer.tokenizeWords(matchString)  ;
+        strings = shortTokenizer.tokenizeWords(matchString)  ;
         assertEquals(2,strings.size()) ;
-        strings = tokenizer.tokenize(matchString)  ;
+        strings = shortTokenizer.tokenize(matchString)  ;
         assertEquals(2,strings.size());
         assertTrue(strings.contains("sensitivity")) ;
         assertTrue(strings.contains("process")) ;

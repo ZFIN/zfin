@@ -366,8 +366,8 @@ public class MatchingTermServiceTest {
         assertFalse(service.containsAllTokens("abcd",strings)) ;
         assertFalse(service.containsAllTokens("defg",strings)) ;
         assertTrue(service.containsAllTokens("abcd defg",new String[]{"ab","de"})) ;
-        assertFalse(service.containsAllTokens("cat",new String[]{"dog","cat"})); ;
-        assertFalse(service.containsAllTokens("cat d",new String[]{"dog","cat"})); ;
+        assertFalse(service.containsAllTokens("cat",new String[]{"dog","cat"}));
+        assertFalse(service.containsAllTokens("cat d",new String[]{"dog","cat"}));
     }
 
     @Test

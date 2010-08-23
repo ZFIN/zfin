@@ -30,10 +30,6 @@ public class OntologyPerformanceTest extends AbstractOntologyTest{
         ontologyManager.reLoadOntologies();
     }
 
-
-
-
-
     /**
      */
     @Test

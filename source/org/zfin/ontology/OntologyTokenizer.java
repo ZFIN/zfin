@@ -23,13 +23,20 @@ public class OntologyTokenizer {
     private final String DEFAULT_STRING_REGEXP = "(\\p{Alnum}{3,})" ;
     private final String DEFAULT_WORD_REGEXP = "\\s+" ;
     private final Pattern pattern = Pattern.compile(DEFAULT_STRING_REGEXP) ;
+    private int minLength = -1 ;
+
+    public OntologyTokenizer(){ }
+
+    public OntologyTokenizer(int minLength){
+        this.minLength = minLength ;
+    }
 
 
     // this generates words of the form:
     // expression: 'a-b c-d'
     //  tokenizeString: 'a' and 'b' and 'c' and 'd'
     //  tokenizeWords: 'a-b' and 'c-d'
-    // where 'a-b' is larger than 3 letters
+    // where 'a-b' is larger than the minLength
     protected Set<String> tokenizeWords(String string){
         Set<String> strings = new HashSet<String>(Arrays.asList(string.split(DEFAULT_WORD_REGEXP)));
         Iterator<String> iter = strings.iterator() ;
@@ -43,7 +50,7 @@ public class OntologyTokenizer {
             if(word.endsWith(")")){
                 word = word.substring(0,word.length()-1) ;
             }
-            if(word.trim().length()>2 ){
+            if(word.trim().length()>=minLength){
                 returnStrings.add(word) ;
             }
         }

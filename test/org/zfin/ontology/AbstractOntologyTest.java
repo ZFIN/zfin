@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.properties.ZfinProperties;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -26,6 +27,7 @@ public abstract class AbstractOntologyTest {
     protected abstract Ontology[] getOntologiesToLoad();
 
     protected void initHibernate(){
+        ZfinProperties.init();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
