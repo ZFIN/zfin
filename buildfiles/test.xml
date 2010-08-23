@@ -293,6 +293,33 @@ test(s) need to be run before committing changes or pushing files to production 
         </junit>
     </target>
 
+    <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
+    <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
+    <target name="productionSmokeTests" if="isproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
+
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               showoutput="true"
+               maxmemory="1024m"
+                >
+            <!--            <jvmarg line="${junrt.jvmargs}"/>-->
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+            <test name="org.zfin.ProductionSmokeTests" outfile="${smokeTestFile}"
+                  todir="${test.reports.dir}"
+                  haltonerror="false" haltonfailure="true"
+                  failureproperty="smoke.failure" >
+                <formatter type="plain"/>
+            </test>
+        </junit>
+        <antcall target="handleSmokeFailure">
+            <param name="test.output.file" value="${smokeTestFile}"/>
+        </antcall>
+    </target>
 
 
     <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->

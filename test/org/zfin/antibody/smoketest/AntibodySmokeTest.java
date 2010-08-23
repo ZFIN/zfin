@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import org.junit.Test;
 import org.zfin.AbstractSmokeTest;
 import org.zfin.antibody.Antibody;
@@ -60,18 +61,15 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         for (WebClient aWebClient : publicWebClients) {
             webClient = aWebClient;
             try {
-
-                String antibodyName = "anti-Tbx16";
-                AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
-                Antibody antibody = ar.getAntibodyByName(antibodyName);
-                if (antibody == null) {
-                    fail("No Antibody found with name: " + antibodyName);
-                }
-                String uri = "/action/antibody/detail?antibody.zdbID="+antibody.getZdbID();
+                // name
+                String zdbID = "ZDB-ATB-081002-3" ;
+                String uri = "/action/antibody/detail?antibody.zdbID="+zdbID;
                 HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + uri);
-                assertEquals("Antibody: "+antibodyName, page.getTitleText());
-                assertNotNull("renders the end of the page sources " , page.getByXPath("//a[@id='ZDB-LAB-991005-53']"));
-                assertNotNull("renders the end of the page citations " , page.getByXPath("//a[. ='CITATIONS']"));
+                HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//table[@class='data_manager']//td").get(0);
+                assertTrue(cell.getTextContent().contains(zdbID)) ;
+                assertNotNull("find the ID on the page" , page.getByXPath("//table[@class='data_manager']//td").get(0));
+                assertNotNull("renders the end of the page sources " , page.getByXPath("//a[@id='ZDB-LAB-991005-53']").get(0));
+                assertNotNull("renders the end of the page citations " , page.getByXPath("//a[. ='CITATIONS']").get(0));
 
             }
             catch(Exception e){
