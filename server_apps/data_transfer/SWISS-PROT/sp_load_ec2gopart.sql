@@ -20,12 +20,12 @@ begin work;
 		select distinct "EC:"||ec_acc, e.goterm_name, e.goterm_id,
 			t.term_is_obsolete, t.term_is_secondary 
 		  from ec_goterm_with_dups e, term t
-	         where e.goterm_id = g.goterm_go_id
+	         where "GO:"||e.goterm_id = t.term_ont_id
 	           and (t.term_is_obsolete = "t"
 		       or t.term_is_secondary = "t")
 		order by t.term_is_secondary, t.term_is_obsolete;	
 	delete from ec_goterm_with_dups
-		where "GO:"||goterm_id in (select term_ont_id
+		where "GO:"||e.goterm_id in (select term_ont_id
 				       from term
 			              where term_is_obsolete = "t"
 		                        or  term_is_secondary = "t"

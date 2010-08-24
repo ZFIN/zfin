@@ -172,7 +172,7 @@ begin work;
 	           and (t.term_is_obsolete = "t"
 	             or t.term_is_secondary = "t")
 		order by t.term_is_secondary, t.term_is_obsolete;	
-	delete from ip_goterm_with_dups
+	delete from ip_goterm_with_dups 
 		where "GO:"||goterm_id in (select term_ont_id
 				       from term
 			              where term_is_obsolete = "t"
@@ -196,8 +196,8 @@ begin work;
 	           and (t.term_is_obsolete = "t"
 		       or t.term_is_secondary = "t")
 		order by t.term_is_secondary, t.term_is_obsolete;	
-	delete from ec_goterm_with_dups
-		where "GO:"goterm_id in (select term_ont_id
+	delete from ec_goterm_with_dups 
+		where "GO:"||goterm_id in (select term_ont_id
 				       from term
 			              where term_is_obsolete = "t"
 		                        or  term_is_secondary = "t"
