@@ -83,8 +83,8 @@ while ($line = <ASSEMBLY>) {
 
     my $fullsource = $source . ".fulllength";
 
-    if ($seqid =~/^[1-9U]/) {
-        print FULLCLONEGFF3 "$seqid\t$fullsource\t$type\t$start\t$end\t$score\t$strand\t$phase\t$attributes\n";
-        print VEGACLONEGFF3 "$seqid\t$source\t$type\t$original_start\t$original_end\t$score\t$strand\t$phase\t$attributes\n";
-    }
+
+    print FULLCLONEGFF3 "$seqid\t$fullsource\t$type\t$start\t$end\t$score\t$strand\t$phase\t$attributes\n";
+    print VEGACLONEGFF3 "$seqid\t$source\t$type\t$original_start\t$original_end\t$score\t$strand\t$phase\t$attributes\n";
+
 }
