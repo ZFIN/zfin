@@ -422,38 +422,52 @@ and mrkr_type = 'MRPHLNO'
   <?/MICOMMENT>
 
   <?MICOMMENT> ======== Gene Expression and Phenotype Data  ============ <?/MICOMMENT>
+  <?MIVAR NAME=pbv_xpat_fig_count>0<?/MIVAR>
   <?MISQL SQL="
-	select count(*)::integer
+	select count(distinct xpatfig_fig_zdb_id)::integer
  	  from figure, expression_pattern_figure
  	 where fig_source_zdb_id = '$OID'
          and fig_zdb_id=xpatfig_fig_zdb_id">
+    <?MIVAR NAME=pbv_xpat_fig_count>$1<?/MIVAR>
   <?/MISQL>
-  <?MIVAR NAME=pbv_fig_count>$1<?/MIVAR>
 
+  <?MIVAR NAME=pbv_pheno_fig_count>0<?/MIVAR>
   <?MISQL SQL="
-	select count(*)::integer
+	select count(distinct apatofig_fig_zdb_id)::integer
  	  from figure, apato_figure
  	 where fig_source_zdb_id = '$OID'
          and fig_zdb_id=apatofig_fig_zdb_id">
+    <?MIVAR NAME=pbv_pheno_fig_count>$1<?/MIVAR>
   <?/MISQL>
 
-  <?MIVAR NAME=pbv_fig_count2>$1<?/MIVAR>
-  <?MIBLOCK COND="$(OR,$(>,$pbv_fig_count,1),$(>,$pbv_fig_count2,1))">
+  <?MIBLOCK COND="$(OR,$(>,$pbv_xpat_fig_count,1),$(>,$pbv_pheno_fig_count,1))">
      <?MIVAR NAME=pbv_fig_page>fxallfigures.apg<?/MIVAR>
      <?MIVAR NAME=pbv_fig_page_link_id>$OID<?/MIVAR>	
-  <?MIELSE COND="$(OR,$(AND,$(=,$pbv_fig_count,1),$(<,$pbv_fig_count2,1)),$(AND,$(=,$pbv_fig_count2,1),$(<,$pbv_fig_count,1)))">
-     <?MISQL SQL="select fig_zdb_id
+  <?MIELSE COND="$(OR,$(AND,$(=,$pbv_xpat_fig_count,1),$(<,$pbv_pheno_fig_count,1)),$(AND,$(=,$pbv_pheno_fig_count,1),$(<,$pbv_xpat_fig_count,1)))">
+
+   
+    <?MISQL SQL="select fig_zdb_id
                   from figure,expression_pattern_figure
-                  where fig_source_zdb_id='$OID'and fig_zdb_id=xpatfig_fig_zdb_id;">
+                  where fig_source_zdb_id='$OID' 
+                    and fig_zdb_id=xpatfig_fig_zdb_id;">
+        <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
       <?/MISQL> 
-      <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
+      <?MISQL COND="$(NXST,$pbv_fig_page_link_id)"
+              SQL="select fig_zdb_id
+                  from figure,apato_figure
+                  where fig_source_zdb_id='$OID'
+                    and fig_zdb_id=apatofig_fig_zdb_id;">
+        <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
+      <?/MISQL>
       <?MIVAR NAME=pbv_fig_page>fxfigureview.apg<?/MIVAR>
+  
   <?MIELSE>
+
       <?MIVAR NAME=pbv_fig_page>fxallfigures.apg<?/MIVAR>
       <?MIVAR NAME=pbv_fig_page_link_id>$OID<?/MIVAR>
   <?/MIBLOCK>	
 <?MICOMMENT>  
-  <?MIBLOCK COND="$(=,$pbv_fig_count2,1)">
+  <?MIBLOCK COND="$(=,$pbv_pheno_fig_count,1)">
 
      <?MISQL SQL="select fig_zdb_id
                   from figure,apato_figure
@@ -464,15 +478,15 @@ and mrkr_type = 'MRPHLNO'
 
   <?/MIBLOCK>
 <?/MICOMMENT>  
-  <?MIBLOCK COND="$(AND,$(>,$pbv_fig_count,0),$(>,$pbv_fig_count2,0))">
+  <?MIBLOCK COND="$(AND,$(>,$pbv_xpat_fig_count,0),$(>,$pbv_pheno_fig_count,0))">
      <?MIVAR NAME=pbv_fig_link_text>Gene Expression and Phenotype Data<?/MIVAR>	
-  <?MIELSE COND="$(AND,$(>,$pbv_fig_count,0),$(<,$pbv_fig_count2,1))">
+  <?MIELSE COND="$(AND,$(>,$pbv_xpat_fig_count,0),$(<,$pbv_pheno_fig_count,1))">
      <?MIVAR NAME=pbv_fig_link_text>Gene Expression<?/MIVAR>
-  <?MIELSE COND="$(AND,$(>,$pbv_fig_count2,0),$(<,$pbv_fig_count,1))">
+  <?MIELSE COND="$(AND,$(>,$pbv_pheno_fig_count,0),$(<,$pbv_xpat_fig_count,1))">
      <?MIVAR NAME=pbv_fig_link_text>Phenotype Data<?/MIVAR>     
   <?/MIBLOCK>	  
 
-  <?MIBLOCK COND="$(OR,$(!=,$pbv_fig_count,0),$(!=,$pbv_fig_count2,0))">
+  <?MIBLOCK COND="$(OR,$(!=,$pbv_xpat_fig_count,0),$(!=,$pbv_pheno_fig_count,0))">
     <?MIVAR>
        <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$pbv_fig_page&OID=$pbv_fig_page_link_id">
 	   $pbv_fig_link_text
