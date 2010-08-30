@@ -15,19 +15,10 @@ import java.util.ArrayList;
 
 public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Marker expressedGene;
-    private SortedSet<Term> sortedTerms;
     private Set<Publication> publications;
     private Set<Figure> figures;
     private boolean moInExperiment;
     private List<ExpressionResult> expressionResults;
-
-    public SortedSet<Term> getSortedTerms() {
-        return sortedTerms;
-    }
-
-    public void setSortedTerms(SortedSet<Term> sortedTerms) {
-        this.sortedTerms = sortedTerms;
-    }
 
     public int compareTo(ExpressionDisplay anotherExpressionDisplay) {
         if (expressedGene == null)

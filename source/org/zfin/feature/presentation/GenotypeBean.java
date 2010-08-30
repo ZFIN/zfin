@@ -115,18 +115,20 @@ public class GenotypeBean {
 
         String keyGeno = genotype.getZdbID();
 
+        Set<String> termIdStrings = new HashSet<String>();
+
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
                 String key = keyGeno + expressedGene.getZdbID();
 
-                SortedSet<Term> terms = new TreeSet<Term>();
                 Term superterm = xpResult.getSuperterm();
-                if (superterm != null)
-                    terms.add(superterm);
                 Term subterm = xpResult.getSubterm();
+                String termIDString = new String();
                 if (subterm != null)
-                    terms.add(subterm);
+                    termIDString = superterm.getID() + subterm.getID();
+                else
+                    termIDString = superterm.getID();
 
                 Set<Figure> figs = xpResult.getFigures();
                 Publication pub = xpResult.getExpressionExperiment().getPublication();
@@ -137,9 +139,9 @@ public class GenotypeBean {
                 if (!map.containsKey(key)) {
                     xpDisplay = new ExpressionDisplay();
                     xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
+                    termIdStrings.add(termIDString);
                     xpDisplay.getExpressionResults().add(xpResult);
                     xpDisplay.setExpressedGene(expressedGene);
-                    xpDisplay.setSortedTerms(terms);
                     xpDisplay.setPublications(new HashSet<Publication>());
                     xpDisplay.getPublications().add(pub);
                     xpDisplay.setFigures(figs);
@@ -157,11 +159,10 @@ public class GenotypeBean {
                     map.put(key, xpDisplay);
                 } else {
                     xpDisplay = map.get(key);
-                    if (!xpDisplay.getExpressionResults().contains(xpResult)) {
+                    if (!termIdStrings.contains(termIDString)) {
                         xpDisplay.getExpressionResults().add(xpResult);
                         Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
                     }
-                    xpDisplay.getSortedTerms().addAll(terms);
                     xpDisplay.getPublications().add(pub);
                     xpDisplay.getFigures().addAll(figs);
                 }
@@ -273,8 +274,6 @@ public class GenotypeBean {
                     if (mo != null) {
                         phenoDisplay.setMO(mo);
                         phenoDisplay.setMoInExperiment(true);
-                        Marker targetGene = markerRepository.getTargetGeneByMO(mo);
-                        phenoDisplay.setTargetGene(targetGene);
                     } else {
                         phenoDisplay.setMoInExperiment(false);
                     }

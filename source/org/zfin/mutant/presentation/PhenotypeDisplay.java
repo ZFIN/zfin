@@ -26,8 +26,6 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     private Figure singleFig;
     private Publication singlePub;
 
-    private Marker targetGene;
-
     public int getNumberOfFigures() {
         if (figures == null) {
             return 0;
@@ -123,24 +121,25 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     }
 
     public int compareTo(PhenotypeDisplay anotherPhenotypeDisplay) {
-        if (targetGene == null && anotherPhenotypeDisplay.getTargetGene() != null) {
+        Marker MO2 = anotherPhenotypeDisplay.getMO();
+
+        if (MO == null && MO2 != null) {
 			return -1;
-		} else if (targetGene != null && anotherPhenotypeDisplay.getTargetGene() == null) {
+		} else if (MO != null && MO2 == null) {
 			return 1;
-	    } else if (targetGene == null && anotherPhenotypeDisplay.getTargetGene() == null) {
+	    } else if (MO == null && MO2 == null) {
 		    if (entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper()) == 0)
 			    return qualityTerm.compareTo(anotherPhenotypeDisplay.getQualityTerm());
 			else
 				return entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper());
 	    } else {
-			if (targetGene.compareTo(anotherPhenotypeDisplay.getTargetGene()) == 0) {
-			    if (entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper()) == 0)
-				    return qualityTerm.compareTo(anotherPhenotypeDisplay.getQualityTerm());
-				else
-					return entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper());
-			} else {
-				return targetGene.compareTo(anotherPhenotypeDisplay.getTargetGene());
-			}
+            int indexOfHyphen1 = MO.getName().indexOf("-");
+            String moNameCmp1 = MO.getName().substring(indexOfHyphen1);
+
+            int indexOfHyphen2 = MO2.getName().indexOf("-");
+            String moNameCmp2 = MO2.getName().substring(indexOfHyphen2);
+
+            return moNameCmp1.compareToIgnoreCase(moNameCmp2);
 		}
     }
 
@@ -160,13 +159,5 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
 			   return true;
         }
         return false;
-    }
-
-    public Marker getTargetGene() {
-        return targetGene;
-    }
-
-    public void setTargetGene(Marker targetGene) {
-        this.targetGene = targetGene;
     }
 }
