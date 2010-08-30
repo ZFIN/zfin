@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
@@ -524,6 +525,9 @@ public class OntologyManager {
      * @return term
      */
     public Term getTermByID(String termID) {
+        if(StringUtils.isEmpty(termID))
+        return null;
+        
         for (Ontology ontology : ontologyTermMap.keySet()) {
             Term term = getTermByID(ontology, termID);
             if (term != null) {

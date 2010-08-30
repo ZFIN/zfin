@@ -710,9 +710,9 @@ public class AntibodyService {
                                         figureData.setFigure(f);
                                         List<Term> anatomyItems = new ArrayList<Term>();
                                         for (ExpressionResult er : f.getExpressionResults()) {
-                                            Term AOstructure = er.getSuperterm();
-                                            if (!anatomyItems.contains(AOstructure))
-                                                anatomyItems.add(AOstructure);
+                                            Term aOstructure = er.getSuperterm();
+                                            if (!anatomyItems.contains(aOstructure))
+                                                anatomyItems.add(aOstructure);
                                         }
                                         Collections.sort(anatomyItems);
                                         figureData.setTerms(anatomyItems);

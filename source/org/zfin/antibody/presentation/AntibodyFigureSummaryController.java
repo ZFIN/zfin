@@ -1,5 +1,6 @@
 package org.zfin.antibody.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,14 +42,16 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         Term superterm = OntologyManager.getInstance().getTermByID(form.getSuperTerm().getID());
         form.setSuperTerm(superterm);
 
-        Term subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getID());
-        form.setSubTerm(subterm);
-
+        Term subterm = null;
+        if (StringUtils.isNotEmpty(form.getSubTerm().getID())) {
+            subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getID());
+            form.setSubTerm(subterm);
+        }
         DevelopmentStage startStage = getAnatomyRepository().getStage(form.getStartStage());
         form.setStartStage(startStage);
 
         DevelopmentStage endStage = getAnatomyRepository().getStage(form.getEndStage());
-        form.setEndStage(endStage);        
+        form.setEndStage(endStage);
 
         AntibodyService abStat = new AntibodyService(ab);
         abStat.createFigureSummary(superterm, subterm, form.getStartStage(), form.getEndStage(), form.isOnlyFiguresWithImg());

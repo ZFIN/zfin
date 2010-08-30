@@ -19,6 +19,7 @@ public class AbstractSmokeTest extends WebTestCase {
     protected String mutant ;
     protected String domain ;
     protected WebClient webClient;
+    protected String unsecureUrlPrefix;
 
     protected final WebClient[] curationWebClients = {
             new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
@@ -46,6 +47,7 @@ public class AbstractSmokeTest extends WebTestCase {
         TestConfiguration.configure();
         domain = ZfinPropertiesEnum.DOMAIN_NAME.toString() ;
         mutant = ZfinPropertiesEnum.MUTANT_NAME.toString() ;
+        unsecureUrlPrefix = ZfinPropertiesEnum.NON_SECURE_HTTP + domain;
         if (!initDatabase){
             initDatabase();
         }

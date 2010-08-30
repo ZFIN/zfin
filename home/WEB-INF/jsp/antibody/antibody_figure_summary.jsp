@@ -9,9 +9,8 @@
 </tiles:insert>
 
 <div style="font-size:larger; font-weight:bold;" align="center">
-    Antibody <zfin:link entity="${formBean.antibody}"/> labeling in <zfin:link
-        entity="${formBean.superTerm}"/>
-    <c:if test="${formBean.subTerm ne null}"> : <zfin:link entity="${formBean.subTerm}"/></c:if>
+    Antibody <zfin:link entity="${formBean.antibody}"/> labeling in
+    <zfin2:postComposedTermLink superterm="${formBean.superTerm}" subterm="${formBean.subTerm}" />
     <c:if test="${formBean.startStage.zdbID !=null && formBean.endStage.zdbID != null}">
         <c:choose>
             <c:when test="${formBean.startStage.zdbID == formBean.endStage.zdbID}">
@@ -70,7 +69,8 @@
             <% } %>
             <td>
                 <c:if test="${status.index == 0 || formBean.antibodyStat.figureSummary[status.index].publication.zdbID ne formBean.antibodyStat.figureSummary[status.index-1].publication.zdbID}">
-                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${figureData.publication.zdbID}">
+                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${figureData.publication.zdbID}"
+                       id="${figureData.figure.zdbID}">
                             ${figureData.publication.shortAuthorList}
                     </a>
                 </c:if>
