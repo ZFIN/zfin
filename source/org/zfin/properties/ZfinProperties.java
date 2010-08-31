@@ -1,5 +1,6 @@
 package org.zfin.properties;
 
+import org.apache.log4j.Logger;
 import org.zfin.gwt.root.ui.HandlesErrorCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.properties.ant.LoadPropertiesTask;
@@ -12,6 +13,7 @@ import java.util.Map;
  */
 public final class ZfinProperties {
 
+    private static final Logger logger = Logger.getLogger(ZfinProperties.class) ;
     private static LoadPropertiesTask loadPropertiesTask = new LoadPropertiesTask();
 
 
@@ -137,7 +139,22 @@ public final class ZfinProperties {
     public static void init() {
         // should load from a default file, or from a -DPROPERTY=<path/to/file>
         init(loadPropertiesTask.getFile());
-//        loadPropertiesTask.execute();
+    }
+
+    public static void validateProperties(){
+        String instance = ZfinPropertiesEnum.INSTANCE.value() ;
+        if(instance==null){
+            instance = System.getenv("INSTANCE") ;
+            logger.error("Instance undefined in properties files, getting from environment["+instance+"]");
+        }
+        for(ZfinPropertiesEnum zfinPropertiesEnum : ZfinPropertiesEnum.values()){
+            if(zfinPropertiesEnum.value()==null){
+               logger.error("Property["+zfinPropertiesEnum.name() + " not defined for INSTANCE["+ ZfinPropertiesEnum.INSTANCE+"]");
+            }
+            else{
+                logger.error("Property["+zfinPropertiesEnum.name() + "=["+ zfinPropertiesEnum.value()+"]");
+            }
+        }
     }
 
 

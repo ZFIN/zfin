@@ -18,10 +18,83 @@
              classname="org.zfin.properties.ant.ExportPropertiesTask"
              classpathref="classpath"/>
 
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="lib/Java/ant-contrib-0.3.jar"/>
+        </classpath>
+    </taskdef>
+
+
     <property name="commons.dir" value="${basedir}/externals/properties"/>
 
+    <property environment="env"/>
+    <!--<echo message="INSTANCE from environment '${env.INSTANCE}'"/>-->
+
+    <!-- This code forced it to only unset the INSTANCE once -->
+    <if>
+        <not>
+            <equals arg1="${INIT_ANT}" arg2="true"/>
+        </not>
+        <then>
+            <var name="INSTANCE" unset="true"/>
+            <property name="INIT_ANT" value="true"/>
+        </then>
+    </if>
+
+    <!--If INSTANCE system property is not defined,-->
+    <!--then define from the environment.-->
+    <condition property="instance.system.defined">
+        <not>
+            <equals arg1="${OVERRIDE_INSTANCE}" arg2="$${OVERRIDE_INSTANCE}"/>
+        </not>
+    </condition>
+
+    <!--<echo message="Sytem defined: ${instance.system.defined}"/>-->
+
+    <!--If INSTANCE system property is not defined,-->
+    <!--then define from the environment.-->
+    <condition property="instance.env.defined">
+        <not>
+            <equals arg1="${env.INSTANCE}" arg2=""/>
+        </not>
+    </condition>
+
+    <fail unless="instance.env.defined" message="INSTANCE must be defined in the environment."/>
+
+    <!--If the INSTANCE variable is not already set (this code gets run for every target, I believe)-->
+    <!--the we check if it is defined in the system as OVERRIDE_INSTANCE-->
+    <if>
+        <equals arg1="${INSTANCE}" arg2="$${INSTANCE}"/>
+        <then>
+            <if>
+                <equals arg1="${instance.system.defined}" arg2="true"/>
+                <then>
+                    <echo message="!!!!!!!"/>
+                    <echo message="Instance IS system defined and set to '${OVERRIDE_INSTANCE}'."/>
+                    <property name="INSTANCE" value="${OVERRIDE_INSTANCE}"/>
+                    <echo message="!!!!!!!"/>
+                </then>
+                <else>
+                    <property name="INSTANCE" value="${env.INSTANCE}"/>
+                    <echo message="Setting INSTANCE to '${INSTANCE}' from environment"/>
+                </else>
+            </if>
+        </then>
+    </if>
+
+
+    <!--Define property file.-->
+    <property name="property.file" value="${commons.dir}/${INSTANCE}.properties"/>
+
+    <!--If the property file is not defined then fail.-->
+    <echo message="property file=${property.file}"/>
+    <available property="property.file.available" file="${property.file}"/>
+
+    <fail unless="property.file.available" message="Unable to find property file[${property.file}] for instance[${INSTANCE}"/>
+
     <!--here, we are only loading property files into ant, not into the enum -->
-    <loadProperties file="${commons.dir}/${INSTANCE}.properties" />
+    <loadProperties file="${property.file}" />
+
 
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>
@@ -98,7 +171,7 @@
                 keySuffix=" "
                 valuePrefix="&quot;"
                 valueSuffix="&quot;"
-                footerFile="${commons.dir}/footer.env"                
+                footerFile="${commons.dir}/footer.env"
                 exportPropertyFile="${commons.dir}/env-exports.properties" />
     </target>
 
@@ -110,7 +183,7 @@
                 keyPrefix="&lt;!--|"
                 keySuffix="|--&gt;${tab}"
                 exportPropertyFile="${commons.dir}/tt-exports.properties"
-                footerFile="${commons.dir}/footer.tt"                
+                footerFile="${commons.dir}/footer.tt"
                 />
     </target>
 
@@ -411,7 +484,7 @@
         <antcall target="generateJSPVersionFile"/>
         <!-- Want to call at the same time in order match -->
         <antcall target="generateStaticHTMLVersionFile"/>
-        <antcall target="jsp-compile"/> 
+        <antcall target="jsp-compile"/>
     </target>
 
     <filterset id="cssfilters">
@@ -429,6 +502,7 @@
     <filterset id="webdriverfilters">
         <filter token="TARGETCGIBIN" value="${TARGETCGIBIN}"/>
         <filter token="WEBDRIVER_LOC" value="${WEBDRIVER_LOC}"/>
+        <filter token="INSTANCE" value="${INSTANCE}"/>
     </filterset>
 
     <filterset id="quartzfilters">
@@ -445,11 +519,24 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="replaceProperties">
+        <attribute name="to"/>
+        <sequential>
+            <delete dir="@{to}/externals" verbose="true"/>
+            <copy todir="@{to}" >
+                <fileset dir="${commons.dir}">
+                    <include name="*.properties"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
     <macrodef name="copyWebApp">
         <attribute name="from"/>
         <attribute name="to"/>
         <attribute name="overwrite" default="false"/>
         <sequential>
+            <echo message="copying the webapp from @{from} to @{to}" />
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="**/css/*.css"/>
@@ -477,6 +564,7 @@
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
+            <replaceProperties to="@{to}/WEB-INF/properties"/>
         </sequential>
     </macrodef>
 
