@@ -3,6 +3,7 @@ package org.zfin.gwt;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import org.zfin.AbstractSmokeTest;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 
@@ -14,7 +15,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
         for (WebClient aWebClient : publicWebClients) {
             webClient = aWebClient;
             try {
-                HtmlPage page = webClient.getPage("http://" + domain + "/" + mutant + "/webdriver?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage("http://" + domain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
@@ -63,7 +64,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
             webClient = aWebClient;
 
             try {
-                HtmlPage page = webClient.getPage("http://" + domain + "/" + mutant + "/webdriver?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage("http://" + domain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
