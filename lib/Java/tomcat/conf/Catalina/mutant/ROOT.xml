@@ -10,7 +10,7 @@
 <Resource name="jdbc/zfin" auth="Container"
                 type="javax.sql.DataSource" username="zfinner" password="Rtwm4ts"
                 driverClassName="com.informix.jdbc.IfxDriver" 
-                url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@"
+                url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=5"
                 maxActive="40" maxIdle="10"/>
 
   <Resource name="jdbc/gbrowse" auth="Container"

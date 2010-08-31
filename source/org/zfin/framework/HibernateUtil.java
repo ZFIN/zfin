@@ -94,13 +94,6 @@ public class HibernateUtil {
         // Open a new ZfinSession, if this Thread has none yet
         if (s == null) {
             s = sessionFactory.openSession();
-            try {
-                s.connection().setTransactionIsolation(1);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                String message = "Failed to create a DB Connection";
-                throw new RuntimeException(message, e);
-            }
             localSession.set(s);
         }
         s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
@@ -145,14 +138,14 @@ public class HibernateUtil {
     @SuppressWarnings({"unchecked"})
     public static <T> T initializeAndUnproxy(T entity) {
         if (entity == null) {
-                return null;
-            }
-            Hibernate.initialize(entity);
-            if (entity instanceof HibernateProxy) {
-                entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
-                        .getImplementation();
-            }
-            return entity;
+            return null;
+        }
+        Hibernate.initialize(entity);
+        if (entity instanceof HibernateProxy) {
+            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+                    .getImplementation();
+        }
+        return entity;
     }
 
 }
