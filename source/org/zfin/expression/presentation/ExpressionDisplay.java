@@ -19,12 +19,21 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Set<Figure> figures;
     private boolean moInExperiment;
     private List<ExpressionResult> expressionResults;
+    private Set<Term> nonDuplicatedTerms;
 
     public int compareTo(ExpressionDisplay anotherExpressionDisplay) {
         if (expressedGene == null)
             return -1;
         return expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene());
     }
+
+    public Set<Term> getNonDuplicatedTerms() {
+		return nonDuplicatedTerms;
+    }
+
+    public void setNonDuplicatedTerms(Set<Term> nonDuplicatedTerms) {
+		this.nonDuplicatedTerms = nonDuplicatedTerms;
+	}
 
     public Set<Figure> getFigures() {
         return figures;

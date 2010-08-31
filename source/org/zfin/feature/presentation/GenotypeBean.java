@@ -113,8 +113,6 @@ public class GenotypeBean {
 
         String keyGeno = genotype.getZdbID();
 
-        Set<String> termIdStrings = new HashSet<String>();
-
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
@@ -122,11 +120,6 @@ public class GenotypeBean {
 
                 Term superterm = xpResult.getSuperterm();
                 Term subterm = xpResult.getSubterm();
-                String termIDString = new String();
-                if (subterm != null)
-                    termIDString = superterm.getID() + subterm.getID();
-                else
-                    termIDString = superterm.getID();
 
                 Set<Figure> figs = xpResult.getFigures();
                 Publication pub = xpResult.getExpressionExperiment().getPublication();
@@ -137,7 +130,12 @@ public class GenotypeBean {
                 if (!map.containsKey(key)) {
                     xpDisplay = new ExpressionDisplay();
                     xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
-                    termIdStrings.add(termIDString);
+                    xpDisplay.setNonDuplicatedTerms(new HashSet<Term>());
+                    xpDisplay.getNonDuplicatedTerms().add(superterm);
+
+                    if (subterm != null)
+						xpDisplay.getNonDuplicatedTerms().add(subterm);
+
                     xpDisplay.getExpressionResults().add(xpResult);
                     xpDisplay.setExpressedGene(expressedGene);
                     xpDisplay.setPublications(new HashSet<Publication>());
@@ -157,8 +155,13 @@ public class GenotypeBean {
                     map.put(key, xpDisplay);
                 } else {
                     xpDisplay = map.get(key);
-                    if (!termIdStrings.contains(termIDString)) {
+                    if (!xpDisplay.getNonDuplicatedTerms().contains(superterm) && !xpDisplay.getNonDuplicatedTerms().contains(subterm)) {
                         xpDisplay.getExpressionResults().add(xpResult);
+                        xpDisplay.getNonDuplicatedTerms().add(superterm);
+
+						if (subterm != null)
+						  xpDisplay.getNonDuplicatedTerms().add(subterm);
+
                         Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
                     }
                     xpDisplay.getPublications().add(pub);
