@@ -5,16 +5,14 @@ import org.zfin.mutant.Genotype;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.ontology.Term;
-import org.zfin.expression.Image;
 
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  */
 public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     private Genotype genotype;
-    private Marker MO;
+    private Marker morpholino;
     private Term entityTermSuper;
     private Term entityTermSub;
     private Term qualityTerm;
@@ -48,12 +46,12 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
         this.genotype = genotype;
     }
 
-    public Marker getMO() {
-        return MO;
+    public Marker getMorpholino() {
+        return morpholino;
     }
 
-    public void setMO(Marker MO) {
-        this.MO = MO;
+    public void setMorpholino(Marker morpholino) {
+        this.morpholino = morpholino;
     }
 
     public Term getEntityTermSuper() {
@@ -121,23 +119,23 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     }
 
     public int compareTo(PhenotypeDisplay anotherPhenotypeDisplay) {
-        Marker MO2 = anotherPhenotypeDisplay.getMO();
+        Marker morpholinoTwo = anotherPhenotypeDisplay.getMorpholino();
 
-        if (MO == null && MO2 != null) {
+        if (morpholino == null && morpholinoTwo != null) {
 			return -1;
-		} else if (MO != null && MO2 == null) {
+		} else if (morpholino != null && morpholinoTwo == null) {
 			return 1;
-	    } else if (MO == null && MO2 == null) {
+	    } else if (morpholino == null && morpholinoTwo == null) {
 		    if (entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper()) == 0)
 			    return qualityTerm.compareTo(anotherPhenotypeDisplay.getQualityTerm());
 			else
 				return entityTermSuper.compareTo(anotherPhenotypeDisplay.getEntityTermSuper());
 	    } else {
-            int indexOfHyphen1 = MO.getName().indexOf("-");
-            String moNameCmp1 = MO.getName().substring(indexOfHyphen1);
+            int indexOfHyphen1 = morpholino.getName().indexOf("-");
+            String moNameCmp1 = morpholino.getName().substring(indexOfHyphen1);
 
-            int indexOfHyphen2 = MO2.getName().indexOf("-");
-            String moNameCmp2 = MO2.getName().substring(indexOfHyphen2);
+            int indexOfHyphen2 = morpholinoTwo.getName().indexOf("-");
+            String moNameCmp2 = morpholinoTwo.getName().substring(indexOfHyphen2);
 
             return moNameCmp1.compareToIgnoreCase(moNameCmp2);
 		}

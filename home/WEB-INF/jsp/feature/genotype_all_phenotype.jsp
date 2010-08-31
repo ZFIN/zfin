@@ -33,8 +33,8 @@
                 <tr class="search-result-table-entries">
                     <td>
                        <c:choose>
-                         <c:when test="${pheno.MO ne null}">
-                             <zfin:link entity="${pheno.MO}"/>
+                         <c:when test="${pheno.morpholino ne null}">
+                             <zfin:link entity="${pheno.morpholino}"/>
                          </c:when>
                          <c:otherwise>
                              Standard or control
@@ -51,8 +51,8 @@
                        <c:choose>
                          <c:when test="${pheno.numberOfFigures >1}">
                            <c:choose>
-                             <c:when test="${pheno.MO ne null}">
-                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.ID}&qualityID=${pheno.qualityTerm.ID}&tag=${pheno.tag}&includingMO=yes&moID=${pheno.MO.zdbID}&entIDsub=${pheno.entityTermSub.ID}'>
+                             <c:when test="${pheno.morpholino ne null}">
+                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.ID}&qualityID=${pheno.qualityTerm.ID}&tag=${pheno.tag}&includingMO=yes&moID=${pheno.morpholino.zdbID}&entIDsub=${pheno.entityTermSub.ID}'>
                                  ${pheno.numberOfFigures} figures</a>
                                <c:if test="${pheno.imgInFigure}">
                                  <img src="/images/camera_icon.gif" border="0" alt="with image">

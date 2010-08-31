@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
+import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
@@ -24,6 +25,7 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
         ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
         GeneEditSmokeTest.class,
+        GenotypeDetailSmokeTest.class,
         SiteSearchSmokeTest.class
 })
 public class SmokeTests {

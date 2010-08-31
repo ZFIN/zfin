@@ -8,7 +8,6 @@ import org.zfin.expression.ExpressionResultTermComparator;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 
 import org.zfin.mutant.presentation.GenotypeStatistics;
@@ -16,7 +15,6 @@ import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.marker.repository.MarkerRepository;
 
 import java.util.*;
@@ -272,7 +270,7 @@ public class GenotypeBean {
                     phenoDisplay = new PhenotypeDisplay();
                     phenoDisplay.setGenotype(genotype);
                     if (mo != null) {
-                        phenoDisplay.setMO(mo);
+                        phenoDisplay.setMorpholino(mo);
                         phenoDisplay.setMoInExperiment(true);
                     } else {
                         phenoDisplay.setMoInExperiment(false);
