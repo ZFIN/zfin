@@ -10,10 +10,11 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/";
 chdir "$dir";
-
+$jobTitle = "Cron Job: Upload obo file: ";
 
 my $fileUrl = $ARGV[0];
 my $fileName = $ARGV[1];
+
 
 # see paths.txt for paths to the fileName and the fileName itself.
 #-------------------SubRoutines-------------#
@@ -30,9 +31,9 @@ sub sendLoadReport ($) { # send email on error or completion
 # $_[x] means to take from the array of values passed to the fxn, the 
 # number indicated: $_[0] takes the first member.
     
-    my $SUBJECT="Auto OntologyTerms:".$_[0];
-    my $MAILTO=$_[1];
-    my $TXTFILE=$_[2];
+    my $SUBJECT=$_[0] . ": " . $jobTitle . $fileName .": " .$_[1];
+    my $MAILTO=$_[2];
+    my $TXTFILE=$_[3];
     
     # Create a new multipart message:
     $msg1 = new MIME::Lite 
@@ -44,6 +45,10 @@ sub sendLoadReport ($) { # send email on error or completion
     attach $msg1 
 	Type     => 'text/plain',   
 	Path     => "$TXTFILE";
+
+    attach $msg1
+	Type     => 'text/html',
+        Path     => "cron-job-info.html";
 
     # Output the message to sendmail
     
@@ -67,7 +72,7 @@ sub countFileLines () { # count the number of lines in a file. Takes the
 
     while( !( -e "./$filename")) {
 	
-# auto incriment the counter
+# auto increment the counter
 
 	$count++;
 
@@ -104,7 +109,7 @@ sub isEmptyFile() { # much like the count lines in a file routine, except
 	print "$printMessage" ;
     }
     else {
-	&sendLoadReport("$emailHeader","$emailAddress", 
+	&sendLoadReport("Success","$emailHeader","$emailAddress", 
 			"./$filename") ;
     }
     close FILE1;
@@ -124,7 +129,7 @@ print "loadOntology.pl running in: $dir"."\n" ;
 #remove old files
 
 system("/bin/rm -f *.unl") and die "can not rm unl" ;
-system("/bin/rm -f *.txt") and die "can not rm txt" ;
+system("/bin/rm -f report.txt terms_missing_obo_id.txt") and die "can not rm txt" ;
 system("/bin/rm -f *.obo") and die "can not rm obo" ;
 system("/bin/rm -f sec_unload_report") and die "can not remove sec_unload_report";
 system("/bin/rm -f *.ontology") and die "can not rm ontology";
@@ -171,8 +176,8 @@ $count++ while <DEFS_PARSED>;
 
 if ($count < 10) {
 
-    &sendLoadReport("parseObo.pl failed","<!--|VALIDATION_EMAIL_DBA|-->", "./term_parsed.unl") ;
-
+    &sendLoadReport("ERROR", "No terms found in obo file.","<!--|VALIDATION_EMAIL_DBA|-->", "./term_parsed.unl") ;
+    exit;
 }
 else {	 
 
@@ -221,11 +226,5 @@ if ($fileName eq "sequence_ontology.obo"){
 &isEmptyFile ("new_terms.unl","no new terms\n","<!--|VALIDATION_EMAIL_DBA|-->","new terms\n");
 
 &isEmptyFile ("terms_missing_obo_id.txt","no terms missing obo ids\n","<!--|VALIDATION_EMAIL_DBA|-->","terms missing obo ids\n");
-
-&isEmptyFile ("term_no_longer_secondary.txt","No terms once secondary are now primary\n","<!--|VALIDATION_EMAIL_DBA|-->","Error in the .obo file?  Terms once secondary are now primary.");
-
-system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
-
-system ("/bin/chgrp fishadmin <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
 
 exit;
