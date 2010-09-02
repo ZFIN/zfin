@@ -126,7 +126,7 @@ public class ExecuteBlastTest {
             assertTrue(hitViewBean.isHasExpression());
             assertTrue(hitViewBean.isHasExpressionImages());
             assertTrue(hitViewBean.isHasGO());
-            assertFalse(hitViewBean.isHasPhenotype());
+            assertTrue(hitViewBean.isHasPhenotype());
             assertFalse(hitViewBean.isHasPhenotypeImages());
 
             // find 3rd hit, a genbank hit, but only a transcript association
@@ -140,7 +140,7 @@ public class ExecuteBlastTest {
             assertTrue(hitViewBean.isHasExpression());
             assertTrue(hitViewBean.isHasExpressionImages());
             assertTrue(hitViewBean.isHasGO());
-            assertFalse(hitViewBean.isHasPhenotype());
+            assertTrue(hitViewBean.isHasPhenotype());
             assertFalse(hitViewBean.isHasPhenotypeImages());
 
             // here there are both a transcript and clone associated, but since
@@ -154,7 +154,7 @@ public class ExecuteBlastTest {
             assertTrue(hitViewBean.isHasExpression());
             assertTrue(hitViewBean.isHasExpressionImages());
             assertTrue(hitViewBean.isHasGO());
-            assertFalse(hitViewBean.isHasPhenotype());
+            assertTrue(hitViewBean.isHasPhenotype());
             assertFalse(hitViewBean.isHasPhenotypeImages());
 
             // here want to test that we get different results for gene pax6b
