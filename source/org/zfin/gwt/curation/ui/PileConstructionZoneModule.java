@@ -230,8 +230,11 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         if (quality != null) {
             quality.getTermTextBox().setText(term.getQuality().getTermName());
             ZfinListBox selector = quality.getOntologySelector();
-            if (selector != null && selector.getItemCount() > 0)
+            if (selector != null && selector.getItemCount() > 0){
                 selector.selectEntryByDisplayName(term.getQuality().getOntology().getDisplayName());
+            }
+            LookupComposite lookupEntryBox = quality.getTermTextBox();
+            lookupEntryBox.setOntology(term.getQuality().getOntology());
         }
         String tag = term.getTag();
         if (tag != null) {
@@ -244,8 +247,11 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         if (superterm != null) {
             superterm.getTermTextBox().setText(term.getSuperterm().getTermName());
             ZfinListBox selector = superterm.getOntologySelector();
-            if (selector != null && selector.getItemCount() > 0)
+            if (selector != null && selector.getItemCount() > 0){
                 selector.selectEntryByDisplayName(term.getSuperterm().getOntology().getDisplayName());
+            }
+            LookupComposite lookupEntryBox = superterm.getTermTextBox();
+            lookupEntryBox.setOntology(term.getSuperterm().getOntology());
         }
 
         TermEntry subterm = getSubterm();
