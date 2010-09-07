@@ -302,10 +302,10 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
             (select stg_name from stage where stg_zdb_id = ph.apato_end_stg_zdb_id),
               (select term_ont_id from term where term_zdb_id = ph.apato_superterm_zdb_id),
             (select term_name from term where term_zdb_id = ph.apato_superterm_zdb_id),
-              (select term_ont_id from term where term_zdb_id = ph.apato_quality_zdb_id),
-            (select term_name from term where term_zdb_id = ph.apato_quality_zdb_id),
               (select term_ont_id from term where term_zdb_id = ph.apato_subterm_zdb_id),
             (select term_name from term where term_zdb_id = ph.apato_subterm_zdb_id),
+              (select term_ont_id from term where term_zdb_id = ph.apato_quality_zdb_id),
+            (select term_name from term where term_zdb_id = ph.apato_quality_zdb_id),
             ph.apato_tag,
             ph.apato_pub_zdb_id,
             gx.genox_exp_zdb_id
@@ -398,28 +398,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt
    from tmp_env
 order by t_exp_zdb_id, t_cdt_group;
 
-
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_ontology_translation.txt'
- DELIMITER "	"
- select term_zdb_id, term_ont_id
-   from term
-   where term_is_obsolete = 'f'
-   and term_is_secondary = 'f'
-   and term_ontology in ('biological_process','cellular_component','molecular_function');
-
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology_translation.txt'
- DELIMITER "	"
- select term_zdb_id, term_ont_id
-   from term
-   where term_is_obsolete = 'f'
-   and term_ontology = 'zebrafish_anatomy';
-
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype_quality_ontology_translation.txt'
- DELIMITER "	"
- select term_zdb_id, term_ont_id, term_name
-   from term
-   where term_is_obsolete = 'f'
-   and term_is_secondary = 'f';
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pub_to_pubmed_id_translation.txt'
  DELIMITER "	"
@@ -522,7 +500,7 @@ union
 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1' order by 1;
-
+pub_to_pubmed_id_translation.txt
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'
 select distinct gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
@@ -695,7 +673,7 @@ where term_ont_id = anatitem_obo_id
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'
 DELIMITER "	"
-select termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
+select term1.term_ont_id, term2.term_ont_id, termrel_type
   from term_relationship, term as term1, term as term2
   where term1.term_ontology = 'zebrafish_anatomy'
   and term2.term_ontology = 'zebrafish_anatomy'
