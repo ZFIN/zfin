@@ -42,6 +42,8 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
     protected String password = "zfinadmn@zfin.org" ;
     private int FTP_TIMEOUT = 3000 ; // ftp timeout in milliseconds
     private boolean alwaysUseExistingFile = false ;
+    // recommended here: ftp://ftp.ncbi.nih.gov/README.ftp
+    private final int BUFFER_SIZE = 32768 ;
 
     public Set<String> parseUniqueNumbers(String fileName, int column) {
         return parseUniqueNumbers(fileName, column,null,null) ;
@@ -83,13 +85,16 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
             FTPClient ftpClient = new FTPClient();
             ftpClient.setDataTimeout(FTP_TIMEOUT);
             ftpClient.connect(urlString);
+            ftpClient.setBufferSize(BUFFER_SIZE);
             ftpClient.login(userName,password);
 
             ftpClient.changeWorkingDirectory(workingDirectory) ;
             FTPFile[] ftpFiles = ftpClient.listFiles(getFileName()+fileNameSuffix+gzipSuffix) ;
 
             if(ftpFiles.length!=1){
-                throw new RuntimeException("Problem retrieving file from NCBI of name: "+ getFileName()+fileNameSuffix+gzipSuffix ) ;
+                String errorText = "Problem retrieving file from NCBI of name: "+ getFileName()+fileNameSuffix+gzipSuffix ;
+                logger.error(errorText);
+                throw new RuntimeException(errorText) ;
             }
 
             FTPFile ftpFile = ftpFiles[0] ;
@@ -109,7 +114,7 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
                 logger.info("starting to download to: "+ localFile + " size: "+  NumberFormat.getInstance().format((ftpFile.getSize()/1000000d)) + " Mb" ) ;
                 FileOutputStream fileOutputStream = new FileOutputStream( localFile);
                 GZIPInputStream gzipInputStream = new GZIPInputStream(ftpClient.retrieveFileStream(ftpFile.getName())) ;
-                byte[] buf = new byte[1024];
+                byte[] buf = new byte[BUFFER_SIZE];
                 int len;
                 while((len = gzipInputStream.read(buf)) > 0) {
                     fileOutputStream.write(buf, 0, len);

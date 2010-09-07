@@ -32,23 +32,23 @@ import java.util.*;
 public final class MicroarrayProcessor {
 
     final Logger logger = Logger.getLogger( MicroarrayProcessor.class ) ;
-    ReferenceDatabase geoDatabase = null ;
+
+    private boolean listNotFound = false ;
+
+    private ReferenceDatabase geoDatabase = null ;
 //    ReferenceDatabase zfEspressoDatabase = null ;
 //    ReferenceDatabase arrayExpressDatabase = null ;
-
-
-
-    ReferenceDatabase genBankGenomicDatabase  = null ;
-    ReferenceDatabase genBankRNADatabase  = null ;
-    ReferenceDatabase refseqRNADatabase  = null ;
-    ReferenceDatabase mirbaseStemLoopDatabase  = null ;
-    ReferenceDatabase mirbaseMatureDatabase  = null ;
-    SequenceRepository sequenceRepository = null ;
+    private ReferenceDatabase genBankGenomicDatabase  = null ;
+    private ReferenceDatabase genBankRNADatabase  = null ;
+    private ReferenceDatabase refseqRNADatabase  = null ;
+    private ReferenceDatabase mirbaseStemLoopDatabase  = null ;
+    private ReferenceDatabase mirbaseMatureDatabase  = null ;
+    private SequenceRepository sequenceRepository = null ;
 
 
 
     final String referencePubZdbID = "ZDB-PUB-071218-1" ;
-    Publication refPub ;
+    private Publication refPub ;
 
 
     public void init() throws Exception{
@@ -158,7 +158,9 @@ public final class MicroarrayProcessor {
 //        Collection<String> accessionsNotFound = CollectionUtils.subtract(newMicroarrayAccessions,genBankLinks.keySet()) ;
         newMicroarrayAccessions.removeAll(genBankLinks.keySet());
         microarrayBean.addMessage("accessions NOT FOUND in genbank: " + newMicroarrayAccessions.size());
-        microarrayBean.setNotFoundAccessions(newMicroarrayAccessions);
+        if(listNotFound){
+            microarrayBean.setNotFoundAccessions(newMicroarrayAccessions);
+        }
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(File.createTempFile("microarray_report",".txt")));
@@ -231,7 +233,7 @@ public final class MicroarrayProcessor {
         }
 
         microarrayBean.addMessage("number of links actually added: " + microarrayAccessionsAdded);
-        
+
         return microarrayBean ;
     }
 
@@ -353,7 +355,7 @@ public final class MicroarrayProcessor {
             Map<String,MarkerDBLink> genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( getGenbankReferenceDatabases()) ;   // 1 - load genbank
 
             microarrayBean = processNewLinks(newGEOAccessions,genBankLinks,geoDatabase) ; // 2
-            
+
             // to process others
 //            microarrayLinks = sequenceRepository.getMarkerDBLinks(null, zfEspressoDatabase ,arrayExpressDatabase) ;   // 0 - load microarray
 //            processNewLinks( newOtherAccessions , microarrayLinks,zfEspressoDatabase,arrayExpressDatabase) ;  // 2
@@ -366,7 +368,7 @@ public final class MicroarrayProcessor {
             try {
                 microarrayBean.addMessage("Failed to to microarray update\n"+e.fillInStackTrace().toString());
             } catch (IOException e1) {
-                logger.error(e.fillInStackTrace()) ; 
+                logger.error(e.fillInStackTrace()) ;
             }
             HibernateUtil.rollbackTransaction();
         }
@@ -384,6 +386,14 @@ public final class MicroarrayProcessor {
         referenceDatabases[3] = mirbaseStemLoopDatabase ;
         referenceDatabases[4] = refseqRNADatabase ;
         return referenceDatabases ;
+    }
+
+    public boolean isListNotFound() {
+        return listNotFound;
+    }
+
+    public void setListNotFound(boolean listNotFound) {
+        this.listNotFound = listNotFound;
     }
 
     public static void main(String args[]){
