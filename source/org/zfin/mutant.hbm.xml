@@ -486,8 +486,5 @@
 
     </class>
 
-    <sql-query name="regenGenofigGenotype" callable="true">
-        { execute procedure regen_genofig_genotype(?) }
-    </sql-query>
 </hibernate-mapping>
 

@@ -683,4 +683,29 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         markerRepository.addMarkerAlias(antibody, "Bruno", publication);
         HibernateUtil.rollbackTransaction();
     }
+
+    @Test
+    public void retrieveSingleTargetGeneFromMorpholino(){
+        // MO1-adam8a has one target gene
+        MarkerRepository markerRep = RepositoryFactory.getMarkerRepository();
+        Marker morpholino = markerRep.getMarkerByAbbreviation("MO1-adam8a");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        assertNotNull(targetGenes);
+        assertEquals(1, targetGenes.size());
+        assertEquals("adam8a", targetGenes.get(0).getAbbreviation());
+
+    }
+
+    @Test
+    public void retrieveMultipleTargetGenesFromMorpholino(){
+        // MO4-rbpja+rbpjb has two target genes
+        MarkerRepository markerRep = RepositoryFactory.getMarkerRepository();
+        Marker morpholino = markerRep.getMarkerByAbbreviation("MO4-rbpja+rbpjb");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        assertNotNull(targetGenes);
+        assertEquals(2, targetGenes.size());
+        assertEquals("rbpja", targetGenes.get(0).getAbbreviation());
+        assertEquals("rbpjb", targetGenes.get(1).getAbbreviation());
+
+    }
 }

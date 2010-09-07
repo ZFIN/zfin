@@ -1366,45 +1366,35 @@ function doValidateAndSubmit(currentTime ){
         <?MIVAR NAME=fsel_anat_list><?/MIVAR>
 
         <?MIBLOCK COND="$(EQ,$isWT,t)">
-          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct term_name, lower(term_name)
-				                from term, genotype_figure_fast_search, marker_relationship
+          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct super.term_name, lower(super.term_name), sub.term_name
+				                from term as super, OUTER term as sub, genotype_figure_fast_search, marker_relationship
 				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and term_zdb_id = gffs_superterm_zdb_id
-				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-                                                 and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
-          <?/MIVAR>
-          
-          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct term_name, lower(term_name)
-				                from term, genotype_figure_fast_search, marker_relationship
-				               where gffs_geno_zdb_id = '$genotypeid'
-				                 and term_zdb_id = gffs_subterm_zdb_id
+				                 and super.term_zdb_id = gffs_superterm_zdb_id
+						 and sub.term_zdb_id = gffs_subterm_zdb_id
 				                 and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                                                  and mrel_mrkr_2_zdb_id = '$matchedTargetGene'
           <?/MIVAR>
           
         <?MIELSE>
-          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct term_name, lower(term_name)
-                                                from term, genotype_figure_fast_search
+          <?MIVAR NAME=fsel_pheno_entity_sql1>select distinct super.term_name, lower(super.term_name), sub.term_name
+                                                from term as super, OUTER term as sub, genotype_figure_fast_search
                                                where gffs_geno_zdb_id = '$genotypeid'
-                                                 and term_zdb_id = gffs_superterm_zdb_id
-          <?/MIVAR>
-
-          <?MIVAR NAME=fsel_pheno_entity_sql2>select distinct term_name, lower(term_name)
-                                                from term, genotype_figure_fast_search
-                                               where gffs_geno_zdb_id = '$genotypeid'
-                                                 and term_zdb_id = gffs_subterm_zdb_id
+                                                 and super.term_zdb_id = gffs_superterm_zdb_id
+						 and sub.term_zdb_id = gffs_subterm_zdb_id
           <?/MIVAR>
 
           <?MIBLOCK COND="$(OR,$(EC,$fselFilterValue,moOnly),$(EC,$fselFilterValue,moWTandReporterOnly))">
             <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql1,$(CONCAT,$fsel_pheno_entity_sql1,and gffs_morph_zdb_id is not null))<?/MIVAR>          
-            <?MIVAR>$(SETVAR,$fsel_pheno_entity_sql2,$(CONCAT,$fsel_pheno_entity_sql2,and gffs_morph_zdb_id is not null))<?/MIVAR>
           <?/MIBLOCK>
         <?/MIBLOCK>       
 
         <?MISQL SQL="$fsel_pheno_entity_sql1 
-                      UNION $fsel_pheno_entity_sql2
-                      order by lower(term_name);">
-          <?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1)<?/MIVAR>
+                      order by lower(super.term_name);">
+	  <?MIBLOCK COND="$(ISNULL,$3)">	      
+	        <?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1)<?/MIVAR>
+	  <?MIELSE>
+		<?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1 $3)<?/MIVAR>
+	  <?/MIBLOCK>
         <?/MISQL> 
         <?MIVAR NAME=fsel_separate_anat_list SEPARATE=", ">$fsel_anat_list<?/MIVAR>
         <?MIVAR>$(UNSETVAR,$fsel_anat_list)<?/MIVAR>

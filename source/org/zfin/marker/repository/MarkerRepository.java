@@ -254,4 +254,12 @@ public interface MarkerRepository {
 
     List<Marker> getMarkerForAttribution(String publicationZdbID);
 
+    /**
+     * Create a gene for a given Morpholino which is targeting it.
+     *
+     * @param morpholino      valid Morpholino of Marker object.
+     * @return the target gene of the Morpholino
+     */
+    List<Marker> getTargetGenesForMorpholino(Marker morpholino);
+
 }

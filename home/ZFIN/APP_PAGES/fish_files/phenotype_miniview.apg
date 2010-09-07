@@ -121,26 +121,19 @@
 
   <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     <?MIVAR NAME=phmview_entity_sql>
-	     select term_zdb_id, term_name, lower(term_name)
-               from $phmview_input_figentity_table, term
-              where t_superterm_zdb_id = term_zdb_id
-	  UNION
-	     select term_zdb_id, term_name, lower(term_name)
-               from $phmview_input_figentity_table, term
-              where t_subterm_zdb_id = term_zdb_id
+	     select distinct super.term_zdb_id, sub.term_zdb_id, lower(super.term_name)
+               from $phmview_input_figentity_table, term as super, OUTER term as sub
+              where t_superterm_zdb_id = super.term_zdb_id
+	        and t_subterm_zdb_id = sub.term_zdb_id
+	   group by super.term_zdb_id, sub.term_zdb_id
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=phmview_entity_sql>
-	     select term_zdb_id, term_name, lower(term_name)
-               from $phmview_input_table, atomic_phenotype, term
+	     select distinct super.term_zdb_id, sub.term_zdb_id, lower(super.term_name)
+               from $phmview_input_table, atomic_phenotype, term as super, OUTER term as sub
               where t_pato_zdb_id = apato_zdb_id
-	        and apato_subterm_zdb_id = term_zdb_id
-	        and apato_tag != 'normal'
-	  UNION
-	     select term_zdb_id, term_name, lower(term_name)
-               from $phmview_input_table, atomic_phenotype, term
-              where t_pato_zdb_id = apato_zdb_id
-	        and apato_superterm_zdb_id = term_zdb_id
+	        and apato_subterm_zdb_id = sub.term_zdb_id
+		and apato_superterm_zdb_id = super.term_zdb_id
 	        and apato_tag != 'normal'
     <?/MIVAR>
   <?/MIBLOCK>
@@ -148,10 +141,10 @@
   <?MICOMMENT> *** display the phenotype block for gene or MO page <?/MICOMMENT>
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
-    <?MISQL SQL="$phmview_entity_sql order by lower(term_name);">
+    <?MISQL SQL="$phmview_entity_sql order by lower(super.term_name);">
         <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
     
-        <?MISQL SQL="execute function get_entity_name_html('$1')">
+        <?MISQL SQL="execute function get_postcomposed_term_html('$1','$2')">
                  <?MIVAR NAME=phmview_anatitem_html><span nowrap>$1</span><?/MIVAR>
          <?/MISQL>
 

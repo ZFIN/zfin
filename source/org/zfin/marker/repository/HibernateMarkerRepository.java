@@ -1447,4 +1447,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         return markerTypes;
     }
+
+    /**
+     * Retrieve gene for a given Morpholino which is targeting it.
+     *
+     * @param morpholino      valid Morpholino of Marker object.
+     * @return the target gene of the Morpholino
+     */
+    public List<Marker> getTargetGenesForMorpholino(Marker morpholino) {
+		if (morpholino == null)
+		    return null;
+
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(MarkerRelationship.class);
+        criteria.add(Restrictions.eq("firstMarker", morpholino));
+        criteria.add(Restrictions.eq("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+        List<MarkerRelationship> markerRelations = criteria.list();
+        if(markerRelations == null)
+        return null;
+
+        List<Marker> targetGenes = new ArrayList<Marker>(markerRelations.size());
+        for(MarkerRelationship relationship: markerRelations){
+            targetGenes.add(relationship.getSecondMarker());
+        }
+        return targetGenes;
+    }
+
 }

@@ -419,25 +419,16 @@ DEBUGGING:
 
     <?MIBLOCK COND="$(EC,$phenosum_split_morphant_flag,t)">    
       <?MIVAR NAME=phenosum_sql_split_nonmo_entities1>
-            select distinct term_zdb_id, term_name
-              from term, genotype_figure_fast_search
+            select distinct super.term_zdb_id, super.term_name, sub.term_zdb_id, sub.term_name
+              from term as super, OUTER term as sub, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and term_zdb_id = gffs_superterm_zdb_id 
+               and super.term_zdb_id = gffs_superterm_zdb_id 
+	       and sub.term_zdb_id = gffs_subterm_zdb_id
                and gffs_morph_zdb_id is null
       <?/MIVAR>
           
-      <?MIVAR NAME=phenosum_sql_split_nonmo_entities2>
-            select distinct term_zdb_id, term_name
-              from term, genotype_figure_fast_search
-             where gffs_geno_zdb_id = '$OID'
-               and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and term_zdb_id = gffs_subterm_zdb_id
-               and gffs_morph_zdb_id is null
-      <?/MIVAR>
-          
-      <?MISQL SQL="$phenosum_sql_split_nonmo_entities1 UNION
-                   $phenosum_sql_split_nonmo_entities2; ">
+      <?MISQL SQL="$phenosum_sql_split_nonmo_entities1; ">
       <?/MISQL>
       <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">$(SETVAR,$phenosum_split,t)<?/MIVAR>
     <?/MIBLOCK>
@@ -587,33 +578,22 @@ DEBUGGING:
     <?MIVAR NAME=phenosum_anat_short_list_cap>3<?/MIVAR>
     <td valign=bottom>
       
-      <?MICOMMENT> *** entity list for gene / MO <?/MICOMMENT>
+      <?MICOMMENT> *** entity list for gene or Morpholino <?/MICOMMENT>
       <?MIBLOCK COND="$(OR,$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE),$(EC,$(SUBSTR,$OID,1,8),ZDB-MRPH))">
         <?MIVAR NAME=phenosum_sql_entities>
-          select distinct term_zdb_id, term_name, lower(term_name)
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term
+          select distinct super.term_zdb_id, lower(super.term_name),
+	  	 sub.term_zdb_id, lower(sub.term_name)
+            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term as super,
+	    	 OUTER term as sub
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
              and genox_geno_zdb_id = '$phenosum_geno_zdb'
              and apato_genox_zdb_id = mfs_genox_zdb_id
              and apatofig_apato_zdb_id = apato_zdb_id
              and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_subterm_zdb_id = term_zdb_id
+             and apato_subterm_zdb_id = sub.term_zdb_id
+	     and apato_superterm_zdb_id = super.term_zdb_id
  	     and apato_tag != 'normal'
- 	     
- 	  UNION
- 	  
-          select distinct term_zdb_id, term_name, lower(term_name)
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term
-           where mfs_mrkr_zdb_id = '$OID'
-             and mfs_genox_zdb_id = genox_zdb_id
-             and genox_geno_zdb_id = '$phenosum_geno_zdb'
-             and apato_genox_zdb_id = mfs_genox_zdb_id
-             and apatofig_apato_zdb_id = apato_zdb_id
-             and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_superterm_zdb_id = term_zdb_id
- 	     and apato_tag != 'normal'
- 	     
         <?/MIVAR>
        
       <?MIELSE>  <?MICOMMENT> *** entity list for genotype <?/MICOMMENT>
@@ -621,60 +601,44 @@ DEBUGGING:
         <?MICOMMENT> *** entity list for morphant of WT genotype/Tg, with regard to a target gene <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
           <?MIVAR NAME=phenosum_sql_entities1>
-            select distinct term_zdb_id,term_name, lower(term_name)
-              from term, genotype_figure_fast_search, marker_relationship
+            select distinct super.term_zdb_id, lower(super.term_name), sub.term_zdb_id, lower(sub.term_name)
+              from term as super, OUTER term as sub, genotype_figure_fast_search, marker_relationship
              where gffs_geno_zdb_id = '$OID'
  	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and term_zdb_id = gffs_superterm_zdb_id
+ 	       and super.term_zdb_id = gffs_superterm_zdb_id
+ 	       and sub.term_zdb_id = gffs_subterm_zdb_id
  	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
                and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
           <?/MIVAR>
           
-          <?MIVAR NAME=phenosum_sql_entities2>
-            select distinct term_zdb_id, term_name, lower(term_name)
-              from term, genotype_figure_fast_search, marker_relationship
-             where gffs_geno_zdb_id = '$OID'
- 	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
- 	       and term_zdb_id = gffs_subterm_zdb_id
- 	       and gffs_morph_zdb_id = mrel_mrkr_1_zdb_id
-               and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
-          <?/MIVAR>          
-           
+	<?MIVAR>$phenosum_sql_entitie<?/MIVAR>                      
         <?MIELSE> <?MICOMMENT> *** entity list for genotypes linked from genotype page or mutant search result page <?/MICOMMENT>
           <?MIVAR NAME=phenosum_sql_entities1>
-            select distinct term_zdb_id, term_name, lower(term_name)
-              from term, genotype_figure_fast_search
+            select distinct super.term_zdb_id, lower(super.term_name),
+                            sub.term_zdb_id, lower(sub.term_name)
+              from term as super, OUTER term as sub, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and term_zdb_id = gffs_superterm_zdb_id
-          <?/MIVAR>
-          
-          <?MIVAR NAME=phenosum_sql_entities2>
-            select distinct term_zdb_id, term_name, lower(term_name)
-              from term, genotype_figure_fast_search
-             where gffs_geno_zdb_id = '$OID'
-               and gffs_fig_zdb_id = '$phenosum_fig_zdb'
-               and term_zdb_id = gffs_subterm_zdb_id
+               and super.term_zdb_id = gffs_superterm_zdb_id
+               and sub.term_zdb_id = gffs_subterm_zdb_id
           <?/MIVAR>
           
           <?MIBLOCK COND="$(AND,$(XST,$morphantsOnly),$(EC,$morphantsOnly,yes))">
             <?MIVAR>$(SETVAR,$phenosum_sql_entities1,$(CONCAT,$phenosum_sql_entities1,and gffs_morph_zdb_id is not null))<?/MIVAR>          
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities2,$(CONCAT,$phenosum_sql_entities2,and gffs_morph_zdb_id is not null))<?/MIVAR>
           <?MIELSE COND="$(OR,$(NXST,$includingMO),$(NE,$includingMO,yes))">
             <?MIVAR>$(SETVAR,$phenosum_sql_entities1,$(CONCAT,$phenosum_sql_entities1,and gffs_morph_zdb_id is null))<?/MIVAR>          
-            <?MIVAR>$(SETVAR,$phenosum_sql_entities2,$(CONCAT,$phenosum_sql_entities2,and gffs_morph_zdb_id is null))<?/MIVAR>
           <?/MIBLOCK>
         <?/MIBLOCK> 
 
         <?MIBLOCK COND="$(AND,$(XST,$phenosum_morphant_pheno_flag),$(>,$phenosum_morphant_pheno_flag,0))">
           <?MIVAR NAME=phenosum_sql_entities_nonMO>$phenosum_sql_entities1 and gffs_morph_zdb_id is null
-                                           UNION $phenosum_sql_entities2 and gffs_morph_zdb_id is null
           <?/MIVAR>
 
-          <?MISQL SQL="$phenosum_sql_entities_nonMO order by lower(term_name); ">
+          <?MISQL SQL="$phenosum_sql_entities_nonMO order by lower(super.term_name); ">
            
 	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
-        <?MISQL SQL="execute function get_entity_name_html('$1')">
+
+        <?MISQL SQL="execute function get_postcomposed_term_html('$1', '$3')">
                  <?MIVAR NAME=phenosum_anatitem_html_nonMO><span nowrap>$1</span><?/MIVAR>
          <?/MISQL>
 
@@ -722,20 +686,18 @@ DEBUGGING:
           </script>        
 
           <?MIVAR NAME=phenosum_sql_entities>$phenosum_sql_entities1 and gffs_morph_zdb_id is not null
-                                           UNION $phenosum_sql_entities2 and gffs_morph_zdb_id is not null
           <?/MIVAR>
           <?MIBLOCK COND="$(AND,$(XST,$phenosum_split),$(EC,$phenosum_split,t))"><br/><?/MIBLOCK>
         <?MIELSE>         
           <?MIVAR NAME=phenosum_sql_entities>$phenosum_sql_entities1 
-                                           UNION $phenosum_sql_entities2
           <?/MIVAR>
         <?/MIBLOCK>
       <?/MIBLOCK>
   
-      <?MISQL SQL="$phenosum_sql_entities order by 3; ">
-           
+      <?MISQL SQL="$phenosum_sql_entities order by lower(super.term_name), lower(sub.term_name); ">
+
 	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
-         <?MISQL SQL="execute function get_entity_name_html('$1')">
+         <?MISQL SQL="execute function get_postcomposed_term_html('$1','$3')">
 	 	 <?MIVAR NAME=phenosum_anatitem_html><span nowrap>$1</span><?/MIVAR>
          <?/MISQL>
 
@@ -762,6 +724,7 @@ DEBUGGING:
 
       <?MIVAR><span id="$phenosum_anat_elem_id">
         $phenosum_anat_short_list_escp<?/MIVAR>
+
 
         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phenosum_anat_short_list_cap)">   
           ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>

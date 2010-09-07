@@ -6,14 +6,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.database.InformixUtil;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.MutantFigureStage;
-import org.zfin.mutant.Phenotype;
-import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -22,16 +22,13 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -118,21 +115,19 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         List<PhenotypeStructure> structures = (List<PhenotypeStructure>) query.list();
 
 
-
-        if(CollectionUtils.isNotEmpty(structures)){
+        if (CollectionUtils.isNotEmpty(structures)) {
             // this is most cases
-            for(PhenotypeStructure structure : structures){
+            for (PhenotypeStructure structure : structures) {
                 // for fogbugz case 5722
                 // if your hit has a substructure, but you do not, then
-                if( (phenotypeTerm.getSubterm()==null && structure.getSubterm()==null)
-                        || (phenotypeTerm.getSubterm()!=null && structure.getSubterm()!=null) ) {
-                    return true ;
+                if ((phenotypeTerm.getSubterm() == null && structure.getSubterm() == null)
+                        || (phenotypeTerm.getSubterm() != null && structure.getSubterm() != null)) {
+                    return true;
                 }
             }
-            return false ;
-        }
-        else{
-            return false ;
+            return false;
+        } else {
+            return false;
         }
     }
 
@@ -426,25 +421,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param phenotype Phenotype
      */
     public void runRegenGenotypeFigureScript(Phenotype phenotype) {
-        Session session = currentSession();
-        Connection connection = session.connection();
-        CallableStatement statement = null;
-        String sql = "execute procedure regen_genofig_genotype(?)";
-        try {
-            statement = connection.prepareCall(sql);
-            String genotypeID = phenotype.getGenotypeExperiment().getGenotype().getZdbID();
-            statement.setString(1, genotypeID);
-            statement.execute();
-        }
-        catch (SQLException sqle) {
-            LOG.error("could not run regen_genofig_genotype()", sqle);
-            throw new RuntimeException(sqle);
-        }
-        finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                LOG.error("could not run regen_genofig_genotype", e);
+        InformixUtil.runInformixProcedure("regen_genofig_genotype", phenotype.getGenotypeExperiment().getGenotype().getZdbID());
+        Set<ExperimentCondition> conditions = phenotype.getGenotypeExperiment().getExperiment().getMorpholinoConditions();
+        if (conditions != null) {
+            for (ExperimentCondition condition : conditions) {
+                Marker morpholino = condition.getMorpholino();
+                InformixUtil.runInformixProcedure("regen_genox_marker", morpholino.getZdbID());
+                List<Marker> targetGenes = getMarkerRepository().getTargetGenesForMorpholino(morpholino);
+                for (Marker targetGene : targetGenes)
+                    InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbID());
             }
         }
     }
@@ -512,6 +497,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             }
         }
         session.refresh(phenotype.getGenotypeExperiment());
+        runRegenGenotypeFigureScript(phenotype);
     }
 
 
