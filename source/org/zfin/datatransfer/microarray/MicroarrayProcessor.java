@@ -350,6 +350,7 @@ public final class MicroarrayProcessor {
         MicroarrayBean microarrayBean = null ;
 
         try{
+            microarrayBean = new MicroarrayBean();
             Set<String> newGEOAccessions = getGEOAccessions() ;
 
             Map<String,MarkerDBLink> genBankLinks = sequenceRepository.getUniqueMarkerDBLinks( getGenbankReferenceDatabases()) ;   // 1 - load genbank
@@ -364,7 +365,7 @@ public final class MicroarrayProcessor {
             HibernateUtil.flushAndCommitCurrentSession();
         }
         catch(Exception e){
-            logger.error("failed to do microarray update",e.fillInStackTrace());
+            logger.error("failed to do microarray update",e);
             try {
                 microarrayBean.addMessage("Failed to to microarray update\n"+e.fillInStackTrace().toString());
             } catch (IOException e1) {

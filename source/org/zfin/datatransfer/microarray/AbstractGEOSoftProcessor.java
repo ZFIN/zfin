@@ -146,7 +146,7 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
             }
         }
         catch(Exception e){
-            throw new RuntimeException("Failed to download file properly, bailing out of load for file: "+getFileName(),e.fillInStackTrace()) ;
+            throw new RuntimeException("Failed to download file properly, bailing out of load for file: "+getFileName(),e) ;
         }
     }
 
