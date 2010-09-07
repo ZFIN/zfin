@@ -34,9 +34,6 @@ OUTPUT:
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MICOMMENT> *** iterates through each term *** <?/MICOMMENT>
-<?MIVAR>
-$xpanatv_processed_selected_structures
-<?/MIVAR>
 <?MIBLOCK WHILE=$(NE,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures),)>     
 
   <?MIVAR NAME=$xpanatv_str>$(TRIM,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures))<?/MIVAR>
