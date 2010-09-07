@@ -55,9 +55,6 @@ PREFIX:
         </script>
         <?/MIVAR>
 
-        <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
-        <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
 
 <?MIVAR NAME=featcur_mrkr_type><?/MIVAR>
 <?MICOMMENT>This comma delimited list of markers is created for use in the 

@@ -122,9 +122,6 @@ FILTERs section
         </script>
         <?/MIVAR>
 
-        <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
-        <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
         <div id="directAttributionName"></div>
 
 <a name=featcreation>
