@@ -500,7 +500,6 @@ union
 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1' order by 1;
-pub_to_pubmed_id_translation.txt
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'
 select distinct gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
