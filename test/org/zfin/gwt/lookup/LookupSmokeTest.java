@@ -10,12 +10,11 @@ import org.zfin.properties.ZfinPropertiesEnum;
 public class LookupSmokeTest extends AbstractSecureSmokeTest {
 
     public void testAnatomyLookupForm() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
-                login();
+                login(webClient);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/lookup-table");
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -24,24 +23,22 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
                 assertEquals("Enter search terms", ((HtmlTableDataCell) page.getByXPath("//td[. = 'Enter search terms']").get(0)).getTextContent());
                 assertNotNull(page.getByXPath("//div[@class='gwt-Label']").get(0));
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
-                assertEquals("Should be an empty input term","", htmlInput.getValueAttribute());
+                assertEquals("Should be an empty input term", "", htmlInput.getValueAttribute());
                 htmlInput.setValueAttribute("pelv");
                 assertEquals("pelv", htmlInput.getValueAttribute());
             } catch (Exception e) {
-                fail("Client["+webClient.getBrowserVersion().getApplicationName()+ webClient.getBrowserVersion().getApplicationVersion()+"] failed with:\n" + e.toString());
+                fail("Client[" + webClient.getBrowserVersion().getApplicationName() + webClient.getBrowserVersion().getApplicationVersion() + "] failed with:\n" + e.toString());
             }
         }
     }
 
 
-
     public void testAnatomyLookupTyping() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
-                login();
+                login(webClient);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/lookup-table");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 final HtmlForm form = page.getFormByName("lookupTable");

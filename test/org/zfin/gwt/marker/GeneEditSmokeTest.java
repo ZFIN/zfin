@@ -15,10 +15,9 @@ import org.zfin.repository.RepositoryFactory;
 public class GeneEditSmokeTest extends AbstractSecureSmokeTest {
 
     public void testAlternateGeneNote() {
-        for (WebClient aWebClient : curationWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : curationWebClients) {
             try {
-                login();
+                login(webClient);
                 // first we have to guarantee that we always have a note there
                 Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2");
                 String oldNote = gene.getPublicComments();
@@ -29,7 +28,7 @@ public class GeneEditSmokeTest extends AbstractSecureSmokeTest {
                 }
 
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/dev-tools/gwt/alternate-gene-edit");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/alternate-gene-edit");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Gene Edit", page.getTitleText());

@@ -15,9 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.mutant.MutantFigureStage;
-import org.zfin.mutant.Phenotype;
-import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.mutant.*;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -178,6 +176,22 @@ public class PhenotypeRepositoryTest {
         }
     }
 
+    @Test
+    public void regenGenofigGenotype() {
+        Phenotype phenotype = new Phenotype();
+        phenotype.setZdbID("ZDB-APATO-070117-10002");
+        GenotypeExperiment genox = new GenotypeExperiment();
+        genox.setZdbID("ZDB-GENOX-041102-1948");
+        phenotype.setGenotypeExperiment(genox);
+        Genotype geno = new Genotype();
+        geno.setZdbID("ZDB-GENO-980202-405");
+        genox.setGenotype(geno);
+
+        HibernateUtil.createTransaction();
+        getPhenotypeRepository().runRegenGenotypeFigureScript(phenotype);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+    }
     @Test
     public void createPatoRecord() {
         String expressionExperimentID = "ZDB-XPAT-081003-1";

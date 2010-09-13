@@ -7,6 +7,7 @@ import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
+import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
@@ -17,15 +18,16 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-//        MarkerViewSmokeTest.class,
-        SimpleSmokeTest.class,
         AnatomySmokeTest.class,
-        LookupSmokeTest.class,
+        AntibodySmokeTest.class,
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
         ExpressionSmokeTest.class,
-        AntibodySmokeTest.class,
         GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
+        LookupSmokeTest.class,
+//        MarkerViewSmokeTest.class,
+        MorpholinoAddSmokeTest.class,
+        SimpleSmokeTest.class,
         SiteSearchSmokeTest.class
 })
 public class SmokeTests {

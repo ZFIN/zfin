@@ -394,7 +394,8 @@ var ENTER_KEY = 13;
                             showError: true,
                             wildcard: false,
                             width: "25",
-                            type: "MARKER_LOOKUP"
+                            type: "GENEDOM_AND_EFG_LOOKUP",
+			    useTermTable: false
                         };
          </script>
 

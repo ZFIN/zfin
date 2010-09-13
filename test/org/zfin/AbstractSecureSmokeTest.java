@@ -1,5 +1,6 @@
 package org.zfin;
 
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -19,14 +20,14 @@ import java.util.Date;
  */
 public class AbstractSecureSmokeTest extends AbstractSmokeTest {
 
-    protected Person person = null;
+    protected Person person;
     protected String password = "veryeasypass";
-    private final Logger logger = Logger.getLogger(AbstractSecureSmokeTest.class) ;
+    private final Logger logger = Logger.getLogger(AbstractSecureSmokeTest.class);
 
     @Override
     public void setUp() {
         super.setUp();
-        createPerson();
+        insertTestPersonIntoDatabase();
     }
 
     @Override
@@ -36,8 +37,8 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
     }
 
 
-    public Person getTestPerson() {
-        Person person = new Person();
+    private void createTestPersonObject() {
+        person = new Person();
         person.setName("Test Person");
         person.setEmail("Email Address Test");
         AccountInfo accountInfo = new AccountInfo();
@@ -51,12 +52,11 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         accountInfo.setAccountCreationDate(new Date());
         accountInfo.setCookie("somecookie");
         person.setAccountInfo(accountInfo);
-        return person;
     }
 
-    protected void createPerson() {
+    protected void insertTestPersonIntoDatabase() {
         HibernateUtil.createTransaction();
-        person = getTestPerson();
+        createTestPersonObject();
         HibernateUtil.currentSession().save(person);
         HibernateUtil.currentSession().flush();
 
@@ -74,18 +74,17 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().delete(person);
-        if(activeSource!=null){
+        if (activeSource != null) {
             HibernateUtil.currentSession().delete(activeSource);
-        }
-        else{
-            logger.error("unable to delete user: "+ person.getZdbID() + " "+ person.getName());
+        } else {
+            logger.error("unable to delete user: " + person.getZdbID() + " " + person.getName());
         }
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    public void login() throws Exception {
+    public void login(WebClient webClient) throws Exception {
         webClient.setRedirectEnabled(true);
-        HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/login");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/login");
         HtmlForm loginForm = page.getFormByName("login");
         HtmlInput nameField = loginForm.getInputByName("j_username");
         nameField.setValueAttribute(person.getAccountInfo().getLogin());

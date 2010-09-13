@@ -15,14 +15,12 @@ public class AntibodyEditSmokeTest extends AbstractSecureSmokeTest {
         final String zdbID = "ZDB-ATB-081002-19";
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
         assertNotNull(antibody);
-        for (WebClient aWebClient : curationWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : curationWebClients) {
             webClient.setJavaScriptEnabled(true);
             try {
-                int i = 0 ; 
-                login();
+                login(webClient);
                 webClient.waitForBackgroundJavaScript(5000);
-                HtmlPage page = webClient.getPage("http://" + domain + "/action/dev-tools/gwt/antibody-edit");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/antibody-edit");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Antibody Edit", page.getTitleText());
 

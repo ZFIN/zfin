@@ -9,56 +9,45 @@
 <!-- -->
 
 <script type="text/javascript">
-    var LookupProperties = { NumLookups: "4" } ;
+    var LookupProperties = { NumLookups: "4" };
     var LookupProperties0 = {
         divName: "featureTerm",
         inputName: "searchTerm",
         showError: true,
-        buttonText: "search",
         type: "FEATURE_LOOKUP",
-        wildcard: true
+        wildcard: true,
+        useTermTable: false
     };
 
     var LookupProperties1 = {
         divName: "markerTerm",
         inputName: "searchTerm",
         showError: true,
-        buttonText: "search",
         type: "MARKER_LOOKUP",
-        wildcard: true
+        wildcard: true,
+        useTermTable: false
     };
 
     var LookupProperties2 = {
         divName: "antigenGene",
         inputName: "searchTerm",
         showError: true,
-        buttonText: "search",
         action: "GENEDOM_AND_EFG_SEARCH",
         onclick: "hello",
         type: "GENEDOM_AND_EFG_LOOKUP",
-        wildcard: true
+        wildcard: false,
+        useTermTable: false
     };
 
     var LookupProperties3 = {
         divName: "anatomyTerm",
         inputName: "searchTerm",
         showError: true,
-        buttonText: "search",
         type: "GDAG_TERM_LOOKUP",
         ontologyName: "zebrafish_anatomy",
-        wildcard: true
+        wildcard: true,
+        useTermTable: false
     };
-
-</script>
-
-<script language="javascript" src="gwt.js">
-    function submitForm(url) {
-        form = document.getElementById("Antibody Detail Update");
-        //alert("Form: " + form.name);
-        form.action = url;
-        alert('url ' + url);
-        form.submit();
-    }
 
 </script>
 
@@ -67,39 +56,37 @@
 
 <h1>Lookup Application</h1>
 
-<form action="run">
-    <table>
-        <tr>
-            <td> Feature term</td>
-        </tr>
-        <tr>
-            <td>
-                <div id="featureTerm"></div>
-            </td>
-        </tr>
-        <tr>
-            <td> Marker term</td>
-        </tr>
-        <tr>
-            <td>
-                <div id="markerTerm"></div>
-            </td>
-        </tr>
-        <tr>
-            <td> Antigen Gene</td>
-        </tr>
-        <tr>
-            <td>
-                <div id="antigenGene"></div>
-            </td>
-        </tr>
-        <tr>
-            <td> Anatomy Term</td>
-        </tr>
-        <tr>
-            <td>
-                <span id="anatomyTerm"></span>
-            </td>
-        </tr>
-    </table>
-</form>
+<table>
+    <tr>
+        <td> Feature</td>
+    </tr>
+    <tr>
+        <td>
+            <div id="featureTerm"></div>
+        </td>
+    </tr>
+    <tr>
+        <td> General Marker</td>
+    </tr>
+    <tr>
+        <td>
+            <div id="markerTerm"></div>
+        </td>
+    </tr>
+    <tr>
+        <td> Gene or EFG</td>
+    </tr>
+    <tr>
+        <td>
+            <div id="antigenGene"></div>
+        </td>
+    </tr>
+    <tr>
+        <td> Anatomy Term</td>
+    </tr>
+    <tr>
+        <td>
+            <span id="anatomyTerm"></span>
+        </td>
+    </tr>
+</table>

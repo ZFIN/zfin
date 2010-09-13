@@ -5,7 +5,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.zfin.AbstractSmokeTest;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.presentation.SearchBean;
 
 import java.io.IOException;
@@ -20,11 +19,10 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
      * Should bring up an Alternative search:  calcium-dependent cell adhesion molecule activity (cadherin)
      */
     public void testCadherin() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
                 String query = "cadherin";
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -43,11 +41,10 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
      * Should bring up no Alternative search
      */
     public void testGsc() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
                 String query = "gsc";
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -65,11 +62,10 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
      * Should bring up no Alternative search. Used to suggest the sequence similarity name 'si:...'.
      */
     public void testNitr() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
                 String query = "nitr";
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -87,11 +83,10 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
      * Should bring up an Alternative search term:  midbrain hindbrain boundary neural tube
      */
     public void testMidbrainHindbrain() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
                 String query = "midbrain-hindbrain boundary neural tube";
-                HtmlPage page = webClient.getPage(ZfinPropertiesEnum.NON_SECURE_HTTP + domain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 

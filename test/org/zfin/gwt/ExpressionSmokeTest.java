@@ -12,10 +12,9 @@ import java.io.IOException;
 public class ExpressionSmokeTest extends AbstractSmokeTest {
 
     public void testExpressionLookupTable() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage("http://" + domain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "/webdriver?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
@@ -60,11 +59,10 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
     }
 
     public void testExpressionLookupTableWithSubmitButton() {
-        for (WebClient aWebClient : publicWebClients) {
-            webClient = aWebClient;
+        for (WebClient webClient : publicWebClients) {
 
             try {
-                HtmlPage page = webClient.getPage("http://" + domain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "/webdriver?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
