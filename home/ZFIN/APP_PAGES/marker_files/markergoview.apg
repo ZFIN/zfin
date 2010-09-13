@@ -174,15 +174,14 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
   <?MIVAR NAME=infername><?/MIVAR>
 
 <?MISQL SQL="
-       select  distinct gont_ontology_name,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,
+       select gont_ontology_name,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,
 	      mrkrgoev_term_zdb_id,mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,
-	      mrkrgoev_notes, mrkrgoev_gflag_name, infgrmem_inferred_from 
-	 from term, marker_go_term_evidence, go_ontology, outer inference_group_member
+	      mrkrgoev_notes, mrkrgoev_gflag_name
+	 from term, marker_go_term_evidence, go_ontology
 	where mrkrgoev_mrkr_zdb_id='$OID' 
 	  and mrkrgoev_term_zdb_id=term_zdb_id
 	  and term_ontology=gont_ontology_internal_name
-        and mrkrgoev_zdb_id=infgrmem_mrkrgoev_zdb_id
-        order by gont_order,mrkrgoev_evidence_code,term_name, infgrmem_inferred_from, mrkrgoev_gflag_name">
+        order by gont_order,mrkrgoev_evidence_code,term_name, mrkrgoev_gflag_name">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
    <?MIVAR NAME=$goterm>$2<?/MIVAR>
@@ -203,7 +202,10 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
   	<?MIVAR NAME=not><?/MIVAR>
    <?/MIBLOCK>
    <?MIVAR NAME=has_inf>f<?/MIVAR>
-   <?MISQL SQL="select * from inference_group_member where infgrmem_mrkrgoev_zdb_id = '$markergoevid'"><?MIVAR NAME=infername>$1<?/MIVAR><?/MISQL>
+   <?MIVAR NAME="infername"><?/MIVAR>
+   <?MISQL SQL="select * from inference_group_member where infgrmem_mrkrgoev_zdb_id = '$markergoevid'">
+   <?MIVAR NAME=infername>$(CONCAT,$infername,$1)<?/MIVAR>
+   <?/MISQL>
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=has_inf>t<?/MIVAR>
 
    <!--now displaying annotations-->
@@ -211,7 +213,8 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
      <tr <?MIVAR>$(IF,$(AND,$(NC,$lastonto,),$(NC,$ontology,$lastonto)),class="newgroup")<?/MIVAR>  bgcolor=<?MIVAR>$row_color<?/MIVAR> height=25>
 
      <?MIVAR>
-     <td nowrap>$(IF,$(NC,$ontology,$lastonto),$ontology)</td> 
+     <td>$(IF,$(NC,$ontology,$lastonto),$ontology)
+    </td> 
      <?MIBLOCK COND="$(EC,$qualifier,true)">
        <?MIBLOCK COND="$(EC,$contribs,t)">
         <td nowrap><i><?MIVAR><i>$not</i><?/MIVAR> Contributes to<i></td>
