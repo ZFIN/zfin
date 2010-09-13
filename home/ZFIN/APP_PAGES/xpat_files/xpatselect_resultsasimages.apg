@@ -21,80 +21,77 @@ OUTPUT VARS:
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+<?MIVAR NAME="$xpresimg_images_per_box">20<?/MIVAR>
+<?MIVAR NAME="$xpresimg_box_number">1<?/MIVAR>
+<?MIVAR NAME="$xpresimg_max_images">5000<?/MIVAR>
+<?MIVAR NAME="xpresimg_jsonCollection"><?/MIVAR>
 
-<?MISQL SQL="select first 1 img_zdb_id
-             from $xpresimg_resultTable
-                  join image on img_fig_zdb_id = xpat_fig_zdb_id;">
-<?MIVAR NAME="$xpresimg_query_has_images">t<?/MIVAR>
+<?MISQL SQL="
+     select first $xpresimg_max_images distinct img_thumbnail, img_zdb_id
+       from $xpresimg_resultTable
+            join image on img_fig_zdb_id = xpat_fig_zdb_id ;">
+
+     <?MIVAR COND="$(EC,$MI_CURRENTROW,1)"
+             NAME="xpresimg_query_has_images">t<?/MIVAR>
+     <?MIVAR NAME="xpresimg_imgThumb">$1<?/MIVAR>
+     <?MIVAR NAME="xpresimg_imgZdbId">$2<?/MIVAR>
+     
+     <?MIVAR NAME="xpresimg_jsonCollection">
+       $xpresimg_jsonCollection
+       $(IF,$(NE,$MI_CURRENTROW,1),",")
+       {
+         "imgThumb":"$xpresimg_imgThumb",
+         "imgZdbId":"$xpresimg_imgZdbId"
+       }
+     <?/MIVAR>
 <?/MISQL>
+
+<?MIVAR NAME="$xpresimg_imgCount">$MI_ROWCOUNT<?/MIVAR>
+
 
 <?MIBLOCK COND="$(XST,$xpresimg_query_has_images)">
 
 
-<script type="text/javascript" src="/javascript/control.modal.js"></script>
+  <script type="text/javascript" src="/javascript/control.modal.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
-
-<?MIVAR NAME="$xpresimg_images_per_box">20<?/MIVAR>
-<?MIVAR NAME="$xpresimg_box_number">1<?/MIVAR>
-<?MIVAR NAME="$xpresimg_max_images">5000<?/MIVAR>
-<div id="xpresimg_all">
-  <div id="xpresimg_control_box">
-      <span id="xpresimg_thumbs_title">Figure Gallery</span>
-      <span id="xpresimg_controls"></span>
+  <div id="xpresimg_all">
+    <div id="xpresimg_control_box">
+        <span id="xpresimg_thumbs_title">Figure Gallery</span>
+        <span id="xpresimg_controls"></span>
+    </div>
+    <div id="xpresimg_box"></div>
+    <div id="imagebox_maxnote" style="display: none;"></div>
+    <div id="xpresimg_imagePreload"></div>
   </div>
-  <div id="xpresimg_box"></div>
-  <div id="imagebox_maxnote" style="display: none;"></div>
-  <div id="xpresimg_imagePreload"></div>
-</div>
 
-<script type="text/javascript" src="/javascript/imagebox.js"></script>
-<script type="text/javascript">
-  var imageBox = new ImageBox();
-
+  <script type="text/javascript" src="/javascript/imagebox.js"></script>
   <?MIVAR>
-    imageBox.setImageDivById("xpresimg_box");
-    imageBox.setControlDivById("xpresimg_controls");
-    imageBox.setHiddenCountFieldById("xpatsel_thumbnail_page_hidden_field");
-    imageBox.setMaxImages($xpresimg_max_images);
-    imageBox.images = [
-   <?/MIVAR>
-
-   <?MISQL SQL="
-     select first $xpresimg_max_images distinct img_thumbnail, img_zdb_id
-       from $xpresimg_resultTable
-            join image on img_fig_zdb_id = xpat_fig_zdb_id ;">
-     <?MIVAR NAME="xpresimg_imgThumb">$1<?/MIVAR>
-     <?MIVAR NAME="xpresimg_imgZdbId">$2<?/MIVAR>
-     <?MIVAR>$(IF,$(NE,$MI_CURRENTROW,1),",")<?/MIVAR>
-     {{
-       "imgThumb":"$xpresimg_imgThumb",
-       "imgZdbId":"$xpresimg_imgZdbId"
-     }}
-   <?/MISQL> ];
-
-  <?MIVAR>
-
-   document.getElementById('xpresimg_thumbs_title').innerHTML = "Figure Gallery ($MI_ROWCOUNT images)";
+    <script type="text/javascript">
+     var imageBox = new ImageBox();
+     imageBox.setImageDivById("xpresimg_box");
+     imageBox.setControlDivById("xpresimg_controls");
+     imageBox.setHiddenCountFieldById("xpatsel_thumbnail_page_hidden_field");
+     imageBox.setMaxImages($xpresimg_max_images);
+     imageBox.images = [ $(TRIM,$xpresimg_jsonCollection) ];
+  
+     document.getElementById('xpresimg_thumbs_title').innerHTML = "Figure Gallery ($MI_ROWCOUNT images)";
 
 
-   function loadImages() {
-     storedpage = imageBox.getHiddenCountInput().value;
+     function loadImages() {
+       storedpage = imageBox.getHiddenCountInput().value;
 
-     if ((storedpage != null) && (storedpage != "")) {
-       imageBox.jumpToPage(storedpage);
-     } else {
-       imageBox.displayFirstSet();
+       if ((storedpage != null) && (storedpage != "")) {
+         imageBox.jumpToPage(storedpage);
+       } else {
+         imageBox.displayFirstSet();
+       }
      }
-   }
 
-   document.hasImages = true;
-
-  <?/MIVAR>
-</script>
-
-
-<?MIVAR NAME="$xpresimg_imgCount">$MI_ROWCOUNT<?/MIVAR>
+     document.hasImages = true;
+    </script>
+   <?/MIVAR>
 
 <?/MIBLOCK> <?MICOMMENT> -- end query_has_images xst check -- <?/MICOMMENT>
