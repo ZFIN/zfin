@@ -35,15 +35,14 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
     private String fileName ;
     protected String urlString = "ftp.ncbi.nih.gov" ;
     protected String tempDirectory = System.getProperty("java.io.tmpdir",null) ;
-    protected String workingDirectory ;  //To change body of implemented methods use File | Settings | File Templates.
+    protected String workingDirectory ;
     protected String fileNameSuffix = "_family.soft" ;
     protected String gzipSuffix = ".gz" ;
     protected String userName = "anonymous" ;
     protected String password = "zfinadmn@zfin.org" ;
     private int FTP_TIMEOUT = 3000 ; // ftp timeout in milliseconds
     private boolean alwaysUseExistingFile = false ;
-    // recommended here: ftp://ftp.ncbi.nih.gov/README.ftp
-    private final int BUFFER_SIZE = 32768 ;
+    private final int BUFFER_SIZE =       1024;
 
     public Set<String> parseUniqueNumbers(String fileName, int column) {
         return parseUniqueNumbers(fileName, column,null,null) ;
@@ -66,7 +65,7 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
 
     @Override
     public void setAlwaysUseExistingFile(boolean alwaysUseExistingFile) {
-       this.alwaysUseExistingFile = alwaysUseExistingFile ;
+        this.alwaysUseExistingFile = alwaysUseExistingFile ;
     }
 
     @Override
@@ -80,6 +79,7 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
      */
     public File downloadFile() {
         File localFile = new File(tempDirectory + "/" + getFileName()+fileNameSuffix) ;
+        String remoteFileName = getFileName()+fileNameSuffix+gzipSuffix ;
         try {
             workingDirectory = "pub/geo/DATA/SOFT/by_platform/"+this.fileName ;
             FTPClient ftpClient = new FTPClient();
@@ -89,46 +89,76 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
             ftpClient.login(userName,password);
 
             ftpClient.changeWorkingDirectory(workingDirectory) ;
+
+            ftpClient.enterLocalPassiveMode();
             FTPFile[] ftpFiles = ftpClient.listFiles(getFileName()+fileNameSuffix+gzipSuffix) ;
 
             if(ftpFiles.length!=1){
-                String errorText = "Problem retrieving file from NCBI of name: "+ getFileName()+fileNameSuffix+gzipSuffix ;
+                String errorText = "Problem retrieving file from NCBI of name: "+
+                        getFileName()+fileNameSuffix+gzipSuffix ;
                 logger.error(errorText);
                 throw new RuntimeException(errorText) ;
             }
 
             FTPFile ftpFile = ftpFiles[0] ;
-            Date remoteDate = ftpFile.getTimestamp().getTime() ;
+
+            long remoteFileSize = ftpFile.getSize() ; // this file is gzipped
+            long localFileSize = localFile.length() ; // ths file is not
 
             // do we have a local file?
-            logger.info("downloaded file at: "+localFile.getAbsolutePath());
+            logger.info("downloaded file should be here: "+localFile.getAbsolutePath());
+            if(localFile.exists()){
+                logger.info("local file date: "+new Date(localFile.lastModified()));
+                logger.info("local expanded file size: "+
+                        NumberFormat.getInstance().format(((double)localFileSize/(1024*1024))) + " Mb");
+                logger.info("remote gzipped file size: "+
+                        NumberFormat.getInstance().format(((double)remoteFileSize/(1024*1024))) + " Mb");
+
+            }
+            else{
+                logger.info("no local file available");
+            }
+
+
+            logger.info("remote file date: "+ftpFile.getTimestamp().getTime());
             // if the local file does not exist
             // if the local file timestamp is older than the new one
             if(
-                    (localFile.exists() && localFile.lastModified()<remoteDate.getTime() && false==alwaysUseExistingFile)
+                    (localFile.exists() && localFile.lastModified()<ftpFile.getTimestamp().getTimeInMillis()
+                            && false==alwaysUseExistingFile)
                             ||
                             (false==localFile.exists())
+                            ||
+                            (localFileSize < remoteFileSize)
                     ){
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                 localFile.createNewFile();
-                logger.info("starting to download to: "+ localFile + " size: "+  NumberFormat.getInstance().format((ftpFile.getSize()/1000000d)) + " Mb" ) ;
+                logger.info("starting to download to: "+ localFile + " size: "+
+                        NumberFormat.getInstance().format((ftpFile.getSize()/(1024*1024))) + " Mb" ) ;
                 FileOutputStream fileOutputStream = new FileOutputStream( localFile);
-                GZIPInputStream gzipInputStream = new GZIPInputStream(ftpClient.retrieveFileStream(ftpFile.getName())) ;
+                ftpClient.enterLocalPassiveMode();
+                long startTime = System.currentTimeMillis() ;
+                GZIPInputStream gzipInputStream =
+                        new GZIPInputStream(ftpClient.retrieveFileStream(remoteFileName)) ;
                 byte[] buf = new byte[BUFFER_SIZE];
                 int len;
                 while((len = gzipInputStream.read(buf)) > 0) {
                     fileOutputStream.write(buf, 0, len);
                 }
-                logger.info("fnished download to: "+ localFile) ;
+                long endTime = System.currentTimeMillis() ;
+                int downloadTime = (int) ( endTime - startTime )/1000 ;
+                double downloadRate = (double) remoteFileSize / (1024*1024) / downloadTime ;
+                logger.info("finished download to: "+ localFile ) ;
+                logger.info("Time: " + downloadTime +  "(s) Rate: " + downloadRate + " Mb/s") ;
 
                 gzipInputStream.close();
                 fileOutputStream.close();
                 ftpClient.logout();
-                localFile.setLastModified(remoteDate.getTime()) ;
+                localFile.setLastModified(ftpFile.getTimestamp().getTimeInMillis()) ;
                 return localFile ;
             }
             else{
-                logger.info("newer file not detected: "+getFileName()+fileNameSuffix);
+                logger.info("newer file not detected and files are of appropriate size: "+getFileName()+fileNameSuffix);
             }
 
             ftpClient.logout();
@@ -142,13 +172,15 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
             }
             else{
                 logger.error("No file exists, so nothing to update"+ fileName);
-                throw new RuntimeException("stop parsing, bad IO connection and file not downloaded and no file exists",socketException);
+                throw new RuntimeException("stop parsing, bad IO connection and file not " +
+                        "downloaded and no file exists",socketException);
             }
         }
         catch(Exception e){
             throw new RuntimeException("Failed to download file properly, bailing out of load for file: "+getFileName(),e) ;
         }
     }
+
 
     public Set<String> parseUniqueNumbers(File file) {
 
@@ -236,7 +268,7 @@ public abstract class AbstractGEOSoftProcessor implements SoftParser{
                 }
             }
         }
-        return true ; 
+        return true ;
     }
 
     /**
