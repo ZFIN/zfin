@@ -55,7 +55,7 @@ import java.util.*;
 public class Indexer implements Runnable {
 
     private static final String lineSep = System.getProperty("line.separator");
-    private static final Logger logger = Logger.getLogger(Indexer.class);
+    private final Logger logger = Logger.getLogger(Indexer.class);
 
     private String indexDir;
     private List<String> URLsToIndex;
@@ -104,7 +104,8 @@ public class Indexer implements Runnable {
      * @throws Exception exception
      */
     public static void main(String argv[]) throws Exception {
-        initializeLog4j();
+	//DOMConfigurator.configure("server_apps/quicksearch/logs/log4j.xml");
+        //initializeLog4j();
         Indexer s = new Indexer(argv);
         s.go();
         if (errorCount > 100) {
@@ -156,6 +157,7 @@ public class Indexer implements Runnable {
             e.printStackTrace();
             e.printStackTrace(log);
         }
+
     }
 
 
