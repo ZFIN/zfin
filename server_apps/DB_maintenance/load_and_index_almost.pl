@@ -235,6 +235,8 @@ my $jsvc_pid = `pgrep -P 1 -u root,informix jsvc`;
 $jsvc_pid =~ s/\n/ /g;
 if ( $jsvc_pid ) {
     print (STDERR "Tomcat failed to exit, jsvc process: $jsvc_pid. Please check catalina.out \n");
+    system("kill -3 $jsvc_pid");
+    system("kill -9 $jsvc_pid");
 }
 
 # restartapache, then

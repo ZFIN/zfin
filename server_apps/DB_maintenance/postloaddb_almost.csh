@@ -15,7 +15,7 @@
 #    zfinWwwDir  - the ZFIN_WWW dir for almost.
 #    makeEnvFile - the .env file for almost.
 
-setenv Prompt  # a hack so the source works.
+setenv prompt  # a hack so the source works.
 cd $1
 source $2
 /local/bin/gmake postloaddb
