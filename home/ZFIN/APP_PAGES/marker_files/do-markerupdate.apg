@@ -496,7 +496,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 
       <?MIBLOCK COND=$(XST,$xtra_param)>
         <?MIVAR NAME=domrkr_encoded_note>$(URLENCODE,$xtra_param)<?/MIVAR>
-        <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$domrkr_encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+        <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_type=none&dnotenew_NOTE=$domrkr_encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
       <?/MIBLOCK> 
     
    <?/MIBLOCK>
