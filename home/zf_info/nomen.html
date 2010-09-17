@@ -314,31 +314,64 @@ The general format for naming translocations depends upon the type of translocat
 
 <blockquote><p> <a name="4.3.1"></a><b>4.3.1 Transgenic constructs</b>
 
-<p><i>Tg(promoter:gene)</i>
 
-<p><i>Tg</i> indicates transgene. Within the parentheses, the most salient features of the transgene should be described. Brevity and clarity in the transgene name are favored, in general, over exhaustive detail. Regulatory sequences should be listed to the left of the colon, and coding sequences to the right of the colon. Not all transgenic constructs will have both promoter and coding elements, and in this case, the colon will not be used. In cases where a construct utilizes sequences from a named gene, it should contain the standard zebrafish lowercase symbol for that gene. Human genes may be listed in all capital letters, mouse genes with the first letter capitalized, and other non-zebrafish genes with the two letter species abbreviation (Ss for Salmo Salar) and the first letter of the gene capitalized. For commonly used reporter elements (i.e. GFP, DsRed) use standard naming conventions. 
 
-<p><b>Example:</b> <i>Tg(SsNdr2:GFP)</i> 
+<p><i>Tg(promoter:gene)</i><span style='font-style:normal'> </span></p>
 
-<p>Regulatory sequence could be derived from either an enhancer or promoter, and are denoted by the symbol of the regulated gene. Regulatory or coding sequence fusions should be separated by hyphens. In cases where a number of constructs are generated with differing sizes of promoter elements, these may be specified within the parentheses as follows: 
+<p><i>Tg</i><span style='font-style:normal'> indicates transgene. Within the
+parentheses, the most salient features of the transgene should be described.
+Brevity and clarity in the transgene name are favored, in general, over
+exhaustive detail. Regulatory sequences should be listed to the left of the
+colon, and coding sequences to the right of the colon. Not all transgenic
+constructs will have both promoter and coding elements, and in this case, the
+colon will not be used. In cases where a construct utilizes sequences from a
+named gene, it should contain the standard zebrafish lowercase symbol for that
+gene. For those cases where a specific transcript or transcript promoter of a
+gene is used, the transcript number or name should be used.<span
+style="mso-spacerun: yes">&nbsp; </span>Transcript names and numbers can be
+identified by BLASTing the sequence in question against the ZFIN Vega
+Transcripts database at ZFIN. On the BLAST results page the transcript name
+will be displayed in the transcript or clone column. (<a
+href="http://zfin.org/action/blast/blast">http://zfin.org/action/blast/blast</a>)</span></p>
 
-<p><b>Example:</b> <i>Tg(-3.5hhex-ERE:sptb-GFP)</i> 
+<p>It should be noted that the use of hyphens here is distinct from the use of
+hyphens in regulatory or coding sequence fusions as discussed below.<span
+style="mso-spacerun: yes">&nbsp; </span>The hyphen in transcript names is an
+integral part of the transcript name and demarcates the transcript number for a
+gene.</p>
 
-<br><i>Tg(-6.0hhex-ERE:sptb-GFP)</i> 
+<p><b>Example: </b><span style='font-weight:normal'><i>Tg(pitx2-002:GFP)</i></span><span
+style="mso-spacerun: yes">&nbsp; </span>In this case an internal <i>pitx2</i><span
+style='font-style:normal'> gene promoter that generates the </span><i>pitx2-002</i><span
+style='font-style:normal'> transcript is driving expression of GFP. <b><o:p></o:p></b></span></p>
 
-<p>Here, two constructs having a fusion protein of <i>spectrin beta (sptb)</i> and GFP driven by a combination of an estrogen response element and an upstream enhancer containing either 3.5kb or 6.0kb 5' to the <i>hhex</i> gene. 
+<p>Regulatory sequence could be derived from either an enhancer or promoter,
+and is denoted by the symbol of the regulated gene or gene transcript.
+Regulatory or coding sequence fusions should be separated by hyphens.<span
+style="mso-spacerun: yes">&nbsp;&nbsp; </span></p>
 
-<p>However, in a number of cases, the changes within the construct may be too small to change the number of kb. In this case, the constructs will be appended with a period and a number within the parentheses, referring to the element that has changed, instead of including further details in the name. Alternatively, if the .1, .2 nomenclature conflicts with a gene name, then a number may be placed at the beginning of the construct name. The numbering should start with a 1 and increment by one for each different construct. The details of construct differences will be available on the construct pages. 
+<p><b>Example: </b><span style='font-weight:normal'><i>Tg(-3.5hhex-ERE:sptb-GFP)</i></span>
+In this case the construct has a fusion protein of <i>spectrin beta (sptb)</i><span
+style='font-style:normal'> and GFP driven by a combination of an estrogen
+response element and an upstream enhancer containing 3.5kb of the </span><i>hhex</i><span
+style='font-style:normal'> gene. <o:p></o:p></span></p>
 
-<p><b>Example:</b> <i>Tg(-1.7shha.1:GFP)</i><br>
- &nbsp;&nbsp;&nbsp;&nbsp;<i>Tg(-1.7shha.2:GFP)</i><br>
- &nbsp;&nbsp;&nbsp;&nbsp;<i>Tg(-1.7shha.3:GFP)</i><br>
+<p>For those cases where a gene from a different species is used, the three
+letter abbreviation should be used (<i>Homo sapien</i><span style='font-style:
+normal'> (Hsa), </span><i>Mus musculus</i><span style='font-style:normal'>
+(Mmu), </span><i>Salmo salar</i><span style='font-style:normal'> (Ssa))
+followed by a period then the gene symbol.<span style="mso-spacerun:
+yes">&nbsp; </span>For human genes use the standard gene symbol conventions of
+all capital letters. For mouse and other species the first letter of the gene
+is capitalized.</span></p>
 
-<p>Sometimes within a single construct, there are multiple cassettes, each containing regulatory and coding sequences. In this case, it is necessary to distinguish between what is coding in the first cassette with what is regulatory in the second. Multiple cassettes may be distinguished using a comma. In the following example, isl3 promoter and retinoic acid response element drive GAL4, and UAS drives GFP. 
+<p><b>Example;</b><span style='font-weight:normal'> <i>Tg(Hsa.FGF8:GFP)</i></span>
+Here the promoter of the human FGF8 gene is driving expression of GFP.<o:p></o:p></p>
 
-<p><b>Example:</b> <i>Tg(isl3-RARE:GAL4,UAS:GFP)</i>
+<p><b>Example:</b><span style='font-weight:normal'> <i>Tg(Ssa.Ndr2:GFP)</i></span>
+Here the promoter of the salmon Ndr2 gene is driving expression of GFP.</p>
 
-<p>Enhancer, promoter, and gene-trap constructs may use Et, Pt, or Gt, all of which are considered types of transgenic constructs. 
+</blockquote>
 
 
 <p> <a name="4.3.2"></a><b>4.3.2 Enhancer trap, promoter trap, gene trap constructs</b>
