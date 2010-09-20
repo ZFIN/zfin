@@ -1143,7 +1143,7 @@ Only need to update clones, etc., which should be the only things that will have
 
       <tr>
         <td width=25%>
-          Regulatory Region(s):
+          Regulatory Regions:
         </td>
         <td>
           $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -1160,7 +1160,7 @@ Only need to update clones, etc., which should be the only things that will have
             and mrel_type = 'coding sequence of'">
       <tr>
         <td width=25%>
-          Coding Sequence(s):
+          Coding Sequences:
         </td>
         <td>
           <i>$1</i><?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -1176,7 +1176,7 @@ Only need to update clones, etc., which should be the only things that will have
             and mrel_type = 'contains other feature'">
       <tr>
         <td width=25%>
-          Other Feature(s):
+          Engineered Regions:
         </td>
         <td>
           $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -3085,7 +3085,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
         <br>$1 End Mrel, Sequence section, Start Mapping
 <?/MISQL>
 
-
 <?MICOMMENT>=========================================================
             ==    MAPPING INFORMATION
 	    =========================================================
@@ -3103,7 +3102,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
    </TR>
   </TABLE>
 <?/MIBLOCK>
-
 
 <form name=updater1>
 
