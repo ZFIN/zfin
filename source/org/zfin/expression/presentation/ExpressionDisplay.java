@@ -2,16 +2,12 @@ package org.zfin.expression.presentation;
 
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
-import org.zfin.expression.Image;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
-import java.util.HashSet;
-import java.util.SortedSet;
-import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
 public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Marker expressedGene;

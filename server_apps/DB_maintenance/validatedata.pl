@@ -972,10 +972,10 @@ sub associatedDataforPUB030508_1 ($) {
 #---------------------------------------------------------------
 # associatedDataforPUB030905_2
 #
-# Only data for gene name, gene symbol, 
-# or previous name should be associated with
-# ZDB-PUB-030508-1.
-# 
+# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
+
+# The only data that should be attributed should be sequence accessions (or their markers) 
+# of type Genomic, RNA, or Sequence Clusters.
 # 
 #Parameter
 # $      Email Address for recipients
@@ -1292,59 +1292,6 @@ sub xpatHasConsistentMarkerRelationship ($) {
   &recordResult($routineName, $nRecords); 
 } 
 
-
-
-#---------------------------------------------------------------
-# prefixedIbdGenesHave1Est
-#
-# This test esists solely to report prefixed genes that start with "id:"
-# but done have a corresponding EST.  This data is treated differently
-# from all other prefixed genes (see previous test) because, unlike 
-# other prefixed genes, ZFIN is not going to create ESTs for the "id:"
-# genes.  The hope is that over time the biology community will determine
-# what genes these actually are, and then these records will slowly go away.
-#
-# Therefore, the output of this test should not be considered as stuff
-# that needs to be fixed this month, but rather as a report on the progress
-# towards the overall goal of making these genes disappear.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub prefixedIbdGenesHave1Est ($) {
-
-  my $routineName = "prefixedIbdGenesHave1Est";
-
-  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
-               from marker m1
-               where mrkr_type = "GENE"
-                 and mrkr_name like "id:%"
-                 and 1 <> 
-                     ( select count(*) 
-                         from marker m2, marker_relationship
-                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
-                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene encodes small segment" )
-               order by mrkr_name';
-
-  my @colDesc = ("Gene ZDB ID       ",
-		 "Gene Name         ",
-		 "Gene Abbrev       ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "id: genes that have 0 or > 1 associated ESTs";
-    my $errMsg = "$nRecords 'id:' genes had 0 or more than 1 associated ESTs. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #---------------------------------------------------------------
 # estsWithoutClonesHaveXxGenes
 #
@@ -1451,139 +1398,6 @@ sub xxGenesHaveNoClones ($) {
 # These tests could be filed under the gene-est tests above, or under the
 # db_link-orthology tests below.  However, they fall in between so they
 # get thier own listing.
-
-
-#---------------------------------------------------------------
-# Detect candidates for gene merging by identifying different genes that point
-# at the same DB_link records in other databases.
-#
-# Parameter
-# $      Email Address for recipients
-# 
-
-sub genesWithCommonDblinks ($) {
-
-  my $routineName = "genesWithCommonDblinks";
-	
-  my $sql = '
-      -- cDNA/Polypeptide acc connects anything directly to anything
-      -- (no marker relationships)
-      select fdb_db_name, adbl.dblink_acc_num, 
-	     a.mrkr_abbrev, b.mrkr_abbrev
-	from marker a, marker b,
-	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,foreign_db,foreign_db_data_type,
-	     marker_type_group_member amtgm, marker_type_group_member bmtgm
-       where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
-	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
-	 and amtgm.mtgrpmem_mrkr_type_group in ("GENEDOM","SMALLSEG")
-	 and bmtgm.mtgrpmem_mrkr_type_group in ("GENEDOM","SMALLSEG")
-	 and a.mrkr_abbrev < b.mrkr_abbrev
-	 and a.mrkr_zdb_id = adbl.dblink_linked_recid
-	 and b.mrkr_zdb_id = bdbl.dblink_linked_recid
-	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
-	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbdt_data_type in ("cDNA", "Polypeptide")
-         and fdbdt_pk_id = fdbcont_fdbdt_id
-         and fdbcont_fdb_db_id = fdb_db_pk_id
-	 and adbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
-	 and bdbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
-    union
-      -- cDNA/Polypeptide acc connects genes
-      -- via marker relationships to both
-      select fdb_db_name, adbl.dblink_acc_num, 
-	     a.mrkr_abbrev, b.mrkr_abbrev
-	from marker a, marker b,
-	     marker_relationship amr, marker_relationship bmr,
-	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,foreign_db, foreign_db_data_type,
-	     marker_type_group_member amtgm, marker_type_group_member bmtgm
-       where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
-	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
-	 and amtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and bmtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and a.mrkr_abbrev < b.mrkr_abbrev
-	 and amr.mrel_mrkr_1_zdb_id = a.mrkr_zdb_id
-	 and amr.mrel_mrkr_2_zdb_id = adbl.dblink_linked_recid
-	 and bmr.mrel_mrkr_1_zdb_id = b.mrkr_zdb_id
-	 and bmr.mrel_mrkr_2_zdb_id = bdbl.dblink_linked_recid
-	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
-	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbdt_data_type in ("cDNA", "Polypeptide")
-         and fdbcont_fdb_db_id = fdb_db_pk_id
-         and fdbcont_fdbdt_id = fdbdt_pk_id
-	 and adbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	 and bdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-    union
-      -- cDNA/Polypeptide acc connected gene to smallseg
-      -- via marker relationship on first gene only
-      select fdb_db_name, adbl.dblink_acc_num, 
-	     a.mrkr_abbrev, b.mrkr_abbrev
-	from marker a, marker b,
-	     marker_relationship bmr,
-	     db_link adbl, db_link bdbl,
-	     foreign_db_contains, foreign_db, foreign_db_data_type,
-	     marker_type_group_member amtgm, marker_type_group_member bmtgm
-       where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
-	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
-	 and amtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and bmtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and a.mrkr_abbrev < b.mrkr_abbrev
-	 and a.mrkr_zdb_id = adbl.dblink_linked_recid
-	 and bmr.mrel_mrkr_1_zdb_id = b.mrkr_zdb_id
-	 and bmr.mrel_mrkr_2_zdb_id = bdbl.dblink_linked_recid
-	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
-	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbdt_data_type in ("cDNA", "Polypeptide")
-         and fdbcont_fdb_db_id = fdb_db_pk_id
-         and fdbcont_fdbdt_id = fdbdt_pk_id
-	 and adbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	 and bdbl.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-    union
-      -- cDNA/Polypeptide acc connected gene to smallseg
-      -- via marker relationship on second gene only
-      select fdb_db_name, adbl.dblink_acc_num, 
-	     a.mrkr_abbrev, b.mrkr_abbrev
-	from marker a, marker b,
-	     marker_relationship amr,
-	     db_link adbl, db_link bdbl,
-	     foreign_db_contains,foreign_db, foreign_db_data_type,
-	     marker_type_group_member amtgm, marker_type_group_member bmtgm
-       where a.mrkr_type = amtgm.mtgrpmem_mrkr_type
-         and fdbcont_fdb_db_id = fdb_db_pk_id
-	 and b.mrkr_type = bmtgm.mtgrpmem_mrkr_type
-	 and amtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and bmtgm.mtgrpmem_mrkr_type_group ="GENEDOM"
-	 and a.mrkr_abbrev < b.mrkr_abbrev
-	 and amr.mrel_mrkr_1_zdb_id = a.mrkr_zdb_id
-	 and amr.mrel_mrkr_2_zdb_id = adbl.dblink_linked_recid
-	 and b.mrkr_zdb_id = bdbl.dblink_linked_recid
-	 and adbl.dblink_acc_num = bdbl.dblink_acc_num
-	 and adbl.dblink_acc_num[1,3] <> "NC_" -- temp kludge
-	 and fdbdt_data_type in ("cDNA", "Polypeptide")
-         and fdbcont_fdbdt_id = fdbdt_pk_id
-       	 and adbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
-	 and bdbl.dblink_fdbcont_zdb_id =  fdbcont_zdb_id
-    order by 1,2,3,4';
-
-  my @colDesc = ("Database     ",
-		 "Accession num",
-		 "First marker ",
-		 "Second marker");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Markers that are candidates for merging";
-    my $errMsg = "$nRecords pairs of markers are candidates for merging, based on common links to other databases.";
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
 
 
 #============================ Linkage ===================================
@@ -1700,74 +1514,6 @@ sub orthologueHasDblink ($) {
 
 
 
-#-------------------------------------------------------------
-# orthologueNomenclatureValid 
-# 
-# Do minimal nomenclature rule checking on orthologue names and symbols.
-# This routine checks rules that are easy to check (such as "must be all caps").
-# The first version of this routine also excluded common exceptions to the
-# rules such as "C%orf%" orthologues in humans and Riken orthologues in Mouse.
-# However, Ken requested that the report include these, as most/all of them
-# will change over time.  
-#
-# Names and abbrevs reported by this check are not necessarily 
-# in error -- they might be errors, or they just might be exceptions to 
-# the standard nomenclature.  These exceptions are why this check is not
-# done with a trigger.  See case 314 for more details.
-#
-# There are some rules that we know about that we don't enforce:
-# Everything, from Ken
-#   Dashes and periods are frowned upon in symbols, but there are exceptions.
-# Yeast, from Ceri:
-#   all symbols (gene abbreviations in the yeast community) must contain 3 
-#   letters and then the numbers.  The exceptions are the systematic names 
-#   such as YMR043W which will have 3 letters followed by numbers (I think 
-#   standard # of numbers #=3 but not sure) followed either by W or C
-#   However, The Systematic names are not used as identifiers by the yeast 
-#   community after the gene has been given a (standard) name.
-#
-# Parameter
-# $      Email Address for recipients
-# 
-sub orthologueNomenclatureValid ($) {
-
-  my $routineName = "orthologueNomenclatureValid";
-
-  my $sql = '
-    select organism, ortho_abbrev, ortho_name, c_gene_id
-      from orthologue 
-      where ortho_abbrev like "% %" 
-         or (    organism = "Human" 
-             and ortho_abbrev <> upper(ortho_abbrev))
-         or (    organism = "Mouse"
-             and (   ortho_abbrev[1,1] <> upper(ortho_abbrev[1,1])
-                  or substr(ortho_abbrev,2) <> lower(substr(ortho_abbrev,2))))
-         or (    organism = "Yeast"
-             and (   ortho_abbrev <> upper(ortho_abbrev)
-	          or ortho_name <> upper(ortho_name)
-                  or ortho_name <> ortho_abbrev
-                  or length(ortho_abbrev) < 4))
-      order by organism, ortho_abbrev;';
- 
-  my @colDesc = ("Organism    ",
-		 "Ortho Abbrev",
-		 "Ortho Name  ",
-		 "Gene ID     " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Orthologue(s) with suspect nomenclature";
-    my $errMsg = "$nRecords orthologue(s) have suspect nomenclature.  ";
-    logWarning ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-
-
 #---------------------------------------------------------------
 # orthologyHasEvidence
 #
@@ -1832,7 +1578,7 @@ sub mouseOrthologyHasValidMGIAccession ($) {
   my $sql = "select zdb_id, c_gene_id, organism
              from   orthologue
              where  organism = 'Mouse'
-             and    not exists (
+             and    exists (
                        select dblink_linked_recid
                        from   db_link, foreign_db_contains,foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -1840,7 +1586,7 @@ sub mouseOrthologyHasValidMGIAccession ($) {
                        and    fdbcont_fdb_db_id = fdb_db_pk_id
                        and    fdb_db_name = 'MGI'
                        and    zdb_id = dblink_linked_recid
-                       and    dblink_acc_num not like 'MGI:%'
+                       and    dblink_acc_num like 'MGI:%'
                     )";
 
   my @colDesc = ("Orthology ZDB ID  ",
@@ -1863,7 +1609,7 @@ sub mouseOrthologyHasValidMGIAccession ($) {
 
 
 #---------------------------------------------------------------
-# mouseOrthologyHasEntrezAccession
+# mouseAndHumanOrthologyHasEntrezAccession
 #
 # This test identifies any mouse orthology records without any
 # Entrez accession ID.
@@ -1873,9 +1619,9 @@ sub mouseOrthologyHasValidMGIAccession ($) {
 # $      Email Address for recipients
 # 
 
-sub mouseOrthologyHasEntrezAccession ($) {
+sub mouseAndHumanOrthologyHasEntrezAccession ($) {
 
-  my $routineName = "mouseOrthologyHasEntrezAccession";
+  my $routineName = "mouseAndHumanOrthologyHasEntrezAccession";
 
   my $sql = "select zdb_id, c_gene_id, organism
              from   orthologue
@@ -1884,7 +1630,7 @@ sub mouseOrthologyHasEntrezAccession ($) {
                        select dblink_linked_recid
                        from   db_link, foreign_db_contains, foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_organism_common_name = 'Mouse'
+                       and    fdbcont_organism_common_name in ('Mouse', 'Human')
                        and    fdbcont_fdb_db_id = fdb_db_pk_id
                        and    fdb_db_name = 'Entrez Gene'
                        and    zdb_id = dblink_linked_recid
@@ -1909,68 +1655,11 @@ sub mouseOrthologyHasEntrezAccession ($) {
 
 
 
-#---------------------------------------------------------------
-# humanOrthologyHasEntrezAccession
-#
-# This test identifies any human orthology records without any
-# Entrez accession ID.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub humanOrthologyHasEntrezAccession ($) {
-
-  my $routineName = "humanOrthologyHasEntrezAccession";
-
-  my $sql = "select zdb_id, c_gene_id, organism
-             from   orthologue o1
-             where  organism = 'Human'
-             and    not exists (
-                       select dblink_linked_recid
-                       from   db_link, foreign_db_contains, foreign_db
-                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_organism_common_name = 'Human'
-                       and    fdb_db_name = 'Entrez Gene'
-                       and    fdbcont_fdb_db_id = fdb_db_pk_id
-                       and    o1.zdb_id = dblink_linked_recid
-                    )
-             -- exclude organism type mismatch errors
-             -- these errors reported in separate DBA validation below
-             and    not exists (
-                       select dblink_linked_recid 
-                       from   db_link, foreign_db_contains, orthologue o2
-                       where  organism <> fdbcont_organism_common_name
-                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    o2.zdb_id = dblink_linked_recid
-                       and    o1.zdb_id = o2.zdb_id
-                    )";
-
-  my @colDesc = ("Orthology ZDB ID  ",
-		 "Gene ZDB ID       ",
-		 "Organism          ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Human Orthology is missing Entrez Gene accession ID.";
-    my $errMsg = "$nRecords human orthology records require a Entrez Gene accession ID.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
 
 #---------------------------------------------------------------
 # orthologyOrganismMatchesForeignDBContains
 #
-# This test identifies any human orthology records without any
-# Entrez accession ID.
+# This test identifies any orthology records that doesn't match organism in foreign_db_contains table
 # 
 # 
 #Parameter
@@ -2142,15 +1831,19 @@ sub allTranscriptsHaveAtLeastOneDbLink ($) {
 # 
 sub tscriptLoadIdMatchesDBLink ($) {
     my $routineName = "tscriptLoadIdMatchesDBLink";
-    my $sql = 'select tscript_mrkr_zdb_id, tscript_load_id
-                 from transcript
+    my $sql = 'select tscript_mrkr_zdb_id, tscript_load_id, dblink_acc_num
+                 from transcript, db_link
                  where not exists (Select "x"
-                                     from db_link
-                                     where dblink_linked_recid = tscript_mrkr_zdb_id
-                                       and dblink_Acc_num = tscript_load_id)
-                 and tscript_load_id != tscript_mrkr_zdb_id';
+                                     from db_link b
+                                     where b.dblink_linked_recid = tscript_mrkr_zdb_id
+                                       and b.dblink_Acc_num = tscript_load_id)
+                 and tscript_load_id != tscript_mrkr_zdb_id
+                 and dblink_linked_recid = tscript_mrkr_zdb_id
+                 and not exists (Select "x" from data_alias
+                                     where dalias_data_zdb_id = tscript_mrkr_zdb_id
+                                     and dalias_alias like "OTTDAR%")';
 
-    my @colDesc =("tscript zdb id, tscript_load_id");
+    my @colDesc =("tscript zdb id, tscript_load_id, dblink_acc_num");
 
     my $nRecords = execSql ($sql, undef, @colDesc);
 
@@ -2158,7 +1851,7 @@ sub tscriptLoadIdMatchesDBLink ($) {
 
 	my $sendToAddress = $_[0];
 	my $subject = "AutoGen: Transcripts with mismatched tscript_load_id/dblink records";
-	my $errMsg = "In transcripts, $nRecords have no dblinks with that match tscript_load_id";
+	my $errMsg = "In transcripts, $nRecords have no dblinks with that match tscript_load_id and are missing aliases to their OTTDART ids";
 	
 	logError ($errMsg); 
 	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
@@ -2701,43 +2394,6 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   &recordResult($routineName, $nRecords);
 } 
 
-# Parameter
-#  $     Email Address for recipient
-#
-sub removeGOTermsFromWithdrawnMarkers ($) {
-
-  my $routineName = "removeGOTermsFromWithdrawnMarkers";
-  
- my $sql = "select mrkrgoev_mrkr_zdb_id, mrkrgoev_source_Zdb_id,term_name, mrkrgoev_evidence_code
-              from marker_go_term_evidence, marker,term
-              where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-              and mrkr_abbrev like 'WITHDRAWN%'
-              and term_zdb_id = mrkrgoev_term_zdb_id
-              order by mrkrgoev_mrkr_Zdb_id;";
-
-  my @colDesc = ("marker zdb id      ",
-                 "pub id             ",
-		 "goterm name        ",
-		 "evidence code      ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  
-  my $sth = $dbh->do("delete from marker_go_term_evidence
-                        where exists (Select 'x' from marker
-                                        where mrkr_zdb_id = mrkrgoev_mrkr_zdb_id
-                                        and mrkr_abbrev like 'WITHDRAWN%');" );
-  
- if ( $nRecords > 0 ) {
-  my $sendToAddress = $_[0];
-  my $subject = "Go annotations have been removed from withdrawn markers";
-  my $errMsg = "There are $nRecords GO annotation(s) that have been removed because their referenced genes have been withdrawn. There may be some duplicates because we are not including inferred from information in this report.";
-    
-  logError ($errMsg);
-  &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  &recordResult($routineName, $nRecords);
- }
-} 
-
 #----------------------
 # Parameters
 #     $     mrkrgoev zdb id  1
@@ -2913,143 +2569,6 @@ sub zdbReplacedDataIsReplaced ($) {
   &recordResult($routineName, $nRecords);
 }
 
-#========================== Active data & Source ========================
-#-------------------
-#
-sub subZdbActiveDataSourceStillInUse {
- 
-  my @row = @_;
-  my $sql = "select $row[2]
-               from $row[1]                
-              where $row[2] = '$row[0]'";
-  
-  my @result = $dbh->selectrow_array($sql);
-  return @result? 0:1 ;
- 
-}
-
-#-------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub zdbActiveDataStillActive($) {
-  
-  my $routineName = "zdbActiveDataStillActive";
-  &oldOrphanDataCheck($_[0]);
-  my $sql = "
-             select zactvd_zdb_id, 
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column
- 
-              from  zdb_active_data, 
-                    zdb_object_type
-              where get_obj_type(zactvd_zdb_id) = zobjtype_name";
-
-  my @colDesc = ("Zactvd ZDB ID              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home zdb id column" );
-
-  my $subSqlRef = \&subZdbActiveDataSourceStillInUse;
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-  if ( $nRecords > 0 ) {
-    
-    &storeOrphan();
-    my $sendToAddress = $_[0];
-    my $subject = "orphan in zdb active data";
-    my $errMsg = "In zdb_active_data, $nRecords ids are out of use, and stored in zdb_orphan_data table.";
-
-    logWarning ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  } 
-  &recordResult($routineName, $nRecords);
-}           
-
-
-#---------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-sub zdbActiveSourceStillActive($) {
-  
-  my $routineName = "zdbActiveSourceStillActive";
-  
-  &oldOrphanSourceCheck($_[0]);
-  my $sql = "
-             select zactvs_zdb_id, 
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column
- 
-              from  zdb_active_source, 
-                    zdb_object_type
-              where get_obj_type(zactvs_zdb_id) = zobjtype_name";
-
-  my @colDesc = ("Zactvs ZDB ID              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home zdb id column" );
-
-  my $subSqlRef = \&subZdbActiveDataSourceStillInUse;
-
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    &storeOrphan();
-    my $sendToAddress = $_[0];
-    my $subject = "orphan in zdb active source";
-    my $errMsg = "In zdb_active_source, $nRecords ids are out of use, and stored in zdb_orphan_source table.";
-             
-    logWarning ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  } 
-  &recordResult($routineName, $nRecords);
-}
-   
-#-------------------
-#Parameter
-# $      Email Address for recipients
-#
-sub oldOrphanDataCheck($) {
-
-  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-  my $sql = "select * 
-               from zdb_orphan_data ";
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";  
-  $sth -> execute();
-
-  my $fileNotEmpt;
-  while (my @row = $sth ->fetchrow_array()) {
-
-    $fileNotEmpt = 1;
-    my $orphan = subZdbActiveDataSourceStillInUse(@row);
-
-    if($orphan) {
-      my $sql = "delete from zdb_active_data
-                      where zactvd_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "Delete $row[0] from zdb_active_data.\n";
-    }else {
-      my $sql = "delete from zdb_orphan_data
-                      where zorphand_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "$row[0] is restored.\n";
-    }
-  }
- 
-  close (ORPH);
-  
-  if($fileNotEmpt) {
-    my $sendToAddress = $_[0];
-    my $subject = "about previous orphans.";
-    my $routineName = "oldOrphanDataCheck";
-    my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject,$routineName, $msg, );     
-
-  }
-}
-
-
 
 #-------------------
 #Parameter
@@ -3173,77 +2692,6 @@ sub printTop40PostcomposedTerms($) {
 }
 
 
-sub oldOrphanSourceCheck($) {
-
-  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-  my $sql = "select * 
-               from zdb_orphan_source ";
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";  
-  $sth -> execute();
-
-  my $fileNotEmpt;
-  while (my @row = $sth ->fetchrow_array()) {
-   
-    $fileNotEmpt = 1;
-    my $orphan = subZdbActiveDataSourceStillInUse(@row);
-    
-    if($orphan) {
-      my $sql = "delete from zdb_active_source
-                      where zactvs_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "Delete $row[0] from zdb_active_source.\n";
-    }else {
-      my $sql = "delete from zdb_orphan_source
-                      where zorphans_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "$row[0] is restored.\n";
-    }
-  }
-  close(ORPH);
-  if($fileNotEmpt) {
-    my $sendToAddress = $_[0];
-    my $subject = "about previous orphans.";
-    my $routineName = "oldOrphanSourceCheck";
-    my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject, $routineName, $msg, );
-  }
-}
-
-
-
-#-------------------
-# 
-sub storeOrphan {
-  
- 
-  my ($table, $zdbid, $hometable, $homecolumn);
-  open F, "$globalResultFile" or die "Cannot open the $globalResultFile to read.\n";
-  
-  while (<F>) {
-    
-    if(/Zactvd ZDB ID\s+(\w.+)/) {
-      $zdbid = $1;
-      $table = "zdb_orphan_data";
-    }
-    if(/Zactvs ZDB ID\s+(\w.+)/) {
-      $zdbid = $1;
-      $table = "zdb_orphan_source";
-    }
-    if (/Zobjtype home table\s+(\w.+)/) {
-      $hometable = $1;
-    }
-    if (/Zobjtype home zdb id column\s+(\w.+)/) {
-      $homecolumn = $1;
-      my $sql = "insert into $table values('$zdbid', '$hometable', '$homecolumn')";
-      
-      $dbh->do($sql);
-    }
-  }
-  close (F);
-}
-#=======================================================================
-
 
 #######################  Main ###########################################
 #
@@ -3263,7 +2711,6 @@ Command line parameters:
   -w       Excute the checks supposed to run weekly.
   -m       Excute the checks supposed to run monthly.
   -y       Excute the checks supposed to run yearly.
-  -o       Excute the orphan checks.
 
 ENDDOC
 
@@ -3276,7 +2723,6 @@ GetOptions (
 	    "w"    => \$weekly,
 	    "m"    => \$monthly,
 	    "y"    => \$yearly,
-            "o"    => \$orphan 
 	    );
 
 #
@@ -3327,17 +2773,16 @@ my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
 my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
+my $transcriptEmail = "<!--|VALIDATION_EMAIL_TRANSCRIPT|-->";
+my $publicationEmail = "<!--|VALIDATION_EMAIL_PUBLICATION|-->";
 
 
 if($daily) {
-    removeGOTermsFromWithdrawnMarkers($goEmail);
     allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
-    transcriptsOnMoreThanOneGene($dbaEmail);
-    tscriptLoadIdMatchesDBLink($dbaEmail);
-    findWithdrawnMarkerMismatch($geneEmail); 
+    transcriptsOnMoreThanOneGene($transcriptEmail);
+    tscriptLoadIdMatchesDBLink($transcriptEmail);
+    findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
-    unFeatureNameAbbrevUpdate($dbaEmail);
-    unrecoveredFeatureNameAbbrevUpdate($dbaEmail);
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     xpatHasConsistentMarkerRelationship($xpatEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
@@ -3349,7 +2794,7 @@ if($daily) {
                      on source_id = zdb_id
                where target_id = 'ZDB-LAB-000914-1'
                  and position = 'Research Staff'";
-    my $sth = $dbh->prepare ($sql) or die "Prepare fails";
+    my $sth = $dbh->prepare ($sql) or die "Prepare fails on email selection";
     $sth->execute();
 
     while (my ($curatorEmail, $curatorId, $curatorName) = $sth->fetchrow_array()) {
@@ -3362,9 +2807,8 @@ if($daily) {
 	featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
     }
     genotypesHaveNoNames($genoEmail);
-    pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
-    linkageHasMembers($linkageEmail);
-    linkagePairHas2Members($linkageEmail);
+    #removing this routine as it seems that it is no longer needed as curator is notified when pub is closed.
+    #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     allTranscriptsHaveAtLeastOneDbLink($dbaEmail);
     syncDbLinkAccBkLength($dbaEmail);
     foreigndbNotInFdbcontains($otherEmail);
@@ -3374,18 +2818,13 @@ if($daily) {
     zdbObjectIsSourceDataCorrect($dbaEmail);
     zdbObjectHandledByGetObjName($dbaEmail);
 
-    pubTitlesAreUnique($otherEmail);
+    pubTitlesAreUnique($publicationEmail);
     zdbReplacedDataIsReplaced($dbaEmail);
 
     mrkrgoevDuplicatesFound($goEmail);
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
     mrkrgoevSecondaryAnnotationsFound($goEmail);
-}
-if($orphan) {
-  
-  zdbActiveDataStillActive($dbaEmail);
-  zdbActiveSourceStillActive($dbaEmail);
 }
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
@@ -3394,39 +2833,37 @@ if($weekly) {
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xxGenesHaveNoClones($estEmail);
-        xpatObjectNotGeneOrEFG ($xpatEmail);
+    xpatObjectNotGeneOrEFG ($xpatEmail);
 
 	# these are curatorial errors (case219)
 	# however, errors returned are difficult to
 	# return to curators without dba
-	associatedDataforPUB030905_1($dbaEmail);
-	associatedDataforPUB030508_1($dbaEmail);
-	associatedDataforPUB030905_2($dbaEmail);
+	associatedDataforPUB030905_1($geneEmail);
+	associatedDataforPUB030508_1($geneEmail);
+	associatedDataforPUB030905_2($geneEmail);
 
 	# put these here until we get them down to 0 records.  Then move them to 
 	# daily.
-	orthologyOrganismMatchesForeignDBContains($dbaEmail);
 
 	refSeqAccessionInWrongFormat($geneEmail);
 	vegaAccessionInWrongFormat($dbaEmail);
-	morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
+	# changed to monthly morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
 
 }
 if($monthly) {
+  orthologyOrganismMatchesForeignDBContains($geneEmail);
   orthologueHasDblink($geneEmail);
-  orthologueNomenclatureValid($geneEmail);
-  prefixedIbdGenesHave1Est($estEmail);
-  genesWithCommonDblinks($geneEmail);
+  morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
   orthologyHasEvidence($geneEmail);
   mouseOrthologyHasValidMGIAccession($geneEmail);
-  mouseOrthologyHasEntrezAccession($geneEmail);
-  humanOrthologyHasEntrezAccession($geneEmail);
+  mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
   addressStillNeedsUpdate($adminEmail);
   mrkrgoevInfgrpDuplicatesFound($goEmail);
   printTop40PostcomposedTerms($aoEmail);
-
+  linkageHasMembers($linkageEmail);
+  linkagePairHas2Members($linkageEmail);
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
   my $sql = " select email, full_name
                 from int_person_lab join person

@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.doi;
 
+import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -13,6 +14,8 @@ import java.util.Date;
  */
 public class UpdateDOIJob extends QuartzJobBean {
 
+    private Logger logger = Logger.getLogger(UpdateDOIJob.class) ;
+
     // defaults are for monthly scheduling
     private boolean reportAll = true;
     private int maxToProcess = DOIProcessor.ALL ;
@@ -25,11 +28,11 @@ public class UpdateDOIJob extends QuartzJobBean {
 
             if (reportAll == true || driver.isDoisUpdated()) {
                 (new IntegratedJavaMailSender()).sendMail("doi updates for: " + (new Date()).toString()
-                        , driver.getMessage().toString(), ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER));
+                        , driver.getMessage().toString(), ZfinProperties.splitValues(ZfinPropertiesEnum.DOI_EMAIL_REPORT));
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to update DOI Job",e);
         }
     }
 

@@ -20,12 +20,12 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
 SUBDIRS = loadUp/
 
-GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl \
+GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh validatedata.pl \
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
            fx_permission_check.pl pnas_report.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh \
-	   performance.pl
+	   performance.pl  orphanChecks.pl
 
-STATICS = postloaddb_almost.csh updatePNAS.sql  \
+STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \
 	  makeDeveloperBlastDbs.sh 
 
 

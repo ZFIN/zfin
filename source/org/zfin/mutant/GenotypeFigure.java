@@ -1,10 +1,10 @@
 package org.zfin.mutant;
 
-import java.io.Serializable;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.ontology.Term;
+
+import java.io.Serializable;
 
 
 public class GenotypeFigure implements Serializable {

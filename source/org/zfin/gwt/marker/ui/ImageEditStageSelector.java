@@ -2,14 +2,9 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.ImageDTO;
-import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.StageSelector;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 /**
  * Stage selector specifically for the ImageEditController

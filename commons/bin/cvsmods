@@ -1,0 +1,89 @@
+#!/private/bin/perl -w
+#-------------------------------------------------------------------------
+#
+# This script recursively walks a CVS tree looking for files that have been
+# updated in CVS and need to be updated in the directory.  It starts walking
+# from the current directory.
+#
+# For each such file it reports:
+#
+#  cvs verb (e.g. "U") and directory/filename
+#  Log entries for all revisions after the revision that is currently in use.
+#  If the changes look like they might be non-trivial*, it also flags the
+#    file as a possible non-trivial change.
+#
+# "looks like they might be non-trivial" - what does that mean?  In this file
+# it means that either the file is new, or more than a certain number of lines
+# were added/deleted/changed.
+#
+# The whole purpose of this script is to check that ZFINners are conforming
+# to ZFIN coding standards 
+# 
+# Usage:
+#
+#  cvsmods 
+#
+
+# Get list of files, ignoring anything unknown to CVS ("?")
+my @changedFiles = split(/\n/m, `/local/bin/cvs -nq update | /bin/grep -v '^\?'`);
+
+foreach $file (@changedFiles) {
+
+    # lines have 2 formats:
+    #  U directory/filename
+    #  cvs update: directory/filename is no longer in the repository
+    # We might also see M's and C's.
+
+    my @linePart = split(/ /, $file);
+    my $fileName = $linePart[1];
+
+    if ($linePart[0] eq "cvs") {
+	# file has been removed from cvs
+	$fileName = $linePart[2];
+    }
+
+    my @statusLine = split(/\n/m, `/local/bin/cvs status $fileName`);
+
+    # Get working revision number (the revision that is currently checked out)
+    my @revisionLine = split(/\s+/, $statusLine[3]);
+    my $workingRevision = $revisionLine[3];
+    my @logEntries = split(/----------------------------\n/m, 
+			   `/local/bin/cvs log $fileName`);
+
+    # Print out every log entry after working revision up to the latest
+    # repository revision.  
+    my @relevantLogEntries;
+    my $lineChangeCount = 0;
+    my $significantChange = 0;
+
+    foreach $logEntry (@logEntries) {
+	if ($logEntry =~ /^revision /) {
+	    my @logLines = split(/\n/m, $logEntry);
+	    my @revLine = split(/ /, $logLines[0]);
+	    if ($revLine[1] eq $workingRevision) {
+		last;		# EXIT LOOP EARLY.
+	    }
+	    my @details = split(/\s+/, $logLines[1]);
+	    if ($#details == 6) {
+		# no line counts, file is new, flag it as significant
+		$significantChange = 1;
+	    } else {
+		$lineChangeCount += abs($details[8]) + abs($details[9]);
+	    }
+	    push(@relevantLogEntries, $logEntry);
+	}
+    } # end for each log entry.  NOTE: Early exit almost always taken.
+
+    print("\n");
+    print("===============================================================\n");
+    if ($significantChange || ($lineChangeCount > 25)) {
+	print("**************   Possible NON-TRIVIAL Revision   **************\n");
+    }
+    print("$file\n");
+
+    foreach $logEntry (@relevantLogEntries) {
+	print("-------------\n");
+	print("$logEntry\n");
+    }
+} # End for each changed file
+

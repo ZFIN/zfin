@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 
 GENERICS = signsoflife.sh \
-           webrotate.pl gen-jobs-rss.r gen-meetings-rss.r gen-news-rss.r
+           gen-jobs-rss.r gen-meetings-rss.r gen-news-rss.r
 
 STATICS = makemirror.csh domainlookup.pl rss-util.r
 

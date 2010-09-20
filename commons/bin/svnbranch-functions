@@ -1,0 +1,216 @@
+#!/bin/bash
+# Functions useed from within the svnbranch.
+
+function usage(){
+    printCurrentBranch ; 
+    echo "Usage: " 
+    echo "" 
+    echo "BRANCHES:                                                 " 
+    echo "createfromtrunk <branch name>                 - Creates a branch from the trunk.." 
+    echo "createfrombranch <branch name> <opt branch>   - Creates a branch from another branch." 
+    echo "current                                       - Names the current branch." 
+    echo "find <branch name>                            - Find a branch." 
+    echo "switch <branch name>                          - Switch to <branch name>." 
+    echo "switchtotrunk                                 - Switch to the trunk." 
+    echo "delete <branch name>                          - Delete a branch." 
+    echo "mergefrombranch <branch name> <opt rev>       - Merge from other branch.." 
+    echo "mergefromtrunk <opt rev>                      - Merge from trunk." 
+    echo "" 
+    echo "TAGS:"  
+    echo "tagfromtrunk <tag name>                       - Create a tag from the trunk." 
+    echo "tagfrombranch <tag name> <opt branch>         - Creates tag from the named branch." 
+    echo "switchtotag <tag name>                        - Switches to tag." 
+    echo "deletetag <tag name>                          - Deletes tag." 
+    echo "findtag <tag name>                            - Finds matching tags." 
+    exit ; 
+}
+
+function getCurrentBranch(){
+    BRANCH_NAME=`svn info | grep branches | cut -d \/ -f10 ` ;
+    if [ -z $BRANCH_NAME  ]; then
+        IS_TRUNK=`svn info | grep trunk | wc -l` ;
+        if [ $IS_TRUNK == 1 ]; then
+            BRANCH_NAME="trunk" ; 
+        else
+            exit ; 
+        fi
+    fi
+	return 
+}
+
+function printCurrentBranch(){
+    getCurrentBranch ; 
+	echo "Current branch: $BRANCH_NAME" ;
+    if [ -z $BRANCH_NAME  ]; then
+        echo "Could not get branch name." ; 
+        exit ; 
+    fi
+}
+
+function svnbranch-createfromtrunk(){
+    FMT_DATE=`date '+%Y-%m-%d'` ; 
+    BRANCH_NAME=b$FMT_DATE-$1
+    svn copy $SVNROOT/ZFIN_WWW/trunk $SVNROOT/ZFIN_WWW/branches/$BRANCH_NAME ; 
+    echo "Created branch $BRANCH_NAME" ;
+
+	printCurrentBranch 
+}
+
+function svnbranch-createfrombranch(){
+	printCurrentBranch ; # also sets $CURRENT_BRANCH
+    if [ -z $2 ]; then 
+	  SELECT_BRANCH=$BRANCH_NAME ;
+    else
+	  SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $2  `
+    fi
+	echo $BRANCH_NAME
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/branches | grep $SELECT_BRANCH | wc -l `
+    if [ $NUM_BRANCHES = 1 ] ; then
+		FMT_DATE=`date '+%Y-%m-%d'` ; 
+		BRANCH_NAME=b$FMT_DATE-$1
+		echo "Creating branch [$BRANCH_NAME] from [$SELECT_BRANCH]" ; 
+        svn copy $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH $SVNROOT/ZFIN_WWW/branches/$BRANCH_NAME ; 
+    else
+        echo $NUM_BRANCHES tags found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/branches | grep $SELECT_BRANCH ;
+    fi
+	echo "Created branch $BRANCH_NAME" ; 
+}
+
+function svnbranch-tagfromtrunk(){
+    FMT_DATE=`date '+%Y-%m-%d'` ; 
+	BRANCH_NAME=t$FMT_DATE-$1
+    svn copy $SVNROOT/ZFIN_WWW/trunk $SVNROOT/ZFIN_WWW/tags/$BRANCH_NAME ; 
+	echo "Created tag $BRANCH_NAME" ; 
+	printCurrentBranch 
+}
+
+
+function svnbranch-switchtotrunk(){
+    svn switch $SVNROOT/ZFIN_WWW/trunk ; 
+}
+
+function svnbranch-switch(){
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1 | wc -l ` ; 
+    if [ $NUM_BRANCHES = 1 ] ; then
+        SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1  `
+        svn switch $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH
+    else
+        echo $NUM_BRANCHES branches found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/branches | grep $1 ;
+    fi
+	printCurrentBranch ; 
+}
+
+function svnbranch-switchtotag(){
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/tags | grep $1 | wc -l ` ; 
+    if [ $NUM_BRANCHES = 1 ] ; then
+        SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/tags | grep $1  `
+        svn switch $SVNROOT/ZFIN_WWW/tags/$SELECT_BRANCH
+    else
+        echo $NUM_BRANCHES tags found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/tags | grep $1 ;
+    fi
+	printCurrentBranch ; 
+}
+
+function svnbranch-delete(){
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1 | wc -l `
+    if [ $NUM_BRANCHES = 1 ] ; then
+        SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1  `
+        svn delete $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH
+		echo "Deleting branch: $SELECT_BRANCH" ; 
+    else
+        echo $NUM_BRANCHES branches found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/branches | grep $1 ;
+    fi
+}
+
+function svnbranch-deletetag(){
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/tags | grep $1 | wc -l `
+    if [ $NUM_BRANCHES = 1 ] ; then
+        SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/tags | grep $1  `
+        svn delete $SVNROOT/ZFIN_WWW/tags/$SELECT_BRANCH
+		echo "Deleting tag: $SELECT_BRANCH" ; 
+    else
+        echo $NUM_BRANCHES tags found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/tags | grep $1 ;
+    fi
+}
+
+function svnbranch-find(){
+    svn list $SVNROOT/ZFIN_WWW/branches | grep $1 ;
+}
+
+function svnbranch-findtag(){
+    svn list $SVNROOT/ZFIN_WWW/tags | grep $1 ;
+}
+
+
+function svnbranch-mergefrombranch(){
+#    BRANCH_URL=`svn info | grep URL: | grep branch | wc -l ` ;
+#    if [  $BRANCH_URL -eq "1" ]; then
+#       echo "Must be in trunk to merge from branch." ; 
+#       echo "Currently in `svn info | grep URL `" ;
+#       exit ; 
+#    fi
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1 | wc -l `
+	printCurrentBranch ; # also sets $CURRENT_BRANCH
+    if [ $NUM_BRANCHES = 1 ] ; then
+        SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $1  `
+		echo "Merging in branch: $SELECT_BRANCH" ; 
+	   if [ -z $2 ]; then 
+        INIT_REVISION_LINE=`svn log -r1:HEAD --stop-on-copy $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH --limit 1 | grep ^r`
+        INIT_REVISION=`getinitrevision.pl $INIT_REVISION_LINE`
+	   else
+        INIT_REVISION=$2 ;
+	   fi
+        echo "[$INIT_REVISION]"; 
+        svn merge -r$INIT_REVISION:HEAD $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH
+    else
+        echo $NUM_BRANCHES branches found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/branches | grep $1 ;
+    fi
+}
+
+function svnbranch-tagfrombranch(){
+	printCurrentBranch ; # also sets $CURRENT_BRANCH
+    if [ -z $2 ]; then 
+	  SELECT_BRANCH=$BRANCH_NAME ;
+    else
+	  SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $2  `
+    fi
+    NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/branches | grep $SELECT_BRANCH | wc -l `
+    if [ $NUM_BRANCHES = 1 ] ; then
+		FMT_DATE=`date '+%Y-%m-%d'` ; 
+		BRANCH_NAME=t$FMT_DATE-$1
+		echo "Tagging branch: $SELECT_BRANCH as $BRANCH_NAME" ; 
+        svn copy $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH $SVNROOT/ZFIN_WWW/tags/$BRANCH_NAME ; 
+    else
+        echo $NUM_BRANCHES tags found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/branches | grep $SELECT_BRANCH ;
+    fi
+}
+
+
+
+function svnbranch-mergefromtrunk(){
+    BRANCH_URL=`svn info | grep URL: | grep trunk | wc -l ` ;
+    if [ $BRANCH_URL = "1" ]; then
+       echo "Must be in branch to merge from trunk." ; 
+	   printCurrentBranch 
+       exit ; 
+    fi
+	printCurrentBranch 
+    SELECT_BRANCH=`svn list $SVNROOT/ZFIN_WWW/branches | grep $BRANCH_NAME  `
+    INIT_REVISION_LINE=`svn log -r1:HEAD --stop-on-copy $SVNROOT/ZFIN_WWW/branches/$SELECT_BRANCH --limit 1 | grep ^r`
+    if [ -z $1 ]; then
+        INIT_REVISION=`getinitrevision.pl $INIT_REVISION_LINE` ; 
+    else
+        INIT_REVISION="$1" ; 
+    fi 
+    echo "[$INIT_REVISION]"; 
+    svn merge -r$INIT_REVISION:HEAD $SVNROOT/ZFIN_WWW/trunk
+}
+
+ 

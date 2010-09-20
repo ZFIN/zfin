@@ -1,11 +1,7 @@
 package org.zfin.properties;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
 
 import static org.junit.Assert.*;
 
@@ -23,12 +19,12 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
         Assert.assertEquals("Highlight Color", "#4437", ZfinPropertiesEnum.HIGHLIGHT_COLOR.value());
         assertEquals("Highlighter Color", "#7743", ZfinPropertiesEnum.HIGHLIGHTER_COLOR.value());
         assertEquals("Link Color", "#9980", ZfinPropertiesEnum.LINKBAR_COLOR.value());
-        assertEquals("Email Address", "test\\@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
+        assertEquals("Email Address", "test@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
         assertEquals("FTP Path", "/research/zcentral/ftp/test/test", ZfinPropertiesEnum.FTP_ROOT.value());
         assertEquals("Image Load Path", "/imageLoadUp", ZfinPropertiesEnum.IMAGE_LOAD.value());
         assertEquals("Load Up Path", "/research/zcentral/loadUp", ZfinPropertiesEnum.LOADUP_FULL_PATH.value());
         assertEquals("PDF Path", "/pdf/", ZfinPropertiesEnum.PDF_PATH.value());
-        assertEquals("test\\@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());
+        assertEquals("test@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());
     }
 
     @Test

@@ -1,0 +1,106 @@
+#!/bin/bash
+# The purpose of this script is to simplify accessing branches.
+#
+# I've added an svnbranch command that wraps around svn commands in Commons/bin. I will explain each command below (and put it in the command reference).  I use these often for creating small branches ( < 2 months ) because its hard for me to remember the exact name of a branch.  Its shell with a smidgen of perl, so it may be a good reference, as well.
+#
+# 1. svnbranch create <branch name>
+#
+# creates the branch:
+# $SVNROOT/ZFIN_WWW/branches/b<date>_<branch name>
+#
+# 2. svnbranch find <branch name>
+#
+# Finds all of the branches that match the expression <branch name>: 
+# e.g.
+# svnbranch find test
+# b2007-08-29-testwithtransaction/
+# b2007-09-25_r-reno_fb2063_enumtest/
+# b2007-11-14-r-head-testmerge1/
+# b2007-12-19-l_test/
+#
+# 3a. svnbranch switch <branch name>
+#
+# Switches to a branch if it finds only one, otherwise it will list all of the branches that match that exrpession.
+#
+# 3b. svnbranch switchtotrunk
+#
+# Switches to the trunk version.
+#
+# 4. svnbranch delete <branch name>
+#
+# Deletes a branch if it finds only one, otherwise it will list all of the branches that match that expression.
+#
+#
+# 5. svnbranch mergefromtrunk <optional revision #>   - Must be done from within branch.
+#
+# Merges the trunk into the branch based on the first revision of the branch if no revision is provided or on the revision #.  You must provide a branch name (though maybe this could change later) so it knows what reversion to merge from. SHOULD ONLY BE USED ONCE PER BRANCH(that's why it should be used for small branches).
+#  
+#  6. svnbranch mergefrombranch <branch name>  - Must be done from within trunk.
+#
+#  Merges a branch into the trunk based on the first revision of the branch.  You must provide a branch name so it knows what reversion to look up. SHOULD ONLY BE USED ONCE PER BRANCH (that's why it should be used for small branches).
+#
+#
+#
+
+source svnbranch-functions
+
+if [ -z $1 ]; then 
+	usage ; 
+elif [ -z $2 ]; then 
+    if [ $1 != "mergefromtrunk" ] && [ $1 != "switchtotrunk" ]  && [ $1 != "current" ]; then
+      usage ; 
+    fi
+fi
+
+
+if [ $1 = "createfromtrunk" ] ; then 
+    svnbranch-createfromtrunk "$2" ; 
+elif [ $1 = "createfrombranch" ] ; then 
+    if [ -z $3 ]; then 
+        svnbranch-createfrombranch "$2" ; 
+    else
+        svnbranch-createfrombranch "$2" "$3" ; 
+    fi
+elif [ $1 = "current" ] ; then 
+    printCurrentBranch ; 
+elif [ $1 = "find" ] ; then 
+    svnbranch-find "$2" ; 
+elif [ $1 = "findtag" ] ; then 
+    svnbranch-findtag "$2" ; 
+elif [ $1 = "switchtotrunk" ] ; then 
+    svnbranch-switchtotrunk ; 
+elif [ $1 = "switch" ] ; then 
+    svnbranch-switch "$2" ; 
+elif [ $1 = "delete" ] ; then 
+    svnbranch-delete "$2" ; 
+elif [ $1 = "deletetag" ] ; then 
+    svnbranch-deletetag "$2" ; 
+elif [ $1 = "tagfromtrunk" ] ; then 
+    svnbranch-tagfromtrunk $2 ; 
+elif [ $1 = "switchtotag" ] ; then 
+    svnbranch-switchtotag $2 ;
+elif [ $1 = "tagfrombranch" ] ; then 
+    if [ -z $3 ]; then 
+        svnbranch-tagfrombranch "$2" ; 
+    else
+        svnbranch-tagfrombranch "$2" "$3" ; 
+    fi
+elif [ $1 = "deletetag" ] ; then 
+    svnbranch-deletetag"$2" ; 
+elif [ $1 = "mergefrombranch" ] ; then 
+    if [ -z $3 ]; then 
+        svnbranch-mergefrombranch "$2" ; 
+    else
+        svnbranch-mergefrombranch "$2" "$3" ; 
+    fi
+elif [ $1 = "mergefromtrunk" ] ; then 
+    if [ -z $2 ]; then 
+        svnbranch-mergefromtrunk ; 
+    else
+        svnbranch-mergefromtrunk "$2" ; 
+    fi
+else
+usage ; 
+fi
+
+

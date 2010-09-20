@@ -1,0 +1,82 @@
+#!/private/bin/perl -w
+#-------------------------------------------------------------------------
+#
+# Print information about files in the local CVS directory.
+#
+# Usage:
+#
+# cvsinfo [filename ...]
+#
+# Prints out the status of every file in the directory or of the files
+# passed on the command line.
+#
+
+if ($#ARGV >= 0) {
+    @onlyTheseFiles = (@ARGV);	# only print info on a subset of files
+} 
+
+$_ = `/local/bin/cvs -q status -l @onlyTheseFiles`;
+
+print("Latest     Revision\n");
+print("Revision   You Have   Status           File\n");
+print("---------- ---------- ---------------- -----------------------------\n");
+
+@cvsfiles = split(/===================================================================\n/m, $_);
+
+foreach $file (@cvsfiles) {
+  if ($file ne "") {
+    @lines = split(/\n/m, $file);
+
+    $filename = "";
+    $status = "";
+
+    @words = split(" ", $lines[0]);
+    foreach $word (@words) {
+	if ($word eq "File:") {
+	    $inFileName = 1;
+	}
+	elsif ($word eq "Status:") {
+	    $inFileName = 0;
+	}
+	elsif ($inFileName) {
+	    $filename = $filename . " " . $word;
+	}
+	else {
+	    $status = $status . " " . $word;
+	}
+    }
+
+    $filename = substr($filename, 1);
+    $status = substr($status, 1);
+
+    @words = split(" ", $lines[2]);
+    $wordCnt = 0;
+    $workRev = "";
+    $inDate = 0;
+    foreach $word (@words) {
+	$wordCnt++;
+	if ($wordCnt > 2) {
+	    if ($word eq "Sun" ||
+		$word eq "Mon" ||
+		$word eq "Tue" ||
+		$word eq "Wed" ||
+		$word eq "Thu" ||
+		$word eq "Fri" ||
+		$word eq "Sat") {
+		$inDate = 1;
+	    }
+	    elsif (! $inDate) {
+		if ($workRev eq "") {
+		    $workRev = $word;
+		}
+	    }
+	}
+    }
+
+    @words = split(" ", $lines[3]);
+    $repRev = $words[2];
+
+    printf("%-10s %-10s %-16s %-40s\n", $repRev, $workRev, $status, $filename);
+  }
+}
+exit;

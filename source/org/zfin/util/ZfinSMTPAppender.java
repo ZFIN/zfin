@@ -10,7 +10,9 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.log4j.ZfinHtmlLayout;
 import org.zfin.util.servlet.RequestBean;
 
-import javax.mail.*;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.util.Date;

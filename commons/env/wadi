@@ -1,0 +1,61 @@
+#!/local/bin/tcsh
+#
+# This script should be sourced to set Informix environment variables to
+# the values needed for the WADI, the upgraded to 11.10.FC2 informix server on 
+# embryonix.
+#
+# This script ASSUMES the following:
+#
+# o If a shell variable called $PREINFORMIXPATH already exists then it 
+#   contains the value of $PATH before any Informix information was 
+#   added to it.  If the $PREINFROMIXPATH variable does not already 
+#   exist then this script defines it.
+#
+# o If a shell variable called $PREINFORMIX_LD_PATH is set then
+#   this script will use it to set the $LD_LIBRARY_PATH variable.  If it 
+#   is not set then this script will override the incoming setting, if any,
+#   of the $LD_LIBRARY_PATH variable.
+#
+
+if ("`/local/bin/hostname`" != "embryonix") then
+  echo "WARNING: Not currently logged in to embryonix."
+endif
+
+# Set standard Informix variables
+# here's a change, the informix path
+setenv INFORMIXDIR /private/apps/Informix/informix.11.10.FC2
+
+#  here's a change, the server name
+setenv INFORMIXSERVER wadi
+
+# lets set the full onconfig path to be paranoid
+setenv ONCONFIG onconfig
+
+# looks like this is setting a full path based on the informixdir above?; so I'll leave it
+setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/sqlhosts
+
+# Set PATH variables and prompt using the standard variables
+# First check if PREINFORMIXPATH IS SET
+if (! $?PREINFORMIXPATH) then
+    setenv PREINFORMIXPATH ${PATH}
+endif
+setenv PATH ${INFORMIXDIR}/bin:/research/ZfinLinks/Commons/bin:${PREINFORMIXPATH}
+if ($?PREINFORMIX_LD_PATH) then
+    setenv LD_LIBRARY_PATH ${PREINFORMIX_LD_PATH}:${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
+else
+    setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
+endif
+
+#I think this is ok to leave as is.
+# Define CVSROOT
+setenv CVSROOT /research/zcentral/Vault/CVSroot
+
+# Define SVNROOT
+setenv SVNROOT svn+ssh://$USER@embryonix.cs.uoregon.edu/research/zcentral/Vault/SVNROOT
+
+# Set prompt
+if ($user != `/usr/ucb/whoami`) then
+    set prompt = "$INFORMIXSERVER $user `/usr/ucb/whoami` %c1$Prompt"
+else
+    set prompt = "$INFORMIXSERVER $user %c1$Prompt"
+endif

@@ -7,7 +7,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import org.junit.Test;
 import org.zfin.AbstractSmokeTest;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 import java.util.List;

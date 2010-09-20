@@ -6,16 +6,17 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResultTermComparator;
 import org.zfin.expression.Figure;
+import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.*;
-import org.zfin.ontology.Term;
-
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeFeature;
+import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
-import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.marker.repository.MarkerRepository;
 
 import java.util.*;
 

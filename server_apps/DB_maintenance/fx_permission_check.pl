@@ -41,6 +41,7 @@ sub sendReport($)
     print MAIL "To:". $_[0]."\n";
 
     print MAIL "Subject: AutoGen: FX lite-figures have permission to become full-figured\n";
+
     while($line = <REPORT>)
     {
       print MAIL $line;
@@ -98,7 +99,11 @@ while ($cur->fetch) {
     
     open (REPORT, ">>reportPermissions") or die "can not open report" ;
 
-    print REPORT "Images could be loaded for these figures, they have full permissions.\n\n" ;
+    print REPORT "These figures are from publications with expression or phenotype data where\n";
+    print REPORT "permission to use images was originally denied, but is now granted.\n\n";
+    print REPORT "For more information, including how to get figures to be ignored by this check,\n";
+    print REPORT "see https://wiki.zfin.org/display/doc/FX+Permisssion+Check\n\n";
+    
 
     # prepare the query to get the lite figures that should
     # be full figures.
@@ -119,7 +124,7 @@ while ($cur->fetch) {
                      person 
                 where fig_source_zdb_id = cur_pub_zdb_id
                 and (fig_caption is null or fig_caption = '')
-                and cur_topic = 'Expression' 
+                and (cur_topic = 'Expression' or cur_topic = 'Phenotype')
                 and cur_closed_date is not null 
                 and fig_comments != 'image quality poor, permission exception'
                 and fig_source_zdb_id = publication.zdb_id 

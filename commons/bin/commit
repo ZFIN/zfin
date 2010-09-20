@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ $USER = "informix" ]
+then
+    echo "can not commit as informix" ; 
+exit    ; 
+fi
+rm -f /tmp/$USER.tmpdiff.txt
+svn diff "$@" >> /tmp/$USER.tmpdiff.txt
+svn commit --editor-cmd=svn-editor "$@"

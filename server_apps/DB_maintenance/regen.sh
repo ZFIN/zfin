@@ -16,13 +16,13 @@ echo "Starting regen_genox at `date`"
 echo 'execute function regen_genox(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_anatomy at `date`"
-echo 'execute function regen_anatomy(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
-
-echo "Starting regen_maps at `date`"
-echo 'execute function regen_maps(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+echo 'execute function regen_anatomy_counts(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_names at `date`"
 echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
+echo "Starting regen_maps at `date`"
+echo 'execute function regen_maps(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_oevdisp at `date`"
 echo 'execute function regen_oevdisp(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
@@ -32,6 +32,5 @@ echo 'execute function regen_feature_ao_fast_search(); update statistics for pro
 
 echo "do extra update statistics high to try and avoid 710 errors `date`"
 echo 'update statistics high' | dbaccess <!--|DB_NAME|-->
-
 
 echo "Finished at `date`"

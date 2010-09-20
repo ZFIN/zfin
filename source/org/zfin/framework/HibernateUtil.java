@@ -7,8 +7,6 @@ import org.hibernate.proxy.HibernateProxy;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.repository.SessionCreator;
 
-import java.sql.SQLException;
-
 /**
  * Utility class for web applications to make a database session object
  * available via the framework of Hibernate.

@@ -2,8 +2,6 @@ package org.zfin.util.log4j;
 
 import org.apache.log4j.Logger;
 import org.zfin.util.ZfinSMTPAppender;
-import org.zfin.util.servlet.RequestBean;
-import org.zfin.util.servlet.ServletService;
 
 import java.util.Enumeration;
 

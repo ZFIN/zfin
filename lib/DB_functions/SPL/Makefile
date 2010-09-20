@@ -93,14 +93,14 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
-	get_entity_name_html.sql get_postcomposed_term_html.sql
+	get_entity_name_html.sql get_postcomposed_term_html.sql regen_anatomy_counts.sql
 # insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
 # are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql \
+MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql  clone_2_sanger.sql \
 		 get_genofeat_mp_zyg_html_display.sql
 
 GENERIC_AGGR = $(ZDB_AGGR) 

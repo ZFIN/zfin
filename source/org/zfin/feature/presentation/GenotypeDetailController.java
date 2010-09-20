@@ -10,15 +10,12 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.GenotypeFigure;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import org.zfin.mutant.presentation.GenotypeStatistics;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 

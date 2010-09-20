@@ -2,15 +2,11 @@ package org.zfin.util.servlet;
 
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.zfin.people.Person;
-import org.zfin.properties.ZfinProperties;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
-import java.util.Map;
 
 /**
  * Service class that extracts various information from the servlet request.

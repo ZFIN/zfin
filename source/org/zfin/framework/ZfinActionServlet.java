@@ -16,9 +16,9 @@ import javax.servlet.ServletException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 /**
+ * <p>
  * Master Servlet that controls each request and response.
  * 1) Initialize Hibernate
  * 2) Initialize ZFIN properties
@@ -43,13 +43,7 @@ public class ZfinActionServlet extends DispatcherServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        // make web root dir available to the application
         webRoot = getServletContext().getRealPath("/");
-        try {
-            initProperties();
-        } catch (TomcatStartupException e) {
-            throw new RuntimeException("TomcatStartupException caught, Stopping server",e) ;
-        }
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(webRoot);
         ZfinPropertiesEnum.INDEXER_DIRECTORY.setValue(getServletContext().getInitParameter("quicksearch-index-directory"));
         initCategories();
@@ -107,65 +101,11 @@ public class ZfinActionServlet extends DispatcherServlet {
     }
 
     private void initDatabase() {
-/*
-        try {
-            Context initCtx = new InitialContext();
-            Context envCtx = (Context) initCtx.lookup("java:comp/env");
-
-            DataSource ds = (DataSource)
-                    envCtx.lookup("jdbc/zfin");
-
-            Connection conn = ds.getConnection();
-            conn.close();
-        } catch (NamingException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-*/
         // initialize Hibernate
         HibernateUtil.init();
         GBrowseHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
-    }
-
-    /**
-     * Initialize the Zfin Properties by reading the property file and
-     * making the parameters available.
-     */
-    private void initProperties() throws TomcatStartupException{
-        String instance = System.getenv("INSTANCE") ;
-        if(instance==null){
-            throw new TomcatStartupException("INSTANCE not defined in environment") ;
-        }
-        String propertiesFileString = webRoot + "/WEB-INF/properties/" + instance+".properties" ;
-        File propertiesFile = new File(propertiesFileString) ;
-        if(false==propertiesFile.exists()){
-            throw new TomcatStartupException("Property file: " +propertiesFile.getAbsolutePath() +
-                    " not found for INSTANCE: "+ instance) ;
-        }
-        ZfinProperties.init(propertiesFileString);
-        ZfinProperties.validateProperties() ;
-        checkDeployedInstance() ;
-    }
-
-    private void checkDeployedInstance() throws TomcatStartupException{
-        File file = new File(webRoot+"/WEB-INF/INSTANCE") ;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file)) ;
-            String instance = reader.readLine() ;
-            reader.close();
-            reader = null ;
-            if(false==instance.equals(ZfinPropertiesEnum.INSTANCE.value())){
-                throw new TomcatStartupException(
-                        "Deployed instance["+instance+"] does not match " +
-                                "loaded instance from environment : " + ZfinPropertiesEnum.INSTANCE.value() +
-                                " current environment["+System.getenv("INSTANCE")+"]")  ;
-            }
-        } catch (Exception e) {
-            throw new TomcatStartupException("INSTANCE not deployed properly due to error trying to load file: "+ file,e)  ;
-        }
     }
 
 

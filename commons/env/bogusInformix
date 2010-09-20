@@ -1,0 +1,23 @@
+#!/local/bin/tcsh
+#
+# This script is used with mirror sites that don't actually use an 
+# informix server because mirror sites don't have databases.  However,
+# the makefiles require that several Informix variables be set.  This
+# script sets the required variables to bogus values.
+#
+# NOTE: The makefiles check for the particular value of INFORMIXSERVER
+#       that is set by this file,  Whenever INFORMIXSERVER has this
+#       particular value, you are prevented from running gmake without
+#       a target.
+
+setenv INFORMIXDIR /bogus.informix.dir.for.mirrors
+setenv INFORMIXSERVER bogus.informix.server.for.mirrors
+setenv ONCONFIG bogus.onconfig.for.mirrors
+setenv INFORMIXSQLHOSTS bogus.sqlhosts.for.mirrors
+
+# Define SVNROOT
+setenv SVNROOT svn+ssh://$USER@embryonix.cs.uoregon.edu/research/zcentral/Vault/SVNROOT
+
+# add research/zcentral/Commons/bin to path.
+setenv PATH ${PATH}:/private/ZfinLinks/Commons/bin
+

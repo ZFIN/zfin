@@ -1,11 +1,9 @@
 package org.zfin.mutant;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.people.GenotypeSupplier;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;

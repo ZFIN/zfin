@@ -1,0 +1,19 @@
+#! /private/bin/rebol  -sqw
+rebol[ 	author "Tom Conlin"
+	file: %reline
+	purpose: { change newlines to your current platform}
+	usage: {> reline filename}
+]
+
+;;; check file existance and relative or absoulte path
+if err: error? try[
+	either equal? (pick system/script/args 1) #"/"
+	[file: to-file system/script/args]
+	[file: to-file rejoin[system/options/path system/script/args]]
+][print err q]
+           
+;;; 
+if  err: error? try [write file read file][
+	print [{Can't open file "} file {"^/}]
+]
+

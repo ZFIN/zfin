@@ -45,6 +45,7 @@ DB_NAME,
 DB_OWNER,
 DEBUGPORT,
 DEFAULT_EMAIL,
+DOI_EMAIL_REPORT,
 DOMAIN_NAME,
 FTPROOT_PATH,
 FTP_ROOT,
@@ -128,6 +129,8 @@ VALIDATION_EMAIL_LINKAGE,
 VALIDATION_EMAIL_MORPHOLINO,
 VALIDATION_EMAIL_MUTANT,
 VALIDATION_EMAIL_OTHER,
+VALIDATION_EMAIL_PUBLICATION,
+VALIDATION_EMAIL_TRANSCRIPT,
 VALIDATION_EMAIL_XPAT,
 WEBDRIVER_LOC,
 WEBDRIVER_PATH_FROM_ROOT,
@@ -162,4 +165,10 @@ private ZfinPropertiesEnum(){this(null);}
 public String value(){return this.value;}
 public String toString(){return this.value;}
 public void setValue(String value){this.value=value;}
-}
+public static ZfinPropertiesEnum getEnumByName(String name){
+for(ZfinPropertiesEnum t : values()){
+if(t.toString().equals(name.trim())){
+return t;
+}}
+throw new RuntimeException("No enum of name " + name + " found.");
+}}

@@ -1,8 +1,6 @@
 package org.zfin.expression;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 
 import java.io.Serializable;

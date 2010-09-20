@@ -1,15 +1,14 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.ImageDTO;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.StageSelector;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;

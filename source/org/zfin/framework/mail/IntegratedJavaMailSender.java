@@ -5,11 +5,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
 import java.util.Date;
 
 /**

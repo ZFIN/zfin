@@ -1,0 +1,83 @@
+# Crontab format, from left to right
+# * minute (0-59),
+# * hour (0-23),
+# * day of the month (1-31),
+# * month of the year (1-12),
+# * day of the week (0-6 with 0=Sunday)
+#
+# Each of these patterns may be either an  asterisk
+# (meaning all legal values)    OR
+#       a list of elements separated by commas.
+# An element is either a number OR
+#       two numbers separated by  a minus  sign
+#       (meaning  an  inclusive  range).
+# Note that the specification of days may be made by two fields
+# (day of  the month and day of the week).
+# Both are adhered to if specified as a list of elements.
+#
+# NO BLANK LINES
+# T        10:30pm   weekly run of validation of UniProt IDs
+30 22 * * 4 /research/zcentral/www_homes/mirror/server_apps/data_transfer/GO/validateUniprotIDsZFIN.pl
+#
+#
+# SMTWTFS  11:22pm   CURATOR SUPPORT: Nightly check for new publications.
+22 23 * * * /research/zcentral/www_homes/mirror/cgi-bin/publications_today.cgi
+#
+# 
+# SMTWT    after     Validate data
+45 23 * * 0-4 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;scrubscan.pl;validatedata.pl -d  mirrordb
+# SMTWTF   4pm reload of mirrordb (aka: validatedb)
+00 16 * * 0-5 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
+# ------------------------------------------------------------------------
+# ----  1 AM -  3 AM : DATA CLEANING                                  ----
+# ------------------------------------------------------------------------
+#
+#
+# S         3:00am   Validate data, daily + weekly + orphans check (daily)
+00 03 * * 6 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance; validatedata.pl -d -w mirrordb ; orphanChecks.pl mirrordb
+#
+# ========================================================================
+# ====                   MONTHLY SCRIPTS                              ====
+# ========================================================================
+#
+# What exactly does night 0 mean?  Well: 
+#  o The comments in this file indicate what night a cron job runs on, not 
+#    what day.
+#  o Nights start at 5pm and run through the following morning.
+#  o The name of the night is the name of the day the night started on.
+#
+# Night "0" comes from applying this scheme to months.  Does the first
+# night of the month start at 5 pm on the last day of the previous month,
+# or does it start at 5 pm on the first day of the current month?
+#
+# I went with the latter: 
+#  o Night 1 starts at 5 pm on the first day of the current month.
+#  o Therefore, night 0 is the night that starts at 5pm on the last day of 
+#    the previous month.
+#
+# Using night 0 should also help people notice that something different is
+# going on here.  Hopefully, they will then actually put the time in to
+# read these comments.
+#
+#
+# Nights   When      Comments
+# 0         2:30am   DATA CLEANING: Run monthly data validation script.
+30 02 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -m mirrordb
+#
+# 0         3:15am   CURATOR SUPPORT: monthly zgc related statistics email
+15 03 1 * * /research/zcentral/www_homes/mirror/server_apps/Reports/Count.pl
+#
+# 0         3:25am   CURATOR SUPPORT: monthly figure permission check
+25 03 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/fx_permission_check.pl
+#
+#
+# 0         3:27am   curator support: monthly pnas report for dave f.
+27 03 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/pnas_report.pl
+#
+# ========================================================================
+# ====                   YEARLY SCRIPTS                               ====
+# ========================================================================
+#
+# Nights   When      Comments
+# 1         2:40am   DATA CLEANING: Run yearly data validation script.
+40 02 1 1 * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -y mirrordb

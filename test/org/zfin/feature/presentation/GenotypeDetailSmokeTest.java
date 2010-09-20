@@ -1,12 +1,9 @@
 package org.zfin.feature.presentation;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import org.zfin.AbstractSmokeTest;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
  */

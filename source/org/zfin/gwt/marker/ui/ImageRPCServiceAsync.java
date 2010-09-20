@@ -4,7 +4,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.ImageDTO;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 

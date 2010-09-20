@@ -152,7 +152,7 @@ public final class ZfinProperties {
                logger.error("Property["+zfinPropertiesEnum.name() + " not defined for INSTANCE["+ ZfinPropertiesEnum.INSTANCE+"]");
             }
             else{
-                logger.error("Property["+zfinPropertiesEnum.name() + "=["+ zfinPropertiesEnum.value()+"]");
+                logger.info("Property["+zfinPropertiesEnum.name() + "=["+ zfinPropertiesEnum.value()+"]");
             }
         }
     }

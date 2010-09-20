@@ -15,9 +15,9 @@
             jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference
 
             PROPERTIES:
+            rebuildProperties: Builds property files for all instances defined by instances.properties.
+            rebuildPropertiesForInstance: Builds property files the current instance defined by ${INSTANCE} in the environment.
             createEnum: Rebuild java class ZfinPropertiesEnum.
-            createPropertiesFiles: Creates TT file (createTTFile) and env file (createEnvFile) for given INSTANCE.
-            exportAllInstances: Exports all instances defined by instances.properties.
 
             DEVELOPMENT:
             dirtydeploy: Deploys entire WEB-INF environment changes without cleaning

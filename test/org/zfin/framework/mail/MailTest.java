@@ -41,8 +41,8 @@ public class MailTest extends AbstractZfinPropertiesTest{
 
     @Test
     public void emailProps(){
-        assertEquals("test\\@zfin.org",  ZfinPropertiesEnum.DEFAULT_EMAIL.value());
-        assertEquals("test\\@zfin.org",  ZfinProperties.splitValues(ZfinPropertiesEnum.DEFAULT_EMAIL)[0]);
+        assertEquals("test@zfin.org",  ZfinPropertiesEnum.DEFAULT_EMAIL.value());
+        assertEquals("test@zfin.org",  ZfinProperties.splitValues(ZfinPropertiesEnum.DEFAULT_EMAIL)[0]);
         assertEquals("test@zfin.org", mailSender.filterEmail(ZfinPropertiesEnum.DEFAULT_EMAIL.value()));
         assertEquals("test@zfin.org",  mailSender.filterEmail(ZfinProperties.splitValues(ZfinPropertiesEnum.DEFAULT_EMAIL))[0]);
     }

@@ -67,10 +67,8 @@ Create dba function regen_feature_ao_fast_search()
 
     on exception
       set sqlError, isamError, errorText
-      begin
 
-	-- Something terrible happened while creating the new tables
-	-- Get rid of them, and leave the original tables around
+      begin
 
 	on exception in (-255, -668, -535)
 	  --  255: OK to get a "Not in transaction" here, since
@@ -101,46 +99,9 @@ Create dba function regen_feature_ao_fast_search()
 	-- exiting this exception handler will commit the transaction.
 	rollback work;
 
-	-- Don't drop the tables here.  Leave them around in an effort to
-	-- figure out what went wrong.
-
-        let zdbFlagReturn = release_zdb_flag("regen_feature_ao_fast_search");
 	return -1;
       end
     end exception;
-
-    let errorHint = "Grab zdb_flag";
-    if grab_zdb_flag("regen_feature_ao_fast_search") <> 0 then
-      return 1;
-    end if
-
-
-
-  begin work;
-
-  begin -- local exception handler dropping, renaming, and constraints
-
-  define esql, eisam int;
-
-      on exception set esql, eisam
-	-- Any error at this point, just rollback.  The rollback will
-	-- restore all the old tables and their indices.
-	rollback work;
-	-- Now pass the error to the master handler to drop the new tables
-	raise exception esql, eisam;
-      end exception;
-
-      on exception in (-206, -535)
-	-- 206 ignore error when dropping a table that doesn't already exist
-        -- 535 ignore error of already in transaction
-      end exception with resume;
-
-
-      -- Now rename our new tables and indexes to have the permanent names.
-      -- Also define primary keys and alternate keys.
-
-      -- Note that the exception-handler at the top of this file is still active
-
 
    let errorHint = "drop existing temp tables";
     -- drop the table if it already exists
@@ -152,27 +113,26 @@ Create dba function regen_feature_ao_fast_search()
 
     if (exists (select *
 	           from systables
-		   where tabname = "feature_stats_temp")) then
-		drop table feature_stats_new;
+		   where tabname = "feature_stats_working")) then
+		drop table feature_stats_working;
     end if
 
-
-    if (exists (select *
-	           from systriggers
-		   where trigname = "fst_insert_trigger")) then
-		drop trigger fst_insert_trigger;
+   if (exists (select *
+	           from systables
+		   where tabname = "feature_stats_old")) then
+		drop table feature_stats_old;
     end if
 
     let errorHint = "create feature_stats_temp";
     create table feature_stats_temp (
-		fstat_pk_id serial8,
-		fstat_feat_zdb_id varchar(50),
-		fstat_superterm_zdb_id varchar(50),
-		fstat_subterm_zdb_id varchar(50),
+		fstat_pk_id serial8 not null,
+		fstat_feat_zdb_id varchar(50) not null,
+		fstat_superterm_zdb_id varchar(50) not null,
+		fstat_subterm_zdb_id varchar(50) not null,
 		fstat_gene_zdb_id varchar(50),
-		fstat_fig_zdb_id varchar(50),
-		fstat_pub_zdb_id varchar(50),
-		fstat_xpatres_zdb_id varchar(50),
+		fstat_fig_zdb_id varchar(50) not null,
+		fstat_pub_zdb_id varchar(50)  not null,
+		fstat_xpatres_zdb_id varchar(50) not null,
 		fstat_type varchar(20),
 		fstat_img_zdb_id varchar(50)
 	) 
@@ -202,149 +162,130 @@ Create dba function regen_feature_ao_fast_search()
 				       fstat_type,
 				       fstat_img_zdb_id
 	    from feature_stats;
- 
+
+	    let errorHint = "fstat_feat_fk_index";
+	    
+   	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_feat_fk_index")) then
+		       drop index fstat_feat_fk_index;
+            end if
+
+
+	    let errorHint = "fstat_fig_fk_index";
+
+   	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_fig_fk_index")) then
+		       drop index fstat_fig_fk_index;
+            end if
+
+
+	    let errorHint = "fstat_gene_fk_index";
+
+  	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_gene_fk_index")) then
+		       drop index fstat_gene_fk_index;
+            end if
+	    let errorHint = "fstat_img_fk_index";
+  	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_img_fk_index")) then
+		       drop index fstat_img_fk_index;
+            end if
+	  
+
+	    let errorHint = "fstat_pk_id_index";
+
+	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_pk_id_index")) then
+		       drop index fstat_pk_id_index;
+            end if
+	    let errorHint = "fstat_pub_fk_index";
+  	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_pub_fk_index")) then
+		       drop index fstat_pub_fk_index;
+            end if
+	  
+	    let errorHint = "fstat_subterm_fk_index";
+  	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_subterm_fk_index")) then
+		       drop index fstat_subterm_fk_index;
+            end if
+
+
+	    let errorHint = "fstat_superterm_fk_index";
+  	    if (exists (select *
+	               from sysindexes
+		       where idxname = "fstat_superterm_fk_index")) then
+		       drop index fstat_superterm_fk_index;
+            end if
+
+	    create index fstat_feat_fk_index on feature_stats_temp
+    	    	   (fstat_feat_zdb_id) using btree  in idxdbs2;
+
+	    create index fstat_fig_fk_index on feature_stats_temp 
+       	           (fstat_fig_zdb_id) using btree  in idxdbs2;
+
+            create index fstat_gene_fk_index on feature_stats_temp
+    	    	   (fstat_gene_zdb_id) using btree  in idxdbs2;
+
+            create index fstat_img_fk_index on feature_stats_temp
+    	    	   (fstat_img_zdb_id) using btree  in idxdbs3;
+
+            create unique index fstat_pk_id_index on
+    	    	   feature_stats_temp (fstat_pk_id) using btree  in idxdbs1;
+
+            create index fstat_pub_fk_index on feature_stats_temp 
+    	    	   (fstat_pub_zdb_id) using btree  in idxdbs2;
+
+            create index fstat_subterm_fk_index on feature_stats_temp 
+    	    	   (fstat_subterm_zdb_id) using btree  in idxdbs1;
+
+            create index fstat_superterm_fk_index on 
+    	    	   feature_stats_temp (fstat_superterm_zdb_id) using btree  in idxdbs3;
+
+
+ begin work ; 
+ begin -- local exception renaming tables and truncating.
+
+  define esql, eisam int;
+
+      on exception set esql, eisam
+	-- Any error at this point, just rollback. 
+	rollback work;
+	-- Now pass the error to the master handler 
+	raise exception esql, eisam;
+      end exception;
+
+      on exception in (-206, -535)
+	-- 206 ignore error when dropping a table that doesn't already exist
+        -- 535 ignore error of already in transaction
+      end exception with resume;
+
+
+      -- Now rename our new tables and indexes to have the permanent names.
+      -- Also define primary keys and alternate keys.
+
+      -- Note that the exception-handler at the top of this file is still active
+
+
       let errorHint = "rename feature_stats_temp to feature_stats";
-      drop table feature_stats ;
+      rename table feature_stats to feature_stats_working;
       rename table feature_stats_temp to feature_stats ;
 
-      let errorHint = "create trigger feature_stats_insert_trigger";
-      create trigger feature_stats_insert_trigger insert on feature_stats
-          referencing new as new_fst
-          for each row (execute procedure p_feature_stats_check_constraints(new_fst.fstat_pk_id,
-							new_fst.fstat_feat_zdb_id,
-							new_fst.fstat_superterm_zdb_id,
-							new_fst.fstat_subterm_zdb_id,
-							new_fst.fstat_fig_zdb_id,
-							new_fst.fstat_pub_zdb_id,
-							new_fst.fstat_xpatres_zdb_id)
-       );
 
-      let errorHint = "create feature_stats_new";
-      create table feature_stats_new (
-		fstat_pk_id serial8 not null constraint fstat_pk_id_not_null,
-		fstat_feat_zdb_id varchar(50) not null constraint fstat_feat_zdb_id_not_null,
-		fstat_superterm_zdb_id varchar(50) not null constraint fstat_superterm_zdb_id_not_null,
-		fstat_subterm_zdb_id varchar(50) not null constraint fstat_subterm_zdb_id_not_null,
-		fstat_gene_zdb_id varchar(50),
-		fstat_fig_zdb_id varchar(50) not null constraint fstat_fig_zdb_id_not_null,
-		fstat_pub_zdb_id varchar(50) not null constraint fstat_pub_zdb_id_not_null,
-		fstat_xpatres_zdb_id varchar(50) not null constraint fstat_xpatres_zdb_id_not_null,
-		fstat_type varchar(20),
-		fstat_img_zdb_id varchar(50)
-      ) 
-      fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-      extent size 1024 next size 1024 ;
+      truncate table feature_stats_working reuse storage;
+   commit work;
 
-          let errorHint = "fstat_superterm_fk_index";
-	  -- create indexes
-    	  create index fstat_superterm_fk_index 
-	   on feature_stats_new (fstat_superterm_zdb_id) 
-           using btree in idxdbs3;
- 
-          let errorHint = "fstat_subterm_fk_index";
-   	  create index fstat_subterm_fk_index 
-           on feature_stats_new (fstat_subterm_zdb_id) 
-           using btree in idxdbs1;
-
-          let errorHint = "fstat_gene_fk_index";
-    	  create index fstat_gene_fk_index 
-           on feature_stats_new (fstat_gene_zdb_id) 
-           using btree in idxdbs2;
-
-          let errorHint = "fstat_pk_id_index";
-    	  create unique index fstat_pk_id_index 
-           on feature_stats_new (fstat_pk_id) 
-           using btree in idxdbs1; 
-
-          let errorHint = "fstat_pub_fk_index";
-    	  create index fstat_pub_fk_index 
-           on feature_stats_new (fstat_pub_zdb_id) 
-           using btree in idxdbs2;
- 
-         let errorHint = "fstat_feat_fk_index";
-    	  create index fstat_feat_fk_index 
-           on feature_stats_new (fstat_feat_zdb_id) 
-           using btree in idxdbs2;
-
-          let errorHint = "fstat_img_fk_index";
-    	  create index fstat_img_fk_index 
-           on feature_stats_new (fstat_img_zdb_id) 
-           using btree in idxdbs3;
-
-
-          let errorHint = "fstat_fig_fk_index";
-    	  create index fstat_fig_fk_index 
-           on feature_stats_new (fstat_fig_zdb_id) 
-           using btree in idxdbs2;
-
-	  
-          let errorHint = "fstat_epxression_fk_constraint_odc"; 
-          -- create foreign keys
-
-	  alter table feature_stats_new 
-	    add constraint (foreign key (fstat_xpatres_zdb_id)
-	    references expression_result on delete cascade constraint 
-	    fstat_epxression_fk_constraint_odc);
-
-          let errorHint = "fstat_gene_fk_constraint_odc";
-
-    	  alter table feature_stats_new 
-	    add constraint (foreign key (fstat_gene_zdb_id) 
-	    references marker on delete cascade constraint 
-	    fstat_gene_fk_constraint_odc);
-
-          let errorHint = "fstat_superterm_fk_constraint_odc";
-
-    	  alter table feature_stats_new 
-	    add constraint (foreign key (fstat_superterm_zdb_id)
-	    references term on delete cascade constraint 
-	    fstat_superterm_fk_constraint_odc);
- 
-         let errorHint = " fstat_subterm_fk_constraint_odc";
-
-    	 alter table feature_stats_new 
-           add constraint (foreign key (fstat_subterm_zdb_id)
-	   references term on delete cascade constraint 
-	   fstat_subterm_fk_constraint_odc);
-
-         let errorHint = "fstat_figure_fk_constraint_odc";
-
-    	 alter table feature_stats_new 
-	   add constraint (foreign key (fstat_fig_zdb_id)
-	   references figure on delete cascade constraint 
-	   fstat_figure_fk_constraint_odc);
-
---         let errorHint = "fstat_img_fk_constraint_odc";
-
---    	 alter table feature_stats_new 
---	   add constraint (foreign key (fstat_img_zdb_id)
---	   references image on delete cascade constraint 
---	   fstat_image_fk_constraint_odc);
-
-         let errorHint = "fstat_publication_fk_constraint_odc";
-
-    	 alter table feature_stats_new 
-	   add constraint (foreign key (fstat_pub_zdb_id)
-	   references publication on delete cascade constraint 
-	   fstat_publication_fk_constraint_odc);
-
-         let errorHint = "fstat_feature_fk_constraint_odc";
-
-    	 alter table feature_stats_new 
-	   add constraint (foreign key (fstat_feat_zdb_id)
-	   references marker on delete cascade constraint 
-	   fstat_feature_fk_constraint_odc);
-
-         let errorHint = "fstat_primary_key_constraint";
-
-    	 alter table feature_stats_new 
-	   add constraint primary key (fstat_pk_id)
-	   constraint fstat_primary_key_constraint;
-
-      -- Antibodies: insert records for xpatres_superterm_zdb_id
-
-      let errorHint = "insert records for xpatres_superterm_zdb_id";		
-      insert into feature_stats_new( fstat_feat_zdb_id,
+   begin work;
+  
+      let errorHint = 'insert records for xpatres_superterm_zdb_id';		
+      insert into feature_stats_working( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
 		       fstat_gene_zdb_id,
@@ -375,7 +316,7 @@ Create dba function regen_feature_ao_fast_search()
       let errorHint = "Antibodies: insert records for xpatres_subterm_zdb_id";
 	-- Antibodies: insert records for xpatres_subterm_zdb_id
 
-	insert into feature_stats_new( fstat_feat_zdb_id,
+	insert into feature_stats_working( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
 		       fstat_gene_zdb_id,
@@ -402,7 +343,7 @@ Create dba function regen_feature_ao_fast_search()
 	let errorHint = "High-Quality-Probes: insert records for xpatres_superterm_zdb_id";
 
 	-- High-Quality-Probes: insert records for xpatres_superterm_zdb_id
-	insert into feature_stats_new (fstat_feat_zdb_id,
+	insert into feature_stats_working (fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
 		       fstat_gene_zdb_id,
@@ -432,7 +373,7 @@ Create dba function regen_feature_ao_fast_search()
 
 	let errorHint = "High-Quality-Probes: insert records for xpatres_subterm_zdb_id";
 	-- High-Quality-Probes: insert records for xpatres_subterm_zdb_id
-	insert into feature_stats_new (fstat_feat_zdb_id,
+	insert into feature_stats_working (fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
 		       fstat_gene_zdb_id,
@@ -461,22 +402,11 @@ Create dba function regen_feature_ao_fast_search()
 		and img_fig_zdb_id = fig_zdb_id
                 and xpatres_subterm_zdb_id is not null;
 
-
-         let errorHint = "drop feature_stats second time";
-
-         if (exists (select *
-	               from systables
-		       where tabname = "feature_stats")) then
-	 drop table feature_stats;
-
-    	 end if
-
-          
          let errorHint = "rename table feature_stats_new";
 
-  	 rename table feature_stats_new to feature_stats;
-
-          
+	 rename table feature_stats to feature_stats_old;
+  	 rename table feature_stats_working to feature_stats;
+        
 	 let errorHint = "update statistics for feature_stats";
 
          update statistics high for table feature_stats;
@@ -486,10 +416,6 @@ Create dba function regen_feature_ao_fast_search()
   commit work ;
   
  end -- master exception handler
-
- if release_zdb_flag("regen_feature_ao_fast_search") <> 0 then
-   return 1;
- end if
 
 return 0;
 

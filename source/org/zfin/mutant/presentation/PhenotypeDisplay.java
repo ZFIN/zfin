@@ -1,10 +1,10 @@
 package org.zfin.mutant.presentation;
 
 import org.zfin.expression.Figure;
-import org.zfin.mutant.Genotype;
 import org.zfin.marker.Marker;
-import org.zfin.publication.Publication;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.Term;
+import org.zfin.publication.Publication;
 
 import java.util.Set;
 

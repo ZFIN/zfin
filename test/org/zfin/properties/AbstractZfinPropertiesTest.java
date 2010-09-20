@@ -1,19 +1,15 @@
 package org.zfin.properties;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.zfin.TestConfiguration;
-
-import static org.junit.Assert.*;
 
 /**
  * Test if the property file can be read.
  */
 public abstract class AbstractZfinPropertiesTest {
 
-    public static final String TEST_PROPERTIES_FILE = "./externals/properties/test-properties.properties";
+    public static final String TEST_PROPERTIES_FILE = "./commons/env/test-properties.properties";
     private String currentPropertyFile ;
 
     /**

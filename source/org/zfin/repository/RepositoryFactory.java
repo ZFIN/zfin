@@ -22,7 +22,9 @@ import org.zfin.mutant.repository.HibernateMutantRepository;
 import org.zfin.mutant.repository.HibernatePhenotypeRepository;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.ontology.repository.HibernateMarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.HibernateOntologyRepository;
+import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
 import org.zfin.orthology.repository.OrthologyRepository;
@@ -57,6 +59,7 @@ public class RepositoryFactory {
     private static FeatureRepository featRep;
     private static ExpressionRepository xpatsumRep;
     private static MarkerRepository markerRep;
+    private static MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository;
     private static InfrastructureRepository infraRep;
     private static SequenceRepository seqRep;
     private static OrthologyRepository orthoRep;
@@ -168,6 +171,12 @@ public class RepositoryFactory {
         if (infraRep == null)
             infraRep = new HibernateInfrastructureRepository();
         return infraRep;
+    }
+
+    public static MarkerGoTermEvidenceRepository getMarkerGoTermEvidenceRepository() {
+        if (markerGoTermEvidenceRepository == null)
+            markerGoTermEvidenceRepository = new HibernateMarkerGoTermEvidenceRepository();
+        return markerGoTermEvidenceRepository;
     }
 
     public static void setMarkerRepository(MarkerRepository markerRep) {

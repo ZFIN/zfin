@@ -59,6 +59,10 @@
 		<priority value="ERROR"/>
 	</category>
 
+	<category name="net.sf.ehcache.EhCacheProvider">
+		<priority value="ERROR"/>
+	</category>
+
     <!-- Log the parameter substitutions in the SQL statement. Unfortunately logging org.hibernate gives a lot of other junk as well -->
     <category name="org.hibernate">
 		<priority value="ERROR"/> 

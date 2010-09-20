@@ -240,7 +240,7 @@
     </definition>
 
     <definition name="zfin-properties.page" extends="dev_layout">
-        <put name="staticTitle" value="Quartz Jobs"/>
+        <put name="staticTitle" value="Zfin Properties Enum Values"/>
         <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_properties.jsp"/>
     </definition>
 

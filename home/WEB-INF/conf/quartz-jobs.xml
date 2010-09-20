@@ -7,7 +7,7 @@
     <!-- register them in the scheduler -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!-- name used to publish applicationContext to Quartz Job instances, so they can call business services -->
-        <property name="autoStartup" value="@RUN_QUARTZ_JOBS@"/>
+        <property name="autoStartup" value="${RUN_QUARTZ_JOBS}"/>
         <property name="triggers">
             <list>
                 <ref bean="regenerateWebHostDatabasesDaily"/>
@@ -20,6 +20,7 @@
                 <ref bean="reloadOntologyTrigger"/>
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
+                <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -37,7 +38,8 @@
     <bean id="regenerateWebHostDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Regenerate WebHost Curated Databases"/>
+                <property name="name" value="Blast - Regenerate WebHost Curated Databases"/>
+                <property name="group" value="Blast Databases"/>
                 <property name="jobClass" value="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
             </bean>
         </property>
@@ -51,7 +53,8 @@
     <bean id="validateDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Validate Blast Databases"/>
+                <property name="name" value="Blast - Validate Blast Databases"/>
+                <property name="group" value="Blast Databases"/>
                 <property name="jobClass" value="org.zfin.sequence.blast.ValidateBlastDatabases"/>
             </bean>
         </property>
@@ -61,10 +64,25 @@
         <property name="cronExpression" value="0 0 3 * * ?"/>
     </bean>
 
+    <bean id="removeGoTermsFromWithdrawnMarkersWeekly" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="GO - Remove Go Terms From Withdrawn Markers"/>
+                <property name="group" value="GO"/>
+                <property name="jobClass" value="org.zfin.datatransfer.go.RemoveGoTermsFromWithdrawnMarkersJob"/>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--a nice lookup-->
+        <!--fire at 8.12 pm every Friday -->
+        <property name="cronExpression" value="0 12 20 ? * FRI"/>
+    </bean>
+
     <bean id="pushAntibodiesToWikiWeekly" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Synchronize ZFIN Antibodies With Wiki"/>
+                <property name="name" value="Wiki - Synchronize ZFIN Antibodies With Wiki"/>
+                <property name="group" value="Wiki"/>
                 <property name="jobClass" value="org.zfin.wiki.AntibodyWikiSynchronizationJob"/>
             </bean>
         </property>
@@ -77,7 +95,8 @@
     <bean id="setPermissionsToOwnerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Set Permissions to Owner on Wiki"/>
+                <property name="name" value="Wiki - Set Permissions to Owner on Wiki"/>
+                <property name="group" value="Wiki"/>
                 <property name="jobClass" value="org.zfin.wiki.SetPermissionsToOwnerJob"/>
             </bean>
         </property>
@@ -91,7 +110,8 @@
     <bean id="validateZebrafishBookPermissionsTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Validate Zebrafish Book Permissions"/>
+                <property name="name" value="Wiki - Validate Zebrafish Book Permissions"/>
+                <property name="group" value="Wiki"/>
                 <property name="jobClass" value="org.zfin.wiki.ValidatePermissionsForZebrafishBookJob"/>
             </bean>
         </property>
@@ -104,7 +124,8 @@
     <bean id="sandboxCleanerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Clean Sandbox Wiki"/>
+                <property name="name" value="Wiki - Clean Sandbox Wiki"/>
+                <property name="group" value="Wiki"/>
                 <property name="jobClass" value="org.zfin.wiki.SandboxCleanerJob"/>
             </bean>
         </property>
@@ -117,7 +138,8 @@
     <bean id="updateDOIDailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Update DOIs Daily"/>
+                <property name="name" value="DOI - DOI Daily Update"/>
+                <property name="group" value="DOI"/>
                 <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
                 <property name="jobDataAsMap">
                     <map>
@@ -137,7 +159,8 @@
     <bean id="updateDOIMonthlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Update DOIs Monthly"/>
+                <property name="name" value="DOI - DOI Monthly Update"/>
+                <property name="group" value="DOI"/>
                 <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
                 <!--just use defaults-->
             </bean>
@@ -150,7 +173,8 @@
     <bean id="microarrayTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Update Microarrays"/>
+                <property name="name" value="Microarray - Microarray Update"/>
+                <property name="group" value="Microarray"/>
                 <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayJob"/>
             </bean>
         </property>
@@ -163,7 +187,8 @@
     <bean id="reloadOntologyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Reload Ontologies"/>
+                <property name="name" value="Ontology - Reload Ontologies"/>
+                <property name="group" value="Ontology"/>
                 <property name="jobClass" value="org.zfin.ontology.quartz.ReloadOntologiesJob"/>
             </bean>
         </property>

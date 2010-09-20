@@ -1,0 +1,9 @@
+# ----------------  SANITY CHECKS  -------------
+
+# The last two tags are special in makespecific.  They are used to detect 
+# any tags that weren't translated and report an error if any are found.  
+# They will catch tags that aren't in this file, or when the opening or 
+# closing parts of the tag are mistyped.
+
+<!--|	<!--|
+|-->	|-->

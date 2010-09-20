@@ -1,0 +1,211 @@
+#! /private/bin/rebol -qs
+REBOL[
+    Title: "Make Specific"
+    Date:  [2000-Sept-01 2000-Sept-20 2000-Nov-6 2001-Feb-1 ]
+    Version: 0.1.3
+    Author: "Tom Conlin"
+    File: %makespecific
+
+    Purpose: {
+        takes an input file applies supplied translations ,
+        writes translated output file
+        the format of the translation table is expected to be
+        a single key-value pair per line separated by a space.
+        if the key system has a tag enclosing structure  ala html <!--|foo|-->
+        the prefix  or postfix tag  may be repeated in the translation table and after
+        the translation is finished unmatched (preamble)tags will be announced
+
+        process:
+        the translation keys are sorted by length and the longest are applied first.
+        at this point keys are not expected to be nested
+        (tho clever use of the translation table that involved embeding  shorter keys in
+        the value of longer keys would get around part of it but I havent noticed a reason to do it)
+
+        the normal key value order of the translation table may be reversed to generate
+        generic templates from specific files.
+
+    }
+    comment{
+         I am not expecting spaces in filenames.
+         I am finding keys to be replaced without respect to their case.
+         that is  UC == lc == i_don't_care
+
+         will the translation table have spaces in the keys or values
+         full path?   absoulte|relative path
+    }
+]; end header block
+
+comment{
+figure out how the system object changed between versions
+causing script to break because it did not find or parse its args
+
+;system/user/home    -- User's home directory
+;system/script/path  -- Where the script is found
+;system/options/path -- Where you were when you invoked the script
+;system/script/args  -- Where the arguments are, (in one string)
+
+foreach item [
+        system/user/home
+        system/script/path
+        system/options/path
+        system/script/args
+][print [:item "==" mold item]]
+}
+
+
+;callpath:       system/script/parent/path  ;abs path called from (pre Nov 5 2000)
+callpath:        system/options/path        ;abs path called from
+
+args:             copy ""
+infile:           copy ""
+transfile:        copy ""
+outfile:          copy ""
+
+; make pretty darn sure the arguments make sense
+; 'any' is short circut series of OR's
+; so each test will only be performed
+; if none of the preceding tests have returned true
+
+if any[
+           error? args: try [trim to-string copy system/script/args]
+           error? try [args: parse args none]; are there any args?
+           (length? args)  < 3                           ; are there too few args?
+           ;(length? args)  > 3
+
+           error? try [infile: trim pick args 1] ; can't really fail
+           equal? infile ""                                     ;is the input file name blank?
+           ; if the input file is given with an absolute path use it as is
+           ; otherwise make it relative to where the script was called from.
+           error? try[
+                either equal? (pick infile 1) #"/"
+                [infile: to-file infile]
+                [infile: to-file rejoin[callpath infile]]
+           ]
+           error? try [read infile] ;can we access the input file?
+
+           error? try [transfile:  pick args 2] ; can't really fail
+           equal? transfile ""                                   ;is the trans table file name blank?
+           ; if the transput file is given with an absolute path use it as is
+           ; otherwise make it relative to where the script was called from.
+           error? try[
+                either equal? (pick transfile 1) #"/"
+                        [transfile: to-file transfile]
+                        [transfile: to-file rejoin[callpath transfile]]
+           ]
+           error? try [read transfile] ;can we access the trans table file?
+
+           error? try [outfile: pick args 3]
+           equal? outfile ""
+           ; if the out file is given with an absolute path use it as is
+           ; otherwise make it relative to where the script was called from.
+           error? try[
+               either equal? (pick outfile 1) #"/"
+                   [outfile: to-file outfile]
+                   [outfile: to-file rejoin[callpath outfile]]
+           ]
+           ; check we are able to write the output file...
+][
+   print [newline args
+{^/^/Usage: Make-Specific in-filespec translation-table-filespec out-filespec ^/
+the infile is a file containing (some)tags that will corespond with the keys in the translation table.
+the translation table is, a single key-value pair per line separated by a space.
+if the key system has a tag enclosing structure  ala html <!--|FOO|-->
+the prefix  or postfix tag  may be repeated in the translation table and after the translation is finished
+unmatched (preamble) tags will be announced }
+]
+   quit
+]; end sanity check for command line args
+
+;;;
+;;; don't blink
+;;;
+
+Make-Specific: func[ "automated search and replace"
+    infile     "input  file path and name"
+    transfile  "filename and path and name"
+    outfile    "output file path and name"
+    k [integer!]    "1|2  one for make specific, two for make unspecific "
+    /local buffer line  translation-table  v key value
+][
+    buffer:  read/lines transfile
+    translation-table: copy[]
+    foreach line buffer[
+
+        ;;; to handle unbalanced (double)quotes need /all refinement on parse
+        ;;; /all refinement on parse causes multiple whitespaces to be significant
+        ;;; pre process to remove redundant ws
+        line: trim line                   ; remove extra spaces (from begin & end)
+        line: replace/all line "^-" " "   ; convert tabs to (a) space
+        line: replace/all line "  " " "   ; convert two spaces to one space
+
+        ; ignore lines beginning with hash  and blanks
+        if all[not equal? (pick line 1) #"#" not equal?  line "" ] [
+            key:   copy ""
+            value: copy ""
+            parse/all line [
+                      any { }
+                      copy key to { }
+                      any { }
+                      copy value to end
+                      (append/only translation-table
+                        (to-block reduce [ trim to-string :key  trim to-string :value ])
+                      )
+                                          ]
+                ;(print ["RAW: " key tab value])
+        ]
+    ]
+    either equal? k 1 [v: 2][v: 1]
+
+        ;foreach row translation-table[ print [ row/1 row row/2 ] ]
+
+    sort/compare translation-table (func[a b][
+                                 (length?  (pick a :k)) >
+                                 (length?  (pick b :k))
+        ])
+
+comment
+{ pull these checks out and run it as a standalone translation table checker
+    ; want to know if there are duplicate keys (especially if values  different)
+ 
+    ; want to determine if a key is found in the value of a kv pair that is applied before
+    ; since this would change a previously set value  
+    for i 2 length? translation-table 1[
+      for j 1 (i - 1) 1 [
+         if find translation-table/:j/:v translation-table/:i/:k
+            [print [ i ": "  translation-table/:i/:k  "  "  j ": " translation-table/:j/:v ]]
+      ]
+    ]
+
+}
+
+        ;probe translation-table
+        ;print "^/^/"
+        ;foreach row translation-table[print row/1]
+        ;write %/tmp/tt.tab translation-table
+        ;foreach row translation-table[ print [row/1 row row/2] ]
+
+    buffer: read infile
+    foreach keyvalue translation-table [
+        replace/all buffer keyvalue/:k  keyvalue/:v
+    ]
+    ; check the buffer for unmatched tags
+    key: back tail translation-table
+    key: pick parse to-string key none 1
+    either find buffer key 
+        [print ["warning un-matched tag " key "  found"]]
+        [   key: back back tail translation-table
+            key: pick parse to-string key none 1      	
+            if find buffer key [
+		        print ["warning un-matched tag " key " found"]
+	        ]
+        ]
+
+    ; file permission default to current umask
+    write outfile buffer
+
+    ; write/allow outfile buffer [read write execute]
+    ; effect:      make file +rwx for owner
+    ; side effect: remove all permissions for other & group
+];;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Make-Specific infile transfile outfile 1

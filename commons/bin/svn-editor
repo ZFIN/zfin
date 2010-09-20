@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "BugzID: <Must delete this line to abort>\n" > /tmp/$USER.tmpdiff.2.txt ; 
+cat "$1" >> /tmp/$USER.tmpdiff.2.txt ; 
+cat /tmp/$USER.tmpdiff.txt >> /tmp/$USER.tmpdiff.2.txt ;
+cat /tmp/$USER.tmpdiff.2.txt > "$1" ;
+$EDITOR "$1" ;
+rm -f /tmp/$USER.tmpdiff.txt ; 

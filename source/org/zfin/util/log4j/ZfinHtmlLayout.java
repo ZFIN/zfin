@@ -3,7 +3,6 @@ package org.zfin.util.log4j;
 import org.apache.log4j.HTMLLayout;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
-import org.apache.log4j.helpers.ISO8601DateFormat;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.helpers.Transform;
 import org.apache.log4j.spi.LocationInfo;

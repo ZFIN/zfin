@@ -1,0 +1,184 @@
+# Translate table for converting from GENERIC TO SPECIFIC for creating
+# the manx web page hierarchy that is used by Tim Mason to update ZIRC
+# related static pages in the web site.
+#
+# $Id: manx.tt,v 1.30 2008-02-28 21:21:28 pm Exp $
+# $Source: /research/zusers/ndunn/CVSROOT/Commons/env/manx.tt,v $
+#
+
+# Database name
+
+<!--|DB_NAME|-->	mnxdb
+
+
+# -----------  Host/Internet mappings -----------
+
+# Machine name
+<!--|MACHINE_NAME|-->		embryonix
+<!--|DOMAIN_NAME|-->		manx.zfin.org
+
+# The host name as it occurs in the sqlhosts file.  This is needed by JDBC, 
+# and it will change whenever zfin.org is moved on to or off of embryonix
+<!--|SQLHOSTS_HOST|-->		embryonix.cs.uoregon.edu
+
+
+# ------------  Directories  -------------------
+
+# The FTP_ROOT value must be the same as the TARGETFTPROOT environment variable
+
+<!--|ROOT_PATH|-->		/research/zcentral/www_homes/manx
+<!--|FTP_ROOT|-->		/research/zcentral/ftp/test/manx
+<!--|IMAGE_LOAD|-->		/imageLoadUp
+<!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
+<!--|PDF_LOAD|-->		/PDFLoadUp
+
+# ------------ BLAST MAPPING -------------
+
+<!--|INTERNAL_BLAST_PATH|-->	/research/zunloads/dev_blastfiles/
+
+# ------------  INFORMIX SERVER MAPPINGS ------------
+
+<!--|INFORMIX_SERVER|-->	wanda
+<!--|INFORMIX_DIR|-->		/private/apps/Informix/informix
+<!--|ONCONFIG_FILE|-->		onconfig
+<!--|SQLHOSTS_FILE|-->		sqlhosts
+<!--|INFORMIX_PORT|-->		2002
+
+# ----------- GBrowse Mapping --------------------
+
+<!--|GBROWSE_DB_HOST|-->	zfinmysql.uoregon.edu
+<!--|GBROWSE_DB|-->	vega_37
+<!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
+<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
+
+# ------------- Unix Usernames ---------------
+
+# None of this matters for mirror.
+
+<!--|APP_PAGE_USER|-->			zfinner
+<!--|APACHE_USER|-->			zfishweb
+<!--|DB_OWNER|-->			tmason
+
+
+
+# ------------- Color Palette ---------------
+
+<!--|BACKGROUND_COLOR|-->		#FFFFCC
+<!--|HEADER_COLOR|-->			#99CCCC
+<!--|HIGHLIGHT_COLOR|-->		#EEEEEE
+<!--|HIGHLIGHTER_COLOR|-->		#F4F4F4
+<!--|LINKBAR_COLOR|-->			#006666
+<!--|SIDEBAR_COLOR|-->			#CCCCCC
+
+
+# ------------ CSS Background Tags -----------
+
+<!--|SITE_BACKGROUND|-->	#FFFFCC
+<!--|HEADER_BACKGROUND|-->	#FFFFCC
+<!--|ZDBHOME_BACKGROUND|-->	url(/images/zdbhome-background.jpg) 
+
+
+# -------------  CGI MAPPINGS ----------------
+
+# cgi-bin path relative to ROOT_PATH.
+
+<!--|CGI_BIN_DIR_NAME|-->		cgi-bin
+
+
+# webdriver currently resides in cgi-bin directory, but might want it
+# somewhere else eventually
+
+<!--|WEBDRIVER_PATH_FROM_ROOT|-->	manx/webdriver
+
+
+
+# ---------------  EMAILS -----------
+
+# Who checklinks should send e-mail to.  This should be a space separated
+# list of e-mail addresses.
+
+<!--|CHECKLINKS_EMAILS|-->		mason@uoneuro.uoregon.edu
+
+# Who we should send locus registrations to.  The \ is needed because this
+# is included (only) in perl scripts.
+
+<!--|LOCUS_REGISTRATION_EMAIL|-->	mason\@uoneuro.uoregon.edu
+
+# Who we should send db check to.
+<!--|CURATORS_AT_ZFIN|-->       mason\@cs.uoregon.edu
+<!--|NOMEN_COORDINATOR|-->      mason\@cs.uoregon.edu
+<!--|COUNT_VEGA_ERR|-->		mason\@cs.uoregon.edu	
+<!--|COUNT_VEGA_OUT|-->		mason\@cs.uoregon.edu
+<!--|COUNT_THISSE_VEGA_ERR|-->		mason\@cs.uoregon.edu	
+<!--|COUNT_THISSE_VEGA_OUT|-->		mason\@cs.uoregon.edu
+<!--|COUNT_ZGC_ERR|-->		mason\@cs.uoregon.edu	
+<!--|COUNT_ZGC_OUT|-->		mason\@cs.uoregon.edu
+<!--|COUNT_PATO_ERR|-->		mason\@cs.uoregon.edu	
+<!--|COUNT_PATO_OUT|-->		mason\@cs.uoregon.edu
+
+<!--|VALIDATION_EMAIL_MORPHOLINO|-->    mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_AD|-->		mason\@uoneuro.uoregon.edu	
+<!--|VALIDATION_EMAIL_XPAT|-->		mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_LINKAGE|-->	mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_OTHER|-->		mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_CURATOR|-->	mason\@uoneuro.uoregon.edu	
+<!--|VALIDATION_EMAIL_DBA|-->		mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_EST|-->		mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_GENE|-->		mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_MUTANT|-->	mason\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_GENOCURATOR|-->   mason\@cs.uoregon.edu
+
+# Who we should send Request a new AO term to
+<!--|REQUEST_NEW_ANATOMY_EMAIL|-->	mason\@uoneuro.uoregon.edu
+
+
+# Who we should send SWISS-PROT load reports to.
+
+<!--|SWISSPROT_EMAIL_ERR|-->		mason\@uoneuro.uoregon.edu	
+<!--|SWISSPROT_EMAIL_REPORT|-->		mason\@uoneuro.uoregon.edu
+<!--|SWISSPROT_EMAIL_CURATOR|-->	mason\@uoneuro.uoregon.edu	
+
+# Who we should send GO file generation reports to.
+<!--|GO_EMAIL_ERR|-->			mason\@uoneuro.uoregon.edu	
+<!--|GO_EMAIL_CURATOR|-->		mason\@uoneuro.uoregon.edu	
+
+# Who we should send AO file to.
+<!--|AO_EMAIL_CURATOR|-->		mason\@cs.uoregon.edu	
+<!--|AO_EMAIL_ERR|-->			mason\@cs.uoregon.edu	
+
+# Who we should send PATO file to.
+<!--|PATO_EMAIL_CURATOR|-->		mason\@cs.uoregon.edu
+
+
+
+# ZIRC related e-mails
+#  systems staff at ZIRC.
+<!--|ZIRC_EMAIL_SYSTEMS|-->		mason\@uoneuro.uoregon.edu
+
+# Who we should send LN54 emails to
+<!--|LN54_CONTACT_EMAIL|-->		mason\@cs.uoregon.edu
+
+# zfin administrative email
+<!--|ZFIN_ADMIN|-->		        mason\@cs.uoregon.edu
+
+# web administration email
+<!--|WEB_ADMIN_EMAIL|-->	mason\@cs.uoregon.edu 
+
+# ----------------  COOKIES  -------------
+
+# Each site *can* have its own cookie value, although for most
+# testing purposes, they can all use the same.
+
+<!--|ZFIN_COOKIE|-->			st4mwtR
+
+
+
+# ----------------  SANITY CHECKS  -------------
+
+# The last two tags are special in makespecific.  They are used to detect 
+# any tags that weren't translated and report an error if any are found.  
+# They will catch tags that aren't in this file, or when the opening or 
+# closing parts of the tag are mistyped.
+
+<!--|	<!--|
+|-->	|-->
