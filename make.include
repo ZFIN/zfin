@@ -91,19 +91,9 @@ DbNameCheck:
 	$(error DBNAME Environment variable not set.)
 endif
 
-
-# TRANSLATETABLE must be defined as an absolute path
-
 ifndef TRANSLATETABLE
-TranslateTableCheck:
-	$(error TRANSLATETABLE Environment variable not set.)
+TRANSLATETABLE = ${TOP}/commons/env/${INSTANCE}.tt
 endif
-ifneq ($(filter /%,$(TRANSLATETABLE)),$(TRANSLATETABLE))
-TranslateTableNotAbsolute:
-	$(error TRANSLATETABLE must be an absolute path.)
-endif
-
-
 
 
 # ---------------  Variable Definitions  --------------------------------
