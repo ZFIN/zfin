@@ -69,23 +69,23 @@
 # -------------------------------------------------------------------------------------------------------
 # 10 AM first day of the month report vacation and sick hours to Neuroscience contact
 #
-00 10 1 * * /research/zcentral/Commons/bin/email.pl
+00 10 1 * * /research/zusers/almost/commons/bin/email.pl
 #
 # M   10:10 AM  technical staff weekly status reports
-10 10 * * 1 /research/zcentral/Commons/bin/status_report.pl
+10 10 * * 1 /research/zusers/almost/commons/bin/status_report.pl
 #
 # 20th of each month reminder for curator project reports
-00 10 20 * * /research/zcentral/Commons/bin/monthly_report.pl
+00 10 20 * * /research/zusers/almost/commons/bin/monthly_report.pl
 # 
 # 20th of each month reminder to restart ontape on production
-00 10 20 * * /research/zcentral/Commons/bin/monthly_ontape.pl
+00 10 20 * * /research/zusers/almost/commons/bin/monthly_ontape.pl
 # 
 # 1st of each month reminder to change code checkin
-00 10 01 * * /research/zcentral/Commons/bin/code_checkin_reminder.pl
+00 10 01 * * /research/zusers/almost/commons/bin/code_checkin_reminder.pl
 #
 # Daily 3:30am   Populate dblink microarrays.
 #35 12 * * * /research/zcentral/www_homes/almost/server_apps/data_transfer/Microarray/microarray.sh
 #
 # several times a year in the middle of a month send email about GenBank TPA
-0 0 15 4,8,12 * /research/zcentral/Commons/bin/TPA_nag.sh
+0 0 15 4,8,12 * /research/zusers/almost/commons/bin/TPA_nag.sh
 #

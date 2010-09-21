@@ -55,16 +55,16 @@
 # -------------------------------------------------------------------------------------------------------
 # 10 AM first day of the month report vacation and sick hours to Neuroscience contact
 #
-00 10 1 * * /research/zcentral/Commons/bin/email.pl
+00 10 1 * * /research/zusers/almost/commons/bin/email.pl
 #
 # M   10:10 AM  technical staff weekly status reports
-10 10 * * 1 /research/zcentral/Commons/bin/status_report.pl
+10 10 * * 1 /research/zusers/almost/commons/bin/status_report.pl
 #
 # 20th of each month reminder for curator project reports
-00 10 20 * * /research/zcentral/Commons/bin/monthly_report.pl
+00 10 20 * * /research/zusers/almost/commons/bin/monthly_report.pl
 # 
 # 20th of each month reminder to restart ontape on production
-00 10 20 * * /research/zcentral/Commons/bin/monthly_ontape.pl
+00 10 20 * * /research/zusers/almost/commons/bin/monthly_ontape.pl
 # 
 #
 # several times a year in the middle of a month send email about GenBank TPA
