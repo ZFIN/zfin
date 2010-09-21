@@ -124,7 +124,7 @@ Message: $MI_ERRORMSG
             ==     but not fh, fl, fr
             ==  mi should include mik1 etc.
             == And 'sb' should be finding sb13fixe
-            == And nk should also finds nksag, nksagm, nksagp etc
+            == And nk should also finds nksag, nksagm, nksagp, nkhgn, nkfuji, nkxig, nku etc
             ====================================================================
     <?/MICOMMENT>      
       <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
@@ -164,10 +164,8 @@ Message: $MI_ERRORMSG
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>
       <?MIELSE COND="$(EQ,$adn_beginningLetter,nk)">  
-        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,s))">
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?/MIBLOCK>        
       <?MIELSE COND="$(EQ,$adn_beginningLetter,mi)">        
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNumD),$(EQ,$adn_firstNumD,k))">
           <?MIVAR>$1<?/MIVAR> <br/>
@@ -201,7 +199,7 @@ Message: $MI_ERRORMSG
             ==     but not fh, fl, fr
             ==  mi should include mik1 etc.
             == And 'sb' should be finding sb13fixe
-            == And nk should also finds nksag, nksagm, nksagp etc            
+            == And nk should also finds nksag, nksagm, nksagp, nkhgn, nkfuji, nkxig, nku etc            
             ====================================================================
     <?/MICOMMENT>      
       <?MIBLOCK COND="$(EQ,$adn_beginningLetter,t)">
@@ -239,10 +237,8 @@ Message: $MI_ERRORMSG
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
         <?/MIBLOCK>    
       <?MIELSE COND="$(EQ,$adn_beginningLetter,nk)">  
-        <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,s))">
           <?MIVAR>$1<?/MIVAR> <br/>
           <?MIVAR>$(SETVAR,$adn_count,$(+,$adn_count,1))<?/MIVAR>
-        <?/MIBLOCK>       
       <?MIELSE COND="$(EQ,$adn_beginningLetter,mi)">        
         <?MIBLOCK COND="$(OR,$(ISNUM,$adn_firstNum),$(EQ,$adn_firstNum,k))">
           <?MIVAR>$1<?/MIVAR> <br/>
