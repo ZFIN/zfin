@@ -1,4 +1,4 @@
-#! /bin/tcsh
+#!/bin/tcsh
 
 setenv INFORMIXDIR <!--|INFORMIX_DIR|-->
 setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
@@ -26,11 +26,24 @@ end
 
 if ($HOST != "embryonix") then
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
-  /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
-  /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
+  #  $? is the return value of the last-executed command.  
+  #  When it works correctly, unloaddb.pl returns 0. 
+  if ($? != "0") then
+    /bin/rm -rf $pth/$dirname
+  else
+    /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
+    /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
+    chgrp -R fishadmin $pth/$dirname
+    chmod -R g+rw $pth/$dirname
+  endif
 else 
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
+  if ($? != "0") then
+    /bin/rm -rf $pth/$dirname
+  else 
+    chgrp -R fishadmin $pth/$dirname
+    chmod -R g+rw $pth/$dirname
+    echo "unloaddb.pl completed successfully."
+  endif
 endif
 
-chgrp -R fishadmin $pth/$dirname
-chmod -R g+rw $pth/$dirname
