@@ -126,10 +126,12 @@ CHGRP_FISHADMIN = @/usr/bin/chgrp -R fishadmin
 
 CHMOD_775 = @/usr/bin/chmod -R ug+rwX,o+rX
 
-LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
-UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
+COMMONS_BIN = ${TOP}/commons/bin
 
-MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
+LOADAPPPAGE = ${COMMONS_BIN}/loadapppage.pl
+UNLOADAPPPAGE = ${COMMONS_BIN}/unloadapppage.pl
+
+MAKESPECIFIC = ${COMMONS_BIN}/makespecific.pl
 #MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
@@ -171,7 +173,7 @@ JAVACFLAGS =
 
 CONTEXT_DIR = /private/apps/tomcat/conf/Catalina/$(DOMAIN_NAME)
 
-SET_CONTEXT_DESCRIPTOR = /private/ZfinLinks/Commons/bin/setContextDescriptor.pl
+SET_CONTEXT_DESCRIPTOR = ${COMMONS_BIN}/setContextDescriptor.pl
 
 
 

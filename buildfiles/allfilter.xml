@@ -80,7 +80,6 @@
 <filter token="LOG_FILE_SESSION" value="${LOG_FILE_SESSION}"/>
 <filter token="LOG_FILE_SIZE" value="${LOG_FILE_SIZE}"/>
 <filter token="MACHINE_NAME" value="${MACHINE_NAME}"/>
-<filter token="MAKESPECIFIC" value="${MAKESPECIFIC}"/>
 <filter token="MICROARRAY_EMAIL" value="${MICROARRAY_EMAIL}"/>
 <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
@@ -111,7 +110,6 @@
 <filter token="TARGETCGIBIN" value="${TARGETCGIBIN}"/>
 <filter token="TARGETFTPROOT" value="${TARGETFTPROOT}"/>
 <filter token="TARGETROOT" value="${TARGETROOT}"/>
-<filter token="TRANSLATETABLE" value="${TRANSLATETABLE}"/>
 <filter token="USER" value="${USER}"/>
 <filter token="VALIDATION_EMAIL_AD" value="${VALIDATION_EMAIL_AD}"/>
 <filter token="VALIDATION_EMAIL_CURATOR" value="${VALIDATION_EMAIL_CURATOR}"/>
