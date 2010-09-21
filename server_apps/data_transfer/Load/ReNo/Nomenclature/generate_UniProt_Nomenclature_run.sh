@@ -50,4 +50,4 @@ echo "on EMBRYONIX blast the nomenclature set against Human & mouse & zebrafish 
 
 ssh embryonix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! UniProt_$timestamp.out"
 
-/research/zcentral/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp"
+/private/ZfinLinks/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp"
