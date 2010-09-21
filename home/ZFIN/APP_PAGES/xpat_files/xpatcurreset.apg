@@ -48,10 +48,7 @@ Reset the cookies and infrastructure tables for pub curation.
 
       storeSession('$ZDB_ident','$OID','pubcur_c_pubCuration','$OID');
       storeSession('$ZDB_ident','$OID','pubcur_c_auto_on','on');
-      storeSession('$ZDB_ident','$OID','xpcur_c_show_all','false');
-
-      storeSession('$ZDB_ident','$OID','xpcur_c_has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');            
-    
+      storeSession('$ZDB_ident','$OID','xpcur_c_show_all','false');    
       <?/MIVAR>
     }
 

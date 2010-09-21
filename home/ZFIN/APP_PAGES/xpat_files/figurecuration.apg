@@ -45,13 +45,9 @@ PREFIX:   figcur_
 
 
 <a name=figure>
-    <?MISQL COND=$(NXST,$xpcur_c_has_permission) SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_person_zdb_id = '$ZDB_ident'
-          and cs_field_name = 'xpcur_c_has_permission';">
-        <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+    <?MISQL COND=$(NXST,$figcur_pub_can_show_images) SQL="
+       select pub_can_show_images from publication where zdb_id = '$OID';">
+        <?MIVAR NAME=figcur_pub_can_show_images>$1<?/MIVAR>
     <?/MISQL>
     <?MISQL SQL="
         select cs_field_name_value 
@@ -94,10 +90,10 @@ PREFIX:   figcur_
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_image),$(EC,$xpcur_c_image,hide))>
 
   <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
-    <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+    <?MIVAR NAME=figcur_pub_can_show_images>$1<?/MIVAR>
   <?/MISQL>
   
-  <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,t))>  
+  <?MIBLOCK COND=$(AND,$(XST,$figcur_pub_can_show_images),$(EC,$figcur_pub_can_show_images,t))>  
     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','xpcur_c_image','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID');">$unhide</a><?/MIVAR>
     <br>
   <?MIELSE>

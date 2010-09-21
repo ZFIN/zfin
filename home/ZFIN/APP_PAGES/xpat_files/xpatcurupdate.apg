@@ -295,13 +295,8 @@ EFFECTS
 
   
   <?MICOMMENT> ================| Figure |================ <?/MICOMMENT>
-    <?MISQL SQL="
-        select cs_field_name_value 
-        from curator_session 
-        where cs_data_zdb_id = '$OID' 
-          and cs_person_zdb_id = '$ZDB_ident'
-          and cs_field_name = 'xpcur_c_has_permission';">
-        <?MIVAR NAME=xpcur_c_has_permission>$1<?/MIVAR>
+    <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
+        <?MIVAR NAME=xpcurup_pub_can_show_images>$1<?/MIVAR>
     <?/MISQL>
     
   <?MIBLOCK COND=$(XST,$xpcur_G_fig_add_label)>  
@@ -316,7 +311,7 @@ EFFECTS
       <?MIVAR NAME=xpcur_G_fig_add_caption>$xpcur_G_TO_fig_text<?/MIVAR>
 
     <?/MIBLOCK>    
-    <?MIBLOCK COND=$(AND,$(EC,$xpcur_c_has_permission,f),$(NC,$xpcur_G_fig_add_label,$xpcurup_textOnly),$(NC,$xpcur_G_fig_add_caption,$xpcur_G_light_fig_text))>
+    <?MIBLOCK COND=$(AND,$(EC,$xpcurup_pub_can_show_images,f),$(NC,$xpcur_G_fig_add_label,$xpcurup_textOnly),$(NC,$xpcur_G_fig_add_caption,$xpcur_G_light_fig_text))>
 
       <?MIVAR COND=$(NE,$xpcur_G_fig_add_caption,) NAME=xpcurup_alert>Warning! No Legend Permission. Please change the publication permissions before entering figure legends.<?/MIVAR>
       <?MIVAR NAME=xpcur_G_fig_add_caption>$xpcur_G_light_fig_text<?/MIVAR>
@@ -366,7 +361,7 @@ EFFECTS
 
     <?/MIBLOCK>    
 
-    <?MIBLOCK COND=$(AND,$(EC,$xpcur_c_has_permission,f),$(NC,$xpcur_G_fig_label,$xpcurup_textOnly),$(NE,$xpcur_G_fig_caption,$xpcur_G_light_fig_text))>
+    <?MIBLOCK COND=$(AND,$(EC,$xpcurup_pub_can_show_images,f),$(NC,$xpcur_G_fig_label,$xpcurup_textOnly),$(NE,$xpcur_G_fig_caption,$xpcur_G_light_fig_text))>
 
       <?MIVAR COND=$(NE,$xpcur_G_fig_caption,) NAME=xpcurup_alert>Warning! No Legend Permission. Please change the publication permissions before entering figure legends.<?/MIVAR>      
       <?MIVAR NAME=xpcur_G_fig_caption>$xpcur_G_light_fig_text<?/MIVAR>
@@ -407,7 +402,7 @@ EFFECTS
 
 
   <?MICOMMENT> ================| Image |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(AND,$(EC,$xpcur_c_has_permission,f),$(XST,$xpcur_G_image_OID))>
+  <?MIBLOCK COND=$(AND,$(EC,$xpcurup_pub_can_show_images,f),$(XST,$xpcur_G_image_OID))>
       <?MIVAR>$(UNSETVAR,$xpcur_G_image_OID)<?/MIVAR>
       <?MIVAR NAME=xpcurup_alert>Warning! No Image Permission. Please change the publication permissions before adding images.<?/MIVAR>
   <?/MIBLOCK>
@@ -538,12 +533,6 @@ EFFECTS
       from webPages where ID='aa-record_web_update.apg';">
     <?/MISQL>      
     
-           
-    <?MIVAR NAME=pubcur_onload>$pubcur_onload storeSession('$ZDB_ident','$OID','xpcur_c_has_permission','$xpcur_G_can_show_image');<?/MIVAR>
-    
-    
-    <?MIVAR NAME="xpcur_c_has_permission">$xpcur_G_can_show_image<?/MIVAR>
-
   <?/MIBLOCK>
 
 
