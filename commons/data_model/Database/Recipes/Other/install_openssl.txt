@@ -1,0 +1,95 @@
+************************************************************************
+* We need to install OpenSSL libraries so that mod_ssl in apache can
+* use them.  Dave's recipe in serverlog is configured for 64 bit apache
+* and we want 32 bit apache from David Sullivan.  Also, helix does not
+* have openssl installed in /private/apps.  So, before moving SSL to 
+* production, we will need these libraries on helix.
+************************************************************************
+
+So, I tested on bionix; an install w/32 instead of 64 bits.
+
+x. install OpenSSL on bionix
+
+x. download openSSL openssl-0.9.8g.tar.gz from openssl.org
+
+x. cp it into /private/apps/SSL on BIONIX
+
+x. gunzip openssl-0.9.8g.tar.gz
+
+x. tar -xf openssl-0.9.8g.tar.gz
+
+x. used the following to compile: (as staylor on bionix)
+
+ % srcbionix
+ % setenv CC cc
+ % cd /private/apps/SSL/openssl-0.9.8g
+
+ -- tried exclude the c compiler; .Configure complained and gave
+ -- me a list to choose from.
+ -- note the change in c compiler from Dave's recipe:
+ -- (from solaris64-sparcv9-cc to solaris-sparcv9-cc)
+
+ % ./Configure no-threads -KPIC shared --openssldir=/private/apps/openssl-0.9.8g solaris-sparcv9-cc
+
+ -- returned no errors
+
+ % make
+
+ -- and boy does it take a long time to make; warning me that -xarch=v8plus
+ -- is deprecated and to use -xarch=sparc instead.  
+
+ % make test
+
+ -- and boy does that produce a lot of output.  It seems to have passed.
+
+ % make install
+
+ -- failed first, could not create/access the directory in /private/apps
+ -- made the directory, then ran again, and it then 
+ -- ran a long time and finished with this:
+
+OpenSSL shared libraries have been installed in:
+  /private/apps/openssl-0.9.8g
+
+If this directory is not in a standard system path for dynamic/shared
+libraries, then you will have problems linking and executing
+applications that use OpenSSL libraries UNLESS:
+
+* you link with static (archive) libraries.  If you are truly
+  paranoid about security, you should use static libraries.
+* you use the GNU libtool code during linking
+  (http://www.gnu.org/software/libtool/libtool.html)
+* you use pkg-config during linking (this requires that
+  PKG_CONFIG_PATH includes the path to the OpenSSL shared
+  library directory), and make use of -R or -rpath.
+  (http://www.freedesktop.org/software/pkgconfig/)
+* you specify the system-wide link path via a command such
+  as crle(1) on Solaris systems.
+* you add the OpenSSL shared library directory to /etc/ld.so.conf
+  and run ldconfig(8) on Linux systems.
+* you define the LD_LIBRARY_PATH, LIBPATH, SHLIB_PATH (HP),
+  DYLD_LIBRARY_PATH (MacOS X) or PATH (Cygwin and DJGPP)
+  environment variable and add the OpenSSL shared library
+  directory to it.
+
+One common tool to check the dynamic dependencies of an executable
+or dynamic library is ldd(1) on most UNIX systems.
+
+See any operating system documentation and manpages about shared
+libraries for your version of UNIX.  The following manpages may be
+helpful: ld(1), ld.so(1), ld.so.1(1) [Solaris], dld.sl(1) [HP],
+ldd(1), crle(1) [Solaris], pldd(1) [Solaris], ldconfig(8) [Linux],
+chatr(1) [HP].
+cp libcrypto.pc /private/apps/openssl-0.9.8g/lib/pkgconfig
+chmod 644 /private/apps/openssl-0.9.8g/lib/pkgconfig/libcrypto.pc
+cp libssl.pc /private/apps/openssl-0.9.8g/lib/pkgconfig
+chmod 644 /private/apps/openssl-0.9.8g/lib/pkgconfig/libssl.pc
+cp openssl.pc /private/apps/openssl-0.9.8g/lib/pkgconfig
+chmod 644 /private/apps/openssl-0.9.8g/lib/pkgconfig/openssl.pc
+bionix staylor openssl-0.9.8g% 
+
+
+ x. Add sym link
+
+ % cd /private/apps
+ % sudo ln -s openssl-0.9.7d openssl

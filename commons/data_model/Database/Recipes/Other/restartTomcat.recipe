@@ -1,0 +1,53 @@
+===============================================================================
+Sometimes tomcat has issues.  Either it has a memory heap overflow, or
+it runs out of threads to use.  Both these errors show up as either
+a slow website, phenote/quicksearch don't work, or are those applications
+are so slow that they are basically not working.  The tomcat log (catalina.out)
+is the best place to start to see if Tomcat is having issues.
+===============================================================================
+
+Start by checking the log (on helix, as informix):
+
+% tail -f /private/apps/tomcat/logs/catalina.out
+
+Sep 30, 2007 10:48:54 AM org.apache.tomcat.util.threads.ThreadPool logFull
+SEVERE: All threads (150) are currently busy, waiting. Increase maxThreads (150) or check
+the servlet status
+
+This error indicates that we need to restart tomcat, first do a thread dump
+with kill -3.
+
+If you are src'd to an informix user, you can just type:
+
+% kill -3 [jsvc process id]
+% restarttomcat.pl
+
+Check the logs again, to see if the server starts correctly.
+
+% tail -f /private/apps/tomcat/logs/catalina.out
+
+Sep 30, 2007 10:48:54 AM org.apache.tomcat.util.threads.ThreadPool logFull
+SEVERE: All threads (150) are currently busy, waiting. Increase maxThreads (150) or check
+the servlet status
+Parse Done!
+01/10/2007 08:59:48 15774 jsvc error: Still running according to PID file
+/var/run/jsvc.pid, PID is 22391
+01/10/2007 08:59:48 15773 jsvc error: Service exit with a return value of 122
+
+Sometimes the server does not restart on the first try.  The log above
+shows a non-restarted server.
+
+So, try again.
+
+% restarttomcat.pl
+
+And check the logs again:
+
+% tail -f /private/apps/tomcat/logs/catalina.out
+
+Oct 1, 2007 9:01:00 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 30375 ms
+
+And this shows the server has started.  The restarttomcat.pl script will
+return before the server is completely up.  Give the server a few extra
+seconds post-restart before worrying.

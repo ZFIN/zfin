@@ -1,0 +1,11 @@
+This directory should contain ER/Studio SQL Scripts.
+
+In ER/Studio, you should set your Database Scripts Directory to this directory:
+
+   Tools->Options->Directories->Database Scripts
+
+We aren't sure yet if we will actually store any scripts here.
+
+
+
+

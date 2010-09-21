@@ -1,0 +1,11 @@
+This directory should contain ER/Studio development models.  (The 
+Reference directory holds the production model.)
+
+In ER/Studio, you should set your Models Directory to this directory:
+
+   Tools->Options->Directories->Models
+
+We aren't quite sure yet how the Models and Reference directories will
+interact.
+
+

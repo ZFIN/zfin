@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE ERStudioReportWizard SYSTEM "file:///ReportWiz.dtd">
+<!--Name          : Embarcadero Project File
+Description   : This file contains an Embarcadero generated data file.
+Version       : Version 1.00
+Creation Date : 12/05/03 - 12:13:55
+Last Update   : 12/05/03 - 12:13:55
+-->
+<ERStudioReportWizard><ReportWizardPropertyValue ReportWizardPropertyValue=""/>
+<OptionVariables m_bAttrHeader="1" m_bAttrSum="1" m_bDiagramCompany="1" m_bDiagramCopyrightOwner="1" m_bDiagramCopyrightYear="1" m_bDiagramDescription="1" m_bDiagramHeader="1" m_bDiagramName="1" m_bDiagramVersion="1" m_bEntGenInfo="1" m_bEntityDRC="1" m_bEntityDef="1" m_bEntityDetail="1" m_bEntityHeader="1" m_bEntityName="1" m_bEntityPK="1" m_bEntityRel="1" m_bGenAllSubmodelImages="1" m_bHTMLReport="1" m_bModelHeader="1" m_bModelName="1" m_bPBAttachmentTypes="1" m_bPBAttachments="1" m_bPBColumns="1" m_bPBDefaults="1" m_bPBDomains="1" m_bPBEntities="1" m_bPBIndexes="1" m_bPBMaterializedViews="1" m_bPBObjectTypes="1" m_bPBPackages="1" m_bPBProcedures="1" m_bPBReferenceValues="1" m_bPBRelationships="1" m_bPBRules="1" m_bPBStorageObjects="1" m_bPBSupertypes="1" m_bPBSynonyms="1" m_bPBTriggers="1" m_bPBUserTypes="1" m_bPBViewRels="1" m_bPBViews="1" m_bRelCard="1" m_bRelChild="1" m_bRelDesc="1" m_bRelDetail="1" m_bRelExst="1" m_bRelGenInfo="1" m_bRelHeader="1" m_bRelKey="1" m_bRelName="1" m_bRelParent="1" m_bRelPropagated="1" m_bRelType="1" m_bSelectDiagram="1" m_bSubModelHeader="1" m_bSubModelName="1" m_bTOC="1" m_bTitle="1" m_bViewAttrSum="1" m_bViewDDL="1" m_bViewDef="1" m_bViewDetail="1" m_bViewGenInfo="1" m_bViewHeader="1" m_bViewName="1"/>
+<NumberVariables m_nModelImageQuality="100" m_nModelImageZoomLevel="80"/>
+<CStringVariables m_Title="ZFIN Data Model" m_YourCompany="University of Oregon" m_YourName="ZFIN Staff" m_csCopyrightYear="2003 University of Oregon" m_csCreatedDate="11/11/2003" m_csDirectory="\\acme.cs.uoregon.edu\research\zusers\clements\Zfin\Commons\doc\Database\DataModel" m_csFilename="Report.RTF" m_csImageFile="\\acme.cs.uoregon.edu\research\zusers\clements\Zfin\Commons\doc\zfinlogo.gif" m_csLink="" m_csModifiedDate="11/18/2003" m_csReportDescription="" m_csReportTitle="ZFIN Data Model" m_csVersion="1.0"/>
+<ReportObjectData><ModelList><Model><Object ObjectName="Logical" OwnerName=""/>
+<Submodel><Object ObjectName="Main Model" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Anatomical Dictionary" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Curator Database" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Expression" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Fish / Mutants" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Fish Images" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="GO" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Infrastructure" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Mapping and Linkages" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Markers and Genes" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Orthology and DB Links" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Sources and Attribution" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="Unclassified" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList/>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<Submodel><Object ObjectName="ZIRC" OwnerName="Logical"/>
+<EntityList><SelectedAll SelectedAll="1"/>
+</EntityList>
+<ViewList/>
+<RelationshipList><SelectedAll SelectedAll="1"/>
+</RelationshipList>
+<SuperTypeList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Submodel>
+<BufferPoolList/>
+<DatabaseList/>
+<MaterializedViewList/>
+<NodeGroupList/>
+<PackageList/>
+<ObjectTypeList/>
+<ProcedureList/>
+<FunctionList/>
+<RollbackSegmentList/>
+<SequenceList/>
+<SynonymList/>
+<StoGroupList/>
+<TablespaceList/>
+<TriggerList/>
+<AuxTableList/>
+<Variables m_bGenerateImage="1" m_bSelectForReport="1"/>
+</Model>
+</ModelList>
+<DataDictionary><AttachmentTypeList/>
+<AttachmentList/>
+<DefaultList/>
+<RuleList/>
+<UserDataTypeList/>
+<DomainList/>
+<ReferenceValueList/>
+</DataDictionary>
+</ReportObjectData>
+</ERStudioReportWizard>
+
+

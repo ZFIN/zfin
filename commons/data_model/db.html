@@ -1,0 +1,2128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<TITLE>Database Design, ZFIN Documentation
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</TITLE>
+
+<link rel=stylesheet href="doc.css" type="text/css">
+
+</head>
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+</td></tr></table>
+
+<div class="zdoc">
+
+
+<CENTER>
+<H1>ZFIN Documentation:<br>Database Design
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</H1>
+
+<p>$Id: db.html,v 1.75 2005-07-19 23:15:36 peirans Exp $
+
+<p><a href="index.html">Back to Table of Contents</a>
+<br><a href="dst.html">Previous Section</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="impl.html">Next Section</a>
+
+
+</CENTER>
+
+<p>This document is one of several that describe the Zebrafish Information
+Network, or ZFIN.  This document focuses on the logical database design.
+
+<p><b>This is the only document in that set that is accessible
+to the public over the web.  However, this document does contain some pointers
+into the other documents.  If you are accessing this document through ZFIN's
+public web interface then these links will lead you to a
+<a href="internal.html">page</a> explaining that the requested document is
+not available to the public.
+</b>
+For example, the following paragraph contains 2 links into documents that
+only accessible within ZFIN.
+
+<p>For information on the physical database design see the
+<a href="admin.html#Physical Design">Physical Design</a> section of the
+<a href="admin.html#Database Administration">Database Administration</a>
+document.  For details on database implementation at ZFIN (such 
+as tools and locally written scripts) see the
+<a href="impl.html#Database Implementation">Database Implementation</a>
+section of the <a href="impl.html">Implementation and Development</a>
+document.
+
+
+<!-- =================================================================== -->
+<!-- ========= Table of Contents ======================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Table of Contents">Table of Contents</a></h1>
+
+<!-- Duplicate the table of contents for this document here.  This is
+     necessary because this document is available as a standalone document
+     and we ought to give users an idea of what is in the file. -->
+
+  <ol>
+   <li><a href="db.html#History">History</a></li>
+   <li><a href="db.html#Logical Design Conventions">Logical Design Conventions</a>
+    <ol>
+     <li><a href="db.html#ZDB IDs and ZDB Object Types">
+                          ZDB IDs and ZDB Object Types</a></li>
+     <li><a href="db.html#Sources and Data">Sources and Data</a>
+      <ol>
+
+       <li><a href="db.html#Sources">Sources</a></li>
+       <li><a href="db.html#Data">Data</a></li>
+       <li><a href="db.html#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">
+                            ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA</a>
+        <ol>
+         <li><a href="db.html#ZDB ID History">ZDB ID History</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Tables and Columns">Tables and Columns</a>
+      <ol>
+       <li><a href="db.html#Generic Tables">Generic Tables</a></li>
+       <li><a href="db.html#Data Types">Data Types</a>
+        <ol>
+         <li><a href="db.html#VARCHAR and CHAR">VARCHAR and CHAR</a></li>
+         <li><a href="db.html#LVARCHAR, CLOB, and HTML">
+                              LVARCHAR, CLOB, and HTML</a></li>
+        </ol>
+       </li>
+       <li><a href="db.html#Redundant Data">Redundant Data</a>
+        <ol>
+         <li><a href="db.html#Derived Data">Derived Data</a>
+          <ol>
+           <li><a href="db.html#Derived Columns">Derived Columns</a></li>
+           <li><a href="db.html#Fast Search Tables">Fast Search Tables</a></li>
+          </ol>
+         </li>
+         <li><a href="db.html#Redundant Attributions">Redundant Attributions</a>
+         <li><a href="db.html#Legacy Redundant Data">Legacy Redundant Data</a>
+        </ol>
+       </li>
+       <li><a href="db.html#Private Data">Private Data</a></li>
+      </ol>
+     </li>
+     <li><a href="db.html#Views">Views</a></li>
+     <li><a href="db.html#Naming Conventions">Naming Conventions</a>
+      <ol>
+       <li><a href="db.html#Table Names">Table Names</a></li>
+       <li><a href="db.html#View Names">View Names</a></li>
+       <li><a href="db.html#Column Names">Column Names</a></li>
+       <li><a href="db.html#Function Names">Function Names</a></li>
+       <li><a href="db.html#Other Database Names">Other Database Names</a></li>
+      </ol>
+     </li>
+     <li><a href="db.html#Constraints">Constraints</a>
+      <ol>
+       <li><a href="db.html#Primary Keys">Primary Keys</a>
+        <ol>
+         <li><a href="db.html#When to Give a Table Its Own ZDB ID">
+                              When to Give a Table Its Own ZDB ID</a>
+          <ol>
+            <li><a href="db.html#When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA">
+                                 When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA</a></li>
+          </ol>
+         </li>            
+        </ol>
+       <li><a href="db.html#Foreign Keys">Foreign Keys</a>
+        <ol>
+         <li><a href="db.html#Cascading Deletes">Cascading Deletes</a></li>
+         <li><a href="db.html#When Not to Use a Foreign Key">
+                              When Not to Use a Foreign Key</a></li>
+        </ol>
+       </li>
+       <li><a href="db.html#Alternate Keys">Alternate Keys</a></li>
+       <li><a href="db.html#Not NULL Constraints">Not NULL Constraints</a></li>
+       <li><a href="db.html#Check Constraints">Check Constraints</a>
+        <ol>
+         <li><a href="db.html#Check Triggers">Check Triggers</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Triggers">Triggers</a></li>
+    </ol>
+   </li>
+   <li><a href="db.html#Schema"><b>Database Schema</b></a>
+   <li><a href="db.html#Database Areas">Database Areas</a>
+    <ol> 
+     <li><a href="db.html#Anatomical Dictionary">Anatomical Dictionary</a>
+     <li><a href="db.html#Expression">Expression</a>
+     <li><a href="db.html#Fish_Mutants">Fish / Mutants</a>
+      <ol>
+       <li><a href="db.html#Fish Images">Fish Images</a>
+       <li><a href="db.html#ZIRC">ZIRC</a>
+       <li><a href="db.html#New Fish Model">New Fish Model</a>
+      </ol>
+     <li><a href="db.html#Infrastructure">Infrastructure</a>
+     <li><a href="db.html#Mapping and Linkages">Mapping and Linkages</a>
+     <li><a href="db.html#Markers and Genes">Markers and Genes</a>
+      <ol>
+       <li><a href="db.html#Gene Ontology (GO)">Gene Ontology (GO)</a>
+       <li><a href="db.html#Orthologues and DB Links">
+                            Orthologues and DB Links</a>
+      </ol>
+     <li><a href="db.html#Sources and Attribution">
+                          Sources and Attribution</a>
+      <ol>
+       <li><a href="db.html#Curator Database">Curator Database</a>
+      </ol>
+     </li>
+     <li><a href="db.html#Unclassified">Unclassified</a>
+    </ol>
+   <li><a href="db.html#Database Cleaning and Validation">
+                        Database Cleaning and Validation</a>
+   <li><a href="db.html#Database Functions">Database Functions</a>
+    <ol>
+     <li><a href="db.html#Infrastructure Functions">
+                          Infrastructure Functions</a>
+     <li><a href="db.html#Text Processing Functions">
+                          Text Processing Functions</a>
+     <li><a href="db.html#Regen Functions">Regen Functions</a>
+      <ol>
+       <li><a href="db.html#regen_names Functions">regen_names Functions</a>
+        <ol>
+         <li><a href="db.html#regen_names Implementation">regen_names Implementation</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Stage Functions">Stage Functions</a>
+      <ol>
+       <li><a href="db.html#Stage Name Functions">Stage Name Functions</a>
+        <ol>
+         <li><a href="db.html#Stage Names">Stage Names</a>
+        </ol>
+       <li><a href="db.html#Stage Window Functions">Stage Window Functions</a>
+        <ol>
+         <li><a href="db.html#Stage Windows">Stage Windows</a>
+        </ol>
+      </ol>
+     <li><a href="db.html#Image Functions">Image Functions</a>
+     <li><a href="db.html#Fish/Mutant Functions">Fish/Mutant Functions</a>
+     <li><a href="db.html#Publication Functions">Publication Functions</a>
+    </ol>
+  </ol>
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= History ================================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="History">History</a></h1>
+
+<p>None of the members of the ZFIN team that wrote the document you are
+reading were with ZFIN when the database was first designed.  Therefore,
+the version of events recorded here may not be that accurate.
+
+<p>An initial data model was drawn up in 1997 by Eck Doerry, Ted Kirkpatrick,
+Sarah Douglas, and
+Monte Westerfield.  This document is available in the ZFIN web site at
+
+<div class="urlline">
+<a href="http://zfin.org/zf_info/dbase/PAPERS/ZFIN_DataModel/data_model.html">
+         http://zfin.org/zf_info/dbase/PAPERS/ZFIN_DataModel/data_model.html</a>
+</div>
+
+<p>This document is well worth reading.  It describes the vision that
+guided the initial implementation of ZFIN.  However, it describes an ideal
+that was never achieved for a number of reasons.  It uses object-relational
+terminology to describe the data model.  Unfortunately, the object-relational
+technology that was available at the time fell short of the terminology.
+Also, when ZFIN was first implemented, connecting a database to the web
+was bleeding edge work.  Just getting it to work took an extraordinary amount
+of effort.  As a result, the bulk of development time was spent on the
+user interface and on getting the web to database connection to work at all.
+The database implementation became a low priority.
+Finally, the database is also not running under the database management
+system for
+which it was first implemented.  ZFIN originally used Illustra.  However,
+Illustra was purchased by Informix, and ZFIN migrated to Informix in early
+2000.  Some things that made sense under Illustra, no
+longer make sense under Informix.
+
+<p>The result was a database that successfully backed the ZFIN site, but that
+bears only a limited resemblance to the design described in the original
+data model document.
+
+<p>The database has a number of problems that ZFIN is actively addressing:
+<ul>
+  <li>Redundant data
+  <li>Incorrect implementation of one-to-many and many-to-many relationships
+  <li>Lack of foreign key and primary key enforcement
+  <li>Poor implementation of specialization-generalization hierarchies
+</ul>
+
+<p>Starting in 2001/06 we created this document to describe what was actually
+in production.  From then until 2004/01 this document contained general 
+database design information (such as this History section), as well as
+ER diagrams of database tables, and text descriptions of each table and
+their columns.  The ER diagrams and table and column descriptions were
+all manually generated.
+
+<p>In 2004/01, we removed the ER diagrams and table and column descriptions
+from this document, and replaced them with a 
+<a href="#Schema">pointer</a> to documentation that 
+is automatically by generated by the 
+<a href="http://www.embarcadero.com">ER/Studio</a> database design tool.
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Logical Design Conventions ============================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Logical Design Conventions">Logical Design Conventions</a></h1>
+
+
+
+<p>This section describes the guiding principles used at ZFIN to design and
+implement our database.  This section is domain neutral.  For a description
+of how we map different biological areas to the database see the
+<a href="#Schema">Database Schema</a> and 
+<a href="#Database Areas">Database Areas</a> sections.
+
+<p>Many parts of this discussion include 
+<span class="std">ZFIN standards</span>.  ZFIN standards are 
+<span class="std">shown in a different font and color</span>.  Most ZFIN 
+standards are described in the 
+<a href="standards.html">Standards and Best Practices</a> document.  
+However, we thought that this document was the best place to put our 
+database related standards.
+
+
+
+<!-- ========= ZDB IDs and ZDB Object Types ============================ -->
+
+<h2 class="zdoc"><a name="ZDB IDs and ZDB Object Types">
+                          ZDB IDs and ZDB Object Types</a></h2>
+
+<p>The central identifier in ZFIN is a <i>ZDB ID</i>.  A ZDB ID is guaranteed
+to uniquely identify an object within ZFIN.  ZDB IDs are character fields 
+that have the following form:
+
+<div class="oneline">
+ZDB-<i>objtype-yymmdd-n</i>
+</div>
+
+<p>where
+<br><br>
+<table class="definition">
+ <tr>
+   <td class="term">ZDB-</td>
+   <td>Every ZDB ID start with these 4 characters.</td>
+ </tr>
+ <tr>
+   <td class="term"><i>objtype</i></td>
+   <td>This is the ZDB object type of the record.  This is a short
+     character string that indicates the type of record, e.g,
+     "GENE", "PUB".
+   </td>
+ </tr>
+ <tr>
+   <td class="term"><i>yymmdd</i></td>
+   <td>The year, month, and date the record was created in ZFIN.</td>
+ </tr>
+ <tr>
+   <td class="term"><i>n</i></td>
+   <td>Arbitrary number of digits uniquely identifying the record.
+     This value is incremented each time an ID
+     for a given record type is specified. It is reset to 1 each day.
+   </td>
+ </tr>
+</table>
+
+<p>New ZDB IDs are
+generated by the <a href="#Infrastructure Functions">get_id()</a>
+ZFIN SQL function.  get_id() is passed a ZDB object type
+as a parameter and it returns the next available ZDB ID for that object type.
+They are implemented in the database as VARCHAR(50).
+None of the existing values comes close to being that long.
+
+<p>Two other functions are also useful with ZDB IDs
+
+<ul>
+  <li><a href="#Infrastructure Functions">get_obj_name()</a>
+    returns the name of an object given its ZDB ID.
+  <li><a href="#Infrastructure Functions">get_obj_type()</a>
+    returns the object type of an object given its ZDB ID.
+</ul>
+
+
+<p>Supported ZDB object types are defined in the
+<a href="Database/DataModel/index.htm">ZDB_OBJECT_TYPE</a> table.
+
+
+
+<!-- ========= Sources and Data ======================================== -->
+
+<h2 class="zdoc"><a name="Sources and Data">Sources and Data</a></h2>
+
+<p>Broadly speaking, records with ZDB IDs (and therefore ZDB object types
+as well) can be broken into two general
+categories:  Sources and Data.
+
+
+
+<h3 class="zdoc"><a name="Sources">Sources</a></h3>
+
+<p>Sources are what data come from.  Sources are either publications, 
+people, labs, or companies. The ZDB IDs of all sources are stored in the 
+<a href="#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">ZDB_ACTIVE_SOURCE</a> table.
+
+<p>See the <a href="#Sources and Attribution">Sources and Attribution</a>
+section for details.
+
+
+<h3 class="zdoc"><a name="Data">Data</a></h3>
+
+<p>Data is information taht describes genetic or experimental
+data.  This is pretty much every type of record in the database that is
+not a <a href="#Sources">source</a>.  The ZDB IDs of most 
+object types are stored in
+the <a href="#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">ZDB_ACTIVE_DATA</a> table.
+
+
+<h3 class="zdoc"><a name="ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">
+                          ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA</a></h3>
+
+<p>If you look at the <a href="#Schema">database schema</a> you will see
+an enormous number of foreign key relationships pointing back to the 
+ZDB_ACTIVE_DATA table, and to a lesser extent to the ZDB_ACTIVE_SOURCE
+table.
+
+<p>These tables store the ZDB IDs of almost every active source or data
+item in ZFIN.  These tables were added to ZFIN in 2001 to give us better
+support for <i>generic tables</i>.  Without these
+tables it would not be possible to have 
+<a href="#Foreign Keys">foreign key constraints</a> on generic tables.
+See the <a href="#Generic Tables">Generic Tables</a> section for details.
+
+<p>We did consider and reject two other options for achieving this same end.
+
+<ol>
+ <li><p>We could have used Informix table inheritance features.  Then the 
+   data tables (e.g. MARKER, LOCUS, etc.) would inherit from ZDB_ACTIVE_DATA
+   and ZDB_ACTIVE_SOURCE.  We decided not to pursue this option because of
+   portability issues.  However, that decision might be worth reconsidering
+   at some point.
+ </li>
+ <li><p>We could have used <a href="#Triggers">triggers</a> instead of 
+   foreign key constraints to enforce foreign key relationships.  This would
+   work but using triggers instead of foreign key constraints so obscures the
+   relationships in the database that we decided not to to go this route
+   either.
+ </li>
+</ol>
+
+
+
+<h4 class="zdoc"><a name="ZDB ID History">ZDB ID History</a></h4>
+
+<p>ZFIN has a mechanism for tracking data ZDB IDs that have been replaced by
+other ZDB IDs and then deleted from the database.  See the
+<a href="Database/DataModel/index.htm">ZDB_REPLACED_DATA</a> table for details.
+
+
+
+<!-- ========= Tables and Columns ====================================== -->
+
+<h2 class="zdoc"><a name="Tables and Columns">Tables and Columns</a></h2>
+
+<p>This sections describes general ZFIN guidelines for defining tables and 
+columns.  See also <a href="#Naming Conventions">Naming Conventions</a> and
+<a href="#Constraints">Constraints</a>.
+
+
+<h3 class="zdoc"><a name="Generic Tables">Generic Tables</a></h3>
+
+<p><span class="std">ZFIN favors design approaches that use fewer general 
+purpose tables over those that use many specific tables.</span>
+
+<p>What does that mean exactly?  Lets use
+the topic of aliases, previous names, and synonyms (hereafter refrered to as
+just aliases) as an example.
+
+<p>Practically everything in ZFIN can have aliases: markers, loci, GO terms, 
+orthologues, and so on.  Originally, we had an alias table for each different
+type of marker.  That is, the MARKER table had a MARKER_ALIAS table hung off
+it, the LOCUS table had a LOCUS_ALIAS table hung off of it, and so on.  All
+of these alias tables had identical or nearly identical structures.  They 
+contained the ZDB ID of the object the alias was for, and the alias.
+
+<p>The "alias table per object type" approach had some advantages.  
+In particular made, it was explicit in the database design what object 
+types had aliases.  This approach had several disadavantages.  First it led
+to a proliferation of tables, all with the same structure.  Secondly, and 
+more importantly, it made it difficult to make system-wide changes to how
+aliases are treated.  For example, we couldn't have one routine that 
+displayed an alias list in one format, no matter what the object type.
+If we decided we wanted to add classes of aliases and say some are more
+important than others, we would have to modify many tables and lots of
+code.
+
+<p>To address these issues we added the DATA_ALIAS table, moved all the data
+from the object-specific alias tables into it, and then dropped the 
+object-specific alias tables.  We now store and treat aliases in a uniform
+way, resulting in cleaner code and a more flexible database.  The downside
+is it is no longer obvious from the database design what objects have aliases.
+The ZDB ID column in DATA_ALIAS points at 
+<a href="#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">ZDB_ACTIVE_DATA</a>.
+
+<p><a href="#Sources and Attribution">Attributions</a> make an even stronger
+case for general purpose tables.  Currently, all attributions are stored 
+in two tables, RECORD_ATTRIBUTION and COLUMN_ATTRIBUTION.  If the code needs
+to know what objects are referencing a particular publication, it only has
+to query those two tables.  If attribution were distributed across many 
+object-specific attribution tables, then such code becomes much more awkward and
+much higher maintenance.
+
+
+
+<h3 class="zdoc"><a name="Data Types">Data Types</a></h3>
+
+<p>It is generally obvious what the data type of a column should be.
+This section discusses a few cases where the choice is not
+so obvious.
+
+
+<h4 class="zdoc"><a name="VARCHAR and CHAR">VARCHAR and CHAR</a></h4>
+
+<p><span class="std">ZFIN has a general policy that character data less 
+than 255 characters 
+long is stored in VARCHAR columns rather than CHAR columns.</span>
+
+
+<h4 class="zdoc"><a name="LVARCHAR, CLOB, and HTML">LVARCHAR, CLOB, and HTML</a></h4>
+
+<p>The LVARCHAR, CLOB, and HTML datatypes can all be used to store character
+data that is longer than the VARCHAR max of 255 characters.  LVARCHAR can store up
+to 32KB characters (depending on how big other columns are in the table).  HTML and
+CLOB can store character data of arbitrary size.
+
+<p><span class="std">Whenever possible, store large character data in LVARCHAR 
+columns.</span>  LVARCHAR is a first class string datatype in Informix.  You can
+treat LVARCHAR columns just like VARCHAR columns in your code.  In addition
+to simple syntax, this also gives you access to the full set of Informix string 
+functions.  
+
+<p>HTML and CLOB columns both require significantly more work.
+In fact, in January of 2005, ZFIN decided to move publication.pub_file(blob),
+fish_image.fimg_image(blob), fimg_image.fimg_image_with_annotation(blob),
+and fish_image.fimg_thumbnail(blob) all out of the databases and into 
+the filesystem.  Loading these large objects from the web proved
+to be unreliable and error-prone.  We are not sure what part of this 
+process actually caused the errors.  It could have been the network (problems
+seemed to occur more frequently in the morning), the
+platform (seemed to occur more frequently on Macs then on PCs), the 
+informix routine used to generate the large object, the perl scripts
+used to make the thumbnails, or many other factors.  After
+the move, loading from the web has been successful.  
+ 
+<p> In general, if a blob is going to be loaded from the web,
+it would be a good idea to consider storing the actual file in
+a directory in the filesytem with a pointer in the database to the file.
+
+
+
+<h3 class="zdoc"><a name="Redundant Data">Redundant Data</a></h3>
+
+<p>There are three kinds of redundant data at ZFIN, all of them discussed below.
+
+
+<h4 class="zdoc"><a name="Derived Data">Derived Data</a></h4>
+
+<p>Dervied data exists in ZFIN in several places.  It is derived by processing
+base data.  <i>In theory</i>, when the base data changes the derived data
+should also change.  How long it takes the derived data to actually change
+depends on the situation.  
+
+<p>Derived data always exists to make the web site faster.
+
+<h5 class="zdoc"><a name="Derived Columns">Derived Columns</a></h5>
+
+<p>Derived columns are columns in tables that are populated by 
+<a href="#Triggers">insert and update triggers</a> on the same table
+the derived column is in.  Therefore, derived columns are always current
+with the base data they are derived from.
+
+<p>Derived columns can contain almost any type of data.  However, there
+are a few types of derived column that occur throughout the database:
+
+<table class="definition">
+  <caption>Common Derived Columns</caption>
+  <tr>
+    <td class="term">_lower&nbsp;columns</td>
+    <td>Lower columns contain the contents of another column in the row,
+      with the value shifted to all lower case.
+    </td>
+  </tr>
+  <tr>
+    <td class="term">_order&nbsp;columns</td>
+    <td>Order columns are used to order output results.  Order columns that
+      contain character data are usually the result of calling the 
+      <a href="#Infrastructure Functions">zero_pad()</a> function on
+      another column in the row.
+    </td>
+  </tr>
+</table>
+
+
+<h5 class="zdoc"><a name="Fast Search Tables">Fast Search Tables</a></h5>
+
+<p>Fast search tables are derived tables that are used to greatly speed up
+the ZFIN web site.  The contents of fast search tables are the
+result of processing data from multiple tables and merging it in complex
+ways.  They are created because it is too slow to do this processing
+on the fly.
+
+<p>Fast search tables are generated by the 
+ZFIN <a href="#Regen Functions">regen functions</a>.  Some regen functions
+are run on demand.  A few regen functions are called every time a base table
+is updated and do incremental updates to fast search tables.  All fast search
+tables are regenerated every night.  Therefore, the age of data in fast search
+tables can range from current (usually) to up to 24 hours old
+(rarely).  See the <a href="#Regen Functions">Regen Functions</a> section for
+details.
+
+
+<h4 class="zdoc"><a name="Redundant Attributions">Redundant Attributions</a></h4>
+
+<p>Because of ZFIN's use of <a href="#Generic Tables">generic tables</a> we 
+occassionally have a situation where the best compromise is to duplicate data 
+in both an <a href="#Sources and Attribution">attribution table</a>, 
+and in a base table.  This happens whenever the
+attribution is itself part of the identity of the record.
+
+<p>This type of redundancy can occur with any generic table, whenever the item
+stored in the generic table, such as an alias, is part of the identity of the
+record in the base table.
+
+<p>This redundancy is managed with triggers.  See the
+<a href="#When Not to Use a Foreign Key">When Not to Use a Foreign Key</a>
+section for the other alternatives we considered.
+
+
+
+<h4 class="zdoc"><a name="Legacy Redundant Data">Legacy Redundant Data</a></h4>
+
+<p>ZFIN also has redundant data in some tables that date back to early days of 
+ZFIN (1999 and before).  Most of this redudant data resides in the
+<a href="#Fish_Mutants">Fish / Mutants</a> tables, but some also exists in
+the <a href="#Sources and Attribution">Sources and Attribution</a> tables.
+We hope to get rid of most of these redundant columns in 2005.
+
+
+<h3 class="zdoc"><a name="Private Data">Private Data</a></h3>
+
+<p>The ZFIN database has no private data in it.  By definition, if data is 
+in the database then it can be shown to anyone via the web site.
+
+<!-- ========= Views =================================================== -->
+
+<h2 class="zdoc"><a name="Views">Views</a></h2>
+
+<p>Views at ZFIN are an under-represented minority for no other 
+reason than we have not yet found significant use for them.  We encourage
+their use whenever necessary.
+
+<p>Currently, there are 3 views in the database (the Figure_Gene_View has 
+the proper naming conventions for any new views created at ZFIN. 
+[Data_Description]_View.):<br><br>
+
+<i>vGroupSize<br>
+vMrkrGoevSameSize<br>
+Figure_Gene_View</i><br>
+
+<p>vGroupSize and vMrkrGoevSameSize were put in production to support
+a nightly validatedata.pl check (mrkrgoevInfgrpDuplicatesFound check).  This
+check was requried to maintain a normalized schema for marker-go-term-evidence
+inference data and to support the way we insert this data via the interface.
+
+<p>The statement in validatedata.pl checks for duplicate 
+marker_Go_term_evidence records that have duplicate inference_group_members.
+ 
+<p>There are 2 parts to this query.  The inner subquery
+uses 2 copies of the marker_go_term_evidence table to find
+all the mrkrgoev records that have identical mrkr, go_term, source,
+and evidence_code (we can't put an AK on this table and still avoid
+a join table between inference_group_member and mrkrgoev--in May 2004 we
+decided to remove the join table that did this--called inference_group).
+
+<p>The outer query relies on 2 views that exist in the db: vMrkrGoevSameSize, 
+and vGroupSize
+ 
+<p>vGroupSize gives us the number of inference_group_members for each
+mrkrgoev_zdb_id.
+ 
+<p>vMrkrGoevSameSize holds pairs of mrkrgoev_zdb_ids who have same size
+inference_groups.
+ 
+<p>We test for equality by doing a self-join on the inference_group_members
+of mrkrgoev_zdb_ids with same size inference_groups.
+If one set can be mapped onto another with no inference_group_members
+left over, then the 2 sets are equal.
+ 
+<p>If a record exists both in the subquery--duplicates in 
+marker_go_term_Evidence and in the outer query, duplicates in 
+inference_group_members...then this query will return the duplicate
+pairs of mrkrgoev_zdb_ids to Doug and Informix.
+
+<!-- ========= Naming Conventions ====================================== -->
+
+<h2 class="zdoc"><a name="Naming Conventions">Naming Conventions</a></h2>
+
+<p>This section defines the database naming conventions used at ZFIN.
+ZFIN was originally implemented with very few naming conventions for
+tables and columns.  Since 2000, we have been using naming conventions
+with any new work we do, and applying them to existing areas as we
+modify them.  However, many of the older tables still do not conform to
+these standards.
+
+
+<h3 class="zdoc"><a name="Table Names">Table Names</a></h3>
+
+<p>We have a few standards for naming tables.
+
+<ol>
+  <li>
+    <div class="std">Use whole words.</div>
+
+    <p>This leads to clearly understandable, if long, table names.  The place
+    for brevity can be in <a href="#Column Names">column names</a>.
+  </li>
+  <li>
+    <div class="std">Use singular table names.</div>
+
+    <p>Except in the case of fast search tables (see below), use singular 
+    table names.  That is, MARKER is better than MARKERS.
+  </li>
+  <li>
+    <p><b>Intersection tables</b>.
+
+    <p>Intersection tables implement many to many relationships between
+    other tables.  There are two standards for these, and old one and a
+    new one.  The old standard is to name the table
+
+    <div class="sql">
+    INT_<i>tablename1_tablename2</i>
+    </div>
+
+    <div class="std">The new standard is to just name it
+
+    <div class="sql">
+    <i>tablename1_tablename2</i>
+    </div>
+    </div>
+  </li>
+  <li>
+    <p><b><a href="#Fast Search Tables">Fast search tables</a></b>.
+
+    <p><span class="std">There are two naming conventions that are often used 
+    with fast search
+    tables.  First, they have the prefix ALL_.  Second, fast search tables
+    often have plural names, such as ALL_MAP_NAME<i>S</i>.</span>  Both of these
+    highlight that the table is a fast search table.
+  </li>
+  <li><div class="std">Related tables can have similar names.</div>
+
+    <p>It is acceptable (maybe encouraged) for related tables to have similar
+    names.  For example, the FISH_IMAGE_VIEW, FISH_IMAGE_DIRECTION, 
+    FISH_IMAGE_FORM, and FISH_IMAGE_PREPARATION tables are all
+    contolled vocabulary tables that constrain columns in the FISH_IMAGE
+    table.
+  </li>
+</ol>
+
+
+
+<h3 class="zdoc"><a name="View Names">View Names</a></h3>
+
+<p>The proper naming conventions for any new views created at ZFIN are as
+follows: <br><br>
+[Data_Description]_View
+
+<p>The figure_gene_view is a good example of this convention.  It describes
+a join between the figure table and the genes used in expression records.
+
+<h3 class="zdoc"><a name="Column Names">Column Names</a></h3>
+
+<p>Our column naming conventions can be divided into two camps.  There
+is the <b><i>one true omnipresent and omnipotent naming convention that must
+be followed in all cases forever</i></b>, and then there is everything else.
+The big kahuna is listed first.
+
+<ol>
+  <li><div class="std">Every table has a unique prefix that occurs at the front of every 
+    column name in that table.</div>
+
+    <p>Each existing and new table is assigned a unique 1 to 10 character 
+    prefix that every column in that table starts with.  This includes 
+    foreign key columns (see below).
+    This allows us to uniquely identify each column in the database given 
+    just its name.  It becomes much easier to find all places where a column 
+    is used.  Columns that already exist will keep their existing names until
+    we can get back to them.
+  </li>
+  <li><p><b>ZDB ID Columns</b>.
+
+    <div class="std">Any column that contains a ZDB ID, ends in "_ZDB_ID".</div>
+  </li>
+  <li><p><b>Foreign Key Columns</b>.
+
+    <div class="std"><a href="#Foreign Keys">Foreign key columns</a>, like every 
+    other column, must start with the
+    table prefix.  After the prefix, unless you can think of a better name,
+    a good default is to append the name of the foreign key in its home table.
+    </div>
+  </li>
+  <li><p><b>_ORDER Columns</b>.
+
+    <p><span class="std">Any column with a name that ends in "_ORDER" specifies an
+    order in which values from this table should be displayed.
+    Such columns only exist when the table does not already contain
+    a column that can be used for this purpose.</span>  Order columns can
+    be integer or character.  In the case of character order columns
+    they are almost always populated by triggers with the
+    <a href="#Text Processing Functions">zero_pad</a> function.
+    Values in order columns are ascending, e.g., records with low
+    values are displayed before those with higher values.
+  </li>
+  <li><p><b>_SIGNIFICANCE Columns</b>
+    <p>Significance columns have a distinct purpose from order columns.
+     <span class="std">Significance columns specify how 
+     significant/reliable/important a
+     particular record is relative to other records in the same table.
+     Unlike order columns, two or more records can have the same
+     significance value.</span>  Significance columns are often used to list
+     output in decreasing order of significance.  Values in significance
+     columns are ascending, e.g., records with low values are more
+     significant than records with high values.
+   </li>
+</ol>
+
+
+
+<h3 class="zdoc"><a name="Function Names">Function Names</a></h3>
+
+<ol>
+  <li><p><b>Regen Functions</b>
+
+    <p><span class="std">Functions which generate 
+    <a href="#Fast Search Tables">fast search tables</a>, known as 
+    <a href="#Regen Functions">Regen Functions</a>, must be named
+    regen_<i>whatTheyRegen</i>.</span>
+  </li>
+</ol>
+
+
+
+<h3 class="zdoc"><a name="Other Database Names">Other Database Names</a></h3>
+
+<p>The names of things like indexes, triggers, and constraints are physical
+details that you do not need to know to understand or use the database.
+Therefore, they are described elsewhere under
+<a href="admin.html#Physical Design">Physical Design</a>.
+
+
+
+
+
+<!-- ========= Constraints ============================================= -->
+
+<h2 class="zdoc"><a name="Constraints">Constraints</a></h2>
+
+<p>ZFIN cares a great deal about data quality.  We have a multilevel 
+approach to this.  Our very first line of defense are database constraints.  
+If ZFIN can find a way to define a constraint in the database, we define it.
+Put another way, we push as many domain rules into database constraints as 
+possible.  
+
+<p>Some constraints are to complex or too costly to be enforced with 
+Informix mechanisms.  To check these constraints ZFIN runs 
+additional <a href="#Database Cleaning and Validation">validation scripts</a> 
+daily to flag any data that falls outside of those conditions.
+
+<p>Finally, ZFIN runs 
+<a href="#Database Cleaning and Validation">weekly and monthly scritps</a>
+that report boundary conditions
+that often, but not always, indicate problems.
+
+<p>This remainder of this section describes constraints that can be 
+enforced using Informix constraint and trigger mechanisms.
+
+
+
+<h3 class="zdoc"><a name="Primary Keys">Primary Keys</a></h3>
+
+<p>We have a number of guidelines on primary keys.
+
+<ol>
+  <li><div class="std">Every table must have a primary key.</div></li>
+  <li><div class="std">If a 
+    <a href="#When to Give a Table Its Own ZDB ID">table has its own ZDB ID</a>
+    then the ZDB ID must be the primary key.</div>
+  </li>
+  <li><div class="std">Primary keys can be natural keys.</div>
+    <p>If a table has its own ZDB ID column, then that column should be the 
+    primary key column for that table.  If it doesn't then a natural key can be
+    used.
+  </li>
+  <li><div class="std">Primary keys can be composite keys.</div></li>
+</ol>
+
+
+
+
+<h4 class="zdoc"><a name="When to Give a Table Its Own ZDB ID">
+                          When to Give a Table Its Own ZDB ID</a></h4>
+
+<p>Some tables have their own ZDB ID column and some don't.  How do we decide
+if a table should get its own ZDB ID or not?
+
+<ol>
+  <li><p><span class="std">If a web page will exist to display an individual 
+    record in the table, then that table should get its own ZDB ID.</span>
+    Put another way, if the identifying data for that record will occur in 
+    a URL at ZFIN, then it should have its own ZDB ID.
+  </li>
+  <li><p><span class="std">If the data in the table will use any of the 
+    <a href="#Generic Tables">general purpose tables</a> then the table 
+    will need its own ZDB ID.</span>  The generic tables include the ZDB ID of
+    the data record.  Without that ZDB ID, you can't use the tables.  Also see
+    the <a href="#When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA">When to 
+    Add a Foreign Key Referencing ZDB_ACTIVE_DATA</a> section.
+  </li>
+  <li><p><span class="std">If a table's natural key includes more than 3 columns
+    then it may be worthwhile to give the table its own ZDB ID just to make 
+    identifying records in the table less cumbersome.</span>  This situation
+    often arises in long chains of tables where the natural key can eventually
+    include 4 or 5 ZDB IDs from other tables.
+
+    <p>However, there are tradeoffs, in swapping 4 or 5 foreign ZDB ID columns
+    for your own.  An advantage of having all those keys in every step along
+    the way is that it is easy to join a record from any table in the chain with
+    any other table in the chain.  If you give every table in the chain its own
+    ZDB ID, then you must join every table along the chain between the two tables
+    of interest.
+  </li>
+</ol>
+
+<h5 class="zdoc"><a name="When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA">
+                          When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA</a></h5>
+
+<p>Not every <a href="#Sources and Data">data table</a> that has its own
+ZDB ID column has a foreign key relationship to 
+<a href="#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">ZDB_ACTIVE_DATA</a>.  Tables
+that don't have these relationships don't have their ZDB IDs in ZDB_ACTIVE_DATA.
+
+<p><span class="std">You don't need to add a table's ZDB IDs to ZDB_ACITVE_DATA 
+unless you need to place it in a column in another table that has a foreign
+key relationship to ZDB_ACTIVE_DATA.</span>  This often happens when you try to
+use the ZDB ID in one of the <a href="#Generic Tables">general purpose tables</a>.
+
+<p>You are also free to add the constraint for other reasons as well.
+
+
+
+
+<h3 class="zdoc"><a name="Foreign Keys">Foreign Keys</a></h3>
+
+<p><span class="std">Use foreign keys whenever possible, and always reference the
+most specific table possible.</span>
+
+
+<h4 class="zdoc"><a name="Cascading Deletes">Cascading Deletes</a></h4>
+
+<p>When you define a foreign key, you can specify if it uses cascading deletes
+or not.  If a foreign key uses cascading deletes then the record containing
+the foreign key will be automatically deleted when the parent record (the 
+record where the foreign key came from) is deleted.  That is, when the parent
+record is deleted, that delete will <i>cascade</i> out to the child record.
+
+<p>If a foreign key does not use cascading deletes then deletes of a parent
+record will fail unless all child records are first deleted or the foreign key
+column in all the child records are changed to a different value (to point at
+a different parent record).
+
+<p>ZFIN has several rules of thumb for deciding when to use or not use
+cascading deletes.
+
+<ul>
+ <li><b>Controlled Vocabulary</b>:  
+     <span class="std">If the foreign key points back to a 
+     <a href="db.html#Controlled Vocabulary">controlled vocabulary</a> table
+     then it will <i>not</i> have an "on delete cascade" clause.</span>  If you are
+     going to delete a controlled vocabulary term then you will have to go
+     through the work of dealing with the records that use it before you can
+     delete the term.
+ </li>
+ <li><b>Base Data</b> (i.e., anything but controlled vocabulary): 
+     <span class="std">If the foreign key points back to a 
+     <a href="db.html#Base Data">base data</a>
+     table (such as MARKER or PUBLICATION), or at ZDB_ACTIVE_SOURCE or 
+     ZDB_ACTIVE_DATA then the foreign key will have an "on delete cascade"
+     defined for it.</span>  This means that you can delete a record from 
+     ZDB_ACTIVE_DATA or ZDB_ACTIVE_SOURCE and count on all references to 
+     that record being deleted from the database.
+ </li>
+</ul>
+
+<p>Note that tables that store large ontologies that change relatively often
+fall somewhere in between these groups.  Are 
+<a href="db.html#Gene Ontology (GO)">GO terms</a> or the 
+<a href="db.html#Anatomical Dictionary">anatomical dictionary</a> 
+controlled vocabularies or base data?  Deal with these situations on a case
+by case basis.
+
+
+
+<h4 class="zdoc">
+<a name="When Not to Use a Foreign Key">When Not to Use a Foreign Key</a>
+</h4>
+
+<p>There are some cases where zealous use of foreign keys can cause 
+unexpected results.  For example, the alternate key in the
+<a href="Database/DataModel/index.htm">MARKER_GO_TERM_EVIDENCE</a>
+table includes the source ZDB ID.  The source ZDB ID defines what publication 
+(usually) the evidence was found in.  We can't create a MARKER_GO_TERM_EVIDENCE
+record without a source; it is a fundamental part of what defines a
+MARKER_GO_TERM_EVIDENCE record.
+
+<p>However, we generally shy away from storing sources in base data tables.
+We prefer to store them in the
+<a href="Database/DataModel/index.htm">RECORD_ATTRIBUTION and 
+COLUMN_ATTRIBUTION</a> tables.  That way, we only have to look in 2 tables
+to find all the attributions to a particular publication.
+
+<p>There are at least 3 solutions to this situation, all of them with drawbacks:
+
+<ol>
+ <li><p>Include the source in the base data table, but <i>do not</i> add a 
+     matching
+     record to RECORD_ATTRIBUTION (or COLUMN_ATTRIBUTION).  This means there
+     is no redundant information in the database (the attribution is stored
+     only in the base data table), but it now means we have to look in more
+     that just the attribution tables to find out where a source is
+     attributed.
+ </li>
+ <li><p>Store the source only in RECORD_ATTRIBUTION (or COLUMN_ATTRIBUTION).  Do
+     not have a column for the source in the base data table.  This means there
+     is no redundant information in the database (the attribution is stored
+     only in the attribution table), but it now means that part of what defines
+     the record (the source) is no longer stored in the record.
+ </li>
+ <li><p><span class="std">Store the source in both the base data table and in 
+     RECORD_ATTRIBUTION (or COLUMN_ATTRIBUTION).</span>  This introduces redundant data
+     into the database because the attribution is now stored in 2 places, but
+     it means we only have to look in the attribution tables for attribution 
+     data, and that everything that defines the record is now stored in the
+     record.
+ </li>
+</ol>
+
+<p>At ZFIN we started out using option 2, but eventually moved to option 3,
+having redundant data in the database.
+
+<p>What does this have to do with the zealous use of foreign keys?  One way
+to control the redundancy in option 3 is to add a foreign key to the base
+data table (MARKER_GO_TERM_EVIDENCE in this example) that points at
+RECORD_ATTRIBUTION.  This way, you can't have a MARKER_GO_TERM_EVIDENCE
+record unless you also have a matching RECORD_ATTRIBUTION record.
+
+<p>This solution deals with the redundancy effectively, but results in some
+counterintuitive behavior.  First, you have to insert an attribution for the
+MARKER_GO_TERM_EVIDENCE record before you can insert the MARKER_GO_TERM_EVIDENCE
+record itself.  If you don't do this then you will get a foreign key error
+when you try to insert the MARKER_GO_TERM_EVIDENCE record.  
+This seems backwards.
+
+<p>Second, deleting a record from RECORD_ATTRIBUTION can now result in the
+deletion of a record from another table.  This is bad because you would
+never intuitively expect that deleting an attribution would cause the thing
+that is attributed to also be deleted.
+
+<p>A better way to deal with the redundancy is to 
+<ul>
+ <li>Add an insert trigger to MARKER_GO_TERM_EVIDENCE so that when a 
+     record is inserted there, a matching record is also inserted into
+     RECORD_ATTRIBUTION.
+ </li>
+ <li>Add a nightly check to 
+     <a href="db.html#Database Cleaning and Validation">validatedata.pl</a>
+     to verify that all MARKER_GO_TERM_EVIDENCE records still have matching
+     RECORD_ATTRIBUTION records.
+ </li>
+</ul>
+
+<p>So that is what we did.
+
+
+
+<h3 class="zdoc"><a name="Alternate Keys">Alternate Keys</a></h3>
+
+<p><span class="std">If a table has columns that form alternate keys, then
+define unique constraints for those columns.</span>  We put a great deal of
+effort into identifying what the alternate keys are.  Not having them properly
+defined leads to duplicate data in the database.
+
+
+<h3 class="zdoc"><a name="Not NULL Constraints">Not NULL Constraints</a></h3>
+
+<p><span class="std">If a column cannot contain NULL values then define
+a not NULL constraint for the column.  If a column can contain NULL values
+then a description of what a NULL value in that column means must be 
+included in the <a href="#Schema">schema documentation</a></span>.
+
+
+
+<h3 class="zdoc"><a name="Check Constraints">Check Constraints</a></h3>
+
+<p>In Informix, check constraints can be used to enforce conditions within
+the context of a row.  <span class="std">If a domain rule can be enforced
+with a check constraint, the define a check constraint to enforce 
+the rule.</span>
+
+
+<h4 class="zdoc"><a name="Check Triggers">Check Triggers</a></h4>
+
+<p>Some domain rules involve more than one row in a table, or rows in more
+than one table.  These rules cannot be enforced with 
+<a href="#Check Constraints">check constraints</a>.  We enforce them by:
+<ol>
+  <li>Defining database functions that check the conditions, and throw
+    an exception if the conditions fail.
+  </li>
+  <li>Adding insert and delete triggers on the table that call the 
+    function that checks the conditions.
+  </li>
+</ol>
+
+<p>When records are inserted or updated in the table, the check trigger
+is fired, which invokes the database function that checks the condition.
+If the condition fails, the function throws an exception, which aborts
+the insert or update.
+
+
+
+
+<!-- ========= Triggers ================================================ -->
+
+<h2 class="zdoc"><a name="Triggers">Triggers</a></h2>
+
+<p>ZFIN embraces three types of triggers:
+
+<ol>
+  <li><p>Triggers that do minor data cleaning at insert and update time.
+    For example, the <a href="#Text Processing Functions">scrub_char()</a> 
+    function is called by many triggers to remove leading and trailing spaces 
+    (and several other things) before the data is added to the database.  
+    Scrubbing triggers exist on all columns that can be populated through 
+    user/curator input.  In addition, we run a script every night, 
+    scrubscan.pl, to check all (almost) character columns in the database 
+    to see if they need to be scrubbed.
+  </li>
+  <li><p>Triggers that populate <a href="#Derived Data">derived data</a>, 
+    either in <a href="#Derived Columns">derived columns</a> in the same
+    table, or in <a href="#Fast Search Tables">derived tables</a>.
+  </li>
+  <li><p>Triggers that check complex conditions and abort the insert or
+    delete if the condition fails.  See the 
+    <a href="#Check Triggers">Check Triggers</a> section for more.
+  </li>
+</ol>
+
+<p>We shy away from and are ambivalent about triggers
+that cause any other type of action, such as inserting, updating or deleting
+data in the same or other tables.
+
+<p>Why?  These triggers constantly surprise you.  They are oh so easy to 
+forget, and even when you remember them, you have to find the definition 
+of the trigger, and then maybe a procedure as well.  
+
+<p>ZFIN, however, does have a few situations where we use this type of
+trigger simply because it was the best way to do something.  Specifically,
+the marker_go_term and marker_go_term_evidence tables have these triggers.
+
+
+<!-- =================================================================== -->
+<!-- ========= Database Schema========================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Schema">Database Schema</a></h1>
+
+<p>To see Entity-Relationship (ER) diagrams, and descriptions of the 
+table and columns in the ZFIN database, see
+ 
+<center><p><a href="Database/DataModel/index.htm"><b>CLICK HERE</b></a>.</center>
+<p>  This schema 
+documentation is far from complete.  Some tables have no verbal description,
+and many tables have only minimal comments.  This documentation is a work in 
+progress at ZFIN.
+
+<p><b>A note to Apple users</b>:  As of 2004/01, ER/Studio generated 
+documentation is not readable by Safari 1.1.1 or Internet Explorer 5.2.3 
+running on Macs.  It does work with the Camino browser, however.  ER/Studio 
+uses some fairly thorny JavaScript to do navigation, and this does not currently
+run under Safari or IE browsers on Macs.
+
+<p>The schema documentation is created using a database design tool
+<a href="http://www.embarcadero.com">ER/Studio</a>. The tool
+does not yet support all of our database documentation needs.  As a result
+the database documentation is split between the tool generated schema 
+documentation, and this document.  In particular, the schema documentation
+does not contain a verbal description of the 
+<a href="#Database Areas">database areas</a> or
+<a href="#Database Functions">database functions</a>.  
+These things are all documented in this document.
+
+<p>Each table is assigned a prefix, one or more areas, and a function.
+Functions comes from this set:
+
+      <ul>
+        <li><a name="Base Data"><b>Base Data:</b></a>
+	  Table contains data about zebrafish or the
+	  zebrafish community.  Most of what is entered by users or curators
+	  qualifies as base data.
+	<li><a name="Controlled Vocabulary"><b>Controlled Vocabulary:</b></a>
+	  These tables are used within ZFIN to limit the values that can
+	  occur in columns to a small set of values.
+	  They are used to populate pull down menus as well.  These tables
+	  are always referenced in foreign key clauses of other tables.
+	<li><a href="#Infrastructure"><b>Infrastructure:</b></a>
+	  Table is used to manage or run the web site.
+	<li><b>Fast Search:</b>  See the
+	  <a href="#Fast Search Tables">Fast Search Tables</a> section.
+	<li><b>App Page Specific:</b>  All app page specific tables should
+	  be replaced with 
+	  <a href="standards.html#Temporary Tables in App Pages">temporary 
+	  tables</a>.
+	<li><a name="View"><b>View:</b></a>
+	  Table is not actually a table, but is a view. A view is a virtual
+	  table that is actually the result of a dynamically executed
+	  SQL query on other tables.
+	  <br><br>
+      </ul>
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Database Areas ========================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Database Areas">Database Areas</a></h1>
+
+<p>This section contains verbal descriptions of the database areas described in
+the <a href="#Schema">Schema</a> documentation.
+
+<p>The tables in the database are divided up into several logical areas,
+each focusing on a different type of data.  Note that these areas are not
+disjoint.  There are links into and out of each area from other areas.
+This means that some tables are shown in several different areas.
+
+<p>Each area has a diagram in the <a href="#Schema">schema documentation</a>
+showing all of the tables in that area.  Verbal descriptions of the tables
+can also be found in the schema documentation.
+
+
+
+
+<!-- ========= Anatomical Dictionary =================================== -->
+
+<h2 class="zdoc"><a name="Anatomical Dictionary">Anatomical Dictionary</a></h2>
+
+<p>These tables describe ZFIN's anatomical dictionary.  
+The anatomical dictionary was implemented at the same time as 
+<a href="#Expression">expression</a>.
+
+<p>This work went into production on 2001/10/01.
+
+
+
+<!-- ========= Expression ============================================== -->
+
+<h2 class="zdoc"><a name="Expression">Expression</a></h2>
+
+<p>These tables describe gene expression in ZFIN.
+Expression was implemented at the same time as the
+<a href="#Anatomical Dictionary">anatomical dictionary</a>.
+
+<p>This work went into production on 2001/10/01.
+
+
+
+<!-- ========= Fish / Mutants =========================================== -->
+
+<h2 class="zdoc"><a name="Fish_Mutants">Fish / Mutants</a></h2>
+
+<p>The tables related to mutants are in dire need of a redesign.
+INT_FISH_CHROMO, along with the
+CHROMOSOME table, were
+a first and unsuccessful effort by ZFIN to support double mutants.
+We didn't end up supporting double mutants, and we badly muddled
+the implementation of single mutants in the process.
+
+<p>The intent of this table was to implement a M:M relationship
+between the FISH and
+CHROMOSOME tables.  This relationship
+would support double, triple, etc., mutants.  This table
+could in fact support such a thing.
+
+<p>However, because the
+CHROMOSOME and FISH tables have so much redundant data in them,
+they effectively render this whole effort useless.
+What we end up with instead is the FISH table supporting only
+single mutants, and a 4 table cycle with 1:1 relationships all the
+way around.
+
+<p>FISH has a 1:1 relationship with
+INT_FISH_CHROMO which has a 1:1 relationship with
+CHROMOSOME which has a 1:1 relationship with
+ALTERATION which has a 1:1 relationship with
+FISH, which is where we started.  In this box step,
+INT_FISH_CHROMO contains no useful information, and CHROMOSOME contains
+only one useful field.
+
+<p>ZFIN plans to clean this up in 2005.
+
+<h3 class="zdoc"><a name="New Fish Model">New Fish Model</a></h3>
+
+<p> The new fish model is in development.  It is based on the GMOD sequence
+and genetic modules.
+
+<br>
+<img src="fish_new.jpg" alt="New Fish Model">
+<br>
+
+
+<h3 class="zdoc"><a name="Fish Images">Fish Images</a></h3>
+
+<p>Fish images are a subarea of <a href="#Fish_Mutants">Fish / Mutants</a>, and
+are related to the <a href="#Anatomical Dictionary">Anatomical Dictionary</a>
+and <a href="#Expression">Expression</a> areas.
+
+<p>This work went into production on 2001/10/01.
+
+
+
+
+<h3 class="zdoc"><a name="ZIRC">ZIRC</a></h3>
+
+<p>This is a subarea of <a href="#Fish_Mutants">Fish / Mutants</a>.  It 
+contains the tables that describe the availability of various fish and mutations
+at <a href="http://zfin.org/zirc/home/guide.php">ZIRC</a>.  
+ZIRC's database better represents double, triple, etc. mutants better
+than ZFIN.  Therefore, ZIRC availability information is stored in ZFIN by 
+relating ZIRC fish lines to ZFIN alterations, rather than directly to ZFIN
+FISH records.
+
+
+
+
+<!-- ========= Infrastructure ========================================== -->
+
+<h2 class="zdoc"><a name="Infrastructure">Infrastructure</a></h2>
+
+<p>Tables in this area are used to support the database or web site in 
+general ways.
+
+
+
+<!-- ========= Mapping and Linkages ==================================== -->
+
+<h2 class="zdoc"><a name="Mapping and Linkages">Mapping and Linkages</a></h2>
+
+<p>These tables contain information about mapping experiments.
+
+<p>The linkage tables are used to represent independent linkages in ZFIN.
+An independent linkage is basically a mapping experiment result that was not
+done on a panel.  Therefore it can't go in the standard mapping tables.
+
+<p>An independent linkage says that this set of markers occur close to each
+other.  The basic information about linkages and the markers in them are
+in the LINKAGE and
+LINKAGE_MEMBER tables.
+There may also be additional information distances between particular markers
+in the linkage.  This information is represented in the
+LINKAGE_PAIR and
+LINKAGE_PAIR_MEMBER tables.
+
+<p>Linkages were reimplemented in production on 2001/07/18.
+
+
+
+
+
+<!-- ========= Markers and Genes ======================================= -->
+
+<h2 class="zdoc"><a name="Markers and Genes">Markers and Genes</a></h2>
+
+<p>This large set of tables describes genes and markers in ZFIN, as well
+as related information.
+
+
+<h3 class="zdoc"><a name="Gene Ontology (GO)">Gene Ontology (GO)</a></h3>
+
+<p>Gene ontology (GO)
+(<a href="http://www.geneontology.org">www.geneontology.org</a>)
+is a large project that attempts to " provide controlled vocabularies
+for the description of the molecular function, biological process and
+cellular component of gene products."
+
+<p>ZFIN implements only a fraction of GO.  In particular any GO terms
+that are associated by SWISS-PROT with ZFIN
+gene records are included in ZFIN.  ZFIN does not
+store the full GO hierarchies (directed acyclic graphs actually), only
+the terms that are relevant to zebrafish and which of
+the three GO ontologies the term is a part of.
+
+
+<h3 class="zdoc"><a name="Orthologues and DB Links">Orthologues and DB Links</a></h3>
+
+<p>These tables store orthology information in ZFIN.  It is a subarea
+of the <a href="#Markers and Genes">Markers and Genes</a> area.
+
+
+
+
+<!-- ========= Sources and Attribution ================================= -->
+
+<h2 class="zdoc"><a name="Sources and Attribution">Sources and Attribution</a></h2>
+
+<p>Sources refer to things that can be sources of data.  This includes
+publications, people, labs, and companies.
+
+
+
+
+<h3 class="zdoc"><a name="Curator Database">Curator Database</a></h3>
+
+<p>This subarea of 
+<a href="#Sources and Attribution">Sources and Attribution</a> describes the
+tables that ZFIN uses to keep track of what has been curated in what
+publications so far.
+
+
+
+<!-- ========= Unlcassified ============================================ -->
+
+<h2 class="zdoc"><a name="Unclassified">Unclassified</a></h2>
+
+<p>Tables in this area have not yet been classified into one of the other 
+areas yet.
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Database Cleaning and Validation ======================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Database Cleaning and Validation">
+                          Database Cleaning and Validation</a></h1>
+
+<p>Whenever possible we try to enforce <a href="#Constraints">constraints</a>
+in the database, using the database management system.  In addition 
+ZFIN also uses triggers to do some data cleaning at insert and update time.
+See the <a href="#Constraints">Constraints</a> and 
+<a href="#Triggers">Triggers</a> sections for details.
+
+<p>Finally, there are some conditions that can't be easily checked with check
+triggers or standard constraints.  ZFIN runs a script every night, 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/DB_maintenance/validatedata.pl">validatedata.pl</a>,
+that reports any violations of this type of constraint.  In
+addition, it also does some cleanup for a limited number of conditions.
+The same script is run (with different options) to generate weekly and monthly
+reports of conditions that sometimes, but not always require curator attention.
+
+<!-- ========= Verifying Blobs in the filesytem =========================== -->
+
+<h2 class="zdoc"><a name="Verifying BLOBs in the Filesytem">
+Verifying Blobs in the filesystem</a></h2>
+
+<p>In 2005, ZFIN decided to move image and pdf BLOB files out of the database
+and into the filesystem.  The 
+<a href="impl.html#ZFIN Prod LoadUp">/loadUp/ directories</a>
+on helix and embryonix hold these files.
+
+<p>Every night, via zfishweb cron, the filesystem repository of images/pdfs is 
+compared to (and validates) database references to these files.
+Zfishweb cron fires 
+
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/DB_maintenance/loadUp/remove_orphan_files.pl">remove_orphan_files.pl</a>
+ 
+(which calls <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/DB_maintenance/loadUp/rsync.pl">rsync.pl</a>). 
+
+<p>Image files can be referenced in two different tables:
+
+<p><i>fx_fish_image_private<br>
+<p>fish_image</i><br>
+
+<p>PDF files are references in the <i>publication</i> table. 
+
+<p>If files are incountered in the filesystem that do not have any 
+references in the database, then these files are moved to the 
+/bkup directory available in each loadUp subdirectory and a report 
+is sent listing all the files that moved.  This can happen when a curator 
+deletes an image from an FX record.  The interface
+is not allowed to delete or move files in the filesystem for security reasons. 
+
+<p>If the script incounters file references in the database that are not
+in the filesystem, it generates and sends a report to informix.  
+This is a sign of something very wrong with the 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/cgi-bin/upload.cgi">upload cgi</a>.  
+In the early days, this happened because curators were able
+to load 'null' image records into the database.  Null image records were image
+records with no actual image.  These have almost all been corrected and we 
+should NEVER receive emails listing file references in the database with no 
+matching file in the filesystem.
+
+<!-- =================================================================== -->
+<!-- ========= Database Functions ====================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Database Functions">Database Functions</a></h1>
+
+<p>Informix allows you to define functions to the database that are written
+in either Informix Stored Procedure Language (SPL), or in other
+programming languages such as C.  Once defined to the database, these
+functions can be called from SQL in the same way that built-in SQL functions
+are called.
+
+<p>All of the functions defined in ZFIN are defined in the
+<a href="impl.html#lib/DB_functions">lib/DB_functions</a> directory.
+
+<p>This section describes the more important functions, grouped roughly by
+functionality.
+
+
+
+<!-- ========= Infrastructure Functions ================================ -->
+
+<h2 class="zdoc"><a name="Infrastructure Functions">Infrastructure Functions</a></h2>
+
+<table class="zdoc">
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>get_id</b>
+      <br>&nbsp;&nbsp;&nbsp;(name lvarchar)
+    <td valign="top">lvarchar
+    <td valign="top">Generates a new unique ID of the format:
+      <pre>
+      ZDB-name-YYMMDD-seq
+      </pre>
+      where name is a valid
+      <a href="#ZDB IDs and ZDB Object Types">ZDB object type</a>,
+      YYMMDD is the current date, and seq is unique for that name and date.
+      Seq starts over at 1 when the date changes.  This routine reads and
+      updates the ZDB_OBJECT_TYPE table.
+
+  <tr>
+    <td valign="top"><b>get_obj_name</b>
+      <br>&nbsp;&nbsp;&nbsp;(zdbId varchar)
+    <td valign="top">varchar
+    <td valign="top">Given a ZDB ID, returns the name of the object associated with that
+      ZDB ID.  Some <a href="#ZDB IDs and ZDB Object Types">object types</a>
+      do not have names per se.  In these cases the ZDB ID is returned.
+      Whenever new object types are added to the
+      ZDB_OBJECT_TYPE table, code must also
+      be added to this function to handle that object type.
+
+  <tr>
+    <td valign="top"><b>get_obj_type</b>
+      <br>&nbsp;&nbsp;&nbsp;(zdbId varchar)
+    <td valign="top">varchar
+    <td valign="top">Given a ZDB ID, this extracts the
+      <a href="#ZDB IDs and ZDB Object Types">object type</a> from the
+      ZDB ID.  The object type is the second part of the ZDB ID.
+
+  <tr>
+    <td valign="top"><b>get_random_cookie</b>()
+    <td valign="top">lvarchar
+    <td valign="top">Generates a random cookie of printable
+      characters to be passed to a web browser
+
+  <tr>
+    <td valign="top"><b>get_time</b>()</td>
+    <td valign="top">varchar(30)</td>
+    <td valign="top">Returns the current system time, down to the millisecond.  This is
+      useful for doing timings inside app pages.
+    </td>
+  </tr>
+
+  <tr>
+    <td valign="top"><b>set_session_params</b>()</td>
+    <td valign="top">nothing</td>
+    <td valign="top">
+      Sets a standard set of Informix session parameters to the settings we
+      commonly use at ZFIN.  It is useful to call this at the beginning of 
+      scripts or SPLs.  See the 
+      <a href="impl.html#Informix Settings">Informix Settings</a> section 
+      for details.
+    </td>
+  </tr>
+
+  <tr>
+    <td valign="top"><b>sysexec</b>
+      <br>&nbsp;&nbsp;&nbsp;(key lvarchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;args lvarchar)
+    <td valign="top">lvarchar
+    <td valign="top">Calls a system executable and returns results from STDOUT.  See
+    the <a href="impl.html#sysexec, EXECWEB, and unix_commands">
+    sysexec, EXECWEB, and unix_commands</a> section and the
+    EXECWEB table for more details.
+  </tr>
+
+  <tr>
+    <td valign="top"><b>table_exists</b>
+      <br>&nbsp;&nbsp;&nbsp;(table_name&nbsp;varchar)</td>
+    <td valign="top">boolean</td>
+    <td valign="top">Returns 't' (true) if the table exists in the current 
+      database, and 'f' (false) if it does not.  table_name can be a permanent
+      or temporary table.
+    </td>
+  </tr>
+</table>
+
+
+
+
+<!-- ========= Text Processing Functions =============================== -->
+
+<h2 class="zdoc"><a name="Text Processing Functions">Text Processing Functions</a></h2>
+
+
+<table class="zdoc">
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>conc</b>
+      <br>&nbsp;&nbsp;&nbsp;(pre&nbsp;lvarchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;post&nbsp;lvarchar)
+    <td valign="top">lvarchar
+    <td valign="top">Concatenates two strings.  This varies from the 
+      Informix concatenation operator, "||", in one subtle way.  conc()
+      treats NULLs as empty strings.  "||" treats NULLs as NULLs.  For 
+      example "NULL || 'Eck'" returns NULL, but "conc(NULL, 'Eck')" 
+      returns "Eck".  This function gets used in 7 files.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>html_breaks</b>
+      <br>&nbsp;&nbsp;&nbsp;(text lvarchar)
+    <td valign="top">lvarchar
+    <td valign="top">Our HTML columns are stored with newlines in them.  
+      If we were to
+      just display this data in our app pages, the newlines would be
+      ignored because that is what HTML does.  This function translates
+      newlines into <kbd>&lt;BR&gt;</kbd> so that they will actually
+      get displayed that way in app pages.
+
+      <P>Note that this is an incredibly inefficient way to do this.  It
+      would be much better if we did this translation only when the data
+      was first entered or updated.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>html_breaks</b>
+      <br>&nbsp;&nbsp;&nbsp;(html html)
+    <td valign="top">html
+    <td valign="top">This is called html_breaks_html() in <kbd>zextend.c</kbd>.
+      It is a version
+      of html_breaks() that works with HTML data types.
+
+  <tr>
+    <td valign="top"><b>position</b>
+      <br>&nbsp;&nbsp;&nbsp;(lchr lvarchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;lstr lvarchar)
+    <td valign="top">integer
+    <td valign="top">Find the position of a character in a string.  As of 
+      2004/05 this is not used anywhere.
+
+  <tr>
+    <td valign="top"><b>scrub_char</b>
+      <br>&nbsp;&nbsp;&nbsp;(src lvarchar)
+    <td valign="top">lvarchar
+    <td valign="top">Scrubs character strings and removes conditions that
+      we don't want in the database.  Some of those conditions are 
+      <ul>
+        <li>Leading spaces
+	<li>Trailing spaces
+	<li>Control characters
+	<li>Condensing multiple spaces/control characters to a single space
+      </ul>
+      It is typically used with char and varchar columns, and is used in a
+      fair number of triggers.
+
+  <tr>
+    <td valign="top"><b>zero_pad</b>
+      <br>&nbsp;&nbsp;&nbsp;(varchar)
+    <td valign="top">varchar
+    <td valign="top">Returns a version of the input string with any numbers in it expanded
+      out to 10 digits wide.  This allows the code to do an order by on the
+      output of this function and get things in a reasonable order.  For
+      example, the strings A1, A2, A3, A10, A20 would now be sorted in that
+      order, rather than in the order A1, A10, A2, A20, A3.  This function
+      is used in several triggers in the database to populate columns that
+      are specifically for ordering output.
+
+  <tr>
+    <td valign="top"><b>zero_pad_int</b>
+      <br>&nbsp;&nbsp;&nbsp;(unsigned int, unsigned short int)
+    <td valign="top">varchar
+    <td valign="top">The first parameter is the integer to be zero padded, 
+      the second parameter defines the digits. For example, zero_pad_int(203,7)
+      returns "0000203". 
+
+</table>
+
+
+
+<!-- ========= Regen Functions ========================================= -->
+
+<h2 class="zdoc"><a name="Regen Functions">Regen Functions</a></h2>
+
+<p>These functions create and populate the
+<a href="#Fast Search Tables">fast search tables</a>.
+See the <a href="#Fast Search Tables">Fast Search Tables</a> section
+for more on these functions.
+
+<table class="zdoc">
+  <caption>Regen Functions</caption>
+  <tr>
+    <th>Function</th>
+    <th>Returns</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_anatomy</b>()</td>
+    <td valign="top">integer</td>
+    <td valign="top">Regenerates the
+      <a href="#Anatomical Dictionary">anatomical
+      dictionary</a> <a href="#Fast Search Tables">fast search</a> tables:
+      <ul>
+        <li>ALL_ANATOMY_CONTAINS</li>
+        <li>ALL_ANATOMY_STAGE</li>
+        <li>ANATOMY_DISPLAY</li>
+        <li>ANATOMY_STAGE_STATS</li>
+      </ul>
+      <p>All of these tables exist so that ZFIN code does not have to deal
+      with the anatomy hierarchy on the fly.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_fishsearch</b>()</td>
+    <td valign="top">integer</td>
+    <td valign="top">Regenerates the FISH_SEARCH
+      <a href="#Fast Search Tables">fast search</a> table.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <b>regen_names</b>()<br>
+      <b>regen_names_fish</b>(zdbId)<br>
+      <b>regen_names_locus</b>(zdbId)<br>
+      <b>regen_names_marker</b>(zdbId)
+    </td>
+    <td valign="top">&nbsp;</td>
+    <td valign="top">
+      See the <a href="#regen_names Functions">regen_names Functions</a> 
+      section below.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_oevdisp</b>()</td>
+    <td valign="top">integer</td>
+    <td valign="top">Regenerates the ORTHOLOGUE_EVIDENCE_DISPLAY
+      <a href="#Fast Search Tables">fast search</a> table.
+    </td>
+  </tr>
+</table>
+
+
+
+<h3 class="zdoc"><a name="regen_names Functions">regen_names Functions</a></h3>
+
+<p>This subset of <a href="#Regen Functions">Regen Functions</a> update these
+<a href="#Fast Search Tables">fast search tables</a>:
+<ul>
+  <li><a href="Database/DataModel/index.htm">ALL_MAP_NAMES</a></li>
+  <li><a href="Database/DataModel/index.htm">ALL_NAME_ENDS</a></li>
+</ul>
+
+<table class="zdoc">
+  <caption>regen_names Functions</caption>
+  <tr>
+    <th>Function</th>
+    <th>Returns</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_names</b>()</td>
+    <td valign="top">integer</td>
+    <td valign="top">This generates all possible names for every
+      <a href="Database/DataModel/index.htm">FISH</a>,
+      <a href="Database/DataModel/index.htm">LOCUS</a>, and
+      <a href="Database/DataModel/index.htm">MARKER</a>.
+      It takes a long time to run.
+    </td>
+  </tr>
+</table>
+
+<p>The following functions regenerate all possible names for a single 
+ZDB ID of the given type.  These are called by ZFIN web pages whenever 
+any possible name for the given object type is added, modified, or 
+deleted.  Compared to <b>regen_names()</b>, these run instantaneously.
+
+<table class="zdoc">
+  <caption>regen_names Object Type Functions</caption>
+  <tr>
+    <th>Function</th>
+    <th>Returns</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_names_fish</b>(zdbId)</td>
+    <td valign="top">nothing</td>
+    <td valign="top">Updates the name information for the given fish ZDB ID
+      in the ALL_MAP_NAMES and ALL_NAME_ENDS 
+      <a href="#Fast Search Tables">fast search tables</a>.
+      What regen_names() does for all fish, regen_names_fish() does for
+      a single fish.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_names_locus</b>(zdbId)</td>
+    <td valign="top">nothing</td>
+    <td valign="top">Updates the name information for the given locus ZDB ID
+      in the ALL_MAP_NAMES and ALL_NAME_ENDS 
+      <a href="#Fast Search Tables">fast search tables</a>.
+      What regen_names() does for all locii, regen_names_locus() does for
+      a single locus.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><b>regen_names_marker</b>(zdbId)</td>
+    <td valign="top">nothing</td>
+    <td valign="top">Updates the name information for the given marker ZDB ID
+      in the ALL_MAP_NAMES and ALL_NAME_ENDS 
+      <a href="#Fast Search Tables">fast search tables</a>.
+      What regen_names() does for all markers, regen_names_marker() does for
+      a single marker.
+    </td>
+  </tr>
+</table>
+
+
+<h4 class="zdoc"><a name="regen_names Implementation">
+                          regen_names Implementation</a></h4>
+
+<p>regen_names() and regen_names_fish(zdbId), regen_names_locus(zdbId), and
+regen_names_fish(zdbId) all use a common set of subroutines and temp tables:
+
+<br><br>
+<img src="http://cvs.zfin.org/cvs/cvsweb.cgi/~checkout~/ZFIN_WWW/lib/DB_functions/SPL/Regen_names/regen_names.gif?rev=HEAD&amp;content-type=image/gif"
+     alt="Will not show unless you are at ZFIN">
+
+<p>Only the top level of subroutines should be called from scripts or web pages.
+Only the regen_names routines should access the temp tables shown in this 
+diagram.
+
+
+<!-- ========= Stage Functions ========================================= -->
+
+<h2 class="zdoc"><a name="Stage Functions">Stage Functions</a></h2>
+
+<p>There are many database functions related to
+developmental stages.  Several return formatted
+versions of the <a href="#Stage Names">stage name</a>,
+some with extra information about the stage, and
+some with embedded HTML links.  Others exist to do
+<a href="db.html#Stage Windows">stage window</a> consistency
+checking.
+
+<p>See the description of the
+STAGE table or the function
+<a href="impl.html#lib/DB_functions">source files</a>
+for more on these functions.
+
+
+<h3 class="zdoc"><a name="Stage Name Functions">Stage Name Functions</a></h3>
+
+<h4 class="zdoc"><a name="Stage Names">Stage Names</a></h4>
+
+<p>When stage names are displayed in the web site, the hours covered
+by them, and any other features that are used to delimit/determine
+stage (such as notochord, standard, or full body length) are often
+displayed next to them:
+
+<p>
+&nbsp;&nbsp;&nbsp;Large-stage:Sub-stage (60.00h - 72.00h)<br>
+&nbsp;&nbsp;&nbsp;Large-stage:Sub-stage (60.00h - 72.00h, 3.0mm SL)<br>
+&nbsp;&nbsp;&nbsp;Large-stage:Sub-stage (60.00h - 72.00h, 3.0mm NL)<br>
+&nbsp;&nbsp;&nbsp;Large-stage:Sub-stage (60.00h - 72.00h, 3.0/4.0mm NL/SL)
+<p>In addition, any times greater than 168 hours (7 days) are displayed
+as days, rather than as hours:
+
+<p>
+&nbsp;&nbsp;&nbsp;Larval:Middle to late (168.00h - 90d)<br>
+&nbsp;&nbsp;&nbsp;Adult (90d to 730d)
+
+<p>These are known as <i>long</i> stage names and they are stored in
+the stg_name_long column.
+
+<p>Several <a href="#Database Functions">database functions</a>
+exist that can be called to generate stage names
+and long stage names that include HTML links to the help pages
+for the stage.  (The HTML links points to the page in
+stg_comments_relative_url.)
+<br><br>
+
+<table class="zdoc">
+  <caption>Stage Name Functions</caption>
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>create_stg_name_ext</b>
+      <br>&nbsp;&nbsp;&nbsp;(stgHrsStart decimal,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;stgHrsEnd decimal,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;stgOtherFeatures&nbsp;varchar)
+    <td valign="top">varchar
+    <td valign="top">Creates the extension part of the "long name" for a stage, i.e, the
+      part that makes a long name long.  The extension includes the hours the
+      stage spans, and the contents of the stg_other_features column.
+      In addition, any times greater than 168 hours (7 days) are displayed
+      as days, rather than as hours.
+
+  <tr>
+    <td valign="top"><b>create_stg_name_long</b>
+      <br>&nbsp;&nbsp;&nbsp;(stgName varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;stgHrsStart decimal,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;stgHrsEnd decimal,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;stgOtherFeatures varchar)
+    <td valign="top">varchar
+    <td valign="top">Creates the "long name" for a stage.  The long name includes
+      the name of the stage, plus the hours it spans, and the contents
+      of the stg_other_features column except that the "Unknown" stage has the 
+      same long name as its name.
+      In addition, any times greater than 168 hours (7 days) are displayed
+      as days, rather than as hours.
+
+  <tr>
+    <td valign="top"><b>get_stg_name_html</b>
+      <br>&nbsp;&nbsp;&nbsp;(stgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;javaScriptFunc varchar)
+    <td valign="top">varchar
+    <td valign="top">Generates a string containing the stage name with embedded 
+      hot links to the stage index page, except that the "Unknown" 
+      stage doesn't get a hot link.
+      If the <i>optional</i> javascriptFunc parameter is provided then the
+      generated HTML will invoke that JavaScript routine, passing the URL 
+      as a parameter to the JavaScript function.
+
+  <tr>
+    <td valign="top"><b>get_stg_name_long_html</b>
+      <br>&nbsp;&nbsp;&nbsp;(stgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;javaScriptFunc varchar)
+    <td valign="top">varchar
+    <td valign="top">Creates the "long name" for a stage with embedded HREF tags in it.
+      The long name includes the name of the stage, plus the hours it spans,
+      and the contents of the stg_other_features column. The "Unknown" stage
+      gets the plain stage name returned.
+      If the <i>optional</i> javascriptFunc parameter is provided then the
+      generated HTML will invoke that JavaScript routine, passing the URL as a 
+      parameter to the JavaScript function.
+
+</table>
+
+
+<h3 class="zdoc"><a name="Stage Window Functions">Stage Window Functions</a></h3>
+
+<h4 class="zdoc"><a name="Stage Windows">Stage Windows</a></h4>
+
+<p>Stages are usually used in ZFIN in
+ordered pairs known as <i>stage windows</i>.  Stage windows cover one
+or more stages.  The first member of the
+pair is the stage where the window starts; the second member is
+where the window ends.  The window goes from the start of the
+start stage to the instant before the end of the end stage.
+If the stage window covers only a single stage then both the
+start and end stage will be that stage.
+
+<p>Several <a href="#Database Functions">database functions</a>
+have been defined to do stage window processing.  <br><br>
+
+
+<table class="zdoc">
+  <caption>Stage Window Functions</caption>
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>anatitem_overlaps_stg_window</b>
+      <br>&nbsp;&nbsp;&nbsp;(anatItemZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;startStageZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;endStageZdbId varchar)
+    <td valign="top">boolean
+    <td valign="top">Returns true if the stage window the anatomy item exists in overlaps in
+      any way with stage window passed in to the routine.
+
+  <tr>
+    <td valign="top"><b>fimg_overlaps_stg_window</b>
+      <br>&nbsp;&nbsp;&nbsp;(fimgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;startStageZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;endStageZdbId varchar)
+    <td valign="top">boolean
+    <td valign="top">Returns true if any of the stage windows defined for the image overlaps
+      in any way with the stage window passed to the function.
+
+  <tr>
+    <td valign="top"><b>stg_window_consistent</b>
+      <br>&nbsp;&nbsp;&nbsp;(startStgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;endStgZdbId varchar)
+    <td valign="top">boolean
+    <td valign="top">A pair of stages are consistent if any of the condition is met:
+      <ul>
+        <li> The start stage is the same as the end stage
+        <li>The start of the start stage is <i>less than </i>
+	  the start of the end stage.
+	<li>The end of the end stage is  <i>greater than </i>
+	  the end of the start stage.
+      </ul>
+
+  <tr>
+    <td valign="top"><b>stg_windows_overlap</b>
+      <br>&nbsp;&nbsp;&nbsp;(w1StartStgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;w1EndStgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;w2StartStgZdbId varchar,
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;w2EndStgZdbId varchar)
+    <td valign="top">boolean
+    <td valign="top">Returns true if the first stage window overlaps in any way with the
+      second stage window.
+</table>
+
+
+
+<!-- ========= Image Functions ========================================= -->
+
+<h2 class="zdoc"><a name="Image Functions">Image Functions</a></h2>
+
+<p>There is a single database function related to images:
+
+<table class="zdoc">
+  <caption>Image Functions</caption>
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>get_image_stats</b>
+      <br>&nbsp;&nbsp;&nbsp;(filepath&nbsp;lvarchar)
+    <td valign="top">integer,<br>
+      integer
+    <td valign="top">Given the name of a file containing an image, return the width and
+      height of the image in pixels.  Uses the
+      <a href="impl.html#sysexec, EXECWEB, and unix_commands">sysexec</a>
+      mechanism to call the <a href="admin.html#Netpbm">Netpbm</a> package
+      to get these values.
+      See the description of the FISH_IMAGE
+      table for more details.
+</table>
+
+
+<!-- ========= Fish/Mutant Functions ==================================== -->
+
+<h2 class="zdoc"><a name="Fish/Mutant Functions">Fish/Mutant Functions</a></h2>
+
+<p>In addition to the <a href="#Regen Functions">regen functions</a> there is
+a single database function related to fish/mutants:
+
+<table class="zdoc">
+  <caption>Fish / Mutant Functions</caption>
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>get_fish_full_name</b>
+      <br>&nbsp;&nbsp;&nbsp;(fishZdbId lvarchar)
+    <td valign="top">varchar
+    <td valign="top">Given the ZDB ID of a fish, returns a fully qualified fish name of
+      the form:
+      <ul>
+        <li><b>Mutants:</b> <i>locus_name (locus_abbrev<sup>allele_name</sup>)</i>
+	<li><b>Wildtypes:</b> wildtype_name (wildtype_abbrev)
+      </ul>
+      <p>This function is needed because ZFIN does not explicitly store the
+      full fish/mutant name anywhere in the database.  This routine constructs
+      the full fish name with appropriate italicization and superscripting
+      HTML tags included.  See the source file for the routine, or the
+      description of the <a href="db.html#Fish_Mutants">FISH</a> table for more
+      details.
+</table>
+
+
+<!-- ========= Publication Functions =================================== -->
+
+<h2 class="zdoc"><a name="Publication Functions">Publication Functions</a></h2>
+
+<p>There is a single database function related to publications:
+<br>
+<table class="zdoc">
+  <caption>Publication Functions</caption>
+  <tr>
+    <th>Function
+    <th>Returns
+    <th>Description
+
+  <tr>
+    <td valign="top"><b>get_pub_mini_ref</b>
+      <br>&nbsp;&nbsp;&nbsp;(pubZdbId&nbsp;varchar)
+    <td valign="top">varchar
+    <td valign="top">Given the ZDB ID of a publication, return the "mini ref" for that
+      publication.  Mini refs are used to display some types (Tier 1 actually)
+      of <a href="#Sources and Attribution">attributions</a>.
+      They are of the form:
+      <ul>
+        <li><b>Single Author:</b> last name, year
+	<li><b>Multiple Authors:</b> first last name, <i>et al</i>, year
+      </ul>
+      <p>This function is used in update and insert triggers on the
+      PUBLICATION table to set the
+      pub_mini_ref column.
+</table>
+
+<br><br>
+</div> <!-- class="zdoc" -->
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>
+
+</body>
+</html>

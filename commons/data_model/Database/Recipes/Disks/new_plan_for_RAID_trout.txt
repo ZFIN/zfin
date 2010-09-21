@@ -1,0 +1,75 @@
+
+New plan for RAID:
+--------------------------------------------------------------
+1 drive group, 10 disks, 1 LUNs 
+
+partition   size     usage
+ 1          3.5 TB   /zusers,
+                     /zcentral,
+                     /zarchive0,1,2,3,4
+ 2          1   TB   free (can become cooked, but RAW for now)
+ 3          2.5 TB   /zblastfiles,
+                     /zblastdb,
+                     /zunloads
+ 4          1   TB   free (can become cooked, but RAW for now)
+ 5          1.5 TB   RAW (informix)
+ 6          0.5 TB   free (can become RAW informix or cooked)
+
+
+Gives us 1.5 TB of RAW Informix disk to work with.
+
+onstat -d on current server gives amount allocated and space required in pages.
+
+need to increase the size and/or number of logical logs.
+need to increas the size of the physical log.
+
+onstat -g ckp: is apparently helpful in determining phsylog performance, 
+       	       but interpreting the meaning will take some time.
+
+BUFFERPOOL = 4G on almost
+	   doc suggests that for systems with bufferpool >= 4G, start the physlog at 4G, and increase
+	   as necessary according to the online log warnings.
+
+
+When oninit -i 'ing the server, we have to start it up with plog in the rootdbs (informix
+rules).  We also start out with only 3 llog files and a much smaller llog. 
+This means we have to have a oninit.i version of the file.
+
+** Right now, these params are commented out next to their non-i params in the onconfig.
+
+** Change rootdbs offset based on new server config and RAID config.
+
+ROOTOFFSET
+
+PHYSDBS   rootdbs
+PHYSFILE  2000
+
+LOGFILES  3
+LOGSIZE   1500
+
+RTO_SERVER_RESTART 60 # (1 minute fast recovery time as suggested by informix)
+
+# CKPTINTVL  (comment out with RTO_SERVER_RESTART param set, it is ignored anyway).
+
+AUTO_LRU_TUNING 1 # (auto tune the LRU's to match RTO_SERVER_RESTART parameter)
+
+AUTO_CKPTS 1 # (turn these on too) 
+
+OPT_GOAL 0 # change this to optimize for the first rows of data instead of all rows.
+
+DYNAMIC_LOGS 0 # (notify DBA to add new logical logs when necessary: we'll add more by default and
+                  only turn on this parameter if more doesn't work).
+
+** plogdbs_c1 is 16384 pages on almost right now; 
+   update that to at least: 2097152 pages (2K page size)
+
+server admin guide for version 11 suggests setting LRU params up a bit higher: 70 and 80 respectively.
+(these are ignored if RTO_SERVER_RESTART is enabled).
+
+** lru_max_dirty=80.000000
+** lru_min_dirty=70.000000
+
+** add 30 extra logical logs to production and development (add extra space to development for growth).
+
+?* NETTYPE to use NET type instead of CPU type.
+?* add VPCLASS tli,num=1

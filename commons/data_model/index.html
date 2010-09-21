@@ -1,0 +1,1374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<TITLE>Table of Contents, ZFIN Documentation
+</TITLE>
+
+<link rel=stylesheet href="doc.css" type="text/css">
+
+</HEAD>
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+</td></tr></table>
+
+<div class="zdoc">
+
+<CENTER>
+<H1>ZFIN Documentation:<br>Table of Contents
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br></H1>
+<p>$Id: index.html,v 1.77 2006-03-30 23:17:38 peirans Exp $
+</CENTER>
+<HR>
+<p>The online ZFIN documentation <br>
+is split across a small number of files.  The first 
+part is an introduction that should be useful to everyone involved in the
+project.  The remaining parts are each geared to a different audience,
+depending on the job they do.
+
+<!-- =================================================================== -->
+<!-- ========= SECTIONS ================================================ -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Sections">Sections</a></h1>
+
+  <h3><a href="#overview_Introduction">Introduction</a></h3>
+  <h3><a href="#overview_Curation">Curation</a></h3>
+  <h3><a href="#overview_Data Submission and Transfer">
+		Data Submission and Transfer</a></h3>
+  <h3><a href="#overview_Database Design">Database Design</a></h3>
+  <h3><a href="#overview_Implementation and Development">
+		Implementation and Developement</a></h3>
+  <h3><a href="#overview_Coding Standards and Best Practices">
+		Coding Standards and Best Practices</a></h3>
+  <h3><a href="#overview_System, Web Server, and Database Administration">
+		System, Web Server, and Database Administration</a></h3>
+
+
+
+<!-- =================================================================== -->
+<!-- ========= TABLE OF CONTENTS, OVERVIEW ============================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Table of Contents, Overview">Table of Contents, Overview</a></h1>
+
+ <h2 class="zdoc"><a name="overview_Introduction" 
+                     href="#detailed_Introduction">Introduction</a></h2>
+  <ol>
+   <li><a href="#intro_ZFIN">ZFIN</a></li>
+   <li><a href="#intro_ZFIN Documentation">ZFIN Documentation</a></li>
+   <li><a href="#intro_FogBUGZ">FogBUGZ</a></li>
+   <li><a href="#intro_ZFIN Web Sites">ZFIN Web Sites</a></li>
+   <li><a href="#intro_ODBC Connections">ODBC Connections</a>
+  </ol>
+
+ <h2 class="zdoc"><a name="overview_Curation"
+                     href="#detailed_Curation">Curation</a></h2>
+  <ol>
+   <li><a href="#curation_Overview">Overview</a></li>
+   <li><a href="#curation_Curation Resources">Curation Resources</a></li>
+   <li><a href="#curation_Publication Identification, Entry, Acquisition, and Annotation">
+                              Publication Identification, Entry, Acquisition, and Annotation</a></li>
+   <li><a href="#curation_Genes">Genes</a></li>
+   <li><a href="#curation_Mutants">Mutants</a></li>
+   <li><a href="#curation_Morpholinos">Morpholinos</a></li>
+   <li><a href="#curation_People">People and Labs</a></li>
+   <li><a href="#curation_Companies">Companies</a></li>
+   <li><a href="#curation_Publications">Publications</a></li>
+   <li><a href="#curation_Nomenclature Approvals">Nomenclature Approvals</a></li>
+   <li><a href="#curation_When the Web Pages Aren't Enough">
+                              When the Web Pages Aren't Enough</a>
+  </ol>
+
+ <h2 class="zdoc"><a name="overview_Data Submission and Transfer" 
+                    href="#detailed_Data Submission and Transfer">
+                                    Data Submission and Transfer:</a></h2>
+  <ol>
+   <li><a href="#dst_Overview">Overview</a></li>
+   <li><a href="#dst_Direct Data Submissions">Direct Data Submissions</a></li>
+   <li><a href="#dst_Automated Data Transfers">Automated Data Transfers</a>
+  </ol>
+
+ <h2 class="zdoc"><a name="overview_Database Design" 
+                    href="#detailed_Database Design">Database Design</a></h2>
+  <ol>
+   <li><a href="#db_History">History</a></li>
+   <li><a href="#db_Logical Design Conventions">Logical Design Conventions</a></li>
+   <li><a href="#db_Schema">Database Schema</a></li>
+   <li><a href="#db_Database Areas">Database Areas</a></li>
+   <li><a href="#db_Database Cleaning and Validation">
+                        Database Cleaning and Validation</a></li>
+   <li><a href="#db_Database Functions">Database Functions</a>
+  </ol>
+
+ <h2 class="zdoc"><a name="overview_Implementation and Development" 
+                    href="#detailed_Implementation and Development">
+                                    Implementation and Development</a></h2>
+  <ol>
+   <li><a href="#impl_Big Picture">Big Picture</a></li>
+   <li><a href="#impl_Machines and Informix Engines">
+                          Machines and Informix Engines</a></li>
+   <li><a href="#impl_Directories and Files">Directories and Files</a></li>
+   <li><a href="#impl_Web Site / Database / Machine Matrix">
+                          Web Site / Database / Machine Matrix</a></li>
+   <li><a href="#impl_ZFIN Development Environments">
+                          ZFIN Development Environments</a></li>
+   <li><a href="#impl_Web Page Design and Implementation">
+                          Web Page Design and Implementation</a></li>
+   <li><a href="#impl_Database Implementation">Database Implementation</a></li>
+   <li><a href="#impl_Uniquery">Uniquery</a></li>
+   <li><a href="#impl_BLAST">BLAST</a></li>
+   <li><a href="#impl_Mirror Sites">Mirror Sites</a>
+  </ol>
+ 
+ <h2 class="zdoc"><a name="overview_Coding Standards and Best Practices"
+                    href="#detailed_Coding Standards and Best Practices">
+                                    Coding Standards and Best Practices</a></h2>
+  <ol>
+   <li><a href="#standards_Philosophy">Philosophy</a></li>
+   <li><a href="#standards_Updating ZFIN Standards">Updating ZFIN Standards</a></li>
+   <li><a href="#standards_Enforcement">Enforcement</a></li>
+   <li><a href="#standards_General Standards and Best Practices">
+                           General Standards and Best Practices</a></li>
+   <li><a href="#standards_HTML">HTML</a></li>
+   <li><a href="#standards_Database">Database</a></li>
+   <li><a href="#standards_Web Datablade App Pages">Web Datablade App Pages</a></li>
+   <li><a href="#standards_CGI">CGI</a></li>
+   <li><a href="#standards_PERL">PERL</a></li>
+  </ol>
+
+ <h2 class="zdoc"><a name="overview_System, Web Server, and Database Administration"
+                    href="#detailed_System, Web Server, and Database Administration">
+                                    System, Web Server, and Database Administration</a></h2>
+  <ol>
+   <li><a href="#admin_Database Administration">Database Administration</a></li>
+   <li><a href="#admin_Apache and Web Datablade Administration">
+                           Apache and Web Datablade Administration</a></li>
+   <li><a href="#admin_System Administration">System Administration</a></li>
+   <li><a href="#admin_BLAST Server Admininstration">
+                       BLAST Server Admininstration</a></li>
+   <li><a href="#admin_Moving zfin.org to a Different Machine">
+                       Moving zfin.org to a Different Machine</a></li>
+   <li><a href="#admin_Moving loadUp directories">
+                       Moving loadUp directories</a></li>
+  </ol>
+
+
+
+<!-- =================================================================== -->
+<!-- ========= TABLE OF CONTENTS, DETAILED ============================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Table of Contents, Detailed">Table of Contents, Detailed</a></h1>
+
+ <!-- ========= INTRODUCTION =========================================== -->
+
+ <h2 class="zdoc"><a name="detailed_Introduction" href="intro.html">Introduction</a></h2>
+  <ol>
+   <li><a name="intro_ZFIN" href="intro.html#ZFIN">ZFIN</a></li>
+   <li><a name="intro_ZFIN Documentation" 
+          href="intro.html#ZFIN Documentation">ZFIN Documentation</a>
+    <ol>
+     <li><a href="intro.html#Where To Find This Documentation">
+                             Where To Find This Documentation</a></li>
+     <li><a href="intro.html#How To Read This Documentation">
+                             How To Read This Documentation</a>
+      <ol>
+       <li><a href="intro.html#Biologists">Biologists</a></li>
+       <li><a href="intro.html#Technologists">Technologists</a>
+      </ol>
+     </li>
+     <li><a href="intro.html#How To Update This Documentation">
+                             How To Update This Documentation</a>
+      <ol>
+       <li><a href="intro.html#Biologists Update">Biologists</a></li>
+       <li><a href="intro.html#Technologists Update">Technologists</a>
+        <ol>
+         <li><a href="intro.html#Figures">Figures</a></li>
+         <li><a href="intro.html#Database Documentation">Database Documentation</a>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="intro_FogBUGZ" href="intro.html#FogBUGZ">FogBUGZ</a></li>
+   <li><a name="intro_ZFIN Web Sites"
+            href="intro.html#ZFIN Web Sites">ZFIN Web Sites</a>
+    <ol>
+     <li><a href="intro.html#Production Site">Production Site</a></li>
+     <li><a href="intro.html#Pre-Production and Sandbox Site">
+                             Pre-Production and Sandbox Site</a></li>
+     <li><a href="intro.html#Beta Testing Site">Beta Testing Site</a></li>
+     <li><a href="intro.html#Development Sites">Development Sites</a></li>
+     <li><a href="intro.html#BLAST Site">BLAST Site</a></li>
+     <li><a href="intro.html#Mirror Sites">Mirror Sites</a></li>
+    </ol>
+   </li>
+   <li><a name="intro_ODBC Connections"
+          href="intro.html#ODBC Connections">ODBC Connections</a>
+  </ol>
+
+
+ <!-- ========= CURATION =============================================== -->
+
+ <h2 class="zdoc"><a name="detailed_Curation" href="curation.html">Curation</a></h2>
+  <ol>
+   <li><a name="curation_Overview"
+          href="curation.html#Overview">Overview</a></li>
+   <li><a name="curation_Curation Resources"
+          href="curation.html#Curation Resources">Curation Resources</a>
+    <ol>
+     <li><a href="curation.html#Journal Acquisition">Journal Acquisition</a></li>
+     <li><a href="curation.html#Nomenclature">Nomenclature</a></li>
+     <li><a href="curation.html#Bioinformatics and Analysis Tools">
+                                Bioinformatics and Analysis Tools</a></li>
+     <li><a href="curation.html#Genome and Sequence">Genome and Sequence</a></li>
+     <li><a href="curation.html#Ontologies">Ontologies</a></li>
+     <li><a href="curation.html#Model Organism Databases">
+                                Model Organism Databases</a>
+    </ol>
+   </li>
+
+   <li><a name="curation_Publication Identification, Entry, Acquisition, and Annotation"
+          href="curation.html#Publication Identification, Entry, Acquisition, and Annotation">
+                              Publication Identification, Entry, Acquisition, and Annotation</a></li>
+   <li><a name="curation_Genes"
+          href="curation.html#Genes">Genes</a>
+    <ol>
+     <li><a href="curation.html#Gene Nomenclature">Gene Nomenclature</a>
+      <ol>
+       <li><a href="curation.html#Nomenclature Entry">Nomenclature Entry</a>
+        <ol>
+	 <li><a href="curation.html#Renaming genes">Renaming genes</a>
+	 <li><a href="curation.html#Reasons for renaming gene names and symbols">
+	                            "Reason"s for renaming gene names and symbols</a>
+	</ol>
+       <li><a href="curation.html#Gene Previous Names">Previous Names</a>
+        <ol>
+	 <li><a href="curation.html#Previous Name Entry">Previous Name Entry</a>
+	</ol>
+      </ol>
+     </li>
+     <li><a href="curation.html#Gene Products">Gene Products</a></li>
+     <li><a name="curation_GO" href="curation.html#GO">Gene Ontology (GO)</a>
+      <ol>
+       <li><a href="curation.html#creating annotations">Creating New Annotations</a></li>
+       <li><a href="curation.html#editing annotations">Editing Existing Annotations</a>
+	<ol>
+    	 <li><a href="curation.html#annotation editor">Using the Annotation Editor</a></li>
+    	 <li><a href="curation.html#deleting terms">Deleting GO Terms</a></li>
+    	</ol>
+       </li>
+       <li><a href="curation.html#general recommendations">General GO Consortium Recommendations</a></li>
+       <li><a href="curation.html#evidence codes">Evidence Codes</a>
+    	<ol>
+         <li><a href="curation.html#IC">IC</a></li>
+         <li><a href="curation.html#IDA">IDA</a></li>
+         <li><a href="curation.html#IEA">IEA</a></li>
+         <li><a href="curation.html#IEP">IEP</a></li>
+         <li><a href="curation.html#IGI">IGI</a></li>
+         <li><a href="curation.html#IPI">IPI</a></li>
+         <li><a href="curation.html#IMP">IMP</a></li>
+         <li><a href="curation.html#ISS">ISS</a></li>
+         <li><a href="curation.html#NAS">NAS</a></li>
+         <li><a href="curation.html#ND">ND</a></li>
+         <li><a href="curation.html#TAS">TAS</a></li>
+        </ol>
+       </li>
+       <li><a href="curation.html#policies">ZFIN GO Curation Policies</a>
+        <ol>
+         <li><a href="curation.html#annotating subunits">
+                Annotating a subunit of a complex and the use of the "contributes to" checkbox.</a></li>
+         <li><a href="curation.html#Exchange of DNA/RNA between species">
+                                    Exchange of DNA/RNA between species.</a></li>
+         <li><a href="curation.html#Sensu terms and term definitions">
+                                   "Sensu" terms and term definitions.</a></li>
+         <li><a href="curation.html#Creating new GO terms and modifying current ontology structures">
+                                    Creating new GO terms and modifying current ontology structures.</a></li>
+         <li><a href="curation.html#Bringing forward annotations from orthologs/homologs">
+                                    Bringing forward annotations from orthologs/homologs.</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="curation.html#Gene Expression">Gene Expression</a>
+      <ol>
+       <li><a href="curation.html#Gene Expression Entry">Gene Expression Entry</a>
+	</ol>
+     <li><a href="curation.html#DNA Segments">DNA Segments</a>
+      <ol>
+       <li><a href="curation.html#DNA Segment Entry">DNA Segment Entry</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Sequence">Sequence</a>
+      <ol>
+       <li><a href="curation.html#Sequence Entry">Sequence Entry</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Mapping">Mapping</a>
+      <ol>
+       <li><a href="curation.html#Mapping Entry">Mapping Entry</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Orthology">Orthology</a>
+      <ol>
+       <li><a href="curation.html#Orthology Entry">Orthology Entry</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Citations">Citations</a>
+      <ol>
+       <li><a href="curation.html#Citation Entry">Citation Entry</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Merging Genes">Merging Genes</a>
+    </ol>
+   </li>
+
+   <li><a name="curation_Mutants"
+          href="curation.html#Mutants">Mutants</a>
+    <ol>
+     <li><a href="curation.html#Locus/allele registration">
+                                Locus/allele registration</a></li>
+     <li><a href="curation.html#Curation of Locus and Fish records">
+                                Curation of Locus and Fish records</a>
+      <ol>
+       <li><a href="curation.html#Linking Locus and Fish records">
+                                  Linking Locus and Fish records</a></li>
+       <li><a href="curation.html#Affected gene">Affected gene</a></li>
+       <li><a href="curation.html#Previous names">Previous names</a></li>
+       <li><a href="curation.html#Mutant descriptions">Mutant descriptions</a></li>
+       <li><a href="curation.html#Phenotype annotation">Phenotype annotation</a></li>
+       <li><a href="curation.html#Publications">Publications</a>
+      </ol>
+     </li>
+     <li><a href="curation.html#Images">Images</a>
+    </ol>
+   </li>
+
+
+ <!-- == MORPHOLINOS == -->  	
+   <li><a name="curation_Morpholinos"
+          href="curation.html#MO">Morpholinos</a>
+    <ol>
+     <li><a href="curation.html#MO_nomenclature">Morpholino Nomenclature</a></li>
+     <li><a href="curation.html#Confirming_MO_sequence">Confirming Morpholino Sequences</a></li>
+     <li><a href="curation.html#Add_new_MO">Adding a New Morpholino</a></li>
+     <li><a href="curation.html#Other_MO_considerations">Other Morpholino Considerations</a></li>
+    </ol>
+   </li>
+
+
+ <!-- == PEOPLE and LABS == -->  	
+   <li><a name="curation_People" href="curation.html#People">People and Labs</a>
+    <ol>
+     <li><a href="curation.html#New Person Records">New Records</a></li>
+         <li><a href="curation.html#Updating Person Information">Updating Information</a></li>
+     <li><a href="curation.html#Deleting Person Records">Deleting Records</a></li>
+        
+    </ol>
+   </li>
+      
+                               
+    </li>
+   <li><a name="curation_Companies"
+          href="curation.html#Companies">Companies</a>
+    <ol>
+     <li><a href="curation.html#New Company Records">New Records</a></li>
+     <li><a href="curation.html#Updating Company Information">
+                                Updating Information</a>
+   </ol>
+   <li><a name="curation_Publications"
+          href="curation.html#Pub">Publications</a>
+    <ol>
+     <li><a href="curation.html#Pub Searches">Pub Searches</a></li>
+     <li><a href="curation.html#Entering New Publications">
+                                Entering New Publications</a></li>
+     <li><a href="curation.html#Linking to Authors">Linking to Authors</a></li>
+     
+    </ol>
+   </li>
+   <li><a name="curation_Nomenclature Approvals"
+          href="curation.html#Nomenclature Approvals">Nomenclature Approvals</a></li>
+ 
+   </li>
+   <li><a name="curation_When the Web Pages Aren't Enough"
+          href="curation.html#When the Web Pages Aren't Enough">
+                              When the Web Pages Aren't Enough</a>
+  </ol>
+
+
+ <!-- ========= DATA SUBMISSION AND TRANSFER =========================== -->
+
+ <h2 class="zdoc"><a name="detailed_Data Submission and Transfer"
+                   href="dst.html">Data Submission and Transfer:</a></h2>
+  <ol>
+   <li><a name="dst_Overview"
+          href="dst.html#Overview">Overview</a></li>
+   <li><a name="dst_Direct Data Submissions"
+          href="dst.html#Direct Data Submissions">Direct Data Submissions</a>
+    <ol>
+     <li><a href="dst.html#Mapping Panels">Mapping Panels</a></li>
+     <li><a href="dst.html#Expression Data">Expression Data (FileMaker Templates)</a>
+      <ol>
+       <li><a href="dst.html#Purpose">Purpose</a></li>
+       <li><a href="dst.html#Passwords">Passwords</a></li>
+       <li><a href="dst.html#The User Interface">The User Interface</a></li>
+       <li><a href="dst.html#Tables">Tables</a></li>
+       <li><a href="dst.html#Fields">Fields</a></li>
+       <li><a href="dst.html#Scripts">Scripts</a></li>
+       <li><a href="dst.html#Controlled Vocabularies">Controlled Vocabularies</a></li>
+       <li><a href="dst.html#FR Template">FR Template</a>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="dst_Automated Data Transfers"
+          href="dst.html#Automated Data Transfers">Automated Data Transfers</a>
+    <ol>
+     <li><a href="dst.html#ZFIN Download Files">ZFIN Download Files</a></li>
+     <li><a href="dst.html#Custom Data Transfers">Custom Data Transfers</a>
+      <ol>
+       <li><a href="dst.html#pull.sh">pull.sh</a></li>
+       <li><a href="dst.html#BLAST">BLAST</a></li>
+       <li><a href="dst.html#euGenes">euGenes</a></li>
+       <li><a href="dst.html#GO">GO</a></li>
+       <li><a href="dst.html#NCBI">NCBI</a>
+        <ol>
+         <li><a href="dst.html#GenPept">GenPept</a></li>
+         <li><a href="dst.html#RefSeq">RefSeq</a>
+        </ol>
+       </li>
+       <li><a href="dst.html#John Postlethwait">John Postlethwait</a></li>
+       <li><a href="dst.html#Sanger">Sanger</a></li>
+       <li><a href="dst.html#SWISS-PROT">SWISS-PROT</a></li>
+       <li><a href="dst.html#Thisse">Thisse</a></li>
+       <li><a href="dst.html#ZIRC">ZIRC</a>
+       <li><a href="dst.html#Images and PDFs">Images and PDFs</a>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+
+
+ <!-- ========= DATABASE DESIGN ======================================== -->
+
+ <h2 class="zdoc"><a name="detailed_Database Design"
+                    href="db.html">Database Design</a></h2>
+  <ol>
+   <li><a name="db_History"
+          href="db.html#History">History</a></li>
+   <li><a name="db_Logical Design Conventions"
+          href="db.html#Logical Design Conventions">
+                        Logical Design Conventions</a>
+    <ol>
+     <li><a href="db.html#ZDB IDs and ZDB Object Types">
+                          ZDB IDs and ZDB Object Types</a></li>
+     <li><a href="db.html#Sources and Data">Sources and Data</a>
+      <ol>
+
+       <li><a href="db.html#Sources">Sources</a></li>
+       <li><a href="db.html#Data">Data</a></li>
+       <li><a href="db.html#ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA">
+                            ZDB_ACTIVE_SOURCE and ZDB_ACTIVE_DATA</a>
+        <ol>
+         <li><a href="db.html#ZDB ID History">ZDB ID History</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Tables and Columns">Tables and Columns</a>
+      <ol>
+       <li><a href="db.html#Generic Tables">Generic Tables</a></li>
+       <li><a href="db.html#Data Types">Data Types</a>
+        <ol>
+         <li><a href="db.html#VARCHAR and CHAR">VARCHAR and CHAR</a></li>
+         <li><a href="db.html#LVARCHAR, CLOB, and HTML">
+                              LVARCHAR, CLOB, and HTML</a></li>
+        </ol>
+       </li>
+       <li><a href="db.html#Redundant Data">Redundant Data</a>
+        <ol>
+         <li><a href="db.html#Derived Data">Derived Data</a>
+          <ol>
+           <li><a href="db.html#Derived Columns">Derived Columns</a></li>
+           <li><a href="db.html#Fast Search Tables">Fast Search Tables</a></li>
+          </ol>
+         </li>
+         <li><a href="db.html#Redundant Attributions">Redundant Attributions</a>
+         <li><a href="db.html#Legacy Redundant Data">Legacy Redundant Data</a>
+        </ol>
+       </li>
+       <li><a href="db.html#Private Data">Private Data</a></li>
+      </ol>
+     </li>
+     <li><a href="db.html#Views">Views</a></li>
+     <li><a href="db.html#Naming Conventions">Naming Conventions</a>
+      <ol>
+       <li><a href="db.html#Table Names">Table Names</a></li>
+       <li><a href="db.html#View Names">View Names</a></li>
+       <li><a href="db.html#Column Names">Column Names</a></li>
+       <li><a href="db.html#Function Names">Function Names</a></li>
+       <li><a href="db.html#Other Database Names">Other Database Names</a></li>
+      </ol>
+     </li>
+     <li><a href="db.html#Constraints">Constraints</a>
+      <ol>
+       <li><a href="db.html#Primary Keys">Primary Keys</a>
+        <ol>
+         <li><a href="db.html#When to Give a Table Its Own ZDB ID">
+                              When to Give a Table Its Own ZDB ID</a>
+          <ol>
+            <li><a href="db.html#When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA">
+                                 When to Add a Foreign Key Referencing ZDB_ACTIVE_DATA</a></li>
+          </ol>
+         </li>            
+        </ol>
+       <li><a href="db.html#Foreign Keys">Foreign Keys</a>
+        <ol>
+         <li><a href="db.html#Cascading Deletes">Cascading Deletes</a></li>
+         <li><a href="db.html#When Not to Use a Foreign Key">
+                              When Not to Use a Foreign Key</a></li>
+        </ol>
+       </li>
+       <li><a href="db.html#Alternate Keys">Alternate Keys</a></li>
+       <li><a href="db.html#Not NULL Constraints">Not NULL Constraints</a></li>
+       <li><a href="db.html#Check Constraints">Check Constraints</a>
+        <ol>
+         <li><a href="db.html#Check Triggers">Check Triggers</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Triggers">Triggers</a></li>
+    </ol>
+   </li>
+   <li><a name="db_Schema" href="db.html#Schema"><b>Database Schema</b></a>
+   <li><a name="db_Database Areas"
+          href="db.html#Database Areas">Database Areas</a>
+    <ol> 
+     <li><a href="db.html#Anatomical Dictionary">Anatomical Dictionary</a>
+     <li><a href="db.html#Expression">Expression</a>
+     <li><a href="db.html#Fish_Mutants">Fish / Mutants</a>
+      <ol>
+       <li><a href="db.html#Fish Images">Fish Images</a>
+       <li><a href="db.html#ZIRC">ZIRC</a>
+       <li><a href="db.html#New Fish Model">New Fish Model</a>
+      </ol>
+     <li><a href="db.html#Infrastructure">Infrastructure</a>
+     <li><a href="db.html#Mapping and Linkages">Mapping and Linkages</a>
+     <li><a href="db.html#Markers and Genes">Markers and Genes</a>
+      <ol>
+       <li><a href="db.html#Gene Ontology (GO)">Gene Ontology (GO)</a>
+       <li><a href="db.html#Orthologues and DB Links">
+                            Orthologues and DB Links</a>
+      </ol>
+     <li><a href="db.html#Sources and Attribution">
+                          Sources and Attribution</a>
+      <ol>
+       <li><a href="db.html#Curator Database">Curator Database</a>
+      </ol>
+     </li>
+     <li><a href="db.html#Unclassified">Unclassified</a>
+    </ol>
+   <li><a name="db_Database Cleaning and Validation"
+          href="db.html#Database Cleaning and Validation">
+                        Database Cleaning and Validation</a>
+   </li>
+   <li><a name="db_Database Functions"
+          href="db.html#Database Functions">Database Functions</a>
+    <ol>
+     <li><a href="db.html#Infrastructure Functions">
+                          Infrastructure Functions</a>
+     <li><a href="db.html#Text Processing Functions">
+                          Text Processing Functions</a>
+     <li><a href="db.html#Regen Functions">Regen Functions</a>
+      <ol>
+       <li><a href="db.html#regen_names Functions">regen_names Functions</a>
+        <ol>
+         <li><a href="db.html#regen_names Implementation">regen_names Implementation</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="db.html#Stage Functions">Stage Functions</a>
+      <ol>
+       <li><a href="db.html#Stage Name Functions">Stage Name Functions</a>
+        <ol>
+         <li><a href="db.html#Stage Names">Stage Names</a>
+        </ol>
+       <li><a href="db.html#Stage Window Functions">Stage Window Functions</a>
+        <ol>
+         <li><a href="db.html#Stage Windows">Stage Windows</a>
+        </ol>
+      </ol>
+     <li><a href="db.html#Image Functions">Image Functions</a>
+     <li><a href="db.html#Fish/Mutant Functions">Fish/Mutant Functions</a>
+     <li><a href="db.html#Publication Functions">Publication Functions</a>
+    </ol>
+  </ol>
+
+
+
+ <!-- ========= IMPLEMENTATION AND DEVELOPMENT ========================= -->
+
+ <h2 class="zdoc"><a name="detailed_Implementation and Development" 
+                   href="impl.html">Implementation and Development</a></h2>
+  <ol>
+   <li><a name="impl_Big Picture"
+          href="impl.html#Big Picture">Big Picture</a>
+    <ol>
+     <li><a href="impl.html#Architecture">Architecture</a></li>
+     <li><a href="impl.html#Development and Deployment">
+                            Development and Deployment</a>
+      <ol>
+       <li><a href="impl.html#Creating a Test Web Site">
+                              Creating a Test Web Site</a></li>
+       <li><a href="impl.html#Updating a File">Updating a File</a></li>
+       <li><a href="impl.html#Deploying a Change to Production">
+                              Deploying a Change to Production</a></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="impl_Machines and Informix Engines"
+          href="impl.html#Machines and Informix Engines">
+                          Machines and Informix Engines</a>
+    <ol>
+     <li><a href="impl.html#Production Server">Production Server</a></li>
+     <li><a href="impl.html#Development Server">Development Server</a></li>
+     <li><a href="impl.html#Upgrade Server">Upgrade Server</a></li>
+     <li><a href="impl.html#BLAST Server">BLAST Server</a></li>
+     <li><a href="impl.html#FogBUGZ Server">FogBUGZ Server</a></li>
+     <li><a href="impl.html#Non-Server Machines">Non-Server Machines</a></li>
+     <li><a href="impl.html#Past Servers">Past Servers</a>
+    </ol>
+   </li>
+   <li><a name="impl_Directories and Files"
+          href="impl.html#Directories and Files">Directories and Files</a>
+    <ol>
+     <li><a href="impl.html#Web Sites">Web Sites</a>
+      <ol>
+       <li><a href="impl.html#Web Site Directory Structure">
+                              Web Site Directory Structure</a>
+      </ol>
+     </li>
+     <li><a href="impl.html#ZFIN Central">ZFIN Central</a></li>
+     <li><a href="impl.html#ZFIN Commons">ZFIN Commons</a></li>
+     <li><a href="impl.html#ZFIN Prod">ZFIN Prod</a></li>
+     <li><a href="impl.html#ZFIN Users">ZFIN Users</a></li>
+     <li><a href="impl.html#ZFIN Unloads">ZFIN Unloads</a></li>
+     <li><a href="impl.html#ZFIN Archive">ZFIN Archive</a></li>
+     <li><a href="impl.html#/private">/private</a>
+      <ol>
+       <li><a href="impl.html#/private/ZfinLinks">/private/ZfinLinks</a></li>
+      </ol>
+     </li>
+     <li><a href="impl.html#Databases">Databases</a>
+     <li><a href="impl.html#ZFIN Prod LoadUp">loadUp Directories</a>
+    </ol>
+   </li>
+   <li><a name="impl_Web Site / Database / Machine Matrix"
+          href="impl.html#Web Site / Database / Machine Matrix">
+                          Web Site / Database / Machine Matrix</a>
+
+   <li><a name="impl_ZFIN Development Environments"
+          href="impl.html#ZFIN Development Environments">
+                          ZFIN Development Environments</a>
+    <ol>
+     <li><a href="impl.html#Environment Variables">Environment Variables</a>
+      <ol>
+       <li><a href="impl.html#.env Files">.env Files</a></li>
+       <li><a href="impl.html#Informix Environment Variables">
+                              Informix Environment Variables</a></li>
+       <li><a href="impl.html#Makefile Environment Variables">
+                              Makefile Environment Variables</a>
+      </ol>
+     </li>
+     <li><a href="impl.html#Makefiles and the ZFIN_WWW Source Tree">
+                            Makefiles and the ZFIN_WWW Source Tree</a>
+      <ol>
+       <li><a href="impl.html#Generic vs. Specific">Generic vs. Specific</a></li>
+       <li><a href="impl.html#Recursion">Recursion</a></li>
+       <li><a href="impl.html#Targets">Targets</a></li>
+       <li><a href="impl.html#Makefile Variables">Makefile Variables</a></li>
+       <li><a href="impl.html#Makefile Include Files">Makefile Include Files</a></li>
+       <li><a href="impl.html#Staging Directories">Staging Directories</a>
+      </ol>
+     </li>
+     <li><a href="impl.html#Source Code Control and CVS">
+                            Source Code Control and CVS</a>
+      <ol> 
+       <li><a href="impl.html#CVS Commands">CVS Commands</a>
+        <ol>
+	 <li><a href="impl.html#CVS Global Options">CVS Global Options</a>
+	 <li><a href="impl.html#CVS Common Command Options">
+	                        CVS Common Command Options</a>
+	</ol>
+       <li><a href="impl.html#CVSweb">CVSweb</a></li>
+       <li><a href="impl.html#CVS, Locking, and Multiple Developers">
+                              CVS, Locking, and Multiple Developers</a>
+        <ol>
+	 <li><a href="impl.html#The RCS Approach">The RCS Approach</a>
+	 <li><a href="impl.html#The CVS Approach">The CVS Approach</a>
+	 <li><a href="impl.html#Conflict Resolution in CVS">
+	                        Conflict Resolution in CVS</a>
+	</ol>
+       <li><a href="impl.html#CVS and Large Projects">
+                              CVS and Large Projects</a>
+        <ol>
+	 <li><a href="impl.html#Manual Coordination of Updates for Multiple Developer Projects">
+	                         Manual Coordination of Updates for Multiple Developer Projects</a>
+	 <li><a href="impl.html#Manual Coordination of Updates for a Single Developer with Multiple Projects">
+                                Manual Coordination of Updates for a Single Developer with Multiple Projects</a>
+	 <li><a href="impl.html#Automatic Coordination of Updates and CVS Branching">
+	                        Automatic Coordination of Updates and CVS Branching</a>
+	</ol>
+      </ol>
+     </li>
+     <li><a href="impl.html#Creating a ZFIN Development Environment, An Example">
+                            Creating a ZFIN Development Environment, An Example</a></li>
+     <li><a href="impl.html#Updating a File, An Example">
+                            Updating a File, An Example</a></li>
+     <li><a href="impl.html#Putting Changes Into Production">
+                            Putting Changes Into Production</a></li>
+     <li><a href="impl.html#Updating Files in the ZFIN Commons">
+                            Updating Files in the ZFIN Commons</a></li>
+     <li><a href="impl.html#Obtaining a Development Web Site">
+                            Obtaining a Development Web Site</a>
+    </ol>
+   </li>
+
+   <li><a name="impl_Web Page Design and Implementation"
+          href="impl.html#Web Page Design and Implementation">
+                          Web Page Design and Implementation</a>
+    <ol>
+     <li><a href="impl.html#Static Pages">Static Pages</a>
+      <ol>
+       <li><a href="impl.html#Static Page Design Guidelines">
+                                          Design Guidelines</a></li>
+       <li><a href="impl.html#Static Web Page Updates">
+                              Static Web Page Updates</a>
+        <ol>
+	 <li><a href="impl.html#How it's done depends on who is doing it">
+	                        How it's done depends on who is doing it</a>
+	 <li><a href="impl.html#Updates Done By Biologists">
+	                        Updates Done By Biologists</a>
+	 <li><a href="impl.html#Updates Done by Technologists">
+	                        Updates Done by Technologists</a>
+	</ol>
+       <li><a href="impl.html#checklinks">checklinks</a>
+      </ol>
+     </li>
+     <li><a href="impl.html#Dynamic (Database) Pages">
+                            Dynamic (Database) Pages</a>
+      <ol>
+       <li><a href="impl.html#Dynamic Page Design Guidelines">
+                                           Design Guidelines</a></li>
+       <li><a href="impl.html#Web Datablade">Web Datablade</a>
+        <ol>
+	 <li><a href="impl.html#Debugging App Pages">Debugging App Pages</a>
+	</ol>
+       <li><a href="impl.html#Java">Java</a>
+        <ol>
+	 <li><a href="impl.html#Applets">Applets</a>
+	 <li><a href="impl.html#JDKs and Class Libraries">
+	                        JDKs and Class Libraries</a>
+	 <li><a href="impl.html#Javaserver">Javaserver</a>
+	</ol>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="impl_Database Implementation"
+          href="impl.html#Database Implementation">Database Implementation</a>
+    <ol>
+     <li><a href="impl.html#Informix">Informix</a>
+      <ol>
+       <li><a href="impl.html#Informix Settings">Informix Settings</a></li>
+       <li><a href="impl.html#Informix Tools">Informix Tools</a>
+        <ol>
+	 <li><a href="impl.html#dbaccess">dbaccess</a>
+	 <li><a href="impl.html#dbschema">dbschema</a>
+	 <li><a href="impl.html#finderr">finderr</a>
+	</ol>
+      </ol>
+     </li>
+     <li><a href="impl.html#ZFIN Database Tools">ZFIN Database Tools</a>
+      <ol>
+       <li><a href="impl.html#Loading Databases">Loading Databases</a>
+        <ol>
+	 <li><a href="impl.html#loaddb.pl">loaddb.pl</a>
+	</ol>
+       <li><a href="impl.html#Scan All Character Columns for a String (scancharcols.pl)">
+                              Scan All Character Columns for a String (scancharcols.pl)</a></li>
+       <li><a href="impl.html#Scan All Character Columns for Illegal Characters (scrubscan.pl)">
+                              Scan All Character Columns for Illegal Characters (scrubscan.pl)</a></li>
+       <li><a href="impl.html#sysexec, EXECWEB, and unix_commands">
+                              sysexec, EXECWEB, and unix_commands</a>
+      </ol>
+     </li>
+     <li><a href="impl.html#ODBC Connections">ODBC Connections</a></li>
+     <li><a href="impl.html#ZFIN LoadUp">ZFIN LoadUp</a>
+        <ol>
+          <li><a href="impl.html#Filesystem space and permissions">
+               Filesystem space and permissions</a></li>
+
+          <li><a href= "impl.html#Database pointers">
+               Database pointers</a></li>
+
+          <li><a href= "impl.html#Apache configuration">
+               Apache configuration</a></li>
+
+         <li><a href= "impl.html#Environment and .tt files">
+               Environment and .tt files</a></li>
+
+         <li><a href= "impl.html#Development filesystem syncing">
+               Development filesystem sync</a></li>
+        </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><a name="impl_Uniquery"
+          href="impl.html#Uniquery">Uniquery</a>
+    <ol>
+     <li><a href="impl.html#IndexApp">IndexApp</a>
+      <ol>
+       <li><a href="impl.html#Runtime Options">Runtime Options</a></li>
+       <li><a href="impl.html#IndexApp Implementation Notes">Implementation Notes</a></li>
+       <li><a href="impl.html#IndexApp Classes">Classes</a></li>
+      </ol>
+     </li>
+     <li><a href="impl.html#UniquerySupport">UniquerySupport</a>
+      <ol>
+       <li><a href="impl.html#UniquerySupport Classes">Classes</a></li>
+      </ol>
+     </li>
+     <li><a href="impl.html#SearchApp">SearchApp</a>
+      <ol>
+       <li><a href="impl.html#Configuration">Configuration</a></li>
+       <li><a href="impl.html#SearchApp Implementation Notes">Implementation Notes</a></li>
+       <li><a href="impl.html#SearchApp Classes">Classes</a></li>
+       <li><a href="impl.html#Deployment to Development">Deployment to Development</a></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="impl_BLAST" href="impl.html#BLAST">BLAST</a></li>
+    <ol>
+     <li><a href="impl.html#BLASTVersion">BLAST Version</a></li>
+     <li><a href="impl.html#Environment Variables">Environment Variables</a></li>
+     <li><a href="impl.html#Files and Databases">BLAST Files and BLAST Databases</a></li>
+       <ol>
+         <li><a href="impl.html#Format DBs">Format BLAST DBs</a></li>
+         <li><a href="impl.html#Retrieve Fasta Files">Retrieve Fasta Files</a></li>
+	 <li><a href="impl.html#DBs Update">BLAST DBs Update</a></li>
+       </ol>
+     <li><a href="impl.html#BLAST Commands">BLAST Commands</a></li>   
+       <ol>
+         <li><a href="impl.html#Single node execution">Single node execution</a></li>
+         <li><a href="impl.html#Clustered execution">Clustered execution</a></li>
+       </ol>
+     </li>
+     <li><a href="impl.html#Web-based BLAST">Web-based BLAST</a></li>   
+       <ol>
+         <li><a href="impl.html#Execution">Execution</a></li>
+         <li><a href="impl.html#Executables">Executables</a></li>
+         <li><a href="impl.html#Results">Results</a></li>
+       </ol>
+     </li>
+    </ol>
+   <li><a name="impl_Mirror Sites"
+          href="impl.html#Mirror Sites">Mirror Sites</a></li>
+  </ol>
+
+ 
+ <!-- ========= CODING STANDARADS AND BEST PRACTICES =================== -->
+
+ <h2 class="zdoc"><a name="detailed_Coding Standards and Best Practices"
+              href="standards.html">Coding Standards and Best Practices</a></h2>
+  <ol>
+   <li><a name="standards_Philosophy" 
+          href="standards.html#Philosophy">Philosophy</a>
+    <ol>
+     <li><a href="standards.html#Non Standards">Non Standards</a></li>
+    </ol>
+   </li>
+   <li><a name="standards_Updating ZFIN Standards" 
+          href="standards.html#Updating ZFIN Standards">Updating ZFIN Standards</a></li>
+   <li><a name="standards_Enforcement" 
+          href="standards.html#Enforcement">Enforcement</a>
+    <ol>
+     <li><a href="standards.html#Code Reviews">Code Reviews</a></li>
+     <li><a href="standards.html#Deadlines versus Code Reviews">
+                                 Deadlines versus Code Reviews</a></li>
+    </ol>
+   </li>
+   <li><a name="standards_General Standards and Best Practices" 
+          href="standards.html#General Standards and Best Practices">
+                               General Standards and Best Practices</a>
+    <ol>
+     <li><a href="standards.html#Naming Conventions">Naming Conventions</a>
+      <ol>
+       <li><a href="standards.html#Variable Scope">Variable Scope</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Modularity and Defined Interfaces">
+                                 Modularity and Defined Interfaces</a></li>
+     <li><a href="standards.html#Comments">Comments</a>
+      <ol>
+       <li><a href="standards.html#Defined Interface Comments">
+                                   Defined Interface Comments</a></li>
+       <li><a href="standards.html#Closing Comments">Closing Comments</a></li>
+       <li><a href="standards.html#Inline Comments">Inline Comments</a></li>
+       <li><a href="standards.html#Comment Flags">Comment Flags</a></li>
+       <li><a href="standards.html#Section Separator Comments">
+                                   Section Separator Comments</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Indenting and Whitespace">
+                                 Indenting and Whitespace</a>
+      <ol>
+       <li><a href="standards.html#Reindenting">Reindenting</a></li>
+       <li><a href="standards.html#Whitespace">Whitespace</a>
+        <ol>  
+         <li><a href="standards.html#Tabs versus Spaces">Tabs versus Spaces</a></li>
+         <li><a href="standards.html#Maximum Line Length">Maximum Line Length</a></li>
+	</ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Source Code Control and Committing Files">
+                                 Source Code Control and Committing Files</a>
+      <ol>
+       <li><a href="standards.html#Committing Files">Committing Files</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Debugging Support">Debugging Support</a></li>
+     <li><a href="standards.html#Overriding Standards">Overriding Standards</a></li>
+     <li><a href="standards.html#Applying Standards to Old Code">
+                                 Applying Standards to Old Code</a></li>
+    </ol>
+   </li>
+   <li><a name="standards_HTML" href="standards.html#HTML">HTML</a>
+    <ol>
+     <li><a href="standards.html#Style Sheets">Style Sheets</a></li>
+     <li><a href="standards.html#HTML Capitalization">HTML Capitalization</a></li>
+     <li><a href="standards.html#HTML Closing Tags">HTML Closing Tags</a></li>
+     <li><a href="standards.html#HTML Attribute Values">HTML Attribute Values</a></li>
+     <li><a href="standards.html#Italics">Italics</a></li>
+     <li><a href="standards.html#Non-ASCII Characters in HTML">Non-ASCII Characters in HTML</a>
+      <ol>
+       <li><a href="standards.html#HTML Character Entities">HTML Character Entities</a>
+      </ol>
+     </li>
+     <li><a href="standards.html#HTML Comments">HTML Comments</a></li>
+     <li><a href="standards.html#Internal ZFIN Links">Internal ZFIN Links</a></li>
+     <li><a href="standards.html#JavaScript">JavaScript</a></li>
+    </ol>
+   </li>
+   <li><a name="standards_Database" href="standards.html#Database">Database</a>
+    <ol>
+     <li><a href="standards.html#SQL">SQL</a>
+      <ol>
+       <li><a href="standards.html#SQL Comments">SQL Comments</a></li>
+       <li><a href="standards.html#SQL Indenting">SQL Indenting</a></li>
+       <li><a href="standards.html#SQL Capitalization">SQL Capitalization</a></li>
+       <li><a href="standards.html#Join Syntax">Join Syntax</a></li>
+       <li><a href="standards.html#SELECT DISTINCT">SELECT DISTINCT</a></li>
+       <li><a href="standards.html#INSERT">INSERT</a></li>
+       <li><a href="standards.html#Column Names versus Column Numbers">
+                                   Column Names versus Column Numbers</a></li>
+       <li><a href="standards.html#Subqueries">Subqueries</a>
+        <ol>
+         <li><a href="standards.html#IN versus EXISTS">IN versus EXISTS</a></li>
+        </ol>
+       </li>
+       <li><a href="standards.html#SELECT INTO TEMP">SELECT INTO TEMP</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#SPL">SPL</a>
+      <ol>
+       <li><a href="standards.html#SPL Naming Conventions">
+                                   SPL Naming Conventions</a>
+        <ol>
+         <li><a href="standards.html#SPL Variable Naming Conventions">
+                                     SPL Variable Naming Conventions</a></li>
+	</ol>
+       </li>
+       <li><a href="standards.html#SPL Variable Data Types">
+                                   SPL Variable Data Types</a></li>
+       <li><a href="standards.html#SPL Modularity and Defined Interfaces">SPL Modularity and Defined Interfaces</a>
+        <ol>
+         <li><a href="standards.html#SPL Defined Interfaces">SPL Defined Interfaces</a></li>
+         <li><a href="standards.html#SPL Modularity">SPL Modularity</a></li>
+	</ol>
+       </li>
+       <li><a href="standards.html#SPL Comments">SPL Comments</a></li>
+       <li><a href="standards.html#SPL Debugging Support">SPL Debugging Support</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Testing Database Scripts">Testing Database Scripts</a></li>
+     <li><a href="standards.html#Temporary Tables">Temporary Tables</a>
+      <ol>
+       <li><a href="standards.html#Temporary Table Creation">
+                                   Temporary Table Creation</a>
+        <ol>
+         <li><a href="standards.html#With No Log, Indexes, and Constraints">
+                                     With No Log, Indexes, and Constraints</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="standards_Web Datablade App Pages" 
+          href="standards.html#Web Datablade App Pages">Web Datablade App Pages</a>
+    <ol>
+     <li><a href="standards.html#App Page Naming Conventions">
+                                 App Page Naming Conventions</a>
+      <ol>
+       <li><a href="standards.html#App Page Directories">App Page Directories</a></li>
+       <li><a href="standards.html#App Page File Names">App Page File Names</a></li>
+       <li><a href="standards.html#App Page Variable Names">App Page Variable Names</a>
+        <ol>
+         <li><a href="standards.html#App Page Variable Name Prefix">
+                                     App Page Variable Name Prefix</a></li>
+         <li><a href="standards.html#App Page Database Column Variables">
+                                     App Page Database Column Variables</a></li>
+         <li><a href="standards.html#App Page $1, $2, ... Variables">
+	                             App Page $1, $2, ... Variables</a></li>
+         <li><a href="standards.html#App Page Boolean Variable Names">
+	                             App Page Boolean Variable Names</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="standards.html#App Page Modularity and Defined Interfaces">
+                                 App Page Modularity and Defined Interfaces</a>
+      <ol>
+       <li><a href="standards.html#Top Level versus Subroutine App Pages">
+                                   Top Level versus Subroutine App Pages</a>
+        <ol>
+         <li><a href="standards.html#When to Create Subroutine App Pages">
+	                             When to Create Subroutine App Pages</a></li>
+         <li><a href="standards.html#Subroutine App Pages versus Stored Procedures">
+	                             Subroutine App Pages versus Stored Procedures</a></li>
+        </ol>
+       </li>
+       <li><a href="standards.html#App Page Defined Interfaces">
+                                   App Page Defined Interfaces</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#App Page Variables">App Page Variables</a>
+      <ol>
+       <li><a href="standards.html#App Page Boolean Variables">
+                                   App Page Boolean Variables</a></li>
+       <li><a href="standards.html#App Page Variable Existence and Non-Existence">
+                                   App Page Variable Existence and Non-Existence</a></li>
+       <li><a href="standards.html#App Page Vector Variables">
+                                   App Page Vector Variables</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#Web Datablade Tags and Functions">
+                                 Web Datablade Tags and Functions</a>
+      <ol>
+       <li><a href="standards.html#MIBLOCK and MIELSE versus MIVAR">
+                                   MIBLOCK and MIELSE versus MIVAR</a></li>
+       <li><a href="standards.html#MIVAR versus $(SETVAR)">
+                                   MIVAR versus $(SETVAR)</a></li>
+       <li><a href="standards.html#App Page Comments">App Page Comments</a>
+        <ol>
+         <li><a href="standards.html#MICOMMENT versus HTML Comments">
+	                             MICOMMENT versus HTML Comments</a></li>
+         <li><a href="standards.html#App Page Section Separator Comments">
+                                     App Page Section Separator Comments</a></li>
+        </ol>
+       </li>
+       <li><a href="standards.html#HTML in App Pages">HTML in App Pages</a></li>
+       <li><a href="standards.html#JavaScript in App Pages">
+                                   JavaScript in App Pages</a></li>
+       <li><a href="standards.html#Temporary Tables in App Pages">
+                                   Temporary Tables in App Pages</a></li>
+      </ol>
+     </li>
+     <li><a href="standards.html#App Page Debugging Support">
+                                 App Page Debugging Support</a></li>
+    </ol>
+   </li>
+   <li><a name="standards_CGI" href="standards.html#CGI">CGI</a></li>
+   <li><a name="standards_PERL" href="standards.html#PERL">PERL</a>
+    <ol>
+     <li><a href="standards.html#PERL Taint">PERL Taint</a></li>
+    </ol>
+   </li>
+  </ol>
+
+
+ <!-- ========= SYSTEM, WEB SERVER, AND DATABASE ADMINISTRATION ======== -->
+
+ <h2 class="zdoc"><a name="detailed_System, Web Server, and Database Administration"
+                  href="admin.html">System, Web Server, and Database Administration</a></h2>
+  <ol>
+   <li><a name="admin_Database Administration"
+          href="admin.html#Database Administration">Database Administration</a>
+    <ol>
+     <li><a href="admin.html#Products and Licenses">Products and Licenses</a>
+      <ol>
+       <li><a href="admin.html#Informix Dynamic Server">
+                               Informix Dynamic Server</a></li>
+       <li><a href="admin.html#Client SDK">Client SDK</a></li>
+       <li><a href="admin.html#Informix Server Administrator (ISA)">
+                               Informix Server Administrator (ISA)</a></li>
+       <li><a href="admin.html#Verity Text Search Datablade">
+                               Verity Text Search Datablade</a></li>
+       <li><a href="admin.html#Licenses">Licenses</a>
+      </ol>
+     </li>
+     <li><a href="admin.html#Dealing With IBM Corporation">
+                             Dealing With IBM Corporation</a>
+      <ol>
+       <li><a href="admin.html#History">History</a></li>
+       <li><a href="admin.html#IBM Scholars Program">IBM Scholars Program</a></li>
+       <li><a href="admin.html#IBM Passport Advantage Support">
+                               IBM Passport Advantage Support</a></li>
+       <li><a href="admin.html#Bug Reporting">Bug Reporting</a></li>
+       <li><a href="admin.html#Upgrades">Upgrades</a></li>
+       <li><a href="admin.html#Online Resources">Online Resources</a>
+      </ol>
+     </li>
+     <li><a href="admin.html#Backups">Backups</a>
+      <ol>
+       <li><a href="admin.html#Full Nightly Dump of Production Server">
+                               Full Nightly Dump of Production Server</a></li>
+       <li><a href="admin.html#Logical Log Dumps as the Logs Become Full">
+                               Logical Log Dumps as the Logs Become Full</a></li>
+       <li><a href="admin.html#Unloads of Individual Databases">
+                               Unloads of Individual Databases</a>
+      </ol>
+     </li>
+     <li><a href="admin.html#Monitoring">Monitoring</a>
+      <ol>
+       <li><a href="admin.html#Memory Usage">Memory Usage</a></li>
+       <li><a href="admin.html#Informix Server Status - onstat">
+                               Informix Server Status - onstat</a></li>
+       <li><a href="admin.html#Active Queries">Active Queries</a></li>
+       <li><a href="admin.html#Monitoring Locks">Monitoring Locks</a></li>
+       <li><a href="admin.html#Monitoring Temp Table Creation and Use">
+                               Monitoring Temp Table Creation and Use</a></li>
+       <li><a href="admin.html#Informix Server Status - Message Log">
+                               Informix Server Status - Message Log</a></li>
+       <li><a href="admin.html#Other Informix Monitoring Tools">
+                               Other Informix Monitoring Tools</a></li>
+      </ol>
+     </li>
+     <li><a href="admin.html#Fixing Immediate Problems">
+                             Fixing Immediate Problems</a>
+      <ol>
+       <li><a href="admin.html#Run onstat -a">Run onstat -a</a></li>
+       <li><a href="admin.html#Errors">Errors</a>
+        <ol>
+         <li><a href="admin.html#online.but.piling.up">
+	                         onstat says -- On-Line --, but zfinners piling up</a></li>
+         <li><a href="admin.html#checkpoint.required">
+                                 onstat says -- On-Line (CKPT REQ) --</a></li>
+         <li><a href="admin.html#server.down">
+                                 onstat says 'shared memory not initialized for ...'</a></li>
+         <li><a href="admin.html#server.screwed">
+                                 onstat returns a different one line error</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="admin.html#solutions">Solutions</a>
+      <ol>
+       <li><a href="admin.html#badly.broken">Dealing with a badly broken server</a></li>
+       <li><a href="admin.html#rebooting">Rebooting the server</a></li>
+       <li><a href="admin.html#starting.server">Starting the server</a></li>
+       <li><a href="admin.html#starting.ontape">Starting ontape</a></li>
+      </ol>
+     </li>
+     <li><a href="admin.html#Disk Usage">Disk Usage</a>
+      <ol>
+       <li><a href="admin.html#Ownership">Ownership</a></li>
+       <li><a href="admin.html#RAID">RAID</a>
+        <ol>
+	 <li><a href="admin.html#RAID Levels">RAID Levels</a>
+	 <li><a href="admin.html#Sun A1000 RAID">Sun A1000 RAID</a>
+	 <li><a href="admin.html#NStor 4150S RAID">NStor 4150S RAID</a>
+	 <li><a href="admin.html#RAID and Informix">RAID and Informix</a>
+	</ol>
+       <li><a href="admin.html#Production Server Disk">Production Server Disk</a>
+        <ol>
+	 <li><a href="admin.html#Production Internal Disks">Internal Disks</a></li>
+	 <li><a href="admin.html#Production RAID Disks">RAID Disks</a>
+	  <ol>
+	   <li><a href="admin.html#Physical Allocation">Physical Allocation</a>
+	   <li><a href="admin.html#Logical Allocation">Logical Allocation</a>
+	  </ol>
+	</ol>
+       <li><a href="admin.html#Development Server Disk">Development Server Disk</a>
+        <ol>
+         <li><a href="admin.html#Development Internal Disks">Internal Disks</a></li>
+	 <li><a href="admin.html#Development RAID Disks">RAID Disks</a>
+	  <ol>
+	   <li><a href="admin.html#NStor RAID Physical Allocation">
+					      Physical Allocation</a>
+	   <li><a href="admin.html#NStor RAID Logical Allocation">
+					      Logical Allocation</a>
+	  </ol>
+	</ol>
+       <li><a href="admin.html#Upgrade Server Disk">Upgrade Server Disk</a>
+        <ol>
+	 <li><a href="admin.html#Upgrade Internal Disks">Internal Disks</a>
+	</ol>
+      </ol>
+     </li>
+     <li><a href="admin.html#Physical Design">Physical Design</a>
+      <ol>
+       <li><a href="admin.html#DB Spaces">DB Spaces</a>
+        <ol>
+	 <li><a href="admin.html#Separate Table and Index dbspaces">
+	                         Separate Table and Index dbspaces</a>
+	 <li><a href="admin.html#Table dbspaces">Table dbspaces</a>
+	 <li><a href="admin.html#Index dbspaces">Index dbspaces</a>
+	 <li><a href="admin.html#Default dbspace">Default dbspace</a>
+	 <li><a href="admin.html#Smart BLOB Spaces">Smart BLOB Spaces</a>
+	 <li><a href="admin.html#Temporary dbspaces">Temporary dbspaces</a>
+	</ol>
+       <li><a href="admin.html#Tables and Indexes">Tables and Indexes</a>
+        <ol>
+	 <li><a href="admin.html#Fragmentation">Fragmentation</a>
+	 <li><a href="admin.html#Extent Sizes">Extent Sizes</a>
+	 <li><a href="admin.html#Lock Mode">Lock Mode</a>
+	 <li><a href="admin.html#Constraint Names">Constraint Names</a>
+	 <li><a href="admin.html#Primary Key, Unique, and Foreign Key Indexes">
+	                         Primary Key, Unique, and Foreign Key Indexes</a>
+	 <li><a href="admin.html#Example Table Definition">Example Table Definition</a>
+	</ol>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><a name="admin_Apache and Web Datablade Administration"
+          href="admin.html#Apache and Web Datablade Administration">
+                           Apache and Web Datablade Administration</a>
+    <ol>
+     <li><a href="admin.html#Versions">Versions</a>
+
+     <li><a href="admin.html#Apache">Apache</a>
+      <ol>
+       <li><a href="admin.html#Starting, Stopping, and Restarting Apache">
+                               Starting, Stopping, and Restarting Apache</a></li>
+       <li><a href="admin.html#Monitoring Apache">Monitoring Apache</a></li>
+       <li><a href="admin.html#httpd.conf Configuration File">
+                               httpd.conf Configuration File</a>
+        <ol>
+         <li><a href="admin.html#Production httpd.conf">Production</a></li>
+         <li><a href="admin.html#Development httpd.conf">Development</a>
+        </ol>
+       </li>
+      </ol>
+     </li>
+     <li><a href="admin.html#Web Datablade">Web Datablade</a>
+      <ol>
+       <li><a href="admin.html#web.cnf Configuration File">
+                               web.cnf Configuration File</a></li>
+       <li><a href="admin.html#admin Mappings">admin Mappings</a>
+      </ol>
+     </li>
+     <li><a href="admin.html#Adding a New Web Site">
+                             Adding a New Web Site</a></li>
+     <li><a href="admin.html#Reassigning a Web Site">
+                             Reassigning a Web Site</a></li>
+     <li><a href="admin.html#Web Logs">Web Logs</a>
+      <ol>
+       <li><a href="admin.html#Apache Logs">Apache Logs</a></li>
+       <li><a href="admin.html#webdriver Log">webdriver Log</a></li>
+       <li><a href="admin.html#Log Analysis">Log Analysis</a></li>
+       <li><a href="admin.html#webrotate.pl">webrotate.pl</a>
+      </ol>
+     </li>
+     <li><a href="admin.html#SSL">SSL</a>
+    </ol>
+   </li>
+
+   <li><a name="admin_System Administration"
+          href="admin.html#System Administration">System Administration</a>
+    <ol>
+     <li><a href="admin.html#ZFIN Usernames">ZFIN Usernames</a></li>
+     <li><a href="admin.html#ZFIN Groups">ZFIN Groups</a></li>
+     <li><a href="admin.html#Ports and Services">Ports and Services</a></li>
+     <li><a href="admin.html#/etc/system">/etc/system</a></li>
+     <li><a href="admin.html#Startup and Shutdown">Startup and Shutdown</a></li>
+     <li><a href="admin.html#cron">cron</a></li>
+     <li><a href="admin.html#Xvfb and /usr/X11R6">Xvfb and /usr/X11R6</a></li>
+     <li><a href="admin.html#Netpbm">Netpbm</a></li>
+     <li><a href="admin.html#FTP">FTP</a></li>
+     <li><a href="admin.html#E-mail">E-mail</a></li>
+     <li><a href="admin.html#Domain Name Registration">
+                             Domain Name Registration</a></li>
+     <li><a href="admin.html#/private/apps">/private/apps</a>
+      <ol>
+       <li><a href="admin.html#Informix">Informix</a></li>
+       <li><a href="admin.html#alchemy">alchemy</a></li>
+       <li><a href="admin.html#apache">apache</a></li>
+       <li><a href="admin.html#java">java</a></li>
+       <li><a href="admin.html#PERL">PERL</a></li>
+       <li><a href="admin.html#Rebol">Rebol</a></li>
+      </ol>
+     </li>
+     <li><a href="admin.html#Power">Power</a>
+      <ol>
+       <li><a href="admin.html#Equipment">Equipment</a></li>
+       <li><a href="admin.html#Dual Transfer Switch">Dual Transfer Switch</a></li>
+       <li><a href="admin.html#UPS">Uninterruptable Power Supply (UPS)</a>
+        <ol>
+         <li><a href="admin.html#Estimated Run Times">Estimated Run Times</a></li>
+         <li><a href="admin.html#Load Balancing">Load Balancing</a></li>
+         <li><a href="admin.html#Support">Support</a></li>
+         <li><a href="admin.html#UPS History">History</a></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+   <li><a name="admin_BLAST Server Admininstration"
+          href="admin.html#BLAST Server Administration">
+                           BLAST Server Administration</a>
+    <ol>
+     <li><a href="admin.html#Who Does What">Who Does What</a></li>
+     <li><a href="admin.html#BioTeam iNquiry">BioTeam iNquiry</a></li>
+    </ol>
+   </li>
+   <li><a name="admin_Moving zfin.org to a Different Machine"
+          href="admin.html#Moving zfin.org to a Different Machine">
+                           Moving zfin.org to a Different Machine</a>
+    <ol>
+     <li><a href="admin.html#Moving from the Production Server to the Development Server">
+                             Moving from the Production Server to the Development Server</a></li>
+     <li><a href="admin.html#Moving from the Development Server to the Production Server">
+                             Moving from the Development Server to the Production Server</a></li>
+    </ol>
+    
+   <li><a name="admin_Moving loadUp directories"
+          href="admin.html#Moving loadUp directories">
+                           Moving loadUp directories</a>
+
+   </li>
+  </ol>
+
+
+</div> <!-- class="zdoc" -->
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,3629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<TITLE>Curation, ZFIN Documentation
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</TITLE>
+
+<link rel=stylesheet href="doc.css" type="text/css">
+
+</HEAD>
+
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+
+</td></tr></table>
+
+
+<div class="zdoc">
+
+<CENTER>
+<H1>ZFIN Documentation:<br>Curation
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br></H1>
+
+<p>$Id: curation.html,v 1.38 2006-07-12 16:27:06 jknight Exp $
+
+<p><a href="index.html">Back to Table of Contents</a>
+<br><a href="intro.html">Previous Section</a>
+&nbsp;&nbsp;
+<a href="dst.html">Next Section</a>
+
+
+</CENTER>
+
+<p>This document is one of several that describe the Zebrafish Information
+Network, or ZFIN.  This document describes how the data in ZFIN is
+curated.
+
+
+
+<!-- =================================================================== -->
+<!-- ======================== OVERVIEW ================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Overview">Overview</a></h1>
+
+<p>This document covers curation, where biologists review papers and enter
+new data.  For a discussion of bulk loads of data from other sources see
+the <a href="dst.html">Data Submission and Transfer</a> section.
+
+
+
+
+<!-- =================================================================== -->
+<!-- ======================== CURATION RESOURCES ======================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Curation Resources">Curation Resources</a></h1>
+
+<p>Compiled by the ZFIN Scientific Curation Staff, 2004/1. Updated by Erik S, 
+  2005/2.</p>
+
+<p><b>Biocurator.org</b><br>
+  The <a href="http://tesuque.stanford.edu/biocurator.org">biocurator.org</a> 
+  site is "intended to 
+  give a stable web address for information and meetings relating to curation 
+  of biological data". Curators are encouraged to subscribe to its mailing list.</p>
+
+<p><b>Mozilla BioBar</b><br>
+  If you are using a current Mozilla browser, including Firefox, you can install 
+  an extremely useful bioinformatics search toolbar at <a href="http://biobar.mozdev.org/installation.html">http://biobar.mozdev.org/installation.html</a>.</p>
+
+<hr align="center" noshade size="5" width="90%">
+<h3>Contents</h3>
+<ol type="i">
+  <li><b><a href="#Journal Acquisition">Journal Acquisition</a></b><br>
+    <br>
+  <li><b><a href="#Bioinformatics and Analysis Tools">Bioinformatics and Analysis
+        Tools</a></b><br>
+    <br>
+  <li><b><a href="#Genome and Sequence">Genome and Sequence</a></b><br>
+    <br>
+  <li><b><a href="#Ontologies">Ontologies</a></b><br>
+    <br>
+  <li><b><a href="#Model Organism Databases">Model Organism Databases</a></b>
+</ol>
+
+
+
+
+<!-- ========= JOURNAL ACQUISITION ===================================== -->
+
+<h2 class="zdoc"><a name="Journal Acquisition">Journal Acquisition</a></h2>
+
+<p style="padding:4px; margin-left:20px; margin-right:20px; border-top:1px dashed #333333; border-bottom:1px dashed #333333; background-color:#eeeeee" align="center">The 
+  <b><a href="http://www.cs.uoregon.edu/~dhowe/jperm/jperm.php">ZFIN Journal Permissions 
+  Table</a></b> lists current policies for the inclusion of published figures 
+  in ZFIN. <p>
+
+<p><a href="http://libweb.uoregon.edu/">University of Oregon Libraries</a> 
+<ul>
+  <li><a href="http://libweb.uoregon.edu/general/about/libcol.html">Libraries 
+    and Collections</a> 
+  <li><a href="http://libweb.uoregon.edu/scilib/">Science Library</a> 
+  <li><a href="http://libweb.uoregon.edu/dbs/indexes.php">Databases &amp; Indexes</a> 
+  <li><a href="http://janus.uoregon.edu/search~S1/t">Journal Title Search</a> 
+  <li><a href="http://libweb.uoregon.edu/ill/ill-general.html">Interlibrary Loan</a> 
+</ul>
+
+<p><a href="http://www.oclc.org/worldcat/">OCLC WorldCat</a><br>
+  <a href="http://www.ncbi.nlm.nih.gov/entrez/jrbrowser.cgi">NCBI Journal Browser</a><br>
+  <a href="http://www.bioscience.org/atlases/jourabbr/list.htm">Journal name abbreviation, 
+  ISSN number and coverage</a><br>
+  <a href="http://www.pubmedcentral.nih.gov/">PubMed Central Journal Finder</a><br>
+  <a href="http://www.scirus.com/">Scirus - for scientific information</a><br>
+  <a href="http://www.freemedicaljournals.com/">Free Medical Journals</a><br>
+  <a href="http://www.annualreviews.org/">Annual Reviews</a><br>
+  <a href="http://www.neuroguide.com/neurojour.html">Neuroguide.com - Neuroscience 
+  Journals</a></p>
+
+
+
+
+<!-- ========= NOMENCLATURE ============================================ -->
+
+<h2 class="zdoc"><a name="Nomenclature">Nomenclature</a></h2>
+
+<p><a href="http://zfin.org/zf_info/nomen.html">Zebrafish Nomenclature Guidelines</a><br>
+  <a href="http://zfin.org/zf_info/zfbook/lab_desig.html">Laboratory Allele Designations</a><br>
+  <a href="http://www.gene.ucl.ac.uk/nomenclature/">Human Gene Nomenclature Committee 
+  (HGNC)</a><br>
+  <a href="http://zfin.org/zf_info/monitor/vol7.1/vol7.1.html#WHATS%20IN%20A%20NAME">What's 
+  In A Name?</a> (from the Zebrafish Science Monitor) </p>
+
+<p style="padding:4px; margin-left:20px; margin-right:20px; border-top:1px dashed #333333; border-bottom:1px dashed #333333; background-color:#eeeeee" align="center">Additional 
+  resources and tools can be found in the <b><a href="#Gene Nomenclature">Gene 
+  Nomenclature</a></b> documentation.</p>
+
+
+
+
+
+<!-- ========= BIOINFORMATICS AND ANALYSIS TOOLS ======================= -->
+
+<h2 class="zdoc"><a name="Bioinformatics and Analysis Tools">Bioinformatics and Analysis Tools</a></h2>
+
+
+<p><a href="http://www.ncbi.nlm.nih.gov/">National Center for Biotechnology Information 
+  (NCBI)</a> 
+<ul>
+  <li><a href="http://www.ncbi.nlm.nih.gov/Entrez/">NCBI Entrez</a> 
+  <li><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene">Entrez Gene</a> 
+  <li><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM">OMIM: Online 
+    Mendelian Inheritance in Man</a> 
+  <li><a href="http://www.ncbi.nlm.nih.gov/Structure/MMDB/mmdb.shtml">NCBI Structure 
+    - MMDB page</a> 
+</ul>
+
+<p style="padding:4px; margin-left:20px; margin-right:20px; border-top:1px dashed #333333; border-bottom:1px dashed #333333; background-color:#eeeeee" align="center"><b><a href="http://almost.zfin.org/blast/blast.html">ZFIN 
+  BLAST Server</a></b></p>
+
+<p> <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a> 
+<ul>
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=10&amp;FILTER=L&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;NCBI_GI=on&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=34&amp;SET_DEFAULTS.y=8&amp;SHOW_OVERVIEW=on&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes&amp;GET_SEQUENCE=yes">Nucleotide-nucleotide 
+    BLAST</a> (blastn) 
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CDD_SEARCH=on&amp;CLIENT=web&amp;COMPOSITION_BASED_STATISTICS=on&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=10&amp;FILTER=L&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;I_THRESH=0.005&amp;MATRIX_NAME=BLOSUM62&amp;NCBI_GI=on&amp;PAGE=Proteins&amp;PROGRAM=blastp&amp;SERVICE=plain&amp;SET_DEFAULTS.x=41&amp;SET_DEFAULTS.y=5&amp;SHOW_OVERVIEW=on&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes&amp;GET_SEQUENCE=yes">Protein-protein 
+    BLAST</a> (blastp) 
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=10&amp;FILTER=L&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;GENETIC_CODE=1&amp;NCBI_GI=on&amp;PAGE=Translations&amp;PROGRAM=blastx&amp;SERVICE=plain&amp;SET_DEFAULTS.x=37&amp;SET_DEFAULTS.y=5&amp;SHOW_OVERVIEW=on&amp;UNGAPPED_ALIGNMENT=no&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes&amp;GET_SEQUENCE=yes">Nucleotide 
+    query - Protein db</a> (blastx) 
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=10&amp;FILTER=L&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;GENETIC_CODE=0&amp;NCBI_GI=on&amp;PAGE=Translations&amp;PROGRAM=tblastn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=23&amp;SET_DEFAULTS.y=10&amp;SHOW_OVERVIEW=on&amp;UNGAPPED_ALIGNMENT=no&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes&amp;GET_SEQUENCE=yes">Protein 
+    query - Translated db</a> (tblastn) 
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=10&amp;FILTER=L&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;GENETIC_CODE=1&amp;NCBI_GI=on&amp;PAGE=Translations&amp;PROGRAM=tblastx&amp;SERVICE=plain&amp;SET_DEFAULTS.x=21&amp;SET_DEFAULTS.y=9&amp;SHOW_OVERVIEW=on&amp;UNGAPPED_ALIGNMENT=yes&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes">Nucleotide 
+    query - Translated db</a> (tblastx) 
+  <li><a href="http://www.ncbi.nlm.nih.gov/blast/bl2seq/bl2.html">BLAST 2 Sequences</a> 
+</ul>
+
+<p> <a href="http://blast.wustl.edu/">WU BLAST Archives</a><br>
+  <a href="http://mouseblast.informatics.jax.org/">MouseBLAST</a></p>
+
+<p><a href="http://www.ebi.ac.uk/">European Bioinformatics Institute (EBI)</a> 
+<ul>
+  <li><a href="http://www.ebi.ac.uk/blastall/">NCBI-BLAST2</a> 
+  <li><a href="http://www.ebi.ac.uk/blast2/">WU-Blast2</a> 
+</ul>
+
+<p><a href="http://www.ensembl.org/Danio_rerio/">Ensembl Zebrafish Genome Server</a><br>
+  <a href="http://www.gene.ucl.ac.uk/nomenclature/">Human Gene Nomenclature Committee 
+  (HGNC)</a><br>
+  <a href="http://www.expasy.uniprot.org/">UniProt</a><br>
+  <a href="http://us.expasy.org/">ExPASy Proteomics Server</a><br>
+  <a href="http://www.ddbj.nig.ac.jp/">DDBJ Homepage</a><br>
+  <a href="http://zgc.nci.nih.gov/">Zebrafish Gene Collection (ZGC)</a><br>
+  <a href="http://clustalw.genome.jp/">CLUSTALW - Multiple Sequence Alignment</a><br>
+  <a href="http://discover.nci.nih.gov/gominer/">GoMiner Home Page</a><br>
+  <a href="http://www-genome.wi.mit.edu/cgi-bin/primer/primer3_www.cgi">Primer3 
+  Input (primer3_www.cgi v 0.2)</a><br>
+  <a href="http://meme.sdsc.edu/meme/website/intro.html">MEME/MAST - Motif Discovery 
+  and Search</a><br>
+  <a href="http://www.bioinfo.rpi.edu/applications/mfold/old/rna/form1.cgi">mfold 
+  Server</a><br>
+  <a href="http://workbench.sdsc.edu/">SDSC Biology Workbench</a><br>
+  <a href="http://molbio.info.nih.gov/molbio/gcode.html">Table of Standard Genetic 
+  Code</a><br>
+  <a href="http://lectures.molgen.mpg.de/online_lectures.html">Online Lectures 
+  on Bioinformatics</a></p>
+
+
+
+
+<!-- ========= GENOME AND SEQUENCE ===================================== -->
+
+<h2 class="zdoc"><a name="Genome and Sequence">Genome and Sequence</a></h2>
+
+<p><a href="http://www.ncbi.nlm.nih.gov/genome/guide/zebrafish/">NCBI - Zebrafish 
+  Genome Resources Page</a><br>
+  <a href="http://genome.wustl.edu/est/index.php?zebrafish=1">GSC EST Projects</a><br>
+  <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a><br>
+  <a href="http://www.jgi.doe.gov/">DOE Joint Genome Institute</a><br>
+  <a href="http://www.cshl.org/">Cold Spring Harbor Laboratory</a><br>
+  <a href="http://stein.cshl.org/">Stein Laboratory</a><br>
+  <a href="http://biodas.org/">www.biodas.org</a><br>
+  <a href="http://image.llnl.gov/">The I.M.A.G.E. Consortium</a><br>
+  <a href="http://www.genome.jp/">GenomeNet</a></p>
+
+<p><a href="http://www.sanger.ac.uk/">Sanger Institute</a> 
+<ul>
+  <li><a href="http://www.ensembl.org/Danio_rerio/">Ensembl Zebrafish Genome Server</a> 
+  <li><a href="http://vega.sanger.ac.uk/">Vega Genome Browser</a> 
+  <li><a href="http://www.sanger.ac.uk/Projects/D_rerio/">Danio rerio Sequencing 
+    Project</a> 
+  <li><a href="http://www.sanger.ac.uk/cgi-bin/Projects/D_rerio/mapsearch">Danio 
+    rerio map search</a> 
+</ul>
+
+<p><b>Homology</b><br>
+  <a href="http://www.ncbi.nlm.nih.gov/Homology/">Maps of Human-Mouse Homology</a><br>
+  <a href="http://www.informatics.jax.org/reports/homologymap/mouse_human.shtml">MGI 
+  - mouse_human Comparative Genome Map</a><br>
+  <a href="http://rgd.mcw.edu/VCMAP/">Rat Genome Database: VCMAP</a></p>
+
+<p><b>Other Organisms</b><br>
+  <a href="http://www.ensembl.org/Fugu_rubripes/">Ensembl Fugu Genome Server</a><br>
+  <a href="http://www.fugu-sg.org/">IMCB - FUGU Genome Project</a><br>
+  <a href="http://www.genome.wustl.edu/projects/chicken/">Wash U GSC Chicken Genome</a><br>
+  <a href="http://www.tigr.org/tigr-scripts/tgi/T_index.cgi?species=g_gallus">TIGR 
+  Gallus gallus Gene Index</a></p>
+
+
+
+
+<!-- ========= ONTOLOGIES ============================================== -->
+
+<h2 class="zdoc"><a name="Ontologies">Ontologies</a></h2>
+
+<p><a href="http://www.geneontology.org/">Gene Ontology Consortium</a></p>
+
+<p style="padding:4px; margin-left:20px; margin-right:20px; border-top:1px dashed #333333; border-bottom:1px dashed #333333; background-color:#eeeeee" align="center">GO 
+  curation policies are described in the <b><a href="#GO">Gene Ontology</a></b> 
+  documentation.</p>
+
+<p><a href="http://obo.sourceforge.net/">Open Biomedical Ontologies (OBO)</a><br>
+  An umbrella web address for controlled vocabularies for shared use across different 
+  biological and medical domains. Curators are urged to subscribe to the <a href="http://sourceforge.net/mailarchive/forum.php?forum_id=35770">obo-phenotype</a> 
+  mailing list.</p>
+
+<p style="padding:4px; margin-left:20px; margin-right:20px; border-top:1px dashed #333333; border-bottom:1px dashed #333333; background-color:#eeeeee" align="center">Go 
+  to the <b><a href="http://www.cs.uoregon.edu/~dhowe/cgi-bin/anatomy/newanatomy.cgi">New 
+  Anatomical Structures List</a></b> to propose additions or changes to the ZFIN 
+  Anatomical Ontology (AO). Contact Doug H for the password to this page.</p>
+  
+  <p>
+
+<p> <a href="http://www.amonline.net.au/fishes/fishfacts/fish/glossary.htm">Glossary 
+  of Fish Terminology</a><br>
+  <a href="http://www.xspan.org/">XSPAN: Cross-species Anatomy</a><br>
+  <a href="http://bio-imaging.liacs.nl/">Imaging & BioInformatics at LIACS</a><br>
+  <a href="http://www.dhpc.adelaide.edu.au/projects/vishuman1/">DHPC mirror of 
+  the NPAC Visible Human Viewer</a><br>
+  <a href="http://genex.hgu.mrc.ac.uk/">The Edinburgh Mouse Atlas Project</a><br>
+  <a href="http://www.mgu.har.mrc.ac.uk/servlet/browser.frameset">CRAVE - the 
+  Concept Relationship Assay Value Explorer</a><br>
+  <a href="http://www.wormatlas.org/SW/SW.htm/WormViewer.htm">WormViewerUser Interface</a><br>
+  <a href="http://protege.stanford.edu/">The Prot&eacute;g&eacute; Ontology Editor</a></p>
+
+
+
+
+<!-- ========= Model Organism Databases ================================= -->
+
+<h2 class="zdoc"><a name="Model Organism Databases">Model Organism Databases</a></h2>
+
+<p><a href="http://flybase.bio.indiana.edu/">FlyBase</a><br>
+  <a href="http://www.gramene.org/">Gramene</a> (grasses)<br>
+  <a href="http://www.maizegdb.org/">MaizeGDB</a><br>
+  <a href="http://medaka.dsp.jst.go.jp/MGI/">Medaka Genome Initiative</a><br>
+  <a href="http://www.informatics.jax.org/">MGI: Mouse Genome Informatics</a><br>
+  <a href="http://rgd.mcw.edu/">RGD: Rat Genome Database</a><br>
+  <a href="http://www.yeastgenome.org/">SGD: Saccharomyces Genome Database</a><br>
+  <a href="http://www.arabidopsis.org/">TAIR: The Arabidopsis Information Resource</a><br>
+  <a href="http://www.wormbase.org/">WormBase</a><br>
+  <a href="http://www.xenbase.org/">XenBase</a></p>
+  
+
+
+
+<!-- ===================== end of CURATION RESOURCES ======================= -->
+
+
+
+
+<!-- ======================================================================= -->
+<!-- ========== start of PUBLICATION IDENT ENTRY ACQ AND ANNOT ============= -->
+<!-- ======================================================================= -->
+
+<h1 class="zdoc">
+  <a name="Publication Identification, Entry, Acquisition, and Annotation">
+           Publication Identification, Entry, Acquisition, and Annotation</a>
+</h1>
+
+<p>This section was written/compiled by Ken in 2004/02.<br>
+Updated by Jonathan Knight 2006/06
+
+<p>The administrative coordinator conducts literature searches for papers about zebrafish periodically and enters the articles into ZFIN.  Every night, a list of papers entered that day is automatically created and emailed to the curators.  If there is any question about including a paper in ZFIN all curators should be asked for their opinion.  If any curator thinks the paper should be included  then the  a publication record should be added to ZFIN.   Papers that are "epub ahead of print" should be marked inactive and  the paper should not be obtained until the publication date for that volume of the journal.  The student assistant is responsible for acquiring these papers from online resources, the library, or inter library loan. Typically, if the paper does not contain any information currently annotated by ZFIN, there is no need to obtain a copy..  If there is any question if a paper should be obtained the point curator shoud be consulted.   </p>
+
+
+<p>If a paper is available as a PDF, the student assistant will attach it to the publication record in ZFIN. To attach a PDF file to the publication record, log into ZFIN and go to the publication record. Select the "Curate" hypertext link to the right of the ZFIN ID, select the "Browse" button, add the PDF file to the PDF box on the publication page, and select the "Upload" button. This will attach the PDF file to the publication page. If we have the journal's  permission to use the images in the paper the images and associated figure legends  should be uploaded at this time.  The list of journals who have responded to our request for figure permissions is available  from the <a href="http://www.cs.uoregon.edu/~dhowe/jperm/jperm.php">ZFIN Journal Permissions   Table</a>  
+
+<p>To add images to publications click on the "FX curation" link to bring up the FX annotation/update page.
+
+<p>Before adding a figure image, you first need to make a figure record in the database.  In the Figure section of the FX form, just enter the figure number in the entry box next to Fig. in the Figure section.  You don't need to enter "F-i-g", just enter the number.  Then click the Add button to the left.  Ta-da!  You've made a figure record.
+
+<p>Images that should be uploaded are images of fish.  Images that just contain diagrams or sequences should not be added.
+
+<p>To add an image to a figure, first download the image to your computer from the journal website (or extract the image from the pdf, if the publication is not available in HTML form on the journal website).  Make sure that the image you download is the maximum resolution image available on the website - sometimes there is a thumbnail, then a medium sized image that you can click to get the full-sized image.  Bigger is better.   
+
+<p>In the Image section of the FX form, select the figure number from the Fig pull-down menu, then hit the Browse button to find the image  on your hard-drive.  Click 'Add' to upload the selected figure.  You  won't need to enter anything in the Label field unless (very  rare) there are multiple images for one figure - in that case you  would need to enter a Label like 'A' or 'B' to uniquely specify each  image associated with the same figure.
+
+<p>You can enter the caption at the same time you create the figure record or later on.  The display-version of the caption (what the users will see) is shown above the caption entry box - just click the 'Update' button to see the formatted results of your latest changes to the caption.
+
+<p>It's best to enter plain text with explicit HTML markup, and then to carefully check the ZFIN display version with the journal caption.   You can set your browser to display the HTML source for caption-making.  The most common markup types are HTML italics for gene and mutant names, and the Greek letter mu, for micrometers in the scale bars.
+
+<p>A hard copy will also be printed for curation, labeled with the ZDB-PUB ID number and placed in the "To Be Curated" basket in the main office area.   If images have been uploaded an indication of this should be made on the printed copy.  Currently a star is drawn by the ZDB-PUB ID number.  When you are ready to curate a paper, take a paper out of this bin and capture the information as outlined below.
+
+<p>When you have completed extracting the information from the paper and entered it into ZFIN, go to the publication record, and select the "Curate" hypertext link. There you will find a set of data types with a series of boxes. Select the boxes on the far left next to the data types found in the paper. The categories are: Expression, GO, Genes, Mapping, Mutant, Nomenclature, Orthology, Phenotype, and Sequence. Most of these categories are intuitive except the distinction between "Genes" and "Nomenclature". Select the "Genes" box if there is a new gene in the paper. The "Nomenclature" box is reserved for cases where there was information in the paper that caused you to change the nomenclature of an existing gene.
+
+<p>For each data type you have selected on the publication page, if you have annotated that information to completion, select the corresponding "Close" box to the right of the data type. If you have not annotated that information, select the corresponding "Open" box. By default, you will be selected as the "Curator" when you select the "Open" box. If you want to change the curator in that field, you can by using the pull down menu. Instances in which you might do this is if the data are complicated or presented in a confusing manner and you want to hand the paper off to someone with more expertise in annotating that particular type of data. Make sure you notify a person that you have selected them to curate information in a paper. There is also a non-public "Notes" field if you would like to make any comments. If you have annotated all of the information in a paper, select the "Close Paper" button to indicate the paper is fully annotated.
+
+<p>When you are finished with the paper, file put it in the "To be Filed" basket in the main office area..  If you need to check out one of these papers, fill out a card and include the ZDB-PUB ID, your initials, and the date on which you took the paper. This card should be placed in the location where the paper should be filed.  The cards allow someone to know who has that paper if it is missing, in addition to allowing you to file the paper more quickly and accurately when you are finished with it   Be sure to file it properly so that it can be easily found at a later date.
+</p>
+
+<!-- ========== end of PUBLICATION IDENT ENTRY ACQ AND ANNOT =============== -->
+
+<!-- ========== Start of Anatomical Ontology Section =============== -->
+
+
+<h1 class="zdoc"><a name="AO">Zebrafish Anatomical Ontology</a></h1>
+
+<h2 class="zdoc">Editing the Zebrafish Anatomical Ontology (AO) in DAG-Edit</a></h2>
+
+<p><strong>Point person currently Melissa Haendel<br>
+  Backup person Ceri Van Slyke</strong></p>
+<p>The zebrafish anatomy ontology (AO) is currently edited in DAG-Edit version 
+  1.419 rev3. This will change when the new OBO-Edit is available in full release. 
+  The program is available for download at: <a href="http://sourceforge.net/project/showfiles.php?group_id=36855">http://sourceforge.net/project/showfiles.php?group_id=36855</a></p>
+<p>The following fields are utilized in DAG-Edit:</p>
+<ul>
+  <li> ID: new anatomy terms are assigned a unique ID of the following form: ZFA:#######. 
+    ZFIN stages, which are constant, have the form ZFS:#######. These IDs can 
+    be set by each editor in the DAG-Edit configuration Manager. </li>
+
+  <br>
+  <li>Namespace: there are two namespaces for anatomical terms and stages, zebrafish_anatomy 
+    and zebrafish_stages, respectively. All are found under the umbrella namespace 
+    zebrafish_anatomical_ontology. </li>
+  <br>
+  <li>Term name: some guidelines for adding new terms are 1) Plurals are used 
+    only when there are children of the term (or will be). Exceptions occur when 
+    putative children have no specific names. For example, scales. 2) No capital 
+    letters except when it is a name. 3) No left/right designations unless the 
+    terms differ on the two sides. </li>
+  <br>
+  <li>Definition: Definitions may come from a collaborator or from the literature 
+    and may be linked to pubs or websites using html sourcecode. </li>
+  <br>
+
+  <li>Synonyms: Synonyms may come from a collaborator, the literature, or be a 
+    previous name for a term. These should include plural/singular variations.</li>
+  <br>
+  <li> Dbxrefs: a ZFIN ZDB-ANAT ID is displayed. These come from the database 
+    once the AO is loaded and a new obo file generated. In the case of adding 
+    a cell type from the CL ontology (see below), the CL identifier would be added 
+    here.</li>
+  <br>
+  <li> Parent Plugin: For every term added, a start_stage and end_stage are added, 
+    as well as a relationship to the term&#8217;s parent. These relationships 
+    are is_, part_of, or develops_from as defined by OBO. Terms must follow the 
+    rules that for is_a and part_of relationships, a child must exist within the 
+    range of its parent. For develops_from relationships, terms must overlap or 
+    abut in time.</li>
+  <br>
+
+  <li> Comments: It is suggested that the comments field be utilized for explanations 
+    of new term creation, term relationship changes and any additional notes such 
+    as which collaborator has approved a definition.</li>
+  <br>
+  <li> Currently, terms from the cell type ontology can be added to the AO. However, 
+    they will keep their CL identifiers such that when the cell type ontology 
+    is implemented independently they can be separated. In order to do this, add 
+    the cell type with a ZFC:####### ID and put the CL:####### in the Dbxrefs 
+    field.</li>
+  <br>
+  <li> Merging terms: Do not create a new term and then merge it into another 
+    term. The reverse, merging an existing term into a new term, is ok. Because 
+    the direction of the merge decides the order of the two or more ZDB-ANAT- 
+    id lines, and further decides which id gets kept and which gets tossed, be 
+    conscientious of the direction. For example, if A is merged into B, and really 
+    should be B merged into A, then undo the merge and re-merge the other way 
+    around. </li>
+  <br>
+
+  <li>Curators may view the history of changes to a term by clicking on the &#8220;Updated: 
+    date&#8221; button on the upper right corner of an anatomy page. </li>
+  <br>
+  <li>Loads of the AO into the database should occur every month or two, dependent 
+    on how many changes have been put into the CVS.</li>
+</ul>
+
+
+
+<h2 class="zdoc">Submission to OBO, collaborators, and CVS</h2>
+<p><strong>Point person currently Melissa Haendel<br>
+  Backup person Ceri Van Slyke</strong></p>
+
+<p>Once the AO has been loaded, two new obo files are generated and emailed to 
+  the two curators in charge of the AO. One file contains only anatomy and development 
+  terms, whereas the other contains in addition the cell type terms. The latter 
+  is the file used on ZFIN production. The files are re-saved in DAG-Edit which 
+  reorders the terms and changes the header to indicate the submitter. The files 
+  are then sent to our collaborators and to OBO. OBO receives only the file containing 
+  anatomy and development terms, whereas the collaborators receive both files. 
+  The OBO webmaster is Amelia Ireland at: <a href="mailto:aji@ebi.ac.uk">aji@ebi.ac.uk</a> 
+  The lead curator is then responsible for depositing the new anatomy.obo (anatomy 
+  +cell terms) file into the CVS.</p>
+<h2>Proposed anatomical term</h2>
+<p><strong>Point person currently Doug Howe</strong></p>
+<p>Curators may request new terms or changes to existing terms by going to the 
+  following site, maintained by Doug Howe:<br>
+  <a href="http://www.cs.uoregon.edu/%7Edhowe/cgi-bin/anatomy/newanatomy.cgi">http://www.cs.uoregon.edu/~dhowe/cgi-bin/anatomy/newanatomy.cgi</a><br>
+  Curators should be as complete as possible in their entries to expedite their 
+  implementation. Also, terms from the Cell type ontology should be indicated 
+  in their title. The lead anatomy curator is responsible for making these changes.</p>
+
+
+<h2 class="zdoc">Using CVS with the AO</h2>
+<p>CVS stands for concurrent version system. This means a file can be edited by 
+  more then one person at a time. In order to be able to get a copy of the file 
+  from CVS it is necessary to have a CS account, secure shell client (SSC) and 
+  secure file transfer client (SFTC) software, and have someone with root access 
+  make you part of the group with permission to edit the file in CVS. </p>
+<p>Each time a curator works on the file they should get the most up to date version 
+  of anatomy.obo. At the end of each work day their edited file should be committed 
+  to the repository. </p>
+<p>The first time you get the anatomy.obo file from CVS, after logging in using 
+  the SSC you will need to type &quot;cvs checkout Curation&quot;. This will give 
+  you access to the anatomy.obo file. </p>
+<p>After that, each day before you start your work, login in using SSC and do 
+  a &quot;cvs -nq update&quot;(if you want to be very very careful) and &quot;cvs 
+  -q update&quot; to bring in the current version in the repository to your working 
+  directory. If you see a &quot;U&quot; in front of the file, you know somebody 
+  else updated the file after your last commit. This file then should be copied 
+  to your desktop using SFTC to be updated using DAG/OBO-Edit. </p>
+
+<p>After editing, the file should be renamed and SFTC should be used to copy the 
+  file back to your directory and the new file copied over the old copy of anatomy.obo. 
+  Now the anatomy.obo file in your directory has your day's work, you do a &quot;cvs 
+  -q update&quot; to bring/merge in the current version in the repository. You 
+  will see either &quot;M anatomy.obo&quot; or &quot;C anatomy.obo&quot;. &quot;M&quot; 
+  stands for your file has modifications (no matter whether there is updates in 
+  the repository or not). &quot;C&quot; stands for conflicts during the merge, 
+  which tells you there are updates in the repository and that the updates somehow 
+  conflict with your modifications. In this case, you need to edit anatomy.obo 
+  file to resolve the conflicts. Conflicts are in blocks marked by </p>
+<p>&nbsp;&nbsp;&nbsp;&lt;&lt;&lt;&lt;&lt; r.# <br>
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content in this repository version <br>
+  &nbsp;&nbsp;&nbsp;= = = = <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content in your working version <br>
+  &nbsp;&nbsp;&nbsp; &gt;&gt;&gt;&gt;&gt;&gt; </p>
+<p>Only after the conflicts are resolved, would you be able to commit your working 
+  version into the repository. </p>
+<p>To commit the file to the repository you type &quot;cvs commit -m &quot;comments&quot; 
+  anatomy.obo&quot;. The comments should be inside quotes and should briefly note 
+  the type of changes you made. CVS will give you a new version number. </p>
+
+<p>The most common commands used by the curators are:<br>
+  cp filename1 filename2 -- copies file1 to file2 keeping a copy of file1<br>
+  cvs -nq update -- Show if files have changed but doesn't do anything to files<br>
+  cvs -q update --Bring updates into your copy of the file<br>
+  cvs commit -m &quot;comments on updated file&quot; anatomy.obo -- commits changes 
+  to CVS with your comments<br>
+
+  cvs diff -rversion number1 -r version number2 anatomy.obo |less -- shows a list 
+  of changes between versions of the two files. The version numbers should be 
+  in the form 1.21. This list uses greater or less than signs to show differences 
+  between the files. The |less lets you see one screen at a time and advances 
+  the view through the list when you hit the space bar. To exit type q.</p>
+<p>If you want to minimize the need of using a text editor to reconcile differences 
+  in the file have only one curator at a time work on the file. </p>
+<p>General commands for use with CVS are available in the doc at <a href="http://mirror.zfin.org/zfin_doc/impl.html#Source%20Code%20Control%20and%20CVS">http://mirror.zfin.org/zfin_doc/impl.html#Source%20Code%20Control%20and%20CVS</a> 
+  <br>
+  Most of these commands are not routinely used by the curators that edit the 
+  AO file.</p>
+<h2>Loading changes to the AO into the database </h2>
+<p><strong>Point person currently Peiran Song<br>
+  Backup person Sierra Taylor</strong></p>
+
+<h3>Where Are The Scripts</h3>
+<p>Scripts for AO loading and unloading are at ZFIN_WWW/server_apps/data_transfer/Anatomy. 
+  There is a README file documenting the steps to conduct AO load and unload with 
+  brief explanation of each script. For data load and unload purpose, please read 
+  and follow the README file.</p>
+<p>The following documentation goes into details on what things are done and how 
+  they are done. It is for debugging and revision purpose. </p>
+<h3>Input File Format</h3>
+<p>AO Term: <br>
+  Below is a typical AO term in OBO format. Some notes:<br>
+  1) Brand new terms do not have xref_analog line. <br>
+  2) When terms merge, the old(merged) term&#8217;s name becomes the new(merged-into) 
+  term's synonym, ID becomes an alt_id: ZFA:# line, and if exists xref_analog, 
+  it would be inserted in front of the new term&#8217;s xref_analog line. <br>
+
+  3) When terms become obsolete, there will be an is_obsolete: true line. </p>
+<p>[Term] <br>
+  id: ZFA:0000006 <br>
+  name: ball <br>
+  namespace: zebrafish_anatomy <br>
+  xref_analog: ZFIN:ZDB-ANAT-010921-413 <br>
+
+  synonym: &quot;yolk ball&quot; [ZFIN:ZDB-PUB-961014-576] <br>
+  def: &quot;The anterior round region of the yolk cell present after the yolk 
+  extension forms during the segmentation period. &lt;a href='http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-961014-576'&gt;Kimmel 
+  et al, 1995.&lt;/a&gt;&quot; [ZFIN:curator] <br>
+  relationship: start ZFS:0000025 <br>
+
+  relationship: end ZFS:0000036 <br>
+  relationship: part_of ZFA:0000084 </p>
+<p>Cell Ontology term: <br>
+  We have also incorporated terms from the Cell Ontology. Below is a typical new 
+  CL term in OBO format. </p>
+<p>[Term] <br>
+  id: ZFC:0001318 <br>
+  name: lymphopoietic stem cell <br>
+
+  namespace: zebrafish_cells <br>
+  is_a: ZFC:0001317 ! hematopoietic stem cell <br>
+  relationship: end ZFS:0000044 ! Adult <br>
+  relationship: start ZFS:0000030 ! Pharyngula:Prim-15 <br>
+  xref_unknown: CL:0000051</p>
+<h3>What Happens During The Loading </h3>
+
+<p><strong>1)</strong> Parser generates </p>
+<ul>
+  <li>one translation file: <br>
+    &nbsp;&nbsp;cell_ids.unl : ZFC:#######|CL:#######| </li>
+  <li>anatitem_new.unl : terms without xref_analog line, one term per line </li>
+  <li>anatitem_exist.unl : terms with xref_analog line, one term per line </li>
+
+  <li>anatitem_merged.unl : ZFA:#######|ZFA:#######| </li>
+  <li>anatitem_obsolete.unl : ZDB-ANAT-######-##| </li>
+  <li>anatalias.unl : ZFA:#######|synonym|ZDB-PUB-######-##| </li>
+  <li>anatrel.unl : ZFA:#######(parent)|ZFA:#######(child)|rel_type|</li>
+</ul>
+<p><strong>2)</strong> Loader has two parts, the first part creates temporary 
+  tables, load raw data in, use the translation file, anatomy_item and stage table 
+  to translate the ZFA/ZFS/ZFC ids to ZDB ids. It also executes create_anatomy_relationship_list() 
+  procedure to generate parents and children lists for each anatomy term, store 
+  them for later comparison. </p>
+
+<p>The second half loads data into real tables as explained below:<br>
+  <br>
+  For existing terms: update it in anatomy_item, record actions in updates table. 
+  <br>
+  For new terms: enter it to zdb_active_data and anatomy_item <br>
+  For merged terms: </p>
+<ol type="a">
+  <li>expression annotations and pattern figures: <br>
+
+    If same annotations exist on both old(merged) and new(merged-into) terms, 
+    keep the ones on the new terms and link xpat figures from the annotation on 
+    the old term over to the annotation on the new term. For the rest annotations 
+    on the old terms, do a distinctive select, and generate new -XPATRES- ids 
+    (it is possible that two old terms with the same annotation get merged into 
+    the same term, we choose to get a new id instead of picking an old one out.) 
+    Then link over all the xpat figure records on the old annotations to the news. 
+    For deletions on expression annotation, either due to both new term and old 
+    term have the same annotation or more than one terms with the same annotation 
+    merged into one term, record annotation ids in zdb_replaced_data.</li>
+  <li>anatomy items:<br>
+    Record term zdb ids in zdb_replaced_data, record merging in updates table 
+    for the new terms, delete the old terms from zdb_active_data. The term is 
+    gone but the term name is kept as the new term's synonym.</li>
+</ol>
+<p>For obsolete terms: flag it in the anatomy_item <br>
+  For synonym/alias updates: </p>
+<ol type="a">
+  <li>record synonym deletions in updates table for synonymns that are not included 
+    in the new AO file, then delete those synonyms from zdb_active_data. </li>
+
+  <li>for existing synonymn attributions, delete those that are not included in 
+    the new AO file, and add those they are new. </li>
+  <li>add new synonyms to zdb_active_data and data_alias, and add attribution 
+    to record_attribution. </li>
+</ol>
+<p>For Cell ontology term: use CL:# instead of ZFC:# as anatitem_obo_id. <br>
+  For relationship: this is where stage inconsistency often comes up. </p>
+<ol type="a">
+  <li>three checkings correspond to three .err output files: <br>
+    start_startInconsistent.err: parent term|child term|parent start stg|child 
+    start stg| <br>
+
+    end_startInconsistent.err: parent term|child term|parent end stg|child start 
+    stg| (for develops_from relationship) <br>
+    end_endInconsistent.err: parent term|child term|parent end stg|child end stg| 
+  </li>
+  <li>load in anatomy_relationship </li>
+  <li>run create_anatomy_relationship_list() procedure, record change to each 
+    term's contained_by, contains, develops_from and develops_into lists. </li>
+</ol>
+<p>To have history tracking, we store each update/change action into the updates 
+  table, and the web application function would retrieve and format them for web 
+  display.</p>
+<p>Updates that we track include:</p>
+
+<ul>
+  <li> term name change</li>
+  <li> term start stage or end stage change </li>
+  <li>term definition change</li>
+  <li> term receives a merge</li>
+  <li> new synonym</li>
+
+  <li> contained_by (is_a, part_of) parent list change</li>
+  <li> contains (is_a, part_of) children list change</li>
+  <li> develops_from parent list change </li>
+  <li>develops_into children list change</li>
+</ul>
+<p><strong>3)</strong> With term stage(s) changes, some existing expression annotations 
+  might have stage inconsistence problem. The loader generates annotationViolates.err 
+  file in a format of: <br>
+
+  ZDB-PUB-###(annotation source)|annotation start stage abbrev|end stage abbrev|anatomy 
+  term name|term start stage abbrev|end stage abbrev| </p>
+<p>Curators would return a file in format of <br>
+  ZDB-ANAT-####(term to be translated)|start stg abbrev|end stage abbrev|ZDB-ANAT-###(term 
+  to be translated into) </p>
+<p>These file would be used by batch_xpat_annot_adjust() function to adjust annotation. 
+</p>
+<p><strong>4)</strong> Providing Thisse keyword file--stageKeywords.csv, loadMaster.sh 
+  would parse it and check it against new AO table content and generate two files 
+  to curators: </p>
+<p>kwdNameNotPrim.err: start stage name|end stage name|term name|<br>
+  The term name used in that stage window is not longer a primary ZFIN AO term 
+  name, it might become a synonym, or updated or merged or obsoleted.</p>
+
+<p>kwdStageInconsis.err: start stage name|end stage name|term name| <br>
+  The term name used in that stage window is not longer consistent with current 
+  stage definition of that term in ZFIN.</p>
+<h3>What To Do After The Loading </h3>
+<p>First, commit the anatomy.obo file that used for the loading into CVS. </p>
+<p>Then, unload ZFIN anatomy and stages. <br>
+  During the unload, each anatomy term grabs its parents from anatomy_relationship, 
+  its synonyms from data_alias and synonym attribution from record_attribution, 
+  and form an obo format item definition. </p>
+<p>We generate two version of obo file,</p>
+<ul>
+
+  <li>one with term comments(anatitem_description) and cell ontology terms for 
+    internal use </li>
+  <br>
+  <li>one without both for sharing at public OBO site</li>
+</ul>
+<p>Both files would be sent to curators via emails as the end of the execution. 
+  Curator(s) would re-save them by DAGEdit for format/order adjustment. The internal 
+  one should be committed into CVS by the curator. </p>
+<p>Finally, the AO files at ZFIN public download site would be updated on Sunday 
+  night by weekly cron job, or you could choose to launch it right away.</p>
+<h2>Making changes to anatomy expression templates</h2>
+<strong>Point person currently Ceri Van Slyke <br>
+
+Backup person Erik Segerdell</strong> 
+<h3> Updating the Thisse Anatomy List</h3>
+<p>The file that contains the FileMaker template anatomy list is named rel_values_key.fp7. 
+  After each AO load a script is run that checks to see if the template is out 
+  of sync with the newest anatomy. An error list with the structure and stages 
+  that the structure does not match in the AO is sent to a curator. The curator 
+  edits the template as described in the FileMaker template portion of the documentation. 
+  If the changes are extensive, the checking script may be rerun with the newest 
+  template to ensure all errors have been caught and no new errors have been introduced. 
+  The file is then sent to the Thisses. The file will also be put in the work 
+  tracking system (FogBugz) the Thisse cases (827) and (362). The Thisses occasionally 
+  request terms to be added or removed from the template.</p>
+<h2>Making changes to anatomy PATO templates</h2>
+<p><strong>Point person Erik Segerdell<br>
+  Backup person Ceri Van Slyke</strong></p>
+<p>A FileMaker Pro 7 database (or "template") has been developed for phenotype 
+  annotation based on the syntax and ontologies now being devised by the Phenotype 
+  Ontology consortium</a>.</p>
+
+<p>Unlike the case of the <a href="#">Thisse expression pattern template</a>, 
+  we do not receive routine data submissions via the PATO template. It was developed 
+  originally for trial curation of mutant phenotypes based on the PATO schema. 
+  We also have distributed copies to, among a few others, Makoto Furutani-Seiki 
+  (medaka fish mutant screen) and to Paula Mabee (integrated fish evolution database) 
+  for their own particular projects. See FogBugz <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?587">case 
+  587</a> for more information.</p>
+<p>The PATO template uses several controlled vocabularies for annotation. When 
+  AO updates occur, this template should be kept in sync, and the above users 
+  should be notified.</p>
+<h3>Updating Anatomical Terms</h3>
+<p>The template consists of four integrated files; approved anatomical terms are 
+  stored in <strong>rel_pato_val_anat(.fp7)</strong>. No experimental data is 
+  ever stored in this file. It simply provides a value list of terms that shows 
+  up in an Anatomy pick-list during annotation. Once it is updated, users need 
+  only to replace this particular file on their machines.</p>
+<p>Unlike the Thisses, who use a preferred subset of AO terms for their annotations, 
+  the PATO template stores all AO terms and their ID's. This makes updating the 
+  file particularly simple:</p>
+
+<ul>
+  <li>Obtain a flat file containing ID's and anatomy items that reflect the most 
+    recent AO update and save it on your machine: 
+    <ul>
+      <li><a href="http://zfin.org/data_transfer/Downloads/anatomy_item.txt">http://zfin.org/data_transfer/Downloads/anatomy_item.txt</a></li>
+    </ul>
+  </li>
+  <br>
+  <li>Open <em>only</em> <strong>rel_pato_val_anat(.fp7)</strong>. In FileMaker, 
+    select Records -&gt Show All Records, then select Delete Found Records...</li>
+
+  <br>
+  <li>Select File -&gt; Import Records -&gt; File...</li>
+  <br>
+  <li>In the dialog box, open the saved flat file.</li>
+  <br>
+  <li>In the next dialog box, you should see ZDB-ANAT-ID's mapped to the anat_id 
+    target field, and the anatomical terms themselves mapped to the anat_term 
+    field. If not, adjust the target fields. ZDB-STAGE-ID's will not be imported.</li>
+
+  <br>
+  <li>Click Import to complete the procedure.</li>
+</ul>
+<!-- ========= end of ANATOMICAL ONTOLOGY ============================== -->
+
+
+
+<!-- =================================================================== -->
+<!-- ========== start of GENES ========================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Genes">Genes</a></h1>
+
+<p>This section was written/compiled by Ken in 2004/02.
+
+
+
+<!-- ========= Gene Nomenclature ======================================= -->
+
+<h2 class="zdoc"><a name="Gene Nomenclature">Gene Nomenclature</a></h2>
+
+<p>One of the first things you'll need to do is figure out the gene(s) associated
+with the data in the paper.  They might be existing genes, completely
+novel, or novel to zebrafish, but known in another species.  It is
+important for curators to do independent analysis of genes reported in papers
+and not take the word of the author that it is either novel or an existing
+gene.
+
+<p>There are a number of online resources, analysis tools, and documents
+instrumental in researching the identity of the gene and, if necessary,
+assigning nomenclature.  They are too numerous to list, but can be found
+in the <a href="#Bioinformatics%20and%20Analysis%20Tools">curation 
+resources section</a>.
+It is to your advantage to learn about and become comfortable with these online
+resources, analysis tools, and documents.  Information in those resources
+will not be repeated here to any great extent.
+
+<p>If the authors report nucleotide sequence accession numbers associated with a
+gene, search ZFIN using the number to check to see if the number is already in
+ZFIN associated with a reserved gene or a gene record created for a GenBank
+number.  If nothing is returned, run a blastn and blastx against the
+nonredundant (nr) database with the reported sequence to investigate whether it
+matches a published or unpublished sequence and whether that sequence is
+already in ZFIN associated with a gene record.
+
+<p>If a BLAST analysis returns a matching sequence that is listed as unpublished,
+it doesn't mean that it is unpublished.  Select a couple authors from the
+"unpublished" GenBank record and type them into PubMed to look for a published
+paper containing this sequence.  If you find a matching published
+zebrafish sequence in an unannotated paper, acquire the paper and annotated it
+at the same time you are annotating your original paper.
+
+<p>If there is no nucleotide sequence accession number presented in the paper,
+sometimes there is a nucleotide or protein sequence presented in a figure 
+Typing in a portion of the sequence and running a BLAST analysis may identify a
+longer or even complete zebrafish, mouse or human sequence which can then be
+used for more comprehensive analysis.  If the sequence in the figure is
+long, it is wise to type in portions of the 5', central, and 3' portion of the
+sequence to increase the chances of finding a partial gene sequence deposited
+in GenBank.
+
+<p>Let's assume your initial investigations suggest that the gene you are
+analyzing is novel.  It is important to run a BLAST analysis against the
+zebrafish ESTs to identify genes in ZFIN that are only known as ESTs.  If
+a published zebrafish sequence matches an EST that is associated with a gene
+whose nomenclature is based on EST nomenclature it is important to analyze the
+published sequence and rename the gene with more informative nomenclature.
+
+<p>From your initial sequence similarity analyses, you should get a feel for the
+relationship of the gene under consideration to other zebrafish, mouse and
+human genes.  For example, you may be able to tell that it is a member of
+an established gene family based on similar identity to other zebrafish
+sequences and that is the likely ortholog of a particular human or mouse
+sequence.  It is important to use this information in conjunction with the
+information provided in the paper such as author's statements, sequence
+alignments, phylogenetic trees, and experimental data such as expression
+patterns.
+
+<p>Elucidating relationships may be furthered by looking for conserved synteny
+using analysis tools at Ensembl.  BLASTing the sequence under
+consideration against the zebrafish sequences at Sanger may identify a contig
+on which the gene is found.  Looking at the flanking zebrafish genes on
+that contig, their likely human or mouse counterparts based on Sanger's
+computations, and the neighborhoods surrounding those human and mouse genes,
+may provide evidence of orthology based on conserved synteny. <br>
+<br>
+If the gene under consideration is novel to zebrafish and is the ortholog of a
+human or mouse gene, naming is pretty straight forward as gene nomenclature
+follows that of human.  If there is no human ortholog, the nomenclature
+follows that of mouse.  Often human gene names will contain terms or
+descriptors in brackets which seem excessive.  These are not included in
+the zebrafish name.  It is a judgment call whether to include the terms or
+not.  In most cases, these extra descriptors are easy to pick out.  I
+usually look at the gene names of zebrafish genes in the same gene family if
+there are any.  Another method to identify these terms in the human gene
+name is to look at the gene name of the orthologous mouse gene and see if they
+are present.
+
+<p>If two zebrafish genes are determined to be the genome duplicates of a human or
+mouse ortholog, the mammalian gene and name nomenclature is used, followed by
+an 'a' and 'b'.  Typically, duplicate nomenclature is not used unless there is
+evidence that the two zebrafish genes are duplicates.  Closely related
+zebrafish genes with high sequence similarity should not be given duplicate
+nomenclature based on sequence alone.  Corroborating evidence that they are
+genome duplicates can be conserved location of the genes with other known
+zebrafish genome duplicates, conserved location with human or mouse orthologs,
+and analyses using phylogenetic software programs such as clustal.</p>
+
+
+
+<p>When two genes are determined to be genome duplicates, base
+your assignment of 'a' and 'b' on the nomenclature of other genome duplicates
+on the same chromosome.  For example, if you identify genome duplicates on chromosome
+3 and 12, search ZFIN for genes on those two chromosomes and see whether the
+named 'a' duplicates are on 3 or 12.  In this example, the hoxb#a genes are on
+3 and the hoxb#b genes are on 12.  The duplicate on 3 would be 'a' and
+duplicate on 12 would be 'b'.  It is impossible to be completely consistent in
+naming, but try where you can.
+
+<p>If there is no human or mouse ortholog, try to identify if it is a member of a
+gene family and use the gene family nomenclature.  If the zebrafish gene
+is a novel member of a gene family, but its relationship to human or mouse gene
+family members is unclear, give the zebrafish gene the gene family root symbol
+and use a number if the human and mouse nomenclature use letters and vice
+versa.  For example, there are a number of claudin genes in zebrafish (symbol:
+cldn*), some of which are identified as orthologs of human and mouse genes
+while others have undetermined relationships with mammalian counterparts.  The
+claudin genes with established human and/or mouse orthologs are given the same
+nomenclature.  An example of this is cldn10 whose human ortholog is CLDN10 and
+mouse ortholog is Cldn10.  A zebrafish claudin gene whose relationship to human
+and mouse claudin genes is undetermined at this point is cldnf.  Once the
+relationship of this zebrafish gene is clarified in relation to the human and
+mouse claudin genes, cldnf will be renamed using a number corresponding to the
+orthologous gene in human and mouse.
+
+<p>If it is not in a gene family, look for domains or conserved regions using Pfam
+and try to utilize that in the name.  On occasion, there will be
+information in the GenBank record helpful in proposing a name, however DO NOT
+TRUST THE NOMENCLATURE IN GENBANK.  It is very unreliable.
+
+<p>It is OK to use what the authors use if it resembles approved zebrafish
+nomenclature format, there is no better alternative, and it does not conflict
+with existing gene or mutant nomenclature in zebrafish, human, or mouse. 
+It is important to make sure the proposed nomenclature does not interrupt or become
+easily confused with that of existing zebrafish, human, or mouse nomenclature.<br>
+
+
+
+<h3 class="zdoc"><a name="Nomenclature Entry">Nomenclature Entry</a></h3>
+
+<p>Go to the ZFIN homepage, log in, and select the "Add new GENE" link in 
+the "Genes" section. Enter the gene name and gene symbol following 
+zebrafish nomenclature guidelines. You can write a gene description on 
+that page or from a separate entry form on the newly created gene page. 
+Indicate if the gene you are creating is being reserved for somebody.  
+When you have entered the information, select "Submit new GENE". You can 
+then go to the gene record and add to it as necessary.
+
+<p>If you make a typo in the gene name or symbol you will be unable to 
+manually make a
+complete correction.  Changing gene names directly on the gene page or 
+when you merge two genes, creates previous names and modifies the 
+nomenclature history.  You cannot delete previous names if they are in 
+the nomenclature history and you usually cannot delete or properly 
+modify the nomenclature history.
+
+<p>If you add or modify the gene name or gene symbol and found you have 
+made a typo, make the intended change, then notify a technologist
+to clean up the gene record ASAP.  Trying to make the corrections 
+yourself in these cases usually make matters worse or at least take more 
+time.  When you contact a technologist (Sierra [first choice], Brock [second 
+choice]), please be explicit, clear, and complete about what you did and 
+what needs to be done to correct what you did.  Typically the symbol and 
+name need to be removed from the nomenclature history and the previous 
+symbol must be deleted from the previous name. 
+
+<p>When the corrections have been made, check the previous name field and 
+nomenclature history of the gene record (and anything else) to make sure 
+everything appears as it needs to.  If more input from the technologist
+is needed, 
+ask for it.  Please keep in consideration that they are bailing us out 
+and they have many other things to be doing so try to request all 
+changes needed in the first email.
+
+<p>If you didn't catch your typo until the next day, it's in the previous 
+names and nomenclature history for good.  Just make the needed 
+corrections to the database records.  The 'reason' on the update page 
+for the gene name and gene symbol should be, 'Not Specified'.
+
+
+
+
+<h4 class="zdoc"><a name="Renaming genes">Renaming genes</a></h4>
+
+<p>If you need to rename a gene symbol, gene name, or both, log
+into ZFIN and go to the gene page.  On the gene page, select the "Add/Update
+this record" hypertext link to the right of the ZDB-GENE ID.  Select the
+"Update" button next to "Gene Name:" or "Gene Symbol:", modify the name or
+symbol, select the "Reason" for the change (see below), and select the "SUBMIT
+this UPDATE" selection button.  </p>
+
+
+
+<h4 class="zdoc"><a name="Reasons for renaming gene names and symbols">
+                         "Reason"s for renaming gene names and symbols</a></h4>
+
+<p>
+When renaming genes, there is an opportunity to indicate a "reason".  The
+options and instances for which you use each are:<br>
+<br>
+"per gene family revision" - If the gene family undergoes revision and names
+change because of the work done.
+
+<p>"per personal communication with authors" - communication with an author leads
+to a change in the nomenclature.
+
+<p>"renamed to conform with human guidelines" - the nomenclature for the human
+ortholog changed from one approved symbol to another approved symbol.  The
+nomenclature of the zebrafish ortholog is now out of sync and is being changed. 
+Another scenario in which to choose this option is when you are renaming
+uninformative zebrafish gene nomenclature with unapproved human gene
+nomenclature found in LocusLink.
+
+<p>"renamed to conform with mouse guidelines" - there is no human ortholog and the
+nomenclature for the mouse ortholog changed from one approved symbol to another
+approved symbol.  The nomenclature of the zebrafish ortholog is now out of
+sync and is being changed.
+
+<p>"renamed to conform with zebrafish guidelines" - use this option for most
+naming not covered by other options.  This includes if the zebrafish gene
+is now found to be the ortholog of a human gene with different
+nomenclature.  Another example would be if an existing zebrafish gene is
+found to be a genome duplicate and the duplicate nomenclature conventions are
+being instituted.
+
+<p>"not specified" - probably used only in very strange&nbsp;scenarios, if ever.
+
+<p>"same marker" - automatically listed when you merge a gene.  Should you
+delete a gene and realize you should have merged it, this is the reason you
+use.  It will probably never be used unless and error is made and you have
+to clean up.</p>
+
+
+
+<p>When a gene is renamed, the symbol being changed
+automatically gets listed as a previous name and needs to be attributed.  If
+the symbol was used in a publication, select one of the papers using that
+nomenclature (the earliest if possible) for the attribution.  If you cannot
+find the symbol in a paper, use the zebrafish nomenclature committee reference
+(ZDB-PUB-030508-1).</p>
+
+
+
+<p>When you edit the nomenclature of a gene, the changes appear
+in the nomenclature history that you can access by selecting the "Nomenclature
+History" hypertext link below the gene nomenclature and previous names on the
+gene page.  If you make a mistake during the editing of the nomenclature, you
+may edit the incorrect information by going to the nomenclature history page
+and selecting the "Add/Update this Record" hypertext link to the right of the
+ZDB-GENE ID.  Select the "Edit/Delete" button next to the nomenclature you wish
+to correct.  A pop up window appears where you may make corrections.<br>
+
+
+
+<h3 class="zdoc"><a name="Gene Previous Names">Previous Names</a></h3>
+
+<p>Enter non approved gene symbols that are used in publications to gene record's
+previous name field.  We often include symbols in previous names if there are
+case differences from the approved gene symbol, especially if they are in
+common usage.  Examples of previous names that only differ in case from
+the approved gene symbols are MyoD (myod) and msxB (msxb).</p>
+
+
+
+<h4 class="zdoc"><a name="Previous Name Entry">Previous Name Entry</a></h4>
+
+<p>On the gene page, select the "Add/Update this record"
+hypertext link to the right of the ZDB-GENE ID.  Select the "Add" button next
+to "Previous Names:", add the name, and elect the "SUBMIT this UPDATE"
+selection button.  To attribute the previous name, enter the name in the "Previous
+name" entry box, enter the ZDB-PUB ID in the reference selection box, and
+select the "Add" button.</p>
+
+
+
+<p>If you merge a gene into another or change the name of a
+gene, the old gene symbol will appear as a previous name.  If the old gene
+symbol can be attributed to a reference, use that reference as attribution for
+the previous name.  In cases where you change the name of a gene derived from
+EST nomenclature to more informative gene nomenclature, use the Zebrafish
+Nomenclature Committee reference (ZDB-PUB-030508-1).</p>
+
+
+
+<p>To delete previous names, on the gene page, select the
+"Add/Update this record" hypertext link to the right of the ZDB-GENE ID.  Select
+the "Delete" button next to the name you want to delete.<br>
+
+
+
+<!-- ========= Gene Products =========================================== -->
+
+<h2 class="zdoc"><a name="Gene Products">Gene Products</a></h2>
+
+<p>Creation and maintenance of the InterPro, PROSITE, Pfam, and EC links are from
+automated loads.  Gene Ontology (GO) annotation is also entered from automated
+loads and translations as well as manually from the literature.  See the
+<a href="#GO">GO section</a> for proper annotation of GO.
+
+
+
+<!-- ========== Gene Ontology (GO) ===================================== -->
+
+<h2 class="zdoc"><a name="GO">Gene Ontology (GO)</a></h2>
+
+<p>This section was written (Jan. 2004) and revised (July 2006) by Doug Howe</p>
+<hr width="80%">
+
+<h3>GO INDEX</h3>
+
+<ul>
+	<li><a href="#creating annotations">Creating Annotations</a></li>
+	<li><a href="#editing annotations">Editing Existing Annotations</a></li>
+
+	<li><a href="#general recommendations">General Recommendations</a></li>
+
+	<li><a href="#evidence codes">Evidence Codes</a></li>
+	<li><a href="#policies">ZFIN GO Curation Policies</a></li>
+</ul>
+
+<hr width="80%">
+
+<p><a href="http://www.geneontology.org">The GO Consortium website</a> provides extensive documentation on the current policies regarding
+the use of GO terms and evidence codes. In
+addition to the information provided below (which has been modified from parts
+of the GO site), it is strongly recommended that you visit the following urls
+to gather information on the use of GO as currently recommended by the GO
+consortium.</p>
+
+<ul>
+   <li><h3>GO Documentation: <a href="http://www.geneontology.org/GO.contents.doc.shtml">www.geneontology.org/GO.contents.doc.shtml</a></h3></li>
+
+   <li><h3>GO Annotation Guide: <a href="http://www.geneontology.org/GO.annotation.shtml">www.geneontology.org/GO.annotation.shtml</a></h3></li>
+   <li><h3>GO Evidence Codes: <a href="http://www.geneontology.org/GO.evidence.shtml">www.geneontology.org/GO.evidence.shtml</a></h3></li>
+
+</ul>
+<br />
+
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+
+
+<!-- ....... NEW ANNOTATIONS ............................................ -->
+
+<h3 class="zdoc"><a name="creating annotations">Creating New GO Annotations</a></h3>
+<p>To access the GO curation page, select the "Add/Update this Record" link at the top of 
+the gene page for the gene you wish to annotate.  Then, select the "Update" button next to the Gene Ontology section. You can also access the GO curation page by following the "Add/Update GO annotations" link at the top right of
+any GO details page.</p>
+<p>Adding a GO annotation should be performed using the fields available at the
+top of the page when you enter the GO curation interface.
+<br /><br />
+<table cellspacing="0" cellpadding="4" border="1" width="95%" align="center">
+   <tr bgcolor="#FFF0F0">
+
+      <th align="center" width="15%">
+
+         <b>FIELD</b>
+
+      </th>
+      <th>
+         <b>DESCRIPTION</b>
+      </th>
+   </tr>
+   <tr>
+
+      <td>
+         <b>GO Term ID:</b>
+
+      </td>
+      <td>
+         Enter the ID of the desired GO term in this field (e.g. GO:0087998).  When you move off this field, you will get visual confirmation of the selected 
+         GO term adjacent to the GO Term ID box.
+      </td>
+   </tr>
+   <tr>
+      <td>
+
+         <b>Publication:</b>
+
+      </td>
+      <td>
+         Enter the ZDB-PUB identifier for the source of this annotation (e.g. ZDB-PUB-970221-3).  In some cases this will be a pseudopublication that ZFIN has created to support annotations not derived from a literature publication (see ND evidence code below for an example).  This value is validated when the Add GO Annotation button is clicked.
+      </td>
+   </tr>
+   <tr>
+      <td>
+
+         <b>Evidence Code:</b>
+
+      </td>
+      <td>
+         Select the desired evidence code for this annotation from the menu.  Consult the <a href="#evidence codes">notes for specific evidence codes</a> below for guidance on which code to use and how it affects other aspects of your annotation.
+      </td>
+   </tr>
+   <tr>
+
+      <td>
+
+         <b>Inferred From:</b>
+
+      </td>
+      <td>
+         &quot;Inferred from&quot; data is entered in two steps.  Select the source for any inferred from data you wish to enter from the pulldown menu, and enter the ID of
+      the object in the text field (e.g. RefSeq in pulldown, and NM_878766 in text box).  For ZDB objects, select ZFIN from the pulldown and enter the full identifier (e.g. ZDB-FISH-990210-1) in the text box.  You can enter comma-separated lists of object IDs here when there is grouped inference data.
+      If you do this, they must all be of the same type indicated by your choice in the pulldown menu.  To add mixed types of inference data, create the annotation with one
+      type and use the edit button for the new record to add new inference data of any type available in the pulldown menu.  
+      This type of grouped inference data has special meaning for IPI and IGI 
+      annotations.  Please see the <a href="#evidence codes">evidence codes</a> 
+      section for details.
+      </td>
+
+   </tr>
+   <tr>
+   	<td>
+
+   	  <b>Qualifiers:</b>
+   	</td>
+   	<td>
+   		The NOT checkbox is used to negate the GO term being applied.  For example, if a paper shows through immunostaining or cell fractionation that a gene product is not
+   		present in the nucleus, you could annotate the gene with cellular component: NOT nucleus (IDA).  Negation of this type can be used with any GO term if the evidence
+   		is very good. <br /><br />
+
+   		The Contributes To checkbox is ONLY to be used with Molecular Function annotations.  Contributes To indicates that the annotated gene product contributes to the molecular function of a protein complex, but does not have or is not known to perform the function of the complex by itself.  A cellular component annotation for the complex should also be made.
+   		Please use only one qualifier per annotation...they are not intended to make "does not contribute to" annotations!
+   	</td>
+   </tr>
+   <tr>
+
+      <td>
+         <b>Notes:</b>
+      </td>
+      <td>
+
+         This notes field is explicitly tied to the annotation you are 
+         creating.  Use this notes field for any information of 
+         curatorial interest, such as indicating that a cDNA was injected, which cell type or tissue was involved etc.  
+				 The text in this field is not currently displayed to the public.
+      </td>
+   </tr>
+   <tr>
+      <td>
+
+         <b>Add GO Annotation Button:</b>
+      </td>
+      <td>
+
+         Click this button when you are ready to create your annotation.  Internal identifiers are validated at this point, and the new annotation should appear in the lower portion of the screen.  
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <b>Clear Button:</b>
+
+      </td>
+      <td>
+
+         Click this button to clear all the fields.
+      </td>
+   </tr>
+</table>
+
+
+<br />
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+
+<!-- ........ EDITING ANNOTATIONS ..................................... -->
+
+<h3 class="zdoc"><a name="editing annotations">Editing Existing GO Annotations</a></h3>
+
+
+
+<h4 class="zdoc"><a name="annotation editor">Using the GO Annotation Editor</a></h4>
+<p>Any existing GO annotation can be edited from the GO curation form by clicking the "Edit" button located
+to the right of the annotation.  The Annotation Editor has the following fields and functionality.</p>
+
+ <table cellspacing="0" cellpadding="4" border="1" width="95%" align="center">
+   <tr bgcolor="#FFF0F0">
+      <th align="center" width="10%">
+
+         <b>FIELD</b>
+
+      </th>
+
+      <th>
+         <b>DESCRIPTION</b>
+      </th>
+   </tr>
+   <tr>
+      <td>
+
+         <b>GO Term ID:</b>
+
+      </td>
+
+      
+      <td>
+         Identification of the GO Term being edited.
+      </td>
+   </tr>
+   <tr>
+      <td>
+
+         <b>Evidence Code:</b>
+
+      </td>
+      
+      <td>
+          Select the desired Evidence Code from the pull-down menu.  Click the adjacent &quot;Update&quot; button to execute the change.  <br />
+      </td>
+
+   </tr>
+
+   <tr>
+
+      <td>
+         <b>Reference(s):</b>
+      </td>
+      
+      <td>
+      	Edit the publication attributed for this GO annotation in this field.  Click the adjacent &quot;Update&quot; button to execute the change.
+      </td>
+
+   </tr>
+
+   <tr>
+      <td>
+         <b>Inference(s):</b>
+      </td>
+      
+      <td>
+         <b>Adding Inferences Using The Annotation Editor</b><br />
+
+         Select the source for any inferred from data you wish to enter from the pulldown menu, and enter the ID of
+      	the object in the text field (e.g. RefSeq in pulldown, and NM_878766 in text box).  For ZDB objects, select ZFIN from the pulldown and enter the full identifier 
+      	(e.g. ZDB-FISH-990210-1 or ZDB-GENE-990212-3) in the text box.  Comma-separated lists of grouped object IDs can be entered here. Multiple inferences displayed grouped 
+      	have special meaning for <a href="#IPI">IPI</a> and 
+        <a href="#IGI">IGI</a> annotations.  Please see the 
+        <a href="#evidence codes">evidence codes</a> section for details.<br /><br />
+
+         <b>Deleting Inferences Using The Annotation Editor</b><br />
+         Delete inferences using the &quot;Delete Inference&quot; button adjacent to the inference.
+     </td>
+
+   </tr>
+   <tr>
+      <td>
+         <b>Qualifiers:</b>
+
+      </td>
+      
+      <td>
+         Select the appropriate qualifier and click the &quot;Update Qualifiers&quot; button to execute the change.  
+         Please use only one qualifier per annotation...they are not intended to make "does not contribute to" annotations!
+      </td>
+
+   </tr>
+   <tr>
+      <td>
+
+         <b>Notes:</b>
+
+      </td>
+      
+      <td>
+         The notes field is explicitly tied to the annotation you are editing.  Use this notes field for any information of curatorial interest such as when morpholinos or overexpression were used to support an IMP GO annotation.  
+         This field is not currently displayed publicly.
+      </td>
+
+   </tr>
+   <tr>
+      <td>
+
+         <b>Done Editing Button:</b>
+      </td>
+
+      
+      <td>
+           Click the &quot;Done Editing&quot; button when you are finished making changes.  This will update the GO display to reflect the new record status. 
+      </td>
+
+   </tr>
+ </table>
+
+
+
+<h4 class="zdoc"><a name="deleting terms">Deleting GO annotations</a></h4>
+
+<p>Use the &quot;Delete&quot; button  located to the right of any GO annotation on the GO curation screen to remove a GO annotation.</p>
+
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+
+<!-- ..... GENERAL RECOMMENDATIONS .................................... -->
+
+<h3 class="zdoc"><a name="general recommendations">General GO Consortium Recommendations</a></h3>
+
+<h4>(modified from <a href="http://www.geneontology.org/GO.annotation.shtml">www.geneontology.org/GO.annotation.shtml</a>)</h4>
+
+<ul>
+ <li>Annotate gene products to the most detailed level in the ontology that correctly
+     describes the documented biology of the gene product. A gene product can be annotated to zero or more nodes of each ontology.  </li>
+
+ <li>Keep the <a href="http://www.geneontology.org/GO.usage.shtml#truePathRule">True Path Rule</a> in mind: annotating to a term implies annotation to all
+     parents via any path.  So all the parent terms must be true as well.  It is a good idea to check the parentage of a
+     term before annotating (and request new terms or path corrections if
+     necessary).</li>
+
+ <li>There is an important distinction between a gene/gene product annotated to
+     &quot;unknown&quot; function, process, and/or component, and one that has
+     not been annotated. &quot;Unknown&quot; means that someone has tried
+     annotating the gene, but didn't find any information. Absence of
+     annotation implies that no one has looked.  Curators are encouraged to annotate to terms from all three
+     ontologies, using &quot;unknown&quot; liberally if necessary.  For annotations to &quot;unknown&quot;
+
+     from any of the three ontologies, you should cite our pseudopub which
+     explains the application of this GO term. The correct pub and evidence code are populated in the corresponding fields for you 
+     when you select one of the three &quot;unknown&quot; GO terms.</li>
+
+ <li>Uncertain knowledge of where a gene product operates should be denoted by annotating
+     it to multiple terms, one of which can be a parent of the other. For instance,
+     a gene product known to be in the nucleolus, but also experimentally
+     observed in the nucleus generally, can be annotated to both nucleolus and
+     nucleus in the cell component ontology. Even though annotation to
+     nucleolus alone implies that a gene product is also in the nucleus,
+     annotate to both so as to explicitly indicate that it has been reported in
+     the two locations. The two annotations may have the same or different
+     supporting evidence. Similar reports of general and specific molecular
+     function or biological process for a gene product could be handled the
+     same way. You also can annotate to multiple nodes that conflict with each
+     other if there are conflicting claims in the literature.</li>
+ <li>A gene product should be annotated with terms reflecting its normal activity
+     and location. A function, process, or localization (component) observed
+     only in a mutant or disease state is therefore not usually included.</li>
+ <li>An individual gene product that is part of a complex can be annotated to
+     terms that describe the action (function or process) of the complex. This
+     is colloquially known as annotating 'to the potential of the complex', and
+     is a way to capture information about what a complex does in the absence
+     of database objects and identifiers representing complexes. It is
+     especially useful in cases where a complex has an activity, but the individual
+     subunits do not. One example is the subunits of nuclear RNA polymerases,
+     where none of the individual subunits have RNA polymerase activity, yet
+     all of these subunits are annotated to 'DNA-dependent RNA polymerase
+     activity', to capture the activity of the complex. In such cases you should use the &quot;contributes_to&quot;
+
+     qualifier to indicate that a gene product contributes to the function of a complex, but does not have, or
+     it is not known to have the function itself.</li>
+</ul>
+<br />
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+
+
+<!-- ................ EVIDENCE CODES ..................................... -->
+
+<h3 class="zdoc"><a name="evidence codes">Evidence Codes:</a></h3>
+
+<h4>(Modified from <a href="http://www.geneontology.org/GO.evidence.shtml">http://www.geneontology.org/GO.evidence.shtml</a>)</h4>
+
+<h4>Jump To:</h4>
+	<ul>
+		<li><a href="#IC">IC</a></li>
+
+		<li><a href="#IDA">IDA</a></li>
+		<li><a href="#IEA">IEA</a></li>
+		<li><a href="#IEP">IEP</a></li>
+
+		<li><a href="#IGI">IGI</a></li>
+		<li><a href="#IPI">IPI</a></li>
+		<li><a href="#IMP">IMP</a></li>
+
+		<li><a href="#ISS">ISS</a></li>
+		<li><a href="#NAS">NAS</a></li>
+
+		<li><a href="#ND">ND</a></li>
+
+		<li><a href="#TAS">TAS</a></li>
+	</ul>
+<br />
+
+
+<!-- ===== IC ===== -->
+
+<h4 class="zdoc"><a name="IC">IC</a> - inferred by curator</h4>
+
+		<ul>
+
+			<li>GO terms implied by the presence of other GO terms with non-ISS/non-IEA evidence</li>
+		</ul>
+	 <p>To be used for those cases where an annotation is not supported by any
+     evidence, but can be reasonably inferred by a curator from other GO
+     annotations, for which evidence is available. Evidence is defined as an evidence code other than ISS or IEA.
+     Use TAS or NAS rather than IC if there are author statements to support the derived GO term.
+     <br /><br />
+
+	  For example if there are experimentally supported GO annotations indicating that a particular gene product has the function 
+&quot;transcription factor activity&quot;, but there is no evidence whatsoever that this
+gene product has the cellular location &quot;nucleus&quot;, this would be a
+perfectly reasonable inference to make.
+
+<br /><br />
+The inferred annotation &quot;nucleus&quot; should be linked to the &quot;transcription factor&quot; annotation in two ways:
+	<ul>
+
+		<li>The derived annotation (nucleus) and source annotation (transcription factor activity) should cite the same publication. If the derived term uses a source GO term attributed to
+			 multiple publications, it is OK to cite only one of those papers in the derived annotation.</li>
+
+		<li>The &quot;inferred from&quot; field of the derived annotation should include the GO ID of the source GO term (GO:#######).</li>
+
+	</ul>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#ic'>[IC documentation at GO website]</a>
+
+<!-- ========= IDA ========== -->
+
+<h4 class="zdoc"><a name="IDA">IDA</a> - inferred from direct assay</h4>
+
+	<ul>
+		<li>Enzyme assays</li>
+
+ 		<li>In vitro reconstitution (e.g. transcription)</li>
+ 		<li>Immunofluorescence (for cellular component)</li>
+ 		<li>Cell fractionation (for cellular component)</li>
+
+ 		<li>Physical interaction/binding assay (sometimes appropriate for
+     cellular component or molecular function)</li>
+
+	</ul>
+<p>This evidence code is used to indicate a <b>direct</b> assay for the
+function, process, or component indicated by the GO term. Curators
+therefore need to be careful, because an experiment considered a direct assay
+for a term from one ontology may be a different kind
+of evidence for the other ontologies. In particular, direct assays for cellular
+component are more common than for function or process.
+
+<br />
+For example, a fractionation experiment might provide IDA evidence that a gene product is
+in the nucleus, but IPI evidence for its function or process. Binding assays can provide direct assay evidence for &quot;...
+binding&quot; molecular function terms.</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#ida'>[IDA documentation at GO website]</a>
+
+<!-- ====== IEA ======= -->
+
+<h4 class="zdoc"><a name="IEA">IEA</a> - inferred from electronic annotation</h4>
+
+<ul>
+ <li>Annotations based on &quot;hits&quot; in sequence similarity searches,
+     if they have <i>not been reviewed by curators</i> (curator-reviewed hits get ISS)</li>
+
+ <li>Annotations transferred from another database's records, if not
+     reviewed by curators.  An example of this is applying GO terms to genes through the use of the spkw2go translation table.</li>
+
+</ul>
+
+<p>This evidence code is used for annotations that depend directly on computation or automated transfer of
+annotations from a database. The key feature that distinguishes this evidence
+code from others is <i>what a curator has done</i>--IEA is used when no curator
+has checked the annotation to verify its accuracy. The actual method used
+(BLAST search, SwissProt keyword mapping, etc.) doesn't matter.</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#iea'>[IEA documentation at GO website]</a>
+<!-- ==== IEP ===== -->
+
+<h4 class="zdoc"><a name="IEP">IEP</a> - inferred from expression pattern</h4>
+
+<ul>
+
+ <li>Transcript levels (e.g. Northerns, microarray data)</li>
+
+ <li>Protein levels (e.g. Western blots, immunohistochemistry)</li>
+</ul>
+
+<p>Covers cases where the annotation is inferred from the timing or location of
+gene expression. <b>Expression data will be most useful for Process annotations</b>. For
+example, several of the heat shock proteins are
+thought to be involved in the process of stress response because they are
+upregulated during stress conditions. Another example might be in microarray data, where a set of known genes respond to an 
+ongoing process, and a set of unknown genes show a similar reponse.  This expression pattern suggests that the novel genes
+are involved in the process.  Generally, a publication must demonstrate a correlation between the expression pattern of a gene and
+a known process before this evidence code can be used.  Use this code with caution!</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#iep'>[IEP documentation at GO website]</a>
+<!-- ========IGI========= -->
+
+<h4 class="zdoc"><a name="IGI">IGI</a> - inferred from genetic interaction</h4>
+
+<ul>
+ <li>&quot;Traditional&quot; genetic interactions such as suppressors, synthetic lethals, etc.</li>
+ <li>Functional complementation</li>
+ <li>Rescue experiments</li>
+ <li>Inference about one gene drawn from the phenotype of a mutation in a different gene</li>
+</ul>
+
+<p>Includes any combination of alterations in the sequence, expression, or function of <b>more than one gene/gene
+product</b>. IGI is appropriate when experiments are done with fish harboring mutations in two or more genes, or when morpholinos or overexpression is used 
+with more than one gene at a time.  When redundant copies of a gene must all be mutated to see an informative
+phenotype, that's IGI.
+
+<br /><br />
+<b>An entry in the &quot;inferred from&quot; field is REQUIRED when using this
+evidence code.</b> This &quot;inferred from&quot; entry should be an identifier for the other gene(s) involved in the
+interaction.  If mutant fish are used, the ZDB-FISH ID (allele) should be used.  If the exact allele is not known, use the 
+ZDB-FISH (allele) ID for the "not specified" allele.  If morpholinos are used to reduce expression of one of the participating genes, 
+use the ZDB-MRPHLNO ID.  If multiple independent interactions between pairs of proteins support the same GO term (i.e. mutation of A 
+and B, and mutation of A and C), separate annotations should be created for each independent piece 
+of &quot;inferred from&quot; data.  In cases where interaction between more than two proteins is required (i.e. mutation of genes A, B and C 
+is simultaneously required), all of the interacting genes should be grouped together into one annotation.
+
+
+
+<br /><br />
+To help clarify: 
+<br /><br />
+<i>GOterm &nbsp;&nbsp;&nbsp;IGI &nbsp;&nbsp;&nbsp;ZFIN:gene1,ZFIN:gene2</i>
+<br />
+means that the GO term is supported by evidence involving simultaneous interaction with *both* of these genes;<br /> i.e. neither of the following statements are known to be true:
+<br />
+<i>GOterm &nbsp;&nbsp;&nbsp;IGI &nbsp;&nbsp;&nbsp;ZFIN:gene1
+<br />
+GOterm &nbsp;&nbsp;&nbsp;IGI &nbsp;&nbsp;&nbsp;ZFIN:gene2</i>
+
+<br />
+<br />
+The &quot;inferred from&quot; field can be used in three ways with IGI evidence.
+<ul>
+	<li>To indicate a single partner in the interaction enter a single item in the &quot;inferred from&quot; field.</li>
+	<li>To indicate that an interaction with more than 1 protein is required for the annotation to apply, enter multiple comma-separated
+items in the &quot;inferred from&quot; field. These will be displayed grouped together.</li>
+
+	<li>To indicate that multiple independent interactions support a single GO term, make a new GO annotation for each piece of evidence.</li>
+</ul>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#igi'>[IGI documentation at GO website]</a>
+
+<!-- ======== IPI ========== -->
+
+<h4 class="zdoc"><a name="IPI">IPI</a> - inferred from physical interaction</h4>
+
+<ul>
+
+ <li>2-hybrid interactions</li>
+
+ <li>Co-purification</li>
+ <li>Co-immunoprecipitation</li>
+ <li>Ion/protein binding experiments</li>
+</ul>
+<p>Covers physical interactions between the gene product of interest and another molecule
+(or ion, or complex). For functions such as protein binding or nucleic acid binding, a binding assay is
+simultaneously IPI and IDA; IDA is preferred because the assay directly detects
+the binding.
+<br />
+<br />
+
+<b>An entry in the &quot;inferred from&quot; field is REQUIRED when using this
+evidence code.</b> This should be the UniProt identifier for the protein involved in the interaction.  Often the authors won't 
+report the UniProt ID of the protein, but you should be able to use the generic UniProt ID for the gene.  
+If multiple independent physical interactions support the same GO term, separate annotations should be created
+for each independent piece of &quot;inferred from&quot; data.  In cases where the protein of interest interacts
+simultaneously with more than one other protein, all of the interacting proteins
+should be displayed grouped together.<br />
+
+<br />
+To help clarify:
+<br /><br />
+<i>GOterm &nbsp;&nbsp;&nbsp;IPI &nbsp;&nbsp;&nbsp;SPTR:protein1,SPTR:protein2</i><br />
+
+means that the GO term is supported by its interaction with *both* of these proteins;<br />
+i.e. neither of these statements are known to be true:
+<br />
+<i>GOterm &nbsp;&nbsp;&nbsp;IPI &nbsp;&nbsp;&nbsp;SPTR:protein1<br />
+GOterm &nbsp;&nbsp;&nbsp;IPI &nbsp;&nbsp;&nbsp;SPTR:protein2 </i><br /><br />
+
+As with IGI, the &quot;inferred from&quot; field can be used in three ways with IPI evidence.
+
+<ul>
+	<li>To indicate a single partner in the interaction, enter a single item in the &quot;inferred from&quot; field.</li>
+
+	<li>To indicate that an interaction with more than 1 protein is required for the annotation to apply, enter multiple comma-separated
+		items in the &quot;inferred from&quot; field. These will be displayed grouped together on one line.</li>
+
+	<li>To indicate that multiple independent interactions support a single GO term, make a new GO annotation for each piece of evidence.</li>
+
+</ul>
+
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#ipi'>[IPI documentation at GO website]</a>
+
+<!-- ====== IMP ======= -->
+
+<h4 class="zdoc"><a name="IMP">IMP</a> - inferred from mutant phenotype</h4>
+
+<ul>
+
+ <li>Any single gene mutation/knockout</li>
+
+ <li>Overexpression/ectopic expression of wild-type or mutant genes</li>
+ <li>Anti-sense experiments and morpholinos</li>
+ <li>RNAi experiments</li>
+ <li>Specific protein inhibitors</li>
+</ul>
+
+<p>We will use this frequently when mutant fish, morpholinos, or transgenic fish are used. Anything that is concluded from looking at 
+mutations or abnormal levels of the product(s) only of the gene of interest is IMP (compare IGIs where multiple genes/gene products 
+are involved). Use this code for experiments that use antibodies or other specific inhibitors of RNA or protein activity, even though no gene
+may be mutated.  The rationale is that IMP is used where an abnormal situation traceable to a single gene prevails
+in a cell or organism.
+<br />
+
+If your annotation is derived from studies using mutant fish, put the ZDB-FISH (allele) ID in the &quot;with&quot; field.  If the 
+exact allele is not known, use the ZDB-FISH (allele) for the &quot;not specified&quot; allele.
+<br />
+If your annotation is derived from studies using morpholinos or other 
+types of inhibitors, please enter the ZDB-ID of the inhibitor in the 
+"with" field when such an ID is available.
+Use the notes field liberally to add detail to the annotation...we may 
+draw on this information later.
+
+</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#imp'>[IMP documentation at GO website]</a>
+
+<!-- ===== ISS ===== -->
+
+<h4 class="zdoc"><a name="ISS">ISS</a> - inferred from sequence or structural similarity</h4>
+
+<ul>
+ <li>Sequence similarity (homologue of/most closely related to)</li>
+ <li>Recognized domains</li>
+
+ <li>Structural similarity</li>
+ <li>Southern blotting</li>
+
+</ul>
+
+<p>Use this code for sequence similarity results (BLAST, InterPro, etc) that have been reviewed for accuracy
+by a curator. ISS can also be used for sequence similarities reported in published papers, if you think the
+result is reliable enough. 
+<br />
+If the same annotation can be made from a single paper based on sequence similarity with multiple sequences
+then multiple annotations should be made with a single sequence used in the inference data for each (ie..one annotation for similarity to mouse and 
+one annotation to for similarity to human).  Rare exceptions may occur when grouping the inferences together would be appropriate...for example 
+when sequence similarity with two interpro domains suggests a function (nuclear localization signal and zinc finger domains might support ISS for transcription factor activity) 
+<br />
+<br />
+<b>An entry in the &quot;inferred from&quot; column is required when using this evidence code.</b>  This should be the identifier for
+the similar sequence, and will generally be a SwissProt ID, RefSeq ID, or InterPro ID. 
+
+<br /><br />
+<b>Getting Annotations From an Ortholog</b><br />
+If there is no GO in a category and no annotations can be obtained from publications, you can adopt annotations from the mouse or human ortholog using ISS under the following circumstances:
+
+<br />
+
+A)  The sequence similarity between the ortholog and the zebrafish gene is &gt;50% (this is an arbitrary cutoff, but we need to have one...do a BLAST analysis)
+<br />
+..AND.. 
+<br /> 
+B)  The term to be adopted is supported by <b>experimental</b> evidence on the ortholog (ie. IDA, IMP, IGI or IPI).
+<br /><br />
+
+This is generally a viable option for Molecular Function terms.  However, Process and Component annotations should be brought forward 
+from another species with caution, as these can be split among gene duplicates in zebrafish.  The &quot;inferred from&quot; field should contain either the nucleotide 
+or protein RefSeq ID (NM_ or NP_ respectively) taken from the ortholog's gene record.  
+Cite the ZFIN pseudo-publication that has been established specifically for this type of annotation (ZDB-PUB-040216-1).
+   
+
+</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#iss'>[ISS documentation at GO website]</a>
+
+<!-- ===== NAS ===== -->
+
+<h4 class="zdoc"><a name="NAS">NAS</a> - Non-traceable author statement</h4>
+
+<ul>
+ <li>Statements in papers (abstract, introduction, or discussion) that a curator cannot
+     trace to another publication</ul>
+
+<p>This one seems pretty self-explanatory...</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#nas'>[NAS documentation at GO website]</a>
+<!-- ===== ND ===== -->
+
+<h4 class="zdoc"><a name="ND">ND</a> - no biological data available</h4>
+
+<ul>
+ <li>Used for annotations to &quot;unknown&quot; Molecular Function, Biological
+     Process, or Cellular Component after a curator has determined that no
+     information is available for the marker. </li>
+
+</ul>
+
+<p>This code is used <i>only</i> for annotations to &quot;unknown,&quot; and conversely it is the only evidence code
+that should be used for annotations to unknown. When applying this annotation, use the ZFIN
+pseudo-pub that has been specifically established to support this annotation.  If you select a GO &quot;unknown&quot; term, this pub and the ND evidence code
+will automatically be populated in the curator interface for you.  Do not use this evidence code if other annotations exist in the same GO
+category. Annotations to &quot;unknown&quot; should be removed once any other annotation is
+applied in the same GO domain. 
+</p>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#nd'>[ND documentation at GO website]</a>
+
+<!-- ===== TAS ===== -->
+
+<h4 class="zdoc"><a name="TAS">TAS</a> - traceable author statement</h4>
+
+<ul>
+ <li>Anything in a review article where the original experiments are
+     traceable through that article (material from introductions to non-review
+     papers will sometimes meet this standard)</li>
+
+ <li>Anything found in a text book or dictionary; usually text book
+     material has become common knowledge (e.g. &quot;everybody&quot; knows
+     that enolase is a glycolytic enzyme).</li>
+
+</ul>
+
+<p>TAS and NAS are both used for cases where the publication that a curator uses to support an annotation
+doesn't show the evidence (experimental results, sequence comparison, etc.).
+TAS is meant for the more reliable cases, such as reviews (presumably written
+by experts) or material sufficiently well established to appear in a text
+book. There isn't really a sharp cutoff between TAS and NAS.  Rather than use TAS to make annotations from a publication, 
+You should try to get the source publication when possible if an author states something like "The doug1 gene encodes a bHLH transcription factor known to be 
+involved in gastrulation(Howe et al., 1999)". 
+</p>
+
+
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+<a href='http://www.geneontology.org/GO.evidence.shtml#tas'>[TAS documentation at GO website]</a>
+
+<!-- ....... ZFIN POLICIES ................................................ -->
+
+<h3 class="zdoc"><a name="policies">ZFIN GO curation Policies:</a></h3>
+
+<h4 class="zdoc"><a name="annotating subunits">Annotating a subunit of a complex and the use of the &quot;contributes to&quot; checkbox.</a></h4>
+
+<ol>
+<li>Annotate the individual subunits of a complex with the Cellular Component term for the complex.</li>
+<li>If the Molecular Function being annotated is known to be intrinsic to the isolated gene product, annotate directly to the specific function 
+in the Molecular Function ontology </li>
+<li>If the Molecular Function being annotated is <em>known not to be, or is not known to be,</em> intrinsic to the isolated gene product, annotate 
+the component proteins with the Molecular Function of the entire complex and use the &quot;contributes_to&quot; modifier.  This indicates that the 
+gene product contributes to the function of the complex, but is not known to have the function by itself.  
+To do this, click the "contributes to" checkbox as you create your Molecular Function annotation.  The "contributes to" qualifier should 
+only be used for Molecular Function annotations.
+
+
+
+</li>
+
+</ol>
+
+
+<h4 class="zdoc"><a name="Exchange of DNA/RNA between species">
+                          Exchange of DNA/RNA between species.</a></h4>
+
+<p>We will not curate GO from experiments where <i>non-</i>zebrafish
+DNA or RNA is introduced into mutant zebrafish in rescue-type experiments. This data belongs to the species who
+donated the introduced gene.  However, we may curate GO in cases where zebrafish DNA/RNA is used in non-zebrafish cells
+or organisms. In this case the data belongs to the zebrafish gene. Curators should
+exercise caution however to avoid poor quality annotations. For example, if antisense was used to knock
+down expression of a gene in a xenopus egg, and then a zebrafish gene was
+injected to try and rescue the egg, I would not curate GO from this. The quality of the experiment is low from a
+curation point of view. How well was expression of the xenopus gene knocked down? Also note that conservation of Biological Process across species can
+sometimes be weak. Additionally, there are
+cases where the function of an ancestral gene has been split among the two
+copies of the gene when it is a duplicate in zebrafish.  We should annotate function and process terms conservatively and
+cautiously when such a condition exists.
+</p>
+
+
+<h4 class="zdoc"><a name="Sensu terms and term definitions">
+
+                          &quot;Sensu&quot; terms and term definitions.</a></h4>
+
+<p>The use of &quot;sensu&quot; does not limit usage of a term to specific species, but rather qualifies the term 
+to mean &quot;as in&quot; a specific taxon.  So for example &quot;sensu Mammalia&quot; means that the specific GO term is refering to something as it is known
+in the Mammals.  If the Mammals and Zebrafish are the same with respect to the term in question, then usage of the term is fine.  If Mammals and zebrafish differ with
+respect to the term, then a new term may be required.  The ontologies have not been challenged with a non-mammalian vertebrate(ie. zebrafish).
+There may be areas in the graphs that we would like to annotate to, but which have been restricted by &quot;sensu Mammalia&quot;
+
+without an appropriate non-mammalian alternative.  Bring these cases to Doug's attention as you encounter them and adjustments will be made to the
+ontologies to accommodate our needs if the biology in question is different between Mammals and Teleosts. 
+</p>
+
+
+<h4 class="zdoc">
+  <a name="Creating new GO terms and modifying current ontology structures">
+           Creating new GO terms and modifying current ontology structures.</a></h4>
+
+<p>
+We request edits to the GO ontologies through the 
+<a href='https://sourceforge.net/tracker/?func=browse&amp;group_id=36855&amp;atid=440764'>SourceForge 
+GO Curator Requests Tracker</a>, where they are evaluated and executed 
+by people at the GO editorial office.  Such requests can be submitted by 
+any of us, however you should set up a SourceForge account before 
+submitting requests. The GO consortium provides the following 
+<a href='http://www.geneontology.org/GO.contents.curator.guides.shtml?all'>documentation 
+for obtaining a SourceForge account and editing the GO ontologies.</a>  
+
+
+</p>
+
+<h4 class="zdoc">
+
+  <a name="Bringing forward annotations from orthologs/homologs">
+           Bringing forward annotations from orthologs/homologs.</a>
+</h4>
+<p>Please see the documentation on <a href="#ISS">using the ISS evidence code</a> for details of this process.
+
+<h4><a href="#GO">Top of GO Documentation</a></h4>
+
+<!-- ========= Gene Expression ========================================= -->
+
+<h2 class="zdoc"><a name="Gene Expression">Gene Expression</a></h2>
+
+<p>Currently, expression data is entered through automated or semi-automated
+processes.  There is no manual curation of expression from publications at this
+time.  Until we are able to manually annotate zebrafish gene expression in
+detail, each curator is capturing a limited amount of information into their
+own personal copy of a FileMaker Pro database.  Data captured in these
+databases will be loaded into ZFIN in the future, supporting basic, yet useful
+queries by users.  Further, capturing this limited information will identify
+and categorize papers for complete gene expression annotation when the database
+structures allow us to do so.</p>
+
+
+
+<h3 class="zdoc"><a name="Gene Expression Entry">Gene Expression Entry</a></h3>
+
+<p>To annotate information for the gene expression index,
+record the gene being expressed (symbol and ZDB-GENE ID), the publication ID, the
+background of the test animal (symbol and ZDB-FISH ID or ZDB-LOCUS ID), the
+wildtype or mutant designation, and the whether expression was tested and found
+or tested and not found.  Then record the assay and stage of the assay by
+checking the appropriate box.</p>
+
+
+
+<p>Stages for indexing are defined by us and correspond to the
+chart supplied here:</p>
+
+<table class="zdoc">
+ <caption>ZFIN Developmental Stages</caption>
+ <tr>
+  <th>Stage Name</th>
+  <th>Non-ZFIN terms</th>
+  <th>Start Time</th>
+  <th>End Time</th>
+ </tr>
+ <tr>
+  <td>Zygote:1-cell</td>
+  <td>&nbsp;</td>
+  <td>0.00 hpf</td>
+  <td>0.74 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:2-cell</td>
+  <td>&nbsp;</td>
+  <td>0.75 hpf</td>
+  <td>0.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:4-cell</td>
+  <td>&nbsp;</td>
+  <td>1.00 hpf</td>
+  <td>1.24 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:8-cell</td>
+  <td>&nbsp;</td>
+  <td>1.25 hpf</td>
+  <td>1.49 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:16-cell</td>
+  <td>&nbsp;</td>
+  <td>1.50 hpf</td>
+  <td>1.74 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:32-cell</td>
+  <td>&nbsp;</td>
+  <td>1.75 hpf</td>
+  <td>1.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Cleavage:64-cell</td>
+  <td>&nbsp;</td>
+  <td>2.00 hpf</td>
+  <td>2.24 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:128-cell</td>
+  <td>&nbsp;</td>
+  <td>2.25 hpf</td>
+  <td>2.49 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:256-cell</td>
+  <td>&nbsp;</td>
+  <td>2.50 hpf</td>
+  <td>2.74 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:512-cell</td>
+  <td>&nbsp;</td>
+  <td>2.75 hpf</td>
+  <td>2.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:1k-cell</td>
+  <td>&nbsp;</td>
+  <td>3.00 hpf</td>
+  <td>3.32 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:High</td>
+  <td>&nbsp;</td>
+  <td>3.33 hpf</td>
+  <td>3.65 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:Oblong</td>
+  <td>&nbsp;</td>
+  <td>3.66 hpf</td>
+  <td>3.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:Sphere</td>
+  <td>&nbsp;</td>
+  <td>4.00 hpf</td>
+  <td>4.32 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:Dome</td>
+  <td>&nbsp;</td>
+  <td>4.33 hpf</td>
+  <td>4.65 hpf</td>
+ </tr>
+ <tr>
+  <td>Blastula:30%-epiboly</td>
+  <td>&nbsp;</td>
+  <td>4.66 hpf</td>
+  <td>5.24 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:50%-epiboly</td>
+  <td>&nbsp;</td>
+  <td>5.25 hpf</td>
+  <td>5.65 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:Germ-ring</td>
+  <td>&nbsp;</td>
+  <td>5.66 hpf</td>
+  <td>5.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:Shield</td>
+  <td>&nbsp;</td>
+  <td>6.00 hpf</td>
+  <td>7.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:75%-epiboly</td>
+  <td>&nbsp;</td>
+  <td>8.00 hpf</td>
+  <td>8.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:90%-epiboly</td>
+  <td>&nbsp;</td>
+  <td>9.00 hpf</td>
+  <td>9.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Gastrula:Bud</td>
+  <td>&nbsp;</td>
+  <td>10.00 hpf</td>
+  <td>10.32 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:1-somite</td>
+  <td>2-4
+  somites</td>
+  <td>10.33 hpf</td>
+  <td>11.65 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:5-somite</td>
+  <td>6-9
+  somites</td>
+  <td>11.66 hpf</td>
+  <td>13.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:10-somite</td>
+  <td>11-13
+  somites</td>
+  <td>14.00 hpf</td>
+  <td>15.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:14-somite</td>
+  <td>15-19
+  somites</td>
+  <td>16.00 hpf</td>
+  <td>18.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:20-somite</td>
+  <td>21-25
+  somites</td>
+  <td>19.00 hpf</td>
+  <td>21.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Segmentation:26-somite</td>
+  <td>27-30
+  somites</td>
+  <td>22.00 hpf</td>
+  <td>23.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Pharyngula:Prim-5</td>
+  <td>1.9 mm,
+  prim 6-14</td>
+  <td>24.00 hpf</td>
+  <td>29.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Pharyngula:Prim-15</td>
+  <td>2.5 mm,
+  prim 16-24</td>
+  <td>30.00 hpf</td>
+  <td>35.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Pharyngula:Prim-25</td>
+  <td>2.7 mm,
+  prim 26-30</td>
+  <td>36.00 hpf</td>
+  <td>41.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Pharyngula:High-pec</td>
+  <td>2.9 mm</td>
+  <td>42.00 hpf</td>
+  <td>47.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Hatching:Long-pec</td>
+  <td>3.1 mm</td>
+  <td>48.00 hpf</td>
+  <td>59.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Hatching:Pec-fin</td>
+  <td>3.3 mm</td>
+  <td>60.00 hpf</td>
+  <td>71.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Protruding-mouth</td>
+  <td>3.5 mm</td>
+  <td>72.00 hpf</td>
+  <td>95.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Day
+  4</td>
+  <td>3.7 mm</td>
+  <td>96.00 hpf</td>
+  <td>119.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Day
+  5</td>
+  <td>3.9 mm,
+  6 teeth</td>
+  <td>120.00 hpf</td>
+  <td>143.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Day
+  6</td>
+  <td>4.2 mm</td>
+  <td>144.00 hpf</td>
+  <td>167.99 hpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Days
+  7-13</td>
+  <td>4.5 mm,
+  8 teeth</td>
+  <td>7.00
+  dpf</td>
+  <td>13.99
+  dpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Days
+  14-20</td>
+  <td>6.2 mm,
+  10 teeth</td>
+  <td>14.00
+  dpf</td>
+  <td>20.99
+  dpf</td>
+ </tr>
+ <tr>
+  <td>Larval:Days
+  21-29</td>
+  <td>7.8 mm</td>
+  <td>21.00
+  dpf</td>
+  <td>29.99
+  dpf</td>
+ </tr>
+ <tr>
+  <td>Juvenile:Days
+  30-44</td>
+  <td>10 mm,
+  adult fins/pigment</td>
+  <td>30.00
+  dpf</td>
+  <td>44.99
+  dpf</td>
+ </tr>
+ <tr>
+  <td>Juvenile:Days
+  45-89</td>
+  <td>14 mm,
+  12 teeth</td>
+  <td>45.00
+  dpf</td>
+  <td>89.99
+  dpf</td>
+ </tr>
+ <tr>
+  <td>Adult</td>
+  <td>&nbsp;</td>
+  <td>90.00
+  dpf</td>
+  <td>730.00
+  dpf</td>
+ </tr>
+</table>
+
+<p>A separate expression index record must be created for each
+gene if multiple genes are reported in a paper.  Further, curators must create
+separate expression index records if the authors report expression of a gene
+and report testing for expression, but finding none.</p>
+
+
+
+<p>If the authors say that they tested expression in 36 hour
+AND 42 hour embryos, record two stages (Prim-25 and High-pec).  If they
+say they looked at expression at 36 THROUGH 42 hours, record only one stage
+(Prim-25).</p>
+
+
+
+<p>Background is restricted to strains and mutants with records
+in ZFIN.  A generic wild type fish was created in ZFIN for those cases where
+the authors state they were looking at expression in wild type fish, but do not
+specify further.</p>
+
+
+
+<p>Approved assays for annotation are In situ RNA (section), In
+situ RNA (whole mount), In situ protein (section), In situ protein (whole
+mount), Northern blot, Western blot, RT-PCR, cDNA clones, primer extension, S1
+nuclease, and RNase protection.
+
+<p>Annotate expression when the author reports data and presents it as 'data not
+shown' or 'personal observations'.  However, if the author presents data
+as 'personal communication', do not annotate it.</p>
+
+
+
+
+<!-- ========= DNA Segments ============================================ -->
+
+<h2 class="zdoc"><a name="DNA Segments">DNA Segments</a></h2>
+
+<p>Clones and probes (known as DNA segments) come into the
+database via mapping panel, expression data, and genomic sequence loads.  We
+are currently not creating or annotating them from the literature.  However, we
+do have to do some manipulation of segment records in the database, such as
+when genes are merged and a segment record is manually moved from one gene to
+another.  There is more on the merging procedures later in this document.</p>
+
+
+
+<h3 class="zdoc"><a name="DNA Segment Entry">DNA Segment Entry</a></h3>
+
+<p>Entry of segment information on the gene page should be
+restricted to activities associated with the merging process.  If two genes are
+determined to be the same, the information must be consolidated in one of the
+gene records.  The process of moving a segment from the soon to become obsolete
+gene record to the one that will remain requires adding a segment to the gene
+page.</p>
+
+
+
+<p>For adding segments encoded by a gene, on the gene page,
+select the "Add/Update this record" hypertext link to the right of the ZDB-GENE
+ID.  In the "SEGMENT (CLONE AND PROBE) RELATIONSHIPS" section of the gene page,
+select "gene encodes small segment-Encodes" from the "Relationship" pull down
+menu, enter the segment name in the "Symbol" box, and select the "Add it!"
+button.</p>
+
+
+
+<p>If you are adding a large genomic segment such as a PAC or
+BAC to the gene record, select the "clone contains gene-Contained in" option in
+the "Relationship" pull down menu, add the segment name in the "Symbol" box,
+and select the "Add it!" button.</p>
+
+
+
+<p>To delete a segment, on the gene page, select the
+"Add/Update this record" hypertext link to the right of the ZDB-GENE ID.  Select
+the "Delete" button next to the segment you want to delete.</p>
+
+
+
+<!-- ========= Sequence ================================================ -->
+
+<h2 class="zdoc"><a name="Sequence">Sequence</a></h2>
+
+<p>If the authors report a nucleotide sequence accession
+number, look it up in NCBI GenBank and make sure the sequence in the record
+corresponds to the sequence in the paper.  Only then add the number to the gene
+record in ZFIN.</p>
+
+
+
+<p>If during your analyses, you find an unpublished sequence
+corresponding to a known gene, you may add it to ZFIN.  First, Make sure the
+sequence is really not published (as described in the gene nomenclature section
+above).  When you add the unpublished nucleotide sequence accession number to
+ZFIN, use the "Curation of unpublished nucleotide sequence accession numbers"
+reference (ZDB-PUB-030905-2) for attribution.</p>
+
+
+
+<p>When entering the nucleotide sequence accession number, do
+not include the version number.  The version number is the number after the
+stop (period).  For example, if the nucleotide sequence accession number is
+reported as AB123456.1, enter the number AB123456, excluding the ".1".</p>
+
+
+
+<p>ZFIN collaborates with NCBI to load and maintain sequences
+derived from the zebrafish full length cDNA sequencing project (ZGC).  The
+nucleotide sequence accession numbers of the sequences derived from this
+project begin with "BC".  These sequences can be added to ZFIN if they appear
+in the literature.  However, if during your analyses you find a ZGC sequence
+that matches a sequence of a named gene, do not add the ZGC sequence to ZFIN. 
+Let the load scripts take care of those.</p>
+
+
+
+<p>ZFIN also collaborates with NCBI to load and maintain
+RefSeqs.  Do not manually add RefSeqs to ZFIN, even if they are reported in the
+literature.  Let the load scripts take care of them.</p>
+
+
+
+<p>We only manually record the nucleotide sequence accession
+numbers.  SwissProt, UniGene, and other numbers are all taken care of by load
+scripts.</p>
+
+
+
+<h3 class="zdoc"><a name="Sequence Entry">Sequence Entry</a></h3>
+
+<p>On the gene page, select the "Add/Update this record"
+hypertext link to the right of the ZDB-GENE ID.  In the pull down menu next to "Add
+link to Seq DB:" in the SEQUENCE INFORMATION section of the gene page, make
+sure "GenBank" is selected for the DBname.  Enter the nucleotide sequence
+accession number and select the "Add It!" button.  After the number is added,
+enter the number in the "Accession" box in the "Add reference to Sequence"
+section and enter the attributing reference in the "Reference" box.  Selecting
+the corresponding "Add It!" button should add attribution to the sequence.</p>
+
+
+
+<p>Currently, it is not possible to enter both a sequence
+number and attribution for that number at the same time.  The sequence must be
+added, followed by the attributing reference.  The nucleotide sequence
+accession number should only be attributed to the reference that originally
+reports the sequence.  This reference should be in the reference section of the
+nucleotide sequence record.</p>
+
+
+
+<p>To delete a sequence accession number, on the gene page,
+select the "Add/Update this record" hypertext link to the right of the ZDB-GENE
+ID.  Select the "Delete" button next to the sequence accession number you want
+to delete.</p>
+
+
+
+<p>If a sequence accession number is associated with a DNA
+segment, do not add the nucleotide sequence accession number to the gene page. 
+The accession number will be automatically brought forward to the gene page
+when the DNA segment is associated with the gene.</p>
+
+
+
+<!-- ========= Mapping ================================================= -->
+
+<h2 class="zdoc"><a name="Mapping">Mapping</a></h2>
+
+<p>Most of the mapping information in ZFIN comes from the
+automated mapping panel loads.  However, if there is mapping information in the
+literature that is not in ZFIN, there is a way to add it manually.  The
+information you need to capture includes the source of the linkage data
+(publication or person), linkage group designation, linked markers, distances
+between linked markers (if known), and LOD score (if known).</p>
+
+
+
+<h3 class="zdoc"><a name="Mapping Entry">Mapping Entry</a></h3>
+
+<p>Go to the ZFIN homepage and select the "Add new LINKAGES"
+link in the "Genes" section.  Select the source of the linkage data from
+the pull down menu and select the "Search" button.  If the linkage information
+is unpublished and comes from an individual, select the "PERSON" option in the
+pulldown menu.  Search for and select the person or publication source. </p>
+
+
+
+<p>Select the linkage group on which the marker is mapped. 
+Linkage group "unknown" is acceptable in cases where there is physical linkage
+between two or more genes, but the linkage group on which these markers are
+located is unknown.  Add text, being as specific as possible, to the
+"Comments:" field.  For consistency, the general text format is:</p>
+
+
+
+<p>&lt;Name&gt; &lt;(short citation)&gt; reports mapping
+&lt;gene&gt; to &lt;linkage group&gt; &lt;orientation and distance&gt; to
+&lt;genes&gt; on the &lt;mapping panel&gt;.</p>
+
+
+
+<p>OR</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping abc to LG10 between def and ghi on the LN54 mapping panel.</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping abc to LG10 approximately 5cM distal to def on the LN54 mapping panel.</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping abc to LG10 approximately 5cM distal to def and 5cM proximal to ghi on
+the LN54 mapping panel.</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping abc to LG10 near def on the LN54 mapping panel.</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping the genes in the orientation of abc-def-ghi-jkl-mno-pqr to LG10 on the
+LN54 mapping panel.</p>
+
+
+
+<p>Westerfield, et al. (2003. Dev Biol. 123:456-789.) reports
+mapping the genes in the orientation of
+abc-(5cM)-def-(4cM)-ghi-(3cM)-jkl-(4cM)-mno-(2cM)-pqr to LG10 on the LN54
+mapping panel.</p>
+
+
+
+<p>Select the "Add markers" button.</p>
+
+
+
+<p>Search for and select all of the markers involved in the
+linkage annotation.  If there is no distance information in your linkage
+annotation, select the "Entry Complete" button (skip the next paragraph).  If
+there is any distance information to record, select the "Add Distances" button.</p>
+
+
+
+<p>From the pull down boxes containing the genes in your gene
+set, select the appropriate two markers, add a numerical distance, select the
+units (cM or cR), and add the LOD score, if there is one.  Select the "Add
+Distance" button.  Repeat this operation for all distances between genes in
+your gene set.  After selecting the "Add Distances" button after your last
+entered distance, select the "Entry Complete" button.</p>
+
+
+
+
+<p>To delete linkage, go to the mapping detail page and select
+the "Add/Update this Record" hypertext link to the right of the ZDB-GENE ID. 
+Select the "Update" button next to the marker on whose page you would like to
+delete something.  Select the "Delete" button next to the information you would
+like to delete.  Select the "Entry Complete" button at the bottom of the page
+when you are finished.  If you'd like to delete the entire linkage record,
+select the "Delete Linkage" button at the bottom of the page.</p>
+
+
+
+<!-- ========= Orthology =============================================== -->
+
+<h2 class="zdoc"><a name="Orthology">Orthology</a></h2>
+
+<p>If there is orthology information reported between a zebrafish gene and that of
+human, mouse, fly or yeast, that information is captured and reported in ZFIN. 
+Gene names, gene symbols, external database accession numbers, and evidence on
+which the orthology is established by the author are also reported.</p>
+
+
+<table class="zdoc">
+ <caption>Evidence Codes</caption>
+ <tr>
+  <td>
+  <p align="center"><b>AA</b></p>
+  </td>
+  <td>
+  <p>Amino acid sequence comparison.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>CE</b></p>
+  </td>
+  <td>
+  <p>Coincident expression.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>CL</b></p>
+  </td>
+  <td>
+  <p>Conserved map location.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>FC</b></p>
+  </td>
+  <td>
+  <p>Functional complementation.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>FH</b></p>
+  </td>
+  <td>
+  <p>Formation of functional heteropolymers.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>IX</b></p>
+  </td>
+  <td>
+  <p>Immunological cross-reaction.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>NS</b></p>
+  </td>
+  <td>
+  <p>Not specified.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>NT</b></p>
+  </td>
+  <td>
+  <p>Nucleotide sequence comparison.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>SI</b></p>
+  </td>
+  <td>
+  <p>Similar response to inhibitors.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>SL</b></p>
+  </td>
+  <td>
+  <p>Similar subcellular location.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>SS</b></p>
+  </td>
+  <td>
+  <p>Similar substrate specificity.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>SU</b></p>
+  </td>
+  <td>
+  <p>Similar subunit structure.</p>
+  </td>
+ </tr>
+ <tr>
+  <td>
+  <p align="center"><b>XH</b></p>
+  </td>
+  <td>
+  <p>Cross-hybridization to same molecular probe.</p>
+  </td>
+ </tr>
+</table>
+
+
+
+<p>Orthology curation is not restricted to data found in the
+published literature and may be recorded based on orthology analyses conducted
+by ZFIN curators.  For ZFIN curator determined orthology, the same information
+is reported, but the attribution is a ZFIN orthology curation reference
+(ZDB-PUB-030905-1).</p>
+
+
+
+<h3 class="zdoc"><a name="Orthology Entry">Orthology Entry</a></h3>
+
+<p>On the gene page, select the "Add/Update this record"
+hypertext link to the right of the ZDB-GENE ID.  In the Orthology section of
+the gene page, select the species from the "Add Orthologue;" pull down menu,
+and enter the approved gene name and symbol for the orthologous gene.  The
+approved nomenclature can be found in HUGO (human), MGI (mouse), FlyBase (fly)
+and SGD (yeast).  Select the "Add" button next to the "Symbol:" text box.</p>
+
+
+
+<p>Once the non-zebrafish orthologous gene names and symbols
+are entered, add the external database accession IDs for the ortholog by
+selecting the database from the "DB:" selection box and entering the numerical
+value of the accession number in the "Accession:" text box. External database
+accession numbers to add to the orthology section are OMIM and LocusLink for
+human orthologs, MGI and LocusLink accession numbers for mouse orthologs,
+FlyBase and LocusLink accession numbers for fly orthologs, and SGD accession
+numbers for yeast orthologs.</p>
+
+
+
+<p>Select the evidence code from the "Evidence Code:" pull down
+menu, and add the complete ZDB-PUB ID in which this evidence was presented in
+the "Publication:" text box.  For ZFIN curator determined orthology, use the
+ZFIN orthology curation reference (ZDB-PUB-030905-1).</p>
+
+
+
+<p>Select the "Commit Update" button to add the external
+database accession numbers and evidence codes.  If additional external database
+accession numbers and evidence codes need to be added, enter that information
+and select the "Commit Update" button.  Return to the ZFIN homepage and select
+the "Regen Orthologue Display data" button to complete the orthology curation
+and allow the entered data to be displayed.</p>
+
+
+
+<p>To delete external database accession numbers or orthology
+evidence codes, on the gene page, select the "Add/Update this record" hypertext
+link to the right of the ZDB-GENE ID.  Select the information to be deleted in
+the pull down menus on the editing form and select the "Commit Update" button. 
+You may delete the entire orthologue record by choosing this option on the
+editing form.  However, you must first delete the external database accession
+numbers and evidence codes for the species ortholog record you are deleting. 
+For those changes to be displayed, you must select the "Regen Orthologue
+Display data" button on the ZFIN homepage.</p>
+
+
+
+<!-- ========= Citations =============================================== -->
+
+<h2 class="zdoc"><a name="Citations">Citations</a></h2>
+
+<p>ZFIN records citations of papers in which information on a
+gene is found.  Entering data and attributing it automatically adds the
+citation to the citation list of the gene.  If a paper mentions a gene and has
+original data for that gene, but the data is not captured in ZFIN at this time,
+add the publication to the citation section in the gene record.  If the
+gene is mentioned in the paper, but no original data is presented including
+mentioning results, but a paper is listed, do not include it.</p>
+
+
+
+<h3 class="zdoc"><a name="Citation Entry">Citation Entry</a></h3>
+
+<p>To add a citation to a gene record, go to the citations page for the gene, select
+the "Add/Update this Record" hypertext link to the right of the ZDB-GENE ID,
+and select the "Add Publication" button.  Search for the publication you wish
+to add and select the hypertext "SELECT" next to the publication you wish to
+add.</p>
+
+
+
+<p>To delete a citation, go to the citations page for the gene,
+select the "Add/Update this Record" hypertext link to the right of the ZDB-GENE
+ID select the "Delete" button next to the sequence accession number you want to
+delete.</p>
+
+<p><br>
+If Pat enters the same paper twice, one of the papers and its associated
+accession number has to be deleted.  If you find a paper that is in the
+database twice, request Pat to delete the paper with the least information
+associated with it after ensuring all information associated with the paper is
+incorporated into ZFIN.  If you stumble across a paper in the database
+twice and there is no information associated with either ZDB-PUB, choose one
+paper to be deleted and email Pat.
+
+<p>If you find a paper that is not in ZFIN and needs to be, email Pat and Sherry
+with the citation information, including the PubMed number.</p>
+
+
+
+<!-- ========= Merging Genes =========================================== -->
+
+<h2 class="zdoc"><a name="Merging Genes">Merging Genes</a></h2>
+
+<p>The merge process is largely manual rather than automated. 
+Although this makes the process more labor intensive, it ensures that there is
+no doubt about data being properly associated with a gene as the curator must
+actively make the association.</p>
+
+
+
+<p>To merge a gene, it is suggested that you open two browser
+windows, each displaying one of the two genes being merged.  After deciding
+which of the two gene records will be retained, manually add information found
+in the record that will be going away to the gene record being retained.</p>
+
+
+
+<p>Start by moving any probe/clone/primer (segment) records. 
+Mapping, expression, and nucleotide sequence accession numbers associated with
+the probe/clone/primer will automatically appear in the gene record when the
+probe/clone/primer is added to a gene.  You should also move previous names,
+mutant locus associations, orthology data, <i>NON-IEA</i> GO annotations, 
+and any nucleotide sequence
+accession numbers associated directly to the gene.  Remember the nucleotide
+sequence accession numbers associated with a gene through probes/clones/primer
+relationships will move automatically.  You also need to move any mapping data
+entered manually by a curator (non-mapping panel mapping data).  Don't forget
+to also move all data attribution.  Finally, add any references found in the
+gene record being merged to the gene record being retained that are not already
+there.</p>
+
+
+
+<p>During the automated portion of the merge process, the gene
+symbol of the gene going away will be added as a previous name of the gene
+being retained so do not add it manually to the previous names of the retained
+gene record.  </p>
+
+
+
+<p>You may now delete all of the information you moved to the
+gene record being retained from the gene record that is going away.  You may
+also delete all information added through loads as the loads will repopulate
+the retained gene record next time they are run.  
+This load information includes IEA GO annotations and links to InterPro, 
+GenPept, PROSITE, Pfam, RefSeq, LocusLink, SNP, Sanger_FPC, UniGene, and 
+SwissProt.</p>
+
+<p>What should remain is a gene record with a gene name, gene symbol, and 
+nomenclature history. These will all move automatically during the 
+automated portion of the gene merge.   On the gene page
+that is going away, select the "Delete or Merge this record" link to the right
+of the ZDB-GENE ID.  Search for the gene being retained in the "Merge this record
+into:" search box.  Select the appropriate gene from the list and select the
+"Delete or Merge" button.</p>
+
+
+
+<p>Check the retained gene
+record for accuracy.  While on the retained gene record page, attribute the
+previous name derived from the gene that has been merged.  The reference to use
+is the Zebrafish Nomenclature Committee reference (ZDB-PUB-030508-1).</p>
+
+<!-- ========== end of GENES ======================= -->
+
+
+
+<!-- =================================================================== -->
+<!-- ============================== MUTANTS ============================ -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Mutants">Mutants</a></h1>
+
+<p>by Erik Segerdell, updated 2004/1.<br>
+
+
+
+<!-- ========= Locus/allele registration =============================== -->
+
+<h2 class="zdoc"><a name="Locus/allele registration">Locus/allele registration</a></h2>
+
+<p>New mutant records are made in ZFIN in the following ways:
+<ul>
+  <li>registration of a new locus and/or allele by a member of the research community
+  <li>registration of a new locus and/or allele by a ZFIN curator, resulting from
+    literature curation, personal communication, or data obtained through a mutant
+    line submission to ZIRC
+  <li>bulk upload from the research community
+</ul>
+
+<p>Submit a new mutant on the "Register Locus and/or Allele Designations" page. Before
+proceeding, be familiar with these guidelines:
+
+<ul>
+  <li><a href="http://zfin.org/ZFIN/help_files/Locus-policy.html">ZFIN Policy
+    for Registration of Locus and Allele Designations</a>
+  <li><a href="http://zfin.org/zf_info/nomen.html">Zebrafish Nomenclature Guidelines</a>
+  <li><a
+href="http://zfin.org/zf_info/zfbook/lab_desig.html">Laboratory Designations for
+    Mutant Alleles</a>
+</ul>
+
+<p>Submissions are emailed automatically to the designated ZFIN "nomenclature
+  guru" for approval and further processing.
+
+<p><b>Deficiency and Transgenic lines:</b> We currently treat these as mutants
+  in the data model. Fill the locus name field with the Df or Tg name according
+  to the Nomenclature Guidelines, copy this name into the abbreviation field as
+  well, enter a lab allele designation, and submit them as a new locus and allele.
+
+<p><b>&quot;Unspecified&quot; alleles:</b> Sometimes it is necessary to create
+  a placeholder allele for a particular locus because you need to link data (GO,
+  FX, etc.) to that mutant, but an author has not provided an allele designation.
+
+<p>For this purpose, create a new allele called &quot;un_[locus_abbreviation]&quot;,
+  e.g. <em>un_swr</em> would be the &quot;unspecified&quot; allele of the <em>swirl
+  (swr)</em> locus. Only one of these should be created for a given locus. In
+  the Submitter's Comments field of the newly-created Fish page, paste the following:
+<blockquote><tt>This record has been created in support of data for which a publication
+  has not specified an allele.</tt></blockquote>
+
+<p><b>Un-named mutants:</b> Hundreds of mutants recovered in the large-scale Tuebingen
+  and MGH screens now exist in ZFIN with only a lab allele designation and no
+  official locus name or abbreviation. Every now and then, another one will crop
+  up somewhere&mdash;a pub, an email, a ZIRC submission&mdash;and will need to
+  be added to ZFIN, following this example:
+
+<ul>
+  <li><b>Locus:</b> un-named m749</li>
+  <li><b>Locus abbreviation:</b> unm m749</li>
+  <li><b>Allele:</b> m749</li>
+  <li><b>Submitted</b> as a new locus and new allele</li>
+</ul>
+
+<p><b>Tuebingen allele nomenclature:</b> Many Tuebingen allele names have an extra
+  letter or two after the "t" and preceding the number, for example <i>tq252</i>
+  and <i>tbx392</i>. This is generally allowed. In other cases where an extra
+  stray letter is found in an allele name, consult the nomenclature committee.
+
+<p> Consult a technologist if the registration interface does not accept any mutant
+  that you believe is correct and appropriate for inclusion in ZFIN.
+
+
+
+
+
+<!-- ========= Curation of Locus and Fish records ======================= -->
+
+<h2 class="zdoc"><a name="Curation of Locus and Fish records">Curation of Locus and Fish
+  records</a></h2>
+
+<p>A ZFIN Locus (ZDB-LOCUS) record provides an overview of the mutant, including
+the affected gene (if known), a summary of alleles, and a link to publications.
+The allele names are hot-linked to their corresponding Fish (ZDB-FISH) records.
+Information in the allele summary table is imported from the individual Fish
+records.
+
+
+
+<h3 class="zdoc"><a name="Linking Locus and Fish records">Linking Locus and Fish records</a></h3>
+
+<p>Occasionally a curator must change the locus with which an allele (Fish record)
+is associated, i.e. allele <i>t999</i> used to be assigned to the <i>tweedledee</i> locus,
+but a paper now reports that it is allelic to the <i>tweedledum</i> locus. There
+is no curator interface for making this change. Ask a technologist to make the
+change, supplying the Locus and Fish ZDB-ID's of the fickle mutants.
+
+
+
+<h3 class="zdoc"><a name="Affected gene">Affected gene</a></h3>
+
+<p>If the mutated gene has been identified, go to the Locus page and update this
+field with a link to the corresponding gene record.
+<p><b><u>Attention!</u></b> It is important to attribute this field accurately
+  and properly. Identifying a mutant locus as a certain gene is taken seriously
+  by the scientific community; not giving attribution where it should be or giving
+  attribution where it shouldn't be will potentially create hard feelings towards
+  ZFIN.
+<p>Attribution should be limited to the publication(s) that <i>first</i> reports
+  the assignment of a gene to a locus. Do not include publications that report
+  a new allele of an established locus. Multiple publications are possible under
+  the following circumstances:
+<ul>
+  <li>Multiple papers appearing back-to-back in a journal and both laying claim
+    to linking the gene to the locus.
+  <li>Multiple papers claiming to link a gene and a locus for the first time
+    appear independently within a reasonable timespan&mdash;say, within 3 months
+    of each other.
+  <li>Multiple papers claiming to link a gene and a locus for the first time
+    appear independently, and one paper states something to the effect of &quot;While
+    in press Soandso and Soandso reported that the bla locus corresponds to the
+    suchandsuch gene&quot;.
+  <li>At the discretion of the curators and the nomenclature committee in unusual
+    cases where multiple mutant loci are reported, by different publications
+    within a reasonable timespan, to be mutations in the same gene.
+</ul>
+
+
+
+
+<h3 class="zdoc"><a name="Previous names">Previous names</a></h3>
+
+<p>"Previous names" of mutants can be of different forms and can appear in three
+different places in ZFIN. It can be a bit tricky trying to figure out exactly
+what should go where (and where they are going to magically show up later). General
+rules of thumb:
+<ul>
+  <li><b>Locus:</b> Previous mutant names are entered into the previous names
+    field on the <i><u>Locus</u></i> page, i.e. <i>dino</i> was previously called <i>chordino</i>.<br>
+    <br>
+  <li><b>Fish:</b> The previous names field near the top of the <u><i>Fish</i></u> page
+    is used in cases where a mutant was once considered to belong to a different
+    locus. For example, <i>din<sup>m52</sup></i> was previously thought to be
+    an allele of the <i>captain hook</i> locus and was later determined to be
+    allelic to <i>dino</i>; in this field, you would enter <i>captain hook (cpt<sup>m52</sup>)</i>,
+    using HTML superscript tags for the allele designation. Furthermore... these
+    names will be imported automatically into the Locus page's previous names
+    field; you should edit them only in the Fish record.<br>
+    <br>
+  <li><b>Allele:</b> Previous laboratory allele designations are entered into
+    the previous names field lower on the <u><i>Fish</i></u> page in the &quot;ALLELE(S)
+    CARRIED IN THIS MUTANT LINE&quot; table, i.e. <i>b104</i> was originally
+    reported as <i>b104rl</i>.
+</ul>
+<p> Attribute previous names with the publication(s) in which the old names first
+  appeared.
+
+
+
+<h3 class="zdoc"><a name="Mutant descriptions">Mutant descriptions</a></h3>
+
+<p>If you are in edit mode of a Locus or Fish page, you may find descriptive paragraphs
+of the mutant and phenotype, along with some attributions. We currently hide
+these fields to the public and are not actively curating and updating them until
+we decide on a workable strategy for providing helpful, up-to-date, and complete
+text descriptions to the community.
+<p> The Locus page, however, still reveals to the public a short, one-line text
+  description for each allele in the Brief Descriptions column of the allele
+  table. Curators may continue to maintain this, making note of the phenotype
+  and whether it is a strong, weak, or null allele, etc. See the 
+  <i><a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-locusview.apg&amp;OID=ZDB-LOCUS-990215-403">ncad</a></i>
+  record
+  for an example.
+<p> The alleles table is not directly editable on the Locus page. A little bit
+  of magic is needed to modify the Brief Description lines. Go to the Fish record
+  of the allele you want to edit. In the phenotype description field, type your
+  brief description, as you want it to appear on the Locus page. Follow that
+  with "Details:" enclosed by HTML bold tags:
+<blockquote> <font face="Courier New, Courier, mono">Reduced pigment, eyes; null
+    allele. &lt;b&gt;Details:&lt;/b&gt;</font> </blockquote>
+When finished, go to the ZFIN home page, run the Regen fishsearch script... and
+anything you typed before "Details:" will now appear publicly in the Locus allele
+table.
+
+
+
+
+<h3 class="zdoc"><a name="Phenotype annotation">Phenotype annotation</a></h3>
+
+<p>The keyword field on the Fish page displays a list of structures, developmental
+processes, and behaviors that are affected in the mutation. Keywords are based
+on a controlled vocabulary and are searched using the selector applet on the
+mutant search page.
+<p> For curation, use the <a 
+href="http://www.cs.uoregon.edu/%7Eeriks/AD_viewer/keywords.html">keyword utility</a> to
+  generate a list of affected structures and defects in a mutant. Check the boxes
+  next to each applicable term, copy the text string generated at the bottom
+  of the page, and paste it into the ZFIN Fish record. Be sure to include the
+  initial and final semicolons in the text string; the initial semicolon will
+  be hidden when the keywords are displayed publicly.
+<p><b>Future developments:</b> The current mutant keyword list is a limited set
+  of terms, developed originally to annotate data for a large mutant screen nearly
+  a decade ago. It will be replaced soon by PATO, the Phenotype and Trait Ontology,
+  a cross-species controlled vocabulary used in conjunction with the anatomical
+  ontology and gene ontology to annotate mutants. For now, curators should continue
+  to use the old keywords, which will be translated to PATO terminology when
+  its time comes.
+<p> If you do not find a term you need in the old vocabulary right now, you can
+  copy and paste one or more items from the <a 
+href="http://zfin.org/data_transfer/Downloads/ad.txt">anatomical ontology</a> into
+  the keyword field, separating them with semicolons. They will become searchable
+  terms once PATO is implemented. For example:
+<blockquote> An existing Fish record has...<br>
+  <br>
+  <b>Keywords:</b> nervous system;brain;small eyes;<br>
+  <br>
+  A new publication describes specific defects in the retina and retinal pigmented
+  epithelium of this mutant. The old keyword vocabulary does not contain terms
+  for these; you can find approved terms in the anatomical ontology and append
+  the keyword list:<br>
+  <br>
+  <b>Keywords:</b> nervous system;brain;small eyes;<b>retina;pigmented epithelium;</b> </blockquote>
+
+
+
+<h3 class="zdoc"><a name="Publications">Publications</a></h3>
+
+<p>Publications listed in a Fish record will automatically appear in the 
+publication
+list for the mutant Locus record as well. It is also possible to add a publication
+directly to the Locus record's list; pubs added this way, however, will <i>not</i> be
+imported into Fish records for the mutant.
+<p>Pubs added only to the Locus list are typically review articles that make
+  general reference to the mutant without specifying any particular allele used
+  in an experiment.
+
+
+
+<!-- ========= Images ================================================== -->
+
+<h2 class="zdoc"><a name="Images">Images</a></h2>
+
+<p>Mutant images may be entered into ZFIN by a curator or anyone in the research
+community. <i>Development</i> is currently the only journal that gives curators
+blanket permission to add published images to ZFIN. Otherwise, new images are
+usually submitted directly by researchers.
+<p> Users who wish to add new images themselves through the ZFIN interface must
+  have an account and have the correct permissions set for them. Ask Judy S.
+  to provide them with the proper access. Once granted, users will find a link
+  on the ZFIN home page to "add new images" and will be given on-screen instructions
+  from that point on.
+<p> Recommendations for new images:
+<p> <b>Format</b>: JPG or GIF. The filename can be anything, but has to have
+  a .jpg or .gif extension.
+<p> <b>Dimensions:</b> A browser-friendly size is recommended, about 500-600
+  pixels in height or width for a 72 dpi (pixels/inch) image.
+<p> <b>Image Quality:</b> Imaging software lets users set the image quality of
+  JPG's destined for the web. This parameter, sometimes confused with resolution,
+  controls the file compression of the saved image. A higher setting increases
+  file size, but reduces artifacts in the image. For ZFIN images, minimize artifacts
+  by using a 70-80% setting.
+<p> <b>Caption:</b> An optional free-text description of the image. If there
+  are any symbols, arrows, or scale bars in an image, a brief text legend for
+  those should appear here.
+<p> <b>Stage:</b> Provide the developmental stage or age of the fish.
+<p> <b>Preparation:</b> Select one term for each category...
+<p> <u>Preparation</u>
+<ul>
+  <li>live
+  <li>whole-mount
+  <li>LM-section
+  <li>EM-section
+</ul>
+<p> <u>View</u>
+<ul>
+  <li>side view (lateral)
+  <li>dorsal
+  <li>ventral
+  <li>frontal
+  <li>animal pole
+  <li>vegetal pole
+  <li>transverse
+  <li>sagittal
+  <li>parasagittal
+</ul>
+<p> <u>Orientation</u>
+<ul>
+  <li>anterior to left
+  <li>anterior to top
+  <li>anterior to right
+  <li>dorsal to top
+  <li>dorsal to right
+  <li>oblique
+</ul>
+
+<!-- ============================== end of MUTANTS ======================= -->
+
+
+
+<!-- =================================================================== -->
+<!-- ============================== Morpholinos ======================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="MO">Morpholinos</a></h1>
+
+<p> This section was written (Mar. 2005, updated May 2005) by Doug Howe with nomenclature by Erik Segerdell</p>
+<hr width="80%">
+
+<h3>A CAUTIONARY STATEMENT</h3>
+<p>The quality of morpholino (MO) sequences reported in publications has been found to be highly variable.  In addition, MO sequence is 
+variably reported as either MO sequence or target sequence.  We always curate the 5'-3' MO sequence into ZFIN.  For this reason, we examine 
+and evaluate morpholino sequences to ensure the highest quality and consistency of MO sequences possible prior to their addition into ZFIN.  
+This portion of the DOC provides guidance on how to confirm an MO sequence and enter it into ZFIN. </P>
+
+
+<!-- ====== Morpholino Nomenclature ==================================== -->
+
+<h2 class="zdoc"><a name="MO_nomenclature">Morpholino Nomenclature</a></h2>
+
+<p>Morpholino nomenclature follows the format:<br>
+
+<font size="+2">MO#-xyz</font><br>
+... where "xyz" is the approved symbol of the targeted gene.<br />
+<ul>
+    <li> All names begin with "MO" (all caps)</li>
+
+    <li> "MO" is always followed by an ordinal to distinguish unique sequences targeting a particular gene. The first one added to 
+    ZFIN will be MO1 (not plain "MO"), then MO2, etc. This means that if an author refers to a morpholino as "pax8 MO1" and ZFIN 
+    already has five pax8 MO's that have different sequences, then the reported MO would be added to the database as "MO6-pax8", 
+    as all ZFIN records require a unique name. In this case "pax8 MO1" would be shown as a previous name of MO6-pax8 and would be 
+    attributed to the publication.</li>
+    <li> Additional information about the morpholino - i.e., how or where it targets the gene - is captured in its ZFIN record. We 
+    do not attempt to convey this info with additional symbols or notations in the name itself.</li>
+    <li> Curators and the Nomenclature Committee agreed that including lab designations in the name would significantly slow down and 
+    complicate curation, as in many cases we would have to arrange new designations for authors before an MO could be added to ZFIN. 
+    All MO records will list publicatons that show who has used it and how.</li>
+    <li> This naming format may be used for other RNA-blocking reagents - e.g., "PNA" in place of the "MO".</li>
+    <li> Use the ZFIN pseudopub ZDB-PUB-030508-1 for previous names not tied to a publication.</li>
+</ul>
+
+
+<!-- ====== Confirming a morpholino sequence =========================== -->
+<h2 class="zdoc"><a name="Confirming_MO_sequence">Confirming a morpholino sequence</a></h2>
+<p>Always confirm the MO sequence before adding it to ZFIN.  You must confirm that the MO targets the correct gene, appears to work by the 
+mechanism the authors claim is should, that it is not already in ZFIN, and that there is nothing suspicious about the sequence such as missing/extra bases etc.  There are two ways to do this...
+<br /><br />
+<b>Confirmation by Local ZFIN BLAST</b>
+<ol>
+<li>GO to the <a href='http://almost.zfin.org/blast/blast.html'>Local ZFIN BLAST</a> page.</li>
+<li>Paste the MO sequence into the sequence box and select the &quot;Search for short, nearly exact matches&quot; checkbox.</li>
+<li>Choose the desired databases (a good set includes ZFIN Morpholinos and GenBank Zebrafish or ZFIN cDNA)</li>
+<li>Set the Expect and word size values to 1000 and 7 respectively (on some browsers this will happen automatically)</li>
+</ol>
+
+<b>Confirmation by NCBI BLAST</b>
+
+
+<ol>
+<li>Go to the page for <a href="http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?CMD=Web&amp;LAYOUT=TwoWindows&amp;AUTO_FORMAT=Semiauto&amp;ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=%28none%29&amp;EXPECT=1000&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;NCBI_GI=on&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=29&amp;SET_DEFAULTS.y=6&amp;SHOW_OVERVIEW=on&amp;WORD_SIZE=7&amp;END_OF_HTTPGET=Yes&amp;SHOW_LINKOUT=yes&amp;GET_SEQUENCE=yes">NCBI BLAST for short exact matches</a></li>
+<li>Paste in the reported MO sequence.</li>
+<li>Select Danio rerio from the species filter pulldown.  Word size and Expect values should by default be 7 and 1000 respectively.</li>
+</ol>
+
+<p>Run the BLAST analysis and proceed as described below for translation or splice blocking morpholino sequence.</p>
+
+
+<h3 class="zdoc">For translation blocking MOs</h3>
+
+<p><ol><li><b>Confirm that the MO targets the proper gene:</b>  Examine your BLAST results for a 100% full length blast hit on an mRNA 
+sequence corresponding to the gene the authors claim the MO targets.  If things go well, there should only be one gene with perfectly 
+matching mRNA.  The BLAST hit will commonly span the start codon of the mRNA.  This means it will generally hit the 5' end of the mRNA.  
+If you have the MO sequence, then the MO is likely to have "CAT" (the reverse complement of "ATG"), in the middle of it somewhere.</li>
+<li><b>Determine if you have MO or target sequence:</b>  If the Strand line of the BLAST results is "Strand = Plus / Minus" on an mRNA sequence match, then the sequence you BLASTed is complementary to the mRNA, so it is the actual MO sequence.  If this line is "Strand = Plus / Plus" on an mRNA sequence match then the sequence you BLASTed is the same as the mRNA sequence, which means it is the target sequence rather than the MO sequence.  This can be corrected when you enter the MO into ZFIN.  If the sequence does not appear to be a translation blocking morpholino, contact the authors for confirmation</li></ol>
+
+
+<h3 class="zdoc">For splice blocking MOs</h3>
+
+<p><ol>
+<li><b>Locate a genomic clone matching the published MO sequence:</b> Look for a genomic sequence that has a 100% full length match with the sequence you BLASTed.  Write down the accession number of the genomic segment and the bp coordinates that match the sequence you BLASTed.</li>
+<li><b>Confirm that the MO spans a splice junction:</b> Get a full length mRNA for the targeted gene, and use this mRNA in a BLAST2 analysis with the genomic clone identified by your initial BLAST.  You should find the targeted gene in the genomic clone.  You should also find a segment of the BLAST2 hit that begins or ends within the same bp coordinates that were targeted by the MO.</li>
+<li><b>Determine if you have MO or target sequence:</b> Analyze by BLAST2 the published "MO" sequence vs. the mRNA sequence.  This will not be a full length match, but the portion of the MO sequence that corresponds to the exon will match.  If the Strand line reads "Strand = Plus / Minus", then the published MO sequence is correct.  If the Strand line reads "Strand = plus / plus" then the published MO sequence is actually the targeted mRNA sequence.  This can be corrected when you enter the MO sequence into ZFIN.  If the morpholino does not target the expected gene or does not appear to span an intron/exon junction, contact the authors for confirmation.</ol>
+
+
+
+<!-- ====== Adding a new MO to ZFIN ==================================== -->
+
+<h2 class="zdoc"><a name="Add_new_MO">Adding a new MO to ZFIN</a></h2>
+
+<ol>
+<li>GO to the <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-new_marker.apg">ZFIN Add Marker Page</a>.</li>
+<li>Select Morpholino from the pulldown menu and hit the "create it" button.</li>
+<li>Enter the MO name (see the <a href="curation.html#MO_nomenclature">MO nomenclature guidelines</a>). (required) </li>
+<li>Copy and paste the sequence into the sequence box (limited to 100 bases).  Manipulate the sequence if necessary using the 
+adjacent buttons to get the MO sequence in 5'-3' orientation. Any non-ATGC bases will be dropped at this stage if you try to complement the sequence.  A popup window will warn you of this.</li>
+<li>Enter the publication from which you are curating the MO if the pub is the first report of the MO sequence (optional)</li>
+<li>Enter any publicly viewable notes into the "Note" field below the name field.  This could include a statement about the type of MO (splice or translation blocking) if you have confirmed this, as well as any information important for the public to view regarding the sequence.  For example if you had to remove a base from the sequence of this MO as published in a specific paper, it would be reasonable to note that and acknowledge that the authors confirmed this edit.</li>
+<li>Enter any private curator notes into the "Curator Notes" field to the right of the sequence.  This should include any additional information you may have uncovered while analyzing the MO sequence, communication with authors, etc.</li>
+<li>Submit the MO by hitting the "Submit new morpholino" button.</li>
+<li>Go to the new MO page and add any previous names (usually at least the one used in the pub you are curating) and attribute them to the proper publications.  </li>
+<li>In the Marker Relationships section, add the "is morpholino of" relationship to the correct target gene, and add attribution for this as well.
+</ol>
+
+
+<!-- ====== Other morpholino considerations ============================ -->
+
+<h2 class="zdoc"><a name="Other_MO_considerations">Other morpholino considerations</a></h2>
+
+<ul>
+<li>You should be skeptical of claims in the literature that "our morpholino AGCTG....ATAAT is exactly the same as that used by" anyone else.  It is not uncommon for the morpholinos to be shifted one way or the other by a few bases, but authors have been known to still consider these "exactly the same".  For our purposes, a morpholino is defined by its sequence.  Even a single base difference is a distinct MO in ZFIN.  This should be checked out carefully, especially when it comes to back-curation of older pubs that are said to have used a specific MO.....check the sequence before adding the pub to a MO.</li>
+
+<li>GeneTools, Inc. is currently the primary source for MOs.  They have told us that they generally do not make MOs longer than 26 nucleotides because it messes up their production schedule.  If a paper reports an MO longer than a 26mer, you should be skeptical.</li>
+
+<li>If you have reservations or concerns about the MO sequence as it was reported in the paper, you can create the MO record without including the sequence.  That way you can continue curation until the actual sequence has been clarified.</li>
+<li>Sometimes there is no recourse but to contact the authors for confirmation.</li>
+</ul>
+
+
+
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- ============================== PEOPLE ============================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="People">People and Labs</a></h1>
+
+<p>This section was written by Sherry Giglia 7/2005
+
+
+
+
+<!-- ========= 2005 Person Records ====================================== -->
+
+<h2 class="zdoc"><a name="New Person Records">New Records</a></h2>
+
+<p><b>Personal Records:</b>  A new personal record is set up for an individual upon request.  These requests are usually made by PIs or lab administrative assistants when new people join their labs.  Sometimes a new lab member or independent researcher will contact ZFIN directly requesting a new record.  Other possibilities include:
+
+<ul>
+    <li>An author of an important article is not listed in ZFIN, and a curator requests that this person be added to the database.</li>
+    <li>A researcher submits a fish line to ZIRC, which generates a message to the ZFIN Administrative Coordinator (AC) to check for accuracy in ZFIN records, and the AC discovers that the researcher does not have a personal record.
+</ul>
+
+
+Under these circumstances, the AC or assistant should contact the author or researcher and request complete contact information in order to set up a personal record.</p>
+
+<p>To set up a personal record, the "new person" form (accessed from the home page while logged in as admin) requires the person's name and lab or institution mailing address. The e-mail address and phone number should also be obtained if possible.  Additional information can be entered by the admin staff, or by the user once they have logged onto the website. Edits are made to the new record by clicking on "Update this record", which appears in red at the top of the screen.</p>
+
+<p>A new user should be subscribed to the ZFIN distribution list at the time the new record is created, unless he/she requests not to be included. To subscribe a new user, click on "Subscribe" in the "Admin info" box under the person's name while in edit mode.</p>
+
+<p>After a personal record is created, the admin staff will register the new person with a username and password, and then contact the person by e-mail advising them of their log in information and welcoming them to ZFIN. To register the user, click on "Add/Edit ZFIN Registration" at the top of the screen. </p>
+
+<p><b>TIPS:</b></p>
+
+<ul>
+    <li>When creating a username and password, try to use something simple that will be easy for the user to remember.  The first part of the user's e-mail address is a good choice, or simply the first or last name, if it is unique.</li>
+    <li>Set the password the same as the username initially, and always ask the user to change his/her password when they log in for the first time.  At this time, users do not have the ability to change their usernames - that can only be done by ZFIN.  </li>
+    <li>Test the new username and password before you send this information to the new user.  Occasionally, it does not work and must be reset.  You can do this by going to the home page, logging out and logging back in with the new username and password. </li>
+    <li>If a user provides you with a photo to place in his/her record, you can use Photoshop to optimize the image file and make it the appropriate size for the space available in the ZFIN record.  Save the edited file as a .gif or .jpg and then place it in his/her record.   </li>
+    <li>When sending an acknowledgement e-mail following the creation of a new record, include a link to the ZFIN tutorial that was presented at the '05 European Zebrafish meeting.  This is helpful for new users (see "sample e-mail", below) </li>
+</ul>
+
+<p><b>Sample "New ZFIN record" acknowledgement e-mail:</b></p>
+
+<i><p>Hello _______:</p>
+
+<p>At the request of _______________, I have created a new personal ZFIN record for you and linked it to the __________ Lab record. <font size="2" color="blue"> (note: this is not always true - sometimes a personal record is not linked to a lab)</font>.  I have set your username and your password both to "_______".  Please be sure to change your password when you log in for the first time.  Please note that you must log in to make changes to your personal record; however, you do not need to log in to use the database.</p>
+
+<p>For information on using the ZFIN database most efficiently, please see:<br>
+http://www.sanger.ac.uk/Projects/D_rerio/workshop_Dresden/.</p>
+
+<p>Please note that this link is also available from our home page under "site news".</p>
+
+<p>Let me know if you have questions or need further assistance.  And welcome to ZFIN!</p>
+
+<p>Best regards,<br>
+____________</p></i>
+
+<p><b>Laboratory Records:</b>  We create new lab records upon the request of a PI.  Occasionally, it will come to our attention that a PI has a personal record only, or is not registered in ZFIN at all, in which case, the AC may want to contact a PI and offer to set up a lab record for them.  The form to create a new Lab record is available from the home page under "Laboratories -  Add new LAB" while logged in as admin.  </p>
+
+<p>When a PI requests a new lab record, request that he/she provides you with the following information:
+
+<ul>
+    <li>Lab Name</li>
+    <li>Mailing Address</li>
+    <li>Lab phone & fax</li>
+    <li>Lab contact e-mail</li>
+    <li>URL (optional)</li>
+    <li>A list of lab members, including their e-mail addresses, phone numbers and lab positions.  Position designations include:</li>
+        <ul>
+        <li>PI/Director</li>
+        <li>Co-PI/Senior Scientist</li>
+        <li>MD/Veterinarian</li>
+        <li>Postdoc</li>
+        <li>Graduate Student</li>
+        <li>Research Staff</li>
+        <li>Fish Facility Staff</li>
+        <li>Technical Staff</li>
+        <li>Administrative Staff</li>
+        <li>Other</li>
+        </ul>
+</ul>
+
+Lab members are "linked" to the lab record either at the time that the new lab record is created, or on the "update" screen for an existing lab record (see "updating records", below).  Note that lab members must have a personal ZFIN record before they can be linked to the lab record. </p>
+
+<p>Note:  The "allele designation" is not generally assigned at the time the lab record is created.  This is something that is agreed upon between the lab PI and our nomenclature contact person at ZFIN, and is usually added to a lab record at a later time by the technical staff.  </p>
+
+<p><b>TIPS:</b>
+
+<ul>
+    <li>Suggest that Lab names include the last name of the PI - much easier to search. </li>
+    <li>Encourage the PI to send a picture of the group for the lab page, and to add a "Statement of Research Interests".
+    <li>The contact person has permissions to update contact information and to link and unlink lab members from the lab page.  He/she cannot update personal records, however (other than his/her own), and cannot create new personal records for new lab members at this time.  This should be explained to the contact person at the time the new lab record is set up. </li>
+    <li>In order to maintain a current "PI only" distribution list, a PI must have a lab record in addition to his/her personal record, as the lab record is the only place where a position is designated.  Therefore, even if a PI is just starting out and has no lab members, it is a good idea to recommend that they establish a lab record for this reason.  Occasionally we send out important notices to PIs only, and those who do not have a lab record are missed.  This has caused some aggravation in the past.</li>
+</ul></p>
+
+
+<!-- ========= Updating Person Information ============================= -->
+
+<h2 class="zdoc"><a name="Updating Person Information">Updating Information</a></h2>
+
+
+<p><b>Personal Records:</b>  Users have the ability to update their own records, and should be encouraged to do so.  However, users frequently contact us and request changes to their records.  Our policy is to accommodate these requests promptly and courteously, while tactfully reminding them that they may update their own records.  </p>
+
+<p>Some sample language:</p>
+
+<i><p>"For you convenience, please note that you have the ability to update your personal record directly at any time by logging onto ZFIN from the home page..."</p></i>
+
+<p><b>Lab Records:</b>  The designated contact person for a lab has permissions to make changes to the lab record, but not to individual lab members' records.  (See "tips" under "Laboratory records," above). 
+
+<HR width="15%" align="left"> 
+
+<p>ZFIN's student assistant handles the bulk of update requests.  However, it is essential that these requests are fulfilled in a timely manner, so if requests come in when the student assistant is not working, the AC should handle them.</p>  
+
+<p>The AC should initiate a reminder to the entire ZFIN distribution list on a quarterly basis to update records.  It is best to time these messages at the end or beginning of semesters/terms, as this is when most of the shuffling of grad students takes place.  It is a good idea to be sure the student assistant will be available to handle the bulk of the responses to this request for updates, because it tends to generate a high volume of e-mails.  It is important to be ready to implement these changes promptly if we ask for them! </p> 
+
+<p>In response to a request for updates, many, many people will request their username and password so that they can make their own updates.  These requests should be given top priority, so that the user has the ability to make the changes while it is fresh in his/her mind.  </p>
+
+<p>When any message is sent to the ZFIN distribution list, the AC will receive a large number of e-mail bounces.  It is not worth the time to try to work through these bounces every time, but now and then, an attempt should be made to follow up on these before the number gets out of hand.  The ZFIN student assistant usually assists with this.  If the correct e-mail address cannot be determined, at the very least the person should be "unsubscribed" from the distribution list until updated information is received.  </p>
+
+<p><b>Sample update reminder e-mail:</b></p>
+
+<i><p>Dear ZFIN users:</p>
+
+<p>It's time again for a friendly reminder to update your ZFIN personal and lab records.  Please take a moment to check your records for accuracy - and please take special note of e-mail addresses.</p>
+
+<p>For your convenience, you may make changes directly to your personal record by logging in to ZFIN on the home page.  Only those designated as "contact person" have the ability to make changes to lab pages.  If you have forgotten your username and/or password, please let us know and we'll be happy to reset it for you.</p>
+
+<p>Please note that if you have new lab members who do not already have personal records in ZFIN, we must create the initial records here before they can be added to your lab page.  Please send us each person's name, e-mail address and position (i.e. Post-Doc, Graduate Student, Research Staff, Techical Staff, Fish Facility Staff, or Administrative Staff).   If you need assistance or have questions, we are happy to help.</p>
+
+<p>Thank you very much - we appreciate your assistance in keeping ZFIN up-to-date!</p>
+
+<p>Best regards,<br>
+_________________</p></i>
+
+
+
+<!-- ========= Deleting Person Records ================================= -->
+
+<h2 class="zdoc"><a name="Deleting Person Records">Deleting Records</a></h2>
+
+<p>A personal record should only be deleted if the AC can verify that a person is no longer involved in zebrafish research.  Even then, it is best to leave a record intact if the person has authored zebrafish publications.  In this case, these steps should be followed:</p>
+
+<ol>
+    <li>Make a notation in the "Biography and Research Interests" area of the record stating "no longer involved in zebrafish research".</li>
+    <li>Unlink the inactive personal record from the lab record, if applicable (this must be done from the lab page, by clicking on the "delete" button next to the name in the update mode - the personal record remains intact, this only deletes the link).   </li>
+    <li>"Unsubscribe" the inactive researcher from the e-mail distribution list</li>
+</ol>
+
+<p>If the AC determines that a person is no longer involved in zebrafish research and they have not authored zebrafish papers, their personal record should be deleted. This is a fairly frequent occurrence with admin staff, students, and technicians.</p>
+
+<p>A record is deleted from the personal record page (click on "delete this record").  </p>
+
+<p>It is generally our policy not to delete a lab record.  Members change, addresses change, research focus may change, but it is seldom that a lab just stops functioning. In the case of a duplicate lab record, or if extenuating circumstances make it is necessary to delete a lab record, however, it is done in the same way as a person record (above).  </p>
+
+<p><b>Note:</b> A PI or lab contact person will frequently advise ZFIN of people who have left their labs.  It is important to inquire further.  If these lab members have moved on to other labs, we need to know so that we may update their information.  The AC should always ask if they have the old lab member's current contact information and follow up.  </p>
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- =========================== COMPANIES ============================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Companies">Companies</a></h1>
+
+<p>This section was written by Sherry Giglia 7/2005.</p>
+
+<h2 class="zdoc"><a name="New Company Records">New Records</a></h2>
+
+
+
+<p>Company records are added infrequently.  If a company requests a new record, the AC must have authorization from Judy and/or Monte to create the record. Only companies that are utilized frequently by zebrafish researchers for lab supplies or other products are listed in ZFIN.  Company listings exist for the convenience of researchers, not to provide exposure for companies or to advertise their products.</p>
+
+<h2 class="zdoc"><a name="Updating Company Information">Updating Information</a></h2>
+
+<p>Updates to company records are also infrequent, and are done in the same manner as for personal or lab records.</p>
+
+<p>Note that all persons listed in a company record must also have a personal ZFIN record, which is the same as a personal record for a researcher.  Personal records for company employees are linked to company records in the same way that lab members are linked to lab records.</p>
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- =========================== PUBLICATIONS ========================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Pub">Publications</a></h1>
+
+<p>This section was written by Sherry Giglia 7/2005</p>
+
+
+
+<!-- ========= Pub Searchess =========================================== -->
+
+<h2 class="zdoc"><a name="Pub Searches">Pub Searches</a></h2>
+
+<p>At this time, PubMed is the primary source for locating recently published zebrafish papers.  In the past, we checked other sources and subscribed to various pub alerts.  We found that, for the most part, the information received was a duplication of what we had already received from PubMed and was not worth the time spent checking every paper against the database.  </p>
+
+<p>Exceptions:
+<ul>
+<li>PubMed does not currently carry papers published in the journal <i>Zebrafish</i>.  However, this relatively new journal publishes papers by prominent zebrafish researchers, so it is important to capture this information.  Because <i>Zebrafish</i> is a new journal (first published Feb., 2004), publication intervals have been sporadic.  The AC will check the Zebrafish journal website a minimum of every 3 months to keep current with publications.  This duty has been assigned to the student assistant in the past.</li><br>
+
+<li>Papers published in fisheries journals and some toxicology journals do not always show up in PubMed.  These papers come to our attention in various and sometimes unpredictable ways - usually at the request of authors.  The rule of thumb is that a zebrafish paper will be entered into ZFIN, even if there is no "curatable" data in the article. </li><br> 
+
+<li>Books, PhD and Masters' theses about zebrafish.  The AC or the student assistant should check periodically for these in World Cat (from the UO Library website).</li>
+</ul></p>
+
+<p><b>To search for zebrafish papers in PubMed:</b>  PubMed must be accessed from the special UO url - not the public PubMed url.</p>
+
+<p><center><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?otool=oruolib">http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?otool=oruolib </a></center></p>
+
+<p>This is important, because the UO url provides links to the UO library records of journal publications for each article, in addition to any journal webpage links provided by PubMed.  This is very useful when entering pubs.   </p>
+
+<p>The search keyword is simply "zebrafish".  This displays any paper with the word "zebrafish" in the title, abstract or keywords of the paper.  Note that PubMed does not search the entire article.  However, it is highly unlikely that a paper would be appropriate for entry into ZFIN if the word "zebrafish" did not exist in the title, abstract or keywords. </p> 
+
+<p>PubMed will list articles in publication date order.  This is ideal for our purposes, because the most recent papers are listed first.  The AC only needs to keep track of where she/he left off the last time pubs were entered to know where to begin the next time. </p>
+
+
+
+
+<!-- ========= Entering New Publications =============================== -->
+
+<h2 class="zdoc"><a name="Entering New Publications">Entering New Publications</a></h2>
+
+<p>It works well to enter pubs 1-2 times per week. This has been the duty of the AC primarily in the past, but the student assistant is also trained to perform this task.</p>
+
+<p>Steps for entering pubs:
+
+<ul>
+    <li>Find the last pub entered, and start working with from the bottom up with new pubs (e.g. if pub #10 was the last one entered, begin your work with pub #9 and work up to pub #1).  This way, if you are entering several articles from one journal issue, the papers with lower page numbers will be entered first, and therefore assigned a lower "ZDB-ID" number.</li><br>  
+
+    <li>Click on the link for the first paper.  If the word "zebrafish" does not occur in the title of the paper, do a "find" (control "f" in most browsers) to search for the word "zebrafish" in the abstract.  You may be able to tell from the context of the usage of the word(s) whether or not this is, indeed, a zebrafish paper.</li><br>
+
+    <li>If you are not sure that this article is appropriate for ZFIN, start an e-mail to curators@zfin.org, and list the PubMed number of that paper.  You can add to it as you go through the remaining pubs, if necessary.  In this e-mail you will ask the curators to check the pub(s) and let you know if they want these pubs entered.  If even one curator answers "yes", you need to enter the pub.  </li><br>
+
+    <li>If you are sure that an article belongs in ZFIN, open the ZFIN website in a new screen (this is where the two monitors come in very handy!)  From the home page, click on "Add new PUB" under "Publications" to access the entry form.</li><br>
+
+    <li>Copy and paste all appropriate information from PubMed to ZFIN:
+        <ul>
+	<li><b>TITLE:</b>  Do not copy the period at the end of the title - ZFIN will add one when you submit the new pub record</li><br>
+
+	<li><b>STATUS:</b>  When they first appear in PubMed, most  publications are still "Epub ahead of print," which is the default value.  You will see these words in the citation of the paper in ZFIN.  Other status options:
+
+             <ul>
+	     <li>Active: If the publication date is current (not more than a week ahead of the current date), and volume, issue and page numbers are listed in PubMed, this is an "active" pub.</li>
+	     <li>Inactive:  If volume, issue and page numbers exist, but the publication date is in the future, this is an "inactive" pub - it has probably not been published yet, but is not considered an Epub.  </li>
+	     <li>In press:  Rarely used - usually refers to a book</li>
+	     </ul><br>
+
+         <li><b>PubMed ID:</b>  Copy and paste from the PubMed record (at the bottom of the abstract).</li><br>
+
+	 <li><b>AUTHORS:</b>  Copy and paste from the PubMed record.  Some additional editing is required.  PubMed does not place commas or periods in author listings.  You must manually place a comma after each last name, and a period after each initial.  Additionally, you must add the word "and" before the last author's name (look at other pub records for examples).  </li><br>
+
+	 <li><b>NUMBER of authors listed:</b>  Add 'em up!</li><br>
+
+	 <li><b>DATE:</b>  Date as shown in the PubMed record.  Note:  If only the month is listed, use the 1st as the date (e.g. 7/1/05 for a July issue).  If only the year is listed, investigate a little further.  If you can find the article on the journal website, you may be able to determine the month of publication.  If not, use January 1st of that year.  </li><br>
+
+	 <li><b>Journal Abbrev:</b>  This abbreviation must match the journal record that exists in ZFIN.  Abbreviations are almost always the same as what is listed in PubMed, except for the fact that PubMed does not use periods for truncated words in the title.  You must add these.  
+<table width"80%" border="0" cellspacing="8" align="center">
+         <tr><td>Example:</td><td></td></tr>
+	 <tr><td>PubMed shows:</td><td>Dev Biol</td></tr>
+	 <tr><td>You Use:</td><td>Dev. Biol.</td></tr>
+</table>
+
+</p>To be sure, you can click on the "find journal abbrev." button and find the right abbreviation.  If you don't look it up and the abbreviation you use is wrong, you will get a cryptic error message when you submit the pub record.  Not to worry - you can simply hit the back button and try again without losing all your data.  </p>
+
+<p>If ZFIN does not have a record for the journal, you must create one.  It works best to open another window (or tab) and go to the ZFIN home page to access the "Add new JOURNAL" form, under "Publications".   To create this record, you must determine the full name of the journal.  The best way to do this is to click on the "FindText" link on the PubMed article record.  This takes you to the UO Library record, where the full name of the journal is listed.    To obtain the correct journal abbreviation, you are usually safe to use PubMed's abbreviation and add the periods.  Be careful about short words that may or may not be abbreviated (e.g. "cell" which could actually be the word "cell" and would not require a period, or could be short for "cellular".)</p></li>
+
+          <li><b>Journal Volume:</b>  Volume number and issue number in this format:<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;426(6)<br>     
+Do not add the colon!  ZFIN will add it when you submit.<br><br>
+
+NOTE:  If you are working with an "Epub", you will not have the volume or page numbers - leave them blank for now.</li><br>
+
+          <li><b>Pages:</b>  Page numbers, written out.  Note that PubMed abbreviates this, but ZFIN does not.  
+<table width"80%" border="0" cellspacing="8" align="center">
+         <tr><td>Example:</td><td></td></tr>
+	 <tr><td>PubMed shows:</td><td>145-7</td></tr>
+	 <tr><td>You Use:</td><td>145-147</td></tr>
+</table></li><br>
+
+         <li><b>Type of publication:</b>  Usually "journal" which means "journal article".  The other most common pub type is "review".  A good clue that an article is a review is if there is only one author.  Also, the title often gives it away.  Check the journal website to try to determine if an article is a review if you are not sure.  Often, you can find that designation in the table of contents (not in the article page itself).  </li><br>
+
+	 <li><b>KEYWORDS:</b>  PubMed does not list keywords.  You will only find these if you can find the article or the abstract online.  There is usually a link to the online version of the article or abstract in the PubMed record, or sometimes you can find it through the "FindText" UO link.  However, even if you do find the article online, it will not always have keywords.  It is worthwhile to try to find them, however, and if you do, copy and paste.  NOTE:  if keywords are separated by anything other than commas or semicolons, you must change the separator.  Other punctuation may cause an error response when you submit.</li><br>
+
+	 <li><b>ABSTRACT:</b>  Copy and paste this from the PubMed record - not from the journal website record.  The reason for this is that PubMed will never use scientific symbols in their abstracts, and the journal websites often do. </li><br>
+
+	 <li><b>ERRATA and NOTES:</b>  This field is used when an erratum is published to correct or change information in a previously published paper.  PubMed will display a new record with an erratum that refers to the original paper.  ZFIN does not create a separate record for the erratum; the information is copied and pasted into this field in the original pub record.  Be sure to include the new PubMed number for the erratum for reference.<br><br>  
+
+This field is also occasionally used for notes about the record, e.g. "article published in Chinese" or any other useful information.  Keep in mind that this field will show up in the pub record when it is queried, so it should not be used for "internal" notes.</li><br><br>
+
+    </ul>
+
+   <li>Click the "submit" button to create the new pub record.</li>
+</ul>
+
+
+
+
+
+<!-- ========= Linking to Authors ====================================== -->
+
+<h2 class="zdoc"><a name="Linking to Authors">Linking to Authors</a></h2>
+
+<p>After a pub record has been created, the paper must be linked to author(s) that have personal records in ZFIN.  Once linked, the paper becomes part of each author's record and the lab record with which they are affiliated. </p> 
+
+<p><b>To link papers to authors:</b>
+
+  <ol>
+      <li>Click on the "link" button to the left of the reference for the new record.  A javascript form will be displayed, showing all names that are possible matches to the author names listed in the pub record. </li><br>
+      <li>Once you  have identified a correct author name in the "potential authors" list, click on it and then click on the ">>>" arrow button to move this name to the "linked author list".  Repeat this process for each author found in the "potential" list.</li><br>
+      <li>Click "submit" to complete the link function.</li>
+</ol>
+
+Note:  Sometimes the "potential authors" list will be blank.  This just means that none of the authors names are at all similar to those who have records in ZFIN.</p>
+
+<p><b>Tips for linking authors:</b></p>
+
+<ul>
+      <li>Always check author names in the online journal article or abstract, where the full first name is usually displayed (PubMed uses only initials).  </li><br>
+      <li>If you are still unsure whether or not you have the right person, look at the institution that the author is affiliated with (either in PubMed or the online journal record) Then check this person's ZFIN personal record to see if it matches up.  </li><br>
+      <li>Another clue is to look at who a particular researcher has published with in the past.  Authors tend to publish with the same people multiple times.  </li><br>
+      <li>If you cannot be sure, it is best to NOT link the author and contact the person you suspect is the author and check with them.  Researchers don't like being associated with papers they did not publish, nor do they like having another person's name on their paper!  </li><br>
+      <li>A word about special characters:  Because we deal with a global network of researchers, you will frequently run across ethnic names with different accent marks, etc.  ZFIN's policy is to include these special characters in a users personal record.  PubMed, however, does not include these characters in their author names.  If you have created a record that does not include a special character in an author name, and his/her ZFIN record includes the character, the name will not appear in the "potential authors" list.  There are two ways to deal with this:
+      <ul><br>
+          <li>Watch carefully for special characters in author names in the online journal article or abstract.  If the paper was published with the special character in the author's name, then you should copy and paste the last name into the ZFIN pub record.  Then, it will show up in the "potential author" list and you can link it. </li><br>
+	  <li>If the paper was published without the special character in the author name, you should not include it in the pub record.  But if you know that the author's ZFIN record has a special character, you can link the pub from the author's personal record.  To do this, pull up the personal record, go into update mode and click on "link new pub".  Search for the pub in question and "select" it.  It will now be linked to the author and lab record.  Note that you are not likely to catch this until you have worked with these records for awhile and are familiar with author names.  More commonly, the author will e-mail you and ask you to add a recent publication to his/her record.  Upon investigation, you will realize that the reason the link was not made was because of the special character discrepancy.</li>
+      </ul>
+</ul><br>
+
+<p><b>Linking Pubs to New Personal Records</b></p>
+
+<p>When a new personal and/or lab record is created for a PI or published zebrafish researcher, it is likely that articles authored by them already exist in ZFIN.  The AC should check for pub records that should be linked to this new personal record from the personal record update screen, as described above.  </p>
+
+<p><b>Working with "Epub" and "Inactive" Records</b></p>
+
+<p>At least once every week or so, the AC works the "Epub ahead of print" and "Inactive" lists.  This should be done BEFORE adding new pubs; otherwise, you will have a longer list to work through because your list will contain the records you just entered.  </p>
+
+<p>To work the "Epub ahead of print" list:</p>
+
+<ul>
+
+    <li>Search for all Epubs by choosing "Epub ahead of print" under "Publication Status" on the publication search page.  This will generate a listing of all Epubs in alphabetical order by first author name.  </li><br>
+    <li>Open PubMed in a separate screen.  </li><br>
+    <li>Click on the first paper title to bring up the pub record. </li><br>
+    <li>Copy and paste the PubMed number into the PubMed search bar to bring up the PubMed record.  (Note - you could just click on the PubMed number in the ZFIN Pub record, but it makes navigation back to your working list more difficult  Besides, it's easier to work on two monitors for this task). </li><br>
+    <li>Check the current status of the paper.  If it still says "Epub..." in PubMed, go back to your ZFIN screen, hit the back button and go on to the next pub on the list.  If the "Epub..." notation has been replaced with a new date, volume/issue and page numbers, go back to your ZFIN list, click on the "edit" link and change/add the following:
+     <ul>
+         <li>Status - change to "active" (or "inactive" if the new date is in the future)</li>
+	 <li>Date - insert new date as displayed in PubMed</li>
+	 <li>Journal Volume(issue)</li>
+	 <li>Pages</li>
+     </ul><br>
+
+     <li>Also check for keywords.  If they are missing, it is worth your time to try to locate them again.  Epubs are not always available online, and therefore you may have been unable to locate the keywords at the time the pub record was created.</li><br>
+
+     <li>Submit the record, which takes you back to your working list (notice that the pub you just submitted is gone - it is no longer an Epub!)</li><br>
+     <li>Repeat this process with each record on the list</li>
+</ul><br>
+
+<p>To work the "Inactive" list:</p>
+
+<ul>
+    <li>Search for inactive records in the same way you searched for Epub records.</li><br>
+    <li>For this list, it is not usually necessary to refer back to PubMed.  Simply click on the "edit" button for each pub record and look at the date. </li><br>
+    <li>If the date is current, change the status to "active" and submit the record, which takes you back to your working list.  </li><br> 
+    <li>If the date is still too far in the future, click "cancel," which takes you back to the working list, and go on to the next pub record. </li>
+</ul>
+
+<p>NOTE:  An e-mail is generated listing all the "active" pubs entered in a day and sent to curators and to the student assistant.  This list includes any new active pubs entered, as well as any older pub records whose status was changed to "active" that day.  The student assistant then locates a pdf version of each pub if possible, downloads it to the pub record for curation purposes and prints a hard copy, or tracks down a hard copy at the science library if a pdf is not available.   She then makes the hard copies available for curators. </p>
+ 
+   
+
+
+
+
+
+
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= When the Web Pages Aren't Enough ======================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="When the Web Pages Aren't Enough">
+                          When the Web Pages Aren't Enough</a></h1>
+
+<p>The ZFIN web pages support the entry of most new data.  However,
+they are not so good at supporting the modification of data
+that is already in the
+database.  Frequently, a curator will change the name of something through
+the web interface and then find that the name has changed in some, but not
+all places in the web site.  We plan to eventually fix these problems, but
+in the meantime many such updates require additional work by a technologist.
+
+<p>Whenever a biologist does any of the following types of updates they
+should notify a technologist.  You should provide
+the ZDB IDs of the records involved as well as a description of what was
+done:
+
+<ul>
+  <li>Deleting almost anything.
+  <li>Renaming almost anything.
+  <li>Merging almost anything.
+  <li>Splitting almost anything.
+</ul>
+
+<p>As a technologist, what are you supposed to do with this information?
+Basically, you need to clean up the database, by deleting, renaming,
+splitting or merging any data that the web interface did not take care of.
+You will probably want to use the 
+<a href="impl.html#Scan All Character Columns for a String (scancharcols.pl)">scancharcols.pl</a> 
+script to support this.
+<br><br>
+
+</div> <!-- end class="zdoc" -->
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>

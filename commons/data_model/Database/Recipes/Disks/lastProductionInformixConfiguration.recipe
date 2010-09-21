@@ -1,0 +1,278 @@
+============================================================
+Bringing up the last configuration of informix/disk on Helix
+************************************************************
+
+This recipe brings up an informix instance from scratch
+on helix, the production box as it was the last time informix
+was re-initialized with oninit -i.
+
+We should update this file with the latest recipe, but 
+we might forget.  Ask the DBA to confirm if possible.
+
+************************************************************
+==========================================================++
+
+x. Bring wildtype down
+
+   as informix
+
+   % onmode -k
+
+   STATUS:
+
+x. Copy onconfig for safe-keeping
+
+   % cd informix/etc
+    cp onconfig onconfig.wildtype.newRaid.bkup
+
+   STATUS:
+
+x. re-initialize wildtype !! Stop, this will clear out
+   all the current settings for informix on helix.
+
+   % cd ~
+   % oninit -i
+
+   STATUS:
+
+x. Convert to large chunks
+
+    % onmode -BC 1
+    % ontape -s -L 0
+    % onmode -BC 2
+    % ontape -s -L 0
+
+
+x. Re-create the links to the old A1000 disks
+
+   as informix
+
+   % cd ~/informix/dev
+
+   ln -s defaultdbs_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s defaultdbs_c2 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs1_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs1_c2 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs2_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs2_c2 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs3_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs3_c2 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs4_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s idxdbs4_c2 -> /dev/rdsk/c3t5d1s0
+   ln -s llogdbs1_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s plogdbs1_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s rootdbs_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smartbs1_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smartbs2_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smartbs3_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smartbs4_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smartdfltbs_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s smarttempbs1_c1 -> /dev/rdsk/c3t5d4s0
+   ln -s tbldbs1_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tbldbs2_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tbldbs3_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs10_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs11_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs12_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs1_c1 -> /dev/rdsk/c1t0d0s3
+   ln -s tempdbs2_c1 -> /dev/rdsk/c1t1d0s3
+   ln -s tempdbs3_c1 -> /dev/rdsk/c1t2d0s3
+   ln -s tempdbs4_c1 -> /dev/rdsk/c1t3d0s3
+   ln -s tempdbs5_c1 -> /dev/rdsk/c3t5d0s0
+   ln -s tempdbs6_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs7_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs8_c1 -> /dev/rdsk/c3t5d1s0
+   ln -s tempdbs9_c1 -> /dev/rdsk/c3t5d1s0
+
+also add the additional ones post-last-recipe
+
+ % ln -s /dev/rdsk/c3t5d1s0 idxdbs2_c2
+ % ln -s /dev/rdsk/c3t5d1s0 idxdbs3_c2
+ % ln -s /dev/rdsk/c3t5d1s0 idxdbs4_c2
+
+ % ln  -s /dev/rdsk/c3t5d1s0 defaultdbs_c2
+
+x. All of the raw disks need to be owned
+by informix:informix.
+
+   ask Lauradel to do so if not already done.
+
+	OR: as staylor on helix:
+
+	sudo chown informix:informix /devices/pseudo/rdnexus@3/rdriver@5,1:a,raw
+	sudo chown informix:informix /devices/pci@1f,700000/scsi@2/sd@0,0:d,raw
+	sudo chown informix:informix /devices/pci@1f,700000/scsi@2/sd@1,0:d,raw
+	sudo chown informix:informix /devices/pci@1f,700000/scsi@2/sd@2,0:d,raw
+	sudo chown informix:informix /devices/pci@1f,700000/scsi@2/sd@3,0:d,raw
+	sudo chown informix:informix /devices/pseudo/rdnexus@3/rdriver@5,0:a,raw
+	sudo chown informix:informix /devices/pseudo/rdnexus@3/rdriver@5,4:a,raw
+
+	sudo chmod g+w,g+r /devices/pseudo/rdnexus@3/rdriver@5,1:a,raw
+	sudo chmod g+w,g+r /devices/pci@1f,700000/scsi@2/sd@0,0:d,raw	
+	sudo chmod g+w,g+r /devices/pci@1f,700000/scsi@2/sd@1,0:d,raw	
+	sudo chmod g+w,g+r /devices/pci@1f,700000/scsi@2/sd@2,0:d,raw	
+	sudo chmod g+w,g+r /devices/pci@1f,700000/scsi@2/sd@3,0:d,raw	
+	sudo chmod g+w,g+r /devices/pseudo/rdnexus@3/rdriver@5,0:a,raw
+	sudo chmod g+w,g+r /devices/pseudo/rdnexus@3/rdriver@5,4:a,raw
+
+
+x. Bring up informix on helix
+
+   as informix on helix
+
+   % oninit 
+
+
+x. Now add all the spaces.
+
+    Add the spaces in the order you want them to show up in ISA.
+
+  onspaces -c -d llogdbs1        -p /private/apps/Informix/informix/dev/llogdbs1_c1     -o  1572864 -s  4194304
+  onspaces -c -d plogdbs1        -p /private/apps/Informix/informix/dev/plogdbs1_c1     -o  5767168 -s    65536
+  onspaces -c -d defaultdbs      -p /private/apps/Informix/informix/dev/defaultdbs_c1   -o  6881280 -s    32768
+
+  onspaces -c -d tbldbs1         -p /private/apps/Informix/informix/dev/tbldbs1_c1      -o        0 -s   524288
+  onspaces -c -d tbldbs2         -p /private/apps/Informix/informix/dev/tbldbs2_c1      -o   524288 -s   524288
+  onspaces -c -d tbldbs3         -p /private/apps/Informix/informix/dev/tbldbs3_c1      -o  1048576 -s   524288
+
+  onspaces -c -d idxdbs1         -p /private/apps/Informix/informix/dev/idxdbs1_c1      -o  6619136 -s   262144
+  onspaces -c -d idxdbs2         -p /private/apps/Informix/informix/dev/idxdbs2_c1      -o  5832704 -s   262144
+  onspaces -c -d idxdbs3         -p /private/apps/Informix/informix/dev/idxdbs3_c1      -o  6094848 -s   262144
+  onspaces -c -d idxdbs4         -p /private/apps/Informix/informix/dev/idxdbs4_c1      -o  6356992 -s   262144
+
+  onspaces -c -S smartbs1        -p /private/apps/Informix/informix/dev/smartbs1_c1     -o 10092544 -s  4194304 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+  onspaces -c -S smartbs2        -p /private/apps/Informix/informix/dev/smartbs2_c1     -o 14286848 -s  4194304 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+  onspaces -c -S smartbs3        -p /private/apps/Informix/informix/dev/smartbs3_c1     -o 18481152 -s  4194304 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+  onspaces -c -S smartbs4        -p /private/apps/Informix/informix/dev/smartbs4_c1     -o 22675456 -s  4194304 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+
+  onspaces -c -S smartdfltbs     -p /private/apps/Informix/informix/dev/smartdfltbs_c1  -o 26869760 -s   524288 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+
+  onspaces -c -d tempdbs1     -t -p /private/apps/Informix/informix/dev/tempdbs1_c1     -o        0 -s 2097152
+  onspaces -c -d tempdbs2     -t -p /private/apps/Informix/informix/dev/tempdbs2_c1     -o        0 -s 2097152
+  onspaces -c -d tempdbs3     -t -p /private/apps/Informix/informix/dev/tempdbs3_c1     -o        0 -s 2097152
+  onspaces -c -d tempdbs4     -t -p /private/apps/Informix/informix/dev/tempdbs4_c1     -o        0 -s 2097152
+  onspaces -c -d tempdbs5     -t -p /private/apps/Informix/informix/dev/tempdbs5_c1     -o        0 -s 2095102
+  onspaces -c -d tempdbs6     -t -p /private/apps/Informix/informix/dev/tempdbs6_c1     -o  6946816 -s 1048576
+  onspaces -c -d tempdbs7     -t -p /private/apps/Informix/informix/dev/tempdbs7_c1     -o  7995392 -s 1048576
+  onspaces -c -d tempdbs8     -t -p /private/apps/Informix/informix/dev/tempdbs8_c1     -o  9043968 -s 1048576
+  onspaces -c -S smarttempbs1 -t -p /private/apps/Informix/informix/dev/smarttempbs1_c1 -o        0 -s 2097152 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+
+add the extra later spaces
+
+ % onspaces -a idxdbs2         -p /private/apps/Informix/informix/dev/idxdbs2_c2 -o 31850496  -s 262144
+ % onspaces -a idxdbs3         -p /private/apps/Informix/informix/dev/idxdbs3_c2 -o 32112640  -s 262144
+ % onspaces -a idxdbs4         -p /private/apps/Informix/informix/dev/idxdbs4_c2 -o 32374784  -s 262144
+
+ % onspaces -a defaultdbs       -p /private/apps/Informix/informix/dev/defaultdbs_c2 -o 32636928  -s 32768
+
+x. run a level 0 archive 
+
+    % ontape -s -L 0
+
+x. restart informix
+
+    % onmode -k
+    % oninit
+
+x. Add new logical logs in llogdbs1 and drop 3 in root.
+
+    First, put server in quiescent mode:
+
+      onmode -u
+
+    llogdbs1 has been increased to 4 GB in size, which is big enough to hold
+    63 or 64 64 MB files.
+
+    Add 63.
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+      onparams -a -d llogdbs1
+
+
+x. do a level 0 backup to make them available
+
+     % ontape -s -L 0
+
+x. Drop the old log files.
+
+     % onparams -d -l 1
+     % onparams -d -l 3
+     % onmode -l
+     % ontape -s -L 0
+     % onparams -d -l 2
+     % ontape -s -L 0
+     % onmode -m
+
+    onstat -l should show just the 63 new logs.
+
+x. start ontape!!
+
+   % /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/dumpLogsContinuous.pl
+
+x. reload zfindb with the dump you made pre-move.
+
+x. ask Lauradel to rsync the filesystems back.
+
+   /research/zprod
+
+

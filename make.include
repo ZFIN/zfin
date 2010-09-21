@@ -131,7 +131,8 @@ COMMONS_BIN = ${TOP}/commons/bin
 LOADAPPPAGE = ${COMMONS_BIN}/loadapppage.pl
 UNLOADAPPPAGE = ${COMMONS_BIN}/unloadapppage.pl
 
-MAKESPECIFIC = ${COMMONS_BIN}/makespecific.pl
+#MAKESPECIFIC = ${COMMONS_BIN}/makespecific.pl
+MAKESPECIFIC = ${COMMONS_BIN}/make-specific.r
 #MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)

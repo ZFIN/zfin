@@ -1,0 +1,2313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Coding Standards and Best Practices, ZFIN Documentation:<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</title>
+
+<link rel=stylesheet href="doc.css" type="text/css">
+
+</head>
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+</td></tr></table>
+
+<div class="zdoc">
+
+<center>
+<h1>ZFIN Documentation:<br>Coding Standards and Best Practices
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br></h1>
+
+<p>$Id: standards.html,v 1.16 2005-10-18 21:14:50 staylor Exp $
+
+<p><a href="index.html">Back to Table of Contents</a>
+<br><a href="impl.html">Previous Section</a>
+&nbsp;&nbsp;
+<a href="admin.html">Next Section</a>
+
+</center>
+
+<p>
+<center>
+<br>
+<b>"What do you mean we don't have standards?  We have 2 or 3 standards 
+for everything!"</b>
+</center>
+
+
+<!-- =================================================================== -->
+<!-- ========= Philosophy ============================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Philosophy">Philosophy</a></h1>
+
+<p>The goals of these standards are to
+
+<ul>
+  <li>Make the ZFIN web site more reliable.</li>
+  <li>Make ZFIN staff more responsive and more productive.</li>
+</ul>
+
+<p>The hard part about standards is getting the right amount of them.  Not
+enough and we won't meet our goals.  Too many
+and we will spend all our time looking up standards, and arguing about them.  
+
+<p>ZFIN strives to have just enough standards to meet 
+our goals.  We strive to make them easy to follow, which means we put
+a fair amount of time into making this document as readable as possible.
+We attempt to express standards (and 
+<a href="#Non Standards">non-standards</a> in concise statements that
+are <span class="std">are shown in bold and in a distinct green color</span>.
+
+<p>The emphasis of this document is on 
+<a href="#Naming Conventions">naming conventions</a>,
+<a href="#Modularity and Defined Interfaces">modularity and well defined 
+interfaces</a>, and <a href="#Comments">comments</a>.
+
+<p>These standards do not emphasize on the syntax or particular statements
+These standards generally do not specify the <b>one true</b> way to do something
+in the code.
+
+
+<!-- ========= Non Standards============================================ -->
+
+<h2 class="zdoc"><a name="Non Standards">Non Standards</a></h2>
+
+<p>In addition to describing coding standards that ZFIN has, this document
+also includes some discussion of standards that we have agreed <i>not</i> 
+to have.  In particular, if we spent time discussing a possible standard and 
+decided that either the issue was too contentious or that it didn't matter
+then this document will explicitly state that we have no standard in that
+area.
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Updating ZFIN Standards ================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Updating ZFIN Standards">Updating ZFIN Standards</a></h1>
+
+<p>This is a living document.  New standards are needed as we gain more 
+experience or adopt new technology.  Some existing standards will need to 
+be tweaked or discarded.
+
+<p>New and revised standards start life in this file as 
+<i>preliminary standards</i>.  Preliminary standards are subject to a one
+month feedback and revision process.  At the end of that month, the 
+preliminary standard gets promoted to a standard.
+
+<p>Preliminary standards are displayed with a 
+<span class="std_prelim">special background color</span> and are preceded
+with this comment:
+
+<div class="std_prelim">
+<p>This section is a preliminary (or revised) standard posted on YYYY/MM/DD.
+It is open to comments and revision until YYYY/MM+1/DD, when it will lose 
+its preliminary status.
+</div>
+
+
+
+<p>New and revised standards are added to this file 
+<p>Once these standards have settled, I propose a quarterly review of them 
+to figure out what needs to be changed, and then change it.  Discussion
+can be tracked in <a href="intro.html#FogBUGZ">FogBUGZ</a>.
+
+
+<!-- =================================================================== -->
+<!-- ========= Enforcement ============================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Enforcement">Enforcement</a></h1>
+
+<p>Enforcement of standards, like standards themselves, is a matter of 
+striking a balance.  We want just barely enough enforcement to ensure that
+standards are followed.  
+
+<p>ZFIN considered two extremes of enforcement:
+
+<ul>
+  <li><b>Self Enforcement</b>:  That is, we rely on people's self-discipline.
+    We think this would work in the short term, but that over time, people
+    would drift away from it.
+  </li>
+  <li><b>Formal Code Inspections</b>:  This approach would produce high quality
+    code that conforms to standards.  However, it would also take an enormous
+    amount of time.  We would have high quality code, we just would not have
+    much of it.
+  </li>
+</ul>
+
+<p>We settled on an approach that is one step up from self-enforcement.
+
+
+<!-- ========= Code Reviews ============================================ -->
+
+<h2 class="zdoc"><a name="Code Reviews">Code Reviews</a></h2>
+
+<p>ZFIN adopted these standards for code reviews:
+
+<ol> 
+  <li><div class="std"><i>Trivial</i> revisions do not need to be reviewed.
+    A change is <i>non-trivial</i> if any of these conditions hold:
+    <ol>
+      <li>It affects the <a href="#Modularity and Defined Interfaces">defined
+        interface</a> for the module/object/page/program.
+      </li>
+      <li>It involves anything but simple logic changes or formatting changes.
+      </li>
+    </ol>
+    If you are in doubt as to whether or not your code needs reviewing, then 
+    have it reviewed.</div>
+  </li>
+  <li><span class="std">Before a set of revisions can be committed, it 
+    must be spot checked and approved by 
+    one or more other ZFIN staff.</span>
+  </li>
+  <li><span class="std">If the person reviewing the change does not have 
+    expertise in all 
+    areas of the revision, then additional people need to be called in to
+    review those areas.</span>
+  </li>
+  <li><span class="std">The name(s) of the reviewers will be included with 
+    the CVS message
+    when the changes are <a href="#Committing Files">committed</a>.</span>
+  </li>
+  <li><span class="std">The reviewer will specify at the time of the review
+    whether or not they want to review the code again after any changes have
+    been made.</span>
+  </li>
+</ol>
+
+
+<p>When sending changes to other developers for review it is useful to 
+include the following information.
+
+<p>For the set of files being changed:
+<ul>
+  <li>A high level description of the changes.</li>
+  <li><a href="intro.html#FogBUGZ">FogBUGZ case</a>, if there is one.</li>
+  <li>Where the changed files actually reside on disk.</li>
+  <li>What web site the changes are in.</li>
+</ul>
+
+<p>For each file being changed:
+<ul>
+  <li>CVS diffs of the files, unless the change is too big to make the
+    diff useful.
+  </li>
+  <li>Proposed <a href="#Committing Files">CVS log entry</a> for each file.</li>
+  <li>If the change is potentially far-reaching, or if it is hard to test,
+    then include a description of how the change was tested and/or what some
+    good test cases are.
+  </li>
+</ul>
+
+<p>For example,
+<div class="shell">
+Can you review the changes described below?  I added knowledge of the
+all_name_ends table to a linkage page.
+
+Case:   461
+Source: /research/zusers/clements/Zfin/ZFIN_WWW
+Site:   albino.zfin.org
+
+
+Index: ZFIN_WWW/home/ZFIN/APP_PAGES/linkage/add_linkage_members.apg
+===================================================================
+retrieving revision 1.15
+diff -r1.15 add_linkage_members.apg
+1c1,3
+&lt; &lt;!-- this app page is used to add members to a new linkage group. The page supports, search/selection of the markers/mutants.
+---
+&gt; &lt;?MICOMMENT&gt;
+&gt;   *** this app page is used to add members to a new linkage group.
+&gt;   *** The page supports, search/selection of the markers/mutants.
+7c9
+&lt; --&gt;
+---
+&gt; &lt;?/MICOMMENT&gt;
+144c146
+&lt;     Specify members of linkage: &lt;?MIVAR&gt;
+---
+&gt;     Specify members of linkage:
+162d163
+&lt;     &lt;?/MIVAR&gt;
+170,176c171,180
+&lt;        &lt;?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkrtype_type_display,mrkr_abbrev
+&lt;          from marker a, all_map_names b, marker_types c
+&lt;            where a.mrkr_type='$mtype'
+&lt;              and a.mrkr_zdb_id = b.allmapnm_zdb_id
+&lt;              and b.allmapnm_name_lower like '%$(LOWER,$member)%'
+&lt;              and a.mrkr_type = c.marker_type
+&lt;              order by a.mrkr_abbrev;"&gt;
+---
+&gt;        &lt;?MISQL SQL="
+&gt;            select distinct mrkr_zdb_id, mrkr_name, mrkrtype_type_display,
+&gt;                   mrkr_abbrev
+&gt;            from marker, all_map_names, all_name_ends, marker_types
+&gt;            where mrkr_type = '$mtype'
+&gt;              and mrkr_zdb_id = allmapnm_zdb_id
+&gt;                and allmapnm_serial_id = allnmend_allmapnm_serial_id
+&gt;              and allnmend_name_end_lower like '$(LOWER,$member)%'
+&gt;              and mrkr_type = marker_type
+&gt;            order by mrkr_abbrev;"&gt;
+216,217c220,221
+&lt;        &lt;?MIVAR COND="$(=,$MI_ROWCOUNT,0)"&gt;No mutant matches.&lt;?/MIVAR&gt;
+&lt;        &lt;p&gt;
+---
+&gt;          &lt;?MIVAR COND="$(=,$MI_ROWCOUNT,0)"&gt;No mutant matches.&lt;?/MIVAR&gt;
+&gt;          &lt;p&gt;
+219,220c223,224
+&lt;   &lt;?/MIBLOCK&gt;
+&lt;
+---
+&gt;        &lt;?/MIBLOCK&gt;
+&gt;     &lt;?/MIVAR&gt;
+
+CVS Entry:
+
+Made several changes:
+ o Converted query that did like '%name%' processing on all_map_names to
+   do like 'name%' processing on all_name_ends.  The new query will be faster
+   than the old.
+ o Converted header comments from <a href="#MICOMMENT versus HTML Comments">HTML to MICOMMENTs</a>.
+ o Fixed an unterminated MIVAR reported by <a href="impl.html#weblint">Informix weblint</a>.
+</div>
+
+
+
+<!-- ========= Deadlines versus Code Reviews =========================== -->
+
+<h2 class="zdoc">
+<a name="Deadlines versus Code Reviews">Deadlines versus Code Reviews</a>
+</h2>
+
+<p>Whenver possible, you should allocate sufficient time in your schedule for
+code reviews and any resulting rework.  This is often not hard at ZFIN since
+many projects do not have hard deadlines.  However, many projects do
+have hard deadlines that cannot be missed due to interaction with other 
+organizations or because of upcoming events such as conferences or 
+publications.
+
+<p>In such cases, development work can go right up to the dealine, not
+leaving enough time to do a code review before the code needs to go in.
+What should we do in these cases?
+
+<div class="std">
+<ol>
+  <li><p>First, try to avoid this situation whenever possible.  Really.</li>
+  <li><p>If a deadline looms and the changes need to go in, then 
+      <a href="#Committing Files">commit them</a> without code review, stating
+      in the CVS message that the changes were not code reviewed due to 
+      deadlines.
+  </li>
+  <li><p>Get the changes code reviewed within a week of committing them.</li>
+</ol>
+</div>
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= General Standards and Best Practices ==================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="General Standards and Best Practices">
+                          General Standards and Best Practices</a></h1>
+
+<p>This section discusses coding standards and best practices that are 
+independent of the particular language or technology being used.  Often
+the standards given in this section are expanded on in some or all of
+the language specific sections.  When working on code, both the general 
+and the language specific standards must be used.
+
+<p>There are three main areas of emphasis in this document, and several minor
+areas.  The three main areas have both general standards and language specific
+standards.  The three major areas are:
+
+<ol>
+  <li><a href="#Naming Conventions">Naming Conventions</a></li>
+  <li><a href="#Modularity and Defined Interfaces">Modularity and Defined 
+    Interfaces</a>
+  </li>
+  <li>Readability.  This includes <a href="#Comments">Comments</a> and
+    <a href="#Indenting and Whitespace">Indenting</a>.
+  </li>
+</ol>
+
+
+<!-- ========= Naming Conventions ====================================== -->
+
+<h2 class="zdoc"><a name="Naming Conventions">Naming Conventions</a></h2>
+  
+<p>ZFIN cares a great deal about naming conventions for almost everything 
+you can think of:
+<ul>
+  <li>Variable names.</li>
+  <li>Routine names.</li>
+  <li>File and directory names, and directory hierarchies.</li>
+  <li>Database table, column, and stored procedure names.</li>
+</ul>
+
+<p>Each language has its own set of naming conventions.  See:
+<ul>
+  <li><a href="#App Page Naming Conventions">App Page Naming Conventions</a></li>
+  <li><a href="db.html#Naming Conventions">Database Naming Conventions</a></li>
+  <li><a href="#SPL Naming Conventions">SPL Naming Conventions</a></li>
+</ul>
+
+
+<h3 class="zdoc"><a name="Variable Scope">Variable Scope</a></h3>
+
+<p>In languages where global variables are the only option 
+(<a href="#Web Datablade App Pages">Web Datablade</a>), or where the
+default scope for variables is global (<a href="#PERL">PERL</a>), then 
+our naming conventions include standards that help us tell where 
+any variable came from.
+
+<p>See also:
+<ul>
+  <li><a href="#App Page Variable Names">App Page Variable Names</a></li>
+</ul>
+
+
+<!-- ========= Modularity and Defined Interfaces ======================= -->
+
+<h2 class="zdoc"><a name="Modularity and Defined Interfaces">
+             Modularity and Defined Interfaces</a></h2>
+
+<p>ZFIN code needs to be modular and it needs to have well defined 
+interfaces.  Our goals in this area include:
+
+<ul>
+  <li>Code reuse.  It should be easy to find what has already been done.</li>
+  <li>When using code, you don't have to read the entire 
+    program/subroutine/app page, to use it.
+  </li>
+  <li>When modifying code, you don't have to read the entire
+    program/subroutine/app page, to figure out how it interacts with
+    other components.
+  </li>
+</ul>
+
+<p>A well defined interface will specify these things:
+
+<ol>
+  <li>A brief description of what the module does.</li>
+  <li>A list of inputs</li>
+  <li>A list of outputs</li>
+  <li>A list of side effects</li>
+</ol>
+
+<p>How modularity is implemented varies from language to language.  See:
+
+<ul>
+  <li><a href="#Defined Interface Comments">Defined Interface Comments</a></li>
+  <li><a href="#SPL Modularity and Defined Interfaces">SPL
+      Modularity and Defined Interfaces</a>
+  </li>
+  <li><a href="#App Page Modularity and Defined Interfaces">App Page 
+      Modularity and Defined Interfaces</a>
+  </li>
+</ul>
+
+
+
+<!-- ========= Comments ================================================ -->
+
+<h2 class="zdoc"><a name="Comments">Comments</a></h2>
+
+<p>Comments are a key part of the ZFIN standards.  In addition to just 
+making things more readable, they are key to 
+<a href="#Defined Interface Comments">well defined interfaces</a>.
+
+<p>See also:
+<ul>
+  <li><a href="#HTML Comments">HTML Comments</a></li>
+  <li><a href="#SQL Comments">SQL Comments</a></li>
+  <li><a href="#App Page Comments">App Page Comments</a></li>
+</ul>
+
+
+
+<h3 class="zdoc"><a name="Defined Interface Comments">Defined Interface Comments</a></h3>
+
+<p><span class="std">Comments are required at the top of each defined interface.</span>
+This specifies
+what the file/module/program/routine/etc does, expects as input, produces
+as output, and what side effects it has.  Each language has a different
+format for defining interfaces.  See:
+
+<ul>
+  <li><a href="#SPL Defined Interfaces">SPL Defined Interfaces</a></li>
+  <li><a href="#App Page Defined Interfaces">App Page Defined Interfaces</a></li>
+</ul>
+
+
+<h3 class="zdoc"><a name="Closing Comments">Closing Comments</a></h3>
+    
+<p><a href="#Indenting and Whitespace">Indenting</a> makes a file infinitely 
+more readable.  However, good indenting complements the practice of
+putting comments on closing tags/statements that are a long way
+from their matching opening tag or statement.
+<span class="std">Comments are required on some closing tags / statements that are 
+more than 50 lines away from the matching opening tag or statement.</span>  
+The practice of using ending comments helps enormously on blocks of code that 
+span a page or more.
+
+<p>See also:
+<ul>
+  <li><a href="#App Page Closing Comments">App Page Closing Comments</a></li>
+</ul>
+
+
+<h3 class="zdoc"><a name="Inline Comments">Inline Comments</a></h3>
+    
+<p><span class="std">Comments are recommended anywhere where it is not obvious from 
+the code what is going on.</span>  
+If it took you some time to figure out what is going on
+then you should take the time to record your hard-earned knowledge in a 
+comment.  
+
+<p>Inline comments are love notes to your future self.  Feel the love.
+
+<p>See also:
+<ul>
+  <li><a href="#HTML Comments">HTML Comments</a></li>
+  <li><a href="#App Page Comments">App Page Comments</a></li>
+</ul>
+
+
+<h4 class="zdoc"><a name="Comment Flags">Comment Flags</a></h4>
+
+<p>There are several types of inline comments that deserve particular 
+attention and that are to be labeled with specific "flags" in the comment.
+This will allow us to search for this particular type of flag.  The flags are
+
+
+<table class="definition">
+  <caption>Comment Flags</caption>
+  <tr>
+    <td class="term">:TODO:</td>
+    <td>Put this in the code when you have more to do here and don't ant to 
+      forget to do it.  You should never commit a file that a :TODO: comment
+      flag in it.
+    </td>
+  </tr>
+  <tr>
+    <td class="term">:KLUDGE:</td>
+    <td>Use when something isn't pretty, but it works.  Flags things that
+      could be improved on the next thorough examination of the code.
+    </td>
+  </tr>
+  <tr>
+    <td class="term">:PRODUCT_BUG:</td>
+    <td>Use this when code is working around a bug in a product.  When the
+      next release of the product comes out this will allow us to test if
+      the problem has gone away.
+    </td>
+  </tr>
+</table>
+  
+
+
+<h3 class="zdoc"><a name="Section Separator Comments">Section Separator Comments</a></h3>
+    
+<p>Comments are also useful as section separators in large files.  
+<span class="std">Section separator comments are large enough to pop out at you when 
+scrolling through a file in an editor or looking at a printed page.</span>  
+Each language has its own standard section separator comment format.  See:
+
+<ul>
+  <li><a href="#App Page Section Separator Comments">App Page Section Separator Comments</a></li>
+</ul>
+
+
+
+<!-- ========= Indenting and Whitespace ================================ -->
+
+<h2 class="zdoc"><a name="Indenting and Whitespace">Indenting and Whitespace</a></h2>
+
+<p><span class="std">Our standard on indenting is that you must indent your code.
+Code that is not indented or is indented in a misleading way will 
+<a href="#Enforcement">not be accepted</a>.</span>
+However, we usually don't have specific standards telling you exactly how 
+you should indent your code.  
+
+<p>See also:
+<ul>
+  <li><a href="#SQL Indenting">SQL Indenting</a></li>
+</ul>
+
+
+<h3 class="zdoc"><a name="Reindenting">Reindenting</a></h3>
+    
+<p>Do you have to reindent all the code whenever you add an extra condition,
+for example, around a large part of a file?  No, 
+<span class="std">you only need to reindent a file when it becomes hard to read.</span>
+In order to avoid the need for constantly reindenting a file, 
+<span class="std">we recommend that your initial indent be at least 4 characters wide.</span>
+This gives you room to add at least one condition
+(and up to 3 if you squint) before you need to reindent a large portion of 
+the file.
+
+<p>Also, <span class="std">large scale indenting changes to a file should be done
+as their own revision.</span>  That is, whenever possible, we should not 
+mix logic changes and big indenting changes.  They should be done as two 
+separate revisions.
+
+
+
+<h3 class="zdoc"><a name="Whitespace">Whitespace</a></h3>
+
+<span class="std">ZFIN has no standard on blank lines.</span>  
+Just make your code readable. 
+<span class="std">Using single spaces to separate multiple items on a single line
+in encourages, where the language supports it.</span>
+
+
+
+<h4 class="zdoc"><a name="Tabs versus Spaces">Tabs versus Spaces</a></h4>
+
+<p><span class="std">Configure your editor to use spaces instead of tab characters.</span>
+There is no standard definition across tools on what a tab means, even on Unix.
+
+<p>Once we figure out how to do this in each editor in use at ZFIN, add a 
+description here on how to do this.
+
+
+
+<h4 class="zdoc"><a name="Maximum Line Length">Maximum Line Length</a></h4>
+
+<p>Good <a href="#Indenting and Whitespace">indenting practice</a> and
+good <a href="#Naming Conventions">naming conventions</a> are at odds with
+maximum line length standards.
+Good indenting and readable variable names leads to long lines.  
+There are also some situations, particularly in <a href="#HTML">HTML</a> and 
+<a href="#JavaScript">JavaScript</a>, where it is impossible to have short
+lines.
+
+<p><span class="std">ZFIN does not have a maximum line length.  However,
+short lines are favored over long lines whenever using short lines does not
+compromise readability.
+If you can easily fit things in 80 characters or less, please do so.</span>
+
+
+
+
+<!-- ========= Source Code Control and Committing Files ================ -->
+
+<h2 class="zdoc"><a name="Source Code Control and Committing Files">
+             Source Code Control and Committing Files</a></h2>
+
+<p><span class="std">Any file that is part of the web site, that is used to produce the 
+web site, or that is used to update the web site must be under 
+<a href="impl.html#Source Code Control and CVS">CVS</a>.</span>
+
+<p>This includes things like FileMaker files, and load scripts.  Historical 
+load scripts that are not likely to be used again do not need to be loaded into
+CVS.
+
+
+<h3 class="zdoc"><a name="Committing Files">Committing Files</a></h3>
+
+<p><span class="std">Files cannot be 
+<a href="impl.html#CVS commit">committed</a> to CVS until
+the changes in them have been inspected by someone else.</span>  See
+<a href="#Enforcement">Enforcement</a> for details.
+
+<div class="std">
+<p>When committing a file 3 things must be provided.
+
+<ol>
+  <li>The <a href="intro.html#FogBUGZ">FogBUGZ</a> case, if one exists 
+      for this revision.
+  </li>
+  <li>A verbal description of what changed in the file and why.</li>
+  <li>Who <a href="#Enforcement">inspected</a> this set of revisions.</li>
+</ol>
+</div>
+
+
+
+<!-- ========= Debugging Support ======================================= -->
+
+<h2 class="zdoc"><a name="Debugging Support">Debugging Support</a></h2>
+
+<p>Multi-tier applications like dynamic web sites are notoriously difficult to 
+debug.  Does the problem lie in the browser, the web server, HTML code, 
+file permissions, app page tags, SQL syntax, database permissions, or in the
+database server?  Often it is darn hard to tell.
+
+<p><span class="std">Wherever possible, a standard approach should be taken to
+debugging in a given language.</span>  This means that
+
+<ol>
+  <li>There should be a standard way to turn debugging on and off.</li>
+  <li>There should be a standard way to support debugging in each 
+    program/module/page.  That is, if there is always some useful
+    information to know when using a particular language, then that 
+    information should be displayed when debugging is turned on.
+  </li>
+</ol>
+
+<p>See also:
+<ul>
+  <li><a href="#SPL Debugging Support">SPL Debugging Support</a></li>
+  <li><a href="#App Page Debugging Support">App Page Debugging Support</a></li>
+</ul>
+
+
+
+<!-- ========= Overriding Standards ==================================== -->
+
+<h2 class="zdoc"><a name="Overriding Standards">Overriding Standards</a></h2>
+
+<p>We have standards because they improve the quality of the code in the
+vast majority of cases in which they can be applied.  If this weren't 
+true of a standard then that standard should quickly become a 
+<a href="#Non Standards">non-standard</a>.
+
+<p>However, even the best standards aren't applicable 100% of the time.
+<span class="std">If you find yourself in a situation where applying a standard lowers the 
+quality of the code then you are free to ignore the standard as long as:</span>
+
+<div class="std">
+<ol>
+  <li>You document why the standard was ignored, and</li>
+  <li>You can convince your <a href="#Enforcement">reviewer(s)</a> that
+    using the standard would have lowered the quality of the code.
+  </li>
+</ol>
+</div>
+
+
+<!-- ========= Applying Standards to Old Code ========================== -->
+
+<h2 class="zdoc"><a name="Applying Standards to Old Code">Applying Standards to Old Code</a></h2>
+
+<p>Newly written code should always conform to the ZFIN standards.
+But what about old code that was written before we had standards?  
+
+<p>Here are some guidelines
+<div class="std">
+<ol>
+  <li>Any new code should conform to standards, no matter how small the 
+    code.
+  </li>
+  <li>Any new variables should conform to ZFIN 
+    <a href="#Naming Conventions">Naming Conventions</a>.
+  </li>
+  <li>If you spent the time to figure out any of a previously undefined 
+    interface, then create a skeleton 
+    <a href="#Modularity and Defined Interfaces">defined interface</a>
+    for the code.  Label anything you don't know with "Undocumented.".
+  </li>
+  <li>If you are rewriting a significant portion of the code then
+    bite the bullet and rewrite the surrounding code to conform to 
+    standards as well.
+  </li>
+  <li>If it easy to apply a standard to old code, and the payoff is high,
+    then fix the old code.  For example, in 
+    <a href="#Web Datablade App Pages">app pages</a> it is relatively easy to 
+    replace <a href="#App Page $1, $2, ... Variables">$1, $2, ... variables</a>
+    with named variables.
+  </li>
+</ol>
+</div>
+
+
+
+<!-- =================================================================== -->
+<!-- ========= HTML ==================================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="HTML">HTML</a></h1>
+
+<p>This section describes standards and best practices for both HTML only
+pages (static pages) and for HTML code that is embedded in other languages,
+such as <a href="#Web Datablade App Pages">app pages</a>.  There may also
+be additional language specific standards for HTML that is embedded in other
+languages.
+
+
+
+<!-- ========= Style Sheets ============================================ -->
+
+<h2 class="zdoc"><a name="Style Sheets">Style Sheets</a></h2>
+
+<p><span class="std">Style settings (font, font size, colors, etc.) should
+be moved from HTML files to the single global ZFIN Cascading Style Sheet.
+All HTML should use styles from that global style sheet.  There will be
+no local style settings, either in other CSS files, or directly in the
+HTML file.</span>  
+
+
+<!-- ========= HTML Capitalization ===================================== -->
+
+<h2 class="zdoc"><a name="HTML Capitalization">HTML Capitalization</a></h2>
+
+<p><span class="std">HTML tags should be all lower case.</span>  We could have 
+picked all upper case as well.  We picked all lower case because that is
+what XHTML uses.
+
+
+
+<!-- ========= HTML Closing Tags ======================================= -->
+
+<h2 class="zdoc"><a name="HTML Closing Tags">HTML Closing Tags</a></h2>
+
+<p>Not all opening HTML tags require matching closing tags.  Here are ZFIN's
+guidelines for when we should provide closing tags that HTML does not strictly
+require.
+
+<ul>
+  <li><span class="std">Table related tags should have closing tags.</span>  
+    Some
+    browsers have trouble when you don't specify closing &lt;/tr&gt; and 
+    &lt;/td&gt; tags, particularly when nesting tables.
+  </li>
+  <li><span class="std">Basic text processing tags such as &lt;p&gt; and 
+    &lt;br&gt; do not require closing tags.</span>
+  </li>
+  <li><span class="std">List item tags (&lt;li&gt;) require closing tags.</span></li>
+  <li><span class="std">Generally, any tag that increases the indent level of the text
+    should have a closing tag.</span>
+  </li>
+</ul>
+
+
+<!-- ========= HTML Attribute Values =================================== -->
+
+<h2 class="zdoc"><a name="HTML Attribute Values">HTML Attribute Values</a></h2>
+
+<p><span class="std">HTML attribute values should always be placed in 
+quotes.</span>  The HTML standard requires this.
+
+
+<!-- ========= Italicization =========================================== -->
+
+<h2 class="zdoc"><a name="Italics">Italics</a></h2>
+
+<div class="std">
+<p>The following should be <i>italicized</i> whenever they are
+displayed:
+
+<ul>
+  <li>allele names
+  <li>locus abbreviations
+  <li>locus names
+  <li>gene abbreviations
+  <li>gene names
+</ul>
+</div>
+
+<p>Note that genes are the only types of markers
+that are italicized.  All other marker types
+are shown as plain text.
+
+<!-- ========= Non-ASCII Characters in HTML ============================ -->
+
+<h2 class="zdoc"><a name="Non-ASCII Characters in HTML">Non-ASCII Characters in HTML</a></h2>
+
+<p>The standard ASCII character set is 7 bits long.  It includes every
+character that is needed in most of our pages.  However, it does not include
+non-English characters such as "&uuml;" or "&agrave;", or  
+non-alphanumeric characters such as the copyright sign, "&copy;".
+
+<p>Including non-ASCII characters directly in HTML pages can be done, but it is
+problematic.  There is no guarantee that editors, and more importantly browsers,
+will render the characters correctly.  A better approach is to replace all 
+non-ASCII characters with <i>HTML Character Entities</i>.
+
+<p><span class="std">All non-ASCII characters in HTML should be converted to 
+HTML Character Entities before being checked into CVS.</span>
+
+
+<h3 class="zdoc"><a name="HTML Character Entities">HTML Character Entities</a></h3>
+
+<p>HTML Character Entities serve (at least) two purposes in HTML:
+<ul>
+  <li>To represent non-ASCII characters.</li>
+  <li>To escape characters such as "&gt;" that have special meaning in HTML.
+  </li>
+</ul>
+
+<p>HTML Character Entities have the format:
+<pre class="zdoc">
+  &amp;mnemonic;
+</pre>
+<kbd>mnemonic</kbd> is a 2 to 8 character mnemonic code for the character.  
+Complete lists of HTML Character Entities are available online at:
+<br><br>
+<table class="zdoc">
+  <tr>
+    <td>The official specification:
+    <td><a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a></td>
+  <tr>
+    <td>Nicer interface:</td>
+    <td><a href="http://www.alanwood.net/demos/ent4_frame.html">http://www.alanwood.net/demos/ent4_frame.html</a></td>
+  </tr>
+</table>
+
+<p>Some of the more popular HTML character entities are:
+<br><br>
+<table class="zdoc">
+  <tr>
+    <th>Character</th>
+    <th>HTML Character Entity</th>
+  </tr>
+  <tr>
+    <td>&lt;</td>
+    <td>&amp;lt;</td>
+  </tr>
+  <tr>
+    <td>&gt;</td>
+    <td>&amp;gt;</td>
+  </tr>
+  <tr>
+    <td>&amp;</td>
+    <td>&amp;amp;</td>
+  </tr>
+  <tr>
+    <td>&uuml;</td>
+    <td>&amp;uuml;</td>
+  </tr>
+</table>
+
+
+
+
+
+<!-- ========= HTML Comments =========================================== -->
+
+<h2 class="zdoc"><a name="HTML Comments">HTML Comments</a></h2>
+
+<p>As stated earlier, comments are a developer's best friend.  However,
+for <b>static</b> HTML pages comments should be used sparingly:
+<ul>
+  <li><span class="std">A short comment at the top describing what the page shows.</span></li>
+  <li><span class="std">If the page is particularly long, then use 
+    <a href="#Section Separator Comments">section separator comments</a>.</span>
+  </li>
+  <li><span class="std">If some HTML is particularly obscure then include an explanation 
+    of why it is there, and/or why the obvious approach doesn't work.</span>
+  </li>
+  <li>Keep in mind that HTML comments go out to the world.  
+    <span class="std">Nothing sensitive should be in an HTML comment.</span>
+  </li>
+</ul>
+
+<p><span class="std">For <b>dynamic</b> pages, always use the comment syntax 
+for the dynamic language, rather than HTML comments.</span>  These comments 
+do not go out over the web.
+
+
+
+<!-- ========= Internal ZFIN Links ===================================== -->
+
+<h2 class="zdoc"><a name="Internal ZFIN Links">Internal ZFIN Links</a></h2>
+
+<p><span class="std">Links within the ZFIN web site should be relative rather
+than absolute.</span>  
+
+<p>There are several reasons for this:
+
+<ol>
+  <li><b>Development web sites</b>:  Relative links mean that when we are
+    in a development/test web site, we will stay in that development/test
+    web sites.  Absolute links would take us unexpectedly to the production
+    web site.
+  </li>
+  <li><b>Mirror web sites</b>:  The point of ZFIN's mirror sites is to provide
+    local access to as much of ZFIN as possible in distant parts of the worlds.
+    Absolute addresses defeat the purpose.
+  </li>
+  <li><b>Mixed protocols</b>:  When you specify an absolute URL, you also have
+    to specify the protocol, either HTTP or HTTPS.  If you used HTTPS to load 
+    a page then all of the included content (images, JavaScript, CSS files)
+    in that page must use HTTPS as well.  If any of the included content uses
+    HTTP then the user gets a security warning.  It is easier just to use
+    relative references, and let the browser default to the page's protocol.
+  </li>
+</ol>
+
+<p><span class="std">What is an absolute link?  </span>
+<p>Any link in an "a href" html tag that has "zfin.org" in it. 
+
+<p><span class="std">How do we make a non-absolute (relative) link?</span>
+
+<p>Well, here are some examples: To link to static pages:
+
+<ol>
+  <li><b>a href="/" : </b>(the zfin.org homepage)</li>
+  <li><b>a href="/zf_info/glossary.html" </b>: (the zfin.org glossary)</li>
+  <li><b>a href="/&lt!--|CGI_BIN_DIR_NAME|--&gt/ZFIN_jump?record=ZDB-PUB-011008-1" </b>: (a specific pub)</li>
+
+<p>To link to a specific web datablade, dynamically generated
+page, use one of our generic tags (all generic tags are found
+in the .tt file in [yer] database's /Commons/env directory).  An example:
+
+  <li><b>a href="&lt!--|WEBDRIVER_PATH_FROM_ROOT|--&gt;?MIval=aa-fishview.apg&OID="</b></li>
+</ol>
+
+<p>If you think of "/ZFIN_WWW" , "/" , and "yerdb.zfin.org" as synonymous, 
+finding the relative link to your file under your ZFIN_WWW directory 
+will be easier.
+
+<p>A relative link points to a aliased spot in ZFIN's file system.  An 
+absolute link also points to an aliased spot.  However, an absolute link
+specifies which copy of the ZFIN file system it is pointing to (namely, the
+zfin.org copy), while a relative link allows some other process (namely, the
+apache configuration file and the gmake/.tt files) 
+to direct it to the appropriate copy. 
+
+<!-- ========= JavaScript ============================================== -->
+
+<h2 class="zdoc"><a name="JavaScript">JavaScript</a></h2>
+
+<p>Kevin will write this section.
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Database ================================================ -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Database">Database</a></h1>
+
+<p>This section describes database standards relating to using the database.
+For logical database design standards, see the 
+<a href="db.html#Logical Design Conventions">Logical Design Conventions</a>
+section of the <a href="db.html">Database Design</a> document.  For physical
+design standards see the 
+<a href="admin.html#Physical Design">Physical Design</a> section of the 
+<a href="admin.html">Administration</a> document.
+
+
+
+<!-- ========= SQL ===================================================== -->
+
+<h2 class="zdoc"><a name="SQL">SQL</a></h2>
+
+<p>This section describes some less than obvious best practices for writing 
+SQL at ZFIN.  For standards that are specific to SPL routines see the
+<a href="#SPL">SPL</a> section.
+
+
+<h3 class="zdoc"><a name="SQL Comments">SQL Comments</a></h3>
+
+<p>Informix supports two types of comments in SQL:
+
+<ul>
+  <li><b>End of Line Comments:</b> These start with "--" and comment out
+    everything from there to the end of the line.
+  </li>
+  <li><b>Multiline Comments:</b> These start with start with "{" and
+    end with "}".  They comment out everything between them.
+  </li>
+</ul>
+
+<p>Multiline comments (braces) are a good way to comment out large chunks of
+SQL when debugging.  They could also be used to comment out 
+<a href="#SPL Defined Interfaces">defined interface comments in SPL routines</a>.
+
+<p>However, braces have one drawback:  SQL mode in emacs does not recognize 
+braces as SQL comments and does not display comments in braces as comments.
+Emacs displays them as SQL code, which means that highlighting and colors in
+multiline comments are displayed more or less randomly.  Because of this,
+<span class="std">ZFIN recommends that multiline SQL comments use dashes on
+each line, rather than braces to enclose the whole comment.</span>
+
+
+
+<h3 class="zdoc"><a name="SQL Indenting">SQL Indenting</a></h3>
+
+<p><span class="std">Each SQL keyword should start a new line.</span>
+This SQL statement needs to be rewritten:
+<div class="sql">
+  select prfx_a, prfx_b from some_table where prfx_c &gt; 0 and prfx_d is not null;
+</div>
+<p>Here is one possibility:
+<div class="sql">
+  select prfx_a, prfx_b 
+    from some_table
+    where prfx_c &gt; 0 
+      and prfx_d is not null;
+</div>
+
+
+<h3 class="zdoc"><a name="SQL Capitalization">SQL Capitalization</a></h3>
+
+<p><span class="std">Table and column names should be in all lower case.
+ZFIN has no standard for capitalizing SQL keywords.</span>
+
+
+<h3 class="zdoc"><a name="Join Syntax">Join Syntax</a></h3>
+
+<p><span class="std">ZFIN does not have a standard join syntax.</span>
+You can use either the ANSI join syntax where join conditions are 
+specified in the FROM clause or the older syntax where the join conditions
+are in the WHERE clause.
+
+<p>Examples
+
+
+<h3 class="zdoc"><a name="SELECT DISTINCT">SELECT DISTINCT</a></h3>
+
+<p>Putting a distinct clause in a select statement causes the select to
+get rid of any duplicate rows before returning the results.  It does this
+by performing a sort on the result set, a fairly expensive operation.
+
+<p><span class="std">Unless you have a reason to use distinct clause in
+a select statement, don't use one.  Use a distinct clause only if there
+is the potential for duplicates in the result set.</span>  This requires
+some additional work on the programmer.  You need to examine the columns
+and tables in the query to determine if duplicates are possible.
+
+
+
+<h3 class="zdoc"><a name="INSERT">INSERT</a></h3>
+
+<p><span class="std">When inserting a list of values into a table, always 
+enumerate the columns in the insert statement.</span>  This makes it easier to
+keep insert code up to date with table changes.
+
+<p>Example
+
+<h3 class="zdoc"><a name="Column Names versus Column Numbers">Column Names versus Column Numbers</a></h3>
+
+<p><span class="std">Whenever possible, use column names rather than column 
+numbers in order by and group by clauses.</span>  
+If someone adds or drops columns from a select list then an order by or 
+group by clause  using column names will continue to
+work as expected.  Dropping or adding columns in the select list in a query
+that uses column numbers may result in a query that 
+continues to run, just not the way it was supposed to.
+
+<p>For example, <b>don't do this</b>:
+
+<div class="sql">
+  select mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order
+    from marker
+    order by 4;
+</div>
+<p>The above query would quietly break if I added mrkr_zdb_id to
+the front of the select list.  
+<b>Instead, use the column name:</b>
+<div class="sql">
+  select mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order
+    from marker
+    order by mrkr_abbrev_order;
+</div>
+
+<h3 class="zdoc"><a name="Subqueries">Subqueries</a></h3>
+
+<p>Subqueries can greatly improve the readability of certain queries, and
+subqueries are the only way to ask some questions.  Use subqueries wherever
+they are appropriate.
+
+<h4 class="zdoc"><a name="IN versus EXISTS">IN versus EXISTS</a></h4>
+
+
+<p><span class="std">When writing subqueries use "exists/not exists" instead
+of "in/not in", whenever possible.</span>  There are two reasons for this:
+
+<ol>
+  <li><p>It makes it easier for the optimizer.  "In/not in" queries can take 
+    an order of magnitude longer to run in certain cases.  (See below for why.)
+    In general, when writing
+    complicated queries, try and make it easier for the optimizer to figure out
+    what is really being asked
+  </li>
+  <li><p>"not in" subqueries are not logically equivalent to "not exists"
+    subqueries when the list of values returned by the subquery 
+    includes NULLs.  If any value in the list returned
+    is a NULL then the whole subquery condition will evaluate to false. 
+    (See below for why.)  I can't think of
+    a situation when this is the behavior you would want.  Avoid this by always
+    using not exists subqueries instead.
+  </li>
+</ol>
+
+<p>For example, this query:
+<div class="sql">
+select xpat_zdb_id
+  from expression_pattern
+  where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
+    and (   xpat_zdb_id in ( select xpatfimg_xpat_zdb_id
+                               from expression_pattern_image )
+         or xpat_zdb_id in ( select xpatstg_xpat_zdb_id
+                               from expression_pattern_stage
+                               where xpatstg_comments is not null )
+         or xpat_zdb_id in ( select xpatanat_xpat_zdb_id
+                               from expression_pattern_anatomy )
+        )
+  order by xpat_zdb_id;
+</div>
+<p>should be rewritten as this query:
+<div class="sql">
+  select xpat_zdb_id
+    from expression_pattern
+    where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
+      and (   exists ( select 'x'
+                         from expression_pattern_image
+                         where xpat_zdb_id = xpatfimg_xpat_zdb_id )
+           or exists ( select 'x'
+                         from expression_pattern_stage
+                         where xpatstg_comments is not null
+                           and xpat_zdb_id = xpatstg_xpat_zdb_id )
+           or exists ( select 'x'
+                         from expression_pattern_anatomy
+                         where xpatanat_xpat_zdb_id = xpat_zdb_id )
+          )
+    order by xpat_zdb_id;
+</div>
+
+<p><b>Q:</b> Why can the "in" query be an order of magnitude slower than the
+"exists" query?
+
+<p><b>A:</b> If we could run the "in" query completely unoptimized, it would 
+do a linear scan of 1 to 3 of the inner tables 
+(expression_pattern_image, expression_pattern_stage, expression_pattern_anatomy)
+for each matching row in the outer table (expression_pattern).  This is
+in fact what happens in many cases.
+
+<p>The "exists" query more clearly states in the subqueries that we are looking
+for the existence of rows with a specific value.  In the "exists" query, it
+is much easier for the optimizer to figure out that it can use the indexes on 
+the inner tables, rather than linear scans.
+
+<p><b>Q:</b> Why do NULLs in "not in" subqueries always cause the condition to 
+be evaluated to false?
+
+<p><b>A:</b> In SQL any condition involving a NULL value is assigned the 
+value of "unknown", rather than true or false.  It maintains that unknown
+state until the last possible part of the query when the unknown is 
+promoted to false.
+In the case of "not in" queries, NULLs mean that the database can't tell if the
+value is in the list or not, because the values of the NULLs are unknown.  
+That unknown will eventually become a false.
+
+
+
+
+<h3 class="zdoc"><a name="SELECT INTO TEMP">SELECT INTO TEMP</a></h3>
+
+<p>This is one of two ways to create temporary tables.
+However, there are several things you need to be aware of when
+using it.  See the <a href="#Temporary Tables">Temporary Tables</a> section
+for more information.
+
+
+
+<!-- ========= SPL ===================================================== -->
+
+<h2 class="zdoc"><a name="SPL">SPL</a></h2>
+
+<p>This section discusses standards that are specific to stored procedure 
+language (SPL) routines.  SPL routines at ZFIN range from simple ones
+that are called by insert and update triggers to do 
+<a href="db.html#Database Cleaning and Validation">data validation</a> to 
+very long ones used to generate 
+<a href="db.html#Fast Search Tables">fast search tables</a>.  Most of the
+SPL routines at ZFIN are defined in the 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/lib/DB_functions/SPL/">lib/DB_functions/SPL</a> 
+directory.  SPL routines that are specific to data loads/unloads are also found
+in the 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/">server_apps/data_transfer/</a>
+tree.
+ 
+<h3 class="zdoc"><a name="SPL Naming Conventions">SPL Naming Conventions</a></h3>
+
+
+<h4 class="zdoc"><a name="SPL Variable Naming Conventions">SPL Variable Naming Conventions</a></h4>
+
+<p><span class="std">Variables in SPL routines should use mixed case to 
+distinguish words in variable names.</span>  SPL supports underscores in 
+variables but we
+avoid their use at ZFIN.  This allows the reader to clearly distinguish between
+variables and column names.
+
+<p>There is also a more subtle reason for this standard:  
+SPL allows you to define a variable with exactly the same name as a 
+database column.  SPL does not issue any warnings when you do this.  
+This can lead to unexpected results because it is not clear in SQL statements
+if the column or variable is being used.  Using mixed case instead of 
+underscores in SPL variable names prevents this from ever happening.
+
+
+
+<h3 class="zdoc"><a name="SPL Variable Data Types">SPL Variable Data Types</a></h3>
+
+<p><span class="std">Variables in SPL routines that hold data from database 
+columns should use "like table.column_name" in the define, rather than 
+explicitly stating the datatype.</span>  For example, this
+<div class="sql">
+  define mrkrAbbrev like marker.mrkr_abbrev;
+</div>
+<p>is better than
+<div class="sql">
+  define mrkrAbbrev varchar(40);
+</div>
+
+<p>Using "like" makes the code much easier to maintain when the definitions
+of columns change.
+
+
+
+<h3 class="zdoc"><a name="SPL Modularity and Defined Interfaces">SPL Modularity and Defined Interfaces</a></h3>
+
+
+
+<h4 class="zdoc"><a name="SPL Defined Interfaces">SPL Defined Interfaces</a></h4>
+<div class="std">
+<p>Every SPL routine should have a 
+<a href="#Defined Interface Comments">defined interface</a>.  The defined 
+interface for an SPL routine occurs as comments at the top of the routine, 
+just after the routine definition:
+<div class="sql">
+  -- ---------------------------------------------------------------------
+  -- A description of what the routine is for.
+  --
+  -- INPUT VARS:
+  --   var1    Description of first input variable, if any
+  --
+  -- OUTPUT VARS:
+  --   var2    Description of first output variable, if any
+  --
+  -- RETURNS:
+  --   Describe the return value for both the success and error cases.
+  --
+  -- EFFECTS:
+  --   Describe the side effects of this routine for both the success and 
+  --   error cases.  Side effects include changes to the filesystem or
+  --   database.
+  -- ---------------------------------------------------------------------
+</div>  <!-- class="sql" -->
+</div>  <!-- class="std" -->
+
+
+
+<h4 class="zdoc"><a name="SPL Modularity">SPL Modularity</a></h4>
+
+
+
+<h3 class="zdoc"><a name="SPL Comments">SPL Comments</a></h3>
+
+<p>See the <a href="#SQL Comments">SQL Comments</a> and 
+<a href="#SPL Defined Interfaces">SPL Defined Interfaces</a> sections for 
+standards on comments in SPL routines.
+
+
+<h3 class="zdoc"><a name="SPL Debugging Support">SPL Debugging Support</a></h3>
+
+<p>Unless you go through the effort to support it, debugging SPL is darn hard.
+Fortunately, ZFIN has already gone through the effort to support debugging SPL.
+The state of the art for debugging SPL and comments describing how it works
+can be found in
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/lib/DB_functions/SPL/Regen_names/regen_names.sql">regen_names</a>.
+
+<p><span class="std">All complicated SPL routines should include the debugging
+features described in regen_names.</span>
+
+
+
+
+<!-- ========= Testing Database Scripts ================================ -->
+
+<h2 class="zdoc">
+<a name="Testing Database Scripts">Testing Database Scripts</a>
+</h2>
+
+<p><span class="std">
+Any script that inserts, deletes, or updates data in the database should
+be thoroughly tested before running in production.  This includes custom test
+queries that are specific to that script, as well as running two standard
+testing scripts afterwards:
+</span>
+
+<ol>
+  <li>
+    <p><span class="std">Run
+    <span class="file"><a href="db.html#Database Cleaning and Validation">validatedata.pl</a></span>
+    with the daily, weekly, and orphan options.</span>  See the 
+    <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/DB_maintenance/Makefile">makefile</a>
+    for details.  This will detect if the script has broken any of ZFIN's
+    regular validation checks.  Check the results to see if any reported item
+    could come from the script you just ran.
+  </li>
+  <li>
+    <p><span class="std">Run
+    <span class="file"><a href="impl.html#Scan All Character Columns for Illegal Characters (scrubscan.pl)">scrubscan.pl</a></span>
+    to scan character columns for illigal characters.</span>  See the 
+    <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/DB_maintenance/Makefile">makefile</a>
+    for how to do this.  Check the results to see if any reported item could
+    have come from the script you just ran.
+  </li>
+</ol>
+
+  
+    
+
+
+
+<h2 class="zdoc"><a name="Temporary Tables">Temporary Tables</a></h2>
+
+<p>Temporary tables are widely used at ZFIN.  
+This section describes general best practices for creating
+and using temp tables.
+
+<h3 class="zdoc"><a name="Temporary Table Creation">Temporary Table Creation</a></h3>
+
+<p> See the 
+<a href="#Temporary Tables in App Pages">Temporary Tables in App Pages</a> 
+section for additional information on that topic.
+
+<p>There are two ways to create temp tables:
+<ol>
+  <li><a name="CREATE TEMP TABLE"><b>Use a CREATE TEMP TABLE statement</b></a>.
+      This is nominally more work then using a 
+      SELECT INTO TEMP, but it does avoid 
+      all the issues with constants described below, and it makes the code 
+      easier to read.  An example table definition is:
+      <div class="sql">
+      CREATE TEMP TABLE tmp_table1 
+        (
+          col1 varchar(50),
+          col2 int,
+          col3 varchar(10)
+        ) WITH NO LOG;
+      </div>
+      <span class="std">Favor create temp table statements over select into temp
+      statements.</span>
+  </li>
+  <li><b>Use a SELECT INTO TEMP statement.</b>
+    This statement both creates and
+    populates the temp table.  The column names in the temp table are the same
+    as the column names in the select statement, unless a new column name is 
+    provided in the query.  Expressions must be assigned explicit column names.
+
+    <p>The datatypes of the columns in the temp table are the same as the 
+    datatypes of the columns and expressions in the select statement.  This 
+    is generally what we want, but it can get us into trouble when constants or 
+    expressions are in the select list, <i>particularly with character data
+    when the constant is a placeholder for values that will be provided later,
+    such as ZDB IDs</i>.
+
+    <p>ZFIN has a <a href="db.html#VARCHAR and CHAR">general policy</a> 
+    that character data
+    less than 255 characters long is stored in VARCHAR columns rather than CHAR
+    columns.  In addition, ZFIN has a function, 
+    <a href="db.html#Text Processing Functions">scrub_char()</a>, and a 
+    <a href="admin.html#cron">cron job</a>, 
+    <a href="impl.html#Scan All Character Columns for Illegal Characters (scrubscan.pl)">scrubscan.pl</a>, 
+    that we use to trim/report leading and trailing blanks in all our VARCHAR 
+    columns.
+
+    <p>SELECT INTO TEMP statements are the leading cause of trailing blanks in
+    VARCHAR columns at ZFIN, particularly on ZDB ID columns.  Here's why, and 
+    how to avoid them.
+
+    <p>The statement
+    <div class="sql">
+    SELECT '123456789 123456789 123456789 123456789 123456789 ' zdb_id_col, 
+           <i>other_column(s)</i>
+      FROM <i>some_table(s)</i>
+      INTO TEMP temp_table WITH NO LOG;
+    </div>
+    <p>creates a 2 column table.  The first column is destined to hold a ZDB ID.
+    However, it is created as CHAR(50), which means that when we populate
+    it with ZDB IDs they will have trailing spaces.  If we forget to do a trim()
+    or a scrub_char() (and we will) then the ZDB IDs will show up in the database
+    with trailing spaces, will be reported by the nightly cron job, and
+    will need to be manually fixed.
+
+    <p>This statement creates the column as VARCHAR(50):
+    <div class="sql">
+    SELECT ' 123456789 123456789 123456789 123456789 123456789'::varchar(50) zdb_id_col,
+           <i>other_column(s)</i>
+      FROM <i>some_table(s)</i>
+      INTO TEMP temp_table WITH NO LOG;
+    </div>
+    <p>The ZDB IDs will not have trailing spaces when set in this temp table,
+    and therefore will not have trailing spaces when inserted into permanent 
+    tables.
+
+    <p><b>NOTE:</b>  There are several other possibilities that are simpler, 
+    <b>but that do not work</b>.  In particular, these 2 approaches fail:
+
+    <div class="sql">
+    SELECT '1'::varchar(50) zdb_id_col,
+           <i>other_column(s)</i>
+      FROM <i>some_table(s)</i>
+      INTO TEMP temp_table WITH NO LOG;
+
+    SELECT null::varchar(50) zdb_id_col,
+           <i>other_column(s)</i>
+      FROM <i>some_table(s)</i>
+      INTO TEMP temp_table WITH NO LOG;
+    </div>
+
+    <p>Why?  In both cases Informix creates the column as VARCHAR(1).  Why?
+    Nobody knows.
+  </li>
+</ol>
+
+<h4 class="zdoc"><a name="With No Log, Indexes, and Constraints">
+                          With No Log, Indexes, and Constraints</a></h4>
+
+<p><span class="std">Temp tables should always be created using a 
+"with no log" clause at the end of the table definition.</span>  
+This suppresses logging for the temporary table.
+
+<p>Also note that temp tables can have indexes and constraints as well.
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= Web Datablade App Pages ================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Web Datablade App Pages">Web Datablade App Pages</a></h1>
+
+<p>Web Datablade app pages, also known as just "the Web Datablade" or 
+"app pages", were the initial motivation for drawing up these standards.
+The majority of ZFIN's dynamic pages have used the Web Datablade since 
+ZFIN was started.  The Web Datablade is an IBM Informix product for tying 
+together the web and Informix databases.  It uses an extra layer of markup
+language/tags embedded in the HTML.  The Web Datablade tags are
+interpreted at run time by a module running inside Apache.  Pages that 
+contain the Web Datablade tags are called "app pages".
+
+<p>The syntax of app pages is not particularly pretty, but it is easy to
+understand.  What is less easy to grasp are the subtleties of getting app
+pages to scale to a web site of our size.  We have not done a particularly
+good job in the past at creating readable and maintainable app pages.
+
+
+<!-- ========= App Page Naming Conventions ======================== -->
+
+<h2 class="zdoc"><a name="App Page Naming Conventions">App Page Naming Conventions</a></h2>
+
+
+<h3 class="zdoc"><a name="App Page Directories">App Page Directories</a></h3>
+
+<p>All app pages are stored under the 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/">ZFIN_WWW/home/ZFIN/APP_PAGES</a> 
+directory.  That directory contains many subdirectories, each covering
+a different subject area or infrastructure function in the ZFIN web site.  
+All app pages related to a particular topic are stored in that topic's 
+directory.  Some directories
+also have subdirectories to handle particular parts of that area.
+
+<p>Subject area directories, such as 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/gene_files/">gene_files</a> or
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/personbrowser/">personbrowser</a>,
+cover specific subject areas in the web site such as genes or people.
+Infrastructure directories, such as
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/navigation_files/">navigation_files</a> or
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/security_files/">security_files</a>
+contain files that are used across many subject areas of the web site.
+
+<p><span class="std">Directory names should accurately reflect their contents.</span>
+This makes it easy to know where to look to see if an app page already exists
+for a particular purpose.  
+
+<p><span class="std">ZFIN does not have a standard on capitalization or underscores in 
+directory names.</span>
+
+
+<h3 class="zdoc"><a name="App Page File Names">App Page File Names</a></h3>
+
+<p>First some general app page file name standards
+
+<ol>
+  <li><span class="std">An indication of the app page's subject area and/or function 
+    should be included in the filename.</span>  In addition to making it
+    obvious what the file does, this also tells you what 
+    <a href="#App Page Directories">directory</a> the file resides in.
+  </li>
+  <li><span class="std">File names must be 37 characters or less in length,
+    including the .apg extension.</span>  Maximally descriptive filenames are 
+    encouraged within that limit.
+  </li>
+  <li><span class="std">App pages that display detailed information about an 
+    individual object (such as a gene or a person) should have the word
+    "view" in their file name.</span>
+  </li>
+  <li><span class="std">App pages that contain query forms should have the word
+    "select" in their file name.</span>
+  </li>
+  <li><span class="std">ZFIN does not have a standard on capitalization or underscores in 
+    app page file names.</span>
+  </li>
+</ol>
+
+
+<h3 class="zdoc"><a name="App Page Variable Names">App Page Variable Names</a></h3>
+
+<p>The most significant fact about app page variables is that
+all app page variables are global in scope.  No matter how you 
+WebExplode another app page (there are several ways), the called app
+page and the calling app page share the same variable name space.  If you 
+modify, create, or destroy a variable in either page then the other
+page knows about it as well.
+
+<p>Thus we need to take great care we need to take great care when naming
+app page variables so that
+
+<ol>
+  <li>We can tell what app page a variable came from.</li>
+  <li>We avoid accidental variable name collisions between calling and
+    called app pages.
+  </li>
+</ol>
+
+
+<h4 class="zdoc"><a name="App Page Variable Name Prefix">App Page Variable Name Prefix</a></h4>
+
+<p>The main way we address these problems is that
+<span class="std">every app page has a unique 2 to 10 character variable name prefix 
+associated with it, and every variable that is used in that page starts with
+that prefix followed by an underscore, followed by a descriptive name of the
+variable.</span>
+
+<p>For example, the prefix for
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/xpat_files/xpatselect.apg">xpatselect.apg</a>
+is xpatsel_.  All variables in this file should (but currently don't) begin 
+with this prefix.
+
+<p>There is another type of global variable - <i>project global</i>. In Java
+they would be Protected variables. These variables are shared between a
+<a href="#Top Level versus Subroutine App Pages">top-level page and 
+subroutine page(s)</a>.  Either page may change the value
+and explicitly renaming the variable to pass into the subroutine page is
+not required.  Subroutines list the global variables under 
+<a href="#App Page Defined Interfaces">INPUT VARS</a> that
+it uses or modifies.
+
+<p><span class="std">All project global variables should append G_ 
+to the top-page prefix</span>.  For example, xpatselect.apg global 
+variables would begin with the prefix xpatsel_G_ .
+Thus search by prefix will return all file specific variables.
+
+<p>We discussed if we should treat app page variables that are visible in URLs 
+any different.  We decided that we should not.  They too should use app page
+prefixes in their name.
+
+<p>Finally, we talked about what to do with "global" variable names like $OID
+or any variable name that exists in secure_navigation.apg.  We decide to leave 
+these variables as they are, at least for the time being, as it is just too
+big a task to convert them.
+
+
+<h4 class="zdoc"><a name="App Page Database Column Variables">App Page Database Column Variables</a></h4>
+
+<p><span class="std">Other than using 
+<a href="#App Page Variable Name Prefix">app page prefixes</a>, ZFIN does not
+have a standard for naming variables that either came from a database table or
+are destined for a database table.</span>
+
+<p>We discussed the possibility of naming such variables 
+$apgprfx_database_column_name, where database_column_name is the exact name 
+of the column in the database.  This is not a bad standard, and you are free to
+follow it, but there are many situations where you don't want to use it.
+For example, you might have a page that deals with genes
+and their associated ESTs.  The ZDB IDs for both come from the mrkr_zdb_id
+column in the marker table.  There are two problems here:
+
+<ol>
+  <li>They can't both be called $apgprfx_mrkr_zdb_id.  One of them will have 
+    to be called something else, like $apgprfx_est_zdb_id.
+  </li>
+  <li>Naming the variable that holds the gene ZDB ID $apgprfx_mrkr_zdb_id is
+    just not as helpful as naming it $apgprfx_gene_zdb_id.  The variable will
+    never hold anything other than a gene ZDB ID.  Using gene in the name 
+    instead of mrkr means the reader need to keep one less fact in their
+    head.
+  </li>
+</ol>
+
+<p>Pick database column variable names that make the code the most readable.
+
+
+<h4 class="zdoc"><a name="App Page $1, $2, ... Variables">App Page $1, $2, ... Variables</a></h4>
+
+<p>When query results are initially returned to an app page from an
+SQL statement, they are placed in variables named $1 through $n where n
+is the number of columns returned by the query.  
+<span class="std">You should always assign $n variables to variables with standard names
+immediately after the SQL statement that produced them.</span>
+
+<p><b>Exceptions</b>: You don't have to do this if all these conditions are met:
+<ol>
+  <li>There are <b>4</b> or fewer columns in the query result.  <b>And</b></li>
+  <li>The $n variables are used only in the <b>1</b> line immediately following 
+    the SQL query.
+  </li>
+</ol>
+
+<p>Nothing is less clear than using a variable named $1 twenty lines after 
+an SQL query.  $1 is also in danger of being stomped on if
+we insert any SQL between the SQL that originally populated
+$1 and when $1 gets used.
+
+
+<h4 class="zdoc"><a name="App Page Boolean Variable Names">App Page Boolean Variable Names</a></h4>
+<p><span class="std">Boolean variable names should clearly communicate that they are 
+boolean variables.</span>  
+For example, apgprfx_fishIsMutant and apgprfx_idsAreEqual are
+preferred over apgprfx_mutant and apgprfx_same.  <span class="std">Use "is" and
+"are" in boolean variable names.</span>
+
+<p>Also see the section on <a href="#App Page Boolean Variables">app
+page boolean variable usage</a>.
+
+
+
+<!-- ========= App Page Modularity and Defined Interfaces ============== -->
+
+<h2 class="zdoc"><a name="App Page Modularity and Defined Interfaces">App Page Modularity and Defined Interfaces</a></h2>
+
+<p>Some significant facts about app pages:
+<ul>
+  <li>App pages can do subroutine-like invocations of other app pages 
+    using the WebExplode() function.
+  </li>
+  <li>App pages can call database functions/procedures written in Informix's 
+    <a href="#SPL">Stored Procedure Language (SPL)</a>.
+  </li>
+  <li>App page files are monolithic.  That is, in an app page there is only
+    one logical unit of code.  Processing starts at the top and goes to
+    the bottom.  You can't declare an app page "subroutine" at the top of
+    the file and then WebExplode it later in the same file.  If you want to
+    have an app page subroutine, you have to put it in a separate file,
+    and it will be the only unit of code in that file.
+  </li>
+  <li><a href="#App Page Variable Names">All app page variables are global 
+    in scope.</a>
+  </li>
+</ul>
+
+<p>All of these facts have conspired to produce some pretty heinous app pages
+at ZFIN.  We underutilize the WebExplode() function, resulting in 20 and 30 
+page long app pages.  When we do use WebExplode() we have had such poor naming
+conventions for app page variables that we have no way to tell where a 
+variable might have come from.  Better use of WebExplode, naming conventions, 
+and well defined interfaces will all help address these problems.
+
+
+<h3 class="zdoc"><a name="Top Level versus Subroutine App Pages">Top Level versus Subroutine App Pages</a></h3>
+
+<p>When discussing app pages, it is useful to classify them by how they are 
+called:
+<ol>
+  <li><b>Top level app pages</b>:  These pages are called directly via HTTP
+    and can show up in URLs.  For example, 
+    <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/xpat_files/xpatselect.apg">xpatselect.apg</a>
+    is called directly from the home page.
+  </li>
+  <li><b>Subroutine app pages</b>:  These pages are WebExploded by other pages.
+    These are building block pages, and can be be further classified:
+    <ol>
+      <li><b>Subroutine app pages that exist for code reuse</b>:  These are
+        utility routines that are useful in many different app pages.
+	They can be either in a subject area (for example, an app page
+	to show a short reference to a publication), or in an 
+	infrastructure function directory (for example, to check a user's
+	permissions).
+      </li>
+      <li><b>Subroutine app pages that exist solely to make a
+        single app page more readable</b>:  For example,
+        <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/xpat_files/xpatselectquery.apg">xpatselectquery.apg</a>
+	is called only from 
+	<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/home/ZFIN/APP_PAGES/xpat_files/xpatselect.apg">xpatselect.apg</a>.
+	It contains query processing logic that was formerly in 
+	xpatselect.apg.  Pulling it into its own file made xpatselect.apg
+	much easier to read.
+	<span class="std">These app pages should be named so that it is 
+	obvious what other app page they are called from.</span>
+      </li>
+    </ol>
+    The distinction between the two types of subroutine app pages is blurry.
+    This is a good thing:  We could easily convert xpatselectquery.apg so it 
+    could be called by any app page that wants to query expression patterns 
+    (maybe it supports this already).
+</ol>
+
+<p><span class="std">An app page should be either a top level app page, or a subroutine
+app page, but never both.</span>
+
+
+<h4 class="zdoc"><a name="When to Create Subroutine App Pages">When to Create Subroutine App Pages</a></h4>
+
+<p>You should create a subroutine app page in any of these situations:
+
+<ul>
+  <li>An app page is too long.  
+    <span class="std">If an app page is longer than 10 pages then it is probably too long.</span>
+    Look for logical units in the app page that
+    can be split off into subroutine app pages.  Is the app page trying to 
+    do several distinct functions based on a switch?  If so then split it 
+    into a different app page for each different function.  
+    (Why 10 pages?  It's arbitrary.  Most shops say 1 page, but for us 
+    that is not workable.  Maybe some day we can cut this number down to 
+    say 4 pages?)
+  </li>
+  <li>Code reuse.  <span class="std">If you find yourself typing the same or similar 
+    code in 2 or more places, or if you find the same or similar code in 2 
+    or more places then consider merging the code into a new app page.</span>
+    If you do this then 
+    you should go hunting for other code that also call the new app page.
+  </li>
+</ul>
+
+
+<h4 class="zdoc"><a name="Subroutine App Pages versus Stored Procedures">Subroutine App Pages versus Stored Procedures</a></h4>
+
+<p>An alternative to placing code/subroutines in app pages is to place the
+code in a <a href="#SPL">Stored Procedure Language (SPL)</a> 
+routine inside the database.
+Here are some guidelines on when you might choose which technology.
+
+<ul>
+  <li><span class="std">If the functionality of the code is something that 
+    might be useful in many situations, not just inside web pages, then 
+    implement it with SPL.</span>
+    That way you can use it anywhere you can use SQL.
+  </li>
+  <li><span class="std">If the purpose of the code is to produce a big chunk 
+    of HTML then implement it in an app page.</span>  App pages are all about 
+    HTML and the code is unlikely to be useful outside of the Web Datablade.
+  </li>
+</ul>
+
+<p>However, there are some restrictions on what can be done in SPLs that are
+called from WebExploded app pages.  In particular, you can run any DDL, other
+than to create temporary tables, and you also may not be able to insert or
+delete rows from tables.
+
+
+
+<h3 class="zdoc"><a name="App Page Defined Interfaces">App Page Defined Interfaces</a></h3>
+
+<p>Every piece of code we have at ZFIN, including app pages, should have a 
+<a href="#Defined Interface Comments">defined interface</a>.  
+<span class="std">Every app page must have this comment block at the 
+top.  If you make a <a href="#Enforcement">non-trivial change</a> to a 
+page that does not have a defined interface comment block at the top then
+you must add one and document the parts of the interface that you are
+changing.</span>
+
+<div class="shell">
+&lt;?MICOMMENT&gt;
+
+FILE:     filename.apg
+PREFIX:   apgprfx_
+
+A description of what the page is for.
+
+INPUT VARS:
+  apgprfx_var1      Description of first input variable
+  apgprfx_var2      Description of first input variable
+  ...
+
+OUTPUT VARS:
+  apgprfx_varx      Description of first output variable, if there is one.
+  ...
+
+OUTPUT:
+  If this is app page produces a chunk of HTML then this describes the
+  HTML it produces.
+
+EFFECTS:
+  What if anything changed in the filesystem or in the database.  Basically
+  any changes not covered by OUTPUT VARS or OUTPUT.
+
+DEBUGGING:
+  Any useful advice on how to debug this page, including what 
+  <a href="#App Page Debugging Support">app page debugging variables</a> it supports, and any particularly useful 
+  test cases.
+&lt;?/MICOMMENT&gt;
+</div>
+
+<div class="std">
+<p>If your revision does not involve exhaustively researching
+the page's interface then you don't have to fully document the interface.
+For any section that is not fully documented, insert the statement
+<div class="shell">
+  <i>SECTION_NAME</i> NOT FULLY DOCUMENTED.
+</div>
+</div>
+
+<table class="definition">
+  <caption>Additional Explanation</caption>
+  <tr>
+    <td class="term">INPUT&nbsp;VARS</td>
+    <td>Lists all input variables to this page.  If the existence of a
+      variable is optional, then this also describes what the non-existence
+      of a variable means.
+  </tr>
+  <tr>
+    <td class="term">OUTPUT&nbsp;VARS</td>
+    <td>Descriptions of each output variable.  If existence is optional
+      then includes a description of what non-existence means.  If this
+      app page changes the existence or values of any input variables 
+      then those variables must be listed as output variables as well.
+      <br>Note that because of the global scope of app page variables 
+      that any variable created in this app page is in fact visible to
+      the caller.  However, only variables in the OUTPUT VARS list should
+      be referenced by the calling page.
+    </td>
+  </tr>
+  <tr>
+    <td class="term">OUTPUT</td>
+    <td>Many app pages, and all top level app pages, produce HTML as 
+      output.  This is a description of that HTML.  This is a description
+      of the $1 value returned by WebExplode().
+    </td>
+  </tr>
+</table>
+
+
+
+
+<!-- ========= App Page Variables ====================================== -->
+
+<h2 class="zdoc"><a name="App Page Variables">App Page Variables</a></h2>
+
+<p>This section covers how to use app page variables.  
+<a href="#App Page Variable Names">Naming conventions for app page variables</a>
+are covered elsewhere.  
+
+
+
+<h3 class="zdoc"><a name="App Page Boolean Variables">App Page Boolean Variables</a></h3>
+
+<p>The Web Datablade does not have strongly typed variables.  There is no
+boolean type in the Web Datablade.  However, like Perl, C/C++ and Java,
+it does have a definition of True and False.  Anything that is 0 is False,
+and anything that is not 0 is True.  This differs from Informix itself which
+returns 'f' for false and 't' for true.
+
+<p>ZFIN uses a wide variety of conventions to represent boolean values in
+its app pages.  This includes the built in 0/not 0 distinction, a plethora
+of t/f, T/F, True/False, etc. variations, and the 
+<a href="#App Page Variable Existence and Non-Existence">existence or 
+non-existence</a> of a variable.
+
+<p>It would be nice if we could settle on a single way to represent booleans.
+However, because of the mismatch between Web DataBlade and the Informix DBMS,
+and because sometimes we have to use existence/non-existence, I don't think 
+it is worth the effort.  However, I think <span class="std">we should reduce 
+the number of boolean representations down to these 3:</span>
+
+<ol>
+  <li><p><span class="std">0 for false, not 0 for true.</span>  This is the
+      representation Web DataBlade uses.  Example:
+      <div class="shell">
+  &lt;?MIVAR NAME=$prfx_geneIsUnchanged&gt;$(EQ,$prfx_currGeneZdbId,$prfx_prevGeneZdbId)&lt;?/MIVAR&gt;
+  ...
+  &lt;?MIBLOCK COND=$prfx_geneIsUnchanged&gt;
+      </div>
+  </li>
+  <li><p><span class="std">'f' for false, 't' for true.</span>  This is the 
+      representation boolean columns in Informix have.  Example:
+      <div class="shell">
+  &lt;?MIVAR NAME=$prfx_geneIsUnchanged&gt;f&lt;?/MIVAR&gt;
+  &lt;?MIVAR COND=$(EQ,$prfx_currGeneZdbId,$prfx_prevGeneZdbId) 
+          NAME=$prfx_geneIsUnchanged&gt;t&lt;?/MIVAR&gt;
+  ...
+  &lt;?MIBLOCK COND=$(EQ,$prfx_geneIsUnchanged,t)&gt;
+      </div>
+      We hoped that their might be an Informix environment variable that 
+      we could define to automatically translate boolean values into 0/1 so
+      that we could at least drop this option.  However, no such environment
+      variable exists.
+  </li>
+  <li><p><span class="std">Not exists for false, exists for true.</span>  We are
+      forced to support this option with checkboxes, and it is darn convenient
+      to use as well.  Example:
+      <div class="shell">
+  &lt;?MIVAR COND=$(EQ,$prfx_currGeneZdbId,$prfx_prevGeneZdbId) 
+          NAME=$prfx_geneIsUnchanged&gt;&lt;?/MIVAR&gt;
+  ...
+  &lt;?MIBLOCK COND=$(XST,$prfx_geneIsUnchanged)&gt;
+      </div>
+  </li>
+</ol>
+
+
+<h3 class="zdoc"><a name="App Page Variable Existence and Non-Existence">App Page Variable Existence and Non-Existence</a></h3>
+
+<p>In app pages we can use the existence or non-existence of a variable to
+communicate information.  
+<span class="std">ZFIN does not have a standard on using the existence or 
+non-existence of a variable to communicate information.</span>
+
+<p>Note that when using checkboxes, existence/non-existence is the only way 
+to communicate if the box was checked or not.
+
+<p>Also note that 
+<a href="#Top Level versus Subroutine App Pages">subroutine app pages</a>
+must take care when using app page variable existence/non-existence internally.
+Subroutine app pages can be called multiple times within one transaction,
+and any variable created or destroyed on a previous call will be in that state
+in subsequent calls to that app page in the current transaction.
+
+
+<h3 class="zdoc"><a name="App Page Vector Variables">App Page Vector Variables</a></h3>
+
+<p>App pages support arrays in the form of vector variables.  The use of 
+vector variables is encouraged wherever applicable.  A known problem with 
+vector variables is that they can't be explicitly passed to subroutine app 
+pages in WebExplode (they can be implicitly passed).  Also, you can't use a
+vector variable in a URL.
+
+
+
+<!-- ========= Web Datablade Tags and Functions ======================== -->
+
+<h2 class="zdoc"><a name="Web Datablade Tags and Functions">Web Datablade Tags and Functions</a></h2>
+
+<p>This section describes some best practices for how to actually use the
+Web Datablade tags and functions (i.e., the Web Datablade markup language)
+in app pages.
+
+
+<h3 class="zdoc"><a name="MIBLOCK and MIELSE versus MIVAR">MIBLOCK and MIELSE versus MIVAR</a></h3>
+
+<p>You can use a COND clause with either MIBLOCK or MIVAR tags to control 
+the execution of blocks of code in app pages.  Here are the advantages and 
+disadvantages of each.
+
+<p><span class="std">If your code is logically using an "if-then-else" structure then 
+use MIBLOCK followed by MIELSEs.</span>  
+This makes the structure of the code clearer.
+
+<p><span class="std">If your code is logically using an "if-then" structure then you can 
+use either MIBLOCK or MIVAR around the code.</span>  
+If you use MIBLOCK and the block
+of code contains app page variables then you will need at least one additional
+MIVAR tag around those variables.
+
+
+<h3 class="zdoc"><a name="MIVAR versus $(SETVAR)">MIVAR versus $(SETVAR)</a></h3>
+
+<p>You have to use the MIVAR tag to create and set the initial value of a 
+variable, but you can use either the MIVAR tag or a $(SETVAR) function to 
+update the variable.
+<span class="std">ZFIN has no standard on using MIVAR or $(SETVAR).</span>
+Use whichever one you want.
+
+
+<h3 class="zdoc"><a name="App Page Comments">App Page Comments</a></h3>
+
+<p>See the <a href="#Comments">general comments section</a> for guidelines
+on using comments in all language.  This section covers issues specific to
+app pages.
+
+<p>The most important comments in an app page are the defined interface comments.
+See the <a href="#App Page Defined Interfaces">App Page Defined Interfaces</a>
+section for details on this.
+
+
+<h4 class="zdoc"><a name="MICOMMENT versus HTML Comments">MICOMMENT versus HTML Comments</a></h4>
+
+<p>HTML and Web Datablade both have comment tags.  HTML comments are left in the
+page by the Web Datablade and are sent out to the world.  Web Datablade
+comments, which are wrapped in MICOMMENT tags, are stripped out by the Web 
+Datablade and are not sent out to the world.
+
+<p><span class="std">Use MICOMMENTs rather than HTML comments in app pages.</span>
+There is no reason to be sending out comments to the world.  If we need to
+communicate something to our users, they should see that in the displayed
+page.  They should not have to look at the source code.
+
+
+
+<p>MICOMMENTs have the disadvantage that they don't stand out visually in 
+the code as much as HTML comments.  Therefore,
+<span class="std">any MICOMMENTs after the
+<a href="#App Page Defined Interfaces">app page defined interface comment</a>
+should have 3 leading asterisks on each line of
+the comment.  Single line comments should also have 3 trailing asterisks.</span>
+
+<p>For example:
+<div class="shell">
+  ...
+  &lt;?MIVAR NAME=$prfx_geneIsUnchanged&gt;$(EQ,$prfx_currGeneZdbId,$prfx_prevGeneZdbId)&lt;?/MIVAR&gt;
+  &lt;?MICOMMENT&gt; *** A single line comment *** &lt;?/MICOMMENT&gt;
+  &lt;?MIVAR NAME=$prfx_targetTable&gt;marker&lt;?/MIVAR&gt;
+  &lt;?MIVAR NAME=$prfx_pageTitle&gt;ZFIN Listing&lt;?/MIVAR&gt;
+  &lt;?MICOMMENT&gt;
+    *** A multi line comment
+    *** spanning, of all things,
+    *** multiple lines
+  &lt;?/MICOMMENT&gt;
+</div>
+
+
+<h4 class="zdoc"><a name="App Page Closing Comments">App Page</a> <a href="#Closing Comments">Closing Comments</a></h4>
+
+<p><span class="std">Any closing Web Datablade tag that is more than 50 lines from its 
+corresponding starting tag should have a comment on the closing tag indicating
+what it is closing.</span>  For example,
+
+<div class="shell">
+&lt;?MIBLOCK COND=$prfx_authorWasSpecified&gt;
+  ... lots of code here ...
+&lt;?/MIBLOCK&gt;  &lt;?MICOMMENT&gt; *** end author was specified *** &lt;?/MICOMMENT&gt;
+</div>
+
+
+<h4 class="zdoc"><a name="App Page Section Separator Comments">App Page Section Separator Comments</a></h4>
+
+<p>Since app pages tend to be 
+<a href="#App Page Modularity and Defined Interfaces">long</a>, 
+<a href="#Section Separator Comments">section separator comments</a> 
+can help make them almost manageable.  Here is one possibility
+for their format.
+
+<div class="shell">
+&lt;?MICOMMENT&gt;
+  ============================================================================
+  ==========  DESCRIPTION OF THE SECTION
+  ============================================================================
+  Optional comments elaborating on what is going on here.
+&lt;?/MICOMMENT&gt;
+
+</div>
+
+
+
+<h3 class="zdoc"><a name="HTML in App Pages">HTML in App Pages</a></h3>
+
+<p><span class="std">HTML in app pages should conform to the 
+<a href="#HTML">general HTML standards</a> for static pages.</span>
+
+<p>In addition, <span class="std">whenever possible, app page tags and functions and
+HTML tags should be correctly nested</span>.  In other words, it is bad
+practice to open an HTML tag, then open an app page tag, then close the HTML
+tag, and then close the app page tag.  For example, <b>don't do this</b>:
+<div class="shell">
+  &lt;td&gt;
+    &lt;?MIVAR&gt;
+      Name: $prfx_mrkr_name
+    &lt;/td&gt;
+  &lt;?/MIVAR&gt;
+</div>
+<p>The Web Datablade will accept this nesting, it is just hard to read.
+In most cases it is trivial to convert code to use a nesting that makes
+sense.  <b>Do this instead</b>:
+<div class="shell">
+  &lt;td&gt;
+    &lt;?MIVAR&gt;
+      Name: $prfx_mrkr_name
+    &lt;?/MIVAR&gt;
+  &lt;/td&gt;
+</div>
+<p>In some very complex cases it is not possible to do the correct nesting.
+If you find yourself in such a case, then the design of the code may be
+too complex.
+
+
+<h3 class="zdoc"><a name="JavaScript in App Pages">JavaScript in App Pages</a></h3>
+
+<p>This section discusses issues that are specific to using JavaScript 
+in app pages.  See the <a href="#JavaScript">JavaScript</a> section
+for general guidelines on writing JavaScript.
+
+<p>Kevin will write this section.
+
+
+
+<h3 class="zdoc"><a name="Temporary Tables in App Pages">Temporary Tables in App Pages</a></h3>
+
+<p>The ZFIN web site makes use of temporary tables in some of its web pages.
+However, starting with Informix 9.4, extreme care must be taken when using
+temporary tables in app pages that are web exploded by other app pages.  
+In particular, you can still create and use temporary tables in such app
+pages, but you can no longer drop them.  (See the 
+discussion of MIqry2pass variable in the Web Datablade Application 
+Developer's Guide for more information.)
+
+<p>We first tried using permanent 
+tables and Informix session IDs to keep the different invocations of an 
+app page separate.  However, this approach got tripped up on -244 errors
+when the table was under high use.
+
+<p>Our second approach was more successful.  We went back to using temporary
+tables, but we now include the session ID in the temp table name.  Before
+creating a temp table, the code now checks if it already exists by calling
+the <a href="db.html#Infrastructure Functions">table_exists()</a> database function.
+The app page also deletes all records from the table before returning.
+
+<p>App page specific tables are named 
+
+<p>&nbsp;&nbsp;<i>app_page_name</i>_temp_<i>description_sessionid</i>
+
+<p>Like other ZFIN tables, each table has a unique 
+<a href="db.html#Naming Conventions">prefix</a>.
+
+<p>We do not have foreign key or other constraints on these tables.  
+We don't think it
+is worth the overhead for records that will exist for less than a second.
+
+<p>Some example code that creates a temp table for the markerselect.apg page.
+First, the code that uses the session ID to set the table name.
+
+<div class="sql">
+  &lt;?MISQL SQL="
+    select dbinfo('sessionid') 
+      from single;"&gt;
+    &lt;?MIVAR NAME=$mrkrsel_sessId&gt;$1&lt;?/MIVAR&gt;
+    &lt;?MIVAR NAME=$markerselect_temp_match&gt;$(CONCAT,markerselect_temp_match_,$mrkrsel_sessId)&lt;?/MIVAR&gt;
+  &lt;?/MISQL&gt;
+</div>
+
+<p>Then the code that determines if the table already exists, and creates it
+if it does not:
+
+<div class="sql">
+  &lt;?MISQL SQL="
+    execute function table_exists('$markerselect_temp_match')"&gt;
+    &lt;?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $markerselect_temp_match (
+        mstmatch_zdb_id varchar(50),
+        mstmatch_name varchar(255),
+        mstmatch_significance integer,
+        mstmatch_precedence varchar(80)
+      ) with NO LOG;"&gt;
+    &lt;?/MISQL&gt;
+  &lt;?/MISQL&gt;
+</div>
+
+<p>And finally code to remove all records from the temp table before leaving
+the page.
+
+<div class="sql">
+  &lt;?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
+      delete from $markerselect_temp_match;"&gt;
+  &lt;?/MISQL&gt;
+</div>
+
+<p>An alternative would be to just leave the data in the temp table
+and then delete it the next time the page is invoked and the code finds
+that the table already exists.
+
+
+<!-- ========= App Page Debugging Support ========================= -->
+
+<h2 class="zdoc"><a name="App Page Debugging Support">App Page Debugging Support</a></h2>
+
+<p>ZFIN uses a standardized set of debug-related app page variables to 
+turn debugging print statements on or off.
+
+<table class="definition">
+  <caption>Standard App Page Debugging Variables</caption>
+  <tr>
+    <td class="term">$debug_sql</td>
+    <td>Complex dynamically constructed SQL statements will be displayed.</td>
+  </tr>
+  <tr>
+    <td class="term">$debug_timing</td>
+    <td>How long it takes each part of a page to run will be displayed.
+        This code makes extensive use of the 
+	<a href="db.html#Infrastructure Functions">get_time()</a> function.
+    </td>
+  </tr>
+  <tr>
+    <td class="term">$debug_flow</td>
+    <td>Used to display flow of control information, such as "Decided fish
+        is a wildtype".  Often this can be inferred from the displays produced
+        by the other debug variables, but sometimes it is clearer to have
+        explicit flow of control debug information.
+    </td>
+  </tr>
+</table>
+
+<p>These are enabled by defining the variables at the top of the page, or for
+some pages, they can also be passed in with the URL.
+
+<p>Be careful to strike a balance between keeping the code readable and
+fast (fewer debug variable tests and print statements) and making 
+standard debugging useful (more debug variable tests and print statements).
+
+<p>We discussed more sophisticated methods for enabling debugging across all
+pages.  (These included defining flags inside the database, or using the
+web datablade to define the variables across all pages.)  We decided to try
+the simple approach first.  If it irritates us enough, we will adopt more
+sophisticated techniques.
+
+<p>We also discussed using debug levels instead of or in addition to 
+debug categories.  We decided that categories gave us better control than
+levels for the same amount of work, and that adding levels to categories
+was more work than it was worth.
+
+
+<!-- =================================================================== -->
+<!-- ========= CGI ===================================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="CGI">CGI</a></h1>
+
+<p>Most of ZFIN's dynamic pages use the 
+<a href="#Web Datablade App Pages">Web Datablade app pages</a>, but some
+of our dynamic pages use CGI.  Someday, this section will describe standards 
+that apply to all CGIs, no matter what language they are written in.
+
+<p>Each language that CGI pages are written in also has additional 
+standards that apply to writing CGI.  See
+<ul>
+  <li><a href="#PERL Taint">PERL Taint</a></li>
+</ul>
+
+
+
+<!-- =================================================================== -->
+<!-- ========= PERL ==================================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="PERL">PERL</a></h1>
+
+<p><span class="std">Use /private/bin/perl in all ZFIN PERL scripts.</span>
+We do this for a couple of reasons:
+<ul>
+  <li>/private/bin/perl resides on the machine the script is running on.
+    For complex scripts, like the mapper, this leads to significantly
+    faster execution.
+  </li>
+  <li>ZFIN controls /private/bin/perl.  We change it only after extensive
+    testing.  ZFIN does not control the perl on the CS machines and it
+    can change without notice.  This has broken several scripts in the 
+    past.
+  </li>
+</ul>
+
+
+<!-- ========= PERL Taint ============================================== -->
+
+<h2 class="zdoc"><a name="PERL Taint">PERL Taint</a></h2>
+
+<p><span class="std">When using perl, especially as a <a href="#CGI">CGI</a>, 
+always use the taint -T  flag
+and properly untaint all input before using it.</span>
+
+<br><br>
+</div> <!-- class="zdoc" -->
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>
+
+</body>
+</html>

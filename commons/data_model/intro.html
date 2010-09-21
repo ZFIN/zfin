@@ -1,0 +1,689 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<TITLE>Introduction, ZFIN Documentation
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</TITLE>
+
+<link rel=stylesheet href="doc.css" type="text/css">
+
+</HEAD>
+
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+
+</td></tr></table>
+
+
+<div class="zdoc">
+
+<CENTER>
+<h1>ZFIN Documentation:<br>Introduction
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</H1>
+
+<p>$Id: intro.html,v 1.14 2005-05-27 17:22:16 clements Exp $
+
+<p><a href="index.html">Back to Table of Contents</a>
+<br><a href="curation.html">Next Section</a>
+
+
+</CENTER>
+
+<p>This document is one of several that describe the Zebrafish Information
+Network, or ZFIN.  This document introduces ZFIN and the rest of the 
+documentation.
+
+<!-- =================================================================== -->
+<!-- ========= ZFIN ==================================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="ZFIN">ZFIN</a></h1>
+
+<p>ZFIN is an acronym for the Zebrafish Information Network, a 
+<a href="http://zfin.org">web site</a> of information about zebrafish 
+for biologists around the world.  The site contains all manner of information
+about zebrafish, from care and feeding, to where a particular gene has 
+been mapped on which chromosome using which mapping technique.
+
+<p>Some of the information, such as care and feeding, is stored in static
+pages.  Other information, such as genetic mapping results, are stored in
+a database and pages describing that information are generated dynamically
+in response to user queries.  
+
+
+<!-- =================================================================== -->
+<!-- ========= ZFIN Documentation ====================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="ZFIN Documentation">ZFIN Documentation</a></h1>
+
+<p>You are reading the "ZFIN Documentation", such as it is.  It consists of
+a hierarchy of HTML files.  Our goal is to eventually include all documents
+about ZFIN in this HTML hierarchy.  However, not all documentation is (or 
+should be) in this tree.  Much of the documentation about the implementation
+is stored in the web site files themselves.  There is a lot of documentation
+in the 
+<a href="impl.html#Makefiles and the ZFIN_WWW Source Tree">makefiles</a> 
+that are used to produce the web site.  This is in keeping with the principle
+that it is best to store documentation about code as close to the code 
+itself as possible.  This increases the likelihood that the documentation
+will stay up to date.
+Another excellent source of documentation for ZFIN is 
+<a href="http://zfinwinserver1.uoregon.edu/fogbugz/">FogBUGZ</a>, 
+a project management / defect tracking tool used at ZFIN.  
+See the <a href="#FogBUGZ">FogBUGZ section</a> for more details.
+
+
+<p>The documentation is split into a few large files, rather than one 
+monolithic file, or hundreds of small files.  This middle approach is a
+tradeoff between the advantages and disadvantages of either extreme.  
+Having a 
+few large files instead of hundreds of smaller ones 
+makes it easier to search and to print the documentation.
+Having a few large files broken down along functional lines, rather than
+one large file will hopefully make the documentation easier to read.
+
+
+<!-- ========= Where to Find This Documentation ======================== -->
+
+<h2 class="zdoc"><a name="Where To Find This Documentation">
+                          Where To Find This Documentation</a></h2>
+
+<p>This documentation is meant to be read in a browser.  It can be viewed 
+from any browser <i>anywhere in the world</i> with this URL:
+
+<div class="urlline">
+<a href="http://mirror.zfin.org/zfin_doc/">http://mirror.zfin.org/zfin_doc/</a>
+</div>
+
+<p>However, this documentation, with the exception of the 
+<a href="db.html">database design</a> section, is not meant for general
+public consumption.  Then why is the aboe URL open to the world?  We 
+frequently give access to the ZFIN documentation to specific people 
+outside of ZFIN such as funders or staff at other model organism databases.
+
+<p>In addition, the ZFIN documentation can be read from a restricted set of
+IP addresses (campus plus selected others) by appending "/zfin_doc/" to the
+end of any <a href="impl.html#Development DB Matrix">ZFIN test web site URL</a>.
+For example, 
+<a href="http://albino.zfin.org/zfin_doc/">http://albino.zfin.org/zfin_doc/</a>.
+
+
+<!-- ========= How to Read This Documentation ========================== -->
+
+<h2 class="zdoc"><a name="How To Read This Documentation">
+                          How To Read This Documentation</a></h2>
+
+<p>What parts of the documentation you should read depends on what your 
+general role is in the group, and on what particular tasks you perform.
+
+<p>However, regardless of your role or the tasks you perform, everyone 
+should read at least the <a href="intro.html">Introduction</a> section.
+
+
+
+<h3 class="zdoc"><a name="Biologists">Biologists</a></h3>
+
+<p>The relevant sections for biologists are:
+
+<table>
+ <tr>
+  <td align="right"><b><a href="intro.html">Introduction</a></b>
+  <td>Read entire document.
+ <tr>
+  <td align="right" valign="top"><b><a href="curation.html">Curation</a></b>
+  <td>If you do curation, read
+    the <a href="curation.html#Overview">Overview</a> section and the
+    sections that pertain to the type of curation you do.
+ <tr>
+  <td align="right" valign="top"><b><a href="dst.html">Data Submission and Transfer</a></b>
+  <td>If you are involved with or curious about 
+    <a href="dst.html#Direct Data Submissions">direct data submissions to 
+    ZFIN</a>, or any of the 
+    <a href="dst.html#Automated Data Transfers">automated data transfers</a>
+    that ZFIN does, then read the relevant parts of this document.
+ <tr>
+  <td align="right" valign="top"><b><a href="db.html">Database Design</a></b>
+  <td>This describes the database that underlies the web site.
+     This is of interest if you want to know how the data is represented
+     behind the scenes.
+     This contains <a href="db.html#Database Areas">high level descriptions</a>
+     of various areas of the database, as well a description of the
+     <a href="db.html#Schema">database schema</a>.
+ <tr>
+  <td align="right" valign="top"><b><a href="impl.html">Implementation and Development</a></b>
+  <td>If you update the static web pages in the web site then you should
+     read the section on how to do
+     <a href="impl.html#Static Pages">static page updates</a>.  That is the
+     only section in this document that is highly relevant to biologists.
+</table>
+
+
+<h3 class="zdoc"><a name="Technologists">Technologists</a></h3>
+
+<p>Technologists have a distinct, but not disjoint, list of areas that they
+should read.
+
+<table>
+ <tr>
+  <td align="right" valign="top"><b><a href="intro.html">Introduction</a></b>
+  <td>Read entire document.
+ </tr>
+ <tr>
+  <td align="right" valign="top"><b><a href="curation.html">Curation</a></b>
+  <td>All technologists should read the 
+     <a href="curation.html#When the Web Pages Aren't Enough">
+                            When the Web Pages Aren't Enough</a> section.
+     It describes what technologists can do when the curation web pages
+     aren't quite enough for the curators to get their job done.
+     If you are responsible for assigning allele prefixes to labs
+     you should read the 
+     <a href="curation.html#Assigning Allele Prefixes">
+                            Assigning Allele Prefixes</a> section.
+ </tr>
+ <tr>
+  <td align="right" valign="top"><b><a href="dst.html">Data Submission and Transfer</a></b>
+  <td>If you are involved with or curious about 
+    <a href="dst.html#Direct Data Submissions">direct data submissions to 
+    ZFIN</a>, or any of the 
+    <a href="dst.html#Automated Data Transfers">automated data transfers</a>
+    that ZFIN does, then read the relevant parts of this document.
+ </tr>
+ <tr>
+  <td align="right" valign="top"><b><a href="db.html">Database Design</a></b>
+  <td>Review everything in this document.  
+     Once you have done that also look around
+     the <a href="Database/DataModel/index.htm">entity-relationship
+     diagrams and table definitions</a> of any areas that are of particular
+     interest to you.
+ </tr>
+ <tr>
+  <td align="right" valign="top"><b><a href="impl.html">Implementation and Development</a></b>
+  <td>This is the bread and butter of a ZFIN technologist's work day.
+     Read this over and over until you can cite it chapter and verse.
+ </tr>
+ <tr>
+  <td align="right" valign="top"><b><a href="standards.html">Coding Standards 
+    and Best Practices</a></b>
+  </td>
+  <td>This is the cool, cool water of the ZFIN Technologist's work day.
+    Read the introductory general sections that apply no matter what technolgoy
+    you are using.  Read the sections about specific technologies if and when
+    you use those technologies.
+  </td>
+ <tr>
+  <td align="right" valign="top"><b><a href="admin.html">System, Web Server, and 
+     <br>Database Administration</a></b>
+  <td>If you do any administration for ZFIN, then read the appropriate 
+     section.
+ </tr>
+</table>
+
+
+<!-- ========= How To Update This Documentation ======================== -->
+
+<h2 class="zdoc"><a name="How To Update This Documentation">
+             How To Update This Documentation</a></h2>
+
+<p>There are 2 main ways to update this documentation.  Which one you use
+depends on how comfortable you are with Unix, and how much you know about 
+<a href="impl.html#Source Code Control and CVS">CVS</a>.  This discussion
+assumes that biologists are not comfortable with Unix and CVS and that 
+technologists are.
+
+
+<h3 class="zdoc"><a name="Biologists Update">Biologists</a></h3>
+
+<p>How the update is done depends on which section you are updating.
+<table>
+ <tr>
+   <td align="right" valign="top"><b><a href="curation.html">Curation</a></b>
+   <td>To update the curation document, pull the document into 
+       whatever web page authoring tool you are used to (e.g. FrontPage,
+       DreamWeaver) and edit it.  When you are done with your updates, 
+       e-mail the updated page to a technologist (probably Dave C.), and
+       they will put it back in to the documentation.
+ <tr>
+   <td align="right" valign="top"><b>All other sections</b>
+   <td>Same as for curation except for the last step.  When
+       you e-mail the updated file to a technologist you should also 
+       include a list of what sections were changed.
+       Unlike for the curation document, the technologist 
+       will not do a wholesale replacement of the file with the updated file.
+       Web page authoring tools are notorious for converting readable simple
+       HTML files into obscure, over-tagged, and difficult to decipher HTML
+       files.  The curation document will be updated mainly be people using 
+       such tools.
+       However, all the other documents will be mostly updated by 
+       technologists working directly in HTML, and we want to keep those 
+       files as clean as possible.
+</table>
+
+
+<h3 class="zdoc"><a name="Technologists Update">Technologists</a></h3>  
+
+<p>Technologists use the same process to update all the HTML files.
+The documentation is part of the <a href="impl.html#ZFIN Commons">Commons</a>
+<a href="impl.html#Source Code Control and CVS">CVS</a> project.
+To edit documentation files, 
+first <a href="impl.html#CVS checkout">checkout</a> the 
+<a href="impl.html#ZFIN Commons">Commons</a>
+project, <a href="impl.html#CVS edit">edit</a> the files, and then 
+<a href="impl.html#CVS commit">commit</a> them.  
+Finally, talk to Dave C. to get the
+updates posted back to the ZFIN Commons directory.
+
+
+<h4 class="zdoc"><a name="Figures">Figures</a></h4>
+
+<p>The figures in this documentation were created with the Unix <kbd>xfig</kbd>
+utility.  <kbd>xfig</kbd> is a drawing program capable of exporting files 
+into a number of
+formats, including GIF, which is what the figures you see in these documents 
+are.  Since the 
+figures were created with a Unix utility, they can only be updated by 
+people who are comfortable with Unix, which means 
+<a href="#Technologists Update">technologists</a>.
+The <a href="Products/xfig.html"><kbd>xfig</kbd> man page</a> and the
+<a href="Products/xfig-howto.pdf"><i>Using XFig</i></a> manual are good
+sources of information on how to use <kbd>xfig</kbd>.
+
+<p>The figures are stored in subdirectories hung off the main directory.
+Each HTML document has its own subdirectory for figures.  The versions
+of the files that are displayed in the doc end in <kbd>.gif</kbd>.  
+The versions 
+of the files that can be edited with <kbd>xfig</kbd> end in <kbd>.fig</kbd>.
+
+<p>The <kbd>.fig</kbd> and <kbd>.gif</kbd> files are controlled by 
+<a href="impl.html#Source Code Control and CVS">CVS</a>, 
+just like the HTML 
+files.  The process for updating them is the same as that for HTML files,
+with a little extra work:
+<ol>
+ <li>Using CVS, <a href="impl.html#CVS checkout">checkout</a> the 
+   <a href="impl.html#ZFIN Commons">Commons</a> project 
+   (if you haven't already done so).
+ <li><a href="impl.html#CVS edit">CVS edit</a> both the <kbd>.fig</kbd>
+   and <kbd>.gif</kbd> versions of the figure file you want to update.
+ <li>Update the <kbd>.fig</kbd> file using <kbd>xfig</kbd>.
+ <li><a href="impl.html#CVS commit">CVS commit</a> the <kbd>.fig</kbd> file.
+ <li>Run <kbd>xfig</kbd> on the committed <kbd>.fig</kbd> file, and 
+   Export it as a GIF, with Smooth turned on, and magnification set to
+   at least 125%.
+ <li><a href="impl.html#CVS commit">CVS commit</a> the .gif file.
+ <li>Talk to Dave C. to get the committed files posted to the
+<a href="impl.html#ZFIN Commons">ZFIN Commons</a> directories.
+</ol>
+
+<p>The <kbd>.fig</kbd> and <kbd>.gif</kbd> files need to be committed in
+two separate steps because most of the <kbd>.fig</kbd> files contain
+RCS flags that show the revision number of the figure.  Committing a
+file changes its revision number.  Committing them
+separately means the revision number shown in the <kbd>.gif</kbd> file will 
+always agree with that in the <kbd>.fig</kbd> file.
+
+
+<p>The figures were created with these settings:
+<ul>
+  <li>Grid Mode set to the finest level.
+  <li>Text Size set to 8
+  <li>Test Step set to 1.0
+  <li>Text Font set to Helvetica
+</ul>
+
+<p>A Zoom of 1.5 works well when editing the figures.
+
+<p>The GIFs were created from the <kbd>xfig</kbd> drawings by exporting them:
+<ul>
+  <li>Select Export from the File menu.
+  <li>Set Language to GIF.
+  <li>Select Smooth.
+  <li>Set Magnif to at least 125%.  Bigger is better.
+    Anything smaller will not be readable as a GIF.  The diagrams you see
+    in these documents were created with magnifications of 125% or 140%.
+  <li>Hit the Export button at the bottom.
+</ul>
+
+
+<h4 class="zdoc"><a name="Database Documentation">Database Documentation</a></h4>
+
+<p>The database documentation is divided into 2 different parts:
+
+<ul>
+  <li><a href="db.html">db.html</a>:  This contains 
+    database wide documentation, such as descriptions of ZDB ID formats,
+    source versus data issues, and database functions.  It also contains
+    a pointer to the 
+    <a href="Database/DataModel/index.htm">ER/Studio database documentation</a>.
+  <li><a href="Database/DataModel/index.htm">ER/Studio database documentation</a>:
+    This contains ER diagrams of the entire database and subareas of the 
+    database, and detailed descriptions of tables and columns.
+</ul>
+
+<p>The db.html file is updated in <a href="#Technologists Update">the same 
+way</a> as other ZFIN documentation.  The ER/Studio doc is updated in an
+entirely different fashion, and the rest of this section deals with how to
+do that. 
+
+<p><b>Note:</b> This section does <i>not</i> talk about how to update 
+documentation within the ER/Studio product itself.  For details on how to
+do that, see 
+<a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?pg=pgEditBug&amp;command=view&amp;ixBug=46">FogBUGZ case 46</a>.
+This section describes how to generate HTML reports from ER/Studio and then
+get them placed so they can be read from the ZFIN web site.
+
+<ol>
+ <li>First, in order to even do this, you must have a PC that has 
+  ER/Studio on it.  As of 2004/01, Dave and Sierra's PCs have ER/Studio,
+  and the <a href="impl.html#FogBUGZ Server">FogBUGZ server</a> 
+  in room 333 also has ER/Studio.<br><br>
+
+ <li>In order to generate the Reports in the right place you must first 
+  set the Reports directory.  In ER/Studio, get to the Options page:
+
+  <p>&nbsp;&nbsp;Tools &rarr; Options &rarr; Directories
+
+  <p>Set the "Intranet Site Root" to an Acme Network Place that contains a
+  checked out copy of the <a href="impl.html#ZFIN Commons">Commons</a> CVS 
+  project.  It should point at the "doc/Database/DataModel" subdirectory.
+  For example, on Dave's machine the "Intranet Site Root" is set to 
+
+  <div class="fileline">
+  \\acme.cs.uoregon.edu\research\zusers\clements\Zfin\Commons\doc\Database\DataModel
+  </div>
+
+  <br>
+ </li>
+ <li><p>To generate a report of the production model, first open the production
+  model in ER/Studio.  The production model is at:
+
+  <div class="fileline">
+  Commons/doc/Database/ERStudio/Reference/Production.DM1
+  </div>
+
+  <br>
+ </li>
+ <li>Then generate a report:
+
+  <p>&nbsp;&nbsp;Tools &rarr; Generate Reports ...
+
+  <p>Under the "Wizard Quick Launch" section hit the "Load File..." button and
+  set it to 
+
+  <div class="fileline">
+  Commons/doc/Database/ERStudio/Reports/FullHTML.rpo
+  </div>
+
+  <p>Then hit the "Next" button.  This may come up and warn you that the 
+  directory already exists.  This will be the case if you have generated a 
+  report before.  Press "Yes".
+  <br>
+ </li>
+ <li>The next page in the ER/Studio Report Wizard (page 2 of 4) lists what 
+  objects from the database you want to include in the report, and what you
+  want to know about them.  The selections you see here came from the 
+  "Wizard Quick Launch" file you selected on the previous page.  Accept them
+  as is and press "Next".
+  <br><br>
+ </li>
+ <li>The next page in the ER/Studio Report Wizard (page 3 of 4) lists what
+  quality and zoom you want for the images, and what the logo, report title
+  and description for the report should be.  I spent a fair amount of time 
+  trying to figure out what minimum zoom (80%) and quality (100%) settings 
+  could be used and still have the diagrams be readable.  I have also tried to
+  add a Description here, but if I then save that back to the Quick Launch
+  File, it corrupts the file.  So you can add a description here, but think
+  twice (or thrice) before saving it.  Accept the settings on this page 
+  and hit "Next".
+  <br><br>
+ </li>
+ <li>The fourth and final page basically lists what will show up on the title
+  page of the report.  I would really like to be able to set the Modified date
+  here, but I can't figure out how.  I am not sure if the version is useful
+  to us.  Perhaps we should set it to the date?  Anyway, accept the settings
+  on this page, and hit "Finish".
+  <br><br>
+ </li>
+ <li>This then displays a window showing the progress of the report generation.
+  When the generating is complete the "Cancel" button changes to "Close" and
+  ER/Studio opens a browser window with the report in it.  Close the window
+  and then review the report in the browser to see if it is what you want.
+  If it is then proceed to the next step.  If it isn't then go back into
+  ER/Studio and either update the data model (or the report options) and  
+  then regenerate the report.
+  <br><br>
+ </li>
+ <li>You now have an HTML report that exists on your Unix filesystem in your
+  checked out copy of the Commons directory.  You now need to copy that report
+  to the "production" and "development" copies of the 
+  Commons directory so the report is visible
+  on the web.  The previous instructions were all run on your PC.  The remaining
+  instructions are all run on Unix.
+  <br><br>
+ </li>
+ <li><p>Get to the DataModel directory of your copy of the CVS Commons project.
+  For me this is
+
+  <div class="shellline">
+  % cd Commons/doc/Database/DataModel
+  </div>
+  <br>
+ </li>
+ <li>The DataModel directory is a mixture of CVS controlled files (README) and 
+  files that are generated by ER/Studio.  The files that are generated by 
+  ER/Studio are not placed under CVS.  When ER/Studio generates the files and
+  directories under the DataModel directory, it does not always make them
+  world readable.  We want everything to be world readable:
+
+  <div class="shell">
+  % find . -exec chmod g+r,o+r {} \;
+  % find . -type d -exec chmod o+x {} \;
+  </div>
+ </li>
+ <li>Package the directory into a tar file.
+
+  <div class="shell">
+  % cd ..
+  % tar cf DataModel.tar DataModel
+  </div>
+ </li>
+ <li>Copy the new report into the "development" ZFIN commons directory so it
+  can be seen from the ZFIN documentation.  As yourself on the 
+  <a href="impl.html#Development Server">development server</a>:
+
+  <div class="shell">
+  % sudo cp DataModel.tar <a href="impl.html#/private/ZfinLinks">/private/ZfinLinks</a>/Commons/doc/Database
+  % cd /private/ZfinLinks/Commons/doc/Database
+  % sudo rm -rf DataModel
+  % sudo tar xf DataModel.tar
+  % sudo rm DataModel.tar
+  </div>
+ </li>
+
+ <li>Copy the new report into the "production" ZFIN commons directory so it
+  can be seen from the zfin.org web site.  As yourself on the 
+  <a href="impl.html#Production Server">production server</a>:
+
+  <div class="shell">
+  % sudo cp DataModel.tar <a href="impl.html#/private/ZfinLinks">/private/ZfinLinks</a>/Commons/doc/Database
+  % cd /private/ZfinLinks/Commons/doc/Database
+  % sudo rm -rf DataModel
+  % sudo tar xf DataModel.tar
+  % sudo rm DataModel.tar
+  </div>
+ </li>
+</ol>
+
+<p>And you are done.
+
+
+
+<!-- =================================================================== -->
+<!-- ========= FogBUGZ ================================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="FogBUGZ">FogBUGZ</a></h1>
+
+<p>FogBUGZ is a project management / defect tracking system that ZFIN uses
+track bugs, new features, and technical discussions.  It is accessible over
+the web at:
+
+<div class="urlline">
+<a href="http://zfinwinserver1.uoregon.edu/fogbugz/">http://zfinwinserver1.uoregon.edu/fogbugz/</a>
+</div>
+
+<p>You need to have a login to use it.  FogBUGZ is made by 
+<a href="http://fogcreek.com/FogBugz/index.html">Fog Creek Software</a>.
+It is easy to use.  Our FogBUGZ installation runs on a
+<a href="impl.html#FogBUGZ Server">windows machine in room 333</a>.
+
+<p>ZFIN has a number of guidelines for submitting, assigning, resolving and
+closing cases in FogBUGZ, and someday those guidelines will appear right here.
+But not today.
+
+
+
+<!-- =================================================================== -->
+<!-- ========= ZFIN Web Sites ========================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="ZFIN Web Sites">ZFIN Web Sites</a></h1>
+
+<p>The end product of ZFIN is a web site.  In most contexts that means
+the production site, <a href="http://zfin.org">http://zfin.org</a>.
+However, ZFIN also has several other types of sites for things like mirror 
+sites, beta testing, and development.  The remainder of this section 
+briefly introduces each type of ZFIN web site.
+For information on what web sites are
+implemented on which machines using which databases see the 
+<a href="impl.html#Web Site / Database / Machine Matrix">
+                   Web Site / Database / Machine Matrix</a>.
+
+
+<!-- ========= Production Site ========================================= -->
+
+<h2 class="zdoc"><a name="Production Site">Production Site</a></h2>
+
+<p>When people talk about the ZFIN site, they are referring to the 
+production ZFIN site at <a href="http://zfin.org">http://zfin.org</a>.
+This is ZFIN's presentation to the world.
+It has the latest and greatest version of the web site.  The biologists
+do their curation on this web site.  No matter which 
+<a href="impl.html#Machines and Informix Engines">physical server</a> the
+production web site is running on, it is always accessed as
+<a href="http://zfin.org">http://zfin.org</a>.
+
+<p>The production web site normally resides on the
+<a href="impl.html#Production Server">production server</a>.  However, when 
+the production server 
+is down for upgrades or maintenance, the production web site resides
+on the <a href="impl.html#Development Server">development server</a>.  
+The process for doing this swap is described in the 
+<a href="admin.html#Moving zfin.org to a Different Machine">
+Moving zfin.org to a Different Machine</a>
+section.
+
+
+<!-- ========= Pre-Production and Sandbox Site ========================= -->
+
+<h2 class="zdoc"><a name="Pre-Production and Sandbox Site">
+             Pre-Production and Sandbox Site</a></h2>
+
+<p>ZFIN uses the 
+<a href="http://almost.zfin.org">http://almost.zfin.org</a> site as its
+final staging/testing site for updates before they are 
+<a href="impl.html#Putting Changes Into Production">placed into production</a>.
+ZFIN team members will often be asked to test something on this site as a 
+final sanity check.  It also serves as a "sandbox" site where curators can 
+try things
+before trying them on <a href="http://zfin.org">http://zfin.org</a> to see
+what happens.
+
+
+<!-- ========= Beta Testing Site ======================================= -->
+
+<h2 class="zdoc"><a name="Beta Testing Site">Beta Testing Site</a></h2>
+
+<p>ZFIN sometimes makes new features available to the outside world for 
+testing and evaluation before we put them into production.  We use the
+<a href="http://test.zfin.org">http://test.zfin.org</a> site for this
+purpose.  Access to the testing site is generally disallowed, but is
+opened up when features are being tested.
+
+<p>In addition, we also sometimes open up access to particular 
+<a href="#Development Sites">development web sites</a> that have features 
+we want people outside of ZFIN to evaluate.
+
+
+
+
+<!-- ========= Development Sites ======================================= -->
+
+<h2 class="zdoc"><a name="Development Sites">Development Sites</a></h2>
+
+<p>ZFIN has a score of development web sites that are used to do ZFIN
+<a href="impl.html">maintenance and development</a>.  They are named
+http://<i>mutant_name</i>.zfin.org.  Most development sites are backed 
+by their own database.  See the
+<a href="impl.html#Web Site / Database / Machine Matrix">
+                   Web Site / Database / Machine Matrix</a> for a list
+of development sites.
+
+
+<!-- ========= BLAST Site ============================================== -->
+
+<h2 class="zdoc"><a name="BLAST Site">BLAST Site</a></h2>
+
+<p>ZFIN has its own internal BLAST server that has been tuned for our needs.
+As of 2005/02, the BLAST server is at:
+
+<div class="urlline">
+  <a href="http://almost.zfin.org/blast/blast.html">http://almost.zfin.org/blast/blast.html</a>
+</div>
+
+<p>We are working on migrating this to an Apple cluster available at:
+
+<div class="urlline">
+  <a href="http://genomix.cs.uoregon.edu">http://genomix.cs.uoregon.edu</a>
+</div>
+
+<p>See the <a href="impl.html#BLAST Server">BLAST Server</a>, 
+<a href="impl.html">BLAST Implementation</a>, and 
+<a href="admin.html#BLAST Server Administration">BLAST Server Administration</a>
+sections for more details.
+
+
+
+<!-- ========= Mirror Sites ============================================ -->
+
+<h2 class="zdoc"><a name="Mirror Sites">Mirror Sites</a></h2>
+
+<p>ZFIN supports 3 mirror sites around the world, as well as mirror sites
+that are internal to ZFIN.  
+See <a href="impl.html#Mirror Sites">Mirror Sites</a> for details on these.
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= ODBC Connections ======================================== -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="ODBC Connections">ODBC Connections</a></h1>
+
+<p>ODBC is a good way for Windows users to access our Informix database.
+See <a href="impl.html#ODBC Connections">ODBC Connections</a> 
+for details on these.
+
+<br><br>
+</div>  <!-- class="zdoc" -->
+
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>

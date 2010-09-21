@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE ERStudioReverseEngineerWizard SYSTEM "file:///RevEngWiz3.dtd">
+<!--Name          : Embarcadero Project File
+Description   : This file contains an Embarcadero generated data file.
+Version       : Version 1.00
+Creation Date : 12/28/04 - 14:10:37
+Last Update   : 12/28/04 - 14:10:37
+-->
+<ERStudioReverseEngineerWizard><ConnectionType><ODBC><DataSourceName DataSourceName="zfindb"/>
+<DataSourceType DataSourceType="IBM INFORMIX 3.82 32 BIT"/>
+<UserName UserName="informix"/>
+<Password Password="58c7edf6162d1222255cc1984c2bd67b"/>
+</ODBC>
+</ConnectionType>
+<QualifierList/>
+<OwnerList><Owner OwnerName="bsprunge"/>
+<Owner OwnerName="clements"/>
+<Owner OwnerName="eriks"/>
+<Owner OwnerName="informix"/>
+<Owner OwnerName="judys"/>
+<Owner OwnerName="kschaper"/>
+<Owner OwnerName="ksf"/>
+<Owner OwnerName="peirans"/>
+<Owner OwnerName="pm"/>
+<Owner OwnerName="staylor"/>
+<Owner OwnerName="tomc"/>
+<Owner OwnerName="zfinner"/>
+<Owner OwnerName="zfishweb"/>
+</OwnerList>
+<SelectedObjects><IncludedTables><SelectAllTables SelectAllSystemTables="0" SelectAllUserTables="1" SelectedAllSystemTables="0" SelectedAllUserTables="0"/>
+<Tables><Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="accession_bank" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="209" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="alias_group" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="163" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="all_anatomy_contains" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="663" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="all_anatomy_stage" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="659" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="alteration" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="125" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="alteration_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="124" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomical_parts" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="151" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_contains" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="133" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_display" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="660" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_hierarchy" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="132" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_item" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="235" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_item_homolog" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="242" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_stage_stats" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="662" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anatomy_stats" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="661" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="anon_orphan" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="149" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="attributed_column" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="153" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="chromosome" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="202" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="clone" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="246" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="column_attribution" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="154" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="company" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="222" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="company_position" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="114" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="condition" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="256" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="curation" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="197" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="curation_topic" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="196" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="data_alias" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="215" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="data_note" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="250" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="db_link" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="121" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="defline" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="161" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="do_oevdispupdate_temp_first" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="218" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="do_oevdispupdate_temp_second" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="219" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="environment" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="257" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="environment_condition" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="258" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="environment_unit" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="261" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="execweb" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="144" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="245" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern_anatomy" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="142" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern_assay" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="260" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern_image" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="141" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern_infrastructure" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="259" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="expression_pattern_stage" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="207" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="external_note" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="243" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="feature_environment" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="255" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="231" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="138" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_anatomy" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="140" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_direction" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="135" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_form" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="136" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_preparation" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="137" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_stage" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="139" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_image_view" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="134" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_search" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="655" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_status" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="170" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fish_supplier_status" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="169" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="foreign_db" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="143" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="foreign_db_contains" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="181" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="foreign_db_data_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="180" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fx_expression_experiment" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="252" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fx_expression_pattern_image" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="254" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fx_expression_result" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="253" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fx_figure" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="251" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fx_fish_image_private" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="262" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="go_evidence_code" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="230" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="go_evidence_flag" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="225" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="go_flag" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="226" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="go_ontology" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="160" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="go_term" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="227" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="inference_group_member" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="224" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_data_source" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="118" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_data_supplier" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="119" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_fish_chromo" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="126" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_person_company" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="115" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_person_lab" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="113" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="int_person_pub" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="116" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="lab" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="233" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="lab_position" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="112" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkage" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="189" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkage_group" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="123" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkage_member" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="127" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkage_pair" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="128" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkage_pair_member" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="129" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="linkages_copy" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="145" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="locus" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="201" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="locus_registration" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="203" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="map_metric" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="122" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="mapped_deletion" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="205" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="mapped_marker" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="211" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="212" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_go_term_evidence" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="404" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_history" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="216" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_history_event" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="190" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_history_reason" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="200" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_relationship" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="159" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_relationship_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="158" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_type_group" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="156" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_type_group_member" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="157" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="marker_types" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="120" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="mutagee" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="192" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="mutagen" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="191" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="old_image" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="152" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="organism" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="167" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="orthologue" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="213" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="orthologue_evidence" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="175" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="orthologue_evidence_code" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="174" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="orthologue_evidence_display" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="176" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="paneled_markers" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="651" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="panels" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="223" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="person" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="221" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="primer_set" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="146" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="probe_library" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="173" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="publication" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="220" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="publication_claim" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="199" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="publication_note" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="198" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="putative_non_zfin_gene" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="214" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="record_attribution" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="155" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="return_recs" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="208" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="sequence_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="162" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="single" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="204" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="source_url" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="241" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="source_url_purpose" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="229" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="stage" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="130" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="stage_contains" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="131" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="staging_webpages" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="148" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="syserrors" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="43" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="systraceclasses" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="44" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="systracemsgs" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="45" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="temp_fish" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="232" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="updates" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="150" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="url_ref" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="210" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="validate_check_history" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="194" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="vector" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="172" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="vector_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="171" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="webpages" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="147" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_active_data" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="117" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_active_source" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="111" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_flag" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="179" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_object_type" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="177" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_orphan_data" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="164" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_orphan_source" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="165" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_replaced_data" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="217" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zdb_submitters" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="247" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zirc_fish_line" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="183" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zirc_fish_line_alteration" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="184" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zirc_fish_line_background" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="185" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zirc_fish_line_status" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="186" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="zmap_pub_pan_mark" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="178" ObjectType="T" ObjectTypeId="0" OwnerName="informix"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="acc_ref_gid_eid" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="182" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="fest_lib_inst" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="168" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="geneprefix_institution" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="206" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="panel_count" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="193" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="probe_lib" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="195" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+<Object ObjectComments="" ObjectDDLTypeId="0" ObjectModifiedType="" ObjectName="snp_dblnk" ObjectOwnerId="0" ObjectSpecName="" ObjectTableId="166" ObjectType="T" ObjectTypeId="0" OwnerName="tomc"/>
+</Tables>
+</IncludedTables>
+<IncludedViews><SelectAllViews SelectAllSystemViews="0" SelectAllUserViews="0" SelectedAllSystemViews="0" SelectedAllUserViews="0"/>
+<Views/>
+</IncludedViews>
+<IncludedTriggers><SelectAllTriggers SelectAllTriggers="0" SelectedAllTriggers="0"/>
+<Triggers/>
+</IncludedTriggers>
+<IncludedProcsFuncs><SelectAllProcsFuncs SelectAllProcsFuncs="0" SelectedAllProcsFuncs="0"/>
+<ProcsFuncs/>
+</IncludedProcsFuncs>
+<IncludedPackages><SelectAllPackages SelectAllPackages="0" SelectedAllPackages="0"/>
+<Packages/>
+</IncludedPackages>
+<IncludedObjectTypes><SelectAllObjectTypes SelectAllObjectTypes="0" SelectedAllObjectTypes="0"/>
+<ObjectTypes/>
+</IncludedObjectTypes>
+<IncludedStorageObjects><SelectAllStorageObjects SelectAllStorageObjects="0" SelectedAllStorageObjects="0"/>
+<StorageObjects/>
+</IncludedStorageObjects>
+</SelectedObjects>
+<InferObjects><PrimaryKeys PK="0"/>
+<ForeignKeysFromIndexes FK="0"/>
+<ForeignKeysFromNames FK="0"/>
+<Domains Domains="0"/>
+</InferObjects>
+</ERStudioReverseEngineerWizard>
+
+

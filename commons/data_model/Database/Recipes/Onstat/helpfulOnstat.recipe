@@ -1,0 +1,84 @@
+****************************************************************************
+* onstat is the command line tool for monitoring DB functionality
+* All commands must be run by Informix
+*
+* onstat can be used to find and monitor problems.
+*
+* onmode commands can be used with onstat 
+* to kill/fix run-away queries, stale tomcat
+* connections, memory allocation problems and of course, to re-initialize
+* the server and disk allocations.
+*
+* onmode commands listed here are relatively safe; meaning
+* server crash is not expected. It should be
+* noted that onmode is a DBA tool.  Even the onmode 
+* commands below should be used with caution and the server should be 
+* monitored for an extended period after executing.
+*
+* iostat is a server-performance monitoring tool; should tell the % b (busy)
+* that each disk is experiencing.  Should be under 10 for each disk. 
+* use this several times, or watch over time to get a good sense of the
+* data
+* 
+*****************************************************************************
+onstat -g sql [session_id] : shows running SQL commands [shows last parsed SQL
+       	      		     and SQL that is currently running for that session]
+
+onmode -z session_id : kills a db sesssion.  Sometimes sessions can depend
+       	  	       on each other.  Killing more than one is sometimes
+		       required.  Killing a db session will often result
+		       in an error on the user end; but, the trade-off is
+		       often a painfully slow interface, or the inability
+		       to reload a db.  So, it is required.
+
+onstat -g stm [session_id] : shows executing cursers and threads [for a session]
+       	      		     or overall.
+
+onstat -m : display the message log from infromix server.
+
+onstat -g seg: shows segments of memory being used for database work.
+
+onmode -F : Clears out shared memory that has been locked by large decision
+       	    queries.  Significantly affects performance for 1-5 seconds, but
+	    is sometimes required.  Required when iowait is high and restarting
+	    tomcat and apache does nothing to help.  Should be used with
+	    onstat -g seg.  More than 3-4 Virtual segments in use dictates
+	    using this command.  Could affect the user. 
+
+iostat -xn : shows a list of devices/disks on the machine and how
+       	     busy each is.  The % busy is listed over time and is an
+	     average, so watching for a bit of time will help.
+
+top: used to see the "top" processes on a server.  If there are 3 "oninit" 
+     processes at the top of the list, each with > 20% of the CPU, then
+     informix is using all of its allocated resources.  Performance will
+     be slow.  
+
+     check onstat -g sql.  If there are more than 4 "selects" in the list,
+     and more than 6 total sql keywords that show up in this output, then
+     performance of the website is probably slow.  Check each session
+     individually.  Monitor the least-numbered session that hangs
+     around for more than a few seconds and record 
+     what its doing.
+     
+     If only 2 oninit processes are > 20%, perfomance is still
+     slow, but users are being fed information.  Normal usage is 3 "oninit"
+     processes, each with about 2-10% usage.
+
+     jsvc in the top position usually means that java is being deployed.
+
+restarttomcat.pl : script used to restart tomcat.  
+
+restart apache: used as a last resort, when informix is hosed and
+		processes access informix faster than they can be killed.
+
+		% sudo /private/apps/apache/bin/apachectl stop
+		% sudo /private/apps/apache/bin/apachect -DZFIN -DSSL -k start
+
+		This should end most incoming transactions.
+		Keep apache down for a few seconds, and check
+		onstat -g sql.  Hopefully, the number of queries 
+		will have decreased dramatically.
+
+		Start apache and monitor the server.  
+

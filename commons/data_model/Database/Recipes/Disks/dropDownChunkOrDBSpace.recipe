@@ -1,0 +1,108 @@
+========================================================================
+What do you do when a temp space goes down?
+************************************************************************
+Sometimes we've seen zfin.org stall and informix stall on helix and 
+embryonix with a 'down chunk' assertion failure.  This seems to happen
+after restart of the solaris servers.
+
+Typically the symptoms of this are: 
+
+1) a frozen website 
+2) a ton of SQL SELECTS in the output of "onstat -g sql"
+3) an assertion failure like this: 
+
+(/research/zprod/users/WildtypeFailures)
+
+15:46:25  Assert Failed: Buffer modified in inconsistent chunk.
+15:46:25   Who: Session(20, zfinner@helix, 856, 222b682d0)
+                Thread(368, sqlexec, 222b4cde8, 1)
+                File: rsdebug.c Line: 957
+15:46:25   Results: Chunk 20 is being taken OFFLINE.
+15:46:25   Action: Restore chunk from archive.
+15:46:25  Stack for thread: 368 sqlexec
+
+4) trying to take down the server with onmode -k 
+gives a warning/error message about not being completed with its checkpoint. 
+
+5) onstat -m says that "Checkpoint blocked because of down chunk. 
+Waiting for shutdown or override."
+
+6) onstat commands will continue to work perfectly.
+
+7) echo "select * from syschunks where is_offline != 0" | dbaccess sysmasterdb 
+reveals a down chunk.  The chunk path should point to a **temp** dbspace
+
+************************************************************************
+========================================================================
+
+Email tech support.
+
+https://www-304.ibm.com/jct09002c/university/scholars/members/spm/support/support-request-window.html
+
+IBM id: staylor@cs.uoregon.edu
+password: see sierra, peiran, tom or judy 
+(hint: The shaping of a continent North Americas active west).
+
+When a chunk is down, the server waits for you to let it finish a checkpoint 
+without referencing the down chunk.  You want to be sure that the down chunk is a TEMPORARY dbspace.
+
+******!!!!!If you execute this recipe on a non-temp dbspace, chaos may insue!!!!********
+  ****!!!!!This recipe also assumes 1 chunk per db space!!!!**********
+
+x. Mark the chunk down this with:
+
+   as informix:
+
+   % onmode -O (capital o). 
+
+This marks the chunk as down and lets the server finish the checkpoint.  This
+is a fine action to take for temp db spaces.  
+
+x. Bounce the server
+
+   as informix:
+
+   % onmode -k
+   % oninit 
+
+x. query sysmaster to make sure the chunk is still down.
+   as informix:
+ % echo 'select * from syschunks where is_offline != "0"' | dbaccess sysmaster
+
+******!!!!!If you execute this recipe on a non-temp dbspace, chaos may insue!!!!********
+
+x. drop the down chunk 
+as informix:
+  (match the chunk name in this command with the down chunk in sysmaster out-put; the chunk
+   name may be different when viewed by informix as when viewed in sysmaster db.  You have to 
+   figure out what the chunk name is to informix; yeah it sucks.  Whatever you called the chunk/dbspace
+   when you created it with the onspaces command, is what informix names it. Try onstat -D if you
+   don't have an old recipe for adding spaces that you can consult; usually the name will only differ
+   by its suffix. ie: tempdbs4_c1 in sysmaster = tempdbs4 to informix).
+  
+ % onspaces -d chunk_name ("tempdbs4" for example)
+
+  (leave the symlink to /tempdbs4_c1 in place in /informix/dev/rdsk/)
+
+x. recreate the chunk in the same place it was before (if you have the recipe you used for making the chunk/dbspace)
+
+  EXAMPLE ONLY:
+
+   as informix:
+
+   % onspaces -c -d tempdbs5 -t -p /private/apps/Informix/informix/dev/tempdbs5_c1 -o 1673216 -s 2097152 
+
+  MORE GENERIC:
+
+   % onspaces -c -d chunk_name_as_informix_sees_it -t -p /private/apps/Informix/informix/dev/name_of_chunk_in_symlink -o chunk_offset -s chunk_size 
+  
+x. do a level 0 backup to initialize the space:
+   as informix
+
+   % ontape -s -L 0
+
+x. try the website again
+
+x. query sysmaster to make sure the chunk is up.
+   as informix
+ % echo 'select * from syschunks where is_offline != "0"' | dbaccess sysmaster

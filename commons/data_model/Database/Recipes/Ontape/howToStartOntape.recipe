@@ -1,0 +1,63 @@
+======================================================================================
+How to clean out old informix logs (we really only need as many days of logs as 
+there are between informix level 0 backups)
+**************************************************************************************
+This recipe comes in a monthly email reminder to informix.  It needs to be done to
+rotate/clear out old log files.  These log files are informix logical logs.  They
+give us the ability to roll-forward from a crash post-checkpoint.  We need only as many
+log files as there are since the last level 0 dump. 
+
+This recipe can also be used to start logging on helix/production when/if informix is 
+restarted after a server crash or other downtime.
+
+How do I know when this needs to be done (symptoms):
+
+1) if cron is running on production you will have received about 10,000 email messages
+that tell you that Wildtype is ABNORMAL! and that you need to check ontape.
+
+2) When the logical log files fill up (after about 2 days of no logging), the engine
+will hang and there will be messages as to what is going on in the online.log (onstat -m
+as informix).
+======================================================================================
+
+x. source helix
+
+      as informix on helix:
+       % srchelix 
+ 
+x. find the process id of ontape
+       % ps -ef | grep ontape 
+     
+(if no ontape -c process is found, skip the kill command below and just issue the gmake dumpLogsContinuous command:)
+   
+x.  issue a kill command for the ontape process 
+       % kill [found_process_id_from_above]
+       % cdhelix 
+       % cd server_apps/DB_maintenance/ 
+       % gmake dumpLogsContinuous 
+      
+x. dump the informix server 
+       % cd /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/
+       % ./dumpServer.pl  (will require a return and will take about 2 minutes, don't panic)
+
+x. If this routine completes successfully, delete the old log file with
+   last month's datetime stamp.
+
+       % cd /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/
+   
+x. Confirm that the logs symlink is pointing to a logfile with 
+   today's date.
+       % ls -al logs
+
+x. Confirm that the data symlink is pointing to a data file with today's
+   date.  Will be created with the dumpServer.pl script
+
+       % ls -al data
+
+x. Remove the old log file that the logs symlink is NOT pointing to.
+
+       % rm log[the_date_to_delete.0]
+
+x. Else, wait untill tomorrow, and make sure we have a dump from tonight's
+   cron job and delete the historical log file with last month's
+   datetime stamp then.

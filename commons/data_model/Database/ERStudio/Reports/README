@@ -1,0 +1,16 @@
+This directory should contain ER/Studio report templates.  
+
+In ER/Studio, you should set your Reports Directory to this directory:
+
+   Tools->Options->Directories->Reports
+
+We aren't sure yet if we will have one report template, or many.
+
+Note that this directory does NOT contain the output of the reports(s) -- it 
+contains the template(s) used to produce the output.  The output of 
+the report(s) goes in Commons/doc/Database/DataModel.
+
+
+
+
+

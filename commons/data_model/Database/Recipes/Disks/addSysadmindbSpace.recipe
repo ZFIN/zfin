@@ -1,0 +1,123 @@
+######################################################################################################################
+# Here were the symptoms of a full rootdbs, and a sysadmin db in the wrong db space:
+#
+# 1) Can not load almdb (no free disk space error)
+# 2) Can not add any additional dbspaces (as these get registered in the full rootdbs).
+#
+# Here are the tools I used to find out:
+#
+# 1) ISA showed rootdbs as full
+# 2) onstat -d showed rootdbs as full (except 8 pages).
+# 
+# Note: There is a bug in ISA that makes determining if a chunk is down or up difficult.  
+# One area says "Online", one says "Offline".
+# These bugs in ISA will crop up as IBM wants us to use the OAT tool instead 
+# (which is still very beta and is not secure).
+#
+# Onstat -d is always right; when in doubt use that.
+#
+# 3) I documented related  info from informix in the upgrade case (2718).
+#
+# Problem was the sysadmin db.  It has a new feature to allow really cool 
+# automated statistics gathering, but by default, it assigns
+# this db to to rootdbs.  We never allocate more space than is needed to rootdbs so we can catch things like this.
+#
+# Note: We have to move sysadmindbs manually each time we re-initialize the server 
+# (meaning when we clear out space or upgrade; I don't think we have to do it on simple server restart).
+#
+# So here's what I did:
+# 
+# 1) tried to move sysadmin database to its own db space.
+# (see /private/ZfinLinks/Commons/doc/Database/addSysadmindbSpace.recipe in an hour or so).
+# 
+# Could not do so because there was no space in rootdbs.
+#
+# 2) added another chunk to rootdbs  (see /private/ZfinLinks/Commons/doc/Database/fixRootdbs.recipe in an hour or so).
+# 
+# 3) created the sysadmindbs db space
+# 
+# http://www.ibm.com/developerworks/blogs/page/idsteam?tag=sysadmin
+# DATABASE sysadmin;
+#   UPDATE ph_task 
+#   SET tk_delete = (4 * tk_frequency) 
+#   WHERE tk_type = 'SENSOR';
+######################################################################################################################
+
+2008-07-30
+
+Need to move sysadmin database to new chunk.
+
+As informix on embryonix
+
+ % cd /private/apps/apache/bin
+
+ % sudo apachectl stop
+
+ kill all tomcats
+
+ % sudo kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+ 
+ % cd ~/informix/dev
+
+ % ln -s /dev/rdsk/c2t1d4s0 sysadmindbs_c1
+
+ check permissions
+ 
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+ % onspaces -c -d sysadmindbs         -p /private/apps/Informix/informix/dev/sysadmindbs_c1 -o 0  -s 65536
+
+ % ontape -s -L 0
+
+ check that space is available and ONLINE in ISA
+
+ % UPDATE DOC TO show new offset
+
+   new offset = old offset (0) + space added (65536) = 65536
+
+To move the sysadmin database:
+
+   x. Make sure the following message has appeared in the online message log after server startup:
+
+      SCHAPI: Started 2 dbWorker threads.  
+
+
+   x. As user informix, run the following commands:
+
+      % dbaccess sysadmin -   
+      > execute function task("reset sysadmin", "sysadmindbs");  
+      > close database
+      > [cntl-C]  to sever the connection to sysadmin so that it can be moved/exclusively locked.
+
+      The internal thread, bld_sysadmin, waits up to five minutes to obtain exclusive access to the 
+      sysadmin database. The progress of the bld_sysadmin thread is logged in the online message log.
+
+      The command returns the following message:
+
+      SCHAPI: 'sysadmin' database will be moved to 'sysadmindbs'.
+      See online message log.
+
+      If this operation completes successfully, the sysadmin database is dropped and  
+      recreated in the new dbspace. The Scheduler and dbWorker threads are started automatically.
+
+done: completed successfully.
+
+In case of failure: 
+drop chunk
+
+as informix on embryonix:
+
+% onspaces -d sysadmindbs -p /private/apps/Informix/informix/dev/sysadmindbs_c1 -o 65536
+% rm /dev/rdsk/c2t1d4s0 sysadmindbs_c1 
+
+status: did not fail

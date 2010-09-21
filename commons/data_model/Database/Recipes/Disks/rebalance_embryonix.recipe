@@ -1,0 +1,235 @@
+
+Pre-Work
+-----------------
+x. 12/26 reminder to group of the work on 12/27
+
+x. 12/26 late afternoon, inform developpers to stop tomcat
+
+
+Reorganize physical layout at Embryonix
+----------------------------------------
+x. email group that development server would be unavailable 
+   till further notice
+
+x. stop tomcat, apache 
+
+   % ps -ef | grep jsvc
+   % sudo kill -9 pid
+
+   as self on embryonix
+
+   % sudo  /private/httpd/bin/apachectl stop
+
+x. Bring down wanda
+
+   as informix on embryonix
+
+   % onmode -ky
+
+   making sure it is offline
+   % onstat 
+   % ps -ef | grep oninit 
+   % ps -ef | grep onstat
+
+
+x. define informix raw device
+
+   % cd /private/apps/Informix/informix/dev/
+
+   % rm -f *
+
+   % ln -s /dev/rdsk/c1t0d0s4 tempdbs1_c1
+   % ln -s /dev/rdsk/c1t1d0s4 tempdbs2_c1
+   % ln -s /dev/rdsk/c1t2d0s4 tempdbs3_c1
+   % ln -s /dev/rdsk/c1t3d0s4 tempdbs4_c1
+
+
+   % ln -s /dev/rdsk/c2t1d3s0 tbldbs2_c1       
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs5_c1         
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs7_c1         
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs9_c1 
+        
+   % ln -s /dev/rdsk/c2t1d3s1 tbldbs3_c1          
+   % ln -s /dev/rdsk/c2t1d3s1 smartbs_c1    
+   % ln -s /dev/rdsk/c2t1d3s1 smarttempbs_c1
+ 
+   % ln -s /dev/rdsk/c2t1d3s6 smartdfltbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 llogdbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 plogdbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 idxdbs1_c1
+
+
+   % ln -s /dev/rdsk/c2t1d5s0 tbldbs1_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs6_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs8_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs10_c1
+   % ln -s /dev/rdsk/c2t1d5s0 rootdbs_c1
+
+         
+   % ln -s /dev/rdsk/c2t1d5s1 idxdbs2_c1
+   % ln -s /dev/rdsk/c2t1d5s1 idxdbs3_c1
+
+   % ln -s /dev/rdsk/c2t1d5s6 defaultdbs_c1
+   % ln -s /dev/rdsk/c2t1d4s0 sysadmindbs_c1
+ 
+   % ln -s /dev/rdsk/c2t1d3s6 smartdfltbs_c2
+   % ln -s /dev/rdsk/c2t1d5s0 rootdbs_c2
+
+   (26 dbspaces)
+
+x. use new onconfig file
+
+   % cd ../etc
+   % co -l onconfig
+   % cp onconfig.new onconfig
+   
+
+  ROOTOFFSET	31457280
+
+  use initial physical and logical log parameters
+
+  LOCKS         524288   # doubled
+
+  DBSPACETEMP   # add tempdbs2, delete tempdbs11
+                # should have removed all tempdbs from the oninit -i
+
+x. Re-initiate wanda
+
+   % oninit -i 
+
+   % onstat -m
+
+complained about invalid dbspace listed in DBSPACETEMP
+
+x. Convert to large chunks
+
+   % onmode -BC 1
+nothing changed
+
+   % onmode -BC 2
+
+nothing changed. it is already in Exclusive Big chunk (BC=2) mode
+
+
+   % ontape -s -L 0
+skipped
+
+x. Add dbspaces (not in order of location but rather familiar ISA display) 
+
+   onspaces -c -d plogdbs -p /private/apps/Informix/informix/dev/plogdbs_c1 -o 5242880 -s 32768 
+   onspaces -c -d llogdbs -p /private/apps/Informix/informix/dev/llogdbs_c1 -o 1048576 -s 4194304
+
+   onspaces -c -d tbldbs1      -p /private/apps/Informix/informix/dev/tbldbs1_c1 -o 0 -s 25165824
+   onspaces -c -d tbldbs2     -p /private/apps/Informix/informix/dev/tbldbs2_c1 -o 0 -s 25165824
+   onspaces -c -d tbldbs3     -p /private/apps/Informix/informix/dev/tbldbs3_c1 -o 0 -s 25165824
+
+   onspaces -c -d defaultdbs   -p /private/apps/Informix/informix/dev/defaultdbs_c1 -o 0  -s 2097152
+
+   onspaces -c -d idxdbs1        -p /private/apps/Informix/informix/dev/idxdbs1_c1 -o 5275648 -s 16777216
+   onspaces -c -d idxdbs2      -p /private/apps/Informix/informix/dev/idxdbs2_c1  -o 0  -s 16777216
+   onspaces -c -d idxdbs3      -p /private/apps/Informix/informix/dev/idxdbs3_c1  -o 16777216 -s 16777216
+
+   onspaces -c -S smartbs1     -p /private/apps/Informix/informix/dev/smartbs_c1 -o 25165824 -s 6291456 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+   onspaces -c -S smartdfltbs -p /private/apps/Informix/informix/dev/smartdfltbs_c1 -o 0 -s 1048576 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+   onspaces -c -S smarttempbs -p /private/apps/Informix/informix/dev/smarttempbs_c1 -o 31457280 -s 2097152 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+
+
+   onspaces -c -d tempdbs1 -t -p /private/apps/Informix/informix/dev/tempdbs1_c1 -o 0 -s 2097152
+   onspaces -c -d tempdbs2 -t -p /private/apps/Informix/informix/dev/tempdbs2_c1 -o 0 -s 2097152
+   onspaces -c -d tempdbs3 -t -p /private/apps/Informix/informix/dev/tempdbs3_c1 -o 0 -s 2097152
+   onspaces -c -d tempdbs4 -t -p /private/apps/Informix/informix/dev/tempdbs4_c1 -o 0 -s 2097152
+
+   onspaces -c -d tempdbs5 -t -p /private/apps/Informix/informix/dev/tempdbs5_c1 -o 25165824 -s 2097152
+   onspaces -c -d tempdbs6 -t  -p /private/apps/Informix/informix/dev/tempdbs6_c1 -o 25165824 -s 2097152
+   onspaces -c -d tempdbs7 -t -p /private/apps/Informix/informix/dev/tempdbs7_c1 -o 27262976 -s 2097152
+   onspaces -c -d tempdbs8 -t  -p /private/apps/Informix/informix/dev/tempdbs8_c1 -o 27262976 -s 2097152
+   onspaces -c -d tempdbs9 -t -p /private/apps/Informix/informix/dev/tempdbs9_c1 -o 29360128 -s 2097152
+   onspaces -c -d tempdbs10 -t -p /private/apps/Informix/informix/dev/tempdbs10_c1 -o 29360128 -s 2097152
+   onspaces -c -d sysadmindbs         -p /private/apps/Informix/informix/dev/sysadmindbs_c1 -o 0 -s 65536
+
+   onspaces -a smartdfltbs  -p /private/apps/Informix/informix/dev/smartdfltbs_c2 -o 22052864  -s 1048576
+   onspaces -a rootdbs         -p /private/apps/Informix/informix/dev/rootdbs_c2 -o 31490048  -s 32768
+
+   Level 0 backup
+
+   % ontape -s -L 0
+
+ 
+x. Modify onconfig and bounce the server
+
+   % cd /private/apps/Informix/informix/etc
+   % emacs onconfig &
+   use large size config for physical log and logical log configuration
+
+   % onmode -ky
+   % onstat
+
+   STATUS: change DS_TOTAL_MEMORY to 8970652 according to informix server message
+
+   % oninit
+
+   STATUS: got fatal error on shared memory initialization. In onconfig file, change plogdbs1 -> plogdbs
+ 
+   % onstat -m
+
+x. Add 63 logical log files
+   
+   onparams -a -d llogdbs
+   ...
+   
+   % onstat -l 
+
+   the seq id should be 4 - 66
+ 
+   need a level 0 back up? STATUS: skipped
+
+   % ontape -s -L 0
+
+   drop old log files
+  
+    % onstat -l        # find the current log file 
+    % onparams -d -l 1
+    % onparams -d -l 3  
+    % onmode -l        # advance log file
+
+ STATUS: before advance:
+address          number   flags    uniqid   begin                size     used    %used
+224961518        1        U-B----  4        1:1263                750      750   100.00
+224961580        2        U---C-L  5        1:2013                750      117    15.60
+2249615e8        3        U-B----  3        1:2763                750      750   100.00
+
+         after advance:
+address          number   flags    uniqid   begin                size     used    %used
+224961518        1        D------  0        1:1263                750        0     0.00
+224961580        2        U-B---L  5        1:2013                750      120    16.00
+2249615e8        3        D------  0        1:2763                750        0     0.00
+225674d80        4        U---C--  6        3:53                32768        0     0.00
+
+but couldn't drop 2. it said, in use.
+Did level 0 backup, then able to dropp it. 
+
+    % ontape -s -L 0   
+    % onparams -d -l 2
+
+    % ontape -s -L 0
+
+x. Start up Apache & almost tomcat
+
+   as yourself on embryonix
+    % sudo  /private/httpd/bin/apachectl startssl
+
+   as informix, start it 
+   so that the reload script would not abort when trying to stop it
+    % /private/ZfinLinks/Commons/bin/starttomcat.pl
+
+x. unload almost.zfin.org
+
+   as informix
+
+    % cd /research/zcentral/www_homes/almost/server_apps/DB_maintenance
+    % load_and_index_almost.pl
+   
+    check almost tomcat is up, http://almost.zfin.org is functioning
+
+x. email group that almost.zfin.org is available, tech people need to reload
+   their individual databases.

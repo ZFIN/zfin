@@ -1,0 +1,418 @@
+2008/08/20
+
+
+x. Email zfinner(make sure Holle & Jon are on the list), 
+       curators no web updates, tech people no direct updates.   
+
+done: 
+
+
+x. Kill ISA
+
+  As staylor on embryonix.
+
+  % sudo /etc/init.d/informix-isa stop
+
+Done:903
+
+
+x. Stop tomcat and apache on Embryonix
+
+         As self on Embryonix
+
+         % ps -ef | grep jsvc
+	 --kill all tomcats
+	 % kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+
+	 % ps -ef | grep jsvc 
+      
+         % sudo /private/apps/apache/bin/apachectl stop
+
+	 done: 903
+
+     
+x. Take the informix server down on embryonix
+    
+        As informix on the embryonix server:
+        onmode -k
+
+done: 906
+
+x. edit the dump dir to /research/zunloads/projects/patchInformix
+
+done:906
+
+x. Bring wanda back up with new onconfig.
+
+   As informix on embryonix:
+
+   % oninit
+
+Done: 906
+
+
+x. Bring wanda to quiescent 
+
+   As informix on embryonix 
+
+   % onmode -s
+   % onstat to check quiescence.
+
+Done: 909
+
+
+x. Make a level 0 backup of the server
+
+   As informix on embryonix:
+
+   % ontape -s -L 0
+
+make sure dir has informix:informix permissions
+and group has writable permissions
+have to touch the data and logs files to get them to be recognized by ontape.
+takes at least 45 minutes on embryonix.
+
+onstat -m 
+
+done if shows that the backup has completed.
+
+done: 1004
+
+x. cp backup to a secure name
+
+   in /research/zunloads/projects/patchInformix
+
+   % no
+
+
+x. Shut down wanda gracefully.
+
+   As informix on embryonix:
+
+   % onmode -s (puts server in quiescent mode)
+   
+     wait for users to exit, 
+     run onstat for open connections.
+
+   % onmode -l (shifts to next logical log)
+
+   % onmode -c (force a checkpoint)
+
+Done: 1005
+
+
+x. Bring down the server all the way.
+
+   As informix on embryonix:
+
+   % onmode -k
+   
+   answer "y" to the questions.
+
+Done: 1006
+
+
+x. review online log for any errors
+
+   onstat -m
+
+   done: 1006
+
+x. Confirm that ontape -c is not in the process list.
+
+   % ps -ef | grep ontape 
+
+
+Done: 1006
+
+x. switch out the dump dir to /dev/null.
+
+as informix on embryonix
+   % emacs onconfig
+    change tapedev and ltapedev to /dev/null
+
+Done: 1006
+
+x. check again for any open connections
+
+   As informix on embryonix
+
+   % oninit -s (puts server in quiescent mode and does a fast recovery)
+
+     -rolls forward all committed transactions, and rolls back all incomplete transactions
+      since the last checkpoint and then leaves a new checkpoint record in the log
+      with no open transactions pending.
+
+     -if not done, and you execute oninit, and there are open transactions, error will
+      result http://publib.boulder.ibm.com/infocenter/idshelp/v10/index.jsp?topic=/com.ibm.mig.doc/mig.htm
+
+Done: 1007
+
+x. take server down again
+
+As informix on embryonix:
+
+   % onmode -yuk  
+
+Done:  1007
+
+
+x. Verify that source server is offline
+
+   As informix on embryonix:
+
+   % onstat -m 
+
+   "Shared memory not initialized" should appear.
+
+Done: yep
+
+
+
+##########################
+# INSTALL THE NEW SERVER #
+##########################
+
+
+x. move into the informix directory
+   
+   As staylor on embryonix
+   % source /private/Zfinlinks/Commons/env/wanda
+
+   % cd informix
+   % pwd
+    
+    -- confirm where you are.
+
+Done: 1008
+
+
+x. monitor the message log for conversion errors
+
+   --the install might fill up the logical logs
+     --use ontape -a /private/apps/Informix/informix/bin/ontape to advance the log and continue.
+
+
+   --the install might corrupt indexes
+     --rebuild them as necessary.
+
+     in a new window, as informix on embryonix
+
+Done: 
+
+x. install the server
+
+   As staylor on embryonix:
+   
+   % sudo
+   % cd /private/apps/Informix/informix
+   % pwd
+   % source /private/ZfinLinks/Commons/env/wanda
+   % echo $INFORMIXDIR
+   % echo $PATH
+   
+   -- env should include
+   -- $INFORMIXDIR
+   -- $PATH must include JRE location.
+
+   % ./installserver -console -javahome /private/apps/java/bin -record /tmp/ids11W4_response_log 
+
+   -- install.log is entered in the same dir for all logs of the event.
+   -- typical install with all features.  might as well.
+      
+  Complete the installation and exit the installation application.
+
+   % cp /tmp/ids11W4_response_log /research/zusers/staylor/Temp
+
+Done: 1025
+
+x. cp over the sqlhosts file and the modified onconfig from the old installation.
+
+   As informix on embryonix:
+
+   % cd /private/apps/Informix/informix/etc
+   % pwd -- check location
+   
+   --check for onconfig in this dir, if its there, copy it to a backup
+   % cp onconfig onconfig.bkup
+   % cp sqlhosts sqlhosts.bkup
+
+   no, keep onconfig.std as is.
+
+   --check for sqlhosts in this dir, if its there, copy it to a backup
+   % cp /private/apps/Informix/informix.11.10.FC2/etc/sqlhosts .
+   % cp /private/apps/Informix/informix.11.10.FC2/etc/onconfig .
+   done
+
+
+Done: 955
+
+x. make sure enviromenet is ok:
+
+INFORMIXSERVER
+ONCONFIG
+PATH
+INFORMIXSQLHOSTS 
+Done: 
+
+x. copy the /dev symlinks over to the new install
+
+   --had to make the /dev directory 
+
+   !! MIGHT NOT need to do this with the copied dir over!!
+
+   As informix on embryonix:
+
+   % srcwanda
+
+   % cd /private/apps/Informix/informix/dev/
+   % pwd    --confirm you're in the new installed dir
+   % ll     --should be empty.
+
+   % ln -s /dev/rdsk/c1t0d0s4 tempdbs1_c1
+   % ln -s /dev/rdsk/c1t1d0s4 tempdbs2_c1
+   % ln -s /dev/rdsk/c1t2d0s4 tempdbs3_c1
+   % ln -s /dev/rdsk/c1t3d0s4 tempdbs4_c1
+
+
+   % ln -s /dev/rdsk/c2t1d3s0 tbldbs2_c1       
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs5_c1         
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs7_c1         
+   % ln -s /dev/rdsk/c2t1d3s0 tempdbs9_c1 
+        
+   % ln -s /dev/rdsk/c2t1d3s1 tbldbs3_c1          
+   % ln -s /dev/rdsk/c2t1d3s1 smartbs_c1    
+   % ln -s /dev/rdsk/c2t1d3s1 smarttempbs_c1
+ 
+   % ln -s /dev/rdsk/c2t1d3s6 smartdfltbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 llogdbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 plogdbs_c1
+   % ln -s /dev/rdsk/c2t1d3s6 idxdbs1_c1
+
+
+   % ln -s /dev/rdsk/c2t1d5s0 tbldbs1_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs6_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs8_c1
+   % ln -s /dev/rdsk/c2t1d5s0 tempdbs10_c1
+   % ln -s /dev/rdsk/c2t1d5s0 rootdbs_c1
+
+   % ln -s /dev/rdsk/c2t1d5s1 idxdbs2_c1
+   % ln -s /dev/rdsk/c2t1d5s1 idxdbs3_c1
+
+   % ln -s /dev/rdsk/c2t1d5s6 defaultdbs_c1
+
+Done: 
+
+x. check the modified onconfig file.
+   
+   --double check that the alarmprogram variable is set to no_log.sh
+   informix suggests changing ALARMPROGRAM to nothing while converting
+
+Done: 
+
+x. check permissions
+ 
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+done:
+
+
+x. bring up the new server to initiate the conversion
+   
+   As informix in newly installed Informix dir, with srcwanda
+
+   --confirm PATH and INFORMIXDIR.
+
+   % oninit
+
+   -- this should begin the process of converting all dbs to version 11.10.FC2
+   -- ALARMPROGRAM is set to no_log.sh, but ontape -a will get let us proceed.
+   
+Done:
+
+x. monitor online.log for "Conversion completed successfully" and the message about 2 dbworker threads
+starting for sysadmin.
+
+Done: 
+
+x. run update statistics high
+
+   As informix on embryonix:
+
+   % dbaccess all_dbs 
+   % update statistisc high.
+
+Done:
+
+x. Verify integrity of data
+
+   As informix on embryonix:
+
+   % oncheck -cr 
+
+   % oncheck -ce 
+   % oncheck -cc 
+   % oncheck -cD zfindb
+   % oncheck -cI zfindb
+
+   Fix data problems before taking a level 0 backup
+
+Done:
+
+
+x. Make a level 0 backup of the server
+
+   As informix on embryonix:
+
+   % ontape -s -L 0
+
+
+onstat -m 
+
+done if shows that the backup has completed.
+
+done: 
+
+
+x. test that dbaccess works
+   
+   % dbaccess almdb
+
+   done: 
+
+x. reload C functions.
+
+   % cd lib/DB_functions/C
+   % gmake clean clobber
+   % gmake
+
+
+done:
+
+x. restart apache
+
+  % cd /private/apps/apache/bin/	
+  % sudo apachectl start
+
+done:
+
+
+x. start tomcat
+
+ % restarttomcat.pl
+
+Done:
+
+x. tell developers to gmake postloaddb.
+
+done:

@@ -1,0 +1,72 @@
+Need to add a second chunk for smartdfltbs on embryonix -- filled because of
+gbrowse blobs not being specified in smartbs.
+
+as staylor on embryonix:
+
+ % cd /private/apps/apache/bin
+
+ % sudo apachectl stop
+
+ kill all tomcats
+
+ % kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+
+
+As informix on embryonix
+
+ % cd ~/informix/dev
+
+ Find where there is free space to add a second chunk, preferably in the same partition as the current smartdfltbs.
+http://zfin.org/zfin_doc/admin.html#NStor%204150S%20RAID
+
+ There is room in the current partition. (see old ZFIN doc on mirror for an updated chart of 
+ space availability).  
+
+ **Always** check and update this doc--seriously, its all we have in times
+ of crisis to determine where we can add chunks. 
+
+ % ln -s /dev/rdsk/c2t1d3s6 smartdfltbs_c2
+
+ check permissions
+ 
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+ % onspaces -a smartdfltbs  -p /private/apps/Informix/informix/dev/smartdfltbs_c2 -o 22052864  -s 1048576 
+
+ % ontape -s -L 0
+
+ check that space is available and ONLINE in ISA
+
+STATUS: done and worked.
+
+now try adding the new sysadmindbs_c1
+
+ % UPDATE DOC TO show new offset
+
+   new offset = old offset (22052864) + space added (1048576KB) = 23101440
+
+STATUS: 
+
+
+
+******
+
+if fails: 
+drop chunk
+
+% onspaces -d smartdfltbs -p /private/apps/Informix/informix/dev/smartdfltbs_c2 -o 22052864
+
+% cd ~/informix/dev
+% unlink smartdfltbs_c2
+
+

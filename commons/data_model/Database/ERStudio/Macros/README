@@ -1,0 +1,11 @@
+This directory should contain ER/Studio macros.  
+
+In ER/Studio, you should set your Macros Directory to this directory:
+
+   Tools->Options->Directories->Macros
+
+Of course this may all be moot because we probably won't be using 
+ER/Studio macros anyway.
+
+
+

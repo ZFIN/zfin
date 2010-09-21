@@ -1,0 +1,22 @@
+#############################################################################
+# This recipe describes the process one goes through to add/edit 
+# a user on our pmwiki documentation software (as accessed here:
+# http://almost.zfin.org/new_doc).
+#
+#
+#############################################################################
+
+In order to add or update passwords for logging into the pmwiki documentation
+at ZFIN, you must be able to sudo to the user "zfishweb."
+
+Then execute the following commands:
+
+% cd /private/etc/apache/pmwiki/
+% sudo -u zfishweb newPass.sh [username]
+
+you will then be prompted to enter the password for the new user twice.
+
+Also, if you cntl-C out of the program, it leaves the htpasswd file writable 
+by zfishweb...so don't make my mistake and do that.
+
+

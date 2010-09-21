@@ -1,0 +1,1914 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<TITLE>Data Submission and Transfer, ZFIN Documentation
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</TITLE>
+<link rel=stylesheet href="doc.css" type="text/css">
+</HEAD>
+
+<script language="JavaScript" src="/header.js" type="text/javascript"></script>
+
+<!-- :KLUDGE: Close out the table that is opened by header.js -->
+
+</td></tr></table>
+
+<div class="zdoc">
+
+
+<CENTER>
+  <H1>ZFIN Documentation:<br>
+    Data Submission and Transfer
+<br>
+This documentation is preserved for historical purposes, and NOT updated. Updated documentation is found here: <a href="http://almost.zfin.org/doc">http://almost.zfin.org/doc</a><br>
+</H1>
+  <p>$Id: dst.html,v 1.8 2006-07-12 16:00:58 jknight Exp $
+  <p><a href="index.html">Back to Table of Contents</a> <br>
+    <a href="curation.html">Previous Section</a> &nbsp;&nbsp; <a href="db.html">Next
+    Section</a>
+</CENTER>
+
+<p>This document is one of several that describe the Zebrafish Information 
+Network,
+or ZFIN. This document describes how ZFIN gets data through means other than
+publication curation, and how ZFIN makes data available to other researches.
+
+<!-- =================================================================== -->
+<!-- ========= OVERVIEW ================================================ -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Overview">Overview</a></h1>
+
+<p>Data comes into ZFIN via 3 main paths:
+<ol>
+  <li><a href="curation.html">Curation of zebrafish publications</a>. ZFIN curators
+    read publications relevant to the zebrafish community and then curate the
+    results in ZFIN.
+  <li><a href="#Direct Data Submissions">Direct data submissions</a>. We have
+    relationships with several labs that submit specific kinds of data directly
+    to ZFIN, without first going through a publication. Data that comes in this
+    way is not peer reviewed, but it may be curator reviewed.
+  <li><a href="#Custom Data Transfers">Custom data transfers</a>. ZFIN also has
+    automatic processes that are run daily, weekly, or as needed to pull data
+    from other web sites and databases and then integrate that data into ZFIN.
+</ol>
+<p>This document discusses the last 2 methods.
+<p>In addition, data goes out of ZFIN via 3 main paths as well:
+<ol>
+  <li>Browsing the <a href="http://zfin.org">ZFIN web site</a>.
+  <li><a href="#ZFIN Download Files">ZFIN Download Files</a>. ZFIN makes available
+    through the web site a standard set of download files that can be downloaded
+    by anyone. These contain commonly requested types of data in an easy to parse
+    plain text format.
+  <li><a href="#Custom Data Transfers">Custom Data Transfers</a>. ZFIN also generates
+    custom download files for several other web sites and labs.
+</ol>
+<p>This document discusses the last 2 methods.
+
+
+<!-- =================================================================== -->
+<!-- ========= DIRECT DATA SUBMISSIONS ================================= -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Direct Data Submissions">Direct Data Submissions</a></h1>
+
+<p>ZFIN accepts direct data submissions from a small number of zebrafish researchers.
+  Typically, these researchers are generating large amounts of data that are
+  not appropriate for a journal publication and have grants that stipulate or
+  encourage them to submit their data directly to ZFIN.
+<p>Direct data submissions are done in a variety of ways. The only thing they
+  have in common is that they are a lot of work, and take a lot of coordination
+  with the submitting lab. However, some of our most popular data (<a href="#Expression Data">expression</a>, <a href="#Mapping Panels">mapping</a>)
+  come from direct data submissions.
+
+
+<!-- ========= MAPPING PANELS ========================================== -->
+
+<h2 class="zdoc"><a name="Mapping Panels">Mapping Panels</a></h2>
+
+<p>ZFIN receives mapping panel updates from the mapping labs whenever a new version
+  of the mapping panel becomes available. Tom C. handles these updates. All scripts
+  and data related to this task are in his ZFIN user directory. Please see Tom
+  if you have questions.
+
+
+
+<!-- ========= FILEMAKER TEMPLATES ===================================== -->
+
+<h2 class="zdoc"><a name="Expression Data">Expression Data (FileMaker Templates)</a></h2>
+<p>by Erik Segerdell, updated 2005/11.<br />
+<p>This section describes the FileMaker Pro database used to enter gene expression 
+  data. The process to take that FileMaker Pro data and get it into ZFIN is described 
+  in the <a href="#Thisse">Thisse section</a>. 
+<h3 class="zdoc"><a name="Background">Background</a></h3>
+<p>ZFIN supplies a FileMaker Pro database (or "template") to facilitate large-scale 
+  gene expression data transfer from the <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-LAB-980204-15">Thisse 
+  Laboratory</a> [FogBugz <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?362">case 
+  362</a>]. The database is available upon request to any lab that wishes to submit 
+  expression data [FogBugz <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?586">case 
+  586</a>]. The FileMaker Pro software is commercially available for the Mac or 
+  Windows (<a href="http://www.filemaker.com/">http://www.filemaker.com/</a>). 
+
+<p> This section describes the structure and functionality of the template and 
+  its internal scripts. It does not cover associated curation tasks, such as the 
+  assignment of gene names to the Thisses' clones; see the ZFIN Nomenclature Coordinator 
+  if you have questions. 
+<p> Experimental procedures are described in the Thisses' ZFIN pubs of <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-010810-1">2001</a> 
+  and <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-040907-1">2004</a>. 
+<p> In addition to the template, we provide to the Thisses an annotation tool 
+  for overlaying images with text labels; a description and download are available 
+  at <a href="http://www.cs.uoregon.edu/~kschaper/annotator.html">http://www.cs.uoregon.edu/~kschaper/annotator.html</a>. 
+<h3 class="zdoc"><a name="Passwords">Passwords</a></h3>
+<p>See Erik Segerdell or Ceri Van Slyke for the template's master password. Non-ZFIN 
+  users are provided with passwords that give restricted access to the template, 
+  i.e. they can only edit data, they can't change the layout, fields, value lists, 
+  etc. (in FileMaker, go to: File -&gt; Access Privileges). 
+
+<h3 class="zdoc"><a name="Software Versions">Software Versions</a></h3>
+<p>The template was designed originally in FileMaker version 5 and was used for 
+  annotating high-quality "CB" data. The Thisses have converted the template to 
+  version 7 for their "FR" fast-release expression data. The structure and functionality 
+  of the CB and FR templates, as described below, are essentially the same. Features 
+  that appear only in the FR implementation are noted. FR template files have 
+  the extension <em>fp7</em>, and this is used below; in the earlier CB implementation, 
+  file extensions were <em>fp5</em>. 
+<h3 class="zdoc"><a name="The User Interface">The User Interface</a></h3>
+<p>The UI is provided by the <strong>DATA_FRX.fp7</strong> (or <strong>DATA_CBX.fp5</strong>) 
+  file. Tabs at top provide access to four data-entry panels: Probe, Expression, 
+  Keywords, Images. There are a total of six layouts: <br />
+  <br />
+
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top nowrap><strong>Probe</strong></td>
+    <td>Provides fields for clone name and data, comments, and authors. The user 
+      can create a record by clicking the New button at top; this simultaneously 
+      creates expression pattern records for the six default developmental stages 
+      {G, ES, MS, 24h, 36h, 48h}. A Delete button for the whole record is provided. 
+      Another button below the Authors fields switches the user to the Control 
+      Panel for customizing the Authors value list.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Expression</strong></td>
+    <td>Displays rows of fields for text descriptions of the expression pattern 
+      at each stage. Each row also has a checkbox to mark "no expression", a link 
+      to the Keyword selection panel for that stage, and a Delete button for that 
+      expression record. A link near the top switches the user to the Info panel 
+      for the zebrafish developmental staging series.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Keywords</strong></td>
+    <td>Displays a keyword checklist of anatomical structures and processes available 
+      for the given stage (stage shown at top-right). Fields also exist for editing 
+      the text description or checking the "no expression" box. On the right side 
+      is a list of stages at which expression records exist for the probe. Clicking 
+      on one will show the keyword panel and other fields for that stage.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Images</strong></td>
+    <td>Displays rows of fields for describing submitted images of the expression 
+      pattern. Each row provides fields for the filename, stage, image orientation, 
+      and a text caption. The "&gt;&gt;" button optionally lets the user auto-fill 
+      the Stage field with the stage symbol {G, ES, MS, 24h, 36h, 48h} embedded 
+      in the filename. A Delete button for each image is provided. The actual 
+      <em>jpg</em> files are submitted separately and are referenced by the filename.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Control Panel | Authors</strong></td>
+    <td>Provides an interface for adding or deleting names in the Authors value 
+      list and a button for returning to the Probe panel. The user is prompted 
+      to enter names exactly as they appear in their ZFIN personal records, but 
+      this is not validated by the template.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Info | Staging Series</strong></td>
+    <td>Lists the start and end times for each stage in the developmental staging 
+      series. For informational purposes only, and no data entry occurs here. 
+      Provides a back-link to the Expression panel.</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Tables">Tables</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top><strong>DATA_FRX.fp7</strong></td>
+    <td>Provides all user-interface elements. Also stores clone data for each 
+      experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_authors.fp7</strong></td>
+
+    <td>Related table that stores author names for each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_expression.fp7</strong></td>
+    <td>Related table that stores text descriptions and keywords for each developmental 
+      stage in each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_images.fp7</strong></td>
+
+    <td>Related table that stores image filenames and descriptions for each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_val_lists.fp7</strong></td>
+    <td>Stores values for the Authors menu; stores values for lookup fields. Does 
+      not store experimental data.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_values_key.fp7</strong></td>
+
+    <td>Stores values for Keywords panel. Does not store experimental data.</td>
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Fields">Fields</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=21><strong>DATA_FRX.fp7</strong></td>
+    <td valign=top nowrap><strong>__keyExp</strong></td>
+    <td><strong>Primary key.</strong> Auto-entered serial number, prefixed by 
+      "exp" (for "experiment"), incremented by 1 for each new record. Hidden from 
+      the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>cdna name</strong></td>
+    <td>Clone/EST name; must be unique.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>probe_rating_display</strong><br />
+      (FR template only)</td>
+
+    <td>"Star rating" to indicate the quality/usefulness of a probe; may be 1 
+      to 5 stars (see <strong><em>probe_rating</em></strong> field).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>gene zdb_id</strong></td>
+    <td>If a gene assignment is made for this EST, the ZFIN gene ID is entered 
+      here.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>genbank 5'</strong></td>
+    <td>Clone/EST accession ID.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>genbank 3'</strong></td>
+    <td>Clone/EST accession ID.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>library</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>digest</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>vector</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>pcr amplification</strong></td>
+    <td>Clone data; looked up according to the vector selected, but may be modified 
+      by the user.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>insert size</strong></td>
+    <td>Clone data (numerical).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>cloning site</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>polymerase</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>comments</strong></td>
+    <td>Optional comments.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL rel_values_cat</em></strong></td>
+
+    <td>This global field is set to "1" when the user requests to customize the 
+      Authors menu (<strong>gotoAuthorMenuEditor</strong> script), providing a 
+      primary key for viewing the author names stored in <strong>rel_val_lists.fp7</strong>.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>TEMP xpat_uniqueID</em></strong></td>
+    <td rowspan=2 valign=top>When a user chooses to access the Keyword panel for 
+      a particular clone and stage, the <strong>gotoKeywordEditView</strong> script 
+      is activated; these two fields are then filled in with primary key values 
+      for viewing keyword data and for displaying all available keywords (according 
+      to stage and provided by the <strong>rel_values_key.fp7</strong> table).</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>TEMP xpat_stage</em></strong></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>COUNT records</em></strong></td>
+    <td>Stores the number of records in this table, used by the <strong>gotoAuthorMenuEditor</strong> 
+      script to determine whether a temporary record needs to be created to enable 
+      the user to access the Author menu customization interface.</td>
+
+  </tr></tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>probe_rating</em></strong><br />
+      (FR template only)</td>
+    <td>This field provides a menu for assigning a "star rating" to the probe. 
+      If a value of 0 to 4 is selected, then that number is increased by 1 and 
+      automatically filled into the <strong>probe_rating_display</strong> field 
+      to be exported.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top rowspan=3><strong>rel_authors.fp7</strong></td>
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new author record is created. Hidden 
+      from the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>author</strong></td>
+    <td>Author name (from values stored in <strong>rel_val_lists.fp7</strong>).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=10><strong>rel_expression.fp7</strong></td>
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new expression record is created. 
+      Hidden from the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>stage</strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>description</strong></td>
+
+    <td>Free-text description of the expression pattern (default is "No comments").</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>state</strong></td>
+    <td>Expression state, set by checkbox (see <strong><em>ENTER state</em></strong> 
+      field) to one of these values: 
+      <ul>
+        <li>0 = no expression detected 
+        <li>1 = expression detected (default) 
+        <lI>2 = basal level of expression (FR template only) 
+        <li>3 = not spatially restricted (FR template only) </ul></td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>keywords</strong></td>
+    <td>Anatomical term (from <a href="#Controlled Vocabularies">controlled vocabulary</a> 
+      stored in <strong>rel_values_key.fp7</strong>); multiple items selected 
+      by checkboxes are separated by return characters when exported to plain 
+      text.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>__uniqueID</em></strong></td>
+    <td>Auto-entered serial number, incremented by 1 for each new record. Hidden 
+      from the user, can not be modified. Provides a foreign key for viewing keywords 
+      for a particular clone and stage.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL keyExp</em></strong></td>
+    <td>When a new clone record is created, the <strong>createNewRecord</strong> 
+      script sets this global field to the primary key value of the new record 
+      in <strong>DATA_FRX.fp7</strong>. The <strong>createDefaultStages</strong> 
+      script proceeds to create new related expression records for stages {G, 
+      ES, MS, 24h, 36h, 48h}, setting their foreign key values to the global value.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>ENTER state</em></strong></td>
+    <td>This field provides the checkboxes for entering expression state. If a 
+      value other than the default "1" is selected, then that digit is appended 
+      to the "1". FileMaker then takes the rightmost digit and fills it into the 
+      <strong>state</strong> field to be exported.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=11><strong>rel_images.fp7</strong></td>
+
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new image record is created. Hidden 
+      from the user, can not be modified.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>filename</strong></td>
+
+    <td>Image filename; must be unique and have a <em>jpg</em> extension.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>stage</strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>).</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>view</strong></td>
+    <td>Image orientation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "side view (lateral)".)</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>direction</strong></td>
+
+    <td>Image orientation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "anterior to left".)</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>specimen</strong></td>
+    <td>Image preparation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "whole-mount".)</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>comments</strong></td>
+    <td>Optional caption/comments.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL del_exp</em></strong></td>
+    <td rowspan=2 valign=top>When an expression record is deleted, the <strong>deleteExpressionStage</strong> 
+      script sets these global fields to the key and stage values, respectively, 
+      of the deleted row in <strong>rel_expression.fp7</strong>. The <strong>deleteRelatedImages</strong> 
+      script then uses these values to target related image records for deletion.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL del_stage</em></strong></td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=4><strong>rel_val_lists.fp7</strong></td>
+    <td valign=top colspan=2><em>This table provides items for value lists and 
+      lookup fields and does not store experimental data for export.</em></td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>cat</em></strong></td>
+    <td>Arbitrary number (category) assigned to each item (such as "1" for authors); 
+      provides a foreign key for creating a value list in the main UI file.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>item</em></strong></td>
+    <td>Value-list items.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>lookup</em></strong></td>
+    <td>Looked-up data for selected value-list items.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=3><strong>rel_values_key.fp7</strong></td>
+    <td valign=top colspan=2><em>This table provides items for value lists and 
+      does not store experimental data for export.</em></td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>stage</em></strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>); provides a foreign key for displaying available keywords 
+      for a particular stage.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>vocab item</em></strong></td>
+    <td>Anatomical term (from <a href="#Controlled Vocabularies">controlled vocabulary</a>).</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Scripts">Scripts</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=8><strong>DATA_FRX.fp7</strong></td>
+    <td valign=top><strong>deleteStageDependents</strong><br /> <strong>deleteStageImageDependents</strong><br /> 
+      <strong>deleteStageKeywordsDependents</strong></td>
+
+    <td>Data-load validation scripts (added by Brock Sprunger).</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>autoEnterImageStage</strong></td>
+    <td>The Image panel "&gt;&gt;" button activates this script, auto-filling 
+      the Stage field if a stage symbol {G, ES, MS, 24h, 36h, 48h} has been embedded 
+      in the filename. If none of these symbols is found, the field is left empty 
+      and must be manually filled.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>createNewRecord</strong></td>
+
+    <td>Activated by the New button on the Probe panel. Sets the <strong>rel_expression.fp7:GLOBAL 
+      keyExp</strong> field to the primary key value for this new clone record. 
+      The <strong>createDefaultStages</strong> script is then run, using the global 
+      field to establish a foreign key value.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>deleteExpressionStage</strong></td>
+    <td>Any expression record Delete button activates this script, setting the 
+      <strong>rel_images.fp7:GLOBAL del_exp</strong> and <strong>rel_images.fp7:GLOBAL 
+      del_stage</strong> fields to the key and stage values, respectively, of 
+      the deleted row in <strong>rel_expression.fp7</strong>. The <strong>deleteRelatedImages</strong> 
+      script then uses these values to target related image records for deletion.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>deleteTempRecord</strong></td>
+    <td>Checks for and deletes the temporary record created by the <strong>gotoAuthorMenuEditor</strong> 
+      script. For good measure, it is also run when the <strong>DATA_FRX.fp7</strong> 
+      file is opened and closed.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top><strong>gotoAuthorMenuEditor</strong></td>
+    <td>Switches to the "Control Panel | Authors" layout when the Customize button 
+      is clicked, letting the user edit the Authors value list stored in <strong>rel_val_lists.fp7</strong>. 
+      Editing is possible only if the database has at least one existing record. 
+      If there is none, this script creates a temporary one. When the user clicks 
+      the Finished button, the <strong>deleteTempRecord</strong> script checks 
+      for it and deletes it.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>gotoKeywordEditView</strong></td>
+
+    <td>Activated when the user navigates to the Keywords panel. The <strong>DATA_FRX.fp7:TEMP 
+      xpat_uniqueID</strong> and <strong>DATA_FRX.fp7:TEMP xpat_stage</strong> 
+      are set to the values of the unique ID and stage for the expression record 
+      being edited.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>!resetDatabase</strong></td>
+    <td><strong>Deletes all records in the template and resets serial numbers 
+      and global fields. Used when testing the database. This is never, ever made 
+      available to non-ZFIN users.</strong></td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_expression.fp7</strong></td>
+    <td valign=top><strong>createDefaultStages</strong></td>
+    <td>Activated by the <strong>createNewRecord</strong> script. Creates new 
+      expression records for the stages {G, ES, MS, 24h, 36h, 48h}, setting the 
+      foreign key for each to the <strong>GLOBAL keyExp</strong> value.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_images.fp7</strong></td>
+    <td valign=top><strong>deleteRelatedImages</strong></td>
+    <td>Activated by the <strong>deleteExpressionStage</strong> script. All the 
+      rows in the <strong>rel_images.fp7</strong> file are scanned for matches 
+      between the <strong>GLOBAL del_exp</strong> and <strong>_keyExp</strong> 
+      fields and between the <strong>GLOBAL del_stage</strong> and <strong>stage</strong> 
+      fields. If both matches occur, the row is deleted.</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Controlled Vocabularies">Controlled Vocabularies</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=10><strong>Stages</strong></td>
+    <td colspan=2>Based on the Kimmel <em>et al</em> developmental staging series 
+      (<a href="http://zfin.org/zf_info/zfbook/stages/index.html">http://zfin.org/zf_info/zfbook/stages/index.html</a>).<br />
+
+      The Thisses use a set of short stage symbols for some of their data. These 
+      do not appear in ZFIN records; instead they are translated into one or a 
+      range of Kimmel stage(s). The template also allows individual stages to 
+      be selected.</td>
+  </tr>
+  <tr> 
+    <td nowrap><strong>Symbol</strong></td>
+    <td><strong>Maps to...</strong></td>
+  </tr>
+  <tr> 
+    <td valign=top>B</td>
+
+    <td>Blastula:Sphere, Blastula:Dome, Blastula:30%-epiboly</td>
+  </tr>
+  <tr> 
+    <td valign=top>G</td>
+    <td>Gastrula:50%-epiboly, Gastrula:Germ-ring, Gastrula:Shield, Gastrula:75%-epiboly, 
+      Gastrula:90%-epiboly, Gastrula:Bud</td>
+  </tr>
+  <tr> 
+    <td valign=top>ES</td>
+
+    <td>Segmentation:1-4 somites, Segmentation:5-9 somites, Segmentation:10-13 
+      somites</td>
+  </tr>
+  <tr> 
+    <td valign=top>MS</td>
+    <td>Segmentation:14-19 somites</td>
+  </tr>
+  <tr> 
+    <td valign=top>24h</td>
+
+    <td>Segmentation:20-25 somites, Segmentation:26+ somites, Pharyngula:Prim-5</td>
+  </tr>
+  <tr> 
+    <td valign=top>36h</td>
+    <td>Pharyngula:Prim-15, Pharyngula:Prim-25</td>
+  </tr>
+  <tr> 
+    <td valign=top>48h</td>
+
+    <td>Pharyngula:High-pec, Hatching:Long-pec</td>
+  </tr>
+  <tr> 
+    <td valign=top>"all stages"<br />
+      (FR template only)</td>
+    <td>Zygote:1-cell -&gt; Hatching:Pec-fin</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>Keywords</strong></td>
+    <td colspan=2>Based on the Anatomical Ontology (<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search">http://zfin.org/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search</a>).<br />
+      In practice, only a subset of these terms are used in the template. To update 
+      them and stay in sync with the AO, follow the procedures for <a href="#">making 
+      changes to anatomy expression templates</a>.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top rowspan=4><strong>Images</strong></td>
+    <td colspan=2>Permitted values for image description fields follow. In practice, 
+      only a subset of these terms are used in the template.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Specimen</strong></td>
+    <td>EM-section, LM-section, live, whole-mount, not specified</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Orientation (View)</strong></td>
+    <td>animal pole, anterior, cross section, dorsal, frontal, parasagittal, posterior, 
+      sagittal, side view (lateral), transverse, vegetal pole, ventral, not specified</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Orientation (Direction)</strong></td>
+    <td>animal pole to top, anterior to left, anterior to right, anterior to top, 
+      dorsal to left, dorsal to right, dorsal to top, oblique, posterior to top, 
+      ventral to right, not specified</td>
+
+  </tr>
+</table>
+
+
+
+<h3 class="zdoc"><a name="FR Template">FR Template</a></h3>
+
+<p>The FR template for the Thisses' fast-release clones contains a few 
+differences
+from the CB template:
+<ul>
+  <li> option to select "all stages"
+  <li> more choices for expression state
+  <li> fewer anatomical keywords available for each stage [lists provided by
+    the Thisses]
+  <li> a few minor cosmetic changes to the UI
+</ul>
+
+<!-- ========= end of FILEMAKER TEMPLATES ============================== -->
+
+
+
+
+<!-- =================================================================== -->
+<!-- ========= AUTOMATED DATA TRANSFERS ================================ -->
+<!-- =================================================================== -->
+
+<h1 class="zdoc"><a name="Automated Data Transfers">Automated Data Transfers</a></h1>
+
+<p>ZFIN both gathers data and makes data available through automated scripts.
+  This section describes the standard set of easily parsable downloadable ZFIN
+  data files that should meet most users' needs for ZFIN data. It also describes
+  data transfers (in either direction) between ZFIN and specific labs, databases,
+  and web sites.
+
+
+
+<!-- ========= ZFIN DOWNLOAD FILES ===================================== -->
+
+<h2 class="zdoc"><a name="ZFIN Download Files">ZFIN Download Files</a></h2>
+
+<p>The ZFIN download files are a set of plain text files that contain the most
+requested ZFIN data records in an easily parsable format. The download files
+are available through the web site at 
+
+<div class="urlline">
+  <a href="http://zfin.org/zf_info/downloads.html">http://zfin.org/zf_info/downloads.html</a>
+</div>
+
+<p>That page has a pointer to each file and describes the format of each file. 
+There is a pointer to the downloads page from the <a href="http://zfin.org">ZFIN
+home page</a>.
+
+<p>Most of the files on the downloads page are generated with scripts in the 
+directory:
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/Downloads/">ZFIN_WWW/server_apps/data_transfer/Downloads/</a>
+</div>
+
+<p>See the scripts and 
+<span class="file"><a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/Downloads/Makefile">Makefile</a></span>
+ for details.
+
+
+
+<!-- ========= CUSTOM DATA TRANSFERS =================================== -->
+
+<h2 class="zdoc"><a name="Custom Data Transfers">Custom Data Transfers</a></h2>
+
+<p>This section describes how ZFIN gathers and/or makes available data for of
+from several specific labs, databases, and web sites. The scripts for doing
+this are typically under the directory:
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/">ZFIN_WWW/server_apps/data_transfer/</a>
+</div>
+
+<p>Each specific data transfer usually gets its own subdirectory.
+
+<p>Data transfer scripts are either run automatically using 
+<a href="admin.html#cron">cron</a> or are run on an as needed basis.
+
+
+<h3 class="zdoc"><a name="pull.sh">pull.sh</a></h3>
+
+<p>The not so aptly named 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/pull.sh">pull.sh</a>
+script is the 800 pound gorilla of the custom data transfer scripts.  It pulls
+data, pushes data, and backs up data.  The script doesn't do any work of its
+own, but it does call lots of other scripts that are described later in this
+section:
+
+<br><br>
+<img src="http://cvs.zfin.org/cvs/cvsweb.cgi/~checkout~/ZFIN_WWW/server_apps/data_transfer/pull_sh.gif?rev=HEAD&amp;content-type=image/gif" alt="pull.sh graphic">
+</br><br>
+
+
+<h3 class="zdoc"><a name="BLAST">BLAST</a></h3>
+
+<p>This is an internal data transfer within ZFIN.  It extracts data from the
+<a href="impl.html#Production Server">ZFIN production server</a> and makes
+it available to the <a href="impl.html#BLAST Server">ZFIN BLAST server</a>.
+The BLAST server uses the information to link back to ZFIN.
+
+<p>The scipt for doing the push (extraction from ZFIN) is in the directory
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/BLAST/">ZFIN_WWW/server_apps/data_transfer/BLAST/</a>
+</div>
+
+
+
+<h3 class="zdoc"><a name="euGenes">euGenes</a></h3>
+
+<p>ZFIN makes certain gene related data available for the 
+<a href="http://eugenes.org">euGenes eukaryotic genomes web site</a>
+(formerly MEOW) using scripts in the directory
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/MEOW/">ZFIN_WWW/server_apps/data_transfer/MEOW/</a>
+</div>
+
+
+
+<h3 class="zdoc"><a name="GO">GO</a></h3>
+
+<p>ZFIN both gathers and integrates gene ontology information 
+(<a href="http://www.geneontology.org">GO</a>, 
+see <a href="curation.html#GO">GO curation</a> and 
+<a href="db.html#Gene Ontology (GO)">GO database design</a>)
+and makes it available to others.
+
+<p>The scripts in the direcotry
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/GO/">ZFIN_WWW/server_apps/data_transfer/GO/</a> 
+</div>
+
+<p>make ZFIN GO information available to others.
+
+<p>ZFIN gets GO information from <a href="curation.html#GO">curation</a> and
+gathers it from <a href="#SWISS-PROT">SWISS-PROT</a>. See those links 
+for details.
+
+
+
+<h3 class="zdoc"><a name="NCBI">NCBI</a></h3>
+
+<p><a href="http://www.ncbi.nlm.nih.gov/">NCBI</a> is both a provider of 
+data to ZFIN and a consumer of data from ZFIN.
+NCBI gathers ZFIN data from at least the 
+<a href="#ZFIN Download Files">ZFIN download files</a>, and possibly from 
+other custom data transfers as well (<a href="#euGenes">euGenes</a> ?).
+
+<p>ZFIN has 2 sets of scripts that pull data from NCBI, 
+<a href="#GenPept">GenPept</a> and <a href="#RefSeq">RefSeq</a>.
+
+
+
+<h4 class="zdoc"><a name="GenPept">GenPept</a></h4>
+
+<p>The GenPept scripts "extract relationships from GenPept files that can be
+used to create Protein sequence links for Zebrafish genes."
+
+<p>The GenPept scripts and a README file can be found in the directory
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/GenPept/">ZFIN_WWW/server_apps/data_transfer/GenPept/</a>
+</div>
+
+
+
+<h4 class="zdoc"><a name="RefSeq">RefSeq</a></h4>
+
+<p>The RefSeq scripts "extract relationships from LocusLink files that can be
+used to create orthologue and sequence links for Zebrafish genes."
+
+<p>The RefSeq scripts and a README file can be found in the directory
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/RefSeq/">ZFIN_WWW/server_apps/data_transfer/RefSeq/</a> 
+</div>
+
+
+
+
+<h3 class="zdoc"><a name="John Postlethwait">John Postlethwait</a></h3>
+
+<p>ZFIN makes EST and gene data available for the 
+<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-labview.apg&amp;OID=ZDB-LAB-970408-67">John Postlethwait lab</a>
+using scripts that are in the directory
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/JohnP/">ZFIN_WWW/server_apps/data_transfer/JohnP/</a> 
+</div>
+
+
+
+
+<h3 class="zdoc"><a name="Sanger">Sanger</a></h3>
+
+<p>ZFIN makes gene and EST related information available for the Sanger Center.
+The Sanger scripts and a README file are in the directory:
+
+<div class="fileline">
+  <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/Sanger/">ZFIN_WWW/server_apps/data_transfer/Sanger/</a>
+</div>
+
+
+
+<h3 class="zdoc"><a name="SWISS-PROT">SWISS-PROT</a></h3>
+
+<p>ZFIN gathers a lot of information about genes from SWISS-PROT. The scripts
+that do this and a README file are in the directory
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/SWISS-PROT/">ZFIN_WWW/server_apps/data_transfer/SWISS-PROT/</a>
+</div>
+
+<p>These scripts, unlike most data transfer scripts, is not run by cron. It is
+run on an as needed basis.
+
+
+
+<h3 class="zdoc"><a name="Thisse">Thisse</a></h3>
+
+<p>The 
+<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-labview.apg&amp;OID=ZDB-LAB-980204-15">Thisse</a> 
+lab directly submits data to ZFIN from a large gene expression grant they 
+are running.  They use a 
+<a href="#Expression Data">ZFIN created FileMaker Pro template</a> to enter 
+their data. That data is then sent to ZFIN where it is converted, reformatted,
+and then inserted into ZFIN. The scripts for doing this conversion, along with
+a README file, are in the directory
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/Thisse/">ZFIN_WWW/server_apps/data_transfer/Thisse/</a>
+</div>
+
+<p>These scripts are manually run whenever we receive an update from the 
+Thisses.
+
+
+
+<!-- ========= THISSE LOADS CURATOR ANALYSIS ===================================== -->
+<h3 class="zdoc">Thisse loads curator analysis</h3>
+<p><strong>Point person currently: Ceri Van Slyke<br>
+  Backup person: Leyla Bayraktaroglu</strong></p>
+<h3 class="zdoc">Thisse Data</h3>
+
+<p>The Thisses use three different sets of sequences to make probes for their 
+  in situ hybridizations; ZGC clones, IMAGE Clones or PCR products based on ENSEMBL 
+  gene predictions. Each of these is sent in a different set of files. The Thisses 
+  send us a copy(s) of their FileMaker template with the new expression patterns. 
+  These files are parsed using the scripts found <a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/Thisse/">ZFIN_WWW/server_apps/data_transfer/Thisse/</a>. 
+  
+  <!-- ========= THISSE LOADS CURATOR ANALYSIS ===================================== -->
+ 
+</p>
+<h3 class="zdoc">ZGC or Ref_Seq Data</h3>
+<p>For ZGC clones, the scripts first check the GenBank numbers associated with 
+  the expression patterns against all GenBank numbers in ZFIN. The expression 
+  for ZGC clones is assigned to those clones in ZFIN. After this is done the database 
+  is checked for redundancy by blasting the sequence for the new clones with expression 
+  against all of the genes and predicted genes in ZFIN. The criteria for the BLAST 
+  are listed below. If a match is not filtered out by the first criteria and fails 
+  the second a curator examines the data. Identical sequences are merged. The 
+  same protocol is followed for ENSEMBL predictions that are associated with a 
+  GenBank Ref_Seq ID except that a clone record is created without an associated 
+  sequence and no blast are run for clones associated with Ref_Seq numbers.</p>
+
+<p>The full blast criteria for ZGC:</p>
+<ul>
+  <li>blastn against zfin_cdna database</li>
+  <li>expect=1e-50</li>
+  <li>filter one: identity percentage threshold 90%, alignment length threshold 
+    150bp. If alignment &lt;90% or is &lt;150bp then ignored. If not, the second 
+    filter is applied.</li>
+  <li>filter two: has to have a strong candidate-- &gt;=98% identity, alignment 
+    length &gt;80% of the shorter sequence. Also all the other hits that have 
+    &gt;=96% identity are from the same gene, and no other hits from the gene 
+    have a &lt;96% identity. If TRUE, then sequence is automatically assigned 
+    to gene, If False, curator examines.</li>
+
+</ul>
+<h3 class="zdoc">EST or Predicted Genes</h3>
+<p>In the case of IMAGE clones and ENSEMBL derived sequences, the GenBank numbers 
+  are checked against those in ZFIN. Usually, the GenBank numbers of these probes 
+  are not in ZFIN. The sequences are then blasted against the genes and predicted 
+  genes in ZFIN. The criteria for the BLAST are listed below. If a sequence is 
+  not clearly either a new gene or an existing gene, then a curator analyses the 
+  BLAST results. The sequences are then assigned to the corresponding gene or 
+  if there is no match a new gene is created. The expression patterns are attached 
+  to the probe as with the ZGC. The new clones created for the IMAGE clones are 
+  named using the unique identifier assigned by the IMAGE consortium. The clones 
+  are in the form IMAGE:###### and the genes are in the form im:######. The sequences 
+  based on the ENSEMBL predictions are given clone names based on the Thisses 
+  nomenclature, the EST records are prefaced by eu# and the genes are named su:eu#.</p>
+<p>The full blast criteria for other sequences:</p>
+<ul>
+  <li> blastn against zfin_cdna database</li>
+  <li> expect=1e-20</li>
+  <li> filter one: identity percentage threshold 90%, alignment length threshold 
+    40bp. If alignment &lt;90% or is &lt;40bp, then a new gene is made. If not, 
+    the second filter is applied. </li>
+
+  <li>filter two: has to have a strong candidate-- &gt;=98% identity, alignment 
+    length &gt;80% of the shorter sequence. Also all the other hits that have 
+    &gt;=96% identity are from the same gene, and no other hits from the gene 
+    have a &lt;96% identity. If TRUE, then sequence is automatically assigned 
+    to gene, If False, curator examines. </li>
+</ul>
+<h3 class="zdoc">Data Tracking</h3>
+<p>All data about number, type and problems with the load are noted in the work 
+  tracking system. The first case pertaining to the Thisse loads was 494, the 
+  current case is 827. Statistics are generated at the time of the load these 
+  are appended to the case. These statistics include number and identity of genes 
+  that have multiple sets of expression data generated by the Thisses. Occasionally 
+  they request we send them the list of genes for which they have analyzed expression 
+  for more than once. Additional expression statistics are generated on a monthly 
+  basis and these are also recorded in this case. After every FR load a translation 
+  table is generated so the Thisses know what we call the genes. The curator takes 
+  the flat file and imports it into Excel. Additionally, once a month a script 
+  runs that checks for genes that have VEGA links that don't have expression from 
+  the Thisses. This file is also put into Excel and sent to the Thisses.</p>
+<p>The process of updating the anatomy templates is described in the Anatomy Ontology 
+  section under <a href="curation.html#update_thisse">Making changes to anatomy expression templates</a>.</p>
+  
+<!-- ========= end of THISSE LOADS CURATOR ANALYSIS ============================== -->
+
+
+  
+  
+  
+  <!-- ========= FILEMAKER TEMPLATES ===================================== -->
+<h2 class="zdoc"><a name="Expression Data">Expression Data (FileMaker Templates)</a></h2>
+<p>by Erik Segerdell, updated 2005/11.<br />
+<p>This section describes the FileMaker Pro database used to enter gene expression 
+  data. The process to take that FileMaker Pro data and get it into ZFIN is described 
+  in the <a href="#Thisse">Thisse section</a>. 
+<h3 class="zdoc"><a name="Background">Background</a></h3>
+<p>ZFIN supplies a FileMaker Pro database (or "template") to facilitate large-scale 
+  gene expression data transfer from the <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-LAB-980204-15">Thisse 
+  Laboratory</a> [FogBugz <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?362">case 
+  362</a>]. The database is available upon request to any lab that wishes to submit 
+  expression data [FogBugz <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?586">case 
+  586</a>]. The FileMaker Pro software is commercially available for the Mac or 
+  Windows (<a href="http://www.filemaker.com/">http://www.filemaker.com/</a>). 
+
+<p> This section describes the structure and functionality of the template and 
+  its internal scripts. It does not cover associated curation tasks, such as the 
+  assignment of gene names to the Thisses' clones; see the ZFIN Nomenclature Coordinator 
+  if you have questions. 
+<p> Experimental procedures are described in the Thisses' ZFIN pubs of <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-010810-1">2001</a> 
+  and <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-040907-1">2004</a>. 
+<p> In addition to the template, we provide to the Thisses an annotation tool 
+  for overlaying images with text labels; a description and download are available 
+  at <a href="http://www.cs.uoregon.edu/~kschaper/annotator.html">http://www.cs.uoregon.edu/~kschaper/annotator.html</a>. 
+<h3 class="zdoc"><a name="Passwords">Passwords</a></h3>
+<p>See Erik Segerdell or Ceri Van Slyke for the template's master password. Non-ZFIN 
+  users are provided with passwords that give restricted access to the template, 
+  i.e. they can only edit data, they can't change the layout, fields, value lists, 
+  etc. (in FileMaker, go to: File -&gt; Access Privileges). 
+
+<h3 class="zdoc"><a name="Software Versions">Software Versions</a></h3>
+<p>The template was designed originally in FileMaker version 5 and was used for 
+  annotating high-quality "CB" data. The Thisses have converted the template to 
+  version 7 for their "FR" fast-release expression data. The structure and functionality 
+  of the CB and FR templates, as described below, are essentially the same. Features 
+  that appear only in the FR implementation are noted. FR template files have 
+  the extension <em>fp7</em>, and this is used below; in the earlier CB implementation, 
+  file extensions were <em>fp5</em>. 
+<h3 class="zdoc"><a name="The User Interface">The User Interface</a></h3>
+<p>The UI is provided by the <strong>DATA_FRX.fp7</strong> (or <strong>DATA_CBX.fp5</strong>) 
+  file. Tabs at top provide access to four data-entry panels: Probe, Expression, 
+  Keywords, Images. There are a total of six layouts: <br />
+  <br />
+
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top nowrap><strong>Probe</strong></td>
+    <td>Provides fields for clone name and data, comments, and authors. The user 
+      can create a record by clicking the New button at top; this simultaneously 
+      creates expression pattern records for the six default developmental stages 
+      {G, ES, MS, 24h, 36h, 48h}. A Delete button for the whole record is provided. 
+      Another button below the Authors fields switches the user to the Control 
+      Panel for customizing the Authors value list.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Expression</strong></td>
+    <td>Displays rows of fields for text descriptions of the expression pattern 
+      at each stage. Each row also has a checkbox to mark "no expression", a link 
+      to the Keyword selection panel for that stage, and a Delete button for that 
+      expression record. A link near the top switches the user to the Info panel 
+      for the zebrafish developmental staging series.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Keywords</strong></td>
+    <td>Displays a keyword checklist of anatomical structures and processes available 
+      for the given stage (stage shown at top-right). Fields also exist for editing 
+      the text description or checking the "no expression" box. On the right side 
+      is a list of stages at which expression records exist for the probe. Clicking 
+      on one will show the keyword panel and other fields for that stage.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Images</strong></td>
+    <td>Displays rows of fields for describing submitted images of the expression 
+      pattern. Each row provides fields for the filename, stage, image orientation, 
+      and a text caption. The "&gt;&gt;" button optionally lets the user auto-fill 
+      the Stage field with the stage symbol {G, ES, MS, 24h, 36h, 48h} embedded 
+      in the filename. A Delete button for each image is provided. The actual 
+      <em>jpg</em> files are submitted separately and are referenced by the filename.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Control Panel | Authors</strong></td>
+    <td>Provides an interface for adding or deleting names in the Authors value 
+      list and a button for returning to the Probe panel. The user is prompted 
+      to enter names exactly as they appear in their ZFIN personal records, but 
+      this is not validated by the template.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Info | Staging Series</strong></td>
+    <td>Lists the start and end times for each stage in the developmental staging 
+      series. For informational purposes only, and no data entry occurs here. 
+      Provides a back-link to the Expression panel.</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Tables">Tables</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top><strong>DATA_FRX.fp7</strong></td>
+    <td>Provides all user-interface elements. Also stores clone data for each 
+      experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_authors.fp7</strong></td>
+
+    <td>Related table that stores author names for each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_expression.fp7</strong></td>
+    <td>Related table that stores text descriptions and keywords for each developmental 
+      stage in each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_images.fp7</strong></td>
+
+    <td>Related table that stores image filenames and descriptions for each experiment.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_val_lists.fp7</strong></td>
+    <td>Stores values for the Authors menu; stores values for lookup fields. Does 
+      not store experimental data.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_values_key.fp7</strong></td>
+
+    <td>Stores values for Keywords panel. Does not store experimental data.</td>
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Fields">Fields</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=21><strong>DATA_FRX.fp7</strong></td>
+    <td valign=top nowrap><strong>__keyExp</strong></td>
+    <td><strong>Primary key.</strong> Auto-entered serial number, prefixed by 
+      "exp" (for "experiment"), incremented by 1 for each new record. Hidden from 
+      the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>cdna name</strong></td>
+    <td>Clone/EST name; must be unique.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>probe_rating_display</strong><br />
+      (FR template only)</td>
+
+    <td>"Star rating" to indicate the quality/usefulness of a probe; may be 1 
+      to 5 stars (see <strong><em>probe_rating</em></strong> field).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>gene zdb_id</strong></td>
+    <td>If a gene assignment is made for this EST, the ZFIN gene ID is entered 
+      here.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>genbank 5'</strong></td>
+    <td>Clone/EST accession ID.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>genbank 3'</strong></td>
+    <td>Clone/EST accession ID.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>library</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>digest</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>vector</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>pcr amplification</strong></td>
+    <td>Clone data; looked up according to the vector selected, but may be modified 
+      by the user.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>insert size</strong></td>
+    <td>Clone data (numerical).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>cloning site</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>polymerase</strong></td>
+    <td>Clone data (from value list).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>comments</strong></td>
+    <td>Optional comments.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL rel_values_cat</em></strong></td>
+
+    <td>This global field is set to "1" when the user requests to customize the 
+      Authors menu (<strong>gotoAuthorMenuEditor</strong> script), providing a 
+      primary key for viewing the author names stored in <strong>rel_val_lists.fp7</strong>.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>TEMP xpat_uniqueID</em></strong></td>
+    <td rowspan=2 valign=top>When a user chooses to access the Keyword panel for 
+      a particular clone and stage, the <strong>gotoKeywordEditView</strong> script 
+      is activated; these two fields are then filled in with primary key values 
+      for viewing keyword data and for displaying all available keywords (according 
+      to stage and provided by the <strong>rel_values_key.fp7</strong> table).</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>TEMP xpat_stage</em></strong></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>COUNT records</em></strong></td>
+    <td>Stores the number of records in this table, used by the <strong>gotoAuthorMenuEditor</strong> 
+      script to determine whether a temporary record needs to be created to enable 
+      the user to access the Author menu customization interface.</td>
+
+  </tr></tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>probe_rating</em></strong><br />
+      (FR template only)</td>
+    <td>This field provides a menu for assigning a "star rating" to the probe. 
+      If a value of 0 to 4 is selected, then that number is increased by 1 and 
+      automatically filled into the <strong>probe_rating_display</strong> field 
+      to be exported.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top rowspan=3><strong>rel_authors.fp7</strong></td>
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new author record is created. Hidden 
+      from the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>author</strong></td>
+    <td>Author name (from values stored in <strong>rel_val_lists.fp7</strong>).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=10><strong>rel_expression.fp7</strong></td>
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new expression record is created. 
+      Hidden from the user, can not be modified.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>stage</strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>).</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>description</strong></td>
+
+    <td>Free-text description of the expression pattern (default is "No comments").</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>state</strong></td>
+    <td>Expression state, set by checkbox (see <strong><em>ENTER state</em></strong> 
+      field) to one of these values: 
+      <ul>
+        <li>0 = no expression detected 
+        <li>1 = expression detected (default) 
+        <lI>2 = basal level of expression (FR template only) 
+        <li>3 = not spatially restricted (FR template only) </ul></td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>keywords</strong></td>
+    <td>Anatomical term (from <a href="#Controlled Vocabularies">controlled vocabulary</a> 
+      stored in <strong>rel_values_key.fp7</strong>); multiple items selected 
+      by checkboxes are separated by return characters when exported to plain 
+      text.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>__uniqueID</em></strong></td>
+    <td>Auto-entered serial number, incremented by 1 for each new record. Hidden 
+      from the user, can not be modified. Provides a foreign key for viewing keywords 
+      for a particular clone and stage.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL keyExp</em></strong></td>
+    <td>When a new clone record is created, the <strong>createNewRecord</strong> 
+      script sets this global field to the primary key value of the new record 
+      in <strong>DATA_FRX.fp7</strong>. The <strong>createDefaultStages</strong> 
+      script proceeds to create new related expression records for stages {G, 
+      ES, MS, 24h, 36h, 48h}, setting their foreign key values to the global value.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>ENTER state</em></strong></td>
+    <td>This field provides the checkboxes for entering expression state. If a 
+      value other than the default "1" is selected, then that digit is appended 
+      to the "1". FileMaker then takes the rightmost digit and fills it into the 
+      <strong>state</strong> field to be exported.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=11><strong>rel_images.fp7</strong></td>
+
+    <td valign=top nowrap><strong>_keyExp</strong></td>
+    <td><strong>Foreign key.</strong> Automatically set to the value of the <strong>DATA_FRX.fp7</strong> 
+      <strong>__keyExp</strong> field when a new image record is created. Hidden 
+      from the user, can not be modified.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>filename</strong></td>
+
+    <td>Image filename; must be unique and have a <em>jpg</em> extension.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>stage</strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>).</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>view</strong></td>
+    <td>Image orientation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "side view (lateral)".)</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>direction</strong></td>
+
+    <td>Image orientation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "anterior to left".)</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>specimen</strong></td>
+    <td>Image preparation (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>). (Default is "whole-mount".)</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong>comments</strong></td>
+    <td>Optional caption/comments.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>date last modified</strong></td>
+    <td>Auto-entered modification date for the record.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top colspan=2><em>Fields in italics are necessary for UI and script 
+      functionality and are not exported to ZFIN:</em></td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL del_exp</em></strong></td>
+    <td rowspan=2 valign=top>When an expression record is deleted, the <strong>deleteExpressionStage</strong> 
+      script sets these global fields to the key and stage values, respectively, 
+      of the deleted row in <strong>rel_expression.fp7</strong>. The <strong>deleteRelatedImages</strong> 
+      script then uses these values to target related image records for deletion.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>GLOBAL del_stage</em></strong></td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=4><strong>rel_val_lists.fp7</strong></td>
+    <td valign=top colspan=2><em>This table provides items for value lists and 
+      lookup fields and does not store experimental data for export.</em></td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>cat</em></strong></td>
+    <td>Arbitrary number (category) assigned to each item (such as "1" for authors); 
+      provides a foreign key for creating a value list in the main UI file.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>item</em></strong></td>
+    <td>Value-list items.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>lookup</em></strong></td>
+    <td>Looked-up data for selected value-list items.</td>
+  </tr>
+  <tr> 
+    <td valign=top rowspan=3><strong>rel_values_key.fp7</strong></td>
+    <td valign=top colspan=2><em>This table provides items for value lists and 
+      does not store experimental data for export.</em></td>
+  </tr>
+
+  <tr> 
+    <td valign=top nowrap><strong><em>stage</em></strong></td>
+    <td>Developmental stage (from <a href="#Controlled Vocabularies">controlled 
+      vocabulary</a>); provides a foreign key for displaying available keywords 
+      for a particular stage.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong><em>vocab item</em></strong></td>
+    <td>Anatomical term (from <a href="#Controlled Vocabularies">controlled vocabulary</a>).</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Scripts">Scripts</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=8><strong>DATA_FRX.fp7</strong></td>
+    <td valign=top><strong>deleteStageDependents</strong><br /> <strong>deleteStageImageDependents</strong><br /> 
+      <strong>deleteStageKeywordsDependents</strong></td>
+
+    <td>Data-load validation scripts (added by Brock Sprunger).</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>autoEnterImageStage</strong></td>
+    <td>The Image panel "&gt;&gt;" button activates this script, auto-filling 
+      the Stage field if a stage symbol {G, ES, MS, 24h, 36h, 48h} has been embedded 
+      in the filename. If none of these symbols is found, the field is left empty 
+      and must be manually filled.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>createNewRecord</strong></td>
+
+    <td>Activated by the New button on the Probe panel. Sets the <strong>rel_expression.fp7:GLOBAL 
+      keyExp</strong> field to the primary key value for this new clone record. 
+      The <strong>createDefaultStages</strong> script is then run, using the global 
+      field to establish a foreign key value.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>deleteExpressionStage</strong></td>
+    <td>Any expression record Delete button activates this script, setting the 
+      <strong>rel_images.fp7:GLOBAL del_exp</strong> and <strong>rel_images.fp7:GLOBAL 
+      del_stage</strong> fields to the key and stage values, respectively, of 
+      the deleted row in <strong>rel_expression.fp7</strong>. The <strong>deleteRelatedImages</strong> 
+      script then uses these values to target related image records for deletion.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>deleteTempRecord</strong></td>
+    <td>Checks for and deletes the temporary record created by the <strong>gotoAuthorMenuEditor</strong> 
+      script. For good measure, it is also run when the <strong>DATA_FRX.fp7</strong> 
+      file is opened and closed.</td>
+  </tr>
+
+  <tr> 
+    <td valign=top><strong>gotoAuthorMenuEditor</strong></td>
+    <td>Switches to the "Control Panel | Authors" layout when the Customize button 
+      is clicked, letting the user edit the Authors value list stored in <strong>rel_val_lists.fp7</strong>. 
+      Editing is possible only if the database has at least one existing record. 
+      If there is none, this script creates a temporary one. When the user clicks 
+      the Finished button, the <strong>deleteTempRecord</strong> script checks 
+      for it and deletes it.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>gotoKeywordEditView</strong></td>
+
+    <td>Activated when the user navigates to the Keywords panel. The <strong>DATA_FRX.fp7:TEMP 
+      xpat_uniqueID</strong> and <strong>DATA_FRX.fp7:TEMP xpat_stage</strong> 
+      are set to the values of the unique ID and stage for the expression record 
+      being edited.</td>
+  </tr>
+  <tr> 
+    <td valign=top><strong>!resetDatabase</strong></td>
+    <td><strong>Deletes all records in the template and resets serial numbers 
+      and global fields. Used when testing the database. This is never, ever made 
+      available to non-ZFIN users.</strong></td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_expression.fp7</strong></td>
+    <td valign=top><strong>createDefaultStages</strong></td>
+    <td>Activated by the <strong>createNewRecord</strong> script. Creates new 
+      expression records for the stages {G, ES, MS, 24h, 36h, 48h}, setting the 
+      foreign key for each to the <strong>GLOBAL keyExp</strong> value.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>rel_images.fp7</strong></td>
+    <td valign=top><strong>deleteRelatedImages</strong></td>
+    <td>Activated by the <strong>deleteExpressionStage</strong> script. All the 
+      rows in the <strong>rel_images.fp7</strong> file are scanned for matches 
+      between the <strong>GLOBAL del_exp</strong> and <strong>_keyExp</strong> 
+      fields and between the <strong>GLOBAL del_stage</strong> and <strong>stage</strong> 
+      fields. If both matches occur, the row is deleted.</td>
+
+  </tr>
+</table>
+<h3 class="zdoc"><a name="Controlled Vocabularies">Controlled Vocabularies</a></h3>
+<table width="100%" border=1 cellspacing=0 cellpadding=8>
+  <tr> 
+    <td valign=top rowspan=10><strong>Stages</strong></td>
+    <td colspan=2>Based on the Kimmel <em>et al</em> developmental staging series 
+      (<a href="http://zfin.org/zf_info/zfbook/stages/index.html">http://zfin.org/zf_info/zfbook/stages/index.html</a>).<br />
+
+      The Thisses use a set of short stage symbols for some of their data. These 
+      do not appear in ZFIN records; instead they are translated into one or a 
+      range of Kimmel stage(s). The template also allows individual stages to 
+      be selected.</td>
+  </tr>
+  <tr> 
+    <td nowrap><strong>Symbol</strong></td>
+    <td><strong>Maps to...</strong></td>
+  </tr>
+  <tr> 
+    <td valign=top>B</td>
+
+    <td>Blastula:Sphere, Blastula:Dome, Blastula:30%-epiboly</td>
+  </tr>
+  <tr> 
+    <td valign=top>G</td>
+    <td>Gastrula:50%-epiboly, Gastrula:Germ-ring, Gastrula:Shield, Gastrula:75%-epiboly, 
+      Gastrula:90%-epiboly, Gastrula:Bud</td>
+  </tr>
+  <tr> 
+    <td valign=top>ES</td>
+
+    <td>Segmentation:1-4 somites, Segmentation:5-9 somites, Segmentation:10-13 
+      somites</td>
+  </tr>
+  <tr> 
+    <td valign=top>MS</td>
+    <td>Segmentation:14-19 somites</td>
+  </tr>
+  <tr> 
+    <td valign=top>24h</td>
+
+    <td>Segmentation:20-25 somites, Segmentation:26+ somites, Pharyngula:Prim-5</td>
+  </tr>
+  <tr> 
+    <td valign=top>36h</td>
+    <td>Pharyngula:Prim-15, Pharyngula:Prim-25</td>
+  </tr>
+  <tr> 
+    <td valign=top>48h</td>
+
+    <td>Pharyngula:High-pec, Hatching:Long-pec</td>
+  </tr>
+  <tr> 
+    <td valign=top>"all stages"<br />
+      (FR template only)</td>
+    <td>Zygote:1-cell -&gt; Hatching:Pec-fin</td>
+
+  </tr>
+  <tr> 
+    <td valign=top><strong>Keywords</strong></td>
+    <td colspan=2>Based on the Anatomical Ontology (<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search">http://zfin.org/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search</a>).<br />
+      In practice, only a subset of these terms are used in the template. To update 
+      them and stay in sync with the AO, follow the procedures for <a href="#">making 
+      changes to anatomy expression templates</a>.</td>
+
+  </tr>
+  <tr> 
+    <td valign=top rowspan=4><strong>Images</strong></td>
+    <td colspan=2>Permitted values for image description fields follow. In practice, 
+      only a subset of these terms are used in the template.</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Specimen</strong></td>
+    <td>EM-section, LM-section, live, whole-mount, not specified</td>
+
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Orientation (View)</strong></td>
+    <td>animal pole, anterior, cross section, dorsal, frontal, parasagittal, posterior, 
+      sagittal, side view (lateral), transverse, vegetal pole, ventral, not specified</td>
+  </tr>
+  <tr> 
+    <td valign=top nowrap><strong>Orientation (Direction)</strong></td>
+    <td>animal pole to top, anterior to left, anterior to right, anterior to top, 
+      dorsal to left, dorsal to right, dorsal to top, oblique, posterior to top, 
+      ventral to right, not specified</td>
+
+  </tr>
+</table>
+<!-- ========= end of FILEMAKER TEMPLATES ============================== -->
+
+</p>
+<h3 class="zdoc">ZGC or Ref_Seq Data</h3>
+<p>For ZGC clones, the scripts first check the GenBank numbers associated with 
+  the expression patterns against all GenBank numbers in ZFIN. The expression 
+  for ZGC clones is assigned to those clones in ZFIN. After this is done the database 
+  is checked for redundancy by blasting the sequence for the new clones with expression 
+  against all of the genes and predicted genes in ZFIN. The criteria for the BLAST 
+  are listed below. If a match is not filtered out by the first criteria and fails 
+  the second a curator examines the data. Identical sequences are merged. The 
+  same protocol is followed for ENSEMBL predictions that are associated with a 
+  GenBank Ref_Seq ID except that a clone record is created without an associated 
+  sequence and no blast are run for clones associated with Ref_Seq numbers.</p>
+
+<p>The full blast criteria for ZGC:</p>
+<ul>
+  <li>blastn against zfin_cdna database</li>
+  <li>expect=1e-50</li>
+  <li>filter one: identity percentage threshold 90%, alignment length threshold 
+    150bp. If alignment &lt;90% or is &lt;150bp then ignored. If not, the second 
+    filter is applied.</li>
+  <li>filter two: has to have a strong candidate-- &gt;=98% identity, alignment 
+    length &gt;80% of the shorter sequence. Also all the other hits that have 
+    &gt;=96% identity are from the same gene, and no other hits from the gene 
+    have a &lt;96% identity. If TRUE, then sequence is automatically assigned 
+    to gene, If False, curator examines.</li>
+
+</ul>
+<h3 class="zdoc">EST or Predicted Genes</h3>
+<p>In the case of IMAGE clones and ENSEMBL derived sequences, the GenBank numbers 
+  are checked against those in ZFIN. Usually, the GenBank numbers of these probes 
+  are not in ZFIN. The sequences are then blasted against the genes and predicted 
+  genes in ZFIN. The criteria for the BLAST are listed below. If a sequence is 
+  not clearly either a new gene or an existing gene, then a curator analyses the 
+  BLAST results. The sequences are then assigned to the corresponding gene or 
+  if there is no match a new gene is created. The expression patterns are attached 
+  to the probe as with the ZGC. The new clones created for the IMAGE clones are 
+  named using the unique identifier assigned by the IMAGE consortium. The clones 
+  are in the form IMAGE:###### and the genes are in the form im:######. The sequences 
+  based on the ENSEMBL predictions are given clone names based on the Thisses 
+  nomenclature, the EST records are prefaced by eu# and the genes are named su:eu#.</p>
+<p>The full blast criteria for other sequences:</p>
+<ul>
+  <li> blastn against zfin_cdna database</li>
+  <li> expect=1e-20</li>
+  <li> filter one: identity percentage threshold 90%, alignment length threshold 
+    40bp. If alignment &lt;90% or is &lt;40bp, then a new gene is made. If not, 
+    the second filter is applied. </li>
+
+  <li>filter two: has to have a strong candidate-- &gt;=98% identity, alignment 
+    length &gt;80% of the shorter sequence. Also all the other hits that have 
+    &gt;=96% identity are from the same gene, and no other hits from the gene 
+    have a &lt;96% identity. If TRUE, then sequence is automatically assigned 
+    to gene, If False, curator examines. </li>
+</ul>
+<h3 class="zdoc">Data Tracking</h3>
+<p>All data about number, type and problems with the load are noted in the work 
+  tracking system. The first case pertaining to the Thisse loads was 494, the 
+  current case is 827. Statistics are generated at the time of the load these 
+  are appended to the case. These statistics include number and identity of genes 
+  that have multiple sets of expression data generated by the Thisses. Occasionally 
+  they request we send them the list of genes for which they have analyzed expression 
+  for more than once. Additional expression statistics are generated on a monthly 
+  basis and these are also recorded in this case. After every FR load a translation 
+  table is generated so the Thisses know what we call the genes. The curator takes 
+  the flat file and imports it into Excel. Additionally, once a month a script 
+  runs that checks for genes that have VEGA links that don't have expression from 
+  the Thisses. This file is also put into Excel and sent to the Thisses.</p>
+<p>The process of updating the anatomy templates is described in the Anatomy Ontology 
+  section under <a href="#AO">Making changes to anatomy expression templates</a>.</p>
+  
+  
+  
+<!-- ========= end of THISSE LOADS CURATOR ANALYSIS ============================== -->
+
+
+
+
+
+<h3 class="zdoc"><a name="ZIRC">ZIRC</a></h3>
+
+<p>ZFIN both pushes and pulls information to and from ZIRC. The scripts that
+do this are in the directory
+
+<div class="fileline">
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/server_apps/data_transfer/ZIRC/">ZFIN_WWW/server_apps/data_transfer/ZIRC/</a>
+</div>
+
+<p>As of 2004/01, the data that is pulled from ZIRC is stored in the ZFIN 
+database, but it is not displayed on the web site. 
+
+<h3 class="zdoc"><a name="Images and PDFs">Images and PDFs</a></h3>
+
+<p>Large object files, namely image files and pdf files are stored
+in the ZFIN filesystem.  The script 
+<a href="http://cvs.zfin.org/cvs/cvsweb.cgi/ZFIN_WWW/cgi-bin/upload.cgi">upload.cgi</a>controls web-based data transfer of these files.
+This script is currently being called from the image, FX curation and 
+publication pages.  Automated data transfer scripts that upload images
+from non-web based loads are currently in development.   
+
+<p>Database columns in either case should contain the complete filename
+like: ZDB-IMAGE-010101-1.jpg in either case.  The full path to this image
+would be determine by the apache configuration, the .tt files being sourced
+and the current location of the production filesystem.</p>
+
+<h2 class="zdoc"><a name="AO">Loading changes to the AO into the database</a></h2>
+
+<p><strong>Point person currently Peiran Song<br>
+  Backup person Sierra Taylor</strong></p>
+
+<h3 class="zdoc">Where Are The Scripts</h3>
+<p>Scripts for AO loading and unloading are at ZFIN_WWW/server_apps/data_transfer/Anatomy. 
+  There is a README file documenting the steps to conduct AO load and unload with 
+  brief explanation of each script. For data load and unload purpose, please read 
+  and follow the README file.</p>
+<p>The following documentation goes into details on what things are done and how 
+  they are done. It is for debugging and revision purpose. </p>
+<h3 class="zdoc">Input File Format</h3>
+<p>AO Term: <br>
+  Below is a typical AO term in OBO format. Some notes:<br>
+  1) Brand new terms do not have xref_analog line. <br>
+  2) When terms merge, the old(merged) term&#8217;s name becomes the new(merged-into) 
+  term's synonym, ID becomes an alt_id: ZFA:# line, and if exists xref_analog, 
+  it would be inserted in front of the new term&#8217;s xref_analog line. <br>
+
+  3) When terms become obsolete, there will be an is_obsolete: true line. </p>
+<p>[Term] <br>
+  id: ZFA:0000006 <br>
+  name: ball <br>
+  namespace: zebrafish_anatomy <br>
+  xref_analog: ZFIN:ZDB-ANAT-010921-413 <br>
+
+  synonym: &quot;yolk ball&quot; [ZFIN:ZDB-PUB-961014-576] <br>
+  def: &quot;The anterior round region of the yolk cell present after the yolk 
+  extension forms during the segmentation period. &lt;a href='http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-PUB-961014-576'&gt;Kimmel 
+  et al, 1995.&lt;/a&gt;&quot; [ZFIN:curator] <br>
+  relationship: start ZFS:0000025 <br>
+
+  relationship: end ZFS:0000036 <br>
+  relationship: part_of ZFA:0000084 </p>
+<p>Cell Ontology term: <br>
+  We have also incorporated terms from the Cell Ontology. Below is a typical new 
+  CL term in OBO format. </p>
+<p>[Term] <br>
+  id: ZFC:0001318 <br>
+  name: lymphopoietic stem cell <br>
+
+  namespace: zebrafish_cells <br>
+  is_a: ZFC:0001317 ! hematopoietic stem cell <br>
+  relationship: end ZFS:0000044 ! Adult <br>
+  relationship: start ZFS:0000030 ! Pharyngula:Prim-15 <br>
+  xref_unknown: CL:0000051</p>
+<h3 class="zdoc">What Happens During The Loading </h3>
+
+<p><strong>1)</strong> Parser generates </p>
+<ul>
+  <li>one translation file: <br>
+    &nbsp;&nbsp;cell_ids.unl : ZFC:#######|CL:#######| </li>
+  <li>anatitem_new.unl : terms without xref_analog line, one term per line </li>
+  <li>anatitem_exist.unl : terms with xref_analog line, one term per line </li>
+
+  <li>anatitem_merged.unl : ZFA:#######|ZFA:#######| </li>
+  <li>anatitem_obsolete.unl : ZDB-ANAT-######-##| </li>
+  <li>anatalias.unl : ZFA:#######|synonym|ZDB-PUB-######-##| </li>
+  <li>anatrel.unl : ZFA:#######(parent)|ZFA:#######(child)|rel_type|</li>
+</ul>
+<p><strong>2)</strong> Loader has two parts, the first part creates temporary 
+  tables, load raw data in, use the translation file, anatomy_item and stage table 
+  to translate the ZFA/ZFS/ZFC ids to ZDB ids. It also executes create_anatomy_relationship_list() 
+  procedure to generate parents and children lists for each anatomy term, store 
+  them for later comparison. </p>
+
+<p>The second half loads data into real tables as explained below:<br>
+  <br>
+  For existing terms: update it in anatomy_item, record actions in updates table. 
+  <br>
+  For new terms: enter it to zdb_active_data and anatomy_item <br>
+  For merged terms: </p>
+<ol type="a">
+  <li>expression annotations and pattern figures: <br>
+
+    If same annotations exist on both old(merged) and new(merged-into) terms, 
+    keep the ones on the new terms and link xpat figures from the annotation on 
+    the old term over to the annotation on the new term. For the rest annotations 
+    on the old terms, do a distinctive select, and generate new -XPATRES- ids 
+    (it is possible that two old terms with the same annotation get merged into 
+    the same term, we choose to get a new id instead of picking an old one out.) 
+    Then link over all the xpat figure records on the old annotations to the news. 
+    For deletions on expression annotation, either due to both new term and old 
+    term have the same annotation or more than one terms with the same annotation 
+    merged into one term, record annotation ids in zdb_replaced_data.</li>
+  <li>anatomy items:<br>
+    Record term zdb ids in zdb_replaced_data, record merging in updates table 
+    for the new terms, delete the old terms from zdb_active_data. The term is 
+    gone but the term name is kept as the new term's synonym.</li>
+</ol>
+<p>For obsolete terms: flag it in the anatomy_item <br>
+  For synonym/alias updates: </p>
+<ol type="a">
+  <li>record synonym deletions in updates table for synonymns that are not included 
+    in the new AO file, then delete those synonyms from zdb_active_data. </li>
+
+  <li>for existing synonymn attributions, delete those that are not included in 
+    the new AO file, and add those they are new. </li>
+  <li>add new synonyms to zdb_active_data and data_alias, and add attribution 
+    to record_attribution. </li>
+</ol>
+<p>For Cell ontology term: use CL:# instead of ZFC:# as anatitem_obo_id. <br>
+  For relationship: this is where stage inconsistency often comes up. </p>
+<ol type="a">
+  <li>three checkings correspond to three .err output files: <br>
+    start_startInconsistent.err: parent term|child term|parent start stg|child 
+    start stg| <br>
+
+    end_startInconsistent.err: parent term|child term|parent end stg|child start 
+    stg| (for develops_from relationship) <br>
+    end_endInconsistent.err: parent term|child term|parent end stg|child end stg| 
+  </li>
+  <li>load in anatomy_relationship </li>
+  <li>run create_anatomy_relationship_list() procedure, record change to each 
+    term's contained_by, contains, develops_from and develops_into lists. </li>
+</ol>
+<p>To have history tracking, we store each update/change action into the updates 
+  table, and the web application function would retrieve and format them for web 
+  display.</p>
+<p>Updates that we track include:</p>
+
+<ul>
+  <li> term name change</li>
+  <li> term start stage or end stage change </li>
+  <li>term definition change</li>
+  <li> term receives a merge</li>
+  <li> new synonym</li>
+
+  <li> contained_by (is_a, part_of) parent list change</li>
+  <li> contains (is_a, part_of) children list change</li>
+  <li> develops_from parent list change </li>
+  <li>develops_into children list change</li>
+</ul>
+<p><strong>3)</strong> With term stage(s) changes, some existing expression annotations 
+  might have stage inconsistence problem. The loader generates annotationViolates.err 
+  file in a format of: <br>
+
+  ZDB-PUB-###(annotation source)|annotation start stage abbrev|end stage abbrev|anatomy 
+  term name|term start stage abbrev|end stage abbrev| </p>
+<p>Curators would return a file in format of <br>
+  ZDB-ANAT-####(term to be translated)|start stg abbrev|end stage abbrev|ZDB-ANAT-###(term 
+  to be translated into) </p>
+<p>These file would be used by batch_xpat_annot_adjust() function to adjust annotation. 
+</p>
+<p><strong>4)</strong> Providing Thisse keyword file--stageKeywords.csv, loadMaster.sh 
+  would parse it and check it against new AO table content and generate two files 
+  to curators: </p>
+<p>kwdNameNotPrim.err: start stage name|end stage name|term name|<br>
+  The term name used in that stage window is not longer a primary ZFIN AO term 
+  name, it might become a synonym, or updated or merged or obsoleted.</p>
+
+<p>kwdStageInconsis.err: start stage name|end stage name|term name| <br>
+  The term name used in that stage window is not longer consistent with current 
+  stage definition of that term in ZFIN.</p>
+<h3 class="zdoc">What To Do After The Loading </h3>
+<p>First, commit the anatomy.obo file that used for the loading into CVS. </p>
+<p>Then, unload ZFIN anatomy and stages. <br>
+  During the unload, each anatomy term grabs its parents from anatomy_relationship, 
+  its synonyms from data_alias and synonym attribution from record_attribution, 
+  and form an obo format item definition. </p>
+<p>We generate two version of obo file,</p>
+<ul>
+
+  <li>one with term comments(anatitem_description) and cell ontology terms for 
+    internal use </li>
+  <br>
+  <li>one without both for sharing at public OBO site</li>
+</ul>
+<p>Both files would be sent to curators via emails as the end of the execution. 
+  Curator(s) would re-save them by DAGEdit for format/order adjustment. The internal 
+  one should be committed into CVS by the curator. </p>
+<p>Finally, the AO files at ZFIN public download site would be updated on Sunday 
+  night by weekly cron job, or you could choose to launch it right away.</p>
+
+<br><br>
+
+</div>  <!-- end class="zdoc" -->
+
+<script language="JavaScript" src="/footer.js" type="text/javascript"></script>

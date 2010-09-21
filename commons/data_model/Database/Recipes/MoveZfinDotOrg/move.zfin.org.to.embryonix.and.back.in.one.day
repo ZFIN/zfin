@@ -1,0 +1,805 @@
+=================================================================================
+Moving zfin.org to embryonix and back again
+*********************************************************************************
+
+This recipe was put together in 2007 when we installed a new fibre channel
+card in our Solaris server, "Helix", in order to switch our RAID device from
+a Sun A1000 to an Apple XServe RAID.
+
+This recipe should be treated as a template only; modifications should
+be made depending on the purpose of the move.
+
+This recipe also assumes that the move to embryonix and back will be done in one
+day.  If zfin.org needs to stay on embryonix, then the recipe should be adjusted.
+
+*********************************************************************************
+=================================================================================
+
+Tasks to perform in advance of the move:
+========================================
+
+ 1. Pick a time. It needs to be coordinated with curators, 
+    technologists, and the CS system administrators.
+
+    STATUS: 
+
+
+ 2. Make updated version of http.conf files on both servers
+
+    STATUS: on helix: /private/httpd.conf/httpd.conf.main.notzfin 
+    	       	      updated manually to get changes from  httpd.conf.main and 
+                      add changes necessary to bring up helix.cs.uoregon.edu
+		      add httpd.conf.main.bkup.070824 as a copy of httpd.conf.main
+
+            on embryonix: /private/httpd/conf/move.zfin.org.here.httpd.conf 
+	       	      modified to take SSL changes from httpd.conf and
+	              add changes necessary to bring up zfin.org on embryonix
+		      add httpd.conf.bkup.070824 as a copy of httpd.conf
+
+	done: 
+
+ 3. Create the ZFIN_WWW tree on Embryonix
+    
+        as informix (srcembryonix)
+
+        % cd /research/zusers/embryonix
+        
+        % cvs -q update -P
+
+	STATUS:
+
+ 4. rsync the images and pdf from Helix to Embryonix
+       we will run this again during the move, this run is get most of the updates
+       to reduce the moving time
+
+        as yourself on embryonix:
+       
+       % cd /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp/
+
+       % sudo -u zfishweb /local/bin/rsync -upvab --copy-links  /research/zprod/loadUp/imageLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp
+
+       This takes about 15 minutes from scratch, less if images already exist.
+
+
+       STATUS:
+
+       Now do the PDF rsync.
+       As yourself on embryonix:
+
+       % cd /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/
+       
+       % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zprod/loadUp/PDFLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/
+
+       STATUS: 
+
+     5. Config Tomcat applications for zfin.org on Embryonix
+
+	% cd /private/etc/tomcat/Catalina/zfin.org
+  
+          edit file to update docBase and having index path to almost
+          index repository. 
+
+	  done: 
+
+---------------------------------------------------------------------------------	  
+
+
+      6. Check Tomcat configuration
+
+         uncomment the section for zfin.org on embryonix and comment out the 
+	 similar section:
+
+	  /private/apps/tomcat/conf/server.xml
+
+	  done: 
+	  
+<!--   When ZFIN.org is on embryonix
+
+       <Resource
+        name="jdbc/zfinDatabase"
+        auth="Container"
+        type="javax.sql.DataSource" 
+        description="The ZFIN Database"
+        factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
+        driverClassName="com.informix.jdbc.IfxDriver"
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+-->
+
+Tasks to perform at the time of the move:
+==========================================
+    0. Email zfinner(make sure everyone, including Marie & Jon are on the list), 
+       curators not web updates, tech people no direct updates.   
+
+    1. Open a shell as informix on helix
+
+       % srchelix   
+ 
+       Open another shell as informix on embryonix
+
+       % srcembryonix
+
+    2. Disable web update and cron job on Helix   
+
+        % echo 'update zdb_flag set zflag_is_on = "t",
+                                    zflag_last_modified = CURRENT
+        where zflag_name = "disable updates"' | dbaccess zfindb
+
+        As informix on helix
+        % cdhelix
+        % cd server_apps/cron
+        % gmake stop
+   
+	STATUS: 
+
+
+    3. Unload zfindb from Helix
+ 
+        % unloaddb.pl zfindb /research/zunloads/databases/zfindb/2007.08.27.pre_move
+
+	STATUS: 
+
+
+    4. Load the dump into zfindb on Embryonix
+
+        % loaddb.pl zfindb /research/zunloads/databases/zfindb/2007.08.27.pre_move
+
+	STATUS:
+
+      
+    5. While loading, zip production FTP dir and transfer to Embryonix
+
+        as informix on helix
+
+        on Helix
+
+        % cd /research/zprod/ftp
+        % tar cf pub.tar pub
+
+        on Embryonix
+
+        % cd /research/zcentral/ftp
+        % cp -f /research/zprod/ftp/pub.tar . 
+        % rm -rf pub 
+        % tar xf pub.tar
+
+	STATUS:
+
+
+    6. While loading, rsync the images and pdf from Helix to Embryonix
+
+        as yourself on embryonix
+
+        % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zprod/loadUp/imageLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp/
+
+        % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zprod/loadUp/PDFLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/
+
+
+	STATUS: 
+
+
+     7. Update /private/ZfinLinks on Embryonix
+             
+        Change any links that move when zfin.org moves.
+
+       % rm www; ln -s /research/zcentral/www_homes/embryonix www
+       % rm mirror_src; ln -s /research/zusers/mirror mirror_src
+       % rm mirror_dest; ln -s /research/zcentral/ftp/pub/transfer/Mirror/site mirror_dest
+
+        STATUS: 
+
+
+     8. Once the DB load finished, gmake the web site
+
+        As informix on embryonix
+
+        % cdembryonix
+        % cvs -q update -P
+        % gmake postloaddb
+	% gmake
+	% cd j2ee
+	% gmake
+
+        STATUS: 
+
+     9. Create all the outgoing data transfer files
+
+        As informix on embryonix
+ 
+        % cd server_apps/data_transfer
+        % gmake push
+
+
+	STATUS: 
+
+     10 Test that embryonix.cs.uoregon.edu comes up
+
+        Not everything will work, but the basics like the home page will. 
+        If something obvious does not work, then you need to fix it before 
+        moving on.
+
+
+	STATUS:
+
+
+     11. Update tomcat server.xml file
+       
+        As informix on embryonix
+
+        % cd /private/apps/tomcat/conf
+
+        % co -l server.xml
+
+        Edit server.xml change the jdbc connection section:
+
+        Change
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+
+        To
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+	
+done
+
+
+     12. Update embryonix apache configuration files
+      
+        As yourself on embryonix
+
+        % cd /private/httpd/conf
+
+        % sudo cp httpd.conf httpd.conf.bkup.preMove.070827
+        % co -l httpd.conf
+        % sudo cp move.zfin.org.here.httpd.conf httpd.conf
+        % sudo ../bin/apachectl configtest
+
+	STATUS:
+	
+    13. Notify developers Apache and Tomcat would be down on embryonix, as well as Informix engine.
+
+    	STATUS:
+
+    14. Stop tomcat and apache on Embryonix
+
+         As self on Embryonix
+
+         % sudo /private/apps/tomcat-5.5.15/bin/jsvc-src/native/startStop.sh stop
+      
+         % sudo /private/httpd/bin/apachectl stop
+
+
+    15. Archive the catalina.out file, and start a fresh one 
+
+         As self/sudo on Embryonix
+        
+         % cd /private/apps/tomcat/log
+         % gzip -c catalina.out
+
+
+         % sudo touch catalina.out
+         % ls -l catalina.out
+     
+     done: 
+
+    16. Copy the Apache log files from the production server to embryonix
+
+        As yourself on helix:
+        % cp /private/httpd/logs/zfin.org/access_log /research/zusers/staylor/Temp/logs070827/ 
+        % cp /private/httpd/logs/zfin.org/error_log /research/zusers/staylor/Temp/logs070827/
+
+        As yourself on embryonix:
+        cd /private/httpd/logs/zfin.org 
+        sudo cp /research/zusers/staylor/Temp/logs070827/access_log . 
+        sudo cp /research/zusers/staylor/Temp/logs070827/error_log . 
+        sudo chown root:other *_log
+
+
+    17. Start Apache and Tomcat
+
+         As self on Embryonix
+ 
+         % sudo /private/httpd/bin/apachectl startssl
+
+         % sudo /private/apps/tomcat-5.5.15/bin/jsvc-src/native/startStop.sh start
+
+
+    18. Take the informix server down on embryonix
+ 
+        This step is necessary in order to perform the next step. 
+        If you update the INFORMIXSQLHOSTS file while the server is up and 
+        running, then bad things can happen like clients can't reach it, and 
+        you can't shut down the engine.
+   
+        As informix on the embryonix server:
+        onmode -k
+
+        STATUS: 
+
+
+    19. Update the development server's INFORMIXSQLHOSTS file
+
+        Wanda's INFORMIXSQLHOSTS file is at
+        /private/apps/Informix/informix/etc/sqlhosts
+
+        Change 
+        wanda ontlitcp embryonix.cs.uoregon.edu zfin_tli
+
+        to
+        wanda ontlitcp zfin.org zfin_tli
+
+        STATUS: 
+
+
+    20. Get systems to swap zfin.org from the production server to the 
+         development server
+	 (lauradel is your best bet)
+
+         STATUS: 
+
+
+    21. Bring up Informix server on embryonix
+
+
+         As informix on embryonix, 
+         
+        ( open a new shell)
+
+         % srcembryonix
+         % oninit
+
+         STATUS: 
+
+    22. Test that you can get to zfin.org,  ZIRC links, the mirror site, 
+         the CVSweb site, and the test web sites, albino.zfin.org, for example.
+
+         Watch the access_log and error_log to make sure that offsite 
+         URLs can successfully access zfin.org
+
+         STATUS: 
+
+
+    23. Start cron on embryonix
+
+        As informix on embryonix
+        % cdembryonix
+        % cd server_apps/cron
+        % gmake start
+
+
+    23. Enable update to zfin.org on Embryonix
+
+         As self or informix
+         % echo 'update zdb_flag set zflag_is_on = "f",zflag_last_modified = CURRENT
+        where zflag_name = "disable updates"' | dbaccess zfindb
+
+
+    24. Notify zfinner that zfin.org is on embryonix. 
+        No tomcat configuration changes. Monitor embryonix load. 
+
+    25. Throttle back loaddb.pl on embryonix for as long as zfin.org is on it.
+
+        commenting out the setting of PDQPRIORITY and 
+        PSORT_N_PROCS environment variables.
+
+        STATUS: 
+
+    25. As yourself on helix stop apache and tomcat
+       % cd /private/apps/apachec/bin
+       % sudo apachectl stop 
+
+       stop tomcat
+       % ps -ef | grep jsvc
+       % sudo kill pid
+
+       STATUS:
+        
+
+    26. Update tomcat server.xml file and bounce tomcat
+       
+        As yourself on helix
+
+        % cd /private/apps/tomcat/conf
+
+        % co -l server.xml
+
+        Edit server.xml change the jdbc connection section:
+
+        Change
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wildtype;user=zfinner;password=Rtwm4ts" />
+
+        To
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://helix.cs.uoregon.edu:2002:INFORMIXSERVER=wildtype;user=zfinner;password=Rtwm4ts" />
+
+
+    27. Update INFORMIXSQLHOSTS file on helix
+
+        As informix on helix:
+
+        onmode -k
+
+       Wildtype's INFORMIXSQLHOSTS file is at
+       /private/apps/Informix/informix/etc/sqlhosts.wildtype
+
+       Change 
+       wildtype ontlitcp zfin.org zfin1_tli
+
+       to
+       wildtype ontlitcp helix.cs.uoregon.edu zfin1_tli
+
+       STATUS: 
+
+    28. Bring informix up on the production server
+
+        As informix on helix
+        % oninit
+
+	done: 
+
+    29. Bring up apache
+
+	as self on helix
+
+	% cd /private/apps/apache/bin
+	% sudo apachctl start
+
+	bring up tomcat
+
+	% sudo tomcat.sh start helixNotZfin
+
+	done:
+
+    29. Test that you can get to helix.cs.uoregon.edu.
+
+        done: 
+
+
+==============================================================================
+Helix is now a playground.  You can get to the website on helix at:
+http://helix.cs.uoregon.edu 
+==================================================================================
+
+
+Then move ZFIN.org back.
+
+   0. Email zfinners update is to be disabled on zfin.org, and zfindb. 
+
+   1. Disable update on Embryonix
+
+     % echo 'update zdb_flag set zflag_is_on = "t",zflag_last_modified = CURRENT
+       where zflag_name = "disable updates"' | dbaccess zfindb
+
+       done: never turned them on.
+
+   2. Unload zfindb on Embryonix
+ 
+	(if you never enabled updates on zfin.org and you're sure that
+	 no technologists logged into zfindb and updated data, then you
+	 do not have to do this step, otherwise, play it safe and do it)
+
+     As informix on embryonix
+   
+     % unloaddb.pl zfindb /research/zunloads/databases/zfindb/mvback
+
+    done: 
+
+   3. Load db to Helix
+
+     As informix on helix
+     % loaddb.pl zfindb /research/zunloads/databases/zfindb/mvback
+
+     done: 
+    
+
+   4. While loading, zip production FTP dir and transfer to Embryonix
+     (if same day moving back, skip)
+
+      on Embryonix
+
+      % cd /research/zcentral/ftp
+      % tar cf pub.tar pub
+
+      on Embryonix
+
+      % cd /research/zprod/ftp
+      % cp -f /research/zcentral/ftp/pub.tar . 
+      % rm -rf pub 
+      % tar xf pub.tar
+
+	STATUS: 
+
+
+   5. While loading, rsync the images and pdf from Embryonix to Helix
+
+       as yourself on helix
+
+      % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp /research/zprod/loadUp/imageLoadUp/
+                  
+
+      % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp /research/zprod/loadUp/PDFLoadUp/
+                  
+	STATUS: 
+
+
+    6. Update /private/ZfinLinks on Embryonix
+            
+       % rm www; ln -s /research/zprod/www_homes/zfin.org www
+       % rm mirror_src; ln -s /research/zprod/users/mirror mirror_src
+       % rm mirror_dest; ln -s /research/zprod/ftp/pub/transfer/Mirror/site mirror_dest
+
+        STATUS: 
+
+     7. Once the DB load finished, gmake the web site
+
+        As informix on helix
+
+        % cdhelix
+        % cvs -q update -P
+        % gmake postloaddb
+	
+	STATUS: 
+
+
+     8. Create all the outgoing data transfer files
+
+        As informix on helix
+ 
+        % cd server_apps/data_transfer
+        % gmake push
+
+	done: 
+
+    10. Take level 0 dump
+
+        As informix on helix
+	(this will require you to push return once and wait for about 2 minutes)
+
+        % ontape -s -L 0 
+
+	done:
+
+    11. Update tomcat server.xml file
+       
+        As yourself on helix
+
+        % cd /private/apps/tomcat/conf
+
+        % co -l server.xml
+
+        Edit server.xml change the jdbc connection section:
+
+        Change
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://helix.cs.uoregon.edu:2002:INFORMIXSERVER=wildtype;user=zfinner;password=Rtwm4ts" />
+
+        To
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wildtype;user=zfinner;password=Rtwm4ts" />
+
+	done: 
+
+
+    12. Update helix apache configuration files
+      
+        As yourself on Helix
+
+        % cd /private/httpd/conf
+        % cp httpd.conf.main.bkup.070827 httpd.conf
+        % ci -u httpd.conf.main
+   
+	done:
+
+    13. Stop tomcat and apache on Embryonix
+
+         As self on Helix
+
+         % sudo /private/apps/tomcat-5.5.15/bin/startStop.sh stop
+      
+         % sudo /private/httpd/bin/apachectl stop
+
+	 done:
+
+    14. Archive the catalina.out file, and start a fresh one 
+
+         As self on helix
+        
+         % cd /private/apps/tomcat/log
+         % gzip -c catalina.out > catalina.out.gz
+         % sudo touch catalina.out
+         % ls -l catalina.out
+
+	 done:
+     
+    15. Copy the Apache log files from embryonix back
+
+        As yourself on embryonix:
+        % cp -f /private/httpd/logs/zfin.org/access_log /research/zusers/staylor/Temp/logs070827/
+        % cp -f /private/httpd/logs/zfin.org/error_log /research/zusers/staylor/Temp/logs070827/
+
+        As yourself on helix:
+        cd /private/httpd/logs/zfin.org 
+        sudo cp -f /research/zusers/staylor/Temp/logs070827/access_log . 
+        sudo cp -f /research/zusers/staylor/Temp/logs070827/error_log . 
+        (sudo chown root:other *_log)
+
+
+	done:
+
+    17. Take the informix server down on helix
+ 
+        As informix on helix:
+        onmode -k
+
+        STATUS:
+
+
+   18. Update production server's INFORMIXSQLHOSTS file
+
+        Wanda's INFORMIXSQLHOSTS file is at
+        /private/apps/Informix/informix/etc/sqlhosts
+
+        Change 
+        wildtype ontlitcp helix.cs.uoregon.edu zfin_tli
+
+        to
+        wildtype ontlitcp zfin.org zfin_tli
+
+        STATUS:
+
+
+   19. Get systems to swap zfin.org from the development server to the 
+       production server.
+       (lauradel is your best bet)
+ 
+      STATUS:
+
+
+   20. Start Apache and Tomcat
+
+         As self on Helix
+ 
+         % sudo /private/httpd/bin/apachectl start
+
+         % sudo /private/apps/tomcat-5.5.15/bin/startStop.sh start
+
+	 done:
+
+   21. Bring up informix
+
+       as informix on helix
+
+       In a new shell
+       % srchelix
+       % oninit
+
+       done:
+	
+   22. Test that you can get to zfin.org, zirc links ...
+
+   23. State ontape on hliex
+
+       As informix on helix
+       % cdhleix
+       % cd server_apps/DB_maintenance
+       % gmake dumplogscontinuous
+
+   24. Start cron on the production server and restart it on the development server.
+
+      As informix on helix
+      % cd server_apps/cron
+      % gmake start
+
+      As informix on embryonix
+      % srcalmost
+      % cdalmost
+      % cd server_apps/cron
+      % gmake startdevl
+
+      STATUS: done: 
+
+
+   25. Enable updates on zfin.org.
+
+      As informix on helix
+
+      % echo 'update zdb_flag set zflag_is_on = "f", zflag_last_modified = CURRENT 
+             where zflag_name = "disable updates"' | dbaccess zfindb
+
+
+   26. Notify all that zfin.org is back, but need to take down apache
+       and informix on embryonix
+
+
+   27. Restore httpd.conf on Embryonix
+       as self on embryonix
+       % cd /private/httpd/conf
+       % cp httpd.conf.bkup.070827 httpd.conf
+       % ci -u httpd.conf
+       done: 
+
+   28. Restore tomcat server.xml on Embryonix
+       % cd /private/apps/tomcat/conf
+
+        Change
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+
+        To    
+        url="jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+       
+       % ci -u server.xml
+
+
+   28. Take down apache, tomcat and informix on embryonix
+
+      as yourself on embryonix
+
+      % sudo /private/httpd/bin/apachectl stop
+      % sudo /private/apps/tomcat-5.5.15/bin/jsvc-src/native/startStop.sh stop
+
+      as informix on embryonix
+
+      onmode -k
+
+
+      done:
+
+   29. update the INFORMIXSQLHOSTS file on wanda
+       %cd /private/apps/Informix/informix/etc/sqlhosts
+ 
+       wanda  ontlitcp embryonix.cs.uoregon.edu zfin_tli
+
+       done:
+
+   30. Bring informix up on embryonix
+ 
+       As informix on embryonix
+
+       start a new shell
+       srcalmost
+       oninit
+
+
+       done:
+
+   31. Bring apache and tomcat up on embryonix
+
+      % sudo /private/httpd/bin/apachectl startssl
+      % sudo /private/apps/tomcat-5.5.15/bin/jsvc-src/native/startStop.sh start
+
+
+      done: 
+
+   32. Check that test sites are back, quicksearch works.
+
+       check access log
+
+       done: 
+
+
+--------------------------------------------------------------------------------------------
+   33. Clean up filesystems and databases on Embryonix
+
+      Drop zfindb on wanda/embryonix.
+
+        % echo 'drop database zfindb' |dbaccess
+
+      drop the ZFIN_WWW source tree and the www_homes/embryonix dest tree.
+
+      Clear out the imageLoadUp directories.
+        Need a script to do all these. 
+
+      Clear out FTP directory.
+

@@ -1,0 +1,371 @@
+---------
+pre-move:
+---------
+
+x. test symlinking the onconfig file.
+
+as informix on embryonix 
+
+% mv ~/informix/etc/onconfig ~/informix/etc/onconfig.bkup
+% setenv INFORMIXSQLHOSTS /research/zcentral/informix_config/
+% setenv ONCONFIG /research/zcentral/informix_config/onconfig
+
+STATUS: skip this because Nstor is down. 
+
+x. bounce the server to test that it worked
+
+as informix on embryonix
+
+% onmode -k
+% oninit
+
+STATUS:skip this because Nstor is down.
+
+x. edit the wanda env file, changing the INFORMIXSQLHOSTS and ONCONFIG parameters accordingly (check in changes).
+
+x. set up a time with Lauradel to preconfigure the device.
+
+x. read new_plan_for_RAID.txt
+
+   % emacs /research/zcentral/informix_config/new_plan_for_RAID.txt
+
+--------
+Day Of:
+--------
+
+x. stop tomcat, apache 
+
+   % ps -ef | grep jsvc
+   % sudo kill -9 pid
+
+   as self on embryonix
+
+   % sudo  /private/httpd/bin/apachectl stop
+
+STATUS:already done
+
+x. Bring down wanda
+
+   as informix on embryonix
+
+   % onmode -ky
+
+   making sure it is offline
+   % onstat 
+   % ps -ef | grep oninit 
+   % ps -ef | grep onstat
+
+STATUS: done for us by nstor crash
+
+x. re-define informix raw device
+
+   % cd /private/apps/Informix/informix/dev/ (this could move to a fs)
+
+   % rm -f *
+
+   try using a script:
+   
+   % /research/zcentral/informix_config/makeSymLinks.sh
+
+   if it fails, do it manually:
+
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6	tempdbs1_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs2_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs3_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs4_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs5_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs6_c1         
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs7_c1 
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs8_c1        
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs9_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tempdbs10_c1
+
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tbldbs1_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tbldbs2_c1              
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	tbldbs3_c1
+          
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6	idxdbs1_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	idxdbs2_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6	idxdbs3_c1
+
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	smartbs_c1    
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	smarttempbs_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	smartdfltbs_c1
+ 
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6	rootdbs_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	defaultdbs_c1
+
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	llogdbs_c1
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	plogdbs_c1
+
+   % ln -s /dev/rdsk/c9t600A0B80005AC7FC000002574A5B2B16d0s6 	sysadmindbs_c1
+
+   (24 dbspaces)
+
+STATUS: script worked
+
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+
+STATUS: ask Lauradel to change permissions
+
+
+x. create new onconfig file (uncomment onini-i plog and llog params)
+
+STATUS: created in: /research/zcentral/informix_config
+        named: onconfig_oninit_i_2540Raid
+
+x. move current onconfig file to the backup
+   % cd /research/zcentral/informix_config
+   % svn mv onconfig onconfig.asof.090714
+   % cp mv onconfig_oninit_i_2540Raid onconfig
+   
+STATUS: didn't do it with the symlink/env parameters.  Next time.  just cp'd the file over the top.
+
+x. confirm that the ONCONFIG and INFORMIXSQLHOSTS env variables are set to point at /private/ZfinLinks/informix_config/.
+
+   as infromix@embryonix
+
+   % env | grep ONCONFIG
+   % env | grep INFORMIXSQLHOSTS
+
+STATUS: didn't do it with the symlink/env parameters.  Next time.  just cp'd the file over the top.
+
+x. bring server up with new config
+ 
+ as informix on embryonix
+
+   % oninit -i
+
+   % onstat -m
+
+server failed to come up because not enough llog files to complete the sysadmin db.
+got error on length of onconfig
+doesn't like tempdbspaces before adding tempdbspaces.
+plog, llog too small
+SCHAPIs started succesfully.
+
+
+STATUS: 11:56
+
+x. Convert to large chunks
+
+   % onmode -BC 1
+
+   % onmode -BC 2
+
+   % ontape -s -L 0
+
+STATUS: already done. did the tape backup to dev/null successfully.
+
+x. add the new spaces (order matters)
+
+   try using the .sh script:
+
+   % cd /research/zcentral/informix_config
+   % ./addDbSpaces.sh
+   (this script also does a level 0 backup)
+
+STATUS: script worked! success so far.
+
+  If it doesn't work, oninit -i again, and do it manually:
+
+   onspaces -c -d plogdbs -p /private/apps/Informix/informix/dev/plogdbs_c1 -o 328679424 -s 4613734 
+   onspaces -c -d llogdbs -p /private/apps/Informix/informix/dev/llogdbs_c1 -o 316293120 -s 12386304
+
+   onspaces -c -d tbldbs1 -p /private/apps/Informix/informix/dev/tbldbs1_c1 -o 127401984 -s 37748736 
+   onspaces -c -d tbldbs2 -p /private/apps/Informix/informix/dev/tbldbs2_c1 -o  165150720 -s 37748736
+   onspaces -c -d tbldbs3 -p /private/apps/Informix/informix/dev/tbldbs3_c1 -o  202899456 -s 37748736
+
+   onspaces -c -d defaultdbs   -p /private/apps/Informix/informix/dev/defaultdbs_c1 -o 78643200 -s 48758784 
+
+   onspaces -c -d idxdbs1 -p /private/apps/Informix/informix/dev/idxdbs1_c1  -o 240648192 -s 25165824
+   onspaces -c -d idxdbs2 -p /private/apps/Informix/informix/dev/idxdbs2_c1  -o  265814016 -s 25165824
+   onspaces -c -d idxdbs3 -p /private/apps/Informix/informix/dev/idxdbs3_c1  -o  290979840 -s 25165824 
+
+   onspaces -c -S smartbs1    -p /private/apps/Informix/informix/dev/smartbs_c1 -o 33030144 -s 42467328  -Df "LOGGING=ON,AVG_LO_SIZE=32"
+   onspaces -c -S smartdfltbs -p /private/apps/Informix/informix/dev/smartdfltbs_c1 -o 31457280  -s 1572864  -Df "LOGGING=ON,AVG_LO_SIZE=32"
+   onspaces -c -S smarttempbs -p /private/apps/Informix/informix/dev/smarttempbs_c1 -o 75497472 -s 3145728 -Df "LOGGING=ON,AVG_LO_SIZE=32"
+
+
+   onspaces -c -d tempdbs1 -t -p /private/apps/Informix/informix/dev/tempdbs1_c1 -o 0 	    -s 3145728
+   onspaces -c -d tempdbs2 -t -p /private/apps/Informix/informix/dev/tempdbs2_c1 -o 3145728 -s 3145728  
+   onspaces -c -d tempdbs3 -t -p /private/apps/Informix/informix/dev/tempdbs3_c1 -o 6291456 -s 3145728
+   onspaces -c -d tempdbs4 -t -p /private/apps/Informix/informix/dev/tempdbs4_c1 -o 9437184 -s 3145728
+
+   onspaces -c -d tempdbs5 -t -p /private/apps/Informix/informix/dev/tempdbs5_c1 -o 12582912  -s 3145728
+   onspaces -c -d tempdbs6 -t -p /private/apps/Informix/informix/dev/tempdbs6_c1 -o 15728640  -s 3145728
+   onspaces -c -d tempdbs7 -t -p /private/apps/Informix/informix/dev/tempdbs7_c1 -o 18874368  -s 3145728
+   onspaces -c -d tempdbs8 -t -p /private/apps/Informix/informix/dev/tempdbs8_c1 -o 22020096  -s 3145728
+   onspaces -c -d tempdbs9 -t -p /private/apps/Informix/informix/dev/tempdbs9_c1 -o 25165824  -s 3145728
+   onspaces -c -d tempdbs10 -t -p /private/apps/Informix/informix/dev/tempdbs10_c1 -o 28311552 -s 3145728
+
+   onspaces -c -d sysadmindbs -p /private/apps/Informix/informix/dev/sysadmindbs_c1 -o 316145664  -s 98304
+
+   Level 0 backup
+
+   % ontape -s -L 0
+
+STATUS: script did the level 0 backup
+ 
+x. Modify onconfig and bounce the server
+
+   use large size config for physical log and logical log and rootdbs configuration
+   as informix@embryonix
+
+   % cd /research/zcentral/informix_config
+   % rm onconfig
+   % mv onconfig_embryonix_oninit_no-i_2540Raid onconfig
+
+   % onmode -ky
+   % onstat
+   % oninit
+
+onconfig file has too long lines
+
+   STATUS: still complaining about small plog (even after increasing to 4.4 G)
+    try to restart again after llog addition and see what happens.
+ 
+   % onstat -m
+
+x. Add 96 logical log files
+   
+   onparams -a -d llogdbs is the command; try using the .sh file:
+
+   % cd /research/zcentral/informix_onconfig
+   % ./addLogicalLogs.sh
+
+   % onstat -l
+   % ontape -s -L 0
+
+   STATUS: failed; space too small to add all 96 because production only holds 96
+
+if it doesn't work, do it manually
+   
+   % onstat -l 
+
+   % ontape -s -L 0
+
+   STATUS: 
+
+x. drop old log files
+  
+    % onstat -l        # find the current log file 
+    % onparams -d -l 1
+    % onparams -d -l 3  
+    % onmode -l        # advance log file
+
+ STATUS: before advance:
+address          number   flags    uniqid   begin                size     used    %used
+224961518        1        U-B----  4        1:1263                750      750   100.00
+224961580        2        U---C-L  5        1:2013                750      117    15.60
+2249615e8        3        U-B----  3        1:2763                750      750   100.00
+
+         after advance:
+address          number   flags    uniqid   begin                size     used    %used
+224961518        1        D------  0        1:1263                750        0     0.00
+224961580        2        U-B---L  5        1:2013                750      120    16.00
+2249615e8        3        D------  0        1:2763                750        0     0.00
+225674d80        4        U---C--  6        3:53                32768        0     0.00
+
+but couldn't drop 2. it said, in use.
+Did level 0 backup, then able to dropp it. 
+
+    % ontape -s -L 0   
+    % onparams -d -l 2
+
+    % ontape -s -L 0
+
+STATUS: had 6 llogs to delete instead of 3, and were bigger, but process is the same.
+
+--------------------
+MOVE the sysadmin db:
+--------------------
+
+ x. As user informix, run the following commands to move the sysadmindb from root to sysadmindbs_c1
+
+      % dbaccess sysadmin -   
+       execute function task("reset sysadmin", "sysadmindbs");  
+       close database
+       [cntl-C]  to sever the connection to sysadmin so that it can be moved/exclusively locked.
+
+      The internal thread, bld_sysadmin, waits up to five minutes to obtain exclusive access to the 
+      sysadmin database. The progress of the bld_sysadmin thread is logged in the online message log.
+
+      The command returns the following message:
+
+      SCHAPI: 'sysadmin' database will be moved to 'sysadmindbs'.
+      See online message log.
+
+      If this operation completes successfully, the sysadmin database is dropped and  
+      recreated in the new dbspace. The Scheduler and dbWorker threads are started automatically.
+
+STATUS: worked 12:52
+
+
+almost informix etc% onparams -p -s 4613628 -d plogdbs
+Do you really want to change the physical log? (y/n)y
+Log operation started. To monitor progress, use the onstat -l command.
+** WARNING ** Because the physical log has been modified, a level 0 archive
+must be taken of the following space before an incremental archive will be
+permitted for it: plogdbs
+(see Dynamic Server Administrator's manual)
+almost informix etc% ontape -s -L 0
+Archive to tape device '/dev/null' is complete.
+
+Program over.
+almost informix etc% onmode -k
+
+This will take IBM Informix Dynamic Server OFF-LINE -
+Do you wish to continue (y/n)? y
+
+There are 0 user threads that will be killed.
+Do you wish to continue (y/n)? y
+almost informix etc% oninit
+
+
+--------------
+REBUILD almost:
+--------------
+
+x. Start up Apache & almost tomcat
+
+   as yourself on embryonix
+    % sudo  /private/httpd/bin/apachectl startssl
+
+    % restarttomcat.pl
+
+x. load almost.zfin.org
+
+   as informix
+
+    % cd /research/zcentral/www_homes/almost/server_apps/DB_maintenance
+    % load_and_index_almost.pl
+   
+    check almost tomcat is up, http://almost.zfin.org is functioning
+
+x. email group that almost.zfin.org is available, tech people need to reload
+   their individual databases.
+
+--------------------------
+Add Logical Logs to Helix:
+--------------------------
+
+as informix on helix:
+
+% onparams -a -d llogdbs (x33) (or modify script to do this for us)
+actually added 32 to make 95 on both embryonix and helix.
+
+% ontape -s -L 0
+
+done: 2:03pm.

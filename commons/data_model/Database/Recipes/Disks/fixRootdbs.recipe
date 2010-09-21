@@ -1,0 +1,68 @@
+Need to add a second chunk for rootdbs on embryonix -- filled because of sysadmin database
+growth with upgrade to 11.10.FC2.  See addSysadmindbSpace.recipe for more details.
+
+As informix on embryonix
+
+ % cd /private/apps/apache/bin
+
+ % sudo apachectl stop
+
+ kill all tomcats
+
+ % kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+ 
+ % cd ~/informix/dev
+
+ Find where there is free space to add a second chunk, preferably in the same partition
+ as the current rootdbs.
+
+ There is room in the current partition. (see old ZFIN doc on mirror for an updated chart of 
+ space availability).  
+
+ **Always** check and update this doc--seriously, its all we have in times
+ of crisis to determine where we can add chunks. 
+
+ % ln -s /dev/rdsk/c2t1d5s0 rootdbs_c2
+
+ check permissions
+ 
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+ % onspaces -a rootdbs         -p /private/apps/Informix/informix/dev/rootdbs_c2 -o 31490048  -s 32768
+
+ % ontape -s -L 0
+
+ check that space is available and ONLINE in ISA
+
+STATUS: done and worked.
+
+now try adding the new sysadmindbs_c1
+
+ % UPDATE DOC TO show new offset
+
+   new offset = old offset (31490048) + space added (32768KB) = 31522816
+
+STATUS: done and good.  unused most likely ever--as sysadmin was moved to sysadmindbs.
+
+
+
+******
+
+if fails: 
+drop chunk
+
+% onspaces -d rootdbs -p /private/apps/Informix/informix/dev/rootdbs_c2 -o 31490048
+
+% rm /dev/rdsk/c3t5d1s0 rootdbs_c2
+
+

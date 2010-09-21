@@ -1,0 +1,1135 @@
+2008/08/20
+
+Need to upgrade informix on helix.
+
+##########################################
+# DayOf
+##########################################
+
+x. Disable web update and cron job on Helix   
+
+        % echo 'update zdb_flag set zflag_is_on = "t",
+                                    zflag_last_modified = CURRENT
+        where zflag_name = "disable updates"' | dbaccess zfindb
+
+        As informix on helix
+        % cdhelix
+        % cd server_apps/cron
+        % gmake stop
+   
+	STATUS: 
+
+x. Email zfinner(make sure Holle & Jon are on the list), 
+       curators no web updates, tech people no direct updates.   
+
+done: 6:45am
+
+
+x. Unload zfindb from Helix
+
+        as informix on helix:
+ 
+        % unloaddb.pl zfindb /research/zunloads/databases/zfindb/2008.11.18.pre_move
+
+	(make sure the path to the unloads directory is correct)
+
+	STATUS: 
+
+x. Kill ISA
+
+  As staylor on helix.
+
+  % sudo /etc/init.d/informix-isa stop
+
+Done: 7:00am
+
+x. Load the dump into zfindb on Embryonix
+
+       as informix on embryonix (srcembryonixZfin):
+
+        % loaddb.pl zfindb /research/zunloads/databases/zfindb/2008.11.18.pre_move
+
+	STATUS: 
+
+      
+x.  While loading, zip production FTP dir and transfer to Embryonix
+
+        on Helix as informix
+
+        % cd /research/zprod/ftp
+        % tar cf pub.tar pub
+
+        on Embryonix
+
+        % cd /research/zcentral/ftp
+        % cp -f /research/zprod/ftp/pub.tar . 
+        % rm -rf pub 
+        % tar xf pub.tar
+
+	STATUS: 
+
+
+ x. While loading, rsync the images and pdf from Helix to Embryonix
+
+        as yourself on embryonix
+
+        % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zprod/loadUp/imageLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp/
+
+        % sudo -u zfishweb /local/bin/rsync -upvab --copy-links /research/zprod/loadUp/PDFLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/
+
+
+	STATUS: 
+
+
+x. Update /private/ZfinLinks on Embryonix
+             
+        Change any links that move when zfin.org moves.
+
+       % rm www; ln -s /research/zcentral/www_homes/embryonix www
+       % rm mirror_src; ln -s /research/zusers/mirror mirror_src
+       % rm mirror_dest; ln -s /research/zcentral/ftp/pub/transfer/Mirror/site mirror_dest
+
+        STATUS: 
+
+
+x. Once the DB load finished, gmake the web site
+
+        As informix on embryonix, srcembryonixZfin
+
+	I tested all this yesterday with plain vanilla embryonix; then I changed the server.xml file
+	to be zfin.org.  So, let's assume it works and move on.  srcembryonixZfin will set us up
+	for zfin.org on embryonix.  In either case, restarting tomcat with the sudo tomcat.sh start 
+	embryonixZfin will work now, just the tomcat stuff will point to zfin.org.
+
+        % cdembryonix
+        % gmake postloaddb
+	% ant deploy
+	
+        STATUS: 
+
+x. Create all the outgoing data transfer files
+
+        As informix on embryonix, srcembryonix
+ 
+	% cdembryonix
+        % cd server_apps/data_transfer
+        % gmake push
+
+	zfishweb crontab is still running.  its only job is to rsync image/pdf files to embryonix.
+	we do that manually in this process, so it is ok.  If you want to stop, there is a
+	crontab.zfishweb on /server_apps/cron to replace when done...
+
+	STATUS: did everything but the blast push as it takes a long time.
+
+x. Update tomcat server.xml file
+       
+        As yourself on embryonix
+
+        % cd /private/apps/tomcat/zfin.org/conf/Catalina/zfin.org/
+
+        % co -l ROOT.xml
+
+        Change
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+
+        To
+        <Resource
+        name="jdbc/zfinDatabase"
+        ...
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+
+	STATUS: 
+
+
+x. Notify developers Apache and Tomcat would be down on embryonix, as well as Informix engine.
+
+    STATUS: 7:54
+
+x. Stop tomcat and apache on Embryonix
+
+         As self on Embryonix
+
+         % ps -ef | grep jsvc
+	 --kill all tomcats
+	 % kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+
+	 % ps -ef | grep jsvc 
+      
+         % sudo /private/apps/apache/bin/apachectl stop
+
+	 done: 
+
+     
+x. Copy the Apache log files from the production server to embryonix
+
+        As yourself on the production server:
+        % cp /private/apps/apache/logs/zfin_access /research/zusers/staylor/Temp/logs080820/ 
+        % cp /private/apps/apache/logs/zfin_errors /research/zusers/staylor/Temp/logs080820/
+
+        As yourself on the development server:
+        cd /private/apps/apache/logs/ 
+        sudo cp /research/zusers/staylor/Temp/logs080820/zfin_access zfin_access 
+        sudo cp /research/zusers/staylor/Temp/logs080820/zfin_errors zfin_errors
+        sudo chown root:other *_log
+
+
+	done: 
+
+x. Take the informix server down on embryonix
+ 
+        This step is necessary in order to perform the next step. 
+        If you update the INFORMIXSQLHOSTS file while the server is up and 
+        running, then bad things can happen like clients can't reach it, and 
+        you can't shut down the engine.
+   
+        As informix on the embryonix server:
+        onmode -k
+
+        STATUS: 
+
+
+ x. Update the development server's INFORMIXSQLHOSTS file
+
+        Wanda's INFORMIXSQLHOSTS file is at
+        /private/apps/Informix/informix/etc/sqlhosts
+
+        Change 
+        wanda ontlitcp embryonix.cs.uoregon.edu zfin_tli
+
+        to
+        wanda ontlitcp zfin.org zfin_tli
+
+        STATUS: 
+
+
+
+*** Systems Work *****
+ 
+x. Get systems to swap zfin.org from the production server to the 
+         development server
+
+         STATUS: 
+
+**********************
+
+
+x. Bring up Informix server on embryonix
+
+
+         As informix on embryonix, 
+         
+        ( open a new shell)
+
+         % srcembryonixZfin
+         % oninit
+
+         STATUS: 
+
+x. Start Apache
+
+         As self on Embryonix
+ 
+         % sudo /private/apps/apache/bin/apachectl -DZFIN -DSSL -k start
+
+	 done: 
+
+x. cdembryonix, have to restart tomcat with new src
+
+   % sudo tomcat.sh start embryonixZfin
+
+   done: 8:17
+
+x. Test that you can get to zfin.org, anatomy page, login,
+    	 ZIRC links, and the test web sites, hoover.zfin.org, for example.
+
+         Watch the access_log and error_log to make sure that offsite 
+         URLs can successfully access zfin.org
+
+         STATUS: cached result, but then cam thru on zirc sites.
+	 
+
+
+x. Start cron on embryonix
+
+        As informix on embryonix
+        % cdembryonix
+        % cd server_apps/cron
+        % gmake start
+
+	done: 
+
+x. Notify zfinner that zfin.org is on embryonix. 
+        Monitor embryonix load. 
+
+	STATUS:
+ 
+x. Throttle back loaddb.pl on embryonix for as long as zfin.org is on it.
+
+        commenting out the setting of PDQPRIORITY and 
+        PSORT_N_PROCS environment variables.
+
+        STATUS: no
+
+
+
+###################
+# Now work on helix
+###################
+
+
+x. take down apache on helix
+
+   as yourself on helix
+   % cd /private/apps/apache/bin
+   % sudo apachctl stop
+
+done: 8:21
+
+x. take down tomcat on helix
+
+   as yourself on helix
+   % ps -ef | grep jsvc
+   % sudo kill pid
+   
+done: 
+
+x. take down informix on helix
+        
+	As informix on helix:
+
+        % onmode -k
+
+done: 
+
+x. Update INFORMIXSQLHOSTS file on helix
+
+        As informix on helix:
+
+       Wildtype's INFORMIXSQLHOSTS file is at
+       /private/apps/Informix/informix/etc/sqlhosts
+
+       Change 
+       wildtype ontlitcp zfin.org zfin1_tli
+
+       to
+       wildtype ontlitcp helix.cs.uoregon.edu zfin1_tli
+
+       STATUS: 
+
+
+x. modify home/WEB-INF/conf/applicationContext-acegi-security.xml
+
+replace the following snippet:
+*    <property name="filterInvocationDefinitionSource">
+           <value>
+               CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+               PATTERN_TYPE_APACHE_ANT
+               /action/dev-tools/**=REQUIRES_SECURE_CHANNEL
+               /action/audit-log/**=REQUIRES_SECURE_CHANNEL
+               /action/security-check=REQUIRES_SECURE_CHANNEL
+               /action/login-redirect=REQUIRES_SECURE_CHANNEL
+               /**=REQUIRES_INSECURE_CHANNEL
+           </value>
+       </property>
+
+
+with
+
+   <property name="filterInvocationDefinitionSource">
+           <value>
+               CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+               PATTERN_TYPE_APACHE_ANT
+               /**=REQUIRES_INSECURE_CHANNEL
+           </value>
+       </property>
+*
+
+--could do dirty-deploy here instead of ant deploy.
+--deploy failed with bad path to /tiles
+--try srchelix
+--try deploy as production helix.
+--maybe root.xml or some such missed Christian's change for helix.cs.uoregon.edu (move tiles into WEB_...)
+
+
+x. deploy security change
+
+as informix on helix
+   % source /private/ZfinLinks/Commons/env/helixNotZfin
+
+   % ant deploy
+
+   done: 
+
+failed, then 
+--had to change permissions on /work directory in helix.cs.uoregon.edu to be informix:informix.
+--Christian helped.
+
+ done: 
+
+x. Bring informix up on the production server
+
+        As informix on helix
+        % oninit
+
+        STATUS:
+
+
+x. Bring up apache on helix
+
+      as self on helix:
+      
+      % cd /private/apps/apache/bin
+      % sudo apachectl start (should start helix.cs.uoregon.edu only, no ssl)
+
+       STATUS: 
+
+
+x. bring up tomcat
+    
+    as self on helix
+
+   % sudo /private/ZfinLinks/Commons/bin/tomcat.sh start helixNotZfin.env
+
+done:
+
+
+x. Test that you can get to helix.cs.uoregon.edu.
+
+   should be able to login and use tomcat as well.
+
+   STATUS: 
+
+
+=========================================
+Helix is ready to be upgraded.
+=========================================
+
+
+x. as self on helix, take down apache, tomcat:
+
+   % sudo tomcat.sh stop helixNotZfin
+      
+   % sudo /private/apps/apache/bin/apachectl stop
+   
+   STATUS: 
+
+x. take down informix on this server.
+
+   as informix on helix:
+   % onmode -k
+
+done:
+
+x. Bring wanda back up with new onconfig.
+
+   As informix on embryonix:
+
+   % oninit
+
+Done: 
+
+
+
+x. Bring wildtype to quiescent 
+
+   As informix on helix 
+
+   % onmode -s
+   % onstat to check quiescence.
+
+Done: 
+
+
+x. Make a level 0 backup of the server
+
+   As informix on helix:
+
+   % ontape -s -L 0
+
+
+onstat -m 
+
+done if shows that the backup has completed.
+
+done: 
+
+x. cp backup of data to a secure name
+
+   % cd /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance
+
+   % cp dataxxx to dataxxx.preUpgrade
+
+done: 
+
+x. Shut down wildtype gracefully.
+
+   As informix on helix:
+
+   % onmode -s (puts server in quiescent mode)
+   
+     wait for users to exit, 
+     run onstat for open connections.
+
+   % onmode -l (shifts to next logical log)
+
+   % onmode -c (force a checkpoint)
+
+Done:
+
+x. Run ontape -a  ( )
+
+   As informix on helix:
+
+   % ontape -a  
+
+helix informix DB_maintenance% ontape -a
+
+Performing automatic backup of logical logs.
+
+Please mount tape 1 on /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/logs and press Return to continue ... 
+
+
+Do you want to back up the current logical log? (y/n) y
+Read/Write End Of Medium enabled: blocks = 11 
+
+Please label this tape as number 1 in the log tape sequence. 
+
+This tape contains the following logical logs: 
+    2875 - 2876
+
+Program over.
+
+  
+Done: 
+
+x. Bring down the server all the way.
+
+   As informix on helix:
+
+   % onmode -k
+   
+   answer "y" to the questions.
+
+Done: 
+
+
+x. review online log for any errors
+
+   onstat -m
+
+   done: 
+
+x. Confirm that ontape -c is not in the process list.
+
+   % ps -ef | grep ontape 
+
+
+Done:
+
+x. check again for any open connections
+
+   As informix on helix
+
+   % oninit -s (puts server in quiescent mode and does a fast recovery)
+
+     -rolls forward all committed transactions, and rolls back all incomplete transactions
+      since the last checkpoint and then leaves a new checkpoint record in the log
+      with no open transactions pending.
+
+     -if not done, and you execute oninit, and there are open transactions, error will
+      result http://publib.boulder.ibm.com/infocenter/idshelp/v10/index.jsp?topic=/com.ibm.mig.doc/mig.htm
+
+Done:
+
+x. take server down again
+
+As informix on helix:
+
+   % onmode -yuk  
+
+Done: 936
+
+
+x. Verify that source server is offline
+
+   As informix on helix:
+
+   % onstat -m 
+
+   "Shared memory not initialized" should appear.
+
+Done:
+
+
+##########################
+# INSTALL THE NEW SERVER #
+##########################
+
+x. Open an new shell as staylor@helix
+
+Done: 
+
+
+x. move into the new directory
+   
+   As staylor on helix
+
+   % cd informix
+   % pwd
+    
+    -- confirm where you are.
+
+Done:
+
+
+x. monitor the message log for conversion errors
+
+   --the install might fill up the logical logs
+     --use ontape -a /private/apps/Informix/informix/bin/ontape to advance the log and continue.
+
+
+   --the install might corrupt indexes
+     --rebuild them as necessary.
+
+     in a new window, as informix on helix
+
+     % srcwildtype
+     % tail -f /private/apps/Informix/informix/online.log (this will be in the new installation dir
+       	    as we've moved the symlink to informix).
+
+Done: 
+
+x. install the server
+
+   As staylor on helix:
+   
+   % sudo
+   % cd /private/apps/Informix/informix
+   % pwd
+   % source /private/ZfinLinks/Commons/env/wildtype
+   % echo $INFORMIXDIR
+   % echo $PATH
+   
+   -- env should include
+   -- $INFORMIXDIR
+   -- $PATH must include JRE location.
+
+   % ./ids_install -console -javahome /private/apps/java/bin -record /tmp/ids11_response_log 
+
+   -- install.log is entered in the same dir for all logs of the event.
+   -- typical install with all features.  might as well.
+      
+
+   1. Read and accept the license to proceed with the installation.
+   2. You can install into the default directory or choose a different directory.
+   3. Select the products that you want to install, if that is an option.
+   4. Choose Typical setup to install the product with all features.
+   5. Optional: Choose whether to enable role separation for auditing procedures.
+
+      Important: If you enable role separation, you cannot turn it off after the product is installed. To remove role separation, you must uninstall the database server and reinstall it without role separation. To learn more about role separation, see Role Separation.
+   6. Optional: Select whether to create a demonstration database server instance.
+          * If you do not choose to create one, you can configure and initialize the database server manually after installation is complete.
+          * If you choose to create one, you can use the default configuration file, or provide your own configuration file. After installation, the database server instance is initialized automatically. For more information, see Demonstration Database Server.
+   7. Important: Verify that the installation summary accurately reflects your installation options, and that the server has enough free space for the total installation. Go back to adjust the installation options as necessary.
+
+# Complete the installation and exit the installation application.
+
+
+no web datablade 
+need to install this
+   
+   % cp /tmp/ids11FC2W4_response_log /research/zusers/staylor/Temp
+
+Done:
+
+x. check to see what you got in install.log
+
+   % less install.log
+   % cp install.log /resaerch/zusers/staylor/Temp
+
+   Done:did not get one, as expected.
+
+x. monitor the message log for errors.
+
+   Done: 
+
+x. cp over the sqlhosts file and the modified onconfig from the old installation.
+
+   see if this needs to be done?
+
+Done: 
+
+x. make sure enviromenet is ok:
+
+INFORMIXSERVER
+ONCONFIG
+PATH
+INFORMIXSQLHOSTS -- this should be helix.cs.uoregon.edu!
+
+Done: 
+
+x. copy the /dev symlinks over to the new install
+
+   Do we need to do this?
+
+   --had to make the /dev directory 
+
+   As informix on helix:
+
+   % srcwildtype
+
+   % cd /private/apps/Informix/informix/dev/
+   % pwd    --confirm you're in the new installed dir
+   % ll     --should be empty.
+
+   ln -s /dev/rdsk/c6t0d0s6 rootdbs_c1
+   ln -s /dev/rdsk/c6t0d0s6 defaultdbs_c1 
+
+   ln -s /dev/rdsk/c6t0d1s6 llogdbs1_c1
+   ln -s /dev/rdsk/c6t0d2s6 plogdbs1_c1  
+
+   ln -s /dev/rdsk/c6t0d0s6 idxdbs1_c1  
+   ln -s /dev/rdsk/c6t0d1s6 idxdbs2_c1 
+   ln -s /dev/rdsk/c6t0d2s6 idxdbs3_c1
+
+
+   ln -s  /dev/rdsk/c6t0d0s6 smartbs1_c1 
+   ln -s /dev/rdsk/c6t0d2s6  smartdfltbs_c1  
+
+   ln -s /dev/rdsk/c7t0d0s1 smarttempbs1_c1  
+
+   ln -s /dev/rdsk/c6t0d0s6 tbldbs1_c1  
+   ln -s /dev/rdsk/c6t0d1s6 tbldbs2_c1  
+   ln -s /dev/rdsk/c6t0d2s6 tbldbs3_c1  
+
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs1_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs2_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs3_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs4_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs5_c1  
+
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs6_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs7_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs8_c1 
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs9_c1  
+   ln -s /dev/rdsk/c7t0d0s1 tempdbs10_c1
+ 
+   ln -s /dev/rdsk/c1t2d0s3 tempdbs11_c1 
+   ln -s /dev/rdsk/c1t2d0s3 tempdbs12_c1  
+   ln -s /dev/rdsk/c1t3d0s3 tempdbs13_c1  
+   ln -s /dev/rdsk/c1t3d0s3 tempdbs14_c1 
+
+   ln -s /dev/rdsk/c6t0d0s6 sysadmindbs_c1
+
+Done: 
+
+x. check the modified onconfig file.
+   
+   --double check that the alarmprogram variable is set to no_log.sh
+   informix suggests changing ALARMPROGRAM to nothing while converting
+
+Done: 
+
+x. check permissions
+ 
+ % ls -lL
+
+     see that new file has crw-rw---- privledges and is owned by informix
+     and is in the informix group
+     -c means you are dealing with RAW disk.
+
+     make sure if you do have to change permissions
+     that you do g+w, g+r, o+w, o+r instead of chmod numbers !!!
+
+     also see that the random 231 number matches all other files
+     in the partition you're trying to add to. 
+
+done:
+
+x. check that clientSDK.64 bits is available.
+
+   done: internal to the server.
+
+x. 32 bit client should continue to exist on embryonix at /private/apps/Informix/ClientSDK.32bits
+
+   --confirm this.
+
+Done: .
+
+
+x. bring up the new server to initiate the conversion
+   
+   As informix in newly installed Informix dir, with srcwildtype
+
+   --confirm PATH and INFORMIXDIR.
+
+   % oninit
+
+   -- this should begin the process of converting all dbs to version 11.10.FC2
+   -- ALARMPROGRAM is set to no_log.sh, but ontape -a will get let us proceed.
+   
+Done:
+
+
+x. monitor online.log for "Conversion completed successfully" and the message about 2 dbworker threads
+starting for sysadmin.
+
+Done: 
+
+x. run update statistics high
+
+   As informix on helix:
+
+   % dbaccess zfindb 
+   % update statistisc high.
+
+Done: takes awhile; like 10 mins
+probably want to enable auto-log backup first next time.
+
+
+x. Make a level 0 backup of the server
+
+   (make sure first, that the existing data dump has been moved to a backup)
+   As informix on helix:
+
+   % ontape -s -L 0
+
+
+onstat -m 
+
+done if shows that the backup has completed.
+
+done: 
+
+
+x. test that dbaccess works
+   
+   % dbaccess zfindb
+
+   done: it does
+
+x. reload C functions.
+
+   % cd lib/DB_functions/C
+   % gmake clean clobber
+   % gmake
+
+
+done:
+
+x. restart apache
+
+  % cd /private/apps/apache/bin/	
+  % sudo apachectl start
+
+done:
+
+x. check if you can get to helix.cs.uoregon.edu's homepage.
+ 
+done:
+
+x. start tomcat
+
+   As informix on helix: 
+   
+   % source /private/Zfinlinks/Commons/env/helixNotZfin.env
+
+   % cd ../../../
+   % gmake
+   % cd j2ee 
+   % gmake
+   % ant deploy
+
+  as self on helix
+
+  % sudo tomcat.sh start helixNotZfin
+
+Done:
+
+x. check if you can get to all necessary pages in helix.cs.uoregon.edu.
+
+   --mapper
+   --login
+   --AO
+   --gene search
+   --mutant search
+   --upload.cgi
+
+mapper header broken, gmake in cgi-bin worked.
+Done:
+
+
+x. bring down everything
+
+   as informix on helix
+
+   % srcwildtype
+   % onmode -k
+
+x. move onconfig
+
+   as informix on helix
+
+   % cd ~/informix/etc
+   % mv onconfig onconfig.11.helix.firstUp
+   % mv onconfig.11.helix onconfig
+
+done:
+
+x try bringing up informix for good measure with new onconfig
+
+  as informix on helix (srcwildtype)
+  
+  % oninit
+
+helix informix etc% oninit
+DS_TOTAL_MEMORY recalculated and changed from 9001372Kb to 8965988Kb
+
+
+done:1152
+
+x. bring it back down
+
+   as informix on helix (srcwildtype)
+
+   % onmode -k
+
+done:
+
+=========================================
+Move ZFIN.org back.
+=========================================
+
+
+x. Update /private/ZfinLinks on Embryonix
+            
+       % rm www; ln -s /research/zprod/www_homes/zfin.org www
+       % rm mirror_src; ln -s /research/zprod/users/mirror mirror_src
+       % rm mirror_dest; ln -s /research/zprod/ftp/pub/transfer/Mirror/site mirror_dest
+
+        STATUS: 
+
+
+x. Stop tomcat and apache and ISA on Helix
+
+         As self on Helix
+
+         % sudo /private/ZfinLinks/Commons/bin/tomcat.sh stop helixNotZfin
+      
+         % sudo /private/apps/apache/bin/apachectl stop
+
+	 % sudo /etc/init.d/informix-isa stop
+	
+	 STATUS: already done, have not rebooted helix yet. 121
+
+
+ x. Copy the Apache log files from embryonix back
+
+        As yourself on embryonix:
+        % cp -f /private/apps/apache/logs/zfin_access /research/zusers/staylor/Temp/logs080820/
+        % cp -f /private/apps/apache/logs/zfin_error /research/zusers/staylor/Temp/logs080820/
+
+        As yourself on helix:
+        cd /private/apps/apache/logs 
+        sudo cp -f /research/zusers/staylor/Temp/logs080820/zfin_access . 
+        sudo cp -f /research/zusers/staylor/Temp/logs080820/zfin_errors . 
+        (sudo chown root:zfishweb *_log)
+
+	STATUS:
+
+x. Take the informix server down on helix
+ 
+        As informix on helix:
+        onmode -k
+
+        STATUS: 
+
+
+x. Update production server's INFORMIXSQLHOSTS file
+
+        Wildtype's INFORMIXSQLHOSTS file is at
+        /private/apps/Informix/informix/etc/sqlhosts
+
+        Change 
+        wildtype ontlitcp helix.cs.uoregon.edu zfin_tli
+
+        to
+        wildtype ontlitcp zfin.org zfin_tli
+
+        STATUS:
+
+******** Systems Work ****************
+
+x. Get systems to swap zfin.org from the development server to the 
+       production server.
+ 
+      STATUS:david reboot helix and swap zfin.org over.
+
+**************************************
+
+x. Bring up informix
+
+       as informix on helix
+
+       In a new shell
+       % srchelix
+       % oninit
+       
+       STATUS: already done on reboot
+
+
+x. Start Apache and Tomcat
+
+         As self on Helix
+ 
+         % sudo /private/apps/apache/bin/apachectl -DZFIN -DSSL -k start
+
+	 STATUS:
+
+	 As informix on helix
+
+	 % srchelix
+	 % restarttomcat.pl
+
+	 STATUS:
+
+	
+x. Test that you can get to zfin.org, zirc links ...
+
+   done:
+
+x.State ontape on helix
+
+       As informix on helix
+       % cdhleix
+       % cd server_apps/DB_maintenance
+       % gmake dumplogscontinuous
+
+       STATUS:
+
+x. Start cron on the production server and restart it on the development server.
+
+      As informix on helix
+      % cd server_apps/cron
+      % gmake start
+
+      As informix on embryonix
+      % srcalmost
+      % cdalmost
+      % cd server_apps/cron
+      % gmake startdevl
+
+      STATUS: 
+
+
+x. Enable updates on zfin.org.
+
+      As informix on helix
+
+      % echo 'update zdb_flag set zflag_is_on = "f", zflag_last_modified = CURRENT 
+             where zflag_name = "disable updates"' | dbaccess zfindb
+
+
+	     STATUS:
+
+
+x. Notify all that zfin.org is back, but need to take down apache
+       and informix on embryonix
+
+
+       STATUS:
+      
+
+x. Restore tomcat server.xml on Embryonix
+       % cd /private/apps/tomcat/conf
+
+        Change
+        url="jdbc:informix-sqli://zfin.org:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+
+        To    
+        url="jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002:INFORMIXSERVER=wanda;user=zfinner;password=Rtwm4ts" />
+       
+       % ci -u server.xml
+
+       STATUS:
+
+x. Take down apache, tomcat and informix on embryonix
+
+      as yourself on embryonix
+
+      % sudo /private/apps/apache/bin/apachectl stop
+      % sudo kill `ps -e | grep jsvc | egrep -v grep | awk '{print $1}'`
+      % ps -ef | grep jsvc
+
+      as informix on embryonix
+
+      % srcwanda
+      % onmode -k
+
+      STATUS:
+
+x. update the INFORMIXSQLHOSTS file on wanda
+   as informix on embryonix
+
+       % cd /private/apps/Informix/informix/etc/sqlhosts
+ 
+       wanda  ontlitcp embryonix.cs.uoregon.edu zfin_tli
+
+       STATUS:
+       
+x. Bring informix up on embryonix
+ 
+       As informix on embryonix
+
+       start a new shell
+       srcalmost
+       oninit
+
+       done:
+
+x. Bring apache and tomcat up on embryonix
+
+      % sudo /private/httpd/bin/apachectl startssl
+
+      as informix on embryonix
+
+      % srcalmost
+      % restarttomcat.pl
+      
+      STATUS:
+
+x. Check that test sites are back, quicksearch works.
+
+       check access log
+
+       done:
+
+
+x. edit evidence.sh on helix to allow email to be sent to informix on assertion failure.
+
+   as informix ? on helix
+   % cd /private/apps/Informix/informix/etc/
+   % emacs evidence.sh
+   % set DBA_email on
+   % dba email should go to informix.
+
+ done:
+
+
+--------------------------------------------------------------------------------------------
+x. Clean up filesystems and databases on Embryonix
+
+      Drop zfindb on wanda/embryonix.
+        % echo 'drop database zfindb' |dbaccess
+	done.
+
+      drop the ZFIN_WWW source tree and the www_homes/embryonix dest tree.
+
+      leave it here for now.
+
+      Clear out the imageLoadUp directories.
+  
+      Clear out FTP directory.
