@@ -91,10 +91,7 @@ DbNameCheck:
 	$(error DBNAME Environment variable not set.)
 endif
 
-ifndef TRANSLATETABLE
 TRANSLATETABLE = ${TOP}/commons/env/${INSTANCE}.tt
-endif
-
 
 # ---------------  Variable Definitions  --------------------------------
 
