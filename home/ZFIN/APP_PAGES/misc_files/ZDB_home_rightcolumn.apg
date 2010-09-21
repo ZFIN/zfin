@@ -194,18 +194,20 @@
          Month day - link text
          </a>
        </li>
-       <?/MICOMMENT>
+       <?/MICOMMENT> 
+       
+       <li>
+         <a href="/zf_info/news/siteNews.html#motrack">
+           September 21, 2010 - New tracks at ZFIN GBrowse</a>
+       </li> 
+       
         
               <li>
          <a href="/zf_info/news/siteNews.html#Zv9">
           July 22, 2010 - Zv9 Assembly and Pre Ensembl</a>
        </li> 
        
-              <li>
-         <a href="/zf_info/news/siteNews.html#par">
-           July 13, 2010 - New announcement about existing NIH Funding Opportunities for Zebrafish Research</a>
-       </li> 
-       
+     
  
        <li> 
          <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
