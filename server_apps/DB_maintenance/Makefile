@@ -66,5 +66,3 @@ runweekly : $(TARGETDIR)/validatedata.pl
 runmonthly : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -m
 
-runyearly : $(TARGETDIR)/validatedata.pl
-	$(TARGETDIR)/validatedata.pl $(DBNAME) -y

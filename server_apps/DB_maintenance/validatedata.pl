@@ -2698,7 +2698,7 @@ sub printTop40PostcomposedTerms($) {
 # Define Usage 
 # 
 
-$usage = "Usage: validatedata.pl <dbname> [-d|-w|-m|-y|-o] ";
+$usage = "Usage: validatedata.pl <dbname> [-d|-w|-m|-o] ";
 
 $document = <<ENDDOC;
 
@@ -2710,7 +2710,6 @@ Command line parameters:
   -d       Excute the checks supposed to run daily.  
   -w       Excute the checks supposed to run weekly.
   -m       Excute the checks supposed to run monthly.
-  -y       Excute the checks supposed to run yearly.
 
 ENDDOC
 
@@ -2722,7 +2721,6 @@ GetOptions (
 	    "d"    => \$daily,
 	    "w"    => \$weekly,
 	    "m"    => \$monthly,
-	    "y"    => \$yearly,
 	    );
 
 #
@@ -2879,9 +2877,6 @@ if($monthly) {
       $curatorFirstName =~ s/^\s+//;
       phenotypeAnnotationUnspecified ($curatorEmail, $curatorFirstName);
   }
-}
-if($yearly) {
-
 }
 
 	   

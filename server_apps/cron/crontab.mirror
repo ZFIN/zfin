@@ -78,6 +78,3 @@
 # ====                   YEARLY SCRIPTS                               ====
 # ========================================================================
 #
-# Nights   When      Comments
-# 1         2:40am   DATA CLEANING: Run yearly data validation script.
-40 02 1 1 * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -y mirrordb
