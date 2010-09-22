@@ -27,7 +27,7 @@
 # SMTWT    after     Validate data
 45 23 * * 0-4 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;scrubscan.pl;validatedata.pl -d  mirrordb
 # SMTWTF   4pm reload of mirrordb (aka: validatedb)
-00 16 * * 0-5 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
+00 16 * * 0-5 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
