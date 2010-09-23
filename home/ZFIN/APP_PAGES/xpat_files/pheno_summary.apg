@@ -611,7 +611,6 @@ DEBUGGING:
                and mrel_mrkr_2_zdb_id = '$moTargetGeneID'
           <?/MIVAR>
           
-	<?MIVAR>$phenosum_sql_entitie<?/MIVAR>                      
         <?MIELSE> <?MICOMMENT> *** entity list for genotypes linked from genotype page or mutant search result page <?/MICOMMENT>
           <?MIVAR NAME=phenosum_sql_entities1>
             select distinct super.term_zdb_id, lower(super.term_name),
