@@ -10,12 +10,12 @@
         </parallel>
     </target>
 
-    <target name="gwt" description="Compiles all gwt targets">
-        <parallel>
-            <antcall target="lookup-gwt"/>
-            <antcall target="marker-gwt"/>
-            <antcall target="curation-gwt"/>
-        </parallel>
+    <target name="gwt" depends="lookup-gwt,marker-gwt,curation-gwt" description="Compiles all gwt targets">
+<!--        <parallel>-->
+<!--            <antcall target="lookup-gwt"/>-->
+<!--            <antcall target="marker-gwt"/>-->
+<!--            <antcall target="curation-gwt"/>-->
+<!--        </parallel>-->
     </target>
 
     <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
