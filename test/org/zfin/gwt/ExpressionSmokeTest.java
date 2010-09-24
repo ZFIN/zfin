@@ -35,7 +35,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
 
                 // wait for popup
                 assertNotNull(page.getByXPath("//div[@class='gwt-SuggestBoxPopup']"));
-                assertTrue(page.getByXPath("//span[@class='autocomplete-plain']").size() > 5);
+                assertTrue(page.getByXPath("//td[@class='item']").size() > 5);
                 HtmlTableDataCell selectedCell = (HtmlTableDataCell) page.getByXPath("//td[@class='item item-selected']").get(0);
                 assertNotNull(selectedCell);
                 assertEquals("retina", selectedCell.getTextContent());
@@ -83,7 +83,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
 
                 // wait for popup
                 assertNotNull(page.getByXPath("//div[@class='gwt-SuggestBoxPopup']"));
-                assertTrue(page.getByXPath("//span[@class='autocomplete-plain']").size() > 5);
+                assertTrue(page.getByXPath("//td[@class='item']").size() > 5);
                 HtmlTableDataCell selectedCell = (HtmlTableDataCell) page.getByXPath("//td[@class='item item-selected']").get(0);
                 assertNotNull(selectedCell);
                 assertEquals("retina", selectedCell.getTextContent());

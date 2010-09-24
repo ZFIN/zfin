@@ -55,12 +55,13 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
                 assertNotNull(page.getByXPath("//div[@class='gwt-SuggestBoxPopup']"));
-                assertEquals(20, page.getByXPath("//span[@class='autocomplete-plain']").size());
-                assertTrue(((HtmlSpan) page.getByXPath("//span[@class='autocomplete-plain']").get(19)).getTextContent().contains("pelv"));
+                assertEquals(20, page.getByXPath("//td[@class='item']").size());
+                HtmlTableDataCell cell = ((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(18)) ;
+                String cellString = cell.getTextContent() ;
+                assertTrue(cellString.contains("pelv"));
 
                 // the very first element is selected by default
                 assertEquals(1, page.getByXPath("//td[@class='item item-selected']").size());
-                assertEquals(20, page.getByXPath("//td[@class='item']").size());
                 assertNotSame("...", ((HtmlTableDataCell) page.getByXPath("//td[@class='item']").get(19)).getTextContent());
 
             } catch (Exception e) {
