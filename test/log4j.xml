@@ -55,6 +55,10 @@
 		<priority value="warn"/>
     </category>
 
+	<category name="com.gargoylesoftware.htmlunit.javascript.StrictErrorReporter">
+		<priority value="FATAL"/>
+	</category>
+
 	<category name="com.gargoylesoftware.htmlunit">
 		<priority value="ERROR"/>
 	</category>
