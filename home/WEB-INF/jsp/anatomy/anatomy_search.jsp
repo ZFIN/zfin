@@ -51,7 +51,7 @@
                         <TD width=45%>
                             <label class="indented-label">Anatomical Term</label><br>
                             <zfin2:lookup ontology="<%=Ontology.ANATOMY%>"
-                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>" showTermDetail="false"
+                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
                                           wildcard="true"/>
                         </TD>
                         <TD width=10%>

@@ -41,14 +41,6 @@ public interface ConstructionZone {
     void resetConstructionZone();
 
     /**
-     * Display the term info for a given term in a given ontology.
-     *
-     * @param ontology Ontology
-     * @param termID   term ID: zdb ID or obo ID
-     */
-    void showTermInfo(OntologyDTO ontology, String termID);
-
-    /**
      * Set the object that validated a new structure according to given business logic.
      *
      * @param validator StructureValidator
@@ -61,12 +53,4 @@ public interface ConstructionZone {
      * @param listener handler
      */
     void addCreatePileChangeListener(PileStructureListener listener);
-
-    /**
-     * Convenience method: Needed as we expose this to an external JS.
-     *
-     * @param ontology ontology
-     * @param termID   term ID
-     */
-    public void showTermInfoString(String ontology, String termID);
 }

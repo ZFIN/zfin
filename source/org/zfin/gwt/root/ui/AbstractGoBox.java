@@ -70,7 +70,6 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         goTermBox.setOntology(OntologyDTO.GO);
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);
-        goTermBox.setShowTermDetail(false);
         goTermBox.setTermInfoTable(termInfoComposite);
         goTermBox.setSubmitOnEnter(true);
         goTermBox.setUseIdAsValue(true);
@@ -185,7 +184,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
             public void onClick(ClickEvent event) {
                 TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
                 if(termInfo!=null){
-                    MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(termInfo.getName(),new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value",handlesError) {
+                    LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,termInfo.getName(),new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value",handlesError) {
                         @Override
                         public void onSuccess(TermDTO result) {
                             temporaryGoTermDTO = result;
@@ -275,7 +274,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                 goTermBox.setEnabled(false);
                 goTermBox.setNoteString("Validating ["+value+"]...");
 
-                MarkerGoEvidenceRPCService.App.getInstance().getGOTermByName(value,
+                LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,value,
                         new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]",handlesError,false) {
 
                             @Override
@@ -339,7 +338,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
 
 
         if (dto.getGoTerm() != null) {
-            LookupRPCService.App.getInstance().getTermInfoByName(OntologyDTO.GO, dto.getGoTerm().getName(), new TermInfoCallBack(termInfoComposite, dto.getGoTerm().getName()));
+            LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, dto.getGoTerm().getTermID(), new TermInfoCallBack(termInfoComposite, dto.getGoTerm().getName()));
         }
     }
 

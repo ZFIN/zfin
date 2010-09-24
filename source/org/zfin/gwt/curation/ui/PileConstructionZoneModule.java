@@ -70,7 +70,6 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     }
 
     private void initGUI() {
-        createTermEntryUnits();
         RootPanel.get(SWAP_TERMS).add(swapTermsButton);
         HorizontalPanel submitResetPanel = new HorizontalPanel();
         submitButton.addClickHandler(new AddNewStructureClickListener());
@@ -78,6 +77,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         submitResetPanel.add(resetButton);
         RootPanel.get(SUBMIT_RESET).add(submitResetPanel);
         termInfoTable = new TermInfoComposite();
+        createTermEntryUnits();
         termInfoTable.addErrorHandler(errorElement);
         VerticalPanel termInfoPanel = new VerticalPanel();
         termInfoPanel.add(historyLabelTermInfo);
@@ -89,7 +89,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     private void createTermEntryUnits() {
         for (Map.Entry<PostComposedPart, List<OntologyDTO>> postComposedEntry : termEntryMap.entrySet()) {
             List<OntologyDTO> ontologies = postComposedEntry.getValue();
-            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey());
+            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey(),termInfoTable);
             termEntry.getCopyFromTerminfoToTextButton().addClickHandler(
                     new CopyTermToEntryFieldClickListener(termEntry));
             String divName = getDivName(postComposedEntry.getKey());
@@ -142,38 +142,6 @@ public class PileConstructionZoneModule extends Composite implements Constructio
      */
     public void addCreatePileChangeListener(PileStructureListener listener) {
         pileListener.add(listener);
-    }
-
-    /**
-     * Display the term info for a given term ID in a given ontology.
-     *
-     * @param ontology Ontology
-     * @param termID   term ID: zdb ID or obo ID
-     */
-    public void showTermInfo(OntologyDTO ontology, String termID) {
-        //Window.alert("Show Term:: " + ontology + ":" + termID);
-        lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
-    }
-
-    /**
-     * Display the term info for a given term name in a given ontology.
-     *
-     * @param ontology Ontology
-     * @param termName term name: zdb ID or obo ID
-     */
-    public void showTermInfoByName(OntologyDTO ontology, String termName) {
-        //Window.alert("Show Term:: " + ontology + ":" + termID);
-        lookupRPC.getTermInfoByName(ontology, termName, new TermInfoCallBack(termInfoTable, termName));
-    }
-
-    /**
-     * Convenience method: Needed as we expose this to an external JS.
-     *
-     * @param ontology ontology
-     * @param termID   term ID
-     */
-    public void showTermInfoString(String ontology, String termID) {
-        showTermInfo(OntologyDTO.getOntologyByDescriptor(ontology), termID);
     }
 
     /**
@@ -384,10 +352,19 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
         public void onFocus(FocusEvent event) {
             errorElement.clearAllErrors();
-            OntologyDTO ontology = termEntryUnit.getSelectedOntology();
+            final OntologyDTO ontology = termEntryUnit.getSelectedOntology();
             String termName = termEntryUnit.getTermText();
-            if (StringUtils.isNotEmpty(termName))
-                showTermInfoByName(ontology, termName);
+            if (!termEntryUnit.isSuggestionListShowing() && StringUtils.isNotEmpty(termName)){
+                lookupRPC.getTermByName(ontology,termName,new ZfinAsyncCallback<TermDTO>(
+                        "Failed to find term: " + termName + " for ontology: " +ontology.getDisplayName(),null){
+                    @Override
+                    public void onSuccess(TermDTO termDTO) {
+                        if(termDTO!=null){
+                            lookupRPC.getTermInfo(ontology, termDTO.getTermID(), new TermInfoCallBack(termInfoTable, termDTO.getTermID()));
+                        }
+                    }
+                });
+            }
         }
 
     }

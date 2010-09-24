@@ -34,7 +34,7 @@
             </td>
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontology="<%= Ontology.ANATOMY%>"
-                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>" showTermDetail="false"
+                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"
                               wildcard="true"/>
             </td>
         </tr>

@@ -48,8 +48,6 @@ public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     void deleteMarkerGoTermEvidence(String zdbID);
 
-    TermDTO getGOTermByName(String value);
-
     List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID);
 
     List<GoEvidenceDTO> getMarkerGoTermEvidencesForMarker(String markerID);

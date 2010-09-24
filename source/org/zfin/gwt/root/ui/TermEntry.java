@@ -7,9 +7,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
-import org.zfin.gwt.root.dto.TermInfo;
+import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -26,13 +26,19 @@ public class TermEntry extends HorizontalPanel {
     private ZfinListBox ontologySelector = new ZfinListBox();
     private LookupComposite termTextBox = new LookupComposite();
     private Button copyFromTerminfoToTextButton = new Button("&larr;");
+    private TermInfoComposite termInfoComposite = null ;
 
     // ontologies used
     private List<OntologyDTO> ontologies;
     private PostComposedPart termPart;
 
+    public TermEntry(List<OntologyDTO> ontologies, PostComposedPart termPart,TermInfoComposite termInfoComposite) {
+        this(ontologies,termPart);
+        this.termInfoComposite = termInfoComposite ;
+        addInternalListeners() ;
+    }
+
     public TermEntry(List<OntologyDTO> ontologies, PostComposedPart termPart) {
-        super();
         if (ontologies == null || ontologies.isEmpty())
             throw new NullpointerException("no ontology provided");
         if (termPart == null)
@@ -41,6 +47,20 @@ public class TermEntry extends HorizontalPanel {
         this.termPart = termPart;
         init();
     }
+
+    private void addInternalListeners() {
+        if(termInfoComposite!=null){
+            termTextBox.setHighlightAction(new HighlightAction(){
+                @Override
+                public void onHighlight(String termID) {
+                    if(termID!=null && false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                        LookupRPCService.App.getInstance().getTermInfo(termTextBox.getOntology(), termID, new TermInfoCallBack(termInfoComposite, termID));
+                    }
+                }
+            });
+        }
+    }
+
 
     private void init() {
         addOntologySelector();
@@ -68,6 +88,44 @@ public class TermEntry extends HorizontalPanel {
         termTextBox.setInputName(termPart.name());
         termTextBox.setShowError(true);
         termTextBox.setWildCard(false);
+        termTextBox.setUseIdAsValue(true);
+        termTextBox.setAction(new SubmitAction(){
+
+            private boolean isSubmitting = false ;
+            @Override
+            public void doSubmit(final String value) {
+                if(isSubmitting){
+                    return ;
+                }
+                isSubmitting = true ;
+                termTextBox.setEnabled(false);
+                termTextBox.setNoteString("Validating ["+value+"]...");
+
+                LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,value,
+                        new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]") {
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                super.onFailure(throwable);
+                                termTextBox.setEnabled(true);
+                                termTextBox.clearNote();
+                                isSubmitting =  false;
+                            }
+
+                            @Override
+                            public void onSuccess(TermDTO result) {
+                                termTextBox.setEnabled(true);
+                                termTextBox.clearNote();
+                                if(result==null) {
+                                    termTextBox.setErrorString("Unable to find term["+value+"]");
+                                    return ;
+                                }
+                                termTextBox.setText(result.getTermName());
+                                isSubmitting =  false;
+                            }
+                        });
+            }
+        });
         termTextBox.initGui();
         add(termTextBox);
         add(WidgetUtil.getNbsp());
@@ -177,6 +235,10 @@ public class TermEntry extends HorizontalPanel {
 
     public boolean hasOntology(OntologyDTO selectedSubtermOntology) {
         return ontologies.contains(selectedSubtermOntology);
+    }
+
+    public boolean isSuggestionListShowing(){
+        return termTextBox.isSuggestionListShowing();
     }
 
     public void addOnFocusHandler(FocusHandler autocompleteFocusHandler) {

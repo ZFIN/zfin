@@ -1,6 +1,21 @@
+Index: build.xml
+===================================================================
+--- build.xml	(revision 8811)
++++ build.xml	(working copy)
+@@ -15,6 +15,10 @@
+     <gwt.ant dir="distro-source" />
+   </target>
+ 
++  <target name="redist" depends="dev, user, servlet, tools, jni " description="Run the distributions">
++    <gwt.ant dir="distro-source" />
++  </target>
++
+   <target name="dev" depends="buildtools" description="Run dev">
+     <gwt.ant dir="dev" />
+   </target>
 Index: user/src/com/google/gwt/user/client/ui/SuggestBox.java
 ===================================================================
---- user/src/com/google/gwt/user/client/ui/SuggestBox.java	(revision 8050)
+--- user/src/com/google/gwt/user/client/ui/SuggestBox.java	(revision 8811)
 +++ user/src/com/google/gwt/user/client/ui/SuggestBox.java	(working copy)
 @@ -17,61 +17,52 @@
  
@@ -89,7 +104,7 @@ Index: user/src/com/google/gwt/user/client/ui/SuggestBox.java
   * <h3>CSS Style Rules</h3>
   * <dl>
   * <dt>.gwt-SuggestBox</dt>
-@@ -135,7 +126,7 @@
+@@ -135,640 +126,798 @@
   * <dt>.gwt-SuggestBoxPopup .suggestPopupBottomRightInner</dt>
   * <dd>the inner element of the cell</dd>
   * </dl>
@@ -98,419 +113,1331 @@ Index: user/src/com/google/gwt/user/client/ui/SuggestBox.java
   * @see SuggestOracle
   * @see MultiWordSuggestOracle
   * @see TextBoxBase
-@@ -157,7 +148,7 @@
-    * Additional methods in SuggestionMenu provide information about the number
-    * of items in the menu, and the index of the currently selected item.
-    */
+  */
+ @SuppressWarnings("deprecation")
+ public class SuggestBox extends Composite implements HasText, HasFocus,
+-    HasAnimation, SourcesClickEvents, SourcesFocusEvents, SourcesChangeEvents,
+-    SourcesKeyboardEvents, FiresSuggestionEvents, HasAllKeyHandlers,
+-    HasValue<String>, HasSelectionHandlers<Suggestion> {
++        HasAnimation, SourcesClickEvents, SourcesFocusEvents, SourcesChangeEvents,
++        SourcesKeyboardEvents, FiresSuggestionEvents, HasAllKeyHandlers,
++        HasValue<String>, HasSelectionHandlers<Suggestion> {
+ 
+-  /**
+-   * The SuggestionMenu class is used for the display and selection of
+-   * suggestions in the SuggestBox widget. SuggestionMenu differs from MenuBar
+-   * in that it always has a vertical orientation, and it has no submenus. It
+-   * also allows for programmatic selection of items in the menu, and
+-   * programmatically performing the action associated with the selected item.
+-   * In the MenuBar class, items cannot be selected programatically - they can
+-   * only be selected when the user places the mouse over a particlar item.
+-   * Additional methods in SuggestionMenu provide information about the number
+-   * of items in the menu, and the index of the currently selected item.
+-   */
 -  private static class SuggestionMenu extends MenuBar {
-+  private class SuggestionMenu extends MenuBar {
++    /**
++     * The SuggestionMenu class is used for the display and selection of
++     * suggestions in the SuggestBox widget. SuggestionMenu differs from MenuBar
++     * in that it always has a vertical orientation, and it has no submenus. It
++     * also allows for programmatic selection of items in the menu, and
++     * programmatically performing the action associated with the selected item.
++     * In the MenuBar class, items cannot be selected programatically - they can
++     * only be selected when the user places the mouse over a particlar item.
++     * Additional methods in SuggestionMenu provide information about the number
++     * of items in the menu, and the index of the currently selected item.
++     */
++    private class SuggestionMenu extends MenuBar {
  
-     public SuggestionMenu(boolean vertical) {
-       super(vertical);
-@@ -166,6 +157,103 @@
-       setStyleName("");
-     }
+-    public SuggestionMenu(boolean vertical) {
+-      super(vertical);
+-      // Make sure that CSS styles specified for the default Menu classes
+-      // do not affect this menu
+-      setStyleName("");
+-    }
++        public SuggestionMenu(boolean vertical) {
++            super(vertical);
++            // Make sure that CSS styles specified for the default Menu classes
++            // do not affect this menu
++            setStyleName("");
++        }
  
-+    @Override
-+    public void onBrowserEvent(Event event) {
-+      MenuItem item = findItem(DOM.eventGetTarget(event));
-+      switch (DOM.eventGetType(event)) {
-+        case Event.ONCLICK: {
-+          FocusPanel.impl.focus(getElement());
-+          // Fire an item's command when the user clicks on it.
-+          if (item != null) {
-+            doItemAction(item, true);
-+          }
-+          break;
+-    public void doSelectedItemAction() {
+-      // In order to perform the action of the item that is currently
+-      // selected, the menu must be showing.
+-      MenuItem selectedItem = getSelectedItem();
+-      if (selectedItem != null) {
+-        doItemAction(selectedItem, true);
+-      }
+-    }
++        @Override
++        public void onBrowserEvent(Event event) {
++            MenuItem item = findItem(DOM.eventGetTarget(event));
++            switch (DOM.eventGetType(event)) {
++                case Event.ONCLICK: {
++                    FocusPanel.impl.focus(getElement());
++                    // Fire an item's command when the user clicks on it.
++                    if (item != null) {
++                        doItemAction(item, true);
++                    }
++                    break;
++                }
+ 
+-    public int getNumItems() {
+-      return getItems().size();
++                case Event.ONMOUSEOVER: {
++                    if (item != null) {
++                        itemOver(item, true);
++                        fireHighlightedEvent(this);
++                    }
++                    break;
++                }
++
++                case Event.ONMOUSEOUT: {
++                    if (item != null) {
++                        itemOver(null, true);
++                        fireHighlightedEvent(this);
++                    }
++                    break;
++                }
++
++                case Event.ONFOCUS: {
++                    selectFirstItemIfNoneSelected();
++                    fireHighlightedEvent(this);
++                    break;
++                }
++
++                case Event.ONKEYDOWN: {
++                    int keyCode = DOM.eventGetKeyCode(event);
++                    switch (keyCode) {
++                        case KeyCodes.KEY_LEFT:
++                            if (LocaleInfo.getCurrentLocale().isRTL()) {
++                                moveToNextItem();
++                            } else {
++                                moveToPrevItem();
++                            }
++                            eatEvent(event);
++                            break;
++                        case KeyCodes.KEY_RIGHT:
++                            if (LocaleInfo.getCurrentLocale().isRTL()) {
++                                moveToPrevItem();
++                            } else {
++                                moveToNextItem();
++                            }
++                            eatEvent(event);
++                            break;
++                        case KeyCodes.KEY_UP:
++                            moveUp();
++                            fireHighlightedEvent(this);
++                            eatEvent(event);
++                            break;
++                        case KeyCodes.KEY_DOWN:
++                            moveDown();
++                            fireHighlightedEvent(this);
++                            eatEvent(event);
++                            break;
++                        case KeyCodes.KEY_ESCAPE:
++                            closeAllParents();
++                            eatEvent(event);
++                            break;
++                        case KeyCodes.KEY_ENTER:
++                            if (!selectFirstItemIfNoneSelected()) {
++                                doItemAction(selectedItem, true);
++                                eatEvent(event);
++                            }
++                            break;
++                    } // end switch(keyCode)
++
++                    break;
++                } // end case Event.ONKEYDOWN
++            } // end switch (DOM.eventGetType(event))
++
++            // in place of other code
++            switch (DOM.eventGetType(event)) {
++                case Event.ONMOUSEOVER:
++                    // Only fire the mouse over event if it's coming from outside this
++                    // widget.
++                case Event.ONMOUSEOUT:
++                    // Only fire the mouse out event if it's leaving this
++                    // widget.
++                    Element related = event.getRelatedTarget();
++                    if (related != null && getElement().isOrHasChild(related)) {
++                        return;
++                    }
++                    break;
++            }
++            DomEvent.fireNativeEvent(event, this, this.getElement());
 +        }
 +
-+        case Event.ONMOUSEOVER: {
-+          if (item != null) {
-+            itemOver(item, true);
-+            fireHighlightedEvent(this);
-+          }
-+          break;
-+        }
-+
-+        case Event.ONMOUSEOUT: {
-+          if (item != null) {
-+            itemOver(null, true);
-+            fireHighlightedEvent(this);
-+          }
-+          break;
-+        }
-+
-+        case Event.ONFOCUS: {
-+          selectFirstItemIfNoneSelected();
-+          fireHighlightedEvent(this);
-+          break;
-+        }
-+
-+        case Event.ONKEYDOWN: {
-+          int keyCode = DOM.eventGetKeyCode(event);
-+          switch (keyCode) {
-+            case KeyCodes.KEY_LEFT:
-+              if (LocaleInfo.getCurrentLocale().isRTL()) {
-+                moveToNextItem();
-+              } else {
-+                moveToPrevItem();
-+              }
-+              eatEvent(event);
-+              break;
-+            case KeyCodes.KEY_RIGHT:
-+              if (LocaleInfo.getCurrentLocale().isRTL()) {
-+                moveToPrevItem();
-+              } else {
-+                moveToNextItem();
-+              }
-+              eatEvent(event);
-+              break;
-+            case KeyCodes.KEY_UP:
-+              moveUp();
-+              fireHighlightedEvent(this);
-+              eatEvent(event);
-+              break;
-+            case KeyCodes.KEY_DOWN:
-+              moveDown();
-+              fireHighlightedEvent(this);
-+              eatEvent(event);
-+              break;
-+            case KeyCodes.KEY_ESCAPE:
-+              closeAllParents();
-+              eatEvent(event);
-+              break;
-+            case KeyCodes.KEY_ENTER:
-+              if (!selectFirstItemIfNoneSelected()) {
++        public void doSelectedItemAction() {
++            // In order to perform the action of the item that is currently
++            // selected, the menu must be showing.
++            MenuItem selectedItem = getSelectedItem();
++            if (selectedItem != null) {
 +                doItemAction(selectedItem, true);
-+                eatEvent(event);
-+              }
-+              break;
-+          } // end switch(keyCode)
++            }
++        }
 +
-+          break;
-+        } // end case Event.ONKEYDOWN
-+      } // end switch (DOM.eventGetType(event))
++        public int getNumItems() {
++            return getItems().size();
++        }
 +
-+      // in place of other code
-+      switch (DOM.eventGetType(event)) {
-+        case Event.ONMOUSEOVER:
-+          // Only fire the mouse over event if it's coming from outside this
-+          // widget.
-+        case Event.ONMOUSEOUT:
-+          // Only fire the mouse out event if it's leaving this
-+          // widget.
-+          Element related = event.getRelatedTarget();
-+          if (related != null && getElement().isOrHasChild(related)) {
-+            return;
-+          }
-+          break;
-+      }
-+      DomEvent.fireNativeEvent(event, this, this.getElement());
-+    }
++        /**
++         * Returns the index of the menu item that is currently selected.
++         *
++         * @return returns the selected item
++         */
++        public int getSelectedItemIndex() {
++            // The index of the currently selected item can only be
++            // obtained if the menu is showing.
++            MenuItem selectedItem = getSelectedItem();
++            if (selectedItem != null) {
++                return getItems().indexOf(selectedItem);
++            }
++            return -1;
++        }
 +
-     public void doSelectedItemAction() {
-       // In order to perform the action of the item that is currently
-       // selected, the menu must be showing.
-@@ -181,7 +269,7 @@
++        /**
++         * Selects the item at the specified index in the menu. Selecting the item
++         * does not perform the item's associated action; it only changes the style
++         * of the item and updates the value of SuggestionMenu.selectedItem.
++         *
++         * @param index index
++         */
++        public void selectItem(int index) {
++            List<MenuItem> items = getItems();
++            if (index > -1 && index < items.size()) {
++                itemOver(items.get(index), false);
++                fireHighlightedEvent(this);
++            }
++        }
++
++        public SuggestOracle.Suggestion getHighlightedSuggestion(){
++            return   ((SuggestBox.SuggestionMenuItem) getSelectedItem()).getSuggestion() ;
++        }
+     }
  
++    private Suggestion highlightedSuggestion = null ;
++
      /**
-      * Returns the index of the menu item that is currently selected.
+-     * Returns the index of the menu item that is currently selected.
 -     * 
-+     *
-      * @return returns the selected item
+-     * @return returns the selected item
++     * @param suggestion Suggestion to check.
++     * @return Returns if suggestion has changed.
       */
-     public int getSelectedItemIndex() {
-@@ -198,19 +286,78 @@
-      * Selects the item at the specified index in the menu. Selecting the item
-      * does not perform the item's associated action; it only changes the style
-      * of the item and updates the value of SuggestionMenu.selectedItem.
--     * 
-+     *
-      * @param index index
-      */
-     public void selectItem(int index) {
-       List<MenuItem> items = getItems();
-       if (index > -1 && index < items.size()) {
-         itemOver(items.get(index), false);
-+        fireHighlightedEvent(this);
-       }
+-    public int getSelectedItemIndex() {
+-      // The index of the currently selected item can only be
+-      // obtained if the menu is showing.
+-      MenuItem selectedItem = getSelectedItem();
+-      if (selectedItem != null) {
+-        return getItems().indexOf(selectedItem);
+-      }
+-      return -1;
++    protected boolean isNewHighlightedSuggestion(Suggestion suggestion){
++        if( suggestion!=highlightedSuggestion
++            ||
++            (suggestion!=null && highlightedSuggestion!=null
++                    &&
++                    (suggestion.getReplacementString()!=null  && !suggestion.getReplacementString().equals(highlightedSuggestion.getReplacementString()))
++                    ||
++                    (highlightedSuggestion.getReplacementString()!=null && !highlightedSuggestion.getReplacementString().equals(suggestion.getReplacementString()) )
++                ) ){
++            highlightedSuggestion = suggestion ;
++            return true ;
++        }
++        return false ; 
      }
-+
-+    public SuggestOracle.Suggestion getHighlightedSuggestion(){
-+      return   ((SuggestBox.SuggestionMenuItem) getSelectedItem()).getSuggestion() ;
-+    }
-   }
  
-+  private Suggestion highlightedSuggestion = null ;
++    private void fireHighlightedEvent(SuggestionMenu suggestionMenu) {
++        Suggestion highlightedSuggestion = suggestionMenu.getHighlightedSuggestion();
++        if(isNewHighlightedSuggestion(highlightedSuggestion)){
++            fireHighlightedEvent(new SuggestionHighlightEvent(highlightedSuggestion));
++        }
++    }
++
+     /**
+-     * Selects the item at the specified index in the menu. Selecting the item
+-     * does not perform the item's associated action; it only changes the style
+-     * of the item and updates the value of SuggestionMenu.selectedItem.
+-     * 
+-     * @param index index
++     * @param event Event to fire
+      */
+-    public void selectItem(int index) {
+-      List<MenuItem> items = getItems();
+-      if (index > -1 && index < items.size()) {
+-        itemOver(items.get(index), false);
+-      }
++    public void fireHighlightedEvent(SuggestionHighlightEvent event) {
++        for(HighlightHandler<Suggestion> suggestionHighlightHandler : getHighlightHandlers()){
++            suggestionHighlightHandler.onHighlight(event);
++        }
+     }
+-  }
  
-   /**
-+   * @param suggestion Suggestion to check.
-+   * @return Returns if suggestion has changed.
-+   */
-+  protected boolean isNewHighlightedSuggestion(Suggestion suggestion){
-+    if(suggestion==null && highlightedSuggestion == null){
-+      return false ;
-+    }
-+    else
-+    if(
-+        ( highlightedSuggestion == null && suggestion != null )
-+            ||
-+            ( highlightedSuggestion !=null && suggestion == null )
-+            ||
-+            (false == highlightedSuggestion.getReplacementString().equals(suggestion.getReplacementString()))
-+        ){
-+      highlightedSuggestion = suggestion ;
-+      return true ;
-+    }
-+    else{
-+      return false ;
-+    }
-+  }
-+
-+  private void fireHighlightedEvent(SuggestionMenu suggestionMenu) {
-+    Suggestion highlightedSuggestion = suggestionMenu.getHighlightedSuggestion();
-+    if(isNewHighlightedSuggestion(highlightedSuggestion)){
-+      fireHighlightedEvent(new SuggestionHighlightEvent(highlightedSuggestion));
-+    }
-+  }
-+
-+  /**
-+   * @param event Event to fire
-+   */
-+  public void fireHighlightedEvent(SuggestionHighlightEvent event) {
-+    for(HighlightHandler<Suggestion> suggestionHighlightHandler : getHighlightHandlers()){
-+      suggestionHighlightHandler.onHighlight(event);
-+    }
-+  }
-+
-+
-+  // listeneres
-+  private List<HighlightHandler<Suggestion>> suggestionHighlightHandlers = new ArrayList<HighlightHandler<Suggestion>>() ;
-+
-+  public void addSuggestionHandler(HighlightHandler<Suggestion> highlightHandler){
-+    suggestionHighlightHandlers.add(highlightHandler) ;
-+  }
-+
-+  public List<HighlightHandler<Suggestion>> getHighlightHandlers() {
-+    return suggestionHighlightHandlers;
-+  }
-+
-+
-+  /**
-    * Class for menu items in a SuggestionMenu. A SuggestionMenuItem differs from
-    * a MenuItem in that each item is backed by a Suggestion object. The text of
-    * each menu item is derived from the display string of a Suggestion object,
-@@ -247,11 +394,11 @@
-   /**
-    * Creates a {@link SuggestBox} widget that wraps an existing &lt;input
-    * type='text'&gt; element.
--   * 
-+   *
-    * This element must already be attached to the document. If the element is
-    * removed from the document, you must call
-    * {@link RootPanel#detachNow(Widget)}.
--   * 
-+   *
-    * @param oracle the suggest box oracle to use
-    * @param element the element to be wrapped
-    */
-@@ -294,7 +441,7 @@
-   /**
-    * Constructor for {@link SuggestBox}. Creates a {@link TextBox} to use with
-    * this {@link SuggestBox}.
--   * 
-+   *
-    * @param oracle the oracle for this <code>SuggestBox</code>
-    */
-   public SuggestBox(SuggestOracle oracle) {
-@@ -304,7 +451,7 @@
-   /**
-    * Constructor for {@link SuggestBox}. The text box will be removed from it's
-    * current location and wrapped by the {@link SuggestBox}.
--   * 
-+   *
-    * @param oracle supplies suggestions based upon the current contents of the
-    *          text widget
-    * @param box the text widget
-@@ -318,7 +465,6 @@
-     suggestionMenu = new SuggestionMenu(true);
-     suggestionPopup = createPopup();
-     suggestionPopup.setAnimationType(AnimationType.ROLL_DOWN);
+ 
+-  /**
+-   * Class for menu items in a SuggestionMenu. A SuggestionMenuItem differs from
+-   * a MenuItem in that each item is backed by a Suggestion object. The text of
+-   * each menu item is derived from the display string of a Suggestion object,
+-   * and each item stores a reference to its Suggestion object.
+-   */
+-  private static class SuggestionMenuItem extends MenuItem {
++    // listeneres
++    private List<HighlightHandler<Suggestion>> suggestionHighlightHandlers = new ArrayList<HighlightHandler<Suggestion>>() ;
+ 
+-    private static final String STYLENAME_DEFAULT = "item";
 -
-     addEventsToTextBox();
- 
-     setOracle(oracle);
-@@ -326,10 +472,10 @@
-   }
- 
-   /**
--   * 
-+   *
-    * Adds a listener to receive change events on the SuggestBox's text box. The
-    * source Widget for these events will be the SuggestBox.
--   * 
-+   *
-    * @param listener the listener interface to add
-    * @deprecated use {@link #getTextBox}().addChangeHandler instead
-    */
-@@ -341,7 +487,7 @@
-   /**
-    * Adds a listener to receive click events on the SuggestBox's text box. The
-    * source Widget for these events will be the SuggestBox.
--   * 
-+   *
-    * @param listener the listener interface to add
-    * @deprecated use {@link #getTextBox}().addClickHandler instead
-    */
-@@ -354,7 +500,7 @@
- 
-   /**
-    * Adds an event to this handler.
--   * 
-+   *
-    * @deprecated use {@link #addSelectionHandler} instead.
-    */
-   @Deprecated
-@@ -365,7 +511,7 @@
-   /**
-    * Adds a listener to receive focus events on the SuggestBox's text box. The
-    * source Widget for these events will be the SuggestBox.
--   * 
-+   *
-    * @param listener the listener interface to add
-    * @deprecated use {@link getTextBox}().addFocusHandler/addBlurHandler() instead
-    */
-@@ -411,7 +557,7 @@
-    * Gets the limit for the number of suggestions that should be displayed for
-    * this box. It is up to the current {@link SuggestOracle} to enforce this
-    * limit.
--   * 
-+   *
-    * @return the limit for the number of suggestions
-    */
-   public int getLimit() {
-@@ -420,7 +566,7 @@
- 
-   /**
-    * Gets the suggest box's {@link com.google.gwt.user.client.ui.SuggestOracle}.
--   * 
-+   *
-    * @return the {@link SuggestOracle}
-    */
-   public SuggestOracle getSuggestOracle() {
-@@ -437,7 +583,7 @@
- 
-   /**
-    * Get the text box associated with this suggest box.
--   * 
-+   *
-    * @return this suggest box's text box
-    */
-   public TextBoxBase getTextBox() {
-@@ -462,7 +608,7 @@
-   /**
-    * Returns whether or not the first suggestion will be automatically selected.
-    * This behavior is on by default.
--   * 
-+   *
-    * @return true if the first suggestion will be automatically selected
-    */
-   public boolean isAutoSelectEnabled() {
-@@ -532,7 +678,7 @@
-   /**
-    * Turns on or off the behavior that automatically selects the first suggested
-    * item. This behavior is on by default.
--   * 
-+   *
-    * @param selectsFirstItem Whether or not to automatically select the first
-    *          suggestion
-    */
-@@ -547,7 +693,7 @@
-   /**
-    * Sets the limit to the number of suggestions the oracle should provide. It
-    * is up to the oracle to enforce this limit.
--   * 
-+   *
-    * @param limit the limit to the number of suggestions provided
-    */
-   public void setLimit(int limit) {
-@@ -556,7 +702,7 @@
- 
-   /**
-    * Sets the style name of the suggestion popup.
--   * 
-+   *
-    * @param style the new primary style name
-    * @see UIObject#setStyleName(String)
-    */
-@@ -596,7 +742,7 @@
-    * <li>-popup = The popup that appears with suggestions.</li>
-    * <li>-items-item# = The suggested item at the specified index.</li>
-    * </ul>
--   * 
-+   *
-    * @see UIObject#onEnsureDebugId(String)
-    */
-   @Override
-@@ -608,12 +754,12 @@
- 
-   /**
-    * Gets the specified suggestion from the suggestions currently showing.
--   * 
-+   *
-    * @param index the index at which the suggestion lives
--   * 
-+   *
-    * @throws IndexOutOfBoundsException if the index is greater then the number
-    *           of suggestions currently showing
--   * 
-+   *
-    * @return the given suggestion
-    */
-   Suggestion getSuggestion(int index) {
-@@ -626,7 +772,7 @@
- 
-   /**
-    * Get the number of suggestions that are currently showing.
--   * 
-+   *
-    * @return the number of suggestions currently showing, 0 if there are none
-    */
-   int getSuggestionCount() {
-@@ -723,7 +869,7 @@
- 
-   /**
-    * Sets the suggestion oracle used to create suggestions.
--   * 
-+   *
-    * @param oracle the oracle
-    */
-   private void setOracle(SuggestOracle oracle) {
-@@ -732,7 +878,7 @@
- 
-   /**
-    * Show the given collection of suggestions.
--   * 
-+   *
-    * @param suggestions suggestions to show
-    */
-   private void showSuggestions(Collection<? extends Suggestion> suggestions) {
-@@ -771,4 +917,12 @@
-       suggestionPopup.hide();
+-    private Suggestion suggestion;
+-
+-    public SuggestionMenuItem(Suggestion suggestion, boolean asHTML) {
+-      super(suggestion.getDisplayString(), asHTML);
+-      // Each suggestion should be placed in a single row in the suggestion
+-      // menu. If the window is resized and the suggestion cannot fit on a
+-      // single row, it should be clipped (instead of wrapping around and
+-      // taking up a second row).
+-      DOM.setStyleAttribute(getElement(), "whiteSpace", "nowrap");
+-      setStyleName(STYLENAME_DEFAULT);
+-      setSuggestion(suggestion);
++    public void addSuggestionHandler(HighlightHandler<Suggestion> highlightHandler){
++        suggestionHighlightHandlers.add(highlightHandler) ;
      }
-   }
-+
-+  /**
-+   */
-+  public class SuggestionHighlightEvent extends HighlightEvent<Suggestion> {
-+    SuggestionHighlightEvent(Suggestion highlighted) {
-+      super(highlighted);
+ 
+-    public Suggestion getSuggestion() {
+-      return suggestion;
++    public List<HighlightHandler<Suggestion>> getHighlightHandlers() {
++        return suggestionHighlightHandlers;
+     }
+ 
+-    public void setSuggestion(Suggestion suggestion) {
+-      this.suggestion = suggestion;
+-    }
+-  }
+ 
+-  private static final String STYLENAME_DEFAULT = "gwt-SuggestBox";
++    /**
++     * Class for menu items in a SuggestionMenu. A SuggestionMenuItem differs from
++     * a MenuItem in that each item is backed by a Suggestion object. The text of
++     * each menu item is derived from the display string of a Suggestion object,
++     * and each item stores a reference to its Suggestion object.
++     */
++    private static class SuggestionMenuItem extends MenuItem {
+ 
+-  /**
+-   * Creates a {@link SuggestBox} widget that wraps an existing &lt;input
+-   * type='text'&gt; element.
+-   * 
+-   * This element must already be attached to the document. If the element is
+-   * removed from the document, you must call
+-   * {@link RootPanel#detachNow(Widget)}.
+-   * 
+-   * @param oracle the suggest box oracle to use
+-   * @param element the element to be wrapped
+-   */
+-  public static SuggestBox wrap(SuggestOracle oracle, Element element) {
+-    // Assert that the element is attached.
+-    assert Document.get().getBody().isOrHasChild(element);
++        private static final String STYLENAME_DEFAULT = "item";
+ 
+-    TextBox textBox = new TextBox(element);
+-    SuggestBox suggestBox = new SuggestBox(oracle, textBox);
++        private Suggestion suggestion;
+ 
+-    // Mark it attached and remember it for cleanup.
+-    suggestBox.onAttach();
+-    RootPanel.detachOnWindowClose(suggestBox);
++        public SuggestionMenuItem(Suggestion suggestion, boolean asHTML) {
++            super(suggestion.getDisplayString(), asHTML);
++            // Each suggestion should be placed in a single row in the suggestion
++            // menu. If the window is resized and the suggestion cannot fit on a
++            // single row, it should be clipped (instead of wrapping around and
++            // taking up a second row).
++            DOM.setStyleAttribute(getElement(), "whiteSpace", "nowrap");
++            setStyleName(STYLENAME_DEFAULT);
++            setSuggestion(suggestion);
++        }
+ 
+-    return suggestBox;
+-  }
++        public Suggestion getSuggestion() {
++            return suggestion;
++        }
+ 
+-  private int limit = 20;
+-  private boolean selectsFirstItem = true;
+-  private SuggestOracle oracle;
+-  private String currentText;
+-  private final SuggestionMenu suggestionMenu;
+-  private final PopupPanel suggestionPopup;
+-  private final TextBoxBase box;
+-  private final Callback callback = new Callback() {
+-    public void onSuggestionsReady(Request request, Response response) {
+-      showSuggestions(response.getSuggestions());
++        public void setSuggestion(Suggestion suggestion) {
++            this.suggestion = suggestion;
++        }
+     }
+-  };
+ 
+-  /**
+-   * Constructor for {@link SuggestBox}. Creates a
+-   * {@link MultiWordSuggestOracle} and {@link TextBox} to use with this
+-   * {@link SuggestBox}.
+-   */
+-  public SuggestBox() {
+-    this(new MultiWordSuggestOracle());
+-  }
++    private static final String STYLENAME_DEFAULT = "gwt-SuggestBox";
+ 
+-  /**
+-   * Constructor for {@link SuggestBox}. Creates a {@link TextBox} to use with
+-   * this {@link SuggestBox}.
+-   * 
+-   * @param oracle the oracle for this <code>SuggestBox</code>
+-   */
+-  public SuggestBox(SuggestOracle oracle) {
+-    this(oracle, new TextBox());
+-  }
++    /**
++     * Creates a {@link SuggestBox} widget that wraps an existing &lt;input
++     * type='text'&gt; element.
++     *
++     * This element must already be attached to the document. If the element is
++     * removed from the document, you must call
++     * {@link RootPanel#detachNow(Widget)}.
++     *
++     * @param oracle the suggest box oracle to use
++     * @param element the element to be wrapped
++     */
++    public static SuggestBox wrap(SuggestOracle oracle, Element element) {
++        // Assert that the element is attached.
++        assert Document.get().getBody().isOrHasChild(element);
+ 
+-  /**
+-   * Constructor for {@link SuggestBox}. The text box will be removed from it's
+-   * current location and wrapped by the {@link SuggestBox}.
+-   * 
+-   * @param oracle supplies suggestions based upon the current contents of the
+-   *          text widget
+-   * @param box the text widget
+-   */
+-  public SuggestBox(SuggestOracle oracle, TextBoxBase box) {
+-    this.box = box;
+-    initWidget(box);
++        TextBox textBox = new TextBox(element);
++        SuggestBox suggestBox = new SuggestBox(oracle, textBox);
+ 
+-    // suggestionMenu must be created before suggestionPopup, because
+-    // suggestionMenu is suggestionPopup's widget
+-    suggestionMenu = new SuggestionMenu(true);
+-    suggestionPopup = createPopup();
+-    suggestionPopup.setAnimationType(AnimationType.ROLL_DOWN);
++        // Mark it attached and remember it for cleanup.
++        suggestBox.onAttach();
++        RootPanel.detachOnWindowClose(suggestBox);
+ 
+-    addEventsToTextBox();
++        return suggestBox;
 +    }
-+  }
+ 
+-    setOracle(oracle);
+-    setStyleName(STYLENAME_DEFAULT);
+-  }
++    private int limit = 20;
++    private boolean selectsFirstItem = true;
++    private SuggestOracle oracle;
++    private String currentText;
++    private final SuggestionMenu suggestionMenu;
++    private final PopupPanel suggestionPopup;
++    private final TextBoxBase box;
++    private final Callback callback = new Callback() {
++        public void onSuggestionsReady(Request request, Response response) {
++            showSuggestions(response.getSuggestions());
++        }
++    };
+ 
+-  /**
+-   * 
+-   * Adds a listener to receive change events on the SuggestBox's text box. The
+-   * source Widget for these events will be the SuggestBox.
+-   * 
+-   * @param listener the listener interface to add
+-   * @deprecated use {@link #getTextBox}().addChangeHandler instead
+-   */
+-  @Deprecated
+-  public void addChangeListener(final ChangeListener listener) {
+-    ListenerWrapper.WrappedLogicalChangeListener.add(box, listener).setSource(this);
+-  }
++    /**
++     * Constructor for {@link SuggestBox}. Creates a
++     * {@link MultiWordSuggestOracle} and {@link TextBox} to use with this
++     * {@link SuggestBox}.
++     */
++    public SuggestBox() {
++        this(new MultiWordSuggestOracle());
++    }
+ 
+-  /**
+-   * Adds a listener to receive click events on the SuggestBox's text box. The
+-   * source Widget for these events will be the SuggestBox.
+-   * 
+-   * @param listener the listener interface to add
+-   * @deprecated use {@link #getTextBox}().addClickHandler instead
+-   */
+-  @Deprecated
+-  public void addClickListener(final ClickListener listener) {
+-    ListenerWrapper.WrappedClickListener legacy = ListenerWrapper.WrappedClickListener.add(box,
+-        listener);
+-    legacy.setSource(this);
+-  }
++    /**
++     * Constructor for {@link SuggestBox}. Creates a {@link TextBox} to use with
++     * this {@link SuggestBox}.
++     *
++     * @param oracle the oracle for this <code>SuggestBox</code>
++     */
++    public SuggestBox(SuggestOracle oracle) {
++        this(oracle, new TextBox());
++    }
+ 
+-  /**
+-   * Adds an event to this handler.
+-   * 
+-   * @deprecated use {@link #addSelectionHandler} instead.
+-   */
+-  @Deprecated
+-  public void addEventHandler(final SuggestionHandler handler) {
+-    ListenerWrapper.WrappedOldSuggestionHandler.add(this, handler);
+-  }
++    /**
++     * Constructor for {@link SuggestBox}. The text box will be removed from it's
++     * current location and wrapped by the {@link SuggestBox}.
++     *
++     * @param oracle supplies suggestions based upon the current contents of the
++     *          text widget
++     * @param box the text widget
++     */
++    public SuggestBox(SuggestOracle oracle, TextBoxBase box) {
++        this.box = box;
++        initWidget(box);
+ 
+-  /**
+-   * Adds a listener to receive focus events on the SuggestBox's text box. The
+-   * source Widget for these events will be the SuggestBox.
+-   * 
+-   * @param listener the listener interface to add
+-   * @deprecated use {@link getTextBox}().addFocusHandler/addBlurHandler() instead
+-   */
+-  @Deprecated
+-  public void addFocusListener(final FocusListener listener) {
+-    ListenerWrapper.WrappedFocusListener focus = ListenerWrapper.WrappedFocusListener.add(box,
+-        listener);
+-    focus.setSource(this);
+-  }
++        // suggestionMenu must be created before suggestionPopup, because
++        // suggestionMenu is suggestionPopup's widget
++        suggestionMenu = new SuggestionMenu(true);
++        suggestionPopup = createPopup();
++        suggestionPopup.setAnimationType(AnimationType.ROLL_DOWN);
++        addEventsToTextBox();
+ 
+-  /**
+-   * @deprecated Use {@link #addKeyDownHandler}, {@link
+-   * #addKeyUpHandler} and {@link #addKeyPressHandler} instead
+-   */
+-  @Deprecated
+-  public void addKeyboardListener(KeyboardListener listener) {
+-    ListenerWrapper.WrappedKeyboardListener.add(this, listener);
+-  }
++        setOracle(oracle);
++        setStyleName(STYLENAME_DEFAULT);
++    }
+ 
+-  public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+-    return addDomHandler(handler, KeyDownEvent.getType());
+-  }
++    /**
++     *
++     * Adds a listener to receive change events on the SuggestBox's text box. The
++     * source Widget for these events will be the SuggestBox.
++     *
++     * @param listener the listener interface to add
++     * @deprecated use {@link #getTextBox}().addChangeHandler instead
++     */
++    @Deprecated
++    public void addChangeListener(final ChangeListener listener) {
++        ListenerWrapper.WrappedLogicalChangeListener.add(box, listener).setSource(this);
++    }
+ 
+-  public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
+-    return addDomHandler(handler, KeyPressEvent.getType());
+-  }
++    /**
++     * Adds a listener to receive click events on the SuggestBox's text box. The
++     * source Widget for these events will be the SuggestBox.
++     *
++     * @param listener the listener interface to add
++     * @deprecated use {@link #getTextBox}().addClickHandler instead
++     */
++    @Deprecated
++    public void addClickListener(final ClickListener listener) {
++        ListenerWrapper.WrappedClickListener legacy = ListenerWrapper.WrappedClickListener.add(box,
++                listener);
++        legacy.setSource(this);
++    }
+ 
+-  public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+-    return addDomHandler(handler, KeyUpEvent.getType());
+-  }
++    /**
++     * Adds an event to this handler.
++     *
++     * @deprecated use {@link #addSelectionHandler} instead.
++     */
++    @Deprecated
++    public void addEventHandler(final SuggestionHandler handler) {
++        ListenerWrapper.WrappedOldSuggestionHandler.add(this, handler);
++    }
+ 
+-  public HandlerRegistration addSelectionHandler(
+-      SelectionHandler<Suggestion> handler) {
+-    return addHandler(handler, SelectionEvent.getType());
+-  }
++    /**
++     * Adds a listener to receive focus events on the SuggestBox's text box. The
++     * source Widget for these events will be the SuggestBox.
++     *
++     * @param listener the listener interface to add
++     * @deprecated use {@link getTextBox}().addFocusHandler/addBlurHandler() instead
++     */
++    @Deprecated
++    public void addFocusListener(final FocusListener listener) {
++        ListenerWrapper.WrappedFocusListener focus = ListenerWrapper.WrappedFocusListener.add(box,
++                listener);
++        focus.setSource(this);
++    }
+ 
+-  public HandlerRegistration addValueChangeHandler(
+-      ValueChangeHandler<String> handler) {
+-    return addHandler(handler, ValueChangeEvent.getType());
+-  }
++    /**
++     * @deprecated Use {@link #addKeyDownHandler}, {@link
++     * #addKeyUpHandler} and {@link #addKeyPressHandler} instead
++     */
++    @Deprecated
++    public void addKeyboardListener(KeyboardListener listener) {
++        ListenerWrapper.WrappedKeyboardListener.add(this, listener);
++    }
+ 
+-  /**
+-   * Gets the limit for the number of suggestions that should be displayed for
+-   * this box. It is up to the current {@link SuggestOracle} to enforce this
+-   * limit.
+-   * 
+-   * @return the limit for the number of suggestions
+-   */
+-  public int getLimit() {
+-    return limit;
+-  }
++    public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
++        return addDomHandler(handler, KeyDownEvent.getType());
++    }
+ 
+-  /**
+-   * Gets the suggest box's {@link com.google.gwt.user.client.ui.SuggestOracle}.
+-   * 
+-   * @return the {@link SuggestOracle}
+-   */
+-  public SuggestOracle getSuggestOracle() {
+-    return oracle;
+-  }
++    public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
++        return addDomHandler(handler, KeyPressEvent.getType());
++    }
+ 
+-  public int getTabIndex() {
+-    return box.getTabIndex();
+-  }
++    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
++        return addDomHandler(handler, KeyUpEvent.getType());
++    }
+ 
+-  public String getText() {
+-    return box.getText();
+-  }
++    public HandlerRegistration addSelectionHandler(
++            SelectionHandler<Suggestion> handler) {
++        return addHandler(handler, SelectionEvent.getType());
++    }
+ 
+-  /**
+-   * Get the text box associated with this suggest box.
+-   * 
+-   * @return this suggest box's text box
+-   */
+-  public TextBoxBase getTextBox() {
+-    return box;
+-  }
++    public HandlerRegistration addValueChangeHandler(
++            ValueChangeHandler<String> handler) {
++        return addHandler(handler, ValueChangeEvent.getType());
++    }
+ 
+-  public String getValue() {
+-    return box.getValue();
+-  }
++    /**
++     * Gets the limit for the number of suggestions that should be displayed for
++     * this box. It is up to the current {@link SuggestOracle} to enforce this
++     * limit.
++     *
++     * @return the limit for the number of suggestions
++     */
++    public int getLimit() {
++        return limit;
++    }
+ 
+-  /**
+-   * Hide current suggestions.
+-   */
+-  public void hideSuggestionList() {
+-    this.suggestionPopup.hide();
+-  }
++    /**
++     * Gets the suggest box's {@link com.google.gwt.user.client.ui.SuggestOracle}.
++     *
++     * @return the {@link SuggestOracle}
++     */
++    public SuggestOracle getSuggestOracle() {
++        return oracle;
++    }
+ 
+-  public boolean isAnimationEnabled() {
+-    return suggestionPopup.isAnimationEnabled();
+-  }
++    public int getTabIndex() {
++        return box.getTabIndex();
++    }
+ 
+-  /**
+-   * Returns whether or not the first suggestion will be automatically selected.
+-   * This behavior is on by default.
+-   * 
+-   * @return true if the first suggestion will be automatically selected
+-   */
+-  public boolean isAutoSelectEnabled() {
+-    return selectsFirstItem;
+-  }
++    public String getText() {
++        return box.getText();
++    }
+ 
+-  /**
+-   * @return true if the list of suggestions is currently showing, false if not
+-   */
+-  public boolean isSuggestionListShowing() {
+-    return suggestionPopup.isShowing();
+-  }
++    /**
++     * Get the text box associated with this suggest box.
++     *
++     * @return this suggest box's text box
++     */
++    public TextBoxBase getTextBox() {
++        return box;
++    }
+ 
+-  /**
+-   * @deprecated Use the {@link HandlerRegistration#removeHandler}
+-   * method on the object returned by {@link #getTextBox}().addChangeHandler instead
+-   */
+-  @Deprecated
+-  public void removeChangeListener(ChangeListener listener) {
+-    ListenerWrapper.WrappedChangeListener.remove(box, listener);
+-  }
++    public String getValue() {
++        return box.getValue();
++    }
+ 
+-  /**
+-   * @deprecated Use the {@link HandlerRegistration#removeHandler}
+-   * method on the object returned by {@link #getTextBox}().addClickHandler instead
+-   */
+-  @Deprecated
+-  public void removeClickListener(ClickListener listener) {
+-    ListenerWrapper.WrappedClickListener.remove(box, listener);
+-  }
++    /**
++     * Hide current suggestions.
++     */
++    public void hideSuggestionList() {
++        this.suggestionPopup.hide();
++    }
+ 
+-  /**
+-   * @deprecated Use the {@link HandlerRegistration#removeHandler}
+-   * method no the object returned by {@link #addSelectionHandler} instead
+-   */
+-  @Deprecated
+-  public void removeEventHandler(SuggestionHandler handler) {
+-    ListenerWrapper.WrappedOldSuggestionHandler.remove(this, handler);
+-  }
++    public boolean isAnimationEnabled() {
++        return suggestionPopup.isAnimationEnabled();
++    }
+ 
+-  /**
+-   * @deprecated Use the {@link HandlerRegistration#removeHandler}
+-   * method on the object returned by {@link #getTextBox}().addFocusListener instead
+-   */
+-  @Deprecated
+-  public void removeFocusListener(FocusListener listener) {
+-    ListenerWrapper.WrappedFocusListener.remove(this, listener);
+-  }
++    /**
++     * Returns whether or not the first suggestion will be automatically selected.
++     * This behavior is on by default.
++     *
++     * @return true if the first suggestion will be automatically selected
++     */
++    public boolean isAutoSelectEnabled() {
++        return selectsFirstItem;
++    }
+ 
+-  /**
+-   * @deprecated Use the {@link HandlerRegistration#removeHandler}
+-   * method on the object returned by {@link #getTextBox}().add*Handler instead
+-   */
+-  @Deprecated
+-  public void removeKeyboardListener(KeyboardListener listener) {
+-    ListenerWrapper.WrappedKeyboardListener.remove(this, listener);
+-  }
++    /**
++     * @return true if the list of suggestions is currently showing, false if not
++     */
++    public boolean isSuggestionListShowing() {
++        return suggestionPopup.isShowing();
++    }
+ 
+-  public void setAccessKey(char key) {
+-    box.setAccessKey(key);
+-  }
++    /**
++     * @deprecated Use the {@link HandlerRegistration#removeHandler}
++     * method on the object returned by {@link #getTextBox}().addChangeHandler instead
++     */
++    @Deprecated
++    public void removeChangeListener(ChangeListener listener) {
++        ListenerWrapper.WrappedChangeListener.remove(box, listener);
++    }
+ 
+-  public void setAnimationEnabled(boolean enable) {
+-    suggestionPopup.setAnimationEnabled(enable);
+-  }
++    /**
++     * @deprecated Use the {@link HandlerRegistration#removeHandler}
++     * method on the object returned by {@link #getTextBox}().addClickHandler instead
++     */
++    @Deprecated
++    public void removeClickListener(ClickListener listener) {
++        ListenerWrapper.WrappedClickListener.remove(box, listener);
++    }
+ 
+-  /**
+-   * Turns on or off the behavior that automatically selects the first suggested
+-   * item. This behavior is on by default.
+-   * 
+-   * @param selectsFirstItem Whether or not to automatically select the first
+-   *          suggestion
+-   */
+-  public void setAutoSelectEnabled(boolean selectsFirstItem) {
+-    this.selectsFirstItem = selectsFirstItem;
+-  }
++    /**
++     * @deprecated Use the {@link HandlerRegistration#removeHandler}
++     * method no the object returned by {@link #addSelectionHandler} instead
++     */
++    @Deprecated
++    public void removeEventHandler(SuggestionHandler handler) {
++        ListenerWrapper.WrappedOldSuggestionHandler.remove(this, handler);
++    }
+ 
+-  public void setFocus(boolean focused) {
+-    box.setFocus(focused);
+-  }
++    /**
++     * @deprecated Use the {@link HandlerRegistration#removeHandler}
++     * method on the object returned by {@link #getTextBox}().addFocusListener instead
++     */
++    @Deprecated
++    public void removeFocusListener(FocusListener listener) {
++        ListenerWrapper.WrappedFocusListener.remove(this, listener);
++    }
+ 
+-  /**
+-   * Sets the limit to the number of suggestions the oracle should provide. It
+-   * is up to the oracle to enforce this limit.
+-   * 
+-   * @param limit the limit to the number of suggestions provided
+-   */
+-  public void setLimit(int limit) {
+-    this.limit = limit;
+-  }
++    /**
++     * @deprecated Use the {@link HandlerRegistration#removeHandler}
++     * method on the object returned by {@link #getTextBox}().add*Handler instead
++     */
++    @Deprecated
++    public void removeKeyboardListener(KeyboardListener listener) {
++        ListenerWrapper.WrappedKeyboardListener.remove(this, listener);
++    }
+ 
+-  /**
+-   * Sets the style name of the suggestion popup.
+-   * 
+-   * @param style the new primary style name
+-   * @see UIObject#setStyleName(String)
+-   */
+-  public void setPopupStyleName(String style) {
+-    suggestionPopup.setStyleName(style);
+-  }
++    public void setAccessKey(char key) {
++        box.setAccessKey(key);
++    }
+ 
+-  public void setTabIndex(int index) {
+-    box.setTabIndex(index);
+-  }
++    public void setAnimationEnabled(boolean enable) {
++        suggestionPopup.setAnimationEnabled(enable);
++    }
+ 
+-  public void setText(String text) {
+-    box.setText(text);
+-  }
++    /**
++     * Turns on or off the behavior that automatically selects the first suggested
++     * item. This behavior is on by default.
++     *
++     * @param selectsFirstItem Whether or not to automatically select the first
++     *          suggestion
++     */
++    public void setAutoSelectEnabled(boolean selectsFirstItem) {
++        this.selectsFirstItem = selectsFirstItem;
++    }
+ 
+-  public void setValue(String newValue) {
+-    box.setValue(newValue);
+-  }
++    public void setFocus(boolean focused) {
++        box.setFocus(focused);
++    }
+ 
+-  public void setValue(String value, boolean fireEvents) {
+-    box.setValue(value, fireEvents);
+-  }
++    /**
++     * Sets the limit to the number of suggestions the oracle should provide. It
++     * is up to the oracle to enforce this limit.
++     *
++     * @param limit the limit to the number of suggestions provided
++     */
++    public void setLimit(int limit) {
++        this.limit = limit;
++    }
+ 
+-  /**
+-   * Show the current list of suggestions.
+-   */
+-  public void showSuggestionList() {
+-    if (isAttached()) {
+-      currentText = null;
+-      refreshSuggestions();
++    /**
++     * Sets the style name of the suggestion popup.
++     *
++     * @param style the new primary style name
++     * @see UIObject#setStyleName(String)
++     */
++    public void setPopupStyleName(String style) {
++        suggestionPopup.setStyleName(style);
+     }
+-  }
+ 
+-  /**
+-   * <b>Affected Elements:</b>
+-   * <ul>
+-   * <li>-popup = The popup that appears with suggestions.</li>
+-   * <li>-items-item# = The suggested item at the specified index.</li>
+-   * </ul>
+-   * 
+-   * @see UIObject#onEnsureDebugId(String)
+-   */
+-  @Override
+-  protected void onEnsureDebugId(String baseID) {
+-    super.onEnsureDebugId(baseID);
+-    suggestionPopup.ensureDebugId(baseID + "-popup");
+-    suggestionMenu.setMenuItemDebugIds(baseID);
+-  }
++    public void setTabIndex(int index) {
++        box.setTabIndex(index);
++    }
+ 
+-  /**
+-   * Gets the specified suggestion from the suggestions currently showing.
+-   * 
+-   * @param index the index at which the suggestion lives
+-   * 
+-   * @throws IndexOutOfBoundsException if the index is greater then the number
+-   *           of suggestions currently showing
+-   * 
+-   * @return the given suggestion
+-   */
+-  Suggestion getSuggestion(int index) {
+-    if (!isSuggestionListShowing()) {
+-      throw new IndexOutOfBoundsException(
+-          "No suggestions showing, so cannot show " + index);
++    public void setText(String text) {
++        box.setText(text);
+     }
+-    return ((SuggestionMenuItem) suggestionMenu.getItems().get(index)).suggestion;
+-  }
+ 
+-  /**
+-   * Get the number of suggestions that are currently showing.
+-   * 
+-   * @return the number of suggestions currently showing, 0 if there are none
+-   */
+-  int getSuggestionCount() {
+-    return isSuggestionListShowing() ? suggestionMenu.getNumItems() : 0;
+-  }
++    public void setValue(String newValue) {
++        box.setValue(newValue);
++    }
+ 
+-  void showSuggestions(String query) {
+-    if (query.length() == 0) {
+-      oracle.requestDefaultSuggestions(new Request(null, limit), callback);
+-    } else {
+-      oracle.requestSuggestions(new Request(query, limit), callback);
++    public void setValue(String value, boolean fireEvents) {
++        box.setValue(value, fireEvents);
+     }
+-  }
+ 
+-  private void addEventsToTextBox() {
+-    class TextBoxEvents extends HandlesAllKeyEvents implements
+-        ValueChangeHandler<String> {
+-
+-      public void onKeyDown(KeyDownEvent event) {
+-        // Make sure that the menu is actually showing. These keystrokes
+-        // are only relevant when choosing a suggestion.
+-        if (suggestionPopup.isAttached()) {
+-          switch (event.getNativeKeyCode()) {
+-            case KeyCodes.KEY_DOWN:
+-              suggestionMenu.selectItem(suggestionMenu.getSelectedItemIndex() + 1);
+-              break;
+-            case KeyCodes.KEY_UP:
+-              suggestionMenu.selectItem(suggestionMenu.getSelectedItemIndex() - 1);
+-              break;
+-            case KeyCodes.KEY_ENTER:
+-            case KeyCodes.KEY_TAB:
+-              if (suggestionMenu.getSelectedItemIndex() < 0) {
+-                suggestionPopup.hide();
+-              } else {
+-                suggestionMenu.doSelectedItemAction();
+-              }
+-              break;
+-          }
++    /**
++     * Show the current list of suggestions.
++     */
++    public void showSuggestionList() {
++        if (isAttached()) {
++            currentText = null;
++            refreshSuggestions();
+         }
+-        delegateEvent(SuggestBox.this, event);
+-      }
++    }
+ 
+-      public void onKeyPress(KeyPressEvent event) {
+-        delegateEvent(SuggestBox.this, event);
+-      }
++    /**
++     * <b>Affected Elements:</b>
++     * <ul>
++     * <li>-popup = The popup that appears with suggestions.</li>
++     * <li>-items-item# = The suggested item at the specified index.</li>
++     * </ul>
++     *
++     * @see UIObject#onEnsureDebugId(String)
++     */
++    @Override
++    protected void onEnsureDebugId(String baseID) {
++        super.onEnsureDebugId(baseID);
++        suggestionPopup.ensureDebugId(baseID + "-popup");
++        suggestionMenu.setMenuItemDebugIds(baseID);
++    }
+ 
+-      public void onKeyUp(KeyUpEvent event) {
+-        // After every user key input, refresh the popup's suggestions.
+-        refreshSuggestions();
+-        delegateEvent(SuggestBox.this, event);
+-      }
++    /**
++     * Gets the specified suggestion from the suggestions currently showing.
++     *
++     * @param index the index at which the suggestion lives
++     *
++     * @throws IndexOutOfBoundsException if the index is greater then the number
++     *           of suggestions currently showing
++     *
++     * @return the given suggestion
++     */
++    Suggestion getSuggestion(int index) {
++        if (!isSuggestionListShowing()) {
++            throw new IndexOutOfBoundsException(
++                    "No suggestions showing, so cannot show " + index);
++        }
++        return ((SuggestionMenuItem) suggestionMenu.getItems().get(index)).suggestion;
++    }
+ 
+-      public void onValueChange(ValueChangeEvent<String> event) {
+-        delegateEvent(SuggestBox.this, event);
+-      }
++    /**
++     * Get the number of suggestions that are currently showing.
++     *
++     * @return the number of suggestions currently showing, 0 if there are none
++     */
++    int getSuggestionCount() {
++        return isSuggestionListShowing() ? suggestionMenu.getNumItems() : 0;
+     }
+ 
+-    TextBoxEvents events = new TextBoxEvents();
+-    events.addKeyHandlersTo(box);
+-    box.addValueChangeHandler(events);
+-  }
++    void showSuggestions(String query) {
++        if (query.length() == 0) {
++            oracle.requestDefaultSuggestions(new Request(null, limit), callback);
++        } else {
++            oracle.requestSuggestions(new Request(query, limit), callback);
++        }
++    }
+ 
+-  private PopupPanel createPopup() {
+-    PopupPanel p = new DecoratedPopupPanel(true, false, "suggestPopup");
+-    p.setWidget(suggestionMenu);
+-    p.setStyleName("gwt-SuggestBoxPopup");
+-    p.setPreviewingAllNativeEvents(true);
+-    p.addAutoHidePartner(getTextBox().getElement());
+-    return p;
+-  }
++    private void addEventsToTextBox() {
++        class TextBoxEvents extends HandlesAllKeyEvents implements
++                ValueChangeHandler<String> {
+ 
+-  private void fireSuggestionEvent(Suggestion selectedSuggestion) {
+-    SelectionEvent.fire(this, selectedSuggestion);
+-  }
++            public void onKeyDown(KeyDownEvent event) {
++                // Make sure that the menu is actually showing. These keystrokes
++                // are only relevant when choosing a suggestion.
++                if (suggestionPopup.isAttached()) {
++                    switch (event.getNativeKeyCode()) {
++                        case KeyCodes.KEY_DOWN:
++                            suggestionMenu.selectItem(suggestionMenu.getSelectedItemIndex() + 1);
++                            break;
++                        case KeyCodes.KEY_UP:
++                            suggestionMenu.selectItem(suggestionMenu.getSelectedItemIndex() - 1);
++                            break;
++                        case KeyCodes.KEY_ENTER:
++                        case KeyCodes.KEY_TAB:
++                            if (suggestionMenu.getSelectedItemIndex() < 0) {
++                                suggestionPopup.hide();
++                            } else {
++                                suggestionMenu.doSelectedItemAction();
++                            }
++                            break;
++                    }
++                }
++                delegateEvent(SuggestBox.this, event);
++            }
+ 
+-  private void refreshSuggestions() {
+-    // Get the raw text.
+-    String text = box.getText();
+-    if (text.equals(currentText)) {
+-      return;
+-    } else {
+-      currentText = text;
++            public void onKeyPress(KeyPressEvent event) {
++                delegateEvent(SuggestBox.this, event);
++            }
++
++            public void onKeyUp(KeyUpEvent event) {
++                // After every user key input, refresh the popup's suggestions.
++                refreshSuggestions();
++                delegateEvent(SuggestBox.this, event);
++            }
++
++            public void onValueChange(ValueChangeEvent<String> event) {
++                delegateEvent(SuggestBox.this, event);
++            }
++        }
++
++        TextBoxEvents events = new TextBoxEvents();
++        events.addKeyHandlersTo(box);
++        box.addValueChangeHandler(events);
+     }
+-    showSuggestions(text);
+-  }
+ 
+-  private void setNewSelection(SuggestionMenuItem menuItem) {
+-    Suggestion curSuggestion = menuItem.getSuggestion();
+-    currentText = curSuggestion.getReplacementString();
+-    setText(currentText);
+-    suggestionPopup.hide();
+-    fireSuggestionEvent(curSuggestion);
+-  }
++    private PopupPanel createPopup() {
++        PopupPanel p = new DecoratedPopupPanel(true, false, "suggestPopup");
++        p.setWidget(suggestionMenu);
++        p.setStyleName("gwt-SuggestBoxPopup");
++        p.setPreviewingAllNativeEvents(true);
++        p.addAutoHidePartner(getTextBox().getElement());
++        return p;
++    }
+ 
+-  /**
+-   * Sets the suggestion oracle used to create suggestions.
+-   * 
+-   * @param oracle the oracle
+-   */
+-  private void setOracle(SuggestOracle oracle) {
+-    this.oracle = oracle;
+-  }
++    private void fireSuggestionEvent(Suggestion selectedSuggestion) {
++        SelectionEvent.fire(this, selectedSuggestion);
++    }
+ 
+-  /**
+-   * Show the given collection of suggestions.
+-   * 
+-   * @param suggestions suggestions to show
+-   */
+-  private void showSuggestions(Collection<? extends Suggestion> suggestions) {
+-    if (suggestions.size() > 0) {
++    private void refreshSuggestions() {
++        // Get the raw text.
++        String text = box.getText();
++        if (text.equals(currentText)) {
++            return;
++        } else {
++            currentText = text;
++        }
++        showSuggestions(text);
++    }
+ 
+-      // Hide the popup before we manipulate the menu within it. If we do not
+-      // do this, some browsers will redraw the popup as items are removed
+-      // and added to the menu.
+-      boolean isAnimationEnabled = suggestionPopup.isAnimationEnabled();
+-      if (suggestionPopup.isAttached()) {
++    private void setNewSelection(SuggestionMenuItem menuItem) {
++        Suggestion curSuggestion = menuItem.getSuggestion();
++        currentText = curSuggestion.getReplacementString();
++        setText(currentText);
+         suggestionPopup.hide();
+-      }
++        fireSuggestionEvent(curSuggestion);
++    }
+ 
+-      suggestionMenu.clearItems();
++    /**
++     * Sets the suggestion oracle used to create suggestions.
++     *
++     * @param oracle the oracle
++     */
++    private void setOracle(SuggestOracle oracle) {
++        this.oracle = oracle;
++    }
+ 
+-      for (Suggestion curSuggestion : suggestions) {
+-        final SuggestionMenuItem menuItem = new SuggestionMenuItem(
+-            curSuggestion, oracle.isDisplayStringHTML());
+-        menuItem.setCommand(new Command() {
+-          public void execute() {
+-            SuggestBox.this.setNewSelection(menuItem);
+-          }
+-        });
++    /**
++     * Show the given collection of suggestions.
++     *
++     * @param suggestions suggestions to show
++     */
++    private void showSuggestions(Collection<? extends Suggestion> suggestions) {
++        if (suggestions.size() > 0) {
+ 
+-        suggestionMenu.addItem(menuItem);
+-      }
++            // Hide the popup before we manipulate the menu within it. If we do not
++            // do this, some browsers will redraw the popup as items are removed
++            // and added to the menu.
++            boolean isAnimationEnabled = suggestionPopup.isAnimationEnabled();
++            if (suggestionPopup.isAttached()) {
++                suggestionPopup.hide();
++            }
+ 
+-      if (selectsFirstItem) {
+-        // Select the first item in the suggestion menu.
+-        suggestionMenu.selectItem(0);
+-      }
++            suggestionMenu.clearItems();
+ 
+-      suggestionPopup.showRelativeTo(getTextBox());
+-      suggestionPopup.setAnimationEnabled(isAnimationEnabled);
+-    } else {
+-      suggestionPopup.hide();
++            for (Suggestion curSuggestion : suggestions) {
++                final SuggestionMenuItem menuItem = new SuggestionMenuItem(
++                        curSuggestion, oracle.isDisplayStringHTML());
++                menuItem.setCommand(new Command() {
++                    public void execute() {
++                        SuggestBox.this.setNewSelection(menuItem);
++                    }
++                });
++
++                suggestionMenu.addItem(menuItem);
++            }
++
++            if (selectsFirstItem) {
++                // Select the first item in the suggestion menu.
++                suggestionMenu.selectItem(0);
++            }
++
++            suggestionPopup.showRelativeTo(getTextBox());
++            suggestionPopup.setAnimationEnabled(isAnimationEnabled);
++        } else {
++            suggestionPopup.hide();
++        }
+     }
+-  }
++
++    /**
++     */
++    public class SuggestionHighlightEvent extends HighlightEvent<Suggestion> {
++        SuggestionHighlightEvent(Suggestion highlighted) {
++            super(highlighted);
++        }
++    }
  }
 Index: user/src/com/google/gwt/user/client/ui/MenuBar.java
 ===================================================================
---- user/src/com/google/gwt/user/client/ui/MenuBar.java	(revision 8050)
+--- user/src/com/google/gwt/user/client/ui/MenuBar.java	(revision 8811)
 +++ user/src/com/google/gwt/user/client/ui/MenuBar.java	(working copy)
 @@ -157,7 +157,7 @@
    private boolean isAnimationEnabled = false;

@@ -34,9 +34,9 @@ public class CurationEntryPoint implements EntryPoint {
         loadPublicationAndFilterElements();
         exposeSessionSaveMethodsToJavascript();
         // use only the session save module if no pub id is provided.
-        if (publicationID == null)
-            return;
-        exposeCurationJavaScriptMethods(type.initializeModule(publicationID));
+        if (publicationID != null){
+            type.initializeModule(publicationID) ;
+        }
     }
 
     // Load properties from JavaScript.
@@ -63,18 +63,6 @@ public class CurationEntryPoint implements EntryPoint {
       @org.zfin.gwt.curation.ui.CurationEntryPoint::storeRefresh(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(person, publication, field, value,anchor);
       };
 
-    }-*/;
-
-
-    /**
-     * Used to support the mouseOver Event on the popup suggestion box.
-     *
-     * @param constructionZoneModule StructureConstructionZoneModule
-     */
-    private native void exposeCurationJavaScriptMethods(ConstructionZone constructionZoneModule)/*-{
-      $wnd.showTermInfoString = function (ontology, termID) {
-      constructionZoneModule.@org.zfin.gwt.curation.ui.ConstructionZone::showTermInfoString(Ljava/lang/String;Ljava/lang/String;)(ontology, termID);
-      };
     }-*/;
 
     @SuppressWarnings({"FeatureEnvy"})

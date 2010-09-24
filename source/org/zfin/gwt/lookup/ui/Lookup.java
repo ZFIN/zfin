@@ -25,7 +25,6 @@ public class Lookup extends Composite {
     public static final String JSREF_ONCLICK = "onclick";
     public static final String JSREF_OID = "OID";
     public static final String JSREF_ONTOLOGY_NAME = "ontologyName";
-    public static final String JSREF_SHOW_TERM_DETAIL = "showTermDetail";
 
     public void onModuleLoad(Dictionary lookupProperties) {
 
@@ -59,9 +58,6 @@ public class Lookup extends Composite {
             if (keySet.contains(JSREF_ONTOLOGY_NAME)) {
                 lookup.setOntologyName(lookupProperties.get(JSREF_ONTOLOGY_NAME));
             }
-            if (keySet.contains(JSREF_SHOW_TERM_DETAIL)) {
-                lookup.setShowTermDetail(Boolean.valueOf(lookupProperties.get(JSREF_SHOW_TERM_DETAIL)));
-            }
 
             if (keySet.contains(JSREF_ACTION)) {
                 if (lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)) {
@@ -82,18 +78,7 @@ public class Lookup extends Composite {
             if (keySet.contains(JSREF_DIV_NAME)) {
                 RootPanel.get(lookupProperties.get(JSREF_DIV_NAME)).add(lookup);
             }
-        exposeJavaScriptMethods(lookup);
     }
 
-    /**
-     * Used to support the mouseOver Event on the popup suggestion box.
-     *
-     * @param lookupComposite Lookup
-     */
-    private native void exposeJavaScriptMethods(LookupComposite lookupComposite)/*-{
-      $wnd.showTermInfoString = function (ontologyName, termID) {
-      lookupComposite.@org.zfin.gwt.root.ui.LookupComposite::showTermInfo(Ljava/lang/String;Ljava/lang/String;)(ontologyName, termID);
-      };
-    }-*/;
 
 }

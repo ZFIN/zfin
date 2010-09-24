@@ -52,31 +52,18 @@ public interface LookupRPCService extends RemoteService {
      */
     public TermInfo getTermInfo(OntologyDTO ontology, String termID);
 
-
-    /**
-     * Retrieve the term info for a given ontology and term name.
-     *
-     * @param ontology Ontology
-     * @param termName term Name
-     * @return TermInfo
-     */
-    TermInfo getTermInfoByName(OntologyDTO ontology, String termName);
-
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
      * @param request        request
-     * @param showTermDetail true or false
      * @param goOntology     ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO goOntology,boolean useIdAsValue);
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO goOntology,boolean useIdAsValue);
 
     // validation methods
 
     TermStatus validateTerm(String term,  OntologyDTO ontology);
-
-    TermStatus validateMarkerTerm(String term);
 
     List<PublicationDTO> getRecentPublications(String key);
 
@@ -85,4 +72,6 @@ public interface LookupRPCService extends RemoteService {
     List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID);
 
     Map<String,String> getAllZfinProperties();
+
+    public TermDTO getTermByName(OntologyDTO ontologyDTO,String value) ;
 }

@@ -143,9 +143,7 @@
                         ontologyName: "<%= Ontology.ANATOMY %>",
                         width: 40,
                         wildcard: false,
-                        useTermTable: true,
-                    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>:
-                    false,
+                        useTermTable: true
                     }
                 </script>
                 <style type="text/css">
@@ -188,9 +186,7 @@
                         ontologyName: "<%= Ontology.GO_BP %>",
                         width: 40,
                         wildcard: false,
-                        useTermTable: true,
-                    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>:
-                    false,
+                        useTermTable: true
                     }
                 </script>
                 <style type="text/css">

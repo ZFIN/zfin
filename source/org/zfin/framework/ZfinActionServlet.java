@@ -57,7 +57,6 @@ public class ZfinActionServlet extends DispatcherServlet {
             initBlast();
         }
         initRelationshipDisplayNames();
-        initRelationshipDisplayNames();
     }
 
     private void initRelationshipDisplayNames() {

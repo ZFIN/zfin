@@ -390,29 +390,6 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     }
 
     @Override
-    public TermDTO getGOTermByName(String value) {
-        // going to be faster to go to the DB
-        Term goTerm = null;
-        Ontology ontology;
-        for (Iterator<Ontology> iterator = Ontology.GO.getIndividualOntologies().iterator();
-             iterator.hasNext() && goTerm == null;) {
-            ontology = iterator.next();
-            goTerm = OntologyManager.getInstance().getTermByName(ontology, value, true);
-        }
-        if (goTerm == null) {
-            if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
-                logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
-                goTerm = infrastructureRepository.getTermByID(value);
-            }
-            if (goTerm == null) {
-                logger.info("Failed to find GO term[" + value + "]");
-                return null;
-            }
-        }
-        return DTOConversionService.convertToTermDTO(goTerm);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID) {
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(publicationID) ;

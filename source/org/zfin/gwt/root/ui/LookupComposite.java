@@ -73,7 +73,6 @@ public class LookupComposite extends Composite implements Revertible {
     protected String buttonText = null;
     protected String type = GDAG_TERM_LOOKUP;
     protected boolean wildCard = true;
-    protected boolean showTermDetail = true;
     protected int suggestBoxWidth = 30;
     protected String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
@@ -126,6 +125,17 @@ public class LookupComposite extends Composite implements Revertible {
             termInfoTable = new TermInfoComposite(false);
             termInfoTable.clear();
             panel.add(termInfoTable);
+
+            if(highlightAction==null){
+                setHighlightAction(new HighlightAction(){
+                    @Override
+                    public void onHighlight(String termID) {
+                        if(termID!=null && false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                            lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
+                        }
+                    }
+                });
+            }
         }
 
     }
@@ -147,7 +157,7 @@ public class LookupComposite extends Composite implements Revertible {
                     suggestBox.setText(currentText);
                     doSubmit(currentText);
                 } else if (suggestion.getReplacementString() != null) {
-                    if(useIdAsValue){
+                    if(useIdAsValue && termInfoTable !=null){
                         lookupRPC.getTermInfo(ontology,suggestion.getReplacementString(),
                                 new TermInfoCallBack(termInfoTable,suggestion.getReplacementString()){
                                     @Override
@@ -204,9 +214,8 @@ public class LookupComposite extends Composite implements Revertible {
                 // Add logic to popup suggestion upon focus 
                 String text = suggestBox.getText();
                 if (text == null || text.trim().length() > getMinLookupLength()) {
-                    ///
+                    /// do nothing?
                 }
-//                Window.alert("HIOO");
 
             }
         }));
@@ -355,14 +364,6 @@ public class LookupComposite extends Composite implements Revertible {
         this.wildCard = wildCard;
     }
 
-    public boolean isShowTermDetail() {
-        return showTermDetail;
-    }
-
-    public void setShowTermDetail(boolean showTermDetail) {
-        this.showTermDetail = showTermDetail;
-    }
-
     public int getMinLookupLength() {
         return minLookupLength;
     }
@@ -505,5 +506,9 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void setTermInfoTable(TermInfoComposite termInfoTable) {
         this.termInfoTable = termInfoTable;
+    }
+
+    public boolean isSuggestionListShowing() {
+        return suggestBox.isSuggestionListShowing();
     }
 }

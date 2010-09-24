@@ -64,21 +64,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         return publicationAbstractDTO;
     }
 
-
-    private String createListItem(String displayName, Term term) {
-        OntologyDTO ontologyDTO = DTOConversionService.convertToOntologyDTO(term.getOntology());
-        String termID = term.getID();
-        StringBuilder builder = new StringBuilder(60);
-        builder.append("<span onmouseover=showTermInfoString('");
-        builder.append(ontologyDTO.getOntologyName());
-        builder.append("','");
-        builder.append(termID);
-        builder.append("')  class='autocomplete-plain'>");
-        builder.append(displayName);
-        builder.append("</span>");
-        return builder.toString();
-    }
-
     public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
@@ -134,49 +119,24 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
     /**
-     * Checks if a given marker exists in ZFIN>
+     * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param markerAbbreviation abbreviation
-     * @return term status
+     * @param request        request
+     * @param ontology       ontology name
+     * @return suggestions
      */
-    public TermStatus validateMarkerTerm(String markerAbbreviation) {
-
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(markerAbbreviation);
-        if (marker != null) {
-            return new TermStatus(TermStatus.Status.FOUND_EXACT, markerAbbreviation, marker.getZdbID());
-        }
-
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(markerAbbreviation);
-        if (markers.size() == 1) {
-            return new TermStatus(TermStatus.Status.FOUND_EXACT, markerAbbreviation, markers.get(0).getZdbID());
-        } else if (markers.size() == 0) {
-            return new TermStatus(TermStatus.Status.FOUND_NONE, markerAbbreviation);
-        } else {
-            return new TermStatus(TermStatus.Status.FOUND_MANY, markerAbbreviation);
-        }
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO ontology,boolean useIDAsValue) {
+        return getOntologySuggestions(request,  DTOConversionService.convertToOntology(ontology),useIDAsValue);
     }
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
      * @param request        request
-     * @param showTermDetail true or false
      * @param ontology       ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontology,boolean useIDAsValue) {
-        return getOntologySuggestions(request, showTermDetail, DTOConversionService.convertToOntology(ontology),useIDAsValue);
-    }
-
-    /**
-     * Retrieve terms from a given ontology (via the gDAG ontology table)
-     *
-     * @param request        request
-     * @param showTermDetail create mouseOver JS script to show term detail
-     * @param ontology       ontology name
-     * @return suggestions
-     */
-    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, Ontology ontology,boolean useIDAsValue) {
+    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology,boolean useIDAsValue) {
         HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
@@ -192,10 +152,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion) ;
                 String termValue = (useIDAsValue ?  term.getTerm().getID() : term.getTerm().getTermName()) ;
-                if (showTermDetail){
-                    displayName = createListItem(displayName, term.getTerm());
-                }
-
                 suggestions.add(new ItemSuggestion(displayName, termValue));
             }
         }
@@ -310,16 +266,6 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             return null;
         }
         return getGenericTermInfo(termID, ontology);
-    }
-
-    /**
-     * Retrieve the term info for a given ontology and term name.
-     *
-     * @param ontology Ontology
-     * @param termName term Name
-     */
-    public TermInfo getTermInfoByName(OntologyDTO ontology, String termName) {
-        return getGenericTermInfoByName(termName, ontology);
     }
 
     /**
@@ -462,6 +408,29 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 //        }
 
         return allZfinProperties ;
+    }
+
+
+    public TermDTO getTermByName(OntologyDTO ontologyDTO,String value) {
+        Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO) ;
+
+        Term term = null;
+        for (Iterator<Ontology> iterator = ontology.getIndividualOntologies().iterator();
+             iterator.hasNext() && term == null;) {
+            ontology = iterator.next();
+            term = OntologyManager.getInstance().getTermByName(ontology, value, true);
+        }
+        if (term == null) {
+            if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
+                logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
+                term = RepositoryFactory.getInfrastructureRepository().getTermByID(value);
+            }
+            if (term == null) {
+                logger.info("Failed to find GO term[" + value + "]");
+                return null;
+            }
+        }
+        return DTOConversionService.convertToTermDTO(term);
     }
 }
 

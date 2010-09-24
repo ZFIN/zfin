@@ -38,26 +38,14 @@ public interface LookupRPCServiceAsync {
 
     void validateTerm(String term, OntologyDTO ontology, AsyncCallback<TermStatus> async);
 
-    void validateMarkerTerm(String term, AsyncCallback<TermStatus> async);
-
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table).
      *
      * @param request        request
-     * @param showTermDetail true or false
      * @param ontologyDTO    ontology name
      * @param async          callback
      */
-    void getOntologySuggestions(SuggestOracle.Request request, boolean showTermDetail, OntologyDTO ontologyDTO, boolean useIdAsValue, AsyncCallback<SuggestOracle.Response> async);
-
-    /**
-     * Retrieve the term info for a given ontology and term name.
-     *
-     * @param ontology         Ontology
-     * @param termName         term Name
-     * @param termInfoCallback callback
-     */
-    void getTermInfoByName(OntologyDTO ontology, String termName, AsyncCallback<TermInfo> termInfoCallback);
+    void getOntologySuggestions(SuggestOracle.Request request, OntologyDTO ontologyDTO, boolean useIdAsValue, AsyncCallback<SuggestOracle.Response> async);
 
     void getRecentPublications(String key, AsyncCallback<List<PublicationDTO>> asyncCallback);
 
@@ -66,4 +54,6 @@ public interface LookupRPCServiceAsync {
     void getAttributionsForPub(String publicationZdbID, AsyncCallback<List<RelatedEntityDTO>> markerEditCallBack);
 
     void getAllZfinProperties(AsyncCallback<Map<String, String>> async);
+
+    void getTermByName(OntologyDTO ontologyDTO, String value, AsyncCallback<TermDTO> async);
 }

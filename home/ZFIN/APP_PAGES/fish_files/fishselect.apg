@@ -1882,8 +1882,7 @@ return false ; ">
         type: "GDAG_TERM_LOOKUP",
         width: 40, 
         wildcard: false,
-        useTermTable: true,
-        showTermDetail: false
+        useTermTable: true
     };
 </script>
 

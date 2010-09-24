@@ -7,11 +7,11 @@ import org.zfin.gwt.root.dto.TermInfo;
  */
 public class TermInfoCallBack extends ZfinAsyncCallback<TermInfo> {
 
-    private String historyToken;
-    private TermInfoComposite termInfoComposite;
+    protected String historyToken;
+    protected TermInfoComposite termInfoComposite;
 
     public TermInfoCallBack(TermInfoComposite termInfoComposite, String historyToken) {
-        super("Error during Terminfo call", null);
+        super("Error during TermInfo call", null);
         this.termInfoComposite = termInfoComposite;
         this.historyToken = historyToken;
     }

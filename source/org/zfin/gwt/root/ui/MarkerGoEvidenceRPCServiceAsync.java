@@ -27,8 +27,6 @@ public interface MarkerGoEvidenceRPCServiceAsync {
 
     void createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO, AsyncCallback<GoEvidenceDTO> async);
 
-    void getGOTermByName(String value, AsyncCallback<TermDTO> asyncCallback);
-
     void validateAccession(String accession, String inferenceCategory, AsyncCallback<Boolean> async);
 
     void getMarkerGoTermEvidencesForPub(String publicationID, AsyncCallback<List<GoEvidenceDTO>> async);

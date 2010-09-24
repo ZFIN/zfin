@@ -497,15 +497,15 @@ public class OntologyManager {
      * Retrieve a term by ID (internal) or Obo ID from a given ontology.
      *
      * @param ontology ontology
-     * @param ID       term ID
+     * @param id       term ID
      * @return term
      */
-    public Term getTermByID(Ontology ontology, String ID) {
-        Set<Term> terms = ontologyTermMap.get(ontology).get(ID);
+    public Term getTermByID(Ontology ontology, String id) {
+        Set<Term> terms = ontologyTermMap.get(ontology).get(id);
         //if (CollectionUtils.isNotEmpty(terms)) {
         if (terms != null && terms.size() > 0) {
             if (terms.size() != 1) {
-                logger.error("multiple terms [" + terms.size() + "] returned for termID: " + ID);
+                logger.error("multiple terms [" + terms.size() + "] returned for termID: " + id);
             }
             return terms.iterator().next();
         }

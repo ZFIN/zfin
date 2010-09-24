@@ -28,7 +28,7 @@ public class ZfinPropertiesPlaceholderConfigurer extends PropertyPlaceholderConf
         } catch (TomcatStartupException e) {
             throw new RuntimeException("TomcatStartupException caught, Stopping server",e) ;
         }
-        super.postProcessBeanFactory(beanFactory);    //To change body of overridden methods use File | Settings | File Templates.
+        super.postProcessBeanFactory(beanFactory);   
     }
 
     /**

@@ -8,7 +8,6 @@
 <%@attribute name="ontology" type="org.zfin.ontology.Ontology" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="action" type="java.lang.String" required="false" %>
-<%@attribute name="showTermDetail" type="java.lang.Boolean" required="true" description="True means a mouseOver is generated on the suggestion list that would show the term detail" %>
 <%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="Allow to enter a query string with a wildcard added." %>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
@@ -33,8 +32,7 @@
     </c:choose>
     <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
     <%= LookupTable.JSREF_USE_TERM_TABLE%>: false,
-    <%= Lookup.JSREF_LIMIT%>: 25,
-    <%= Lookup.JSREF_SHOW_TERM_DETAIL%>: ${showTermDetail}
+    <%= Lookup.JSREF_LIMIT%>: 25
     }
 
 </script>

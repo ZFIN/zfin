@@ -20,8 +20,7 @@ public abstract class ConstructionZoneAdapater implements ConstructionZone, Hand
      * @param term           full post-composed structure
      * @param selectedEntity entity
      */
-    public void prepopulateConstructionZone(ExpressedTermDTO term, PostComposedPart selectedEntity) {
-    }
+    public void prepopulateConstructionZone(ExpressedTermDTO term, PostComposedPart selectedEntity) { }
 
     /**
      * This method takes an PhenotypeTermDTO and pre-populates the construction
@@ -32,8 +31,7 @@ public abstract class ConstructionZoneAdapater implements ConstructionZone, Hand
      * @param term           full post-composed structure
      * @param selectedEntity entity
      */
-    public void prepopulateConstructionZoneWithPhenotype(PhenotypeTermDTO term, PostComposedPart selectedEntity) {
-    }
+    public void prepopulateConstructionZoneWithPhenotype(PhenotypeTermDTO term, PostComposedPart selectedEntity) { }
 
     /**
      * Sets the construction zone to the default setting:
@@ -41,40 +39,20 @@ public abstract class ConstructionZoneAdapater implements ConstructionZone, Hand
      * 2. set ontology selectors to AO
      * 3. displays the default structure in the term info box (currently AO:anatomical structure)
      */
-    public void resetConstructionZone() {
-    }
-
-    /**
-     * Display the term info for a given term in a given ontology.
-     *
-     * @param ontology Ontology
-     * @param termID   term ID: zdb ID or obo ID
-     */
-    public void showTermInfo(OntologyDTO ontology, String termID) {
-    }
+    public void resetConstructionZone() { }
 
     /**
      * Set the object that validated a new structure according to given business logic.
      *
      * @param validator StructureValidator
      */
-    public void setStructureValidator(StructureValidator validator) {
-    }
+    public void setStructureValidator(StructureValidator validator) { }
 
     /**
      * Add a change handler.
      *
      * @param listener handler
      */
-    public void addCreatePileChangeListener(PileStructureListener listener) {
-    }
+    public void addCreatePileChangeListener(PileStructureListener listener) { }
 
-    /**
-     * Convenience method: Needed as we expose this to an external JS.
-     *
-     * @param ontology ontology
-     * @param termID   term ID
-     */
-    public void showTermInfoString(String ontology, String termID) {
-    }
 }

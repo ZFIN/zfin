@@ -103,15 +103,4 @@ public class PatoCurationEntryPoint implements EntryPoint {
             Window.alert(e.toString());
         }
     }
-
-    /**
-     * Used to support the mouseOver Event on the popup suggestion box.
-     *
-     * @param constructionZoneModule StructureConstructionZoneModule
-     */
-    private native void showTermInfo(PileConstructionZoneModule constructionZoneModule)/*-{
-      $wnd.showTermInfoString = function (ontology, termID) {
-      constructioneZoneModule.@org.zfin.gwt.curation.ui.PileConstructionZoneModule::showTermInfoString(Ljava/lang/String;Ljava/lang/String;)(ontology, termID);
-      };
-    }-*/;
 }
