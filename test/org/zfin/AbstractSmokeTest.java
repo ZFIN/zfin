@@ -19,7 +19,6 @@ public class AbstractSmokeTest extends WebTestCase {
 
     protected String mutant;
     protected String domain;
-    protected String unsecureUrlPrefix;
 
     protected String nonSecureUrlDomain;
     protected String secureUrlDomain;
