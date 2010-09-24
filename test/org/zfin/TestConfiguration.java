@@ -28,7 +28,7 @@ public class TestConfiguration {
         DOMConfigurator.configure(file.getAbsolutePath());
 
         // set tomcat temp directory
-        ZfinProperties.init();
+        ZfinProperties.init("home/WEB-INF/zfin.properties");
         System.setProperty("java.io.tmpdir", ZfinPropertiesEnum.CATALINA_BASE.value()+"/temp") ;
     }
 

@@ -80,8 +80,16 @@
 
     <fail unless="property.file.available" message="Unable to find property file[${property.file}] for instance[${INSTANCE}"/>
 
+
+    <exportProperties
+            file="${commons.dir}/${INSTANCE}.properties"
+            target="home/WEB-INF/zfin.properties"
+            header="#Properties for INSTANCE=${INSTANCE}"
+            keySuffix="="
+            />
+
     <!--here, we are only loading property files into ant, not into the enum -->
-    <loadProperties file="${property.file}" />
+    <loadProperties file="home/WEB-INF/zfin.properties" />
 
     <exportProperties
             file="${commons.dir}/${INSTANCE}.properties"
@@ -566,7 +574,6 @@
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
-            <replaceProperties to="@{to}/WEB-INF/properties"/>
         </sequential>
     </macrodef>
 

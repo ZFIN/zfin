@@ -42,7 +42,7 @@ public class ZfinPropertiesPlaceholderConfigurer extends PropertyPlaceholderConf
             throw new TomcatStartupException("INSTANCE not defined in environment") ;
         }
 
-        String propertiesFileString = webRoot + "/WEB-INF/properties/" + instance+".properties" ;
+        String propertiesFileString = webRoot + "/WEB-INF/zfin.properties" ;
         File propertiesFile = new File(propertiesFileString) ;
         String absolutePath = propertiesFile.getAbsolutePath();
         logger.info(absolutePath);
@@ -52,24 +52,5 @@ public class ZfinPropertiesPlaceholderConfigurer extends PropertyPlaceholderConf
         }
         ZfinProperties.init(propertiesFileString);
         ZfinProperties.validateProperties() ;
-        checkDeployedInstance() ;
-    }
-
-    private void checkDeployedInstance() throws TomcatStartupException{
-        File file = new File(webRoot+"/WEB-INF/INSTANCE") ;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file)) ;
-            String instance = reader.readLine() ;
-            reader.close();
-            reader = null ;
-            if(false==instance.equals(ZfinPropertiesEnum.INSTANCE.value())){
-                throw new TomcatStartupException(
-                        "Deployed instance["+instance+"] does not match " +
-                                "loaded instance from environment : " + ZfinPropertiesEnum.INSTANCE.value() +
-                                " current environment["+System.getenv("INSTANCE")+"]")  ;
-            }
-        } catch (Exception e) {
-            throw new TomcatStartupException("INSTANCE not deployed properly due to error trying to load file: "+ file,e)  ;
-        }
     }
 }
