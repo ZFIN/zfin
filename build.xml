@@ -186,9 +186,9 @@
                 footerFile="${commons.dir}/footer.tt"
                 />
         <replaceregexp file="${commons.dir}/${INSTANCE}.tt"
-                match="@"
-                replace="\\\\@"
-                flags="g"
+                       match="@"
+                       replace="\\\\@"
+                       flags="g"
                 >
         </replaceregexp>
     </target>
@@ -396,38 +396,38 @@
                     <and>
                         <available file="${post-web-inf}"/>
                         <available file="${gwt.post-target}"/>
-                        <!--             <available file="${post.version.file}"/> -->
                     </and>
                 </not>
             </condition>
         </fail>
 
-
-        <move todir="${archive-home.target}" failonerror="false" verbose="false" overwrite="true">
-            <fileset dir="${post-home.target}"/>
-        </move>
-        <move todir="${post-home.target}" failonerror="false" verbose="false">
-            <fileset dir="${home.target}"/>
-        </move>
-        <move todir="${home.target}" verbose="false">
-            <fileset dir="${pre-home.target}"/>
-        </move>
-
-        <!-- move web-inf -->
-        <echo message="reverting build"/>
-        <move todir="${pre-home.target}" verbose="fales" overwrite="true">
-            <fileset dir="${home.target}"/>
-        </move>
-        <move todir="${home.target}" verbose="true">
-            <fileset dir="${post-home.target}"/>
-        </move>
-        <move todir="${post-home.target}" failonerror="false" verbose="true">
-            <fileset dir="${archive-home.target}"/>
-        </move>
+        <moveWebApp to="${archive-home.target" from="${post-home.target}" />
+        <moveWebApp to="${post-home.target" from="${home.target}" />
+        <moveWebApp to="${home.target" from="${pre-home.target}" failonerror="true"/>
 
         <echo message=":REVERTED BUILD SUCCESSFULY:"/>
     </target>
 
+    <macrodef name="moveWebApp">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="true"/>
+        <attribute name="failonerror" default="false"/>
+        <sequential>
+            <echo message="@{from}"/>
+            <move todir="@{to}" overwrite="@{overwrite}" failonerror="@{failonerror}">
+                <fileset dir="@{from}">
+                    <include name="WEB-INF/**"/>
+                    <include name="gwt/**"/>
+                    <include name="images/**"/>
+                    <include name="css/**"/>
+                    <include name="javascript/**"/>
+                </fileset>
+            </move>
+            <move file="@{from}/java-deploy-version.html" todir="@{to}" failonerror="false"/>
+
+        </sequential>
+    </macrodef>
 
     <!-- removed the has.pre-directories clause, as we shouldn't get here unless the pre-compile has been built -->
     <target name="advance-build"
@@ -444,15 +444,18 @@
                 </not>
             </condition>
         </fail>
-        <move todir="${archive-home.target}" failonerror="false" verbose="false" overwrite="true">
-            <fileset dir="${post-home.target}"/>
-        </move>
-        <move todir="${post-home.target}" failonerror="false" verbose="false">
-            <fileset dir="${home.target}"/>
-        </move>
-        <move todir="${home.target}" verbose="false">
-            <fileset dir="${pre-home.target}"/>
-        </move>
+
+        <available  property="post-home.exists" file="${post-home.target}"/>
+        <echo message="${post-home.exists}"/>
+
+        <if>
+            <equals arg1="${post-home.exists}" arg2="true"/>
+            <then>
+                <moveWebApp to="${archive-home.target}" from="${post-home.target}" overwrite="true" failonerror="false"/>
+            </then>
+        </if>
+        <moveWebApp to="${post-home.target}" from="${home.target}" overwrite="true" failonerror="false"/>
+        <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
         <copy file="${conf.dir}/log4j.xml" todir="${home.target}/WEB-INF/classes/" failonerror="false"/>
 
         <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
@@ -491,15 +494,13 @@
     <target name="deploy" depends="has-tomcat-symlink,pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
-    <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release"
+    <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <antcall target="copy-indexer-build-file-with-env-variables"/>
-        <!-- Generate last jsp file before compiling -->
-        <antcall target="generateJSPVersionFile"/>
-        <!-- Want to call at the same time in order match -->
-        <antcall target="generateStaticHTMLVersionFile"/>
         <antcall target="jsp-compile"/>
     </target>
+
+    <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticHTMLVersionFile"/>
 
     <macrodef name="removeWebApp">
         <attribute name="location"/>
@@ -517,14 +518,13 @@
             <!--I don't think doing the full-scale delete is necessary.  -->
             <!--<echo message="@{to}"/>-->
             <!--<delete dir="@{to}" verbose="true"/>-->
-            <copy todir="@{to}" verbose="true">
+            <copy todir="@{to}" verbose="false">
                 <fileset dir="${commons.dir}">
                     <include name="*.properties"/>
                 </fileset>
             </copy>
         </sequential>
     </macrodef>
-
 
     <macrodef name="copyWebApp">
         <attribute name="from"/>
@@ -541,12 +541,12 @@
                     suppressKeyValue="true"
                     footer=""
                     />
-            <copy todir="@{to}" overwrite="@{overwrite}">
+            <copy todir="@{to}" overwrite="@{overwrite}" >
                 <fileset dir="@{from}">
-                    <include name="**/css/*.css"/>
-                    <include name="**/javascript/**/*.js"/>
-                    <include name="**/javascript/**/*.html"/>
-                    <include name="**/WEB-INF/**/*"/>
+                    <include name="css/*.css"/>
+                    <include name="WEB-INF/**"/>
+                    <include name="javascript/**"/>
+                    <exclude name="images/**"/>
                     <exclude name="**/*.jar"/>
                     <exclude name="**/*.zip"/>
                     <exclude name="**/*.class"/>
@@ -556,13 +556,13 @@
                 <filterset refid="allfilters"/>
             </copy>
 
-            <copy todir="@{to}" overwrite="@{overwrite}">
+            <copy todir="@{to}" overwrite="@{overwrite}" >
                 <fileset dir="@{from}">
-                    <include name="**/images/**"/>
-                    <include name="**/WEB-INF/**/*.jar"/>
-                    <include name="**/WEB-INF/**/*.zip"/>
-                    <include name="**/WEB-INF/**/*.class"/>
-                    <include name="**/WEB-INF/**/*.ser"/>
+                    <include name="images/**"/>
+                    <include name="WEB-INF/**/*.jar"/>
+                    <include name="WEB-INF/**/*.zip"/>
+                    <include name="WEB-INF/**/*.class"/>
+                    <include name="WEB-INF/**/*.ser"/>
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
@@ -589,7 +589,7 @@
               overwrite="true">
             <filterset>
                 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
-		<filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
+                <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
             </filterset>
         </copy>
     </target>
@@ -618,14 +618,16 @@
 
     <target name="generateStaticHTMLVersionFile">
         <delete file="${pre.static-version.file}"/>
-        <exec executable="./buildfiles/generateVersion.sh">
+        <exec executable="/bin/sh">
+            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
             <arg value="${pre.static-version.file}"/>
         </exec>
     </target>
 
     <target name="generateJSPVersionFile">
         <delete file="${pre.jsp-version.file}"/>
-        <exec executable="./buildfiles/generateVersion.sh">
+        <exec executable="/bin/sh">
+            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
             <arg value="${pre.jsp-version.file}"/>
         </exec>
     </target>

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/sh
 SVN_REVISION_STRING=`svn info | grep Revision`
 SVN_REVISION=${SVN_REVISION_STRING#*:}
 SVN_URL_STRING=`svn info | grep URL`

@@ -41,6 +41,13 @@
     <!-- The destination directory for tagunit web root -->
     <property name="tagunit-root.dir" value="${TAGUNIT_HOME}"/>
 
+    <!--source root-->
+    <property name="home" value="${basedir}/home"/>
+    <property name="home.webinf" value="${home}/WEB-INF"/>
+    <property name="home.css" value="${home}/css"/>
+    <property name="home.images" value="${home}/images"/>
+    <property name="home.javascript" value="${home}/javascript"/>
+
     <!--test properties-->
     <property name="reports.dir" value="${basedir}/reports"/>
     <property name="test.reports.dir" value="${reports.dir}/tests"/>

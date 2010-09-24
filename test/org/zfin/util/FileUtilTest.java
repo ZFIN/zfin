@@ -35,53 +35,6 @@ public class FileUtilTest {
         cleanupTestFilesStructure();
     }
 
-    /**
-     * Create a single file and archive it. Make sure it moved into the archive directory.
-     */
-    @Test
-    public void archiveFile() {
-        File archivedFile = FileUtil.archiveFile(testLoadFile, testArchiveDir);
-        File[] files = testArchiveDir.listFiles();
-        assertEquals("Number of files", 1, files.length);
-        assertEquals("File Name", archivedFile.getName(), files[0].getName());
-        assertTrue("Original File still exists", testLoadFile.exists());
-    }
-
-    /**
-     * Create a single file and archive it. Make sure it moved into the archive directory.
-     * Sleep for a second and then archive another file and then purge the first file while the
-     * second file does not get purged.
-     */
-    @Test
-    public void purgeArchiveFile() {
-        File archivedFile = FileUtil.archiveFile(testLoadFile, testArchiveDir);
-        File[] files = testArchiveDir.listFiles();
-        assertEquals("Number of files", 1, files.length);
-        assertEquals("File Name", archivedFile.getName(), files[0].getName());
-        assertTrue("Original File still exists", testLoadFile.exists());
-
-        // create the second file
-        testPurgeFile = new File(testLoadDirectory, "test-file-two.txt");
-        try {
-            Thread.sleep(1000);
-            testPurgeFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        archivedFile = FileUtil.archiveFile(testPurgeFile, testArchiveDir);
-        files = testArchiveDir.listFiles();
-        assertEquals("Number of files", 2, files.length);
-        FileUtil.purgeArchiveDirectory(testArchiveDir, 990);
-
-        files = testArchiveDir.listFiles();
-        assertEquals("Number of files", 1, files.length);
-        assertEquals("File Name", archivedFile.getName(), files[0].getName());
-
-    }
-
     @Ignore
     public void apgFiles() {
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
