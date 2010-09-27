@@ -20,7 +20,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution {
         CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
         CLONE_OVERLAP("clone overlap"),
         CODING_SEQUENCE_OF("coding sequence of"),
-        CONTAINS_OTHER_FEATURE("contains other feature"),
+        CONTAINS_ENGINEERED_REGION("contains engineered region"),
         CONTAINS_POLYMORPHISM("contains polymorphism"),
         GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),
         GENE_PRODUCES_TRANSCRIPT("gene produces transcript"),
