@@ -138,7 +138,22 @@ public final class ZfinProperties {
 
     public static void init() {
         // should load from a default file, or from a -DPROPERTY=<path/to/file>
-        init(loadPropertiesTask.getFile());
+        if(false==isInit()){
+            if(loadPropertiesTask.getFile()==null){
+                init("home/WEB-INF/zfin.properties");
+            }
+            else{
+                init(loadPropertiesTask.getFile());
+            }
+        }
+    }
+
+    public static boolean isInit(){
+        return 
+            ZfinPropertiesEnum.INSTANCE.value()!=null
+           &&
+            ZfinPropertiesEnum.SECURE_HTTP.value()!=null 
+            ;
     }
 
     public static void validateProperties(){
