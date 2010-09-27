@@ -54,7 +54,7 @@ OUTPUT:
 	   and mrel_type not in ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature',
+					'contains engineered region',
 					'gene product recognized by antibody',
                                         'transcript targets gene'
 					)
@@ -75,7 +75,7 @@ OUTPUT:
 	   and mrel_type not in ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature',
+					'contains engineered region',
 					'gene product recognized by antibody',
                                         'gene produces transcript',
                                         'transcript targets gene'
