@@ -1124,7 +1124,7 @@ Only need to update clones, etc., which should be the only things that will have
          select mrel_mrkr_2_zdb_id
            from marker_relationship
           where mrel_mrkr_1_zdb_id = '$OID'
-            and mrel_type in ('promoter of','coding sequence of', 'contains other feature')
+            and mrel_type in ('promoter of','coding sequence of', 'contains engineered region')
         ">
    <?/MISQL>
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
@@ -1173,7 +1173,7 @@ Only need to update clones, etc., which should be the only things that will have
            from marker_relationship, marker
           where mrel_mrkr_1_zdb_id = '$OID'
             and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-            and mrel_type = 'contains other feature'">
+            and mrel_type = 'contains engineered region'">
       <tr>
         <td width=25%>
           Engineered Regions:
@@ -2414,7 +2414,7 @@ union
          select mrel_mrkr_1_zdb_id
            from marker_relationship
           where mrel_mrkr_2_zdb_id = '$OID'
-            and mrel_type in ('promoter of','coding sequence of', 'contains other feature')
+            and mrel_type in ('promoter of','coding sequence of', 'contains engineered region')
         ">
    <?/MISQL>
    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
@@ -2495,7 +2495,7 @@ union
                 and mrel_type not in  ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature'
+					'contains engineered region'
 					)
                     ;">
      <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
@@ -2529,7 +2529,7 @@ union
 		and mreltype_name not in ('knockdown reagent targets gene',
 					'promoter of',
 					'coding sequence of',
-					'contains other feature',
+					'contains engineered region',
 					'transcript targets gene',
 					'gene produces transcript'
 					); ">
@@ -2545,7 +2545,7 @@ union
 					'promoter of',
 					'coding sequence of',
 					'transcript targets gene',
-					'contains other feature',
+					'contains engineered region',
 					'gene produces transcript'
 					); ">
    <option value="2to1-$1">$1-$2
