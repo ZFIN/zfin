@@ -14,7 +14,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
     public void testExpressionLookupTable() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "/webdriver?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 
@@ -62,7 +62,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
 
             try {
-                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "/webdriver?MIval=aa-xpatselect.apg");
+                HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
 

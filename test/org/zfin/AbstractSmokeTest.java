@@ -45,7 +45,8 @@ public class AbstractSmokeTest extends WebTestCase {
     }
 
     protected String getApgNonSecureUrl() {
-        return nonSecureUrlDomain + "/" + mutant;
+        // http://<stuff>/mutant/webdriver
+        return nonSecureUrlDomain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT;
     }
 
     @Override

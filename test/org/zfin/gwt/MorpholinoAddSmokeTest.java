@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class MorpholinoAddSmokeTest extends AbstractSecureSmokeTest {
 
-    private String pageUrl = "/webdriver?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource=ZDB-PUB-990507-16";
+    private String pageUrl = "?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource=ZDB-PUB-990507-16";
 
     public void testTargetGeneInputFieldExists() {
         for (WebClient browser : publicWebClients) {
