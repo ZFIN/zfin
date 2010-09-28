@@ -127,7 +127,7 @@ cut -f 2,3 < HM_gene_info | grep "MGI:[0-9]*" | \
 
 #################################################################
 
-source /private/ZflinLinks/Commons/env/<!--|INFORMIX_SERVER|-->
+source /private/ZfinLinks/Commons/env/<!--|INFORMIX_SERVER|-->
 
 setenv INFORMIX_SERVER "<!--|INFORMIX_SERVER|-->"
 setenv   ONCONFIG_FILE "<!--|ONCONFIG_FILE|-->"
