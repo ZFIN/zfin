@@ -15,7 +15,7 @@ setenv PATH <!--|INFORMIX_DIR|-->/bin:$PATH
 echo "Starting regen_genox at `date`"
 echo 'execute function regen_genox(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
-echo "Starting regen_anatomy at `date`"
+echo "Starting regen_anatomy_counts at `date`"
 echo 'execute function regen_anatomy_counts(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_names at `date`"
