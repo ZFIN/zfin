@@ -230,7 +230,7 @@ sub sendMail(@) {
      open MAIL, "|/usr/lib/sendmail -t";
 
      print MAIL "To: $sendToAddress\n";
-     print MAIL "Subject: validatedata: $subject\n";
+     print MAIL "Subject: updateunFeatures: $subject\n";
 
      print MAIL "$msg\n";
 
@@ -450,7 +450,7 @@ sub unrecoveredFeatureNameAbbrevUpdate($) {
 # Define Usage
 #
 
-$usage = "Usage: validatedata.pl <dbname> [-d|-w|-m|-y|-o] ";
+$usage = "Usage: updateunFeatures.pl <dbname>";
 
 $document = <<ENDDOC;
 
@@ -463,13 +463,10 @@ Command line parameters:
 
 ENDDOC
 
-if (@ARGV < 2) {
+if (@ARGV < 1) {
   print $document and exit 1;
 }
 
-GetOptions (
-	    "d"    => \$daily
-	    );
 
 #
 # Define GLOBALS
@@ -508,10 +505,8 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 
 
-if($daily) {
     unFeatureNameAbbrevUpdate($dbaEmail);
     unrecoveredFeatureNameAbbrevUpdate($dbaEmail);
-}
 
 
 	   
