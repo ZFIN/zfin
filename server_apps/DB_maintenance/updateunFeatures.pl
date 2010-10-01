@@ -459,7 +459,6 @@ $usage
 Command line parameters:
 
   dbname   Name of database to validate. This must be a ZFIN database.
-  -d       Excute the checks supposed to run daily.  
 
 ENDDOC
 
