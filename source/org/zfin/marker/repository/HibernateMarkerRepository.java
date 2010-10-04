@@ -600,8 +600,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(attributionZdbID);
             pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
-            pubAttrbs.add(pa);
             currentSession().save(pa);
             currentSession().refresh(mrel);
             addMarkerPub(marker, publication);
@@ -747,7 +745,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @SuppressWarnings("unchecked")
     public List<MarkerFamilyName> getMarkerFamilyNamesBySubstring(String substring) {
 
-        ArrayList<MarkerFamilyName> families = new ArrayList<MarkerFamilyName>();
+        List<MarkerFamilyName> families = new ArrayList<MarkerFamilyName>();
 
         //first put on the "starts with" matches
         Session session = currentSession();
@@ -970,10 +968,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (TranscriptStatus) criteria.uniqueResult();
     }
 
-    //    select mrkrgoev_zdb_id
-    //    from marker_go_term_evidence
-    //    where mrkrgoev_mrkr_zdb_id = '$gene_zdb_id' ";
-
     public boolean getGeneHasGOEvidence(Marker gene) {
         String hql = " " +
                 " select count( mgte) from MarkerGoTermEvidence mgte " +
@@ -983,14 +977,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (((Number) query.uniqueResult()).longValue() > 0);
     }
 
-
-    //select xpatfig_fig_zdb_id
-    //    from expression_experiment, expression_result,
-    //            expression_pattern_figure, image
-    //    where xpatex_zdb_id = xpatres_xpatex_zdb_id
-    //    and xpatex_gene_zdb_id = '$gene_zdb_id'
-    //    and xpatres_zdb_id  = xpatfig_xpatres_zdb_id
-    //    and xpatfig_fig_zdb_id = img_fig_zdb_id";
 
     public boolean getGeneHasExpressionImages(Marker gene) {
         String hql = " " +
@@ -1003,11 +989,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setString("geneZdbID", gene.getZdbID());
         return (((Number) query.uniqueResult()).longValue() > 0);
     }
-
-    //    select xpatres_zdb_id
-    //    from expression_experiment, expression_result
-    //    where xpatex_zdb_id = xpatres_xpatex_zdb_id
-    //    and xpatex_gene_zdb_id = '$gene_zdb_id' ";
 
     public boolean getGeneHasExpression(Marker gene) {
         String hql = " " +
@@ -1421,7 +1402,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             LOG.error("No Marker Alias created! ");
             throw new RuntimeException("No Marker History record found! Trigger did not run.");
         }
-        //add record attribution for previous name if the abbrevation was changed
+        //add record attribution for previous name if the abbreviation was changed
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         LOG.info("marker history: " + mhist);
         LOG.info("marker alias: " + mhist.getMarkerAlias());
@@ -1471,6 +1452,24 @@ public class HibernateMarkerRepository implements MarkerRepository {
             targetGenes.add(relationship.getSecondMarker());
         }
         return targetGenes;
+    }
+
+
+    /**
+     * Checks to see if a marker with the abbreviation given is already in the database.
+     * The check is case insensitive.
+     *
+     * @param abbreviation string
+     * @return true/false
+     */
+    @Override
+    public boolean isMarkerExists(String abbreviation) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.eq("abbreviation", abbreviation.toLowerCase()));
+        Marker marker = (Marker) criteria.uniqueResult();
+        return marker != null;
     }
 
 }

@@ -11,6 +11,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
+import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -36,19 +37,14 @@ import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 
-
+@SuppressWarnings({"FeatureEnvy"})
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(MarkerRepositoryTest.class) ;
+    private Logger logger = Logger.getLogger(MarkerRepositoryTest.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-
-    @Before
-    public void setUp() {
-        TestConfiguration.setAuthenticatedUser();
-    }
 
     @Test
     public void testMarkerLoad() {
@@ -253,9 +249,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-
-
-
     @Test
     public void testRemoveRedundantDBLinks() {
         Session session = HibernateUtil.currentSession();
@@ -364,8 +357,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-
     //ZDB-MREL-021003-11
+
     @Test
     public void retrieveLinkageGroupFromClone() {
         // when the gene has method of creating/adding linkage group information and
@@ -447,24 +440,24 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void testClone(){
+    public void testClone() {
         Transaction tx = null;
-        Session session = HibernateUtil.currentSession() ;
+        Session session = HibernateUtil.currentSession();
         try {
             tx = session.beginTransaction();
-            Marker marker1 = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-080114-111") ;
+            Marker marker1 = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-080114-111");
             assertTrue("Marker is a clone", marker1 instanceof Clone);
-            Clone clone = (Clone) marker1 ;
+            Clone clone = (Clone) marker1;
 //            logger.info(clone.toString());
-            Integer rating = 3 ;
+            Integer rating = 3;
             clone.setRating(rating);
             // NOTE: must be CDNA or EST to set as a non-null problem type
             clone.setProblem(Clone.ProblemType.CHIMERIC);
             session.update(clone);
             session.flush();
-            Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult() ;
-            assertEquals(clone2.getRating(),rating);
-            assertEquals(clone2.getProblem(),Clone.ProblemType.CHIMERIC);
+            Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult();
+            assertEquals(clone2.getRating(), rating);
+            assertEquals(clone2.getProblem(), Clone.ProblemType.CHIMERIC);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -474,7 +467,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             tx.rollback();
         }
     }
-
 
 
     @Test
@@ -657,7 +649,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 try {
                     tx.rollback();
                 } catch (HibernateException e) {
-                    
+
                 }
         }
     }
@@ -665,16 +657,32 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void orthologyNote() {
         String geneName = "fgf8a";
-        MarkerRepository markerRep = RepositoryFactory.getMarkerRepository();
-        Marker gene = markerRep.getMarkerByAbbreviation(geneName);
+        Marker gene = markerRepository.getMarkerByAbbreviation(geneName);
         assertTrue(gene != null);
 
         Set<OrthologyNote> notes = gene.getOrthologyNotes();
         assertTrue(notes != null);
     }
 
+    /**
+     * Check for an existent marker by abbreviation.
+     * Check the the lookup is case insensitive.
+     *
+     * Check for the non-existence as well.
+     */
     @Test
-    public void createDataAlias(){
+    public void markerExists() {
+        String geneName = "FGF8A";
+        boolean markerExists= markerRepository.isMarkerExists(geneName);
+        assertTrue(markerExists);
+
+        geneName = "fgf88ga";
+        markerExists= markerRepository.isMarkerExists(geneName);
+        assertFalse(markerExists);
+    }
+
+    @Test
+    public void createDataAlias() {
         String pubID = "ZDB-PUB-020723-5";
         String antibodyID = "ZDB-ATB-081002-16";
         HibernateUtil.createTransaction();

@@ -30,7 +30,11 @@ import java.util.Map;
 
 
 public class AntibodyCreateController extends SimpleFormController {
+
     private static Logger LOG = Logger.getLogger(AntibodyCreateController.class);
+    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
         CreateAntibodyFormBean formBean = (CreateAntibodyFormBean) command;
@@ -43,14 +47,12 @@ public class AntibodyCreateController extends SimpleFormController {
                                     Object command, BindException errors) throws Exception {
 
         CreateAntibodyFormBean formBean = (CreateAntibodyFormBean) command;
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 
+        String antibodyName = formBean.getAntibodyName();
         Person currentUser = Person.getCurrentSecurityUser();
 
         Antibody newAntibody = new Antibody();
-        newAntibody.setAbbreviation(formBean.getAntibodyName().toLowerCase());
+        newAntibody.setAbbreviation(antibodyName.toLowerCase());
         newAntibody.setName(formBean.getAntibodyName());
         newAntibody.setOwner(currentUser);
 

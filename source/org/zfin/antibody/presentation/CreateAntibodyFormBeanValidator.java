@@ -18,21 +18,20 @@ public class CreateAntibodyFormBeanValidator implements Validator {
 
     public void validate(Object command, Errors errors) {
         CreateAntibodyFormBean formBean = (CreateAntibodyFormBean) command;
-        PublicationValidator.validatePublicationID(formBean.getAntibodyPublicationZdbID(), formBean.AB_PUBLICATION_ZDB_ID, errors);
+        PublicationValidator.validatePublicationID(formBean.getAntibodyPublicationZdbID(), CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID, errors);
 
-        if (StringUtils.isEmpty(formBean.getAntibodyName())) {
+        String antibodyName = formBean.getAntibodyName();
+        if (StringUtils.isEmpty(antibodyName)) {
             errors.rejectValue("antibodyName", "code", "Antibody name cannot be null.");
         }
-        if (!StringUtils.isEmpty(formBean.getAntibodyName())) {
-            Marker m = mr.getMarkerByAbbreviation(formBean.getAntibodyName());
-            if (m != null) {
-                errors.rejectValue("antibodyName", "code", "This marker already exists");
+        if (!StringUtils.isEmpty(antibodyName)) {
+            if (mr.isMarkerExists(antibodyName)) {
+                errors.rejectValue("antibodyName", "code", "The marker abbreviation [" + antibodyName + "] is already taken by another marker");
+                return;
             }
-        }
-        if (!StringUtils.isEmpty(formBean.getAntibodyName())) {
-            Marker marker = mr.getMarkerByName(formBean.getAntibodyName());
+            Marker marker = mr.getMarkerByName(antibodyName);
             if (marker != null) {
-                errors.rejectValue("antibodyName", "code", "This marker already exists");
+                errors.rejectValue("antibodyName", "code", "The marker name [" + antibodyName + "] is already taken by another marker");
             }
         }
 

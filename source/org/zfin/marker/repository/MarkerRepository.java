@@ -249,7 +249,6 @@ public interface MarkerRepository {
      */
     List<MarkerType> getMarkerTypesByGroup(Marker.TypeGroup typeGroup);
 
-
     List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type);
 
     List<Marker> getMarkerForAttribution(String publicationZdbID);
@@ -261,5 +260,13 @@ public interface MarkerRepository {
      * @return the target gene of the Morpholino
      */
     List<Marker> getTargetGenesForMorpholino(Marker morpholino);
+
+    /**
+     * Checks to see if a marker with the abbreviation given is already in the database.
+     * The check is case insensitive.
+     * @param abbreviation string
+     * @return true/false
+     */
+    boolean isMarkerExists(String abbreviation);
 
 }
