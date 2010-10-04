@@ -16,7 +16,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <span id="notesS_${idName}">
-    <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true" escape="html" />
+    <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true" escape="html" escapeHtml="false"/>
     <c:if test="${fn:length(text) > shortLength}">
         <a href="javascript:toggleVersion(${idName}, true)"  title="Show full text">
             &nbsp;...
@@ -26,7 +26,7 @@
     </c:if>
 </span>
 <span style="display:none;" id="notesL_${idName}">
-    ${zfn:escapeHtml(text)}
+    ${zfn:escapeHtml(text, false)}
 &nbsp;
     <img onclick="toggleVersion(${idName}, false)"
          src="/images/left_arrow.gif" alt="collapse" title="Show beginning text">

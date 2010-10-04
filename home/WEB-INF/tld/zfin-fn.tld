@@ -29,7 +29,7 @@
     </description>
     <name>escapeHtml</name>
     <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String escapeHtml(java.lang.String)(java.lang.String)</function-signature>
+    <function-signature>java.lang.String escapeHtml(java.lang.String, boolean)</function-signature>
     <example>
       ${fn:escapeHtml(name)}">
     </example>

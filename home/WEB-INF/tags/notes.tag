@@ -29,6 +29,6 @@
 </authz:authorize>
 
 <c:if test="${!(empty hasNotes.publicComments)}">
-    <b>Note: </b> ${zfn:escapeHtml(hasNotes.publicComments)}
+    <b>Note: </b> ${zfn:escapeHtml(hasNotes.publicComments, false)}
 </c:if>
 

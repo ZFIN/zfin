@@ -15,13 +15,14 @@ public class ToggleTextLengthTag extends TagSupport {
     private String text;
     private int shortLength;
     private boolean shortVersion;
+    private boolean escapeHtml = true;
     private String escape;
 
     public int doStartTag() throws JspException {
 
         try {
             // Just to make sure the rest does not fail.
-            if (text == null){
+            if (text == null) {
                 text = "";
             }
             // treat short version just like long version. no difference.
@@ -42,7 +43,8 @@ public class ToggleTextLengthTag extends TagSupport {
             } else {
                 outputText = text;
             }
-            outputText = StringEscapeUtils.escapeHtml(outputText);
+            if (escapeHtml)
+                outputText = StringEscapeUtils.escapeHtml(outputText);
             outputText = escapeNewlines(outputText);
             pageContext.getOut().print(outputText);
         } catch (IOException ioe) {
@@ -93,5 +95,13 @@ public class ToggleTextLengthTag extends TagSupport {
 
     public void setEscape(String escape) {
         this.escape = escape;
+    }
+
+    public boolean isEscapeHtml() {
+        return escapeHtml;
+    }
+
+    public void setEscapeHtml(boolean escapeHtml) {
+        this.escapeHtml = escapeHtml;
     }
 }

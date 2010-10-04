@@ -37,13 +37,16 @@ public class ZfinJSPFunctions {
     }
 
     /**
-     * Escape characters to valid HTML code
+     * Turn newlines to <br/>. If escapeAll is set to true then
+     * escape html characters to be plan strings. 
      *
      * @param string character string
+     * @param escapeAll boolean
      * @return String
      */
-    public static String escapeHtml(String string) {
-        string = StringEscapeUtils.escapeHtml(string);
+    public static String escapeHtml(String string, boolean escapeAll) {
+        if (escapeAll)
+            string = StringEscapeUtils.escapeHtml(string);
         if (string.indexOf("\r\n") > -1)
             string = string.replaceAll("\r\n", "<br/>");
         if (string.indexOf("\n") > -1)
