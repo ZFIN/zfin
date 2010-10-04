@@ -24,7 +24,7 @@ mailto
 
 select.apg
 select2.apg
-anatomy
+action/anatomy
 quicksearch
 download-sequence
 
