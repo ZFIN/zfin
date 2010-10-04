@@ -38,7 +38,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
 
     /**
      * search for 'gsc':
-     * Should bring up no Alternative search
+     * Should bring up alternative search term: insulin-responsive compartment
      */
     public void testGsc() {
         for (WebClient webClient : publicWebClients) {
@@ -49,7 +49,8 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
                 // find alternative search field
-                assertAlternativeSearchLineAbsent(page);
+                assertAlternativeTermLinePresent(page);
+                assertSingleAlternativeTermName(page, "insulin-responsive compartment");
 
             } catch (IOException e) {
                 fail(e.toString());

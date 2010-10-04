@@ -50,18 +50,18 @@ public class FileUtilTest {
         File file1 = new File("file1");
         assertEquals(file1.getAbsolutePath(),
                 FileUtil.createFileFromStrings("file1").getAbsolutePath());
-        File file2 =  new File("file1"+ FILE_SEPARATOR +  "file2.txt") ;
+        File file2 = new File("file1" + FILE_SEPARATOR + "file2.txt");
         assertEquals(file2.getAbsolutePath(),
                 FileUtil.createFileFromStrings("file1", "file2.txt").getAbsolutePath());
 
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(".");
         File testFile1 = FileUtil.createFileFromStrings(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(),
-                "WEB-INF","conf","antibody.template") ;
-        File file3 = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY+FILE_SEPARATOR+
-                "WEB-INF"+FILE_SEPARATOR+
-                "conf"+FILE_SEPARATOR+
-                "antibody.template"+FILE_SEPARATOR) ;
-        assertEquals(file3.getAbsolutePath(),testFile1.getAbsolutePath());
+                "WEB-INF", "conf", "antibody.template");
+        File file3 = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY + FILE_SEPARATOR +
+                "WEB-INF" + FILE_SEPARATOR +
+                "conf" + FILE_SEPARATOR +
+                "antibody.template" + FILE_SEPARATOR);
+        assertEquals(file3.getAbsolutePath(), testFile1.getAbsolutePath());
     }
 
     @Test
@@ -74,26 +74,33 @@ public class FileUtilTest {
         assertTrue(file.exists());
         assertTrue(file.getAbsolutePath().contains("source"));
 
-        file = FileUtil.createFileFromStrings("source","org");
+        file = FileUtil.createFileFromStrings("source", "org");
         assertNotNull(file);
         assertTrue(file.exists());
         assertTrue(file.getAbsolutePath().contains("source"));
         assertTrue(file.getAbsolutePath().contains("org"));
 
-        file = FileUtil.createFileFromStrings("source","org","zfin");
+        file = FileUtil.createFileFromStrings("source", "org", "zfin");
         assertNotNull(file);
         assertTrue(file.exists());
         assertTrue(file.getAbsolutePath().contains("source"));
         assertTrue(file.getAbsolutePath().contains("org"));
         assertTrue(file.getAbsolutePath().contains("zfin"));
 
-        file = FileUtil.createFileFromStrings("source","org","zfin","marker.hbm.xml");
+        file = FileUtil.createFileFromStrings("source", "org", "zfin", "marker.hbm.xml");
         assertNotNull(file);
         assertTrue(file.exists());
         assertTrue(file.getAbsolutePath().contains("source"));
         assertTrue(file.getAbsolutePath().contains("org"));
         assertTrue(file.getAbsolutePath().contains("zfin"));
         assertTrue(file.getAbsolutePath().contains("marker.hbm.xml"));
+    }
+
+    @Test
+    public void readNumberOfLines() throws IOException {
+        String fileName = FileUtil.createAbsolutePath("test", "test-count-number-of-lines.txt");
+        int numOfLines = FileUtil.countLines(fileName);
+        assertEquals(13, numOfLines);
     }
 
     private void setTestDirectories() {

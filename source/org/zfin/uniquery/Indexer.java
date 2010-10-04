@@ -9,9 +9,12 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.presentation.SearchBean;
+import org.zfin.util.FileUtil;
 import org.zfin.wiki.WikiLoginException;
 
 import java.io.*;
@@ -104,13 +107,23 @@ public class Indexer implements Runnable {
      * @throws Exception exception
      */
     public static void main(String argv[]) throws Exception {
-	//DOMConfigurator.configure("server_apps/quicksearch/logs/log4j.xml");
+        //DOMConfigurator.configure("server_apps/quicksearch/logs/log4j.xml");
         //initializeLog4j();
+        long start = System.currentTimeMillis();
         Indexer s = new Indexer(argv);
         s.go();
+        long end = System.currentTimeMillis();
+        IntegratedJavaMailSender smtp = new IntegratedJavaMailSender();
         if (errorCount > 100) {
+            smtp.sendMail("Error while indexing " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
+                    "Too many errors [" + errorCount + "]", ZfinProperties.getIndexerReportEmailAddresses());
             System.exit(-1);
         } else {
+            String message = "Indexing took " + (end - start) / 1000. + " seconds";
+            message += System.getProperty("line.separator");
+            message += "Indexed " + s.getNumberOfIndexedUrls() + " urls";
+            smtp.sendMail("Indexer finished for " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
+                    message, ZfinProperties.getIndexerReportEmailAddresses());
             System.exit(0);
         }
     }
@@ -139,7 +152,7 @@ public class Indexer implements Runnable {
 
             /* 
             * The "staticIndex" is what the main comments above refer to as
-            * the list of "data page URLs."  This has sped up performace dramatically
+            * the list of "data page URLs."  This has sped up performance dramatically
             * by reducing wasted time spent crawling data pages we can pre-determine
             * from the database.
             */
@@ -156,8 +169,21 @@ public class Indexer implements Runnable {
         catch (Exception e) {
             e.printStackTrace();
             e.printStackTrace(log);
-        }
+	    IntegratedJavaMailSender smtp = new IntegratedJavaMailSender();
+            smtp.sendMail("Error while indexing " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
+			  "Exception: " + e.getMessage(), ZfinProperties.getIndexerReportEmailAddresses());
 
+        }
+    }
+
+    private int getNumberOfIndexedUrls() {
+        int numberOfUrls = 0;
+        try {
+            numberOfUrls = FileUtil.countLines(logDirectory + INDEXED_URLS_LOG);
+        } catch (IOException e) {
+            logger.error("Could not read indexedUrls file!", e);
+        }
+        return numberOfUrls;
     }
 
 
@@ -785,7 +811,7 @@ public class Indexer implements Runnable {
                 initSiteSearchCategories(argv[++i]);
             } else if (argv[i].equals("-zfinPropertiesDir")) {
 //                ZfinProperties.init(argv[++i], "zfin-properties.xml");
-                ZfinProperties.init(argv[++i] );
+                ZfinProperties.init(argv[++i]);
             } else if (argv[i].equals("-l")) {
                 StringBuffer buf = new StringBuffer(argv[++i]);
                 if (buf.charAt(buf.length() - 1) == '/') {

@@ -179,14 +179,6 @@ public interface MutantRepository {
     boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID);
 
     /**
-     * Lookup a term by name. Term must not be obsolete.
-     *
-     * @param termName term name
-     * @return Term object
-     */
-    GenericTerm getQualityTermByName(String termName);
-
-    /**
      * Retrieve the default phenotype for a given figure and genotype experiment.
      * If it does not exist, it return null.
      *

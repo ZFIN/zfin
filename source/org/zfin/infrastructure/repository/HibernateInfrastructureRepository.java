@@ -320,6 +320,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         criteria.add(Restrictions.eq("termName", termName));
         criteria.add(Restrictions.eq("obsolete", false));
         criteria.add(Restrictions.eq("ontology", ontology));
+        criteria.add(Restrictions.eq("secondary", false));
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
         if (term == null)
             return null;

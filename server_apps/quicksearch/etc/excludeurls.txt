@@ -38,6 +38,7 @@ aa-orthoviewdetailed.apg
 action/anatomy/term-detail
 action/anatomy/search
 action/antibody
+action/ontology/term-detail
 action/feature/detail
 marker/transcript-view
 aa-fxassayabbrev.apg

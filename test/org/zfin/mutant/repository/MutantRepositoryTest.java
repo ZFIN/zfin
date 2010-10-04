@@ -38,6 +38,7 @@ public class MutantRepositoryTest {
     private final static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     static {
+        TestConfiguration.configure();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
@@ -46,7 +47,6 @@ public class MutantRepositoryTest {
 
     @Before
     public void setUp() {
-        TestConfiguration.configure();
     }
 
 
@@ -162,14 +162,6 @@ public class MutantRepositoryTest {
 
     }
 
-
-    @Test
-    public void getQualityTerm() {
-
-        GenericTerm term = getMutantRepository().getQualityTermByName(GenericTerm.QUALITY);
-        assertTrue(term != null);
-
-    }
 
     @Test
     public void retrieveDefaultPhenotype() {

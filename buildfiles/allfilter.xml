@@ -57,6 +57,7 @@
 <filter token="HOSTNAME" value="${HOSTNAME}"/>
 <filter token="IMAGE_LOAD" value="${IMAGE_LOAD}"/>
 <filter token="INDEXER_DIRECTORY" value="${INDEXER_DIRECTORY}"/>
+<filter token="INDEXER_REPORT_EMAIL" value="${INDEXER_REPORT_EMAIL}"/>
 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
 <filter token="INDEXER_WIKI_PASSWORD" value="${INDEXER_WIKI_PASSWORD}"/>
 <filter token="INDEXER_WIKI_USERNAME" value="${INDEXER_WIKI_USERNAME}"/>

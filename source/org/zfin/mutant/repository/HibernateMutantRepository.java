@@ -524,21 +524,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Lookup a term by name. Term must not be obsolete.
-     *
-     * @param termName term name
-     * @return Term object
-     */
-    @SuppressWarnings("unchecked")
-    public GenericTerm getQualityTermByName(String termName) {
-        Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(GenericTerm.class);
-        crit.add(Restrictions.eq("termName", termName));
-        crit.add(Restrictions.eq("obsolete", false));
-        return (GenericTerm) crit.uniqueResult();
-    }
-
-    /**
      * Retrieve the default phenotype (AO:unspecified - quality [abnormal]) for a given figure and genotype experiment.
      * If it does not exist, it return null.
      *

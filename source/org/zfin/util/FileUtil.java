@@ -283,6 +283,7 @@ public final class FileUtil {
 
     /**
      * Create a File from an array of strings that define a path.
+     *
      * @param pathElements strings in the order of the file path
      * @return file to the concatenated file or directory
      */
@@ -299,4 +300,16 @@ public final class FileUtil {
         }
         return file;
     }
+
+    public static int countLines(String filename) throws IOException {
+        LineNumberReader reader = new LineNumberReader(new FileReader(filename));
+        int cnt;
+        String lineRead = "";
+        while ((lineRead = reader.readLine()) != null) {
+        }
+        cnt = reader.getLineNumber();
+        reader.close();
+        return cnt;
+    }
+
 }
