@@ -34,7 +34,7 @@
 #
 #
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
-00 03 * * 6 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance; validatedata.pl -d -w mirrordb ; orphanChecks.pl mirrordb
+00 03 * * 6 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance; validatedata.pl -d -w mirrordb 
 #
 # ========================================================================
 # ====                   MONTHLY SCRIPTS                              ====
