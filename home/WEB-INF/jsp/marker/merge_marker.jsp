@@ -3,12 +3,12 @@
 
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 <script type="text/javascript">
-    var LookupProperties = { NumLookups: "1" } ;
     var LookupProperties0 = {
         divName: "antibodyLookup",
         inputName: "markerToMergeIntoViewString",
         showError: true,
         type: "ANTIBODY_LOOKUP",
+	useTermTable: false,
         wildcard: false
     };
     
