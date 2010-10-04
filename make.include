@@ -157,10 +157,7 @@ endif
 # --- Java
 
 JAVAHOME  = /private/apps/java
-JAVAC      = $(JAVAHOME)/bin/sparcv9/javac
-
-JAVAHOME14 = /private/apps/java1.4
-JAVAC14    = $(JAVAHOME14)/bin/javac
+JAVAC      = $(JAVAHOME)/bin/javac
 
 
 # --- Make JDBC 3.0 the default JDBC
