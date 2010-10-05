@@ -292,6 +292,8 @@ public interface InfrastructureRepository {
     int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID);
 
     int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID);
+
+    String getReplacedZdbID(String oldZdbID);
 }
 
 

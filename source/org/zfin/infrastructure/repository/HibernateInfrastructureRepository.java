@@ -25,6 +25,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.ReplacedAccessionNumber;
 
 import java.util.*;
 
@@ -908,6 +909,27 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getReplacedZdbID(String oldZdbID){
+        List<ReplacementZdbID> replacedAccessionList =
+                (List<ReplacementZdbID>) HibernateUtil.currentSession()
+                        .createCriteria(ReplacementZdbID.class)
+                        .add(Restrictions.eq("oldZdbID",oldZdbID))
+                        .list();
+        if(replacedAccessionList !=null && replacedAccessionList.size()==1){
+            return replacedAccessionList.get(0).getReplacementZdbID() ;
+        }
+        else
+        if(replacedAccessionList ==null){
+            logger.warn("Replacement list is null for zdbID: "+ oldZdbID);
+        }
+        else
+        if(replacedAccessionList.size() >1){
+            logger.error("Replacement list has non-unique replacements: "+ replacedAccessionList.size() + " for zdbID: "+oldZdbID);
+        }
+        return null ;
     }
 }
 

@@ -41,6 +41,17 @@ public class TranscriptViewController extends AbstractCommandController {
             transcript = RepositoryFactory.getMarkerRepository().getTranscriptByVegaID(transcriptBean.getVegaID()) ;
         }
 
+        // search in replaced data?
+        if(transcript==null){
+            String replacedTranscriptZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(transcriptBean.getZdbID());
+            logger.debug("trying to find a replaced zdbID for: " + transcriptBean.getZdbID());
+            if(replacedTranscriptZdbID!=null){
+                logger.debug("found a replaced zdbID for: " + transcriptBean.getZdbID() + "->" + replacedTranscriptZdbID);
+                transcriptBean.setZdbID(replacedTranscriptZdbID);
+                transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptBean.getZdbID()) ;
+            }
+        }
+
         if(transcript==null){
             ModelAndView errorModelAndView = new ModelAndView("record-not-found.page") ;
             errorModelAndView.addObject(LookupStrings.ZDB_ID,transcriptBean.getZdbID()) ;
