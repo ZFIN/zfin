@@ -3,7 +3,10 @@
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.isolation">1</property>
+        <!--    in theory this should be using the database default (READ LAST COMMIT or LC)-->
+        <!--    or the JDBC default (2), either of which is better than read uncommited-->
+        <!--    it could be that since jndi was used anyway, that this was ignored -->
+        <!--        <property name="connection.isolation">1</property>-->
 
 
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>

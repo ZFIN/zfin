@@ -219,7 +219,8 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         config.setProperty("hibernate.connection.password", "Rtwm4ts");
         config.setProperty("hibernate.connection.pool_size", "1");
         config.setProperty("hibernate.connection.autocommit", "true");
-        config.setProperty("hibernate.connection.isolation", "1");
+        // should use the default
+//        config.setProperty("hibernate.connection.isolation", "1");
         config.setProperty("hibernate.show_sql", "true");
 
         String absolutePathAnat = FileUtil.createAbsolutePath(ZfinPropertiesEnum.CONFIGURATION_DIRECTORY.value(), "anatomy.hbm.xml");

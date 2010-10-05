@@ -48,7 +48,7 @@ public class GBrowseHibernateUtil {
     public static void initForTest() {
         try {
             if (gbrowseSessionFactory != null) {
-                throw new RuntimeException("GBrowse SessionFactory already instatiated.");
+                throw new RuntimeException("GBrowse SessionFactory already instantiated.");
             }
 
             Configuration config = new Configuration();
@@ -86,14 +86,6 @@ public class GBrowseHibernateUtil {
         Session s = localGBrowseSession.get();
         if (s == null) {
             s = gbrowseSessionFactory.openSession();
-            try {
-                s.connection().setTransactionIsolation(1);
-            } catch (Exception e) {
-                e.printStackTrace();
-                String message = "Failed to create a GBrowse DB Connection";
-                log.error(message);
-                throw new RuntimeException(message, e);
-            }
             localGBrowseSession.set(s);
         }
         return s;
