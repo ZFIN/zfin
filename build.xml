@@ -91,15 +91,6 @@
     <!--here, we are only loading property files into ant, not into the enum -->
     <loadProperties file="home/WEB-INF/zfin.properties" />
 
-    <exportProperties
-            file="${commons.dir}/${INSTANCE}.properties"
-            target="${buildfiles.dir}/allfilter.xml"
-            header="&lt;project&gt;${line.separator}&lt;filterset id='allfilters'&gt;"
-            keyPrefix="&lt;filter token=&quot;"
-            keySuffix="&quot; value=&quot;${@KEY@}&quot;/&gt;"
-            suppressValue="true"
-            footer="&lt;/filterset&gt;${line.separator}&lt;/project&gt;"
-            />
 
     <import file="${buildfiles.dir}/allfilter.xml"/>
     <import file="${buildfiles.dir}/properties.xml"/>
@@ -205,8 +196,20 @@
             description="Rebuilds properties for specified instance: ${INSTANCE} as set in the environemnt.">
     </target>
 
-    <target name="rebuildProperties" depends="createEnum,createAllPropertiesFiles"
+    <target name="rebuildProperties" depends="createEnum,createAllPropertiesFiles,exportAntTokenFilters"
             description="Rebuilds properties for all instances.">
+    </target>
+
+    <target name="exportAntTokenFilters">
+        <exportProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                target="${buildfiles.dir}/allfilter.xml"
+                header="&lt;project&gt;${line.separator}&lt;filterset id='allfilters'&gt;"
+                keyPrefix="&lt;filter token=&quot;"
+                keySuffix="&quot; value=&quot;${@KEY@}&quot;/&gt;"
+                suppressValue="true"
+                footer="&lt;/filterset&gt;${line.separator}&lt;/project&gt;"
+                />
     </target>
 
     <!--is referenced in ExportAllInstancesTask, so if renamed, please change there-->

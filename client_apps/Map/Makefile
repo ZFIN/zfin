@@ -83,8 +83,11 @@ $(STAGINGCLASSES) : $(STAGINGJAVAS)
 # ----- Rules for creating the JAR file.
 
 $(NETSCAPESYMLINK) :
+	rm -f $(NETSCAPESYMLINK)
 	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
 $(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
+	rm -rf $(STAGINGDIR)/netscape
+	cp -rf $(TOP)/lib/Java/netscape $(STAGINGDIR)/netscape
 	cd $(STAGINGDIR); $(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) netscape
 	chmod o+r $@

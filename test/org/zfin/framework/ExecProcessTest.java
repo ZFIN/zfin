@@ -118,9 +118,10 @@ public class ExecProcessTest {
             PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream,byteArrayErrorStream) ;
             defaultExecutor.setStreamHandler(pumpStreamHandler);
             int exitValue = defaultExecutor.execute(commandLine) ;
-//            System.out.println("output: " + byteArrayOutputStream.toString()) ;
             assertFalse(defaultExecutor.isFailure(exitValue));
         } catch (Exception e) {
+            logger.error("failed output: " + byteArrayOutputStream.toString()) ;
+            logger.error("failed error: " + byteArrayErrorStream.toString()) ;
             fail(e.toString()) ;
         }
 
