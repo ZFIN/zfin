@@ -30,12 +30,18 @@
         </tiles:insert>
     </td>
 </tr>
-<c:if test="${formBean.feature.featureType.dispName == 'unrecovered'}">
+
+<c:if test="${fn:startsWith(formBean.feature.abbreviation, 'unrec')==true}">
 
     <br style="font-size:small;">  Note: This record has been created to support data for unrecovered alleles reported by a TILLING project.   </br>
 
 </c:if>
 
+<c:if test="${formBean.feature.featureType.dispName == 'unspecified'}">
+
+    <br style="font-size:small;">  Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature.   </br>
+
+</c:if>
 <hr>
 <c:if test="${formBean.feature.aliases != null}">
     <tr>
