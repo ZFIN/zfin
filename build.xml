@@ -159,8 +159,8 @@
         <antcall target="compile"/>
     </target>
 
-    <target name="createEnvFile">
-        <echo message="creating ENV file for ${INSTANCE}"></echo>
+    <macrodef name="createEnv">
+    <sequential>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.env"
@@ -171,10 +171,17 @@
                 valueSuffix="&quot;"
                 footerFile="${commons.dir}/footer.env"
                 exportPropertyFile="${commons.dir}/env-exports.properties" />
+    </sequential>
+    </macrodef>
+
+    <target name="createEnvFile">
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
+        <createEnv/>
     </target>
 
-    <target name="createTTFile">
-        <echo message="creating TT file for ${INSTANCE}"></echo>
+
+    <macrodef name="createTT">
+    <sequential>
         <exportProperties
                 file="${commons.dir}/${INSTANCE}.properties"
                 target="${commons.dir}/${INSTANCE}.tt"
@@ -188,8 +195,13 @@
                        match="@"
                        replace="\\\\@"
                        flags="g"
-                >
-        </replaceregexp>
+                />
+    </sequential>
+    </macrodef>
+
+    <target name="createTTFile">
+        <echo message="creating TT file for ${INSTANCE}"></echo>
+        <createTT/>
     </target>
 
     <target name="rebuildPropertiesForInstance" depends="createEnum,createPropertiesFilesForInstance"
@@ -233,8 +245,8 @@
     <target name="createPropertiesFilesForInstance" depends="compile"
             description="Exports properties to env and tt files.">
         <echo message="Creating properties file: ${INSTANCE}"></echo>
-        <antcall target="createEnvFile"/>
-        <antcall target="createTTFile"/>
+        <createEnv/>
+        <createTT/>
         <echo message="Created properties file: ${INSTANCE}"></echo>
     </target>
 
