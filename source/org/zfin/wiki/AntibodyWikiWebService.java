@@ -478,6 +478,57 @@ public class AntibodyWikiWebService extends WikiWebService {
         (new IntegratedJavaMailSender()).sendMail("Antibody Wiki Notes", mailMessageStringBuilder.toString(), ZfinProperties.getAdminEmailAddresses());
     }
 
+
+    public RemotePage mergeAntibody(Antibody antibodyToMergeInto, Antibody antibodyToDelete) throws Exception {
+        if (false == ZfinProperties.isPushToWiki()) {
+            logger.info("not authorized to push to wiki by ZfinProperties");
+            return null;
+        }
+
+        // get page to merge into
+        String titleToMergeInto = getWikiTitleFromAntibody(antibodyToMergeInto);
+        RemotePage pageToMergeInto = getPageForAntibodyName(titleToMergeInto);
+
+        // get page to delete
+        String titleToDelete = getWikiTitleFromAntibody(antibodyToDelete);
+        RemotePage pageToDelete = getPageForAntibodyName(titleToDelete);
+
+
+        // recreate new page from old
+        RemotePage newPage = updatePageForAntibody(antibodyToMergeInto, pageToMergeInto.getTitle());
+
+        // move comments overgetTitle() to new antibody
+        moveComments(pageToDelete,pageToMergeInto) ;
+
+        return newPage ;
+    }
+
+    public void moveComments(Antibody antibodyToDelete,Antibody antibodyToMergeInto) throws Exception{
+        // get page to merge into
+        String titleToMergeInto = getWikiTitleFromAntibody(antibodyToMergeInto);
+        RemotePage pageToMergeInto = getPageForAntibodyName(titleToMergeInto);
+
+        // get page to delete
+        String titleToDelete = getWikiTitleFromAntibody(antibodyToDelete);
+        RemotePage pageToDelete = getPageForAntibodyName(titleToDelete);
+
+        moveComments(pageToDelete,pageToMergeInto);
+    }
+
+    /**
+     * change ownership of comment from page to delete to page to merge into
+     * @param pageToDelete
+     * @param pageToMergeInto
+     * @throws Exception
+     */
+    private void moveComments(RemotePage pageToDelete, RemotePage pageToMergeInto) throws Exception{
+        for(RemoteComment comment: service.getComments(token,pageToDelete.getId())){
+            service.removeComment(token,comment.getId())  ;
+            comment.setPageId(pageToMergeInto.getId());
+            service.addComment(token,comment)  ;
+        }
+    }
+
     public RemotePage updatePageForAntibody(Antibody antibody, String oldName) throws Exception {
         if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push to wiki by ZfinProperties");
@@ -548,7 +599,6 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @param zfinAntibodyHashMap       The cached list of antiboidies processed.
      * @param wikiSynchronizationReport The Page report statistics.
      * @return number of dropped antibodies.
-     * @throws Exception Failure to process or drop antibodies.
      */
 
     public WikiSynchronizationReport validateAntibodiesOnWikiWithZFIN(HashMap<String, Antibody> zfinAntibodyHashMap,

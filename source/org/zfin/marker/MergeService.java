@@ -153,9 +153,11 @@ public class MergeService {
 
 
         try {
-            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibodyToMergeInto, antibodyToDelete.getAbbreviation());
+            AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto, antibodyToDelete);
+//            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibodyToMergeInto, antibodyToMergeInto.getAbbreviation());
+//            AntibodyWikiWebService.getInstance().moveComments(antibodyToDelete,antibodyToMergeInto);
         } catch (Exception e) {
-            logger.error("Failed to update antibody: " + antibodyToMergeInto.getAbbreviation(), e);
+            logger.error("Failed to update antibody: " + antibodyToMergeInto, e);
         }
 
     }
@@ -345,7 +347,7 @@ public class MergeService {
 
 
     /**
-     * TODO: check for potiential key conflicts
+     * TODO: check for potential key conflicts
      *
      * @param markerToDelete
      * @param markerToMergeInto
@@ -464,12 +466,10 @@ public class MergeService {
 
         try {
             AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
-            ;
         } catch (Exception e) {
-            logger.error("Failed to login to wiki to remove antibody");
+            logger.error("Failed to remove antibody: "+antibody,e);
         }
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(antibody, "Antibody", "Antibody Deleted", Person.getCurrentSecurityUser());
-        ;
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(antibody.getZdbID());
         // this should force a cascade
         HibernateUtil.currentSession().flush();

@@ -33,9 +33,19 @@ public class AntibodyDetailController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         LOG.info("Start Antibody Detail Controller");
         AntibodyBean form = (AntibodyBean) command;
-        Antibody ab = antibodyRepository.getAntibodyByIDFullyPopulated(form.getAntibody().getZdbID());
-        if (ab == null)
+        Antibody ab = antibodyRepository.getAntibodyByZdbID(form.getAntibody().getZdbID());
+        if (ab == null){
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(form.getAntibody().getZdbID());
+            logger.debug("trying to find a replaced zdbID for: " + form.getAntibody().getZdbID());
+            if(replacedZdbID!=null){
+                logger.debug("found a replaced zdbID for: " + form.getAntibody().getZdbID() + "->" + replacedZdbID);
+                form.getAntibody().setZdbID(replacedZdbID);
+                ab = antibodyRepository.getAntibodyByZdbID(form.getAntibody().getZdbID());
+            }
+        }
+        if(ab==null){
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
+        }
 
         return getModelAndViewForSingleAntibody(ab, false);
     }

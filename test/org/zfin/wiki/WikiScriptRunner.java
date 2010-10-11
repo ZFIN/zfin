@@ -2,8 +2,11 @@ package org.zfin.wiki;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.hibernate.SessionFactory;
+import org.zfin.TestConfiguration;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
@@ -18,6 +21,15 @@ import java.io.File;
 public class WikiScriptRunner {
 
     private final static Logger logger = Logger.getLogger(WikiScriptRunner.class);
+
+
+    static  {
+        TestConfiguration.configure();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false);
+        }
+    }
 
     /**
      * Adds a web page for a single antibody.
@@ -61,31 +73,9 @@ public class WikiScriptRunner {
 
 
     public static void main(String args[]) {
-        String[] confFiles = {
-                "filters.hbm.xml",
-                "anatomy.hbm.xml",
-                "mutant.hbm.xml",
-                "orthology.hbm.xml",
-                "people.hbm.xml",
-                "sequence.hbm.xml",
-                "blast.hbm.xml",
-                "reno.hbm.xml",
-                "publication.hbm.xml",
-                "marker.hbm.xml",
-                "mapping.hbm.xml",
-                "infrastructure.hbm.xml",
-                "expression.hbm.xml"
-        };
-        new HibernateSessionCreator(false);
-        File file = new File("test", "log4j.xml");
-        DOMConfigurator.configure(file.getAbsolutePath());
-        ZfinProperties.init();
-//        LoadPropertiesTask.loadProperties();
-//        ZfinProperties.init("test", "zfin-properties-test.xml");
-//        ZfinProperties.setWebRootDirectory(new File(".").getAbsolutePath());
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
         try {
-            WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
+//            WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
@@ -95,7 +85,11 @@ public class WikiScriptRunner {
 //            AntibodyWikiWebService.getInstance().replaceAntibodiesOnWikiWithZFIN();
 //            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
 //            wikiScriptRunner.synchronizeWebPage("Ab1-tuba");
-            wikiScriptRunner.synchronizeWebPage("anti-Tbx16");
+//            wikiScriptRunner.synchronizeWebPage("anti-Tbx16");
+
+//            Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName("zn-1");
+//            Antibody antibodyToDelete  = RepositoryFactory.getAntibodyRepository().getAntibodyByName("zn-13");
+//            AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto,antibodyToDelete) ;
 
 //            AntibodyWikiWebService.login();
 //            wikiScriptRunner.addWebPage("Ab-2F11");

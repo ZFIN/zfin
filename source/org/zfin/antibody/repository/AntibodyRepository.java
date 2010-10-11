@@ -33,7 +33,7 @@ public interface AntibodyRepository {
      * @param zdbID primary key
      * @return antibody
      */
-    public Antibody getAntibodyByIDFullyPopulated(String zdbID);
+    public Antibody getAntibodyByZdbID(String zdbID);
 
     /**
      * Search for antibodies with given ab parameters and given labeling.

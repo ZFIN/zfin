@@ -7,12 +7,14 @@ import java.util.Date;
 public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
 
     private String name;
+    private String group ;
     private Date lastExecution;
     private Date nextExecution;
     private boolean paused;
 
-    public QuartzJobInfo(String name, Date lastExecution, Date nextExecution, boolean paused) {
+    public QuartzJobInfo(String name,String group, Date lastExecution, Date nextExecution, boolean paused) {
         this.name = name;
+        this.group = group ;
         this.lastExecution = lastExecution;
         this.nextExecution = nextExecution;
         this.paused = paused;
@@ -24,6 +26,14 @@ public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public Date getLastExecution() {
@@ -52,5 +62,18 @@ public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
 
     public int compareTo(QuartzJobInfo o) {
         return name.compareTo(o.getName());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("QuartzJobInfo");
+        sb.append("{name='").append(name).append('\'');
+        sb.append(", group='").append(group).append('\'');
+        sb.append(", lastExecution=").append(lastExecution);
+        sb.append(", nextExecution=").append(nextExecution);
+        sb.append(", paused=").append(paused);
+        sb.append('}');
+        return sb.toString();
     }
 }

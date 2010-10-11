@@ -27,6 +27,8 @@ requestID=${formBean.requestID}
     <br>
     <b>Job:</b> ${formBean.job}
     <br>
+    <b>Group:</b> ${formBean.group}
+    <br>
     <br>
 </c:if>
 

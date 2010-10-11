@@ -89,7 +89,7 @@ public class QuartzJobsController extends AbstractCommandController {
         String[] manualTriggerNames = scheduler.getTriggerNames(MANUAL_TRIGGER_GROUP);
         for (String triggerName : manualTriggerNames) {
             Trigger trigger = scheduler.getTrigger(triggerName, MANUAL_TRIGGER_GROUP);
-            jobs.add(new QuartzJobInfo(trigger.getJobName(), trigger.getPreviousFireTime(),
+            jobs.add(new QuartzJobInfo(trigger.getJobName(),trigger.getGroup(), trigger.getPreviousFireTime(),
                     trigger.getNextFireTime(), scheduler.getTriggerState(triggerName, MANUAL_TRIGGER_GROUP) == Trigger.STATE_PAUSED));
         }
         quartzJobsBean.setManualJobsList(jobs);
@@ -124,7 +124,7 @@ public class QuartzJobsController extends AbstractCommandController {
                     }
                 }
 
-                jobs.add(new QuartzJobInfo(jobName, lastExecution, nextExecution, paused));
+                jobs.add(new QuartzJobInfo(jobName,group, lastExecution, nextExecution, paused));
             }
         }
 

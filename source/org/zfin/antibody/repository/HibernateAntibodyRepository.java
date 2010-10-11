@@ -66,10 +66,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @param zdbID primary key
      * @return antibody
      */
-    public Antibody getAntibodyByIDFullyPopulated(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-
-        Criteria query = session.createCriteria(Antibody.class);
+    public Antibody getAntibodyByZdbID(String zdbID) {
+        Criteria query = HibernateUtil.currentSession().createCriteria(Antibody.class);
         query.add(Restrictions.eq("zdbID", zdbID));
         return (Antibody) query.uniqueResult();
     }
