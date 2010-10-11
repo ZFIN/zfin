@@ -32,8 +32,17 @@ public class GenotypeDetailController extends AbstractCommandController {
         LOG.info("Start Genotype Detail Controller");
         GenotypeBean form = (GenotypeBean) command;
         Genotype genotype = mutantRepository.getGenotypeByID(form.getGenotype().getZdbID());
-        if (genotype == null)
+        if (genotype == null){
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(form.getGenotype().getZdbID());
+            if(replacedZdbID!=null){
+                logger.debug("found a replaced zdbID for: " + form.getGenotype().getZdbID() + "->" + replacedZdbID);
+                form.getGenotype().setZdbID(replacedZdbID);
+                genotype = mutantRepository.getGenotypeByID(form.getGenotype().getZdbID());
+            }
+        }
+        if (genotype == null){
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getGenotype().getZdbID());
+        }
 
         form.setGenotype(genotype);
 
