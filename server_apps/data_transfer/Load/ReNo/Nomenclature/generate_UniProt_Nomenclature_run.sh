@@ -46,8 +46,15 @@ foreach key (`cat keys.txt`)
 	endsw
 end # foreach
 
-echo "on EMBRYONIX blast the nomenclature set against Human & mouse & zebrafish proteins"
 
-ssh embryonix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! UniProt_$timestamp.out"
+if ($HOST=="embryonix") then
+    echo "on EMBRYONIX blast the nomenclature set against Human & mouse & zebrafish proteins"
+
+    ssh embryonix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! UniProt_$timestamp.out"
+else if ($HOST=="zygotix") then
+    echo "on ZYGOTIX blast the nomenclature set against Human & mouse & zebrafish proteins"
+
+    ssh zygotix "cd $here;nice +10 $bin_pth/blastp $quote$current/sptr_hs $current/sptr_ms $current/sptr_zf$quote accession.pp -E e-50 >! UniProt_$timestamp.out" 
+end if
 
 /private/ZfinLinks/Commons/bin/parse-blast-reno.r UniProt_$timestamp.out "UniProt_$timestamp"

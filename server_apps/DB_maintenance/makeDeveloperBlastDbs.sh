@@ -15,7 +15,7 @@ FROM_DIRECTORY=${WEBHOST_BLASTDB_TO_COPY}
 
 TO_DIRECTORY=$WEBHOST_BLAST_DATABASE_PATH/Current/
 
-if [ "${HOST}" == "embryonix" ]; then
+if [ "${HOST}" == "embryonix" ] || ["${HOST}" == "zygotix" ]; then
 
 	if [ -d $WEBHOST_BLAST_DATABASE_PATH ]; then
 	    

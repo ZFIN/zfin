@@ -8,7 +8,7 @@
 #
 use strict;
 
-my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_embryonix, $accfile, $report);
+my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
@@ -20,14 +20,14 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/";
 
-# a place on embryonix is used to store the fasta files for blast db update.
+# a place on development_machine is used to store the fasta files for blast db update.
 
 my $host = "<!--|DOMAIN_NAME|-->";
 if ($host ne "zfin.org") {
-    $dir_on_embryonix = "/research/zblastfiles/dev_files/daily" ;
+    $dir_on_development_machine = "/research/zblastfiles/dev_files/daily" ;
 }
 else {
-    $dir_on_embryonix = "/research/zblastfiles/files/daily" ;    
+    $dir_on_development_machine = "/research/zblastfiles/files/daily" ;    
 }
 
 $report = "acc_update.report";
@@ -102,18 +102,18 @@ while( !(-e "$unzipfile") ) {
 system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
-# only move the FASTA files and flat files to embryonix if that script
+# only move the FASTA files and flat files to development_machine if that script
 # is run from production.
 
 
 if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
-	if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
+	if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
 
-		&writeReport("Fasta files moved to embryonix.");
-		system ("/bin/touch $dir_on_embryonix/fileMoved.$md_date");
+		&writeReport("Fasta files moved to development_machine.");
+		system ("/bin/touch $dir_on_development_machine/fileMoved.$md_date");
 	}
 	else {
-		&writeReport("Failed to move the fasta files to embryonix.");
+		&writeReport("Failed to move the fasta files to development_machine.");
 	}
 }
 # rename daily zebrafish accession file and use that to update the database

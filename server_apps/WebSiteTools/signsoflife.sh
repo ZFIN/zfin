@@ -32,7 +32,7 @@ set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
 # as '1' so if the process is running just once, then the grep -c will return
 # '2'
 
-if ($HOST != "embryonix") then 
+if ($HOST != "embryonix" && $HOST != "zygotix") then 
 
   set logon=`ps -ef | grep -c "$INFORMIXDIR/bin/ontape"`
 

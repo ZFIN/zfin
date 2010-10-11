@@ -7,7 +7,7 @@
 # from the development file system when they are not available on production.
 
 # INPUT VARS: none
-# OUTPUT: adds or deletes files from embryonix/development machine
+# OUTPUT: adds or deletes files from embryonix/zygotix/development machine
 
 # see man rsync for additional details!
 #

@@ -1,7 +1,6 @@
 begin work;
 
 -- FILE: loadgoterms.sql
--- PREFIX: lgotrms_ (none added as of Feb. 2005)
 
 -- DESCRIPTION:
 -- This sql script loads updates to the go_term table from the ontology.unl 

@@ -23,7 +23,7 @@ my $user = "";
 my $passwd = "";
 my $outputdir ="";
 
-# a place on embryonix is used to store the fasta files for blast db update.
+# a place on embryonix/zygotix is used to store the fasta files for blast db update.
 if ($dbname ne "almdb") {
     $outputdir = "/research/zblastfiles/dev_files/genomix/" ;
 }

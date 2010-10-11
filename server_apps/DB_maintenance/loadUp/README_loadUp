@@ -8,12 +8,12 @@ scripts run as) and belong to the apache www group.  The .cgi that adds and
 moves files within these directories is ZFIN_WWW/cgi-bin/upload.cgi.
 
 ***IMPORTANT***
-When moving zfin.org to embryonix:
-After creating a good copy of the filesystems under the embryonix-specific
+When moving zfin.org to development machine:
+After creating a good copy of the filesystems under the development machine-specific
 loadUp/ tree, you *must* change the file
 permissions on the rsync'd directory to be owned zfishweb:www.  Otherwise
 the upload.cgi will fail silently.  You must also alter the apache config
-files to allow open access to the embryonix-specific images on development
+files to allow open access to the development machine-specific images on development
 ***IMPORTANT***
 
 The /bkup/ directories in each of the PDF and image directories hold
@@ -34,27 +34,27 @@ Apache on production is configured to recognize /imageLoadUp as an alias of
 and /PDFLoadUp as an alias of 
 /research/zprod/loadUp/PDFLoadup
 
-Apache on development is also configured to recognize /embryonixImageLoadUp 
-as an alias of /research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp
-and /embryonixPDFLoadUp as an alias of 
-/research/zcentral/loadUp/embryonixLoadup/embryonixPDFLoadUp
+Apache on development is also configured to recognize /development machineImageLoadUp 
+as an alias of /research/zcentral/loadUp/development machineLoadUp/development machineImageLoadUp
+and /development machinePDFLoadUp as an alias of 
+/research/zcentral/loadUp/development machineLoadup/development machinePDFLoadUp
 
 see /private/httpd/conf on emrbyonix or helix for more details.
 
 TRANSLATE TABLE INFO:
 
-In addition, all translate table files (except helix.tt and embryonix.tt)
+In addition, all translate table files (except helix.tt and development machine.tt)
 define the following generic tags to access these directories:
 
 <!--|IMAGE_LOAD|-->		/imageLoadUp
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|PDF_LOAD|-->		/PDFLoadUp
 
-for the embryonix.tt (with zfin.org on embryonix)
+for the development machine.tt (with zfin.org on development machine)
 
-<!--|IMAGE_LOAD|-->		/embryonixImageLoadUp/imageLoadUp
-<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp/embryonixLoadUp
-<!--|PDF_LOAD|-->		/embryonixPDFLoadUp/PDFLoadUp
+<!--|IMAGE_LOAD|-->		/development machineImageLoadUp/imageLoadUp
+<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp/development machineLoadUp
+<!--|PDF_LOAD|-->		/development machinePDFLoadUp/PDFLoadUp
 
 for the helix.tt, these tags are:
 
@@ -63,11 +63,11 @@ for the helix.tt, these tags are:
 <!--|PDF_LOAD|-->		/PDFLoadUp
 
 ***IMPORTANT***
-Note, for helix.tt and embryonix.tt, the full path is actually redirected
+Note, for helix.tt and development machine.tt, the full path is actually redirected
 through ZfinLinks.  This is to help us when we move zfin.org to
-embryonix.  See documentation in ZfinLinks for more information.
+development machine.  See documentation in ZfinLinks for more information.
 The symlinks for these directories in ZfinLinks will *have* to be updated
-when moving zfin.org to embryonix!
+when moving zfin.org to development machine!
 ***IMPORTANT***
 
 
@@ -88,7 +88,7 @@ In these kinds of scripts it is not uncommon to see
 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename as a filepath. 
 
 It is important to note that all development databases and .tt files point to 
-the same directory on embryonix.  This means that any images loaded from hoover
+the same directory on development machine.  This means that any images loaded from hoover
 can also be seen on albino.  It also means that files can be overwritten
 if they have the same filename as is already present in the shared 
 directory.
@@ -98,12 +98,12 @@ in the database clemdb if they are created in the database hoovdb, however.
 Filesystem additions are GLOBAL to developers, database records are LOCAL 
 to developers.  
 
-When zfin.org is on embryonix, the apache configuration changes slightly, and
-the embryonix.tt file always points to slightly different directories.
+When zfin.org is on development machine, the apache configuration changes slightly, and
+the development machine.tt file always points to slightly different directories.
 This is to prevent changes on the development machine to affect the
 production repository of pdfs/images.  
 
-See /private/http/conf/http.conf.embryonix, and embryonix.tt for details.
+See /private/http/conf/http.conf.development machine, and development machine.tt for details.
 
 FILE NAMING CONVENTIONS:
 
@@ -158,16 +158,16 @@ See the rsync man pages for more details.
 It is possible to make your own, personal filesystem for testing pdf,
 image loading.  Please speak to Dave C. or Sierra for help with this.
 
-To make a copy of the production file system on embryonix (for use when
-zfin.org moves to embryonix), run 'makeEmbryFiles.pl.'  This script will sync 
-the production filesystem in the embryonix directories.  After running
-there will be two copies of the entire image/pdf filesystem on embryonix.
+To make a copy of the production file system on development machine (for use when
+zfin.org moves to development machine), run 'makeEmbryFiles.pl.'  This script will sync 
+the production filesystem in the development machine directories.  After running
+there will be two copies of the entire image/pdf filesystem on development machine.
 One copy will  be used by all developers (/research/zcentral/loadup/imageLoadUp
 and /research/zcentral/loadUp/PDFLoadUp).  The other copy will be used
-only by zfin.org on embryonix:
-/research/zcentral/loadUp/embryonixLoadUp/embryonixImageLoadUp/imageLoadUp
+only by zfin.org on development machine:
+/research/zcentral/loadUp/development machineLoadUp/development machineImageLoadUp/imageLoadUp
 and
-/research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/PDFLoadUp
+/research/zcentral/loadUp/development machineLoadUp/development machinePDFLoadUp/PDFLoadUp
 
 ***IMPORTANT***
 After running makeEmbryFiles.pl, a user with the ability to sudo must

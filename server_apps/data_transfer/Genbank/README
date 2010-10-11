@@ -24,5 +24,5 @@ PROCEDURE
 ----------------------------
     
     gbaccession.pl guides the process. 
-    By default, it downloads today's update file from ftp://ftp.ncbi.nih.gov/genbank/daily-nc. Or a specific date could be given in a format of MMDD as parameter. After unzip, the file is parsed by parseDaily.pl, generating nc_zf_acc.unl and a set of fasta files for BLAST db update. The nc_zf_acc.unl is used to update accession_bank and db_link tables by dailyUpdate.sql, and the fasta files are then passed on to embryonix.
+    By default, it downloads today's update file from ftp://ftp.ncbi.nih.gov/genbank/daily-nc. Or a specific date could be given in a format of MMDD as parameter. After unzip, the file is parsed by parseDaily.pl, generating nc_zf_acc.unl and a set of fasta files for BLAST db update. The nc_zf_acc.unl is used to update accession_bank and db_link tables by dailyUpdate.sql, and the fasta files are then passed on to embryonix/zygotix.
   
