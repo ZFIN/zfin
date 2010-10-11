@@ -38,7 +38,7 @@
 <!--|MACHINE_NAME|-->	embryonix
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
 <!--|ONCONFIG_FILE|-->	onconfig
-<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu dhowe\@cs.uoregon.edu
+<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu bjruef\@uoneuro.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/mirror
