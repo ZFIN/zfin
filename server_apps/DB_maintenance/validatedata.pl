@@ -2796,7 +2796,7 @@ if($daily) {
     $sth->execute();
 
     while (my ($curatorEmail, $curatorId, $curatorName) = $sth->fetchrow_array()) {
-	if ($globalDbName ne "zfindb"){
+	if ($globalDbName ne "mirrordb"){
 	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
 	}
 	my @curatorName = split(/,/,$curatorName);
