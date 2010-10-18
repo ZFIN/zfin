@@ -247,8 +247,44 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
       left join clone
           on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
  where gene.mrkr_abbrev not like 'WITHDRAWN: %'
+      and exists (select 1 from expression_result 
+ 	                   where xpatres_xpatex_zdb_id = xpatex_zdb_id )
  order by gene_zdb, xpat_zdb, probe_zdb;
 
+-- generate a file with antibodies and associated expression experiment
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/abxpat.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/abxpat.txt'
+ DELIMITER "	"
+ select antibody.atb_zdb_id, atb.mrkr_abbrev,gene.mrkr_zdb_id as gene_zdb, gene.mrkr_abbrev,
+        xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+        xpatex_source_zdb_id,
+        genox_geno_zdb_id, genox_exp_zdb_id
+ from expression_experiment
+      join genotype_experiment
+	  on genox_zdb_id = xpatex_genox_zdb_id
+      join antibody antibody
+	  on antibody.atb_zdb_id = xpatex_atb_zdb_id
+      left join marker gene
+	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id,
+      marker as atb
+ where atb.mrkr_zdb_id  = antibody.atb_zdb_id
+      and xpatex_gene_zdb_id is null
+UNION
+ select antibody.atb_zdb_id, atb.mrkr_abbrev, gene.mrkr_zdb_id as gene_zdb, gene.mrkr_abbrev,
+        xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+        xpatex_source_zdb_id,
+        genox_geno_zdb_id, genox_exp_zdb_id
+ from expression_experiment
+      join genotype_experiment
+	  on genox_zdb_id = xpatex_genox_zdb_id
+      join antibody antibody
+	  on antibody.atb_zdb_id = xpatex_atb_zdb_id
+      join marker gene
+	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id,
+      marker as atb
+ where gene.mrkr_abbrev not like 'WITHDRAWN: %'
+      and atb.mrkr_zdb_id  = antibody.atb_zdb_id
+ order by antibody.atb_zdb_id, xpat_zdb;
 
 -- create temp table for environment
 
@@ -822,7 +858,7 @@ join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
 join genotype on geno_zdb_id = genox_geno_zdb_id
 join experiment on exp_zdb_id = genox_exp_zdb_id
 where     geno_is_wildtype = 't'
-      and exp_zdb_id = 'ZDB-EXP-041102-1'
+      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
       and xpatres_xpatex_zdb_id = xpatex_zdb_id
       and xpatres_expression_found = 't'
       and xpatres_superterm_zdb_id = term_zdb_id
@@ -836,7 +872,7 @@ join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
 join genotype on geno_zdb_id = genox_geno_zdb_id
 join experiment on exp_zdb_id = genox_exp_zdb_id
 where     geno_is_wildtype = 't'
-      and exp_zdb_id = 'ZDB-EXP-041102-1'
+      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
       and xpatres_xpatex_zdb_id = xpatex_zdb_id
       and xpatres_expression_found = 't'
       and xpatres_subterm_zdb_id = term_zdb_id
