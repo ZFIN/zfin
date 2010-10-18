@@ -125,7 +125,6 @@
                from $phmview_input_figentity_table, term as super, OUTER term as sub
               where t_superterm_zdb_id = super.term_zdb_id
 	        and t_subterm_zdb_id = sub.term_zdb_id
-	   group by super.term_zdb_id, sub.term_zdb_id
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=phmview_entity_sql>
