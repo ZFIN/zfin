@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 
 GENERICS = load_drerio_vega_id.sql unload_pheno_gff.sql unload_zfin_genes_gff.sql \
 unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql GFF3Files.pl \
-unload_zfin_transcript.sql unload_antibody_gff.sql
+unload_zfin_transcript.sql unload_antibody_gff.sql unload_zfin_morphalino.sql
 
 STATICS = gather_alias.awk get_final_gene.awk rollback.sql
 
