@@ -10,7 +10,7 @@
         </parallel>
     </target>
 
-    <target name="gwt" depends="lookup-gwt,marker-gwt,curation-gwt" description="Compiles all gwt targets">
+    <target name="gwt" description="Compiles all gwt targets">
         <!--TODO: when we go to zygotix full-time, this can go back into parallel mode-->
         <!--<parallel>-->
         <sequential>
