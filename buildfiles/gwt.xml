@@ -4,60 +4,45 @@
 
     <target name="dirty-gwt" description="Compiles all gwt targets">
         <parallel>
-            <antcall target="dirty-lookup-gwt"/>
-            <antcall target="dirty-marker-gwt"/>
-            <antcall target="dirty-curation-gwt"/>
+            <dirty-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
+            <dirty-gwt-compile module="org.zfin.gwt.marker.Marker"/>
+            <dirty-gwt-compile module="org.zfin.gwt.curation.Curation"/>
         </parallel>
     </target>
 
     <target name="gwt" depends="lookup-gwt,marker-gwt,curation-gwt" description="Compiles all gwt targets">
-<!--        <parallel>-->
-<!--            <antcall target="lookup-gwt"/>-->
-<!--            <antcall target="marker-gwt"/>-->
-<!--            <antcall target="curation-gwt"/>-->
-<!--        </parallel>-->
-    </target>
-
-    <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.lookup.Lookup"/>
-        </antcall>
+        <!--TODO: when we go to zygotix full-time, this can go back into parallel mode-->
+        <!--<parallel>-->
+        <sequential>
+            <pre-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
+            <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
+            <pre-gwt-compile module="org.zfin.gwt.curation.Curation"/>
+        </sequential>
+        <!--</parallel>-->
     </target>
 
     <target name="lookup-gwt" description="Compiles lookup gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.pre-target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.lookup.Lookup"/>
-        </antcall>
+        <pre-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
     </target>
 
     <target name="curation-gwt" description="Compiles curation gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.pre-target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.curation.Curation"/>
-        </antcall>
-    </target>
-
-    <target name="dirty-curation-gwt" description="Compiles curation gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.curation.Curation"/>
-        </antcall>
+        <pre-gwt-compile module="org.zfin.gwt.curation.Curation"/>
     </target>
 
     <target name="marker-gwt" description="Compiles transcript edit gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.pre-target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.marker.Marker"/>
-        </antcall>
+        <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
+    </target>
+
+    <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
+        <dirty-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
+    </target>
+
+    <target name="dirty-curation-gwt" description="Compiles curation gwt">
+        <dirty-gwt-compile module="org.zfin.gwt.curation.Curation"/>
     </target>
 
     <target name="dirty-marker-gwt" description="Compiles transcript edit gwt">
-        <antcall target="gwt-compile">
-            <param name="gwt.module.target" value="${gwt.target}"/>
-            <param name="gwt.module" value="org.zfin.gwt.marker.Marker"/>
-        </antcall>
+        <dirty-gwt-compile module="org.zfin.gwt.marker.Marker"/>
     </target>
 
     <target name="run-marker-gwt" description="Compiles transcript edit gwt">
@@ -86,22 +71,41 @@
     </target>
 
 
-    <target name="gwt-compile" description="Compile gwt classes to javascript" depends="compile">
-        <delete dir="${gwt.module.target}/${gwt.module}"/>
-        <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
-            <classpath>
-                <dirset dir="${source.dir}" defaultexcludes="true">
-                    <include name="**"/>
-                    <exclude name="**/.svn"/>
-                </dirset>
-            </classpath>
-            <arg value="-war"/>
-            <arg value="${gwt.module.target}"/>
-            <arg value="-style"/>
-            <arg value="PRETTY"/>
-            <arg value="${gwt.module}"/>
-            <jvmarg value="-Xms256m"  />
-            <jvmarg value="-Xmx512m"  />
-        </java>
-    </target>
+    <macrodef name="dirty-gwt-compile">
+        <attribute name="module"/>
+        <sequential>
+            <gwt-compile module="@{module}" target="${gwt.target}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="pre-gwt-compile">
+        <attribute name="module"/>
+        <sequential>
+            <gwt-compile module="@{module}" target="${gwt.pre-target}"/>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef name="gwt-compile" description="Compile gwt classes to javascript" >
+        <attribute name="module"/>
+        <attribute name="target"/>
+        <sequential>
+            <delete dir="@{target}/@{module}"/>
+            <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
+                <classpath>
+                    <dirset dir="${source.dir}" defaultexcludes="true">
+                        <include name="**"/>
+                        <exclude name="**/.svn"/>
+                    </dirset>
+                </classpath>
+                <arg value="-war"/>
+                <arg value="@{target}"/>
+                <arg value="-style"/>
+                <arg value="PRETTY"/>
+                <arg value="@{module}"/>
+                <jvmarg value="-Xms256m"  />
+                <jvmarg value="-Xmx512m"  />
+            </java>
+        </sequential>
+    </macrodef>
 </project>
