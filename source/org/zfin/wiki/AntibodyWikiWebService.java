@@ -103,11 +103,11 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @return The wiki page name.
      */
     private String getWikiTitleFromAntibodyName(String name) {
-        return name.replaceAll("\\/", "-").toLowerCase();
+        return name.replaceAll("\\/", "-");
     }
 
     private String getWikiTitleFromAntibody(Antibody antibody) {
-        return antibody.getName().replaceAll("\\/", "-");
+        return getWikiTitleFromAntibodyName(antibody.getName()) ;
     }
 
 
@@ -232,6 +232,9 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         // host species
         content = content.replace("{text-data:HostOrganism}{text-data}", (antibody.getHostSpecies() != null ? antibody.getHostSpecies() : ""));
+
+        // Immunogen species
+        content = content.replace("{text-data:ImmunogenOrganism}{text-data}", (antibody.getImmunogenSpecies() != null ? antibody.getImmunogenSpecies() : ""));
 
         // antibody isotope
         String isotypeReplaceString = "";

@@ -9,6 +9,7 @@
 || Other names, clone ids, catalog ids etc. | {text-data:OtherInfo}{text-data} ||
 || Does it work on zebrafish\? | {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} ||
 || Host organism | {text-data:HostOrganism}{text-data} ||
+|| Immunogen organism| {text-data:ImmunogenOrganism}{text-data} ||
 || Antibody isotype | {text-data:AntibodyIsotype}{text-data} ||
 || Antibody type | {text-data:AntibodyType}{text-data} ||
 || Anatomical structures recognized \\
