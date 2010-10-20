@@ -138,6 +138,10 @@ EFFECTS
     <?/MISQL>
   <?/MIBLOCK>
 
+  <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">
+    <?MIVAR NAME="xpcurfig_pub_can_show_images">$1<?/MIVAR>
+  <?/MISQL>
+  
   <?MIVAR NAME=xpcurfig_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   
   <table width=100% border=0 cellspacing=0 cellpadding=3>
@@ -158,17 +162,15 @@ EFFECTS
     </tr>  
 
 <?MISQL SQL="
-    select fig_zdb_id, fig_caption, fig_comments, fig_label, zero_pad(fig_label), pub_can_show_images
-    from figure, publication
-    where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
-      and fig_source_zdb_id = zdb_id
+    select fig_zdb_id, fig_caption, fig_comments, fig_label, zero_pad(fig_label)
+    from figure
+    where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')      
     order by 5;">
 
   <?MIVAR name=xpcurfig_fig_zdb_id>$1<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
-  <?MIVAR name="xpcurfig_pub_can_show_images">$6<?/MIVAR>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
@@ -224,7 +226,7 @@ EFFECTS
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
 
 <TEXTAREA name="xpcur_G_fig_caption" cols=80 rows=10
-          <?MIBLOCK COND="$(OR,$(NXST,$xpcurfig_pub_can_show_images),$(EC,$xpcurfig_pub_can_show_images,f))">
+          <?MIBLOCK COND="$(EC,$xpcurfig_pub_can_show_images,f)">
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
        >$xpcur_G_fig_caption</TEXTAREA>
@@ -297,7 +299,7 @@ EFFECTS
     </td>
     <td>
         <TEXTAREA name="xpcur_G_fig_add_caption" cols=70 rows=10
-          <?MIBLOCK COND="$(OR,$(NXST,$xpcurfig_pub_can_show_images),$(EC,$xpcurfig_pub_can_show_images,f))">
+          <?MIBLOCK COND="$(EC,$xpcurfig_pub_can_show_images,f)">
             onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
           <?/MIBLOCK>
         ></TEXTAREA>
