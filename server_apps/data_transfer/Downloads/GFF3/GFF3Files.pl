@@ -42,7 +42,7 @@ my $cmd = "cat load_drerio_vega_id.sql " .
     "unload_xpat_gff.sql " .
     "unload_pheno_gff.sql " .
     "unload_antibody_gff.sql " .
-    "unload_zfin_morphalino.sql " . # should not need as much updating.
+    "unload_zfin_morpholino.sql " . # should not need as much updating.
 #   "unload_mutant_gff.sql " .
 #   "unload_zfin_transcript.sql ".
     "rollback.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess  <!--|DB_NAME|-->";
