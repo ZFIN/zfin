@@ -29,13 +29,13 @@
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
-<!--|INFORMIX_SERVER|-->	wanda
+<!--|INFORMIX_SERVER|-->	waldo
 <!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	cmpich\@cs.uoregon.edu
-<!--|MACHINE_NAME|-->	embryonix
+<!--|MACHINE_NAME|-->	zygotix
 <!--|NOMEN_COORDINATOR|-->	cmpich\@cs.uoregon.edu
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
@@ -45,7 +45,7 @@
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#DDEEAA
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	embryonix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	cmpich\@cs.uoregon.edu
