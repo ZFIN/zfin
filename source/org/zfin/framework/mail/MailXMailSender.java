@@ -76,6 +76,25 @@ public class MailXMailSender extends AbstractZfinMailSender {
 
     }
 
+    /**
+     * ToDo: Needs to be implemented yet...
+     * @param subject
+     * @param message
+     * @param doDefaultSubjectHeader
+     * @param fromEmail
+     * @param recipients
+     * @return
+     */
+    @Override
+    public boolean sendHtmlMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail, String[] recipients) {
+        return false;
+    }
+
+    @Override
+    public boolean sendHtmlMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail, String[] recipients, String filename) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public static void main(String args[]) {
 //        System.out.println("send a mail message") ;
 ////        boolean status = MailXMailSender.sendMail("subject TTTT of test email: "+new Date(),"message of test email: "+new Date(), ZfinProperties.getValidationEmailOtherString(true));

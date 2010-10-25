@@ -926,4 +926,22 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return (List<GenotypeFigure>) query.list();
     }
+
+    /**
+     * Retrieve the phenotypes that are annotated with obsoleted terms.
+     *
+     * @return list of phenotypes
+     */
+    @Override
+    public List<Phenotype> getPhenotypesOnObsoletedTerms() {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select phenotype from Phenotype phenotype " +
+                "     where (phenotype.term.obsolete = 't' OR " +
+                "    phenotype.superterm.obsolete = 't' OR " +
+                "    phenotype.subterm.obsolete = 't')";
+        Query query = session.createQuery(hql);
+
+        return (List<Phenotype>) query.list();
+    }
 }

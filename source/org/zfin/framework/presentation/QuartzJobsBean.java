@@ -1,9 +1,9 @@
 package org.zfin.framework.presentation;
 
-import java.util.Random;
 import java.util.Set;
 
 /**
+ * Form bean for Quartz scheduler page.
  */
 public class QuartzJobsBean {
 
@@ -14,17 +14,19 @@ public class QuartzJobsBean {
     private Set<QuartzJobInfo> manualJobsList;
     private String message;
     private boolean jobsRunning;
-    public static final int JOB_NOT_RUN = -1;
-    private int requestID = JOB_NOT_RUN;
-    private Random random = new Random();
+
+    public boolean isSorting() {
+        return action != null && action.startsWith("sortBy");
+    }
 
     public static enum Action {
         RUN("run"),
         PAUSE("pause"),
         RESUME("resume"),
         PAUSE_ALL("pauseAll"),
-        RESUME_ALL("resumeAll"),;
-
+        RESUME_ALL("resumeAll"),
+        SORT_BY_TIME("sortByTime"),
+        SORT_BY_GROUP("sortByGroup"),;
 
         private final String value;
 
@@ -47,7 +49,6 @@ public class QuartzJobsBean {
         public boolean isPauseAction() {
             return value.equals(PAUSE.value) || value.equals(PAUSE_ALL.value);
         }
-
 
         public boolean isIndividualAction() {
             return value.equals(PAUSE.value) || value.equals(RUN.value) || value.equals(RESUME.value);
@@ -112,22 +113,13 @@ public class QuartzJobsBean {
 
     public void clearLastAction() {
         if (action != null) {
-            this.message = action + " " + job;
+            this.message = action;
+            if (job != null)
+                this.message += " " + job;
             this.group = null;
             this.action = null;
             this.job = null;
         }
     }
 
-    public int getRequestID() {
-        return requestID;
-    }
-
-    public void setRequestID(int requestID) {
-        this.requestID = requestID;
-    }
-
-    public int getNewRequestID() {
-        return random.nextInt();
-    }
 }

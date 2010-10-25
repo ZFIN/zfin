@@ -1,23 +1,31 @@
 package org.zfin.framework.presentation;
 
+import com.zerog.common.java.lang.StringUtil;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  */
 public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
 
     private String name;
-    private String group ;
+    private String group;
     private Date lastExecution;
     private Date nextExecution;
     private boolean paused;
+    private boolean running;
 
-    public QuartzJobInfo(String name,String group, Date lastExecution, Date nextExecution, boolean paused) {
+    public QuartzJobInfo(String name, Date lastExecution, Date nextExecution, boolean paused, String group) {
         this.name = name;
-        this.group = group ;
+        this.group = group;
         this.lastExecution = lastExecution;
         this.nextExecution = nextExecution;
         this.paused = paused;
+        this.group = group;
     }
 
     public String getName() {
@@ -60,7 +68,28 @@ public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
         this.paused = paused;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
     public int compareTo(QuartzJobInfo o) {
+        if (o == null)
+            return 1;
+
+        if (!ObjectUtils.equals(group, o.getGroup()))
+            return group.compareTo(o.getGroup());
+        if (nextExecution == null && o.getNextExecution() != null)
+            return +1;
+        if (nextExecution != null && o.getNextExecution() == null)
+            return -1;
+        if (nextExecution != null && o.getNextExecution() != null) {
+            if (nextExecution.compareTo(o.getNextExecution()) != 0)
+                return nextExecution.compareTo(o.getNextExecution());
+        }
         return name.compareTo(o.getName());
     }
 
@@ -76,4 +105,5 @@ public class QuartzJobInfo implements Comparable<QuartzJobInfo> {
         sb.append('}');
         return sb.toString();
     }
+
 }

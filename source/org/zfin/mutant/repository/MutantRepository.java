@@ -251,5 +251,11 @@ public interface MutantRepository {
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms);
 
     List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
+
+    /**
+     * Retrieve the phenotypes that are annotated with obsoleted terms.
+     * @return list of phenotypes
+     */
+    List<Phenotype> getPhenotypesOnObsoletedTerms();
 }
 

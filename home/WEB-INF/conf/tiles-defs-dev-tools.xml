@@ -264,6 +264,11 @@
         <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_term.jsp"/>
     </definition>
 
+    <definition name="ontology-reports" extends="dev_layout">
+        <put name="staticTitle" value="Ontology: Reports"/>
+        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_reports.jsp"/>
+    </definition>
+
     <definition name="no-error.page" path="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
 </tiles-definitions>

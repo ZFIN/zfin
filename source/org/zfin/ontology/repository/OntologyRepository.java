@@ -1,5 +1,6 @@
 package org.zfin.ontology.repository;
 
+import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public interface OntologyRepository {
     /**
      * Retrieve a list of terms from the Quality ontology that match a given
      * string.
+     *
      * @param queryString query string
      * @return list of quality terms
      */
@@ -19,12 +21,14 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all terms from the quality ontology that are not obsoleted.
+     *
      * @return list of quality terms
      */
     List<Term> getAllQualityTerms();
 
     /**
      * Retrieve all terms from a given ontology that are not obsoleted.
+     *
      * @return list of terms
      */
     List<Term> getAllTermsFromOntology(Ontology ontology);
@@ -43,6 +47,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all Relationships for a given ontology.
+     *
      * @param ontology ontology
      * @return list of relationships
      */
@@ -50,6 +55,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all Relationships.
+     *
      * @return list of relationships
      */
     List<TermRelationshipHelper> getAllRelationships();
@@ -72,6 +78,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all Children terms from a given term
+     *
      * @param termID ID
      * @return list of terms
      */
@@ -79,6 +86,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve a term by name and ontology.
+     *
      * @param termName term name
      * @param ontology Ontology
      * @return term
@@ -87,6 +95,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all parent/child relationships.
+     *
      * @return List of transitive closure
      */
     List<TransitiveClosure> getTransitiveClosure();
@@ -98,4 +107,36 @@ public interface OntologyRepository {
      * @return Generic Term
      */
     GenericTerm getTermByZdbID(String termZdbID);
+
+    /**
+     * Retrieve header info for all ontologies.
+     *
+     * @return list of headers
+     */
+    List<OntologyMetadata> getAllOntologyMetadata();
+
+    /**
+     * Retrieve meta data for a given ontology identified by name
+     *
+     * @param name ontology name
+     * @return ontology metat data
+     */
+    OntologyMetadata getOntologyMetadata(String name);
+
+    /**
+     * Get the biggest number used in the ONTOLOGY.ont_order column.
+     */
+    int getMaxOntologyOrderNumber();
+
+    /**
+     * Retrieve a list of phenotypes that have annotations with secondary terms listed.
+     * @return list of phenotypes
+     */
+    List<Phenotype> getPhenotypesWithSecondaryTerms();
+
+    /**
+     * Save a new record in the ONTOLOGY database which keeps track of versions and namespaces.
+     * @param metaData meta data
+     */
+    void saveNewDbMetaData(OntologyMetadata metaData);
 }

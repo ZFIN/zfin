@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="load ontology" default="load-ontology" basedir=".">
+
+    <property name="anatomyOboURL" value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
+    <property name="qualityOboURL" value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
+    <property name="geneOboURL" value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+    <property name="spatialOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
+
+    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <target name="load-sm" >
+        <antcall target="load-spatial-ontology" />
+    </target>
+
+    <target name="load-spatial-ontology"  depends="init" >
+        <property name="localOboFile" value="${run-directory}/spatial.obo"/>
+        <echo message="${localOboFile}"/>
+        <antcall target="load-ontology" />
+    </target>
+
+    <target name="download-spatial-ontology" >
+        <property name="localOboFile" value="spatial.obo"/>
+        <property name="oboFileURL" value="${spatialOboURL}"/>
+        <antcall target="download-ontology" />
+    </target>
+
+    <target name="load-anatomy-ontology"  depends="init">
+        <property name="localOboFile" value="${run-directory}/anatomy.obo"/>
+        <antcall target="load-ontology" />
+    </target>
+
+    <target name="load-gene-ontology"  depends="init">
+        <property name="localOboFile" value="${run-directory}/gene-ontology.obo"/>
+        <antcall target="load-ontology" />
+    </target>
+
+    <target name="download-gene-ontology" >
+        <property name="localOboFile" value="gene-ontology.obo"/>
+        <property name="oboFileURL" value="${geneOboURL}"/>
+        <antcall target="download-ontology" />
+    </target>
+
+    <target name="load-quality-ontology"  depends="init">
+        <property name="localOboFile" value="${run-directory}/quality.obo"/>
+        <property name="scriptFiles" value="loadTerms.sql,fixPatoAnnotations.sql"/>
+        <antcall target="load-ontology" />
+    </target>
+
+    <target name="download-quality-ontology" >
+        <property name="localOboFile" value="quality.obo"/>
+        <property name="oboFileURL" value="${qualityOboURL}"/>
+        <antcall target="download-ontology" />
+    </target>
+
+    <target name="load-ontology" description="Run the ontology loader">
+        <property name="scriptFiles" value="loadTerms.sql"/>
+        <java classname="org.zfin.ontology.datatransfer.LoadOntology" fork="yes" maxmemory="256m"
+              classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="${localOboFile}"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-dbScriptFileNames"/>
+            <arg value="${scriptFiles}"/>
+        </java>
+
+    </target>
+
+    <target name="download-anatomy-ontology" >
+        <property name="localOboFile" value="anatomy.obo"/>
+        <property name="oboFileURL" value="${anatomyOboURL}"/>
+        <antcall target="download-ontology" />
+    </target>
+
+    
+    <target name="download-ontology" depends="init" description="Run the ontology loader">
+        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes" classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="${run-directory}/${localOboFile}"/>
+            <arg value="-oboFileURL"/>
+            <arg value="${oboFileURL}"/>
+        </java>
+
+    </target>
+
+    <target name="init">
+        <echo message="Launching Ontology Loader"/>
+        <tstamp/>
+        <property name="run-directory" value="./run-${DSTAMP}"/>
+        <mkdir dir="${run-directory}" />
+    </target>
+
+    <target name="archive-run-directory">
+        <echo message="Archive run directory"/>
+        <mkdir dir="${run-directory}" />
+    </target>
+
+
+    <target name="usage">
+        <echo>
+            TARGETS:
+            download-quality-ontology
+            download-anatomy-ontology
+            download-gene-ontology
+            download-spatial-ontology
+
+            load-quality-ontology
+            load-anatomy-ontology
+            load-gene-ontology
+            load-spatial-ontology
+        </echo>
+    </target>
+
+    
+</project>

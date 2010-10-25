@@ -18,6 +18,10 @@
                 <ref bean="updateDOIMonthlyTrigger"/>
                 <ref bean="microarrayTrigger"/>
                 <ref bean="reloadOntologyTrigger"/>
+                <ref bean="loadQualityOntology"/>
+                <ref bean="loadAnatomyOntology"/>
+                <ref bean="loadGeneOntology"/>
+                <ref bean="loadSpatialOntology"/>
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
@@ -30,6 +34,7 @@
                 <prop key="org.quartz.threadPool.threadCount">3</prop>
                 <prop key="org.quartz.threadPool.threadPriority">5</prop>
                 <prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
+                <prop key="org.quartz.jobStore.class">org.quartz.simpl.GroupRAMJobStore</prop>
             </props>
         </property>
     </bean>
@@ -103,7 +108,7 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <property name="cronExpression">
             <!--goes off every 15 minutes -->
-            <value>0 0,15,30,45 * * * ?</value>
+            <value>0 0,15,30,45 2 * * ?</value>
         </property>
     </bean>
 
@@ -187,14 +192,115 @@
     <bean id="reloadOntologyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Reload Ontologies"/>
-                <property name="group" value="Ontology"/>
+                <property name="name" value="Reload Ontologies into Memory"/>
+                <property name="group" value="Load Ontology"/>
                 <property name="jobClass" value="org.zfin.ontology.quartz.ReloadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="jobName" value="Reload Ontologies into Memory"/>
+                    </map>
+                </property>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="0 10 04 ? * *"/>
+        <property name="cronExpression" value="0 20 23 ? * SUN-THU"/>
+    </bean>
+
+    <bean id="loadQualityOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Quality Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="quality.obo"/>
+                        <entry key="oboFileUrl"
+                                  value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Quality Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="0 10 23 ? * SUN-THU"/>
+    </bean>
+
+    <bean id="loadGeneOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Gene Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="gene-ontology.obo"/>
+                        <entry key="oboFileUrl"
+                                  value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Gene Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="1 10 23 ? * SUN-THU"/>
+    </bean>
+
+    <bean id="loadAnatomyOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Anatomy Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="anatomy.obo"/>
+                        <entry key="oboFileUrl"
+                                  value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Anatomy Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="2 10 23 ? * SUN-THU"/>
+    </bean>
+
+    <bean id="loadSpatialOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Spatial Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="spatial.obo"/>
+                        <entry key="oboFileUrl"
+                                  value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Spatial Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="3 10 23 ? * SUN-THU"/>
     </bean>
 
 </beans>

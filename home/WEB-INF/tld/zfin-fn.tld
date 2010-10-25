@@ -155,4 +155,39 @@
     </example>
   </function>
 
+    <function>
+        <description>
+          Determine if a given date is on today's day
+        </description>
+        <name>isToday</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isToday(java.util.Date)</function-signature>
+        <example>
+          ${fn:isToday(date)}">
+        </example>
+      </function>
+
+    <function>
+        <description>
+          Determine if a given date is on today's day
+        </description>
+        <name>isTomorrow</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isTomorrow(java.util.Date)</function-signature>
+        <example>
+          ${fn:isTomorrow(date)}">
+        </example>
+      </function>
+
+    <function>
+        <description>
+          Determine if a given date is on today's day
+        </description>
+        <name>isYesterday</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isYesterday(java.util.Date)</function-signature>
+        <example>
+          ${fn:isYesterday(date)}">
+        </example>
+      </function>
 </taglib>

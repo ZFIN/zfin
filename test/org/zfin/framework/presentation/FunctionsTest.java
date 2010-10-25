@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -93,5 +96,43 @@ public class FunctionsTest {
         String durationString = ZfinJSPFunctions.getTimeBetweenRequests(stream.getStream(), 0);
     }
 
+    @Test
+    public void isDateToday() {
+        Date today = new Date();
+        assertTrue(ZfinJSPFunctions.isToday(today));
+
+        today.setMonth(today.getMonth() + 1);
+        assertTrue(!ZfinJSPFunctions.isToday(today));
+
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        assertTrue(!ZfinJSPFunctions.isToday(tomorrow.getTime()));
+    }
+
+    @Test
+    public void isDateTomorrow() {
+        Date today = new Date();
+        today.setMonth(today.getMonth() + 1);
+        assertTrue(!ZfinJSPFunctions.isTomorrow(today));
+
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        assertTrue(ZfinJSPFunctions.isTomorrow(tomorrow.getTime()));
+    }
+
+    @Test
+    public void isDateYesterday() {
+        Date today = new Date();
+        today.setMonth(today.getMonth() + 1);
+        assertTrue(!ZfinJSPFunctions.isYesterday(today));
+
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        assertTrue(!ZfinJSPFunctions.isYesterday(tomorrow.getTime()));
+
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_MONTH, -1);
+        assertTrue(ZfinJSPFunctions.isYesterday(yesterday.getTime()));
+    }
 }
 

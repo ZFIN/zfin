@@ -59,6 +59,7 @@
                 <prop key="/ontology/terms">ontologyTerms</prop>
                 <prop key="/ontology/term-detail">ontologyTerm</prop>
                 <prop key="/dev-tools/zfin-properties">zfinProperties</prop>
+                <prop key="/dev-tools/ontology-reports">ontologyReports</prop>
             </props>
         </property>
     </bean>
@@ -91,6 +92,10 @@
 
     <bean name="ontologyTerm" class="org.zfin.ontology.presentation.OntologyTermController" scope="prototype">
         <property name="viewName" value="ontology-term"/>
+    </bean>
+
+    <bean name="ontologyReports" class="org.zfin.ontology.presentation.OntologyReportController" scope="prototype">
+        <property name="viewName" value="ontology-reports"/>
     </bean>
 
     <bean name="imageEditTest" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">

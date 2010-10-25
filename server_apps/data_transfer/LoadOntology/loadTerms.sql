@@ -1,4 +1,6 @@
-begin work;
+-- loadTerms.sql
+
+--begin work;
 
 create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(30), remark varchar(100))
 with no log;
@@ -6,11 +8,17 @@ with no log;
 load from ontology_header.unl
   insert into tmp_header;
 
+unload to 'debug' 
+	Select * from tmp_header;
+
 create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
 with no log;
 
 load from syntypedefs_header.unl
   insert into tmp_syndef;
+
+unload to 'debug'
+	Select * from tmp_syndef;
 
 update tmp_syndef
   set scoper = trim(scoper);
@@ -31,7 +39,8 @@ update tmp_syndef
   set type = 'plural'
   where type = 'PLURAL';
 
-select * from tmp_syndef;
+unload to 'debug'
+	Select * from tmp_syndef;
 
 delete from tmp_syndef
   where exists (select 'x' from alias_group
@@ -68,6 +77,8 @@ with no log;
 load from term_consider.unl 
  insert into tmp_suggestion;
 
+unload to 'debug'
+	Select * from tmp_suggestion;
 
 create temp table tmp_term_onto_with_dups (
 		term_id			varchar(50),
@@ -82,11 +93,22 @@ create temp table tmp_term_onto_with_dups (
 
 load from term_parsed.unl insert into tmp_term_onto_with_dups;
 
+unload to 'debug'
+	Select * from tmp_term_onto_with_dups;
+
 update tmp_term_onto_with_dups
   set term_onto = (Select default_namespace 
       		  	  from tmp_header
 			  )
 where term_onto is null;
+
+unload to 'debug' 
+	Select default_namespace 
+      		  	  from tmp_header;
+
+
+unload to 'default_namespace.txt'
+    Select default_namespace from tmp_header;
 
 create temp table tmp_term_onto_no_dups (
 		term_id			varchar(50),
@@ -96,6 +118,7 @@ create temp table tmp_term_onto_no_dups (
 		term_comment		lvarchar,
 		term_is_obsolete	boolean default 'f'
 	)with no log;
+
 
 insert into tmp_term_onto_no_dups
   select distinct term_id, 
@@ -107,11 +130,11 @@ insert into tmp_term_onto_no_dups
 	from tmp_term_onto_with_dups ;
 
 
-create index rterm_name_index 
+create index rterm_name_index
   on tmp_term_onto_no_dups (term_name)
   using btree in idxdbs3 ;
 
-create index rterm_id_index 
+create index rterm_id_index
   on tmp_term_onto_no_dups (term_id)
   using btree in idxdbs2 ;
 
@@ -157,21 +180,11 @@ unload to 'new_terms.unl'
 			   where term.term_ont_id = tmp_term.term_id);
 
 
-select * from tmp_term_onto_with_dups
- where term_id = 'GO:0000758' ;
-
-select * from tmp_term_onto_no_dups
- where term_id = 'GO:0000758' ;
-
-select * from term
- where term_ont_id = 'GO:0000758' ;
-
-
 unload to 'updated_terms.unl'
   select n.term_name, g.term_name, g.term_ont_id 
     from tmp_term_onto_no_dups n, term g 
     where n.term_id = g.term_ont_id 
-    and n.term_name not like g.term_name;
+    and n.term_name != g.term_name;
 
 !echo "update the term table with new names where the term id is the same term id in the obo file" ;
 
@@ -223,49 +236,6 @@ insert into zdb_active_data
 update tmp_term
   set term_is_obsolete = 'f'
   where term_is_obsolete is null ; 
-
-update ontology
-  set ont_format_version = (Select format_ver from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-update ontology
-  set ont_data_version = (Select data_ver from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-update ontology
-  set ont_current_date = (Select datet from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-update ontology
-  set ont_saved_by = (Select saved_by from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-update ontology
-  set ont_import = (Select auto from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-update ontology
-  set ont_remark = (Select remark from tmp_header where default_namespace = ont_default_namespace)
-  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
-
-
-!echo "this is where new ontologies are born.";
-insert into ontology (ont_ontology_name, 
-       	    	     ont_order, 
-		     ont_format_version, 
-		     ont_default_namespace, 
-		     ont_data_version, 
-		     ont_saved_by, 
-		     ont_remark)
-  select distinct term_ontology, 
-  	 	  (select max(ont_order)+1 from ontology),
-		  format_ver, 
-		  default_namespace, 
-		  data_ver,
-		  saved_by, 
-		  remark
-   from tmp_term, tmp_header
-  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
 
 insert into term (term_zdb_id, 
 			term_ont_id, 
@@ -376,11 +346,24 @@ create temp table tmp_rels (
 	termrel_type varchar(100)
  ) with no log ;
 
+create index tmp_rels_1_index 
+  on tmp_rels (termrel_term_1_id)
+  using btree in idxdbs3;
+
+create index tmp_rels_2_index 
+  on tmp_rels (termrel_term_2_id)
+  using btree in idxdbs3;
+
+create index tmp_reltype_index_rels
+  on tmp_rels (termrel_type)
+  using btree in idxdbs3;
+
 
 load from term_relationships.unl
   insert into tmp_rels ;
 
-select distinct termrel_type from tmp_rels;
+unload to 'debug'
+    Select * from tmp_rels;
 
 insert into term_relationship_type (termreltype_name)
   select distinct termrel_type from tmp_rels
@@ -462,19 +445,6 @@ create index tmp_reltype_index_zfin_rels
   using btree in idxdbs2;
 
 
-create index tmp_rels_1_index 
-  on tmp_rels (termrel_term_1_id)
-  using btree in idxdbs3;
-
-create index tmp_rels_2_index 
-  on tmp_rels (termrel_term_2_id)
-  using btree in idxdbs3;
-
-create index tmp_reltype_index_rels
-  on tmp_rels (termrel_type)
-  using btree in idxdbs3;
-
-
 --update statistics high for table zdb_active_data;
 --update statistics high for table tmp_zfin_rels ;
 --update statistics high for table tmp_rels_zdb;
@@ -545,6 +515,10 @@ delete from term_relationship
 create temp table tmp_syns (term_id varchar(30),synonym varchar(255),scoper varchar(30),type varchar(30), syn varchar(30))
 with no log;
 
+create index tmp_syn_synonym_index
+  on tmp_syns(synonym)
+  using btree in idxdbs3;
+
 
 !echo "start of the synonym loading";
 load from term_synonyms.unl
@@ -584,10 +558,6 @@ update tmp_syns
 update tmp_syns
   set type = 'plural'
  where type = 'PLURAL';
-
-create index tmp_syn_synonym_index
-  on tmp_syns(synonym)
-  using btree in idxdbs3;
 
 --update statistics high for table tmp_syns;
 --update statistics high for table data_alias;
@@ -814,24 +784,16 @@ create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(40),
 load from term_subset.unl
   insert into tmp_term_subset;
 
+unload to 'debug'
+	Select * from tmp_term_subset;
+
 !echo "delete from term_subset";
 
+
 delete from term_subset
-  where not exists (Select 'x' from tmp_term_subset, term, ontology_subset
-  	    	   	   where term_id = term_ont_id 
-			   and termsub_subset_id = osubset_pk_id
-			   and subset_name = osubset_subset_name) 
-  and exists (Select 'x' from tmp_term, term
-      	     	     where term_ont_id = term_id
-		     );
-
-
-delete from tmp_term_subset
-  where exists (select 'x' from term_subset, ontology_subset, term
-  	       	       where term_ont_id = term_id
-		       and termsub_subset_id = osubset_pk_id
-		       and subset_name = osubset_subset_name);
-
+       where exists (select 'x' from ontology_subset, tmp_term_subset
+			    where osubset_pk_id = termsub_subset_id
+			    and subset_name = osubset_subset_name);
 
 insert into term_subset (termsub_term_zdb_id, termsub_subset_id)
   select distinct term_zdb_id, osubset_pk_id
@@ -840,6 +802,57 @@ insert into term_subset (termsub_term_zdb_id, termsub_subset_id)
     and osubset_subset_name = subset_name;
 
 
+--create a table for unload to report
+
+insert into sec_unload (sec_id, prim_id)
+  select sec_id, prim_id
+    from sec_oks
+    where exists (select 'x' from
+		    term where term_ont_id = sec_id) ;
+
+unload to 'sec_unload.unl'
+  select * from sec_unload;
+
+unload to 'debug'
+  select * from sec_unload;
+
+create temp table sec_unload_report
+  (
+    sec_id varchar(50),
+    prim_id varchar(50),
+    term_name varchar(255),
+    onto varchar(50),
+    geno_handle	varchar(255),
+    exp_name varchar(255),
+    apato_pub_zdb_id varchar(50)
+  );
+
+insert into sec_unload_report
+  select sec_id,
+	prim_id,
+	term_name,
+	term_ontology,
+ 	geno_handle,
+	exp_name,
+	apato_pub_zdb_id
+    from sec_unload,
+		term,
+		atomic_phenotype,
+		genotype,
+		genotype_experiment,
+		experiment
+    where sec_id = term_ont_id
+    and apato_quality_zdb_id = term_zdb_id
+    and apato_genox_zdb_id = genox_zdb_id
+    and genox_exP_zdb_id = exp_zdb_id
+    and genox_geno_zdb_id = geno_zdb_id ;
+
+unload to 'sec_unload_report.unl'
+  select * from sec_unload_report;
+
+unload to 'debug'
+  select * from sec_unload_report;
+
 --rollback work;
-commit work;
+--commit work;
 

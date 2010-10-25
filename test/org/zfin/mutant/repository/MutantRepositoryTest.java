@@ -45,11 +45,6 @@ public class MutantRepositoryTest {
         }
     }
 
-    @Before
-    public void setUp() {
-    }
-
-
     /**
      * Check that genotype anh^m149 has background AB.
      */
@@ -283,12 +278,19 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getMorpholinosWithMarkerRelationships(){
+    public void getMorpholinosWithMarkerRelationships() {
         List<MorpholinoSequence> morpholinos = mutantRepository.getMorpholinosWithMarkerRelationships();
         assertNotNull(morpholinos);
-        LOG.info("# of morpholinos: "+ morpholinos.size());
-        assertTrue(morpholinos.size()>3000);
+        LOG.info("# of morpholinos: " + morpholinos.size());
+        assertTrue(morpholinos.size() > 3000);
         assertNotNull(morpholinos.get(0).getSequence());
+    }
+
+    @Test
+    public void phenotypesWithObsoleteTerms() {
+        List<Phenotype> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
+        assertNotNull(phenotypes);
+        assertEquals(0, phenotypes.size());
     }
 
 }

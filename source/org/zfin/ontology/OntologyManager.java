@@ -150,6 +150,8 @@ public class OntologyManager {
 
     protected void loadOntologiesFromDatabase() {
         if (singleOntology != null) {
+            List<TermRelationshipHelper> relationships = getOntologyRepository().getAllRelationships();
+            allRelationships = createRelationshipsMap(relationships);
             initSingleOntologyMap(singleOntology);
             serializeOntology(singleOntology);
             if (singleOntology == Ontology.ANATOMY) {
@@ -222,7 +224,7 @@ public class OntologyManager {
     }
 
     private void serializeOntologyInThread(final Ontology ontology) {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 serializeOntology(ontology);
@@ -254,20 +256,29 @@ public class OntologyManager {
         int averageMaximumNumOfChildren = 30;
 
         List<Term> children = new ArrayList<Term>(averageMaximumNumOfChildren);
+        Set<Term> childrenSet = new HashSet<Term>(averageMaximumNumOfChildren);
         for (String rootOboID : rootOboIDs) {
             Term rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
             children.addAll(rootTerm.getChildrenTerms());
+            childrenSet.addAll(rootTerm.getChildrenTerms());
         }
         PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>();
         int obsoleteCount = 0;
         int aliasCount = 0;
         int activeCount = 0;
-        while (!children.isEmpty()) {
-            Term currentTerm = children.get(0);
-            children.remove(0);
+        while (childrenSet.size() > 0) {
+            Term currentTerm = childrenSet.iterator().next();
+            childrenSet.remove(currentTerm);
             List<Term> newChildren = currentTerm.getChildrenTerms();
             if (newChildren != null && !newChildren.isEmpty()) {
-                children.addAll(newChildren);
+                for (Term child : newChildren) {
+                    if (children.contains(child)){
+                        logger.warn("Term already processed: " + child.getTermName() + " [" + child.getID());
+                    }else{
+                        children.add(child);
+                        childrenSet.add(child);
+                    }
+                }
             }
             Term term = getTermByID(currentTerm.getOntology(), currentTerm.getID());
             if (term == null)
@@ -279,8 +290,8 @@ public class OntologyManager {
                 } else {
                     ++activeCount;
                 }
-                if(term.getAliases()!=null){
-                    aliasCount += term.getAliases().size() ;
+                if (term.getAliases() != null) {
+                    aliasCount += term.getAliases().size();
                 }
             }
         }
@@ -326,8 +337,8 @@ public class OntologyManager {
                 aliasCount += term.getAliases().size();
             }
 
-            if(term.getAliases()!=null){
-                aliasCount += term.getAliases().size() ;
+            if (term.getAliases() != null) {
+                aliasCount += term.getAliases().size();
             }
 
         }
@@ -525,9 +536,9 @@ public class OntologyManager {
      * @return term
      */
     public Term getTermByID(String termID) {
-        if(StringUtils.isEmpty(termID))
-        return null;
-        
+        if (StringUtils.isEmpty(termID))
+            return null;
+
         for (Ontology ontology : ontologyTermMap.keySet()) {
             Term term = getTermByID(ontology, termID);
             if (term != null) {
@@ -560,20 +571,19 @@ public class OntologyManager {
     /**
      * Retrieve a term by name from a given ontology.
      *
-     * @param ontology ontology
-     * @param termName term name
+     * @param ontology      ontology
+     * @param termName      term name
      * @param allowObsolete include obsolete term in the search.
      * @return term
      */
-    public Term getTermByName(Ontology ontology, String termName,boolean allowObsolete) {
-        Collection<Term> terms =   getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
-        if(terms==null){
-            logger.info("No terms for term: "+ termName + " and ontology: "+ ontology.getOntologyName());
-            return null ;
-        }
-        else{
-            for(Term term: terms){
-                if( (!term.isObsolete() || allowObsolete)
+    public Term getTermByName(Ontology ontology, String termName, boolean allowObsolete) {
+        Collection<Term> terms = getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
+        if (terms == null) {
+            logger.info("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
+            return null;
+        } else {
+            for (Term term : terms) {
+                if ((!term.isObsolete() || allowObsolete)
                         &&
                         term.getTermName().equalsIgnoreCase(termName)) {
                     return term;
@@ -753,7 +763,7 @@ public class OntologyManager {
      * @throws IOException Thrown if problem writing to file.
      */
     @SuppressWarnings("unchecked")
-    public void deserializeOntology(Ontology ontology) throws Exception{
+    public void deserializeOntology(Ontology ontology) throws Exception {
         long start = System.currentTimeMillis();
         File lookupFile;
         try {
@@ -865,8 +875,8 @@ public class OntologyManager {
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
      *
-     * @param ontologies collection of ontologies
-     * @param termName   term name
+     * @param ontologies    collection of ontologies
+     * @param termName      term name
      * @param allowObsolete True if an obsolete term may be returned.
      * @return term object
      */

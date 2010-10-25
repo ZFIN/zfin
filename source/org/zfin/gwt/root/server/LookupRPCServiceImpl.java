@@ -99,17 +99,25 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     public TermStatus validateTerm(String term,  OntologyDTO ontologyDto) {
 
-        Ontology ontology  = DTOConversionService.convertToOntology(ontologyDto);
-        MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> terms = service.getMatchingTerms(ontology, term);
-
+        Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
         int foundInexactMatch = 0;
-        for (MatchingTerm anatomyItem : terms) {
-            String name = anatomyItem.getTerm().getTermName();
-            if (name.equals(term)) {
-                return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getID());
-            } else if (foundInexactMatch < 1 || name.contains(term)) {
-                ++foundInexactMatch;
+        if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
+            Term termObject = OntologyManager.getInstance().getTermByID(ontology, term);
+            if (termObject != null)
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getTermName(), termObject.getID());
+            else
+                foundInexactMatch = 0;
+        } else {
+            MatchingTermService service = new MatchingTermService();
+            Set<MatchingTerm> terms = service.getMatchingTerms(ontology, term);
+
+            for (MatchingTerm anatomyItem : terms) {
+                String name = anatomyItem.getTerm().getTermName();
+                if (name.equals(term)) {
+                    return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getID());
+                } else if (foundInexactMatch < 1 || name.contains(term)) {
+                    ++foundInexactMatch;
+                }
             }
         }
         if (foundInexactMatch > 1) {

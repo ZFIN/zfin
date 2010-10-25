@@ -88,6 +88,7 @@
 <filter token="NON_SECURE_HTTP" value="${NON_SECURE_HTTP}"/>
 <filter token="ONCONFIG" value="${ONCONFIG}"/>
 <filter token="ONCONFIG_FILE" value="${ONCONFIG_FILE}"/>
+<filter token="ONTOLOGY_LOADER_EMAIL" value="${ONTOLOGY_LOADER_EMAIL}"/>
 <filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>

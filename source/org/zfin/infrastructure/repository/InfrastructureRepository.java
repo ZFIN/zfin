@@ -12,6 +12,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.people.Person;
+import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.List;
 
@@ -294,6 +295,30 @@ public interface InfrastructureRepository {
     int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID);
 
     String getReplacedZdbID(String oldZdbID);
+
+    /**
+     * Execute a sql statement through straight JDBC call.
+     *
+     * @param statement query
+     * @return number from sql query: # of updated records, inserted records, deleted records.
+     */
+    int executeJdbcStatement(DatabaseJdbcStatement statement);
+
+    /**
+     * Execute a sql statement through straight JDBC call and inserting given string data.
+     *
+     * @param statement query
+     * @param data string data
+     */
+    void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data);
+
+    /**
+     * Return a set of data from a native SELECT statement.
+     * @param statement jdbc query
+     * @return list of strings
+     */
+    List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement);
+
 }
 
 

@@ -1,10 +1,14 @@
 package org.zfin.properties;
 
+import freemarker.template.Configuration;
 import org.apache.log4j.Logger;
 import org.zfin.gwt.root.ui.HandlesErrorCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.properties.ant.LoadPropertiesTask;
+import org.zfin.util.FileUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -15,6 +19,7 @@ public final class ZfinProperties {
 
     private static final Logger logger = Logger.getLogger(ZfinProperties.class) ;
     private static LoadPropertiesTask loadPropertiesTask = new LoadPropertiesTask();
+    private static Configuration freeMarkerConfiguration;
 
 
     public static String[] splitValues(ZfinPropertiesEnum zfinPropertiesEnum){
@@ -193,4 +198,19 @@ public final class ZfinProperties {
         }
         return null ; 
     }
+
+
+    public static Configuration getTemplateConfiguration() {
+        if (freeMarkerConfiguration == null) {
+            freeMarkerConfiguration = new Configuration();
+            try {
+                File templateFile = FileUtil.createFile(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF","templates");
+                freeMarkerConfiguration.setDirectoryForTemplateLoading(templateFile);
+            } catch (IOException e) {
+                logger.error("Could not find template directory", e);
+            }
+        }
+        return freeMarkerConfiguration;
+    }
+
 }

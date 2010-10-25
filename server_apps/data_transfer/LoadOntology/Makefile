@@ -20,9 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/LoadOntology
 
-GENERICS = parseObo.pl loadOntology.pl  fixPatoAnnotations.sql  parseHeader.pl load_all_ontologies.pl
+GENERICS = loadOntology.pl fixAnnotationsUponOntologyLoad.sql load_all_ontologies.pl dropTempTables.sql
 
-STATICS = paths.txt loadTerms.sql fixSoAnnotations.sql cron-job-info.html
+STATICS = paths.txt loadTerms.sql fixSoAnnotations.sql cron-job-info.html log4j.xml build.xml
 
 # Define targets that require special handling.
 

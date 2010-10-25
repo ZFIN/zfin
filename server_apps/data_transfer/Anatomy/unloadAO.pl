@@ -74,17 +74,6 @@ sub loadOboToDB (){
 }
 
 
-sub unloadOboFromDB (){
-
-    my $unload_sql = "select lotofile(obofile_text, '<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy.obo!','server') from obo_file where obofile_name = 'zebrafish_anatomy.obo'";
-
-    my $unload_sth = $dbh->prepare($unload_sql)
-	    or  &reportError("Couldn't prepare the statement:$!\n");
-
-    $unload_sth->execute or &reportError("Couldn't execute the statement:$!\n");
-    print "did the unload\n" ;
-}
-
 #--------------- Main --------------------------------
 #
 
@@ -152,8 +141,6 @@ if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_
 }
 
 &loadOboToDB();
-
-&unloadOboFromDB();
 
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> unloadAOFile.sql >out 2> report.txt") and die "unloadAOFile.sql failed";
 

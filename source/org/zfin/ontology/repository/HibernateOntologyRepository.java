@@ -8,10 +8,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -95,6 +98,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve all Relationships.
+     *
      * @return list of relationships
      */
     @SuppressWarnings({"unchecked"})
@@ -230,5 +234,69 @@ public class HibernateOntologyRepository implements OntologyRepository {
         if (term == null)
             return null;
         return term;
-	}
+    }
+
+    /**
+     * Retrieve header info for all ontologies.
+     *
+     * @return list of headers
+     */
+    @Override
+    public List<OntologyMetadata> getAllOntologyMetadata() {
+        String hql = "from OntologyMetadata order by order";
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery(hql);
+        return query.list();
+    }
+
+    /**
+     * Retrieve meta data for a given ontology identified by name
+     *
+     * @param name ontology name
+     * @return ontology meta data
+     */
+    @Override
+    public OntologyMetadata getOntologyMetadata(String name) {
+        Session session = HibernateUtil.currentSession();
+        return (OntologyMetadata) session.get(OntologyMetadata.class, name);
+    }
+
+    @Override
+    public int getMaxOntologyOrderNumber() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select max(ontology.order) from OntologyMetadata ontology";
+        return (Integer) session.createQuery(hql).uniqueResult();
+    }
+
+    /**
+     * Retrieve a list of phenotypes that have annotations with secondary terms listed.
+     *
+     * @return list of phenotypes
+     */
+    @Override
+    public List<Phenotype> getPhenotypesWithSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select phenotype from Phenotype phenotype " +
+                "left outer join phenotype.subterm " +
+                "where " +
+                "((phenotype.superterm.secondary = :isSecondary) or" +
+                "(phenotype.subterm.secondary = :isSecondary) or "+
+                "(phenotype.term.secondary = :isSecondary )) ";
+        Query query = session.createQuery(hql);
+        query.setBoolean("isSecondary", true);
+        List<Phenotype> phenotypesOnSuperterms = (List<Phenotype>) query.list();
+        return phenotypesOnSuperterms;
+    }
+
+    /**
+     * Save a new record in the ONTOLOGY database which keeps track of versions and namespaces.
+     * It also auto-generates the order field.
+     * @param metaData meta data
+     */
+    @Override
+    public void saveNewDbMetaData(OntologyMetadata metaData) {
+        Session session = HibernateUtil.currentSession();
+        metaData.setOrder(getMaxOntologyOrderNumber()+1);
+        session.save(metaData);
+    }
 }

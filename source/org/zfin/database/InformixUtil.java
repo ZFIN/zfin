@@ -1,5 +1,6 @@
 package org.zfin.database;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
@@ -15,6 +16,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class InformixUtil {
 
     private static Logger LOG = Logger.getLogger(InformixUtil.class);
+    public static final String PIPE = "|";
 
     /**
      * Generic procedure call to Informix.
@@ -61,6 +63,18 @@ public class InformixUtil {
                 LOG.error("could not run " + procedureName + "()", e);
             }
         }
+    }
+
+    public static String getUnloadRecord(String... columns) {
+        if (columns == null)
+            return null;
+        StringBuffer buffer = new StringBuffer();
+        for (String column : columns) {
+            buffer.append(column);
+            buffer.append(PIPE);
+        }
+        buffer.append(System.getProperty("line.separator"));
+        return buffer.toString();
     }
 
 }

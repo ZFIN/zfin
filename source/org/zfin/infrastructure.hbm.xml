@@ -322,5 +322,20 @@
         <property name="distance" column="alltermcon_min_contain_distance" />
     </class>
 
+    <class name="org.zfin.ontology.OntologyMetadata" table="ontology">
+        <id name="name">
+            <column name="ont_ontology_name" not-null="true"/>
+        </id>
+
+        <property name="date" column="ont_current_date" />
+        <property name="dataVersion" column="ont_data_version" />
+        <property name="defaultNamespace" column="ont_default_namespace" />
+        <property name="generatedBy" column="ont_import" />
+        <property name="oboVersion" column="ont_format_version" />
+        <property name="order" column="ont_order" />
+        <property name="remark" column="ont_remark" />
+        <property name="savedBy" column="ont_saved_by" />
+    </class>
+
 
 </hibernate-mapping>

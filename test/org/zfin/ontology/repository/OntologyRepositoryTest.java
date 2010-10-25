@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
 import java.util.List;
@@ -64,13 +65,13 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     public void getTermByName() {
         String anatomyTermName = "forerunner cell group";
         Term term = getOntologyRepository().getTermByName(anatomyTermName, Ontology.ANATOMY);
-        Assert.assertNotNull(term);
+        assertNotNull(term);
     }
 
     @Test
     public void getTransitiveClosure() {
         List<TransitiveClosure> tcs = getOntologyRepository().getTransitiveClosure();
-        Assert.assertNotNull(tcs);
+        assertNotNull(tcs);
     }
 
 
@@ -78,19 +79,40 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     public void getAnatomyRootTermInfo() {
         String anatomyRootID = "ZFA:0000037";
         Term term = getOntologyRepository().getTermByOboID(anatomyRootID);
-        Assert.assertNotNull(term);
+        assertNotNull(term);
     }
 
     @Test
     public void loadAllTermsFromFiles() throws Exception{
         OntologyManager manager = OntologyManager.getInstanceFromFile(Ontology.ANATOMY);
-        Assert.assertNotNull(manager);
+        assertNotNull(manager);
     }
 
     @Test
     public void loadAllTermsOfOntology() throws Exception{
         List<Term> terms = getOntologyRepository().getAllTermsFromOntology(Ontology.QUALITY);
-        Assert.assertNotNull(terms);
+        assertNotNull(terms);
+    }
+
+    @Test
+    public void loadOntologyMetatdataForAll() throws Exception{
+        List<OntologyMetadata> metadata = getOntologyRepository().getAllOntologyMetadata();
+        assertNotNull(metadata);
+        assertEquals("ontology name", "sequence ontology", metadata.get(0).getName());
+        assertEquals("ontology name", "zebrafish_anatomy", metadata.get(1).getName());
+    }
+
+    @Test
+    public void loadOntologyMetatdataForQuality() throws Exception{
+        OntologyMetadata metadata = getOntologyRepository().getOntologyMetadata(Ontology.QUALITY.getOntologyName());
+        assertNotNull(metadata);
+        assertEquals("Default name space", "quality", metadata.getDefaultNamespace());
+    }
+
+    @Test
+    public void getPhenotypesWithSecondaryTerms() throws Exception{
+        List<Phenotype> phenotypesWithSecondaryTerms= getOntologyRepository().getPhenotypesWithSecondaryTerms();
+        assertNotNull(phenotypesWithSecondaryTerms);
     }
 
     @Override

@@ -9,13 +9,17 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.DatabaseJdbcStatement;
+import org.zfin.util.DbScriptFileParser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +36,8 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
 
-
     //@Test
+
     public void persistActiveData() {
         try {
             HibernateUtil.createTransaction();
@@ -189,8 +193,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getGenesForStandardAttribution(){
-        
+    public void getGenesForStandardAttribution() {
+
     }
 
     @Test
@@ -233,89 +237,123 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void getDataAliasesAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ; 
+    public void getDataAliasesAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getOrthologueRecordAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getOrthologueRecordAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
-    }
-
-
-    @Test
-    public void getMarkerFeatureRelationshipAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getMarkerFeatureRelationshipAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getOrthologueRecordAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getOrthologueRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
 
     @Test
-    public void getMarkerGenotypeFeatureRelationshipAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getMarkerGenotypeFeatureRelationshipAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getMarkerFeatureRelationshipAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getMarkerFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+    }
+
+
+    @Test
+    public void getMarkerGenotypeFeatureRelationshipAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getMarkerGenotypeFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getFeatureGenotypeAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getFeatureGenotypeAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getFeatureGenotypeAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getFeatureGenotypeAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getGoRecordAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getGoRecordAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getDBLinkAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getDBLinkAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getDBLinkAssociatedToGeneAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getDBLinkAssociatedToGeneAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getDBLinkAssociatedToGeneAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getDBLinkAssociatedToGeneAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getFirstMarkerRelationshipAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getFirstMarkerRelationshipAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getFirstMarkerRelationshipAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getFirstMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getSecondMarkerRelationshipAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getSecondMarkerRelationshipAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getSecondMarkerRelationshipAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getSecondMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getMorpholinoRelatedMarkerAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions( "ZDB-GENE-990415-200" , "ZDB-PUB-090324-13") ;
+    public void getMorpholinoRelatedMarkerAttributions() {
+        RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getExpressionExperimentMarkerAttributionsForGene(){
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200") ;
-        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions( m , "ZDB-PUB-090324-13") ;
+    public void getExpressionExperimentMarkerAttributionsForGene() {
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
+        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getExpressionExperimentMarkerAttributionsForAntibody(){
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19") ;
-        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions( m , "ZDB-PUB-090324-13") ;
+    public void getExpressionExperimentMarkerAttributionsForAntibody() {
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
+        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getExpressionExperimentMarkerAttributionsForClone(){
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105") ;
-        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions( m , "ZDB-PUB-090324-13") ;
+    public void getExpressionExperimentMarkerAttributionsForClone() {
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
+        getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getGenotypeExperimentRecordAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getGenotypeExperimentRecordAttributions( "ZDB-GENO-000405-1" , "ZDB-PUB-090324-13") ;
+    public void getGenotypeExperimentRecordAttributions() {
+        getInfrastructureRepository().getGenotypeExperimentRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
     }
 
     @Test
-    public void getGenotypePhenotypeRecordAttributions(){
-        RepositoryFactory.getInfrastructureRepository().getGenotypePhenotypeRecordAttributions( "ZDB-GENO-000405-1" , "ZDB-PUB-090324-13") ;
+    public void getGenotypePhenotypeRecordAttributions() {
+        getInfrastructureRepository().getGenotypePhenotypeRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
     }
+
+    @Test
+    public void callJdbcStatement() {
+        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))" +
+                "with no log;";
+        DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
+        statement.addQueryPart(query);
+        getInfrastructureRepository().executeJdbcStatement(statement);
+    }
+
+    @Test
+    public void runDbScript() {
+        String fileName = "test//dbTestScript.sql";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+
+        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
+        HibernateUtil.createTransaction();
+        try {
+            for (DatabaseJdbcStatement statement : queries) {
+                infrastructureRep.executeJdbcStatement(statement);
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            fail("error during SQL execution");
+            HibernateUtil.rollbackTransaction();
+        }
+
+    }
+
 }
 
 

@@ -7,19 +7,15 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.people.Person;
+import org.zfin.util.DateUtil;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class that is called from JSP through a function call.
  */
 public class ZfinJSPFunctions {
-    public static final int MILLISECONDS_PER_HOUR = 3600000;
-    public static final int MILLISECONDS_PER_MINUTE = 60000;
-    public static final int MILLISECONDS_PER_SECOND = 1000;
 
     /**
      * Escape characters to valid HTML code
@@ -56,7 +52,7 @@ public class ZfinJSPFunctions {
     }
 
     /**
-     * Convenience method to obtain the visiblity of a section for a given section name.
+     * Convenience method to obtain the visibility of a section for a given section name.
      *
      * @param sectionName string
      * @param visibility  visibility map
@@ -67,7 +63,7 @@ public class ZfinJSPFunctions {
     }
 
     /**
-     * Convenience method to obtain the visiblity of a section for a given section name.
+     * Convenience method to obtain the visibility of a section for a given section name.
      *
      * @param sectionName string
      * @param visibility  visibility map
@@ -78,7 +74,7 @@ public class ZfinJSPFunctions {
     }
 
     /**
-     * Remove a key-value piar from a request.queryString.
+     * Remove a key-value pair from a request.queryString.
      * this will also remove the character before the found key-value string being found,
      * the ampersand.
      *
@@ -107,7 +103,7 @@ public class ZfinJSPFunctions {
      * the ampersand.
      *
      * @param queryString query string from request
-     * @param prefix      to visiblity action string
+     * @param prefix      to visibility action string
      * @return string
      */
     public static String removeAllVisibleQueryParameters(String queryString, String prefix) {
@@ -209,25 +205,7 @@ public class ZfinJSPFunctions {
     }
 
     public static String getTimeDuration(Date start, Date end) {
-        if (end == null)
-            end = new Date();
-        long streamLength = end.getTime() - start.getTime();
-        StringBuffer dateDisplay = new StringBuffer();
-        if (streamLength > MILLISECONDS_PER_HOUR) {
-            dateDisplay.append(streamLength / MILLISECONDS_PER_HOUR);
-            dateDisplay.append(" hours ");
-        }
-        if (streamLength > MILLISECONDS_PER_MINUTE) {
-            dateDisplay.append((streamLength / MILLISECONDS_PER_MINUTE) % 60);
-            dateDisplay.append(" minutes ");
-        }
-        if (streamLength > MILLISECONDS_PER_SECOND) {
-            dateDisplay.append((streamLength / MILLISECONDS_PER_SECOND) % 60);
-            dateDisplay.append(" seconds ");
-        }
-        if (dateDisplay.length() == 0)
-            dateDisplay.append("0 seconds");
-        return dateDisplay.toString();
+        return DateUtil.getTimeDuration(start, end);
     }
 
     public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
@@ -253,5 +231,31 @@ public class ZfinJSPFunctions {
             name = "Guest";
         }
         return name;
+    }
+
+    public static boolean isToday(Date date){
+        Calendar now = GregorianCalendar.getInstance();
+        Calendar givenDate = GregorianCalendar.getInstance();
+        givenDate.setTime(date);
+        return now.get(Calendar.MONTH) == givenDate.get(Calendar.MONTH) &&
+                now.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static boolean isTomorrow(Date date){
+        Calendar tomorrow = GregorianCalendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        Calendar givenDate = GregorianCalendar.getInstance();
+        givenDate.setTime(date);
+        return tomorrow.get(Calendar.MONTH) == givenDate.get(Calendar.MONTH) &&
+                tomorrow.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static boolean isYesterday(Date date){
+        Calendar yesterday = GregorianCalendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_MONTH, -1);
+        Calendar givenDate = GregorianCalendar.getInstance();
+        givenDate.setTime(date);
+        return yesterday.get(Calendar.MONTH) == givenDate.get(Calendar.MONTH) &&
+                yesterday.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
     }
 }

@@ -16,6 +16,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.ZfinJSPFunctions;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -26,8 +27,14 @@ import org.zfin.ontology.TermAlias;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.ReplacedAccessionNumber;
+import org.zfin.util.DatabaseJdbcStatement;
+import org.zfin.util.DateUtil;
 
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
@@ -134,6 +141,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     //retrieve a dataNote by its zdb_id
+
     public DataNote getDataNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(DataNote.class);
@@ -414,7 +422,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setFieldName(fieldName);
 
         Person person = Person.getCurrentSecurityUser();
-        if(person!=null){
+        if (person != null) {
             up.setSubmitterID(person.getZdbID());
             up.setSubmitterName(person.getFullName());
         }
@@ -433,7 +441,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         update.setRecID(recID);
         update.setFieldName(fieldName);
         Person person = Person.getCurrentSecurityUser();
-        if(person!=null){
+        if (person != null) {
             update.setSubmitterID(person.getZdbID());
             update.setSubmitterName(person.getFullName());
         }
@@ -762,6 +770,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     /**
      * Unused.
      * Retrieve # of related markers (in the first position) that are attributed to to this pub.
+     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -782,6 +791,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * Retrieve # of related markers (in the second position) that are attributed to to this pub.
+     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -875,7 +885,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID){
+    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "  select count(*)  " +
                 " from record_attribution ra, genotype_experiment ge " +
@@ -889,7 +899,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
-    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID){
+    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID) {
 //select * from record_attribution ra, atomic_phenotype ph, genotype_experiment ge
 //where
 //ra.recattrib_data_zdb_id=ph.apato_zdb_id
@@ -930,6 +940,202 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             logger.error("Replacement list has non-unique replacements: "+ replacedAccessionList.size() + " for zdbID: "+oldZdbID);
         }
         return null ;
+    }
+
+    /**
+     * Execute a sql statement through straight JDBC call.
+     *
+     * @param jdbcStatement query
+     * @return number from sql query: # of updated records, inserted records, deleted records.
+     */
+    @Override
+    public int executeJdbcStatement(DatabaseJdbcStatement jdbcStatement) {
+        Session session = currentSession();
+        Connection connection = session.connection();
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute(jdbcStatement.getQuery());
+            session.flush();
+        }
+        catch (SQLException exception) {
+            logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
+                    "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                    jdbcStatement.getHumanReadableQueryString(), exception);
+            throw new RuntimeException(exception);
+        }
+        finally {
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getHumanReadableQueryString(), e);
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Execute a sql statement through straight JDBC call and inserting given string data.
+     *
+     * @param jdbcStatement query
+     * @param data          string data
+     */
+    @Override
+    public void executeJdbcStatement(DatabaseJdbcStatement jdbcStatement, List<List<String>> data) {
+        long start = System.currentTimeMillis();
+        Session session = currentSession();
+        Connection connection = session.connection();
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        int batchSize = 50;
+        int accumulatedBatchCounter = 0;
+        int currentBatchSize = 0;
+        boolean error = false;
+        try {
+            Statement st = connection.createStatement();
+            rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            statement = connection.prepareStatement(jdbcStatement.getQuery());
+            boolean lastRwoExecuted = false;
+            for (List<String> individualRow : data) {
+                int index = 1;
+                for (String column : individualRow) {
+                    String columnType = rsMetaData.getColumnClassName(index);
+                    if (columnType.equals("java.lang.Boolean")) {
+                        boolean columnTypeBol = column.equals("t");
+                        statement.setBoolean(index++, columnTypeBol);
+                    } else
+                        statement.setString(index++, column);
+                }
+                statement.addBatch();
+                currentBatchSize++;
+                accumulatedBatchCounter++;
+                // execute batch if batch size is reached or if no more records are found.
+                if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
+                    statement.executeBatch();
+                    logger.debug("Batch inserted records up to #: " + accumulatedBatchCounter);
+                    // reset the index that keeps track of the current batch size
+                    currentBatchSize = 0;
+                }
+                session.flush();
+            }
+        }
+        catch (SQLException exception) {
+            logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
+                    "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                    jdbcStatement.getHumanReadableQueryString(), exception);
+            for (int index = 0; index < batchSize; index++) {
+                int index1 = accumulatedBatchCounter - batchSize + index;
+                logger.error("Record number " + index1 + ", record: " + data.get(index1));
+            }
+            error = true;
+            throw new RuntimeException(exception);
+        }
+        finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getQuery(), e);
+            }
+            // find out the individual line that caused the problem.
+/*
+            if (error)
+                runBatchJDBCStatementIndividually(jdbcStatement, data, accumulatedBatchCounter - batchSize, accumulatedBatchCounter);
+*/
+        }
+        long end = System.currentTimeMillis();
+        logger.debug("Insertion:  " + jdbcStatement.getHumanReadableQueryString());
+        logger.info("Finished Insertion of " + data.size() + " records in " + DateUtil.getTimeDuration(start, end));
+        session.flush();
+    }
+
+    private void runBatchJDBCStatementIndividually(DatabaseJdbcStatement jdbcStatement, List<List<String>> data, int start, int end) {
+        Session session = currentSession();
+        Connection connection = session.connection();
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        int index = start;
+        try {
+            Statement st = connection.createStatement();
+            rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            statement = connection.prepareStatement(jdbcStatement.getQuery());
+            for (; index < end; index++) {
+                List<String> row = data.get(index);
+                for (String column : row) {
+                    String columnType = rsMetaData.getColumnClassName(index);
+                    if (columnType.equals("java.lang.Boolean")) {
+                        boolean columnTypeBol = column.equals("t");
+                        statement.setBoolean(index++, columnTypeBol);
+                    } else
+                        statement.setString(index++, column);
+                }
+                statement.execute();
+            }
+        }
+        catch (SQLException exception) {
+            logger.error("Record number " + index + ", record: " + data.get(index));
+        }
+        finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getQuery(), e);
+            }
+        }
+    }
+
+    /**
+     * Return a set of data from a native SELECT statement.
+     *
+     * @param statement jdbc query
+     * @return list of strings
+     */
+    @Override
+    public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement) {
+        Session session = HibernateUtil.currentSession();
+        SQLQuery query = session.createSQLQuery(statement.getQuery());
+        List objects = query.list();
+        if (objects == null)
+            return null;
+        if (objects.size() == 0)
+            return null;
+
+        List<List<String>> data = new ArrayList<List<String>>(objects.size());
+        if (objects.get(0) instanceof Object[]) {
+            List<Object[]> entities = (List<Object[]>) objects;
+            for (Object[] row : entities) {
+                List<String> singleRow = new ArrayList<String>(row.length);
+                for (Object o : row) {
+                    if (o != null)
+                        singleRow.add(o.toString());
+                    else
+                        singleRow.add("");
+                }
+                data.add(singleRow);
+            }
+        } else if (objects.get(0) instanceof String) {
+            List<String> entities = (List<String>) objects;
+            for (String row : entities) {
+                List<String> singleRow = new ArrayList<String>(1);
+                singleRow.add(row);
+                data.add(singleRow);
+            }
+        }
+        return data;
     }
 }
 

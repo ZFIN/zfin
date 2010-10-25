@@ -128,6 +128,77 @@ public final class FileUtil {
         return FileUtil.createAbsolutePath(ZfinPropertiesEnum.CATALINA_BASE.value(), "logs");
     }
 
+
+    /**
+     * This method moves (renames) a given file into an archive directory.
+     * The file name is changed to include a time stamp.
+     *
+     * @param file
+     * @param archiveFolderPath
+     * @param archiveFolderName
+     */
+    public static File archiveFile(File file, String archiveFolderPath, String archiveFolderName) {
+        File dir = new File(archiveFolderPath, archiveFolderName);
+        return archiveFile(file, dir);
+    }
+
+    /**
+     * This method moves (renames) a given file into an archive directory.
+     * The file name is changed to include a time stamp:
+     * original file name: <file_name.txt>
+     * archived file name: <file_name-yyyy-MM-dd_HH_MI_ss.txt>
+     * <p/>
+     * The archive file is returned.
+     * The original file is removed.
+     * The archive directory is created if it does not exist.
+     *
+     * @param file             file that should be archived
+     * @param archiveDirectory
+     * @return File archive file
+     */
+    public static File archiveFile(File file, File archiveDirectory) {
+        // Create the directory if it does not exist yet.
+        if (!archiveDirectory.exists()) {
+            boolean success = archiveDirectory.mkdirs();
+            if (!success)
+                LOG.error("Error while creating the archive directory '" + archiveDirectory.getAbsolutePath());
+        }
+
+        String fileName = file.getName();
+
+        String archiveFileName = addTimeStampToFileName(fileName);
+        File archiveFile = new File(archiveDirectory, archiveFileName);
+        if (archiveFile.exists())
+            LOG.info("Archive file " + archiveFile.getAbsolutePath() + " already exists. Cannot overwrite it.");
+        else {
+            boolean success = copyFileIntoArchive(file, archiveFile);
+            if (!success)
+                LOG.error("Error while renaming the file '" + file.getAbsolutePath());
+        }
+        return archiveFile;
+    }
+
+    public static String addTimeStampToFileName(String fileName) {
+        int indexOfLastDot = fileName.lastIndexOf(DOT);
+        String extension = fileName.substring(indexOfLastDot + 1);
+        StringBuilder archiveFileName = new StringBuilder(fileName.substring(0, indexOfLastDot));
+        GregorianCalendar cal = new GregorianCalendar();
+        archiveFileName.append(DASH);
+        archiveFileName.append(cal.get(Calendar.YEAR));
+        archiveFileName.append(cal.get(Calendar.MONTH));
+        archiveFileName.append(DASH);
+        archiveFileName.append(cal.get(Calendar.DAY_OF_MONTH));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.HOUR));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.MINUTE));
+        archiveFileName.append(UNDERSCORE);
+        archiveFileName.append(cal.get(Calendar.SECOND));
+        archiveFileName.append(DOT);
+        archiveFileName.append(extension);
+        return archiveFileName.toString();
+    }
+
     private static boolean copyFileIntoArchive(File file, File archiveFile) {
         boolean success = true;
         FileInputStream fis = null;
