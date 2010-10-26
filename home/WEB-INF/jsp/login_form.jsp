@@ -35,6 +35,23 @@
             </div>
         </zfin2:spiffyCorners>
 
+        <script>
+
+
+    
+    function makeLinksNotHttps() {
+          var elements = document.getElementsByTagName("a");
+          
+          for (var i = 0 ; i < elements.length ; i++) {
+            var link = elements[i];
+            if (link.href != null)
+                link.href = link.href.replace("https","http");                        
+          }
+    }
+
+    addLoadEvent(makeLinksNotHttps);
+
+        </script>
         <script>document.login.j_username.focus();</script>
     </zfin:databaseLock>
 </div>
