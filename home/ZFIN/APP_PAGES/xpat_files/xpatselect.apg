@@ -1038,15 +1038,18 @@ return false ; "
           
          <?MICOMMENT> *** End WT Only Checkbox *** <?/MICOMMENT>
 
-         <br>         
+         <br>
+         <?MIVAR>
+         <span id="xpatsel_efgOnlySpan" $(IF,$(XST,$xpatsel_highlightEFGOnly),class="highlight")>
+         <?/MIVAR>
 
          <?MICOMMENT> *** EFG Only Checkbox *** <?/MICOMMENT>
          
          <input type="checkbox" name="xpatsel_efgOnly" id="xpatselefgOnly" value="checked"
          <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_efgOnly),$(EC,$xpatsel_efgOnly,checked)), checked)<?/MIVAR>
-          onchange="if(this.checked) { disable_marker_name(); } else { enable_marker_name();}"
+          onchange=" document.getElementById('xpatsel_efgOnlySpan').className=''; if(this.checked) { disable_marker_name(); } else { enable_marker_name();}"
           >
-         <label for="xpatselefgOnly" id="xpatselefgOnlyLabel">Show only reporter genes</label> <img src="/images/new1.gif">
+         <label for="xpatselefgOnly" id="xpatselefgOnlyLabel">Show only reporter genes in transgenic fish</label>
          
           <script type="text/javascript">
              if (document.getElementById("xpatselefgOnly").checked == true) {
@@ -1055,8 +1058,8 @@ return false ; "
           </script>
 
          <?MICOMMENT> *** end EFG Only Checkbox <?/MICOMMENT>
+         </span>
          <br>
-
            
              <?MICOMMENT> *** Images Only Checkbox *** <?/MICOMMENT>
                <input type="checkbox" id="xpatselImagesOnly"

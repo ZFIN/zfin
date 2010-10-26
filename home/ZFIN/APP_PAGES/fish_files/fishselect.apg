@@ -1761,7 +1761,7 @@ return false ; ">
 <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
    <tr>
-     <td class="halfwidth" ROWSPAN=2>
+     <td class="halfwidth" rowspan="2">
        <?MIVAR>
        <b>Gene/Allele name</b>&nbsp;
        <select name="compare" onChange='document.BrowserForm.START.value = "";'>
@@ -1777,6 +1777,8 @@ return false ; ">
 		       call_submit(); 
              };">
        <?/MIVAR>
+       
+ 
      </td>
 
      <td class="halfwidth">
@@ -1922,7 +1924,7 @@ return false ; ">
 	      </TD>
 	    </TR>
 
-	  </TABLE>
+	  </TABLE> 
      </td>
      <td class="halfwidth">
      <b>Filters:</b>
@@ -1985,6 +1987,16 @@ return false ; ">
       <?/MIVAR> 
      <?/MIBLOCK>       
      </td>
+     <tr>
+     <td colspan=2>
+          <div class="accessoryLabel">
+            <strong>Transgene expression</strong> available via
+            <a id="transgene_expression_link" href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&xpatsel_highlightEFGOnly=true&xpatsel_efgOnly=checked"
+               >Gene Expression</a>
+            search.
+          </div>     
+     </td>
+     </tr>
    </tr>    
      
 <!-- This next little block executes only if we are using the browser as a

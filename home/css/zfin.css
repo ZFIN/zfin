@@ -294,6 +294,10 @@ div.auto_complete ul strong.highlight {
     font-weight:bold;
 }
 
+span.highlight {
+    background: #ffb;
+}
+
 .search-result-table-entries {
     background: #EEEEEE;
     font-weight: normal;
