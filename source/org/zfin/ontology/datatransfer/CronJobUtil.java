@@ -25,7 +25,7 @@ public class CronJobUtil {
 
     private String[] recipients;
 
-    public CronJobUtil(String... recipients) {
+    public CronJobUtil(String[] recipients) {
         this.recipients = recipients;
     }
 

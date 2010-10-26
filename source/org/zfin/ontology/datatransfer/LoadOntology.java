@@ -19,6 +19,7 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
@@ -77,7 +78,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                 if (!checkFileExists(dbScriptFile))
                     throw new IOException("No DB script file <" + dbScriptFile + "> found!");
         }
-        cronJobUtil = new CronJobUtil(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
+        cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
     }
 
     public static void main(String[] arguments) {
