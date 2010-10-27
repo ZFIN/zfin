@@ -10,6 +10,7 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.DateUtil;
 
@@ -33,7 +34,7 @@ public class ReloadOntologiesJob extends QuartzJobBean implements StatefulJob {
         }
         String duration = DateUtil.getTimeDuration(startTime);
         report.finish();
-        CronJobUtil util = new CronJobUtil(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
+        CronJobUtil util = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
         util.emailReport("ontology-loader-reload-into-memory.ftl", report, null);
         LOG.info("Finished re-loading all ontologies in Quartz Job: Duration " + duration);
     }
