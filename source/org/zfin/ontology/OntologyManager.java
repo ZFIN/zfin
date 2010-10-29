@@ -273,7 +273,7 @@ public class OntologyManager {
             if (newChildren != null && !newChildren.isEmpty()) {
                 for (Term child : newChildren) {
                     if (children.contains(child)){
-                        logger.warn("Term already processed: " + child.getTermName() + " [" + child.getID());
+                        logger.info("Term already processed: " + child.getTermName() + " [" + child.getID());
                     }else{
                         children.add(child);
                         childrenSet.add(child);

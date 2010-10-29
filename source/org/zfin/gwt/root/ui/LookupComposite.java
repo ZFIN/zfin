@@ -84,7 +84,7 @@ public class LookupComposite extends Composite implements Revertible {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     public static final String SHOW_TYPE = "SHOW_TYPE";
-    private boolean useIdAsValue = true ;
+    private boolean useIdAsValue = false ;
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
