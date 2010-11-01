@@ -49,8 +49,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
                 // find alternative search field
-                assertAlternativeTermLinePresent(page);
-                assertSingleAlternativeTermName(page, "insulin-responsive compartment");
+		assertAlternativeSearchLineAbsent(page);
 
             } catch (IOException e) {
                 fail(e.toString());
