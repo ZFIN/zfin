@@ -18,20 +18,20 @@ public class NCBIEfetch {
     private final static Logger logger = Logger.getLogger(NCBIEfetch.class);
 
     //    private final static String NUCLEOTIDE_DB = "nuccore" ;
-    private final static String NUCLEOTIDE_DB = "nucleotide";
+//    private final static String NUCLEOTIDE_DB = "nucleotide";
     private final static String POLYPEPTIDE_DB = "protein";
+    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
 
 
     /**
      * @param accession    Accession to get sequences for.
-     * @param isNucleotide Whether or not is nucleotide or protein.
      * @return A list of sequence.
      */
-    public static List<Sequence> getSequenceForAccession(String accession, boolean isNucleotide) {
+    public static List<Sequence> getSequenceForAccession(String accession) {
 
         List<Sequence> fastaStrings = new ArrayList<Sequence>();
         // fetch a record from Taxonomy database
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession,isNucleotide) ;
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession) ;
         if(result==null) return fastaStrings;
         // results output
         for (int i = 0; i < result.getGBSet().getGBSetSequence().length; i++) {
@@ -46,8 +46,8 @@ public class NCBIEfetch {
         return fastaStrings;
     }
 
-    public static Boolean validateAccession(String accession,boolean isNucleotide) {
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession,isNucleotide);
+    public static Boolean validateAccession(String accession) {
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession);
         if(result==null) return false ;
         if (result.getGBSet().getGBSetSequence().length > 1) {
             logger.info(result.getGBSet().getGBSetSequence().length + " sequences returned via EFetch for accession: " + accession);
@@ -56,20 +56,25 @@ public class NCBIEfetch {
     }
 
 
-    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession, boolean isNucleotide){
+    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession){
 
         try{
             EFetchSequenceServiceStub service = new EFetchSequenceServiceStub();
             // call NCBI EFetch utility
             EFetchSequenceServiceStub.EFetchRequest req = new EFetchSequenceServiceStub.EFetchRequest();
-            req.setDb((isNucleotide ? NUCLEOTIDE_DB : POLYPEPTIDE_DB));
+//            req.setDb((isNucleotide ? NUCLEOTIDE_DB : POLYPEPTIDE_DB));
+            req.setDb(POLYPEPTIDE_DB);
             req.setId(accession.toUpperCase());
             req.setRetmax("1");
             return service.run_eFetch(req);
         }
         catch (Exception e) {
-            if (e.getMessage().contains("Unexpected subelement Error")) {
-                logger.info("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
+            if (e.getMessage().contains("Unexpected subelement Error")
+                    ||
+                    e.getMessage().contains("Unexpected subelement Bioseq-set")
+                    ) {
+                logger.error("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
+                logger.info(e);
             } else {
                 logger.error("Error trying to find sequence at NCBI[" + accession.toUpperCase() + "]", e);
             }

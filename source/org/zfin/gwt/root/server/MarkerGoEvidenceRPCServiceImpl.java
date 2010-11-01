@@ -12,7 +12,6 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
-import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -23,8 +22,6 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.orthology.Species;
@@ -194,12 +191,12 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         if (inferenceCategory.equals(InferenceCategory.GENBANK.name())
                 ||
                 inferenceCategory.equals(InferenceCategory.REFSEQ.name())
+                ||
+                inferenceCategory.equals(InferenceCategory.GENPEPT.name())
+                ||
+                inferenceCategory.equals(InferenceCategory.UNIPROTKB.name())
                 ) {
-            return NCBIEfetch.validateAccession(accession, true);
-        } else if (inferenceCategory.equals(InferenceCategory.GENPEPT.name())) {
-            return NCBIEfetch.validateAccession(accession, false);
-        } else if (inferenceCategory.equals(InferenceCategory.UNIPROTKB.name())) {
-            return EBIFetch.validateAccession(accession);
+            return NCBIEfetch.validateAccession(accession);
         }
         return true;  //To change body of created methods use File | Settings | File Templates.
     }

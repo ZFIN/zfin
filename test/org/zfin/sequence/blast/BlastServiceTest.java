@@ -17,7 +17,7 @@ public class BlastServiceTest {
 
     @Test
     public void useEfetchForProtein(){
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("P26630",false) ;
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("P26630") ;
         assertTrue(CollectionUtils.isNotEmpty(sequences));
         assertEquals(1,sequences.size());
         Sequence sequence = sequences.get(0) ;
@@ -29,8 +29,21 @@ public class BlastServiceTest {
     }
 
     @Test
+    public void useEfetchForProtein2(){
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("NP_571379") ;
+        assertTrue(CollectionUtils.isNotEmpty(sequences));
+        assertEquals(1,sequences.size());
+        Sequence sequence = sequences.get(0) ;
+        Defline defline = sequence.getDefLine();
+        assertTrue(defline.getAccession().equals("NP_571379"));
+        assertTrue(sequence.getFormattedData().length()>100);
+        assertTrue(sequence.getFormattedSequence().length()>100);
+        assertTrue(defline.toString().length()>20);
+    }
+
+    @Test
     public void useEfetchForNucleotide(){
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("AY627769",true) ;
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("AY627769") ;
         assertTrue(CollectionUtils.isNotEmpty(sequences));
         assertEquals(1,sequences.size());
         Sequence sequence = sequences.get(0) ;
@@ -42,8 +55,21 @@ public class BlastServiceTest {
     }
 
     @Test
+    public void useEfetchForNucleotide2(){
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("FN428721") ;
+        assertTrue(CollectionUtils.isNotEmpty(sequences));
+        assertEquals(1,sequences.size());
+        Sequence sequence = sequences.get(0) ;
+        Defline defline = sequence.getDefLine();
+        assertTrue(defline.getAccession().equals("FN428721"));
+        assertTrue(sequence.getFormattedData().length()>100);
+        assertTrue(sequence.getFormattedSequence().length()>100);
+        assertTrue(defline.toString().length()>20);
+    }
+
+    @Test
     public void useEfetchForNucleotideWithMultipleReturn(){
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("X63183",true) ;
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("X63183") ;
         assertTrue(CollectionUtils.isNotEmpty(sequences));
         assertEquals(1,sequences.size());
         Sequence sequence = sequences.get(0) ;

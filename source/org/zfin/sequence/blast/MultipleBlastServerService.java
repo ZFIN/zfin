@@ -19,14 +19,18 @@ public class MultipleBlastServerService {
 
     private final static Logger logger = Logger.getLogger(MultipleBlastServerService.class);
 
+    public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, ReferenceDatabase... referenceDatabases) {
+        return getSequencesForAccessionAndReferenceDBs(accession,true,referenceDatabases) ;
+    }
+
     /**
      * You have to have dblinks in order to retrieve sequence.
      *
      * @param accession          Accession to query.
-     * @param referenceDatabases ReferenceDatabases to search for dblinks in.
-     * @return A list of sequences.
+     * @param allowRemoteFetch
+     *@param referenceDatabases ReferenceDatabases to search for dblinks in.  @return A list of sequences.
      */
-    public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, ReferenceDatabase... referenceDatabases) {
+    public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, boolean allowRemoteFetch, ReferenceDatabase... referenceDatabases) {
 
         List<Sequence> sequences = new ArrayList<Sequence>();
         accession = accession.toUpperCase();
@@ -45,7 +49,7 @@ public class MultipleBlastServerService {
                 }
             }
 
-            if (CollectionUtils.isEmpty(sequences)) {
+            if (CollectionUtils.isEmpty(sequences) && allowRemoteFetch) {
                 try {
                     sequences.addAll(getSequenceFromNCBI(dbLinks));
                 } catch (BlastDatabaseException e) {
@@ -54,20 +58,7 @@ public class MultipleBlastServerService {
             }
         } else {
             // assume that the first referenceDatabase indicates the sequence type, if it exists
-            boolean isNucleotide = true;
-            if (referenceDatabases.length > 0) {
-                ReferenceDatabase referenceDatabase = referenceDatabases[0];
-                if (referenceDatabase.getForeignDBDataType().getSuperType() == ForeignDBDataType.SuperType.PROTEIN) {
-                    isNucleotide = false;
-                }
-            }
-            List<Sequence> fastaSequences = NCBIEfetch.getSequenceForAccession(accession, isNucleotide);
-
-            // if this is incorrect, try the protein database instead.
-            if (CollectionUtils.isEmpty(fastaSequences)) {
-                fastaSequences = NCBIEfetch.getSequenceForAccession(accession, !isNucleotide);
-            }
-
+            List<Sequence> fastaSequences = NCBIEfetch.getSequenceForAccession(accession);
             sequences.addAll(fastaSequences);
         }
         return sequences;
@@ -94,7 +85,7 @@ public class MultipleBlastServerService {
         }
 
         String accession = dbLinks.get(0).getAccessionNumber();
-        List<Sequence> fastaSequences = NCBIEfetch.getSequenceForAccession(accession, true);
+        List<Sequence> fastaSequences = NCBIEfetch.getSequenceForAccession(accession);
 
         try {
             for (DBLink dbLink : dbLinks) {

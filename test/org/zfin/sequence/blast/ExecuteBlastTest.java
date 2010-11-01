@@ -618,10 +618,10 @@ public class ExecuteBlastTest {
         query.setMaxResults(1) ;
         String accession = query.list().get(0).toString() ;
 
-        List<Sequence> localSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(accession,referenceDatabase) ;
+        List<Sequence> localSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(accession, true, referenceDatabase) ;
         assertNotNull("should not be null",localSequences);
         assertTrue("should find a local sequence",localSequences.size()>0);
-        List<Sequence> remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ant dep") ;
+        List<Sequence> remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ant dep", true) ;
         assertTrue("should also find a remote sequence",remoteSequences.size()==0);
     }
 
@@ -631,33 +631,35 @@ public class ExecuteBlastTest {
     @Test
     public void getSequenceFromRemote(){
         // get a dblink from a genbank database
-        List<Sequence> badSequences= MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ABC123123123ABC") ;
+        List<Sequence> badSequences= MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ABC123123123ABC", false) ;
         assertTrue("should find NO sequences", CollectionUtils.isEmpty(badSequences));
         List<Sequence> remoteSequences  ;
         // RNA sequences
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("BC066722") ;
+        // also tests to make sure that BC066722 goes to the right place (was going to a generated sequence)
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("BC066722", false) ;
         assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("NM_131304") ;
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("NM_131304", false) ;
         assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("BQ826503") ;
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("BQ826503", false) ;
         assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("AL929172") ;
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("AL929172", false) ;
         assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("AY627769") ;
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("AY627769", false) ;
         assertTrue("should find at least one sequence",remoteSequences.size()==1);
         assertTrue("should be a big sequence",remoteSequences.get(0).getData().length()>1000);
 
         // protein sequences
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("NP_571379") ;
-        assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ZZZZZZ") ;
+//        this is a local sequence, but the only db_link points to the external link
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("NP_571379",false) ;
+        assertTrue(remoteSequences.size()==0);
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ZZZZZZ", false) ;
         assertTrue(CollectionUtils.isEmpty(remoteSequences));
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("P26630") ;
+        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("P26630", false) ;
         assertTrue(remoteSequences.size()>0);
-        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("CAI20610") ;
-        assertTrue(remoteSequences.size()>0);
+//        remoteSequences = MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("CAI20610") ;
+//        assertTrue(remoteSequences.size()>0);
 
-        logger.debug(remoteSequences.get(0).getData());
+//        logger.debug(remoteSequences.get(0).getData());
     }
 
     @Test
