@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
-import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.Sequence;
 
