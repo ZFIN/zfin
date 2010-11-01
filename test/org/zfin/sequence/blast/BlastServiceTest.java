@@ -80,4 +80,12 @@ public class BlastServiceTest {
         assertTrue(defline.toString().length()>20);
     }
 
+    @Test
+    public void validateAccessions(){
+        String[] accessions = {"NP_571379", "AY627769", "FN428721", "X63183"} ;
+        for(String accession : accessions){
+            assertTrue(NCBIEfetch.validateAccession(accession)) ;
+        }
+    }
+
 }
