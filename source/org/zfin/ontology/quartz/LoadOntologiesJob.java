@@ -1,18 +1,23 @@
 package org.zfin.ontology.quartz;
 
 import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.ontology.datatransfer.CronJobReport;
+import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.ontology.datatransfer.DownloadOntology;
 import org.zfin.ontology.datatransfer.LoadOntology;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.DateUtil;
 import org.zfin.util.FileUtil;
 import org.zfin.util.LoggingUtil;
+
+import java.io.File;
 
 /**
  * Load obo file for ontology into the database.
@@ -33,7 +38,8 @@ public class LoadOntologiesJob extends QuartzJobBean implements StatefulJob {
         Appender appender = LoggingUtil.addFileAppender(log, "load-ontology-" + oboFileName);
         long startTime = System.currentTimeMillis();
         String duration = null;
-        CronJobReport report = new CronJobReport(jobName);
+        CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
+        CronJobReport report = new CronJobReport(jobName, cronJobUtil);
         report.start();
         try {
             String localFileName = FileUtil.createAbsolutePath(TEMP_DIRECTORY, oboFileName);
@@ -47,24 +53,35 @@ public class LoadOntologiesJob extends QuartzJobBean implements StatefulJob {
             } else {
                 log.info("Starting to reuse obo file (no fresh download): " + localFileName);
             }
-            String scriptDirectoryFullPath = FileUtil.createAbsolutePath(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), scriptDirectory);
-            String[] dbScriptFiles = scriptFileName.split(",");
-            int index = 0;
-            // prefix the full path to the file names.
-            for (String fileName : dbScriptFiles)
-                dbScriptFiles[index++] = FileUtil.createAbsolutePath(scriptDirectoryFullPath, fileName);
-            LoadOntology loader = new LoadOntology(localFileName, dbScriptFiles);
-            loader.setLogger(log);
-            if (loader.initialize(report))
-                loader.getReport().addMessageToSection("Downloaded Obo file " + oboFileUrl, "Load Obo file");
-            loader.getReport().addMessageToSection("Duration: " + duration, "Load Obo file");
-            loader.runOntologyUpdateProcess();
-
+            File localOboFile = new File(localFileName);
+            if (!localOboFile.exists()) {
+                report.error("Could not find local obo file: "+localFileName);
+            } else {
+                String scriptDirectoryFullPath = FileUtil.createAbsolutePath(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), scriptDirectory);
+                String[] dbScriptFiles = scriptFileName.split(",");
+                int index = 0;
+                // prefix the full path to the file names.
+                for (String fileName : dbScriptFiles)
+                    dbScriptFiles[index++] = FileUtil.createAbsolutePath(scriptDirectoryFullPath, fileName);
+                LoadOntology loader = new LoadOntology(localFileName, dbScriptFiles);
+                loader.setLogger(log);
+                if (loader.initialize(report))
+                    loader.getReport().addMessageToSection("Downloaded Obo file " + oboFileUrl, "Load Obo file");
+                loader.getReport().addMessageToSection("Duration: " + duration, "Load Obo file");
+                loader.runOntologyUpdateProcess();
+            }
         } catch (Exception e) {
-            log.error("Error while loading the ontologies into the database", e);
+            String message = "Error while loading the ontologies into the database";
+            report.error(message);
+            report.error(e);
+            log.error(message, e);
         }
+        report.finish();
         log.info("Finished loading ontology " + oboFileName + " in Quartz Job: Took " + DateUtil.getTimeDuration(startTime));
         log.info("Duration: " + DateUtil.getTimeDuration(startTime));
+        String filename = ((FileAppender) log.getAppender("ontology-logger")).getFile();
+        // send main email report 
+        cronJobUtil.emailReport("ontology-loader-report.ftl", report, filename);
         LoggingUtil.removeAppender(log, appender);
     }
 

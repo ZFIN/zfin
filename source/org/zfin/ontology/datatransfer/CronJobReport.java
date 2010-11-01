@@ -10,17 +10,22 @@ import java.util.*;
 public class CronJobReport {
 
     private String jobName;
-    private Map<String, StringBuffer> messageMap;
+    private Map<String, StringBuffer> messageMap = new LinkedHashMap<String, StringBuffer>(5);
     private long startTime;
     private long finishTime;
     private AbstractScriptWrapper.ScriptExecutionStatus status = AbstractScriptWrapper.ScriptExecutionStatus.SUCCESS;
     private List<String> errorMessages = new ArrayList<String>(2);
     private List rows;
     private String dataSectionTitle;
+    private CronJobUtil cronJobUtil;
 
     public CronJobReport(String jobName) {
         this.jobName = jobName;
-        messageMap = new LinkedHashMap<String, StringBuffer>(5);
+    }
+
+    public CronJobReport(String jobName, CronJobUtil cronJobUtil) {
+        this.jobName = jobName;
+        this.cronJobUtil = cronJobUtil;
     }
 
     public void addMessageToSection(String message, String sectionName) {
@@ -28,8 +33,8 @@ public class CronJobReport {
         if (messageBody == null) {
             messageBody = new StringBuffer();
             messageMap.put(sectionName, messageBody);
-        }else
-        messageBody.append(System.getProperty("line.separator"));
+        } else
+            messageBody.append(System.getProperty("line.separator"));
         messageBody.append(message);
     }
 
@@ -56,7 +61,6 @@ public class CronJobReport {
         builder.append(new Date(startTime));
         builder.append("Finish time: ");
         builder.append(new Date(finishTime));
-
 
         for (String sectionName : messageMap.keySet()) {
             builder.append(sectionName);

@@ -42,3 +42,5 @@ drop table tmp_obsoletes;
 
 drop table sec_unload_report;
 
+drop table updated_terms;
+

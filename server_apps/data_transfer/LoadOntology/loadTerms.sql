@@ -180,11 +180,24 @@ unload to 'new_terms.unl'
 			   where term.term_ont_id = tmp_term.term_id);
 
 
-unload to 'updated_terms.unl'
-  select n.term_name, g.term_name, g.term_ont_id 
-    from tmp_term_onto_no_dups n, term g 
-    where n.term_id = g.term_ont_id 
+unload to 'debug'
+  select *
+    from tmp_term_onto_no_dups n; 
+
+-- somehow java does not get the correct values when trying to use this unload statament directly.
+-- work around: create temp table, load the updated terms into it and then unload that table.
+
+create temp table updated_terms (new_Term varchar(255), old_Term varchar(255), id varchar(50))
+with no log;
+
+insert into updated_terms
+  select n.term_name, g.term_name, g.term_ont_id
+    from tmp_term_onto_no_dups n, term g
+    where n.term_id = g.term_ont_id
     and n.term_name != g.term_name;
+
+unload to 'updated_terms.unl'
+  select new_Term, old_term, id from updated_terms;
 
 !echo "update the term table with new names where the term id is the same term id in the obo file" ;
 

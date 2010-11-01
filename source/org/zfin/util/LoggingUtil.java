@@ -21,7 +21,6 @@ public class LoggingUtil {
      * java.io.tmpdir location.
      */
     public static Appender addFileAppender(Logger log, String filename) {
-        log.setLevel(Level.INFO);
         PatternLayout layout = new PatternLayout("%r - %p: %m%n");
         String fileName = filename + ".log";
         fileName = FileUtil.createAbsolutePath(TEMP_DIRECTORY, "cron-jobs-logs", FileUtil.addTimeStampToFileName(fileName));

@@ -1,9 +1,7 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
@@ -18,8 +16,8 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
@@ -28,6 +26,7 @@ import org.zfin.util.DbScriptFileParser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ChoiceFormat;
 import java.text.DateFormat;
 import java.util.*;
 
@@ -67,6 +66,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     // There are about 20 different types of data set to be imported.  
     private Map<String, List<List<String>>> dataMap = new HashMap<String, List<List<String>>>(20);
     private OntologyMetadata oboMetadata;
+    private ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
 
     public LoadOntology(String oboFile, String... scriptFiles) throws IOException {
         oboFilename = oboFile;
@@ -99,7 +99,8 @@ public class LoadOntology extends AbstractScriptWrapper {
             System.exit(-1);
         }
         loader.initAll();
-        if (loader.initialize(oboFile))
+        CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
+        if (loader.initialize(oboFile, cronJobUtil))
             loader.runOntologyUpdateProcess();
     }
 
@@ -132,15 +133,12 @@ public class LoadOntology extends AbstractScriptWrapper {
             }
             postLoadProcess();
         }
-        report.finish();
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
-        String filename = ((FileAppender) LOG.getAppender("ontology-logger")).getFile();
-        cronJobUtil.emailReport("ontology-loader-report.ftl", report, filename);
         //ontologyLoader.closeAllFiles();
     }
 
-    public boolean initialize(String fileName) {
-        return initialize(new CronJobReport("Load Ontology: " + fileName));
+    public boolean initialize(String fileName, CronJobUtil cronJobUtil) {
+        return initialize(new CronJobReport("Load Ontology: " + fileName, cronJobUtil));
     }
 
     public boolean initialize(CronJobReport cronJobReport) {
@@ -207,7 +205,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             List<List<String>> rows = dataMap.get(UnloadFile.TERMS_MISSING_OBO_ID.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " terms missing OBO ID");
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " missing OBO ID");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-terms-missing-obo-id.ftl", cronReport);
         }
@@ -216,7 +214,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_TERMS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " new Terms found");
+            cronReport.appendToSubject(" - " + rows.size() + " new " + termChoice.format(rows.size()) + " found");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-new-terms.ftl", cronReport);
         }
@@ -225,7 +223,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             List<List<String>> rows = dataMap.get(UnloadFile.UPDATED_TERMS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " terms updated");
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
         }
@@ -234,7 +232,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             List<List<String>> rows = dataMap.get(UnloadFile.SEC_UNLOAD_REPORT.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " merged terms updated");
+            cronReport.appendToSubject(" - " + rows.size() + " merged " + termChoice.format(rows.size()) + " updated");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-secondary-terms.ftl", cronReport);
         }
