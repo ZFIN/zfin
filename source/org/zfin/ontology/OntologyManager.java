@@ -438,11 +438,11 @@ public class OntologyManager {
             if (relatedTerms == null)
                 continue;
             for (TermRelationship relatedTerm : relatedTerms) {
-                if (relatedTerm.getType().equals("start")) {
+                if (relatedTerm.getType().equals("start stage")) {
                     String relatedTermOboId = relatedTerm.getRelatedTerm(term).getOboID();
                     DevelopmentStage start = developmentStageMap.get(relatedTermOboId);
                     term.setStart(start);
-                } else if (relatedTerm.getType().equals("end")) {
+                } else if (relatedTerm.getType().equals("end stage")) {
                     String relatedTermOboId = relatedTerm.getRelatedTerm(term).getOboID();
                     DevelopmentStage end = developmentStageMap.get(relatedTermOboId);
                     term.setEnd(end);
