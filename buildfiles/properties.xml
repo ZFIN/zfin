@@ -9,17 +9,16 @@
     <property name="archive-home.target" value="${TARGETROOT}/archive${today.DSTAMP}-home"/>
 
     <!-- static-version file targets -->
-    <property name="static-version.file" value="${home.target}/${static-version.file.name}"/>
-    <property name="pre.static-version.file" value="${pre-home.target}/${static-version.file.name}"/>
-    <property name="post.static-version.file" value="${post-home.target}/${static-version.file.name}"/>
-    <property name="archive.static-version.file" value="${archive-home.target}/${static-version.file.name}"/>
+    <property name="static-java-version.file" value="${home.target}/${java-static-version.file.name}"/>
+    <property name="pre.static-java-version.file" value="${pre-home.target}/${java-static-version.file.name}"/>
+    <property name="post.static-java-version.file" value="${post-home.target}/${java-static-version.file.name}"/>
+    <property name="archive.static-java-version.file" value="${archive-home.target}/${java-static-version.file.name}"/>
 
     <!-- jsp-version file targets -->
     <property name="jsp-version.file" value="${home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="pre.jsp-version.file" value="${pre-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
     <property name="post.jsp-version.file" value="${post-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-    <property name="archive.jsp-version.file"
-              value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
+    <property name="archive.jsp-version.file" value="${archive-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
 
     <!-- gwt targets -->
     <property name="gwt.target" value="${home.target}/gwt"/>

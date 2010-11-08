@@ -92,7 +92,7 @@
         <a href="/action/dev-tools/view-hibernate-info">Hibernate Info</a>
     </td>
     <td>
-        <a href="/java-deploy-version.html">Java Deploy Version</a>
+        <a href="/action/dev-tools/svn-version">Java Deploy Version</a>
     </td>
 </tr>
 <tr>

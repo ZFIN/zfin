@@ -540,7 +540,7 @@
         <antcall target="jsp-compile"/>
     </target>
 
-    <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticHTMLVersionFile"/>
+    <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticJavaFile"/>
 
     <macrodef name="removeWebApp">
         <attribute name="location"/>
@@ -654,20 +654,21 @@
         <echo message="Has post-redirctories: ${has.post-directories}"/>
     </target>
 
-
-    <target name="generateStaticHTMLVersionFile">
-        <delete file="${pre.static-version.file}"/>
-        <exec executable="/bin/sh">
-            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
-            <arg value="${pre.static-version.file}"/>
-        </exec>
-    </target>
-
     <target name="generateJSPVersionFile">
+        <echo message="${pre.jsp-version.file}"/>
         <delete file="${pre.jsp-version.file}"/>
         <exec executable="/bin/sh">
             <arg value="${basedir}/buildfiles/generateVersion.sh"/>
             <arg value="${pre.jsp-version.file}"/>
+        </exec>
+    </target>
+
+    <target name="generateStaticJavaFile">
+        <echo message="${pre.static-java-version.file}"/>
+        <delete file="${pre.static-java-version.file}"/>
+        <exec executable="/bin/sh" failifexecutionfails="false" >
+            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
+            <arg value="${pre.static-java-version.file}"/>
         </exec>
     </target>
 
