@@ -103,7 +103,7 @@
 
       <h3> Development </h3>
         <ul>
-        <li><a href="/action/dev-tools/home"><em>Developer Tools</em></a> </li>
+        <li><a href="/action/dev-tools/home"><em>Developer Tools</em></a> &bull; <a href="/gmake-deploy-version.html"><em>Deployed Version</em></a></li>
         </ul>
 
  <?/MIBLOCK> <?MICOMMENT> ** end if (root) ** <?/MICOMMENT>
