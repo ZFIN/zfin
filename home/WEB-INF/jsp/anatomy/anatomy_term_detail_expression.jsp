@@ -15,6 +15,8 @@
                              displaySectionName="EXPRESSION"/>
 
     <!-- Expression section -->
+<%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
+    <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
             new Ajax.Updater('${expressionSection}-genes', '/action/anatomy/show-expression-genes?zdbID=${formBean.aoTerm.ID}', {Method: 'get'});
