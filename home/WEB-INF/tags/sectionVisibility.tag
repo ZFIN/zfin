@@ -38,7 +38,7 @@
                 <c:when test="${zfn:isSectionVisible(sectionName,sectionVisibility)}">
                     <span onclick="javascript:showSection('${sectionName}', false)"
                           class="summaryTitle" onmouseover="this.style.cursor='pointer'">${displaySectionName}</span>
-                    (<a href="javascript:showSection('${sectionName}', false)">
+                    <a href="javascript:showSection('${sectionName}', false)">
                     <img src="/images/minus-13.png" alt="collapse" border="0" style="vertical-align:absmiddle;"></a>
                 </c:when>
                 <c:otherwise>
