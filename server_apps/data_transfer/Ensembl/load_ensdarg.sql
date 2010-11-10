@@ -92,8 +92,7 @@ insert into record_attribution (
 ) select ez_zad, 'ZDB-PUB-061101-1', 'standard' from ens_zdb
 ;
 
-select * from ens_zdb;
-
+--select count(*) from ens_zdb;
 
 drop table ens_zdb;
 
