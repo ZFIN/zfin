@@ -130,6 +130,8 @@ public class LoadOntology extends AbstractScriptWrapper {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);
                 report.error(e);
+            }finally {
+                HibernateUtil.closeSession();
             }
             postLoadProcess();
         }
