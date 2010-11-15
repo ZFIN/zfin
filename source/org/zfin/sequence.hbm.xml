@@ -13,13 +13,16 @@
         <param name="enumClassname">org.zfin.sequence.ForeignDBDataType$DataType</param>
     </typedef>
 
-
     <typedef class="org.zfin.database.StringEnumUserType" name="foreignDBAvailableName">
         <param name="enumClassname">org.zfin.sequence.ForeignDB$AvailableName</param>
     </typedef>
 
     <typedef class="org.zfin.database.StringEnumUserType" name="displayGroupName">
         <param name="enumClassname">org.zfin.sequence.DisplayGroup$GroupName</param>
+    </typedef>
+
+    <typedef class="org.zfin.database.StringEnumUserType" name="organism">
+        <param name="enumClassname">org.zfin.orthology.Species</param>
     </typedef>
 
     <class name="org.zfin.sequence.Accession" table="accession_bank">
@@ -34,7 +37,7 @@
         <many-to-one name="referenceDatabase" column="accbk_fdbcont_zdb_id" class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
 
 
-       <!-- <set name="relatedEntrezAccessions" table="entrez_to_protein" lazy="true">
+        <!-- <set name="relatedEntrezAccessions" table="entrez_to_protein" lazy="true">
             <key column="ep_protein_acc_num"/>
             <one-to-many class="EntrezProtRelation"/>
         </set>-->
@@ -81,8 +84,8 @@
         <many-to-one name="primaryBlastDatabase" column="fdbcont_primary_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true" lazy="no-proxy"/>
 
         <!--<set name="relatedBlastDbs" table="int_fdbcont_analysis_tool" >-->
-            <!--<key column="ifat_fdbcont_zdb_id"/>-->
-            <!--<many-to-many class="org.zfin.sequence.blast.Database" column="ifat_blastdb_zdb_id"/>-->
+        <!--<key column="ifat_fdbcont_zdb_id"/>-->
+        <!--<many-to-many class="org.zfin.sequence.blast.Database" column="ifat_blastdb_zdb_id"/>-->
         <!--</set>-->
 
         <bag name="relatedBlastDbs" table="int_fdbcont_analysis_tool">
@@ -118,7 +121,7 @@
 
         <property name="groupName" column="fdbcdg_name" not-null="true" type="displayGroupName" />
         <property name="definition" column="fdbcdg_definition" not-null="true"/>
-        
+
         <set name="referenceDatabases" lazy="true" table="foreign_db_contains_display_group_member">
             <key column="fdbcdgm_group_id"/>
             <many-to-many class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id"/>
@@ -126,11 +129,11 @@
     </class>
 
     <!--<class name="org.zfin.sequence.DisplayGroupMember" table="foreign_db_contains_display_group_member">-->
-        <!--<id name="id">-->
-            <!--<column name="fdbcdgm_pk_id" not-null="true"/>-->
-        <!--</id>-->
-        <!--<many-to-one name="referenceDatabase" class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id" not-null="true"/>-->
-        <!--<many-to-one name="displayGroup" class="org.zfin.sequence.DisplayGroup" column="fdbcdgm_group_id" not-null="true"/>-->
+    <!--<id name="id">-->
+    <!--<column name="fdbcdgm_pk_id" not-null="true"/>-->
+    <!--</id>-->
+    <!--<many-to-one name="referenceDatabase" class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id" not-null="true"/>-->
+    <!--<many-to-one name="displayGroup" class="org.zfin.sequence.DisplayGroup" column="fdbcdgm_group_id" not-null="true"/>-->
     <!--</class>-->
 
     <class name="org.zfin.sequence.ForeignDBDataType" table="foreign_db_data_type">
@@ -142,7 +145,7 @@
         <property name="dataType" column="fdbdt_data_type" type="foreignDatabaseDataType"/>
         <property name="superType" column="fdbdt_super_type" type="foreignDatabaseSuperType"/>
         <property name="displayOrder" column="fdbdt_display_order"/>
-        
+
     </class>
 
     <class name="org.zfin.sequence.MarkerSequence" table="marker_sequence">
@@ -170,8 +173,8 @@
             </generator>
         </id>
 
-<!--        The types for dblink are orthology, anatomy or marker.-->
-<!--        These are guaranteed by the different procedures.-->
+        <!--        The types for dblink are orthology, anatomy or marker.-->
+        <!--        These are guaranteed by the different procedures.-->
         <!--CASE substr(dblink_linked_recid,0,9)-->
         <discriminator type="string"
                        formula="(
@@ -192,7 +195,7 @@
                      class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>
 
         <!--<many-to-one name="version" column="dblink_acc_num"-->
-                     <!--class="java.lang.Integer" not-null="false" lazy="no-proxy"/>-->
+        <!--class="java.lang.Integer" not-null="false" lazy="no-proxy"/>-->
 
         <set name="publications" lazy="true">
             <key column="recattrib_data_zdb_id"/>
@@ -218,7 +221,7 @@
         <id name="entrezAccNum" type="string">
             <column name="eg_acc_num" not-null="true"/>
             <generator class="native"/>
-         </id>
+        </id>
         <!--Perhaps the class column should change; species is really common name, we don't want to display "Homo Sapiens", human rather-->
         <property name="abbreviation" column="eg_symbol" type="string"/>
         <property name="name" column="eg_name" type="string"/>
@@ -245,7 +248,7 @@
         <property name="organism" column="ep_organism_common_name" type="organism"/>
         <property name="proteinAccNum" column="ep_protein_acc_num" not-null="true"/>
         <many-to-one name="entrezAccession" column="ep_entrez_acc_num"
-                             class="org.zfin.sequence.Entrez" not-null="true" lazy="no-proxy"/>
+                     class="org.zfin.sequence.Entrez" not-null="true" lazy="no-proxy"/>
 
     </class>
 
@@ -280,7 +283,7 @@
 
     <class name="org.zfin.sequence.ZfinAccessionNumber" table="zfin_accession_number">
         <id name="zAccNum">
-          <column name="za_acc_num" not-null="true"/>
+            <column name="za_acc_num" not-null="true"/>
         </id>
     </class>
 
@@ -307,8 +310,8 @@
 
 
 
-    
-  <sql-query name="loadEntrezForProtein">
+
+    <sql-query name="loadEntrezForProtein">
         <return alias="acc" class="org.zfin.sequence.Accession"/>
         <return-join alias="entrez" property="acc.relatedEntrezAccessions"/>
         select
@@ -317,15 +320,15 @@
         entrez.ep_organism_common_name ,
         entrez.ep_protein_acc_num ,
         entrez.ep_entrez_acc_num,
-      av.accver_version,
-      av.accver_acc_num
+        av.accver_version,
+        av.accver_acc_num
         from
         entrez_to_protein  entrez
         left outer join accession_bank acc
-            on entrez.ep_protein_acc_num=acc.accbk_acc_num
-      left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
+        on entrez.ep_protein_acc_num=acc.accbk_acc_num
+        left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
         where
-            acc.accbk_pk_id=?
+        acc.accbk_pk_id=?
     </sql-query>
 
     <sql-query name="loadDBLinksForAccession">
@@ -344,58 +347,58 @@
         from
         db_link link
         join accession_bank acc
-            on link.dblink_acc_num=acc.accbk_acc_num
-            and link.dblink_fdbcont_zdb_id=acc.accbk_fdbcont_zdb_id
+        on link.dblink_acc_num=acc.accbk_acc_num
+        and link.dblink_fdbcont_zdb_id=acc.accbk_fdbcont_zdb_id
         left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
         where
-            acc.accbk_pk_id=?
+        acc.accbk_pk_id=?
     </sql-query>
 
 
-<!--    Note:  this should go away when the types are properly discriminated-->
+    <!--    Note:  this should go away when the types are properly discriminated-->
     <sql-query name="loadBlastableDBLinksForAccession">
         <return alias="acc" class="org.zfin.sequence.Accession"/>
         <return-join alias="link" property="acc.blastableMarkerDBLinks"/>
-select
-acc.accbk_pk_id ,
-link.dblink_zdb_id ,
-link.dblink_acc_num ,
-link.dblink_length ,
-link.dblink_fdbcont_zdb_id ,
-link.dblink_linked_recid,
-link.dblink_acc_num_display,
-av.accver_version,
-av.accver_acc_num
-from db_link link
-join accession_bank acc on link.dblink_acc_num=acc.accbk_acc_num
-join foreign_db_contains fdbc on fdbc.fdbcont_zdb_id = link.dblink_fdbcont_zdb_id
-join foreign_db_data_type fdbdt on fdbc.fdbcont_fdbdt_id = fdbdt.fdbdt_pk_id
-left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
-where acc.accbk_pk_id=?
-and fdbdt.fdbdt_super_type = 'sequence'
-and fdbdt.fdbdt_data_type in ( 'RNA','Polypeptide' )
+        select
+        acc.accbk_pk_id ,
+        link.dblink_zdb_id ,
+        link.dblink_acc_num ,
+        link.dblink_length ,
+        link.dblink_fdbcont_zdb_id ,
+        link.dblink_linked_recid,
+        link.dblink_acc_num_display,
+        av.accver_version,
+        av.accver_acc_num
+        from db_link link
+        join accession_bank acc on link.dblink_acc_num=acc.accbk_acc_num
+        join foreign_db_contains fdbc on fdbc.fdbcont_zdb_id = link.dblink_fdbcont_zdb_id
+        join foreign_db_data_type fdbdt on fdbc.fdbcont_fdbdt_id = fdbdt.fdbdt_pk_id
+        left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
+        where acc.accbk_pk_id=?
+        and fdbdt.fdbdt_super_type = 'sequence'
+        and fdbdt.fdbdt_data_type in ( 'RNA','Polypeptide' )
     </sql-query>
 
-<!--    <database-object>
-     <create>
-          create function xdbget(
-             blastdb_abbrev varchar(30),
-             blastdb_type varchar(5),
-             accession varchar(50)
-             ) returning lvarchar
-             with (class = 'UDR')
-             external name "/research/zcentral/www_homes/hoover/lib/DB_functions/xdbget.so"
-             language c
-          end function;
-      </create>
-      <drop>
-          drop function xdbget ;
-      </drop>
-     </database-object>
+    <!--    <database-object>
+         <create>
+              create function xdbget(
+                 blastdb_abbrev varchar(30),
+                 blastdb_type varchar(5),
+                 accession varchar(50)
+                 ) returning lvarchar
+                 with (class = 'UDR')
+                 external name "/research/zcentral/www_homes/hoover/lib/DB_functions/xdbget.so"
+                 language c
+              end function;
+          </create>
+          <drop>
+              drop function xdbget ;
+          </drop>
+         </database-object>
 
-     <sql-query name="xdbget" callable="true">
-      {execute function xdbget(:blastDbAbbrev,:blastDbType,:accNum)}
-     </sql-query>
--->
+         <sql-query name="xdbget" callable="true">
+          {execute function xdbget(:blastDbAbbrev,:blastDbType,:accNum)}
+         </sql-query>
+    -->
 </hibernate-mapping>
 
