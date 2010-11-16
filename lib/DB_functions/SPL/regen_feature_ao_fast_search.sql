@@ -156,8 +156,8 @@ Create dba function regen_feature_ao_fast_search()
 				       fstat_superterm_zdb_id,
 				       fstat_subterm_zdb_id,
 				       fstat_gene_zdb_id,
-				       fstat_pub_zdb_id,
 				       fstat_fig_zdb_id,
+				       fstat_pub_zdb_id,
 				       fstat_xpatres_zdb_id,
 				       fstat_type,
 				       fstat_img_zdb_id
