@@ -7,7 +7,9 @@ Disallow: /cgi-bin/mapper_select.cgi
 Disallow: /cgi-bin/print_map.cgi
 Disallow: /cgi-bin/view_mapplet.cgi
 Disallow: /cgi-bin/view_zmapplet.cgi
-Disallow: /action/blast/blast
+Disallow: /action/blast/blast?*
+Disallow: /action/blast/blast-view*
+Disallow: /action/blast/external-blast*
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-fishselect.apg*
 # this is okay if there is a pub, but without the pubid, it is open search
@@ -29,6 +31,8 @@ Disallow: /cgi-bin/webdriver?MIval=aa-xpatview.apg*
 Disallow: /action/anatomy/search
 # allow stage searches from drop-down, in theory, need to set explicitly on page
 #Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-*
+# Created via a crawl error
+Disallow: /zf_info/dbase/PAPERS/CurrentDataModel/db.html
 
 Disallow: /cgi-perl/gbrowse*
 
