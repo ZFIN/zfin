@@ -471,7 +471,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getGeneClone() {
-        String name = "cfhr2";
+        String name = "cfhl4";
         Marker clone = markerRepository.getMarkerByAbbreviation(name);
         assertTrue(clone != null);
 /*
