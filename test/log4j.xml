@@ -63,7 +63,7 @@
 		<priority value="ERROR"/>
 	</category>
 
-	<category name="net.sf.ehcache.EhCacheProvider">
+	<category name="net.sf.ehcache.hibernate.EhCacheProvider">
 		<priority value="ERROR"/>
 	</category>
 

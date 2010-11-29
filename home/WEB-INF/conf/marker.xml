@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--  URL mappings -->
     <bean id="markerUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="/marker/expression-summary">expressionSummaryBean</prop>
                 <prop key="/marker/transcript-view">transcriptView</prop>
                 <prop key="/marker/transcript-add">transcriptAdd</prop>
                 <prop key="/marker/related-transcripts">relatedTranscripts</prop>
@@ -26,16 +25,13 @@
     </bean>
 
 
-    <bean name="expressionSummaryBean"
-          class="org.zfin.expression.presentation.ExpressionSummaryController"/>
-
     <bean name="transcriptView" class="org.zfin.marker.presentation.TranscriptViewController"/>
     <bean name="relatedTranscripts" class="org.zfin.marker.presentation.RelatedTranscriptsController"/>
 
     <bean name="transcriptDefinitions" class="org.zfin.marker.presentation.TranscriptDefinitionsController"/>
 
     <bean name="transcriptAdd" class="org.zfin.marker.presentation.TranscriptAddController">
-        <property name="formView" value="transcript-add.page"/>
+        <property name="formView" value="marker/transcript-add.page"/>
         <property name="validateOnBinding" value="true"/>
         <property name="commandClass" value="org.zfin.marker.presentation.TranscriptAddBean"/>
         <property name="commandName" value="formBean"/>
@@ -53,8 +49,8 @@
     </bean>
 
     <bean name="mergeMarker" class="org.zfin.marker.presentation.MergeMarkerController">
-        <property name="formView" value="marker-merge.page"/>
-        <property name="successView" value="marker-merge-finish.page"/>
+        <property name="formView" value="marker/merge-marker.page"/>
+        <property name="successView" value="marker/merge-marker-finish.page"/>
         <property name="validateOnBinding" value="true"/>
         <property name="bindOnNewForm" value="true"/>
         <property name="commandName" value="formBean"/>
@@ -72,7 +68,7 @@
     <bean name="markerEdit" class="org.zfin.marker.presentation.MarkerEditController"/>
 
     <bean name="cloneAdd" class="org.zfin.marker.presentation.CloneAddController">
-        <property name="formView" value="clone-add.page"/>
+        <property name="formView" value="marker/clone-add.page"/>
         <property name="validateOnBinding" value="true"/>
         <property name="commandClass" value="org.zfin.marker.presentation.CloneAddBean"/>
         <property name="commandName" value="formBean"/>
@@ -83,7 +79,7 @@
         </property>
     </bean>
 
-    <bean name="miniGeneBean" class="org.zfin.marker.presentation.MiniGeneController" />
-    <bean name="stemLoopSequence" class="org.zfin.marker.presentation.StemLoopController" />
+    <bean name="miniGeneBean" class="org.zfin.marker.presentation.MiniGeneController"/>
+    <bean name="stemLoopSequence" class="org.zfin.marker.presentation.StemLoopController"/>
 
 </beans>

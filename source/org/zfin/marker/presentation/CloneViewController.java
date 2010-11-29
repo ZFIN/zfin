@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.expression.ExpressionService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.MarkerService;
@@ -54,9 +55,9 @@ public class CloneViewController extends AbstractController {
         cloneBean.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForMarker(
                 clone, 0).getTotalCount());
 
-        ModelAndView modelAndView = new ModelAndView("clone-view.page");
+        ModelAndView modelAndView = new ModelAndView("marker/clone-view.page");
         modelAndView.addObject(LookupStrings.FORM_BEAN, cloneBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, clone.getAbbreviation());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString()+clone.getAbbreviation());
 
         return modelAndView;
     }

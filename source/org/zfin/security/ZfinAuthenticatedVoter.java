@@ -1,14 +1,18 @@
 package org.zfin.security;
 
-import org.acegisecurity.*;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.vote.AccessDecisionVoter;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
 /**
  * Validate somebodies has an allowed role.
+ * @Deprecated Using default Spring Security 3 voter.
  */
 public class ZfinAuthenticatedVoter implements AccessDecisionVoter {
 
@@ -33,12 +37,15 @@ public class ZfinAuthenticatedVoter implements AccessDecisionVoter {
         return true;
     }
 
-    public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
+    @Override
+    public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
+//    public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
         int result = ACCESS_ABSTAIN;
-        Iterator iter = config.getConfigAttributes();
+//        Iterator iter = config.getConfigAttributes();
 
-        while (iter.hasNext()) {
-            ConfigAttribute attribute = (ConfigAttribute) iter.next();
+
+        for(ConfigAttribute attribute: attributes){
+//            ConfigAttribute attribute = (ConfigAttribute) iter.next();
 
             if (this.supports(attribute)) {
                 result = ACCESS_DENIED;
@@ -62,7 +69,7 @@ public class ZfinAuthenticatedVoter implements AccessDecisionVoter {
             return Collections.EMPTY_LIST;
         }
 
-        if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().length < 1)) {
+        if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().size()< 1)) {
             return Collections.EMPTY_LIST;
         }
 

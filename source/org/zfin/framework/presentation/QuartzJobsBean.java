@@ -114,8 +114,9 @@ public class QuartzJobsBean {
     public void clearLastAction() {
         if (action != null) {
             this.message = action;
-            if (job != null)
+            if (job != null){
                 this.message += " " + job;
+            }
             this.group = null;
             this.action = null;
             this.job = null;

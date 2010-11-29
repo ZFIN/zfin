@@ -53,7 +53,7 @@
             </td>
             <td class="item">
                 <form:select path="newLoggerLevel" multiple="single">
-                    <form:options items="${loggerForm.loggerValues}" itemLabel="value" itemValue="key"/>
+                    <form:options items="${loggerForm.loggerValues}" />
                 </form:select>
             <td><input type="submit" name="type" value="create"/></td>
         </tr>

@@ -1,6 +1,5 @@
 package org.zfin.database;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 

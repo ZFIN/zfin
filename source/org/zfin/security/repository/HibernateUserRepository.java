@@ -1,18 +1,11 @@
 package org.zfin.security.repository;
 
-import org.acegisecurity.annotation.Secured;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.springframework.security.access.annotation.Secured;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.ZfinSession;
 import org.zfin.people.Person;
-import org.zfin.security.ZfinAuthenticationProcessingFilter;
-
-import java.util.Date;
-import java.util.List;
+import org.zfin.security.ApgCookieHandler;
 
 /**
  * Hibernate implementation of the UserRepository.
@@ -33,43 +26,11 @@ public class HibernateUserRepository implements UserRepository {
         session.save(tempPerson);
     }
 
-    public void createSession(ZfinSession zfinSession) {
-        Session session = HibernateUtil.currentSession();
-        zfinSession.setDateCreated(new Date());
-        zfinSession.setStatus("active");
-        session.save(zfinSession);
-    }
-
-    public ZfinSession getSession(String sessionID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(ZfinSession.class);
-        query.add(Restrictions.eq("sessionID", sessionID));
-        return (ZfinSession) query.uniqueResult();
-    }
-
-    public void updateSession(ZfinSession zfinSession) {
-        Session session = HibernateUtil.currentSession();
-        if (session.getTransaction().wasCommitted()) {
-            session.getTransaction().begin();
-            session.save(zfinSession);
-            session.getTransaction().commit();
-        } else
-            session.save(zfinSession);
-    }
-
-    public List<ZfinSession> getActiveSessions() {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ZfinSession.class);
-        criteria.add(Restrictions.eq("status", "active"));
-        criteria.addOrder(Order.asc("dateCreated"));
-        return (List<ZfinSession>) criteria.list();
-    }
-
     public void backupAPGCookie(String sessionID) {
         Session session = HibernateUtil.currentSession();
         String hql = " from Person person where person.accountInfo.cookie = :cookie ";
         Query query = session.createQuery(hql);
-        query.setString("cookie", ZfinAuthenticationProcessingFilter.convertTomcatCookieToApgCookie(sessionID));
+        query.setString("cookie", ApgCookieHandler.convertTomcatCookieToApgCookie(sessionID));
         Person person = (Person) query.uniqueResult();
         if(person != null){
             person.getAccountInfo().setAuthenticatedCookie(person.getAccountInfo().getCookie());
@@ -78,14 +39,16 @@ public class HibernateUserRepository implements UserRepository {
         }
     }
 
-    public void restoreAPGCookie(String sessionID) {
+    public Person restoreAPGCookie(String sessionID) {
         Session session = HibernateUtil.currentSession();
         String hql = " from Person person where person.accountInfo.authenticatedCookie = :cookie ";
         Query query = session.createQuery(hql);
-        query.setString("cookie", ZfinAuthenticationProcessingFilter.convertTomcatCookieToApgCookie(sessionID));
+        query.setString("cookie", ApgCookieHandler.convertTomcatCookieToApgCookie(sessionID));
         Person person = (Person) query.uniqueResult();
         if(person != null){
             person.getAccountInfo().setCookie(person.getAccountInfo().getAuthenticatedCookie());
+            return person ;
         }
+        return null ;
     }
 }

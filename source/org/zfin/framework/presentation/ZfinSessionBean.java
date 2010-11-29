@@ -1,9 +1,6 @@
 package org.zfin.framework.presentation;
 
 import org.apache.log4j.Logger;
-import org.zfin.framework.ZfinSession;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.security.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -12,10 +9,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
  */
 public class ZfinSessionBean {
 
@@ -69,11 +64,6 @@ public class ZfinSessionBean {
         this.request = request;
     }
 
-    public List<ZfinSession> getActiveSessions() {
-        UserRepository ur = RepositoryFactory.getUserRepository();
-        return ur.getActiveSessions();
-    }
-
     public long getSessionSize() {
         long total = 0;
 
@@ -112,4 +102,7 @@ public class ZfinSessionBean {
 
         return total;
     }
+
+
+
 }

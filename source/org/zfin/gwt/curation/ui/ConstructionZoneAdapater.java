@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.ui.HandlesError;

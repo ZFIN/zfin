@@ -1,9 +1,11 @@
 package org.zfin.framework.presentation;
 
 import com.opensymphony.clickstream.ClickstreamRequest;
-import org.acegisecurity.context.SecurityContext;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.people.Person;
@@ -16,6 +18,9 @@ import java.util.*;
  * Class that is called from JSP through a function call.
  */
 public class ZfinJSPFunctions {
+    public static final int MILLISECONDS_PER_HOUR = 3600000;
+    public static final int MILLISECONDS_PER_MINUTE = 60000;
+    public static final int MILLISECONDS_PER_SECOND = 1000;
 
     /**
      * Escape characters to valid HTML code
@@ -223,8 +228,8 @@ public class ZfinJSPFunctions {
     public static String getPerson(HttpSession session) {
         if (session == null)
             return null;
-        String name = (String) session.getAttribute("ACEGI_SECURITY_LAST_USERNAME");
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("ACEGI_SECURITY_CONTEXT");
+        String name = (String) session.getAttribute(WebAttributes.LAST_USERNAME);
+        SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
         if (StringUtils.isNotEmpty(name) && securityContext != null) {
             name = ((Person) securityContext.getAuthentication().getPrincipal()).getFullName();
         } else {

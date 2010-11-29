@@ -1,17 +1,13 @@
 package org.zfin.wiki;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-
-import java.io.File;
 
 /**
  * This class is used to run wiki code once (as opposed to out of a cron job.

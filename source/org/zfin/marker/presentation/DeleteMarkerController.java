@@ -30,7 +30,7 @@ public class DeleteMarkerController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         DeleteBean deleteBean = (DeleteBean) command;
 
-        ModelAndView modelAndView = new ModelAndView("marker-delete.page");
+        ModelAndView modelAndView = new ModelAndView("marker/delete-marker.page");
         modelAndView.addObject(getCommandName(), deleteBean);
         modelAndView.addObject("errors", errors);
 

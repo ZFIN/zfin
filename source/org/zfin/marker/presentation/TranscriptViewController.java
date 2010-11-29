@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
@@ -152,9 +153,9 @@ public class TranscriptViewController extends AbstractCommandController {
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
         transcriptBean.setNucleotideSequences(sequences);
 
-        ModelAndView modelAndView = new ModelAndView("transcript-view.page") ;
+        ModelAndView modelAndView = new ModelAndView("marker/transcript-view.page") ;
         modelAndView.addObject(LookupStrings.FORM_BEAN,transcriptBean) ;
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, transcript.getAbbreviation()) ;
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getTitleString() +transcript.getAbbreviation()) ;
 
         return modelAndView ;
     }

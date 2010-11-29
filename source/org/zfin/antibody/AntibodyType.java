@@ -10,19 +10,19 @@ public enum AntibodyType {
     UNSPECIFIED(""),
     ;
 
-    private final String name;
+    private final String value;
 
-    private AntibodyType(String name) {
-        this.name = name;
+    private AntibodyType(String value) {
+        this.value = value;
     }
 
-    public String getName() {
-        return name;
+    public String getValue() {
+        return value;
     }
 
     public static AntibodyType getType(String type) {
         for (AntibodyType t : values()) {
-            if (t.getName().equals(type))
+            if (t.getValue().equals(type))
                 return t;
         }
         throw new RuntimeException("No clonal antibodyType of string " + type + " found.");
@@ -33,6 +33,10 @@ public enum AntibodyType {
             return true;
         AntibodyType type = getType(name);
         return type == ANY;
+    }
+
+    public String toString(){
+        return value ;
     }
 
 }

@@ -566,6 +566,14 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="removeWebApp">
+        <attribute name="dir"/>
+        <sequential>
+            <echo message="removing webapp from @{dir}" />
+            <delete dir="@{dir}"/>
+        </sequential>
+	</macrodef>
+
     <macrodef name="copyWebApp">
         <attribute name="from"/>
         <attribute name="to"/>
@@ -608,6 +616,14 @@
             </copy>
         </sequential>
     </macrodef>
+
+    <target name="cleandeploy" depends="do"
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
+        <removeWebApp dir="${home.target}"/>
+        <copyWebApp from="${web.dir}" to="${home.target}"/>
+
+        <antcall target="copy-indexer-build-file-with-env-variables"/>
+    </target>
 
     <target name="dirtydeploy" depends="compile"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">

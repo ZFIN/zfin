@@ -3,10 +3,10 @@
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
 
-<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-    <tiles:put name="subjectName" value="${formBean.antibody.name}"/>
-    <tiles:put name="subjectID" value="${formBean.antibody.zdbID}"/>
-</tiles:insert>
+<tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+    <tiles:putAttribute name="subjectName" value="${formBean.antibody.name}"/>
+    <tiles:putAttribute name="subjectID" value="${formBean.antibody.zdbID}"/>
+</tiles:insertTemplate>
 
 <div style="font-size:larger; font-weight:bold;" align="center">
     Antibody <zfin:link entity="${formBean.antibody}"/> labeling in

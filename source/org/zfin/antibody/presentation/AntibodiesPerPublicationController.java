@@ -1,7 +1,7 @@
 package org.zfin.antibody.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.throwaway.ThrowawayController;
+import org.springframework.web.servlet.mvc.Controller;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
@@ -9,16 +9,20 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * Controller to retrieve all antibodies per given publication.
  */
-public class AntibodiesPerPublicationController implements ThrowawayController {
+public class AntibodiesPerPublicationController implements Controller {
+
 
     private String publicationZdbID;
 
-    public ModelAndView execute() throws Exception {
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(publicationZdbID);
         if (publication == null)

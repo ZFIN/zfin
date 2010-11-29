@@ -3,15 +3,9 @@ package org.zfin.ontology.datatransfer;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 import java.io.StringWriter;

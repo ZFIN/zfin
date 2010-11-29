@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+    <bean id="apgLogoutHandler" class="org.zfin.security.ApgLogoutSuccessHandler">
+        <property name="defaultTargetUrl" value="/"/>
+    </bean>
+
+    <bean id="userRepository" class="org.zfin.security.repository.HibernateUserRepository"/>
+
+    <bean id="apgAuthenticationSuccessHandler" class="org.zfin.security.ApgAuthenticationSuccessHandler">
+        <property name="sessionRegistry" ref="sessionRegistry"/>
+    </bean>
+
+    <bean id="userDetailsService" class="org.zfin.security.UserDetailServiceImpl" />
+
+    <bean id="cachingUserDetailService" class="org.springframework.security.config.authentication.CachingUserDetailsService">
+        <constructor-arg ref="userDetailsService"/>
+    </bean>
+
+    <bean id="zfinGlobalSessionBean" class="org.zfin.framework.presentation.GlobalSessionBean"  >
+        <property name="sessionRegistry" ref="sessionRegistry"/>
+    </bean>
+
+    <bean id="ipRememberMeService" class="org.zfin.security.IpTokenRememberMeServices" >
+        <property name="userDetailsService" ref="cachingUserDetailService"/>
+        <property name="cookieName" value="ZFIN_REMEMBER_ME"/>
+        <property name="tokenValiditySeconds" value="${VALID_SESSION_TIMEOUT_SECONDS}"/>
+        <!--want a key that is rated strong to reduce likelihood of reverse engineering-->
+        <property name="key" value="ZFIN_KEY"/>
+        <property name="useSecureCookie" value="false"/>
+    </bean>
+
+    <security:authentication-manager  alias="authenticationManager">
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder hash="md5" >
+                <security:salt-source system-wide="dedicated to George Streisinger"/>
+            </security:password-encoder>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+    <bean id="checkUpdates" class="org.zfin.framework.filter.UpdatesCheckFilter">
+        <property name="securityHandler" ref="apgLogoutHandler"/>
+    </bean>
+
+    <bean id="sessionRegistry"  class="org.springframework.security.core.session.SessionRegistryImpl"/>
+
+    <!--maps action-->
+    <!--filter action should correspond to this:-->
+    <!--http://static.springsource.org/spring-security/site/docs/3.0.x/reference/ns-config.html#ns-requires-channel-->
+    <security:http
+            lowercase-comparisons="true"
+            path-type="ant"
+            use-expressions="true"
+            create-session="ifRequired"
+            >
+
+        <security:form-login login-page="/action/login"
+                             default-target-url="/"
+                             authentication-failure-url="/action/login-redirect?error=true"
+                             login-processing-url="/action/security-check"
+                             always-use-default-target="false"
+                             authentication-success-handler-ref="apgAuthenticationSuccessHandler"
+                />
+
+        <security:logout logout-url="/action/logout"
+                         success-handler-ref="apgLogoutHandler"
+                />
+        <!--logout-success-url="/action/http-redirect"-->
+
+        <security:anonymous key="changeThis" username="anonymousUser,guest" enabled="true" granted-authority="guest"/>
+
+        <security:port-mappings>
+            <security:port-mapping http="${NON_SECUREPORT}" https="${SECUREPORT}"/>
+        </security:port-mappings>
+
+        <security:session-management>
+            <security:concurrency-control max-sessions="1" expired-url="/action/login" session-registry-ref="sessionRegistry"/>
+        </security:session-management>
+
+        <!--for some reason you have to establish the key here again, or it uses the default springSecurity -->
+        <security:remember-me services-ref="ipRememberMeService" key="ZFIN_KEY"/>
+
+        <security:custom-filter after="LAST"  ref="checkUpdates"/>
+
+
+
+        <security:intercept-url pattern="/action/login" access="permitAll"  requires-channel="http"/>
+        <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root')"  requires-channel="https"/>
+        <security:intercept-url pattern="/action/reno/*" access="hasRole('root')" />
+        <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root')" />
+        <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root')" />
+        <security:intercept-url pattern="/action/people/edit-user" access="hasAnyRole('root','submit')" requires-channel="https"/>
+        <security:intercept-url pattern="/action/webdriver/secure/*" access="hasAnyRole('root','submit')" />
+        <security:intercept-url pattern="/action/antibody/create" access="hasRole('root')" />
+        <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />
+        <security:intercept-url pattern="/action/dev-tools/view-session-info" access="permitAll" />
+        <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root')" requires-channel="http"/>
+        <security:intercept-url pattern="/**/dev-tools/**" access="hasRole('root')" requires-channel="http"/>
+        <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root')" />
+        <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
+        <security:intercept-url pattern="/action/login-redirect" requires-channel="https"/>
+        <security:intercept-url pattern="/action/login-redirect?error=true" requires-channel="https"/>
+
+
+        <security:intercept-url pattern="/ajax/session-save" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/transcriptservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/markerservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/termservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/imageservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/cloneservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/antibodyservice" access="hasRole('root')" />
+        <security:intercept-url pattern="/ajax/curation*" access="hasRole('root')" />
+
+
+        <security:intercept-url pattern="/**" access="permitAll" requires-channel="http"  />
+
+    </security:http>
+
+
+</beans>

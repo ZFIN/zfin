@@ -1,40 +1,28 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
 
-    <definition name="main_layout" path="/WEB-INF/tiles/layout.jsp">
-        <put name="staticTitle" value="" />
-        <put name="header" value="/WEB-INF/tiles/header.jsp" />
-        <put name="footer" value="/WEB-INF/tiles/footer.jsp" />
-    </definition>
-
-    <definition name="view-person-detail" extends="main_layout">
-        <put name="staticTitle" value="ZFIN View Person" />
-        <put name="body" value="/WEB-INF/jsp/people/view_person_detail.jsp"/>
-    </definition>
-
-    <definition name="view-publication-detail" extends="main_layout">
-        <put name="staticTitle" value="ZFIN View Publication" />
-        <put name="body" value="/WEB-INF/jsp/publication/view_publication.jsp"/>
+    <definition name="profile/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/people/{1}.jsp" />
     </definition>
 
     <definition name="edit-user-password.page" extends="main_layout">
-        <put name="staticTitle" value="Edit ZFIN User" />
-        <put name="body" value="/WEB-INF/jsp/people/edit_user_password.jsp"/>
+        <put-attribute name="staticTitle" value="Edit ZFIN User" />
+        <put-attribute name="body" value="/WEB-INF/jsp/people/edit_user_password.jsp"/>
     </definition>
 
     <definition name="edit-user-password-confirmation.page" extends="main_layout">
-        <put name="staticTitle" value="Edit ZFIN User Confirmation" />
-        <put name="body" value="/WEB-INF/jsp/people/edit_user_password_confirmation.jsp"/>
+        <put-attribute name="staticTitle" value="Edit ZFIN User Confirmation" />
+        <put-attribute name="body" value="/WEB-INF/jsp/people/edit_user_password_confirmation.jsp"/>
     </definition>
 
     <definition name="delete-user-password-confirmation.page" extends="main_layout">
-        <put name="staticTitle" value="Delete ZFIN User Confirmation" />
-        <put name="body" value="/WEB-INF/jsp/people/delete_user_confirmation.jsp"/>
+        <put-attribute name="staticTitle" value="Delete ZFIN User Confirmation" />
+        <put-attribute name="body" value="/WEB-INF/jsp/people/delete_user_confirmation.jsp"/>
     </definition>
 
 </tiles-definitions>

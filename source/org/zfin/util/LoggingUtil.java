@@ -1,6 +1,9 @@
 package org.zfin.util;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import java.io.IOException;
 

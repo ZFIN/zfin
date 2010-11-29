@@ -3,7 +3,9 @@ package org.zfin.sequence.blast;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
+import org.zfin.sequence.blast.presentation.XMLBlastViewController;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
@@ -142,6 +144,39 @@ public class BlastNonDBTest {
         xmlBlastBean.setDataLibraryString("stuff");
         String fixedString = SMPWublastService.getInstance().fixBlastXML(testString,xmlBlastBean) ;
         assertTrue(fixedString.startsWith("<BlastOutput>"));
+    }
 
+    @Test
+    public void testBlastNaming(){
+        XMLBlastBean xmlBlastBean = new XMLBlastBean();
+        String ticketNumber = "6347900181946270349";
+        xmlBlastBean.setResultFile(new File(ticketNumber));
+        assertEquals(ticketNumber,xmlBlastBean.getTicketNumber()) ;
+        xmlBlastBean.setResultFile(new File(XMLBlastBean.BLAST_PREFIX + ticketNumber)) ;
+        assertEquals(ticketNumber,xmlBlastBean.getTicketNumber()) ;
+        xmlBlastBean.setResultFile(new File(XMLBlastBean.BLAST_PREFIX + ticketNumber+ XMLBlastBean.BLAST_SUFFIX)) ;
+        assertEquals(ticketNumber,xmlBlastBean.getTicketNumber()) ;
+        xmlBlastBean.setResultFile(new File(ticketNumber+ XMLBlastBean.BLAST_SUFFIX)) ;
+        assertEquals(ticketNumber,xmlBlastBean.getTicketNumber()) ;
+    }
+
+    @Test
+    public void fixFileName(){
+        XMLBlastBean xmlBlastBean = new XMLBlastBean();
+        XMLBlastViewController xmlBlastViewController = new XMLBlastViewController();
+        String ticketNumber = "6347900181946270349";
+        xmlBlastBean.setResultFile(new File(ticketNumber));
+        assertFalse(xmlBlastViewController.isValidBlastResultLocation(xmlBlastBean));
+        xmlBlastBean = xmlBlastViewController.fixFileLocation(xmlBlastBean);
+        try {
+            if(xmlBlastBean.getResultFile().exists()){
+                assertTrue(xmlBlastBean.getResultFile().delete());
+            }
+            assertTrue(xmlBlastBean.getResultFile().createNewFile());
+        } catch (IOException e) {
+            fail(e.toString()) ;
+        }
+        assertTrue(xmlBlastViewController.isValidBlastResultLocation(xmlBlastBean));
+        assertTrue(xmlBlastBean.getResultFile().delete());
     }
 }

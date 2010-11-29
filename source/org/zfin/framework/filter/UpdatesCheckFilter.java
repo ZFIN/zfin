@@ -1,13 +1,13 @@
 package org.zfin.framework.filter;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.log4j.Logger;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.security.ZfinSecurityContextLogoutHandler;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class UpdatesCheckFilter implements Filter {
     private static Logger LOG = Logger.getLogger(UpdatesCheckFilter.class);
     private static ZdbFlag systemUpdates;
     private static final String REDIRECT_URL = "/action/login";
-    private ZfinSecurityContextLogoutHandler securityHandler;
+    private LogoutSuccessHandler securityHandler;
     private static final List<String> readOnlyUrls = new ArrayList<String>();
 
     static {
@@ -55,7 +55,7 @@ public class UpdatesCheckFilter implements Filter {
         // redirect if user is logged in and database is locked
         if (systemUpdates != null && systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {
             logoutUser(request, response);
-            response.sendRedirect(response.encodeRedirectURL(REDIRECT_URL));
+//            response.sendRedirect(response.encodeRedirectURL(REDIRECT_URL));
             LOG.info("System is currently being updated. No login session are allowed.");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -70,21 +70,23 @@ public class UpdatesCheckFilter implements Filter {
         return false;
     }
 
-    private void logoutUser(HttpServletRequest request, HttpServletResponse response) {
+    private void logoutUser(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         // logout user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        securityHandler.logout(request, response, authentication);
+//        securityHandler.logout(request, response, authentication);
+        securityHandler.onLogoutSuccess(request,response,authentication);
     }
 
     public static ZdbFlag getSystemUpdatesFlag() {
         return systemUpdates;
     }
 
-    public ZfinSecurityContextLogoutHandler getSecurityHandler() {
+    public LogoutSuccessHandler getSecurityHandler() {
         return securityHandler;
     }
 
-    public void setSecurityHandler(ZfinSecurityContextLogoutHandler securityHandler) {
+    public void setSecurityHandler(LogoutSuccessHandler securityHandler) {
         this.securityHandler = securityHandler;
     }
 

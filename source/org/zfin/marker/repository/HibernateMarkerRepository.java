@@ -57,6 +57,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) session.get(Marker.class, zdbID);
     }
 
+    public Marker getGeneByID(String zdbID){
+        if(!zdbID.startsWith("ZDB-GENE")) return null ;
+        return (Marker) HibernateUtil.currentSession().createCriteria(Marker.class)
+                .add(Restrictions.eq("zdbID",zdbID))
+                .uniqueResult();
+    }
+
     public Clone getCloneById(String zdbID) {
         Session session = currentSession();
         return (Clone) session.get(Clone.class, zdbID);
@@ -119,6 +126,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Criteria criteria2 = session.createCriteria(Marker.class);
         criteria2.add(Restrictions.ilike("abbreviation", name, MatchMode.ANYWHERE));
         criteria2.add(Restrictions.not(Restrictions.ilike("abbreviation", name, MatchMode.START)));
+        criteria2.addOrder(Order.asc("abbreviationOrder"));
+        markerList.addAll(criteria2.list());
+        return markerList;
+    }
+
+    public List<Marker> getGenesByAbbreviation(String name) {
+        List<Marker> markerList = new ArrayList<Marker>();
+        Session session = currentSession();
+
+        Criteria criteria1 = session.createCriteria(Marker.class);
+        criteria1.add(Restrictions.ilike("abbreviation", name, MatchMode.START));
+        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE-", MatchMode.START));
+        criteria1.addOrder(Order.asc("abbreviationOrder"));
+        markerList.addAll(criteria1.list());
+
+        Criteria criteria2 = session.createCriteria(Marker.class);
+        criteria2.add(Restrictions.ilike("abbreviation", name, MatchMode.ANYWHERE));
+        criteria2.add(Restrictions.not(Restrictions.ilike("abbreviation", name, MatchMode.START)));
+        criteria2.add(Restrictions.like("zdbID", "ZDB-GENE-", MatchMode.START));
         criteria2.addOrder(Order.asc("abbreviationOrder"));
         markerList.addAll(criteria2.list());
         return markerList;

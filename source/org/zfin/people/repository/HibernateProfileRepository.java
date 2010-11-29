@@ -5,6 +5,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
@@ -22,12 +23,11 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 /**
  * Persistence storage of profile data.
  */
+@Repository
 public class HibernateProfileRepository implements ProfileRepository {
 
     public Person getPerson(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        Person person = (Person) session.get(Person.class, zdbID);
-        return person;
+        return (Person) HibernateUtil.currentSession().get(Person.class, zdbID);
     }
 
 
@@ -312,5 +312,46 @@ public class HibernateProfileRepository implements ProfileRepository {
         labs.addAll(companies);
         Collections.sort(labs);
         return labs;
+    }
+
+    @Override
+    public Lab getLabById(String labZdbId) {
+        return (Lab) HibernateUtil.currentSession().get(Lab.class,labZdbId);
+    }
+
+    @Override
+    public List<String> getAllPrefixes() {
+        String hql = " select distinct l.allele_prefix from Lab l " +
+                "order by l.allele_prefix " ;
+        return HibernateUtil.currentSession().createSQLQuery(hql).list();
+    }
+
+    @Override
+    public String getPrefixForLab(String labZdbId) {
+        String hql = " select l.allele_prefix from Lab l " +
+                " where l.zdb_id = :labZdbId" ;
+        Object obj = HibernateUtil.currentSession().createSQLQuery(hql)
+                .setString("labZdbId",labZdbId)
+                .uniqueResult();
+        return (obj!=null ? obj.toString() : null ) ;
+    }
+
+    @Override
+    public String setLabPrefix(String labZdbId, String prefix) {
+        HibernateUtil.createTransaction();
+        String hql = " update lab set allele_prefix = :prefix " +
+                " where zdb_id = :labZdbId "  ;
+        int updated = HibernateUtil.currentSession().createSQLQuery(hql)
+                .setString("labZdbId",labZdbId)
+                .setString("prefix",prefix)
+                .executeUpdate();
+        if(updated==1){
+            HibernateUtil.flushAndCommitCurrentSession();
+            return prefix ;
+        }
+        else{
+            HibernateUtil.rollbackTransaction();
+            return null ;
+        }
     }
 }

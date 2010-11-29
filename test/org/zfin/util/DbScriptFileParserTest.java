@@ -1,9 +1,6 @@
 package org.zfin.util;
 
 import org.junit.Test;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
 

@@ -5,6 +5,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * This Controller is used to pass a publication to the jsp page.
  */
@@ -13,7 +16,7 @@ public class CurationTestController extends SimplePassThroughController {
     private String publicationID;
 
     @Override
-    public ModelAndView execute() throws Exception {
+    public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         if (StringUtils.isEmpty(publicationID))
             publicationID = "ZDB-PUB-961014-496";
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);

@@ -1,7 +1,7 @@
 package org.quartz.simpl;
 
-import org.quartz.*;
 import org.quartz.Calendar;
+import org.quartz.*;
 import org.quartz.core.SchedulingContext;
 import org.quartz.spi.TriggerFiredBundle;
 

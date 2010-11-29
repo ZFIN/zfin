@@ -1,6 +1,3 @@
-<%@ page import="java.util.*,
-                 com.opensymphony.clickstream.Clickstream" %>
-<%@ page import="org.acegisecurity.context.SecurityContext" %>
 <%@ page import="org.zfin.people.Person" %>
 <%@ page import="org.zfin.framework.presentation.UserRequestTrackBean" %>
 <%@ page import="org.zfin.framework.presentation.UserRequestTrackController" %>

@@ -26,9 +26,8 @@ public class XMLBlastViewController extends AbstractCommandController {
 
     private int maxTries = 5;
     private long initPauseTimeMs = 2000; // 2 seconds
-    private long pauseTimeBewteenTriesMs = 5000; // 5 seconds
+    private long pauseTimeBetweenTriesMs = 5000; // 5 seconds
     private JAXBContext jc = null;
-    private BlastThreadCollection blastThreadCollection ;
 
     private Logger logger = Logger.getLogger(XMLBlastViewController.class);
 
@@ -55,23 +54,22 @@ public class XMLBlastViewController extends AbstractCommandController {
 
         try {
             // handle file name issues
-            if (xmlBlastBean.getResultFile() == null) {
+            if (xmlBlastBean.getResultFile() == null){
                 fileName = request.getParameter("resultFile");
+
+                // spring 3 now makes that hard to happen
                 if (fileName == null) {
                     return new ModelAndView("blast-fetch-null.page");
                 }
 
-                if (false == fileName.startsWith(XMLBlastBean.BLAST_PREFIX)) {
-                    fileName = XMLBlastBean.BLAST_PREFIX + fileName;
-                }
-
-                if (false == fileName.endsWith(XMLBlastBean.BLAST_SUFFIX)) {
-                    fileName = fileName + XMLBlastBean.BLAST_SUFFIX;
-                }
-
-                File tempFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
-                xmlBlastBean.setResultFile(tempFile);
+                xmlBlastBean.setResultFile(new File(fileName));
             }
+
+            if(!isValidBlastResultLocation(xmlBlastBean)){
+                fixFileLocation(xmlBlastBean) ;
+            }
+
+
             modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, xmlBlastBean.getTicketNumber());
 
 
@@ -114,7 +112,7 @@ public class XMLBlastViewController extends AbstractCommandController {
 //                            if(e instanceof org.xml.sax.SAXParseException){
                                 logger.warn("sax exception while parsing: " + resultFile, e);
                                 done = false;
-                                Thread.sleep(pauseTimeBewteenTriesMs);
+                                Thread.sleep(pauseTimeBetweenTriesMs);
                             } else {
                                 throw e;
                             }
@@ -142,6 +140,32 @@ public class XMLBlastViewController extends AbstractCommandController {
         }
     }
 
+    public boolean isValidBlastResultLocation(XMLBlastBean xmlBlastBean) {
+            try {
+                return  xmlBlastBean.getResultFile().getAbsolutePath().contains(System.getProperty("java.io.tmpdir"))
+                        &&
+                        xmlBlastBean.isFileExists()
+                        ;
+            } catch (Exception e) {
+                logger.error("Failed to evaluate fileName:\n" + xmlBlastBean.getResultFile(),e);
+                return false ;
+            }
+    }
+
+    public XMLBlastBean fixFileLocation(XMLBlastBean xmlBlastBean) {
+        String fileName = xmlBlastBean.getResultFile().getName();
+        if (false == fileName.startsWith(XMLBlastBean.BLAST_PREFIX)) {
+            fileName = XMLBlastBean.BLAST_PREFIX + fileName;
+        }
+
+        if (false == fileName.endsWith(XMLBlastBean.BLAST_SUFFIX)) {
+            fileName = fileName + XMLBlastBean.BLAST_SUFFIX;
+        }
+        File file = new File(System.getProperty("java.io.tmpdir")+"/"+fileName);
+        xmlBlastBean.setResultFile(file);
+        return xmlBlastBean ;
+    }
+
     public void setMaxTries(int maxTries) {
         this.maxTries = maxTries;
     }
@@ -150,7 +174,7 @@ public class XMLBlastViewController extends AbstractCommandController {
         this.initPauseTimeMs = initPauseTimeMs;
     }
 
-    public void setPauseTimeBewteenTriesMs(long pauseTimeBewteenTriesMs) {
-        this.pauseTimeBewteenTriesMs = pauseTimeBewteenTriesMs;
+    public void setPauseTimeBetweenTriesMs(long pauseTimeBetweenTriesMs) {
+        this.pauseTimeBetweenTriesMs = pauseTimeBetweenTriesMs;
     }
 }

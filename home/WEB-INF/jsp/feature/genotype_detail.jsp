@@ -40,10 +40,10 @@
             </div>
     </td>
     <td align="right">
-        <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-             <tiles:put name="subjectName" value="${formBean.genotype.handle}"/>
-             <tiles:put name="subjectID" value="${formBean.genotype.zdbID}"/>
-        </tiles:insert>
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+             <tiles:putAttribute name="subjectName" value="${formBean.genotype.handle}"/>
+             <tiles:putAttribute name="subjectID" value="${formBean.genotype.zdbID}"/>
+        </tiles:insertTemplate>
     </td>
   </tr>
   

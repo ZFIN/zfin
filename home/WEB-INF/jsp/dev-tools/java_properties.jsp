@@ -41,13 +41,13 @@
         <td class="sectionTitle">Property Key</td>
         <td class="sectionTitle">Property value</td>
     </tr>
-    <c:forEach var="item" items="${properties}">
+    <c:forEach var="session" items="${properties}">
         <tr>
             <td class="listContent">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>

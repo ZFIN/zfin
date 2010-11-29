@@ -18,6 +18,6 @@ public abstract class AbstractZfinMailSender implements MailSender {
 
 
     public String prependSubject(String initialSubject) {
-        return "[" + ZfinPropertiesEnum.DOMAIN_NAME + "] " + initialSubject;
+        return "From [" + ZfinPropertiesEnum.DOMAIN_NAME + "] on [" + ZfinPropertiesEnum.HOSTNAME + "]: " + initialSubject;
     }
 }

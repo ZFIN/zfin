@@ -1,8 +1,8 @@
 package org.zfin.security;
 
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 
 
 /**

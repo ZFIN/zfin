@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
@@ -922,5 +923,43 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setString("genotypeID", genotype.getZdbID());
 
         return (List<ExpressionResult>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AnatomyItem> getAnatomyForMarker(String zdbID){
+//       String sql = "SELECT distinct term_zdb_id" +
+//               "FROM " +
+//               "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item" +
+//               "WHERE" +
+//               "xpatex_gene_zdb_id = :zdbID " +
+//               "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+//               "AND xpatres_expression_found='t'" +
+//               "AND xpatres_superterm_zdb_id = term_zdb_id" +
+//               "AND term_ont_id = anatitem_obo_id" +
+//               "AND xpatex_genox_zdb_id = genox_zdb_id " +
+//               "AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  " +
+//               "AND geno_zdb_id  = genox_geno_zdb_id " +
+//               "AND geno_is_wildtype = 't' " +
+//               "ORDER BY anatitem_name_order asc;"  ;
+        String hql = "SELECT distinct ai " +
+                "FROM " +
+                "ExpressionResult er, ExpressionExperiment ee, Term t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+                " WHERE " +
+                "ee.gene.zdbID = :zdbID " +
+                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
+                "AND er.expressionFound = :expressionFound " +
+                "AND er.superterm.id = t.id " +
+                "AND t.oboID = ai.oboID " +
+                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
+                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
+                "AND g.zdbID = ge.genotype.zdbID " +
+                "AND g.wildtype = :wildType  " +
+                "ORDER BY ai.nameOrder asc"  ;
+        return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("zdbID",zdbID)
+                .setParameter("experiment","_Standard")
+                .setBoolean("expressionFound",true)
+                .setBoolean("wildType",true)
+                .list();
     }
 }

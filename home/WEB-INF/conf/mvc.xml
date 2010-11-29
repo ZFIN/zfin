@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+       ">
+
+    <import resource="anatomy.xml"/>
+    <import resource="antibody.xml"/>
+    <import resource="reno.xml"/>
+    <import resource="developer-tools.xml"/>
+    <import resource="framework.xml"/>
+    <import resource="marker.xml"/>
+    <import resource="blast.xml"/>
+    <import resource="orthology.xml"/>
+    <import resource="profile.xml"/>
+    <import resource="quicksearch.xml"/>
+    <import resource="publication.xml"/>
+    <import resource="webdriver.xml"/>
+    <import resource="mapper.xml"/>
+    <import resource="feature.xml"/>
+    <import resource="wiki.xml"/>
+
+    <!--
+        <bean id="log4jInterceptor" class="org.zfin.framework.AutomaticMethodLogging"/>
+
+        <bean id="log4jProxyCreator" class="org.springframework.aop.framework.ProxyFactoryBean">
+            <property name="target">
+                <ref bean="anatomySearch" />
+            </property>
+            <property name="interceptorNames">
+                <value>log4jInterceptor</value>
+            </property>
+        </bean>
+    -->
+
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">error-page</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
+        <property name="mailHost" value="mailhost.cs.uoregon.edu&quot;"/>
+        <property name="mailSender">
+            <bean id="mailSenderImpl" class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+        </property>
+    </bean>
+
+
+</beans>

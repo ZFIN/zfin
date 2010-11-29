@@ -2,6 +2,7 @@ package org.zfin.framework.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * Simple controller that serves the developers home page.
  */
 public class LoginController implements Controller {
-    public static final String LOGOUT = "j_acegi_logout";
+    public static final String LOGOUT = "logout";
     public static final String ACCESS_DENIED = "access-denied";
 
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -20,7 +21,12 @@ public class LoginController implements Controller {
         // it then redirects to the secure login page.
         String url = request.getRequestURI();
         if (url.endsWith("/action/login")) {
-            response.sendRedirect("/action/login-redirect");
+//            response.sendRedirect("/action/login-redirect");
+
+            String loginRedirectUrl = ZfinPropertiesEnum.SECURE_HTTP.toString()
+                    + ZfinPropertiesEnum.DOMAIN_NAME.toString()
+                    + "/action/login-redirect" ;
+            response.sendRedirect(loginRedirectUrl);
         }
 
         String accessDenied = request.getParameter(ACCESS_DENIED);

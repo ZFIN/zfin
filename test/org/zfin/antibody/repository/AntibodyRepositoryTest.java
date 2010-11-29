@@ -291,7 +291,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
         AntibodyType type = AntibodyType.MONOCLONAL;
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setClonalType(type.getName());
+        searchCriteria.setClonalType(type.getValue());
 
         List<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertTrue(abs != null);

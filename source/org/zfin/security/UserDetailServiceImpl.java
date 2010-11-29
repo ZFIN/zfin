@@ -1,8 +1,8 @@
 package org.zfin.security;
 
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
@@ -17,7 +17,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         Person person = userRep.getPersonByLoginName(username);
 
         if (person == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("User not found: "+username);
         }
 
         return person;

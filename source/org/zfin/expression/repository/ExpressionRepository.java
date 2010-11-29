@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.*;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
@@ -256,4 +257,6 @@ public interface ExpressionRepository {
      * @return list of expression results
      */
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
+
+    List<AnatomyItem> getAnatomyForMarker(String zdbID);
 }

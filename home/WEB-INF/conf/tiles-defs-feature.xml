@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!DOCTYPE tiles-definitions PUBLIC
-        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-        "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
 
     <definition name="feature-detail.page" extends="main_layout">
-        <put name="staticTitle" value="Feature: "/>
-        <put name="body" value="/WEB-INF/jsp/feature/feature_detail.jsp"/>
+        <put-attribute name="staticTitle" value="Feature: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/feature_detail.jsp"/>
     </definition>
 
     <definition name="genotype-detail.page" extends="main_layout">
-        <put name="staticTitle" value="Genotype: "/>
-        <put name="body" value="/WEB-INF/jsp/feature/genotype_detail.jsp"/>
+        <put-attribute name="staticTitle" value="Genotype: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/genotype_detail.jsp"/>
     </definition>
 
     <definition name="genotype_all_phenotype.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: All Phenotypes with " />
-        <put name="body" value="/WEB-INF/jsp/feature/genotype_all_phenotype.jsp"/>
+        <put-attribute name="staticTitle" value="ZFIN: All Phenotypes with " />
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/genotype_all_phenotype.jsp"/>
     </definition>
     
 </tiles-definitions>

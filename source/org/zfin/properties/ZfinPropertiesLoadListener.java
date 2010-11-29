@@ -6,15 +6,15 @@ import org.apache.log4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 
 /**
+ * Class is used to set the context so that later ZfinProperties.init can find the proper location
+ * of the properties files.
+ *
+ * TODO: Use this class to load in the property file.
+ *
  */
-public class ZfinPropertiesLoadListener implements ServletContextListener,
-        HttpSessionListener, HttpSessionAttributeListener {
+public class ZfinPropertiesLoadListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ZfinPropertiesLoadListener.class);
 
@@ -35,9 +35,4 @@ public class ZfinPropertiesLoadListener implements ServletContextListener,
     }
 
     public void contextDestroyed(ServletContextEvent sce) { }
-    public void sessionCreated(HttpSessionEvent se) { }
-    public void sessionDestroyed(HttpSessionEvent se) { }
-    public void attributeAdded(HttpSessionBindingEvent sbe) { }
-    public void attributeRemoved(HttpSessionBindingEvent sbe) { }
-    public void attributeReplaced(HttpSessionBindingEvent sbe) { }
 }

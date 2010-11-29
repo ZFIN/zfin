@@ -33,7 +33,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
     public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
                             String[] recipients, boolean useHtml) {
-        return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, false, null);
+        return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, useHtml, null);
     }
 
     public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
@@ -53,12 +53,21 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             }
             mimeMessage.setSubject(subject);
 
-            // create and fill the first message part
             MimeBodyPart mainBody = new MimeBodyPart();
-            mainBody.setContent(message, "text/html");
-            // create the Multipart and add its parts to it
             Multipart mp = new MimeMultipart();
+
+            if(useHtml){
+                // create and fill the first message part
+                mainBody.setContent(message, "text/html");
+            }
+            else{
+                mainBody.setContent(message,"text/txt");
+            }
+            // create the Multipart and add its parts to it
             mp.addBodyPart(mainBody);
+
+            // add the Multipart to the message
+            mimeMessage.setContent(mp);
 
             MimeBodyPart attachment = new MimeBodyPart();
 
@@ -73,8 +82,6 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
                     logger.error("Could not find file " + fds.getFile().getAbsolutePath() + "to attach to email");
                 }
             }
-            // add the Multipart to the message
-            mimeMessage.setContent(mp);
 
 
             if (mailSender instanceof JavaMailSenderImpl) {
@@ -103,16 +110,16 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
     }
 
     protected String[] filterEmail(String... emailAddresses) {
-        String[] returnEmails = new String[emailAddresses.length];
-        int i = 0;
-        for (String emailAddress : emailAddresses) {
-            returnEmails[i++] = filterEmail(emailAddress);
+        String[] returnEmails = new String[emailAddresses.length] ;
+        int i = 0 ;
+        for(String emailAddress : emailAddresses){
+            returnEmails[i++] = filterEmail(emailAddress) ;
         }
-        return returnEmails;
+        return returnEmails ;
     }
 
     protected String filterEmail(String emailAddress) {
-        return emailAddress.replaceAll("\\\\@", "@");
+        return emailAddress.replaceAll("\\\\@","@") ;
     }
 
     public JavaMailSender getMailSender() {

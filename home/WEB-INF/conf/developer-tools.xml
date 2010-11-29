@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-
-<!--
-  - Application context definitions for the developer tools
-  -->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--  URL mappings -->
     <bean id="developerUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -19,11 +15,10 @@
                 <prop key="/dev-tools/zfin-properties">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/log4j-configuration">log4jConfiguration</prop>
                 <prop key="/dev-tools/classpath-info">classpathInfo</prop>
-                <prop key="/dev-tools/tiles-configuration">tilesConfiguration</prop>
                 <prop key="/dev-tools/file-content">displayFileContent</prop>
                 <prop key="/dev-tools/test-browser">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/view-session-info">devToolsDatabaseInfo</prop>
-                <prop key="/dev-tools/view-global-session-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/view-global-session-info">globalSession</prop>
                 <prop key="/dev-tools/view-hibernate-info">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/view-hibernate-statistics">hibernateStistics</prop>
                 <prop key="/dev-tools/servlet-context">servletContext</prop>
@@ -68,6 +63,11 @@
     <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
     <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="gwt-modules"/>
+    </bean>
+
+    <bean name="globalSession" class="org.zfin.framework.presentation.GlobalSessionViewController" >
+        <property name="commandClass" value="org.zfin.framework.presentation.GlobalSessionBean"/>
+        <property name="zfinGlobalSessionBean" ref="zfinGlobalSessionBean"/>
     </bean>
 
     <bean name="fxCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
@@ -156,8 +156,6 @@
 
     <bean name="devToolsHomePage" class="org.zfin.framework.presentation.HomeController"/>
 
-    <bean name="tilesConfiguration" class="org.zfin.framework.presentation.TilesConfigurationController"/>
-
     <bean name="displayFileContent" class="org.zfin.framework.presentation.FileContentController"/>
 
     <bean name="servletContext" class="org.zfin.framework.presentation.ServletContextController"/>
@@ -218,7 +216,6 @@
                 <prop key="/dev-tools/thread-info">threadInfoHandler</prop>
                 <prop key="/dev-tools/test-browser">testBrowserHandler</prop>
                 <prop key="/dev-tools/view-session-info">viewSessionInfoHandler</prop>
-                <prop key="/dev-tools/view-global-session-info">viewGlobalSessionInfoHandler</prop>
                 <prop key="/dev-tools/view-hibernate-info">viewHibernateInfoHandler</prop>
                 <prop key="/dev-tools/svn-version">svnVersionHandler</prop>
             </props>

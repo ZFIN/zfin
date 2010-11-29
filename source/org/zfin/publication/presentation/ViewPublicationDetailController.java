@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller that serves the people pages.
+ * TODO: is this used????
  */
 public class ViewPublicationDetailController extends AbstractCommandController {
 
@@ -32,7 +34,10 @@ public class ViewPublicationDetailController extends AbstractCommandController {
         ViewPublicationDetailController.LOG.info("Start Action Class");
         publication = publicationRep.getPublication(publication.getZdbID());
         publicationForm.setPublication(publication);
-        return new ModelAndView("view-publication-detail", LookupStrings.FORM_BEAN, publicationForm);
+
+        ModelAndView modelAndView = new ModelAndView("profile/view-publicaton.page", LookupStrings.FORM_BEAN, publicationForm);
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.PUBLICATION.getTitleString()+publication.getCitation());
+        return modelAndView;
     }
 
 }

@@ -10,13 +10,13 @@
         <td width="100" class="sectionTitle">Request Attribute Key</td>
         <td class="sectionTitle">Request Attribute Value</td>
     </tr>
-    <c:forEach var="item" items="${formBean.requestAttributes}">
+    <c:forEach var="session" items="${formBean.requestAttributes}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>
@@ -62,13 +62,13 @@
     <tr>
         <td width="100" colspan="2" class="sectionTitle">Session Contents</td>
     </tr>
-    <c:forEach var="item" items="${formBean.sessionAttributes}">
+    <c:forEach var="session" items="${formBean.sessionAttributes}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>

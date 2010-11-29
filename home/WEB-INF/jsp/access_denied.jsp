@@ -1,6 +1,6 @@
-<%@ page import="org.acegisecurity.context.SecurityContextHolder" %>
-<%@ page import="org.acegisecurity.Authentication" %>
-<%@ page import="org.acegisecurity.ui.AccessDeniedHandlerImpl" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.web.WebAttributes" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -8,7 +8,7 @@
 
 
 <p>
-<%= request.getAttribute(AccessDeniedHandlerImpl.ACEGI_SECURITY_ACCESS_DENIED_EXCEPTION_KEY)%>
+<%= request.getAttribute(WebAttributes.ACCESS_DENIED_403)%>
 
 <p>
 

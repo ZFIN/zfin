@@ -92,9 +92,9 @@
                 ${rt.type}:
             </TD>
             <TD bgcolor="#EEEEEE">
-                <c:forEach var="item" items="${rt.items}">
+                <c:forEach var="session" items="${rt.items}">
                     <%--<zfin:link entity="${item}"/>--%>
-                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${item.zdbID}">${item.name}</a>
+                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.name}</a>
                     &nbsp;
                 </c:forEach>
             </TD>

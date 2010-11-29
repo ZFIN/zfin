@@ -9,9 +9,8 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.properties.ZfinPropertiesLoadListener;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.util.Properties;
 
 /**
  */
@@ -25,10 +24,17 @@ public class ZfinPropertiesPlaceholderConfigurer extends PropertyPlaceholderConf
         webRoot = ZfinPropertiesLoadListener.getWebRoot() ;
         try {
             initProperties();
-        } catch (TomcatStartupException e) {
+
+            // we do it this way instead of using system properties (though we could do that, as well)
+            // this directly assess the spring properties
+            Properties properties = new Properties();
+            for(ZfinPropertiesEnum zfinPropertiesEnum: ZfinPropertiesEnum.values()){
+                properties.put(zfinPropertiesEnum.name(),zfinPropertiesEnum.value()) ;
+            }
+            processProperties(beanFactory,properties);
+        } catch (Exception e) {
             throw new RuntimeException("TomcatStartupException caught, Stopping server",e) ;
         }
-        super.postProcessBeanFactory(beanFactory);   
     }
 
     /**

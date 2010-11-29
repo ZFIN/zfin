@@ -20,7 +20,8 @@ public class TranscriptDefinitionsController extends AbstractController {
         transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
         transcriptBean.setTranscriptTypeList(TranscriptService.getAllTranscriptTypes());
 
-        ModelAndView modelAndView = new ModelAndView("transcript-definitions.page");
+        ModelAndView modelAndView = new ModelAndView("marker/transcript-definitions.page");
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, "Transcript Type and Status Definitions");
         modelAndView.addObject(LookupStrings.FORM_BEAN, transcriptBean);
 
         return modelAndView;

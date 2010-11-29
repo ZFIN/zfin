@@ -23,9 +23,8 @@ public class RelatedTranscriptsController extends AbstractController {
 
         transcriptBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
 
-        ModelAndView modelAndView = new ModelAndView("related-transcripts.page");
+        ModelAndView modelAndView = new ModelAndView("marker/related-transcripts.insert");
         modelAndView.addObject(LookupStrings.FORM_BEAN, transcriptBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, gene.getAbbreviation());
 
         return modelAndView;
     }

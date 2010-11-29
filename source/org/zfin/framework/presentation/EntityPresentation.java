@@ -14,6 +14,7 @@ public abstract class EntityPresentation {
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
     protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
     public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
+    public static final String ZFIN_JUMP_URL = "/ZFIN_jump?record=" ;
 
     /**
      * Uses ZfinProperties to get webdriver link information
@@ -153,6 +154,18 @@ public abstract class EntityPresentation {
         sb.append(getWebdriverUrl(uri, zdbID));
         sb.append("\">");
         return sb.toString();
+    }
+
+//    http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-GENO-080327-132
+    public static String getJumpToLink(String zdbID){
+        StringBuilder sb = new StringBuilder() ;
+        sb.append(ZfinPropertiesEnum.NON_SECURE_HTTP.value());
+        sb.append(ZfinPropertiesEnum.DOMAIN_NAME.value());
+        sb.append("/");
+        sb.append(ZfinPropertiesEnum.WEBDRIVER_LOC.value());
+        sb.append("/ZFIN_jump?record=");
+        sb.append(zdbID);
+        return sb.toString() ;
     }
 
     /* I made this method public because it won't generally be necessary for

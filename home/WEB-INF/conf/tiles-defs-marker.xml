@@ -1,88 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
-    <definition name="expression-summary.page" extends="main_layout">
-        <put name="body" value="/WEB-INF/jsp/marker/expression_summary.jsp"/>
+
+    <definition name="marker/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
     </definition>
 
-    <definition name="mini-gene.page" page="/WEB-INF/jsp/marker/mini_gene.jsp">
-    </definition>
-
-    <definition name="stemloop-sequence.page" page="/WEB-INF/jsp/marker/stemloop_sequence.jsp">
-    </definition>
-
-    <definition name="transcript-view.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Transcript: " />
-        <put name="body" value="/WEB-INF/jsp/marker/transcript_view.jsp"/>
-    </definition>
-
-    <definition name="related-transcripts.page" page="/WEB-INF/jsp/marker/related_transcripts.jsp">
-    </definition>
-
-    <definition name="transcript-definitions.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Transcript Type and Status Definitions" />
-        <put name="body" value="/WEB-INF/jsp/marker/transcript_definitions.jsp"/>
-    </definition>
-
-    <definition name="transcript-add.page" extends="main_layout">
-        <put name="staticTitle" value="Add Transcript" />
-        <put name="body" value="/WEB-INF/jsp/marker/transcript_add.jsp"/>
-    </definition>
-
-    <definition name="clone-add.page" extends="main_layout">
-        <put name="staticTitle" value="Add Clone" />
-        <put name="body" value="/WEB-INF/jsp/marker/clone_add.jsp"/>
-    </definition>
-
-    <definition name="clone-view.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Clone: " />
-        <put name="body" value="/WEB-INF/jsp/marker/clone_view.jsp"/>
-    </definition>
-
-    <definition name="gene-view.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Gene: " />
-        <put name="body" value="/WEB-INF/jsp/marker/gene_view.jsp"/>
-    </definition>
-
-    <definition name="sequence-view.page" extends="main_layout">
-        <put name="staticTitle" value="ZFIN: Sequences for Gene: " />
-        <put name="body" value="/WEB-INF/jsp/marker/sequence_view.jsp"/>
-    </definition>
-
-    <definition name="clone-edit.page" extends="main_layout">
-        <put name="staticTitle" value="Edit Clone" />
-        <put name="body" value="/WEB-INF/jsp/marker/clone_edit.jsp"/>
-    </definition>
-
-    <definition name="antibody-edit.page" extends="main_layout">
-        <put name="staticTitle" value="Edit Antibody" />
-        <put name="body" value="/WEB-INF/jsp/marker/antibody_edit.jsp"/>
-    </definition>
-
-    <definition name="transcript-edit.page" extends="main_layout">
-        <put name="staticTitle" value="Edit Transcript" />
-        <put name="body" value="/WEB-INF/jsp/marker/transcript_edit.jsp"/>
-    </definition>
-
-    <definition name="marker-delete.page" extends="main_layout">
-        <put name="staticTitle" value="Delete Marker" />
-        <put name="body" value="/WEB-INF/jsp/marker/delete_marker.jsp"/>
-    </definition>
-
-    <definition name="marker-merge.page" extends="main_layout">
-        <put name="staticTitle" value="Merge Marker" />
-        <put name="body" value="/WEB-INF/jsp/marker/merge_marker.jsp"/>
-    </definition>
-
-    <definition name="marker-merge-finish.page" extends="main_layout">
-        <put name="staticTitle" value="Merge Marker" />
-        <put name="body" value="/WEB-INF/jsp/marker/merge_marker_finish.jsp"/>
-    </definition>
-
+    <definition name="marker/*.insert" template="/WEB-INF/jsp/marker/{1}.jsp"/>
 
 </tiles-definitions>
 

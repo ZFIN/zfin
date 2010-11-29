@@ -2,6 +2,7 @@
 <%@ page import="org.hibernate.stat.SessionStatisticsImpl" %>
 <%@ page import="org.zfin.framework.HibernateUtil" %>
 <%@ page language="java" %>
+<%@ page session="false" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -11,6 +12,7 @@
     <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
     <title>
+        <%--<tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}--%>
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
     </title>
 
@@ -21,21 +23,11 @@
 
 <a name="top"></a>
 
-<tiles:insert attribute="header">
-</tiles:insert>
+<tiles:insertAttribute name="header"/>
 
-<tiles:insert attribute="body">
-    <tiles:put name="pageSection">
-        <tiles:getAsString ignore="true" name="pageSection"/>
-    </tiles:put>
-    <tiles:put name="pageSectionTitle">
-        <tiles:getAsString ignore="true" name="pageSectionTitle"/>
-    </tiles:put>
-</tiles:insert>
+<tiles:insertAttribute name="body"/>
 
-
-<tiles:insert attribute="footer">
-</tiles:insert>
+<tiles:insertAttribute name="footer"/>
 
 <authz:authorize ifAnyGranted="root">
 <zfin:printDebugInfo ><table cellpadding=5 width=100%>
@@ -67,13 +59,13 @@
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>
-    <c:forEach var="item" items="${requestScope}">
+    <c:forEach var="session" items="${requestScope}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>
@@ -84,13 +76,13 @@
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>
-    <c:forEach var="item" items="${sessionScope}">
+    <c:forEach var="session" items="${sessionScope}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>
@@ -101,13 +93,13 @@
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>
-    <c:forEach var="item" items="${pageScope}">
+    <c:forEach var="session" items="${pageScope}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>
@@ -118,13 +110,13 @@
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>
-    <c:forEach var="item" items="${applicationScope}">
+    <c:forEach var="session" items="${applicationScope}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>
@@ -135,13 +127,13 @@
         <td width="100" class="sectionTitle">Key</td>
         <td class="sectionTitle">Value</td>
     </tr>
-    <c:forEach var="item" items="${param}">
+    <c:forEach var="session" items="${param}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>

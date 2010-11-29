@@ -1,7 +1,6 @@
 package org.zfin.ontology.repository;
 
 import org.hibernate.SessionFactory;
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;

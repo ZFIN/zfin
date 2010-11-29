@@ -25,6 +25,8 @@ public interface MarkerRepository {
 
     Marker getMarkerByID(String zdbID);
 
+    Marker getGeneByID(String zdbID);
+
     Clone getCloneById(String zdbID);
 
     Transcript getTranscriptByZdbID(String zdbID);
@@ -46,6 +48,8 @@ public interface MarkerRepository {
                                              MarkerRelationship.Type type);
 
     List<Marker> getMarkersByAbbreviation(String name);
+
+    List<Marker> getGenesByAbbreviation(String name);
 
     MarkerRelationship getMarkerRelationshipByID(String zdbID);
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="main_layout" template="/WEB-INF/tiles/layout.jsp">
+        <put-attribute name="staticTitle" value="ZFIN " />
+        <put-attribute name="header" value="/WEB-INF/tiles/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/tiles/footer.jsp" />
+    </definition>
+
+    <definition name="dev_layout" extends="main_layout">
+        <put-attribute name="header" value="/WEB-INF/tiles/header_dev_tools.jsp"/>
+    </definition>
+
+
+</tiles-definitions>
+

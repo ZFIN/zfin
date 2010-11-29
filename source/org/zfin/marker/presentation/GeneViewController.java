@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.expression.ExpressionService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerService;
@@ -56,9 +57,9 @@ public class GeneViewController extends AbstractController {
         markerBean.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForMarker(
                 gene, 0).getTotalCount());
 
-        ModelAndView modelAndView = new ModelAndView("gene-view.page");
+        ModelAndView modelAndView = new ModelAndView("marker/gene-view.page");
         modelAndView.addObject(LookupStrings.FORM_BEAN, markerBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, gene.getAbbreviation());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
 
         return modelAndView;
     }

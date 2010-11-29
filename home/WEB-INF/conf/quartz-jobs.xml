@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- register them in the scheduler -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -108,7 +107,7 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
         <property name="cronExpression">
             <!--goes off every 15 minutes -->
-            <value>0 0,15,30,45 2 * * ?</value>
+            <value>0 0,15,30,45 * * * ?</value>
         </property>
     </bean>
 

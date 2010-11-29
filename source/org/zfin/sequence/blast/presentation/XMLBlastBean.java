@@ -2,6 +2,7 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.sequence.blast.BlastQueryThreadCollection;
 import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.Database;
@@ -21,6 +22,8 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
 
     private List<Database> actualDatabaseTargets;
     private List<XMLBlastBean> otherQueries;
+
+    private Logger logger = Logger.getLogger(XMLBlastBean.class) ;
 
 
     public static enum QueryTypes {
@@ -143,9 +146,14 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
         if (file == null) {
             return null;
         }
-        String fileName = file.getName();
-        String ticket = fileName.substring(BLAST_PREFIX.length(),
-                fileName.length() - BLAST_SUFFIX.length());
+        // remove blast from the start and the suffix from the end
+        String ticket = file.getName();
+        if(ticket.startsWith(BLAST_PREFIX)){
+            ticket = ticket.substring(BLAST_PREFIX.length());
+        }
+        if(ticket.contains(BLAST_SUFFIX)){
+            ticket = ticket.substring(0,ticket.length()-BLAST_SUFFIX.length()) ;
+        }
         return ticket;
     }
 
@@ -598,4 +606,5 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
                 ", errorString=" + errorString +
                 '}';
     }
+
 }

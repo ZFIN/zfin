@@ -1,16 +1,16 @@
 package org.zfin.repository;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.MockAuthenticationManager;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.context.SecurityContextImpl;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.log4j.Logger;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
+import org.zfin.security.MockAuthenticationManager;
 
 /**
  * This class instantiates exactly one session per VM.

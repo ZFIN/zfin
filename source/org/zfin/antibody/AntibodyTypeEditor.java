@@ -18,7 +18,7 @@ public class AntibodyTypeEditor extends PropertyEditorSupport {
     }
 
     public String getAsText() {
-        return ((AntibodyType) getValue()).getName();
+        return ((AntibodyType) getValue()).getValue();
     }
 
 }

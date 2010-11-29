@@ -80,13 +80,6 @@ public class DatabaseInfoController extends MultiActionController {
         return new ModelAndView("view-session-info", LookupStrings.FORM_BEAN, form);
     }
 
-    public ModelAndView viewGlobalSessionInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        ZfinSessionBean form = new ZfinSessionBean();
-        form.setRequest(request);
-        return new ModelAndView("view-global-session-info", LookupStrings.FORM_BEAN, form);
-    }
-
     public ModelAndView svnVersionHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         ModelAndView modelAndView = new ModelAndView();

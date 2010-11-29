@@ -59,9 +59,9 @@ public class SupplierNameList extends AbstractStackComposite<MarkerDTO> {
         }
         working();
         MarkerRPCService.App.getInstance().addMarkerSupplier(valueToAdd, dto.getZdbID(),
-                new MarkerEditCallBack<Void>("failed to add supplier to marker: ") {
+                new MarkerEditCallBack<Void>("Failed to add supplier to marker: ",this) {
                     public void onFailure(Throwable t) {
-                        setError("Failed to remove supplier.");
+                        super.onFailure(t);
                         notWorking();
                     }
 

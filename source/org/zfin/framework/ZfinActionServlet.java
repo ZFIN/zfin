@@ -13,9 +13,7 @@ import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 /**
  * <p>

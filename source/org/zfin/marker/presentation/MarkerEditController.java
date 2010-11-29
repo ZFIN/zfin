@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.antibody.Antibody;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Transcript;
@@ -29,8 +30,8 @@ public class MarkerEditController extends AbstractController {
             Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(zdbID);
             if (transcript != null) {
                 markerBean.setMarker(transcript);
-                ModelAndView modelAndView = new ModelAndView("transcript-edit.page", LookupStrings.FORM_BEAN, markerBean);
-                modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, transcript.getAbbreviation());
+                ModelAndView modelAndView = new ModelAndView("marker/transcript-edit.page", LookupStrings.FORM_BEAN, markerBean);
+                modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getEditTitleString()+transcript.getAbbreviation());
                 return modelAndView;
             }
         }
@@ -40,8 +41,8 @@ public class MarkerEditController extends AbstractController {
             Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
             if (antibody != null) {
                 markerBean.setMarker(antibody);
-                ModelAndView modelAndView = new ModelAndView("antibody-edit.page", LookupStrings.FORM_BEAN, markerBean);
-                modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, antibody.getAbbreviation());
+                ModelAndView modelAndView = new ModelAndView("marker/antibody-edit.page", LookupStrings.FORM_BEAN, markerBean);
+                modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getEditTitleString()+antibody.getAbbreviation());
                 return modelAndView;
             }
         }
@@ -51,12 +52,12 @@ public class MarkerEditController extends AbstractController {
         Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(zdbID);
         if (clone != null) {
             markerBean.setMarker(clone);
-            ModelAndView modelAndView = new ModelAndView("clone-edit.page", LookupStrings.FORM_BEAN, markerBean);
-            modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, clone.getAbbreviation());
+            ModelAndView modelAndView = new ModelAndView("marker/clone-edit.page", LookupStrings.FORM_BEAN, markerBean);
+            modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getEditTitleString()+clone.getAbbreviation());
             return modelAndView;
         }
 
-        ModelAndView errorModelAndView = new ModelAndView("record-not-found.page");
+        ModelAndView errorModelAndView = new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE);
         errorModelAndView.addObject(LookupStrings.ZDB_ID, zdbID);
         return errorModelAndView;
 

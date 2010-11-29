@@ -24,10 +24,10 @@
     </td>
 
     <td align="right">
-        <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:put name="subjectName" value="${formBean.feature.name}"/>
-            <tiles:put name="subjectID" value="${formBean.feature.zdbID}"/>
-        </tiles:insert>
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="${formBean.feature.name}"/>
+            <tiles:putAttribute name="subjectID" value="${formBean.feature.zdbID}"/>
+        </tiles:insertTemplate>
     </td>
 </tr>
 

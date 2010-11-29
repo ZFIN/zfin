@@ -20,7 +20,7 @@ import org.zfin.ontology.OntologyManagerTest;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
-import org.zfin.people.repository.PeopleRepositoryTest;
+import org.zfin.people.repository.ProfileRepositoryTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
 import org.zfin.sequence.MapAccessionDbLinkTest;
@@ -56,7 +56,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         MarkerGoTermEvidenceRepositoryTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
-        PeopleRepositoryTest.class,
+        ProfileRepositoryTest.class,
         PublicationRepositoryTest.class,
         RedundancyCandidateControllerTest.class,
 //        NomenclatureCandidateControllerTest.class, // no tests

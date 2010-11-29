@@ -12,15 +12,11 @@
     </tbody>
 </table>
 
-<%--
-<tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false"/>
---%>
-
 <hr>
 
 <a href="search"> New Search</a>
 
-<tiles:insert page="/WEB-INF/jsp-include/pagination_header.jsp" flush="false"/>
+<tiles:insertTemplate template="/WEB-INF/jsp-include/pagination_header.jsp" flush="false"/>
 
 <table width="100%">
     <center>
@@ -112,6 +108,3 @@
 
 <zfin2:pagination paginationBean="${formBean}" />
 
-<%--
-<tiles:insert page="/WEB-INF/jsp/orthology/orthology_search.jsp" flush="true"/>
---%>

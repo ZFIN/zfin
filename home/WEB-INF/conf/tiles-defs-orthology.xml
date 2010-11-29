@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
 
     <definition name="orthology-search.page" extends="main_layout">
-        <put name="staticTitle" value="Orthology Search" />
-        <put name="body" value="/WEB-INF/jsp/orthology/orthology_search.jsp"/>
+        <put-attribute name="staticTitle" value="Orthology Search" />
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/orthology_search.jsp"/>
     </definition>
 
     <definition name="orthology-searchresult.page" extends="main_layout">
-        <put name="staticTitle" value="Orthology Search Results" />
-        <put name="body" value="/WEB-INF/jsp/orthology/orthology_search_result.jsp"/>
+        <put-attribute name="staticTitle" value="Orthology Search Results" />
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/orthology_search_result.jsp"/>
     </definition>
 
     <definition name="create-note.page" extends="main_layout">
-        <put name="staticTitle" value="Create / Update Orthology Note" />
-        <put name="body" value="/WEB-INF/jsp/orthology/create_orthology_note.jsp"/>
+        <put-attribute name="staticTitle" value="Create / Update Orthology Note" />
+        <put-attribute name="body" value="/WEB-INF/jsp/orthology/create_orthology_note.jsp"/>
     </definition>
 
 </tiles-definitions>

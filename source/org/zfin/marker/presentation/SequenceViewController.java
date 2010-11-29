@@ -35,9 +35,9 @@ public class SequenceViewController extends AbstractController {
         markerBean.setMarkerRelationships(cloneRelationships);
 
 
-        ModelAndView modelAndView = new ModelAndView("sequence-view.page");
+        ModelAndView modelAndView = new ModelAndView("marker/sequence-view.page");
         modelAndView.addObject(LookupStrings.FORM_BEAN, markerBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, gene.getAbbreviation());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + gene.getAbbreviation());
 
         return modelAndView;
     }

@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="false" %>
 
 
 <div style="width: 30em; margin: 3em auto; padding-top: 1em;">
@@ -24,6 +25,7 @@
             <div style="padding: 2em;">
                 <form id="login" name="login" action="/action/security-check"
                       method="POST" accept-charset="UTF-8">
+                    <input type='hidden' name='_spring_security_remember_me' value="true" />
                     <input type="hidden" name="page" value="Main"/>
                     <label for="j_username">Login:</label>
                     <input type="text" size="12" name="j_username" id="j_username">

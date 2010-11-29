@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="../home/WEB-INF/conf/properties.xml"/>
+    <import resource="../home/WEB-INF/conf/quartz-jobs.xml"/>
+    <import resource="../home/WEB-INF/conf/security.xml"/>
+
+    <import resource="../home/WEB-INF/conf/mvc.xml"/>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="zfin-messages"/>
+    </bean>
+</beans>

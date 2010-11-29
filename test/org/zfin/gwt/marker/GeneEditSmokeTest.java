@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.AbstractSecureSmokeTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 /**

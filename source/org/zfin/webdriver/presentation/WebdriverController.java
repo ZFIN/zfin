@@ -1,11 +1,11 @@
 package org.zfin.webdriver.presentation;
 
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;

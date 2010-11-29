@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
@@ -278,11 +277,11 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getMorpholinosWithMarkerRelationships() {
+    public void getMorpholinosWithMarkerRelationships(){
         List<MorpholinoSequence> morpholinos = mutantRepository.getMorpholinosWithMarkerRelationships();
         assertNotNull(morpholinos);
-        LOG.info("# of morpholinos: " + morpholinos.size());
-        assertTrue(morpholinos.size() > 3000);
+        LOG.info("# of morpholinos: "+ morpholinos.size());
+        assertTrue(morpholinos.size()>3000);
         assertNotNull(morpholinos.get(0).getSequence());
     }
 

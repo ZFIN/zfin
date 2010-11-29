@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="antibodyUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
@@ -29,7 +28,7 @@
                 <prop key="/antibody/add-alias">addAliasHandler</prop>
                 <prop key="/antibody/delete-alias">deleteAliasHandler</prop>
                 <prop key="/antibody/delete-aliasref">deleteAliasRefHandler</prop>
-                <prop key="/antibody/add-aliasattrib">addAliasAttribHandler</prop>                
+                <prop key="/antibody/add-aliasattrib">addAliasAttribHandler</prop>
                 <prop key="/antibody/add-antigen">addAntigenHandler</prop>
                 <prop key="/antibody/delete-antigen">deleteAntigenHandler</prop>
                 <prop key="/antibody/delete-antigenref">deleteAntigenRefHandler</prop>
@@ -76,21 +75,15 @@
             <bean class="org.zfin.antibody.presentation.CreateAntibodyFormBeanValidator"/>
         </property>
     </bean>
-    
-    <bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-        <property name="customEditors">
-            <map>
-                <entry key="org.zfin.util.FilterType">
-                    <bean id="filterTypeEditor" class="org.zfin.util.FilterTypeEditor"/>
-                </entry>
-                <entry key="org.zfin.expression.Assay">
-                    <bean id="assay" class="org.zfin.expression.AssayEditor"/>
-                </entry>
-                <entry key="org.zfin.antibody.AntibodyType">
-                    <bean id="antibodyType" class="org.zfin.antibody.AntibodyTypeEditor"/>
-                </entry>
-            </map>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="customPropertyEditorRegistrar"/>
+            </list>
         </property>
     </bean>
+
+    <bean id="customPropertyEditorRegistrar" class="org.zfin.framework.CustomPropertyEditorRegistrar"/>
 
 </beans>

@@ -13,7 +13,10 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.PhenotypeTermDTO;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.*;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.MutantFigureStage;
+import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -27,9 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes

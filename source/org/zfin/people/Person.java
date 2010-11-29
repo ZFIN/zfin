@@ -1,14 +1,16 @@
 package org.zfin.people;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.zfin.publication.Publication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -145,12 +147,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
         this.accountInfo = accountInfo;
     }
 
-    public GrantedAuthority[] getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         if (accountInfo == null)
             return null;
         String role = accountInfo.getRole();
         GrantedAuthority gr = new GrantedAuthorityImpl(role);
-        return new GrantedAuthority[]{gr};
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>() ;
+        grantedAuthorities.add(gr) ;
+        return grantedAuthorities ;
     }
 
     public String getPassword() {
@@ -203,6 +207,18 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
         // ToDo: Annonymous user should also be a Person object opposed to a String object
         if (principal instanceof String)
             return null;
+
+
+        // for debugging.  Allows using an in-line spring authentication-manager.
+        if(principal instanceof  org.springframework.security.core.userdetails.User) {
+            org.springframework.security.core.userdetails.User user =
+                    ( org.springframework.security.core.userdetails.User) principal ;
+            Person person = new Person();
+            person.setName(user.getUsername());
+            person.setFullName(user.getUsername());
+            return person;
+        }
+
         return (Person) principal;
     }
 
@@ -245,5 +261,17 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
         // in case the 2 persons have the same name?
         // I guess as a tie-breaker we can use the zdbID, which includes date
         return zdbID.compareTo(anotherPerson.getZdbID());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Person");
+        sb.append("{zdbID='").append(zdbID).append('\'');
+        sb.append(", fullName='").append(fullName).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

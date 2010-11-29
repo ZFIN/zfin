@@ -123,6 +123,10 @@ public class AccountInfo implements Serializable {
         return zdbID;
     }
 
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
     public enum Role {
 
         ROOT("root"),

@@ -37,7 +37,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
 
     //@Test
-
     public void persistActiveData() {
         try {
             HibernateUtil.createTransaction();
@@ -192,10 +191,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(group);
     }
 
-    @Test
-    public void getGenesForStandardAttribution() {
-
-    }
 
     @Test
     public void getQualityRootTerm() {

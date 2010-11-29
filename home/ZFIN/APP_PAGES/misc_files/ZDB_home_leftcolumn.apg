@@ -136,6 +136,6 @@
       to update person and lab records.
   <?MIELSE>
       Logged in to ZFIN as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
-      <a href="/action/j_acegi_logout">[<em>Logout</em>]</a>
+      <a href="/action/logout">[<em>Logout</em>]</a>
   <?/MIBLOCK>  
   </span>

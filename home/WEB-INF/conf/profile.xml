@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--  URL mapping -->
+    <bean id="peopleUrls" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/people/view-person-detail">peopleViewDetail</prop>
+                <prop key="/people/edit-user">editUserBean</prop>
+                <prop key="/people/edit-user-confirmation">editUserConfirmationBean</prop>
+                <!--
+                                <prop key="/people/update-address">peopleUpdateAddress</prop>
+                -->
+            </props>
+        </property>
+    </bean>
+
+    <bean name="peopleViewDetail" class="org.zfin.people.presentation.ViewPersonDetailController"/>
+
+<!--
+    <bean name="peopleUpdateAddress" class="org.zfin.people.presentation.AddressController"/>
+-->
+
+    <bean name="publicationViewDetail" class="org.zfin.publication.presentation.ViewPublicationDetailController"/>
+
+    <bean name="peopleRepository" class="org.zfin.security.repository.HibernateUserRepository"/>
+
+    <bean name="editUserBean" class="org.zfin.people.presentation.EditUserPasswordController" >
+        <property name="successView" value="edit-user-password-confirmation.page"/>
+        <property name="formView" value="edit-user-password.page"/>
+        <property name="commandClass" value="org.zfin.people.presentation.ProfileBean"/>
+        <property name="commandName" value="formBean"/>
+        <property name="salt" value="dedicated to George Streisinger" />
+        <property name="validator">
+            <bean class="org.zfin.people.presentation.EditUserValidator"/>
+        </property>
+        <property name="bindOnNewForm" value="true" />
+    </bean>
+
+    <bean name="editUserConfirmationBean" class="org.zfin.people.presentation.EditUserPasswordConfirmationController" >
+    </bean>
+
+</beans>

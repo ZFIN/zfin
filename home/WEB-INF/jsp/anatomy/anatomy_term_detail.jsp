@@ -13,10 +13,10 @@
                    rtype="anatomy_item"/>
 
 <div style="float: right;">
-    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:put name="subjectName" value="${formBean.anatomyItem.name}"/>
-        <tiles:put name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
-    </tiles:insert>
+    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:putAttribute name="subjectName" value="${formBean.anatomyItem.name}"/>
+        <tiles:putAttribute name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
+    </tiles:insertTemplate>
 </div>
 <div class="summary">
     <table width="100%">
@@ -106,8 +106,8 @@
                         ${rt.type}:
                 </TD>
                 <TD bgcolor="#EEEEEE">
-                    <c:forEach var="item" items="${rt.items}">
-                        <zfin:link entity="${item}" name="anatomy-visibility"/> &nbsp;
+                    <c:forEach var="session" items="${rt.items}">
+                        <zfin:link entity="${session}" name="anatomy-visibility"/> &nbsp;
                         &nbsp;
                     </c:forEach>
                 </TD>
@@ -123,9 +123,9 @@
                                 enumeration="${formBean.sectionVisibility.sectionsWithData}"/>
 <p/>
 --%>
-<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
+<tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
 
-<tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
+<tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
 
 <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
 

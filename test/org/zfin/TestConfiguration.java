@@ -1,18 +1,18 @@
 package org.zfin;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.MockAuthenticationManager;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.context.SecurityContextImpl;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.zfin.people.Person;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.security.MockAuthenticationManager;
 
 import java.io.File;
 

@@ -14,6 +14,12 @@ public class LookupStrings {
     public final static String REF_DB = "refDB";
     public final static String BLAST_DB = "blastDB";
 
+
     public static final String RECORD_NOT_FOUND_PAGE = "record-not-found.page";
+
+    // suffix
+    public final static String PAGE_SUFFIX = ".page";
+    public final static String INSERT_SUFFIX = ".insert";
+
 }
 

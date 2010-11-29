@@ -224,7 +224,7 @@ public class OntologyManager {
     }
 
     private void serializeOntologyInThread(final Ontology ontology) {
-        new Thread() {
+        new Thread(){
             @Override
             public void run() {
                 serializeOntology(ontology);
@@ -337,8 +337,8 @@ public class OntologyManager {
                 aliasCount += term.getAliases().size();
             }
 
-            if (term.getAliases() != null) {
-                aliasCount += term.getAliases().size();
+            if(term.getAliases()!=null){
+                aliasCount += term.getAliases().size() ;
             }
 
         }
@@ -537,8 +537,9 @@ public class OntologyManager {
      * @return term
      */
     public Term getTermByID(String termID) {
-        if (StringUtils.isEmpty(termID))
+        if (StringUtils.isEmpty(termID)){
             return null;
+        }
 
         for (Ontology ontology : ontologyTermMap.keySet()) {
             Term term = getTermByID(ontology, termID);
@@ -572,19 +573,20 @@ public class OntologyManager {
     /**
      * Retrieve a term by name from a given ontology.
      *
-     * @param ontology      ontology
-     * @param termName      term name
+     * @param ontology ontology
+     * @param termName term name
      * @param allowObsolete include obsolete term in the search.
      * @return term
      */
-    public Term getTermByName(Ontology ontology, String termName, boolean allowObsolete) {
-        Collection<Term> terms = getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
-        if (terms == null) {
-            logger.info("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
-            return null;
-        } else {
-            for (Term term : terms) {
-                if ((!term.isObsolete() || allowObsolete)
+    public Term getTermByName(Ontology ontology, String termName,boolean allowObsolete) {
+        Collection<Term> terms =   getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
+        if(terms==null){
+            logger.info("No terms for term: "+ termName + " and ontology: "+ ontology.getOntologyName());
+            return null ;
+        }
+        else{
+            for(Term term: terms){
+                if( (!term.isObsolete() || allowObsolete)
                         &&
                         term.getTermName().equalsIgnoreCase(termName)) {
                     return term;
@@ -764,7 +766,7 @@ public class OntologyManager {
      * @throws IOException Thrown if problem writing to file.
      */
     @SuppressWarnings("unchecked")
-    public void deserializeOntology(Ontology ontology) throws Exception {
+    public void deserializeOntology(Ontology ontology) throws Exception{
         long start = System.currentTimeMillis();
         File lookupFile;
         try {
@@ -876,8 +878,8 @@ public class OntologyManager {
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
      *
-     * @param ontologies    collection of ontologies
-     * @param termName      term name
+     * @param ontologies collection of ontologies
+     * @param termName   term name
      * @param allowObsolete True if an obsolete term may be returned.
      * @return term object
      */

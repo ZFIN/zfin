@@ -3,7 +3,6 @@ package org.zfin.gwt;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import org.zfin.AbstractSmokeTest;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 

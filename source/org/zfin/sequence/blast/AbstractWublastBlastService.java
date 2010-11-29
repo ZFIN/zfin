@@ -355,7 +355,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     protected Set<String> getAccessionsFromFile(File accessionFile) throws BlastDatabaseException {
         Set<String> accessions = new HashSet<String>();
-        ;
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(accessionFile));
 

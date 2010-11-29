@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--This is the base context file required by everything we run that is spring.-->
+    <!--This will include beans and properties common to both test, deployment, and standalone operations.-->
+
+    <import resource="conf/properties.xml"/>
+
+    <!--put hibernate, etc. in here-->
+    
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="zfin-messages"/>
+    </bean>
+</beans>

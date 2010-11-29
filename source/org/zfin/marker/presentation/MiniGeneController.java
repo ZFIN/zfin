@@ -33,7 +33,7 @@ public class MiniGeneController extends AbstractController {
         MarkerBean markerBean = new MarkerBean();
         markerBean.setMarker(marker);
 
-        ModelAndView modelAndView = new ModelAndView("mini-gene.page", LookupStrings.FORM_BEAN, markerBean);
+        ModelAndView modelAndView = new ModelAndView("marker/mini-gene.insert", LookupStrings.FORM_BEAN, markerBean);
 
         String showClose = httpServletRequest.getParameter("showClose");
         modelAndView.addObject("showClose", Boolean.valueOf(showClose));

@@ -12,10 +12,7 @@ import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
-import org.zfin.framework.presentation.FunctionsTest;
-import org.zfin.framework.presentation.PaginationBeanTest;
-import org.zfin.framework.presentation.SectionVisibilityTest;
-import org.zfin.framework.presentation.UIFieldTransformerTest;
+import org.zfin.framework.presentation.*;
 import org.zfin.gwt.InferenceUnitTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
@@ -65,6 +62,7 @@ import org.zfin.util.*;
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         CurationExperimentTest.class,
+        EntityPresentationTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
         ExpressionResultPresentationTest.class,

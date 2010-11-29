@@ -1,7 +1,5 @@
 package org.zfin.util;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Single DB query instruction that will be issued through JDBC connection.
  */

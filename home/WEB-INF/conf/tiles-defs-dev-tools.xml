@@ -1,275 +1,263 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!DOCTYPE tiles-definitions PUBLIC
-        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-        "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
 
-    <definition name="dev_layout" path="/WEB-INF/tiles/layout.jsp">
-        <put name="staticTitle" value="Please provide Title"/>
-        <put name="header" value="/WEB-INF/tiles/header_dev_tools.jsp"/>
-        <put name="footer" value="/WEB-INF/tiles/footer.jsp"/>
-    </definition>
-
-    <definition name="home_layout" path="/WEB-INF/tiles/layout.jsp">
-        <put name="header" value="/WEB-INF/tiles/header.jsp"/>
-        <put name="footer" value="/WEB-INF/tiles/footer.jsp"/>
-        <put name="body" value=""/>
-    </definition>
-
     <definition name="home" extends="dev_layout">
-        <put name="staticTitle" value="Dev Tools"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
+        <put-attribute name="staticTitle" value="Dev Tools"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/home.jsp"/>
     </definition>
 
-    <definition name="login" extends="home_layout">
-        <put name="staticTitle" value="ZFIN Login"/>
-        <put name="body" value="/WEB-INF/jsp/login_form.jsp"/>
+    <definition name="login" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN Login"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/login_form.jsp"/>
     </definition>
 
-    <definition name="access-denied" extends="home_layout">
-        <put name="staticTitle" value="ZFIN Login Access Denied"/>
-        <put name="body" value="/WEB-INF/jsp/access_denied.jsp"/>
+    <definition name="access-denied" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN Login Access Denied"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/access_denied.jsp"/>
     </definition>
 
     <definition name="display-groups.page" extends="dev_layout">
-        <put name="staticTitle" value="Display Groups"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/display_groups.jsp"/>
+        <put-attribute name="staticTitle" value="Display Groups"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/display_groups.jsp"/>
     </definition>
 
     <definition name="java-properties" extends="dev_layout">
-        <put name="staticTitle" value="Java Properties"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/java_properties.jsp"/>
+        <put-attribute name="staticTitle" value="Java Properties"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/java_properties.jsp"/>
     </definition>
 
     <definition name="metadata" extends="dev_layout">
-        <put name="staticTitle" value="Metadata"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_database_info.jsp"/>
+        <put-attribute name="staticTitle" value="Metadata"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_database_info.jsp"/>
     </definition>
 
     <definition name="jdbc-metadata" extends="dev_layout">
-        <put name="staticTitle" value="Database Driver Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_database_driver_info.jsp"/>
+        <put-attribute name="staticTitle" value="Database Driver Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_database_driver_info.jsp"/>
     </definition>
 
     <definition name="thread-info" extends="dev_layout">
-        <put name="staticTitle" value="Thread Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/thread_info.jsp"/>
+        <put-attribute name="staticTitle" value="Thread Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/thread_info.jsp"/>
     </definition>
 
     <definition name="file-content" extends="dev_layout">
-        <put name="staticTitle" value="Property File"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_property_file.jsp"/>
+        <put-attribute name="staticTitle" value="Property File"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_property_file.jsp"/>
     </definition>
 
     <definition name="log4j-configuration" extends="dev_layout">
-        <put name="staticTitle" value="Log4J Configuration"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/log4j_configuration.jsp"/>
+        <put-attribute name="staticTitle" value="Log4J Configuration"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/log4j_configuration.jsp"/>
     </definition>
 
     <definition name="classpath-info" extends="dev_layout">
-        <put name="staticTitle" value="Classpath"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/classpath_info.jsp"/>
+        <put-attribute name="staticTitle" value="Classpath"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/classpath_info.jsp"/>
     </definition>
 
     <definition name="view-thread-info.page" extends="dev_layout">
-        <put name="staticTitle" value="Thread Info"/>
-        <put name="body" value="/dev/view_thread_info.jsp"/>
+        <put-attribute name="staticTitle" value="Thread Info"/>
+        <put-attribute name="body" value="/dev/view_thread_info.jsp"/>
     </definition>
 
     <definition name="view-database-info.page" extends="dev_layout">
-        <put name="staticTitle" value="Informix DB Info"/>
-        <put name="body" value="/dev/view_database_info.jsp"/>
+        <put-attribute name="staticTitle" value="Informix DB Info"/>
+        <put-attribute name="body" value="/dev/view_database_info.jsp"/>
     </definition>
 
     <definition name="tiles-configuration" extends="dev_layout">
-        <put name="staticTitle" value="Tiles Configuration"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/tiles_configuration.jsp"/>
+        <put-attribute name="staticTitle" value="Tiles Configuration"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/tiles_configuration.jsp"/>
     </definition>
 
     <definition name="test-browser" extends="dev_layout">
-        <put name="staticTitle" value="Browser Test"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/test_browser.jsp"/>
+        <put-attribute name="staticTitle" value="Browser Test"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/test_browser.jsp"/>
     </definition>
 
     <definition name="view-session-info" extends="dev_layout">
-        <put name="staticTitle" value="Session Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_session_info.jsp"/>
+        <put-attribute name="staticTitle" value="Session Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_session_info.jsp"/>
     </definition>
 
     <definition name="view-global-session-info" extends="dev_layout">
-        <put name="staticTitle" value="Global Session Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_global_session_info.jsp"/>
+        <put-attribute name="staticTitle" value="Global Session Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_global_session_info.jsp"/>
     </definition>
 
     <definition name="servlet-context-info" extends="dev_layout">
-        <put name="staticTitle" value="Servlet Context Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/servlet_context_info.jsp"/>
+        <put-attribute name="staticTitle" value="Servlet Context Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/servlet_context_info.jsp"/>
     </definition>
 
     <definition name="application-context-info" extends="dev_layout">
-        <put name="staticTitle" value="Application Context Info"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/application_context_info.jsp"/>
+        <put-attribute name="staticTitle" value="Application Context Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/application_context_info.jsp"/>
     </definition>
 
     <definition name="user-request-tracking" extends="dev_layout">
-        <put name="staticTitle" value="User Request Tracking"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/user_request_tracking.jsp"/>
+        <put-attribute name="staticTitle" value="User Request Tracking"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/user_request_tracking.jsp"/>
     </definition>
 
     <definition name="single-user-request-tracking" extends="dev_layout">
-        <put name="staticTitle" value="Single User Request Tracking"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/view_single_user_request.jsp"/>
+        <put-attribute name="staticTitle" value="Single User Request Tracking"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_single_user_request.jsp"/>
     </definition>
 
     <definition name="hibernate-statistics-view" extends="dev_layout">
-        <put name="staticTitle" value="Hibernate Statistics"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/hibernate_statistics_view.jsp"/>
+        <put-attribute name="staticTitle" value="Hibernate Statistics"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/hibernate_statistics_view.jsp"/>
     </definition>
 
     <definition name="zfin-statistics-view" extends="dev_layout">
-        <put name="staticTitle" value="ZFIN Statistics"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
+        <put-attribute name="staticTitle" value="ZFIN Statistics"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/zfin_statistics_view.jsp"/>
     </definition>
 
     <definition name="gwt-modules" extends="dev_layout">
-        <put name="staticTitle" value="GWT Modules"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/modules.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Modules"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/modules.jsp"/>
     </definition>
 
     <definition name="fx-curation" extends="dev_layout">
-        <put name="staticTitle" value="GWT FX Curation"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/fx_curation.jsp"/>
+        <put-attribute name="staticTitle" value="GWT FX Curation"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/fx_curation.jsp"/>
     </definition>
 
     <definition name="phenotype-curation" extends="dev_layout">
-        <put name="staticTitle" value="GWT Phenotype Curation"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/phenotype_curation.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Phenotype Curation"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/phenotype_curation.jsp"/>
     </definition>
 
     <definition name="go-curation" extends="dev_layout">
-        <put name="staticTitle" value="GWT GO Curation"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_curation.jsp"/>
+        <put-attribute name="staticTitle" value="GWT GO Curation"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_curation.jsp"/>
     </definition>
 
     <definition name="image-edit-test" extends="dev_layout">
-        <put name="stcitle" value="GWT Image Edit Test Page"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/image_edit_test.jsp"/>
+        <put-attribute name="stcitle" value="GWT Image Edit Test Page"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/image_edit_test.jsp"/>
     </definition>
 
 
     <definition name="transcript-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Transcript Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Transcript Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/transcript_edit.jsp"/>
     </definition>
 
     <definition name="alternate-gene-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Gene Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/alternate_gene_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Gene Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/alternate_gene_edit.jsp"/>
     </definition>
 
     <definition name="clone-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Clone Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/clone_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Clone Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/clone_edit.jsp"/>
     </definition>
 
     <definition name="go-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT GO Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT GO Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/go_edit.jsp"/>
     </definition>
 
     <definition name="curation-base" extends="dev_layout">
-        <put name="staticTitle" value=""/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/curation_base.jsp"/>
+        <put-attribute name="staticTitle" value=""/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/curation_base.jsp"/>
     </definition>
 
     <definition name="antibody-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Antibody Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/antibody_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Antibody Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/antibody_edit.jsp"/>
     </definition>
 
     <definition name="gene-edit" extends="dev_layout">
-        <put name="staticTitle" value="GWT Antibody Edit"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/gene_edit.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Antibody Edit"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/gene_edit.jsp"/>
     </definition>
 
     <definition name="test-composite" extends="dev_layout">
-        <put name="staticTitle" value="Test Composite"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/test_composite.jsp"/>
+        <put-attribute name="staticTitle" value="Test Composite"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/test_composite.jsp"/>
     </definition>
 
     <definition name="lookup" extends="dev_layout">
-        <put name="staticTitle" value="GWT Lookup"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Lookup"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup.jsp"/>
     </definition>
 
     <definition name="lookup-table" extends="dev_layout">
-        <put name="staticTitle" value="GWT Lookup Table"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup_table.jsp"/>
+        <put-attribute name="staticTitle" value="GWT Lookup Table"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup_table.jsp"/>
     </definition>
 
     <definition name="svn-version" extends="dev_layout">
-        <put name="staticTitle" value="SVN Version"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/svn_version.jsp"/>
+        <put-attribute name="staticTitle" value="SVN Version"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/svn_version.jsp"/>
     </definition>
 
-    <definition name="error-page" extends="home_layout">
-        <put name="staticTitle" value="Error Page"/>
-        <put name="body" value="/WEB-INF/jsp/error_page.jsp"/>
+    <definition name="error-page" extends="main_layout">
+        <put-attribute name="staticTitle" value="Error Page"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/error_page.jsp"/>
     </definition>
 
     <definition name="blastable-databases.page" extends="dev_layout">
-        <put name="staticTitle" value="Blastable Databases"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
+        <put-attribute name="staticTitle" value="Blastable Databases"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/blastable_databases.jsp"/>
     </definition>
 
     <definition name="cache-viewer" extends="dev_layout">
-        <put name="title" value="SVN Version"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/cache_viewer.jsp"/>
+        <put-attribute name="title" value="SVN Version"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/cache_viewer.jsp"/>
     </definition>
 
     <definition name="blast-jobs.page" extends="dev_layout">
-        <put name="staticTitle" value="Blast Jobs"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/blast_jobs.jsp"/>
+        <put-attribute name="staticTitle" value="Blast Jobs"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/blast_jobs.jsp"/>
     </definition>
 
     <definition name="quartz-jobs.page" extends="dev_layout">
-        <put name="staticTitle" value="Quartz Jobs"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/quartz_jobs.jsp"/>
+        <put-attribute name="staticTitle" value="Quartz Jobs"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/quartz_jobs.jsp"/>
     </definition>
 
     <definition name="zfin-properties.page" extends="dev_layout">
-        <put name="staticTitle" value="Zfin Properties Enum Values"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/zfin_properties.jsp"/>
+        <put-attribute name="staticTitle" value="Zfin Properties Enum Values"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/zfin_properties.jsp"/>
     </definition>
 
     <definition name="create-error.page" extends="dev_layout">
-        <put name="staticTitle" value="Create Error Page"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/create-error.jsp"/>
+        <put-attribute name="staticTitle" value="Create Error Page"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/create-error.jsp"/>
     </definition>
 
     <definition name="ontology-manager" extends="dev_layout">
-        <put name="staticTitle" value="Ontology Manager"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_manager.jsp"/>
+        <put-attribute name="staticTitle" value="Ontology Manager"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/ontology_manager.jsp"/>
     </definition>
 
     <definition name="ontology-terms" extends="dev_layout">
-        <put name="staticTitle" value="Ontology: List of Terms and Aliases"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_terms.jsp"/>
+        <put-attribute name="staticTitle" value="Ontology: List of Terms and Aliases"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/ontology_terms.jsp"/>
     </definition>
 
     <definition name="ontology-term" extends="dev_layout">
-        <put name="staticTitle" value="Ontology: Term Detail"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_term.jsp"/>
+        <put-attribute name="staticTitle" value="Ontology: Term Detail"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/ontology_term.jsp"/>
     </definition>
 
     <definition name="ontology-reports" extends="dev_layout">
-        <put name="staticTitle" value="Ontology: Reports"/>
-        <put name="body" value="/WEB-INF/jsp/dev-tools/ontology_reports.jsp"/>
+        <put-attribute name="staticTitle" value="Ontology: Reports"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/ontology_reports.jsp"/>
     </definition>
 
-    <definition name="no-error.page" path="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
+    <definition name="no-error.page" template="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
 </tiles-definitions>
 

@@ -290,9 +290,9 @@ public class AntibodyUpdateDetailBean extends AntibodyBean {
 
     public Map<String, String> getTypeList() {
         LinkedHashMap<String, String> typeList = new LinkedHashMap<String, String>();
-        typeList.put(AntibodyType.UNSPECIFIED.getName(), AntibodyType.UNSPECIFIED.getName());
-        typeList.put(AntibodyType.MONOCLONAL.getName(), AntibodyType.MONOCLONAL.getName());
-        typeList.put(AntibodyType.POLYCLONAL.getName(), AntibodyType.POLYCLONAL.getName());
+        typeList.put(AntibodyType.UNSPECIFIED.getValue(), AntibodyType.UNSPECIFIED.getValue());
+        typeList.put(AntibodyType.MONOCLONAL.getValue(), AntibodyType.MONOCLONAL.getValue());
+        typeList.put(AntibodyType.POLYCLONAL.getValue(), AntibodyType.POLYCLONAL.getValue());
         return typeList;
     }
 

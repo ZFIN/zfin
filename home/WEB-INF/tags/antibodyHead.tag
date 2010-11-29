@@ -6,7 +6,6 @@
 <%@ attribute name="antibodyStat" type="org.zfin.antibody.AntibodyService"
               rtexprvalue="true" required="true" %>
 
-<zfin2:inputWelcome marker="${antibody}"/>
 
 <div style="display: inline;font-size: large; font-weight: bold; margin-top: 1em;">
     Antibody Name:

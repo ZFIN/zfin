@@ -185,6 +185,8 @@ public final class ZfinProperties {
     public static void init(String propertiesFileName) {
         loadPropertiesTask.setFile(propertiesFileName);
         loadPropertiesTask.setEnumClass(ZfinPropertiesEnum.class.getCanonicalName());
+        loadPropertiesTask.setOverrideSystemProperties(false);
+        loadPropertiesTask.setProcessSystemProperties(false);
         loadPropertiesTask.execute();
     }
 

@@ -36,10 +36,10 @@
                     <tbody>
                         <tr>
                             <td>
-                                <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                                    <tiles:put name="subjectName" value="Anatomy: All Antibodies"/>
-                                    <tiles:put name="subjectID" value=""/>
-                                </tiles:insert>
+                                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                                    <tiles:putAttribute name="subjectName" value="Anatomy: All Antibodies"/>
+                                    <tiles:putAttribute name="subjectID" value=""/>
+                                </tiles:insertTemplate>
                             </td>
                         </tr>
                     </tbody>

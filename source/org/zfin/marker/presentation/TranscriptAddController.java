@@ -86,7 +86,7 @@ public class TranscriptAddController extends SimpleFormController {
             logger.error(e);
             tx.rollback();
             // todo: add some errors here
-            modelAndView = new ModelAndView("transcript-add.page");
+            modelAndView = new ModelAndView("marker/transcript-add.page");
         }
         return modelAndView;
     }

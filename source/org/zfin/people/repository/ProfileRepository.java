@@ -154,4 +154,12 @@ public interface ProfileRepository {
      * @return curator session
      */
     CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
+
+    Lab getLabById(String labZdbId);
+
+    List<String> getAllPrefixes();
+
+    String getPrefixForLab(String labZdbId);
+
+    String setLabPrefix(String labZdbId, String prefix);
 }

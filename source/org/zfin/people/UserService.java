@@ -1,9 +1,9 @@
 package org.zfin.people;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.PrimaryKey;
 

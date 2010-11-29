@@ -2,16 +2,13 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -70,6 +67,22 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         List<Marker> paxs = markerRepository.getMarkersByAbbreviation("pax");
         assertNotNull("pax should not be null", paxs);
         assertTrue("pax should have multiple markers", paxs.size() > 1);
+    }
+
+    @Test
+    public void testGenesByAbbreviation() {
+        List<Marker> soxs = markerRepository.getGenesByAbbreviation("sox");
+        assertNotNull("sox should not be null", soxs);
+        assertTrue("sox should have multiple markers", soxs.size() > 1);
+        for(Marker m: soxs){
+            assertTrue(m.getZdbID().startsWith("ZDB-GENE"));
+        }
+    }
+
+    @Test
+    public void testGeneById() {
+        assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
+        assertNotNull(markerRepository.getGeneByID("ZDB-GENE-990415-200"));
     }
 
     /**
@@ -434,8 +447,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void genedomEfgMarkers() {
 
         Marker marker = markerRepository.getMarkerByAbbreviation("fgf8a");
+        assertNotNull(marker);
         List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup("gfp", Marker.TypeGroup.GENEDOM_AND_EFG);
-        assertTrue(markers != null);
+        assertNotNull(markers);
+        assertTrue(markers.size()>0);
     }
 
 
@@ -471,21 +486,17 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getGeneClone() {
-        String name = "cfhl4";
+        String name = "fj17b12";
         Marker clone = markerRepository.getMarkerByAbbreviation(name);
-        assertTrue(clone != null);
-/*
+        assertNotNull(clone);
         assertTrue(clone instanceof Clone);
-        Clone cl = (Clone) clone;
-*/
-
     }
 
     @Test
     public void getESTClone() {
         String name = "eu815";
         Marker clone = markerRepository.getMarkerByAbbreviation(name);
-        assertTrue(clone != null);
+        assertNotNull(clone);
 /*
         assertTrue(clone instanceof Clone);
         Clone cl = (Clone) clone;
@@ -498,7 +509,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // acerebellar, alias for fgf8a
         String zdbID = "ZDB-DALIAS-070117-777";
         MarkerAlias alias = markerRepository.getMarkerAlias(zdbID);
-        assertTrue(alias != null);
+        assertNotNull(alias);
     }
 
     @Test

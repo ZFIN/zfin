@@ -4,13 +4,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.apache.log4j.Logger;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.Person;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Date;

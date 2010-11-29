@@ -1,8 +1,8 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.log4j.Logger;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.people.Person;

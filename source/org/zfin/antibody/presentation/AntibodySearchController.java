@@ -35,7 +35,7 @@ public class AntibodySearchController extends SimpleFormController {
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         AntibodySearchFormBean formBean = (AntibodySearchFormBean) super.formBackingObject(request);
         AntibodySearchCriteria antibodySearchCriteria = new AntibodySearchCriteria();
-        antibodySearchCriteria.setClonalType(AntibodyType.ANY.getName());
+        antibodySearchCriteria.setClonalType(AntibodyType.ANY.getValue());
         antibodySearchCriteria.setIncludeSubstructures(true);
         antibodySearchCriteria.setAnatomyEveryTerm(true);
         DevelopmentStage start = new DevelopmentStage();

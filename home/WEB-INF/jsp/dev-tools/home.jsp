@@ -51,6 +51,7 @@
 </tr>
 <tr>
     <td>
+        <a href="/action/dev-tools/test-error-page">Test Error Page</a>
         &nbsp;
     </td>
     <td>
@@ -58,7 +59,9 @@
     </td>
 </tr>
 <tr>
-    <td>&nbsp;</td>
+    <td>
+        <a href="/webapp/dev-tools/test-ajax/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
+    </td>
     <td>
         <a href="/action/dev-tools/blastable-databases">Blast Database Groups</a>
     </td>
@@ -127,7 +130,9 @@
         <a href="/action/dev-tools/thread-info">Thread Info</a>
     </td>
     <td>
-        <a href="/action/dev-tools/view-session-info">Session Info</a>
+        <a href="/action/dev-tools/view-session-info">Current Session Info</a>
+        -
+        <a href="/action/dev-tools/view-global-session-info">Global Session Info</a> 
     </td>
 </tr>
 <tr>
@@ -171,25 +176,20 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/tiles-configuration">Tiles Configuration</a>
-    </td>
-</tr>
-<tr>
-    <td>
         <a href="/action/dev-tools/file-content?fileName=/WEB-INF/web.xml">Web Deployment descriptor: web.xml</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/applicationContext-acegi-security.xml">Acegi
-            Security Configuration</a>
+        <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/security.xml">Security Configuration</a>
+    </td>
+</tr>
+<tr>
+    <td>
+        &nbsp;
     </td>
 </tr>
 
-<tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-</tr>
 
 <tr bgcolor="#ccccc0">
     <td>

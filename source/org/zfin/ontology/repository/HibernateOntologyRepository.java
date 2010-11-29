@@ -12,9 +12,7 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -98,7 +96,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve all Relationships.
-     *
      * @return list of relationships
      */
     @SuppressWarnings({"unchecked"})

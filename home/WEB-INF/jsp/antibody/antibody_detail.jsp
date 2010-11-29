@@ -13,6 +13,13 @@
                    rtype="marker"/>
 
 
+<div style="float: right">
+    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:putAttribute name="subjectName" value="${formBean.antibody.name}"/>
+        <tiles:putAttribute name="subjectID" value="${formBean.antibody.zdbID}"/>
+    </tiles:insertTemplate>
+</div>
+
 <zfin2:antibodyHead antibody="${formBean.antibody}"  antibodyStat="${formBean.antibodyStat}"/>
 
 

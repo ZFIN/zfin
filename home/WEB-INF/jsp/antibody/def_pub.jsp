@@ -54,7 +54,7 @@
             <form:select path="attribution"
                          onchange="changeDefPubFromSelectionBox(this.value)"
                          id="curatorPubs">
-                <form:options items="${formBean.defPubList}" itemLabel="key" itemValue="value"/>
+                <form:options items="${formBean.defPubList}"/>
             </form:select>
         </td>
     </tr>

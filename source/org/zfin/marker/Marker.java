@@ -27,6 +27,7 @@ import java.util.*;
 public class Marker implements Serializable, Comparable, EntityAlias, EntityNotes {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
+    private static Logger LOG = Logger.getLogger(Marker.class);
 
     private String zdbID;
     private String name;
@@ -536,5 +537,4 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         this.suppliers = suppliers;
     }
 
-    private static Logger LOG = Logger.getLogger(Marker.class);
 }

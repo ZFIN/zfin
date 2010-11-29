@@ -16,7 +16,6 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.ZfinJSPFunctions;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -26,7 +25,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.ReplacedAccessionNumber;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
@@ -422,7 +420,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setFieldName(fieldName);
 
         Person person = Person.getCurrentSecurityUser();
-        if (person != null) {
+        if(person!=null){
             up.setSubmitterID(person.getZdbID());
             up.setSubmitterName(person.getFullName());
         }
@@ -441,7 +439,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         update.setRecID(recID);
         update.setFieldName(fieldName);
         Person person = Person.getCurrentSecurityUser();
-        if (person != null) {
+        if(person!=null){
             update.setSubmitterID(person.getZdbID());
             update.setSubmitterName(person.getFullName());
         }
@@ -770,7 +768,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     /**
      * Unused.
      * Retrieve # of related markers (in the first position) that are attributed to to this pub.
-     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -791,7 +788,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * Retrieve # of related markers (in the second position) that are attributed to to this pub.
-     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -885,7 +881,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID) {
+    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID){
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "  select count(*)  " +
                 " from record_attribution ra, genotype_experiment ge " +
@@ -899,7 +895,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
-    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID) {
+    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID){
 //select * from record_attribution ra, atomic_phenotype ph, genotype_experiment ge
 //where
 //ra.recattrib_data_zdb_id=ph.apato_zdb_id

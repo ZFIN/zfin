@@ -1,68 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<beans>
-
-    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
-        <property name="definitions">
-            <list>
-                <value>/WEB-INF/conf/tiles-defs-anatomy.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-antibody.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-reno.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-dev-tools.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-framework.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-orthology.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-profile.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-publication.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-webdriver.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-quicksearch.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-marker.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-mapper.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-blast.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-wiki.xml</value>
-                <value>/WEB-INF/conf/tiles-defs-feature.xml</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass">
-            <value>org.springframework.web.servlet.view.tiles.TilesView</value>
-        </property>
-    </bean>
-
-    <!--
-    <bean id="log4jInterceptor" class="org.zfin.framework.AutomaticMethodLogging"/>
-
-    <bean id="log4jProxyCreator" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target">
-            <ref bean="anatomySearch" />
-        </property>
-        <property name="interceptorNames">
-            <value>log4jInterceptor</value>
-        </property>
-    </bean>
--->
-
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="java.lang.Exception">error-page</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="zfin-messages"/>
-    </bean>
-
-    <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
-        <property name="mailHost" value="mailhost.cs.uoregon.edu&quot;"/>
-        <property name="mailSender">
-            <bean id="mailSenderImpl" class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
-        </property>
-    </bean>
-
+    <import resource="applicationContext.xml"/>
+    <import resource="conf/quartz-jobs.xml"/>
+    <import resource="conf/mvc.xml"/>
+    <import resource="conf/tiles.xml"/>
 
 </beans>

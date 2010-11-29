@@ -19,10 +19,10 @@
             </span>
         </td>
         <td class="titlebar" align="right">
-            <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:put name="subjectName" value="Anatomical Ontology Browser"/>
-                <tiles:put name="subjectID" value=""/>
-            </tiles:insert>
+            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                <tiles:putAttribute name="subjectName" value="Anatomical Ontology Browser"/>
+                <tiles:putAttribute name="subjectID" value=""/>
+            </tiles:insertTemplate>
         </td>
     </tr>
 </table>
@@ -64,7 +64,7 @@
                             <form:select path="stage.zdbID" onchange="document.formBean.action.value='term-by-stage-search';
                                                             document.formBean.submit();" id="stages" htmlEscape="false">
                                 <form:option value="" label="Select a Stage"/>
-                                <form:options items="${formBean.displayStages}" itemLabel="key" itemValue="value"/>
+                                <form:options items="${formBean.displayStages}" />
                             </form:select>
                         </TD>
                     </TR>
@@ -90,8 +90,7 @@
             <TABLE width="98%" class="">
                 <TR>
                     <TD>
-                        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false">
-                        </tiles:insert>
+                        <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false"/>
                     </TD>
                 </TR>
             </TABLE>
@@ -105,8 +104,7 @@
                     <TD>
                         All Anatomical Terms in alphabetical order:
                         <HR width=500 size=1 noshade align=left>
-                        <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false">
-                        </tiles:insert>
+                        <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false"/>
                     </TD>
                 </TR>
             </TABLE>
@@ -142,8 +140,7 @@
             </tr>
             <TR>
                 <TD>
-                    <tiles:insert page="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false">
-                    </tiles:insert>
+                    <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false"/>
                 </TD>
             </TR>
         </TABLE>

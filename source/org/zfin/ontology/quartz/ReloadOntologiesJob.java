@@ -1,13 +1,11 @@
 package org.zfin.ontology.quartz;
 
 import org.apache.log4j.Logger;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.properties.ZfinProperties;

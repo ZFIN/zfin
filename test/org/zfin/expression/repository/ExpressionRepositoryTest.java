@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
@@ -246,5 +247,38 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(genox);
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void getAnatomyForMarker(){
+
+        String zdbID = "ZDB-GENE-980526-333" ;
+        String sql = "SELECT distinct anatitem_zdb_id, anatitem_name_order " +
+                "FROM " +
+                "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item " +
+                "WHERE " +
+                "xpatex_gene_zdb_id = :zdbID " +
+                "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                "AND xpatres_expression_found= :expressionFound " +
+                "AND xpatres_superterm_zdb_id = term_zdb_id " +
+                "AND term_ont_id = anatitem_obo_id " +
+                "AND xpatex_genox_zdb_id = genox_zdb_id " +
+                "AND exp_zdb_id = genox_exp_zdb_id and exp_name = :experiment  " +
+                "AND geno_zdb_id  = genox_geno_zdb_id " +
+                "AND geno_is_wildtype = :wildType " +
+                "ORDER BY anatitem_name_order asc"  ;
+        List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("zdbID",zdbID)
+                .setParameter("experiment","_Standard")
+                .setBoolean("expressionFound",true)
+                .setBoolean("wildType",true)
+                .list() ;
+        List<AnatomyItem> anatomyItems = expRep.getAnatomyForMarker(zdbID) ;
+        assertEquals(termZdbIds.size(),anatomyItems.size());
+
+        for(int i = 0 ; i < termZdbIds.size() ; i++){
+            assertEquals(termZdbIds.get(i)[0],anatomyItems.get(i).getZdbID());
+        }
+
+    }
 
 }

@@ -137,13 +137,13 @@
     </tr>
     <tr class="search-result-table-header">
         <td colspan="2" class="sectionTitle">HTTP Header Information</td></tr>
-    <c:forEach var="item" items="${form}">
+    <c:forEach var="session" items="${form}">
         <tr>
             <td class="listContentBold">
-                <c:out value='${item.key}'/>
+                <c:out value='${session.key}'/>
             </td>
             <td class="listContent">
-                <c:out value='${item.value}'/>
+                <c:out value='${session.value}'/>
             </td>
         </tr>
     </c:forEach>

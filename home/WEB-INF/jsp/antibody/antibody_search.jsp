@@ -27,10 +27,10 @@ function start_tips() {
                     &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>                   
                 </td>
                 <td align="right" class="titlebar">
-                    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                        <tiles:put name="subjectName" value="Antibody search"/>
-                        <tiles:put name="subjectID" value=""/>
-                    </tiles:insert>
+                    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                        <tiles:putAttribute name="subjectName" value="Antibody search"/>
+                        <tiles:putAttribute name="subjectID" value=""/>
+                    </tiles:insertTemplate>
                 </td>
             </tr>
         </table>
@@ -59,10 +59,10 @@ function start_tips() {
                     </c:if>
                 </td>
                 <td align="right" width="80">
-                    <tiles:insert page="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                        <tiles:put name="subjectName" value="Antibody search"/>
-                        <tiles:put name="subjectID" value=""/>
-                    </tiles:insert>
+                    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                        <tiles:putAttribute name="subjectName" value="Antibody search"/>
+                        <tiles:putAttribute name="subjectID" value=""/>
+                    </tiles:insertTemplate>
                 </td>
             </tr>
             <tr>
@@ -264,12 +264,12 @@ function start_tips() {
         <td align="left">
             <b>Between stages:</b><br/>
             <form:select path="antibodyCriteria.startStage.zdbID" id="startStage">
-                <form:options items="${formBean.displayStages}" itemLabel="key" itemValue="value"/>
+                <form:options items="${formBean.displayStages}" />
             </form:select>
             &nbsp;<b>&</b>
             <br/>
             <form:select path="antibodyCriteria.endStage.zdbID" id="endStage">
-                <form:options items="${formBean.displayStages}" itemLabel="key" itemValue="value"/>
+                <form:options items="${formBean.displayStages}" />
             </form:select>
             <br/>
 
@@ -301,19 +301,20 @@ function start_tips() {
                     </td>
                     <td>
                         <form:select path="antibodyCriteria.assay" multiple="single">
-                            <form:options items="${formBean.assayList}" itemLabel="value" itemValue="key"/>
+                            <%--<form:options items="${formBean.assayList}" itemLabel="value" itemValue="key"/>--%>
+                            <form:options items="${formBean.assayList}" />
                         </form:select>
                     </td>
                 </tr>
             </table>
         </td>
         <td align="left">
-            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.MONOCLONAL.getName()%>"/>
+            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.MONOCLONAL.getValue()%>"/>
             <label for="antibodyCriteria.clonalType1">Monoclonal</label>
             &nbsp; <br/>
-            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.POLYCLONAL.getName()%>"/>
+            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.POLYCLONAL.getValue()%>"/>
             <label for="antibodyCriteria.clonalType2">Polyclonal </label> &nbsp;<br/>
-            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.ANY.getName()%>"/>
+            <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.ANY.getValue()%>"/>
             <label for="antibodyCriteria.clonalType3">Both</label>
             Types
         </td>

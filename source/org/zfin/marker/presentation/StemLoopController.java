@@ -50,7 +50,7 @@ public class StemLoopController extends AbstractController {
             sequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, referenceDatabase);
         }
 
-        ModelAndView modelAndView = new ModelAndView("stemloop-sequence.page", LookupStrings.FORM_BEAN, sequences);
+        ModelAndView modelAndView = new ModelAndView("marker/stemloop-sequence.insert", LookupStrings.FORM_BEAN, sequences);
         return modelAndView;
     }
 }

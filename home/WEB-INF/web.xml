@@ -15,24 +15,8 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/conf/properties.xml,
-            /WEB-INF/conf/anatomy.xml,
-            /WEB-INF/conf/antibody.xml,
-            /WEB-INF/conf/reno.xml,
-            /WEB-INF/conf/developer-tools.xml,
-            /WEB-INF/conf/framework.xml,
-            /WEB-INF/conf/marker.xml,
-            /WEB-INF/conf/blast.xml,
-            /WEB-INF/conf/orthology.xml,
-            /WEB-INF/conf/person.xml,
-            /WEB-INF/conf/quicksearch.xml,
-            /WEB-INF/conf/publication.xml,
-            /WEB-INF/conf/webdriver.xml,
-            /WEB-INF/conf/mapper.xml,
-            /WEB-INF/conf/feature.xml,
-            /WEB-INF/conf/wiki.xml,
-            /WEB-INF/conf/quartz-jobs.xml,
-            /WEB-INF/conf/applicationContext-acegi-security.xml
+            /WEB-INF/applicationContext.xml
+            /WEB-INF/conf/security.xml
         </param-value>
     </context-param>
 
@@ -41,35 +25,6 @@
         <filter-class>com.opensymphony.clickstream.ClickstreamFilter</filter-class>
     </filter>
 
-    <!-- This filter is a generic filter for Acegi Security system. Configure filters pertaining to
-         the security within the WEB-INF/applicationContext-acegi-security.xml file -->
-    <filter>
-        <filter-name>Acegi Filter Chain Proxy</filter-name>
-        <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
-        <init-param>
-            <param-name>targetBean</param-name>
-            <param-value>filterChainProxy</param-value>
-        </init-param>
-    </filter>
-
-    <!--
-        <filter>
-            <filter-name>Check Database Updates</filter-name>
-            <filter-class>org.zfin.framework.filter.UpdatesCheckFilter</filter-class>
-        </filter>
-
-    -->
-    <!-- Filter to cleanup the HTML response before it is sent out to the client -->
-    <!--
-        <filter>
-            <filter-name>HTML Cleanup</filter-name>
-            <filter-class>org.zfin.framework.filter.HtmlCleanupFilter</filter-class>
-            <init-param>
-                <param-name>targetClass</param-name>
-                <param-value>org.acegisecurity.securechannel.ChannelProcessingFilter</param-value>
-            </init-param>
-        </filter>
-    -->
 
     <filter>
         <description>Final Hibernate session closure. This filter has to be the last one entry in this
@@ -80,8 +35,19 @@
         <filter-class>org.zfin.database.HibernateSessionRequestFilter</filter-class>
     </filter>
 
+    <!--this forces it to use the default security bean in security.xml springSecurityFilterChain-->
+    <filter>
+        <filter-name>springSecurity</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>springSecurityFilterChain</param-value>
+        </init-param>
+    </filter>
+
+
     <filter-mapping>
-        <filter-name>Acegi Filter Chain Proxy</filter-name>
+        <filter-name>springSecurity</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
@@ -103,14 +69,8 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <!-- Track each session creation and removal -->
     <listener>
-        <listener-class>org.zfin.framework.ZfinSessionListener</listener-class>
-    </listener>
-
-    <!-- Used by Acegi concurrent session Handling component -->
-    <listener>
-        <listener-class>org.acegisecurity.ui.session.HttpSessionEventPublisher</listener-class>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
 
     <listener>
@@ -124,12 +84,12 @@
     <!--
         Generic class that proxies filters and thus allows to have spring manage the actual filter classes
     -->
-    <!--
-        <filter>
-            <filter-name>myFilter</filter-name>
-            <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        </filter>
-    -->
+
+    <servlet>
+        <servlet-name>zfinapp</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
     <servlet>
         <servlet-name>zfin</servlet-name>
@@ -154,22 +114,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <!-- Standard Action Servlet Mapping -->
-
-    <servlet>
-        <servlet-name>ZFIN Session Manager</servlet-name>
-        <servlet-class>org.zfin.framework.SessionManagerServlet</servlet-class>
-        <init-param>
-            <description>Number of minutes this thread is checking for stale sessions.</description>
-            <param-name>process delay time</param-name>
-            <param-value>1</param-value>
-        </init-param>
-        <init-param>
-            <description>Number of minutes after which a guest session is invalidated.</description>
-            <param-name>guest session timeout</param-name>
-            <param-value>5</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
 
     <servlet>
         <servlet-name>ZFIN Ontology Manager</servlet-name>
@@ -313,13 +257,28 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/webservice/*</url-pattern>
+    </servlet-mapping>
+
+    <!--if we want to put additional stuff in, this is where we would put them-->
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/webapp/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>zfin</servlet-name>
         <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
 
     <!-- time in minutes after which an idle user session is invalidated -->
+    <!--this will invalidate guest sessions-->
+    <!--other sessions are validated via IP and the remember_me token and are valid for 4 days
+     or the time in ZFIN_LOGIN_SECONDS -->
     <session-config>
-        <session-timeout>720</session-timeout>
+        <!--<session-timeout>720</session-timeout>-->
+        <session-timeout>30</session-timeout>
     </session-config>
 
     <!-- The Usual Welcome File List -->
