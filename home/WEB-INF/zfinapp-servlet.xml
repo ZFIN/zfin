@@ -8,13 +8,13 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-    <import resource="applicationContext.xml"/>
+    <import resource="spring/applicationContext.xml"/>
 
     <context:component-scan base-package="org.zfin.people.repository"/>
 
     <!--the rest of this could get moved into its own webapp file-->
 
-    <import resource="mvc-webapp.xml"/>
+    <import resource="spring/mvc-webapp.xml"/>
     <import resource="spring/tiles.xml"/>
 
 
