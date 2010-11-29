@@ -4,8 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="applicationContext.xml"/>
-    <import resource="conf/quartz-jobs.xml"/>
-    <import resource="conf/mvc.xml"/>
-    <import resource="conf/tiles.xml"/>
+    <import resource="spring/quartz-jobs.xml"/>
+    <import resource="spring/mvc.xml"/>
+    <import resource="spring/tiles.xml"/>
 
 </beans>

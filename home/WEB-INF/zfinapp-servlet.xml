@@ -15,7 +15,7 @@
     <!--the rest of this could get moved into its own webapp file-->
 
     <import resource="mvc-webapp.xml"/>
-    <import resource="conf/tiles.xml"/>
+    <import resource="spring/tiles.xml"/>
 
 
 </beans>

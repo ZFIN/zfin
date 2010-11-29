@@ -6,7 +6,7 @@
     <!--This is the base context file required by everything we run that is spring.-->
     <!--This will include beans and properties common to both test, deployment, and standalone operations.-->
 
-    <import resource="conf/properties.xml"/>
+    <import resource="spring/properties.xml"/>
 
     <!--put hibernate, etc. in here-->
     

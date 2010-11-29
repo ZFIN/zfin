@@ -102,7 +102,7 @@
         <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/view-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root')" requires-channel="http"/>
-        <security:intercept-url pattern="/**/dev-tools/**" access="hasRole('root')" requires-channel="http"/>
+        <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root')" requires-channel="http"/>
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root')" />
         <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
         <security:intercept-url pattern="/action/login-redirect" requires-channel="https"/>
