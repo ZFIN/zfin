@@ -138,7 +138,7 @@
 
 
     <target name="do"
-            depends="cleanClasses, construct-ncbi-dtd-classes,create-site-search-categories-classes, compile, prepare-properties"
+            depends="cleanClasses, compile, prepare-properties"
             description="Everything to compile excluding jsp files. No copying into target directory"/>
 
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
@@ -381,33 +381,6 @@
             <arg value="-checkSchema"/>
             <classpath refid="extended.classpath"/>
         </java>
-    </target>
-
-    <taskdef name="xjc"
-             classname="com.sun.tools.xjc.XJCTask"
-             classpathref="extended.classpath"
-             description="Task to generate java source based on Java Binding definitions and an xsd file"
-            >
-    </taskdef>
-
-    <target name="construct-ncbi-dtd-classes" description="Run xjc to generate Java files for parsing blast results">
-        <echo message="Generating NCBI blast result source files ..."/>
-        <echo message="${web.conf}"/>
-        <xjc schema="${web.conf}/NCBI_BlastOutput.dtd" binding="${web.conf}/blast-output.xjb" target="source"
-             package="org.zfin.sequence.blast.results">
-            <arg value="-dtd"/>
-            <produces dir="source" includes="org.zfin.sequence.blast.results/*.java"/>
-        </xjc>
-    </target>
-
-    <target name="create-site-search-categories-classes" description="Run xsd to generate Java files for DX jobs">
-        <echo message="Generating Site Search Categories source files ..."/>
-        <echo message="${web.conf}"/>
-        <xjc schema="${web.conf}/site-search-categories.xsd" binding="${web.conf}/site-search-categories.xjb"
-             target="source"
-             package="org.zfin.uniquery.categories">
-            <produces dir="source" includes="org.zfin.uniquery.categories/*.java"/>
-        </xjc>
     </target>
 
     <target name="prepare-properties" description="Copy jaxb properties into class hierarchy">

@@ -19,7 +19,7 @@ public class BlastOutputHitComparator implements Comparator<Hit> {
         int highScore = 0 ;
         List<Hsp> hsps1 = hit.getHitHsps().getHsp() ;
         for(Hsp hsp : hsps1){
-            int score = Integer.parseInt(hsp.getHspScore().getContent()) ;
+            int score = Integer.parseInt(hsp.getHspScore()) ;
             if(score >highScore){
                 highScore = score ;
             }

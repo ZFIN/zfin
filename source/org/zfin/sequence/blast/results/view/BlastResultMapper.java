@@ -66,77 +66,77 @@ public class BlastResultMapper {
         XMLBlastBean inputBlastBean = new XMLBlastBean();
         blastResultBean.setXmlBlastBean(inputBlastBean);
 
-        inputBlastBean.setProgram(blastOutput.getBlastOutputProgram().getContent());
-        blastResultBean.setQueryLength(Integer.parseInt(blastOutput.getBlastOutputQueryLen().getContent()));
+        inputBlastBean.setProgram(blastOutput.getBlastOutputProgram());
+        blastResultBean.setQueryLength(Integer.parseInt(blastOutput.getBlastOutputQueryLen()));
         String queryDefLine = "";
-        if (StringUtils.isNotEmpty(blastOutput.getBlastOutputQueryID().getContent())) {
-            queryDefLine += blastOutput.getBlastOutputQueryID().getContent();
+        if (StringUtils.isNotEmpty(blastOutput.getBlastOutputQueryID())) {
+            queryDefLine += blastOutput.getBlastOutputQueryID();
         }
 
-        if (StringUtils.isNotEmpty(blastOutput.getBlastOutputQueryDef().getContent())) {
+        if (StringUtils.isNotEmpty(blastOutput.getBlastOutputQueryDef())) {
             queryDefLine += " ";
-            queryDefLine += blastOutput.getBlastOutputQueryDef().getContent();
+            queryDefLine += blastOutput.getBlastOutputQueryDef();
         }
         blastResultBean.setDefLine(queryDefLine);
 
         Parameters blastParameters = blastOutput.getBlastOutputParam().getParameters();
         if (blastParameters.getParametersFilter() != null) {
-            String filterString = blastParameters.getParametersFilter().getContent();
+            String filterString = blastParameters.getParametersFilter();
             blastResultBean.setFilter(filterString);
             inputBlastBean.setDust(filterString.contains(BlastService.FILTER_DUST));
             inputBlastBean.setSeg(filterString.contains(BlastService.FILTER_SEG));
             inputBlastBean.setXnu(filterString.contains(BlastService.FILTER_XNU));
         }
 
-        inputBlastBean.setExpectValue(Double.parseDouble(blastParameters.getParametersExpect().getContent()));
+        inputBlastBean.setExpectValue(Double.parseDouble(blastParameters.getParametersExpect()));
 
         if (blastParameters.getParametersMatrix() != null) {
-            inputBlastBean.setMatrix(blastParameters.getParametersMatrix().getContent());
+            inputBlastBean.setMatrix(blastParameters.getParametersMatrix());
         }
 
 
         if (blastOutput.getZFINParameters().getWordLength() != null) {
-            inputBlastBean.setWordLength(Integer.parseInt(blastOutput.getZFINParameters().getWordLength().getContent()));
+            inputBlastBean.setWordLength(Integer.parseInt(blastOutput.getZFINParameters().getWordLength()));
         }
         if (blastOutput.getZFINParameters().getSubSequenceFrom() != null) {
-            inputBlastBean.setQueryFrom(Integer.parseInt(blastOutput.getZFINParameters().getSubSequenceFrom().getContent()));
+            inputBlastBean.setQueryFrom(Integer.parseInt(blastOutput.getZFINParameters().getSubSequenceFrom()));
         }
 
         if (blastOutput.getZFINParameters().getSubSequenceTo() != null) {
-            inputBlastBean.setQueryTo(Integer.parseInt(blastOutput.getZFINParameters().getSubSequenceTo().getContent()));
+            inputBlastBean.setQueryTo(Integer.parseInt(blastOutput.getZFINParameters().getSubSequenceTo()));
         }
 
         if (blastOutput.getZFINParameters().getQueryType() != null) {
-            inputBlastBean.setQueryType(blastOutput.getZFINParameters().getQueryType().getContent());
+            inputBlastBean.setQueryType(blastOutput.getZFINParameters().getQueryType());
         }
 
         if (blastOutput.getZFINParameters().getDataLibrary() != null) {
-            inputBlastBean.setDataLibraryString(blastOutput.getZFINParameters().getDataLibrary().getContent());
+            inputBlastBean.setDataLibraryString(blastOutput.getZFINParameters().getDataLibrary());
         }
 
         if (blastOutput.getZFINParameters().getSequenceFASTA() != null) {
-            inputBlastBean.setQuerySequence(blastOutput.getZFINParameters().getSequenceFASTA().getContent());
+            inputBlastBean.setQuerySequence(blastOutput.getZFINParameters().getSequenceFASTA());
         }
 
         if (blastOutput.getZFINParameters().getSequenceID() != null) {
-            inputBlastBean.setSequenceID(blastOutput.getZFINParameters().getSequenceID().getContent());
+            inputBlastBean.setSequenceID(blastOutput.getZFINParameters().getSequenceID());
         }
 
         if (blastOutput.getZFINParameters().getSequenceFile() != null) {
-            inputBlastBean.setSequenceFile(blastOutput.getZFINParameters().getSequenceFile().getContent());
+            inputBlastBean.setSequenceFile(blastOutput.getZFINParameters().getSequenceFile());
         }
 
         if (blastOutput.getZFINParameters().getPolyAFilter() != null) {
-            inputBlastBean.setPoly_a(Integer.parseInt(blastOutput.getZFINParameters().getPolyAFilter().getContent()) > 0);
+            inputBlastBean.setPoly_a(Integer.parseInt(blastOutput.getZFINParameters().getPolyAFilter()) > 0);
         }
 
 
         List<String> otherTickets = new ArrayList<String>();
         if (blastOutput.getZFINParameters().getOtherTickets() != null) {
-            List<Ticket> tickets = (List<Ticket>) blastOutput.getZFINParameters().getOtherTickets().getTicket();
+            List<Ticket> tickets = blastOutput.getZFINParameters().getOtherTickets().getTicket();
             if (CollectionUtils.isNotEmpty(tickets)) {
                 for (Ticket ticket : tickets) {
-                    otherTickets.add(ticket.getContent());
+                    otherTickets.add(ticket.getvalue());
                 }
             }
         }
@@ -145,18 +145,18 @@ public class BlastResultMapper {
         // because we no longer have the original request, we need to see what the common public database request is
         // if not root
         Set<Database> databases = new HashSet<Database>();
-//        StringTokenizer databaseStringTokens  = new StringTokenizer(blastOutput.getBlastOutputDb().getContent()," ") ;
+//        StringTokenizer databaseStringTokens  = new StringTokenizer(blastOutput.getBlastOutputDb()," ") ;
         boolean isRoot = Person.isCurrentSecurityUserRoot();
 
         logger.debug("is root: " + isRoot);
         int numberOfSequences = 0;
         if (blastOutput.getZFINParameters().getTargetDatabases() != null) {
-            List<TargetDatabase> otherDatabasesFromQuery = (List<TargetDatabase>) blastOutput.getZFINParameters().getTargetDatabases().getTargetDatabase();
+            List<TargetDatabase> otherDatabasesFromQuery =  blastOutput.getZFINParameters().getTargetDatabases().getTargetDatabase();
             if (CollectionUtils.isNotEmpty(otherDatabasesFromQuery)) {
                 logger.debug("number of databii: " + otherDatabasesFromQuery.size());
                 for (TargetDatabase targetDatabase : otherDatabasesFromQuery) {
 //        while(databaseStringTokens.hasMoreTokens()){
-                    String databaseString = targetDatabase.getContent();
+                    String databaseString = targetDatabase.getvalue();
                     String databaseAbbrevString = databaseString.substring(databaseString.lastIndexOf("/") + 1);
                     logger.debug("get database abbrev sring: " + databaseAbbrevString);
                     Database database = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.getType(databaseAbbrevString.trim()));
@@ -190,7 +190,7 @@ public class BlastResultMapper {
 
 
         // set the query length
-        blastResultBean.setQueryLength(Integer.parseInt(blastOutput.getBlastOutputQueryLen().getContent()));
+        blastResultBean.setQueryLength(Integer.parseInt(blastOutput.getBlastOutputQueryLen()));
 
 
         // process hits
@@ -372,9 +372,9 @@ public class BlastResultMapper {
             Hit hit = iter.next();
             HitViewBean hitViewBean = new HitViewBean();
 
-            hitViewBean.setId(hit.getHitId().getContent());
+            hitViewBean.setId(hit.getHitId());
             // - get the hit accession ID
-            String hitAccession = hit.getHitAccession().getContent();
+            String hitAccession = hit.getHitAccession();
             // now that we have the accessionID set, we can write the contains method
             if (false == hitViewBeans.containsKey(hitAccession)) {
 
@@ -386,10 +386,10 @@ public class BlastResultMapper {
                 hitViewBean.setAccessionNumber(hitAccession);
 
                 // set scores
-                hitViewBean.setHitLength(Integer.parseInt(hit.getHitLen().getContent()));
-                hitViewBean.setHitNumber(Integer.parseInt(hit.getHitNum().getContent()));
+                hitViewBean.setHitLength(Integer.parseInt(hit.getHitLen()));
+                hitViewBean.setHitNumber(Integer.parseInt(hit.getHitNum()));
                 hitViewBean.setNValue(hit.getHitHsps().getHsp().size());
-                hitViewBean.setDefinition(hit.getHitDef().getContent());
+                hitViewBean.setDefinition(hit.getHitDef());
 
 
                 // handle the detailed alignments here
@@ -399,25 +399,25 @@ public class BlastResultMapper {
                 int highScore = Integer.MIN_VALUE;
                 for (Hsp hsp : hsps) {
                     HighScoringPair highScoringPair = new HighScoringPair();
-                    highScoringPair.setHspNumber(Integer.parseInt(hsp.getHspNum().getContent()));
-                    highScoringPair.setQueryStrand(hsp.getHspQseq().getContent());
+                    highScoringPair.setHspNumber(Integer.parseInt(hsp.getHspNum()));
+                    highScoringPair.setQueryStrand(hsp.getHspQseq());
                     if(hsp.getHspMidline()!=null){
-                        highScoringPair.setMidlineStrand(hsp.getHspMidline().getContent());
+                        highScoringPair.setMidlineStrand(hsp.getHspMidline());
                     }
-                    highScoringPair.setHitStrand(hsp.getHspHseq().getContent());
-                    highScoringPair.setQueryFrom(Integer.parseInt(hsp.getHspQueryFrom().getContent()));
-                    highScoringPair.setQueryTo(Integer.parseInt(hsp.getHspQueryTo().getContent()));
-                    highScoringPair.setHitFrom(Integer.parseInt(hsp.getHspHitFrom().getContent()));
-                    highScoringPair.setHitTo(Integer.parseInt(hsp.getHspHitTo().getContent()));
-                    highScoringPair.setBitScore(Float.parseFloat(hsp.getHspBitScore().getContent()));
-                    highScoringPair.setScore(Integer.parseInt(hsp.getHspScore().getContent()));
-                    highScoringPair.setEValue(Float.parseFloat(hsp.getHspEvalue().getContent()));
+                    highScoringPair.setHitStrand(hsp.getHspHseq());
+                    highScoringPair.setQueryFrom(Integer.parseInt(hsp.getHspQueryFrom()));
+                    highScoringPair.setQueryTo(Integer.parseInt(hsp.getHspQueryTo()));
+                    highScoringPair.setHitFrom(Integer.parseInt(hsp.getHspHitFrom()));
+                    highScoringPair.setHitTo(Integer.parseInt(hsp.getHspHitTo()));
+                    highScoringPair.setBitScore(Float.parseFloat(hsp.getHspBitScore()));
+                    highScoringPair.setScore(Integer.parseInt(hsp.getHspScore()));
+                    highScoringPair.setEValue(Float.parseFloat(hsp.getHspEvalue()));
                     if(hsp.getHspAlignLen()!=null){
-                        highScoringPair.setAlignmentLength(Integer.parseInt(hsp.getHspAlignLen().getContent()));
+                        highScoringPair.setAlignmentLength(Integer.parseInt(hsp.getHspAlignLen()));
                     }
-                    highScoringPair.setIdentity(Integer.parseInt(hsp.getHspIdentity().getContent()));
+                    highScoringPair.setIdentity(Integer.parseInt(hsp.getHspIdentity()));
                     if(hsp.getHspPositive()!=null){
-                        highScoringPair.setPositive(Integer.parseInt(hsp.getHspPositive().getContent()));
+                        highScoringPair.setPositive(Integer.parseInt(hsp.getHspPositive()));
                     }
 
                     // set hits as those with max hsp score

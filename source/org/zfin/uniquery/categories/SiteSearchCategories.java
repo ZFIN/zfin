@@ -72,7 +72,6 @@ public final class SiteSearchCategories {
 
             // create an Unmarshaller
             Unmarshaller u = jc.createUnmarshaller();
-            u.setValidating(true);
             if (props != null) {
                 LOG.warn("Called more than once");
                 //ToDO: find out why on the server (embryonix this is called twice)
@@ -111,20 +110,21 @@ public final class SiteSearchCategories {
         checkValidProperties();
         List<SearchCategory> categories = new ArrayList<SearchCategory>();
         @SuppressWarnings("unchecked")
-        List<CategoryType> list = props.getCategory();
-        for (CategoryType category : list) {
+        List<Category> list = props.getCategory();
+        for (Category category : list) {
             @SuppressWarnings("unchecked")
-            List<UrlMappingType.UrlPattern> urls = (List<UrlMappingType.UrlPattern>) category.getUrlMapping().getUrlPattern();
+            List<UrlPatternType> urls = category.getUrlMapping().getUrlPattern();
             List<org.zfin.uniquery.UrlPattern> patterns = new ArrayList<org.zfin.uniquery.UrlPattern>();
-            for (UrlMappingType.UrlPattern patternInternal : urls) {
+            for (UrlPatternType patternInternal : urls) {
                 UrlPattern pattern = new UrlPattern();
-                UrlPatternType urlPattern = patternInternal.getUrlPattern();
-                pattern.setPattern(urlPattern.getValue());
-                pattern.setType(urlPattern.getType());
-                if (urlPattern.getBoostValue() != null)
-                    pattern.setBoostValue(urlPattern.getBoostValue().abs().intValue());
-                if (urlPattern.getTitlePrefix() != null)
-                    pattern.setTitlePrefix(urlPattern.getTitlePrefix());
+                pattern.setPattern(patternInternal.getValue());
+                pattern.setType(patternInternal.getType());
+                if (patternInternal.getBoostValue() != null){
+                    pattern.setBoostValue(patternInternal.getBoostValue().abs().intValue());
+                }
+                if (patternInternal.getTitlePrefix() != null){
+                    pattern.setTitlePrefix(patternInternal.getTitlePrefix());
+                }
                 patterns.add(pattern);
             }
             SearchCategory cat = new SearchCategory(category.getID(), category.getDisplayName(), patterns);
@@ -164,14 +164,14 @@ public final class SiteSearchCategories {
         checkValidProperties();
         List<SearchCategory> categories = new ArrayList<SearchCategory>();
         @SuppressWarnings("unchecked")
-        List<CategoryType> list = props.getCategory();
-        for (CategoryType category : list) {
+        List<Category> list = props.getCategory();
+        for (Category category : list) {
             @SuppressWarnings("unchecked")
-            List<UrlMappingType.UrlPattern> urls = (List<UrlMappingType.UrlPattern>) category.getUrlMapping().getUrlPattern();
+            List<UrlPatternType> urls = category.getUrlMapping().getUrlPattern();
             List<org.zfin.uniquery.UrlPattern> patterns = new ArrayList<org.zfin.uniquery.UrlPattern>();
-            for (UrlMappingType.UrlPattern patternInternal : urls) {
+            for (UrlPatternType patternInternal : urls) {
                 UrlPattern pattern = new UrlPattern();
-                String urlPatternString = patternInternal.getUrlPattern().getValue();
+                String urlPatternString = patternInternal.getValue();
                 if (urlPatternString != null) {
                     Pattern regExpPattern = Pattern.compile("\\$\\{\\w*\\}");
                     Matcher matcher = regExpPattern.matcher(urlPatternString);
@@ -191,11 +191,13 @@ public final class SiteSearchCategories {
                     }
                 }
                 pattern.setPattern(urlPatternString);
-                pattern.setType(patternInternal.getUrlPattern().getType());
-                if (patternInternal.getUrlPattern() != null && patternInternal.getUrlPattern().getBoostValue() != null)
-                    pattern.setBoostValue(patternInternal.getUrlPattern().getBoostValue().abs().intValue());
-                if (patternInternal.getUrlPattern() != null && patternInternal.getUrlPattern().getTitlePrefix() != null)
-                    pattern.setTitlePrefix(patternInternal.getUrlPattern().getTitlePrefix());
+                pattern.setType(patternInternal.getType());
+                if (patternInternal != null && patternInternal.getBoostValue() != null){
+                    pattern.setBoostValue(patternInternal.getBoostValue().abs().intValue());
+                }
+                if (patternInternal != null && patternInternal.getTitlePrefix() != null){
+                    pattern.setTitlePrefix(patternInternal.getTitlePrefix());
+                }
                 patterns.add(pattern);
             }
             String id = category.getID();

@@ -4,9 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.sequence.blast.BlastQueryJob;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.Hit;
-import org.zfin.sequence.blast.results.HitNum;
 import org.zfin.sequence.blast.results.Iteration;
-import org.zfin.sequence.blast.results.impl.HitNumImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,13 +46,13 @@ public class BlastOutputMerger {
         String errorA = null;
         String errorB = null;
         try {
-            errorA = blastOutputA.getZFINParameters().getErrorData().getContent();
+            errorA = blastOutputA.getZFINParameters().getErrorData();
         } catch (NullPointerException e) {
             logger.debug("no error for blastA output:" + blastOutputA);
         }
 
         try {
-            errorB = blastOutputB.getZFINParameters().getErrorData().getContent();
+            errorB = blastOutputB.getZFINParameters().getErrorData();
         } catch (NullPointerException e) {
             logger.debug("no error for blastB output:" + blastOutputB);
         }
@@ -116,12 +114,10 @@ public class BlastOutputMerger {
         if (blastOutput == null) return null;
 
         try {
-            List<Hit> hits = ((List<Iteration>) blastOutput.getBlastOutputIterations().getIteration()).get(0).getIterationHits().getHit();
+            List<Hit> hits = (blastOutput.getBlastOutputIterations().getIteration()).get(0).getIterationHits().getHit();
             Collections.sort(hits, new BlastOutputHitComparator());
             for (int hitNumber = 0; hitNumber < hits.size(); hitNumber++) {
-                HitNum hitNum = new HitNumImpl();
-                hitNum.setContent(String.valueOf(hitNumber + 1));
-                hits.get(hitNumber).setHitNum(hitNum);
+                hits.get(hitNumber).setHitNum(String.valueOf(hitNumber + 1));
             }
         } catch (Exception e) {
             logger.error("Failed to sort hits", e);
