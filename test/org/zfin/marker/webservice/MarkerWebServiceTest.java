@@ -141,7 +141,7 @@ public class MarkerWebServiceTest extends AbstractDatabaseTest{
 
     @Test
     public void testGetMarkerListJson(){
-        String url = BASE_URL + "/webservice/marker/search-name/sox1" ;
+        String url = BASE_URL + "/webservice/gene/search/name/sox1" ;
         GeneList geneList = restTemplate.getForObject(url,GeneList.class) ;
         assertTrue(geneList.size()>10) ;
         for(Gene gene: geneList){
