@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
+import org.zfin.marker.webservice.MarkerWebServiceTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 
 /**
@@ -16,6 +17,7 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
         AnatomySmokeTest.class,
         ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
+        MarkerWebServiceTest.class,
         SiteSearchSmokeTest.class
 })
 public class ProductionSmokeTests {
