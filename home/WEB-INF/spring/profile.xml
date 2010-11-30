@@ -19,16 +19,9 @@
 
     <bean name="peopleViewDetail" class="org.zfin.people.presentation.ViewPersonDetailController"/>
 
-<!--
-    <bean name="peopleUpdateAddress" class="org.zfin.people.presentation.AddressController"/>
--->
-
     <bean name="publicationViewDetail" class="org.zfin.publication.presentation.ViewPublicationDetailController"/>
 
-    <bean name="peopleRepository" class="org.zfin.security.repository.HibernateUserRepository"/>
-
     <bean name="editUserBean" class="org.zfin.people.presentation.EditUserPasswordController" >
-        <property name="successView" value="edit-user-password-confirmation.page"/>
         <property name="formView" value="edit-user-password.page"/>
         <property name="commandClass" value="org.zfin.people.presentation.ProfileBean"/>
         <property name="commandName" value="formBean"/>

@@ -62,7 +62,6 @@ public class EditUserPasswordController extends SimpleFormController {
         }
         profileBean.setPerson(person);
         profileBean.setAccountInfo(person.getAccountInfo());
-        setFormView("edit-user-password.page");
         map.put(LookupStrings.FORM_BEAN, profileBean);
         return map;
     }
