@@ -33,19 +33,19 @@
         </exec>
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
-	 
+
 
     <target name="zfinonembryonix-tomcat-start" if="iszfinonembryonix"  description="Starts tomcat if zfin on embryonix">
         <echo message=":Manually START Tomcat:"/>
         <echo>
-        "ssh username@embryonix sudo tomcat.sh start embryonix"
+            "ssh username@embryonix sudo tomcat.sh start embryonix"
         </echo>
     </target>
 
     <target name="zfinonembryonix-tomcat-stop" if="iszfinonembryonix"  description="Stops tomcat if zfin on embryonix">
         <echo message=":Manually STOP Tomcat:"/>
         <echo>
-        "ssh username@embryonix sudo tomcat.sh stop embryonix"
+            "ssh username@embryonix sudo tomcat.sh stop embryonix"
         </echo>
     </target>
 
@@ -71,7 +71,7 @@
 
     <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"  description="Restarts tomcat for the appropriate machine"/>
     <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"  description="Restarts tomcat in debug mode"/>
-    <target name="restart" depends="tomcat-restart"  description="Restarts tomcat for the appropriate environment"/> 
+    <target name="restart" depends="tomcat-restart"  description="Restarts tomcat for the appropriate environment"/>
     <target name="debug-restart" depends="tomcat-debug-restart"  description="Restarts tomcat in debug mode" />
 
     <!-- an alias to create-mutant-instance with a more explanatory name -->
@@ -141,55 +141,57 @@
         <mkdir dir="${CATALINA_BASE}/temp"/>
     </target>
 
-    <target name="jsp-compile" description="Compiles jsp files using jspc">
-        <delete dir="${pre.jsp-compile}" includes="**/*"/>
-        <mkdir dir="${pre.jsp-compile}"/>
-        <taskdef classname="org.apache.jasper.JspC" name="jasper2">
-            <classpath id="jspc.classpath">
-                <path refid="classpath"/>
-                <pathelement location="${pre-web-inf}"/>
-                <fileset dir="${CATALINA_HOME}/bin">
-                    <include name="*.jar"/>
-                </fileset>
-                <fileset dir="${CATALINA_HOME}/server/lib">
-                    <include name="*.jar"/>
-                </fileset>
-                <fileset dir="${CATALINA_HOME}/common/lib">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-        </taskdef>
-        <jasper2 validateXml="false"
-                 uriroot="${pre-home.target}"
-                 outputDir="${pre.jsp-compile}"
-                 classpath="${jspc.classpath}"
-                 failOnError="false"
-                 verbose="0"
-                 listErrors="true"
-                 compile="false"
-                 compilerSourceVM="1.6"
-                 compilerTargetVM="1.6"
-                />
-        <javac srcdir="${pre.jsp-compile}"
-              destdir="${pre.jsp-compile}"
-              classpathref="jspc.classpath"
-              fork="true"
-              includeAntRuntime="no"
-              memoryMaximumSize="256m"
-              debug="true"
-              target="1.6"/>
-	<echo message=":JSP COMPILE SUCCESSFUL:"/>
-    </target>
+    <macrodef name="jsp-compile" description="Compiles jsp files using jspc">
+        <sequential>
+            <delete dir="${pre.jsp-compile}" includes="**/*"/>
+            <mkdir dir="${pre.jsp-compile}"/>
+            <taskdef classname="org.apache.jasper.JspC" name="jasper2">
+                <classpath id="jspc.classpath">
+                    <path refid="classpath"/>
+                    <pathelement location="${pre-web-inf}"/>
+                    <fileset dir="${CATALINA_HOME}/bin">
+                        <include name="*.jar"/>
+                    </fileset>
+                    <fileset dir="${CATALINA_HOME}/server/lib">
+                        <include name="*.jar"/>
+                    </fileset>
+                    <fileset dir="${CATALINA_HOME}/common/lib">
+                        <include name="*.jar"/>
+                    </fileset>
+                </classpath>
+            </taskdef>
+            <jasper2 validateXml="false"
+                     uriroot="${pre-home.target}"
+                     outputDir="${pre.jsp-compile}"
+                     classpath="${jspc.classpath}"
+                     failOnError="false"
+                     verbose="0"
+                     listErrors="true"
+                     compile="false"
+                     compilerSourceVM="1.6"
+                     compilerTargetVM="1.6"
+                    />
+            <javac srcdir="${pre.jsp-compile}"
+                   destdir="${pre.jsp-compile}"
+                   classpathref="jspc.classpath"
+                   fork="true"
+                   includeAntRuntime="no"
+                   memoryMaximumSize="256m"
+                   debug="true"
+                   target="1.6"/>
+            <echo message=":JSP COMPILE SUCCESSFUL:"/>
+        </sequential>
+    </macrodef>
 
 
     <target name="has-tomcat-symlink">
-       <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
+        <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
         <fail message=":FAIL TOMCAT JSP-COMPILE SYMLINK NOT FOUND:  Try running 'ant create-tomcat-symlink'." unless="has.tomcat.symlink"/>
         <echo message="Link exists"/>
     </target>
 
     <target name="create-tomcat-symlink">
-       <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/> 
+        <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/>
     </target>
 
 </project>

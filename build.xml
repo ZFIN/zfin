@@ -121,19 +121,20 @@
                 <include name="**/*.properties"/>
             </fileset>
         </copy>
+
+        <if>
+            <equals arg1="${hibernate.exists}" arg2="true"/>
+            <then>
+                <echo message="Hibernate configuration file hibernate.properties found"/>
+                <copy file="${conf.dir}/hibernate.properties" tofile="${classbin.dir}/hibernate.properties"
+                      failonerror="false"/>
+            </then>
+        </if>
         <!--
                 <copy file="${conf.dir}/application.properties" todir="${classbin.dir}/resources"/>
         -->
-        <antcall target="copy-hibernate-props"/>
         <copy file="${conf.dir}/views.properties" tofile="${classbin.dir}/views.properties"/>
         <copy file="${conf.dir}/zfin-messages.properties" tofile="${classbin.dir}/zfin-messages.properties"/>
-    </target>
-
-    <target name="copy-hibernate-props" if="hibernate.exists"
-            description="Copy the hiberate.properties file if it exists">
-        <echo message="Hibernate configuration file hibernate.properties found"/>
-        <copy file="${conf.dir}/hibernate.properties" tofile="${classbin.dir}/hibernate.properties"
-              failonerror="false"/>
     </target>
 
 
@@ -317,7 +318,7 @@
     </target>
 
     <target name="cleanTarget" description="Remove target values. ">
-        <removeWebApp location="${home.target}"/>
+        <removeWebAppLocation location="${home.target}"/>
     </target>
 
     <target name="clobber" depends="cleanTarget" description="Remove target values. "/>
@@ -509,13 +510,13 @@
 
     <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
-        <antcall target="copy-indexer-build-file-with-env-variables"/>
-        <antcall target="jsp-compile"/>
+        <copy-indexer-build-file-with-env-variables />
+        <jsp-compile />
     </target>
 
     <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticJavaFile"/>
 
-    <macrodef name="removeWebApp">
+    <macrodef name="removeWebAppLocation">
         <attribute name="location"/>
         <sequential>
             <delete dir="@{location}/css"/>
@@ -539,13 +540,13 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="removeWebApp">
+    <macrodef name="removeWebAppDir">
         <attribute name="dir"/>
         <sequential>
             <echo message="removing webapp from @{dir}" />
             <delete dir="@{dir}"/>
         </sequential>
-	</macrodef>
+    </macrodef>
 
     <macrodef name="copyWebApp">
         <attribute name="from"/>
@@ -592,17 +593,17 @@
 
     <target name="cleandeploy" depends="do"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
-        <removeWebApp dir="${home.target}"/>
+        <removeWebAppDir dir="${home.target}"/>
         <copyWebApp from="${web.dir}" to="${home.target}"/>
 
-        <antcall target="copy-indexer-build-file-with-env-variables"/>
+        <copy-indexer-build-file-with-env-variables />
     </target>
 
     <target name="dirtydeploy" depends="compile"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
 
-        <antcall target="copy-indexer-build-file-with-env-variables"/>
+        <copy-indexer-build-file-with-env-variables />
     </target>
 
 
@@ -611,16 +612,18 @@
         <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
     </target>
 
-    <target name="copy-indexer-build-file-with-env-variables">
-        <copy file="buildfiles/indexer.xml"
-              tofile="${TARGETROOT}/server_apps/quicksearch/build.xml"
-              overwrite="true">
-            <filterset>
-                <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
-                <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
-            </filterset>
-        </copy>
-    </target>
+    <macrodef name="copy-indexer-build-file-with-env-variables">
+        <sequential>
+            <copy file="buildfiles/indexer.xml"
+                  tofile="${TARGETROOT}/server_apps/quicksearch/build.xml"
+                  overwrite="true">
+                <filterset>
+                    <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
+                    <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
+                </filterset>
+            </copy>
+        </sequential>
+    </macrodef>
 
 
     <target name="prepareDeploy" description="Remove existin pre-release folder">

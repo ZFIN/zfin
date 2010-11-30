@@ -181,11 +181,6 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/file-content?fileName=/WEB-INF/conf/security.xml">Security Configuration</a>
-    </td>
-</tr>
-<tr>
-    <td>
         &nbsp;
     </td>
 </tr>
