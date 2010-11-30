@@ -752,10 +752,12 @@ select  xpatres_zdb_id,
        xpatres_xpatex_zdb_id,
        xpatres_start_stg_zdb_id,
        xpatres_end_stg_zdb_id,
-       term_ont_id,
+       superterm.term_ont_id,
+       subterm.term_ont_id,
        xpatres_expression_found
-  from expression_result, term
-  where term_zdb_id = xpatres_superterm_zdb_id
+  from expression_result, term superterm, OUTER term subterm
+  where superterm.term_zdb_id = xpatres_superterm_zdb_id 
+   and  subterm.term_zdb_id = xpatres_subterm_zdb_id
  order by xpatres_xpatex_zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'"
@@ -851,36 +853,23 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'"
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'
  DELIMITER "	"
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, term_ont_id, term_name, start.stg_name, end.stg_name, xpatex_assay_name
-from term, stage as start, stage as end, expression_result, marker
-join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
-join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
-join genotype on geno_zdb_id = genox_geno_zdb_id
-join experiment on exp_zdb_id = genox_exp_zdb_id
-where     geno_is_wildtype = 't'
-      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
-      and xpatres_xpatex_zdb_id = xpatex_zdb_id
-      and xpatres_expression_found = 't'
-      and xpatres_superterm_zdb_id = term_zdb_id
-      and xpatres_start_stg_zdb_id = start.stg_zdb_id
-      and xpatres_end_stg_zdb_id = end.stg_zdb_id
-UNION
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, term_ont_id, term_name, start.stg_name, end.stg_name, xpatex_assay_name
-from term, stage as start, stage as end, expression_result, marker
-join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
-join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
-join genotype on geno_zdb_id = genox_geno_zdb_id
-join experiment on exp_zdb_id = genox_exp_zdb_id
-where     geno_is_wildtype = 't'
-      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
-      and xpatres_xpatex_zdb_id = xpatex_zdb_id
-      and xpatres_expression_found = 't'
-      and xpatres_subterm_zdb_id = term_zdb_id
-      and xpatres_start_stg_zdb_id = start.stg_zdb_id
-      and xpatres_end_stg_zdb_id = end.stg_zdb_id
-      and term_ontology = 'zebrafish_anatomy'
-order by mrkr_zdb_id;
 
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name, 
+startStage.stg_name, endStage.stg_name, xpatex_assay_name
+from marker
+join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
+join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+join genotype on geno_zdb_id = genox_geno_zdb_id
+join experiment on exp_zdb_id = genox_exp_zdb_id
+join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
+join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id 
+join stage endStage on xpatres_end_stg_zdb_id = endStage.stg_zdb_id 
+join term super on xpatres_superterm_zdb_id = super.term_zdb_id
+left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id
+where     geno_is_wildtype = 't'
+      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
+      and xpatres_expression_found = 't'
+order by mrkr_zdb_id;
 
 
 {
