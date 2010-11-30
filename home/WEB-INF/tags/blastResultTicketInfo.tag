@@ -13,15 +13,16 @@
                 <a href="/action/blast/blast?previousSearch=${xmlBlastBean.ticketNumber}">Edit&nbsp;and&nbsp;resubmit</a>
                 </span>
             <br>
-            <c:if test="${!empty xmlBlastBean.blastOutput.ZFINParameters.errorData.content}">
-                <div class="error">${xmlBlastBean.blastOutput.ZFINParameters.errorData.content}</div>
+
+            <c:if test="${!empty xmlBlastBean.blastOutput.ZFINParameters.errorData}">
+                <div class="error">${xmlBlastBean.blastOutput.ZFINParameters.errorData}</div>
             </c:if>
 
             <c:if test="${!empty xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage}">
                 <br>
                 <c:choose>
-                    <c:when test="${ ( fn:contains(xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content, 'EXIT: 13')
-                        || fn:contains(xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content, 'EXIT: 16') ) }">
+                    <c:when test="${ ( fn:contains(xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage, 'EXIT: 13')
+                        || fn:contains(xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage, 'EXIT: 16') ) }">
                         <span style="font-size: small;" class="error-inline">
                             No query sequence was received by blast.
                             Try changing filter parameters.
@@ -30,12 +31,13 @@
                     <c:otherwise>
                         <span style="font-size: small;" class="error-inline">
                             Error message from blast server: <br>
-                       ${xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content}
+                       ${xmlBlastBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage}
                         </span>
                     </c:otherwise>
                 </c:choose>
-                <%--<span style="font-size: small;" class="error-inline">${formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage.content}</span>--%>
+                <%--<span style="font-size: small;" class="error-inline">${formBean.blastOutput.blastOutputIterations.iteration[0].iterationMessage}</span>--%>
             </c:if>
+
         </td>
 
         <td valign="top" width="60%">
