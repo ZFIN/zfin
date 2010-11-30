@@ -11,6 +11,7 @@ import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
+import org.zfin.marker.webservice.MarkerWebServiceTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 
 /**
@@ -26,6 +27,7 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
         GenotypeDetailSmokeTest.class,
         LookupSmokeTest.class,
 //        MarkerViewSmokeTest.class,
+        MarkerWebServiceTest.class,
         MorpholinoAddSmokeTest.class,
         SimpleSmokeTest.class,
         SiteSearchSmokeTest.class
