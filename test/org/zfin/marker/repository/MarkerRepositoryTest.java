@@ -448,9 +448,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         Marker marker = markerRepository.getMarkerByAbbreviation("fgf8a");
         assertNotNull(marker);
-        List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup("gfp", Marker.TypeGroup.GENEDOM_AND_EFG);
+        List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup("pax6", Marker.TypeGroup.GENEDOM_AND_EFG);
         assertNotNull(markers);
         assertTrue(markers.size()>0);
+        for(Marker thisMarker: markers){
+            assertTrue(thisMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG));
+        }
     }
 
 
