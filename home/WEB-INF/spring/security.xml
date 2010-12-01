@@ -96,7 +96,7 @@
         <security:intercept-url pattern="/action/reno/*" access="hasRole('root')" />
         <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root')" />
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root')" />
-        <security:intercept-url pattern="/action/people/edit-user" access="hasAnyRole('root','submit')" requires-channel="https"/>
+        <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit')" requires-channel="https"/>
         <security:intercept-url pattern="/action/webdriver/secure/*" access="hasAnyRole('root','submit')" />
         <security:intercept-url pattern="/action/antibody/create" access="hasRole('root')" />
         <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />

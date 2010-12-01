@@ -37,11 +37,13 @@
 <!--|LOCUS_REGISTRATION_EMAIL|-->	staylor\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
 <!--|NOMEN_COORDINATOR|-->	staylor\@cs.uoregon.edu
+<!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	staylor\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	staylor\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/hoover
+<!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SQLHOSTS_FILE|-->	sqlhosts

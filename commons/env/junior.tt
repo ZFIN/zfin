@@ -37,11 +37,13 @@
 <!--|LOCUS_REGISTRATION_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
 <!--|NOMEN_COORDINATOR|-->	cmpich\@cs.uoregon.edu
+<!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/junior
+<!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SQLHOSTS_FILE|-->	sqlhosts

@@ -37,11 +37,13 @@
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
 <!--|MACHINE_NAME|-->	helix
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
+<!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu bjruef\@uoneuro.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zprod/www_homes/zfin.org
+<!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SQLHOSTS_FILE|-->	sqlhosts

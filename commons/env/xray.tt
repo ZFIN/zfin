@@ -37,11 +37,13 @@
 <!--|LOCUS_REGISTRATION_EMAIL|-->	tomc\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
 <!--|NOMEN_COORDINATOR|-->	tomc\@cs.uoregon.edu
+<!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	tomc\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	tomc\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/xray
+<!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SQLHOSTS_FILE|-->	sqlhosts
