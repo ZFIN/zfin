@@ -1,6 +1,7 @@
 package org.zfin.antibody.repository;
 
 import org.zfin.Species;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
@@ -12,6 +13,7 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Main repository.
@@ -86,11 +88,11 @@ public interface AntibodyRepository {
     /**
      * Retrieve antibodies for a given ao term.
      * Only wild-type fish are cared for.
-     *
+     * <p/>
      * If no pagination info is provided then return the complete list.
      *
-     * @param aoTerm         Term
-     * @param paginationBean Pagination Bean
+     * @param aoTerm               Term
+     * @param paginationBean       Pagination Bean
      * @param includeSubstructures boolean
      * @return number of antibodies
      */
@@ -102,9 +104,9 @@ public interface AntibodyRepository {
      *
      * @param antibody Antibody
      * @param aoTerm   AO Term
-     * @param type:  true figures
-     *               text only figures
-     *               all figures (if null)
+     * @param type:    true figures
+     *                 text only figures
+     *                 all figures (if null)
      * @return number
      */
     int getNumberOfFiguresPerAoTerm(Antibody antibody, Term aoTerm, Figure.Type type);
@@ -156,6 +158,7 @@ public interface AntibodyRepository {
 
     /**
      * Retrieve all Antibodies that match in name or alias a given string
+     *
      * @param string matching string
      * @return list
      */
@@ -165,16 +168,16 @@ public interface AntibodyRepository {
      * Get all antibodyAOStatistics records for a given ao term.
      * Note: for the case to include substructures the result set is not returned just the total number
      * in the PaginationResult object!
-     * 
-     * @param aoTerm ao term
-     * @param pagination pagination bean
+     *
+     * @param aoTerm               ao term
+     * @param pagination           pagination bean
      * @param includeSubstructures boolean
      * @return pagination result
      */
     List<AntibodyStatistics> getAntibodyStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
 
-    int getAntibodyCount(Term anatomyItem,boolean includeSubstructure) ;
+    int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
 
     /**
      * Retrieve all antibodies sorted by name.
@@ -184,4 +187,39 @@ public interface AntibodyRepository {
     List<Antibody> getAllAntibodies();
 
     List<Antibody> getAntibodiesByName(String query);
+
+
+    /**
+     * Get figures that with expression results matching a given antibody, subterm and image boolean
+     * optionally also specify subterm and stages.
+     *
+     * @return figure list, ordered by pub year then figure label
+     */
+    List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, Term superTerm, Term subTerm,
+                                                       DevelopmentStage start, DevelopmentStage end, boolean withImgOnly);
+
+    /**
+     * Retrieve a list of figures for a given antibody, super and sub term, stage range.
+     * Note: If start and end stage is null and the subTerm as well we assume the
+     * caller means: give me all figures with antibodies at any stage with the super term
+     * either super term or sub term.
+     *
+     * @param antibody antibody
+     * @param term term
+     * @param withImgOnly only figures with images or not
+     * @return  list of figures
+     */
+    List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, Term term, boolean withImgOnly);
+
+
+    /**
+     * Get terms (sub & super) present in slice of specified figure where the antibody and
+     * (optionally) stages match.
+     *
+     * @return terms associated with expression data about the antibody within the figure
+     */
+    Set<Term> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
+                                            DevelopmentStage start, DevelopmentStage end);
+
+
 }

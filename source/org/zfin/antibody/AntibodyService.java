@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.presentation.MatchingText;
@@ -16,6 +17,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -33,6 +35,8 @@ public class AntibodyService {
     private int numberOfPublications;
 
     private List<FigureSummaryDisplay> figureSummary;
+
+    private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -654,82 +658,65 @@ public class AntibodyService {
         return labelingDisplays;
     }
 
-    public void createFigureSummary(Term superTermComp, Term subtermComp, DevelopmentStage startStage, DevelopmentStage endStage, boolean withImgOnly) {
+    /**
+     * Create the figure summary for a given antibody, super and sub term and stage range
+     * (expression found, standard or generic control)
+     * If sub term and the stages are null it is assumed to create a list of all figures with
+     * the super term either a super term or sub term without stage constraints.
+     *
+     * @param superterm   term
+     * @param subterm     term
+     * @param startStage  start
+     * @param endStage    end
+     * @param withImgOnly images only
+     */
+    public void createFigureSummary(Term superterm, Term subterm, DevelopmentStage startStage, DevelopmentStage endStage, boolean withImgOnly) {
+
+        boolean superOrSubTerm = false;
+        if (subterm == null && startStage == null && endStage == null)
+            superOrSubTerm = true;
+
         Set<Publication> publications = new HashSet<Publication>();
 
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
 
-        // get a set of ExpressionExperiment objects associated with the antibody
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        List<Figure> figures;
+        if (superOrSubTerm)
+            figures = antibodyRepository.getFiguresForAntibodyWithTerms(antibody, superterm, withImgOnly);
+        else
+            figures = antibodyRepository.getFiguresForAntibodyWithTermsAtStage(antibody, superterm, subterm,
+                    startStage, endStage, withImgOnly);
 
-        // loop through the set of ExpressionExperiment objects to get the related data
-        for (ExpressionExperiment exp : experiments) {
-            // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+        for (Figure figure : figures) {
 
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
+            Set<Image> imgs = figure.getImages();
+            if (withImgOnly && imgs.isEmpty())
+                continue;
+            Publication pub = figure.getPublication();
+            String key = pub.getZdbID() + figure.getZdbID();
 
-            if (geno.isWildtype() && experiment.isStandard()) {
-                // get a set of ExpressionResult objects
-                Set<ExpressionResult> results = exp.getExpressionResults();
+            // if the key is not in the map, instantiate a display object and add it to the map
+            // otherwise, get the display object from the map
+            if (!map.containsKey(key)) {
+                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
+                figureData.setPublication(pub);
+                publications.add(pub);
+                figureData.setFigure(figure);
+                List<Term> anatomyList = new ArrayList<Term>();
+                anatomyList.addAll(antibodyRepository.getAntibodyFigureSummaryTerms(figure, antibody, startStage, endStage));
 
-                // loop through the set of ExpressionResult objects to get the related data
-                for (ExpressionResult result : results) {
-                    if (result.isExpressionFound()) {
-                        // there are 2 cases: from antibody details page (stage IDs are null) and from antibody labeling details page
-                        if (result.getSuperterm().getID().equals(superTermComp.getID()) && (
-                                (startStage.getZdbID() == null && endStage.getZdbID() == null)
-                                        || (result.getStartStage().equals(startStage) && result.getEndStage().equals(endStage)))) {
-
-                            Term subterm = result.getSubterm();
-                            if ((subterm == null && subtermComp != null) || (subterm != null && subtermComp == null))
-                                continue;
-                            if (subterm != null && subtermComp != null && !subterm.getID().equals(subtermComp.getID()))
-                                continue;
-                            // come here if the term IDs are equal or both terms are null
-                            // get the figures associated
-                            Set<Figure> figures = result.getFigures();
-
-                            if (figures != null && !figures.isEmpty()) {
-                                // loop through the figures to get the figure data to be displayed
-                                for (Figure f : figures) {
-                                    Set<Image> imgs = f.getImages();
-                                    if (withImgOnly && imgs.isEmpty())
-                                        continue;
-                                    Publication pub = f.getPublication();
-                                    String key = pub.getZdbID() + f.getZdbID();
-
-                                    // if the key is not in the map, instantiate a display object and add it to the map
-                                    // otherwise, get the display object from the map
-                                    if (!map.containsKey(key)) {
-                                        FigureSummaryDisplay figureData = new FigureSummaryDisplay();
-                                        figureData.setPublication(pub);
-                                        publications.add(pub);
-                                        figureData.setFigure(f);
-                                        List<Term> anatomyItems = new ArrayList<Term>();
-                                        for (ExpressionResult er : f.getExpressionResults()) {
-                                            Term aOstructure = er.getSuperterm();
-                                            if (!anatomyItems.contains(aOstructure))
-                                                anatomyItems.add(aOstructure);
-                                        }
-                                        Collections.sort(anatomyItems);
-                                        figureData.setTerms(anatomyItems);
-                                        for (Image img : f.getImages()) {
-                                            if (figureData.getThumbnail() == null)
-                                                figureData.setThumbnail(img.getThumbnail());
-                                        }
-
-                                        map.put(key, figureData);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                figureData.setTerms(anatomyList);
+                for (Image img : figure.getImages()) {
+                    if (figureData.getThumbnail() == null)
+                        figureData.setThumbnail(img.getThumbnail());
                 }
+
+                map.put(key, figureData);
+
             }
         }
+
 
         List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
         if (map.values().size() > 0) {
@@ -740,6 +727,7 @@ public class AntibodyService {
         setNumberOfPublications(publications.size());
         setFigureSummary(summaryRows);
     }
+
 
     public int getNumOfLabelings() {
         return numOfLabelings;

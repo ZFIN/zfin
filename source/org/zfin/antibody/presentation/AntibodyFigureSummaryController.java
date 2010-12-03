@@ -54,7 +54,7 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         form.setEndStage(endStage);
 
         AntibodyService abStat = new AntibodyService(ab);
-        abStat.createFigureSummary(superterm, subterm, form.getStartStage(), form.getEndStage(), form.isOnlyFiguresWithImg());
+        abStat.createFigureSummary(superterm, subterm, startStage, endStage, form.isOnlyFiguresWithImg());
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 

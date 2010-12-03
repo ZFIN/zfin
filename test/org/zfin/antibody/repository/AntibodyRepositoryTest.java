@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @SuppressWarnings({"FeatureEnvy"})
-public class AntibodyRepositoryTest extends AbstractDatabaseTest{
+public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     /**
      * Retrieving an antibody by ID'
@@ -153,6 +153,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by a single ao term only
+
     @Test
     public void getAntibodyByAnatomyTerm() {
 
@@ -191,6 +192,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by two ao terms ANDed
+
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnected() {
 
@@ -211,6 +213,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by two ao terms ANDed
+
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnectedIncludingSubstructures() {
 
@@ -231,6 +234,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by two ao terms ORed
+
     @Test
     public void getAntibodyByTwoAnatomyTermsOr() {
 
@@ -251,6 +255,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by immunogen species only
+
     @Test
     public void getAntibodyByImmunogenSpecies() {
 
@@ -268,6 +273,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by host species only
+
     @Test
     public void getAntibodyByHostSpecies() {
 
@@ -285,6 +291,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by clonal type only
+
     @Test
     public void getAntibodyByClonalType() {
 
@@ -302,6 +309,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by Zirc-only
+
     @Test
     public void getAntibodyByZircOnlyFilter() {
 
@@ -327,6 +335,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
     // Test search by:
     //  antigen name
+
     @Test
     public void getAntibodyByAntigenName() {
 
@@ -372,6 +381,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
     // Test search by:
     //  antigen name
+
     @Test
     public void getAntibodyByAntibodyPreviousName() {
 
@@ -408,6 +418,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
     // Test search by:
     //  antigen name
+
     @Test
     public void getAntibodyByAntigenGeneName() {
 
@@ -455,6 +466,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test for assay
+
     @Test
     public void getAntibodyByAssay() {
         String assayName = Assay.IMMUNOHISTOCHEMISTRY.getName();
@@ -468,6 +480,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     // Test search by: host and immunogen species
+
     @Test
     public void getAntibodyByHostAndImmunogen() {
 
@@ -489,6 +502,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     // Test search by
     // single ao term
     // ab name
+
     @Test
     public void getAntibodyByAnatomyTermAndABName() {
 
@@ -515,6 +529,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     // host species
     // immunogen species
     // ZircOnly 
+
     @Test
     public void getAntibodyByHostAndImmunogenAndZircOnly() {
 
@@ -569,7 +584,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
         List<Marker> markers = ab.getAllRelatedMarker();
         assertNotNull(markers);
-        assertTrue(markers.size()>0);
+        assertTrue(markers.size() > 0);
 
     }
 
@@ -638,7 +653,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
 
         // cerebellum
         String aoID = "ZDB-ANAT-010921-522";
-        Term aoTerm = getOntologyRepository().getTermByName("cerebellum",Ontology.ANATOMY);
+        Term aoTerm = getOntologyRepository().getTermByName("cerebellum", Ontology.ANATOMY);
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
         assertNotNull(pubs);
@@ -725,6 +740,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     //@Test
+
     public void createAntibody() {
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
@@ -754,6 +770,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     //@Test
+
     public void updateAntibody() {
 
         // anti-DLX3b
@@ -783,6 +800,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     }
 
     //@Test
+
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
@@ -880,7 +898,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
     public void getAntibodyByName() {
         // real name is Ab-F59
         String antibodyName = "AB-F59";
-        Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName) ;
+        Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         assertTrue(antibody != null);
     }
 
@@ -902,6 +920,28 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest{
         result = AnatomyService.getAntibodyStatistics(term, pagination, true);
         assertTrue(result != null);
         assertTrue(result.getTotalCount() > 0);
+
+    }
+
+    @Test
+    public void antibodySummaryPage() {
+        String aoTermName = "muscle pioneer";
+        Term term = new GenericTerm();
+        term.setID("ZDB-TERM-100331-1053");
+        term.setTermName(aoTermName);
+
+        // real name is Ab-Eng
+        String antibodyName = "Ab-eng";
+        Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
+        assertTrue(antibody != null);
+
+        List<Figure> figures = getAntibodyRepository().getFiguresForAntibodyWithTermsAtStage(antibody, term, null, null, null, false);
+        assertNotNull(figures);
+        assertTrue(figures.size() > 5);
+
+        figures = getAntibodyRepository().getFiguresForAntibodyWithTerms(antibody, term, false);
+        assertNotNull(figures);
+        assertTrue(figures.size() > 7);
 
     }
 }

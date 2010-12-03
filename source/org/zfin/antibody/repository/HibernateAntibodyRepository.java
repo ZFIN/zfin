@@ -13,6 +13,8 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
+import org.zfin.expression.*;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
@@ -32,8 +34,7 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
@@ -454,7 +455,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where (   (result.superterm.ID = :aoTermID_" + i + ")"+
+                        "                  where (   (result.superterm.ID = :aoTermID_" + i + ")" +
                         "                         OR result.subterm.ID = :aoTermID_" + i + ")" +
                         "                     AND result.expressionExperiment = experiment" +
                         "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
@@ -512,9 +513,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql = "  from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm";
         else
-            hql = " select distinct stat from AntibodyAOStatistics stat fetch all properties" +
-                    "     where stat.superterm = :aoterm " +
-                    "           and stat.subterm = :aoterm ";
+            hql = " select distinct stat, stat.antibody.abbreviation from AntibodyAOStatistics stat fetch all properties" +
+                    "     where stat.superterm = :aoterm and " +
+                    "           stat.subterm = :aoterm " +
+                    "           order by stat.antibody.abbreviation";
 
         ScrollableResults scrollableResults = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("aoterm", aoTerm).scroll();
@@ -625,6 +627,129 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         if (isNew)
             list.add(newAntibodyStat);
+    }
+
+    public List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, Term superTerm, Term subTerm,
+                                                              DevelopmentStage start, DevelopmentStage end, boolean withImgOnly) {
+
+        List<Figure> figures = new ArrayList<Figure>();
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(Figure.class);
+        criteria.createAlias("expressionResults", "xpatres");
+        criteria.createAlias("xpatres.expressionExperiment", "xpatex");
+        criteria.createAlias("xpatex.genotypeExperiment", "genox");
+        criteria.createAlias("genox.genotype", "geno");
+        criteria.createAlias("genox.experiment", "exp");
+        criteria.createAlias("publication", "pub");
+
+
+        criteria.add(Restrictions.eq("xpatex.antibody", antibody));
+        criteria.add(Restrictions.eq("xpatres.expressionFound", true));
+        criteria.add(Restrictions.eq("geno.wildtype", true));
+        criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
+                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+        criteria.add(Restrictions.eq("xpatres.superterm", superTerm));
+
+        if (subTerm != null)
+            criteria.add(Restrictions.eq("xpatres.subterm", subTerm));
+        else
+            criteria.add(Restrictions.isNull("xpatres.subterm"));
+
+        if (start != null)
+            criteria.add(Restrictions.eq("xpatres.startStage", start));
+        if (end != null)
+            criteria.add(Restrictions.eq("xpatres.endStage", end));
+        if (withImgOnly)
+            criteria.add(Restrictions.isNotEmpty("images"));
+
+        figures.addAll(criteria.list());
+        return figures;
+    }
+
+    /**
+     * Retrieve a list of figures for a given antibody, super and sub term, stage range.
+     * Note: If start and end stage is null and the subTerm as well we assume the
+     * caller means: give me all figures with antibodies at any stage with the super term
+     * either super term or sub term.
+     *
+     * @param antibody    antibody
+     * @param term        term
+     * @param withImgOnly only figures with images or not
+     * @return list of figures
+     */
+    public List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, Term term, boolean withImgOnly) {
+        List<Figure> figures = new ArrayList<Figure>();
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(Figure.class);
+        criteria.createAlias("expressionResults", "xpatres");
+        criteria.createAlias("xpatres.expressionExperiment", "xpatex");
+        criteria.createAlias("xpatex.genotypeExperiment", "genox");
+        criteria.createAlias("genox.genotype", "geno");
+        criteria.createAlias("genox.experiment", "exp");
+        criteria.createAlias("publication", "pub");
+
+
+        criteria.add(Restrictions.eq("xpatex.antibody", antibody));
+        criteria.add(Restrictions.eq("xpatres.expressionFound", true));
+        criteria.add(Restrictions.eq("geno.wildtype", true));
+        criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
+                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+        criteria.add(Restrictions.or(Restrictions.eq("xpatres.superterm", term),
+                Restrictions.eq("xpatres.subterm", term)));
+
+        if (withImgOnly)
+            criteria.add(Restrictions.isNotEmpty("images"));
+
+        figures.addAll(criteria.list());
+        return figures;
+    }
+
+    public Set<Term> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
+                                                   DevelopmentStage start, DevelopmentStage end) {
+        Set<Term> terms = new TreeSet<Term>();
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpatres from ExpressionResult xpatres " +
+                "   join xpatres.expressionExperiment " +
+                "   join xpatres.figures " +
+                "   join fetch xpatres.superterm " +
+                "   left outer join fetch xpatres.subterm " +
+                " where :figure member of xpatres.figures " +
+                "   and xpatres.expressionFound = :expressionFound " +
+                "   and xpatres.expressionExperiment.antibody = :antibody " +
+                "   and xpatres.expressionExperiment.genotypeExperiment.genotype.wildtype = :isWildtype " +
+                "   and ( xpatres.expressionExperiment.genotypeExperiment.experiment.name = :standard  " +
+                "         or xpatres.expressionExperiment.genotypeExperiment.experiment.name = :gc ) ";
+        if (start != null)
+            hql += "  and  xpatres.startStage = :startStage ";
+        if (end != null)
+            hql += "  and xpatres.endStage = :endStage ";
+
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("figure", figure);
+        if (start != null)
+            query.setParameter("startStage", start);
+        if (end != null)
+            query.setParameter("endStage", end);
+        query.setParameter("antibody", antibody);
+        query.setParameter("isWildtype", true);
+        query.setParameter("expressionFound", true);
+        query.setParameter("standard", Experiment.STANDARD);
+        query.setParameter("gc", Experiment.GENERIC_CONTROL);
+
+        List<ExpressionResult> expressionResults = query.list();
+
+
+        for (ExpressionResult expressionResult : expressionResults) {
+            terms.add(expressionResult.getSuperterm());
+            if (expressionResult.getSubterm() != null)
+                terms.add(expressionResult.getSubterm());
+        }
+
+        return terms;
     }
 
 }

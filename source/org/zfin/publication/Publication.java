@@ -224,9 +224,10 @@ public class Publication implements Comparable<Publication>, Serializable {
             return -1;
         if (anotherPublication.getPublicationDate() == null)
             return +1;
-        int publicationComparison = 0 - publicationDate.compareTo(anotherPublication.getPublicationDate());
-        if (publicationComparison != 0)
-            return publicationComparison;
+        if (publicationDate.get(GregorianCalendar.YEAR) > anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR))
+            return -1;
+        if (publicationDate.get(GregorianCalendar.YEAR) < anotherPublication.getPublicationDate().get(GregorianCalendar.YEAR))
+            return +1;
 
         // in case the 2 publications have the same publication dates,
         // compare the authors

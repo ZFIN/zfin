@@ -160,7 +160,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.ID=ZDB-TERM-100331-1053&subTerm.ID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
                 assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that Fig. 3 from Zhou et al is present.
-                assertNotNull(page.getElementById("ZDB-FIG-090617-7-short"));
+                assertNotNull(page.getElementById("ZDB-FIG-090617-7"));
+
 
             } catch (IOException e) {
                 fail(e.toString());

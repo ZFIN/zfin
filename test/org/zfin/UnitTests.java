@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
-import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
@@ -37,6 +36,7 @@ import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
 import org.zfin.properties.ZfinPropertiesTest;
+import org.zfin.publication.PublicationTest;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.BlastNonDBTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
@@ -58,7 +58,6 @@ import org.zfin.util.*;
         AnatomyItemTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
-        AntibodyServiceTest.class,
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         CurationExperimentTest.class,
@@ -89,6 +88,7 @@ import org.zfin.util.*;
         PaginationBeanTest.class,
         PhenotypeServiceTest.class,
         PhenotypeStructureTest.class,
+        PublicationTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,

@@ -19,10 +19,9 @@ import java.util.List;
 public class AntibodiesPerPublicationController implements Controller {
 
 
-    private String publicationZdbID;
-
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        String publicationZdbID = httpServletRequest.getParameter("publicationZdbID");
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(publicationZdbID);
         if (publication == null)
@@ -50,7 +49,4 @@ public class AntibodiesPerPublicationController implements Controller {
         return modelAndView;
     }
 
-    public void setPublicationZdbID(String id) {
-        publicationZdbID = id;
-    }
 }

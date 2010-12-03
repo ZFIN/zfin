@@ -4,6 +4,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
+import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.gbrowse.GBrowseRepositoryTest;
@@ -46,6 +47,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
+        AntibodyServiceTest.class,
         BODtoConversionServiceTest.class,
         CurationRPCTest.class,
         InfrastructureRepositoryTest.class,
