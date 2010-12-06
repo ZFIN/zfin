@@ -20,7 +20,7 @@ public class TermPresentation extends EntityPresentation {
     public static String getLink(Term term) {
         if (term == null)
             return null;
-        if (term.getOntology().equals(Ontology.SPATIAL))
+        if (term.getOntology() != null && term.getOntology().equals(Ontology.SPATIAL))
             return term.getTermName();
         else
             return getLink(term, term.getTermName());

@@ -31,7 +31,7 @@
                     <c:if test="${antibodyStats.numberOfFigures > 0}">
                         <!-- link to figure search page if more than one figure available-->
                         <c:if test="${antibodyStats.numberOfFigures > 1}">
-                            <a href='/action/antibody/figure-summary?anatomyItem.zdbID=${formBean.aoTerm.ID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
+                            <a href='/action/antibody/figure-summary?superTerm.ID=${formBean.aoTerm.ID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${antibodyStats.numberOfFigures}"
                                              includeNumber="true"/>
