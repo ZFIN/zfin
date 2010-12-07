@@ -69,6 +69,7 @@ OUTPUT:
 	
     <?MIVAR NAME=$q_title>$(REPLACE,$q_title,','')<?/MIVAR>
     <?MIVAR NAME=$q_authors>$(REPLACE,$q_authors,','')<?/MIVAR>
+    <?MIVAR NAME=$editpub_jrnl_abbrev>$(TRIM,$editpub_jrnl_abbrev)<?/MIVAR>
     <?MIVAR NAME=$editpub_jrnl_abbrev>$(REPLACE,$editpub_jrnl_abbrev,','')<?/MIVAR>
 
     <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords>$(REPLACE,$q_keywords,','')<?/MIVAR>
@@ -287,6 +288,16 @@ OUTPUT:
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_cur_status)">$returnVariables&cur_status=$q_cur_status<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_pub_status)">$returnVariables&pub_status=$q_pub_status<?/MIVAR>
   <?/MIBLOCK>
+
+<?MICOMMENT> ** clean up empty strings ** <?/MICOMMENT>
+<?MISQL SQL="update publication set accession_no = null where accession_no = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set keywords = null where keywords = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set pub_abstract = null where pub_abstract = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set pub_doi = null where pub_doi = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set pub_volume = null where pub_volume = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set pub_pages = null where pub_pages = '' and zdb_id = '$OID';"><?/MISQL>
+<?MISQL SQL="update publication set pub_errata_and_notes = null where pub_errata_and_notes='' and zdb_id = '$OID';"><?/MISQL>
+
 
 <?MICOMMENT> *** jump back to the previous window *** <?/MICOMMENT>
 

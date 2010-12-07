@@ -51,6 +51,7 @@ a new or updated existing pub
         return true;
       }
 
+
     </SCRIPT>
 
 <?MISQL COND="$(NXST,$OID)" SQL="select WebExplode(object,'page_title=ADD Publication&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
@@ -143,7 +144,7 @@ a new or updated existing pub
 
   <?MIVAR>
     <b>TITLE:</b><br>
-    <TEXTAREA rows=3 cols=80 name="q_title" wrap=virtual>$q_title</TEXTAREA>
+    <TEXTAREA rows=3 cols=80 name="q_title" wrap=virtual>$(REPLACE,$q_title,"&","&amp;")</TEXTAREA>
     <p>
     <b>STATUS:</B> 
     <SELECT name=q_status>
@@ -155,7 +156,7 @@ a new or updated existing pub
     </SELECT>
     </font><br><br>	
     <b>PubMed ID:</B>
-    <br>Enter "none" if this publication does not exist in PubMed.  
+    <br>
     Leave it blank if you don't know.
     <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
     <p>
@@ -175,7 +176,7 @@ a new or updated existing pub
     </ul>
     </font>
     For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would be "Dole, J.P., Nixon, R.M., and Gingrinch, N."<br>
-    <TEXTAREA rows=2 cols=80 name="q_authors" wrap=virtual>$q_authors</TEXTAREA>
+    <TEXTAREA rows=2 cols=80 name="q_authors" wrap=virtual>$(REPLACE,$q_authors,"&","&amp;")</TEXTAREA>
     <p>
     <b>NUMBER of authors listed:</b> (must be a number!) 
     <INPUT TYPE=text name=q_num_auths size=2 maxlength=2 value=$q_num_auths>
@@ -214,15 +215,20 @@ a new or updated existing pub
 
   <?MIVAR COND="$(EC,$OID,new)"><big>The remaining items below are optional; you may leave them blank.</big><p><?/MIVAR>
 
+
+
+
   <?MIVAR>
     <b>KEYWORDS:</b><br>
-    <TEXTAREA rows=2 cols=80 name="q_keywords" wrap=virtual>$q_keywords</TEXTAREA>
+    <TEXTAREA rows=2 cols=80 name="q_keywords" wrap=virtual>$(REPLACE,$q_keywords,"&","&amp;")</TEXTAREA>
     <p>
     <b>ABSTRACT:</b><br>
-    <TEXTAREA rows=8 cols=80 name="q_pub_abstract" wrap=virtual>$q_pub_abstract</TEXTAREA>
+    <TEXTAREA rows=8 cols=80 id="q-pub-abstract" name="q_pub_abstract" 
+              wrap=virtual>$(REPLACE,$q_pub_abstract,"&","&amp;")</TEXTAREA>
+    
     <p>
     <b>ERRATA and NOTES:</b><br>
-    <TEXTAREA rows=2 cols=80 name="q_pub_errata_and_notes" wrap=virtual>$q_pub_errata_and_notes</TEXTAREA>
+    <TEXTAREA rows=2 cols=80 name="q_pub_errata_and_notes" wrap=virtual>$(REPLACE,$q_pub_errata_and_notes,"&","&amp;")</TEXTAREA>
 
     <?MIVAR COND="$(NXST,$inputs)" NAME=$inputs><?/MIVAR>
 
