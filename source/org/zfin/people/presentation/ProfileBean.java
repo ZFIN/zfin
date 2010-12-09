@@ -15,6 +15,7 @@ public class ProfileBean {
     public static final String ACTION_EDIT = "edit-user";
     public static final String ACTION_CREATE = "create-user";
 
+    private String zdbID ;
     private Person person;
     private AccountInfo accountInfo;
     private String passwordOne;
@@ -22,9 +23,15 @@ public class ProfileBean {
     private String action;
     private boolean newUser;
 
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
     public Person getPerson() {
-        if (person == null)
-            person = new Person();
         return person;
     }
 

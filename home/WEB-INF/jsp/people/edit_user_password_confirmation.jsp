@@ -8,7 +8,7 @@
       <p>
       <form:form>
 
-        <a href="javascript:" onClick="window.location.href='/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-persview.apg&OID=${formBean.person.zdbID}'">[View Person]</a>
+        <a href="javascript:" onClick="window.location.href='/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-persview.apg&OID=${formBean.zdbID}'">[View Person]</a>
 
       </form:form>
       <script>document.success_form.done.focus() </script>

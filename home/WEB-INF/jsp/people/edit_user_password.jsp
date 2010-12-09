@@ -123,9 +123,11 @@
     <c:choose>
         <c:when test="${formBean.ownerOrRoot}">
 
-            <form:form action="/action/people/edit-user?person.zdbID=${formBean.person.zdbID}" commandName="formBean"
+            <form:form action="/action/people/edit-user?zdbID=${formBean.person.zdbID}" commandName="formBean"
                        method="POST"
                        name="login_form">
+
+                <%--<input type="hidden" id="zdbID" name="zdbID" value="${formBean.person.zdbID}">--%>
 
                 <c:choose>
                     <c:when test="${formBean.newUser}">
@@ -211,6 +213,7 @@
                     </TABLE>
                 </authz:authorize>
                 <TABLE width=100% cellpadding=5>
+
 
                     <TR align=center>
                         <TD><b>PASSWORD:</b>

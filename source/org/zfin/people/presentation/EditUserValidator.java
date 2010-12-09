@@ -25,7 +25,7 @@ public class EditUserValidator implements Validator {
         ProfileBean profileBean = (ProfileBean) command;
 
         if (!profileBean.deleteRecord()) {
-            ValidationUtils.rejectIfEmpty(errors, "person.zdbID", "code", "No user zdb ID found.");
+            ValidationUtils.rejectIfEmpty(errors, "zdbID", "code", "No user zdb ID found.");
             ValidationUtils.rejectIfEmpty(errors, "passwordOne", "code", "No password provided.");
             ValidationUtils.rejectIfEmpty(errors, "passwordTwo", "code", "No password provided.");
             ValidationUtils.rejectIfEmpty(errors, "accountInfo.login", "code", "No login provided.");
@@ -41,6 +41,14 @@ public class EditUserValidator implements Validator {
             if (!passwordOne.equals(passwordTwo))
                 errors.rejectValue("passwordOne", "code", "The two passwords are not the same");
         }
+
+        ProfileRepository pr = RepositoryFactory.getProfileRepository();
+        Person personToEdit = pr.getPerson(profileBean.getZdbID());
+        if(personToEdit==null){
+            errors.reject("code","ZDB-ID does not map to a proper user: "+profileBean.getZdbID());
+        }
+        profileBean.setPerson(personToEdit) ;
+
         Person submitPerson = Person.getCurrentSecurityUser();
         // if submitter changes own records
         if (submitPerson.getZdbID().equals(profileBean.getPerson().getZdbID())) {
@@ -52,7 +60,6 @@ public class EditUserValidator implements Validator {
             }
         }
 
-        ProfileRepository pr = RepositoryFactory.getProfileRepository();
         // check for login uniqueness if a new user should be created
         if (profileBean.isNewUser()) {
             if (pr.userExists(profileBean.getAccountInfo().getLogin()))
@@ -61,7 +68,7 @@ public class EditUserValidator implements Validator {
 
         } else {
             // check that the change in the login name does not conflict with an existing login account
-            Person person = pr.getPerson(profileBean.getPerson().getZdbID());
+            Person person = pr.getPerson(profileBean.getZdbID());
             AccountInfo accountInfo = person.getAccountInfo();
             if (!accountInfo.getLogin().equals(profileBean.getAccountInfo().getLogin())) {
                 if (pr.userExists(profileBean.getAccountInfo().getLogin()))

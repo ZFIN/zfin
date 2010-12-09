@@ -39,14 +39,16 @@ public class EditUserPasswordController extends SimpleFormController {
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
         ProfileBean profileBean = (ProfileBean) command;
+        setFormView("edit-user-password.page");
 
-        String personID = profileBean.getPerson().getZdbID();
+        String personID = request.getParameter(LookupStrings.ZDB_ID);
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringUtils.isEmpty(personID)) {
             setFormView("record-not-found.page");
             map.put(LookupStrings.ZDB_ID, "");
             return map;
         }
+        profileBean.setZdbID(personID);
 
         Person person = profileRepository.getPerson(personID);
         AccountInfo accountInfo = person.getAccountInfo();
@@ -77,7 +79,7 @@ public class EditUserPasswordController extends SimpleFormController {
             //redirect to confirmation page
             // need this redirect to switch from HTTPS to HTTP
             String url = "/action/people/edit-user-confirmation?action=" +
-                    ProfileBean.ACTION_DELETE + "&person.zdbID=" + bean.getPerson().getZdbID();
+                    ProfileBean.ACTION_DELETE + "&zdbID=" + bean.getPerson().getZdbID();
             return new ModelAndView(new RedirectView(url));
         }
 
@@ -85,7 +87,7 @@ public class EditUserPasswordController extends SimpleFormController {
         //redirect to confirmation page
         // need this redirect to switch from HTTPS to HTTP
         String url = "/action/people/edit-user-confirmation?action=" +
-                ProfileBean.ACTION_EDIT + "&person.zdbID=" + bean.getPerson().getZdbID();
+                ProfileBean.ACTION_EDIT + "&zdbID=" + bean.getPerson().getZdbID();
         return new ModelAndView(new RedirectView(url));
     }
 
