@@ -30,10 +30,6 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
-        <fileset dir="${lib}/jaxws">
-            <include name="*.jar"/>
-            <include name="*.zip"/>
-        </fileset>
     </path>
 
     <target name="init">
@@ -59,7 +55,7 @@
 
     <target name="run-indexer" depends="init" description="run the indexer">
         <echo message="Launching Java Indexer"/>
-        <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath">
+        <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-d"/>
             <arg value="${newIndexDir}"/>
