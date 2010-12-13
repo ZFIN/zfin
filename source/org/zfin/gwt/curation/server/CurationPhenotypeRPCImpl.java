@@ -216,6 +216,13 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         for (Phenotype phenotype : mutantFigureStage.getPhenotypes()) {
 
             if (phenotype.getSuperterm().getID().equals(phenotypePileStructure.getSuperterm().getID())) {
+                // if quality term is not the same continue with next phenotype
+                if (!phenotype.getTerm().getID().equals(phenotypePileStructure.getQuality().getID()))
+                    continue;
+                // if tag is not the same continue with next phenotype
+                if (!phenotype.getTag().equals(phenotypePileStructure.getTag().toString()))
+                    continue;
+
                 String subtermID = null;
                 Term term = phenotype.getSubterm();
                 if (term != null)
