@@ -10,25 +10,25 @@
 <script type="text/javascript">
     function showAlleles(num,prefix){
         alleleTableDiv = document.getElementById('alleleDesignationTable'+num);
-        alleleTableDiv.show() ;
+        alleleTableDiv.style.display = 'inline' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
-        alleleDiv.show() ;
+        alleleDiv.style.display = 'inline' ;
         new Ajax.Updater('alleleDesignation'+num, '/action/feature/alleles/'+prefix, {Method: 'get'});
         alleleShowButton = document.getElementById('showAlleleLink'+num);
-        alleleShowButton.hide();
+        alleleShowButton.style.display = 'none' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
-        alleleHideButton.show();
+        alleleHideButton.style.display = 'inline' ;
     }
 
     function hideAlleles(num) {
         alleleTableDiv= document.getElementById('alleleDesignationTable'+num);
-        alleleDiv.hide() ;
+        alleleDiv.style.display = 'none' ;
         alleleTableDiv = document.getElementById('alleleDesignationTable'+num);
-        alleleTableDiv.hide() ;
+        alleleTableDiv.style.display = 'none' ;
         alleleShowButton = document.getElementById('showAlleleLink'+num);
-        alleleShowButton.show();
+        alleleShowButton.style.display = 'inline' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
-        alleleHideButton.hide();
+        alleleHideButton.style.display = 'none' ;
     }
 </script>
 
