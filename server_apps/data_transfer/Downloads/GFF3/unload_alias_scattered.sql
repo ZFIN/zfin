@@ -49,6 +49,30 @@ select vg.seqname,
    and vt.parent = vg.id
 group by 1,3,7,9
 ---------------------------------------------------------
+union -- ottdarG
+select vg.seqname,
+           "ZFIN" source,
+           case gene.mrkr_type when 'GENEP' then 'pseudogene' else 'gene' end  feature,
+           min(vg.start) start,
+           max(vg.end)   end,
+           "." score,
+           vg.strand,
+           "." frame,
+       'gene_id='  || gene.mrkr_zdb_id
+       ||';Name='  || gene.mrkr_abbrev
+       ||';Alias=' || vg.id
+       attribute
+ from  gff3 vt, gff3 vg, db_link, marker_relationship, marker gene
+ where mrkr_type[1,4] = "GENE"
+   and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+   and dblink_linked_recid = mrel_mrkr_2_zdb_id
+   --and vt.source = 'vega' and vg.source = 'vega'
+   and vt.feature = 'transcript'
+   and vg.feature = 'gene'
+   and dblink_acc_num = vt.id
+   and vt.parent = vg.id
+ group by 1,3,7,9
+---------------------------------------------------------
 union -- data alias
 select vg.seqname,
            "ZFIN" source,
@@ -70,8 +94,9 @@ select vg.seqname,
    and dalias_group_id = 1 --'alias'
    and dalias_alias not like "% %"
    and dalias_alias not like "%;%"
-   and vt.source = 'vega' and vt.feature = 'transcript'
-   and vg.source = 'vega' and vg.feature = 'gene'
+   --and vt.source = 'vega' and vg.source = 'vega'
+   and vt.feature = 'transcript'
+   and vg.feature = 'gene'
    and dblink_acc_num = vt.id
    and vt.parent = vg.id
  group by 1,3,7,9
