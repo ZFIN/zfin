@@ -39,8 +39,8 @@
      <ul>
        <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg" 
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
-       <li><a href="/zf_info/zfbook/lab_desig.html" title ="Line designation nomenclature and requests">Line Designations</a></li>
-       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
+<li><a href="/action/feature/line-designations" title ="Line designation nomenclature and requests">Line Designations</a></li>
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
            Submit mutant/transgenic line names</a>
      </ul>
   </ul>

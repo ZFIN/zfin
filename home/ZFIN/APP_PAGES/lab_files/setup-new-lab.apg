@@ -30,9 +30,12 @@
 -->
 
 <?MISQL SQL="
-  select name, address, phone, fax, email, url, contact_person,allele_prefix 
-    from lab 
-    where zdb_id = '$temp_oid';">
+ select name, address, phone, fax, email, url, contact_person,fp.fp_prefix 
+    from lab l 
+    join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id = l.zdb_id
+    join feature_prefix fp on fp.fp_pk_id=lfp.lfp_prefix_id
+    where zdb_id = '$temp_oid';
+    ">
 <?/MISQL>
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$address>$2<?/MIVAR>

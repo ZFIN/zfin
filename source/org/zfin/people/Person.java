@@ -238,7 +238,12 @@ public class Person implements UserDetails, Serializable, Comparable<Person> {
     }
 
     public int hashCode() {
-        return getZdbID().hashCode();
+        if(zdbID==null){
+            return getZdbID().hashCode();
+        }
+        else{
+            return super.hashCode();
+        }
     }
 
     public boolean equals(Object o) {

@@ -1,7 +1,7 @@
 package org.zfin.mapping;
 
+import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Feature;
 
 import java.util.Set;
 

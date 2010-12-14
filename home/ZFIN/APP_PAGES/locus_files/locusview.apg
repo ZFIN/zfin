@@ -42,7 +42,7 @@ redirect to the correct markerview page
   <?MIELSE COND="$(>,$(POSITION,$lcvw_repld_zdb_id,GENO),0)"> 
 
     <script>
-      <?MIVAR>location.replace('/action/genotype/detail?genotype.zdbID=$1')
+      <?MIVAR>location.replace('/action/genotype/genotype-detail?zdbID=$1')
       <?/MIVAR>
     </script>
                  

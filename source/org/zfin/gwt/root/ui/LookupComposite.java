@@ -46,6 +46,7 @@ public class LookupComposite extends Composite implements Revertible {
 
     // lookup types
     public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
+    public final static String GENEDOM = "GENEDOM";
     public final static String MARKER_LOOKUP = "MARKER_LOOKUP";
     public final static String ANTIBODY_LOOKUP = "ANTIBODY_LOOKUP";
     public final static String TYPE_SUPPLIER = "SUPPLIER";
@@ -172,6 +173,12 @@ public class LookupComposite extends Composite implements Revertible {
                         doSubmit(suggestion.getReplacementString());
                     }
                 }
+            }
+        });
+        suggestBox.addSuggestionHandler(new HighlightHandler<SuggestOracle.Suggestion>() {
+            @Override
+            public void onHighlight(HighlightEvent<SuggestOracle.Suggestion> suggestionHighlightEvent) {
+                doOnHighlight(suggestionHighlightEvent.getHighlighted().getReplacementString());
             }
         });
 

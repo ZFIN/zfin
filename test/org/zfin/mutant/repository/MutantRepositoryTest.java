@@ -10,6 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -87,6 +88,7 @@ public class MutantRepositoryTest {
 
         List<Genotype> genos = getMutantRepository().getGenotypesByFeature(ftr);
         assertNotNull("genos exist", genos);
+        assertTrue("genos exist", genos.size()>0);
 
     }
 
@@ -222,16 +224,6 @@ public class MutantRepositoryTest {
         return markerGoTermEvidence;
     }
 
-    @Test
-    public void attributedFeatures() {
-        // Uemura, et al.
-        String pubID = "ZDB-PUB-050202-4";
-        List<Feature> features = mutantRepository.getFeaturesForAttribution(pubID);
-        assertNotNull(features);
-
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkerForAttribution(pubID);
-        assertNotNull(markers);
-    }
 
     @Test
     public void markerGoTermEvidenceExists() {

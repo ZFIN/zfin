@@ -22,11 +22,11 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files
 
 SUBDIRS = UPDATING
 
-GENERICS = fishselect.apg fishview.apg new-fish.apg process-fish.apg \
+GENERICS = fishselect.apg fishview.apg \
            wtlist.apg genotypeview.apg phenotype_miniview.apg allelelist.apg
 
-STATICS = process-fish-aux.apg setup-new-fish.apg update-fish.apg phenotype_note.apg \
-          alleleDesigNums.apg genotype_name_match.apg genotype_mo_match.apg wildtypePhenoAnat.apg 
+STATICS = setup-new-fish.apg update-fish.apg phenotype_note.apg \
+          genotype_name_match.apg genotype_mo_match.apg wildtypePhenoAnat.apg  labFeatures.apg
 
 # Use default rules for app page directories.
 

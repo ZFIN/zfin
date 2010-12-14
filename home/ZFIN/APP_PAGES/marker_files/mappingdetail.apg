@@ -429,7 +429,7 @@ marker = '';
         <?/MISQL>
 
 	<?MIVAR>
-	  <b> Genomic Feature Name: &nbsp; <i><a href=/action/feature/detail?feature.zdbID=$OID>$allele_name </b><i></a><br>
+	  <b> Genomic Feature Name: &nbsp; <i><a href=/action/feature/feature-detail?zdbID=$OID>$allele_name </b><i></a><br>
           
 	<?/MIVAR>
 
@@ -468,7 +468,7 @@ marker = '';
       <TD colspan=3>
       <TABLE>
        <TR>
-         <TD><b>Strain:</b> <A HREF="/action/genotype/detail?genotype.zdbID=$8">$9</A>  </TD>
+         <TD><b>Strain:</b> <A HREF="/action/genotype/genotype-detail?zdbID=$8">$9</A>  </TD>
          <TD align=left><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
          <TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
          <TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
@@ -861,7 +861,7 @@ marker = '';
         <?MIVAR NAME=subtable>y<?/MIVAR>
     <?/MIBLOCK> 
 
-    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/action/feature/detail?feature.zdbID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/action/feature/feature-detail?zdbID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
     <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
       where lpmem_member_zdb_id = '$member_zdb_id' 

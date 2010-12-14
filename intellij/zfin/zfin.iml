@@ -1,102 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="web" name="Web">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../home/WEB-INF/web.xml" optional="false" version="2.5" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/../../home" relative="/" />
-        </webroots>
-        <building>
-          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/zfinWeb" />
-          <setting name="EXPLODED_ENABLED" value="false" />
-          <setting name="JAR_URL" value="file://" />
-          <setting name="JAR_ENABLED" value="false" />
-          <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-        </building>
-        <packaging>
-          <containerElement type="module" name="zfin">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" name="build-time" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" name="gwt" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" name="hibernate3" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" name="lucene" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="/WEB-INF/lib" />
-          </containerElement>
-          <containerElement type="library" name="runtime" level="project">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" level="module">
-            <attribute name="method" value="0" />
-            <attribute name="URI" value="&lt;N/A&gt;" />
-            <url>jar://$APPLICATION_HOME_DIR$/lib/j2ee.jar!/</url>
-          </containerElement>
-        </packaging>
-      </configuration>
-    </facet>
     <facet type="gwt" name="GWT">
       <configuration>
-        <setting name="additionalCompilerParameters" value="" />
         <setting name="compilerMaxHeapSize" value="128" />
-        <setting name="compilerOutputPath" value="" />
         <setting name="gwtScriptOutputStyle" value="DETAILED" />
-        <setting name="gwtSdkUrl" value="file://$MODULE_DIR$/../../../../gwt-toolkit/gwt-windows-1.4.61" />
-        <setting name="runGwtCompilerOnMake" value="true" />
+        <setting name="gwtSdkUrl" value="file://C:/Documents and Settings/Prita/Desktop/gwt-windows-1.7.1" />
+        <setting name="webFacet" value="Web" />
         <packaging>
-          <module name="org.zfin.framework.presentation.Lookup" path="/org.zfin.framework.presentation.Lookup" />
-          <module name="org.zfin.framework.presentation.LookupTable" path="/org.zfin.framework.presentation.LookupTable" />
-          <module name="org.zfin.people.presentation.SessionSave" path="/org.zfin.people.presentation.SessionSave" />
+          <module name="org.zfin.gwt.curation.Curation" path="/org.zfin.gwt.curation.Curation" />
+          <module name="org.zfin.gwt.lookup.Lookup" path="/org.zfin.gwt.lookup.Lookup" />
+          <module name="org.zfin.gwt.marker.Marker" path="/org.zfin.gwt.marker.Marker" />
+          <module name="org.zfin.gwt.root.Root" path="/org.zfin.gwt.root.Root" />
         </packaging>
-      </configuration>
-    </facet>
-    <facet type="hibernate" name="Hibernate">
-      <configuration>
-        <datasource-map>
-          <unit-entry name="&lt;anonymous&gt;hibernate.cfg.xml@206" value="c21c0115-377b-4c70-a37e-aa44a22b4f0e" />
-          <unit-entry name="conf/hibernate.cfg.xml" value="c21c0115-377b-4c70-a37e-aa44a22b4f0e" />
-        </datasource-map>
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../../conf/hibernate.cfg.xml" optional="false" version="3.0" />
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map>
+          <unit-entry name="conf:hibernate.cfg.xml" />
+        </datasource-map>
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://Y:/conf/hibernate.cfg.xml" />
+      </configuration>
+    </facet>
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://Y:/home/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots />
+        <sourceRoots>
+          <root url="file://Y:/source" />
+        </sourceRoots>
+        <context-artifact name="zfin:Web exploded" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../../home/WEB-INF/classes" />
-    <output-test url="file://$MODULE_DIR$/../../home/WEB-INF/classes" />
+    <output url="file://Y:/home/WEB-INF/classes" />
+    <output-test url="file://Y:/home/WEB-INF/classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../..">
-      <sourceFolder url="file://$MODULE_DIR$/../../client_apps/Map" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../j2ee/MergerServlet/WEB-INF/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../j2ee/uniquery/IndexApp/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../j2ee/uniquery/SearchApp/WEB-INF/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../j2ee/uniquery/Support/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../lib/Java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../server_apps/mapimage" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../source" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../test" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/../../client_apps" />
-      <excludeFolder url="file://$MODULE_DIR$/../../home/WEB-INF/jsp/quicksearch" />
+    <content url="file://Y:">
+      <sourceFolder url="file://Y:/client_apps/Map" isTestSource="false" />
+      <sourceFolder url="file://Y:/server_apps/mapimage" isTestSource="false" />
+      <sourceFolder url="file://Y:/source" isTestSource="false" />
+      <sourceFolder url="file://Y:/test" isTestSource="true" />
+      <excludeFolder url="file://Y:/client_apps" />
+      <excludeFolder url="file://Y:/home/WEB-INF/jsp/quicksearch" />
       <excludeFolder url="file://$MODULE_DIR$/.." />
-      <excludeFolder url="file://$MODULE_DIR$/../../j2ee/uniquery" />
-      <excludeFolder url="file://$MODULE_DIR$/../../lib/Java/Acme" />
-      <excludeFolder url="file://$MODULE_DIR$/../../server_apps" />
+      <excludeFolder url="file://Y:/j2ee/uniquery" />
+      <excludeFolder url="file://Y:/lib/Java/Acme" />
+      <excludeFolder url="file://Y:/server_apps" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -123,6 +80,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gwt-user" level="project" />
+    <orderEntry type="library" name="gwt-user" level="project" />
+    <orderEntry type="library" name="gwt-user (2)" level="project" />
+    <orderEntry type="library" name="gwt-user (2)" level="project" />
   </component>
 </module>
 

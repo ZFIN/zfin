@@ -41,7 +41,7 @@
 
     <!-- Log the substitution parameters in the HQL expression -->
     <category name="org.hibernate.engine.QueryParameters">
-<!--        <priority value="trace"/>-->
+        <!--<priority value="trace"/>-->
     </category>
 
     <!-- Log the real SQL -->

@@ -7,32 +7,39 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class NoteDTO implements IsSerializable {
 
-    private String zdbID ;
-    private String dataZdbID ;
-    private String noteData ;
-    private String publicationZdbID;
-    private String editMode;
+    protected String zdbID ;
+    protected String dataZdbID ;
+    protected String noteData ;
+    protected String publicationZdbID;
+    protected NoteEditMode noteEditMode;
 
     public NoteDTO(){}
 
-    public NoteDTO(String dataZdbID,String editMode,String note){
+    public NoteDTO(String zdbId, String dataZdbID,NoteEditMode noteEditMode,String note){
+        this.zdbID = zdbId ;
         this.dataZdbID = dataZdbID ;
-        this.editMode = editMode;
+        this.noteEditMode = noteEditMode;
         this.noteData = note;
     }
 
-    public NoteDTO(String dataZdbID,String editMode,String note,String publicationZdbID){
-        this(dataZdbID,editMode,note);
-        this.publicationZdbID = publicationZdbID ;
+    public NoteDTO(String dataZdbID,NoteEditMode noteEditMode,String note){
+        this.dataZdbID = dataZdbID ;
+        this.noteEditMode = noteEditMode;
+        this.noteData = note;
     }
+
 
     public NoteDTO(String dataZdbID){
         this.dataZdbID = dataZdbID ;
     }
 
     public NoteDTO clone(){
-        NoteDTO noteDTO = new NoteDTO(dataZdbID,editMode,noteData,publicationZdbID);
+        NoteDTO noteDTO = new NoteDTO();
         noteDTO.setZdbID(zdbID);
+        noteDTO.setDataZdbID(dataZdbID);
+        noteDTO.setNoteData(noteData);
+        noteDTO.setPublicationZdbID(publicationZdbID);
+        noteDTO.setNoteEditMode(noteEditMode);
         return noteDTO;
     }
 
@@ -68,12 +75,12 @@ public class NoteDTO implements IsSerializable {
         this.publicationZdbID = publicationZdbID;
     }
 
-    public String getEditMode() {
-        return editMode;
+    public NoteEditMode getNoteEditMode() {
+        return noteEditMode;
     }
 
-    public void setEditMode(String editMode) {
-        this.editMode = editMode;
+    public void setNoteEditMode(NoteEditMode noteEditMode) {
+        this.noteEditMode = noteEditMode;
     }
 
     public boolean isEmpty(){
@@ -86,7 +93,7 @@ public class NoteDTO implements IsSerializable {
         sb.append("{dataZdbID='").append(dataZdbID).append('\'');
         sb.append(", zdbID='").append(zdbID).append('\'');
         sb.append(", noteData='").append(noteData).append('\'');
-        sb.append(", editMode='").append(editMode).append('\'');
+        sb.append(", editMode='").append(noteEditMode).append('\'');
         sb.append(", publicationZdbID='").append(publicationZdbID).append('\'');
         sb.append('}');
         return sb.toString();

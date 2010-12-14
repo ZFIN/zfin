@@ -61,6 +61,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!--This loads webroot into ZfinPropertiesPlaceholderConfigurer to allow it to process property files.-->
     <listener>
         <listener-class>org.zfin.properties.ZfinPropertiesLoadListener</listener-class>
     </listener>
@@ -226,6 +227,16 @@
         <url-pattern>/ajax/imageservice</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+            <servlet-name>FeatureService</servlet-name>
+            <servlet-class>org.zfin.gwt.curation.server.FeatureRPCServiceImpl</servlet-class>
+        </servlet>
+
+        <servlet-mapping>
+            <servlet-name>FeatureService</servlet-name>
+            <url-pattern>/ajax/featureservice</url-pattern>
+        </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>
         <url-pattern>/ajax/curation</url-pattern>
@@ -265,6 +276,16 @@
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
         <url-pattern>/webapp/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/feature/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/genotype/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

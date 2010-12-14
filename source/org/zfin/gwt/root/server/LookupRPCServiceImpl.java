@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.antibody.Antibody;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
@@ -16,7 +17,6 @@ import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.*;
 import org.zfin.people.Organization;
@@ -62,6 +62,21 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
 
         return publicationAbstractDTO;
+    }
+
+
+    private String createListItem(String displayName, Term term) {
+        OntologyDTO ontologyDTO = DTOConversionService.convertToOntologyDTO(term.getOntology());
+        String termID = term.getID();
+        StringBuilder builder = new StringBuilder(60);
+        builder.append("<span onmouseover=showTermInfoString('");
+        builder.append(ontologyDTO.getOntologyName());
+        builder.append("','");
+        builder.append(termID);
+        builder.append("')  class='autocomplete-plain'>");
+        builder.append(displayName);
+        builder.append("</span>");
+        return builder.toString();
     }
 
     public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req) {
@@ -218,13 +233,45 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @return response
      */
     public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req) {
+        return getMarkerSuggestionsForType(req,Marker.TypeGroup.GENEDOM_AND_EFG) ;
+    }
+
+    /**
+     * Retrieve a list of genes or EFGs whose abbreviations match a given query string.
+     *
+     * @param req request that holds the query string.
+     * @return response
+     */
+    public SuggestOracle.Response getGenedomSuggestions(SuggestOracle.Request req) {
+        return getMarkerSuggestionsForType(req,Marker.TypeGroup.GENEDOM) ;
+    }
+
+    public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req,Marker.TypeGroup typeGroup) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-            List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup(query, Marker.TypeGroup.GENEDOM_AND_EFG);
+            List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup(query, typeGroup);
+            for (Marker marker : markers) {
+                suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query, "<strong>" + query + "</strong>"), marker.getAbbreviation()));
+            }
+        }
+        resp.setSuggestions(suggestions);
+        logger.info("found " + suggestions.size() + " suggestions for " + req);
+        return resp;
+    }
+
+
+     public SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req,String pubZdbID) {
+        SuggestOracle.Response resp = new SuggestOracle.Response();
+        String query = req.getQuery();
+
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        if (query.length() > 0) {
+            MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+            List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query,Marker.TypeGroup.CONSTRUCT,pubZdbID );
             for (Marker marker : markers) {
                 suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query, "<strong>" + query + "</strong>"), marker.getAbbreviation()));
             }
@@ -246,7 +293,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
-            for (Feature feature : RepositoryFactory.getMutantRepository().getFeaturesByAbbreviation(query)) {
+            for (Feature feature : RepositoryFactory.getFeatureRepository().getFeaturesByAbbreviation(query)) {
                 suggestions.add(new ItemSuggestion(
                         feature.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), feature.getAbbreviation()));
             }
@@ -371,7 +418,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     public List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID) {
         List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<RelatedEntityDTO>();
 
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkerForAttribution(publicationZdbID);
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(publicationZdbID);
         if (CollectionUtils.isNotEmpty(markers)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionModule.RemoveHeader.MARKER.toString());
@@ -384,7 +431,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         }
 
 
-        List<Feature> features = RepositoryFactory.getMutantRepository().getFeaturesForAttribution(publicationZdbID);
+        List<Feature> features = RepositoryFactory.getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
         if (CollectionUtils.isNotEmpty(features)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionModule.RemoveHeader.FEATURE.toString());

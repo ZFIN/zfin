@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="true" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
-    <buildFile url="file://$PROJECT_DIR$/../../build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="32" />
-      <properties />
-    </buildFile>
+  </component>
+  <component name="ArtifactManager">
+    <artifact type="exploded-war" name="zfin:Web exploded">
+      <root id="root">
+        <element id="javaee-facet-resources" facet="zfin/web/Web" />
+        <element id="gwt-compiler-output" facet="zfin/gwt/GWT" />
+      </root>
+    </artifact>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -18,13 +18,8 @@
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
   </component>
-  <component name="CodeStyleSettingsManager">
-    <option name="PER_PROJECT_SETTINGS" />
-    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
-  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="2" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -40,10 +35,12 @@
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
   </component>
+  <component name="DataSourceManagerImpl" compressed="false" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
@@ -74,12 +71,12 @@
         <modules>
           <module name="zfin">
             <files>
-              <file url="file://$PROJECT_DIR$/../../home/WEB-INF/web.xml" />
-              <file url="file://$PROJECT_DIR$/../web/WEB-INF/web.xml" />
-              <file url="file://$PROJECT_DIR$/../../j2ee/MergerServlet/WEB-INF/web.xml" />
-              <file url="file://$PROJECT_DIR$/../../j2ee/phenote/phenote/WEB-INF/web.xml" />
-              <file url="file://$PROJECT_DIR$/../../j2ee/uniquery/SearchApp/WEB-INF/web.xml" />
-              <file url="file://$PROJECT_DIR$/../../lib/Java/tomcat/conf/web.xml" />
+              <file url="file://R:/zusers/pm/Projects/FeatureGWT/intellij/web/WEB-INF/web.xml" />
+              <file url="file://Y:/home/WEB-INF/web.xml" />
+              <file url="file://Y:/j2ee/MergerServlet/WEB-INF/web.xml" />
+              <file url="file://Y:/j2ee/phenote/phenote/WEB-INF/web.xml" />
+              <file url="file://Y:/j2ee/uniquery/SearchApp/WEB-INF/web.xml" />
+              <file url="file://Y:/lib/Java/tomcat/conf/web.xml" />
             </files>
           </module>
         </modules>
@@ -88,7 +85,7 @@
         <modules>
           <module name="zfin">
             <files>
-              <file url="file://$PROJECT_DIR$/../../conf/hibernate.cfg.xml" />
+              <file url="file://Y:/conf/hibernate.cfg.xml" />
             </files>
           </module>
         </modules>
@@ -96,24 +93,8 @@
     </autodetection-disabled>
   </component>
   <component name="IdProvider" IDEtalkID="BB23CFE3BFF54F0FF44A22E600D362F8" />
-  <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
-    <profiles>
-      <profile version="1.0" is_locked="false">
-        <option name="myName" value="Project Default" />
-        <option name="myLocal" value="false" />
-      </profile>
-    </profiles>
-    <list size="0" />
-  </component>
   <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -264,7 +245,6 @@
   <component name="ProjectDetails">
     <option name="projectName" value="zfin" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="project:///Users/sierramoxon/Desktop/ZFIN/hoover/ZFIN_WWW_tscripts2/intellij/zfin/zfin.ipr" />
   </component>
@@ -273,8 +253,8 @@
       <module fileurl="file://$PROJECT_DIR$/zfin.iml" filepath="$PROJECT_DIR$/zfin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/../../home/WEB-INF/classes" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+    <output url="file://Y:/home/WEB-INF/classes" />
   </component>
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
@@ -293,14 +273,14 @@
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
       <map>
-        <entry key="$PROJECT_DIR$/../..">
+        <entry key="Y:">
           <value>
             <SvnBranchConfiguration />
           </value>
         </entry>
       </map>
     </option>
-    <option name="myVersion" value="124" />
+    <option name="myVersion" value="123" />
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -308,97 +288,22 @@
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
-    <library name="runtime">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../../lib/Java/http-unit" />
-        <root url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/../../../../acegi-security/acegi-security-1.0.3-src.zip!/" />
-        <root url="file://$PROJECT_DIR$/../../../../log4j/apache-log4j-1.2.15/src/main/java" />
-        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-2.0.8/dist/spring-src.zip!/" />
-        <root url="file://$PROJECT_DIR$/../../../../hibernate/hibernate-3.1/src" />
-        <root url="file://$PROJECT_DIR$/../../../../html-unit/htmlunit-2.1/src/main/java" />
-        <root url="file://$PROJECT_DIR$/../../../../jakarta-taglibs-standard-1.1.2-src/standard/src" />
-        <root url="jar://$PROJECT_DIR$/../../../../apache-commons/commons-lang-2.3-src.zip!/commons-lang-2.3-src/src/test" />
-        <root url="jar://$PROJECT_DIR$/../../../../apache-commons/commons-lang-2.3-src.zip!/commons-lang-2.3-src/src/java" />
-        <root url="file://$PROJECT_DIR$/../../../../clickstream-1.0.3-sources/src/java" />
-      </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" recursive="false" />
-      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/http-unit" recursive="false" />
-    </library>
     <library name="build-time">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxb-xjc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jsp-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/asm-2.2.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jhall.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/org.geneontology.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/IAClasses.zip!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/Acme.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/hsqldb.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/catalina.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/junit-4.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jakarta-oro-2.0.8.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jung-1.7.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/spring-mock-2.0.8.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/obo-util.zip!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/servlet-api-2.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/tagunit-1.0.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/ifxjdbc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/cobertura.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../../../../apache-tomcat-5.5.25/common/lib/servlet-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/stax-ex.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jsr250-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/wsdl-client.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxb-impl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jsr173_api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxws-rt.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/activation.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxb-xjc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/FastInfoset.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxws-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/http.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/sjsxp.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxb-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/saaj-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jaxws-tools.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/jsr181-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/streambuffer.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/saaj-impl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/jaxws/resolver.jar!/" />
-        <root url="file://$PROJECT_DIR$/../../lib/Java/http-unit" />
-        <root url="jar://$PROJECT_DIR$/../../lib/Java/htmlunit-2.1.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$PROJECT_DIR$/../../../../apache-tomcat/apache-tomcat-5.5.25-src/container/catalina/src/share" />
-        <root url="file://$PROJECT_DIR$/../../../../apache-commons/commons-collections-3.2-src/src/java" />
-        <root url="file://$PROJECT_DIR$/../../../../apache-commons/lang/commons-lang-2.3-src/src/java" />
-      </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/http-unit" recursive="false" />
-    </library>
-    <library name="hibernate3">
-      <CLASSES>
-        <root url="jar://$APPLICATION_HOME_DIR$/lib/javaee.jar!/" />
+        <root url="file://Y:/lib/Java/jwebunit" />
+        <root url="file://Y:/lib/Java" />
+        <root url="file://Y:/home/WEB-INF/lib" />
+        <root url="jar://Y:/lib/Java/gwt/gwt-user-1.7.1-patch.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+      <jarDirectory url="file://Y:/home/WEB-INF/lib" recursive="false" />
+      <jarDirectory url="file://Y:/lib/Java" recursive="false" />
+      <jarDirectory url="file://Y:/lib/Java/jwebunit" recursive="false" />
     </library>
-    <library name="lucene">
+    <library name="gwt-user">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../home/WEB-INF/lib/lucene-core-2.3.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../j2ee/uniquery/IndexApp/lib/cvu.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$PROJECT_DIR$/../../../../lucene/lucene-2.3.1-src/src/java" />
-      </SOURCES>
-    </library>
-    <library name="gwt">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../../../gwt-toolkit/gwt-windows-1.4.61/gwt-user.jar!/" />
+        <root url="jar://Y:/lib/Java/gwt/gwt-user-1.7.1-patch.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

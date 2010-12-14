@@ -2,6 +2,7 @@ package org.zfin.framework;
 
 import org.apache.log4j.Logger;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -31,8 +32,10 @@ public class OntologyManagerServlet extends HttpServlet {
             servletName = "";
         if (servletName.startsWith("org.apache.catalina.INVOKER."))
             throw new UnavailableException("Called through Invoker Servlet");
-        ReadOntologiesThread thread = new ReadOntologiesThread();
-        thread.start();
+        if(true==Boolean.valueOf(ZfinPropertiesEnum.LOAD_ONTOLOGIES_AT_STARTUP.toString())){
+            ReadOntologiesThread thread = new ReadOntologiesThread();
+            thread.start();
+        }
         LOG.info("Ontology Manager Thread started: ");
 
     }

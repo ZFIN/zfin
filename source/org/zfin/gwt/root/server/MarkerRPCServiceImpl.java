@@ -10,6 +10,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
@@ -23,7 +24,6 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.Species;
 import org.zfin.people.MarkerSupplier;
@@ -1043,7 +1043,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
     @Override
     public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException , DuplicateEntryException{
-        Feature f = RepositoryFactory.getMutantRepository().getFeatureByAbbreviation(featureAbbrev);
+        Feature f = RepositoryFactory.getFeatureRepository().getFeatureByAbbreviation(featureAbbrev);
         if (f == null) {
             throw new TermNotFoundException(featureAbbrev, "Feature");
         }

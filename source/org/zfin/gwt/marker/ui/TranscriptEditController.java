@@ -6,15 +6,13 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.*;
-import org.zfin.gwt.root.dto.DBLinkDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
-import org.zfin.gwt.root.dto.TranscriptDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.AbstractListBox;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.gwt.root.ui.RelatedEntityBox;
 
 import java.util.List;
 
@@ -231,7 +229,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         publicationLookupBox.setKey(PublicationSessionKey.TRANSCRIPT);
         publicationLookupBox.getRecentPubs();
 
-        markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
+        markerNoteBox.removeEditMode(NoteEditMode.EXTERNAL);
 
         TranscriptRPCService.App.getInstance().getTranscriptTypes(
                 new MarkerEditCallBack<List<String>>("failed to load types: ") {

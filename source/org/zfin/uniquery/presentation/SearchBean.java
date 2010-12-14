@@ -469,7 +469,7 @@ public class SearchBean extends PaginationBean {
             if (theMatchId.startsWith("ZDB-GENO")) {
 
                // viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
-               viewPageUrl = "/action/genotype/detail?genotype.zdbID=" + theMatchId;
+               viewPageUrl = "/action/genotype/genotype-detail?zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")|| theMatchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ATB")) {

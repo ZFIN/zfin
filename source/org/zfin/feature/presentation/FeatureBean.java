@@ -3,29 +3,34 @@ package org.zfin.feature.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.feature.repository.FeatureService;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+import java.util.Set;
 
 public class FeatureBean {
-    protected FeatureService featureStat;
+    private Feature feature;
     private List<Genotype> genotypes;
-    protected Feature feature;
     private List<FeatGenoStatistics> featgenoStats;
     private Marker marker;
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
-
-    public FeatureBean() {
-    }
+    private Set<FeatureMarkerRelationship> sortedMarkerRelationships ;
+    private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
+    private List<RecordAttribution> featureTypeAttributions ;
+    private String singlePublication ;
+    private Set<String> featureMap ;
+    private Set<String> featureLocations ;
+    private String zdbID;
 
     public List<Genotype> getGenotypes() {
         return genotypes;
@@ -84,10 +89,6 @@ public class FeatureBean {
 
 
     public Feature getFeature() {
-        if (feature == null) {
-            feature = new Feature();
-        }
-
         return feature;
     }
 
@@ -95,21 +96,55 @@ public class FeatureBean {
         this.feature = feature;
     }
 
-    public FeatureService getFeatureStat() {
-        if (featureStat == null) {
-            if (feature == null)
-                return null;
-            featureStat = new FeatureService(feature);
-        }
-
-        return featureStat;
+    public Set<FeatureMarkerRelationship> getSortedMarkerRelationships() {
+        return sortedMarkerRelationships;
     }
 
-    public void setFeatureStat(FeatureService featureStat) {
-        this.featureStat = featureStat;
+    public void setSortedMarkerRelationships(Set<FeatureMarkerRelationship> sortedMarkerRelationships) {
+        this.sortedMarkerRelationships = sortedMarkerRelationships;
     }
+
+    public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {
+        return sortedConstructRelationships;
+    }
+
+    public void setSortedConstructRelationships(Set<FeatureMarkerRelationship> sortedConstructRelationships) {
+        this.sortedConstructRelationships = sortedConstructRelationships;
+    }
+
+    public List<RecordAttribution> getFeatureTypeAttributions() {
+        return featureTypeAttributions;
+    }
+
+    public void setFeatureTypeAttributions(List<RecordAttribution> featureTypeAttributions) {
+        this.featureTypeAttributions = featureTypeAttributions;
+    }
+
+    public String getSinglePublication() {
+        return singlePublication;
+    }
+
+    public void setSinglePublication(String singlePublication) {
+        this.singlePublication = singlePublication;
+    }
+
+    public Set<String> getFeatureMap() {
+        return featureMap;
+    }
+
+    public void setFeatureMap(Set<String> featureMap) {
+        this.featureMap = featureMap;
+    }
+
+    public Set<String> getFeatureLocations() {
+        return featureLocations;
+    }
+
+    public void setFeatureLocations(Set<String> featureLocations) {
+        this.featureLocations = featureLocations;
+    }
+
     public String getDeleteURL() {
-
         return "";
     }
 
@@ -119,8 +154,19 @@ public class FeatureBean {
     }
 
     public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(feature.getZdbID());
+        if(feature!=null){
+            AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
+            return alr.getLatestAuditLogItem(feature.getZdbID());
+        }
+        return null ;
+    }
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
     }
 }
 

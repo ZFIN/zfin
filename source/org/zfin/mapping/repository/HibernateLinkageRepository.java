@@ -3,10 +3,10 @@ package org.zfin.mapping.repository;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.FeatureMarkerRelationship;
 
 import java.util.List;
 import java.util.TreeSet;

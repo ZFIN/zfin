@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+        <!--TODO: at some point, make this include all of the enum types-->
+<hibernate-mapping package="org.zfin.sequence" default-access="field">
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="organism">
+        <param name="enumClassname">org.zfin.orthology.Species</param>
+    </typedef>
+
+</hibernate-mapping>
+

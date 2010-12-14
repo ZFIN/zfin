@@ -5,23 +5,23 @@
 
 <hibernate-mapping package="org.zfin.sequence" default-access="field">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="foreignDatabaseSuperType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDatabaseSuperType">
         <param name="enumClassname">org.zfin.sequence.ForeignDBDataType$SuperType</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="foreignDatabaseDataType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDatabaseDataType">
         <param name="enumClassname">org.zfin.sequence.ForeignDBDataType$DataType</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="foreignDBAvailableName">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDBAvailableName">
         <param name="enumClassname">org.zfin.sequence.ForeignDB$AvailableName</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="displayGroupName">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="displayGroupName">
         <param name="enumClassname">org.zfin.sequence.DisplayGroup$GroupName</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="organism">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="organism">
         <param name="enumClassname">org.zfin.orthology.Species</param>
     </typedef>
 

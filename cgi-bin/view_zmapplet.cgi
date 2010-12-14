@@ -877,7 +877,7 @@
 
       "<param name = \"target_frame\"\t value = \"$frame\">\n".
 	 "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n".
-	      "<param name = \"geno_url\" value = \"/action/genotype/detail?genotype.zdbID=\">\n".
+	      "<param name = \"geno_url\" value = \"/action/genotype/genotype-detail?zdbID=\">\n".
 		  "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi\">\n".
 		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
 		      "</APPLET><p>\n";

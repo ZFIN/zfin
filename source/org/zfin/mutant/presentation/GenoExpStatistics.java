@@ -1,9 +1,9 @@
 package org.zfin.mutant.presentation;
 
 import org.zfin.expression.Figure;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;

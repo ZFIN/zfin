@@ -24,7 +24,7 @@
 
     
     <?MISQL SQL="$allele_list_sql order by 1;">     
-         <?MIVAR NAME=allele_list_html><span nowrap><a href=/action/feature/detail?feature.zdbID=$2>$1</a></span><?/MIVAR>
+         <?MIVAR NAME=allele_list_html><span nowrap><a href=/action/feature/feature-detail?zdbID=$2>$1</a></span><?/MIVAR>
 
       $(SETVAR,$allele_counter,$(+,$allele_counter,1))
         <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>

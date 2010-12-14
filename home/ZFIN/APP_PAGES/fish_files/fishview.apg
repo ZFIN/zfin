@@ -31,7 +31,7 @@ this page before, redirect to genotype detail JSP.
   <?/MISQL>
   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
     <script>
-      <?MIVAR>location.replace('/action/genotype/detail?genotype.zdbID=$1')
+      <?MIVAR>location.replace('/action/genotype/genotype-detail?zdbID=$1')
       <?/MIVAR>
     </script>
  

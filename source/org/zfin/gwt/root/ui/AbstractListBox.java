@@ -37,6 +37,44 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
         }
     }
 
+    public void addNull(){
+        addItem(EMPTY_CHOICE,NULL_STRING);
+    }
+
+    /**
+     * These assume that the display is the value and the actual value is the name.
+     * @param items
+     * @return
+     */
+    public int addEnumValues(Enum... items) {
+        clear();
+        // have to use the NULL_STRING here instead of null, or else it will use the item text instead
+        for (Enum item : items) {
+            if (item != null) {
+                addItem(item.toString(), item.toString());
+            }
+        }
+        return items.length ;
+    }
+
+
+    /**
+     * These assume that the display is the value and the actual value is the name.
+     * @param items
+     * @return
+     */
+    public int addNullAndItems(Enum... items) {
+
+        clear();
+        // have to use the NULL_STRING here instead of null, or else it will use the item text instead
+        addItem(EMPTY_CHOICE, NULL_STRING);
+        for (Enum item : items) {
+            if (item != null) {
+                addItem(item.toString(), item.name());
+            }
+        }
+        return items.length ;
+    }
 
     public int addNullAndItems(List<String> items) {
         clear();
@@ -48,6 +86,21 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
             }
         }
         return items.size();
+    }
+
+    /**
+     * These assume that the display is the value and the actual value is the name.
+     * @param items
+     * @return
+     */
+    public int addItems(Enum... items) {
+        clear();
+        for (Enum item : items) {
+            if (item != null) {
+                addItem(item.toString(), item.name());
+            }
+        }
+        return items.length;
     }
 
     public int addItems(List<String> items) {
@@ -70,6 +123,17 @@ public abstract class AbstractListBox<T extends Object> extends ListBox implemen
         }
 
         return false;
+    }
+
+
+    public boolean setDirty(boolean dirty){
+        if(dirty){
+            setStyleName(DIRTY_STYLE);
+        }
+        else{
+            setStyleName(CLEAN_STYLE);
+        }
+        return dirty ;
     }
 
 }

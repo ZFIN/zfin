@@ -8,10 +8,7 @@ import org.zfin.gwt.marker.event.SequenceAddListener;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.PublicationChangeListener;
-import org.zfin.gwt.root.ui.AbstractListBox;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.PublicationValidator;
-import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
 import java.util.List;

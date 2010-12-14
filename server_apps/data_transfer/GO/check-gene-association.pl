@@ -1,8 +1,6 @@
 #!/usr/bin/perl
 #
 # check gene_association file
-# version: $Revision$
-# date: $Date$
 #
 # specification of the gene_association format is defined at:
 #

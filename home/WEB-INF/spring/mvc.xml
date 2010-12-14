@@ -22,7 +22,6 @@
     <import resource="publication.xml"/>
     <import resource="webdriver.xml"/>
     <import resource="mapper.xml"/>
-    <import resource="feature.xml"/>
     <import resource="wiki.xml"/>
 
     <!--

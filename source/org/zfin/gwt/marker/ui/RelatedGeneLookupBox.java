@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SuggestBox;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.LookupCallback;
 import org.zfin.gwt.root.ui.LookupOracle;
@@ -20,6 +21,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
 
     public RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack type, boolean zdbIDThenAbbrev, String div) {
         super(type, zdbIDThenAbbrev, div);
+        initGUI();
     }
 
     protected void initGUI() {
@@ -82,7 +84,7 @@ public class RelatedGeneLookupBox extends RelatedMarkerBox {
 
         @Override
         public void doLookup(final Request request, final Callback callback) {
-            LookupRPCService.App.getInstance().getGenedomAndEFGSuggestions(request,
+            LookupRPCService.App.getInstance().getGenedomSuggestions(request,
                     new LookupCallback(request, callback));
         }
     }

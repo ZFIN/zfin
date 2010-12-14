@@ -934,7 +934,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
       <?MISQL SQL="select feature_abbrev from feature where feature_zdb_id='$OID'">
      <?MIVAR NAME=$ftrname>$1<?/MIVAR>
      <?/MISQL>
-      <?MIVAR><a href=/action/feature/detail?feature.zdbID=$OID>$ftrname</a><?/MIVAR>
+      <?MIVAR><a href=/action/feature/feature-detail?zdbID=$OID>$ftrname</a><?/MIVAR>
      <?MIELSE>
       <?MIVAR>$mrkrsel_mrkr_link<?/MIVAR>
       <?/MIBLOCK>

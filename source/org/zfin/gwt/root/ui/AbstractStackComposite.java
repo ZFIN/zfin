@@ -2,6 +2,7 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -92,5 +93,31 @@ public abstract class AbstractStackComposite<T extends RelatedEntityDTO> extends
 
     public FlexTable getStackTable() {
         return stackTable;
+    }
+
+    public String validateNewRelatedEntity(String name) {
+        if (getRelatedEntityIndex(name) >= 0) {
+            return "Related entity [" + name + "] exists.";
+        }
+        return null;
+    }
+
+    protected int getRelatedEntityIndex(String name) {
+        List relatedEntityNames = getRelatedEntityNames();
+        return (relatedEntityNames.indexOf(name));
+    }
+
+    protected List<String> getRelatedEntityNames() {
+        int rowCount = stackTable.getRowCount();
+        List<String> relatedEntityList = new ArrayList<String>();
+        for (int i = 0; i < rowCount; ++i) {
+            if (stackTable.getWidget(i, 0) == null) {
+                Window.alert("Problem at row, contact dev: " + i);
+                return null;
+            } else {
+                relatedEntityList.add(((RelatedEntityLabel<T>) stackTable.getWidget(i, 0)).getName());
+            }
+        }
+        return relatedEntityList;
     }
 }

@@ -1,6 +1,7 @@
 package org.zfin.gwt.marker.ui;
 
 import org.zfin.gwt.marker.event.RelatedCloneListener;
+import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
 
 /**
  */

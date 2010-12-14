@@ -42,11 +42,7 @@ public interface ProfileRepository {
      */
     void insertPerson(Person person);
 
-    /**
-     * Save a new Lab object. If it exists a runtime exception is thrown.
-     *
-     * @param lab Lab
-     */
+
     void insertLab(Lab lab);
 
     void addSupplier(Organization organization, Marker marker);
@@ -156,10 +152,4 @@ public interface ProfileRepository {
     CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
 
     Lab getLabById(String labZdbId);
-
-    List<String> getAllPrefixes();
-
-    String getPrefixForLab(String labZdbId);
-
-    String setLabPrefix(String labZdbId, String prefix);
 }

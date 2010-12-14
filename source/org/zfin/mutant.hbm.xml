@@ -9,32 +9,29 @@
      could potentially break the code (e.g. moving a clas  into a different package. -->
 <hibernate-mapping package="org.zfin.mutant">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="phenotypeTag">
-        <param name="enumClassname">org.zfin.mutant.Phenotype$Tag</param>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureHistoryReason">
+        <param name="enumClassname">org.zfin.feature.FeatureHistory$Reason</param>
     </typedef>
-    <typedef class="org.zfin.database.StringEnumUserType" name="featureHistoryReason">
-        <param name="enumClassname">org.zfin.mutant.FeatureHistory$Reason</param>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featAssayMutagen">
+        <param name="enumClassname">org.zfin.gwt.root.dto.Mutagen</param>
     </typedef>
-    <typedef class="org.zfin.database.StringEnumUserType" name="featAssayMutagen">
-        <param name="enumClassname">org.zfin.mutant.FeatureAssay$Mutagen</param>
-    </typedef>
-    <typedef class="org.zfin.database.StringEnumUserType" name="featAssayMutagee">
-        <param name="enumClassname">org.zfin.mutant.FeatureAssay$Mutagee</param>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featAssayMutagee">
+        <param name="enumClassname">org.zfin.gwt.root.dto.Mutagee</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="goEvidenceCode">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="goEvidenceCode">
         <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceCodeEnum</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="goFlag">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="goFlag">
         <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceQualifier</param>
     </typedef>
-    <!-- <typedef class="org.zfin.database.StringEnumUserType" name="featureType">
-        <param name="enumClassname">org.zfin.mutant.Feature$Type</param>
-    </typedef>-->
+    <typedef class="org.zfin.framework.StringEnumNameUserType" name="featureType">
+        <param name="enumClassname">org.zfin.gwt.root.dto.FeatureTypeEnum</param>
+    </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="featureMarkerRelationshipType">
-        <param name="enumClassname">org.zfin.mutant.FeatureMarkerRelationship$Type</param>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureMarkerRelationshipType">
+        <param name="enumClassname">org.zfin.feature.FeatureMarkerRelationship$Type</param>
     </typedef>
 
 
@@ -162,7 +159,7 @@
             <column name="genofeat_geno_zdb_id"/>
         </many-to-one>
 
-        <many-to-one name="feature" class="org.zfin.mutant.Feature">
+        <many-to-one name="feature" class="org.zfin.feature.Feature">
             <column name="genofeat_feature_zdb_id"/>
         </many-to-one>
 
@@ -230,18 +227,33 @@
 
     </class>
 
-    <class name="Feature" table="feature">
-        <id name="zdbID" column="feature_zdb_id"/>
+    <class name="org.zfin.feature.Feature" table="feature">
+       <id name="zdbID" type="string">
+            <column name="feature_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">ALT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
         <property name="name" column="feature_name" not-null="true"/>
         <property name="abbreviation" column="feature_abbrev" not-null="true"/>
         <property name="abbreviationOrder" column="feature_abbrev_order" not-null="true"/>
-        <!--<property name="type" type="featureType">
-                <column name="feature_type"/>
-            </property>-->
-        <property name="comments" column="feature_comments" not-null="true"/>
+        <property name="nameOrder" column="feature_name_order" not-null="true"/>
+        <!--<property name="ftrTypeString" column="feature_type" not-null="true"/>-->
+        <property name="transgenicSuffix" column="feature_tg_suffix"/>
+        <property name="lineNumber" column="feature_line_number"/>
+        <property name="dominantFeature"  column="feature_dominant" type="boolean"/>
+        <property name="unspecifiedFeature"  column="feature_unspecified" type="boolean"/>
+        <property name="knownInsertionSite"  column="feature_known_insertion_site" type="boolean"/>
+        <property name="publicComments" column="feature_comments"/>
+
+
+        <!--<property name="labPrefix" column="feature_lab_prefix_id" type="integer"/>-->
+        <many-to-one name="featurePrefix" column="feature_lab_prefix_id" class="org.zfin.feature.FeaturePrefix"/>
+
         <set name="featureMarkerRelations" lazy="true">
 	            <key column="fmrel_ftr_zdb_id"/>
-	            <one-to-many class="org.zfin.mutant.FeatureMarkerRelationship"/>
+	            <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
         </set>
         <set name="genotypeFeatures" lazy="true">
 	            <key column="genofeat_feature_zdb_id"/>
@@ -251,13 +263,11 @@
             <key column="ids_data_zdb_id" update="false"/>
             <one-to-many class="org.zfin.people.FeatureSource"/>
         </set>
-        <many-to-one name="featureType" column="feature_type"
-                     foreign-key="feature_type" not-null="true"
-                     class="org.zfin.mutant.FeatureType"/>
+        <property name="type" column="feature_type" type="featureType" not-null="true" />
 
         <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
             <key column="dalias_data_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.FeatureAlias"/>
+            <one-to-many class="org.zfin.feature.FeatureAlias"/>
         </set>
 
 
@@ -266,12 +276,15 @@
             <one-to-many class="org.zfin.people.FeatureSupplier" />
         </set>
 
-        <set name="dataNote" lazy="true">
+        <set name="dataNotes" lazy="true">
             <key column="dnote_data_zdb_id"/>
             <one-to-many class="org.zfin.infrastructure.DataNote"/>
         </set>
-
-        <join table="feature_assay" optional="true">
+        <set name="publications" lazy="true" cascade="all">
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
+        </set>
+        <join table="feature_assay" optional="true" inverse="true">
             <key column="featassay_feature_zdb_id"/>
             <component name="featureAssay">
                 <property name="mutagen" type="featAssayMutagen">
@@ -286,17 +299,22 @@
     </class>
 
 
-    <class name="FeatureMarkerRelationship" table="feature_marker_relationship">
-        <id name="zdbID" column="fmrel_zdb_id"/>
+    <class name="org.zfin.feature.FeatureMarkerRelationship" table="feature_marker_relationship">
+        <!--<id name="zdbID" column="fmrel_zdb_id"/>-->
+        <id name="zdbID" type="string">
+            <column name="fmrel_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">FMREL</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
         <property name="type" column="fmrel_type" type="featureMarkerRelationshipType"/>
 
 
         <many-to-one name="featureMarkerRelationshipType" column="fmrel_type" insert="false" update="false"
-                     foreign-key="fmrel_type" class="FeatureMarkerRelationshipType"/>
-        <many-to-one name="feature" class="org.zfin.mutant.Feature" column="fmrel_ftr_zdb_id" lazy="no-proxy"
-                     insert="false" update="false"/>
-        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id" lazy="no-proxy"
-                     insert="false" update="false"/>
+                     foreign-key="fmrel_type" class="org.zfin.feature.FeatureMarkerRelationshipType"/>
+        <many-to-one name="feature" class="org.zfin.feature.Feature" column="fmrel_ftr_zdb_id"  />
+        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id"  />
 
 
         <set name="publications" lazy="true" cascade="all">
@@ -345,7 +363,7 @@
         <property name="group" column="expunit_condition_group"/>
     </class>
 
-    <class name="org.zfin.mutant.FeatureHistory" table="feature_history">
+    <class name="org.zfin.feature.FeatureHistory" table="feature_history">
         <id name="zdbID">
             <column name="fhist_zdb_id"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -370,17 +388,21 @@
         </property>
 
         <!-- todo: figure out if this should be one to one -->
-        <many-to-one name="featureAlias" column="fhist_dalias_zdb_id" class="org.zfin.mutant.FeatureAlias"/>
+        <many-to-one name="featureAlias" column="fhist_dalias_zdb_id" class="org.zfin.feature.FeatureAlias"/>
 
-        <many-to-one name="feature" column="fhist_ftr_zdb_id" class="org.zfin.mutant.Feature"/>
+        <many-to-one name="feature" column="fhist_ftr_zdb_id" class="org.zfin.feature.Feature"/>
     </class>
 
-    <class name="org.zfin.mutant.FeatureAssay" table="feature_assay">
-        <id name="zdbID" column="featassay_feature_zdb_id" access="field">
-            <generator class="foreign">
-                <param name="property">featureAssay</param>
-            </generator>
+    <class name="org.zfin.feature.FeatureAssay" table="feature_assay">
+
+         <id name="pkid" type="int">
+            <column name="featassay_pk_id" not-null="true"/>
+            <generator class="increment"/>
         </id>
+        <property name="featzdbID">
+            <column name="featassay_feature_zdb_id"/>
+        </property>
+
         <property name="mutagen" type="featAssayMutagen">
             <column name="featassay_mutagen"/>
         </property>
@@ -391,7 +413,9 @@
     </class>
 
 
-    <class name="org.zfin.mutant.FeatureType" table="feature_type">
+    <!--This is here solely for the purpose of hql query to allow ordering by significane.-->
+    <!--This is also mapped by FeatureTypeEnum, which should be used primarily.-->
+    <class name="org.zfin.feature.FeatureType" table="feature_type">
         <id name="name">
             <column name="ftrtype_name"/>
         </id>
@@ -403,8 +427,17 @@
         </property>
     </class>
 
+    <class name="org.zfin.feature.FeaturePrefix" table="feature_prefix">
+        <id name="featurePkID" type ="integer">
+            <column name="fp_pk_id" />
+        </id>
+        <property name="prefixString" column="fp_prefix"/>
+        <property name="institute" column="fp_institute_display"/>
 
-    <class name="org.zfin.mutant.FeatureTypeGroup" table="feature_type_group">
+    </class>
+
+
+    <class name="org.zfin.feature.FeatureTypeGroup" table="feature_type_group">
         <cache usage="read-only"/>
         <id name="name">
             <column name="ftrgrp_name"/>
@@ -416,12 +449,12 @@
         </set>
 
     </class>
-    <class name="org.zfin.mutant.FeatureMarkerRelationshipType" table="feature_marker_relationship_type">
+    <class name="org.zfin.feature.FeatureMarkerRelationshipType" table="feature_marker_relationship_type">
         <id name="name">
             <column name="fmreltype_name"/>
         </id>
         <many-to-one name="featureTypeGroup" column="fmreltype_ftr_type_group"
-                     foreign-key="fmreltype_ftr_type_group" class="org.zfin.mutant.FeatureTypeGroup"/>
+                     foreign-key="fmreltype_ftr_type_group" class="org.zfin.feature.FeatureTypeGroup"/>
         <many-to-one name="markerTypeGroup" column="fmreltype_mrkr_type_group"
                      foreign-key="fmreltype_mrkr_type_group" class="org.zfin.marker.MarkerTypeGroup"/>
         <property name="affectedMarkerFlag" type="boolean">
@@ -479,7 +512,7 @@
         <many-to-one name="publication" column="api_pub_zdb_id"/>
         <many-to-one name="person" column="api_curator_zdb_id"/>
         <property name="date" column="api_date"/>
-        <property name="tag" column="api_tag" type="phenotypeTag"/>
+        <!--<property name="tag" column="api_tag" type="phenotypeTag"/>-->
         <many-to-one name="superterm" column="api_superterm_zdb_id"/>
         <many-to-one name="subterm" column="api_subterm_zdb_id"/>
         <many-to-one name="quality" column="api_quality_zdb_id"/>

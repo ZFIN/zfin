@@ -3,7 +3,6 @@ package org.zfin.mutant.presentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;

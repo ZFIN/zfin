@@ -8,11 +8,11 @@
      could potentially break the code (e.g. moving a class into a different package. -->
 <hibernate-mapping package="org.zfin.orthology">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="evidenceCode">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="evidenceCode">
         <param name="enumClassname">org.zfin.orthology.OrthoEvidence$Code</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="organism">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="organism">
         <param name="enumClassname">org.zfin.orthology.Species</param>
     </typedef>
 

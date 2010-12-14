@@ -178,6 +178,17 @@ public interface MarkerRepository {
      */
     List<Marker> getMarkersByAbbreviationAndGroup(String name, Marker.TypeGroup markerType);
 
+    /**
+     * Retrieve all markers of a given type group whose abbreviation
+     * contains the 'name' string
+     *
+     * @param name       String
+     * @param markerType Marker.MarkerType
+     * @param pubZdbId
+     * @return list of marker objects
+     */
+    List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType,String pubZdbId);
+
     // clone methods
 
     List<String> getPolymeraseNames();
@@ -255,7 +266,7 @@ public interface MarkerRepository {
 
     List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type);
 
-    List<Marker> getMarkerForAttribution(String publicationZdbID);
+    List<Marker> getMarkersForAttribution(String publicationZdbID);
 
     /**
      * Create a gene for a given Morpholino which is targeting it.

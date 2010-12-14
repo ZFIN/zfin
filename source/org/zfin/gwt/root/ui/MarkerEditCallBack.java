@@ -30,15 +30,6 @@ public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
         displayMessage(message + (showTrace ? throwable : "") );
     }
 
-    private boolean handleDuplicateEntry(Throwable t) {
-        if (t instanceof DuplicateEntryException) {
-            DuplicateEntryException duplicateEntryException = (DuplicateEntryException) t;
-            displayMessage(duplicateEntryException.getMessage());
-            return true;
-        }
-        return false;
-    }
-
 
     private boolean handleDBLinkNotFound(Throwable t) {
         if (t instanceof DBLinkNotFoundException) {

@@ -227,10 +227,10 @@ while (my @row = $sth->fetchrow_array()) {
     if ($url eq "") {
 	    if ($app_page ne "anatomy_item" ) {
               if ($app_page eq "feature") {
-	        $url = "http://<!--|DOMAIN_NAME|-->/action/feature/detail?feature.zdbID=".$oid;
+	        $url = "http://<!--|DOMAIN_NAME|-->/action/feature/feature-detail?zdbID=".$oid;
 }
 elsif ($app_page eq "genotype") {
-                $url = "http://<!--|DOMAIN_NAME|-->/action/genotype/detail?genotype.zdbID=".$oid;
+                $url = "http://<!--|DOMAIN_NAME|-->/action/genotype/genotype-detail?zdbID=".$oid;
               }
 else {
     		my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";

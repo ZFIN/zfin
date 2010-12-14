@@ -26,7 +26,7 @@ As of August, 2010, this page is replaced by / redirected to genotype details JS
 
       <head>
    	    <?MIVAR>
-   	      <meta http-equiv="Refresh" content="0; url=/action/genotype/detail?genotype.zdbID=$OID">
+   	      <meta http-equiv="Refresh" content="0; url=/action/genotype/genotype-detail?zdbID=$OID">
    	    <?/MIVAR>
       </head>
       
@@ -890,7 +890,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
            <?MIVAR NAME=$genovw_ftr_name>unrecovered<?/MIVAR>
         <?/MIBLOCK>
          <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
- 	   <td><?MIVAR>&nbsp;&nbsp;<a href="/action/feature/detail?feature.zdbID=$genovw_ftr_zdb_id"><i>$genovw_ftr_name</i></a> <?/MIVAR></td>
+ 	   <td><?MIVAR>&nbsp;&nbsp;<a href="/action/feature/feature-detail?zdbID=$genovw_ftr_zdb_id"><i>$genovw_ftr_name</i></a> <?/MIVAR></td>
 	 <?MIELSE>
 	   <td>&nbsp;</td>
          <?/MIBLOCK>
@@ -1025,7 +1025,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
          <?MIBLOCK COND="$(EC,$(SUBSTR,$genovw_ftr_name,1,6),unrec_)">
            <?MIVAR NAME=$genovw_ftr_name>unrecovered<?/MIVAR>
         <?/MIBLOCK>
- <?MIVAR><i><a href=/action/feature/detail?feature.zdbID=$genovw_ftr_zdb_id>$genovw_ftr_name<i></a><?/MIVAR>
+ <?MIVAR><i><a href=/action/feature/feature-detail?zdbID=$genovw_ftr_zdb_id>$genovw_ftr_name<i></a><?/MIVAR>
 
           <?MIVAR COND="$(>,$genovw_ftr_all_geno_count,1)">
 		<br>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exists&compareAllele=starts&fsel_allele_id=$genovw_ftr_zdb_id">in $genovw_ftr_all_geno_count genotypes</a>)

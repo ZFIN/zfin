@@ -1,51 +1,20 @@
 package org.zfin.feature.repository;
 
-import org.zfin.infrastructure.DataNote;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAlias;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.FeatureMarkerRelationship;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
 
 public class FeatureService {
-    private Feature feature;
 
-    public FeatureService(Feature feature) {
-        if (feature == null)
-            throw new RuntimeException("No feature object provided");
-        this.feature = feature;
-    }
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public List<DataNote> getFeatureNote() {
-        Set<DataNote> datanotes = feature.getDataNote();
-        if (datanotes == null) {
-            return new ArrayList<DataNote>();
-        }
-        List<DataNote> privateNote = new ArrayList<DataNote>();
-        for (DataNote prnotes : datanotes) {
-            if (prnotes != null)
-                privateNote.add(prnotes);
-        }
-        Collections.sort(privateNote);
-        return privateNote;
-    }
-
-    public Set<FeatureMarkerRelationship> getSortedMarkerRelationships() {
+    public static Set<FeatureMarkerRelationship> getSortedMarkerRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
             return new TreeSet<FeatureMarkerRelationship>();
@@ -58,30 +27,25 @@ public class FeatureService {
                         affectedGenes.add(ftrmrkrRelation);
                 }
         }
-    
-    return affectedGenes;
-}
 
-
-    public TreeSet<String> getFtrLocations() {
-        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        TreeSet<String> lg = mutantRepository.getFeatureLG(feature);
-        TreeSet<String> delmarklg = new TreeSet<String>();
-
-        for (String lgchr : lg)
-
-            delmarklg.add(lgchr);
-
-
-        return delmarklg;
-
+        return affectedGenes;
     }
 
-    public Set<String> getFtrMap() {
-        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        LinkageRepository linkageRepository = RepositoryFactory.getLinkageRepository();
+
+    public static Set<String> getFeatureLocations(Feature feature) {
+        TreeSet<String> lg = RepositoryFactory.getFeatureRepository().getFeatureLG(feature);
+        TreeSet<String> delmarklg = new TreeSet<String>();
+
+        for (String lgchr : lg){
+            delmarklg.add(lgchr);
+        }
+
+        return delmarklg;
+    }
+
+    public static Set<String> getFeatureMap(Feature feature) {
         MarkerRepository mkrRepository = RepositoryFactory.getMarkerRepository();
-        List<Marker> mkr = mutantRepository.getMarkerbyFeature(feature);
+        List<Marker> mkr = RepositoryFactory.getFeatureRepository().getMarkersByFeature(feature);
         Set<String> delmarklg = new TreeSet<String>();
         if (mkr != null)
             for (Marker mark : mkr) {
@@ -93,7 +57,7 @@ public class FeatureService {
         return delmarklg;
     }
 
-    public List<RecordAttribution> getFtrTypeAttr() {
+    public static List<RecordAttribution> getFeatureTypeAttributions(Feature feature) {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
         List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
         List<RecordAttribution> attributions = new ArrayList<RecordAttribution>();
@@ -105,7 +69,7 @@ public class FeatureService {
 
     }
 
-    public int getPublicationCount() {
+    public static int getPublicationCount(Feature feature) {
         InfrastructureRepository infRep = RepositoryFactory.getInfrastructureRepository();
         List<RecordAttribution> recordAttributions = infRep.getRecAttribforFtrType(feature.getZdbID());
         List<RecordAttribution> attributions = new ArrayList<RecordAttribution>();
@@ -115,26 +79,26 @@ public class FeatureService {
         return attributions.size();
     }
 
-    public String getSinglePublication() {
-        if (getPublicationCount() == 1) {
-            for (RecordAttribution pubAttr : getFtrTypeAttr())
-                return pubAttr.getSourceZdbID();
+    public static String getSinglePublication(Feature feature) {
+        if (getPublicationCount(feature) == 1) {
+            return getFeatureTypeAttributions(feature).get(0).getSourceZdbID() ;
         }
         return null;
     }
 
 
-    public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {
+    public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
             return new TreeSet<FeatureMarkerRelationship>();
         }
         SortedSet<FeatureMarkerRelationship> constructMarkers = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
-            if (ftrmrkrRelation != null)
+            if (ftrmrkrRelation != null){
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())) {
                     constructMarkers.add(ftrmrkrRelation);
                 }
+            }
             if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
                 //if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
                 constructMarkers.add(ftrmrkrRelation);
@@ -144,25 +108,12 @@ public class FeatureService {
 
     }
 
-    public Set<FeatureMarkerRelationship> getSortedLGRelationships() {
-        Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
-        if (fmrelationships == null) {
-            return new TreeSet<FeatureMarkerRelationship>();
+    public static List<String> getFeatureAliases(Feature feature) {
+        Set<FeatureAlias> featureAliases = feature.getAliases();
+        List<String> featureAliasList = new ArrayList<String>();
+        for (FeatureAlias featureAlias : featureAliases) {
+            featureAliasList.add(featureAlias.getAlias());
         }
-        SortedSet<FeatureMarkerRelationship> lgMarkers = new TreeSet<FeatureMarkerRelationship>();
-        for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
-            if (ftrmrkrRelation != null)
-                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.IS_ALLELE_OF)) {
-                    lgMarkers.add(ftrmrkrRelation);
-                }
-            if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.MARKERS_PRESENT)) {
-                lgMarkers.add(ftrmrkrRelation);
-            }
-            if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.MARKERS_MISSING)) {
-                lgMarkers.add(ftrmrkrRelation);
-            }
-        }
-        return lgMarkers;
-
+        return featureAliasList;
     }
 }

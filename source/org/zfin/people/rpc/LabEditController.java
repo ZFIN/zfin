@@ -5,9 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.people.Lab;
 import org.zfin.people.repository.ProfileRepository;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
@@ -18,10 +21,13 @@ import java.util.List;
 public class LabEditController {
 
     private ProfileRepository profileRepository ;
+    private FeatureRepository featureRepository ;
 
     @Autowired
     public LabEditController(ProfileRepository profileRepository){
         this.profileRepository = profileRepository ;
+        // TODO: need to make that autowired, as well
+        this.featureRepository = RepositoryFactory.getFeatureRepository();
     }
 
     @RequestMapping(value={"/dev-tools/test-ajax/{id}"},method = RequestMethod.GET)
@@ -29,9 +35,9 @@ public class LabEditController {
         Lab lab = profileRepository.getLabById(labZdbId) ;
         ModelAndView modelAndView = new ModelAndView("profile/lab-edit-test.page");
         modelAndView.addObject("lab",lab);
-        List<String> prefixes = profileRepository.getAllPrefixes() ;
+        List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;
         modelAndView.addObject("prefixes",prefixes);
-        String prefix = profileRepository.getPrefixForLab(labZdbId) ;
+        String prefix = featureRepository.getCurrentPrefixForLab(labZdbId) ;
         modelAndView.addObject("prefix",prefix);
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE,lab.getName());
         return modelAndView;
@@ -47,9 +53,9 @@ public class LabEditController {
         Lab lab = profileRepository.getLabById(labZdbId) ;
         ModelAndView modelAndView = new ModelAndView("profile/lab-edit-popup.page");
         modelAndView.addObject("lab",lab);
-        List<String> prefixes = profileRepository.getAllPrefixes() ;
+        List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;
         modelAndView.addObject("prefixes",prefixes);
-        String prefix = profileRepository.getPrefixForLab(labZdbId) ;
+        String prefix = featureRepository.getCurrentPrefixForLab(labZdbId) ;
         modelAndView.addObject("prefix",prefix);
         modelAndView.addObject(LookupStrings.DYNAMIC_TITLE,lab.getName());
         return modelAndView;
@@ -57,7 +63,7 @@ public class LabEditController {
 
     @RequestMapping(value={"/profile/labPrefixes"},method = RequestMethod.GET)
     public @ResponseBody List<String> allLabPrefixes(){
-        return profileRepository.getAllPrefixes() ;
+        return featureRepository.getAllFeaturePrefixes() ;
     }
 
     /**
@@ -71,11 +77,13 @@ public class LabEditController {
     public @ResponseBody String saveLabPrefix(@PathVariable("id") String labZdbId,
             @RequestBody String prefix){
         prefix = parsePrefix(prefix) ;
-        String returnPrefix = profileRepository.setLabPrefix(labZdbId, prefix) ;
+        HibernateUtil.createTransaction();
+        String returnPrefix = featureRepository.setCurrentLabPrefix(labZdbId, prefix) ;
         if(returnPrefix==null){
             throw new RuntimeException("Failed to save prefix["+ prefix +"] for lab["+labZdbId+"]");
         }
         else{
+            HibernateUtil.flushAndCommitCurrentSession();
             return returnPrefix ;
         }
     }

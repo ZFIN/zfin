@@ -1,6 +1,6 @@
 package org.zfin.gwt.marker.event;
 
-import org.zfin.gwt.marker.ui.AbstractRelatedEntityBox;
+import org.zfin.gwt.root.ui.AbstractRelatedEntityBox;
 
 /**
  */

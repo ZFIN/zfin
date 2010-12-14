@@ -4,8 +4,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.marker.event.RelatedMarkerListener;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.ui.AbstractRelatedEntityBox;
 
 /**
  * A related marker box.

@@ -445,15 +445,38 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void genedomEfgMarkers() {
-
-        Marker marker = markerRepository.getMarkerByAbbreviation("fgf8a");
-        assertNotNull(marker);
         List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup("pax6", Marker.TypeGroup.GENEDOM_AND_EFG);
         assertNotNull(markers);
         assertTrue(markers.size()>0);
         for(Marker thisMarker: markers){
             assertTrue(thisMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG));
         }
+    }
+
+//    Just used for assessing performance
+//    @Test
+    public void markerLookupPerformance() {
+        List<Marker> markers = markerRepository.getMarkersByAbbreviation("fgf");
+        System.out.println(markers.size());
+        long startTime = System.currentTimeMillis();
+        for(Marker marker: markers){
+            List<Marker> groupMarkerList = markerRepository.getMarkersByAbbreviationAndGroup(marker.getAbbreviation(), Marker.TypeGroup.GENEDOM_AND_EFG);
+//            assertNotNull(groupMarkerList);
+//            assertTrue(groupMarkerList.size()>0);
+        }
+        long totalTime = System.currentTimeMillis() - startTime ;
+        System.out.println(totalTime / 1000f);
+    }
+
+
+    @Test
+    public void getMarkersByAbbreviationGroupAndAttribution() {
+        String markerName = "Tg(kdrl:GRCFP)" ;
+        String pub = "ZDB-PUB-030527-16" ;
+        Marker marker = markerRepository.getMarkerByAbbreviation(markerName);
+        List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(markerName, Marker.TypeGroup.CONSTRUCT,pub);
+        assertNotNull(markers);
+        assertTrue(markers.size()>0);
     }
 
 

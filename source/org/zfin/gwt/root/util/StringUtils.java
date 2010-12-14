@@ -30,6 +30,48 @@ public class StringUtils implements IsSerializable {
         return str == null || str.length() == 0;
     }
 
+
+    /**
+     * <p>Checks if a trimmed String is empty ("") or null.</p>
+     * <p/>
+     * <pre>
+     * StringUtils.isEmptyTrim(null)      = true
+     * StringUtils.isEmptyTrim("")        = true
+     * StringUtils.isEmptyTrim(" ")       = true
+     * StringUtils.isEmptyTrim("bob")     = false
+     * StringUtils.isEmptyTrim("  bob  ") = false
+     * </pre>
+     * <p/>
+     * <p>NOTE: This method changed in Lang version 2.0.
+     * It no longer trims the String.
+     * That functionality is available in isBlank().</p>
+     *
+     * @param str the String to check, may be null
+     * @return <code>true</code> if the String is empty or null
+     */
+    public static boolean isEmptyTrim(String str) {
+        return str == null || str.trim().length() == 0;
+    }
+
+    /**
+     * <p>Checks if a String is not empty ("") and not null.</p>
+     *
+     * <pre>
+     * StringUtils.isNotEmptyTrim(null)      = false
+     * StringUtils.isNotEmptyTrim("")        = false
+     * StringUtils.isNotEmptyTrim(" ")       = false
+     * StringUtils.isNotEmptyTrim("bob")     = true
+     * StringUtils.isNotEmptyTrim("  bob  ") = true
+     * </pre>
+     *
+     * @param str  the String to check, may be null
+     * @return <code>true</code> if the String is not empty and not null
+     */
+    public static boolean isNotEmptyTrim(String str) {
+        return !StringUtils.isEmptyTrim(str);
+    }
+
+
     /**
      * <p>Checks if a String is not empty ("") and not null.</p>
      *

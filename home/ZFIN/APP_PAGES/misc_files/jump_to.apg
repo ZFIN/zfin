@@ -63,10 +63,10 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ANAT-),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ZFA:),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ATB-),0)">/action/antibody/detail?antibody.zdbID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENO-),0)">/action/genotype/detail?genotype.zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENO-),0)">/action/genotype/genotype-detail?zdbID=$record<?/MIVAR>
 <?MICOMMENT>fish gets replaced by genotype page checks zdb_replaced_data 
             and displays history info <?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FISH-),0)">/action/genotype/detail?genotype.zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FISH-),0)">/action/genotype/genotype-detail?zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-CONSTRCT-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REGION-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 
@@ -74,7 +74,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENEFAMILY-),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 
 <?MICOMMENT>not sure whether ZDB-ALT- ids would participate in jump_to.apg, just in case.<?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">/action/feature/detail?feature.zdbID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">/action/feature/feature-detail?zdbID=$record<?/MIVAR>
 
 
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>

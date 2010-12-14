@@ -3,10 +3,10 @@ package org.zfin.marker.presentation;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAbbreviationComparator;
 import org.zfin.marker.MarkerType;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -58,6 +58,54 @@ public class MarkerPresentationTest {
     public void markerAbbreviation() {
         String abbreviation = MarkerPresentation.getAbbreviation(marker);
         assertEquals("Span tag", "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span>", abbreviation);
+    }
+
+    @Test
+    public void markerAbbreviationComparator(){
+        Marker m1 = new Marker() ;
+        m1.setAbbreviation("abcd10");
+        m1.setAbbreviationOrder("abcd10");
+
+        Marker m2 = new Marker() ;
+        m2.setAbbreviation("abcd1");
+        m2.setAbbreviationOrder("abcd01");
+
+        List<Marker> markers = new ArrayList<Marker>();
+        markers.add(m1) ;
+        markers.add(m2) ;
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("test"));
+        assertEquals("abcd1",markers.get(0).getAbbreviation()) ;
+        assertEquals("abcd10",markers.get(1).getAbbreviation()) ;
+
+        m2.setAbbreviation("test3") ;
+        m2.setAbbreviationOrder("test03") ;
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("test"));
+        assertEquals("test3",markers.get(0).getAbbreviation()) ;
+        assertEquals("abcd10",markers.get(1).getAbbreviation()) ;
+
+        m1.setAbbreviation("test10") ;
+        m1.setAbbreviationOrder("test10") ;
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("test"));
+        assertEquals("test3",markers.get(0).getAbbreviation()) ;
+        assertEquals("test10",markers.get(1).getAbbreviation()) ;
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("test1"));
+        assertEquals("test10",markers.get(0).getAbbreviation()) ;
+        assertEquals("test3",markers.get(1).getAbbreviation()) ;
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("abcd"));
+        assertEquals("test3",markers.get(0).getAbbreviation()) ;
+        assertEquals("test10",markers.get(1).getAbbreviation()) ;
+
+        m1.setAbbreviation("abcd10");
+        m1.setAbbreviationOrder("abcd10");
+
+        Collections.sort(markers,new MarkerAbbreviationComparator("abcd"));
+        assertEquals("abcd10",markers.get(0).getAbbreviation()) ;
+        assertEquals("test3",markers.get(1).getAbbreviation()) ;
     }
 
 }

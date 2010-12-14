@@ -35,6 +35,8 @@ public interface InfrastructureRepository {
     int deleteRecordAttributionsForData(String dataZdbID);
 
     int deleteRecordAttribution(String dataZdbID, String sourceZdbId);
+    
+    void removeRecordAttributionForType(String zdbID, String datazdbID);
 
     int getGoRecordAttributions(String dataZdbID, String sourceZdbId);
 
@@ -87,7 +89,10 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue);
 
+
     void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person);
+  
+
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 
     //  RecordAttribution getRecordAttribution(String zdbID);

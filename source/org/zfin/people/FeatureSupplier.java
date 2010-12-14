@@ -1,7 +1,7 @@
 package org.zfin.people;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.zfin.mutant.Feature;
+import org.zfin.feature.Feature;
 
 import java.io.Serializable;
 

@@ -5,11 +5,6 @@ import org.apache.commons.lang.ObjectUtils;
 import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Prita
- * Date: Jul 23, 2009
- * Time: 12:02:21 PM
- * To change this template use File | Settings | File Templates.
  */
 public class ObjectSource implements Serializable {
 

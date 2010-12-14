@@ -538,6 +538,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return query.executeUpdate();
     }
 
+    public void removeRecordAttributionForType(String zdbID, String datazdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
+        query.setParameter("zdbID", zdbID);
+        query.setParameter("datazdbID", datazdbID);
+        query.setParameter("sourceType",RecordAttribution.SourceType.FEATURE_TYPE.toString());
+        query.executeUpdate();
+        currentSession().flush();
+    }
+
     /**
      * Retrieve the Updates flag that indicates if the db is disabled for updates.
      *

@@ -50,10 +50,50 @@
       set url = '$url' 
       where zdb_id = '$temp_oid';">
   <?/MISQL>
-  <?MISQL COND="$(XST,$allele_prefix)" SQL="
-    update lab 
-      set allele_prefix = '$allele_prefix' 
-      where zdb_id = '$temp_oid';">
+
+<?MICOMMENT>
+If their is no prefix for this lab,
+   then we need to add an entry.
+   otherwise update it.
+<?/MICOMMENT>
+<?MIBLOCK ="$(XST,$allele_prefix)">
+
+<?MISQL SQL="
+ select count(*) 
+from lab_feature_prefix lfp 
+ where lfp.lfp_lab_zdb_id = '$temp_oid'
+;">
+$1
+<?/MISQL>
+<?MIBLOCK COND="$(=,$1,0)">
+
+  <?MISQL SQL="
+    insert into lab_feature_prefix
+    (lfp_current_designation,lfp_lab_zdb_id,lfp_prefix_id)
+    values (
+    't', '$temp_oid' , '$allele_prefix' 
+    )
+    ; "><?/MISQL>
+
+<?MIELSE>
+
+  <?MISQL SQL="
+    update lab_feature_prefix
+    set lfp_current_designation = 'f'
+    where lfp_lab_zdb_id = '$temp_oid'
+    and lfp_prefix_id <> $allele_prefix ;
+     ">
   <?/MISQL>
+  <?MISQL  SQL="
+    update lab_feature_prefix
+    set lfp_current_designation = 't'
+    where lfp_lab_zdb_id = '$temp_oid'
+    and lfp_prefix_id = $allele_prefix ;
+     ">
+
+<?/MIBLOCK>
+  <?/MISQL>
+
+<?/MIBLOCK>
 <?/MIBLOCK>
 

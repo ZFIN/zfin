@@ -5,19 +5,19 @@
 
 <hibernate-mapping package="org.zfin.infrastructure">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="recordAttributionSourceType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="recordAttributionSourceType">
         <param name="enumClassname">org.zfin.infrastructure.RecordAttribution$SourceType</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="zdbFlagType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="zdbFlagType">
         <param name="enumClassname">org.zfin.infrastructure.ZdbFlag$Type</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="dataAliasGroup">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="dataAliasGroup">
         <param name="enumClassname">org.zfin.infrastructure.DataAliasGroup$Group</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="ontologyEnumeration">
+    <typedef class="org.zfin.ontology.OntologyEnumUserType" name="ontologyEnumeration">
         <param name="enumClassname">org.zfin.ontology.Ontology</param>
     </typedef>
 
@@ -126,6 +126,7 @@
                                     WHEN 'ATB' THEN  'Marker'
                                     WHEN 'TERM' THEN 'Term  '
                                     WHEN 'GENO' THEN 'Genoty'
+                                    WHEN 'ALT'  THEN 'Featur'
                                     ELSE             'Marker'
                                  END)"/>
 
@@ -153,8 +154,8 @@
         <subclass name="org.zfin.marker.MarkerAlias" discriminator-value="Marker">
             <many-to-one name="marker" column="dalias_data_zdb_id" class="org.zfin.marker.Marker"/>
         </subclass>
-        <subclass name="org.zfin.mutant.FeatureAlias" discriminator-value="Feature">
-            <many-to-one name="feature" column="dalias_data_zdb_id" class="org.zfin.mutant.Feature"/>
+        <subclass name="org.zfin.feature.FeatureAlias" discriminator-value="Featur">
+            <many-to-one name="feature" column="dalias_data_zdb_id" class="org.zfin.feature.Feature"/>
         </subclass>
 
         <subclass name="org.zfin.ontology.TermAlias" discriminator-value="Term  ">

@@ -8,7 +8,7 @@
      could potentially break the code (e.g. moving a clas  into a different package. -->
 <hibernate-mapping package="org.zfin.sequence.reno">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="runType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="runType">
         <param name="enumClassname">org.zfin.sequence.reno.Run$Type</param>
     </typedef>
 

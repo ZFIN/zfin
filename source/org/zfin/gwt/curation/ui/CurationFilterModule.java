@@ -96,20 +96,20 @@ public class CurationFilterModule extends Composite {
     private void initGUI() {
         if (experimentModule != null) {
             RootPanel.get(FILTER_BAR_GENES).add(geneList);
-            geneList.addChangeHandler(new ChangeFilterListener(FilterType.GENE));
+            geneList.addChangeHandler(new ChangeFilterHandler(FilterType.GENE));
         }
 
         RootPanel.get(FILTER_BAR_FISH).add(fishList);
-        fishList.addChangeHandler(new ChangeFilterListener(FilterType.GENO));
+        fishList.addChangeHandler(new ChangeFilterHandler(FilterType.GENO));
 
         RootPanel.get(FILTER_BAR_FIGURE).add(figureList);
-        figureList.addChangeHandler(new ChangeFilterListener(FilterType.FIG));
+        figureList.addChangeHandler(new ChangeFilterHandler(FilterType.FIG));
 
         RootPanel featurePanel = RootPanel.get(FILTER_BAR_FEATURE);
         if (featurePanel != null) {
             useFeatureFilter = true;
             featurePanel.add(featureList);
-            featureList.addChangeHandler(new ChangeFilterListener(FilterType.ALT));
+            featureList.addChangeHandler(new ChangeFilterHandler(FilterType.ALT));
         }
         Button reset = new Button("Reset");
         reset.addClickHandler(new ResetListener());
@@ -312,11 +312,11 @@ public class CurationFilterModule extends Composite {
 
     }
 
-    private class ChangeFilterListener implements ChangeHandler {
+    private class ChangeFilterHandler implements ChangeHandler {
 
         private FilterType type;
 
-        private ChangeFilterListener(FilterType type) {
+        private ChangeFilterHandler(FilterType type) {
             this.type = type;
         }
 

@@ -5,35 +5,31 @@
 
 <hibernate-mapping package="org.zfin.marker">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="markerRelationshipType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="markerRelationshipType">
         <param name="enumClassname">org.zfin.marker.MarkerRelationship$Type</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="markerHistoryReason">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="markerHistoryReason">
         <param name="enumClassname">org.zfin.marker.MarkerHistory$Reason</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="dataAliasGroup">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="dataAliasGroup">
         <param name="enumClassname">org.zfin.infrastructure.DataAlias$Group</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="antibodyType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="antibodyType">
         <param name="enumClassname">org.zfin.antibody.AntibodyType</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="species">
-        <param name="enumClassname">org.zfin.Species$Kind</param>
-    </typedef>
-
-    <typedef class="org.zfin.database.StringEnumUserType" name="cloneProblemType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="cloneProblemType">
         <param name="enumClassname">org.zfin.marker.Clone$ProblemType</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="transcriptType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="transcriptType">
         <param name="enumClassname">org.zfin.marker.TranscriptType$Type</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="transcriptStatus">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="transcriptStatus">
         <param name="enumClassname">org.zfin.marker.TranscriptStatus$Status</param>
     </typedef>
 

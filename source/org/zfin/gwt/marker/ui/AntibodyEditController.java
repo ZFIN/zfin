@@ -8,6 +8,8 @@ import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
 import org.zfin.gwt.marker.event.MarkerLoadListener;
 import org.zfin.gwt.root.dto.AntibodyDTO;
+import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
+import org.zfin.gwt.root.dto.NoteEditMode;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
@@ -41,7 +43,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
     protected void setValues() {
 
-        markerNoteBox.setDefaultEditMode(MarkerNoteBox.EditMode.EXTERNAL);
+        markerNoteBox.setDefaultEditMode(NoteEditMode.EXTERNAL);
 
         publicationLookupBox.clearPublications();
         publicationLookupBox.addPublication(new PublicationDTO("Antibody Data Submissions", "ZDB-PUB-080117-1"));

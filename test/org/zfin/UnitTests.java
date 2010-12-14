@@ -12,7 +12,9 @@ import org.zfin.expression.ExpressionExperimentTest;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
+import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
+import org.zfin.gwt.curation.ui.FeatureValidationTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
 import org.zfin.gwt.root.server.HighlighterTest;
@@ -66,10 +68,12 @@ import org.zfin.util.*;
         ExpressionExperimentTest.class,
         ExpressionResultPresentationTest.class,
         ExperimentDTOTest.class,
+        FeatureValidationTest.class,
         FileUtilTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
         GenericTermTest.class,
+        GwtStringUtilsTest.class,
         HighlightUtilTest.class,
         HighlighterTest.class,
         ListFormatterTest.class,

@@ -34,6 +34,12 @@
         </td>
     </tr>
     <tr>
+        <td class="sectionTitle">Feature Curation Interface</td>
+        <td width="120" colspan="2" class="sectionTitle">
+            <a href="/action/dev-tools/gwt/feature-curation">Curation Interface: Feature Section</a>
+        </td>
+    </tr>
+    <tr>
         <td class="sectionTitle">Base Curation Interface</td>
         <td width="120" colspan="2" class="sectionTitle">
             <a href="/action/dev-tools/gwt/curation-base">Curation Interface: Base Attribution</a>

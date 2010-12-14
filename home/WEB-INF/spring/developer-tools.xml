@@ -31,6 +31,7 @@
                 <prop key="/dev-tools/gwt/image-edit-test">imageEditTest</prop>
                 <prop key="/dev-tools/gwt/phenotype-curation">phenotypeCuration</prop>
                 <prop key="/dev-tools/gwt/go-curation">goCuration</prop>
+                <prop key="/dev-tools/gwt/feature-curation">featureCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/gwt/lookup-table">lookupTable</prop>
                 <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
@@ -80,6 +81,10 @@
 
     <bean name="goCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
         <property name="viewName" value="go-curation"/>
+    </bean>
+
+    <bean name="featureCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
+        <property name="viewName" value="feature-curation"/>
     </bean>
 
     <bean name="ontologyCaching" class="org.zfin.ontology.presentation.OntologyManagerController" scope="prototype">

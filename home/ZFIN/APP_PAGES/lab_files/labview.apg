@@ -61,10 +61,11 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 <?MISQL SQL="
-  select name, HTML_breaks(address), phone, fax, email, url, snapshot, 
-	 contact_person, HTML_breaks(lab_bio), allele_prefix 
-    from lab 
-    where zdb_id='$OID';">
+select name, HTML_breaks(address), phone, fax, email, url, snapshot, 
+	 contact_person, HTML_breaks(lab_bio)
+    from lab l
+    where zdb_id='$OID'
+    ;">
 <?/MISQL>
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$address>$2<?/MIVAR>
@@ -75,7 +76,6 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <?MIVAR NAME=$snapshot>$7<?/MIVAR>
 <?MIVAR NAME=$contact_person>$8<?/MIVAR>
 <?MIVAR NAME=$lab_bio>$9<?/MIVAR>
-<?MIVAR NAME=$allele_prefix>$10<?/MIVAR>
 
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
@@ -221,12 +221,34 @@ $1</A>
 <br>
 
 <?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button value=Update onClick="doit('allele_prefix','text','Line+Designation')">
+<script src="/javascript/prototype.js" type="text/javascript"></script>
+<script type="text/javascript">
+function editPrefix(OID){
+   new Ajax.Updater('editPrefix', '/action/people/editLabPrefix?zdbID='+OID, {Method: 'get' });
+}
+</script>
+
+  <INPUT TYPE=button value="Edit" onClick="editPrefix('$OID')">
+  <div id="editPrefix"></div>
 <?/MIVAR> 
-<?MIVAR COND="$(OR,$(NC,$allele_prefix,NULL),$(XST,$UPDATE))">
+<?MISQL sql="
+select  fp.fp_prefix
+    from lab l
+     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+    where zdb_id='$OID' 
+    and lfp.lfp_current_designation='t'
+    ;">
+<?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
+    <?/MISQL>
   <b>Line Designation: </b>
+<?MIBLOCK COND="$(XST,$allele_prefix)">
+  <?MIVAR>
   $allele_prefix
-<?/MIVAR>
+  <?/MIVAR>
+<?MIELSE>
+  none assigned
+<?/MIBLOCK>
 
 </TD>
 
@@ -318,6 +340,13 @@ $1</A>
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value=Update onClick="doit('lab_bio','textarea','Research+Interests')">
 <?/MIVAR>
+<?MISQL SQL="select count(*) from int_data_source where ids_source_zdb_id='$OID'">
+<?MIVAR NAME=$ftrCount>$1<?/MIVAR>
+<?/MISQL>
+<?MIBLOCK COND="$(!=,0,$ftrCount)">
+<B><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labFeatures.apg&OID=<?MIVAR>$OID<?/MIVAR>">Genomic Features originating from this lab</B></A>
+<?/MIBLOCK>
+<P><hr>
 <B>Statement of Research Interests:</B><p>
 <?MIVAR COND=$(NE,$lab_bio,NULL)>$lab_bio<?/MIVAR>
 

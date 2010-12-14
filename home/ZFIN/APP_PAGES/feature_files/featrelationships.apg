@@ -85,7 +85,7 @@ EFFECTS
               <?MIVAR NAME="featrel_rel_type">$3<?/MIVAR>
               <?MIVAR NAME="featrel_feat_type">$6<?/MIVAR>
               <?MIVAR NAME="featrel_relation_zdb_id">$7<?/MIVAR>
-              <?MIVAR NAME="featrel_feat_html"><a href=/action/feature/detail?feature.zdbID=$featrel_feat_zdb_id>$featrel_feature_name</a><?/MIVAR>
+              <?MIVAR NAME="featrel_feat_html"><a href=/action/feature/feature-detail?zdbID=$featrel_feat_zdb_id>$featrel_feature_name</a><?/MIVAR>
               <?MIBLOCK COND=$(NE,$featrel_prev_feature_name,$featrel_feature_name)>
                    <?MIVAR NAME=featrel_row_color>$(IF,$(EC,$featrel_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
              <?MIELSE>

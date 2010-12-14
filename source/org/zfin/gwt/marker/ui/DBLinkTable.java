@@ -7,8 +7,7 @@ import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.IntegerTextBox;
-import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,11 @@ public abstract class DBLinkTable extends AbstractRelatedEntityBox<DBLinkDTO> {
 
     // listeners
     private final List<DBLinkTableListener> dbLinkTableListeners = new ArrayList<DBLinkTableListener>();
+
+    public DBLinkTable(){
+        super();
+        initGUI();
+    }
 
     protected void initGUI() {
         // has to be instantiated here because called from a sub-class initGUI;

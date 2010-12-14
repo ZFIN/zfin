@@ -1,20 +1,23 @@
 package org.zfin.mutant.repository;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Experiment;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
@@ -33,9 +36,13 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
- *
+
  */
+
 public class HibernateMutantRepository implements MutantRepository {
+    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+
+    private Logger logger  = Logger.getLogger(HibernateMutantRepository.class) ;
 
     public PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
@@ -72,7 +79,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "WHERE  genofeat.feature.zdbID= :zdbID " +
                         "AND genofeat.genotype =geno " +
                         "AND genofeat.feature =feat " +
-                        "AND type.name=feat.featureType.name " +
+                        "AND type.name=feat.type " +
                         "ORDER by type.significance, geno.nameOrder ";
 
 
@@ -352,54 +359,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Genotype) criteria.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-
-    public Feature getFeatureByID(String featureZdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (Feature) session.get(Feature.class, featureZdbID);
-    }
-
-    public List<Marker> getMarkerbyFeature(Feature feature) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct fmrel.marker from  FeatureMarkerRelationship fmrel, Marker m" +
-                "     where fmrel.feature.zdbID = :feat" +
-                " and fmrel.type in (:relation, :relationship1, :relationship2) " +
-                " and fmrel.marker=m ";
-
-
-        Query query = session.createQuery(hql);
-
-        query.setString("feat", feature.getZdbID());
-        query.setString("relation", FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString());
-        query.setString("relationship1", FeatureMarkerRelationship.Type.MARKERS_PRESENT.toString());
-        query.setString("relationship2", FeatureMarkerRelationship.Type.MARKERS_MISSING.toString());
-        //query.setParameter("type", Marker.Type.GENE);
-        //query.setString("type", Marker.Type.GENE.toString());
-
-        return (List<Marker>) query.list();
-    }
-
-    public List<Marker> getMarkerPresent(Feature feature) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct fmrel.marker from  FeatureMarkerRelationship fmrel, Marker m" +
-                "     where fmrel.feature.zdbID = :feat" +
-                " and fmrel.type=:relationship " +
-                " and fmrel.marker=m " +
-                " and m.type=:type";
-
-
-        Query query = session.createQuery(hql);
-        query.setParameter("relationship", FeatureMarkerRelationship.Type.MARKERS_PRESENT.toString());
-        query.setString("feat", feature.getZdbID());
-
-
-        //query.setString("type", Marker.Type.GENE.toString());
-
-        return (List<Marker>) query.list();
-    }
-
     /* public List<Marker> getDeletedMarker(Feature feat) {
         Session session = HibernateUtil.currentSession();
 
@@ -434,45 +393,6 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("type", Marker.Type.GENE.toString());
         return (List<String>) query.list();
     }*/
-
-    public TreeSet<String> getFeatureLG(Feature feat) {
-        Session session = HibernateUtil.currentSession();
-        TreeSet<String> lgList = new TreeSet<String>();
-
-
-        String hql = "select distinct mm.lg" +
-                "  from MappedMarker mm" +
-                "   where mm.marker.zdbID=:ftr ";
-        Query query = session.createQuery(hql);
-        query.setString("ftr", feat.getZdbID());
-        lgList.addAll(query.list());
-
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberFeatures as m " +
-                        " where m.zdbID = :zdbId ");
-        query.setParameter("zdbId", feat.getZdbID());
-        lgList.addAll(query.list());
-        return lgList;
-    }
-
-
-    public List<Feature> getFeaturesByAbbreviation(String name) {
-        List<Feature> features = new ArrayList<Feature>();
-        Session session = currentSession();
-
-        Criteria criteria1 = session.createCriteria(Feature.class);
-        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
-        criteria1.addOrder(Order.asc("abbreviationOrder"));
-        features.addAll(criteria1.list());
-
-        Criteria criteria2 = session.createCriteria(Feature.class);
-        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
-        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
-        criteria2.addOrder(Order.asc("abbreviationOrder"));
-        features.addAll(criteria2.list());
-        return features;
-    }
 
     /**
      * Retrieve all distinct wild-type genotypes.
@@ -598,22 +518,11 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // delete genotype experiment if it has no more phenotypes associated
         // and if it is not used in FX (expression_experiment)
-        if (allPhenotypesAffected && genotypeExperiment.getExpressionExperiments() == null)
+        if (allPhenotypesAffected && genotypeExperiment.getExpressionExperiments() == null){
             session.delete(genotypeExperiment);
-
-
+        }
     }
 
-    @SuppressWarnings({"unchecked"})
-    public List<Feature> getFeaturesForStandardAttribution(Publication publication) {
-        String hql = "select f from PublicationAttribution pa , Feature f " +
-                " where pa.dataZdbID=f.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                " and pa.sourceType= :sourceType  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubZdbID", publication.getZdbID());
-        query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
-        return query.list();
-    }
 
     @SuppressWarnings({"unchecked"})
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
@@ -700,20 +609,6 @@ public class HibernateMutantRepository implements MutantRepository {
 
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Feature> getFeaturesForAttribution(String publicationZdbID) {
-        String hql = "" +
-                " select distinct f from Feature f , RecordAttribution ra " +
-                " where ra.dataZdbID=f.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
-                " order by f.abbreviationOrder " +
-                " ";
-
-        return (List<Feature>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("pubZdbID", publicationZdbID)
-                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
-                .list();
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -730,13 +625,14 @@ public class HibernateMutantRepository implements MutantRepository {
                 .list();
     }
 
-    @Override
-    public Feature getFeatureByAbbreviation(String name) {
-        return (Feature) currentSession().createCriteria(Feature.class)
-                .add(Restrictions.eq("abbreviation", name))
-                .uniqueResult()
-                ;
+    public FeatureAlias getSpecificDataAlias(Feature feature, String alias) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(DataAlias.class);
+        criteria.add(Restrictions.eq("feature", feature));
+        criteria.add(Restrictions.eq("alias", alias));
+        return (FeatureAlias) criteria.uniqueResult();
     }
+
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
@@ -806,12 +702,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-    public void invalidateCachedObjects() {
-    }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
+
+
+
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence

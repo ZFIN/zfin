@@ -294,6 +294,12 @@ div.auto_complete ul strong.highlight {
     font-weight:bold;
 }
 
+.curation-filter{
+    background-color: #33CC99;
+    text-align: center;
+    font-weight:bold;
+}
+
 span.highlight {
     background: #ffb;
 }
@@ -337,6 +343,13 @@ span.highlight {
 .curation-box-control-text {
     text-decoration: none;
     font-size: 75%;
+}
+
+.showHideLink{
+    text-decoration: underline ;
+    font-size: 75%;
+    color: blue;
+    vertical-align: bottom;
 }
 
 a.small-new-link:link {
@@ -406,6 +419,11 @@ img.clickable {
 .clickable {
     cursor: pointer;
     color: blue;
+}
+
+.clickable-error {
+    cursor: pointer;
+    color: red;
 }
 
 .table-header {

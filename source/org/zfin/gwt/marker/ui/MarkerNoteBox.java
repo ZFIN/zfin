@@ -7,14 +7,12 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.marker.event.RemovableNoteListener;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerRPCService;
-import org.zfin.gwt.root.ui.StandardDivNames;
+import org.zfin.gwt.root.dto.NoteEditMode;
+import org.zfin.gwt.root.event.RemovableNoteListener;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +25,8 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
 
 
     public MarkerNoteBox() {
-        for (EditMode editMode : EditMode.values()) {
-            addEditMode(editMode);
+        for (NoteEditMode noteEditMode : NoteEditMode.values()) {
+            addEditMode(noteEditMode);
         }
 
         initGUI();
@@ -41,19 +39,19 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
     public void setValues() {
         typeListBox.clear();
         List<String> items = new ArrayList<String>();
-        for (EditMode editMode : editModes) {
-            if (editMode == EditMode.PUBLIC && false == containsPublicNote()) {
-                items.add(editMode.name());
-            } else if (editMode != EditMode.PUBLIC) {
-                items.add(editMode.name());
+        for (NoteEditMode noteEditMode : noteEditModes) {
+            if (noteEditMode == NoteEditMode.PUBLIC && false == containsPublicNote()) {
+                items.add(noteEditMode.name());
+            } else if (noteEditMode != NoteEditMode.PUBLIC) {
+                items.add(noteEditMode.name());
             }
         }
         typeListBox.addNullAndItems(items);
         if (typeListBox.getItemCount() == 2) {
             typeListBox.setSelectedIndex(1);
         }
-        if (defaultEditMode != null) {
-            typeListBox.setIndexForText(defaultEditMode.name());
+        if (defaultNoteEditMode != null) {
+            typeListBox.setIndexForText(defaultNoteEditMode.name());
         }
     }
 
@@ -77,14 +75,14 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
 
 //                working();
                 // rpc call to add type of note
-                EditMode editMode = EditMode.valueOf(typeListBox.getSelected());
+                NoteEditMode noteEditMode = NoteEditMode.valueOf(typeListBox.getSelected());
                 final NoteDTO noteDTO = new NoteDTO();
                 noteDTO.setDataZdbID(dto.getZdbID());
                 noteDTO.setNoteData(newNoteTextArea.getText());
                 noteDTO.setPublicationZdbID(publicationZdbID);
-                noteDTO.setEditMode(editMode.name());
+                noteDTO.setNoteEditMode(noteEditMode);
 
-                if (editMode == EditMode.PUBLIC) {
+                if (noteEditMode == NoteEditMode.PUBLIC) {
                     MarkerRPCService.App.getInstance().editPublicNote(noteDTO, new MarkerEditCallBack<Void>("Failed to update public note") {
                         @Override
                         public void onSuccess(Void v) {
@@ -98,7 +96,7 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
                             });
                         }
                     });
-                } else if (editMode == EditMode.PRIVATE) {
+                } else if (noteEditMode == NoteEditMode.PRIVATE) {
                     MarkerRPCService.App.getInstance().addCuratorNote(noteDTO, new MarkerEditCallBack<NoteDTO>("Failed to update public note") {
                         @Override
                         public void onSuccess(NoteDTO returnNoteDTO) {
@@ -107,7 +105,7 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
                             resetAddNote();
                         }
                     });
-                } else if (editMode == EditMode.EXTERNAL) {
+                } else if (noteEditMode == NoteEditMode.EXTERNAL) {
                     if (noteDTO.getPublicationZdbID() == null || noteDTO.getPublicationZdbID().length() < 16) {
                         setError("External notes require publication");
                         return;
@@ -129,18 +127,18 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
 
     public void addNoteToGUI(NoteDTO noteDTO) {
         int rowCount = table.getRowCount();
-        EditMode editMode = EditMode.valueOf(noteDTO.getEditMode());
-        if (editMode == EditMode.EXTERNAL) {
+        NoteEditMode noteEditMode = noteDTO.getNoteEditMode();
+        if (noteEditMode == NoteEditMode.EXTERNAL) {
             PublicationLabel publicationLabel = new PublicationLabel(noteDTO.getPublicationZdbID());
             table.setWidget(rowCount, 0, publicationLabel);
         } else {
-            table.setHTML(rowCount, 0, editMode.name());
+            table.setHTML(rowCount, 0, noteEditMode.name());
         }
         AbstractNoteEntry noteEntry = IntegratedNoteEntryFactory.createIntegratedNoteEntry(noteDTO, this);
         noteEntry.addNoteListener(this);
         table.setWidget(rowCount, 1, noteEntry);
 
-        if (editMode == EditMode.PUBLIC) {
+        if (noteEditMode == NoteEditMode.PUBLIC) {
             DeferredCommand.addCommand(new Command() {
                 @Override
                 public void execute() {

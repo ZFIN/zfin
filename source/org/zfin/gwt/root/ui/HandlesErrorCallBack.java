@@ -45,6 +45,7 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         if (checkLogin(throwable)) return;
         if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
+        if (handleDuplicateEntry(throwable)) return;
         displayMessage(message + (showTrace ? throwable : "") );
     }
 
@@ -82,5 +83,15 @@ public abstract class HandlesErrorCallBack<T> implements AsyncCallback<T> {
         }
         return false;
     }
+
+    protected boolean handleDuplicateEntry(Throwable t) {
+        if (t instanceof DuplicateEntryException) {
+            DuplicateEntryException duplicateEntryException = (DuplicateEntryException) t;
+            displayMessage(duplicateEntryException.getMessage());
+            return true;
+        }
+        return false;
+    }
+
 
 }

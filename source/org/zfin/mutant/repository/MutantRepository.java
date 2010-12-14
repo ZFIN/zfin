@@ -1,6 +1,8 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -11,7 +13,6 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.List;
-import java.util.TreeSet;
 
 
 /**
@@ -33,8 +34,6 @@ public interface MutantRepository {
     PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords);
 
     List<Genotype> getGenotypesByFeature(Feature feature);
-
-
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
 
     /**
@@ -48,6 +47,9 @@ public interface MutantRepository {
     int getNumberOfImagesPerAnatomyAndMutant(Term item, Genotype genotype);
 
     int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(Term item, Genotype genotype);
+
+
+
 
     /**
      * Retrieve all genotypes that have a phenotype annotation for a given
@@ -76,11 +78,6 @@ public interface MutantRepository {
      */
     Genotype getGenotypeByID(String genotypeZbID);
 
-    Feature getFeatureByID(String featureZdbID);
-
-    List<Marker> getMarkerbyFeature(Feature feature);
-
-    List<Marker> getMarkerPresent(Feature feature);
 
     /**
      * Retrieve a genotype object by handle
@@ -95,7 +92,6 @@ public interface MutantRepository {
 
     List<String> getDeletedMarkerLG(Feature feat);*/
 
-    TreeSet<String> getFeatureLG(Feature feat);
     /*List<String> getMappedFeatureLG(Feature feat);
     List<String> getLinkageFeatureLG(Feature feat);*/
 
@@ -154,11 +150,6 @@ public interface MutantRepository {
     List<GenericTerm> getQualityTermsByName(String name);
 
 
-    /**
-     * @param name name of feature
-     * @return A list of Features that contain the name in the abbreviation.
-     */
-    List<Feature> getFeaturesByAbbreviation(String name);
 
     /**
      * Retrieve all distinct wild-type genotypes.
@@ -205,8 +196,6 @@ public interface MutantRepository {
      */
     void deleteMutantFigureStage(MutantFigureStage mutant);
 
-    List<Feature> getFeaturesForStandardAttribution(Publication publication);
-
     List<Genotype> getGenotypesForStandardAttribution(Publication publication);
 
     List<Term> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
@@ -217,11 +206,10 @@ public interface MutantRepository {
 
     void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference);
 
-    List<Feature> getFeaturesForAttribution(String publicationZdbID);
 
     List<Genotype> getGenotypesForAttribution(String publicationZdbID);
 
-    Feature getFeatureByAbbreviation(String featureAbbrev);
+    FeatureAlias getSpecificDataAlias(Feature feature, String alias) ;
 
     int getZFINInferences(String zdbID, String zdbID1);
 
@@ -251,6 +239,7 @@ public interface MutantRepository {
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms);
 
     List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
+
 
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.

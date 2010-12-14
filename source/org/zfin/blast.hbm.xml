@@ -5,16 +5,16 @@
 
 <hibernate-mapping package="org.zfin.sequence.blast">
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="blastDatabaseType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="blastDatabaseType">
         <param name="enumClassname">org.zfin.sequence.blast.Database$Type</param>
     </typedef>
 
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="blastDatabaseAbbreviation">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="blastDatabaseAbbreviation">
         <param name="enumClassname">org.zfin.sequence.blast.Database$AvailableAbbrev</param>
     </typedef>
 
-    <typedef class="org.zfin.database.StringEnumUserType" name="originationType">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="originationType">
         <param name="enumClassname">org.zfin.sequence.blast.Origination$Type</param>
     </typedef>
 

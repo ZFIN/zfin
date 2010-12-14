@@ -1,34 +1,41 @@
 package org.zfin.feature.repository;
 
-import org.hibernate.SessionFactory;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.presentation.FeatureLabEntry;
+import org.zfin.feature.presentation.FeaturePrefixLight;
+import org.zfin.feature.presentation.LabFeaturePrefixRow;
+import org.zfin.feature.presentation.LineDesignationBean;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.mutant.Feature;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.marker.Marker;
+import org.zfin.people.Lab;
+import org.zfin.people.LabFeaturePrefix;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class FeatureRepositoryTest {
+public class FeatureRepositoryTest extends AbstractDatabaseTest{
+
+    private Logger logger = Logger.getLogger(FeatureRepositoryTest.class) ;
 
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
-
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
 
     @Before
     public void setUp() {
         TestConfiguration.configure();
     }
-
 
     /**
      * Check that genotype anh^m149 has background AB.
@@ -36,12 +43,196 @@ public class FeatureRepositoryTest {
     @Test
     public void getFeatureForPublication() {
         //  publication: Abdelilah
-        String pubID = "ZDB-PUB-970210-18";
-        List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
+        String[] pubIdList = new String[]{
+                "ZDB-PUB-970210-18",
+                "ZDB-PUB-100702-19", // has features with null prefixes
+        } ;
+        for(String pubID: pubIdList){
+            List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
 
-        assertNotNull("feature list exists", features);
+            assertNotNull("feature list exists", features);
+            assertTrue("has features", features.size()>0);
+        }
 
     }
 
+    /**
+     * Check that genotype anh^m149 has background AB.
+     */
+    @Test
+    public void getFeatureMarkerRelationshipsForPublication() {
+        //  publication: PGE2 (Goessling)
+        String pubID = "ZDB-PUB-090324-13";
+        List<FeatureMarkerRelationship> features = featureRepository.getFeatureRelationshipsByPublication(pubID);
 
+        assertNotNull("feature list exists", features);
+        assertTrue("has features marker relationships", features.size()>0);
+
+    }
+
+    @Test
+    public void getFeatureRelationshipTypesForPointMutationType(){
+        List<String> pointMutantTypes = new ArrayList<String>() ;
+        pointMutantTypes.add(FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString()) ;
+
+        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.POINT_MUTATION) ;
+        assertTrue(CollectionUtils.isEqualCollection(pointMutantTypes,types)) ;
+    }
+
+    @Test
+    public void getFeatureRelationshipTypesForTransgenicInsertionType(){
+        List<String> tgInsertionTypes = new ArrayList<String>() ;
+        tgInsertionTypes.add(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString()) ;
+        tgInsertionTypes.add(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString()) ;
+        tgInsertionTypes.add(FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString()) ;
+
+        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION) ;
+        assertTrue(CollectionUtils.isEqualCollection(tgInsertionTypes,types)) ;
+    }
+
+    @Test
+    public void getMarkersForFeatureRelationAndSource(){
+        List<Marker> markers = featureRepository.getMarkersForFeatureRelationAndSource("is allele of","ZDB-PUB-090324-13");
+        List<Marker> attributedMarkers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13") ;
+        assertEquals(attributedMarkers.size(),markers.size()) ;
+        assertTrue(CollectionUtils.isEqualCollection(attributedMarkers,markers)) ;
+    }
+
+    @Test
+    public void getFeaturePrefixes(){
+        List<String> featurePrefixes = featureRepository.getAllFeaturePrefixes() ;
+        assertTrue(featurePrefixes.size()>100);
+        assertTrue(featurePrefixes.size()<300);
+    }
+
+    @Test
+    public void getPrefixForLab(){
+        assertEquals("b",featureRepository.getCurrentPrefixForLab("ZDB-LAB-970408-1")); // westerfield
+        assertEquals("w",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
+    }
+
+    @Test
+    public void setPrefixForLab(){
+        HibernateUtil.createTransaction();
+        assertEquals("w",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
+        featureRepository.setCurrentLabPrefix("ZDB-LAB-980202-1","b") ;
+        HibernateUtil.currentSession().flush();
+        assertEquals("b",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
+        HibernateUtil.rollbackTransaction();
+    }
+
+    @Test
+    public void getAllFeaturePrefixesWithDesignations(){
+        List<FeaturePrefixLight> featurePrefixLights = featureRepository.getFeaturePrefixWithLabs() ;
+        assertNotNull(featurePrefixLights);
+        assertTrue(featurePrefixLights.size()>100);
+        assertTrue(featurePrefixLights.size()<300);
+    }
+
+    @Test
+    public void getLabFeaturePrefixRowWithFeature(){
+        List<LabFeaturePrefix> labFeaturePrefixes = featureRepository.getAllCurrentLabFeaturePrefixesWithFeature() ;
+        assertTrue(labFeaturePrefixes.size()>200);
+        LineDesignationBean lineDesignationBean = new LineDesignationBean();
+        lineDesignationBean.setFeaturePrefixList(labFeaturePrefixes);
+
+        List<LabFeaturePrefixRow> labFeaturePrefixRows = lineDesignationBean.getLabFeaturePrefixRows();
+        assertTrue(labFeaturePrefixRows.size()<300);
+        assertTrue(labFeaturePrefixRows.size()>50);
+        logger.error(labFeaturePrefixRows.get(0).toString());
+    }
+
+    @Test
+    public void getFeaturesForPrefixHasDominant(){
+        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("hi") ;
+        boolean hasDominant = false ;
+
+        for(int i = 0 ; i < featureLabEntries.size() && !hasDominant ; i++){
+            if(featureLabEntries.get(i).getFeature().getAbbreviation().startsWith("d") && featureLabEntries.get(i).getFeature().getDominantFeature()){
+                hasDominant = true ;
+            }
+        }
+
+        assertTrue(hasDominant) ;
+        assertTrue(featureLabEntries.size()>10);
+        assertTrue(featureLabEntries.size()<200);
+    }
+
+    @Test
+    public void getFeaturesForPrefixShowsOtherLabs(){
+        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("a") ;
+
+        assertTrue(featureLabEntries.size()>10);
+        assertTrue(featureLabEntries.size()<50);
+
+        for(FeatureLabEntry featureLabEntry : featureLabEntries){
+            if(featureLabEntry.getFeature().getAbbreviation().equals("a75")){
+                assertEquals("The Zon Lab",featureLabEntry.getSourceOrganization().getName());
+                assertTrue(featureLabEntry.getSourceOrganization().isActive());
+                assertFalse(featureLabEntry.isCurrent());
+            }
+        }
+
+    }
+
+    @Test
+    public void getLabsWithFeaturesForPrefix(){
+        List<Lab> labs = featureRepository.getLabsWithFeaturesForPrefix("b") ;
+        assertTrue(labs.size()>5);
+        assertTrue(labs.size()<20);
+    }
+
+
+    @Test
+    public void getLabsOfOriginWithPrefix(){
+        List<Lab> labs = featureRepository.getLabsOfOriginWithPrefix();
+        assertNotNull(labs);
+        logger.error("number of lab: " + labs.size());
+        assertTrue(labs.size()>200); // should be around 283, otherwise closer to 300
+        // just choose the first 5
+        for(int i = 0 ; i < 5 ; i++){
+            // just test the tostring method
+            labs.get(i).toString();
+            assertNotSame("Lab must have a prefix",0,featureRepository.getLabPrefixes(labs.get(i).getName()));
+        }
+        // assert that affolter is not in there
+    }
+
+//    s	true
+//m	false
+//sk	false
+//st	false
+    @Test
+    public void getLabPrefix(){
+        List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes("Stainier Lab");
+        assertNotNull(featurePrefixes);
+        assertEquals(4,featurePrefixes.size());
+        assertEquals("s",featurePrefixes.get(0).getPrefixString());
+        assertTrue(featurePrefixes.get(0).isActiveForSet());
+        assertEquals("m",featurePrefixes.get(1).getPrefixString());
+        assertFalse(featurePrefixes.get(1).isActiveForSet());
+        assertEquals("sk",featurePrefixes.get(2).getPrefixString());
+        assertFalse(featurePrefixes.get(2).isActiveForSet());
+        assertEquals("st",featurePrefixes.get(3).getPrefixString());
+        assertFalse(featurePrefixes.get(3).isActiveForSet());
+    }
+
+    @Test
+    public void attributedFeatures() {
+        // Uemura, et al.
+        String pubID = "ZDB-PUB-050202-4";
+        List<Feature> features = featureRepository.getFeaturesForAttribution(pubID);
+        assertNotNull(features);
+
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(pubID);
+        assertNotNull(markers);
+    }
+
+    @Test
+    public void getFeaturesByPrefixAndLineNumber(){
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b","1234"));
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix","1"));
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b","notavalidlinenumber"));
+        assertNotNull(featureRepository.getFeatureByPrefixAndLineNumber("b","1"));
+    }
 }

@@ -1498,7 +1498,7 @@ function doValidateAndSubmit(currentTime ){
                   <?MIBLOCK COND="$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,6),unrec_)">
                    <?MIVAR NAME=$fsel_rec_feature_abbrev>unrecovered<?/MIVAR>
                   <?/MIBLOCK>
-<?MIVAR NAME=fsel_feature_html><a href=/action/feature/detail?feature.zdbID=$fsel_rec_feature_id>$fsel_rec_feature_abbrev</a><?/MIVAR>
+<?MIVAR NAME=fsel_feature_html><a href=/action/feature/feature-detail?zdbID=$fsel_rec_feature_id>$fsel_rec_feature_abbrev</a><?/MIVAR>
                   <?MIVAR>$(IF,$(OR,$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,3),unrec_),$(>,$(POSITION,$fsel_rec_feature_abbrev,unrecovered),0)),unrecovered,$fsel_feature_html)<?/MIVAR>
               </TD><?/MIVAR>
               
@@ -1884,7 +1884,8 @@ return false ; ">
         type: "GDAG_TERM_LOOKUP",
         width: 40, 
         wildcard: false,
-        useTermTable: true
+        useTermTable: true,
+        showTermDetail: false
     };
 </script>
 

@@ -23,4 +23,14 @@ public abstract class AbstractTextBox<T> extends TextBox implements IsDirty<T>{
             return true ;
         }
     }
+
+    public boolean setDirty(boolean dirty){
+        if(dirty){
+            setStyleName(DIRTY_STYLE);
+        }
+        else{
+            setStyleName(CLEAN_STYLE);
+        }
+        return dirty ;
+    }
 }

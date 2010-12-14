@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.gwt.marker.ui.MarkerNoteBox;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.InfrastructureService;
@@ -51,7 +50,7 @@ public class DTOMarkerService {
             noteDTO.setZdbID(dataNote.getZdbID());
 //            noteDTO.setDataZdbID(dataNote.getDataZdbID());
             noteDTO.setDataZdbID(marker.getZdbID());
-            noteDTO.setEditMode(MarkerNoteBox.EditMode.PRIVATE.name());
+            noteDTO.setNoteEditMode(NoteEditMode.PRIVATE);
             curatorNotes.add(noteDTO);
         }
         return curatorNotes;
@@ -62,7 +61,7 @@ public class DTOMarkerService {
         publicNoteDTO.setNoteData(marker.getPublicComments());
         publicNoteDTO.setZdbID(marker.getZdbID());
         publicNoteDTO.setDataZdbID(marker.getZdbID());
-        publicNoteDTO.setEditMode(MarkerNoteBox.EditMode.PUBLIC.name());
+        publicNoteDTO.setNoteEditMode(NoteEditMode.PUBLIC);
         return publicNoteDTO;
     }
 
@@ -142,7 +141,7 @@ public class DTOMarkerService {
         for (AntibodyExternalNote antibodyExternalNote : antibody.getExternalNotes()) {
             NoteDTO antibodyExternalNoteDTO = new NoteDTO();
             antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
-            antibodyExternalNoteDTO.setEditMode(MarkerNoteBox.EditMode.EXTERNAL.name());
+            antibodyExternalNoteDTO.setNoteEditMode(NoteEditMode.EXTERNAL);
             antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
             if (antibodyExternalNote.getSinglePubAttribution() != null) {
                 antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());

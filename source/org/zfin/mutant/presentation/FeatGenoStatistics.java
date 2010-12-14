@@ -2,10 +2,10 @@ package org.zfin.mutant.presentation;
 
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;

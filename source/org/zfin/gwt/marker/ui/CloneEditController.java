@@ -10,10 +10,7 @@ import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
 import org.zfin.gwt.marker.event.DirectAttributionDBLinkTableListener;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
 import org.zfin.gwt.marker.event.MarkerLoadListener;
-import org.zfin.gwt.root.dto.CloneDTO;
-import org.zfin.gwt.root.dto.DBLinkDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
@@ -59,7 +56,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
         publicationLookupBox.setKey(PublicationSessionKey.CLONE);
         publicationLookupBox.getRecentPubs();
 
-        markerNoteBox.removeEditMode(MarkerNoteBox.EditMode.EXTERNAL);
+        markerNoteBox.removeEditMode(NoteEditMode.EXTERNAL);
     }
 
     protected void loadDTO() {

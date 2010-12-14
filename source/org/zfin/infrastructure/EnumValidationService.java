@@ -7,12 +7,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.GoEvidenceQualifier;
-import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.*;
-import org.zfin.mutant.Feature;
-import org.zfin.mutant.FeatureAssay;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -172,20 +168,20 @@ public class EnumValidationService {
     public void validateFeatureType() throws EnumValidationException {
         String hql = "select ftrtype_name from feature_type";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, Feature.Type.values());
+        checkEnumVersusDatabaseCollection(typeList, FeatureTypeEnum.values());
     }
 
     @ServiceTest
     public void validateFeatMutagen() throws EnumValidationException {
         String hql = "select * from mutagen";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, FeatureAssay.Mutagen.values());
+        checkEnumVersusDatabaseCollection(typeList, Mutagen.values());
     }
      @ServiceTest
     public void validateFeatMutagee() throws EnumValidationException {
         String hql = "select * from mutagee";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, FeatureAssay.Mutagee.values());
+        checkEnumVersusDatabaseCollection(typeList, Mutagee.values());
     }
     /**
      * @throws EnumValidationException

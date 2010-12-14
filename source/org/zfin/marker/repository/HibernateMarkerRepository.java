@@ -15,6 +15,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -24,7 +25,6 @@ import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
-import org.zfin.mutant.FeatureMarkerRelationship;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -937,19 +937,65 @@ public class HibernateMarkerRepository implements MarkerRepository {
             types[index++] = getMarkerTypeByName(type);
         }
 
-        Criteria criteria1 = session.createCriteria(Marker.class);
-        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
-        criteria1.addOrder(Order.asc("abbreviationOrder"));
-        criteria1.add(Restrictions.in("markerType", types));
-        markerList.addAll(criteria1.list());
+        // a slight speed improvement and more fine-grained sorting control (if needed)
+        String hql = " select distinct m from Marker m  "
+                + " where m.abbreviation like :name  "
+                + " and m.markerType in (:types)  ";
+//                + " order by m.abbreviationOrder asc " ;
+        markerList.addAll(HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setString("name","%"+name+"%")
+                .setParameterList("types",types)
+                .list());
 
-        Criteria criteria2 = session.createCriteria(Marker.class);
-        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
-        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
-        criteria2.addOrder(Order.asc("abbreviationOrder"));
-        criteria2.add(Restrictions.in("markerType", types));
-        markerList.addAll(criteria2.list());
-        return markerList;
+        Collections.sort(markerList,new MarkerAbbreviationComparator(name));
+
+        return markerList ;
+
+//        Criteria criteria1 = session.createCriteria(Marker.class);
+//        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
+//        criteria1.addOrder(Order.asc("abbreviationOrder"));
+//        criteria1.add(Restrictions.in("markerType", types));
+//        markerList.addAll(criteria1.list());
+//
+//        Criteria criteria2 = session.createCriteria(Marker.class);
+//        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE));
+//        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START)));
+//        criteria2.addOrder(Order.asc("abbreviationOrder"));
+//        criteria2.add(Restrictions.in("markerType", types));
+//        markerList.addAll(criteria2.list());
+//        return markerList;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType,String pubZdbId){
+        List<Marker> markerList = new ArrayList<Marker>();
+
+        MarkerTypeGroup group = getMarkerTypeGroupByName(markerType.name());
+        if (group == null)
+            return null;
+        MarkerType[] types = new MarkerType[group.getTypeStrings().size()];
+        int index = 0;
+        for (String type : group.getTypeStrings()) {
+            types[index++] = getMarkerTypeByName(type);
+        }
+
+        String hql = " select distinct m from Marker m , PublicationAttribution pa "
+                + " where m.abbreviation like :name  "
+                + " and pa.dataZdbID = m.zdbID  "
+                + " and pa.sourceZdbID = :publicationZdbId "
+                + " and m.markerType in (:types)  "; 
+//                + " order by m.abbreviationOrder asc " ;
+        markerList.addAll(HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setString("name","%"+name+"%")
+                .setString("publicationZdbId",pubZdbId)
+                .setParameterList("types",types)
+                .list());
+
+        Collections.sort(markerList,new MarkerAbbreviationComparator(name));
+
+        return markerList ;
     }
 
     // clone methods
@@ -1266,7 +1312,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Marker> getMarkerForAttribution(String publicationZdbID) {
+    public List<Marker> getMarkersForAttribution(String publicationZdbID) {
         String hql = "" +
                 " select distinct m from Marker m , RecordAttribution ra " +
                 " where ra.dataZdbID=m.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +

@@ -17,6 +17,9 @@ public class StringListBox extends AbstractListBox<String>{
     }
 
     public String getSelected() {
+        if(getSelectedIndex()<0){
+            return null ; 
+        }
         String value = getValue(getSelectedIndex());
         if (value.equals(NULL_STRING)) {
             return null;
@@ -81,12 +84,10 @@ public class StringListBox extends AbstractListBox<String>{
 
     public boolean isDirty(String value) {
         if(getItemCount()==0 || isFieldEqual(value)){
-            setStyleName(CLEAN_STYLE);
-            return false ;
+            return setDirty(false);
         }
         else{
-            setStyleName(DIRTY_STYLE);
-            return true ;
+            return setDirty(true);
         }
     }
 }

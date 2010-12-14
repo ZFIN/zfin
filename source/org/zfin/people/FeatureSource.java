@@ -1,16 +1,11 @@
 package org.zfin.people;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.zfin.mutant.Feature;
+import org.zfin.feature.Feature;
 
 import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Prita
- * Date: Jul 23, 2009
- * Time: 12:02:38 PM
- * To change this template use File | Settings | File Templates.
  */
 public class FeatureSource extends ObjectSource implements Serializable, Comparable<FeatureSource> {
 

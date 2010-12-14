@@ -39,6 +39,7 @@
 <filter token="DB_OWNER" value="${DB_OWNER}"/>
 <filter token="DEBUGPORT" value="${DEBUGPORT}"/>
 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
+<filter token="DISABLE_SECURITY" value="${DISABLE_SECURITY}"/>
 <filter token="DOI_EMAIL_REPORT" value="${DOI_EMAIL_REPORT}"/>
 <filter token="DOMAIN_NAME" value="${DOMAIN_NAME}"/>
 <filter token="FTPROOT_PATH" value="${FTPROOT_PATH}"/>
@@ -75,6 +76,7 @@
 <filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
+<filter token="LOAD_ONTOLOGIES_AT_STARTUP" value="${LOAD_ONTOLOGIES_AT_STARTUP}"/>
 <filter token="LOCUS_REGISTRATION_EMAIL" value="${LOCUS_REGISTRATION_EMAIL}"/>
 <filter token="LOG_FILE_MAX" value="${LOG_FILE_MAX}"/>
 <filter token="LOG_FILE_PATTERN" value="${LOG_FILE_PATTERN}"/>

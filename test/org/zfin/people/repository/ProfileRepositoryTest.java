@@ -49,8 +49,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
 
         }
         catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+            fail(e.fillInStackTrace().toString());
         }
         finally {
             // rollback on success or exception to leave no new records in the database
@@ -160,40 +159,17 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
     @Test
     public void getMatchingOrganizations() {
         String name = "zeb";
-        ProfileRepository pr = RepositoryFactory.getProfileRepository();
-        List<Organization> orgs = pr.getOrganizationsByName(name);
+        List<Organization> orgs = profileRepository.getOrganizationsByName(name);
         assertTrue(orgs != null);
-    }
 
-    @Test
-    public void getLabById(){
-        assertNotNull(profileRepository.getLabById("ZDB-LAB-000114-8"));
-    }
-
-    @Test
-    public void getAllPrefixes(){
-        List<String> prefixes= profileRepository.getAllPrefixes() ;
-        assertNotNull(prefixes);
-        assertTrue(prefixes.size()>20 && prefixes.size()<500);
-    }
-
-    @Test
-    public void getPrefixForLab(){
-        assertNotNull(profileRepository.getPrefixForLab("ZDB-LAB-000114-8"));
     }
 
 
     @Test
-    public void updateLabForPrefix(){
-        HibernateUtil.createTransaction();
-        try{
-            profileRepository.setLabPrefix("ZDB-LAB-000114-8","b");
-        }
-        catch(Exception e){
-            fail(e.toString());
-        }
-        finally {
-            HibernateUtil.rollbackTransaction();
-        }
+    public void getOrganizationToWork(){
+        Organization organization1 = (Organization) HibernateUtil.currentSession().get(Organization.class,"ZDB-LAB-001018-2") ;
+        assertNotNull(organization1);
+        organization1.toString();
     }
+
 }

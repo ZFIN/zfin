@@ -81,12 +81,10 @@ public class IntegerListBox extends AbstractListBox<Integer> {
 
     public boolean isDirty(Integer value) {
         if( isFieldEqual( value)){
-            setStyleName(CLEAN_STYLE);
-            return false ;
+            return setDirty(false) ;
         }
         else{
-            setStyleName(DIRTY_STYLE);
-            return true ;
+            return setDirty(true) ;
         }
     }
 }

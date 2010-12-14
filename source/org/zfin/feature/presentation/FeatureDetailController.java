@@ -1,54 +1,63 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.mutant.Feature;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class FeatureDetailController extends AbstractCommandController {
+@Controller
+//@RequestMapping("/feature") // already provided in the context
+public class FeatureDetailController {
     private static final Logger LOG = Logger.getLogger(FeatureDetailController.class);
 
     private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
-    public FeatureDetailController() {
-        setCommandClass(FeatureBean.class);
+    @RequestMapping( value={
+//            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
+//            "/detail?feature.zdbID={zdbID}" // using old link
+            "/feature-detail" // using old link
     }
-
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    )
+    protected String getFeatureDetail(@RequestParam String zdbID, Model model) throws Exception {
         LOG.info("Start Feature Detail Controller");
-        FeatureBean form = (FeatureBean) command;
-        Feature feature = featureRepository.getFeatureByID(form.getFeature().getZdbID());
-        if (feature == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getFeature().getZdbID());
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        if (feature == null){
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return "record-not-found.page";
+        }
 
-        FeatureService featStat = new FeatureService(feature);
-        form.setFeatureStat(featStat);
+        FeatureBean form = new FeatureBean();
+        form.setZdbID(zdbID);
         form.setFeature(feature);
+        form.setSortedMarkerRelationships(FeatureService.getSortedMarkerRelationships(feature));
+        form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
+        form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
+        form.setSinglePublication(FeatureService.getSinglePublication(feature));
+        form.setFeatureMap(FeatureService.getFeatureMap(feature));
+        form.setFeatureLocations(FeatureService.getFeatureLocations(feature));
+
         retrieveGenoData(feature, form);
         retrievePubData(feature, form);
-    //    retrieveMarkerData(feature, form);
 
-        ModelAndView modelAndView;
-        modelAndView = new ModelAndView("feature-detail.page", LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, feature.getName());
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());
 
-        return modelAndView;
+        return "feature/feature-detail.page";
     }
 
     private void retrieveGenoData(Feature fr, FeatureBean form) {
@@ -64,20 +73,6 @@ public class FeatureDetailController extends AbstractCommandController {
     private void retrievePubData(Feature fr, FeatureBean form) {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForFeature(fr, 0).getTotalCount());
     }
-
-    //this is to get the affected marker (markers that have 'is allele of relationships' with features. We need this to get Map locations
-   /* private void retrieveMarkerData(Feature fr, FeatureBean form) {
-        Marker marker = RepositoryFactory.getMutantRepository().getMarkerbyFeature(fr);
-        if (marker != null) {
-            form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
-        }
-    }
-    private void retrieveMarkerPresent(Feature fr, FeatureBean form) {
-        Marker marker = RepositoryFactory.getMutantRepository().getMarkerPresent(fr);
-        if (marker != null) {
-            form.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
-        }
-    }*/
 
     private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {
         if (genotypes == null || fr == null)

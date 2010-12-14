@@ -68,6 +68,7 @@
         <property name="fax"/>
         <property name="phone"/>
         <property name="address"/>
+        <property name="status"/>
 
         <set name="organizationUrls">
             <key column="srcurl_source_zdb_id"/>
@@ -75,18 +76,19 @@
         </set>
 
         <union-subclass name="org.zfin.people.Lab" table="lab">
-            <!--    Causes problems in Hibernate as it adds a 'null as company_lab ' line as a union needs to have the same columns
-                        <property name="bio" column="lab_bio" />
-            -->
+            <!--   Causes problems in Hibernate as it adds a 'null as company_lab ' line as a union needs to have the same columns-->
+            <!--<property name="bio" column="lab_bio" />-->
         </union-subclass>
 
         <union-subclass name="org.zfin.people.Company" table="company">
             <!--    Causes problems in Hibernate as it adds a 'null as company_lab ' line as a union needs to have the same columns
             <property name="bio" column="company_bio" />
             -->
+            <!--<property name="bio" column="company_bio" />-->
         </union-subclass>
 
     </class>
+
 
     <class abstract="true" name="org.zfin.people.ObjectSupplier" table="int_data_supplier">
         <composite-id>
@@ -103,7 +105,7 @@
                                     WHEN 'FOSMID' THEN 'Marker'
                                     WHEN 'PAC' THEN 'Marker'
                                     WHEN 'GENO' THEN 'Genoty'
-                                    WHEN 'ALT' THEN 'Featu'
+                                    WHEN 'ALT' THEN 'Featur'
                                     ELSE             'other-'
                                  END)"/>
 
@@ -118,12 +120,12 @@
         <subclass name="org.zfin.people.MarkerSupplier" discriminator-value="Marker">
             <many-to-one name="marker" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
-        
+
         <subclass name="org.zfin.people.GenotypeSupplier" discriminator-value="Genoty">
             <many-to-one name="genotype" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
 
-        <subclass name="org.zfin.people.FeatureSupplier" discriminator-value="Featu">
+        <subclass name="org.zfin.people.FeatureSupplier" discriminator-value="Featur">
             <many-to-one name="feature" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
@@ -136,8 +138,8 @@
 
         <discriminator type="string"
                        formula="(CASE get_obj_type(ids_data_zdb_id)
-                                    WHEN 'ALT' THEN 'Feature'
-                                    WHEN 'GENO' THEN 'Genotype'
+                                    WHEN 'ALT' THEN 'Featur'
+                                    WHEN 'GENO' THEN 'Genoty'
                                     WHEN 'ETCONSTRCT' THEN 'Marker'
                                     WHEN 'EST' THEN 'Marker'
                                     WHEN 'GTCONSTRCT' THEN 'Marker'
@@ -147,7 +149,7 @@
 
 
 
-        <subclass name="org.zfin.people.FeatureSource" discriminator-value="Feature">
+        <subclass name="org.zfin.people.FeatureSource" discriminator-value="Featur">
             <many-to-one name="feature" column="ids_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
@@ -184,6 +186,17 @@
 
     </class>
 
+    <class name="org.zfin.people.LabFeaturePrefix" table="lab_feature_prefix">
+        <!-- Do not create a new record on its own but use
+
+             the Person class. Only used to delete an account info record -->
+        <composite-id>
+            <key-property name="currentDesignation" column="lfp_current_designation"/>
+            <key-many-to-one name="featurePrefix" column="lfp_prefix_id"/>
+            <key-many-to-one name="lab" column="lfp_lab_zdb_id" class="Lab"/>
+        </composite-id>
+    </class>
+
     <class name="org.zfin.people.CuratorSession" table="curator_session">
         <id name="ID" type="long">
             <column name="cs_pk_id" not-null="true"/>
@@ -209,6 +222,7 @@
         </property>
 
     </class>
+
 
 </hibernate-mapping>
 

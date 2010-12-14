@@ -1,10 +1,18 @@
 package org.zfin.gwt.root.server;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAssay;
+import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.presentation.FeaturePresentation;
+import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
@@ -14,6 +22,7 @@ import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.orthology.Species;
 import org.zfin.people.CuratorSession;
+import org.zfin.people.Lab;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -339,11 +348,60 @@ public class DTOConversionService {
     }
 
     public static FeatureDTO convertToFeatureDTO(Feature feature) {
-        FeatureDTO dto = new FeatureDTO();
-        dto.setZdbID(feature.getZdbID());
-        dto.setName(feature.getName());
-        dto.setAbbreviation(feature.getAbbreviation());
-        return dto;
+        FeatureDTO featureDTO = new FeatureDTO();
+        featureDTO.setZdbID(feature.getZdbID());
+        featureDTO.setName(feature.getName());
+        featureDTO.setAbbreviation(feature.getAbbreviation());
+        featureDTO.setFeatureType(feature.getType());
+        featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite()) ;
+        featureDTO.setLink(FeaturePresentation.getLink(feature));
+        featureDTO.setTransgenicSuffix(feature.getTransgenicSuffix());
+        if (feature.getLineNumber()!=null){
+            featureDTO.setLineNumber(feature.getLineNumber());
+        }
+
+        if (feature.getType()!= FeatureTypeEnum.UNSPECIFIED) {
+            FeatureAssay ftrAssay=feature.getFeatureAssay();
+            if (ftrAssay!=null){
+                if (feature.getFeatureAssay().getMutagee()!=null){
+                    featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
+                }
+                if (feature.getFeatureAssay().getMutagen()!=null){
+                    featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
+                }
+            }
+        }
+
+        if (feature.getPublicComments()!=null){
+            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(),feature.getPublicComments()) ;
+            featureDTO.setPublicNote(noteDTO);
+        }
+
+        Set<DataNote> curatorNotes = feature.getDataNotes() ;
+        if (CollectionUtils.isNotEmpty(curatorNotes)){
+            List<NoteDTO> curatorNoteDTOs = new ArrayList<NoteDTO>();
+            for(DataNote dataNote : curatorNotes){
+                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(),dataNote.getDataZdbID(),dataNote.getNote()) ;
+                curatorNoteDTOs.add(noteDTO) ;
+            }
+            featureDTO.setCuratorNotes(curatorNoteDTOs);
+        }
+
+        featureDTO.setDominant(feature.getDominantFeature());
+        featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite());
+        FeaturePrefix featurePrefix = feature.getFeaturePrefix();
+        if(featurePrefix!=null){
+            featureDTO.setLabPrefix(featurePrefix.getPrefixString());
+        }
+        Lab labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
+        if(labByFeature!=null){
+            featureDTO.setLabOfOrigin(labByFeature.getZdbID());
+            logger.debug("Feature does not have a lab: "+ feature.getAbbreviation() + " "+feature.getZdbID());
+        }
+
+
+        featureDTO.setFeatureAliases(FeatureService.getFeatureAliases(feature));
+        return featureDTO;
     }
 
     public static CuratorSessionDTO convertToCuratorSessionDTO(CuratorSession session) {
@@ -698,13 +756,57 @@ public class DTOConversionService {
         info.setComment(term.getComment());
 
         // try to use the terms ontology unless not provided
-        if(term.getOntology()==null){
-            info.setOntology(ontologyDTO) ; 
-        }
-        else{
+        if (term.getOntology() == null) {
+            info.setOntology(ontologyDTO);
+        } else {
             info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
         }
         info.setObsolete(term.isObsolete());
         return info;
+    }
+
+    public static FeatureMarkerRelationshipDTO convertToFeatureMarkerRelationshipDTO(FeatureMarkerRelationship featureMarkerRelationship) {
+        FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = new FeatureMarkerRelationshipDTO();
+
+        featureMarkerRelationshipDTO.setZdbID(featureMarkerRelationship.getZdbID());
+        featureMarkerRelationshipDTO.setRelationshipType(featureMarkerRelationship.getFeatureMarkerRelationshipType().getName());
+        featureMarkerRelationshipDTO.setFeatureDTO(convertToFeatureDTO(featureMarkerRelationship.getFeature()));
+        featureMarkerRelationshipDTO.setMarkerDTO(convertToMarkerDTO(featureMarkerRelationship.getMarker()));
+
+        return featureMarkerRelationshipDTO ;
+    }
+
+    public static LabDTO convertToLabDTO(Lab lab){
+        LabDTO labDTO = new LabDTO();
+        labDTO.setZdbID(lab.getZdbID());
+        labDTO.setName(lab.getName());
+        return labDTO ;
+    }
+
+    public static List<LabDTO> convertToLabDTO(List<Lab> labsOfOrigin) {
+        List<LabDTO> labDTO = new ArrayList<LabDTO>() ;
+        if(CollectionUtils.isNotEmpty(labsOfOrigin)){
+            for(Lab lab : labsOfOrigin){
+                labDTO.add(DTOConversionService.convertToLabDTO(lab)) ;
+            }
+        }
+        return labDTO;
+    }
+
+    public static FeaturePrefixDTO convertToFeaturePrefixDTO(FeaturePrefix featurePrefix) {
+        FeaturePrefixDTO featurePrefixDTO = new FeaturePrefixDTO();
+        featurePrefixDTO.setPrefix(featurePrefix.getPrefixString());
+        featurePrefixDTO.setActive(featurePrefix.isActiveForSet());
+        return featurePrefixDTO;
+    }
+
+    public static List<FeaturePrefixDTO> convertToFeaturePrefixDTO(List<FeaturePrefix> labPrefixes) {
+        List<FeaturePrefixDTO> featurePrefixDTOs = new ArrayList<FeaturePrefixDTO>() ;
+        if(CollectionUtils.isNotEmpty(labPrefixes)){
+            for(FeaturePrefix featurePrefix: labPrefixes){
+                featurePrefixDTOs.add(convertToFeaturePrefixDTO(featurePrefix)) ;
+            }
+        }
+        return featurePrefixDTOs;  //To change body of created methods use File | Settings | File Templates.
     }
 }

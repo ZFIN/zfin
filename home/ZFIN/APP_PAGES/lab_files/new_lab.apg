@@ -111,9 +111,20 @@ USA
     <p>
 
     <b>Allele Designation:</b><br>
+
+    <?MICOMMENT>
     <INPUT type=text 
 	   <?MIVAR COND=$(NC,$allele_prefix,NULL)>value="$allele_prefix" <?/MIVAR>
            name="allele_prefix" size="20">
+           <?/MICOMMENT>
+	  <SELECT name=allele_prefix>
+            <?MISQL SQL="
+            select fp.fp_prefix,fp.fp_pk_id 
+from feature_prefix fp 
+order by fp.fp_prefix asc">
+                  <option value="$2" >$1
+            <?/MISQL>
+	  </SELECT> 
     <p>
 
 

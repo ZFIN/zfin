@@ -40,4 +40,7 @@ public class StringTextBox extends AbstractTextBox<String> {
         }
     }
 
+    public void clear() {
+        setText("");
+    }
 }

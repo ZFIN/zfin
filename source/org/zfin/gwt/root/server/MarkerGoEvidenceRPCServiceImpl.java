@@ -418,7 +418,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     @Override
     public List<MarkerDTO> getGenesForPub(String publicationID) {
         List<MarkerDTO> markerDTOs = new ArrayList<MarkerDTO>();
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkerForAttribution(publicationID);
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(publicationID);
         if (CollectionUtils.isNotEmpty(markers)) {
             for (Marker m : markers) {
                 if (m.getZdbID().startsWith("ZDB-GENE-")) {

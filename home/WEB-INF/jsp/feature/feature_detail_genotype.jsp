@@ -1,6 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<%--TODO: remove?--%>
 <b>Mutant and Transgenic Lines</b>
 
 

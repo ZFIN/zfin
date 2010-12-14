@@ -32,11 +32,13 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 
     public Organization getOrganizationByName(String name) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Organization.class);
-        criteria.add(Restrictions.eq("name", name));
-        return (Organization) criteria.uniqueResult();
-    }
+           Session session = HibernateUtil.currentSession();
+         String hql = "select distinct o  from  Organization o" +
+                "     where o.name = :name";
+        Query query = session.createQuery(hql);
+        query.setParameter("name", name);
+          return ((Organization) query.uniqueResult());
+      }
 
     public Person getPerson(Person pers) {
         return null;
@@ -46,6 +48,8 @@ public class HibernateProfileRepository implements ProfileRepository {
         Session session = HibernateUtil.currentSession();
         session.save(person);
     }
+
+
 
     public void addSupplier(Organization organization, Marker marker) {
         Session session = HibernateUtil.currentSession();
@@ -319,39 +323,4 @@ public class HibernateProfileRepository implements ProfileRepository {
         return (Lab) HibernateUtil.currentSession().get(Lab.class,labZdbId);
     }
 
-    @Override
-    public List<String> getAllPrefixes() {
-        String hql = " select distinct l.allele_prefix from Lab l " +
-                "order by l.allele_prefix " ;
-        return HibernateUtil.currentSession().createSQLQuery(hql).list();
-    }
-
-    @Override
-    public String getPrefixForLab(String labZdbId) {
-        String hql = " select l.allele_prefix from Lab l " +
-                " where l.zdb_id = :labZdbId" ;
-        Object obj = HibernateUtil.currentSession().createSQLQuery(hql)
-                .setString("labZdbId",labZdbId)
-                .uniqueResult();
-        return (obj!=null ? obj.toString() : null ) ;
-    }
-
-    @Override
-    public String setLabPrefix(String labZdbId, String prefix) {
-        HibernateUtil.createTransaction();
-        String hql = " update lab set allele_prefix = :prefix " +
-                " where zdb_id = :labZdbId "  ;
-        int updated = HibernateUtil.currentSession().createSQLQuery(hql)
-                .setString("labZdbId",labZdbId)
-                .setString("prefix",prefix)
-                .executeUpdate();
-        if(updated==1){
-            HibernateUtil.flushAndCommitCurrentSession();
-            return prefix ;
-        }
-        else{
-            HibernateUtil.rollbackTransaction();
-            return null ;
-        }
-    }
 }

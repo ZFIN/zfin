@@ -151,7 +151,7 @@ Optional Vars:
                <?MIVAR>$data_name<?/MIVAR> 
               <?MIELSE>
                 <?MIBLOCK COND="$(EC,$zdbType,ZDB-GENO)">
-                   <?MIVAR><a href="/action/genotype/detail?genotype.zdbID=$OID">$data_name</a><?/MIVAR>  
+                   <?MIVAR><a href="/action/genotype/genotype-detail?zdbID=$OID">$data_name</a><?/MIVAR>  
                 <?MIELSE>
                    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
                 <?/MIBLOCK>

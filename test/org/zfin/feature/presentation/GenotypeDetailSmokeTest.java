@@ -9,7 +9,7 @@ import org.zfin.AbstractSmokeTest;
  */
 public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
 
-    private String pageUrl = "/action/genotype/detail?genotype.zdbID=ZDB-GENO-050809-10";
+    private String pageUrl = "/action/genotype/genotype-detail?zdbID=ZDB-GENO-050809-10";
 
     public void testGenotypeDetailPage() {
         for (WebClient browser : curationWebClients) {

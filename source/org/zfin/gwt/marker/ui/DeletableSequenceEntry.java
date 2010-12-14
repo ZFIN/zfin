@@ -5,6 +5,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.SequenceDTO;
+import org.zfin.gwt.root.ui.HasRelatedEntities;
+import org.zfin.gwt.root.ui.PublicationAttributionLabel;
 
 import java.util.ArrayList;
 import java.util.List;

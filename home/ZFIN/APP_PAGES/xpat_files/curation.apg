@@ -933,7 +933,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?MIELSE>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <p>Authorization for this page failed.
-  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+  <p>A session error may have occurred. Try <a href="/action/logout">logging out</a> and <a href="/action/login">logging back in</a>. If that does not work, contact your database administrator.
 <?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
 
 <?MIELSE>

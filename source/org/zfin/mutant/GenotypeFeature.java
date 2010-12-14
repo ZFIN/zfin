@@ -1,5 +1,7 @@
 package org.zfin.mutant;
 
+import org.zfin.feature.Feature;
+
 /**
  * A genotype feature.
  */

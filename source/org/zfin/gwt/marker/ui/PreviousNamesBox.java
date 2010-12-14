@@ -4,10 +4,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.event.RelatedEntityListener;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerRPCService;
-import org.zfin.gwt.root.ui.StandardDivNames;
+import org.zfin.gwt.root.ui.*;
 
 /**
  */

@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public abstract class Organization implements Comparable<Organization> {
 
+    public static final String ACTIVE_STATUS = "active";
+
     private String zdbID;
     protected String name;
     private String phone;
@@ -18,9 +20,9 @@ public abstract class Organization implements Comparable<Organization> {
     private String url;
     private Person owner;
     private String address;
-    private String bio;
     private boolean active;
     protected Set<SourceUrl> sourceUrls;
+    private String status;
 
     public String getZdbID() {
         return zdbID;
@@ -86,12 +88,12 @@ public abstract class Organization implements Comparable<Organization> {
         this.address = address;
     }
 
-    public String getBio() {
-        return bio;
+    public String getStatus() {
+        return status;
     }
 
-    public void setBio(String bio) {
-        this.bio = bio;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Set<SourceUrl> getOrganizationUrls() {
@@ -103,11 +105,7 @@ public abstract class Organization implements Comparable<Organization> {
     }
 
     public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+        return status.equals(ACTIVE_STATUS);
     }
 
     /**
@@ -166,4 +164,20 @@ public abstract class Organization implements Comparable<Organization> {
 
     public abstract boolean getCompany();
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Organization");
+        sb.append("{active=").append(active).append('\'');
+        sb.append(", zdbID='").append(zdbID).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", phone='").append(phone).append('\'');
+        sb.append(", fax='").append(fax).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", url='").append(url).append('\'');
+        sb.append(", owner=").append(owner).append('\'');
+        sb.append(", address='").append(address).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -7,7 +7,9 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.DirectAttributionListener;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.PublicationChangeListener;
+import org.zfin.gwt.root.ui.CanRemoveReference;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.PublicationAttributionLabel;
 import org.zfin.gwt.root.ui.PublicationValidator;
 
 import java.util.ArrayList;

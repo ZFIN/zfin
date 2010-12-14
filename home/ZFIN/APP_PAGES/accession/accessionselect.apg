@@ -138,8 +138,8 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">/action/genotype/detail?genotype.zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">/action/genotype/detail?genotype.zdbID=$OID<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">/action/genotype/genotype-detail?zdbID=$OID<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">/action/genotype/genotype-detail?zdbID=$OID<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
 
 <?MICOMMENT>
@@ -162,7 +162,7 @@
 <?/MICOMMENT>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">/action/feature/detail?feature.zdbID=$OID<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">/action/feature/feature-detail?zdbID=$OID<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>

@@ -1,10 +1,15 @@
 package org.zfin.mutant.presentation;
 
 import org.zfin.expression.Figure;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.GenotypeFeature;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;

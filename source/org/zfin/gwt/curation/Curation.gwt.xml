@@ -4,6 +4,7 @@
     <inherits name='org.zfin.gwt.root.Root'/>
 
     <source path='dto'/>
+    <source path='event'/>
     <source path='ui'/>
 
     <entry-point class='org.zfin.gwt.curation.ui.CurationEntryPoint'/>
@@ -14,6 +15,7 @@
     <servlet path="/ajax/curation-filter" class='org.zfin.gwt.curation.server.CurationFilterRPCImpl'/>
     <servlet path="/ajax/termservice" class='org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl'/>
     <servlet path="/ajax/markerservice" class="org.zfin.gwt.root.server.MarkerRPCServiceImpl"/>
+     <servlet path="/ajax/featureservice" class="org.zfin.gwt.root.server.FeatureRPCServiceImpl"/>
     <!--
         <define-property name="user.agent" values="gecko" />
     <define-property name="locale" values="en"/>

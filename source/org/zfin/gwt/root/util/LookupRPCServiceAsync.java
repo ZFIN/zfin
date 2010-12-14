@@ -10,6 +10,8 @@ import java.util.Map;
 /**
  */
 public interface LookupRPCServiceAsync {
+                                                          
+    // publication access method
 
     // publication access method
 
@@ -21,7 +23,11 @@ public interface LookupRPCServiceAsync {
 
     void getGenedomAndEFGSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
+    void getGenedomSuggestions(SuggestOracle.Request request, AsyncCallback<SuggestOracle.Response> async);
+
     void getSupplierSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
+
+    void getConstructSuggestions(SuggestOracle.Request req,String pubZdbID, AsyncCallback<SuggestOracle.Response> async);
 
     void getFeatureSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
