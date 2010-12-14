@@ -19,7 +19,7 @@ public class GenotypePresentation extends EntityPresentation {
      * @param genotype Genotype
      */
     public static String getName(Genotype genotype) {
-        String cssClassName = Marker.TypeGroup.GENEDOM.toString();
+        String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
         return getSpanTag(cssClassName, genotype.getName(), genotype.getName());
     }
 
