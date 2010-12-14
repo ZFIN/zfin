@@ -54,7 +54,7 @@ public interface LookupRPCService extends RemoteService {
      * @param termID   term ID
      * @return term info
      */
-    public TermInfo getTermInfo(OntologyDTO ontology, String termID);
+    TermInfo getTermInfo(OntologyDTO ontology, String termID);
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
@@ -63,7 +63,7 @@ public interface LookupRPCService extends RemoteService {
      * @param goOntology     ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO goOntology,boolean useIdAsValue);
+    SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO goOntology,boolean useIdAsValue);
 
     // validation methods
 
@@ -77,5 +77,5 @@ public interface LookupRPCService extends RemoteService {
 
     Map<String,String> getAllZfinProperties();
 
-    public TermDTO getTermByName(OntologyDTO ontologyDTO,String value) ;
+    TermDTO getTermByName(OntologyDTO ontologyDTO,String value) ;
 }

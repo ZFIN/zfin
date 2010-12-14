@@ -379,7 +379,7 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
         this.publicationZdbID = publicationZdbID ;
         FeatureDTO featureDTO = new FeatureDTO();
         featureDTO.setPublicationZdbID(publicationZdbID);
-        setDTO(dto);
+        setDTO(featureDTO);
     }
 
 

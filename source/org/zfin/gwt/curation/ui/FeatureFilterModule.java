@@ -86,6 +86,7 @@ public class FeatureFilterModule extends AbstractComposite<FeatureDTO>{
                                 featureTypeList.addItem(type,type);
                             }
                             refilter();
+                            clearError();
                         }
                     }
                 });

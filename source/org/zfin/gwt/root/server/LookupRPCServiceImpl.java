@@ -21,6 +21,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.ontology.*;
 import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
@@ -458,10 +459,9 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
     public Map<String,String> getAllZfinProperties(){
         Map<String,String> allZfinProperties = new HashMap<String,String>() ;
-//        for(ZfinPropertiesEnum zfinProperties:ZfinPropertiesEnum.values()){
-//            allZfinProperties.put(zfinProperties.name(),zfinProperties.value()) ;
-//        }
-
+        for(ZfinPropertiesEnum zfinProperties: ZfinPropertiesEnum.values()){
+            allZfinProperties.put(zfinProperties.name(),zfinProperties.value()) ;
+        }
         return allZfinProperties ;
     }
 

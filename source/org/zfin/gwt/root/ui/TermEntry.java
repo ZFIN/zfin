@@ -84,7 +84,7 @@ public class TermEntry extends HorizontalPanel {
      */
     private void addLookupTermBox() {
         // set default ontology
-        OntologyDTO defaultOntology = getDefaultOntology();
+        final OntologyDTO defaultOntology = getDefaultOntology();
         termTextBox.setOntology(defaultOntology);
         termTextBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
         termTextBox.setInputName(termPart.name());
@@ -92,7 +92,6 @@ public class TermEntry extends HorizontalPanel {
         termTextBox.setWildCard(false);
         termTextBox.setUseIdAsValue(true);
         termTextBox.setAction(new SubmitAction(){
-
             private boolean isSubmitting = false ;
             @Override
             public void doSubmit(final String value) {
@@ -102,9 +101,8 @@ public class TermEntry extends HorizontalPanel {
                 isSubmitting = true ;
                 termTextBox.setEnabled(false);
                 termTextBox.setNoteString("Validating ["+value+"]...");
-
-                LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,value,
-                        new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]") {
+                LookupRPCService.App.getInstance().getTermByName(defaultOntology,value,
+                        new MarkerEditCallBack<TermDTO>("Failed to retrieve value ["+value+"]") {
 
                             @Override
                             public void onFailure(Throwable throwable) {
@@ -127,6 +125,7 @@ public class TermEntry extends HorizontalPanel {
                             }
                         });
             }
+
         });
         termTextBox.initGui();
         add(termTextBox);

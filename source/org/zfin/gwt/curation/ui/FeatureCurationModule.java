@@ -107,11 +107,12 @@ public class FeatureCurationModule extends ConstructionZoneAdapater {
         featureRelationshipBox.setDTO(featureDTO);
     }
 
+    
 
     public void clearError() {
         setError("");
-        attributionModule.setPublication(publicationID);
-        attributionModule.clearError();
+        attributionModule.revertGUI();
+//        attributionModule.clearError();
         featureAddBox.setPublication(publicationID);
         featureAddBox.clearError();
         featureEditBox.setPublication(publicationID);
