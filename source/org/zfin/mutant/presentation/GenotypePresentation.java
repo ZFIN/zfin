@@ -30,7 +30,7 @@ public class GenotypePresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Genotype genotype) {
-        return getTomcatLink(uri, genotype.getZdbID(), genotype.getName(), null);
+        return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
     }
 
 }
