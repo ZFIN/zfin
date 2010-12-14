@@ -2,7 +2,6 @@
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%@ page import="org.zfin.gwt.root.dto.FeatureTypeEnum" %>
 
 <%--<jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>--%>
 
@@ -38,7 +37,7 @@
 
 </c:if>
 
-<c:if test="${formBean.feature.type == FeatureTypeEnum.UNSPECIFIED}">
+<c:if test="${formBean.feature.type.unspecified}">
 
 
     <br style="font-size:small;">  Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature.   </br>
@@ -110,9 +109,7 @@
 
 </tr>
 
-
-
-<c:if test="${formBean.feature.type == FeatureTypeEnum.TRANSGENIC_INSERTION}">
+<c:if test="${formBean.feature.type.transgenic}">
 <tr>
     <td width="180">
         <b>Construct:</b>
