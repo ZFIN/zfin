@@ -191,11 +191,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name from feature_prefix fp " +
                 "join lab_feature_prefix lfp on fp.fp_pk_id=lfp.lfp_prefix_id " +
                 "join lab l on lfp.lfp_lab_zdb_id=l.zdb_id " +
-                "where lfp.lfp_current_designation = :currentLineDesignation " +
                 "group by fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name " +
                 "order by fp.fp_prefix, l.name " ;
         List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql)
-                .setBoolean("currentLineDesignation",true)
                 .list() ;
         List<FeaturePrefixLight> featurePrefixLightList = new ArrayList<FeaturePrefixLight>() ;
         FeaturePrefixLight featurePrefixLight = null ;
