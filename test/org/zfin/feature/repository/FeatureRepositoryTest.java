@@ -124,10 +124,28 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     @Test
     public void getAllFeaturePrefixesWithDesignations(){
         List<FeaturePrefixLight> featurePrefixLights = featureRepository.getFeaturePrefixWithLabs() ;
+        for(FeaturePrefixLight featurePrefixLight: featurePrefixLights){
+            if(featurePrefixLight.getPrefix().equals("ba"))   {
+                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            }
+            if(featurePrefixLight.getPrefix().equals("bc"))   {
+                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            }
+           if(featurePrefixLight.getPrefix().equals("be"))   {
+               assertTrue(featurePrefixLight.getLabList().size()>0) ;
+           }
+            if(featurePrefixLight.getPrefix().equals("bi"))   {
+                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            }
+            if(featurePrefixLight.getPrefix().equals("bk"))   {
+                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            }
+        }
         assertNotNull(featurePrefixLights);
         assertTrue(featurePrefixLights.size()>100);
         assertTrue(featurePrefixLights.size()<300);
     }
+
 
     @Test
     public void getLabFeaturePrefixRowWithFeature(){

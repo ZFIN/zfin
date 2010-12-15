@@ -192,43 +192,49 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 "join lab_feature_prefix lfp on fp.fp_pk_id=lfp.lfp_prefix_id " +
                 "join lab l on lfp.lfp_lab_zdb_id=l.zdb_id " +
                 "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
-                "order by fp.fp_prefix, l.name " ;
+                "order by fp.fp_prefix, l.name   " ;
         List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql).list() ;
         List<FeaturePrefixLight> featurePrefixLightList = new ArrayList<FeaturePrefixLight>() ;
         FeaturePrefixLight featurePrefixLight = null ;
         String currentPrefix = null ;
-        for(int i = 0 ; i < results.size() ; i++){
+        int i = 0 ;
+        for(Object[] result : results){
             // if an existing one, then just add the lab
-            if(featurePrefixLight!=null && currentPrefix!=null && results.get(i)[0].toString().equals(currentPrefix)){
-                LabLight lab = new LabLight() ;
-                lab.setZdbID(results.get(i)[2].toString());
-                lab.setName(results.get(i)[3].toString());
-                lab.setCurrentDesignation(Boolean.parseBoolean(results.get(i)[4].toString()));
-                featurePrefixLight.addLabLight(lab);
+            if(featurePrefixLight!=null && currentPrefix!=null && result[0].toString().equals(currentPrefix)){
+                featurePrefixLight.addLabLight(createLab(result));
             }
             // if result is not equal, or we are at the start or end, add the current and open a new one
             else
             if(i==results.size()-1
                     || currentPrefix==null
-                    || !results.get(i)[0].toString().equals(currentPrefix)){
+                    || !result[0].toString().equals(currentPrefix)){
                 // add the current one
                 if(featurePrefixLight!=null){
                     featurePrefixLightList.add(featurePrefixLight) ;
                 }
                 featurePrefixLight = new FeaturePrefixLight();
-                currentPrefix = results.get(i)[0].toString();
+                currentPrefix = result[0].toString();
                 featurePrefixLight.setPrefix(currentPrefix);
-                if(results.get(i)[1]!=null){
-                    featurePrefixLight.setInstituteDisplay(results.get(i)[1].toString());
+                featurePrefixLight.addLabLight(createLab(result));
+                if(result[1]!=null){
+                    featurePrefixLight.setInstituteDisplay(result[1].toString());
                 }
                 else{
                     throw new RuntimeException("Should not get here when iterating over feature prefixes.");
                 }
             }
+            ++i ;
         }
 
-
         return featurePrefixLightList;
+    }
+
+    private LabLight createLab(Object[] result){
+        LabLight lab = new LabLight() ;
+        lab.setZdbID(result[2].toString());
+        lab.setName(result[3].toString());
+        lab.setCurrentDesignation(Boolean.parseBoolean(result[4].toString()));
+        return lab ;
     }
 
     /**
