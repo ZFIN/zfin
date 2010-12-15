@@ -6,6 +6,7 @@ public class LabLight {
 
     private String zdbID ;
     private String name ;
+    private Boolean currentDesignation ;
 
     public String getZdbID() {
         return zdbID;
@@ -21,5 +22,13 @@ public class LabLight {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getCurrentDesignation() {
+        return currentDesignation;
+    }
+
+    public void setCurrentDesignation(Boolean currentDesignation) {
+        this.currentDesignation = currentDesignation;
     }
 }

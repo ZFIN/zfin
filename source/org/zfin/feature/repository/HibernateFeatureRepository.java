@@ -188,13 +188,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
      */
     public List<FeaturePrefixLight> getFeaturePrefixWithLabs(){
-        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name from feature_prefix fp " +
+        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation from feature_prefix fp " +
                 "join lab_feature_prefix lfp on fp.fp_pk_id=lfp.lfp_prefix_id " +
                 "join lab l on lfp.lfp_lab_zdb_id=l.zdb_id " +
-                "group by fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name " +
+                "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
                 "order by fp.fp_prefix, l.name " ;
-        List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql)
-                .list() ;
+        List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql).list() ;
         List<FeaturePrefixLight> featurePrefixLightList = new ArrayList<FeaturePrefixLight>() ;
         FeaturePrefixLight featurePrefixLight = null ;
         String currentPrefix = null ;
@@ -204,6 +203,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 LabLight lab = new LabLight() ;
                 lab.setZdbID(results.get(i)[2].toString());
                 lab.setName(results.get(i)[3].toString());
+                lab.setCurrentDesignation(Boolean.parseBoolean(results.get(i)[4].toString()));
                 featurePrefixLight.addLabLight(lab);
             }
             // if result is not equal, or we are at the start or end, add the current and open a new one
@@ -221,13 +221,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 if(results.get(i)[1]!=null){
                     featurePrefixLight.setInstituteDisplay(results.get(i)[1].toString());
                 }
-                LabLight lab = new LabLight() ;
-                lab.setZdbID(results.get(i)[2].toString());
-                lab.setName(results.get(i)[3].toString());
-                featurePrefixLight.addLabLight(lab);
-            }
-            else{
-                throw new RuntimeException("Should not get here when iterating over feature prefixes.");
+                else{
+                    throw new RuntimeException("Should not get here when iterating over feature prefixes.");
+                }
             }
         }
 
