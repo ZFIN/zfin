@@ -32,7 +32,7 @@ public class GenotypeDetailController {
             "/genotype-detail" // this is the current style, have not changed
     }
     )
-    protected String getGenotypeDetail(@RequestParam String zdbID, Model model) throws Exception {
+    protected String getGenotypeDetail(@RequestParam String zdbID, Model model) {
         LOG.debug("Start Genotype Detail Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
         if (genotype == null){

@@ -30,10 +30,34 @@ public class FeatureDetailController {
     @RequestMapping( value={
 //            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
 //            "/detail?feature.zdbID={zdbID}" // using old link
+            "/detail" // using old link
+    }
+    )
+    protected String getOldFeatureDetailPage(
+            @RequestParam(value="feature.zdbID",required = false) String featureZdbID,
+            @RequestParam(value="genotype.zdbID",required = false) String genotypeZdbID,
+                                             Model model){
+        if(featureZdbID!=null){
+            return "redirect:/action/feature/feature-detail?zdbID="+featureZdbID;
+        }
+        else
+        if(genotypeZdbID!=null){
+            return "redirect:/action/genotype/genotype-detail?zdbID="+genotypeZdbID;
+        }
+        else{
+            model.addAttribute(LookupStrings.ZDB_ID, featureZdbID) ;
+            return "record-not-found.page";
+        }
+    }
+
+
+    @RequestMapping( value={
+//            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
+//            "/detail?feature.zdbID={zdbID}" // using old link
             "/feature-detail" // using old link
     }
     )
-    protected String getFeatureDetail(@RequestParam String zdbID, Model model) throws Exception {
+    protected String getFeatureDetail(@RequestParam String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
         if (feature == null){
