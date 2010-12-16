@@ -9,6 +9,10 @@
      could potentially break the code (e.g. moving a clas  into a different package. -->
 <hibernate-mapping package="org.zfin.mutant">
 
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="phenotypeTag">
+        <param name="enumClassname">org.zfin.mutant.Phenotype$Tag</param>
+    </typedef>
+
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureHistoryReason">
         <param name="enumClassname">org.zfin.feature.FeatureHistory$Reason</param>
     </typedef>
@@ -512,7 +516,7 @@
         <many-to-one name="publication" column="api_pub_zdb_id"/>
         <many-to-one name="person" column="api_curator_zdb_id"/>
         <property name="date" column="api_date"/>
-        <!--<property name="tag" column="api_tag" type="phenotypeTag"/>-->
+        <property name="tag" column="api_tag" type="phenotypeTag"/>
         <many-to-one name="superterm" column="api_superterm_zdb_id"/>
         <many-to-one name="subterm" column="api_subterm_zdb_id"/>
         <many-to-one name="quality" column="api_quality_zdb_id"/>
