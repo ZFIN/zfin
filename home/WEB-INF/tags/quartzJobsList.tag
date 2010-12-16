@@ -51,13 +51,13 @@
             <zfin2:displayDay date="${jobBean.lastExecution}" />
         </td>
         <td>
-            <fmt:formatDate value="${jobBean.lastExecution}" pattern="HH:MM:ss"/>
+            <fmt:formatDate value="${jobBean.lastExecution}" pattern="HH:mm:ss"/>
         </td>
         <td>
             <zfin2:displayDay date="${jobBean.nextExecution}" />
         </td>
         <td>
-            <fmt:formatDate value="${jobBean.nextExecution}" pattern="HH:MM:ss"/>
+            <fmt:formatDate value="${jobBean.nextExecution}" pattern="HH:mm:ss"/>
         </td>
         <td>
                 ${jobBean.paused ? "YES": "NO"}

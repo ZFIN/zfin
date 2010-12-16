@@ -16,13 +16,11 @@
                 <ref bean="updateDOIDailyTrigger"/>
                 <ref bean="updateDOIMonthlyTrigger"/>
                 <ref bean="microarrayTrigger"/>
-<!--
                 <ref bean="reloadOntologyTrigger"/>
                 <ref bean="loadQualityOntology"/>
                 <ref bean="loadAnatomyOntology"/>
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
--->
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
@@ -205,7 +203,7 @@
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="0 0 16 ? * SUN-THU"/>
+        <property name="cronExpression" value="0 10 18 ? * SUN"/>
     </bean>
 
     <bean id="loadQualityOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -229,7 +227,7 @@
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="0 0 16 ? * SUN-THU"/>
+        <property name="cronExpression" value="0 0 18 ? * SUN"/>
     </bean>
 
     <bean id="loadGeneOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -253,7 +251,7 @@
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="1 0 16 ? * SUN-THU"/>
+        <property name="cronExpression" value="1 0 18 ? * SUN"/>
     </bean>
 
     <bean id="loadAnatomyOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -277,7 +275,7 @@
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="2 0 16 ? * SUN-THU"/>
+        <property name="cronExpression" value="2 0 18 ? * SUN"/>
     </bean>
 
     <bean id="loadSpatialOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -301,7 +299,7 @@
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="3 0 16 ? * SUN-THU"/>
+        <property name="cronExpression" value="3 0 18 ? * SUN"/>
     </bean>
 
 </beans>
