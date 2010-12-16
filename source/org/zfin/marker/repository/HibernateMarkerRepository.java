@@ -800,13 +800,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerFamilyName) criteria.uniqueResult();
     }
 
-    public void save(Object o) {
-        Session session = currentSession();
-        session.beginTransaction();
-        session.saveOrUpdate(o);
-        session.getTransaction().commit();
-    }
-
     /**
      * This executes the regen_names_marker() procedure.
      * Since Informix Dialect does not support stored procedures
@@ -858,32 +851,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         // run procedure for fast search table
         runMarkerNameFastSearchUpdate(marker);
-    }
-
-    /**
-     * Update marker object. Requires a valid publication.
-     * After successful modification a script is executed for the fast search tables.
-     *
-     * @param marker      new marker object
-     * @param publication publication under which the changes are attributed
-     * @param alias       the alias name. If no alias string provided no alias is created.
-     */
-    public void updateMarker(Marker marker, Publication publication, String alias) {
-        if (marker == null)
-            throw new RuntimeException("No marker object provided.");
-        if (publication == null)
-            throw new RuntimeException("Cannot update a marker without a publication.");
-        currentSession().save(marker);
-        currentSession().flush();
-
-        //add publication to attribution list.
-        // run procedure for fast search table
-
-        if (!StringUtils.isEmpty(alias)) {
-            addMarkerAlias(marker, alias, publication);
-        } else
-            runMarkerNameFastSearchUpdate(marker);
-
     }
 
 
@@ -981,7 +948,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         String hql = " select distinct m from Marker m , PublicationAttribution pa "
-                + " where m.abbreviation like :name  "
+                + " where lower(m.abbreviation) like lower(:name)  "
                 + " and pa.dataZdbID = m.zdbID  "
                 + " and pa.sourceZdbID = :publicationZdbId "
                 + " and m.markerType in (:types)  "; 

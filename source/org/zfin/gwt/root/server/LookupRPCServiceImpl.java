@@ -273,8 +273,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
             List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query,Marker.TypeGroup.CONSTRUCT,pubZdbID );
+            Highlighter highlighter = new Highlighter(query) ;
             for (Marker marker : markers) {
-                suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query, "<strong>" + query + "</strong>"), marker.getAbbreviation()));
+//                suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), marker.getAbbreviation()));
+                suggestions.add(new ItemSuggestion(highlighter.highlight(marker.getAbbreviation()), marker.getAbbreviation()));
             }
         }
         resp.setSuggestions(suggestions);

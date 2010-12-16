@@ -471,12 +471,33 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMarkersByAbbreviationGroupAndAttribution() {
-        String markerName = "Tg(kdrl:GRCFP)" ;
+        // not, that is an lower-case 'L' not the number one.
+        String markerAbbreviation = "Tg(kdrl:GRCFP)" ;
         String pub = "ZDB-PUB-030527-16" ;
-        Marker marker = markerRepository.getMarkerByAbbreviation(markerName);
-        List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(markerName, Marker.TypeGroup.CONSTRUCT,pub);
-        assertNotNull(markers);
-        assertTrue(markers.size()>0);
+        List<Marker> markers = null ;
+        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("Tg(", Marker.TypeGroup.CONSTRUCT,pub);
+        assertTrue(containsMarkerName(markerAbbreviation,markers)) ;
+        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("tg(", Marker.TypeGroup.CONSTRUCT,pub);
+        assertTrue(containsMarkerName(markerAbbreviation,markers)) ;
+        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("GRCFP", Marker.TypeGroup.CONSTRUCT,pub);
+        assertTrue(containsMarkerName(markerAbbreviation,markers)) ;
+        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("cfp", Marker.TypeGroup.CONSTRUCT,pub);
+        assertTrue(containsMarkerName(markerAbbreviation,markers)) ;
+        markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("drl:g", Marker.TypeGroup.CONSTRUCT,pub);
+        assertTrue(containsMarkerName(markerAbbreviation,markers)) ;
+
+    }
+
+    private boolean containsMarkerName(String markerName,List<Marker> markers){
+        if(markers==null || markers.size()==0){
+            return false ;
+        }
+        for(Marker marker : markers){
+            if(marker.getAbbreviation().equals(markerName)){
+                return true ;
+            }
+        }
+        return false;
     }
 
 

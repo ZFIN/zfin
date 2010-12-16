@@ -135,20 +135,9 @@ public interface MarkerRepository {
 
     MarkerFamilyName getMarkerFamilyName(String name);
 
-    void save(Object o);
-
     void runMarkerNameFastSearchUpdate(Marker marker);
 
     void createMarker(Marker marker, Publication publication);
-
-    /**
-     * Update marker object. Requires a valid publication.
-     *
-     * @param marker      new marker object
-     * @param publication publication under which the changes are attributed
-     * @param alias       the alias name
-     */
-    void updateMarker(Marker marker, Publication publication, String alias);
 
 
     /**
