@@ -22,9 +22,9 @@
 
     function hideAlleles(num) {
         alleleTableDiv= document.getElementById('alleleDesignationTable'+num);
-        alleleDiv.style.display = 'none' ;
-        alleleTableDiv = document.getElementById('alleleDesignationTable'+num);
         alleleTableDiv.style.display = 'none' ;
+        alleleDiv = document.getElementById('alleleDesignation'+num);
+        alleleDiv.style.display = 'none' ;
         alleleShowButton = document.getElementById('showAlleleLink'+num);
         alleleShowButton.style.display = 'inline' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
