@@ -124,6 +124,10 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     @Test
     public void getAllFeaturePrefixesWithDesignations(){
         List<FeaturePrefixLight> featurePrefixLights = featureRepository.getFeaturePrefixWithLabs() ;
+        boolean containsEd = false ;
+        boolean containsEr = false ;
+        boolean containsSb = false ;
+        boolean containsUt = false ;
         for(FeaturePrefixLight featurePrefixLight: featurePrefixLights){
             if(featurePrefixLight.getPrefix().equals("ba"))   {
                 assertTrue(featurePrefixLight.getLabList().size()>0) ;
@@ -140,10 +144,30 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
             if(featurePrefixLight.getPrefix().equals("bk"))   {
                 assertTrue(featurePrefixLight.getLabList().size()>0) ;
             }
+            if(featurePrefixLight.getPrefix().equals("ed"))   {
+                assertNull(featurePrefixLight.getLabList());
+                containsEd = true ;
+            }
+            if(featurePrefixLight.getPrefix().equals("er"))   {
+                assertNull(featurePrefixLight.getLabList());
+                containsEr = true ;
+            }
+            if(featurePrefixLight.getPrefix().equals("sb"))   {
+                assertNull(featurePrefixLight.getLabList());
+                containsSb = true ;
+            }
+            if(featurePrefixLight.getPrefix().equals("ut"))   {
+                assertNull(featurePrefixLight.getLabList());
+                containsUt = true ;
+            }
         }
         assertNotNull(featurePrefixLights);
         assertTrue(featurePrefixLights.size()>100);
         assertTrue(featurePrefixLights.size()<300);
+        assertTrue(containsEd);
+        assertTrue(containsEr);
+        assertTrue(containsSb);
+        assertTrue(containsUt);
     }
 
 

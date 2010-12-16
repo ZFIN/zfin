@@ -188,7 +188,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
      */
     public List<FeaturePrefixLight> getFeaturePrefixWithLabs(){
-        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation from feature_prefix fp " +
+        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
+                "from feature_prefix fp " +
                 "join lab_feature_prefix lfp on fp.fp_pk_id=lfp.lfp_prefix_id " +
                 "join lab l on lfp.lfp_lab_zdb_id=l.zdb_id " +
                 "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
@@ -200,8 +201,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
         int i = 0 ;
         for(Object[] result : results){
             // if an existing one, then just add the lab
-            if(featurePrefixLight!=null && currentPrefix!=null && result[0].toString().equals(currentPrefix)){
-                featurePrefixLight.addLabLight(createLab(result));
+            if(featurePrefixLight!=null
+                    && currentPrefix!=null
+                    && result[0].toString().equals(currentPrefix)){
+                if(Boolean.parseBoolean(result[4].toString())){
+                    featurePrefixLight.addLabLight(createLab(result));
+                }
             }
             // if result is not equal, or we are at the start or end, add the current and open a new one
             else
@@ -215,7 +220,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 featurePrefixLight = new FeaturePrefixLight();
                 currentPrefix = result[0].toString();
                 featurePrefixLight.setPrefix(currentPrefix);
-                featurePrefixLight.addLabLight(createLab(result));
+                if(Boolean.parseBoolean(result[4].toString())){
+                    featurePrefixLight.addLabLight(createLab(result));
+                }
                 if(result[1]!=null){
                     featurePrefixLight.setInstituteDisplay(result[1].toString());
                 }
