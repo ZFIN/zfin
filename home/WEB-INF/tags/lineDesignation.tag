@@ -14,7 +14,7 @@
         alleleTableDiv.style.display = 'inline' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
         alleleDiv.style.display = 'inline' ;
-        new Ajax.Updater('alleleDesignation'+num, '/action/feature/features-for-lab/'+$OID, {Method: 'get'});
+         new Ajax.Updater('alleleDesignation'+num, '/action/feature/alleles/'+prefix, {Method: 'get'});
         alleleShowButton = document.getElementById('showAlleleLink'+num);
         alleleShowButton.style.display = 'none' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
