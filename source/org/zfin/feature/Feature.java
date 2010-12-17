@@ -270,7 +270,7 @@ public class Feature implements EntityNotes{
     }
 
     public Set<FeatureMarkerRelationship> getConstructs() {
-        if(type!=FeatureTypeEnum.TRANSGENIC_INSERTION){
+        if(!type.isTransgenic()){
             return null ;
         }
         if (featureMarkerRelations == null) {
