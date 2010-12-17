@@ -17,8 +17,8 @@ public class FeatureMarkerRelationship implements Comparable {
     private String zdbID;
     private Type type;
     private Feature feature;
-     private Marker marker;
-     private Set<PublicationAttribution> publications;
+    private Marker marker;
+    private Set<PublicationAttribution> publications;
     private FeatureMarkerRelationshipType featureMarkerRelationshipType;
 
 
@@ -30,7 +30,7 @@ public class FeatureMarkerRelationship implements Comparable {
         this.feature = feature;
     }
 
-      public Type getType() {
+    public Type getType() {
         return type;
     }
 
@@ -38,14 +38,14 @@ public class FeatureMarkerRelationship implements Comparable {
         this.type = type;
     }
 
-       public enum Type {
+    public enum Type {
 
         IS_ALLELE_OF("is allele of"),
-    CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE("contains phenotypic sequence feature"),
-     CONTAINS_INNOCUOUS_SEQUENCE_FEATURE("contains innocuous sequence feature"),
-     MARKERS_MISSING("markers missing"),
-           MARKERS_MOVED("markers moved"),
-           MARKERS_PRESENT("markers present");
+        CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE("contains phenotypic sequence feature"),
+        CONTAINS_INNOCUOUS_SEQUENCE_FEATURE("contains innocuous sequence feature"),
+        MARKERS_MISSING("markers missing"),
+        MARKERS_MOVED("markers moved"),
+        MARKERS_PRESENT("markers present");
 
         private final String value;
 
@@ -82,7 +82,7 @@ public class FeatureMarkerRelationship implements Comparable {
         this.zdbID = zdbID;
     }
 
-   
+
 
 
 
@@ -129,7 +129,7 @@ public class FeatureMarkerRelationship implements Comparable {
         }
         return null;
     }
-   public int compareTo(Object anotherMarkerRelationship) {
+    public int compareTo(Object anotherMarkerRelationship) {
         return marker.compareTo(((FeatureMarkerRelationship) anotherMarkerRelationship).getMarker());
     }
 }
