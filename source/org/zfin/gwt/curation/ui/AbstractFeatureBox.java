@@ -214,8 +214,6 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
             case TRANSGENIC_INSERTION:
                 knownInsertionCheckBox.setEnabled(true);
                 if (knownInsertionCheckBox.getValue()) {
-                    mutageeBox.setEnabled(false);
-                    mutagenBox.setEnabled(false);
                     featureSuffixBox.setVisible(true);
                     suffixLabel.setVisible(true);
                 }
