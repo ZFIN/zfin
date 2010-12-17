@@ -1,5 +1,5 @@
--- load vega  gff3 files from Will Chow at Sanger
-begin work;
+-- load vega  gff3 files from  Sanger
+-- transaction begun extenrnaly
 
 create table gff3(
     seqname		varchar(9),
@@ -20,11 +20,14 @@ create table gff3(
 
 -- this file is only regenerated with new vega loads
 ! echo "load_drerio_vega_id.sql <- drerio_vega_id.unl"
+-- expects the  drerio_vega_id.unl file to be copied to the local dir.
+-- default cache location is /research/zprodmore/gff3/
+-- can be changed in calling file (GFF3Files.pl)
 
-load from '/research/zprodmore/gff3/drerio_vega_id.unl' insert into gff3;
+
+load from 'drerio_vega_id.unl' insert into gff3;
 
 -- index transcripts
--- create index gff3_id_idx on gff3(id) in idxdbs3; -- is PK now
 create index gff3_parent_idx on gff3(parent) in idxdbs3;
 create index gff3_biotype_idx on gff3(biotype) in idxdbs3;
 
@@ -59,7 +62,7 @@ where feature = 'gene' and exists (
 create index gff3_name_idx on gff3(name) in idxdbs3; -- after renaming
 update statistics medium for table gff3;
 
-! echo " In <!--|ROOT_PATH|-->/home/data_transfer/Downloads/"
+
 ! echo " load_drerio_vega_id.sql -> drerio_vega_transcript.gff3"
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/drerio_vega_transcript.gff3'  DELIMITER "	"
@@ -91,4 +94,4 @@ where tscript_load_id = id
 order by 1::integer,4,3
 ;
 
--- In production, rollback/commit are supplied externally.
+--  rollback/commit are supplied externally.

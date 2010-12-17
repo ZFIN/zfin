@@ -22,9 +22,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 
 GENERICS = load_drerio_vega_id.sql unload_pheno_gff.sql unload_zfin_genes_gff.sql \
 unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql GFF3Files.pl \
-unload_zfin_transcript.sql unload_antibody_gff.sql unload_zfin_morpholino.sql
+unload_zfin_transcript.sql unload_antibody_gff.sql unload_zfin_morpholino.sql \
+unload_vega_chromosome_gff.sql unload_assembly_clone_gff.sql begin_work.sql
 
-STATICS = gather_alias.awk get_final_gene.awk rollback.sql
+STATICS = gather_alias.awk rollback.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -33,7 +34,8 @@ HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
-# data source is /research/zprodmore/gff3/
+# (production) data source is /research/zprodmore/gff3/
+# can be re-set in GFF3Files.pl for development
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -53,9 +55,12 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Run the download script.  This extracts data from ZFIN and places it in
 # the public http directory
 
-run : $(TARGETDIR)/GFF3Files.pl $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/unload_pheno_gff.sql $(TARGETDIR)/unload_zfin_genes_gff.sql \
-$(TARGETDIR)/unload_mutant_gff.sql $(TARGETDIR)/unload_xpat_gff.sql $(TARGETDIR)/unload_alias_scattered.sql $(TARGETDIR)/GFF3Files.pl \
-$(TARGETDIR)/gather_alias.awk $(TARGETDIR)/get_final_gene.awk $(TARGETDIR)/rollback.sql
+run : $(TARGETDIR)/GFF3Files.pl         $(TARGETDIR)/load_drerio_vega_id.sql \
+$(TARGETDIR)/unload_pheno_gff.sql       $(TARGETDIR)/unload_zfin_genes_gff.sql \
+$(TARGETDIR)/unload_mutant_gff.sql      $(TARGETDIR)/unload_xpat_gff.sql \
+$(TARGETDIR)/unload_alias_scattered.sql $(TARGETDIR)/GFF3Files.pl \
+$(TARGETDIR)/gather_alias.awk           $(TARGETDIR)/rollback.sql \
+$(TARGETDIR)/unload_zfin_morpholino.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
+$(TARGETDIR)/begin_work.sql
 	$(TARGETDIR)/GFF3Files.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
-
