@@ -16,6 +16,9 @@
 # Both are adhered to if specified as a list of elements.
 #
 # NO BLANK LINES
+# Nights     When      Comments
+# SMTWTFS    7:30pm    Unload GFF3 files for Browse.
+#30 19 * * * /research/zcentral/www_homes/mirror/server_apps/data_transfer/Downloads/GFF3/GFF3Files.pl
 # T        10:30pm   weekly run of validation of UniProt IDs
 30 22 * * 4 /research/zcentral/www_homes/mirror/server_apps/data_transfer/GO/validateUniprotIDsZFIN.pl
 #

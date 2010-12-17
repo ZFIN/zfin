@@ -48,9 +48,8 @@
 #                    index, and copy it to production.          
 00 02 * * 6 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 #
-# Nights     When      Comments
-# SMTWTFS    6:30pm    Unload GFF3 files for Browse.
-30 18 * * * /research/zcentral/www_homes/almost/server_apps/data_transfer/Downloads/GFF3/GFF3Files.pl
+# SMTWTFS    7:30pm    Unload GFF3 files for Browse.
+30 19 * * * /research/zcentral/www_homes/almost/server_apps/data_transfer/Downloads/GFF3/GFF3Files.pl
 #
 #====================================
 # handle blast files

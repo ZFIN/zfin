@@ -121,6 +121,8 @@
 #
 # F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
 #                    and BACKUPS (calls unload_production.sh at end)
+### MEOW is removed from pull.sh and should migrate to mirror when ftp destination fixed                                                                                    
+45 22 * * 5  <!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW/meow.pl 
 00 23 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
 #
 #   SMTWT     1:00am   Weekly load of data from ZIRC
