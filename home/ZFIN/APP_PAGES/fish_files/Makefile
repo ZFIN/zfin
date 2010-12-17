@@ -26,7 +26,7 @@ GENERICS = fishselect.apg fishview.apg \
            wtlist.apg genotypeview.apg phenotype_miniview.apg allelelist.apg
 
 STATICS = setup-new-fish.apg update-fish.apg phenotype_note.apg \
-          genotype_name_match.apg genotype_mo_match.apg wildtypePhenoAnat.apg  labFeatures.apg
+          genotype_name_match.apg genotype_mo_match.apg wildtypePhenoAnat.apg  
 
 # Use default rules for app page directories.
 

@@ -7,13 +7,14 @@
     <br>
 </p>
 
+<?MIVAR>
 <script type="text/javascript">
     function showAlleles(num,prefix){
         alleleTableDiv = document.getElementById('alleleDesignationTable'+num);
         alleleTableDiv.style.display = 'inline' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
         alleleDiv.style.display = 'inline' ;
-        new Ajax.Updater('alleleDesignation'+num, '/action/feature/alleles/'+prefix, {Method: 'get'});
+        new Ajax.Updater('alleleDesignation'+num, '/action/feature/features-for-lab/'+$OID, {Method: 'get'});
         alleleShowButton = document.getElementById('showAlleleLink'+num);
         alleleShowButton.style.display = 'none' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
@@ -31,6 +32,7 @@
         alleleHideButton.style.display = 'none' ;
     }
 </script>
+<?/MIVAR>
 
 
 <table width="75%" align="center" border="1" cellspacing="1" cellpadding="1">

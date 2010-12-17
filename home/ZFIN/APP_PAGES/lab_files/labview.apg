@@ -335,6 +335,27 @@ select  fp.fp_prefix
 </TR>
 </TABLE>
 
+<script type="text/javascript">
+    function showAlleles(labZdbID){
+        alleleDiv = document.getElementById('alleleDesignation');
+        alleleDiv.style.display = 'inline' ;
+        new Ajax.Updater('alleleDesignation', '/action/feature/features-for-lab/'+labZdbID, {Method: 'get'});
+        alleleShowButton = document.getElementById('showAlleleLink');
+        alleleShowButton.style.display = 'none' ;
+        alleleHideButton = document.getElementById('hideAlleleLink');
+        alleleHideButton.style.display = 'inline' ;
+    }
+
+    function hideAlleles() {
+        alleleDiv = document.getElementById('alleleDesignation');
+        alleleDiv.style.display = 'none' ;
+        alleleShowButton = document.getElementById('showAlleleLink');
+        alleleShowButton.style.display = 'inline' ;
+        alleleHideButton = document.getElementById('hideAlleleLink');
+        alleleHideButton.style.display = 'none' ;
+    }
+</script>
+
 
 <HR width=80%>
 <?MIVAR COND="$(XST,$UPDATE)">
@@ -344,7 +365,16 @@ select  fp.fp_prefix
 <?MIVAR NAME=$ftrCount>$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK COND="$(!=,0,$ftrCount)">
-<B><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labFeatures.apg&OID=<?MIVAR>$OID<?/MIVAR>">Genomic Features originating from this lab</B></A>
+<?MICOMMENT><B><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labFeatures.apg&OID=<?MIVAR>$OID<?/MIVAR>">Genomic Features originating from this lab</B></A><?/MICOMMENT>
+<?MIVAR>
+&nbsp;
+<a id="showAlleleLink" href="javascript:;" onclick="showAlleles('$OID');"><img src="/images/plus-13.png" style="border:none;"></a>
+<?/MIVAR>
+<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()
+"><img src="/images/minus-13.png"  style="border:none;"></a>
+</b>
+Genomic Features originating from this lab
+<div style="display: none; background: lightgray;" id="alleleDesignation"></div>
 <?/MIBLOCK>
 <P><hr>
 <B>Statement of Research Interests:</B><p>
