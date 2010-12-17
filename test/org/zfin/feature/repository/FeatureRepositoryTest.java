@@ -277,4 +277,14 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b","notavalidlinenumber"));
         assertNotNull(featureRepository.getFeatureByPrefixAndLineNumber("b","1"));
     }
+
+
+    @Test
+    public void getFeaturesForLab(){
+        List<Feature> features = featureRepository.getFeaturesForLab("ZDB-LAB-970408-1");
+        assertNotNull(features);
+        assertTrue(features.size()<100 && features.size()>10);
+
+    }
+
 }

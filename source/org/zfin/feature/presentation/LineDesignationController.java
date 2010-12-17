@@ -29,6 +29,12 @@ public class LineDesignationController {
         return "feature/line-designation.page" ;
     }
 
+    @RequestMapping(value="/features-for-lab/{zdbID}")
+    public String getFeatureForLab(@PathVariable String zdbID, Model model) throws Exception {
+        model.addAttribute("features",RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID)) ;
+        return "feature/features-for-lab.insert" ;
+    }
+
 
     @RequestMapping(value="/alleles/{prefix}")
     public String getAllelesForPrefix(@PathVariable String prefix,Model model) throws Exception {

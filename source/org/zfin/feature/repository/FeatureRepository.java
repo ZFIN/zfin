@@ -76,4 +76,5 @@ public interface FeatureRepository {
     List<String> getAllFeaturePrefixes();
     String getCurrentPrefixForLab(String labZdbId);
     String setCurrentLabPrefix(String labZdbId, String prefix);
+    List<Feature> getFeaturesForLab(String labZdbId);
 }

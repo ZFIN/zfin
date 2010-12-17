@@ -648,5 +648,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
         return prefix ;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getFeaturesForLab(String zdbID){
+        String hql = " select f from Feature f join f.sources s " +
+                " where s.organization.zdbID = :zdbID "+
+                " order by f.abbreviationOrder asc "+
+                "";
+        List<Feature> features = HibernateUtil.currentSession().createQuery(hql)
+                .setString("zdbID", zdbID)
+                .list() ;
+        return features ;
+    }
 }
 

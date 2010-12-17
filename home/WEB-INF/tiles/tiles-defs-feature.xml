@@ -12,6 +12,8 @@
         <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
     </definition>
 
+    <definition name="feature/*.insert" template="/WEB-INF/jsp/feature/{1}.jsp"/>
+
     <definition name="genotype/*.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Genotype: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
