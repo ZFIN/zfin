@@ -3,7 +3,7 @@ package org.zfin.gwt.root.dto;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
-*/
+ */
 public enum FeatureTypeEnum implements IsSerializable{
     TRANSGENIC_INSERTION("Transgenic Insertion"),
     POINT_MUTATION("Point Mutation"),
@@ -16,7 +16,7 @@ public enum FeatureTypeEnum implements IsSerializable{
     SEQUENCE_VARIANT("unknown"),
     TRANSGENIC_UNSPECIFIED("unspecified transgenic insertion"),
     UNSPECIFIED("unspecified"),
-        ;
+    ;
 
 
     private String display;
@@ -61,6 +61,6 @@ public enum FeatureTypeEnum implements IsSerializable{
     }
 
     public boolean isTransgenic(){
-        return this == TRANSGENIC_INSERTION;
+        return this == TRANSGENIC_INSERTION || this == TRANSGENIC_UNSPECIFIED;
     }
 }

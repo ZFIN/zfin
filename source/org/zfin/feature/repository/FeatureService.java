@@ -95,13 +95,11 @@ public class FeatureService {
         SortedSet<FeatureMarkerRelationship> constructMarkers = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null){
-                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())) {
+                if(ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
+                || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
+                 )  {
                     constructMarkers.add(ftrmrkrRelation);
                 }
-            }
-            if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
-                //if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
-                constructMarkers.add(ftrmrkrRelation);
             }
         }
         return constructMarkers;
