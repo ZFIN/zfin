@@ -365,7 +365,6 @@ select  fp.fp_prefix
 <?MIVAR NAME=$ftrCount>$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK COND="$(!=,0,$ftrCount)">
-<?MICOMMENT><B><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labFeatures.apg&OID=<?MIVAR>$OID<?/MIVAR>">Genomic Features originating from this lab</B></A><?/MICOMMENT>
 <?MIVAR>
 &nbsp;
 <a id="showAlleleLink" href="javascript:;" onclick="showAlleles('$OID');"><img src="/images/plus-13.png" style="border:none;"></a>
@@ -374,7 +373,7 @@ select  fp.fp_prefix
 "><img src="/images/minus-13.png"  style="border:none;"></a>
 </b>
 Genomic Features originating from this lab
-<div style="display: none; background: lightgray;" id="alleleDesignation"></div>
+<div style="display: none;" id="alleleDesignation"></div>
 <?/MIBLOCK>
 <P><hr>
 <B>Statement of Research Interests:</B><p>
