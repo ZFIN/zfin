@@ -10,8 +10,8 @@
 <?MIVAR>
 <script type="text/javascript">
     function showAlleles(num,prefix){
-        alleleTableDiv = document.getElementById('alleleDesignationTable'+num);
-        alleleTableDiv.style.display = 'inline' ;
+        alleleRowDiv = document.getElementById('alleleDesignationRow'+num);
+        alleleRowDiv.style.display = 'table-row' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
         alleleDiv.style.display = 'inline' ;
          new Ajax.Updater('alleleDesignation'+num, '/action/feature/alleles/'+prefix, {Method: 'get'});
@@ -22,8 +22,8 @@
     }
 
     function hideAlleles(num) {
-        alleleTableDiv= document.getElementById('alleleDesignationTable'+num);
-        alleleTableDiv.style.display = 'none' ;
+        alleleRowDiv= document.getElementById('alleleDesignationRow'+num);
+        alleleRowDiv.style.display = 'none' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
         alleleDiv.style.display = 'none' ;
         alleleShowButton = document.getElementById('showAlleleLink'+num);
@@ -61,8 +61,8 @@
                 </c:forEach>
             </td>
         </tr>
-        <tr>
-            <td id="alleleDesignationTable${index.index}" colspan="3" style="display:none;">
+        <tr id="alleleDesignationRow${index.index}" style="display:none;" >
+            <td colspan="3" width="100%">
                 <div id="alleleDesignation${index.index}"></div>
             </td>
         </tr>
