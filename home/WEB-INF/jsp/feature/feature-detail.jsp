@@ -367,7 +367,7 @@
                                 </c:if>
                             </c:if>
                             <c:if test="${featgenoStat.numberOfFigures == 0}">
-                                --
+                                &nbsp;
                             </c:if>
 
                             <c:if test="${featgenoStat.numberOfPublications ==1}">
@@ -405,7 +405,7 @@
                             </c:if>
 
                             <c:if test="${featgenoStat.numberOfExpFigures == 0}">
-                                --
+                                &nbsp;
                             </c:if>
 
                             <c:if test="${featgenoStat.numberOfExpPublications ==1}">
@@ -494,7 +494,7 @@
                         </c:if>
                     </c:if>
                     <c:if test="${featgenoStat.numberOfFigures == 0}">
-                        --
+                       &nbsp;
                     </c:if>
 
                     <c:if test="${featgenoStat.numberOfPublications ==1}">
@@ -531,7 +531,7 @@
                         </c:if>
                     </c:if>
                     <c:if test="${featgenoStat.numberOfExpFigures == 0}">
-                        --
+                        &nbsp;
                     </c:if>
 
                     <c:if test="${featgenoStat.numberOfExpPublications ==1}">
