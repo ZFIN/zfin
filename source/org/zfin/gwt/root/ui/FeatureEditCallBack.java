@@ -21,9 +21,19 @@ public abstract class FeatureEditCallBack<T> extends HandlesErrorCallBack<T> {
         if (handleDuplicateEntry(throwable)) return;
         if (handleOutOfDateError(throwable)) return;
         if (handleTermNotFound(throwable)) return;
+        if (handleValidationError(throwable)) return;
         // only new one here
 
         displayMessage(message + (showTrace ? throwable : "") );
+    }
+
+    private boolean handleValidationError(Throwable t) {
+        if (t instanceof ValidationException) {
+            ValidationException validationException = (ValidationException) t;
+            displayMessage(validationException.getMessage());
+            return true;
+        }
+        return false;
     }
 
 }

@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
+import org.zfin.gwt.root.ui.ValidationException;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ public interface FeatureRPCService extends RemoteService {
     List<FeatureDTO> getFeaturesForPub(String pubZdbId);
     List<LabDTO> getLabsOfOriginWithPrefix();
     List<FeaturePrefixDTO> getPrefix(String name);
-    FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException;
-    FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException;
+    FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
+    FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
     FeatureDTO getFeature(String featureZdbID);
     void deleteFeature(String zdbID);
     List<FeatureMarkerRelationshipDTO> getFeaturesMarkerRelationshipsForPub(String publicationZdbID);

@@ -17,6 +17,7 @@ import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -45,6 +46,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private List<Lab> labsOfOrigin = null;
+
+
+    private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation." ;
 
     public FeatureDTO getFeature(String featureZdbID) {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class,featureZdbID);
@@ -81,9 +85,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      * @return
      * @throws DuplicateEntryException
      */
-    public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException {
+    public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException , ValidationException{
 
         checkDupes(featureDTO);
+        validateUnspecified(featureDTO);
 
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class,featureDTO.getZdbID()) ;
 //        String oldFtrValue = feature.getAbbreviation();
@@ -261,9 +266,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 //        return labPrefix;
     }
 
-    public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException {
+    public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException , ValidationException{
 
         checkDupes(featureDTO);
+        validateUnspecified(featureDTO);
 
         HibernateUtil.createTransaction();
         Person person = Person.getCurrentSecurityUser();
@@ -431,6 +437,29 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return getFeature(feature.getZdbID());
     }
 
+    private void validateUnspecified(FeatureDTO featureDTO) throws ValidationException {
+        if(featureDTO.getFeatureType()==FeatureTypeEnum.UNSPECIFIED){
+            Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(featureDTO.getOptionalName()) ;
+            if(m==null){
+                throw new ValidationException("["+featureDTO.getOptionalName() + "] not found.  "
+                        + MESSAGE_UNSPECIFIED_FEATURE
+                        ) ;
+            }
+            else
+            if (false==m.getZdbID().startsWith("ZDB-GENE-")){
+                throw new ValidationException("["+featureDTO.getOptionalName() + "] must be a gene.  "
+                        + MESSAGE_UNSPECIFIED_FEATURE
+                        ) ;
+            }
+            if (RepositoryFactory.getInfrastructureRepository().getRecordAttribution(m.getZdbID(),featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
+                    ==null){
+                throw new ValidationException("The gene ["+featureDTO.getOptionalName() + "] must be attributed to this pub ["+featureDTO.getPublicationZdbID()  + "]. "
+                        + MESSAGE_UNSPECIFIED_FEATURE) ;
+            }
+        }
+    }
+
+
     public void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO){
 
         HibernateUtil.createTransaction();
@@ -480,7 +509,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(featureMarkerRelationship) ;
-        infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(),featureMarkerRelationshipDTO.getPublicationZdbID()) ;
+        infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID()) ;
         infrastructureRepository.insertUpdatesTable(featureMarkerRelationship.getZdbID(),"FeatureMarkerRelationship",featureMarkerRelationship.toString(),"Created feature marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
     }
