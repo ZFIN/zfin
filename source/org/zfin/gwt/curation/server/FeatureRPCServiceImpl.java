@@ -419,19 +419,24 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
         FeatureAssay featureAssay = new FeatureAssay();
-        if (!(featureDTO.getFeatureType().isUnspecified())) {
-            featureAssay.setFeatzdbID(feature.getZdbID());
-            if (!(featureDTO.getMutagen() == null)) {
-                featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
-            }
-            if (!(featureDTO.getMutagee() == null)) {
-                featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
-            }
-            feature.setFeatureAssay(featureAssay);
-            HibernateUtil.currentSession().save(featureAssay);
-            feature.setFeatureAssay(featureAssay);
-            HibernateUtil.currentSession().update(feature);
+        featureAssay.setFeatzdbID(feature.getZdbID());
+        if (featureDTO.getMutagen() == null) {
+            featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
         }
+        else{
+            featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
+        }
+        if (featureDTO.getMutagee() == null) {
+            featureAssay.setMutagee(Mutagee.NOT_SPECIFIED);
+        }
+        else{
+            featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
+        }
+        feature.setFeatureAssay(featureAssay);
+        HibernateUtil.currentSession().save(featureAssay);
+        feature.setFeatureAssay(featureAssay);
+        HibernateUtil.currentSession().update(feature);
+
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getFeature(feature.getZdbID());
@@ -443,13 +448,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if(m==null){
                 throw new ValidationException("["+featureDTO.getOptionalName() + "] not found.  "
                         + MESSAGE_UNSPECIFIED_FEATURE
-                        ) ;
+                ) ;
             }
             else
             if (false==m.getZdbID().startsWith("ZDB-GENE-")){
                 throw new ValidationException("["+featureDTO.getOptionalName() + "] must be a gene.  "
                         + MESSAGE_UNSPECIFIED_FEATURE
-                        ) ;
+                ) ;
             }
             if (RepositoryFactory.getInfrastructureRepository().getRecordAttribution(m.getZdbID(),featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
                     ==null){

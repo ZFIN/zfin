@@ -360,15 +360,13 @@ public class DTOConversionService {
             featureDTO.setLineNumber(feature.getLineNumber());
         }
 
-        if (feature.getType()!= FeatureTypeEnum.UNSPECIFIED) {
-            FeatureAssay ftrAssay=feature.getFeatureAssay();
-            if (ftrAssay!=null){
-                if (feature.getFeatureAssay().getMutagee()!=null){
-                    featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
-                }
-                if (feature.getFeatureAssay().getMutagen()!=null){
-                    featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
-                }
+        FeatureAssay ftrAssay=feature.getFeatureAssay();
+        if (ftrAssay!=null){
+            if (feature.getFeatureAssay().getMutagee()!=null){
+                featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
+            }
+            if (feature.getFeatureAssay().getMutagen()!=null){
+                featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
             }
         }
 

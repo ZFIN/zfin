@@ -290,13 +290,10 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
             featureDTO.setLineNumber(lineNumberBox.getText());
             featureDTO.setLabPrefix(labDesignationBox.getSelected());
             featureDTO.setLabOfOrigin(labOfOriginBox.getSelected());
-            if (!mutageeBox.isSelectedNull()) {
-                featureDTO.setMutagee(mutageeBox.getSelected());
-            }
-            if (!mutagenBox.isSelectedNull()){
-                featureDTO.setMutagen(mutagenBox.getSelected());
-            }
         }
+        featureDTO.setMutagen(mutagenBox.getSelected());
+        featureDTO.setMutagee(mutageeBox.getSelected());
+
         featureDTO.setDominant(dominantCheckBox.getValue());
         featureDTO.setKnownInsertionSite(knownInsertionCheckBox.getValue());
 
