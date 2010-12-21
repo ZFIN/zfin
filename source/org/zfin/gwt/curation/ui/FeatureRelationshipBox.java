@@ -260,6 +260,7 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                             @Override
                             public void onSuccess(Void result) {
                                 revertGUI();
+                                clearError();
                             }
                         } );
             }

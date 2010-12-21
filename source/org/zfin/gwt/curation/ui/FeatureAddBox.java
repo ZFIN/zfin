@@ -78,7 +78,7 @@ public class FeatureAddBox extends AbstractFeatureBox  {
                 revertGUI();
                 setNote("Feature created: "+ result.getName() + " ["+result.getZdbID()+"]");
                 notWorking();
-//                saveButton.setEnabled(true);
+                saveButton.setEnabled(false);
             }
         });
     }
