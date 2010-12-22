@@ -196,6 +196,13 @@ public class FeatureEditBox extends AbstractFeatureBox {
 
     protected void sendUpdates() {
         FeatureDTO featureDTO = createDTOFromGUI();
+
+        String errorMessage = FeatureValidationService.isValidToSave(featureDTO) ;
+        if(errorMessage!=null){
+            setError(errorMessage);
+            return ;
+        }
+
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         if (isDirty() && FeatureValidationService.isFeatureSaveable(featureDTO)) {
             working();

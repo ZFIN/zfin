@@ -51,7 +51,7 @@ public class FeatureAddBox extends AbstractFeatureBox  {
     protected void sendUpdates() {
         FeatureDTO featureDTO = createDTOFromGUI();
 
-        String errorMessage = FeatureValidationService.isValidToAdd(featureDTO) ;
+        String errorMessage = FeatureValidationService.isValidToSave(featureDTO) ;
         if(errorMessage!=null){
             setError(errorMessage);
             return ;

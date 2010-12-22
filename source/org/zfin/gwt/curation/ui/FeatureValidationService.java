@@ -10,7 +10,7 @@ import org.zfin.gwt.root.util.StringUtils;
 public class FeatureValidationService {
     public static final String UNSPECIFIED_FEATURE_NAME ="_unspecified" ;
 
-    public static String isValidToAdd(FeatureDTO dtoFromGUI) {
+    public static String isValidToSave(FeatureDTO dtoFromGUI) {
 
         // should never get here
         if(!isFeatureSaveable(dtoFromGUI))return "You must specify a lab prefix, feature type, and feature line number." ;
