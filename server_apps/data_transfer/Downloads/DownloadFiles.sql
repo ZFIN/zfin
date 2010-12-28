@@ -83,23 +83,29 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'
 
 -- create other names file
 
+create temp table tmp_alias (current_id varchar(50), current_name varchar(255),
+       current_abbrev varchar(255), alias varchar(255))
+with no log;
+
+  insert into tmp_alias
   select mrkr_zdb_id as current_id, mrkr_name as current_name,
 		mrkr_abbrev as current_abbrev, dalias_alias as alias
     from marker, data_alias
-    where dalias_data_zdb_id = mrkr_zdb_id
-  union
+    where dalias_data_zdb_id = mrkr_zdb_id;
+
+   insert into tmp_alias
    select feature_zdb_id, feature_name,feature_abbrev, dalias_alias
     from feature, data_alias
-    where feature_zdb_id = dalias_data_zdb_id
-  union
+    where feature_zdb_id = dalias_data_zdb_id;
+
+   insert into tmp_alias
    select geno_zdb_id, geno_display_name, geno_handle, dalias_alias
     from genotype, data_alias
-    where dalias_data_zdb_id = geno_Zdb_id
-  into temp tmp_alias;
+    where dalias_data_zdb_id = geno_Zdb_id;
 
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'
-  DELIMITER "	" select distinct current_id, current_name,
+  DELIMITER "	" select current_id, current_name,
 				  current_abbrev, alias
                     from tmp_alias
 		    order by current_id, alias;
@@ -896,7 +902,7 @@ select dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name, m
    and genofeat_feature_zdb_id = idsup_data_zdB_id
 --   and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53'
    and genofeat_geno_zdb_id = geno_zdb_id
-into temp lamhdi_tmp
+into temp lamhdi_tmp with no log
 ;
 
 
@@ -947,7 +953,7 @@ from lamhdi_tmp;
 
 create temp table gene_pubcount(
        geneid varchar(50),
-       pubcount integer);
+       pubcount integer) with no log;
 
 
 insert into gene_pubcount
