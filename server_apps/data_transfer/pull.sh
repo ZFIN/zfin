@@ -2,15 +2,6 @@
 #  name: pull.sh
 #  to: call various data Pull scripts in a particular sequence
 #
-# ZGC-MEOW tightly coupled pull-push 
-# want to avoid curators being able to rename a zgc clone before
-# ncbi has had a chance to attach our zdb_id to their zgc-clone-name
-
-echo "ZGC Pull: ### IS DISABLED ###"
-#<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/zgc.pl 
-echo "#########################################################################"
-echo "MEOW Push:"   #(whether the ZGC failed or not)
-<!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW/meow.pl
 echo "#########################################################################"
 echo "RefSeq (Entrez) Pull:" 
 echo "Log File: <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.log"
