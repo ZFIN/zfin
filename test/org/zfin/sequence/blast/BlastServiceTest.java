@@ -2,6 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
+import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.sequence.Defline;
 import org.zfin.sequence.Sequence;
@@ -9,6 +10,7 @@ import org.zfin.sequence.Sequence;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -39,6 +41,12 @@ public class BlastServiceTest {
         assertTrue(sequence.getFormattedData().length()>100);
         assertTrue(sequence.getFormattedSequence().length()>100);
         assertTrue(defline.toString().length()>20);
+    }
+
+    @Test
+    public void useEBIForUniprot(){
+        assertFalse(EBIFetch.validateAccession("NP_571379")) ;
+        assertTrue(EBIFetch.validateAccession("B3DJJ0")) ;
     }
 
     @Test

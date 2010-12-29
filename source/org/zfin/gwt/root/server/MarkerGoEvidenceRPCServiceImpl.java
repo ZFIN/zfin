@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
@@ -195,12 +196,14 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
                 inferenceCategory.equals(InferenceCategory.REFSEQ.name())
                 ||
                 inferenceCategory.equals(InferenceCategory.GENPEPT.name())
-                ||
-                inferenceCategory.equals(InferenceCategory.UNIPROTKB.name())
-                ) {
+                ){
             return NCBIEfetch.validateAccession(accession);
         }
-        return true;  //To change body of created methods use File | Settings | File Templates.
+        else
+        if( inferenceCategory.equals(InferenceCategory.UNIPROTKB.name()) ) {
+            return EBIFetch.validateAccession(accession);
+        }
+        return true;
     }
 
 
