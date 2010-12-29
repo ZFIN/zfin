@@ -15,13 +15,14 @@ public class FeatureValidationService {
         // should never get here
         if(!isFeatureSaveable(dtoFromGUI))return "You must specify a lab prefix, feature type, and feature line number." ;
 
-        switch(dtoFromGUI.getFeatureType()){
+        FeatureTypeEnum featureTypeEnum = dtoFromGUI.getFeatureType();
+        switch(featureTypeEnum){
             case INSERTION:
             case DELETION:
             case COMPLEX_SUBSTITUTION:
                 if(dtoFromGUI.getPublicNote()==null || StringUtils.isEmptyTrim(dtoFromGUI.getPublicNote().getNoteData())){
-                    boolean yes= Window.confirm("Do you want to briefly summarize authors statement about insertion?") ;
-                    return (yes ? "Briefly summarize authors' statement about insertion." : null) ;
+                    boolean yes= Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay()+"?") ;
+                    return (yes ? "Briefly summarize authors' statement about "+featureTypeEnum.getDisplay()+"." : null) ;
                 }
                 break ; 
         }
