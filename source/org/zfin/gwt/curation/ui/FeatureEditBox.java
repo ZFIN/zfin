@@ -157,10 +157,16 @@ public class FeatureEditBox extends AbstractFeatureBox {
         boolean isDirty = false ;
         // this displays most changes
         // alias and notes are done automatically?
-        isDirty = (featureDisplayName.isDirty(dto.getName()) || isDirty)  ;
-        isDirty = ( featureTypeBox.getSelected()!=null && dto.getFeatureType()==null
-                || featureTypeBox.isDirty(dto.getFeatureType().name())
-                || isDirty)  ;
+        isDirty = featureDisplayName.isDirty(dto.getName()) || isDirty  ;
+        if(featureTypeBox.getSelected()!=null && dto.getFeatureType()!=null){
+            isDirty = featureTypeBox.isDirty(dto.getFeatureType().name()) || isDirty;
+        }
+        else
+        if(  (featureTypeBox.getSelected()==null && dto.getFeatureType()!=null)
+                || (featureTypeBox.getSelected()!=null && dto.getFeatureType()==null)
+                ){
+            isDirty = featureTypeBox.setDirty(true);
+        }
         isDirty = (mutageeBox.isDirty(dto.getMutagee()) || isDirty)  ;
         isDirty = (mutagenBox.isDirty(dto.getMutagen()) || isDirty)  ;
         isDirty = (labDesignationBox.isDirty(dto.getLabPrefix()) || isDirty)  ;
@@ -314,8 +320,11 @@ public class FeatureEditBox extends AbstractFeatureBox {
     @Override
     public FeatureDTO createDTOFromGUI() {
         FeatureDTO featureDTO = super.createDTOFromGUI();
+        // set things from actual object that are not grabbed from GUI
+        // alias and notes are already handled by the interface
         featureDTO.setZdbID(dto.getZdbID());
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
+        featureDTO.setPublicNote(dto.getPublicNote()); // need this for GUI updates
         return featureDTO ;
     }
 

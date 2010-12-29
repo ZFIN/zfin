@@ -38,7 +38,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
     // for add box only
 //    protected final StringTextBox curatorNoteBox = new StringTextBox();
     protected final TextArea curatorNoteBox = new TextArea();
-//    protected final StringTextBox publicNoteBox = new StringTextBox();
+    //    protected final StringTextBox publicNoteBox = new StringTextBox();
     protected final TextArea publicNoteBox = new TextArea();
 
     // for edit box only
@@ -151,7 +151,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
     protected void updateLabsDesignations() {
         if(labOfOriginBox.isSelectedNull()) return ;
-        
+
         final String labOfOriginSelected = labOfOriginBox.getSelectedText();
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes",this) {
@@ -285,11 +285,13 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
 
         FeatureTypeEnum featureTypeEnum = FeatureTypeEnum.getTypeForName(featureTypeBox.getSelected()) ;
-        featureDTO.setFeatureType(featureTypeEnum);
-        if(!featureTypeEnum.isUnspecified()){
-            featureDTO.setLineNumber(lineNumberBox.getText());
-            featureDTO.setLabPrefix(labDesignationBox.getSelected());
-            featureDTO.setLabOfOrigin(labOfOriginBox.getSelected());
+        if(featureTypeEnum!=null){
+            featureDTO.setFeatureType(featureTypeEnum);
+            if(!featureTypeEnum.isUnspecified()){
+                featureDTO.setLineNumber(lineNumberBox.getText());
+                featureDTO.setLabPrefix(labDesignationBox.getSelected());
+                featureDTO.setLabOfOrigin(labOfOriginBox.getSelected());
+            }
         }
         featureDTO.setMutagen(mutagenBox.getSelected());
         featureDTO.setMutagee(mutageeBox.getSelected());
@@ -490,7 +492,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         featureDTO.setPublicationZdbID(publicationZdbId);
         setDTO(featureDTO);
     }
-    
+
     @Override
     public void working() {
         saveButton.setText(TEXT_WORKING);
