@@ -1,113 +1,54 @@
-
-create function get_genotype_display( genoZdbId varchar(50) )
+create function get_feature_abbrev_html( featZdbId varchar(50) )
 
   returning lvarchar;	
 
   -- --------------------------------------------------------------------- 
-  -- Given the ZDB ID of a genotype, returns the genotype display name in 
-  -- html format. 
-  -- [the same value that is stored in the genotype table. this function
-  --  generates the value that is stored.]
+  -- Given the ZDB ID of a feature, returns the feature abbrev properly 
+  -- html formatted
   --
   --  INPUT VARS: 
-  --     genoZdbId   
+  --     featZdbId   
   --  
   --  OUTPUT VARS: 
   --     none
   -- 
   --  RETURNS:
-  --     genotype display with proper HTML formatting. 
-  --     NULL if genoZdbId does not exist in genotype table.
+  --     feature abbrev with proper HTML formatting. 
+  --     NULL if featZdbId does not exist in feature table.
   --  
   --  EFFECTS:
   --     none
   -------------------------------------------------------------------------- 
 
-  define genoDisplayHtml lvarchar;
-  define featAbbrev	 like feature.feature_abbrev;
-  define featAbbrevHtml  lvarchar;
-  define genoBackground  lvarchar;
-  define zygPrefix       like zygocity.zyg_gene_prefix;
-  define zygAllele       lvarchar;
-  define featSig         like feature_type.ftrtype_name;
-  define startName       like genotype.geno_display_name;
-  define wildtype        like genotype.geno_is_wildtype;
-  define featType	 like feature.feature_type;
-  
-  select geno_display_name, geno_is_wildtype 
-  into startName, wildtype 
-  from genotype where geno_zdb_id = genoZdbId;
+  define featAbbrevHtml lvarchar;
+  define featAbbrev	like feature.feature_abbrev;
+  define featMrkrAbbrev like marker.mrkr_abbrev;
+  define featType 	like feature.feature_type;
 
-  if ( wildtype != 't') then  
-  
-    let genoDisplayHtml = '';
-    let zygPrefix = '';
-      
-  
-    foreach
-       select distinct get_feature_abbrev_display(feature_zdb_id), 
-              zyg_gene_prefix, 
-              zyg_allele_display, 
-              feature_abbrev,
-              ftrtype_significance,
-	      feature_type             
-          into featAbbrevHtml, zygPrefix, zygAllele, featAbbrev, featSig, featType
-         from feature, genotype_feature, zygocity, feature_type
-        where genofeat_geno_zdb_id = genoZdbId
-          and genofeat_feature_zdb_id = feature_zdb_id
-          and genofeat_zygocity = zyg_zdb_id
-          and feature_type = ftrtype_name
-       order by 1
+  select feature_abbrev, mrkr_abbrev, feature_type
+    into featAbbrev, featMrkrAbbrev, featType
+    from feature, outer(feature_marker_relationship, marker)
+   where feature_zdb_id = featZdbId
+     and fmrel_ftr_zdb_id = feature_zdb_id
+     and fmrel_mrkr_zdb_id = mrkr_zdb_id;
 
-        if (featAbbrev like "%unspecified" and featType != 'TRANSGENIC_UNSPECIFIED') then
-          let featAbbrev = "unspecified";    
-        end if
-        if (featAbbrev like "%unrecovered") then
-          let featAbbrev = "unrecovered";    
-        end if
-        
-        if (zygAllele == '/allele') then
-          let zygAllele = '/' || featAbbrev;
-        end if
-        
-        if (zygPrefix is null) then
-          let zygPrefix = '';
-        end if
-        
-        if (zygAllele is null) then
-          let zygAllele = '';
-        end if
-               
-        if (genoDisplayHtml == '') then
-          let genoDisplayHtml = zygPrefix || featAbbrevHtml ;
-          
-        else
-            let genoDisplayHtml = genoDisplayHtml ||';'|| zygPrefix || featAbbrevHtml;
-       
-        end if
-
-
-        if (zygAllele != '') then
-        
-          if (genoDisplayHtml like "%<sup>%") then
-            let genoDisplayHtml = genoDisplayHtml || '<sup>' || zygAllele || '</sup>';
-          else
-            let genoDisplayHtml = genoDisplayHtml || zygAllele ;
-          
-          end if
-        
-        end if
-        
-    end foreach
-
-    let genoDisplayHTML = replace(genoDisplayHTML,'</sup><sup>','');          
-
+  if (featAbbrev is null) then
+    let featAbbrevHtml = null;
   else
   
-    let genoDisplayHTML = startName;
-  
-  end if
+    if (featAbbrev like "%unspecified" and featType!= 'TRANSGENIC_UNSPECIFIED') then
+      let featAbbrev = REPLACE(featAbbrev, featMrkrAbbrev, "unspecified");    
+    end if
+    
+    if (featAbbrev like "%unrecovered") then
+      let featAbbrev = REPLACE(featAbbrev, featMrkrAbbrev, "unrecovered");    
+    end if
+    
+    let featAbbrevHtml = 
+	'<span class="mutant" title="'|| featAbbrev || '">' || featAbbrev || '</span>';
 
-  return genoDisplayHtml;
+  end if  -- feat exists
+
+  return featAbbrevHtml;
 
 end function;
