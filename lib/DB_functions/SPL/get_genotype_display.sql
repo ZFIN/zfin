@@ -31,6 +31,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define featSig         like feature_type.ftrtype_name;
   define startName       like genotype.geno_display_name;
   define wildtype        like genotype.geno_is_wildtype;
+  define featType	 like feature.feature_type;
   
   select geno_display_name, geno_is_wildtype 
   into startName, wildtype 
@@ -47,8 +48,9 @@ create function get_genotype_display( genoZdbId varchar(50) )
               zyg_gene_prefix, 
               zyg_allele_display, 
               feature_abbrev,
-              ftrtype_significance              
-          into featAbbrevHtml, zygPrefix, zygAllele, featAbbrev, featSig
+              ftrtype_significance,
+	      feature_type             
+          into featAbbrevHtml, zygPrefix, zygAllele, featAbbrev, featSig, featType
          from feature, genotype_feature, zygocity, feature_type
         where genofeat_geno_zdb_id = genoZdbId
           and genofeat_feature_zdb_id = feature_zdb_id
@@ -56,10 +58,10 @@ create function get_genotype_display( genoZdbId varchar(50) )
           and feature_type = ftrtype_name
        order by 1
 
-        if (featAbbrev like "unspecified%") then
+        if (featAbbrev like "%unspecified" and featType != 'TRANSGENIC_UNSPECIFIED') then
           let featAbbrev = "unspecified";    
         end if
-        if (featAbbrev like "unrec\_%") then
+        if (featAbbrev like "%unrecovered") then
           let featAbbrev = "unrecovered";    
         end if
         

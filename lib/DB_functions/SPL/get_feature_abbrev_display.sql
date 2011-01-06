@@ -1,6 +1,6 @@
 create function get_feature_abbrev_display( featZdbId varchar(50) )
 
-  returning lvarchar;	
+  returning lvarchar;   
 
   -- --------------------------------------------------------------------- 
   -- Given the ZDB ID of a feature, returns the feature abbrev as a
@@ -21,15 +21,16 @@ create function get_feature_abbrev_display( featZdbId varchar(50) )
   -------------------------------------------------------------------------- 
 
   define featAbbrevHtml lvarchar;
-  define featAbbrev	like feature.feature_abbrev;
-  define featName	like feature.feature_name;
+  define featAbbrev     like feature.feature_abbrev;
+  define featName       like feature.feature_name;
   define featMrkrAbbrev like marker.mrkr_abbrev;
+  define featType 	like feature.feature_type;
   
   let featMrkrAbbrev = "";
 
 foreach
-  select feature_abbrev, mrkr_abbrev, feature_name
-    into featAbbrev, featMrkrAbbrev, featName
+  select feature_abbrev, mrkr_abbrev, feature_name, feature_type
+    into featAbbrev, featMrkrAbbrev, featName, featType
     from feature, outer(feature_marker_relationship, marker)
    where feature_zdb_id = featZdbId
      and fmrel_ftr_zdb_id = feature_zdb_id
@@ -41,11 +42,11 @@ foreach
     let featAbbrevHtml = null;
   else
   
-    if (featName like "%unspecified\_%") then
+    if (featName like "%\_unspecified" and featType != 'TRANSGENIC_UNSPECIFIED') then
       let featName = "unspecified";    
     end if
     
-    if (featName like "%unrec\_%") then
+    if (featName like "%\_unrecovered") then
       let featName = "unrecovered";    
     end if
 

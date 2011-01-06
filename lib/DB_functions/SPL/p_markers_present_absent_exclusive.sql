@@ -1,17 +1,33 @@
+
 create procedure p_markers_present_absent_exclusive (vFmrelMrkrId varchar(50),
        					  vFmrelFtrId varchar(50),
 					  vFmrelRel varchar(50))
 
     define vOk int;
     let vOk = 0;
+  
+  if (vFmrelRel = 'markers moved') 
+       then
+       let vOk = (select count(*) 
+       	     	     from feature_marker_relationship
+       	     	     where fmrel_mrkr_Zdb_id = vfmrelmrkrid
+		     and fmrel_ftr_zdb_id = vfmrelftrid
+		     and fmrel_type in ('is allele of','markers missing','markers present')
+		     );
+       if (vOk > 0)
+       then 
+   	    raise exception -746,0,"FAIL!: can not have m_present m_absent. p_markers_present_absent_exclusive";
 
+       end if;
+   
+    end if;
     if (vFmrelRel = 'markers present') 
        then
        let vOk = (select count(*) 
        	     	     from feature_marker_relationship
        	     	     where fmrel_mrkr_Zdb_id = vfmrelmrkrid
 		     and fmrel_ftr_zdb_id = vfmrelftrid
-		     and fmrel_type in ('is allele of','markers missing')
+		     and fmrel_type in ('is allele of','markers missing','markers moved')
 		     );
        if (vOk > 0)
        then 
@@ -27,7 +43,7 @@ create procedure p_markers_present_absent_exclusive (vFmrelMrkrId varchar(50),
        	     	     from feature_marker_relationship
        	     	     where fmrel_mrkr_Zdb_id = vfmrelmrkrid
 		     and fmrel_ftr_zdb_id = vfmrelftrid
-		     and fmrel_type in ('markers present','is allele of')
+		     and fmrel_type in ('markers present','is allele of','markers moved')
 		     );
        if (vOk > 0)
        then 
@@ -42,7 +58,7 @@ create procedure p_markers_present_absent_exclusive (vFmrelMrkrId varchar(50),
        	     	     from feature_marker_relationship
        	     	     where fmrel_mrkr_Zdb_id = vfmrelmrkrid
 		     and fmrel_ftr_zdb_id = vfmrelftrid
-		     and fmrel_type in ('markers missing','markers present')
+		     and fmrel_type in ('markers missing','markers present','markers moved')
 		  );
        if (vOk > 0)
        then 
