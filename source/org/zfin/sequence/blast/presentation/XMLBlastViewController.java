@@ -108,7 +108,7 @@ public class XMLBlastViewController extends AbstractCommandController {
                         catch (Exception e) {
                             // if it throws premature end of file exception,
                             // then we are probably not done writing to it, so try again
-                            if (e.getMessage()!=null && e.getMessage().contains("Premature end of file.")) {
+                            if (e.getMessage().contains("Premature end of file.")) {
 //                            if(e instanceof org.xml.sax.SAXParseException){
                                 logger.warn("sax exception while parsing: " + resultFile, e);
                                 done = false;
@@ -141,15 +141,15 @@ public class XMLBlastViewController extends AbstractCommandController {
     }
 
     public boolean isValidBlastResultLocation(XMLBlastBean xmlBlastBean) {
-        try {
-            return  xmlBlastBean.getResultFile().getAbsolutePath().contains(System.getProperty("java.io.tmpdir"))
-                    &&
-                    xmlBlastBean.isFileExists()
-                    ;
-        } catch (Exception e) {
-            logger.error("Failed to evaluate fileName:\n" + xmlBlastBean.getResultFile(),e);
-            return false ;
-        }
+            try {
+                return  xmlBlastBean.getResultFile().getAbsolutePath().contains(System.getProperty("java.io.tmpdir"))
+                        &&
+                        xmlBlastBean.isFileExists()
+                        ;
+            } catch (Exception e) {
+                logger.error("Failed to evaluate fileName:\n" + xmlBlastBean.getResultFile(),e);
+                return false ;
+            }
     }
 
     public XMLBlastBean fixFileLocation(XMLBlastBean xmlBlastBean) {
