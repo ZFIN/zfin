@@ -66,6 +66,7 @@
 <!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@cs.uoregon.edu kevin\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu ndunn\@uoregon.edu
+<!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	knight\@uoneuro.uoregon.edu hbauer\@uoneuro.uoregon.edu staylor\@cs.uoregon.edu
 <!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------

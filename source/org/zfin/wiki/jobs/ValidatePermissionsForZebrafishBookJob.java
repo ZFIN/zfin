@@ -1,4 +1,4 @@
-package org.zfin.wiki;
+package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -6,6 +6,8 @@ import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.wiki.*;
+import org.zfin.wiki.service.WikiWebService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public class ValidatePermissionsForZebrafishBookJob extends QuartzJobBean {
             for(RemoteSearchResult result : results){
                 try{
                     boolean isZfinGroup = false ;
-                    RemoteContentPermission[] remoteContentPermissions = WikiWebService.getInstance().getRemoteContentPermissions(result.getId(),Permission.EDIT.getValue()) ;
+                    RemoteContentPermission[] remoteContentPermissions = WikiWebService.getInstance().getRemoteContentPermissions(result.getId(), Permission.EDIT.getValue()) ;
                     for(RemoteContentPermission remoteContentPermission: remoteContentPermissions){
                         String groupName = remoteContentPermission.getGroupName() ;
                         if(groupName.equals(Group.ZFIN_USERS.getValue())){

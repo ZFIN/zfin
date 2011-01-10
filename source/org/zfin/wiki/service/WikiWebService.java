@@ -1,9 +1,10 @@
-package org.zfin.wiki;
+package org.zfin.wiki.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.wiki.*;
 
 import java.util.GregorianCalendar;
 
@@ -251,4 +252,5 @@ public class WikiWebService {
     public RemotePage getPage(long id) throws Exception{
         return service.getPage(token,id) ;
     }
+
 }

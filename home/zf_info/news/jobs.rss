@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<redirect>
+<newLocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=jobs&amp;title=Zebrafish+Jobs&amp;publicFeed=true&amp;os_authType=basic&amp;maxResults=-1&amp;sort=created</newLocation>
+</redirect>
+

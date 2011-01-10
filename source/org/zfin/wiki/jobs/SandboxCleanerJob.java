@@ -1,9 +1,10 @@
-package org.zfin.wiki;
+package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.wiki.service.WikiWebService;
 
 /**
  * Cleans sandbox.

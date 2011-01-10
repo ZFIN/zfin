@@ -5,7 +5,7 @@ import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.wiki.RemotePage;
 import org.zfin.wiki.RemotePageSummary;
 import org.zfin.wiki.WikiLoginException;
-import org.zfin.wiki.WikiWebService;
+import org.zfin.wiki.service.WikiWebService;
 
 import java.net.URL;
 import java.util.ArrayList;

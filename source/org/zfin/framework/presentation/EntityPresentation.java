@@ -2,7 +2,7 @@ package org.zfin.framework.presentation;
 
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.wiki.AntibodyWikiWebService;
+import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.WikiLoginException;
 
 /**

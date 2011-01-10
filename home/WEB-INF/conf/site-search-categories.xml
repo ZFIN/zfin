@@ -83,11 +83,12 @@
             <urlPattern type="LineDesignation" boostValue="8">zf_info/zfbook/lab_desig.htm</urlPattern>
         </UrlMapping>
     </Category>
-    <Category ID="MEETINGS"  order="110">
-        <DisplayName>Jobs/Meetings</DisplayName>
+    <Category ID="WIKI_NEWS"  order="110">
+        <DisplayName>Meetings/Jobs/News</DisplayName>
         <UrlMapping>
-            <urlPattern type="NewsMeetings" boostValue="256">news/mtgs.htm</urlPattern>
-            <urlPattern type="NewsJobs" boostValue="8">news/jobs.htm</urlPattern>
+            <urlPattern type="NewsMeetings" boostValue="256">${INDEXER_WIKI_HOSTNAME}/display/meetings</urlPattern>
+            <urlPattern type="NewsJobs" boostValue="8">${INDEXER_WIKI_HOSTNAME}/display/jobs</urlPattern>
+            <urlPattern type="NewsNews" >${INDEXER_WIKI_HOSTNAME}/display/news</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="PEOPLE" order="120">

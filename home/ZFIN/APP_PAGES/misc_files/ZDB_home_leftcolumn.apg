@@ -68,8 +68,11 @@
           <ul>
           <li><a href="http://wiki.zfin.org" title="ZFIN-hosted community wiki">Wiki</a>:<a href="http://wiki.zfin.org/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="http://wiki.zfin.org/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a>
 
-           <li><a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>,
-            <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, 
+           <li>
+           <!-- <a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>,-->
+           <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/jobs" title="Zebrafish-related job announcements">Jobs</a>,
+            <!-- <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, -->
+            <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>,
             <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>       
             <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
                  title="Search for zebrafish researchers by name or address">

@@ -87,7 +87,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Synchronize ZFIN Antibodies With Wiki"/>
                 <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.AntibodyWikiSynchronizationJob"/>
+                <property name="jobClass" value="org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
@@ -101,7 +101,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Set Permissions to Owner on Wiki"/>
                 <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.SetPermissionsToOwnerJob"/>
+                <property name="jobClass" value="org.zfin.wiki.jobs.SetPermissionsToOwnerJob"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
@@ -116,7 +116,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Validate Zebrafish Book Permissions"/>
                 <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.ValidatePermissionsForZebrafishBookJob"/>
+                <property name="jobClass" value="org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob"/>
             </bean>
         </property>
         <property name="cronExpression">
@@ -130,7 +130,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Clean Sandbox Wiki"/>
                 <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.SandboxCleanerJob"/>
+                <property name="jobClass" value="org.zfin.wiki.jobs.SandboxCleanerJob"/>
             </bean>
         </property>
         <property name="cronExpression">

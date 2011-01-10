@@ -13,7 +13,7 @@
         <%--<strong>--%>
     <zfin:name entity="${antibody}"/>
     <script type="text/javascript">
-    new Ajax.Updater('wikiLink','/action/wiki/wikiLink?zdbID=${antibody.zdbID}&name=${antibody.name}');
+    new Ajax.Updater('wikiLink','/webapp/wiki/wikiLink/${antibody.name}');
     </script>
     <span id="wikiLink" style="display:inline;vertical-align:baseline;font-size:small;"> </span>
 </div>

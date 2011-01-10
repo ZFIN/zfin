@@ -4,6 +4,7 @@
 <!--|INFORMIX_PORT|-->	2005
 <!--|INFORMIX_SERVER|-->	wildtype
 <!--|SQLHOSTS_HOST|-->	helix.cs.uoregon.edu
+<!--|WIKI_HOST|-->	azraelwiki.zfin.org
 # ----------------  SANITY CHECKS  -------------
 
 # The last two tags are special in makespecific.  They are used to detect 

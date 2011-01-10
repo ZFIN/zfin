@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+    <!--wiki definitions-->
+    <definition name="wiki/*.insert" template="/WEB-INF/jsp/wiki/{1}.jsp"/>
+
+    <definition name="wiki/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/wiki/{1}.jsp"/>
+    </definition>
+
+    <!--marker definitions-->
+    <definition name="marker/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
+    </definition>
+
+    <definition name="marker/*.insert" template="/WEB-INF/jsp/marker/{1}.jsp"/>
+
+    <!--feature definitions-->
+    <definition name="feature/*.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="Feature: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
+    </definition>
+
+    <definition name="feature/*.insert" template="/WEB-INF/jsp/feature/{1}.jsp"/>
+
+    <!--genotype definitions-->
+    <definition name="genotype/*.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="Genotype: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
+    </definition>
+
+    <!-- webdriver definitions -->
+    <definition name="webdriver.page" template="/WEB-INF/jsp/webdriver/webdriver.jsp">
+    </definition>
+
+    <!-- profile defintions -->
+    <definition name="profile/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/people/{1}.jsp" />
+    </definition>
+
+</tiles-definitions>
+

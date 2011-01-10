@@ -6,9 +6,6 @@
 
 <tiles-definitions>
 
-    <definition name="profile/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/people/{1}.jsp" />
-    </definition>
 
     <definition name="edit-user-password.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Edit ZFIN User" />

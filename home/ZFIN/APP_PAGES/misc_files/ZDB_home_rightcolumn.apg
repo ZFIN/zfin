@@ -197,7 +197,8 @@
        <?/MICOMMENT> 
        
        
-         
+
+               <!--
        <li>
          <a href="/zf_info/news/siteNews.html#zv9">
            November 16, 2010 - Zv9 in released in Ensembl</a>
@@ -210,14 +211,21 @@
        </li> 
        
        
-     
-        
-      
+
+     -->
+
+       <script type="text/javascript">
+           new Ajax.Updater('news','/webapp/wiki/summary/news?length=2',{Method: 'get' });
+       </script>
+
+       <div id="news"></div>
+
      
  
        <li> 
          <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
-         <a href="/zf_info/news/siteNews.html">News Archive</a>
+         <!--<a href="/zf_info/news/siteNews.html">News Archive</a>-->
+           <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/news">News Archive</a>
       </li>
    
     <br>

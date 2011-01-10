@@ -1,10 +1,11 @@
-package org.zfin.wiki;
+package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.wiki.service.WikiWebService;
 
 /**
  * Set permission of pages with the following labels to the original creator if does not already

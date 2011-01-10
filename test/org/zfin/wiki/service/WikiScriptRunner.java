@@ -1,4 +1,4 @@
-package org.zfin.wiki;
+package org.zfin.wiki.service;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;

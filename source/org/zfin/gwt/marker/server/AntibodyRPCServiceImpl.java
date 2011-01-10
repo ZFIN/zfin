@@ -20,7 +20,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.AntibodyWikiWebService;
+import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import java.util.ArrayList;
 import java.util.List;

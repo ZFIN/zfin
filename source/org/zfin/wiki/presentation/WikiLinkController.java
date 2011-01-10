@@ -1,29 +1,33 @@
 package org.zfin.wiki.presentation;
 
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.wiki.AntibodyWikiWebService;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.WikiLoginException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  */
-public class WikiLinkController extends AbstractCommandController {
+@Controller
+@RequestMapping(value =  "/wiki")
+public class WikiLinkController {
 
-    protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
-        WikiBean wikiBean = (WikiBean) o ;
+    private Logger logger = Logger.getLogger(WikiLinkController.class) ;
 
+    @RequestMapping(value = "/wikiLink/{name}")
+    protected String getWikiLink(@PathVariable String name,Model model) throws Exception {
+
+        model.addAttribute("name",name) ;
         try {
-            wikiBean.setUrl(AntibodyWikiWebService.getInstance().getWikiLink(wikiBean.getName()));
+            String url = AntibodyWikiWebService.getInstance().getWikiLink(name) ;
+            model.addAttribute("url",url) ;
         } catch (WikiLoginException e1) {
-            logger.error("problem showing antibody wiki link: "+wikiBean,e) ;
-            wikiBean = new WikiBean() ;
+            logger.error("problem showing antibody wiki link: "+name,e1) ;
+            model.addAttribute("url",null) ;
         }
 
-        return new ModelAndView("wiki-link.page", LookupStrings.FORM_BEAN,wikiBean) ;
+        return "wiki/wiki-link.insert" ;
     }
 }

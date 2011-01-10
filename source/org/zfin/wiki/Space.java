@@ -8,6 +8,9 @@ public enum Space {
     ANTIBODY("AB"),
     PROTOCOL("prot"),
     SANDBOX("sand"),
+    NEWS("news"),
+    MEETINGS("meetings"),
+    JOBS("jobs"),
     ;
 
     private final String value ;

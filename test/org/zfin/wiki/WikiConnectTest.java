@@ -2,7 +2,11 @@ package org.zfin.wiki;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.TestConfiguration;
+import org.zfin.wiki.service.AntibodyWikiWebService;
+import org.zfin.wiki.service.NewsWikiWebService;
+import org.zfin.wiki.service.WikiWebService;
 
 import static org.junit.Assert.*;
 
@@ -10,9 +14,13 @@ import static org.junit.Assert.*;
  */
 public class WikiConnectTest {
 
+    private NewsWikiWebService newsWikiWebService ;
+
+
     @Before
     public void setUp() throws Exception {
         TestConfiguration.configure();
+        newsWikiWebService = new NewsWikiWebService();
     }
 
 
@@ -59,6 +67,15 @@ public class WikiConnectTest {
             fail(e.fillInStackTrace().toString()) ;
         }
     }
+
+    @Test
+    public void testNews() throws Exception{
+        RemoteBlogEntrySummary[] summaries = newsWikiWebService.getNewsForSpace("meetings") ;
+        assertNotNull(summaries);
+        assertTrue("should have more than 0",summaries.length>0 ) ;
+    }
+
+
 
 
 }
