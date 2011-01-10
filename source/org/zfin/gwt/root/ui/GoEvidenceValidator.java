@@ -1,18 +1,17 @@
 package org.zfin.gwt.root.ui;
 
-import org.zfin.gwt.root.dto.GoCurationDefaultPublications;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.Arrays;
 
 /**
  * Error strings should be of the form:
- * Annotations with <EC> evidence must have [<exactly 1, 0>] annotations of type(s) <types> ]
+ * Annotations with <EC> evidence must have [<exactly 1, 0>] item(s) of type(s) <types> ]
  * in the inferred from field [with pub XXX in the default pub field.]
  */
 public class GoEvidenceValidator {
+
+    public final static String PROTEIN_BINDING_OBO_ID = "GO:0005515" ;
 
     private static String generateErrorString(GoEvidenceDTO dto) {
         String pubName = null;
@@ -40,10 +39,10 @@ public class GoEvidenceValidator {
         errorString += evidenceCode.name() + " evidence must ";
         switch (cardinality) {
             case 0:
-                errorString += " have 0 annotations ";
+                errorString += " have 0 items ";
                 break;
             case 1:
-                errorString += " have exactly 1 annotation ";
+                errorString += " have exactly 1 item ";
                 break;
             default:
                 errorString += " be ";
@@ -95,12 +94,14 @@ public class GoEvidenceValidator {
                 false == dto.getPublicationZdbID().equals(GoCurationDefaultPublications.ROOT.zdbID())) {
             viewClickLabel.setError("Annotations with evidence code ND must have default pub " + GoCurationDefaultPublications.ROOT.title() + ".");
             return false;
-        } else if ((false == dto.getEvidenceCode().equals(GoEvidenceCodeEnum.ND) &&
+        } else
+        if ((false == dto.getEvidenceCode().equals(GoEvidenceCodeEnum.ND) &&
                 dto.getPublicationZdbID().equals(GoCurationDefaultPublications.ROOT.zdbID()))
                 ) {
             viewClickLabel.setError("Annotations with default pub " + GoCurationDefaultPublications.ROOT.title() + " must have evidence code ND.");
             return false;
-        } else if (dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IEA)) {
+        } else
+        if (dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IEA)) {
             String inference = dto.getInferredFrom().iterator().next();
             if (dto.getPublicationZdbID().equals(GoCurationDefaultPublications.INTERPRO.zdbID())) {
                 if (false == inference.startsWith(InferenceCategory.INTERPRO.prefix())) {
@@ -123,7 +124,8 @@ public class GoEvidenceValidator {
             }
         }
         // not an IEA EC, but having an IEA pub
-        else if (dto.getPublicationZdbID().equals(GoCurationDefaultPublications.INTERPRO.zdbID())
+        else
+        if (dto.getPublicationZdbID().equals(GoCurationDefaultPublications.INTERPRO.zdbID())
                 ||
                 dto.getPublicationZdbID().equals(GoCurationDefaultPublications.SPKW.zdbID())
                 ||
@@ -131,6 +133,37 @@ public class GoEvidenceValidator {
                 ) {
             viewClickLabel.setError("Evidence code should be IEA for this default pub: " + GoCurationDefaultPublications.getPubForZdbID(dto.getPublicationZdbID()).title());
             return false;
+        }
+        else
+        // fogbugz 6292
+        if ( (dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI) && 
+            false==dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID))
+            ||
+            (dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID) &&
+            false==dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI))
+            ) {
+                viewClickLabel.setError("Protein binding ("+PROTEIN_BINDING_OBO_ID+
+                        ") may only be used with the evidence code IPI." );
+                return false ;
+         }
+        else
+        if (dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID) &&
+            dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI)
+            ) {
+             if(dto.getFlag()== GoEvidenceQualifier.NOT){
+                viewClickLabel.setError("Not flag not allowed for this evidence code" );
+                return false ;
+              }
+         }
+        // fogbugz 6292
+        else
+        if (dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IEP)) {
+            if(false==dto.getGoTerm().getOntology().getOntologyName().equals("biological_process")){
+                viewClickLabel.setError(
+                        "Only biological process terms allowed for this evidence code, not ["
+                                + dto.getGoTerm().getOntology().getOntologyName() + "]"  );
+                return false ;
+            }
         }
 
         viewClickLabel.clearError();

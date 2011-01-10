@@ -474,7 +474,10 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                 if (result.getOntology() == OntologyDTO.GO_MF) {
                     evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
                 }
-                evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
+                // fogbugz 6292
+                if(false==result.getOboID().equals(GoEvidenceValidator.PROTEIN_BINDING_OBO_ID)){
+                    evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
+                }
             }
         }
     }
