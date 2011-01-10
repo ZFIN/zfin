@@ -75,8 +75,8 @@
 #
 # Nights   When      Comments
 #
-# SMTWTFS        10:00pm   Generate standard set of download files for web site.
-00 22 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/DownloadFiles.pl
+# SMTWTFS        10:00pm   Generate standard set of download files for web site, including gff3 files.
+00 22 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/DownloadFiles.pl;<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/GFF3/GFF3Files.pl
 #
 #
 # S        10:10pm   Generate download files for Sanger
