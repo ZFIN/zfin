@@ -35,7 +35,6 @@ public interface FeatureRepository {
     List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID);
     List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum);
     List<Marker> getMarkersForFeatureRelationAndSource(String featureRelationshipName, String publicationZdbID);
-    List<LabFeaturePrefix> getAllCurrentLabFeaturePrefixesWithFeature();
     List<FeatureLabEntry> getFeaturesForPrefix(String prefix);
     List<LabFeaturePrefix> getLabFeaturePrefixForPrefix(String prefix);
     List<Lab> getLabsWithFeaturesForPrefix(String prefix);

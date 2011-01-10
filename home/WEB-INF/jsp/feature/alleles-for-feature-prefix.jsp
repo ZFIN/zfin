@@ -26,7 +26,7 @@
         <ul>
             <c:forEach var="featureLabEntry" items="${formBean.featureLabEntries}">
                 <li><zfin:link entity="${featureLabEntry.feature}"/>
-                    <c:if test="${!featureLabEntry.current}">
+                    <c:if test="${!featureLabEntry.current && !empty featureLabEntry.sourceOrganization}">
                         (<zfin:link entity="${featureLabEntry.sourceOrganization}"/>)
                     </c:if>
                 </li>

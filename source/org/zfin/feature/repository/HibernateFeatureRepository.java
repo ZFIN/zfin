@@ -168,21 +168,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " select distinct fp.prefixString from FeaturePrefix fp order by fp.prefixString asc ").list();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<LabFeaturePrefix> getAllCurrentLabFeaturePrefixesWithFeature(){
-        String hql = " select lfp from LabFeaturePrefix lfp join lfp.featurePrefix fp" +
-                " where lfp.currentDesignation= :currentLineDesignation "  +
-                " and exists ( " +
-                " select 't' from Feature f where f.featurePrefix = lfp.featurePrefix " +
-                " ) " +
-                " order by fp.prefixString asc " +
-                " " ;
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setBoolean("currentLineDesignation",true)
-                .list() ;
-    }
-
     /**
      * This is rewritten for speed.
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
@@ -251,7 +236,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix){
-        String hql = " select distinct f , f.sources  from Feature f, FeaturePrefix fp   "
+        String hql = " select distinct f , s  from Feature f "
+                + " join f.featurePrefix fp   "
+                + " left join f.sources s "
                 + " where f.featurePrefix = fp "
                 + " and fp.prefixString = :featurePrefix "
                 + " order by  f.abbreviationOrder asc "
@@ -263,7 +250,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         for(Object[] featureEntryObj : featureEntryObjects){
             FeatureLabEntry featureLabEntry = new FeatureLabEntry();
             featureLabEntry.setFeature((Feature) featureEntryObj[0]);
-            featureLabEntry.setSourceOrganization(((FeatureSource) featureEntryObj[1]).getOrganization());
+            if(featureEntryObj[1]!=null){
+                featureLabEntry.setSourceOrganization(((FeatureSource) featureEntryObj[1]).getOrganization());
+            }
             featureLabEntries.add( featureLabEntry ) ;
         }
         return featureLabEntries;

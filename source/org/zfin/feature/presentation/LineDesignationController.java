@@ -66,7 +66,7 @@ public class LineDesignationController {
 
     private void processCurrentLabs(List<FeatureLabEntry> featureLabEntries, Map<String,LabEntry> labEntries) {
         for(FeatureLabEntry featureLabEntry: featureLabEntries){
-            if(labEntries.containsKey(featureLabEntry.getSourceOrganization().getZdbID())){
+            if(featureLabEntry.getSourceOrganization()!=null && labEntries.containsKey(featureLabEntry.getSourceOrganization().getZdbID())){
                 featureLabEntry.setCurrent(labEntries.get(featureLabEntry.getSourceOrganization().getZdbID()).isCurrentLineDesignation());
             }
         }
