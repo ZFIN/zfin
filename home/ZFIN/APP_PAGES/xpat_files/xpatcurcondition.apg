@@ -372,15 +372,13 @@ EFFECTS
 <?MIVAR NAME=xpcurcond_row_color>#FFFFFF<?/MIVAR>
 
 <?MISQL SQL="
-    select exp_name, expcond_zdb_id, cdt_group||':'||cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, gene.mrkr_abbrev, morph.mrkr_abbrev, gene.mrkr_zdb_id
-    from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker morph, marker_relationship,marker gene)
+    select exp_name, expcond_zdb_id, cdt_group||':'||cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, morph.mrkr_abbrev
+    from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker morph)
     where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
       and exp_zdb_id = expcond_exp_zdb_id
       and expcond_cdt_zdb_id = cdt_zdb_id
       and expcond_expunit_zdb_id = expunit_zdb_id
       and expcond_mrkr_zdb_id = morph.mrkr_zdb_id
-      and morph.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-      and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
     order by exp_name, 3;">
     
     <?MIVAR NAME="xpcurcond_exp_name">$1<?/MIVAR>
@@ -390,9 +388,8 @@ EFFECTS
     <?MIVAR NAME="xpcurcond_expunit_name">$5<?/MIVAR>
     <?MIVAR NAME="xpcurcond_expcond_comments">$6<?/MIVAR>
     <?MIVAR NAME="xpcurcond_morph_zdb_id">$7<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_gene_abbrev">$8<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_morph_abbrev">$9<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_gene_zdb_id">$10<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_morph_abbrev">$8<?/MIVAR>
+
     <?MIVAR NAME="xpcurcond_expcond_minus_dash">$(REPLACE,$xpcurcond_expcond_zdb_id,-,)<?/MIVAR>
     
     
@@ -409,7 +406,12 @@ EFFECTS
     </td>
     <td>
       <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
-      <?MIVAR COND=$(NC,$xpcurcond_gene_abbrev,NULL)>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpcurcond_gene_zdb_id">$xpcurcond_gene_abbrev</a>)<?/MIVAR>
+      <?MISQL SQL="select get_mrkr_abbrev_html_link(mrkr_zdb_id)
+                   from marker_relationship, marker
+                   where mrel_mrkr_1_zdb_id = '$xpcurcond_morph_zdb_id'
+                     and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                   order by mrkr_abbrev_order;"><?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)">, <?MIELSE>(<?/MIBLOCK>$1<?/MISQL><?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">)<?/MIBLOCK>
+
     </td>
     <td> $xpcurcond_expcond_value
     </td>
