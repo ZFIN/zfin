@@ -550,11 +550,6 @@ $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
 $numMrkrProcessAfter = countData($sql); 
 
 open (POSTLOADREPORT, '>postUniProtLoadStatistics.txt') or die "Cannot open postUniProtLoadStatistics.txt: $!";
-print POSTLOADREPORT "Before the load, the total number of db_link records associated with UniProt is: $numDblinkBefore\n";
-print POSTLOADREPORT "Before the load, the total number of GO annotations using IEA evidence is: $numIEABefore\n";
-print POSTLOADREPORT "Before the load, the total number of GO annotations using IEA evidence with SP keyword 2 GO is: $numIEASP2GOBefore\n";
-print POSTLOADREPORT "Before the load, the total number of GO annotations using IEA evidence with InterPro 2 GO is: $numIEAInterPro2GOBefore\n";
-print POSTLOADREPORT "Before the load, the total number of GO annotations using IEA evidence with EC acc 2 GO is: $numIEAEC2GOBefore\n";
 
 print POSTLOADREPORT "count of records associated with UniProt\t";
 print POSTLOADREPORT "before load\t";
