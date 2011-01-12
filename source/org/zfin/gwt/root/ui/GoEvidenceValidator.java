@@ -136,10 +136,7 @@ public class GoEvidenceValidator {
         }
         else
         // fogbugz 6292
-        if ( (dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI) && 
-            false==dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID))
-            ||
-            (dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID) &&
+        if (  (dto.getGoTerm().getTermOboID().equals(PROTEIN_BINDING_OBO_ID) &&
             false==dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI))
             ) {
                 viewClickLabel.setError("Protein binding ("+PROTEIN_BINDING_OBO_ID+
@@ -151,9 +148,14 @@ public class GoEvidenceValidator {
             dto.getEvidenceCode().equals(GoEvidenceCodeEnum.IPI)
             ) {
              if(dto.getFlag()== GoEvidenceQualifier.NOT){
-                viewClickLabel.setError("Not flag not allowed for this evidence code" );
+                viewClickLabel.setError("Not flag not allowed for this go term" );
                 return false ;
               }
+
+            if(dto.getInferredFrom()== null || dto.getInferredFrom().size()==0){
+                viewClickLabel.setError("An inference is required for this go term" );
+                return false ;
+            }
          }
         // fogbugz 6292
         else
