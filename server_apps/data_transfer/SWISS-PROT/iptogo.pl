@@ -28,6 +28,7 @@ while(<>) {
 
     ## FB case: 6392 -- not to map GO:0005515
     print IPGO "$ip[1]|$term[1]|$id[1]|\n" if ($term_id[1] ne "GO:0005515");
+    
   }
  @line=(); @ip=(); @term_id=(); @term=(); @id=();
 }
