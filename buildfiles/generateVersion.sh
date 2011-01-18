@@ -1,10 +1,10 @@
-#!/usr/bin/bash
+#!/bin/sh
 SVN_REVISION_STRING=`svn info | grep Revision`
-SVN_REVISION=${SVN_REVISION_STRING#*:}
+SVN_REVISION=`expr "$SVN_REVISION_STRING" : 'Revision: \(.*\)'`;
 SVN_URL_STRING=`svn info | grep URL`
-SVN_URL=${SVN_URL_STRING#*ZFIN_WWW\/}
+SVN_URL=`expr "$SVN_URL_STRING" : '.*ZFIN_WWW\/\(.*\)'`;
 EXPORT_FILE="$1" ; 
-TITLE=${EXPORT_FILE#*home\/}
+TITLE=`expr "$EXPORT_FILE" : '.*home\/\(.*\)'`;
 echo "<html><head><title>Deploy Version $1</title></head><body>" > $EXPORT_FILE ;  
 echo "<h1>$TITLE</h1>" >> $EXPORT_FILE ; 
 echo "<ul>" >> $EXPORT_FILE ;
