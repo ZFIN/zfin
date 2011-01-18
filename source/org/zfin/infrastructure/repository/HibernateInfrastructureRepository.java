@@ -55,12 +55,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public void deleteActiveData(ActiveData activeData) {
         logger.info("Deleting " + activeData.getZdbID() + " from zdb_active_data");
-        Session session = HibernateUtil.currentSession();
-        session.delete(activeData);
+        HibernateUtil.currentSession().delete(activeData);
     }
 
     public void deleteActiveDataByZdbID(String zdbID) {
         ActiveData a = getActiveData(zdbID);
+        if(a==null){
+            logger.error("unable to find zdbID in active data to delete ["+zdbID+"]");
+            return ;
+        }
         deleteActiveData(a);
     }
 
