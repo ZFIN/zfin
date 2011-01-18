@@ -5,7 +5,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
@@ -37,6 +36,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.service.UniprotService;
 
 import java.util.*;
 
@@ -50,6 +50,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     private transient MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
     private transient InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private final static transient Logger logger = Logger.getLogger(MarkerGoEvidenceRPCServiceImpl.class);
+    private transient UniprotService uniprotService = new UniprotService();
 
 
     @Override
@@ -201,7 +202,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         }
         else
         if( inferenceCategory.equals(InferenceCategory.UNIPROTKB.name()) ) {
-            return EBIFetch.validateAccession(accession);
+            return uniprotService.validateAccession(accession);
         }
         return true;
     }

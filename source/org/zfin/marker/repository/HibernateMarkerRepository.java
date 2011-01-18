@@ -33,6 +33,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.sequence.service.SequenceService;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -46,6 +47,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     private static Logger LOG = Logger.getLogger(HibernateMarkerRepository.class);
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private final SequenceService sequenceService = new SequenceService();
 
     public Marker getMarker(Marker marker) {
         Session session = currentSession();
@@ -705,7 +707,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     OrthologueDBLink oldb = new OrthologueDBLink();
                     oldb.setOrthologue(orthologue);
                     oldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
-                    oldb.setReferenceDatabase(SequenceService.getEntrezGeneMouseRefDB());
+                    oldb.setReferenceDatabase(sequenceService.getEntrezGeneMouseRefDB());
                     currentSession().save(oldb);
                     OrthologueDBLink mgioldb = new OrthologueDBLink();
                     mgioldb.setOrthologue(orthologue);
@@ -722,12 +724,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     OrthologueDBLink humoldb = new OrthologueDBLink();
                     humoldb.setOrthologue(orthologue);
                     humoldb.setAccessionNumber(accession.getEntrezAccession().getEntrezAccNum());
-                    humoldb.setReferenceDatabase(SequenceService.getEntrezGeneHumanRefDB());
+                    humoldb.setReferenceDatabase(sequenceService.getEntrezGeneHumanRefDB());
                     currentSession().save(humoldb);
                     OrthologueDBLink omimoldb = new OrthologueDBLink();
                     omimoldb.setOrthologue(orthologue);
                     omimoldb.setAccessionNumber(omimOrthologue.getOmimAccession().replaceAll("MIM:", ""));
-                    omimoldb.setReferenceDatabase(SequenceService.getOMIMHumanOrthologue());
+                    omimoldb.setReferenceDatabase(sequenceService.getOMIMHumanOrthologue());
                     currentSession().save(omimoldb);
                 }
             }
