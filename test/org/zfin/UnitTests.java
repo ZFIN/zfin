@@ -14,6 +14,7 @@ import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
+import org.zfin.gwt.curation.ui.FeatureMarkerRelationshipTest;
 import org.zfin.gwt.curation.ui.FeatureValidationTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
@@ -68,6 +69,7 @@ import org.zfin.util.*;
         ExpressionExperimentTest.class,
         ExpressionResultPresentationTest.class,
         ExperimentDTOTest.class,
+        FeatureMarkerRelationshipTest.class,
         FeatureValidationTest.class,
         FileUtilTest.class,
         FunctionsTest.class,

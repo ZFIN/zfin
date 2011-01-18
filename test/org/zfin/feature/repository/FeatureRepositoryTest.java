@@ -14,6 +14,7 @@ import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.feature.presentation.LabFeaturePrefixRow;
 import org.zfin.feature.presentation.LineDesignationBean;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.people.Lab;
@@ -73,7 +74,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     @Test
     public void getFeatureRelationshipTypesForPointMutationType(){
         List<String> pointMutantTypes = new ArrayList<String>() ;
-        pointMutantTypes.add(FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString()) ;
+        pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString()) ;
 
         List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.POINT_MUTATION) ;
         assertTrue(CollectionUtils.isEqualCollection(pointMutantTypes,types)) ;
@@ -82,9 +83,9 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     @Test
     public void getFeatureRelationshipTypesForTransgenicInsertionType(){
         List<String> tgInsertionTypes = new ArrayList<String>() ;
-        tgInsertionTypes.add(FeatureMarkerRelationship.Type.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString()) ;
-        tgInsertionTypes.add(FeatureMarkerRelationship.Type.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString()) ;
-        tgInsertionTypes.add(FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString()) ;
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString()) ;
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString()) ;
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString()) ;
 
         List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION) ;
         assertTrue(CollectionUtils.isEqualCollection(tgInsertionTypes,types)) ;

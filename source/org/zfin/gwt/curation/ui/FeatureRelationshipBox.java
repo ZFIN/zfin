@@ -236,9 +236,11 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
             @Override
             public void onClick(ClickEvent event) {
                 FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = getFeatureMarkerRelationshipFromGui();
-                if(!validateFeatureMarkerRelationshipToAdd(featureMarkerRelationshipDTO)){
-                    setError("Relationship already exists.");
-                    return ;
+                try {
+                    FeatureMarkerRelationshipValidationService.validateFeatureMarkerRelationshipToAdd(featureMarkerRelationshipDTO,featureMarkerRelationshipDTOs) ;
+                } catch (ValidationException e) {
+                    setError(e.getMessage());
+                    return;
                 }
                 addButton.setEnabled(false);
                 featureToAddTarget.setEnabled(false);
@@ -282,28 +284,26 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
             return ;
         }
         FeatureRPCService.App.getInstance().getRelationshipTypesForFeatureType(featureDTO.getFeatureType(),
-                new FeatureEditCallBack<List<String>>("Failed to return feature relationships for type: "+ featureDTO.getFeatureType().getDisplay(),this){
+                new FeatureEditCallBack<List<String>>("Failed to return feature relationships for type: " + featureDTO.getFeatureType().getDisplay(), this) {
                     @Override
                     public void onSuccess(List<String> result) {
-                        if(result!=null && result.size()>0){
-                            if(result.size()==1){
+                        if (result != null && result.size() > 0) {
+                            if (result.size() == 1) {
                                 // this is probably correct so we don't need to screen it
                                 featureToAddRelationship.addItem(result.get(0));
-                            }
-                            else{
+                            } else {
                                 featureToAddRelationship.addItem("-------");
-                                for(String rel : result){
+                                for (String rel : result) {
                                     // see case 6337
                                     // is_allele relationship should only be available for transgenic insertions where the known insertion site box is checked
                                     // unspecified transgenic will never have known insertion sites
-                                    if( ( featureDTO.getFeatureType()==FeatureTypeEnum.TRANSGENIC_INSERTION
-                                            || featureDTO.getFeatureType()==FeatureTypeEnum.TRANSGENIC_UNSPECIFIED)
-                                            && rel.startsWith("is allele of")){
-                                        if(featureDTO.getKnownInsertionSite()){
+                                    if ((featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_INSERTION
+                                            || featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_UNSPECIFIED)
+                                            && rel.startsWith("is allele of")) {
+                                        if (featureDTO.getKnownInsertionSite()) {
                                             featureToAddRelationship.addItem(rel);
                                         }
-                                    }
-                                    else{
+                                    } else {
                                         featureToAddRelationship.addItem(rel);
                                     }
                                 }
@@ -314,17 +314,6 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                     }
                 }
         );
-    }
-
-    private boolean validateFeatureMarkerRelationshipToAdd(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO){
-
-        for(FeatureMarkerRelationshipDTO compareDto : featureMarkerRelationshipDTOs){
-            if(compareDto.equals(featureMarkerRelationshipDTO)){
-                return false ;
-            }
-        }
-
-        return true ;
     }
 
 
@@ -352,22 +341,22 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
     private void updateTargets(){
         addButton.setEnabled(false);
         featureToAddTarget.setEnabled(false);
-        FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(featureToAddRelationship.getSelectedText(),dto.getPublicationZdbID(),
-                new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type["+featureToAddType.getText()+"] and pub: "+
-                        ( dto!=null ? dto.getPublicationZdbID() : dto) , this){
+        FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(featureToAddRelationship.getSelectedText(), dto.getPublicationZdbID(),
+                new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + featureToAddType.getText() + "] and pub: " +
+                        (dto != null ? dto.getPublicationZdbID() : dto), this) {
                     @Override
                     public void onSuccess(List<MarkerDTO> markers) {
                         featureToAddTarget.clear();
                         Collections.sort(markers);
-                        if(markers!=null & markers.size()>0){
-                            for(MarkerDTO m: markers){
-                                featureToAddTarget.addItem(m.getName(),m.getZdbID());
+                        if (markers != null & markers.size() > 0) {
+                            for (MarkerDTO m : markers) {
+                                featureToAddTarget.addItem(m.getName(), m.getZdbID());
                             }
                             addButton.setEnabled(true);
                             featureToAddTarget.setEnabled(true);
                         }
                     }
-                } );
+                });
     }
 
     public FeatureDTO getFeatureDTOForName(String name){

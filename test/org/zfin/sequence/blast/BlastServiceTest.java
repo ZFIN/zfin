@@ -2,6 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
+import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.sequence.Defline;
 import org.zfin.sequence.Sequence;
@@ -50,6 +51,12 @@ public class BlastServiceTest {
 //        assertTrue(EBIFetch.validateAccession("B3DJJ0")) ;
 //    }
 
+
+    @Test
+    public void useEBIForUniprot(){
+        assertFalse(EBIFetch.validateAccession("NP_571379")) ;
+        assertTrue(EBIFetch.validateAccession("B3DJJ0")) ;
+    }
 
     @Test
     public void useEfetchForNucleotide(){

@@ -13,6 +13,7 @@ import org.zfin.feature.FeatureAssay;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -510,7 +511,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerDTO.getZdbID()) ;
         featureMarkerRelationship.setMarker(marker);
 
-        featureMarkerRelationship.setType(FeatureMarkerRelationship.Type.getType(featureMarkerRelationshipDTO.getRelationshipType()));
+        featureMarkerRelationship.setType(FeatureMarkerRelationshipTypeEnum.getType(featureMarkerRelationshipDTO.getRelationshipType()));
 
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(featureMarkerRelationship) ;

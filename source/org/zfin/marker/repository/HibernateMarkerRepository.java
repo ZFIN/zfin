@@ -15,10 +15,10 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
@@ -230,7 +230,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         "   and fmr.type = :relationship ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
+        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
         // e) add self linkage mapping
@@ -281,9 +281,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         "   and fmr.type in (:firstRelationship, :secondRelationship, :thirdRelationship) ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
-        query.setParameter("secondRelationship", FeatureMarkerRelationship.Type.MARKERS_PRESENT);
-        query.setParameter("thirdRelationship", FeatureMarkerRelationship.Type.MARKERS_MISSING);
+        query.setParameter("firstRelationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        query.setParameter("secondRelationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT);
+        query.setParameter("thirdRelationship", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING);
         lgList.addAll(query.list());
 
         return lgList;

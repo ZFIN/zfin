@@ -1,5 +1,6 @@
 package org.zfin.feature;
 
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
@@ -15,7 +16,7 @@ import java.util.Set;
 public class FeatureMarkerRelationship implements Comparable {
 
     private String zdbID;
-    private Type type;
+    private FeatureMarkerRelationshipTypeEnum type;
     private Feature feature;
     private Marker marker;
     private Set<PublicationAttribution> publications;
@@ -30,40 +31,12 @@ public class FeatureMarkerRelationship implements Comparable {
         this.feature = feature;
     }
 
-    public Type getType() {
+    public FeatureMarkerRelationshipTypeEnum getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(FeatureMarkerRelationshipTypeEnum type) {
         this.type = type;
-    }
-
-    public enum Type {
-
-        IS_ALLELE_OF("is allele of"),
-        CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE("contains phenotypic sequence feature"),
-        CONTAINS_INNOCUOUS_SEQUENCE_FEATURE("contains innocuous sequence feature"),
-        MARKERS_MISSING("markers missing"),
-        MARKERS_MOVED("markers moved"),
-        MARKERS_PRESENT("markers present");
-
-        private final String value;
-
-        Type(String value) {
-            this.value = value;
-        }
-
-        public String toString() {
-            return value;
-        }
-
-        public static Type getType(String type) {
-            for (Type t : values()) {
-                if (t.toString().equals(type))
-                    return t;
-            }
-            throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
-        }
     }
 
     public FeatureMarkerRelationshipType getFeatureMarkerRelationshipType() {

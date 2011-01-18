@@ -35,7 +35,7 @@
     </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureMarkerRelationshipType">
-        <param name="enumClassname">org.zfin.feature.FeatureMarkerRelationship$Type</param>
+        <param name="enumClassname">org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum</param>
     </typedef>
 
 

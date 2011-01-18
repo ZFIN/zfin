@@ -13,6 +13,7 @@ import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.feature.presentation.LabLight;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
@@ -586,9 +587,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query query = session.createQuery(hql);
 
         query.setString("feat", feature.getZdbID());
-        query.setString("relation", FeatureMarkerRelationship.Type.IS_ALLELE_OF.toString());
-        query.setString("relationship1", FeatureMarkerRelationship.Type.MARKERS_PRESENT.toString());
-        query.setString("relationship2", FeatureMarkerRelationship.Type.MARKERS_MISSING.toString());
+        query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setString("relationship1", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT.toString());
+        query.setString("relationship2", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING.toString());
         //query.setParameter("type", Marker.Type.GENE);
         //query.setString("type", Marker.Type.GENE.toString());
 
@@ -607,7 +608,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " and m.markerType =:type";
 
         Query query = session.createQuery(hql);
-        query.setParameter("relationship", FeatureMarkerRelationship.Type.MARKERS_PRESENT.toString());
+        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT.toString());
         query.setString("feat", feature.getZdbID());
 
 

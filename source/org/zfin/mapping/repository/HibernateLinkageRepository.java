@@ -3,7 +3,7 @@ package org.zfin.mapping.repository;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -138,7 +138,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                         "   and fmr.type = :relationship ");
 
         query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.Type.IS_ALLELE_OF);
+        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
         return lgList;
