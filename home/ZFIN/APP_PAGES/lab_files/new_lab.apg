@@ -58,9 +58,9 @@
     <p>
     <b>Full Name:</b><br>
     This field should hold the official name of the lab. 
-    For example, "Westerfield Lab".
+    For example, "Westerfield Lab". 
     <INPUT TYPE=text 
-           <?MIVAR COND=$(NC,$name,NULL)>value="$name" <?/MIVAR>
+           <?MIVAR COND=$(ISNOVALUE,$name)>value="$name" <?/MIVAR>
            NAME="name" size=80> 
     <p>
 
@@ -76,14 +76,14 @@ USA
     <TEXTAREA name=address 
               WRAP=virtual 
               rows=6 
-	      cols=70><?MIVAR COND=$(NC,$address,NULL)>$address<?/MIVAR></TEXTAREA>
+	      cols=70><?MIVAR COND=$(ISNOVALUE,$address)>$address<?/MIVAR></TEXTAREA>
     <p>
 
     <b>Front Office Phone:</b><br>
     This field should hold the front office (general contact) phone number 
     for the lab. Be sure to include relevant country codes.
     <INPUT type=text 
-           <?MIVAR COND=$(NC,$phone,NULL)>value="$phone"<?/MIVAR>
+           <?MIVAR COND=$(ISNOVALUE,$phone)>value="$phone"<?/MIVAR>
 	   name="phone" size="50">
     <p>
  
@@ -91,7 +91,7 @@ USA
     This field should hold the front office (general contact) fax number 
     for the lab. Be sure to include relevant country codes.
     <INPUT type=text 
-           <?MIVAR COND=$(NC,$fax,NULL)>value="$fax" <?/MIVAR> 
+           <?MIVAR COND=$(ISNOVALUE,$fax)>value="$fax" <?/MIVAR> 
            name="fax" size="50">
     <p>
 
@@ -99,14 +99,14 @@ USA
     <b>email:</b><br>
     This field should hold  the general contact email address for the lab. 
     <INPUT type=text 
-	   <?MIVAR COND=$(NC,$email,NULL)>value="$email" <?/MIVAR>
+	   <?MIVAR COND=$(ISNOVALUE,$email)>value="$email" <?/MIVAR>
 	   name="email" size="80">
     <p>
 
     <b>URL:</b><br>
     This field should hold the address (URL) for the lab's WWW site.
     <INPUT type=text 
-	   <?MIVAR COND=$(NC,$url,NULL)>value="$url" <?/MIVAR>
+	   <?MIVAR COND=$(ISNOVALUE,$url)>value="$url" <?/MIVAR>
            name="url" size="80">
     <p>
 
@@ -114,15 +114,16 @@ USA
 
     <?MICOMMENT>
     <INPUT type=text 
-	   <?MIVAR COND=$(NC,$allele_prefix,NULL)>value="$allele_prefix" <?/MIVAR>
+	   <?MIVAR COND=$(ISNOVALUE,$allele_prefix)>value="$allele_prefix" <?/MIVAR>
            name="allele_prefix" size="20">
            <?/MICOMMENT>
 	  <SELECT name=allele_prefix>
+            <option value="" ></option>
             <?MISQL SQL="
             select fp.fp_prefix,fp.fp_pk_id 
 from feature_prefix fp 
 order by fp.fp_prefix asc">
-                  <option value="$2" >$1
+                  <option value="$2" >$1</option>
             <?/MISQL>
 	  </SELECT> 
     <p>
