@@ -110,24 +110,6 @@ USA
            name="url" size="80">
     <p>
 
-    <b>Allele Designation:</b><br>
-
-    <?MICOMMENT>
-    <INPUT type=text 
-	   <?MIVAR COND=$(ISNOVALUE,$allele_prefix)>value="$allele_prefix" <?/MIVAR>
-           name="allele_prefix" size="20">
-           <?/MICOMMENT>
-	  <SELECT name=allele_prefix>
-            <option value="" ></option>
-            <?MISQL SQL="
-            select fp.fp_prefix,fp.fp_pk_id 
-from feature_prefix fp 
-order by fp.fp_prefix asc">
-                  <option value="$2" >$1</option>
-            <?/MISQL>
-	  </SELECT> 
-    <p>
-
 
     <A NAME="pub-info">
     <HR width=100% size=3>
