@@ -110,7 +110,7 @@ the genotype is finalized and committed, the staging area is reset.
         </td>
         <td>
 
-    <?MIVAR NAME=genocurbld_zyg_default>unknown<?/MIVAR>
+    <?MIVAR NAME=genocurbld_zyg_default>homozygous<?/MIVAR>
 
     <select name=genocurbld_zyg_zdb_id onChange="zygocityConstraints();">
       <?MISQL SQL="
@@ -119,26 +119,30 @@ the genotype is finalized and committed, the staging area is reset.
         where z.zyg_name <> 'wild type'
         order by zyg_name
         ;">
-      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <option  id="genocurbld_zyg_zdb_id.$2" value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
       <?/MISQL>
     </select>
         
         </td>
         <td>
 
-    <select name=genocurbld_maternal_zdb_id onChange="zygocityConstraints();">
+    <?MIVAR NAME=genocurbld_mat_zyg_default>heterozygous<?/MIVAR>
+
+    <select id="genocurbld_maternal_zdb_id" name=genocurbld_maternal_zdb_id onChange="zygocityConstraints();">
       <?MISQL SQL="
         select zyg_zdb_id, zyg_name
           from zygocity
          where zyg_name not in ('maternal zygotic','paternal zygotic')
         order by zyg_name
         ;">
-      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <option id="genocurbld_maternal_zdb_id.$2" value="$1" $(IF,$(EC,$2,$genocurbld_mat_zyg_default),SELECTED)>$2</option>     
       <?/MISQL>
     </select>
         
         </td>
         <td>
+
+    <?MIVAR NAME=genocurbld_pat_zyg_default>heterozygous<?/MIVAR>
 
     <select name=genocurbld_paternal_zdb_id onChange="zygocityConstraints();">
       <?MISQL SQL="
@@ -147,11 +151,32 @@ the genotype is finalized and committed, the staging area is reset.
          where zyg_name not in ('maternal zygotic','paternal zygotic')
         order by zyg_name
         ;">
-      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <option id="genocurbld_paternal_zdb_id.$2" value="$1" $(IF,$(EC,$2,$genocurbld_pat_zyg_default),SELECTED)>$2</option>     
       <?/MISQL>
     </select>
         
         </td>
+      </tr>
+      <tr>
+      <td colspan=4>&nbsp;</td>
+      </tr>
+      <tr>
+      <td>
+      Set Defaults:
+      </td>
+      <td colspan=3>
+      <script type="text/javascript">
+      function setButtons(zyg,pat_zyg,mat_zyg){
+          // alert("setting to " + zyg + " " + pat_zyg + " " +mat_zyg ) ; 
+          document.getElementById( 'genocurbld_zyg_zdb_id.'+zyg).selected=true ;
+          document.getElementById( 'genocurbld_paternal_zdb_id.'+pat_zyg).selected=true ;
+          document.getElementById( 'genocurbld_maternal_zdb_id.'+mat_zyg).selected=true ;
+      }
+      </script>
+      <input type="button" value="Set [U U U]" onclick="setButtons( 'unknown','unknown','unknown' );" />
+      <input type="button" value="Set [2 U U]" onclick="setButtons( 'homozygous','unknown','unknown' );" />
+      <input type="button" value="Set [2 1 1]" onclick="setButtons( 'homozygous','heterozygous','heterozygous' );" />
+      </td>
       </tr>
     
     </table>
