@@ -23,13 +23,13 @@
     <Category ID="FEATURES" order="15">
         <DisplayName>Features</DisplayName>
         <UrlMapping>
-            <urlPattern type="FeatureView">feature-detail</urlPattern>
+            <urlPattern type="FeatureView">feature/feature-detail</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="MUTANTS" order="20">
         <DisplayName>Mutants/Transgenics</DisplayName>
         <UrlMapping>
-            <urlPattern type="MutantGenoView">genotype-detail</urlPattern>
+            <urlPattern type="MutantGenoView">genotype/genotype-detail</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="Expression" order="30">
