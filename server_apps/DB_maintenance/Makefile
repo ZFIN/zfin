@@ -23,10 +23,10 @@ SUBDIRS = loadUp/
 GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh validatedata.pl \
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
            fx_permission_check.pl pnas_report.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh \
-	   performance.pl  orphanChecks.pl disable_updates.pl loadAndSwitch.pl loadAndSwitchJobs.txt
+	   performance.pl  orphanChecks.pl disable_updates.pl loadAndSwitch.pl 
 
 STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \
-	  makeDeveloperBlastDbs.sh 
+	  makeDeveloperBlastDbs.sh loadAndSwitchJobs.txt
 
 
 # ---------------  Production Rules  ------------------------------------
