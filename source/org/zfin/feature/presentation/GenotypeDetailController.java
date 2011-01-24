@@ -48,10 +48,13 @@ public class GenotypeDetailController {
         }
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
-        retrieveGenotypeAndFeatureData(form,genotype);
-        retrieveExpressionData(form, genotype);
-        retrievePhenotypeData(form, genotype);
-        retrievePublicationData(form, genotype);
+
+        if (!genotype.isWildtype()) {
+            retrieveGenotypeAndFeatureData(form,genotype);
+            retrieveExpressionData(form, genotype);
+            retrievePhenotypeData(form, genotype);
+            retrievePublicationData(form, genotype);
+	    }
 
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
