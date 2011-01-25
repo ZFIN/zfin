@@ -1,11 +1,18 @@
-dbaccess sysmaster 2> /dev/null <<+
-unload to locks.out
+
+INFORMIXDIR="/private/apps/Informix/informix"
+export INFORMIXDIR
+
+INFORMIXSERVER="waldo"
+export INFORMIXSERVER
+
+/private/apps/Informix/informix/bin/dbaccess sysmaster 2> /dev/null <<+
+unload to /tmp/locks.out
 select a.dbsname, a.tabname, a.rowidlk, a.type, a.owner, b.username
 from syslocks a, syssessions b
 where a.owner = b.sid
 order by a.owner;
 +
-cat locks.out | awk -F"|" '{
+cat /tmp/locks.out | awk -F"|" '{
 
 t_llevel=$3
 if (length($3)<7)
@@ -48,14 +55,14 @@ if ($4 == "SIX")
 
 print($5"|"$6"|"$1"|"$2"|"t_llevel"|"t_ltype"|")
 
-}' > locks1.out
+}' > /tmp/locks1.out
 
-dbaccess sysmaster 2> /dev/null <<+
+/private/apps/Informix/informix/bin/dbaccess sysmaster 2> /dev/null <<+
 create temp table t_lloocckk (session integer, usernm char(15), db_name 
 char(15)
 , tb_name char(20),level char(10), type char(15));
-load from locks1.out insert into t_lloocckk;
-unload to locks.out
+load from /tmp/locks1.out insert into t_lloocckk;
+unload to /tmp/locks.out
 select session, usernm, db_name, tb_name, level, type, count(*)
 from t_lloocckk
 group by 1,2,3,4,5,6
@@ -63,16 +70,16 @@ order by 7 desc;
 drop table t_lloocckk;
 +
 
-echo "Lock usage report Total locks in use" `onstat -k | tail -2 | grep active | awk '{print $1, "out of", $3}'`
+echo "Lock usage report Total locks in use" `/private/apps/Informix/informix/bin/onstat -k | tail -2 | grep active | awk '{print $1, "out of", $3}'`
 echo "----------------------------------------------------------------------------"
 echo "SESSION  OWNER      DATABASE   TABLE            LEVEL     TYPE      #LOCKS"
 echo "----------------------------------------------------------------------------"
 
-cat locks.out | awk -F"|" '{
+cat /tmp/locks.out | awk -F"|" '{
 
 printf("%8d %-10s %-10s %-18s %-7s %-10s %-6d\n",$1,$2,$3,$4,$5,$6,$7)
 
 }'
 
-rm locks.out
-rm locks1.out
+rm /tmp/locks.out
+rm /tmp/locks1.out
