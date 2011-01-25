@@ -21,7 +21,7 @@ public interface FeatureRPCServiceAsync {
     void getRelationshipTypesForFeatureType(FeatureTypeEnum ftrTypeDisplay, AsyncCallback<List<String>> featureEditCallBack);
     void getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID, AsyncCallback<List<MarkerDTO>> featureEditCallBack);
     void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, AsyncCallback<Void> featureEditCallBack);
-    void addFeatureAlias(String name, String ftrZdbID, AsyncCallback<Void> async);
+    void addFeatureAlias(String name, String ftrZdbID,String pubZdbID ,AsyncCallback<Void> async);
     void removeFeatureAlias(String name, String ftrZdbID, AsyncCallback<Void> async);
 
     void editPublicNote(NoteDTO noteDTO, AsyncCallback<Void> async);

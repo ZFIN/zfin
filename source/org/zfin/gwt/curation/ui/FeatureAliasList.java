@@ -52,15 +52,14 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
         addAlias(aliasTextBox.getText());
     }
 
-    protected void addAlias(String text) {
-        final String valueToAdd = aliasTextBox.getText();
+    protected void addAlias(final String valueToAdd) {
 
         working();
 
-        FeatureRPCService.App.getInstance().addFeatureAlias(valueToAdd, dto.getZdbID(),
-                new FeatureEditCallBack<Void>("failed to add alias to feature: ") {
+        FeatureRPCService.App.getInstance().addFeatureAlias(valueToAdd, dto.getZdbID(),dto.getPublicationZdbID(),
+                new FeatureEditCallBack<Void>("Failed to add alias ["+valueToAdd+"] to feature: ",this) {
                     public void onFailure(Throwable t) {
-                        setError("Failed to remove alias.");
+                        super.onFailure(t);
                         notWorking();
                     }
 
@@ -69,6 +68,7 @@ public class FeatureAliasList extends AbstractStackComposite<FeatureDTO> {
                         addToGUI(valueToAdd);
                         notWorking();
                         fireEventSuccess();
+                        clearError();
                     }
                 });
     }

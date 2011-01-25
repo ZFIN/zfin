@@ -212,7 +212,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return featureDTOs;
     }
 
-    public void addFeatureAlias(String name, String ftrZdbID) {
+    public void addFeatureAlias(String name, String ftrZdbID,String pubZdbID) {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, ftrZdbID);
         HibernateUtil.createTransaction();
         FeatureAlias featureAlias = new FeatureAlias();
@@ -222,6 +222,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
         HibernateUtil.currentSession().save(featureAlias);
+        infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), pubZdbID,RecordAttribution.SourceType.STANDARD);
         HibernateUtil.flushAndCommitCurrentSession();
 
 
