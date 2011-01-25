@@ -79,9 +79,19 @@ $EFFECTIVE_USER_ID = $userData[2];
 $REAL_GROUP_ID = $userData[3];
 $EFFECTIVE_GROUP_ID = $userData[3];
 
-if (system("ontape", "-s", "-B", $dbName, "-L", "0")) {
+if ($dbNameTainted eq "hapdb"){
+    if (system("ontape", "-s", "-B", $dbName, "-L", "0")) {
 	logError("Unable to turn on logging for $dbName",
 		"  Try running ontape -s -B $dbName -L 0 as user informix.");
+    }
+}
+
+else {
+
+    if (system("ontape", "-s", "-B", $dbName)) {
+	logError("Unable to turn on logging for $dbName",
+		"  Try running ontape -s -B $dbName as user informix.");
+    }
 }
 
 exit ($globalErrorCount);
