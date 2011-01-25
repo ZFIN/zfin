@@ -19,8 +19,6 @@
             url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@"  	 
             maxActive="8" maxIdle="4"/>
 
- <Parameter name="quicksearch-index-directory" value="/research/zcentral/www_homes/almost/server_apps/quicksearch/indexes" override="true"/>
-
 <Valve className="org.apache.catalina.valves.AccessLogValve"
                  fileDateFormat="yyyy-MM"
                  directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log." 
