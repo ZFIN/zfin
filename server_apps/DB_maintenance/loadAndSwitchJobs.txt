@@ -1,1 +1,2 @@
-/research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/loadspWithNoCheck.pl
+/research/prod/www_homes/happy/server_apps/data_transfer/SWISS-PROT/loadspWithNoCheck.pl
+/research/prod/www_homes/happy/server_apps/data_transfer/GO/go.pl
