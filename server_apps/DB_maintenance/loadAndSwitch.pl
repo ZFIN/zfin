@@ -45,6 +45,7 @@ sub disableUpdates() {
     my $flag = $dbh->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
 
     $flag->execute;
+    $dbh->commit;
 
 #    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/disable_updates.pl") && die "disable_updates.pl failed";
 
