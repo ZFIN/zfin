@@ -17,8 +17,8 @@
 <!--|DB_OWNER|-->	cmpich
 <!--|DOMAIN_NAME|-->	frost.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/frost
-<!--|GBROWSE_DB|-->	vega_37
-<!--|GBROWSE_DB_HOST|-->	zfinmysql.uoregon.edu
+<!--|GBROWSE_DB|-->	vega_current
+<!--|GBROWSE_DB_HOST|-->	gbrowse.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
 <!--|GO_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
