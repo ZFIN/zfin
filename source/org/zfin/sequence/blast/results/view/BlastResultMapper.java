@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.marker.*;
+import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -343,14 +344,20 @@ public class BlastResultMapper {
                     && hitViewBean.getHitDBLink().getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.VEGA_TRANS)) {
                 //todo: eventually handle multiple genes, just incase...
                 Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(hitMarker.getZdbID());
-                Marker gene = TranscriptService.getRelatedGenes(transcript).iterator().next().getMarker();
-
-                //get gbrowse images
-                try {
-                    logger.debug("attempting to get GBrowseImage list for blast hit");
-                    hitViewBean.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, transcript));
-                } catch (Exception e) {
-                    logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+                Set<RelatedMarker> relatedMarkers = TranscriptService.getRelatedGenes(transcript) ;
+                Marker gene ;
+                if(CollectionUtils.isNotEmpty(relatedMarkers)){
+                    gene = relatedMarkers.iterator().next().getMarker();
+                    //get gbrowse images
+                    try {
+                        logger.debug("attempting to get GBrowseImage list for blast hit");
+                        hitViewBean.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, transcript));
+                    } catch (Exception e) {
+                        logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+                    }
+                }
+                else{
+                    logger.warn("unable to find related genes for a transcript: "+transcript);
                 }
             }
 

@@ -55,6 +55,40 @@ public class ExecuteBlastTest {
         HibernateUtil.closeSession();
     }
 
+    @Test
+    public void badBlastA(){
+
+        try {
+// create a bean from the JAXB
+            JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
+            logger.info("jc: "+ jc);
+           Unmarshaller u = jc.createUnmarshaller();
+            logger.info("u: "+ u);
+
+            File blastInputFile = new File ("test/blast1a.xml") ;
+
+            File blastResultFile = File.createTempFile("blast",".xml") ;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(blastInputFile)) ;
+            String xmlString = "" ;
+            for(String line ; (line = bufferedReader.readLine())!=null ; ){
+                xmlString += line ;
+            }
+            xmlString = MountedWublastBlastService.getInstance().fixBlastXML(xmlString,null) ;
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(blastResultFile)) ;
+            writer.write(xmlString);
+            writer.close();
+
+            BlastOutput blastOutput = (BlastOutput) u.unmarshal(new FileInputStream(blastResultFile));
+            assertNotNull("blast output should not be null",blastOutput) ;
+
+            BlastResultBean blastResultBean = BlastResultMapper.createBlastResultBean(blastOutput) ;
+            assertNotNull(blastResultBean);
+
+        } catch (Exception e) {
+            fail(e.fillInStackTrace().toString()) ;
+        }
+    }
 
     @Test
     public void mapBlastOutput(){
