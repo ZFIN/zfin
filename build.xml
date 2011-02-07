@@ -273,23 +273,12 @@
                destdir="${classbin.dir}"
                classpathref="extended.classpath"
                fork="true"
+               encoding="ISO-8859-1"
                includeAntRuntime="no"
                memoryMaximumSize="256m"
                debug="true"
                target="1.6"/>
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>
-    </target>
-
-    <target name="compile-tests"
-            description="Target to compile all test classes.">
-        <javac srcdir="test"
-               destdir="${classbin.dir}"
-               classpathref="extended.classpath"
-               fork="true"
-               includeAntRuntime="no"
-               memoryMaximumSize="256m"
-               debug="true"
-               target="1.6"/>
     </target>
 
     <target name="remove-pre-and-post-targets"
