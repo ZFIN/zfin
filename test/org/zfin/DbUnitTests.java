@@ -8,6 +8,7 @@ import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.gbrowse.GBrowseRepositoryTest;
+import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.infrastructure.EnumValidationTest;
@@ -50,6 +51,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         AntibodyServiceTest.class,
         BODtoConversionServiceTest.class,
         CurationRPCTest.class,
+        GwtConversionTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
         MergeMarkerDBTest.class,
