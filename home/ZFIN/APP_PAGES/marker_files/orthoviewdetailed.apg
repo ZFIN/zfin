@@ -482,7 +482,9 @@ display detailed orthology data.
    <?MIVAR NAME="$note">$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK cond="$(XST,$note)">
+<?MIBLOCK cond="$(NE,$note,$MI_NULL)">
 <span style="text-align: left; font-size: large; font-weight: bold;">Orthology Note: </span><?MIVAR>$1<?/MIVAR>
+<?/MIBLOCK>
 <?/MIBLOCK>
 
 <!--  ZFIN footer -->     

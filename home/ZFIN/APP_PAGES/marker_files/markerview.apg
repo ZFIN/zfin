@@ -3123,6 +3123,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
    <?MIVAR NAME="$note">$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK COND="$(AND,$(XST,$note),$(NXST,$UPDATE))">
+<?MIBLOCK COND="$(NE,$note,$MI_NULL)">
 	  <a href="#popOrthologyNote" id="show-note">Orthology Note</a>
 
 <script type="text/javascript" src="/javascript/control.modal.js"></script>
@@ -3155,7 +3156,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     new Control.Modal('show-note', {opacity: 0.3, width: 400, height: 600, iframe: true});
 </script>
 <?/MIBLOCK>
-
+<?/MIBLOCK>
 <!-------------- ends ORTHOLOGY ------------------------------------>
 
 
