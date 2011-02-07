@@ -1,6 +1,8 @@
 package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
@@ -12,6 +14,7 @@ import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
@@ -28,10 +31,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  */
@@ -39,6 +39,36 @@ public class DTOConversionService {
 
     private static Logger logger = Logger.getLogger(DTOConversionService.class);
 
+
+    public static String escapeString(String uncleansedCharacter){
+//        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
+        return StringEscapeUtils.escapeHtml(uncleansedCharacter);
+    }
+
+    public static String unescapeString(String cleansedCharacter){
+//        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
+        return StringEscapeUtils.unescapeHtml(cleansedCharacter);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Collection<String> escapeStrings(Collection<String> uncleansedCharacter){
+        return CollectionUtils.collect(uncleansedCharacter, new Transformer() {
+            @Override
+            public String transform(Object o) {
+                return DTOConversionService.escapeString(o.toString());
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Collection<String> unescapeStrings(Collection<String> cleansedCharacter){
+        return CollectionUtils.collect(cleansedCharacter, new Transformer() {
+            @Override
+            public String transform(Object o) {
+                return DTOConversionService.unescapeString(o.toString());
+            }
+        });
+    }
 
     public static Set<RelatedEntityDTO> convertPublicationAttributionsToDTOs(String dataZdbID, String name, Set<PublicationAttribution> publications) {
         Set<RelatedEntityDTO> relatedEntityDTOs = new HashSet<RelatedEntityDTO>();
@@ -347,11 +377,51 @@ public class DTOConversionService {
         return returnDTO;
     }
 
+    public static Feature convertToFeature(FeatureDTO featureDTO){
+        Feature feature = new Feature();
+        feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
+        feature.setName(escapeString(featureDTO.getName()));
+
+        // these two need to be added, but a trigger fixes them
+        feature.setAbbreviationOrder(featureDTO.getAbbreviation());
+        feature.setNameOrder(featureDTO.getAbbreviation());
+
+        feature.setType(featureDTO.getFeatureType());
+        feature.setDominantFeature(featureDTO.getDominant());
+        feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
+
+        // if not unspecified
+        if (!(featureDTO.getFeatureType().isUnspecified())){
+            if (featureDTO.getLineNumber() != null) {
+                feature.setLineNumber(featureDTO.getLineNumber());
+            }
+            String labPrefix = featureDTO.getLabPrefix();
+            if (StringUtils.isNotEmpty(labPrefix)) {
+                feature.setFeaturePrefix(RepositoryFactory.getFeatureRepository().getFeatureLabPrefixID(featureDTO.getLabPrefix()));
+            }
+            feature.setUnspecifiedFeature(false);
+        }
+        // if unspecified
+        else{
+            feature.setUnspecifiedFeature(true);
+        }
+
+        if (featureDTO.getKnownInsertionSite()) {
+            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
+        }
+
+        if (featureDTO.getPublicNote()!=null) {
+            feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
+        }
+
+        return feature ;
+    }
+
     public static FeatureDTO convertToFeatureDTO(Feature feature) {
         FeatureDTO featureDTO = new FeatureDTO();
         featureDTO.setZdbID(feature.getZdbID());
-        featureDTO.setName(feature.getName());
-        featureDTO.setAbbreviation(feature.getAbbreviation());
+        featureDTO.setName(unescapeString(feature.getName()));
+        featureDTO.setAbbreviation(unescapeString(feature.getAbbreviation()));
         featureDTO.setFeatureType(feature.getType());
         featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite()) ;
         featureDTO.setLink(FeaturePresentation.getLink(feature));
@@ -398,7 +468,7 @@ public class DTOConversionService {
         }
 
 
-        featureDTO.setFeatureAliases(FeatureService.getFeatureAliases(feature));
+        featureDTO.setFeatureAliases(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
         return featureDTO;
     }
 
@@ -807,4 +877,19 @@ public class DTOConversionService {
         }
         return featurePrefixDTOs;  //To change body of created methods use File | Settings | File Templates.
     }
+
+    public static void escapeFeatureDTO(FeatureDTO featureDTO) {
+        featureDTO.setName(escapeString(featureDTO.getName()));
+        featureDTO.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
+        featureDTO.setAlias(escapeString(featureDTO.getAlias()));
+        featureDTO.setOptionalName(escapeString(featureDTO.getOptionalName()));
+    }
+
+    public static void unescapeFeatureDTO(FeatureDTO featureDTO) {
+        featureDTO.setName(unescapeString(featureDTO.getName()));
+        featureDTO.setAbbreviation(unescapeString(featureDTO.getAbbreviation()));
+        featureDTO.setAlias(unescapeString(featureDTO.getAlias()));
+        featureDTO.setOptionalName(unescapeString(featureDTO.getOptionalName()));
+    }
+
 }

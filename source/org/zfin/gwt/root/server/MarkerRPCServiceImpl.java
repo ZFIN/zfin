@@ -289,12 +289,13 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
+        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
         session.beginTransaction();
         Publication publication = null;
         if (StringUtils.isNotEmpty(relatedEntityDTO.getPublicationZdbID())) {
             publication = (Publication) session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
         }
-        DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, relatedEntityDTO.getName());
+        DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker,aliasName);
         if (dataAlias == null) {
             markerRepository.addMarkerAlias(marker, relatedEntityDTO.getName(), publication);
         } else {
@@ -303,11 +304,11 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
             }
         }
 
-        dataAlias = markerRepository.getSpecificDataAlias(marker, relatedEntityDTO.getName());
+        dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
         //no need to handle the updates table here, since the repository method takes care of it
 
         HibernateUtil.flushAndCommitCurrentSession();
-        relatedEntityDTO.setName(dataAlias.getAlias());
+        relatedEntityDTO.setName(DTOConversionService.unescapeString(dataAlias.getAlias()));
         relatedEntityDTO.setDataZdbID(marker.getZdbID());
         return relatedEntityDTO;
     }
@@ -317,7 +318,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
      */
     public RelatedEntityDTO addDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
         logger.debug(relatedEntityDTO.toString());
-        String aliasName = relatedEntityDTO.getName();
+        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
@@ -358,7 +359,7 @@ public class MarkerRPCServiceImpl extends RemoteServiceServlet implements Marker
      * @param relatedEntityDTO bindle of data with data id, name & pub for attribution
      */
     public void removeDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
-        String aliasName = relatedEntityDTO.getName();
+        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
         String pub = relatedEntityDTO.getPublicationZdbID();
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);

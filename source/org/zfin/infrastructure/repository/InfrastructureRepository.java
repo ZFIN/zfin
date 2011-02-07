@@ -162,19 +162,19 @@ public interface InfrastructureRepository {
     /**
      * Retrieve all data aliases for a given zdbID.
      *
-     * @param zdbID zdb ID
+     * @param aliasLowerName  Lower-case alias name.
      * @return List of data aliases
      */
-    List<DataAlias> getDataAliases(String zdbID);
+    List<DataAlias> getDataAliases(String aliasLowerName);
 
     /**
      * Retrieve all data aliases for a given zdbID. This method
      * also retrieves abbreviation info for an alias
      *
-     * @param zdbID zdb ID
+     * @param aliasLowerName Lower-case alias name.
      * @return List of data aliases
      */
-    List<String> getDataAliasesWithAbbreviation(String zdbID);
+    List<String> getDataAliasesWithAbbreviation(String aliasLowerName);
 
     /**
      * Retrieve anatomy terms (zdbIDs) by token.

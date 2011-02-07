@@ -217,12 +217,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         FeatureAlias featureAlias = new FeatureAlias();
         featureAlias.setFeature(feature);
-        featureAlias.setAlias(name);
+        featureAlias.setAlias(DTOConversionService.escapeString(name));
         String groupName = DataAliasGroup.Group.ALIAS.toString();
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
         HibernateUtil.currentSession().save(featureAlias);
-        infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), pubZdbID,RecordAttribution.SourceType.STANDARD);
+        infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), pubZdbID, RecordAttribution.SourceType.STANDARD);
         HibernateUtil.flushAndCommitCurrentSession();
 
 
@@ -270,46 +270,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException , ValidationException{
 
+        DTOConversionService.escapeFeatureDTO(featureDTO);
         checkDupes(featureDTO);
         validateUnspecified(featureDTO);
 
         HibernateUtil.createTransaction();
         Person person = Person.getCurrentSecurityUser();
-        Feature feature = new Feature();
-        feature.setAbbreviation(featureDTO.getAbbreviation());
-        feature.setName(featureDTO.getName());
-
-        // these two need to be added, but a trigger fixes them
-        feature.setAbbreviationOrder(featureDTO.getAbbreviation());
-        feature.setNameOrder(featureDTO.getAbbreviation());
-
-        feature.setType(featureDTO.getFeatureType());
-        feature.setDominantFeature(featureDTO.getDominant());
-        feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
-
-        // if not unspecified
-        if (!(featureDTO.getFeatureType().isUnspecified())){
-            if (featureDTO.getLineNumber() != null) {
-                feature.setLineNumber(featureDTO.getLineNumber());
-            }
-            String labPrefix = featureDTO.getLabPrefix();
-            if (StringUtils.isNotEmpty(labPrefix)) {
-                feature.setFeaturePrefix(featureRepository.getFeatureLabPrefixID(featureDTO.getLabPrefix()));
-            }
-            feature.setUnspecifiedFeature(false);
-        }
-        // if unspecified
-        else{
-            feature.setUnspecifiedFeature(true);
-        }
-
-        if (featureDTO.getKnownInsertionSite()) {
-            feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }
-
-        if (featureDTO.getPublicNote()!=null) {
-            feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
-        }
+        Feature feature = DTOConversionService.convertToFeature(featureDTO);
         HibernateUtil.currentSession().save(feature);
         currentSession().flush();
         currentSession().refresh(feature);

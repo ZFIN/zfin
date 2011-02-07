@@ -61,7 +61,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void deleteActiveDataByZdbID(String zdbID) {
         ActiveData a = getActiveData(zdbID);
         if(a==null){
-            logger.error("unable to find zdbID in active data to delete ["+zdbID+"]");
+            logger.error("unable to find zdbID in active data to delete [" + zdbID + "]");
             return ;
         }
         deleteActiveData(a);
@@ -601,28 +601,28 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @SuppressWarnings("unchecked")
-    public List<DataAlias> getDataAliases(String zdbID) {
+    public List<DataAlias> getDataAliases(String aliasLowerName) {
         Session session = HibernateUtil.currentSession();
         Criteria crit = session.createCriteria(DataAlias.class);
-        crit.add(Restrictions.eq("aliasLowerCase", zdbID));
+        crit.add(Restrictions.eq("aliasLowerCase", aliasLowerName));
         return (List<DataAlias>) crit.list();
     }
 
     /**
      * Retrieve a list of names of entities that match a given alias name.
      *
-     * @param aliasName alias
+     * @param aliasLowerName alias
      * @return list of strings
      */
     @SuppressWarnings("unchecked")
-    public List<String> getDataAliasesWithAbbreviation(String aliasName) {
+    public List<String> getDataAliasesWithAbbreviation(String aliasLowerName) {
         Session session = HibernateUtil.currentSession();
         SQLQuery sqlQuery = session.createSQLQuery("select distinct get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
                 "from data_alias, alias_group " +
-                "where dalias_alias_lower = :id and dalias_group_id = aliasgrp_pk_id " +
+                "where dalias_alias_lower = :aliasLowerName and dalias_group_id = aliasgrp_pk_id " +
                 "                and aliasgrp_name != :aliasGroup ");
         sqlQuery.addScalar("abbreviation");
-        sqlQuery.setParameter("id", aliasName);
+        sqlQuery.setParameter("aliasLowerName", aliasLowerName);
         sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
         return (List<String>) sqlQuery.list();
     }
