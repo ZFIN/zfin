@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="properties" basedir=".">
 
+<!--required to build GwtConversionTest because of different encodings-->
+<!-- Supports test for non-ASCII characters (case 6544) and is used for compiling. -->
+    <property name="encoding" value="UTF-8"/>
+<!--    <property name="encoding" value="ISO-8859-1"/>-->
+
 <!-- The destination directory for all the compiled classes. -->
     <!-- home targets -->
     <property name="home.target" value="${TARGETROOT}/home"/>

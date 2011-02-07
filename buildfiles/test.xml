@@ -192,7 +192,7 @@ test(s) need to be run before committing changes or pushing files to production 
                destdir="${classbin.dir}"
                classpathref="extended.classpath"
                fork="yes"
-               encoding="ISO-8859-1"
+               encoding="${encoding}"
                includeAntRuntime="no"
                memoryMaximumSize="256m"
                source="1.6"

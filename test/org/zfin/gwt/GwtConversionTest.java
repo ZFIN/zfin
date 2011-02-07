@@ -26,7 +26,9 @@ public class GwtConversionTest extends AbstractDatabaseTest{
 
     private static Logger logger = Logger.getLogger(GwtConversionTest.class);
 
-    private final String unescapedName = "(ÑTg:123)" ;
+    // This is the correct character if it looks like a N with a tilde on top of it.
+    // Off of solaris, it is rendered correctly (a long mdash).  
+    private final String unescapedName = "(\u2014Tg:123)" ;
     private final String escapedName = "(&mdash;Tg:123)";
 
     @Test
