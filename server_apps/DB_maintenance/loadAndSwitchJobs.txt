@@ -1,2 +1,2 @@
-/research/zprodmore/www_homes/happy/server_apps/data_transfer/SWISS-PROT/loadspWithNoCheck.pl
+/research/zprodmore/www_homes/happy/server_apps/data_transfer/SWISS-PROT/loadsp.pl
 /research/zprodmore/www_homes/happy/server_apps/data_transfer/GO/go.pl
