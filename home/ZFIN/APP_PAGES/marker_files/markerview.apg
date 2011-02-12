@@ -28,7 +28,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
 <?MICOMMENT> ** if a vegaID is passed in, use it to get the OID ** <?/MICOMMENT>
-<?MISQL COND="$(XST,$vegaID)" SQL="select first 1 mrkr_zdb_id 
+<?MISQL COND="$(XST,$vegaID)" SQL="select first 1 mrkr_zdb_id
                  from marker, db_link
                 where mrkr_zdb_id = dblink_linked_recid
                   and dblink_acc_num = '$vegaID';">
@@ -534,13 +534,13 @@ function jump(form_select){
 <!----------------------------------------------------------->
 <p>
 
-<?MIVAR COND="$(XST,$UPDATE)"> 
+<?MIVAR COND="$(XST,$UPDATE)">
 
    <form>
      <center>
-       <a 
+       <a
        style="font-size: large;"
-       href="javascript:" 
+       href="javascript:"
         onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
        >[View Marker]</a>
      </center>
@@ -629,7 +629,7 @@ function jump(form_select){
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias, alias_group
-    where dalias_data_zdb_id = '$OID' 
+    where dalias_data_zdb_id = '$OID'
     and aliasgrp_pk_id = dalias_group_id
     and aliasgrp_name = 'alias';">
 
@@ -746,7 +746,7 @@ Only need to update clones, etc., which should be the only things that will have
  <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias, alias_group
-    where dalias_data_zdb_id = '$OID' 
+    where dalias_data_zdb_id = '$OID'
     and dalias_group_id = aliasgrp_pk_id
     and aliasgrp_name = 'sequence similarity';">
 
@@ -1209,7 +1209,7 @@ SQL="
     select count(distinct xpatex_source_zdb_id)::integer
      from expression_experiment join
          expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
-         join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id 
+         join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
      where xpatex_gene_zdb_id = '$OID'
      and not exists(
          select 'x' from clone
@@ -1232,7 +1232,7 @@ SQL="
     select count(distinct xpatex_source_zdb_id)::integer
       from expression_experiment join
            expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
-      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id 
+      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
 
      where xpatex_probe_feature_zdb_id = '$OID'
      ;">
@@ -1241,11 +1241,11 @@ SQL="
 <?/MIBLOCK>
 
 <?MISQL COND="$(EQ,$marker_type,EFG)"
-  SQL=" 
+  SQL="
     select count(distinct xpatex_source_zdb_id)::integer
-      from expression_experiment join 
+      from expression_experiment join
            expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
-      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id 
+      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
      where xpatex_gene_zdb_id = '$OID'
      ;">
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
@@ -1269,7 +1269,7 @@ SQL="
        from expression_experiment join publication
        on xpatex_source_zdb_id = zdb_id
        join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
-      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id 
+      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
        where xpatex_gene_zdb_id = '$OID'
 	   and jtype <> 'Unpublished'
        and not exists (
@@ -1295,7 +1295,7 @@ SQL="
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
       join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
-      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id 
+      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
          where xpatex_gene_zdb_id = '$OID'
 	   and jtype <> 'Unpublished'
      and not exists (select 'x' from marker
@@ -1307,11 +1307,11 @@ SQL="
     <?MIVAR COND="$(EQ,$marker_type,EFG)"
     NAME="mrkrview_xpatsource_desc_sql">
 	select distinct pub_mini_ref
-          from expression_experiment 
+          from expression_experiment
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
          where xpatex_gene_zdb_id = '$OID'
-	   and jtype <> 'Unpublished'; 
+	   and jtype <> 'Unpublished';
     <?/MIVAR>
 
 
@@ -1379,11 +1379,11 @@ SQL="
       <?MIVAR NAME=mrkrview_xpatfig_count_sql>
 	 select count(distinct xpatfig_fig_zdb_id)::integer
            from expression_pattern_figure
-                join expression_result 
+                join expression_result
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment 
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
-	  where xpatex_gene_zdb_id = '$OID'; 
+                join expression_experiment
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id
+	  where xpatex_gene_zdb_id = '$OID';
       <?/MIVAR>
 <?/MIBLOCK>
 
@@ -1444,7 +1444,7 @@ SQL="
 
 
 <?MIBLOCK COND="$(NE,$marker_type,EFG)">
-  <?MISQL 
+  <?MISQL
     SQL="$mrkrview_xpatsubfig_sql">
      <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
@@ -1464,7 +1464,7 @@ SQL="
 <?MICOMMENT>  more will probably follow if phenote submissions become popular with the users. <?/MICOMMENT>
 
          <?MIBLOCK COND="$(NE,$mrkrview_xpatsub_probe_id,)">
-	   <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+	   <?MISQL SQL="select count(distinct img_zdb_id)::integer
              from image, expression_pattern_figure,
                 expression_result, expression_experiment , clone
 	     where
@@ -1473,7 +1473,7 @@ SQL="
              and  xpatex_zdb_id=xpatres_xpatex_zdb_id
              and  clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
              and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
-             and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id' 
+             and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id'
              ; ">
           <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 	  <?MISQL SQL="
@@ -1484,16 +1484,16 @@ SQL="
 	   <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
 	   <?/MISQL>
 
-           <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+           <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
 	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name] 
-	   </td></tr>	
+	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name]
+	   </td></tr>
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
        <?MIELSE>
-          <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+          <?MISQL SQL="select count(distinct img_zdb_id)::integer
              from image, expression_pattern_figure,
                 expression_result, expression_experiment
 	     where
@@ -1504,13 +1504,13 @@ SQL="
              ; ">
           <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 
-          <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+          <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
 	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref 
-	   </td></tr>	
+	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref
+	   </td></tr>
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
       <?/MIBLOCK>
     <?/MISQL>
@@ -1518,32 +1518,32 @@ SQL="
 
 
     <?MIVAR  NAME=mrkrview_xpatsubfig_sql>
-	 select count(distinct xpatfig_fig_zdb_id)::integer, 
+	 select count(distinct xpatfig_fig_zdb_id)::integer,
 		pub.zdb_id, pub.pub_mini_ref
            from expression_pattern_figure
                 join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id
                 join publication pub on pub.zdb_id = xpatex_source_zdb_id
            where xpatex_gene_zdb_id = '$OID'
            and pub.jtype = 'Unpublished'
-           group by  pub.zdb_id, pub.pub_mini_ref; 
+           group by  pub.zdb_id, pub.pub_mini_ref;
      <?/MIVAR>
 
 
-     <?MISQL 
+     <?MISQL
     SQL="$mrkrview_xpatsubfig_sql">
      <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
-	 
+
 	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 
 	    <tr><td><b>Directly submitted expression data: </b></td>
-              
+
          <?MIELSE>
 	    <tr><td>&nbsp;</td>
          <?/MIBLOCK>
-	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+	 <?MISQL SQL="select count(distinct img_zdb_id)::integer
            from image, expression_pattern_figure,
                 expression_result, expression_experiment
 	   where
@@ -1556,17 +1556,17 @@ SQL="
 <?MIVAR NAME=mrkrview_xpat_author>Mason<?/MIVAR>
 <?MIVAR NAME=mrkrview_xpat_resulttytpe>Unpublished<?/MIVAR>
 
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a> 
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a>
 <?MICOMMENT>
 	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 <?/MICOMMENT>
 	 <?/MIVAR>
 
          <td>
-	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref 
+	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref
 	 </td></tr>
-<?/MISQL>	
+<?/MISQL>
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
 
 
@@ -1575,10 +1575,10 @@ SQL="
 
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
      <?MICOMMENT>Do not show if expression is WITHDRAWN: or 'chimeric'<?/MICOMMENT>
-	 <?MISQL SQL=" 
+	 <?MISQL SQL="
 	 SELECT  get_stg_name_long_html(stg_zdb_id) from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage, expression_pattern_figure
-	 WHERE xpatex_gene_zdb_id = '$OID' 
-	 AND 
+	 WHERE xpatex_gene_zdb_id = '$OID'
+	 AND
      (
          xpatres_start_stg_zdb_id = stg_zdb_id
          OR
@@ -1923,7 +1923,7 @@ union
 	$mrkrview_mutants_display
       <?/MIVAR>
     </td></tr>
-      <tr><td> <b>Allele(s): &nbsp; </b> 
+      <tr><td> <b>Allele(s): &nbsp; </b>
 <?MIVAR>
 <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">$1<?/MISQL>
 <?/MIVAR>
@@ -1950,7 +1950,7 @@ union
   <?MISQL COND=$(EC,$mrkrview_tableExists,f) SQL="
     create temp table $mrkrview_temp_pato (
     t_pato_zdb_id 	varchar(50)       ) with NO LOG;">
-  <?/MISQL>  
+  <?/MISQL>
 
   <?MISQL SQL="insert into $mrkrview_temp_pato
                select apato_zdb_id
@@ -1962,9 +1962,9 @@ union
   <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
     <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
       <hr width=80%>
-      <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>    
+      <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>
       $(SETVAR,$display_mut_trg_title,t)
-    <?/MIVAR> 
+    <?/MIVAR>
 
     <?MIBLOCK COND="$(XST,$type_of_genedom)">
       <?MISQL SQL="select count(*)::integer
@@ -1974,7 +1974,7 @@ union
         <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
       <?/MISQL>
     <?/MIBLOCK>
-   
+
   <?/MIBLOCK>
 
   <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
@@ -1982,7 +1982,7 @@ union
        <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
     </td></tr>
   </table>
-  
+
   <?MICOMMENT> *** call phenotype_miniview.apg to display the phenotype data *** <?/MICOMMENT>
   <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
 
@@ -2292,9 +2292,9 @@ union
 <!---------------- Transcripts ----------------------->
 
 
-<?MICOMMENT> ** Only attempt to show related transcripts if there 
+<?MICOMMENT> ** Only attempt to show related transcripts if there
                 is a relationship that might bring one back  ** <?/MICOMMENT>
-<?MISQL SQL="select 'x' from single 
+<?MISQL SQL="select 'x' from single
              where exists (select 'x' from marker_relationship
                            where mrel_mrkr_1_zdb_id = '$OID'
                              and mrel_type = 'gene produces transcript');">
@@ -2617,11 +2617,11 @@ union
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcdg_name = 'marker linked sequence'
     and fdbcdg_pk_id = fdbcdgm_group_id
-    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
     -- and fdb_db_name != 'ZFIN_PROT'
   UNION
   select dblink_acc_num, fdb_db_name
-  from db_link, foreign_db_contains, marker_relationship, foreign_db, 
+  from db_link, foreign_db_contains, marker_relationship, foreign_db,
              foreign_db_contains_display_group_member, foreign_db_contains_display_group
   where mrel_mrkr_1_zdb_id = '$OID'
     and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -2629,7 +2629,7 @@ union
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcdg_name = 'marker linked sequence'
     and fdbcdg_pk_id = fdbcdgm_group_id
-    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
     -- and fdb_db_name != 'ZFIN_PROT'
     and mrel_type in ('gene contains small segment',
 		      'clone contains small segment',
@@ -2644,7 +2644,7 @@ union
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcdg_name = 'marker linked sequence'
     and fdbcdg_pk_id = fdbcdgm_group_id
-    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdb_db_id = fdb_db_pk_id
     and mrel_type in ('clone contains gene')
     and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
@@ -2666,9 +2666,9 @@ union
   <b>Link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-select 
+select
 fdb.fdb_db_name,
-dt.fdbdt_data_type,dgm.fdbcdgm_fdbcont_zdb_id 
+dt.fdbdt_data_type,dgm.fdbcdgm_fdbcont_zdb_id
 from foreign_db_contains_display_group dg
 join foreign_db_contains_display_group_member dgm on dg.fdbcdg_pk_id=dgm.fdbcdgm_group_id
 join foreign_db_contains fdbc  on fdbc.fdbcont_zdb_id=dgm.fdbcdgm_fdbcont_zdb_id
@@ -2718,9 +2718,9 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
   <b>Add reference:</b> &nbsp;
   DBname:<SELECT name=attrib_seq_fdb>
   <?MISQL SQL="
-select 
+select
 fdb.fdb_db_name,
-dt.fdbdt_data_type,dgm.fdbcdgm_fdbcont_zdb_id 
+dt.fdbdt_data_type,dgm.fdbcdgm_fdbcont_zdb_id
 from foreign_db_contains_display_group dg
 join foreign_db_contains_display_group_member dgm on dg.fdbcdg_pk_id=dgm.fdbcdgm_group_id
 join foreign_db_contains fdbc  on fdbc.fdbcont_zdb_id=dgm.fdbcdgm_fdbcont_zdb_id
@@ -2778,7 +2778,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_id = fdb_db_pk_id
           and fdbcdg_name = 'marker linked sequence'
-          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcdg_pk_id = fdbcdgm_group_id
           and fdbcont_fdbdt_id = fdbdt_pk_id
       UNION
@@ -2795,7 +2795,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_id = fdb_db_pk_id
           and fdbcdg_name = 'marker linked sequence'
-          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcdg_pk_id = fdbcdgm_group_id
           and fdbcont_fdbdt_id = fdbdt_pk_id
           and mrel_type in ('gene contains small segment',
@@ -2819,7 +2819,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 
           and fdbcdg_name = 'marker linked sequence'
-          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+          and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcdg_pk_id = fdbcdgm_group_id
 
           and fdbcont_fdbdt_id = fdbdt_pk_id
@@ -2922,7 +2922,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 ------------   OTHER MARKER PAGES   -------------------------------
 <?/MICOMMENT>
 
-  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
+  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>
 
               <?MIVAR NAME=$snp_ensembl_accnum><?/MIVAR>
               <?MIVAR NAME=$type_of_clone><?/MIVAR>
@@ -2937,7 +2937,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     where dblink_linked_recid = '$OID'
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
       and fdbcont_fdb_db_id = fdb_db_pk_id
-      and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id  
+      and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
       and fdbcdg_pk_id = fdbcdgm_group_id
       and fdbcdg_name = 'summary page'
 
@@ -2978,7 +2978,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           <?MISQL SQL="select dblink_acc_num_display
                        from db_link
                        where dblink_linked_recid='$OID'
-                       and dblink_fdbcont_zdb_id='ZDB-FDBCONT-040412-36'">
+                       and dblink_fdbcont_zdb_id='ZDB-FDBCONT-040826-2'">
               <?MIVAR NAME=$snp_ensembl_accnum>$1<?/MIVAR>
           <?/MISQL>
 
@@ -2998,7 +2998,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
       <?MIVAR NAME=vDBnameColumn>
         $vDBnameColumn
        <nobr><LI>
-       $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
+       $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
        <?MIVAR><A HREF="$link_url">$db_name:$link_display</A>&nbsp;$mini_ref <?/MIVAR>
         </LI></nobr>
 
