@@ -8,8 +8,8 @@
     <zfin:databaseLock locked="true">
         <span style="color:red">
             The Database us currently locked for administrative operations and will
-        not allow logins. <br/>
-        Please try again later or contact <a href="mailto:judys@cs.uoregon.edu">judys@cs.uoregon.edu</a>
+        not allow logins. <br/><br/>
+        Please try again later or contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>
             </span>
 
         <p/>

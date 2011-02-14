@@ -3,6 +3,7 @@ package org.zfin.framework.filter;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -20,22 +21,25 @@ import java.util.List;
  * Filter that checks if the database is in Update mode and thus does not allow
  * login sessions. Needs to be run for each servlet request.
  */
-public class UpdatesCheckFilter implements Filter {
+public class UpdatesCheckFilter implements Filter{
 
-    private static Logger LOG = Logger.getLogger(UpdatesCheckFilter.class);
+    private static Logger logger = Logger.getLogger(UpdatesCheckFilter.class);
     private static ZdbFlag systemUpdates;
     private static final String REDIRECT_URL = "/action/login";
-    private LogoutSuccessHandler securityHandler;
+    private List<LogoutHandler> logoutHandlers;
+    private LogoutSuccessHandler logoutSuccessHandler;
     private static final List<String> readOnlyUrls = new ArrayList<String>();
+    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository() ;
 
     static {
         readOnlyUrls.add("/ontology/");
         readOnlyUrls.add("/anatomy/");
+        readOnlyUrls.add("/marker/transcript-view/");
         readOnlyUrls.add("/ajax/anatomylookup");
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        LOG.info("Start Updates Check Filter");
+        logger.info("Start Updates Check Filter");
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
@@ -47,8 +51,7 @@ public class UpdatesCheckFilter implements Filter {
         String url = request.getRequestURI();
         boolean readOnlyUrl = isReadOnlyUrl(url);
         if (!readOnlyUrl) {
-            InfrastructureRepository infrastructure = RepositoryFactory.getInfrastructureRepository();
-            systemUpdates = infrastructure.getUpdatesFlag();
+            systemUpdates = infrastructureRepository.getUpdatesFlag();
         }
         Person person = Person.getCurrentSecurityUser();
 
@@ -56,7 +59,7 @@ public class UpdatesCheckFilter implements Filter {
         if (systemUpdates != null && systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {
             logoutUser(request, response);
 //            response.sendRedirect(response.encodeRedirectURL(REDIRECT_URL));
-            LOG.info("System is currently being updated. No login session are allowed.");
+            logger.info("System is currently being updated. No login session are allowed.");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
@@ -74,22 +77,41 @@ public class UpdatesCheckFilter implements Filter {
             throws IOException, ServletException {
         // logout user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        securityHandler.logout(request, response, authentication);
-        securityHandler.onLogoutSuccess(request,response,authentication);
+
+        if(authentication==null){
+            logger.error("No authentication object in context");
+            return;
+        }
+
+        logger.debug("logging out "+ authentication );
+
+
+        if(logoutHandlers!=null){
+            for(LogoutHandler logoutHandler : logoutHandlers){
+                logoutHandler.logout(request,response,authentication);
+            }
+        }
+
+        if(logoutSuccessHandler!=null){
+            logoutSuccessHandler.onLogoutSuccess(request,response,authentication);
+        }
     }
 
     public static ZdbFlag getSystemUpdatesFlag() {
         return systemUpdates;
     }
 
-    public LogoutSuccessHandler getSecurityHandler() {
-        return securityHandler;
+    public void setLogoutSuccessHandler(LogoutSuccessHandler logoutSuccessHandler) {
+        this.logoutSuccessHandler = logoutSuccessHandler;
     }
 
-    public void setSecurityHandler(LogoutSuccessHandler securityHandler) {
-        this.securityHandler = securityHandler;
+    public void setLogoutHandlers(List<LogoutHandler> logoutHandlers) {
+        this.logoutHandlers = logoutHandlers;
     }
+
 
     public void destroy() {
+        logoutHandlers = null ;
+        logoutSuccessHandler = null ;
     }
 }

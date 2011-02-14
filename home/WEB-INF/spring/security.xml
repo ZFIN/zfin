@@ -44,9 +44,16 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
+    <bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
 
     <bean id="checkUpdates" class="org.zfin.framework.filter.UpdatesCheckFilter">
-        <property name="securityHandler" ref="apgLogoutHandler"/>
+        <property name="logoutSuccessHandler" ref="apgLogoutHandler"/>
+        <property name="logoutHandlers">
+            <list>
+                <ref bean="ipRememberMeService"/>
+                <ref bean="securityContextLogoutHandler"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="sessionRegistry"  class="org.springframework.security.core.session.SessionRegistryImpl"/>
@@ -101,8 +108,8 @@
         <security:intercept-url pattern="/action/antibody/create" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/view-session-info" access="permitAll" />
-		<security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
-		<security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
+        <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
+        <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
         <security:intercept-url pattern="/action/login-redirect" requires-channel="https"/>
