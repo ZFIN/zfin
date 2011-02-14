@@ -651,5 +651,53 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 .list() ;
         return features ;
     }
+
+    @Override
+    public int setLabOfOriginForFeature(Lab lab , Feature feature) {
+        String sql = " update int_data_source " +
+                " set ids_source_zdb_id = :newLabZdbId " +
+                " where ids_data_zdb_id  = :featureZdbId  " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("newLabZdbId", lab.getZdbID())
+                .setString("featureZdbId", feature.getZdbID())
+                ;
+        int recordsUpdated = query.executeUpdate();
+        if(recordsUpdated!=1){
+            logger.error("A feature must of had multiple labs: "+ feature.getZdbID()
+                    + " records updated: "+ recordsUpdated);
+        }
+        return recordsUpdated;
+    }
+
+    @Override
+    public void deleteLabOfOriginForFeature(Feature feature) {
+        String sql = " delete int_data_source " +
+                " where ids_data_zdb_id  = :featureZdbId  " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("featureZdbId", feature.getZdbID())
+                ;
+        int recordsUpdated = query.executeUpdate();
+        if(recordsUpdated!=1){
+            logger.error("A feature must of had multiple labs to delete: "+ feature.getZdbID()
+                    + " records deleted : "+ recordsUpdated);
+        }
+    }
+
+    @Override
+    public int addLabOfOriginForFeature(Feature feature, String labOfOrigin) {
+        String sql = " insert into int_data_source (ids_source_zdb_id,ids_data_zdb_id)" +
+                " values ( :newLabZdbId , :featureZdbId ) " +
+                "    " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("newLabZdbId", labOfOrigin)
+                .setString("featureZdbId", feature.getZdbID())
+                ;
+        int recordsUpdated = query.executeUpdate();
+        if(recordsUpdated!=1){
+            logger.error("A feature must of had multiple labs: "+ feature.getZdbID()
+                    + " records updated: "+ recordsUpdated);
+        }
+        return recordsUpdated;
+    }
 }
 

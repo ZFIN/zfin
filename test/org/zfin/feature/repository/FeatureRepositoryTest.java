@@ -17,6 +17,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.people.FeatureSource;
 import org.zfin.people.Lab;
 import org.zfin.people.LabFeaturePrefix;
 import org.zfin.repository.RepositoryFactory;
@@ -24,6 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
@@ -200,7 +202,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     public void getFeaturesForPrefixShowsOtherLabs(){
         List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("a") ;
 
-        assertTrue(featureLabEntries.size()>10);
+        assertTrue(featureLabEntries.size()>5);
         assertTrue(featureLabEntries.size()<50);
 
         for(FeatureLabEntry featureLabEntry : featureLabEntries){
@@ -282,6 +284,127 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
         assertNotNull(features);
         assertTrue(features.size()<100 && features.size()>10);
 
+    }
+
+    @Test
+    public void setLabOfOriginForFeature(){
+
+        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
+        String lab2ZdbID = "ZDB-LAB-970408-13" ; // kimmel
+        List<Feature> features ;
+        int size1 , size2, totalSize;
+
+        try {
+            HibernateUtil.createTransaction();
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertTrue(size1>0);
+
+            features = featureRepository.getFeaturesForLab(lab2ZdbID);
+            size2 = features.size();
+            assertTrue(size2>0);
+
+            totalSize = size1+ size2 ;
+            assertTrue(totalSize>0);
+
+
+            Lab lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID) ;
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            for(Feature feature : features){
+                featureRepository.setLabOfOriginForFeature(lab2,feature);
+            }
+
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertEquals(0,size1);
+
+            features = featureRepository.getFeaturesForLab(lab2ZdbID);
+            size2 = features.size();
+            assertEquals(totalSize,size2);
+
+        }
+        catch(Exception e){
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void deleteLabOfOriginForFeature(){
+
+        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
+        List<Feature> features ;
+        int size1 ;
+
+        try {
+            HibernateUtil.createTransaction();
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertTrue(size1>0);
+
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            for(Feature feature : features){
+                featureRepository.deleteLabOfOriginForFeature(feature);
+            }
+
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertEquals(0,size1);
+
+        }
+        catch(Exception e){
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void addLabOfOriginForFeature(){
+
+        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
+        List<Feature> features ;
+        int size1 ;
+
+        try {
+            HibernateUtil.createTransaction();
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertTrue(size1>0);
+
+            Feature myFeature  = features.get(0);
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            for(Feature feature : features){
+                featureRepository.deleteLabOfOriginForFeature(feature);
+            }
+
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertEquals(0,size1);
+
+
+            int added = featureRepository.addLabOfOriginForFeature(myFeature, lab1ZdbID);
+            assertEquals(1,added);
+
+            features = featureRepository.getFeaturesForLab(lab1ZdbID);
+            size1 = features.size();
+            assertEquals(1,size1);
+
+        }
+        catch(Exception e){
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
     }
 
 }

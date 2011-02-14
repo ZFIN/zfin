@@ -136,24 +136,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
-        if(featureDTO.getLabOfOrigin()!=null){
-            // there should only be one lab per feature
-            Lab lab = (Lab) HibernateUtil.currentSession().get(Lab.class,featureDTO.getLabOfOrigin());
-//                    FeatureSource featureSource = featureSources.iterator().next();
-//                    featureSource.setOrganization(lab);
-            // there is only one feature
-            String sql = " update int_data_source " +
-                    " set ids_source_zdb_id = :newLabZdbId " +
-                    " where ids_data_zdb_id  = :featureZdbId  " ;
-            Query query = HibernateUtil.currentSession().createSQLQuery(sql)
-                    .setString("newLabZdbId",lab.getZdbID())
-                    .setString("featureZdbId",feature.getZdbID())
-                    ;
-            int recordsUpdated = query.executeUpdate();
-            if(recordsUpdated!=1){
-                logger.error("A fewture must of had multiple labs: "+ feature.getZdbID()
-                        + " records updated: "+ recordsUpdated);
+
+        // get labs of origin for feature
+        Lab existingLabOfOrigin = featureRepository.getLabByFeature(feature);
+        if(featureDTO.getLabOfOrigin()!=null && existingLabOfOrigin!=null){
+            if(false==featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())){
+                 featureRepository.setLabOfOriginForFeature(existingLabOfOrigin,feature);
             }
+        }
+        else
+        if(featureDTO.getLabOfOrigin()==null && existingLabOfOrigin!=null){
+            featureRepository.deleteLabOfOriginForFeature(feature);
+        }
+        else
+        if(featureDTO.getLabOfOrigin()!=null && existingLabOfOrigin==null){
+            featureRepository.addLabOfOriginForFeature(feature,featureDTO.getLabOfOrigin());
         }
         HibernateUtil.flushAndCommitCurrentSession();
         return getFeature(featureDTO.getZdbID());

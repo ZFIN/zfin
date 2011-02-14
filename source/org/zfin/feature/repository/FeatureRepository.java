@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
+import org.zfin.people.FeatureSource;
 import org.zfin.people.Lab;
 import org.zfin.people.LabFeaturePrefix;
 import org.zfin.people.Person;
@@ -76,4 +77,7 @@ public interface FeatureRepository {
     String getCurrentPrefixForLab(String labZdbId);
     String setCurrentLabPrefix(String labZdbId, String prefix);
     List<Feature> getFeaturesForLab(String labZdbId);
+    int setLabOfOriginForFeature(Lab existingLabOfOrigin, Feature feature);
+    void deleteLabOfOriginForFeature(Feature feature);
+    int addLabOfOriginForFeature(Feature feature, String labOfOrigin);
 }
