@@ -1,4 +1,3 @@
-drop procedure p_markers_present_absent_exclusive;
 
 create procedure p_markers_present_absent_exclusive (vFmrelMrkrId varchar(50),
        					  vFmrelFtrId varchar(50),
