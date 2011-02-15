@@ -9,7 +9,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;

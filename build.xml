@@ -710,6 +710,28 @@
               classpathref="extended.classpath">
         </java>
     </target>
+
+    <target name="generateWebServiceClasses">
+        <exec executable="xjc">
+            <arg value="home/WEB-INF/conf/zfin.xsd"/>
+            <arg value="-p"/>
+            <arg value="org.zfin.webservice.schema"/>
+            <arg value="-d"/>
+            <arg value="source"/>
+            <arg value="-mark-generated"/>
+        </exec>
+    </target>
+
+    <target name="generateWSClient">
+        <exec executable="wsimport">
+            <arg value="-p"/>
+            <arg value="org.zfin.webservice.client"/>
+            <arg value="http://precog.uoregon.edu/webservice/definitions/zfin.wsdl"/>
+        </exec>
+        <jar destfile="lib/Java/zfin-soap-client.jar" basedir="." includes="org/**"></jar>
+        <!--<delete dir="org"/>-->
+    </target>
+
 </project>
 
 

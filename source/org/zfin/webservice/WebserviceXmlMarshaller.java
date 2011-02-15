@@ -1,8 +1,9 @@
-package org.zfin.framework.webservice;
+package org.zfin.webservice;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,6 +19,13 @@ public class WebserviceXmlMarshaller {
     private final static Logger logger = Logger.getLogger(WebserviceXmlMarshaller.class) ;
 
     private static Map<Class,Unmarshaller> unmarshallerMap = new HashMap<Class,Unmarshaller>();
+
+    @Autowired
+    private Marshaller marshaller ;
+
+    @Autowired
+    private Unmarshaller unmarshaller ;
+
 
     public static String marshal(Object marshallingTarget) {
         StringWriter stringWriter = new StringWriter() ;

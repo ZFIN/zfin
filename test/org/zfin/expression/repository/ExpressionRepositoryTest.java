@@ -272,7 +272,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 .setBoolean("expressionFound",true)
                 .setBoolean("wildType",true)
                 .list() ;
-        List<AnatomyItem> anatomyItems = expRep.getAnatomyForMarker(zdbID) ;
+        List<AnatomyItem> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID) ;
         assertEquals(termZdbIds.size(),anatomyItems.size());
 
         for(int i = 0 ; i < termZdbIds.size() ; i++){

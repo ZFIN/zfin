@@ -4,7 +4,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;

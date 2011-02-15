@@ -3,7 +3,7 @@ package org.zfin.framework.presentation.tags;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;

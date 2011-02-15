@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class MergeService {
 
-    private static Logger logger = Logger.getLogger(MarkerService.class);
+    private static Logger logger = Logger.getLogger(MergeService.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 

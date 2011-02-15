@@ -18,6 +18,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;

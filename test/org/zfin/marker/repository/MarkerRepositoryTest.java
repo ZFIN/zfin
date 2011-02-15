@@ -15,6 +15,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
@@ -83,6 +84,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testGeneById() {
         assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
         assertNotNull(markerRepository.getGeneByID("ZDB-GENE-990415-200"));
+    }
+
+    @Test
+    public void geneByAbbreviation() {
+        assertNull(markerRepository.getGeneByAbbreviation("pax3"));
+        assertNotNull(markerRepository.getGeneByAbbreviation("pax3a"));
+        assertNotNull(markerRepository.getGeneByAbbreviation("pax6a"));
+        assertNull(markerRepository.getGeneByAbbreviation("pax6a-001"));
     }
 
     /**

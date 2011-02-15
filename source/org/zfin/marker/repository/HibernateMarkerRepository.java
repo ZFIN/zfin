@@ -152,6 +152,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerList;
     }
 
+    public Marker getGeneByAbbreviation(String name) {
+        Session session = currentSession();
+        Criteria criteria1 = session.createCriteria(Marker.class);
+        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
+        criteria1.add(Restrictions.eq("abbreviation", name));
+        try {
+            return (Marker) criteria1.uniqueResult();
+        } catch (HibernateException e) {
+            LOG.debug("unable to return marker for abbrev ["+name+"]");
+            return null ;
+        }
+    }
+
 
     public MarkerRelationship getMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
         Session session = currentSession();

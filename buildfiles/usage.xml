@@ -35,6 +35,8 @@
             javadocs: Create JavaDoc for ZFIN API
             generate-wsdl-doi-client: Generates wsdl java client code for the DOI
             graph:  Generates dotty graph.
+            generateWebServiceClasses:  Generates web services classes off of zfin.xsd
+            generateWSClient:  Generates soap client off of our published wsdl (/webservice/definitions/zfin.wsdl).
 
             TOMCAT:
             tomcat-restart: Restarts tomcat

@@ -1,7 +1,8 @@
-package org.zfin.marker;
+package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.AttributionService;
@@ -10,6 +11,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.mapping.repository.LinkageRepository;
+import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.MarkerSupplier;
@@ -23,6 +25,7 @@ import java.util.*;
 /**
  * Sevice Class that deals with Marker related logic.
  */
+@Service
 public class MarkerService {
 
     private static Logger logger = Logger.getLogger(MarkerService.class);

@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import static org.junit.Assert.*;
 
 /**
- * Tests for org.zfin.marker.MarkerService
+ * Tests for org.zfin.marker.service.MarkerService
  */
 public class MarkerServiceTest {
 

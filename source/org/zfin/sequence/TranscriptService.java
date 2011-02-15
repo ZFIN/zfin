@@ -6,6 +6,7 @@ import org.zfin.gbrowse.GBrowseService;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;

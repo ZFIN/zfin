@@ -258,5 +258,5 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
 
-    List<AnatomyItem> getAnatomyForMarker(String zdbID);
+    List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID);
 }

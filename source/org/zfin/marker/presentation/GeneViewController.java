@@ -6,7 +6,7 @@ import org.zfin.expression.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;

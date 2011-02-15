@@ -51,6 +51,8 @@ public interface MarkerRepository {
 
     List<Marker> getGenesByAbbreviation(String name);
 
+    Marker getGeneByAbbreviation(String name);
+
     MarkerRelationship getMarkerRelationshipByID(String zdbID);
 
     MarkerAlias getSpecificDataAlias(Marker marker, String alias);

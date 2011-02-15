@@ -4,14 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerService;
-import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.repository.RenoRepository;
 
 import java.util.Set;
 
@@ -22,10 +18,7 @@ import java.util.Set;
  */
 public abstract class AbstractRunCandidateValidator implements Validator {
 
-    private static Logger LOG = Logger.getLogger(AbstractRunCandidateValidator.class);
-    private RenoRepository rr = RepositoryFactory.getRenoRepository();
-    private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    private PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+    private static Logger logger = Logger.getLogger(AbstractRunCandidateValidator.class);
 
     public boolean supports(Class clazz) {
         return clazz.equals(CandidateBean.class);

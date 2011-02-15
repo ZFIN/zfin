@@ -11,8 +11,10 @@ import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
-import org.zfin.marker.webservice.MarkerWebServiceTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
+import org.zfin.webservice.MarkerRestSmokeTest;
+import org.zfin.webservice.MarkerSoapClientSmokeTest;
+import org.zfin.webservice.MarkerSoapSmokeTest;
 
 /**
  * Smoke tests: Integration tests.
@@ -26,8 +28,10 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
         GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
         LookupSmokeTest.class,
+        MarkerSoapSmokeTest.class,
+        MarkerSoapClientSmokeTest.class,
 //        MarkerViewSmokeTest.class,
-        MarkerWebServiceTest.class,
+        MarkerRestSmokeTest.class,
         MorpholinoAddSmokeTest.class,
         SimpleSmokeTest.class,
         SiteSearchSmokeTest.class

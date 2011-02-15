@@ -926,7 +926,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<AnatomyItem> getAnatomyForMarker(String zdbID){
+    public List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID){
 //       String sql = "SELECT distinct term_zdb_id" +
 //               "FROM " +
 //               "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item" +

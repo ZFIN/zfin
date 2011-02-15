@@ -119,9 +119,9 @@
     <servlet>
         <servlet-name>ZFIN Ontology Manager</servlet-name>
         <servlet-class>org.zfin.framework.OntologyManagerServlet</servlet-class>
-<!--
-        <description>Load ontologies in memory (used to be Phenote) from a serialized file or the database..</description>
--->
+        <!--
+                <description>Load ontologies in memory (used to be Phenote) from a serialized file or the database..</description>
+        -->
         <!-- Is being handled after the main servlet initialization and the Session handling servlet. -->
         <load-on-startup>3</load-on-startup>
     </servlet>
@@ -228,14 +228,14 @@
     </servlet-mapping>
 
     <servlet>
-            <servlet-name>FeatureService</servlet-name>
-            <servlet-class>org.zfin.gwt.curation.server.FeatureRPCServiceImpl</servlet-class>
-        </servlet>
+        <servlet-name>FeatureService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.FeatureRPCServiceImpl</servlet-class>
+    </servlet>
 
-        <servlet-mapping>
-            <servlet-name>FeatureService</servlet-name>
-            <url-pattern>/ajax/featureservice</url-pattern>
-        </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FeatureService</servlet-name>
+        <url-pattern>/ajax/featureservice</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>
@@ -267,8 +267,22 @@
         <url-pattern>/@TARGETCGIBIN@/*</url-pattern>
     </servlet-mapping>
 
+    <!--<servlet-mapping>-->
+    <!--<servlet-name>zfinapp</servlet-name>-->
+    <!--<url-pattern>/webservice/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <servlet>
+        <servlet-name>spring-ws</servlet-name>
+        <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>transformWsdlLocations</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
+        <servlet-name>spring-ws</servlet-name>
         <url-pattern>/webservice/*</url-pattern>
     </servlet-mapping>
 

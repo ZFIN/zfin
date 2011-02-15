@@ -6,7 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
-import org.zfin.marker.MarkerService;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 

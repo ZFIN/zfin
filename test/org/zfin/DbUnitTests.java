@@ -36,6 +36,7 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.util.BODtoConversionServiceTest;
+import org.zfin.webservice.MarkerSoapDbTest;
 
 
 /**
@@ -58,6 +59,7 @@ import org.zfin.util.BODtoConversionServiceTest;
         TranscriptServiceTest.class,
         OrthologyTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
+        MarkerSoapDbTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
         ProfileRepositoryTest.class,

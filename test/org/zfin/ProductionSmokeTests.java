@@ -6,8 +6,10 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
-import org.zfin.marker.webservice.MarkerWebServiceTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
+import org.zfin.webservice.MarkerRestSmokeTest;
+import org.zfin.webservice.MarkerSoapClientSmokeTest;
+import org.zfin.webservice.MarkerSoapSmokeTest;
 
 /**
  * Smoke tests: Integration tests.
@@ -17,7 +19,9 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
         AnatomySmokeTest.class,
         ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
-        MarkerWebServiceTest.class,
+        MarkerSoapSmokeTest.class,
+        MarkerSoapClientSmokeTest.class,
+        MarkerRestSmokeTest.class,
         SiteSearchSmokeTest.class
 })
 public class ProductionSmokeTests {
