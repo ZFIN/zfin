@@ -361,7 +361,7 @@ select  fp.fp_prefix
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value=Update onClick="doit('lab_bio','textarea','Research+Interests')">
 <?/MIVAR>
-<?MISQL SQL="select count(*) from int_data_source where ids_source_zdb_id='$OID'">
+<?MISQL SQL="select count(*) from int_data_source where ids_source_zdb_id='$OID' and ids_data_zdb_id like '%ALT%'">
 <?MIVAR NAME=$ftrCount>$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK COND="$(!=,0,$ftrCount)">
