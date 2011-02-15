@@ -16,7 +16,7 @@ use English;
 
 
 # set all the user and group ids we can figure out how to.
-my @userData = getpwnam("zfishweb");
+my @userData = getpwnam("root");
 $REAL_USER_ID = $userData[2];
 $EFFECTIVE_USER_ID = $userData[2];
 $REAL_GROUP_ID = $userData[3];
