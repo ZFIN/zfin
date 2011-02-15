@@ -10,8 +10,9 @@
 
 cd /private/ZfinLinks/Commons/bin
 # chown informix:fishadmin enableLogging.pl pullfromfrost.pl 
-chmod 550 restartapache.pl starttomcat.pl stoptomcat.pl restarttomcat.pl setContextDescriptor.pl makemediumimages.bash
+chmod 550 restartapache.pl starttomcat.pl stoptomcat.pl restarttomcat.pl setContextDescriptor.pl makemediumimages.bash starthappytomcat.pl stophappytomcat.pl restarthappytomcat.pl
 chown root:fishadmin restartapache.pl starttomcat.pl stoptomcat.pl restarttomcat.pl setContextDescriptor.pl
-chmod u+s restartapache.pl starttomcat.pl stoptomcat.pl restarttomcat.pl setContextDescriptor.pl
+chown zfishweb:fishadmin starthappytomcat.pl stophappytomcat.pl restarthappytomcat.pl
+chmod u+s restartapache.pl starttomcat.pl stoptomcat.pl restarttomcat.pl setContextDescriptor.pl starthappytomcat.pl stophappytomcat.pl restarthappytomcat.pl
 chown informix:fishadmin ../env/bionix.env ../env/helix.env ../env/embryonix.env ../env/frost.env ../env/mirror.env
 chmod u+s enableLogging.pl
