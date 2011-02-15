@@ -19,8 +19,11 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ORTHO
 
-GENERICS = loadOrthoChromInfo.pl
-STATICS = unloadOrthoData.sql parseFlyBaseData.pl parseMGIdata.pl parseSGDdata.pl updateOrthologue.sql 
+GENERICS = update_orthology.sh
+STATICS = update_fly_ortho_loc.sql update_human_ortho_loc.sql \
+	update_mus_ortho_loc.sql
+#update_yeast_ortho_loc.sql
+
 
 # Define targets that require special handling.
 
@@ -46,5 +49,8 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # ---------------  Misc Targets  ----------------------------------------
 
 run :
-	$(TARGETDIR)/loadOrth.pl
+	cd $(TARGETDIR) && update_orthology.sh
+
+force :
+	cd $(TARGETDIR) && update_orthology.sh -f
 
