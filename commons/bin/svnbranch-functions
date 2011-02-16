@@ -8,6 +8,7 @@ function usage(){
     echo "BRANCHES:                                                 " 
     echo "createfromtrunk <branch name>                 - Creates a branch from the trunk.." 
     echo "createfrombranch <branch name> <opt branch>   - Creates a branch from another branch." 
+    echo "createrelease <opt rev>                       - Creates a release from the trunk." 
     echo "current                                       - Names the current branch." 
     echo "find <branch name>                            - Find a branch." 
     echo "switch <branch name>                          - Switch to <branch name>." 
@@ -54,6 +55,29 @@ function svnbranch-createfromtrunk(){
     echo "Created branch $BRANCH_NAME" ;
 
 	printCurrentBranch 
+}
+
+function svnbranch-createrelease(){
+	printCurrentBranch ; # also sets $CURRENT_BRANCH
+
+	LAST_RELEASE=`svn list $SVNROOT/ZFIN_WWW/releases | tail -1 | cut -d'/' -f1`
+	echo "Last release: $LAST_RELEASE" ;
+
+	NEXT_RELEASE=`expr $LAST_RELEASE + 1 ` 
+	
+	echo "Next release: $NEXT_RELEASE" ;
+
+	if [ -z $1 ]; then 
+	  RELEASE="";
+	else
+	  RELEASE="-r$1"
+    fi
+	echo $BRANCH_NAME
+
+	EXECSTRING="svn copy $RELEASE $SVNROOT/ZFIN_WWW/trunk $SVNROOT/ZFIN_WWW/releases/$NEXT_RELEASE"
+    echo $EXECSTRING ; 
+    $EXECSTRING ;
+	echo "Created release $BRANCH_NAME" ; 
 }
 
 function svnbranch-createfrombranch(){

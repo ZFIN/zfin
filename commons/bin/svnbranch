@@ -47,7 +47,7 @@ source svnbranch-functions
 if [ -z $1 ]; then 
 	usage ; 
 elif [ -z $2 ]; then 
-    if [ $1 != "mergefromtrunk" ] && [ $1 != "switchtotrunk" ]  && [ $1 != "current" ]; then
+    if [ $1 != "mergefromtrunk" ] && [ $1 != "switchtotrunk" ]  && [ $1 != "current" ] && [ $1 != "createrelease" ]; then
       usage ; 
     fi
 fi
@@ -61,6 +61,8 @@ elif [ $1 = "createfrombranch" ] ; then
     else
         svnbranch-createfrombranch "$2" "$3" ; 
     fi
+elif [ $1 = "createrelease" ] ; then 
+    svnbranch-createrelease "$2" ; 
 elif [ $1 = "current" ] ; then 
     printCurrentBranch ; 
 elif [ $1 = "find" ] ; then 
