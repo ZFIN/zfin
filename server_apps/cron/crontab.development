@@ -11,15 +11,18 @@
 # format.
 #
 #
-# cron.chart.fig
-# --------------
-# cron.chart.fig is a graphic depiction of cron at ZFIN.  Any time you
-# change this file, also change cron.chart.fig.
+#==========================================================================
+#       ====  Testing Jobs  before they are run on Production  ====
+#==========================================================================
+#  
+25 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh
+55 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh -f
+#
 #
 #
 #
 # ========================================================================
-# ====               DAILY / WEEKLY SCRIPTS                           ====
+#              ==== DAILY / WEEKLY SCRIPTS ==== 
 # ========================================================================
 #
 # -----------------------------------------------------------
