@@ -159,9 +159,9 @@ public class FeatGenoStatistics {
     }
 
 
-    public List<Marker> getAffectedMarkers() {
+    public SortedSet<Marker> getAffectedMarkers() {
         Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
-        List<Marker> markers = new ArrayList<Marker>();
+        SortedSet<Marker> markers = new TreeSet<Marker>();
         for (GenotypeFeature feat : features) {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
