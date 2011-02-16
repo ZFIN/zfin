@@ -46,7 +46,8 @@ public class MarkerSoapSmokeTest extends WebServiceGatewaySupport{
         int status = client.executeMethod(getMethod);
         assertEquals(HttpStatus.SC_OK,status);
         String body = getMethod.getResponseBodyAsString();
-        System.out.println(body) ;
+        assertNotNull(body);
+        assertTrue(body.length()>100);
     }
 
 
