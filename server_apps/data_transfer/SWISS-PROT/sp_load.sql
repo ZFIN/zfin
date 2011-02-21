@@ -328,16 +328,29 @@ begin work;
                                 where zrepld_old_zdb_id = gene_zdb_id)
          where gene_zdb_id in (select zrepld_old_zdb_id 
                                   from zdb_replaced_data); 
+
+
+        create temp table temp_nondupl_mrkr_cc (
+                nondupl_gene_zdb_id      varchar(50),
+		nondupl_sp_acc_num	 varchar(50),
+                nondupl_cc_note          lvarchar(32613)
+        )with no log;
+
+        insert into temp_nondupl_mrkr_cc (nondupl_gene_zdb_id,nondupl_sp_acc_num,nondupl_cc_note)
+         select distinct gene_zdb_id, sp_acc_num, cc_note
+	          from temp_mrkr_cc;
+
         create temp table pre_external_note(
                 p_extnote_zdb_id          varchar(50),
                 p_extnote_data_zdb_id     varchar(50), 
                 p_extnote_note            lvarchar(32613)
         )with no log;
-         insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id)
-                select cc_note, dblink_zdb_id
-	          from temp_mrkr_cc, db_link
-		 where gene_zdb_id = dblink_linked_recid
-		   and sp_acc_num  = dblink_acc_num
+        
+        insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id)
+                select nondupl_cc_note, dblink_zdb_id
+	          from temp_nondupl_mrkr_cc, db_link
+		 where nondupl_gene_zdb_id = dblink_linked_recid
+		   and nondupl_sp_acc_num  = dblink_acc_num
 		   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-47";
 
         update pre_external_note

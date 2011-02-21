@@ -116,12 +116,6 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
    
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
-print "WARNING!!! no zfin.dat provided. \n" if (!-e "zfin.dat");
-
-print "WARNING!!! no okfile provided. \n" if (!-e "okfile");
-
-print "WARNING!!! no ok2file provided. \n" if (!-e "ok2file");
-
 
 #remove old files
  
@@ -138,6 +132,23 @@ system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2
 system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
 
 
+print "WARNING!!! no zfin.dat provided. \n" if (!-e "zfin.dat");
+
+print "WARNING!!! no okfile provided. \n" if (!-e "okfile");
+
+print "WARNING!!! no ok2file provided. \n" if (!-e "ok2file");
+
+print "WARNING!!! no spkw2go provided. \n" if (!-e "spkw2go");
+
+print "WARNING!!! no interpro2go provided. \n" if (!-e "interpro2go");
+
+print "WARNING!!! no ec2go provided. \n" if (!-e "ec2go");
+
+if (!-e "zfin.dat" || !-e "okfile" || !-e "ok2file" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
+   print "One or more required file(s) not exisiting. Exit.\n";
+   exit;
+}
+
 #--------------------------- record counts before loading starts ----------------------------
 $sql = 'select * from db_link where dblink_info like "%Swiss-Prot%";';
 
@@ -148,6 +159,15 @@ $sql = 'select distinct extnote_zdb_id
          where extnote_data_zdb_id = dblink_zdb_id 
            and dblink_info like "%Swiss-Prot%";';
 $numExternalNoteBefore = countData($sql); 
+
+$sql = 'select distinct dblink_linked_recid
+          from external_note note1, db_link
+         where note1.extnote_data_zdb_id = dblink_zdb_id
+           and dblink_info like "%Swiss-Prot%"
+           and exists (select "x" from external_note note2
+                        where note2.extnote_data_zdb_id = note1.extnote_data_zdb_id
+                          and note2.extnote_zdb_id <> note1.extnote_zdb_id);';
+$numMarkersWithRedundantDblkNoteBefore = countData($sql); 
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
@@ -400,6 +420,15 @@ $sql = 'select distinct extnote_zdb_id
            and dblink_info like "%Swiss-Prot%";';
 $numExternalNoteAfter = countData($sql); 
 
+$sql = 'select distinct dblink_linked_recid
+          from external_note note1, db_link
+         where note1.extnote_data_zdb_id = dblink_zdb_id
+           and dblink_info like "%Swiss-Prot%"
+           and exists (select "x" from external_note note2
+                        where note2.extnote_data_zdb_id = note1.extnote_data_zdb_id
+                          and note2.extnote_zdb_id <> note1.extnote_zdb_id);';
+$numMarkersWithRedundantDblkNoteAfter = countData($sql); 
+
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA"
@@ -519,6 +548,12 @@ print POSTLOADREPORT "external_note with db_link              \t";
 print POSTLOADREPORT "$numExternalNoteBefore        \t";
 print POSTLOADREPORT "$numExternalNoteAfter       \t";
 printf POSTLOADREPORT "%.2f\n", ($numExternalNoteAfter - $numExternalNoteBefore) / $numExternalNoteBefore * 100;
+
+
+print POSTLOADREPORT "genes with duplicated db_link notes      \t";
+print POSTLOADREPORT "$numMarkersWithRedundantDblkNoteBefore        \t";
+print POSTLOADREPORT "$numMarkersWithRedundantDblkNoteAfter       \t";
+printf POSTLOADREPORT "not calculated\n";
 
 print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
 
