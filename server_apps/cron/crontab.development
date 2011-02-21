@@ -15,8 +15,8 @@
 #       ====  Testing Jobs  before they are run on Production  ====
 #==========================================================================
 #  
-25 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh
-55 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh -f
+#25 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh
+#55 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh -f
 #
 #
 #
