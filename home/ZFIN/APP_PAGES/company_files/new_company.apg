@@ -78,7 +78,7 @@ USA
   <p>
 
   <b>URL:</b><br>
-  This field should hold the address (URL) for the company's WWW site. For example, http://www.gene.com
+  This field should hold the address (URL) for the company's WWW site. For example, http://www.gene.com (Be sure to include http://).
   <INPUT type=text <?MIVAR COND=$(NC,$url,NULL)>value="$url" <?/MIVAR> name="url" size="80">
   <p>
 
