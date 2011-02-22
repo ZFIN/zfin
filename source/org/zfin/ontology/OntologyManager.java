@@ -618,6 +618,10 @@ public class OntologyManager {
      */
     public boolean isSubstructureOf(Term child, Term root) {
         List<TransitiveClosure> children = allRelatedChildrenMap.get(root);
+        // return if no children are found for the root term.
+        if (children == null){
+            return false;
+        }
         // ToDO: Need to loop over list rather than use .contains() method because the terms maybe be proxied
         for (TransitiveClosure childTerm : children) {
             if (childTerm.getChild().getID().equals(child.getID()))
