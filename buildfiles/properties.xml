@@ -166,6 +166,10 @@
         </not>
     </condition>
 
+    <condition property="is-happy-zfin-org">
+        <equals arg1="${INSTANCE}" arg2="happy"/>
+    </condition>
+
     <target name="dumpMachine" description="Dump machine type.">
         <echo message="INSTANCE:             ${INSTANCE}"/>
         <echo message="USER:                 ${USER}"/>

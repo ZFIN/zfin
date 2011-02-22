@@ -4,6 +4,9 @@
     <property name="tomcat-script-mutant" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
     <property name="tomcat-script-production-stop" value="/private/ZfinLinks/Commons/bin/stoptomcat.pl"/>
     <property name="tomcat-script-production-start" value="/private/ZfinLinks/Commons/bin/starttomcat.pl"/>
+    <property name="tomcat-script-happy-stop" value="/private/ZfinLinks/Commons/bin/stophappytomcat.pl"/>
+    <property name="tomcat-script-happy-start" value="/private/ZfinLinks/Commons/bin/starthappytomcat.pl"/>
+
 
 
     <target name="productionandalmost-tomcat-start" if="isalmostorproduction" description="Starts tomcat if production or almost">
@@ -49,10 +52,20 @@
         </echo>
     </target>
 
+    <target name="happy-tomcat-start" if="is-happy-zfin-org" description="Starts tomcat if happy.zfin.org">
+        <exec executable="${tomcat-script-happy-start}"  failifexecutionfails="true"/>
+        <echo message=":TOMCAT START SUCCESSFUL:"/>
+    </target>
+
+    <target name="happy-tomcat-stop" if="is-happy-zfin-org" description="Stops tomcat if happy.zfin.org">
+        <exec executable="${tomcat-script-happy-stop}" failifexecutionfails="true"/>
+        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
+    </target>
 
 
-    <target name="tomcat-stop" depends="productionandalmost-tomcat-stop,zfinonembryonix-tomcat-stop,mutant-tomcat-stop"  description="Stops tomcat by calling all tomcat stop targets"/>
-    <target name="tomcat-start" depends="productionandalmost-tomcat-start,zfinonembryonix-tomcat-start,mutant-tomcat-start"   description="Starts tomcat if zfin on embryonix"/>
+
+    <target name="tomcat-stop" depends="productionandalmost-tomcat-stop,zfinonembryonix-tomcat-stop,mutant-tomcat-stop,happy-tomcat-stop"  description="Stops tomcat by calling all tomcat stop targets"/>
+    <target name="tomcat-start" depends="productionandalmost-tomcat-start,zfinonembryonix-tomcat-start,mutant-tomcat-start,happy-tomcat-start"   description="Starts tomcat if zfin on embryonix"/>
 
 
     <target name="tomcat-debug-start"   description="Starts tomcat in debug mode">
