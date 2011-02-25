@@ -69,6 +69,7 @@ public class ForeignDB {
         EC("EC"),
         ENSEMBL_ZV9_("Ensembl(Zv9)"),
         ENSEMBL_CLONE("Ensembl_Clone"),
+        ENSEMBL_TRANS("Ensembl_Trans"),
         ENSEMBL_SNP("Ensembl_SNP"),
         ENTREZ_GENE("Entrez Gene"),
         FLYBASE("FLYBASE"),
