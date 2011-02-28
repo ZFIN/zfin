@@ -29,8 +29,8 @@
 # 
 # SMTWT    after     Validate data
 45 23 * * 0-4 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;validatedata.pl -d  mirrordb
-# SMTWTF   4pm reload of mirrordb (aka: validatedb)
-00 16 * * 0-5 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
+# SMTWTF   2am reload of mirrordb (aka: validatedb)
+00 02 * * 0-5 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
@@ -73,9 +73,6 @@
 # 0         3:25am   CURATOR SUPPORT: monthly figure permission check
 25 03 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/fx_permission_check.pl
 #
-#
-# 0         3:27am   curator support: monthly pnas report for dave f.
-27 03 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/pnas_report.pl
 #
 # ========================================================================
 # ====                   YEARLY SCRIPTS                               ====
