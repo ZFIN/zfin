@@ -72,8 +72,8 @@ public class MorpholinoStatistics extends EntityStatistics {
         if (figures == null) {
             for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
                 Term subTerm = phenotype.getSubterm();
-                if ((subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getID())) ||
-                        StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) &&
+                if ((subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID())) ||
+                        StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) &&
                                 !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                     if (figures == null)
                         figures = new HashSet<Figure>(5);
@@ -98,8 +98,8 @@ public class MorpholinoStatistics extends EntityStatistics {
         Set<Publication> pubs = new HashSet<Publication>(5);
         for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
             Term subterm = phenotype.getSubterm();
-            if ( (subterm != null &&StringUtils.equals(subterm.getID(), anatomyItem.getID())) ||
-                    StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) &&
+            if ((subterm != null && StringUtils.equals(subterm.getZdbID(), anatomyItem.getZdbID())) ||
+                    StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) &&
                             !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
                 pubs.add(phenotype.getPublication());
             }

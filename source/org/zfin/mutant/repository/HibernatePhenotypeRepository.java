@@ -71,19 +71,19 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select structure from PhenotypeStructure as structure where " +
-                "       structure.superterm.ID = :supertermID";
+                "       structure.superterm.zdbID = :supertermID";
         if (structure.getSubterm() != null)
-            hql += " AND structure.subterm.ID = :subtermID ";
-        hql += " AND structure.quality.ID = :qualityID ";
+            hql += " AND structure.subterm.zdbID = :subtermID ";
+        hql += " AND structure.quality.zdbID = :qualityID ";
         hql += " AND structure.tag = :tag ";
         hql += " AND structure.publication.zdbID = :publicationID ";
         Query query = session.createQuery(hql);
-        query.setParameter("supertermID", structure.getSuperterm().getID());
-        query.setParameter("qualityID", structure.getQuality().getID());
+        query.setParameter("supertermID", structure.getSuperterm().getZdbID());
+        query.setParameter("qualityID", structure.getQuality().getZdbID());
         query.setParameter("tag", structure.getTag());
         query.setParameter("publicationID", structure.getPublication().getZdbID());
         if (structure.getSubterm() != null)
-            query.setParameter("subtermID", structure.getSubterm().getID());
+            query.setParameter("subtermID", structure.getSubterm().getZdbID());
         List list = query.list();
         if (list == null || list.isEmpty())
             return false;

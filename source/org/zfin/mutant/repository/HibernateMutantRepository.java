@@ -42,7 +42,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 public class HibernateMutantRepository implements MutantRepository {
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    private Logger logger  = Logger.getLogger(HibernateMutantRepository.class) ;
+    private Logger logger = Logger.getLogger(HibernateMutantRepository.class);
 
     public PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
@@ -457,7 +457,7 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "select pheno from Phenotype pheno, Figure figure " +
                 "     where pheno.genotypeExperiment = :genox" +
                 "           and pheno.superterm = :unspecified " +
-                "           and pheno.term.ID= :qualityZdbID " +
+                "           and pheno.term.zdbID= :qualityZdbID " +
                 "           and pheno.tag = :tag " +
                 "           and figure member of pheno.figures " +
                 "           and figure.zdbID = :figureID";
@@ -467,7 +467,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("genox", genotypeExperiment);
         query.setString("figureID", figureID);
         query.setParameter("unspecified", unspecified);
-        query.setString("qualityZdbID", quality.getID());
+        query.setString("qualityZdbID", quality.getZdbID());
         query.setString("tag", Phenotype.Tag.ABNORMAL.name());
         return (Phenotype) query.uniqueResult();
     }
@@ -518,7 +518,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // delete genotype experiment if it has no more phenotypes associated
         // and if it is not used in FX (expression_experiment)
-        if (allPhenotypesAffected && genotypeExperiment.getExpressionExperiments() == null){
+        if (allPhenotypesAffected && genotypeExperiment.getExpressionExperiments() == null) {
             session.delete(genotypeExperiment);
         }
     }
@@ -551,9 +551,9 @@ public class HibernateMutantRepository implements MutantRepository {
                 " and pa.publication.zdbID= :pubZdbID  " +
                 " and ev.marker.zdbID = :markerZdbID " +
                 " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
-                " and g.ID= ev.goTerm.ID " +
+                " and g.zdbID = ev.goTerm.zdbID " +
                 " and pa.sourceType= :sourceType  " +
-                " order by g.termName  ";
+                " order by g.termName ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
@@ -702,12 +702,9 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-
     @SuppressWarnings("unchecked")
     @Override
     public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
-
-
 
 
         // using this type of query for both speed (an explicit join)
@@ -793,7 +790,7 @@ public class HibernateMutantRepository implements MutantRepository {
         List<MarkerGoTermEvidence> phenotypeArrayList = new ArrayList<MarkerGoTermEvidence>(goTermEvidences.size());
         Set<String> uniqueID = new HashSet<String>();
         for (MarkerGoTermEvidence evidence : goTermEvidences) {
-            String id = evidence.getMarker().getZdbID() + ":" + evidence.getGoTerm().getID();
+            String id = evidence.getMarker().getZdbID() + ":" + evidence.getGoTerm().getZdbID();
             if (!uniqueID.contains(id)) {
                 phenotypeArrayList.add(evidence);
                 uniqueID.add(id);

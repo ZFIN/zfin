@@ -33,8 +33,8 @@ public class PhenotypeService {
 
         for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
             Term subTerm = phenotype.getSubterm();
-            if (StringUtils.equals(phenotype.getSuperterm().getID(), anatomyItem.getID()) ||
-                    (subTerm != null && StringUtils.equals(subTerm.getID(), anatomyItem.getID()))) {
+            if (StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) ||
+                    (subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID()))) {
                 StringBuilder keyBuilder = new StringBuilder(50);
                 if (subTerm != null) {
                     keyBuilder.append(phenotype.getSubterm().getTermName());

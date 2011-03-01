@@ -60,11 +60,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public void deleteActiveDataByZdbID(String zdbID) {
         ActiveData a = getActiveData(zdbID);
-        if(a==null){
+        if (a == null) {
             logger.error("unable to find zdbID in active data to delete [" + zdbID + "]");
-            return ;
+        } else {
+            deleteActiveData(a);
         }
-        deleteActiveData(a);
     }
 
     public int deleteActiveDataByZdbID(List<String> zdbIDs) {
@@ -423,7 +423,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setFieldName(fieldName);
 
         Person person = Person.getCurrentSecurityUser();
-        if(person!=null){
+        if (person != null) {
             up.setSubmitterID(person.getZdbID());
             up.setSubmitterName(person.getFullName());
         }
@@ -442,7 +442,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         update.setRecID(recID);
         update.setFieldName(fieldName);
         Person person = Person.getCurrentSecurityUser();
-        if(person!=null){
+        if (person != null) {
             update.setSubmitterID(person.getZdbID());
             update.setSubmitterName(person.getFullName());
         }
@@ -546,7 +546,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
         query.setParameter("zdbID", zdbID);
         query.setParameter("datazdbID", datazdbID);
-        query.setParameter("sourceType",RecordAttribution.SourceType.FEATURE_TYPE.toString());
+        query.setParameter("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString());
         query.executeUpdate();
         currentSession().flush();
     }
@@ -781,6 +781,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     /**
      * Unused.
      * Retrieve # of related markers (in the first position) that are attributed to to this pub.
+     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -801,6 +802,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     /**
      * Retrieve # of related markers (in the second position) that are attributed to to this pub.
+     *
      * @param zdbID
      * @param pubZdbID
      * @return
@@ -894,7 +896,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID){
+    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "  select count(*)  " +
                 " from record_attribution ra, genotype_experiment ge " +
@@ -908,7 +910,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
-    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID){
+    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID) {
 //select * from record_attribution ra, atomic_phenotype ph, genotype_experiment ge
 //where
 //ra.recattrib_data_zdb_id=ph.apato_zdb_id
@@ -931,24 +933,20 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @SuppressWarnings("unchecked")
-    public String getReplacedZdbID(String oldZdbID){
+    public String getReplacedZdbID(String oldZdbID) {
         List<ReplacementZdbID> replacedAccessionList =
                 (List<ReplacementZdbID>) HibernateUtil.currentSession()
                         .createCriteria(ReplacementZdbID.class)
-                        .add(Restrictions.eq("oldZdbID",oldZdbID))
+                        .add(Restrictions.eq("oldZdbID", oldZdbID))
                         .list();
-        if(replacedAccessionList !=null && replacedAccessionList.size()==1){
-            return replacedAccessionList.get(0).getReplacementZdbID() ;
+        if (replacedAccessionList != null && replacedAccessionList.size() == 1) {
+            return replacedAccessionList.get(0).getReplacementZdbID();
+        } else if (replacedAccessionList == null) {
+            logger.warn("Replacement list is null for zdbID: " + oldZdbID);
+        } else if (replacedAccessionList.size() > 1) {
+            logger.error("Replacement list has non-unique replacements: " + replacedAccessionList.size() + " for zdbID: " + oldZdbID);
         }
-        else
-        if(replacedAccessionList ==null){
-            logger.warn("Replacement list is null for zdbID: "+ oldZdbID);
-        }
-        else
-        if(replacedAccessionList.size() >1){
-            logger.error("Replacement list has non-unique replacements: "+ replacedAccessionList.size() + " for zdbID: "+oldZdbID);
-        }
-        return null ;
+        return null;
     }
 
     /**
@@ -966,14 +964,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             statement = connection.createStatement();
             statement.execute(jdbcStatement.getQuery());
             session.flush();
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
                     "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
                     jdbcStatement.getHumanReadableQueryString(), exception);
             throw new RuntimeException(exception);
-        }
-        finally {
+        } finally {
             try {
                 if (statement != null)
                     statement.close();
@@ -1031,8 +1027,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 }
                 session.flush();
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
                     "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
                     jdbcStatement.getHumanReadableQueryString(), exception);
@@ -1042,8 +1037,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             }
             error = true;
             throw new RuntimeException(exception);
-        }
-        finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -1089,11 +1083,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 }
                 statement.execute();
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             logger.error("Record number " + index + ", record: " + data.get(index));
-        }
-        finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();

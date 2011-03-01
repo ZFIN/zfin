@@ -23,6 +23,8 @@ public class MarkerGoEvidencePresentation {
     public static ReferenceDatabase ecReferenceDatabase;
     public static ReferenceDatabase interproReferenceDatabase;
     public static ReferenceDatabase goReferenceDatabase;
+    public static ForeignDB hamapForeignDB;
+    public static ForeignDB spslForeignDB;
 
     public static ReferenceDatabase getGenbankReferenceDatabase() {
         if (genbankReferenceDatabase == null) {
@@ -90,6 +92,22 @@ public class MarkerGoEvidencePresentation {
         return ecReferenceDatabase;
     }
 
+
+    private static ForeignDB getHamapForeignDBDatabase() {
+        if (hamapForeignDB == null) {
+            hamapForeignDB = RepositoryFactory.getSequenceRepository().getForeignDBByName(ForeignDB.AvailableName.HAMAP);
+        }
+        return hamapForeignDB;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    private static ForeignDB getSpslForeignDBDatabase() {
+        if (spslForeignDB == null) {
+            spslForeignDB = RepositoryFactory.getSequenceRepository().getForeignDBByName(ForeignDB.AvailableName.SP_SL);
+        }
+        return spslForeignDB;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+
     public static ReferenceDatabase getInterproReferenceDatabase() {
         if (interproReferenceDatabase == null) {
             interproReferenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
@@ -126,8 +144,8 @@ public class MarkerGoEvidencePresentation {
             case ZFIN_GENE:
                 if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-GENE-")) {
                     Marker morpholino = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
-                    if(morpholino==null){
-                        return "<span class=error>"+accession+" is a bad link</span>" ;
+                    if (morpholino == null) {
+                        return "<span class=error>" + accession + " is a bad link</span>";
                     }
                     return MarkerPresentation.getLink(morpholino);
                 } else if (accession.startsWith("ZDB-GENO-")) {
@@ -152,6 +170,10 @@ public class MarkerGoEvidencePresentation {
                 return createLink(accession, getInterproReferenceDatabase().getForeignDB(), inferenceCategory);
             case EC:
                 return createLink(accession, getEcReferenceDatabase().getForeignDB(), inferenceCategory);
+            case HAMAP:
+                return createLink(accession, getHamapForeignDBDatabase(), inferenceCategory);
+            case SP_SL:
+                return createLink(accession, getSpslForeignDBDatabase(), inferenceCategory);
             default:
                 return inferredFrom;
         }
@@ -163,8 +185,8 @@ public class MarkerGoEvidencePresentation {
         sb.append("<a href=\"");
 
         sb.append(foreignDB.getDbUrlPrefix());
-        sb.append(inferenceCategory.prefix()) ;
-        sb.append(accession) ;
+        sb.append(inferenceCategory.prefix());
+        sb.append(accession);
         if (foreignDB.getDbUrlSuffix() != null) {
             sb.append(foreignDB.getDbUrlSuffix());
         }

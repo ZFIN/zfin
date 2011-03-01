@@ -50,16 +50,14 @@ public class EnumValidationService {
                     logger.info("running method: " + method.getName());
                     method.invoke(this, new Object[0]);
                     ++count;
-                }
-                catch (IllegalAccessException iae) {
+                } catch (IllegalAccessException iae) {
                     if (iae.getCause() instanceof EnumValidationException) {
                         throw new EnumValidationException("test failed" + method.getName() + "\n"
                                 + iae.getCause().getMessage(), iae);
                     }
                     logger.fatal("bad method exception", iae);
                     throw new EnumValidationException("exception from EnumValidationService on method " + method.getName(), iae);
-                }
-                catch (InvocationTargetException ite) {
+                } catch (InvocationTargetException ite) {
                     logger.fatal("bad method exception", ite);
                     throw new EnumValidationException("failed to call EnumValidationService: ", ite);
                 } catch (Exception e) {
@@ -177,12 +175,14 @@ public class EnumValidationService {
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Mutagen.values());
     }
-     @ServiceTest
+
+    @ServiceTest
     public void validateFeatMutagee() throws EnumValidationException {
         String hql = "select * from mutagee";
         List<String> typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Mutagee.values());
     }
+
     /**
      * @throws EnumValidationException
      */
@@ -276,7 +276,7 @@ public class EnumValidationService {
         List<String> typeList = HibernateUtil.currentSession().createQuery(sql).list();
         checkEnumVersusDatabaseCollection(typeList, DisplayGroup.GroupName.values(), true);
     }
-   
+
 
     @ServiceTest
     public void validateGenotypeWildtypeEnum() throws EnumValidationException {
@@ -293,7 +293,7 @@ public class EnumValidationService {
     }
 
     @ServiceTest
-    public void validateGoFlags(){
+    public void validateGoFlags() {
         String hql = "select f.name from GoFlag f  order by f.displayOrder ";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumValuesPresentInDatabase(typeList, GoEvidenceQualifier.values());
@@ -301,7 +301,7 @@ public class EnumValidationService {
 
 
     @ServiceTest
-    public void validateGoEvidenceCodes(){
+    public void validateGoEvidenceCodes() {
         String hql = "select g.code from GoEvidenceCode g order by g.order";
         List<String> typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumValuesPresentInDatabase(typeList, GoEvidenceCodeEnum.values());
@@ -309,24 +309,25 @@ public class EnumValidationService {
 
 
     @ServiceTest
-    public void validateInferenceCategory(){
+    public void validateInferenceCategory() {
         String hql = "select f.dbName from ForeignDB f";
         List<ForeignDB.AvailableName> typeList = HibernateUtil.currentSession().createQuery(hql).list();
         List<String> names = new ArrayList<String>();
-        for(ForeignDB.AvailableName name: typeList){
+        for (ForeignDB.AvailableName name : typeList) {
             names.add(name.toString());
         }
 
         // 3 is the exclude list, maybe there is a better way to represent this
-        Enum[] enums = new Enum[InferenceCategory.values().length-3] ;
-        int i =0 ;
-        for(InferenceCategory inferenceCategory: InferenceCategory.values()){
-            if(inferenceCategory!= InferenceCategory.ZFIN_MRPH_GENO
-                    && inferenceCategory!=InferenceCategory.ZFIN_GENE
-                    && inferenceCategory!=InferenceCategory.GO
-                    ){
-                enums[i] = inferenceCategory ;
-                ++i ;
+        Enum[] enums = new Enum[InferenceCategory.values().length - 4];
+        int i = 0;
+        for (InferenceCategory inferenceCategory : InferenceCategory.values()) {
+            if (inferenceCategory != InferenceCategory.ZFIN_MRPH_GENO
+                    && inferenceCategory != InferenceCategory.ZFIN_GENE
+                    && inferenceCategory != InferenceCategory.GO
+                    && inferenceCategory != InferenceCategory.ENSEMBL
+                    ) {
+                enums[i] = inferenceCategory;
+                ++i;
             }
         }
         checkEnumValuesPresentInDatabase(names, enums);
@@ -425,7 +426,7 @@ public class EnumValidationService {
             }
         }
 
-        String domain = ZfinPropertiesEnum.DOMAIN_NAME.value() ;
+        String domain = ZfinPropertiesEnum.DOMAIN_NAME.value();
         if (sb.length() > 0) {
             if (domain != null) {
                 sb.insert(0, DOMAIN + domain + "\n");
