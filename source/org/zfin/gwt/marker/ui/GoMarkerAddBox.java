@@ -6,10 +6,7 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.GoEvidenceValidator;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.*;
 
 /**
  * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
@@ -18,12 +15,12 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoMarkerAddBox extends GoInlineMarkerCloneBox{
+public class GoMarkerAddBox extends GoInlineMarkerCloneBox {
 
 
     public GoMarkerAddBox(GoMarkerViewTable goViewTable) {
         this.parent = goViewTable;
-        tabIndex = 10 ;
+        tabIndex = 10;
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
@@ -71,17 +68,18 @@ public class GoMarkerAddBox extends GoInlineMarkerCloneBox{
     }
 
 
-
     protected void sendUpdates() {
         if (isDirty()) {
             GoEvidenceDTO goEvidenceDTO = createDTOFromGUI();
             // have to add marker
-            if (false == GoEvidenceValidator.validate(this, goEvidenceDTO)) {
-                return;
+            try {
+                GoEvidenceValidator.validate(goEvidenceDTO);
+            } catch (ValidationException e) {
+                setError(e.getMessage());
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
-                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
                         @Override
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);

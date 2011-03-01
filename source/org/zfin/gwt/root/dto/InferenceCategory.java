@@ -22,7 +22,10 @@ public enum InferenceCategory {
     REFSEQ("RefSeq"),
     SP_KW("SP_KW"),
     INTERPRO("InterPro"),
-    EC("EC");
+    EC("EC"),
+    HAMAP("HAMAP"),
+    SP_SL("SP_SL"),
+    ENSEMBL("Ensembl"),;
 
     private final String prefix;
     private final String match;

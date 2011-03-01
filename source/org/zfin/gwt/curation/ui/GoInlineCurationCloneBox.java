@@ -1,10 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.ui.AbstractGoViewTable;
-import org.zfin.gwt.root.ui.GoEvidenceValidator;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.*;
 
 /**
  * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
@@ -19,7 +16,7 @@ public class GoInlineCurationCloneBox extends GoInlineCurationAddBox {
     public GoInlineCurationCloneBox(AbstractGoViewTable goViewTable) {
         super();
         this.parent = goViewTable;
-        tabIndex = 50 ;
+        tabIndex = 50;
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
@@ -29,6 +26,7 @@ public class GoInlineCurationCloneBox extends GoInlineCurationAddBox {
         this(goViewTable);
         setDTO(goEvidenceDTO);
         dto.setZdbID(null);
+        dto.setOrganizationSource("ZFIN");
         setValues();
     }
 
@@ -46,12 +44,14 @@ public class GoInlineCurationCloneBox extends GoInlineCurationAddBox {
     protected void sendUpdates() {
         if (isDirty()) {
             GoEvidenceDTO goEvidenceDTO = createDTOFromGUI();
-            if (false == GoEvidenceValidator.validate(this, goEvidenceDTO)) {
-                return;
+            try {
+                GoEvidenceValidator.validate(goEvidenceDTO);
+            } catch (ValidationException ve) {
+                setError(ve.getMessage());
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
-                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
                         @Override
                         public void onFailure(Throwable throwable) {
                             super.onFailure(throwable);

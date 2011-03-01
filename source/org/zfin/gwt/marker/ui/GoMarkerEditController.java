@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import org.zfin.gwt.root.dto.GoCurationDefaultPublications;
+import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -68,7 +68,7 @@ public final class GoMarkerEditController extends AbstractRelatedEntityEditContr
 
     protected void setValues() {
         publicationLookupBox.clearPublications();
-        for (GoCurationDefaultPublications goPubEnum : GoCurationDefaultPublications.values()) {
+        for (GoDefaultPublication goPubEnum : GoDefaultPublication.getCurationPublications()) {
             publicationLookupBox.addPublication(new PublicationDTO(goPubEnum));
         }
         publicationLookupBox.setKey(PublicationSessionKey.GOCURATION);
@@ -114,11 +114,10 @@ public final class GoMarkerEditController extends AbstractRelatedEntityEditContr
     }
 
 
-
     protected void loadDTO() {
         Dictionary transcriptDictionary = Dictionary.getDictionary("MarkerProperties");
         final String zdbID = transcriptDictionary.get(LOOKUP_ZDBID);
-        MarkerRPCService.App.getInstance().getGeneOnlyForZdbID(zdbID, new MarkerEditCallBack<MarkerDTO>("Failed to find gene for: "+zdbID){
+        MarkerRPCService.App.getInstance().getGeneOnlyForZdbID(zdbID, new MarkerEditCallBack<MarkerDTO>("Failed to find gene for: " + zdbID) {
             @Override
             public void onSuccess(MarkerDTO result) {
                 setDTO(result);
@@ -131,7 +130,7 @@ public final class GoMarkerEditController extends AbstractRelatedEntityEditContr
     void setDTO(MarkerDTO dto) {
         if (dto == null) return;
         super.setDTO(dto);
-        goViewTable.setZdbID(dto.getZdbID()) ;
+        goViewTable.setZdbID(dto.getZdbID());
 
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setMarkerDTO(dto);
@@ -139,7 +138,7 @@ public final class GoMarkerEditController extends AbstractRelatedEntityEditContr
         goAddBox.setValues();
         validateGoEvidence();
     }
-    
+
     public void openBox(boolean b) {
         goAddBox.setVisible(b);
         addNewGoLink.setHTML((b ? DOWN_ARROW : RIGHT_ARROW));

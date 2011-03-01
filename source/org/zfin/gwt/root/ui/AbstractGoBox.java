@@ -21,7 +21,7 @@ import java.util.List;
  * 4 - pubs
  * 3 - evidence codes
  */
-public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
+public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
 
     // http://tntluoma.com/sidebars/codes/
     protected HorizontalPanel buttonPanel = new HorizontalPanel();
@@ -38,6 +38,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
     protected final HorizontalPanel pubPanel = new HorizontalPanel();
     protected final Label pubLabel = new HTML("<b>Publication:</b>");
     protected final StringTextBox pubText = new StringTextBox();
+    protected final HTML organizationHTML = new HTML();
     protected final StringListBox evidenceCodeBox = new StringListBox(false);
     protected final RevertibleTextArea noteBox = new RevertibleTextArea();
     protected AbstractInferenceListBox inferenceListBox = new InferenceListBox(null);
@@ -50,7 +51,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
 
     // data
     protected AbstractGoViewTable parent;
-    protected int tabIndex ;
+    protected int tabIndex;
 
     protected void initGUI() {
 
@@ -87,7 +88,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         eastPanel.add(northEastPanel);
         ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
         scrollPanel.setAlwaysShowScrollBars(false);
-        scrollPanel.setSize("500px","300px");
+        scrollPanel.setSize("500px", "300px");
         eastPanel.add(scrollPanel);
         eastPanel.setWidth("500px");
 
@@ -97,7 +98,9 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         pubPanel.setVisible(false);
         pubPanel.add(pubLabel);
         pubPanel.add(pubText);
+        pubPanel.add(new HTML("&nbsp;"));
         panel.add(pubPanel);
+        panel.add(organizationHTML);
 
         buttonPanel.add(saveButton);
         buttonPanel.add(revertButton);
@@ -130,8 +133,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         }
         if (dto.getEvidenceCode() != null) {
             evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
-        }
-        else{
+        } else {
             evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IMP.name());
         }
 
@@ -152,6 +154,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
             evidenceFlagBox.setIndexForText(dto.getFlag().toString());
         }
         pubText.setText(dto.getPublicationZdbID());
+        organizationHTML.setText(dto.getOrganizationSource());
         noteBox.setText(dto.getNote());
         inferenceListBox.setDTO(dto);
         if (dto.getGoTerm() != null) {
@@ -179,12 +182,12 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
             }
         });
 
-        goTermButton.addClickHandler(new ClickHandler(){
+        goTermButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TermInfo termInfo = termInfoComposite.getCurrentTermInfo() ;
-                if(termInfo!=null){
-                    LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,termInfo.getName(),new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value",handlesError) {
+                TermInfo termInfo = termInfoComposite.getCurrentTermInfo();
+                if (termInfo != null) {
+                    LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO, termInfo.getName(), new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value", handlesError) {
                         @Override
                         public void onSuccess(TermDTO result) {
                             temporaryGoTermDTO = result;
@@ -195,8 +198,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                             handleDirty();
                         }
                     });
-                }
-                else{
+                } else {
                     setError("Term details box must be empty.");
                 }
             }
@@ -206,7 +208,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         goTermBox.setHighlightAction(new HighlightAction() {
             @Override
             public void onHighlight(String termID) {
-                if(false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                if (false == termID.startsWith(ItemSuggestCallback.END_ELLIPSE)) {
                     LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
                 }
             }
@@ -215,8 +217,8 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         addGoTermChangeListeners(new RelatedEntityChangeListener<GoEvidenceDTO>() {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
-                if(dataChangedEvent.getDTO().getGoTerm()!=null){
-                    String termID =dataChangedEvent.getDTO().getGoTerm().getTermOboID();
+                if (dataChangedEvent.getDTO().getGoTerm() != null) {
+                    String termID = dataChangedEvent.getDTO().getGoTerm().getTermOboID();
                     LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
                 }
             }
@@ -261,37 +263,38 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         });
 
         goTermBox.setAction(new SubmitAction() {
-            private boolean isSubmitting = false ;
+            private boolean isSubmitting = false;
+
             public void doSubmit(final String value) {
-                if(isSubmitting){
-                    return ;
+                if (isSubmitting) {
+                    return;
                 }
-                isSubmitting = true ;
+                isSubmitting = true;
                 if (value.isEmpty()) {
                     setError("Go term is invalid [" + value + "].  Please add a valid go term.");
                     return;
                 }
                 goTermBox.setEnabled(false);
-                goTermBox.setNoteString("Validating ["+value+"]...");
+                goTermBox.setNoteString("Validating [" + value + "]...");
 
-                LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO,value,
-                        new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value ["+value+"]",handlesError,false) {
+                LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO, value,
+                        new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value [" + value + "]", handlesError, false) {
 
                             @Override
                             public void onFailure(Throwable throwable) {
                                 super.onFailure(throwable);
                                 goTermBox.setEnabled(true);
                                 goTermBox.clearNote();
-                                isSubmitting =  false;
+                                isSubmitting = false;
                             }
 
                             @Override
                             public void onSuccess(TermDTO result) {
                                 goTermBox.setEnabled(true);
                                 goTermBox.clearNote();
-                                if(result==null) {
-                                    goTermBox.setErrorString("Unable to find term["+value+"]");
-                                    return ;
+                                if (result == null) {
+                                    goTermBox.setErrorString("Unable to find term[" + value + "]");
+                                    return;
                                 }
                                 temporaryGoTermDTO = result;
                                 GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
@@ -300,7 +303,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
                                 handleDirty();
                                 goTermBox.setText(temporaryGoTermDTO.getTermName());
                                 clearError();
-                                isSubmitting =  false;
+                                isSubmitting = false;
                             }
                         });
             }
@@ -309,19 +312,20 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
 
     @Override
     protected void setValues() {
-        if (dto == null) return ;
+        if (dto == null) return;
 
         evidenceCodeBox.clear();
-        if(dto.getPublicationZdbID()!=null){
-            for (GoEvidenceCodeEnum evidenceCodeEnum : GoEvidenceCodeEnum.getCodeEnumForPub(dto.getPublicationZdbID())) {
+        if (dto.getPublicationZdbID() != null) {
+            GoEvidenceCodeEnum[] goEvidenceCodeEnums = GoEvidenceCodeEnum.getCodeEnumForPub(dto.getPublicationZdbID());
+            for (GoEvidenceCodeEnum evidenceCodeEnum : goEvidenceCodeEnums) {
                 evidenceCodeBox.addItem(evidenceCodeEnum.name());
             }
         }
-        if(dto.getEvidenceCode()==GoEvidenceCodeEnum.NAS){
+        if (dto.getEvidenceCode() == GoEvidenceCodeEnum.NAS) {
             evidenceCodeBox.addItem(dto.getEvidenceCode().name());
         }
 
-        if(dto.getEvidenceCode()!=null){
+        if (dto.getEvidenceCode() != null) {
             evidenceCodeBox.setIndexForText(dto.getEvidenceCode().name());
             inferenceListBox.setDTO(dto);
         }
@@ -351,7 +355,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         }
         goEvidenceDTO.setFlag(evidenceFlagBox.getItemCount() == 0 || evidenceFlagBox.getSelected() == null ? null : GoEvidenceQualifier.getType(evidenceFlagBox.getSelected()));
         goEvidenceDTO.setPublicationZdbID(pubText.getBoxValue());
-        if(evidenceCodeBox.getItemCount()>0){
+        if (evidenceCodeBox.getItemCount() > 0) {
             goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(evidenceCodeBox.getSelected()));
         }
         goEvidenceDTO.setNote(noteBox.getText());
@@ -372,7 +376,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
 
     @Override
     public boolean isDirty() {
-        return true ;
+        return true;
     }
 
     public int getTabIndex() {
@@ -382,7 +386,6 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
     public void setPubVisible(boolean pubVisible) {
         pubPanel.setVisible(pubVisible);
     }
-
 
 
     @Override
@@ -411,7 +414,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
             pubText.setText(publicationZdbID);
             dto.setPublicationZdbID(publicationZdbID);
 
-            GoCurationDefaultPublications goPubEnum = GoCurationDefaultPublications.getPubForZdbID(publicationZdbID);
+            GoDefaultPublication goPubEnum = GoDefaultPublication.getPubForZdbID(publicationZdbID);
             if (goPubEnum != null) {
                 switch (goPubEnum) {
                     case INTERPRO:
@@ -468,14 +471,14 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO>{
         }
 
         private void updateQualifiers(TermInfo result) {
-            if(result!=null){
+            if (result != null) {
                 evidenceFlagBox.clear();
                 evidenceFlagBox.addItem("NONE", "null");
                 if (result.getOntology() == OntologyDTO.GO_MF) {
                     evidenceFlagBox.addItem(GoEvidenceQualifier.CONTRIBUTES_TO.toString());
                 }
                 // fogbugz 6292
-                if(false==result.getOboID().equals(GoEvidenceValidator.PROTEIN_BINDING_OBO_ID)){
+                if (false == result.getOboID().equals(GoEvidenceValidator.PROTEIN_BINDING_OBO_ID)) {
                     evidenceFlagBox.addItem(GoEvidenceQualifier.NOT.toString());
                 }
             }

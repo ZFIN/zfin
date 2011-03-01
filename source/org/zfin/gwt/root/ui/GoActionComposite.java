@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
@@ -19,6 +20,7 @@ public class GoActionComposite extends Composite implements Revertible {
     private final Image cloneButton = new Image(imageURL + "clone1.png");
     private final Image editButton = new Image(imageURL + "edit.png");
     private final Image deleteButton = new Image(imageURL + "delete-button.png");
+    private final HTML organizationLink = new HTML();
 
     // data
     protected GoEvidenceDTO dto;
@@ -41,9 +43,14 @@ public class GoActionComposite extends Composite implements Revertible {
         cloneButton.setSize("20px", "20px");
         panel.add(cloneButton);
         editButton.setStyleName("relatedEntityPubLink");
-        editButton.setTitle("Edit annotation.");
+        editButton.setTitle("Edit annotation: " + dto.getZdbID());
         editButton.setSize("20px", "20px");
-        panel.add(editButton);
+        if (this.dto.isZfinOrganizationSource()) {
+            panel.add(editButton);
+        } else {
+            organizationLink.setHTML("<span style='font-size:small;' title='This annotation came in through a GO annotation load so it is not editable.'>" + dto.getOrganizationSource() + "</span>");
+            panel.add(organizationLink);
+        }
         deleteButton.setStyleName("relatedEntityPubLink");
         deleteButton.setTitle("Remove annotation.");
         panel.add(deleteButton);

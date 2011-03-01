@@ -1,14 +1,12 @@
 package org.zfin.gwt.curation.dto;
 
-import org.zfin.feature.FeatureMarkerRelationship;
-
 /**
-* Created by IntelliJ IDEA.
-* User: nathandunn
-* Date: 12/22/10
-* Time: 9:38 AM
-* To change this template use File | Settings | File Templates.
-*/
+ * Created by IntelliJ IDEA.
+ * User: nathandunn
+ * Date: 12/22/10
+ * Time: 9:38 AM
+ * To change this template use File | Settings | File Templates.
+ */
 public enum FeatureMarkerRelationshipTypeEnum {
 
     IS_ALLELE_OF("is allele of"),
@@ -36,10 +34,10 @@ public enum FeatureMarkerRelationshipTypeEnum {
         throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
     }
 
-    public static String dumpValues(){
-        String returnString = "" ;
-        for(FeatureMarkerRelationshipTypeEnum featureMarkerRelationshipTypeEnum: values()){
-            returnString += "'"+featureMarkerRelationshipTypeEnum + "' "  ;
+    public static String dumpValues() {
+        String returnString = "";
+        for (FeatureMarkerRelationshipTypeEnum featureMarkerRelationshipTypeEnum : values()) {
+            returnString += "'" + featureMarkerRelationshipTypeEnum + "' ";
         }
         return returnString;
     }

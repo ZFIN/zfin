@@ -17,12 +17,12 @@ import java.util.List;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoCurationAddBox extends GoInlineCurationAddBox{
+public class GoCurationAddBox extends GoInlineCurationAddBox {
 
 
     public GoCurationAddBox(AbstractGoViewTable goViewTable) {
         this.parent = goViewTable;
-        tabIndex = 10 ; 
+        tabIndex = 10;
         initGUI();
         addInternalListeners(this);
         initWidget(panel);
@@ -35,7 +35,6 @@ public class GoCurationAddBox extends GoInlineCurationAddBox{
         revertButton.setText("Cancel");
         zdbIDHTML.setHTML("<font color=red>Not Saved</font>");
     }
-
 
 
     public void updateGenes() {
@@ -52,7 +51,7 @@ public class GoCurationAddBox extends GoInlineCurationAddBox{
                             }
                             GoEvidenceDTO goEvidenceDTO = dto.deepCopy();
                             goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IMP);
-                            if(results.iterator().hasNext()){
+                            if (results.iterator().hasNext()) {
                                 MarkerDTO markerDTO = results.iterator().next();
                                 goEvidenceDTO.setMarkerDTO(markerDTO);
                             }
@@ -86,27 +85,29 @@ public class GoCurationAddBox extends GoInlineCurationAddBox{
             MarkerDTO markerDTO = new MarkerDTO();
             markerDTO.setZdbID(geneBox.getSelectedStringValue());
             goEvidenceDTO.setMarkerDTO(markerDTO);
-            if (false == GoEvidenceValidator.validate(this, goEvidenceDTO)) {
-                return;
+            try {
+                GoEvidenceValidator.validate(goEvidenceDTO);
+            } catch (ValidationException e) {
+                setError(e.getMessage());
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
-                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    super.onFailure(throwable);
-                    notWorking();
-                    revertGUI();
-                }
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            notWorking();
+                            revertGUI();
+                        }
 
-                @Override
-                public void onSuccess(final GoEvidenceDTO result) {
-                    fireChangeEvent(new RelatedEntityEvent<GoEvidenceDTO>(result));
-                    notWorking();
-                    revertGUI();
-                    fireEventSuccess();
-                }
-            });
+                        @Override
+                        public void onSuccess(final GoEvidenceDTO result) {
+                            fireChangeEvent(new RelatedEntityEvent<GoEvidenceDTO>(result));
+                            notWorking();
+                            revertGUI();
+                            fireEventSuccess();
+                        }
+                    });
         }
     }
 

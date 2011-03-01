@@ -40,18 +40,18 @@ public class DTOConversionService {
     private static Logger logger = Logger.getLogger(DTOConversionService.class);
 
 
-    public static String escapeString(String uncleansedCharacter){
+    public static String escapeString(String uncleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
         return StringEscapeUtils.escapeHtml(uncleansedCharacter);
     }
 
-    public static String unescapeString(String cleansedCharacter){
+    public static String unescapeString(String cleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
         return StringEscapeUtils.unescapeHtml(cleansedCharacter);
     }
 
     @SuppressWarnings("unchecked")
-    public static Collection<String> escapeStrings(Collection<String> uncleansedCharacter){
+    public static Collection<String> escapeStrings(Collection<String> uncleansedCharacter) {
         return CollectionUtils.collect(uncleansedCharacter, new Transformer() {
             @Override
             public String transform(Object o) {
@@ -61,7 +61,7 @@ public class DTOConversionService {
     }
 
     @SuppressWarnings("unchecked")
-    public static Collection<String> unescapeStrings(Collection<String> cleansedCharacter){
+    public static Collection<String> unescapeStrings(Collection<String> cleansedCharacter) {
         return CollectionUtils.collect(cleansedCharacter, new Transformer() {
             @Override
             public String transform(Object o) {
@@ -355,6 +355,7 @@ public class DTOConversionService {
         returnDTO.setEvidenceCode(GoEvidenceCodeEnum.valueOf(markerGoTermEvidence.getEvidenceCode().getCode()));
         returnDTO.setFlag(markerGoTermEvidence.getFlag() == null ? null : markerGoTermEvidence.getFlag());
         returnDTO.setMarkerDTO(DTOConversionService.convertToMarkerDTO(markerGoTermEvidence.getMarker()));
+        returnDTO.setOrganizationSource(markerGoTermEvidence.getGafOrganization().getOrganization());
         returnDTO.setNote(markerGoTermEvidence.getNote());
 
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
@@ -377,7 +378,7 @@ public class DTOConversionService {
         return returnDTO;
     }
 
-    public static Feature convertToFeature(FeatureDTO featureDTO){
+    public static Feature convertToFeature(FeatureDTO featureDTO) {
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
         feature.setName(escapeString(featureDTO.getName()));
@@ -391,7 +392,7 @@ public class DTOConversionService {
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
 
         // if not unspecified
-        if (!(featureDTO.getFeatureType().isUnspecified())){
+        if (!(featureDTO.getFeatureType().isUnspecified())) {
             if (featureDTO.getLineNumber() != null) {
                 feature.setLineNumber(featureDTO.getLineNumber());
             }
@@ -402,7 +403,7 @@ public class DTOConversionService {
             feature.setUnspecifiedFeature(false);
         }
         // if unspecified
-        else{
+        else {
             feature.setUnspecifiedFeature(true);
         }
 
@@ -410,11 +411,11 @@ public class DTOConversionService {
             feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
         }
 
-        if (featureDTO.getPublicNote()!=null) {
+        if (featureDTO.getPublicNote() != null) {
             feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
         }
 
-        return feature ;
+        return feature;
     }
 
     public static FeatureDTO convertToFeatureDTO(Feature feature) {
@@ -423,34 +424,34 @@ public class DTOConversionService {
         featureDTO.setName(unescapeString(feature.getName()));
         featureDTO.setAbbreviation(unescapeString(feature.getAbbreviation()));
         featureDTO.setFeatureType(feature.getType());
-        featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite()) ;
+        featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite());
         featureDTO.setLink(FeaturePresentation.getLink(feature));
         featureDTO.setTransgenicSuffix(feature.getTransgenicSuffix());
-        if (feature.getLineNumber()!=null){
+        if (feature.getLineNumber() != null) {
             featureDTO.setLineNumber(feature.getLineNumber());
         }
 
-        FeatureAssay ftrAssay=feature.getFeatureAssay();
-        if (ftrAssay!=null){
-            if (feature.getFeatureAssay().getMutagee()!=null){
+        FeatureAssay ftrAssay = feature.getFeatureAssay();
+        if (ftrAssay != null) {
+            if (feature.getFeatureAssay().getMutagee() != null) {
                 featureDTO.setMutagee(feature.getFeatureAssay().getMutagee().toString());
             }
-            if (feature.getFeatureAssay().getMutagen()!=null){
+            if (feature.getFeatureAssay().getMutagen() != null) {
                 featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
             }
         }
 
-        if (feature.getPublicComments()!=null){
-            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(),feature.getPublicComments()) ;
+        if (feature.getPublicComments() != null) {
+            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(), feature.getPublicComments());
             featureDTO.setPublicNote(noteDTO);
         }
 
-        Set<DataNote> curatorNotes = feature.getDataNotes() ;
-        if (CollectionUtils.isNotEmpty(curatorNotes)){
+        Set<DataNote> curatorNotes = feature.getDataNotes();
+        if (CollectionUtils.isNotEmpty(curatorNotes)) {
             List<NoteDTO> curatorNoteDTOs = new ArrayList<NoteDTO>();
-            for(DataNote dataNote : curatorNotes){
-                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(),dataNote.getDataZdbID(),dataNote.getNote()) ;
-                curatorNoteDTOs.add(noteDTO) ;
+            for (DataNote dataNote : curatorNotes) {
+                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), dataNote.getNote());
+                curatorNoteDTOs.add(noteDTO);
             }
             featureDTO.setCuratorNotes(curatorNoteDTOs);
         }
@@ -458,13 +459,13 @@ public class DTOConversionService {
         featureDTO.setDominant(feature.getDominantFeature());
         featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite());
         FeaturePrefix featurePrefix = feature.getFeaturePrefix();
-        if(featurePrefix!=null){
+        if (featurePrefix != null) {
             featureDTO.setLabPrefix(featurePrefix.getPrefixString());
         }
         Lab labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
-        if(labByFeature!=null){
+        if (labByFeature != null) {
             featureDTO.setLabOfOrigin(labByFeature.getZdbID());
-            logger.debug("Feature does not have a lab: "+ feature.getAbbreviation() + " "+feature.getZdbID());
+            logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
         }
 
 
@@ -559,12 +560,12 @@ public class DTOConversionService {
 
         TermDTO dto = new TermDTO();
         dto.setTermName(term.getTermName());
-        dto.setTermID(term.getID());
+        dto.setTermID(term.getZdbID());
         dto.setObsolete(term.isObsolete());
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
-        if (ontology == Ontology.QUALITY){
-            ontology = OntologyManager.getInstance().getSubOntology(term.getOntology(), term.getID());
+        if (ontology == Ontology.QUALITY) {
+            ontology = OntologyManager.getInstance().getSubOntology(term.getOntology(), term.getZdbID());
         }
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
@@ -612,7 +613,7 @@ public class DTOConversionService {
 
         TermDTO dto = new TermDTO();
         dto.setTermName(term.getTermName());
-        dto.setTermID(term.getID());
+        dto.setTermID(term.getZdbID());
         dto.setTermOboID(term.getOboID());
         dto.setDefinition(term.getDefinition());
         dto.setComment(term.getComment());
@@ -731,12 +732,12 @@ public class DTOConversionService {
         if (es.getSubterm() != null) {
             TermDTO subtermDTO = convertToTermDTO(es.getSubterm());
             expressionTerm.setSubterm(subtermDTO);
-            Term term = OntologyManager.getInstance().getTermByID(es.getSubterm().getID());
+            Term term = OntologyManager.getInstance().getTermByID(es.getSubterm().getZdbID());
         }
         dto.setExpressedTerm(expressionTerm);
         if (superterm.getOntology().equals(Ontology.ANATOMY)) {
             // awkward but needs to be done until we have a better way to join in the stage info for a term.
-            Term term = OntologyManager.getInstance().getTermByID(superterm.getID());
+            Term term = OntologyManager.getInstance().getTermByID(superterm.getZdbID());
             StageDTO start = convertToStageDTO(term.getStart());
             StageDTO end = convertToStageDTO(term.getEnd());
             dto.setStart(start);
@@ -814,7 +815,7 @@ public class DTOConversionService {
 
     public static TermInfo convertToTermInfo(Term term, OntologyDTO ontologyDTO, boolean includeSynonyms) {
         TermInfo info = new TermInfo();
-        info.setID(term.getID());
+        info.setID(term.getZdbID());
         info.setOboID(term.getOboID());
         info.setName(term.getTermName());
         if (includeSynonyms) {
@@ -841,21 +842,21 @@ public class DTOConversionService {
         featureMarkerRelationshipDTO.setFeatureDTO(convertToFeatureDTO(featureMarkerRelationship.getFeature()));
         featureMarkerRelationshipDTO.setMarkerDTO(convertToMarkerDTO(featureMarkerRelationship.getMarker()));
 
-        return featureMarkerRelationshipDTO ;
+        return featureMarkerRelationshipDTO;
     }
 
-    public static LabDTO convertToLabDTO(Lab lab){
+    public static LabDTO convertToLabDTO(Lab lab) {
         LabDTO labDTO = new LabDTO();
         labDTO.setZdbID(lab.getZdbID());
         labDTO.setName(lab.getName());
-        return labDTO ;
+        return labDTO;
     }
 
     public static List<LabDTO> convertToLabDTO(List<Lab> labsOfOrigin) {
-        List<LabDTO> labDTO = new ArrayList<LabDTO>() ;
-        if(CollectionUtils.isNotEmpty(labsOfOrigin)){
-            for(Lab lab : labsOfOrigin){
-                labDTO.add(DTOConversionService.convertToLabDTO(lab)) ;
+        List<LabDTO> labDTO = new ArrayList<LabDTO>();
+        if (CollectionUtils.isNotEmpty(labsOfOrigin)) {
+            for (Lab lab : labsOfOrigin) {
+                labDTO.add(DTOConversionService.convertToLabDTO(lab));
             }
         }
         return labDTO;
@@ -869,10 +870,10 @@ public class DTOConversionService {
     }
 
     public static List<FeaturePrefixDTO> convertToFeaturePrefixDTO(List<FeaturePrefix> labPrefixes) {
-        List<FeaturePrefixDTO> featurePrefixDTOs = new ArrayList<FeaturePrefixDTO>() ;
-        if(CollectionUtils.isNotEmpty(labPrefixes)){
-            for(FeaturePrefix featurePrefix: labPrefixes){
-                featurePrefixDTOs.add(convertToFeaturePrefixDTO(featurePrefix)) ;
+        List<FeaturePrefixDTO> featurePrefixDTOs = new ArrayList<FeaturePrefixDTO>();
+        if (CollectionUtils.isNotEmpty(labPrefixes)) {
+            for (FeaturePrefix featurePrefix : labPrefixes) {
+                featurePrefixDTOs.add(convertToFeaturePrefixDTO(featurePrefix));
             }
         }
         return featurePrefixDTOs;  //To change body of created methods use File | Settings | File Templates.

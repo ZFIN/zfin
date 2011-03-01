@@ -1,10 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.ui.AbstractGoViewTable;
-import org.zfin.gwt.root.ui.GoEvidenceValidator;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.*;
 
 /**
  * This class creates a MarkerGoEntry instance, but then refers to the Edit instance for editing.
@@ -14,11 +11,11 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
  * 4 - pubs
  * 3 - evidence codes
  */
-public class GoInlineCurationEditBox extends AbstractGoCurationBox{
+public class GoInlineCurationEditBox extends AbstractGoCurationBox {
 
     public GoInlineCurationEditBox(AbstractGoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO) {
         this.parent = goViewTable;
-        tabIndex = 50 ;
+        tabIndex = 50;
 
         initGUI();
         addInternalListeners(this);
@@ -54,26 +51,28 @@ public class GoInlineCurationEditBox extends AbstractGoCurationBox{
     protected void sendUpdates() {
         if (isDirty()) {
             GoEvidenceDTO goEvidenceDTO = createDTOFromGUI();
-            if (false == GoEvidenceValidator.validate(this, goEvidenceDTO)) {
-                return;
+            try {
+                GoEvidenceValidator.validate(goEvidenceDTO);
+            } catch (ValidationException e) {
+                setError(e.getMessage());
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO,
-                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:",this) {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    super.onFailure(throwable);
-                    notWorking();
-                    handleDirty();
-                }
+                    new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            notWorking();
+                            handleDirty();
+                        }
 
-                @Override
-                public void onSuccess(final GoEvidenceDTO result) {
-                    notWorking();
-                    revertGUI();
-                    parent.clearError();
-                }
-            });
+                        @Override
+                        public void onSuccess(final GoEvidenceDTO result) {
+                            notWorking();
+                            revertGUI();
+                            parent.clearError();
+                        }
+                    });
         }
     }
 

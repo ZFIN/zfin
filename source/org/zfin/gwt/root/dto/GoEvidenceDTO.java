@@ -8,12 +8,14 @@ import java.util.Set;
  */
 public class GoEvidenceDTO extends RelatedEntityDTO {
 
+    public static final String ZFIN_ORGANIZATION_SOURCE = "ZFIN";
 
     private MarkerDTO markerDTO;
     private TermDTO goTermDTO;
     private GoEvidenceCodeEnum evidenceCode;
     private GoEvidenceQualifier flag;
     private String note;
+    private String organizationSource;
 
     private String createdPersonName;
     private String modifiedPersonName;
@@ -23,9 +25,17 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
     private Set<String> inferredFrom;
     private Set<String> inferredFromLinks;
 
+    public String getFirstInference() {
+        if (inferredFrom != null && inferredFrom.size() > 0) {
+            return inferredFrom.iterator().next();
+        }
+        return null;
+    }
+
     public MarkerDTO getMarkerDTO() {
         return markerDTO;
     }
+
 
     public void setMarkerDTO(MarkerDTO markerDTO) {
         this.markerDTO = markerDTO;
@@ -111,6 +121,14 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         this.inferredFromLinks = inferredFromLinks;
     }
 
+    public String getOrganizationSource() {
+        return organizationSource;
+    }
+
+    public void setOrganizationSource(String organizationSource) {
+        this.organizationSource = organizationSource;
+    }
+
     public GoEvidenceDTO deepCopy() {
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setDataZdbID(dataZdbID);
@@ -129,6 +147,14 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         goEvidenceDTO.setNote(note);
         goEvidenceDTO.setInferredFrom(inferredFrom);
         goEvidenceDTO.setInferredFromLinks(inferredFromLinks);
+        goEvidenceDTO.setOrganizationSource(organizationSource);
         return goEvidenceDTO;
+    }
+
+    public boolean isZfinOrganizationSource() {
+        if (organizationSource != null) {
+            return organizationSource.equals(ZFIN_ORGANIZATION_SOURCE);
+        }
+        return false;
     }
 }

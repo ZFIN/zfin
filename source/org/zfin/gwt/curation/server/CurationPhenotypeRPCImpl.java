@@ -215,9 +215,9 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
     private void removePhenotypeStructureFromMutant(PhenotypeStructure phenotypePileStructure, MutantFigureStage mutantFigureStage) {
         for (Phenotype phenotype : mutantFigureStage.getPhenotypes()) {
 
-            if (phenotype.getSuperterm().getID().equals(phenotypePileStructure.getSuperterm().getID())) {
+            if (phenotype.getSuperterm().getZdbID().equals(phenotypePileStructure.getSuperterm().getZdbID())) {
                 // if quality term is not the same continue with next phenotype
-                if (!phenotype.getTerm().getID().equals(phenotypePileStructure.getQuality().getID()))
+                if (!phenotype.getTerm().getZdbID().equals(phenotypePileStructure.getQuality().getZdbID()))
                     continue;
                 // if tag is not the same continue with next phenotype
                 if (!phenotype.getTag().equals(phenotypePileStructure.getTag().toString()))
@@ -235,7 +235,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                     break;
                 }
                 if (subtermID != null && phenotypePileStructure.getSubterm() != null &&
-                        term.getID().equals(phenotypePileStructure.getSubterm().getID())) {
+                        term.getZdbID().equals(phenotypePileStructure.getSubterm().getZdbID())) {
                     getPhenotypeRepository().deletePhenotype(phenotype, mutantFigureStage.getFigure());
                     Term subterm = phenotype.getSubterm();
                     LOG.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName() + " : " + subterm.getTermName());
@@ -267,9 +267,9 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         Term superterm = phenotypeStructure.getSuperterm();
         Term subterm = phenotypeStructure.getSubterm();
         Phenotype aoPhenotype = new Phenotype();
-        aoPhenotype.setSuperterm(OntologyManager.getInstance().getTermByID(superterm.getID()));
+        aoPhenotype.setSuperterm(OntologyManager.getInstance().getTermByID(superterm.getZdbID()));
         if (subterm != null)
-            aoPhenotype.setSubterm(OntologyManager.getInstance().getTermByID(subterm.getID()));
+            aoPhenotype.setSubterm(OntologyManager.getInstance().getTermByID(subterm.getZdbID()));
         aoPhenotype.addFigure(mutant.getFigure());
         aoPhenotype.setEndStage(mutant.getEnd());
         aoPhenotype.setStartStage(mutant.getStart());
@@ -291,7 +291,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
     private boolean hasMutantGivenPhenotypeStructure(MutantFigureStage mutant, PhenotypeStructure pileStructure) {
         boolean foundStructure = false;
         for (Phenotype phenotype : mutant.getPhenotypes()) {
-            if (phenotype.getSuperterm().getID().equals(pileStructure.getSuperterm().getID())) {
+            if (phenotype.getSuperterm().getZdbID().equals(pileStructure.getSuperterm().getZdbID())) {
                 // check if subterms are unequal
                 // if so continue loop checking for an existing phenotype
                 Term phenoSubterm = HibernateUtil.initializeAndUnproxy(phenotype.getSubterm());
@@ -301,8 +301,8 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                 }
 
                 if (phenoSubterm != null && pileStructure.getSubterm() != null) {
-                    String phenotypeID = phenoSubterm.getID();
-                    String pileStructureID = pileStructure.getSubterm().getID();
+                    String phenotypeID = phenoSubterm.getZdbID();
+                    String pileStructureID = pileStructure.getSubterm().getZdbID();
                     if (!phenotypeID.equals(pileStructureID)) {
                         // terms are different in the sub term
                         continue;

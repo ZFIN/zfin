@@ -6,7 +6,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public enum GoEvidenceQualifier implements IsSerializable {
     CONTRIBUTES_TO("contributes to"),
-    NOT("not"),;
+    NOT("not"),
+    COLOCALIZES_WITH("colocalizes with"),;
 
     private final String value;
 

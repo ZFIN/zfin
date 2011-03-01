@@ -2,12 +2,18 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/** Note that NAS is only for display of existing evidence (case 5664).  
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Note: NAS is only for display of existing evidence (case 5664).
+ * Note: TAS is only for filtering out imported evidence (case 6447).
  */
 public enum GoEvidenceCodeEnum implements IsSerializable {
-    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS;
+    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS;
 
     public static final int CARDINALITY_ANY = -1;
+    public static final int CARDINALITY_ONE_OR_MORE = -2;
 
 
     public InferenceCategory[] getInferenceCategories() {
@@ -43,21 +49,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
     }
 
     public InferenceCategory[] getInferenceCategories(String pubZdbID) {
-        switch (this) {
-            case IEA:
-                if (pubZdbID.equals(GoCurationDefaultPublications.EC.zdbID())) {
-                    return new InferenceCategory[]{InferenceCategory.EC};
-                } else if (pubZdbID.equals(GoCurationDefaultPublications.SPKW.zdbID())) {
-                    return new InferenceCategory[]{InferenceCategory.SP_KW};
-                } else if (pubZdbID.equals(GoCurationDefaultPublications.INTERPRO.zdbID())) {
-                    return new InferenceCategory[]{InferenceCategory.INTERPRO};
-                } else {
-                    // just return them all instead and report validation issues
-                    return getInferenceCategories();
-                }
-            default:
-                return getInferenceCategories();
-        }
+        GoDefaultPublication goDefaultPublication = GoDefaultPublication.getPubForZdbID(pubZdbID);
+        return (goDefaultPublication != null ? new InferenceCategory[]{goDefaultPublication.inferenceCategory()} : getInferenceCategories());
     }
 
 
@@ -66,7 +59,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case NAS:
                 return 0;
             case IC:
-                return 1;
+                return CARDINALITY_ONE_OR_MORE;
             case IDA:
                 return 0;
             case IEA:
@@ -90,30 +83,33 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
 
 
     public static GoEvidenceCodeEnum[] getCodeEnumForPub(String pubZdbID) {
-        if (pubZdbID.equals(GoCurationDefaultPublications.EC.zdbID())) {
+        if (pubZdbID.equals(GoDefaultPublication.EC.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
-        } else if (pubZdbID.equals(GoCurationDefaultPublications.SPKW.zdbID())) {
+        } else if (pubZdbID.equals(GoDefaultPublication.SPKW.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
-        } else if (pubZdbID.equals(GoCurationDefaultPublications.INTERPRO.zdbID())) {
+        } else if (pubZdbID.equals(GoDefaultPublication.INTERPRO.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
-        } else if (pubZdbID.equals(GoCurationDefaultPublications.ROOT.zdbID())) {
+        } else if (pubZdbID.equals(GoDefaultPublication.ROOT.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.ND};
         } else {
-            GoEvidenceCodeEnum[] returnEvidences = new GoEvidenceCodeEnum[GoEvidenceCodeEnum.values().length - 3];
+            List<GoEvidenceCodeEnum> goEvidenceCodeEnumList = new ArrayList<GoEvidenceCodeEnum>();
             int counter = 0;
             // add all but the other two
             for (GoEvidenceCodeEnum goEvidenceCodeEnum : GoEvidenceCodeEnum.values()) {
                 switch (goEvidenceCodeEnum) {
+                    // these ones are filtered out
                     case IEA:
                     case ND:
+                    case TAS:
                     case NAS:
                         break;
+                    // add all remaining
                     default:
-                        returnEvidences[counter++] = goEvidenceCodeEnum;
+                        goEvidenceCodeEnumList.add(goEvidenceCodeEnum);
                         break;
                 }
             }
-            return returnEvidences;
+            return goEvidenceCodeEnumList.toArray(new GoEvidenceCodeEnum[goEvidenceCodeEnumList.size()]);
         }
     }
 

@@ -4,7 +4,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
@@ -17,10 +16,7 @@ import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GoEvidenceCode;
-import org.zfin.mutant.InferenceGroupMember;
-import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
@@ -52,10 +48,15 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     private final static transient Logger logger = Logger.getLogger(MarkerGoEvidenceRPCServiceImpl.class);
     private transient UniprotService uniprotService = new UniprotService();
 
+    private transient GafOrganization zfinGafOrganization;
+
+    public MarkerGoEvidenceRPCServiceImpl() {
+        zfinGafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.ZFIN);
+    }
 
     @Override
     public GoEvidenceDTO getMarkerGoTermEvidenceDTO(String goTermEvidenceZdbID) {
-        MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goTermEvidenceZdbID) ;
+        MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goTermEvidenceZdbID);
         return DTOConversionService.convertToGoEvidenceDTO(markerGoTermEvidence);
     }
 
@@ -63,7 +64,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     @Override
     public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
         // retrieve
-        MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goEvidenceDTO.getZdbID()) ;
+        MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goEvidenceDTO.getZdbID());
         String oldValueString = markerGoTermEvidence.toString();
 
         HibernateUtil.createTransaction();
@@ -80,11 +81,11 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         }
         markerGoTermEvidence.setMarker(marker);
 
-        Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
+        GenericTerm goTerm = (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 //
         if (person != null) {
-            markerGoTermEvidence.setModifiedBy(person.getName());
+            markerGoTermEvidence.setModifiedBy(person);
         }
         markerGoTermEvidence.setModifiedWhen(new Date());
 
@@ -93,7 +94,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(goEvidenceDTO.getPublicationZdbID());
         markerGoTermEvidence.setSource(publication);
 
-        GoEvidenceCode goEvidenceCode = (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code", goEvidenceDTO.getEvidenceCode().name())).uniqueResult();
+        GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(goEvidenceDTO.getEvidenceCode().name());
         markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
         markerGoTermEvidence.setFlag(goEvidenceDTO.getFlag());
 
@@ -197,11 +198,9 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
                 inferenceCategory.equals(InferenceCategory.REFSEQ.name())
                 ||
                 inferenceCategory.equals(InferenceCategory.GENPEPT.name())
-                ){
+                ) {
             return NCBIEfetch.validateAccession(accession);
-        }
-        else
-        if( inferenceCategory.equals(InferenceCategory.UNIPROTKB.name()) ) {
+        } else if (inferenceCategory.equals(InferenceCategory.UNIPROTKB.name())) {
             return uniprotService.validateAccession(accession);
         }
         return true;
@@ -220,8 +219,8 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             for (Term goTerm : goTerms) {
                 GoEvidenceDTO relatedEntityDTO = new GoEvidenceDTO();
                 relatedEntityDTO.setName(goTerm.getTermName());
-                relatedEntityDTO.setZdbID(goTerm.getID());
-                relatedEntityDTO.setDataZdbID(goTerm.getID());
+                relatedEntityDTO.setZdbID(goTerm.getZdbID());
+                relatedEntityDTO.setDataZdbID(goTerm.getZdbID());
                 relatedEntityDTO.setGoTerm(DTOConversionService.convertToTermDTO(goTerm));
                 relatedEntityDTO.setPublicationZdbID(dto.getPublicationZdbID());
                 goEvidenceDTOs.add(relatedEntityDTO);
@@ -244,7 +243,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         Set<String> inferredFromSet = new TreeSet<String>();
 
         // for interpro and EC, these should come form db_links and for SP_KW, from previous inferences
-        List<MarkerGoTermEvidence> markerGoTermEvidenceList  = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbID(zdbID) ;
+        List<MarkerGoTermEvidence> markerGoTermEvidenceList = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbID(zdbID);
 
         for (MarkerGoTermEvidence markerGoTermEvidence : markerGoTermEvidenceList) {
             for (InferenceGroupMember inferenceGroupMember : markerGoTermEvidence.getInferredFrom()) {
@@ -305,6 +304,10 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         Person person = Person.getCurrentSecurityUser();
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
 
+        markerGoTermEvidence.setExternalLoadDate(null);
+        markerGoTermEvidence.setGafOrganization(zfinGafOrganization);
+        markerGoTermEvidence.setOrganizationCreatedBy(GafOrganization.OrganizationEnum.ZFIN.name());
+
         Marker marker;
         if (StringUtils.isNotEmpty(goEvidenceDTO.getMarkerDTO().getZdbID())) {
             marker = markerRepository.getMarkerByID(goEvidenceDTO.getMarkerDTO().getZdbID());
@@ -315,7 +318,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         }
 
         markerGoTermEvidence.setMarker(marker);
-        Term goTerm = (Term) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
+        GenericTerm goTerm = (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 
 //
@@ -330,15 +333,15 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
             // this is normal for test mode
         }
 
-        GoEvidenceCode goEvidenceCode = (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code", goEvidenceDTO.getEvidenceCode().name())).uniqueResult();
+        GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(goEvidenceDTO.getEvidenceCode().name());
         markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
         markerGoTermEvidence.setFlag(goEvidenceDTO.getFlag());
         markerGoTermEvidence.setNote(goEvidenceDTO.getNote());
 
 
         if (person != null) {
-            markerGoTermEvidence.setModifiedBy(person.getName());
-            markerGoTermEvidence.setCreatedBy(person.getName());
+            markerGoTermEvidence.setModifiedBy(person);
+            markerGoTermEvidence.setCreatedBy(person);
         }
 
         Date rightNow = new Date();
@@ -346,7 +349,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         markerGoTermEvidence.setCreatedWhen(rightNow);
 
         // implies that the ID is set here
-        HibernateUtil.currentSession().save(markerGoTermEvidence);
+        markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidence);
 
         // have to do this after we add inferences
         Set<String> newInferenceStrings = new TreeSet<String>(goEvidenceDTO.getInferredFrom());
@@ -395,7 +398,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
     @Override
     @SuppressWarnings("unchecked")
     public List<GoEvidenceDTO> getMarkerGoTermEvidencesForPub(String publicationID) {
-        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(publicationID) ;
+        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(publicationID);
 
         List<GoEvidenceDTO> goEvidenceDTOs = new ArrayList<GoEvidenceDTO>();
         for (MarkerGoTermEvidence markerGoTermEvidence : evidences) {

@@ -17,8 +17,8 @@ import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.service.MarkerService;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 

@@ -68,7 +68,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
 
     private String createListItem(String displayName, Term term) {
         OntologyDTO ontologyDTO = DTOConversionService.convertToOntologyDTO(term.getOntology());
-        String termID = term.getID();
+        String termID = term.getZdbID();
         StringBuilder builder = new StringBuilder(60);
         builder.append("<span onmouseover=showTermInfoString('");
         builder.append(ontologyDTO.getOntologyName());
@@ -108,19 +108,19 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * Checks if a given term is a valid anatomy term or is part of a matching term.
      * 1) Exact match
      * 2) No matching term found
-     * 3) match on more than one term. 
+     * 3) match on more than one term.
      *
      * @param term term name
      * @return TermStatus
      */
-    public TermStatus validateTerm(String term,  OntologyDTO ontologyDto) {
+    public TermStatus validateTerm(String term, OntologyDTO ontologyDto) {
 
         Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
         int foundInexactMatch = 0;
         if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
             Term termObject = OntologyManager.getInstance().getTermByID(ontology, term);
             if (termObject != null)
-                return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getTermName(), termObject.getID());
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getTermName(), termObject.getZdbID());
             else
                 foundInexactMatch = 0;
         } else {
@@ -130,7 +130,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             for (MatchingTerm anatomyItem : terms) {
                 String name = anatomyItem.getTerm().getTermName();
                 if (name.equals(term)) {
-                    return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getID());
+                    return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getZdbID());
                 } else if (foundInexactMatch < 1 || name.contains(term)) {
                     ++foundInexactMatch;
                 }
@@ -145,22 +145,22 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param request        request
-     * @param ontology       ontology name
+     * @param request  request
+     * @param ontology ontology name
      * @return suggestions
      */
-    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO ontology,boolean useIDAsValue) {
-        return getOntologySuggestions(request,  DTOConversionService.convertToOntology(ontology),useIDAsValue);
+    public SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, OntologyDTO ontology, boolean useIDAsValue) {
+        return getOntologySuggestions(request, DTOConversionService.convertToOntology(ontology), useIDAsValue);
     }
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
-     * @param request        request
-     * @param ontology       ontology name
+     * @param request  request
+     * @param ontology ontology name
      * @return suggestions
      */
-    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology,boolean useIDAsValue) {
+    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology, boolean useIDAsValue) {
         HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
@@ -170,12 +170,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             // We add one in order to add an additional term that is not displayed.
             // When it comes back we can add the '...' implying that there are more.
             // Unfortunately, Response does not have an easy fix for this other than exceeding the Response. 
-            MatchingTermService matcher = new MatchingTermService(request.getLimit()+1);
+            MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
             highlighter.setMatch(query);
             for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
                 String suggestion = term.getMatchingTermDisplay();
-                String displayName = highlighter.highlight(suggestion) ;
-                String termValue = (useIDAsValue ?  term.getTerm().getID() : term.getTerm().getTermName()) ;
+                String displayName = highlighter.highlight(suggestion);
+                String termValue = (useIDAsValue ? term.getTerm().getZdbID() : term.getTerm().getTermName());
                 suggestions.add(new ItemSuggestion(displayName, termValue));
             }
         }
@@ -207,19 +207,19 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param req request that holds the query string.
      * @return response
      */
-    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, Map<String,String> options) {
+    public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, Map<String, String> options) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
-            String markerView ;
+            String markerView;
             for (Marker marker : RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query)) {
-                markerView = marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>") ;
-                if(options!=null && Boolean.valueOf(options.get(LookupComposite.SHOW_TYPE))){
-                    markerView += " ["+marker.getType() + "]" ;
+                markerView = marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>");
+                if (options != null && Boolean.valueOf(options.get(LookupComposite.SHOW_TYPE))) {
+                    markerView += " [" + marker.getType() + "]";
                 }
-                suggestions.add(new ItemSuggestion(markerView , marker.getAbbreviation()));
+                suggestions.add(new ItemSuggestion(markerView, marker.getAbbreviation()));
             }
         }
         resp.setSuggestions(suggestions);
@@ -234,7 +234,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @return response
      */
     public SuggestOracle.Response getGenedomAndEFGSuggestions(SuggestOracle.Request req) {
-        return getMarkerSuggestionsForType(req,Marker.TypeGroup.GENEDOM_AND_EFG) ;
+        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM_AND_EFG);
     }
 
     /**
@@ -244,10 +244,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @return response
      */
     public SuggestOracle.Response getGenedomSuggestions(SuggestOracle.Request req) {
-        return getMarkerSuggestionsForType(req,Marker.TypeGroup.GENEDOM) ;
+        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM);
     }
 
-    public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req,Marker.TypeGroup typeGroup) {
+    public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req, Marker.TypeGroup typeGroup) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
@@ -265,15 +265,15 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
 
-     public SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req,String pubZdbID) {
+    public SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req, String pubZdbID) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-            List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query,Marker.TypeGroup.CONSTRUCT,pubZdbID );
-            Highlighter highlighter = new Highlighter(query) ;
+            List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query, Marker.TypeGroup.CONSTRUCT, pubZdbID);
+            Highlighter highlighter = new Highlighter(query);
             for (Marker marker : markers) {
 //                suggestions.add(new ItemSuggestion(marker.getAbbreviation().replaceAll(query.replace("(", "\\(").replace(")", "\\)"), "<strong>" + query + "</strong>"), marker.getAbbreviation()));
                 suggestions.add(new ItemSuggestion(highlighter.highlight(marker.getAbbreviation()), marker.getAbbreviation()));
@@ -357,12 +357,12 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No Ontology [" + ontologyDTO.getOntologyName() + "] found!");
             return null;
         }
-        Term ontologyTerm = OntologyManager.getInstance().getTermByName(ontology, termName,true);
+        Term ontologyTerm = OntologyManager.getInstance().getTermByName(termName, ontology, true);
         if (ontologyTerm == null) {
             logger.warn("No term " + termName + " in ontology [" + ontology.getOntologyName() + " in Ontology Manager found!");
             return null;
         }
-        GenericTerm term = getInfrastructureRepository().getTermByID(ontologyTerm.getID());
+        GenericTerm term = getInfrastructureRepository().getTermByID(ontologyTerm.getZdbID());
         if (term == null) {
             logger.warn("No term " + termName + " found!");
             return null;
@@ -428,8 +428,8 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             relatedEntityDTOs.add(spacer);
         }
         for (Marker m : markers) {
-            MarkerDTO markerDTO = DTOConversionService.convertToMarkerDTO(m) ;
-            markerDTO.setName(m.getAbbreviation() + "["+m.getType() +"]");
+            MarkerDTO markerDTO = DTOConversionService.convertToMarkerDTO(m);
+            markerDTO.setName(m.getAbbreviation() + "[" + m.getType() + "]");
             relatedEntityDTOs.add(markerDTO);
         }
 
@@ -459,23 +459,23 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     }
 
 
-    public Map<String,String> getAllZfinProperties(){
-        Map<String,String> allZfinProperties = new HashMap<String,String>() ;
-        for(ZfinPropertiesEnum zfinProperties: ZfinPropertiesEnum.values()){
-            allZfinProperties.put(zfinProperties.name(),zfinProperties.value()) ;
+    public Map<String, String> getAllZfinProperties() {
+        Map<String, String> allZfinProperties = new HashMap<String, String>();
+        for (ZfinPropertiesEnum zfinProperties : ZfinPropertiesEnum.values()) {
+            allZfinProperties.put(zfinProperties.name(), zfinProperties.value());
         }
-        return allZfinProperties ;
+        return allZfinProperties;
     }
 
 
-    public TermDTO getTermByName(OntologyDTO ontologyDTO,String value) {
-        Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO) ;
+    public TermDTO getTermByName(OntologyDTO ontologyDTO, String value) {
+        Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
 
         Term term = null;
         for (Iterator<Ontology> iterator = ontology.getIndividualOntologies().iterator();
              iterator.hasNext() && term == null;) {
             ontology = iterator.next();
-            term = OntologyManager.getInstance().getTermByName(ontology, value, true);
+            term = OntologyManager.getInstance().getTermByName(value, ontology, true);
         }
         if (term == null) {
             if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
