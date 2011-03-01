@@ -35,7 +35,7 @@ import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
-import org.zfin.ontology.datatransfer.service.GafParserUnitTest;
+import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;

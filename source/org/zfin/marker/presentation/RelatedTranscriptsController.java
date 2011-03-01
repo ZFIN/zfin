@@ -5,7 +5,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

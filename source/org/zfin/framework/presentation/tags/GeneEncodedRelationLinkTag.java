@@ -7,7 +7,7 @@ import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;

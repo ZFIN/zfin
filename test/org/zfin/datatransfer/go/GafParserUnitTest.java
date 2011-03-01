@@ -1,4 +1,4 @@
-package org.zfin.ontology.datatransfer.service;
+package org.zfin.datatransfer.go;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;

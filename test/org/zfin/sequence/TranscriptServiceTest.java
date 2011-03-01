@@ -9,6 +9,7 @@ import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.Set;
 

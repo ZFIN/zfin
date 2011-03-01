@@ -13,7 +13,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.TranscriptType;
 import org.zfin.people.Person;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

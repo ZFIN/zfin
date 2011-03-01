@@ -24,6 +24,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.MountedWublastBlastService;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
 

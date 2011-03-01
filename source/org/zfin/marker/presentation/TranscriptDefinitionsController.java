@@ -3,7 +3,7 @@ package org.zfin.marker.presentation;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

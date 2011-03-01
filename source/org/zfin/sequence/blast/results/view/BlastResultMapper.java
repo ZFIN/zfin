@@ -21,6 +21,7 @@ import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.DatabaseNameComparator;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.*;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
 

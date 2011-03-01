@@ -19,6 +19,7 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
 

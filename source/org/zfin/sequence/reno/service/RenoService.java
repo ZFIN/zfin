@@ -1,4 +1,4 @@
-package org.zfin.sequence.reno;
+package org.zfin.sequence.reno.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +18,9 @@ import org.zfin.sequence.LinkageGroup;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
+import org.zfin.sequence.reno.RedundancyRun;
+import org.zfin.sequence.reno.Run;
+import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.repository.RenoRepository;
 

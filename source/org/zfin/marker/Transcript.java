@@ -2,7 +2,7 @@ package org.zfin.marker;
 
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.TranscriptDBLink;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.ArrayList;
 import java.util.List;

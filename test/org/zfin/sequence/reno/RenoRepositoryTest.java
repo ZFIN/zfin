@@ -13,6 +13,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.Date;
 import java.util.HashMap;

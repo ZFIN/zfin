@@ -1,4 +1,4 @@
-package org.zfin.sequence;
+package org.zfin.sequence.service;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
@@ -13,6 +13,7 @@ import org.zfin.orthology.Species;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.*;
 
 import java.util.*;
 

@@ -16,7 +16,7 @@ import org.zfin.marker.presentation.TranscriptAddBean;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.TranscriptService;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.util.List;
 
