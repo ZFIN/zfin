@@ -5,7 +5,7 @@
 <%
 
     AnatomyItem item = new AnatomyItem();
-    item.setName("Brain");
+    item.setTermName("Brain");
     AnatomySearchBean bean = new AnatomySearchBean();
     bean.setAnatomyItem(item);
     pageContext.setAttribute("ao", bean, PageContext.PAGE_SCOPE);

@@ -207,7 +207,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
             result.setEndStage(end);
             Term term = new GenericTerm();
             term.setTermName(Term.UNSPECIFIED);
-            term.setID("ZDB-TERM-100331-1055");
+            term.setZdbID("ZDB-TERM-100331-1055");
 
             result.setSuperterm(term);
 
@@ -249,9 +249,9 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void getAnatomyForMarker(){
+    public void getAnatomyForMarker() {
 
-        String zdbID = "ZDB-GENE-980526-333" ;
+        String zdbID = "ZDB-GENE-980526-333";
         String sql = "SELECT distinct anatitem_zdb_id, anatitem_name_order " +
                 "FROM " +
                 "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item " +
@@ -265,18 +265,18 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 "AND exp_zdb_id = genox_exp_zdb_id and exp_name = :experiment  " +
                 "AND geno_zdb_id  = genox_geno_zdb_id " +
                 "AND geno_is_wildtype = :wildType " +
-                "ORDER BY anatitem_name_order asc"  ;
+                "ORDER BY anatitem_name_order asc";
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("zdbID",zdbID)
-                .setParameter("experiment","_Standard")
-                .setBoolean("expressionFound",true)
-                .setBoolean("wildType",true)
-                .list() ;
-        List<AnatomyItem> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID) ;
-        assertEquals(termZdbIds.size(),anatomyItems.size());
+                .setParameter("zdbID", zdbID)
+                .setParameter("experiment", "_Standard")
+                .setBoolean("expressionFound", true)
+                .setBoolean("wildType", true)
+                .list();
+        List<AnatomyItem> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID);
+        assertEquals(termZdbIds.size(), anatomyItems.size());
 
-        for(int i = 0 ; i < termZdbIds.size() ; i++){
-            assertEquals(termZdbIds.get(i)[0],anatomyItems.get(i).getZdbID());
+        for (int i = 0; i < termZdbIds.size(); i++) {
+            assertEquals(termZdbIds.get(i)[0], anatomyItems.get(i).getZdbID());
         }
 
     }

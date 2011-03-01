@@ -11,15 +11,11 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
-import org.zfin.feature.presentation.LabFeaturePrefixRow;
-import org.zfin.feature.presentation.LineDesignationBean;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.people.FeatureSource;
 import org.zfin.people.Lab;
-import org.zfin.people.LabFeaturePrefix;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -29,9 +25,9 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
-public class FeatureRepositoryTest extends AbstractDatabaseTest{
+public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(FeatureRepositoryTest.class) ;
+    private Logger logger = Logger.getLogger(FeatureRepositoryTest.class);
 
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 
@@ -49,12 +45,12 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
         String[] pubIdList = new String[]{
                 "ZDB-PUB-970210-18",
                 "ZDB-PUB-100702-19", // has features with null prefixes
-        } ;
-        for(String pubID: pubIdList){
+        };
+        for (String pubID : pubIdList) {
             List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
 
             assertNotNull("feature list exists", features);
-            assertTrue("has features", features.size()>0);
+            assertTrue("has features", features.size() > 0);
         }
 
     }
@@ -69,49 +65,49 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
         List<FeatureMarkerRelationship> features = featureRepository.getFeatureRelationshipsByPublication(pubID);
 
         assertNotNull("feature list exists", features);
-        assertTrue("has features marker relationships", features.size()>0);
+        assertTrue("has features marker relationships", features.size() > 0);
 
     }
 
     @Test
-    public void getFeatureRelationshipTypesForPointMutationType(){
-        List<String> pointMutantTypes = new ArrayList<String>() ;
-        pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString()) ;
+    public void getFeatureRelationshipTypesForPointMutationType() {
+        List<String> pointMutantTypes = new ArrayList<String>();
+        pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
 
-        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.POINT_MUTATION) ;
-        assertTrue(CollectionUtils.isEqualCollection(pointMutantTypes,types)) ;
+        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.POINT_MUTATION);
+        assertTrue(CollectionUtils.isEqualCollection(pointMutantTypes, types));
     }
 
     @Test
-    public void getFeatureRelationshipTypesForTransgenicInsertionType(){
-        List<String> tgInsertionTypes = new ArrayList<String>() ;
-        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString()) ;
-        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString()) ;
-        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString()) ;
+    public void getFeatureRelationshipTypesForTransgenicInsertionType() {
+        List<String> tgInsertionTypes = new ArrayList<String>();
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
 
-        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION) ;
-        assertTrue(CollectionUtils.isEqualCollection(tgInsertionTypes,types)) ;
+        List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
+        assertTrue(CollectionUtils.isEqualCollection(tgInsertionTypes, types));
     }
 
     @Test
-    public void getMarkersForFeatureRelationAndSource(){
-        List<Marker> markers = featureRepository.getMarkersForFeatureRelationAndSource("is allele of","ZDB-PUB-090324-13");
-        List<Marker> attributedMarkers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13") ;
-        assertEquals(attributedMarkers.size(),markers.size()) ;
-        assertTrue(CollectionUtils.isEqualCollection(attributedMarkers,markers)) ;
+    public void getMarkersForFeatureRelationAndSource() {
+        List<Marker> markers = featureRepository.getMarkersForFeatureRelationAndSource("is allele of", "ZDB-PUB-090324-13");
+        List<Marker> attributedMarkers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13");
+        assertEquals(attributedMarkers.size(), markers.size());
+        assertTrue(CollectionUtils.isEqualCollection(attributedMarkers, markers));
     }
 
     @Test
-    public void getFeaturePrefixes(){
-        List<String> featurePrefixes = featureRepository.getAllFeaturePrefixes() ;
-        assertTrue(featurePrefixes.size()>100);
-        assertTrue(featurePrefixes.size()<300);
+    public void getFeaturePrefixes() {
+        List<String> featurePrefixes = featureRepository.getAllFeaturePrefixes();
+        assertTrue(featurePrefixes.size() > 100);
+        assertTrue(featurePrefixes.size() < 300);
     }
 
     @Test
-    public void getPrefixForLab(){
-        assertEquals("b",featureRepository.getCurrentPrefixForLab("ZDB-LAB-970408-1")); // westerfield
-        assertEquals("w",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
+    public void getPrefixForLab() {
+        assertEquals("b", featureRepository.getCurrentPrefixForLab("ZDB-LAB-970408-1")); // westerfield
+        assertEquals("w", featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
     }
 
     // TODO: fix durin line designation edit phase.  Was getting a weird trigger error
@@ -126,48 +122,48 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
 //    }
 
     @Test
-    public void getAllFeaturePrefixesWithDesignations(){
-        List<FeaturePrefixLight> featurePrefixLights = featureRepository.getFeaturePrefixWithLabs() ;
-        boolean containsEd = false ;
-        boolean containsEr = false ;
-        boolean containsSb = false ;
-        boolean containsUt = false ;
-        for(FeaturePrefixLight featurePrefixLight: featurePrefixLights){
-            if(featurePrefixLight.getPrefix().equals("ba"))   {
-                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+    public void getAllFeaturePrefixesWithDesignations() {
+        List<FeaturePrefixLight> featurePrefixLights = featureRepository.getFeaturePrefixWithLabs();
+        boolean containsEd = false;
+        boolean containsEr = false;
+        boolean containsSb = false;
+        boolean containsUt = false;
+        for (FeaturePrefixLight featurePrefixLight : featurePrefixLights) {
+            if (featurePrefixLight.getPrefix().equals("ba")) {
+                assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
-            if(featurePrefixLight.getPrefix().equals("bc"))   {
-                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            if (featurePrefixLight.getPrefix().equals("bc")) {
+                assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
-           if(featurePrefixLight.getPrefix().equals("be"))   {
-               assertTrue(featurePrefixLight.getLabList().size()>0) ;
-           }
-            if(featurePrefixLight.getPrefix().equals("bi"))   {
-                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            if (featurePrefixLight.getPrefix().equals("be")) {
+                assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
-            if(featurePrefixLight.getPrefix().equals("bk"))   {
-                assertTrue(featurePrefixLight.getLabList().size()>0) ;
+            if (featurePrefixLight.getPrefix().equals("bi")) {
+                assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
-            if(featurePrefixLight.getPrefix().equals("ed"))   {
+            if (featurePrefixLight.getPrefix().equals("bk")) {
+                assertTrue(featurePrefixLight.getLabList().size() > 0);
+            }
+            if (featurePrefixLight.getPrefix().equals("ed")) {
                 assertNull(featurePrefixLight.getLabList());
-                containsEd = true ;
+                containsEd = true;
             }
-            if(featurePrefixLight.getPrefix().equals("er"))   {
+            if (featurePrefixLight.getPrefix().equals("er")) {
                 assertNull(featurePrefixLight.getLabList());
-                containsEr = true ;
+                containsEr = true;
             }
-            if(featurePrefixLight.getPrefix().equals("sb"))   {
+            if (featurePrefixLight.getPrefix().equals("sb")) {
                 assertNull(featurePrefixLight.getLabList());
-                containsSb = true ;
+                containsSb = true;
             }
-            if(featurePrefixLight.getPrefix().equals("ut"))   {
+            if (featurePrefixLight.getPrefix().equals("ut")) {
                 assertNull(featurePrefixLight.getLabList());
-                containsUt = true ;
+                containsUt = true;
             }
         }
         assertNotNull(featurePrefixLights);
-        assertTrue(featurePrefixLights.size()>100);
-        assertTrue(featurePrefixLights.size()<300);
+        assertTrue(featurePrefixLights.size() > 100);
+        assertTrue(featurePrefixLights.size() < 300);
         assertTrue(containsEd);
         assertTrue(containsEr);
         assertTrue(containsSb);
@@ -176,38 +172,38 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
 
 
     @Test
-    public void getFeaturesForPrefixNoSources(){
-        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("zf") ;
-        assertTrue(featureLabEntries.size()>140);
-        assertTrue(featureLabEntries.size()<200);
+    public void getFeaturesForPrefixNoSources() {
+        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("zf");
+        assertTrue(featureLabEntries.size() > 140);
+        assertTrue(featureLabEntries.size() < 200);
     }
 
     @Test
-    public void getFeaturesForPrefixHasDominant(){
-        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("hi") ;
-        boolean hasDominant = false ;
+    public void getFeaturesForPrefixHasDominant() {
+        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("hi");
+        boolean hasDominant = false;
 
-        for(int i = 0 ; i < featureLabEntries.size() && !hasDominant ; i++){
-            if(featureLabEntries.get(i).getFeature().getAbbreviation().startsWith("d") && featureLabEntries.get(i).getFeature().getDominantFeature()){
-                hasDominant = true ;
+        for (int i = 0; i < featureLabEntries.size() && !hasDominant; i++) {
+            if (featureLabEntries.get(i).getFeature().getAbbreviation().startsWith("d") && featureLabEntries.get(i).getFeature().getDominantFeature()) {
+                hasDominant = true;
             }
         }
 
-        assertTrue(hasDominant) ;
-        assertTrue(featureLabEntries.size()>400);
-        assertTrue(featureLabEntries.size()<500);
+        assertTrue(hasDominant);
+        assertTrue(featureLabEntries.size() > 400);
+        assertTrue(featureLabEntries.size() < 500);
     }
 
     @Test
-    public void getFeaturesForPrefixShowsOtherLabs(){
-        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("a") ;
+    public void getFeaturesForPrefixShowsOtherLabs() {
+        List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("a");
 
-        assertTrue(featureLabEntries.size()>5);
-        assertTrue(featureLabEntries.size()<50);
+        assertTrue(featureLabEntries.size() > 5);
+        assertTrue(featureLabEntries.size() < 50);
 
-        for(FeatureLabEntry featureLabEntry : featureLabEntries){
-            if(featureLabEntry.getFeature().getAbbreviation().equals("a75")){
-                assertEquals("The Zon Lab",featureLabEntry.getSourceOrganization().getName());
+        for (FeatureLabEntry featureLabEntry : featureLabEntries) {
+            if (featureLabEntry.getFeature().getAbbreviation().equals("a75")) {
+                assertEquals("The Zon Lab", featureLabEntry.getSourceOrganization().getName());
                 assertTrue(featureLabEntry.getSourceOrganization().isActive());
                 assertFalse(featureLabEntry.isCurrent());
             }
@@ -216,45 +212,44 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void getLabsWithFeaturesForPrefix(){
-        List<Lab> labs = featureRepository.getLabsWithFeaturesForPrefix("b") ;
-        assertTrue(labs.size()>5);
-        assertTrue(labs.size()<20);
+    public void getLabsWithFeaturesForPrefix() {
+        List<Lab> labs = featureRepository.getLabsWithFeaturesForPrefix("b");
+        assertTrue(labs.size() > 5);
+        assertTrue(labs.size() < 20);
     }
 
 
-
     @Test
-    public void getLabsOfOriginWithPrefix(){
+    public void getLabsOfOriginWithPrefix() {
         List<Lab> labs = featureRepository.getLabsOfOriginWithPrefix();
         assertNotNull(labs);
         logger.error("number of lab: " + labs.size());
-        assertTrue(labs.size()>200); // should be around 283, otherwise closer to 300
+        assertTrue(labs.size() > 200); // should be around 283, otherwise closer to 300
         // just choose the first 5
-        for(int i = 0 ; i < 5 ; i++){
+        for (int i = 0; i < 5; i++) {
             // just test the tostring method
             labs.get(i).toString();
-            assertNotSame("Lab must have a prefix",0,featureRepository.getLabPrefixes(labs.get(i).getName()));
+            assertNotSame("Lab must have a prefix", 0, featureRepository.getLabPrefixes(labs.get(i).getName()));
         }
         // assert that affolter is not in there
     }
 
-//    s	true
+    //    s	true
 //m	false
 //sk	false
 //st	false
     @Test
-    public void getLabPrefix(){
+    public void getLabPrefix() {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes("Stainier Lab");
         assertNotNull(featurePrefixes);
-        assertEquals(4,featurePrefixes.size());
-        assertEquals("s",featurePrefixes.get(0).getPrefixString());
+        assertEquals(4, featurePrefixes.size());
+        assertEquals("s", featurePrefixes.get(0).getPrefixString());
         assertTrue(featurePrefixes.get(0).isActiveForSet());
-        assertEquals("m",featurePrefixes.get(1).getPrefixString());
+        assertEquals("m", featurePrefixes.get(1).getPrefixString());
         assertFalse(featurePrefixes.get(1).isActiveForSet());
-        assertEquals("sk",featurePrefixes.get(2).getPrefixString());
+        assertEquals("sk", featurePrefixes.get(2).getPrefixString());
         assertFalse(featurePrefixes.get(2).isActiveForSet());
-        assertEquals("st",featurePrefixes.get(3).getPrefixString());
+        assertEquals("st", featurePrefixes.get(3).getPrefixString());
         assertFalse(featurePrefixes.get(3).isActiveForSet());
     }
 
@@ -270,62 +265,61 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void getFeaturesByPrefixAndLineNumber(){
-        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b","1234"));
-        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix","1"));
-        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b","notavalidlinenumber"));
-        assertNotNull(featureRepository.getFeatureByPrefixAndLineNumber("b","1"));
+    public void getFeaturesByPrefixAndLineNumber() {
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "1234"));
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix", "1"));
+        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "notavalidlinenumber"));
+        assertNotNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "1"));
     }
 
 
     @Test
-    public void getFeaturesForLab(){
+    public void getFeaturesForLab() {
         List<Feature> features = featureRepository.getFeaturesForLab("ZDB-LAB-970408-1");
         assertNotNull(features);
-        assertTrue(features.size()<100 && features.size()>10);
+        assertTrue(features.size() < 100 && features.size() > 10);
 
     }
 
     @Test
-    public void setLabOfOriginForFeature(){
+    public void setLabOfOriginForFeature() {
 
-        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
-        String lab2ZdbID = "ZDB-LAB-970408-13" ; // kimmel
-        List<Feature> features ;
-        int size1 , size2, totalSize;
+        String lab1ZdbID = "ZDB-LAB-970408-1"; // monte
+        String lab2ZdbID = "ZDB-LAB-970408-13"; // kimmel
+        List<Feature> features;
+        int size1, size2, totalSize;
 
         try {
             HibernateUtil.createTransaction();
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertTrue(size1>0);
+            assertTrue(size1 > 0);
 
             features = featureRepository.getFeaturesForLab(lab2ZdbID);
             size2 = features.size();
-            assertTrue(size2>0);
+            assertTrue(size2 > 0);
 
-            totalSize = size1+ size2 ;
-            assertTrue(totalSize>0);
+            totalSize = size1 + size2;
+            assertTrue(totalSize > 0);
 
 
-            Lab lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID) ;
+            Lab lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID);
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for(Feature feature : features){
-                featureRepository.setLabOfOriginForFeature(lab2,feature);
+            for (Feature feature : features) {
+                featureRepository.setLabOfOriginForFeature(lab2, feature);
             }
 
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertEquals(0,size1);
+            assertEquals(0, size1);
 
             features = featureRepository.getFeaturesForLab(lab2ZdbID);
             size2 = features.size();
-            assertEquals(totalSize,size2);
+            assertEquals(totalSize, size2);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
@@ -333,32 +327,31 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void deleteLabOfOriginForFeature(){
+    public void deleteLabOfOriginForFeature() {
 
-        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
-        List<Feature> features ;
-        int size1 ;
+        String lab1ZdbID = "ZDB-LAB-970408-1"; // monte
+        List<Feature> features;
+        int size1;
 
         try {
             HibernateUtil.createTransaction();
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertTrue(size1>0);
+            assertTrue(size1 > 0);
 
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for(Feature feature : features){
+            for (Feature feature : features) {
                 featureRepository.deleteLabOfOriginForFeature(feature);
             }
 
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertEquals(0,size1);
+            assertEquals(0, size1);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
@@ -366,41 +359,40 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void addLabOfOriginForFeature(){
+    public void addLabOfOriginForFeature() {
 
-        String lab1ZdbID = "ZDB-LAB-970408-1" ; // monte
-        List<Feature> features ;
-        int size1 ;
+        String lab1ZdbID = "ZDB-LAB-970408-1"; // monte
+        List<Feature> features;
+        int size1;
 
         try {
             HibernateUtil.createTransaction();
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertTrue(size1>0);
+            assertTrue(size1 > 0);
 
-            Feature myFeature  = features.get(0);
+            Feature myFeature = features.get(0);
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for(Feature feature : features){
+            for (Feature feature : features) {
                 featureRepository.deleteLabOfOriginForFeature(feature);
             }
 
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertEquals(0,size1);
+            assertEquals(0, size1);
 
 
             int added = featureRepository.addLabOfOriginForFeature(myFeature, lab1ZdbID);
-            assertEquals(1,added);
+            assertEquals(1, added);
 
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
-            assertEquals(1,size1);
+            assertEquals(1, size1);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();

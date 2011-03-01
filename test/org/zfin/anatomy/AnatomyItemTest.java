@@ -15,13 +15,13 @@ public class AnatomyItemTest implements Serializable {
     @Test
     public void equality() {
         AnatomyItem one = new AnatomyItem();
-        one.setName("root");
+        one.setTermName("root");
 
         AnatomyItem oneOne = new AnatomyItem();
-        oneOne.setName("root");
+        oneOne.setTermName("root");
 
         AnatomyItem two = new AnatomyItem();
-        two.setName("child");
+        two.setTermName("child");
 
         assertEquals("one = one", one, one);
         assertEquals("one = oneOne", one, oneOne);

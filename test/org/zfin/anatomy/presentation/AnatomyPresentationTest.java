@@ -44,13 +44,13 @@ public class AnatomyPresentationTest {
         AnatomyItem item = new AnatomyItem();
         String zdbID = "ZDB-ANAT-051116-41";
         item.setZdbID(zdbID);
-        item.setName("amacrine cell");
+        item.setTermName("amacrine cell");
         AnatomyRelationship arOne = new AnatomyRelationship();
         arOne.setRelationship("is a");
 
         AnatomyItem relatedItemOne = new AnatomyItem();
         relatedItemOne.setZdbID("ZDB-ANAT-010921-544");
-        relatedItemOne.setName("inner nuclear layer");
+        relatedItemOne.setTermName("inner nuclear layer");
         arOne.setAnatomyItem(relatedItemOne);
 
         AnatomyRelationship arTwo = new AnatomyRelationship();
@@ -58,7 +58,7 @@ public class AnatomyPresentationTest {
 
         AnatomyItem relatedItemTwo = new AnatomyItem();
         relatedItemTwo.setZdbID("ZDB-ANAT-010921-8897");
-        relatedItemTwo.setName("yolk");
+        relatedItemTwo.setTermName("yolk");
         arTwo.setAnatomyItem(relatedItemTwo);
 
         AnatomyRelationship arThree = new AnatomyRelationship();
@@ -66,7 +66,7 @@ public class AnatomyPresentationTest {
 
         AnatomyItem relatedItemThree = new AnatomyItem();
         relatedItemThree.setZdbID("ZDB-ANAT-010921-8897");
-        relatedItemThree.setName("yolk");
+        relatedItemThree.setTermName("yolk");
         arThree.setAnatomyItem(relatedItemThree);
 
         List<AnatomyRelationship> relatedItems = new ArrayList<AnatomyRelationship>(3);
@@ -86,10 +86,10 @@ public class AnatomyPresentationTest {
         assertEquals("Number of Items for 'is a'", 2, relItems.size());
 
         AnatomyItem relItem = relItems.get(0);
-        assertEquals("Name of First Anatomy Item", "inner nuclear layer", relItem.getName());
+        assertEquals("Name of First Anatomy Item", "inner nuclear layer", relItem.getTermName());
 
         AnatomyItem relItemTwo = relItems.get(1);
-        assertEquals("Name of Second Anatomy Item", "yolk", relItemTwo.getName());
+        assertEquals("Name of Second Anatomy Item", "yolk", relItemTwo.getTermName());
 
         RelationshipPresentation presentationTwo = presentations.get(1);
         assertEquals("Relation Ship", "part of", presentationTwo.getType());
@@ -101,10 +101,10 @@ public class AnatomyPresentationTest {
      * String with white spaces added after the comma.
      * The list uses the synonym comparator to order the items (alphabetically).
      */
- @Test
+    @Test
     public void multipleSynonymList() {
         AnatomyItem item = new AnatomyItem();
-         DataAliasGroup dag1=new DataAliasGroup();
+        DataAliasGroup dag1 = new DataAliasGroup();
         dag1.setName("exact alias");
         dag1.setSignificance(1);
         AnatomySynonym syn1 = new AnatomySynonym();
@@ -112,19 +112,19 @@ public class AnatomyPresentationTest {
 
         syn1.setAliasGroup(dag1);
         AnatomySynonym syn2 = new AnatomySynonym();
-        DataAliasGroup dag2=new DataAliasGroup();
+        DataAliasGroup dag2 = new DataAliasGroup();
         dag2.setName("related alias");
         dag2.setSignificance(3);
         syn2.setName("second");
         syn2.setAliasGroup(dag2);
         AnatomySynonym syn3 = new AnatomySynonym();
-        DataAliasGroup dag3=new DataAliasGroup();
+        DataAliasGroup dag3 = new DataAliasGroup();
         dag3.setName("exact plural");
         dag3.setSignificance(2);
         syn3.setName("third");
         syn3.setAliasGroup(dag3);
         AnatomySynonym syn4 = new AnatomySynonym();
-        DataAliasGroup dag4=new DataAliasGroup();
+        DataAliasGroup dag4 = new DataAliasGroup();
         dag4.setName("related plural");
         dag4.setSignificance(4);
         syn4.setName("fourth");
@@ -190,7 +190,7 @@ public class AnatomyPresentationTest {
 
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>(1);
         AnatomyItem term = new AnatomyItem();
-        term.setName("neural rod");
+        term.setTermName("neural rod");
         terms.add(term);
 
         List<AnatomyAutoCompleteTerm> list = AnatomyPresentation.getAnatomyTermList(terms, null);
@@ -199,7 +199,7 @@ public class AnatomyPresentationTest {
             assertEquals(true, autoTerm.isMatchOnTermName());
 
         AnatomyItem termTwo = new AnatomyItem();
-        termTwo.setName("retina");
+        termTwo.setTermName("retina");
         terms.add(termTwo);
 
         list = AnatomyPresentation.getAnatomyTermList(terms, null);
@@ -220,9 +220,9 @@ public class AnatomyPresentationTest {
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
-        term.setName(firstTermName);
+        term.setTermName(firstTermName);
         AnatomyItem termTwo = new AnatomyItem();
-        termTwo.setName("retina");
+        termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
 
@@ -246,7 +246,7 @@ public class AnatomyPresentationTest {
                 assertEquals(true, autoTerm.isMatchOnTermName());
             else
                 assertEquals(false, autoTerm.isMatchOnTermName());
-                
+
         }
     }
 
@@ -262,9 +262,9 @@ public class AnatomyPresentationTest {
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
-        term.setName(firstTermName);
+        term.setTermName(firstTermName);
         AnatomyItem termTwo = new AnatomyItem();
-        termTwo.setName("retina");
+        termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
 
@@ -321,9 +321,9 @@ public class AnatomyPresentationTest {
         List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
         AnatomyItem term = new AnatomyItem();
         String firstTermName = "neural rod";
-        term.setName(firstTermName);
+        term.setTermName(firstTermName);
         AnatomyItem termTwo = new AnatomyItem();
-        termTwo.setName("retina");
+        termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
 
@@ -369,13 +369,13 @@ public class AnatomyPresentationTest {
     }
 
     @Test
-    public void wildCard(){
+    public void wildCard() {
         AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
         anatomySearchBean.setSearchTerm("bob");
-        assertEquals("bob",anatomySearchBean.getSearchTerm());
+        assertEquals("bob", anatomySearchBean.getSearchTerm());
         assertFalse(anatomySearchBean.isWildCard());
         anatomySearchBean.setSearchTerm("bob*");
         assertTrue(anatomySearchBean.isWildCard());
-        assertEquals("bob",anatomySearchBean.getSearchTerm());
+        assertEquals("bob", anatomySearchBean.getSearchTerm());
     }
 }

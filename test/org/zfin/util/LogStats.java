@@ -139,7 +139,7 @@ public class LogStats {
                 AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
                 AnatomyItem term = ar.getAnatomyTermByID(hist.getAoID());
                 if (term != null) {
-                    String termName = term.getName();
+                    String termName = term.getTermName();
                     System.out.print(termName);
                 } else
                     System.out.print(hist.getAoID());

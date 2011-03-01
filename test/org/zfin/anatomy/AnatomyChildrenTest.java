@@ -13,10 +13,10 @@ public class AnatomyChildrenTest implements Serializable {
     @Test
     public void equality() {
         AnatomyItem root = new AnatomyItem();
-        root.setName("root");
+        root.setTermName("root");
 
         AnatomyItem child = new AnatomyItem();
-        child.setName("child");
+        child.setTermName("child");
 
         AnatomyChildren one = new AnatomyChildren();
         one.setRoot(root);

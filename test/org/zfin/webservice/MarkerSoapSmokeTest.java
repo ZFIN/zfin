@@ -16,17 +16,17 @@ import static org.junit.Assert.*;
 
 /**
  */
-public class MarkerSoapSmokeTest extends WebServiceGatewaySupport{
+public class MarkerSoapSmokeTest extends WebServiceGatewaySupport {
 
-    private String url ;
+    private String url;
 
     private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
     private ObjectFactory objectFactory = new ObjectFactory();
 
-    public MarkerSoapSmokeTest(){
+    public MarkerSoapSmokeTest() {
         TestConfiguration.configure();
 
-        url = ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/webservice/definitions" ;
+        url = ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/webservice/definitions";
         marshaller = new Jaxb2Marshaller();
 
         getWebServiceTemplate().setMarshaller(marshaller);
@@ -40,73 +40,73 @@ public class MarkerSoapSmokeTest extends WebServiceGatewaySupport{
 
 
     @Test
-    public void validateWsdl() throws Exception{
-        GetMethod getMethod = new GetMethod(url + "/"+ MarkerEndpoint.WEBSERVICE_WSDL_URL) ;
+    public void validateWsdl() throws Exception {
+        GetMethod getMethod = new GetMethod(url + "/" + MarkerEndpoint.WEBSERVICE_WSDL_URL);
         HttpClient client = new HttpClient();
         int status = client.executeMethod(getMethod);
-        assertEquals(HttpStatus.SC_OK,status);
+        assertEquals(HttpStatus.SC_OK, status);
         String body = getMethod.getResponseBodyAsString();
         assertNotNull(body);
-        assertTrue(body.length()>100);
+        assertTrue(body.length() > 100);
     }
 
 
     @Test
-    public void getGeneForId() throws Exception{
-        String testZdbID = "ZDB-GENE-980526-333" ;
+    public void getGeneForId() throws Exception {
+        String testZdbID = "ZDB-GENE-980526-333";
         GeneRetrieveRequest geneRequest = objectFactory.createGeneRetrieveRequest();
         geneRequest.setGeneName(testZdbID);
-        GeneRetrieveResponse geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        GeneRetrieveResponse geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
-        assertEquals(testZdbID,geneResponse.getGene().getZdbId());
+        assertEquals(testZdbID, geneResponse.getGene().getZdbId());
     }
 
 
     @Test
-    public void getAnatomyExpressionForId() throws Exception{
-        String testZdbID = "ZDB-GENE-980526-333" ;
+    public void getAnatomyExpressionForId() throws Exception {
+        String testZdbID = "ZDB-GENE-980526-333";
         JAXBElement<String> geneRequest = objectFactory.createGeneExpressionAnatomyWildTypeRequest(testZdbID);
-        GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = (GeneExpressionAnatomyWildTypeResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = (GeneExpressionAnatomyWildTypeResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(anatomyExpressionRetrieveResponse);
         assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() > 40);
         assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() < 60);
     }
 
     @Test
-    public void getGeneForAbbreviation() throws Exception{
-        String testName = "pax6a" ;
+    public void getGeneForAbbreviation() throws Exception {
+        String testName = "pax6a";
         GeneRetrieveRequest geneRequest = objectFactory.createGeneRetrieveRequest();
         geneRequest.setGeneName("pax6a");
-        GeneRetrieveResponse geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        GeneRetrieveResponse geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
         assertEquals(testName, geneResponse.getGene().getAbbreviation());
-        assertEquals("ZDB-GENE-990415-200",geneResponse.getGene().getZdbId());
-        assertEquals(0,geneResponse.getGene().getExpressionAnatomyWildType().size());
+        assertEquals("ZDB-GENE-990415-200", geneResponse.getGene().getZdbId());
+        assertEquals(0, geneResponse.getGene().getExpressionAnatomyWildType().size());
         geneRequest.setExpressionAnatomyWildType(true);
-        geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        geneResponse = (GeneRetrieveResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
-        assertTrue(geneResponse.getGene().getExpressionAnatomyWildType().size()>40);
-        assertTrue(geneResponse.getGene().getExpressionAnatomyWildType().size()<1000);
+        assertTrue(geneResponse.getGene().getExpressionAnatomyWildType().size() > 40);
+        assertTrue(geneResponse.getGene().getExpressionAnatomyWildType().size() < 1000);
 
 
     }
 
     @Test
-    public void searchForGenesViaNetwork() throws Exception{
+    public void searchForGenesViaNetwork() throws Exception {
         GeneSearchRequest geneRequest = objectFactory.createGeneSearchRequest();
         geneRequest.setGeneName("sox1");
-        GeneSearchResponse geneResponse = (GeneSearchResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        GeneSearchResponse geneResponse = (GeneSearchResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
-        assertTrue( geneResponse.getGenes().size() > 5);
-        assertTrue( geneResponse.getGenes().size() < 100);
-        for(Gene gene : geneResponse.getGenes()){
+        assertTrue(geneResponse.getGenes().size() > 5);
+        assertTrue(geneResponse.getGenes().size() < 100);
+        for (Gene gene : geneResponse.getGenes()) {
             assertTrue(gene.getAbbreviation().startsWith("sox1"));
-            assertEquals(0,gene.getExpressionAnatomyWildType().size());
+            assertEquals(0, gene.getExpressionAnatomyWildType().size());
         }
         geneRequest.setExpressionAnatomyWildType(true);
-        geneResponse = (GeneSearchResponse) getWebServiceTemplate().marshalSendAndReceive(url,geneRequest);
+        geneResponse = (GeneSearchResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
-        for(Gene gene : geneResponse.getGenes()){
+        for (Gene gene : geneResponse.getGenes()) {
             assertTrue(gene.getAbbreviation().startsWith("sox1"));
         }
     }

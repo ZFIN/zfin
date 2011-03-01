@@ -49,7 +49,7 @@
 <%
     AnatomyItem item = new AnatomyItem();
     item.setZdbID("ZDB-ANAT-010921-415");
-    item.setName("brain");
+    item.setTermName("brain");
 
     AnatomySearchBean bean = new AnatomySearchBean();
     bean.setAnatomyItem(item);

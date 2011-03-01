@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
-public class AnatomyRepositoryTest extends AbstractDatabaseTest{
+public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     /**
      * Check that synonyms are not of group 'secondary id'
@@ -52,9 +52,9 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest{
     public void getAnatomyRelationships() {
         String termName = "neural rod";
         AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
-
-        List<AnatomyRelationship> relatedTerms = item.getAnatomyRelations();
-        assertTrue(relatedTerms != null);
+        List<AnatomyRelationship> anatomyRelationships = getAnatomyRepository().getAnatomyRelationships(item);
+        assertNotNull(anatomyRelationships);
+        assertTrue(anatomyRelationships.size() > 0);
 
     }
 
@@ -132,7 +132,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest{
         assertTrue(terms != null);
         assertEquals(1, terms.size());
         // adaxial cell develops from
-        assertEquals("migratory slow muscle precursor cell", terms.get(0).getName());
+        assertEquals("migratory slow muscle precursor cell", terms.get(0).getTermName());
     }
 
     @Test
@@ -146,9 +146,9 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest{
         assertTrue(terms != null);
         assertEquals(3, terms.size());
         // adaxial cell develops from
-        assertEquals("migratory slow muscle precursor cell", terms.get(0).getName());
-        assertEquals("myotome", terms.get(1).getName());
-        assertEquals("slow muscle myoblast", terms.get(2).getName());
+        assertEquals("migratory slow muscle precursor cell", terms.get(0).getTermName());
+        assertEquals("myotome", terms.get(1).getTermName());
+        assertEquals("slow muscle myoblast", terms.get(2).getTermName());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest{
     public void getSubstructureAntibodies() {
         String aoTermName = "cranium";
         Term term = new GenericTerm();
-        term.setID("ZDB-TERM-100331-706");
+        term.setZdbID("ZDB-TERM-100331-706");
         term.setTermName(aoTermName);
         assertNotNull(term);
 
@@ -189,7 +189,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest{
     }
 
     @Test
-    public void getAnatomyItemStatisticsByStage(){
+    public void getAnatomyItemStatisticsByStage() {
         // zygote
         String stageID = "ZDB-STAGE-010723-4";
         DevelopmentStage stage = getAnatomyRepository().getStageByID(stageID);
