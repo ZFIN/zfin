@@ -21,12 +21,14 @@ create procedure p_insert_marker_go_ev (mrkrZdbId	varchar(50),
 			  mrkrgoev_term_zdb_id, mrkrgoev_source_zdb_id,
 			  mrkrgoev_evidence_code, 
 			  mrkrgoev_date_entered, mrkrgoev_date_modified,
-                          mrkrgoev_contributed_by, mrkrgoev_modified_by)
-	          values (mrkrGOEvZdbId, mrkrZdbId,
+			  mrkrgoev_annotation_organization)
+	         select mrkrGOEvZdbId, mrkrZdbId,
                           goTermZdbId, pubZdbId,
 			  evCode, 
                           TODAY, TODAY,
-                          "ZFIN auto assignment", "ZFIN auto assignment");
+			  mrkrgoevas_pk_id
+	             from marker_go_Term_Evidence_annotation_organization
+  		     where mrkrgoevas_annotation_organization = 'ZFIN';
 
 
 

@@ -76,7 +76,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql\
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql\
 	       add_ab_ao_fast_search.sql create_all_terms_contains.sql 
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql  
