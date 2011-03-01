@@ -31,7 +31,7 @@ public interface PublicationRepository extends PaginationParameter {
      * a term 'abstractText' in its abstract. This count is
      * done case insensitive.
      *
-     * @param abstractText  text
+     * @param abstractText text
      * @return number of publications
      */
     int getNumberOfPublications(String abstractText);
@@ -48,7 +48,7 @@ public interface PublicationRepository extends PaginationParameter {
     /**
      * Retrieve all publication for a given geneID and anatomical structure.
      *
-     * @param geneID gene ID
+     * @param geneID        gene ID
      * @param anatomyItemID term ID
      */
     List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID);
@@ -108,7 +108,7 @@ public interface PublicationRepository extends PaginationParameter {
      * limits the result set.
      *
      * @param zdbID  of the anatomy term.
-     * @param maxRow  max number of records
+     * @param maxRow max number of records
      * @return list of markers
      */
     List<Marker> getAllExpressedMarkers(String zdbID, int maxRow);
@@ -117,9 +117,9 @@ public interface PublicationRepository extends PaginationParameter {
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
      * @param anatomyTerm term
-     * @param firstRow  first   record
-     * @param maxRow          last record
-     * @return   marker statistics
+     * @param firstRow    first   record
+     * @param maxRow      last record
+     * @return marker statistics
      */
     PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm, int firstRow, int maxRow);
 
@@ -127,7 +127,7 @@ public interface PublicationRepository extends PaginationParameter {
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
      * @param anatomyTerm term
-     * @return  marker statistics
+     * @return marker statistics
      */
     PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm);
 
@@ -493,4 +493,5 @@ public interface PublicationRepository extends PaginationParameter {
 
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
+    List<Publication> getPublicationByPmid(String pubMedID);
 }

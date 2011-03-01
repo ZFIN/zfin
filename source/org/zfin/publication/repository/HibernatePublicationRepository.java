@@ -127,7 +127,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public int getNumberOfExpressedGenePublications(String geneID, String anatomyItemID) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT count(distinct pub) FROM Publication pub, ExpressionExperiment exp, ExpressionResult res, Marker marker   " +
-                "WHERE res.superterm.ID = :aoZdbID " +
+                "WHERE res.superterm.zdbID = :aoZdbID " +
                 "AND pub.zdbID = exp.publication.zdbID " +
                 "AND res.expressionExperiment = exp " +
                 "AND marker.zdbID = exp.gene.zdbID " +
@@ -142,7 +142,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT count(distinct exp.publication) " +
                 "FROM ExpressionExperiment exp, ExpressionResult res " +
-                "WHERE res.superterm.ID = :aoZdbID " +
+                "WHERE res.superterm.zdbID = :aoZdbID " +
                 "AND res.expressionExperiment = exp " +
                 "AND res.figures is not empty " +
                 "AND exp.gene.zdbID = :zdbID ";
@@ -189,7 +189,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "select distinct probe, marker " +
                 "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker marker " +
-                "WHERE  res.superterm.ID = :ID " +
+                "WHERE  res.superterm.zdbID = :ID " +
                 "AND res.expressionExperiment = exp " +
                 "AND exp.probe = clone " +
                 "AND exp.gene = marker " +
@@ -197,7 +197,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "ORDER by marker.abbreviationOrder  ";
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
-        query.setString("ID", term.getID());
+        query.setString("ID", term.getZdbID());
         ScrollableResults results = query.scroll();
 
 
@@ -228,7 +228,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 //                "ORDER BY marker.abbreviationOrder";
 
         String hql = "SELECT distinct marker FROM Marker marker, ExpressionResult res  " +
-                "WHERE (res.superterm.ID = :zdbID OR res.subterm.ID = :zdbID )" +
+                "WHERE (res.superterm.zdbID = :zdbID OR res.subterm.zdbID = :zdbID )" +
                 "AND res.expressionExperiment.gene.zdbID = marker.zdbID " +
                 "ORDER BY marker.abbreviationOrder";
 
@@ -302,7 +302,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.addScalar("geneID", Hibernate.STRING);
         query.addScalar("geneSymbol", Hibernate.STRING);
         query.addScalar("numOfFig", Hibernate.INTEGER);
-        query.setParameter("termID", anatomyTerm.getID());
+        query.setParameter("termID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
         query.setString("condition", Experiment.STANDARD);
@@ -833,8 +833,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             Criteria criteria = session.createCriteria(Journal.class);
             criteria.add(Restrictions.eq("name", journalTitle));
             return (Journal) criteria.uniqueResult();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("failed to get journal title[" + journalTitle + "] returning null", e);
             return null;
         }
@@ -1430,7 +1429,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         if (maxResults >= 0) {
             query.setMaxResults(maxResults);
         }
-        return  query.list();
+        return query.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -1453,7 +1452,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " order by p.publicationDate desc " +
                 "";
         Query query = session.createQuery(hql);
-        query.setInteger("attempts",maxAttempts) ;
+        query.setInteger("attempts", maxAttempts);
         if (maxResults >= 0) {
             query.setMaxResults(maxResults);
         }
@@ -1461,16 +1460,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<DOIAttempt> getDOIAttemptsFromPubs(List<Publication> publicationList){
-        if(CollectionUtils.isEmpty(publicationList)){
+    public List<DOIAttempt> getDOIAttemptsFromPubs(List<Publication> publicationList) {
+        if (CollectionUtils.isEmpty(publicationList)) {
             return new ArrayList<DOIAttempt>();
         }
         Session session = HibernateUtil.currentSession();
         String hql = " select da from DOIAttempt da   " +
                 " where da.publication in (:publicationList) " +
-                "" ;
-        Query query = session.createQuery(hql) ;
-        query.setParameterList("publicationList",publicationList) ;
+                "";
+        Query query = session.createQuery(hql);
+        query.setParameterList("publicationList", publicationList);
         return query.list();
     }
 
@@ -1478,27 +1477,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     /**
      * This class creates DOI attempts for pubs without previous DOI attempt entries.
      */
-    public List<DOIAttempt> createDOIAttemptsForPubs(List<Publication> publicationList){
-        if(CollectionUtils.isEmpty(publicationList)){
+    public List<DOIAttempt> createDOIAttemptsForPubs(List<Publication> publicationList) {
+        if (CollectionUtils.isEmpty(publicationList)) {
             return new ArrayList<DOIAttempt>();
         }
         Session session = HibernateUtil.currentSession();
         String hql = " select p from Publication p " +
                 " where not exists ( select 'x' from DOIAttempt da where da.publication = p ) " +
                 " and p in (:publicationList) " +
-                "" ;
-        Query query = session.createQuery(hql) ;
-        query.setParameterList("publicationList",publicationList) ;
+                "";
+        Query query = session.createQuery(hql);
+        query.setParameterList("publicationList", publicationList);
         List<Publication> publications = query.list();
         List<DOIAttempt> doiAttempts = new ArrayList<DOIAttempt>();
-        for(Publication publication: publications){
+        for (Publication publication : publications) {
             DOIAttempt doiAttempt = new DOIAttempt();
             doiAttempt.setNumAttempts(1); // probably will be null, though
             doiAttempt.setPublication(publication); // probably will be null, though
-            HibernateUtil.currentSession().save(doiAttempt) ;
-            doiAttempts.add(doiAttempt) ;
+            HibernateUtil.currentSession().save(doiAttempt);
+            doiAttempts.add(doiAttempt);
         }
-        return doiAttempts ;
+        return doiAttempts;
     }
 
     @SuppressWarnings("unchecked")
@@ -1509,14 +1508,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * We only want 2 SQL update passes (one for insert and one for update) at most.
      */
     public List<Publication> addDOIAttempts(List<Publication> publicationList) {
-        List<DOIAttempt> doiAttempts = getDOIAttemptsFromPubs(publicationList) ;
-        for(DOIAttempt doiAttempt: doiAttempts){
+        List<DOIAttempt> doiAttempts = getDOIAttemptsFromPubs(publicationList);
+        for (DOIAttempt doiAttempt : doiAttempts) {
             doiAttempt.addAttempt();
         }
 
-        createDOIAttemptsForPubs(publicationList) ;
+        createDOIAttemptsForPubs(publicationList);
 
-        return publicationList ;
+        return publicationList;
     }
 
     public PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs) {
@@ -1554,6 +1553,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         paginationResult.setTotalCount(pubList.size());
         return paginationResult;
+    }
+
+    public List<Publication> getPublicationByPmid(String pubMedID) {
+        return (List<Publication>) HibernateUtil.currentSession().createCriteria(Publication.class)
+                .add(Restrictions.eq("accessionNumber", pubMedID))
+                .list();
     }
 
 }

@@ -5,29 +5,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.WikiLoginException;
+import org.zfin.wiki.service.AntibodyWikiWebService;
 
 /**
  */
 @Controller
-@RequestMapping(value =  "/wiki")
+@RequestMapping(value = "/wiki")
 public class WikiLinkController {
 
-    private Logger logger = Logger.getLogger(WikiLinkController.class) ;
+    private Logger logger = Logger.getLogger(WikiLinkController.class);
 
     @RequestMapping(value = "/wikiLink/{name}")
-    protected String getWikiLink(@PathVariable String name,Model model) throws Exception {
+    protected String getWikiLink(@PathVariable String name, Model model) throws Exception {
 
-        model.addAttribute("name",name) ;
+        model.addAttribute("name", name);
         try {
-            String url = AntibodyWikiWebService.getInstance().getWikiLink(name) ;
-            model.addAttribute("url",url) ;
+            String url = AntibodyWikiWebService.getInstance().getWikiLink(name);
+            model.addAttribute("url", url);
         } catch (WikiLoginException e1) {
-            logger.error("problem showing antibody wiki link: "+name,e1) ;
-            model.addAttribute("url",null) ;
+            logger.error("problem showing antibody wiki link: " + name, e1);
+            model.addAttribute("url", null);
         }
 
-        return "wiki/wiki-link.insert" ;
+        return "wiki/wiki-link.insert";
     }
 }
