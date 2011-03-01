@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.wiki.RemoteBlogEntrySummary;
 import org.zfin.wiki.service.NewsWikiWebService;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.TreeSet;
+
 /**
  */
 @Controller
@@ -19,6 +23,7 @@ public class NewsLinkController {
     private Logger logger = Logger.getLogger(NewsLinkController.class);
 
     private NewsWikiWebService newsWikiWebService;
+    private NewsComparator newsComparator = new NewsComparator();
 
     @Autowired
     public NewsLinkController(NewsWikiWebService newsWikiWebService) {
@@ -37,7 +42,9 @@ public class NewsLinkController {
         }
 
         try {
-            RemoteBlogEntrySummary[] summaries = newsWikiWebService.getNewsForSpace(space);
+            RemoteBlogEntrySummary[] newsItems= newsWikiWebService.getNewsForSpace(space);
+            TreeSet<RemoteBlogEntrySummary> summaries = new TreeSet<RemoteBlogEntrySummary>(newsComparator)  ;
+            summaries.addAll(Arrays.asList(newsItems)) ;
             model.addAttribute("summaries", summaries);
         } catch (Exception e) {
             logger.error(e);
@@ -45,6 +52,14 @@ public class NewsLinkController {
         }
 
         return "wiki/news-summary.insert";
+    }
+
+    class NewsComparator implements Comparator<RemoteBlogEntrySummary>{
+
+        @Override
+        public int compare(RemoteBlogEntrySummary remoteBlogEntrySummary, RemoteBlogEntrySummary remoteBlogEntrySummary1) {
+            return remoteBlogEntrySummary1.getPublishDate().compareTo(remoteBlogEntrySummary.getPublishDate());
+        }
     }
 
 }
