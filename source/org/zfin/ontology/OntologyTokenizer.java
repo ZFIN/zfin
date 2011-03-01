@@ -15,20 +15,21 @@ import java.util.regex.Pattern;
  */
 public class OntologyTokenizer {
 
-    private Logger logger = Logger.getLogger(OntologyTokenizer.class) ;
+    private Logger logger = Logger.getLogger(OntologyTokenizer.class);
 
 
-//    private final int DEFAULT_MIN_TOKEN_SIZE = 3 ;
+    //    private final int DEFAULT_MIN_TOKEN_SIZE = 3 ;
     // match 3 alphanumeric
-    private final String DEFAULT_STRING_REGEXP = "(\\p{Alnum}{3,})" ;
-    private final String DEFAULT_WORD_REGEXP = "\\s+" ;
-    private final Pattern pattern = Pattern.compile(DEFAULT_STRING_REGEXP) ;
-    private int minLength = -1 ;
+    private final String DEFAULT_STRING_REGEXP = "(\\p{Alnum}{3,})";
+    private final String DEFAULT_WORD_REGEXP = "\\s+";
+    private final Pattern pattern = Pattern.compile(DEFAULT_STRING_REGEXP);
+    private int minLength = -1;
 
-    public OntologyTokenizer(){ }
+    public OntologyTokenizer() {
+    }
 
-    public OntologyTokenizer(int minLength){
-        this.minLength = minLength ;
+    public OntologyTokenizer(int minLength) {
+        this.minLength = minLength;
     }
 
 
@@ -37,92 +38,92 @@ public class OntologyTokenizer {
     //  tokenizeString: 'a' and 'b' and 'c' and 'd'
     //  tokenizeWords: 'a-b' and 'c-d'
     // where 'a-b' is larger than the minLength
-    protected Set<String> tokenizeWords(String string){
+    protected Set<String> tokenizeWords(String string) {
         Set<String> strings = new HashSet<String>(Arrays.asList(string.split(DEFAULT_WORD_REGEXP)));
-        Iterator<String> iter = strings.iterator() ;
+        Iterator<String> iter = strings.iterator();
         Set<String> returnStrings = new HashSet<String>();
-        String word ;
-        while(iter.hasNext()){
+        String word;
+        while (iter.hasNext()) {
             word = iter.next();
-            if(word.startsWith("(")){
-                word = word.substring(1) ;
+            if (word.startsWith("(")) {
+                word = word.substring(1);
             }
-            if(word.endsWith(")")){
-                word = word.substring(0,word.length()-1) ;
+            if (word.endsWith(")")) {
+                word = word.substring(0, word.length() - 1);
             }
-            if(word.trim().length()>=minLength){
-                returnStrings.add(word) ;
+            if (word.trim().length() >= minLength) {
+                returnStrings.add(word);
             }
         }
-        return returnStrings ;
+        return returnStrings;
     }
 
-    protected Set<String> tokenizeStrings(String string){
-        Matcher matcher = pattern.matcher(string) ;
+    protected Set<String> tokenizeStrings(String string) {
+        Matcher matcher = pattern.matcher(string);
 
-        Set<String> returnStrings = new HashSet<String>() ;
+        Set<String> returnStrings = new HashSet<String>();
 
-        while(matcher.find()){
-            returnStrings.add(matcher.group()) ;
+        while (matcher.find()) {
+            returnStrings.add(matcher.group());
         }
 
-        return returnStrings ;
+        return returnStrings;
     }
 
-    protected Set<String> tokenize(String string){
-        Set<String> tokens = tokenizeStrings(string) ;
-        tokens.addAll(tokenizeWords(string)) ;
-        return tokens ;
+    protected Set<String> tokenize(String string) {
+        Set<String> tokens = tokenizeStrings(string);
+        tokens.addAll(tokenizeWords(string));
+        return tokens;
     }
 
     public int tokenizeTerm(Term term, PatriciaTrieMultiMap<Term> termMap) {
-        String exactTerm = term.getTermName().toLowerCase() ;
+        String exactTerm = term.getTermName().toLowerCase();
 
-        int count = 0 ;
+        int count = 0;
 
-        count += tokenizeTerm(exactTerm,term,termMap) ;
+        count += tokenizeTerm(exactTerm, term, termMap);
 
 
         // handle aliases
-        if(term.getAliases()!=null){
+        if (term.getAliases() != null) {
             // handle alias tokens
-            for(TermAlias alias : term.getAliases()){
-                String aliasTerm = alias.getAlias().toLowerCase()  ;
-                count+= tokenizeTerm(aliasTerm,alias.getTerm(),termMap);
+            for (TermAlias alias : term.getAliases()) {
+                String aliasTerm = alias.getAlias().toLowerCase();
+                count += tokenizeTerm(aliasTerm, alias.getTerm(), termMap);
             }
 
         }
 
-        return count ;
+        return count;
 
     }
 
     private int tokenizeTerm(String exactTerm, Term term, PatriciaTrieMultiMap<Term> termMap) {
-        int count = 0 ;
+        int count = 0;
 
         // handle tokens
-        for(String termName : tokenize(exactTerm)){
+        for (String termName : tokenize(exactTerm)) {
             try {
-                termMap.put(termName,term);
-                ++count ;
+                termMap.put(termName, term);
+                ++count;
             } catch (Exception e) {
-                logger.error("failed to add tokenized word: ["+termName+"] from ["+exactTerm+"]",e);
+                logger.error("failed to add tokenized word: [" + termName + "] from [" + exactTerm + "]", e);
             }
         }
 
         try {
-            if(term.getID()!=null){
+            if (term.getZdbID() != null) {
                 // add internal ID and OBO id to map for lookup purposes.
-                termMap.put(term.getID(),term) ;
-                ++count ;
-                termMap.put(term.getOboID(),term) ;
+                termMap.put(term.getZdbID(), term);
+                ++count;
+                termMap.put(term.getOboID(), term);
             }
-            termMap.put(exactTerm,term) ;
-            ++count ;
+            termMap.put(exactTerm, term);
+            ++count;
         } catch (Exception e) {
-            logger.error("failed to add word: ["+exactTerm+"] from term["+term+"]",e);
+            logger.error("failed to add word: [" + exactTerm + "] from term[" + term + "]", e);
         }
-        return count ;
+        return count;
     }
 
 }

@@ -58,7 +58,7 @@ public interface OntologyRepository {
      *
      * @return list of relationships
      */
-    List<TermRelationshipHelper> getAllRelationships();
+    List<TermRelationship> getAllRelationships();
 
     /**
      * Retrieve Term by OBO ID.
@@ -75,6 +75,12 @@ public interface OntologyRepository {
      * @return list of relationships
      */
     List<TermRelationship> getTermRelationships(Term genericTerm);
+
+    /**
+     * @param terms
+     * @return
+     */
+    List<TermRelationship> getTermRelationshipsForTerms(List<Term> terms);
 
     /**
      * Retrieve all Children terms from a given term
@@ -130,13 +136,32 @@ public interface OntologyRepository {
 
     /**
      * Retrieve a list of phenotypes that have annotations with secondary terms listed.
+     *
      * @return list of phenotypes
      */
     List<Phenotype> getPhenotypesWithSecondaryTerms();
 
     /**
      * Save a new record in the ONTOLOGY database which keeps track of versions and namespaces.
+     *
      * @param metaData meta data
      */
     void saveNewDbMetaData(OntologyMetadata metaData);
+
+    /**
+     * Finds ANY parent child relationship, regardless of distance.
+     *
+     * @param parentTerm
+     * @param childTerm
+     * @return
+     */
+    boolean isParentChildRelationshipExist(Term parentTerm, Term childTerm);
+
+    List<Term> getParentDirectTerms(Term goTerm);
+
+    List<Term> getParentTerms(Term goTerm, int distance);
+
+    List<Term> getChildDirectTerms(Term goTerm);
+
+    List<Term> getChildTerms(Term goTerm, int distance);
 }

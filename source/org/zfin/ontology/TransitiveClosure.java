@@ -63,7 +63,7 @@ public class TransitiveClosure implements Serializable, Comparable<TransitiveClo
     public int compareTo(TransitiveClosure o) {
         if (o == null)
             return -1;
-        if (getChild().getID().equals(o.getChild().getID()))
+        if (getChild().getZdbID().equals(o.getChild().getZdbID()))
             return 0;
         if (getDistance() == o.getDistance())
             return getChild().getTermName().compareToIgnoreCase(o.getChild().getTermName());

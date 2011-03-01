@@ -1,15 +1,21 @@
 package org.zfin.ontology.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.mutant.GafOrganization;
+import org.zfin.mutant.GoEvidenceCode;
+import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 
 import java.util.List;
 
 /**
  */
-public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository{
+public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository {
 
 
     @Override
@@ -19,7 +25,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 " order by zdbID ";
 
         return (List<MarkerGoTermEvidence>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("abbreviation",abbreviation)
+                .setString("abbreviation", abbreviation)
                 .list();
     }
 
@@ -43,7 +49,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     @Override
     @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbID(String publicationID) {
-        return  (List<MarkerGoTermEvidence>)
+        return (List<MarkerGoTermEvidence>)
                 HibernateUtil.currentSession().createQuery(" " +
                         " from MarkerGoTermEvidence ev where ev.source = :pubZdbID " +
                         " order by ev.marker.abbreviation , ev.goTerm.termName " +
@@ -63,4 +69,100 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                         .setString("markerZdbID", markerID)
                         .list();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public GoEvidenceCode getGoEvidenceCode(String evidenceCode) {
+        return (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code", evidenceCode)).uniqueResult();
+    }
+
+    @Override
+    public MarkerGoTermEvidence getNdExistsForGoGeneEvidenceCode(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class);
+        criteria.add(Restrictions.eq("marker.zdbID", markerGoTermEvidenceToAdd.getMarker().getZdbID()));
+        criteria.add(Restrictions.eq("goTerm.zdbID", markerGoTermEvidenceToAdd.getGoTerm().getZdbID()));
+        criteria.add(Restrictions.eq("evidenceCode.code", GoEvidenceCodeEnum.ND.name()));
+        return (MarkerGoTermEvidence) criteria.uniqueResult();
+    }
+
+    @Override
+    public GafOrganization getGafOrganization(GafOrganization.OrganizationEnum organizationEnum) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(GafOrganization.class);
+        criteria.add(Restrictions.eq("organization", organizationEnum.toString()));
+        return (GafOrganization) criteria.uniqueResult();
+    }
+
+    @Override
+    public MarkerGoTermEvidence addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+        HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
+
+        // have to do this after we add inferences
+        if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getInferredFrom())) {
+            for (InferenceGroupMember inference : markerGoTermEvidenceToAdd.getInferredFrom()) {
+                inference.setMarkerGoTermEvidenceZdbID(markerGoTermEvidenceToAdd.getZdbID());
+                HibernateUtil.currentSession().save(inference);
+            }
+        }
+
+        return markerGoTermEvidenceToAdd;
+//        for(InferenceGroupMember inferenceGroupMember: markerGoTermEvidenceToAdd.getInferredFrom()){
+//            inferenceGroupMember.setMarkerGoTermEvidenceZdbID(markerGoTermEvidenceToAdd.getZdbID());
+//            HibernateUtil.currentSession().save(inferenceGroupMember) ;
+//        }
+//            HibernateUtil.currentSession().update(markerGoTermEvidenceToAdd);
+    }
+
+    @Override
+    public void removeEvidence(MarkerGoTermEvidence markerGoTermEvidenceToRemove) {
+        HibernateUtil.currentSession().delete(markerGoTermEvidenceToRemove);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getEvidencesForGafOrganization(GafOrganization gafOrganization) {
+        String hql = " " +
+                " select ev.zdbID from MarkerGoTermEvidence ev where ev.gafOrganization = :gaf " +
+                "";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("gaf", gafOrganization)
+                .list();
+    }
+
+
+    /**
+     * Get marker go term evidences that have duplicate go, marker, pub, evdicencecode, flag, and inferences
+     *
+     * @param markerGoTermEvidenceToAdd
+     * @return Returns list of almost matching.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<MarkerGoTermEvidence> getLikeMarkerGoTermEvidencesButGo(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+        String hql = " select ev from MarkerGoTermEvidence ev " +
+                "  where  " +
+                "  ev.source = :pub " +
+                "  and " +
+                "  ev.marker = :marker " +
+                "  and " +
+                "  ev.evidenceCode = :evidenceCode " +
+                " ";
+
+        if (markerGoTermEvidenceToAdd.getFlag() != null) {
+            hql += "  and ev.flag = :flag ";
+        } else {
+            hql += " and ev.flag is null ";
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("pub", markerGoTermEvidenceToAdd.getSource())
+                .setParameter("marker", markerGoTermEvidenceToAdd.getMarker())
+                .setParameter("evidenceCode", markerGoTermEvidenceToAdd.getEvidenceCode());
+
+        if (markerGoTermEvidenceToAdd.getFlag() != null) {
+            query.setString("flag", markerGoTermEvidenceToAdd.getFlag().toString());
+        }
+
+        return (List<MarkerGoTermEvidence>) query.list();
+    }
+
 }

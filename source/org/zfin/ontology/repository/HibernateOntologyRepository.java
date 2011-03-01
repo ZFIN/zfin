@@ -12,7 +12,9 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -96,15 +98,16 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve all Relationships.
+     *
      * @return list of relationships
      */
     @SuppressWarnings({"unchecked"})
     @Override
-    public List<TermRelationshipHelper> getAllRelationships() {
+    public List<TermRelationship> getAllRelationships() {
         Session session = HibernateUtil.currentSession();
-        String hql = " select distinct relationships from TermRelationshipHelper as relationships";
+        String hql = " select distinct relationships from TermRelationship as relationships";
         Query query = session.createQuery(hql);
-        return (List<TermRelationshipHelper>) query.list();
+        return (List<TermRelationship>) query.list();
     }
 
     /**
@@ -133,33 +136,78 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @SuppressWarnings("unchecked")
     public List<TermRelationship> getTermRelationships(Term genericTerm) {
+
+        List<TermRelationship> relatedTerms = new ArrayList<TermRelationship>();
+
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(TermRelationship.class);
-        criteria.add(Restrictions.eq("termOne.ID", genericTerm.getID()));
+        criteria.add(Restrictions.eq("termOne.zdbID", genericTerm.getZdbID()));
         criteria.setFetchMode("termTwo", FetchMode.JOIN);
         criteria.setFetchMode("termTwo.definition", FetchMode.JOIN);
         List<TermRelationship> rels = (List<TermRelationship>) criteria.list();
         if (rels != null) {
             for (TermRelationship relationship : rels) {
                 RelationshipType type = RelationshipType.getInverseRelationshipByName(relationship.getType());
-                relationship.setRelationshipType(type);
+                if (type != null) {
+                    relationship.setRelationshipType(type);
+                    relatedTerms.add(relationship);
+                }
             }
         }
 
         Criteria criteriaTwo = session.createCriteria(TermRelationship.class);
-        criteriaTwo.add(Restrictions.eq("termTwo.ID", genericTerm.getID()));
+        criteriaTwo.add(Restrictions.eq("termTwo.zdbID", genericTerm.getZdbID()));
         criteriaTwo.setFetchMode("termOne", FetchMode.JOIN);
         List<TermRelationship> relationshipListTwo = (List<TermRelationship>) criteriaTwo.list();
         if (relationshipListTwo != null) {
             for (TermRelationship relationship : relationshipListTwo) {
-                RelationshipType type = RelationshipType.getRelationshipTypeByRelName(relationship.getType());
+                RelationshipType type = RelationshipType.getRelationshipTypeByDbName(relationship.getType());
                 relationship.setRelationshipType(type);
-                if (rels == null)
-                    rels = new ArrayList<TermRelationship>();
-                rels.add(relationship);
+                relatedTerms.add(relationship);
             }
         }
-        return rels;
+        return relatedTerms;
+    }
+
+    public List<TermRelationship> getTermRelationshipsForTerms(List<Term> terms) {
+        Set<String> termIds = new HashSet<String>();
+        for (Term t : terms) {
+            termIds.add(t.getZdbID());
+        }
+
+        List<TermRelationship> relatedTerms = new ArrayList<TermRelationship>();
+
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(TermRelationship.class);
+        criteria.add(Restrictions.in("termOne.zdbID", termIds));
+        criteria.setFetchMode("termTwo", FetchMode.JOIN);
+        criteria.setFetchMode("termTwo.definition", FetchMode.JOIN);
+        List<TermRelationship> rels = (List<TermRelationship>) criteria.list();
+        if (rels != null) {
+            for (TermRelationship relationship : rels) {
+                RelationshipType type = RelationshipType.getInverseRelationshipByName(relationship.getType());
+                if (type != null) {
+                    relationship.setRelationshipType(type);
+                    relatedTerms.add(relationship);
+                }
+            }
+        }
+
+        Criteria criteriaTwo = session.createCriteria(TermRelationship.class);
+        criteriaTwo.add(Restrictions.in("termTwo.zdbID", termIds));
+        criteriaTwo.setFetchMode("termOne", FetchMode.JOIN);
+        List<TermRelationship> relationshipListTwo = (List<TermRelationship>) criteriaTwo.list();
+        if (relationshipListTwo != null) {
+            for (TermRelationship relationship : relationshipListTwo) {
+                RelationshipType type = RelationshipType.getRelationshipTypeByDbName(relationship.getType());
+                relationship.setRelationshipType(type);
+                relatedTerms.add(relationship);
+            }
+        }
+
+
+        return relatedTerms;
+
     }
 
     /**
@@ -173,14 +221,14 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<? extends Term> getChildren(String termID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(TermRelationship.class);
-        criteria.add(Restrictions.eq("termOne.ID", termID));
+        criteria.add(Restrictions.eq("termOne.zdbID", termID));
         Criteria genericTerm = criteria.createCriteria("termTwo");
         genericTerm.add(Restrictions.eq("obsolete", false));
         List<TermRelationship> relationshipListTwo = (List<TermRelationship>) criteria.list();
         List<Term> terms = new ArrayList<Term>(5);
         if (relationshipListTwo != null) {
             for (TermRelationship relationship : relationshipListTwo) {
-                RelationshipType type = RelationshipType.getRelationshipTypeByRelName(relationship.getType());
+                RelationshipType type = RelationshipType.getRelationshipTypeByDbName(relationship.getType());
                 relationship.setRelationshipType(type);
                 terms.add(relationship.getTermTwo());
             }
@@ -277,7 +325,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "left outer join phenotype.subterm " +
                 "where " +
                 "((phenotype.superterm.secondary = :isSecondary) or" +
-                "(phenotype.subterm.secondary = :isSecondary) or "+
+                "(phenotype.subterm.secondary = :isSecondary) or " +
                 "(phenotype.term.secondary = :isSecondary )) ";
         Query query = session.createQuery(hql);
         query.setBoolean("isSecondary", true);
@@ -288,12 +336,62 @@ public class HibernateOntologyRepository implements OntologyRepository {
     /**
      * Save a new record in the ONTOLOGY database which keeps track of versions and namespaces.
      * It also auto-generates the order field.
+     *
      * @param metaData meta data
      */
     @Override
     public void saveNewDbMetaData(OntologyMetadata metaData) {
         Session session = HibernateUtil.currentSession();
-        metaData.setOrder(getMaxOntologyOrderNumber()+1);
+        metaData.setOrder(getMaxOntologyOrderNumber() + 1);
         session.save(metaData);
+    }
+
+    @Override
+    public boolean isParentChildRelationshipExist(Term parentTerm, Term childTerm) {
+        return null != HibernateUtil.currentSession().createCriteria(TransitiveClosure.class)
+                .add(Restrictions.eq("root", parentTerm))
+                .add(Restrictions.eq("child", childTerm))
+                .uniqueResult();
+    }
+
+    @Override
+    public List<Term> getParentDirectTerms(Term goTerm) {
+        return getParentTerms(goTerm, 1);
+    }
+
+    @Override
+    public List<Term> getParentTerms(Term goTerm, int distance) {
+        String hql = " select t from TransitiveClosure tc join tc.root as t " +
+                " where tc.child.id = :goTermId " +
+                " and tc.distance = :distance " +
+                " ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("goTermId", goTerm.getZdbID());
+        if (distance >= 0) {
+            query.setInteger("distance", distance);
+        }
+        return query.list();
+    }
+
+    @Override
+    public List<Term> getChildDirectTerms(Term goTerm) {
+        return getChildTerms(goTerm, 1);
+    }
+
+
+    @Override
+    public List<Term> getChildTerms(Term goTerm, int distance) {
+        String hql = " select t from TransitiveClosure tc join tc.child as t " +
+                " where tc.root.id = :goTermId " +
+                " and tc.distance = :distance " +
+                " ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("goTermId", goTerm.getZdbID());
+        if (distance >= 0) {
+            query.setInteger("distance", distance);
+        }
+        return query.list();
     }
 }

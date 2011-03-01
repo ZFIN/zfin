@@ -7,18 +7,20 @@ import java.io.Serializable;
  */
 public class TermRelationship implements Serializable {
 
-    private String ID;
+    private String zdbId;
     private Term termOne;
     private Term termTwo;
     private String type;
+
+    // this is unmapped helper class
     private RelationshipType relationshipType;
 
-    public String getID() {
-        return ID;
+    public String getZdbId() {
+        return zdbId;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setZdbId(String zdbId) {
+        this.zdbId = zdbId;
     }
 
     public Term getTermOne() {
@@ -37,6 +39,14 @@ public class TermRelationship implements Serializable {
         this.termTwo = termTwo;
     }
 
+    public String getTermOneID() {
+        return termOne == null ? null : termOne.getZdbID();
+    }
+
+    public String getTermTwoID() {
+        return termTwo == null ? null : termTwo.getZdbID();
+    }
+
     public String getType() {
         return type;
     }
@@ -46,11 +56,11 @@ public class TermRelationship implements Serializable {
     }
 
     public RelationshipType getRelationshipType() {
-        return RelationshipType.getRelationshipTypeByRelName(type);
+        return RelationshipType.getRelationshipTypeByDbName(type);
     }
 
     public void setRelationshipType(RelationshipType relationshipType) {
-        this.relationshipType = relationshipType;
+        type = relationshipType.getDbMappedName();
     }
 
     /**

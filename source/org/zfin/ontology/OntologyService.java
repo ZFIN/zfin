@@ -104,7 +104,7 @@ public final class OntologyService {
         for (GenericTerm genericTerm : terms) {
             String term = genericTerm.getTermName();
             OntologyAutoCompleteTerm autoCompleteTerm = new OntologyAutoCompleteTerm(term);
-            autoCompleteTerm.setID(genericTerm.getID());
+            autoCompleteTerm.setID(genericTerm.getZdbID());
             // if a match is found on the term name skip the synonym matching logic.
             if (term.toLowerCase().contains(queryString)) {
                 list.add(autoCompleteTerm);
@@ -135,8 +135,8 @@ public final class OntologyService {
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;
-		if(rel.getTermTwo() == null)
-		    log.error("No term two found for: " +rel.getID());
+                if (rel.getTermTwo() == null)
+                    log.error("No term two found for: " + rel.getZdbId());
                 if (rel.getTermTwo().equals(term)) {
                     displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
                 } else {
@@ -201,7 +201,7 @@ public final class OntologyService {
         return OntologyManager.getInstance().getDistinctRelationshipTypes(ontology);
     }
 
-    public static List<Term> getAllChildren(Term term){
+    public static List<Term> getAllChildren(Term term) {
         List<Term> allChildren = new ArrayList<Term>();
         List<Term> childrenTerms = term.getChildrenTerms();
         while (!childrenTerms.isEmpty()) {
@@ -215,6 +215,7 @@ public final class OntologyService {
         }
         return allChildren;
     }
+
     /**
      * Inner class: Comparator that compares the alias names of the AnatomySynonym
      * and orders them alphabetically.

@@ -6,17 +6,17 @@ package org.zfin.ontology;
  */
 public class MatchingTerm {
 
-    public final static String OBSOLETE_SUFFIX =" -- OBSOLETED TERM" ;
+    public final static String OBSOLETE_SUFFIX = " -- OBSOLETED TERM";
 
     private Term term;
     private TermAlias alias; // gives alias, if hit is on alias
-    private String query ;
+    private String query;
 
     public MatchingTerm(Term term, String query) {
-        this(term,query,null) ;
+        this(term, query, null);
     }
 
-    public MatchingTerm(Term term, String query , TermAlias alias) {
+    public MatchingTerm(Term term, String query, TermAlias alias) {
         this.term = term;
         this.query = query;
         this.alias = alias;
@@ -27,12 +27,12 @@ public class MatchingTerm {
     }
 
     public boolean isHitAlias() {
-        return (alias!=null && !term.getTermName().toLowerCase().contains(query)) ;
+        return (alias != null && !term.getTermName().toLowerCase().contains(query));
     }
 
 
     public boolean startsWithQuery() {
-        return (term.getTermName().toLowerCase().startsWith(query)) ;
+        return (term.getTermName().toLowerCase().startsWith(query));
     }
 
     public TermAlias getAlias() {
@@ -59,7 +59,7 @@ public class MatchingTerm {
         if (o == null || getClass() != o.getClass()) return false;
 
         MatchingTerm matchingTerm = (MatchingTerm) o;
-        return matchingTerm.getTerm().equals(getTerm()) ;
+        return matchingTerm.getTerm().equals(getTerm());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MatchingTerm {
         return term != null ? term.hashCode() : 0;
     }
 
-    public boolean isID(){
-        return term.getID().equalsIgnoreCase(query);
+    public boolean isID() {
+        return term.getZdbID().equalsIgnoreCase(query);
     }
 }

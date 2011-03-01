@@ -3,20 +3,21 @@ package org.zfin.ontology;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Basic interface definition for a term in an ontology.
  */
-public interface Term extends Comparable<Term>{
+public interface Term extends Comparable<Term>, Serializable {
 
     public static final String UNSPECIFIED = "unspecified";
     public static final String QUALITY = "quality";
 
-    String getID();
+    String getZdbID();
 
-    void setID(String id);
+    void setZdbID(String id);
 
     String getTermName();
 
@@ -48,9 +49,11 @@ public interface Term extends Comparable<Term>{
 
     Set<TermAlias> getAliases();
 
+    List<Term> getParents(String relationshipType);
+
     void setAliases(Set<TermAlias> aliases);
 
-    boolean isAliasesExist() ;
+    boolean isAliasesExist();
 
     String getDefinition();
 
@@ -62,6 +65,7 @@ public interface Term extends Comparable<Term>{
 
     /**
      * Retrieves all terms that are immediate children of this term.
+     *
      * @return list of children terms
      */
     List<Term> getChildrenTerms();

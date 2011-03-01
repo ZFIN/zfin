@@ -33,7 +33,7 @@ public class OntologyManager {
     // object to be serialized. Since every term has a relationship to all children and parents, through the
     // parents and children relationships each term is indirectly related to all terms in the Ontology
     // which would upon serialization lead to infinite loops and ultimately a StackOverflowError
-    private Map<String, List<TermRelationshipHelper>> allRelationships;
+    private Map<String, List<TermRelationship>> allRelationships;
     // distinct relationship Types used in an ontology
     private Map<Ontology, Set<String>> distinctRelationshipTypes = new HashMap<Ontology, Set<String>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
     private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
@@ -59,6 +59,10 @@ public class OntologyManager {
     public static final String RELATIONSHIP_TYPES_SER = "relationship-types.ser";
 
     private static Ontology singleOntology = null;
+
+    private static int activeCount, aliasCount, obsoleteCount;
+    private static long startTime, endTime;
+    private static Date dateStarted;
 
     /**
      * Obtain the reference to the singleton instance of this manager.
@@ -150,7 +154,7 @@ public class OntologyManager {
 
     protected void loadOntologiesFromDatabase() {
         if (singleOntology != null) {
-            List<TermRelationshipHelper> relationships = getOntologyRepository().getAllRelationships();
+            List<TermRelationship> relationships = getOntologyRepository().getAllRelationships();
             allRelationships = createRelationshipsMap(relationships);
             initSingleOntologyMap(singleOntology);
             serializeOntology(singleOntology);
@@ -176,7 +180,7 @@ public class OntologyManager {
         allRelatedChildrenMap = new HashMap<Term, List<TransitiveClosure>>(getTermOntologyMap(Ontology.ANATOMY).size());
         for (TransitiveClosure closure : closures) {
             Term root = closure.getRoot();
-            Term omRoot = getTermByID(root.getOntology(), root.getID());
+            Term omRoot = getTermByID(root.getOntology(), root.getZdbID());
             List<TransitiveClosure> children = allRelatedChildrenMap.get(omRoot);
             if (children == null)
                 children = new ArrayList<TransitiveClosure>(10);
@@ -224,7 +228,7 @@ public class OntologyManager {
     }
 
     private void serializeOntologyInThread(final Ontology ontology) {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 serializeOntology(ontology);
@@ -233,21 +237,29 @@ public class OntologyManager {
     }
 
     private void loadAndSerializeAllTermRelationships() {
-        long start = System.currentTimeMillis();
-        List<TermRelationshipHelper> relationships = getOntologyRepository().getAllRelationships();
-        allRelationships = createRelationshipsMap(relationships);
-        long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-        logger.info("Time to load relationships from database: " + time + " seconds.");
-        start = System.currentTimeMillis();
+        resetCounter();
+        List<TermRelationship> relationships = getOntologyRepository().getAllRelationships();
+        loadTermRelationships(relationships);
+        serializeTermRelationships(relationships);
+    }
+
+
+    private void serializeTermRelationships(List<TermRelationship> relationships) {
+        startTime = System.currentTimeMillis();
         File lookupFile = FileUtil.serializeObject(allRelationships,
                 FileUtil.createOntologySerializationFile(ALL_RELATIONSHIPS));
-        end = System.currentTimeMillis();
-        time = (double) (end - start) / MILLISECONDS_PER_SECOND;
+        endTime = System.currentTimeMillis();
+        double time = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
 
         logger.info("Time to serialize relationships: " + time + " seconds.");
         logger.info("Lookup file path[" + lookupFile.getAbsolutePath() + "] size: " + (lookupFile.length() / 1024) + "kB");
+    }
 
+    public void loadTermRelationships(List<TermRelationship> relationships) {
+        allRelationships = createRelationshipsMap(relationships);
+        endTime = System.currentTimeMillis();
+        double time = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
+        logger.info("Time to load relationships from database: " + time + " seconds.");
     }
 
     private void initRootOntologyMap(Ontology subOntology, Ontology rootOntology, String... rootOboIDs) {
@@ -272,17 +284,17 @@ public class OntologyManager {
             List<Term> newChildren = currentTerm.getChildrenTerms();
             if (newChildren != null && !newChildren.isEmpty()) {
                 for (Term child : newChildren) {
-                    if (children.contains(child)){
-                        logger.info("Term already processed: " + child.getTermName() + " [" + child.getID());
-                    }else{
+                    if (children.contains(child)) {
+                        logger.info("Term already processed: " + child.getTermName() + " [" + child.getZdbID());
+                    } else {
                         children.add(child);
                         childrenSet.add(child);
                     }
                 }
             }
-            Term term = getTermByID(currentTerm.getOntology(), currentTerm.getID());
+            Term term = getTermByID(currentTerm.getOntology(), currentTerm.getZdbID());
             if (term == null)
-                logger.error("Child Term <" + currentTerm.getID() + "> not found in Root ontology " + rootOntology.getOntologyName());
+                logger.error("Child Term <" + currentTerm.getZdbID() + "> not found in Root ontology " + rootOntology.getOntologyName());
             else {
                 tokenizer.tokenizeTerm(currentTerm, termMap);
                 if (currentTerm.isObsolete()) {
@@ -311,11 +323,24 @@ public class OntologyManager {
      * @param ontology Ontology
      */
     public void initSingleOntologyMap(Ontology ontology) {
-        long startTime = System.currentTimeMillis();
-        Date dateStarted = new Date();
+        resetCounter();
         List<Term> terms = getOntologyRepository().getAllTermsFromOntology(ontology);
         long nextTime = System.currentTimeMillis();
         logger.debug("time to load from DB: " + (nextTime - startTime));
+        loadTermsIntoOntology(terms, ontology);
+    }
+
+    private void resetCounter() {
+        startTime = System.currentTimeMillis();
+        dateStarted = new Date();
+        activeCount = 0;
+        aliasCount = 0;
+        obsoleteCount = 0;
+    }
+
+    public void loadTermsIntoOntology(List<Term> terms, Ontology ontology) {
+
+        long nextTime = System.currentTimeMillis();
 
         PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>();
         if (terms == null) {
@@ -323,9 +348,6 @@ public class OntologyManager {
             return;
         }
 
-        int activeCount = 0;
-        int aliasCount = 0;
-        int obsoleteCount = 0;
         for (Term term : terms) {
             tokenizer.tokenizeTerm(term, termMap);
             if (term.isObsolete()) {
@@ -337,8 +359,8 @@ public class OntologyManager {
                 aliasCount += term.getAliases().size();
             }
 
-            if(term.getAliases()!=null){
-                aliasCount += term.getAliases().size() ;
+            if (term.getAliases() != null) {
+                aliasCount += term.getAliases().size();
             }
 
         }
@@ -359,7 +381,7 @@ public class OntologyManager {
 
         logger.info("populate stage info: " + (System.currentTimeMillis() - nextTime) / MILLISECONDS_PER_SECOND + "s");
 
-        long endTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
         logLoading(ontology, startTime, endTime, dateStarted, activeCount, obsoleteCount, aliasCount,
                 termMap.keySet().size(), termMap.getAllValues().size());
     }
@@ -370,54 +392,58 @@ public class OntologyManager {
      * @param terms    all terms of a given ontology
      * @param ontology given ontology
      */
-    private void populateRelationships(Iterable<Term> terms, Ontology ontology) {
+    public void populateRelationships(Iterable<Term> terms, Ontology ontology) {
         if (ontology == Ontology.STAGE)
             return;
 
         // populate the relationships onto each term
         for (Term term : terms) {
-            List<TermRelationshipHelper> relationships = allRelationships.get(term.getID());
+            List<TermRelationship> relationships = allRelationships.get(term.getZdbID());
             if (relationships != null) {
                 List<TermRelationship> relatedTerms = new ArrayList<TermRelationship>(relationships.size());
-                for (TermRelationshipHelper helper : relationships) {
-                    Term termOne = getTermByID(helper.getTermOneID());
-                    Term termTwo = getTermByID(helper.getTermTwoID());
-                    helper.setTermOne(termOne);
-                    helper.setTermTwo(termTwo);
-                    relatedTerms.add(helper);
+                for (TermRelationship termRelationship : relationships) {
+                    // is this even necessary?
+//                    termRelationship.setTermOne(termRelationship.getTermOne());
+//                    termRelationship.setTermTwo(termRelationship.getTermTwo());
+                    relatedTerms.add(termRelationship);
                     // add relationship type to map
-                    Set<String> relationshipTypes = distinctRelationshipTypes.get(ontology);
-                    if (relationshipTypes == null)
-                        relationshipTypes = new HashSet<String>(5);
-                    relationshipTypes.add(helper.getType());
-                    distinctRelationshipTypes.put(ontology, relationshipTypes);
+                    addRelationshipType(ontology, termRelationship.getType());
                 }
                 term.setRelatedTerms(relatedTerms);
             }
         }
     }
 
+    private void addRelationshipType(Ontology ontology, String type) {
+        Set<String> relationshipTypes = distinctRelationshipTypes.get(ontology);
+        if (relationshipTypes == null) {
+            relationshipTypes = new HashSet<String>();
+        }
+        relationshipTypes.add(type);
+        distinctRelationshipTypes.put(ontology, relationshipTypes);
+    }
 
-    private Map<String, List<TermRelationshipHelper>> createRelationshipsMap(List<TermRelationshipHelper> relationships) {
-        Map<String, List<TermRelationshipHelper>> map = new HashMap<String, List<TermRelationshipHelper>>(relationships.size());
-        for (TermRelationshipHelper relationship : relationships) {
-            List<TermRelationshipHelper> relListOne;
-            relListOne = map.get(relationship.getTermOneID());
+
+    private Map<String, List<TermRelationship>> createRelationshipsMap(List<TermRelationship> relationships) {
+        Map<String, List<TermRelationship>> map = new HashMap<String, List<TermRelationship>>(relationships.size());
+        for (TermRelationship relationship : relationships) {
+            List<TermRelationship> relListOne;
+            relListOne = map.get(relationship.getTermOne().getZdbID());
             if (relListOne == null) {
                 int averageNumOfRelationships = 5;
-                relListOne = new ArrayList<TermRelationshipHelper>(averageNumOfRelationships);
+                relListOne = new ArrayList<TermRelationship>(averageNumOfRelationships);
             }
             relListOne.add(relationship);
-            map.put(relationship.getTermOneID(), relListOne);
+            map.put(relationship.getTermOne().getZdbID(), relListOne);
 
-            List<TermRelationshipHelper> relList;
-            relList = map.get(relationship.getTermTwoID());
+            List<TermRelationship> relList;
+            relList = map.get(relationship.getTermTwo().getZdbID());
             if (relList == null) {
                 int averageNumOfRelationships = 5;
-                relList = new ArrayList<TermRelationshipHelper>(averageNumOfRelationships);
+                relList = new ArrayList<TermRelationship>(averageNumOfRelationships);
             }
             relList.add(relationship);
-            map.put(relationship.getTermTwoID(), relList);
+            map.put(relationship.getTermTwo().getZdbID(), relList);
         }
         return map;
     }
@@ -537,7 +563,7 @@ public class OntologyManager {
      * @return term
      */
     public Term getTermByID(String termID) {
-        if (StringUtils.isEmpty(termID)){
+        if (StringUtils.isEmpty(termID)) {
             return null;
         }
 
@@ -573,20 +599,20 @@ public class OntologyManager {
     /**
      * Retrieve a term by name from a given ontology.
      *
-     * @param ontology ontology
-     * @param termName term name
+     * @param termName      term name
+     * @param ontology      ontology
      * @param allowObsolete include obsolete term in the search.
      * @return term
      */
-    public Term getTermByName(Ontology ontology, String termName,boolean allowObsolete) {
-        Collection<Term> terms =   getTermOntologyMap(ontology).get(termName.trim().toLowerCase());
-        if(terms==null){
-            logger.info("No terms for term: "+ termName + " and ontology: "+ ontology.getOntologyName());
-            return null ;
-        }
-        else{
-            for(Term term: terms){
-                if( (!term.isObsolete() || allowObsolete)
+    public Term getTermByName(String termName, Ontology ontology, boolean allowObsolete) {
+        PatriciaTrieMultiMap<Term> termMap = getTermOntologyMap(ontology);
+        Collection<Term> terms = termMap.get(termName.trim().toLowerCase());
+        if (terms == null) {
+            logger.info("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
+            return null;
+        } else {
+            for (Term term : terms) {
+                if ((!term.isObsolete() || allowObsolete)
                         &&
                         term.getTermName().equalsIgnoreCase(termName)) {
                     return term;
@@ -604,7 +630,7 @@ public class OntologyManager {
      * @return term
      */
     public Term getTermByName(Ontology ontology, String termName) {
-        return getTermByName(ontology, termName, false);
+        return getTermByName(termName, ontology, false);
     }
 
     /**
@@ -619,12 +645,12 @@ public class OntologyManager {
     public boolean isSubstructureOf(Term child, Term root) {
         List<TransitiveClosure> children = allRelatedChildrenMap.get(root);
         // return if no children are found for the root term.
-        if (children == null){
+        if (children == null) {
             return false;
         }
         // ToDO: Need to loop over list rather than use .contains() method because the terms maybe be proxied
         for (TransitiveClosure childTerm : children) {
-            if (childTerm.getChild().getID().equals(child.getID()))
+            if (childTerm.getChild().getZdbID().equals(child.getZdbID()))
                 return true;
         }
         return false;
@@ -751,7 +777,7 @@ public class OntologyManager {
             }
             logger.info("Lookup file: " + lookupFile + " size:" + lookupFile.length() + " last modified: " + new Date(lookupFile.lastModified()));
 
-            allRelationships = (Map<String, List<TermRelationshipHelper>>) FileUtil.deserializeOntologies(lookupFile);
+            allRelationships = (Map<String, List<TermRelationship>>) FileUtil.deserializeOntologies(lookupFile);
         } catch (Exception e) {
             logger.error("Failed to deserialize the files", e);
             throw e;
@@ -770,7 +796,7 @@ public class OntologyManager {
      * @throws IOException Thrown if problem writing to file.
      */
     @SuppressWarnings("unchecked")
-    public void deserializeOntology(Ontology ontology) throws Exception{
+    public void deserializeOntology(Ontology ontology) throws Exception {
         long start = System.currentTimeMillis();
         File lookupFile;
         try {
@@ -882,8 +908,8 @@ public class OntologyManager {
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
      *
-     * @param ontologies collection of ontologies
-     * @param termName   term name
+     * @param ontologies    collection of ontologies
+     * @param termName      term name
      * @param allowObsolete True if an obsolete term may be returned.
      * @return term object
      */
@@ -892,7 +918,7 @@ public class OntologyManager {
             return null;
 
         for (Ontology ontology : ontologies) {
-            Term term = getTermByName(ontology, termName, allowObsolete);
+            Term term = getTermByName(termName, ontology, allowObsolete);
             if (term != null)
                 return term;
         }

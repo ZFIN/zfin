@@ -130,7 +130,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);
                 report.error(e);
-            }finally {
+            } finally {
                 HibernateUtil.closeSession();
             }
             postLoadProcess();
@@ -172,7 +172,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                 row.add(pheno.getPublication().getTitle());
                 row.add(pheno.getSuperterm().getTermName());
                 row.add(pheno.getTerm().getTermName());
-                row.add(pheno.getTerm().getID());
+                row.add(pheno.getTerm().getZdbID());
                 rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
@@ -561,8 +561,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             // parse the command line arguments
             CommandLineParser parser = new GnuParser();
             commandLine = parser.parse(options, args);
-        }
-        catch (ParseException exp) {
+        } catch (ParseException exp) {
             LOG.error("Parsing failed.  Reason: " + exp.getMessage());
             System.exit(-1);
         }

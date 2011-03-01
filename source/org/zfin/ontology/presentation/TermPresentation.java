@@ -36,7 +36,7 @@ public class TermPresentation extends EntityPresentation {
     public static String getLink(Term term, String name) {
         if (term == null || name == null)
             return null;
-        return getTomcatLinkWithTitle(uri, term.getID(), term.getTermName(), name, term.getOntology().getCommonName());
+        return getTomcatLinkWithTitle(uri, term.getZdbID(), term.getTermName(), name, term.getOntology().getCommonName());
     }
 
 }
