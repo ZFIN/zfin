@@ -1,4 +1,4 @@
-package org.zfin.datatransfer.go;
+package org.zfin.datatransfer.go.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -8,6 +8,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -21,36 +22,37 @@ import java.util.List;
  */
 public class RemoveGoTermsFromWithdrawnMarkersJob implements Job {
 
-    private Logger logger = Logger.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class) ;
-    private final static String TAB = "\t" ;
+    private Logger logger = Logger.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class);
+    private final static String TAB = "\t";
+    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
         List<MarkerGoTermEvidence> markerGoTermEvidenceRepositoryList =
-                RepositoryFactory.getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerAbbreviation("WITHDRAWN%") ;
+                RepositoryFactory.getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerAbbreviation("WITHDRAWN%");
 
-        if(CollectionUtils.isEmpty(markerGoTermEvidenceRepositoryList)) {
+        if (CollectionUtils.isEmpty(markerGoTermEvidenceRepositoryList)) {
             logger.info("No MarkerGoTermEvidence's are related to a withdrawn marker");
-            return ;
+            return;
         }
 
 
         String report = createReport(markerGoTermEvidenceRepositoryList);
 
-        HibernateUtil.createTransaction() ;
+        HibernateUtil.createTransaction();
         try {
-            for(MarkerGoTermEvidence markerGoTermEvidence : markerGoTermEvidenceRepositoryList){
-                HibernateUtil.currentSession().delete(markerGoTermEvidence);
+            for (MarkerGoTermEvidence markerGoTermEvidence : markerGoTermEvidenceRepositoryList) {
+                infrastructureRepository.deleteActiveDataByZdbID(markerGoTermEvidence.getZdbID());
             }
-            HibernateUtil.flushAndCommitCurrentSession() ;
-            (new IntegratedJavaMailSender()).sendMail("removeGOTermsFromWithdrawnMarkers - Go annotations have been removed from withdrawn markers: "+(new Date()).toString()
+            HibernateUtil.flushAndCommitCurrentSession();
+            (new IntegratedJavaMailSender()).sendMail("removeGOTermsFromWithdrawnMarkers - Go annotations have been removed from withdrawn markers: " + (new Date()).toString()
                     , report,
                     ZfinProperties.splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_MUTANT));
         } catch (HibernateException e) {
             HibernateUtil.rollbackTransaction();
-            logger.error("Failed to delete MarkerGoTermEvidence's",e);
-            return ;
+            logger.error("Failed to delete MarkerGoTermEvidence's", e);
+            return;
         }
 
 
@@ -58,26 +60,26 @@ public class RemoveGoTermsFromWithdrawnMarkersJob implements Job {
 
 
     private String createReport(List<MarkerGoTermEvidence> markerGoTermEvidences) {
-        StringBuilder sb = new StringBuilder() ;
-        sb.append("There are "+ markerGoTermEvidences.size()+
+        StringBuilder sb = new StringBuilder();
+        sb.append("There are " + markerGoTermEvidences.size() +
                 "  GO annotation(s) that have been removed because " +
                 "their referenced genes have been withdrawn. " +
                 "There may be some duplicates because we are not including " +
                 "inferred from information in this report. ");
-        sb.append("\n") ;
+        sb.append("\n");
 
         sb.append("marker-zdb-id").append(TAB).append("pub-id").append(TAB)
-        .append("goterm-name").append(TAB).append("evidence-code") ;
-        sb.append("\n") ;
+                .append("goterm-name").append(TAB).append("evidence-code");
+        sb.append("\n");
 
-        for(MarkerGoTermEvidence markerGoTermEvidence : markerGoTermEvidences){
+        for (MarkerGoTermEvidence markerGoTermEvidence : markerGoTermEvidences) {
             sb.append(markerGoTermEvidence.getMarker().getZdbID()).append(TAB)
                     .append(markerGoTermEvidence.getSource().getZdbID()).append(TAB)
                     .append(markerGoTermEvidence.getGoTerm().getTermName()).append(TAB)
-                    .append(markerGoTermEvidence.getEvidenceCode().getCode()) ;
-            sb.append("\n") ;
+                    .append(markerGoTermEvidence.getEvidenceCode().getCode());
+            sb.append("\n");
         }
 
-        return sb.toString() ;
+        return sb.toString();
     }
 }
