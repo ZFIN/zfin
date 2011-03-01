@@ -73,7 +73,7 @@ public class MorpholinoStatisticsTest {
 
     private void createAnatomyTerm() {
         item = new AnatomyItem();
-        item.setName("eye");
+        item.setTermName("eye");
         item.setZdbID("ZDB-ANAT-010921-532");
     }
 }

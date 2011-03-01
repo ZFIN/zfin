@@ -32,13 +32,13 @@ public class PhenotypeServiceTest {
     @Before
     public void setUp() {
         anatomyTerm = new GenericTerm();
-        anatomyTerm.setID(aoTermZdbID);
+        anatomyTerm.setZdbID(aoTermZdbID);
         anatomyTerm.setTermName("pronephros");
         ////TODO
         //anatomyTerm.setCellTerm(false);
 
         cellAnatomyTerm = new GenericTerm();
-        cellAnatomyTerm.setID(cellAOZdbID);
+        cellAnatomyTerm.setZdbID(cellAOZdbID);
         cellAnatomyTerm.setTermName("muscle cell");
         //cellAnatomyTerm.setCellTerm(true);
     }

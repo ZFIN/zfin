@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class AntibodyServiceTest {
 
     @Test
-    public void distinctAOTermList(){
+    public void distinctAOTermList() {
         AnatomyItem termOne = new AnatomyItem();
         termOne.setZdbID("ZDB-ANAT-011113-512");
         termOne.setNameOrder("Halle");
@@ -77,7 +77,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void distinctAOTermListWithDuplicate(){
+    public void distinctAOTermListWithDuplicate() {
         AnatomyItem termOne = new AnatomyItem();
         termOne.setZdbID("ZDB-ANAT-011113-512");
         termOne.setNameOrder("Halle");
@@ -126,7 +126,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void distinctAOTermListWithSecondaryAoTerm(){
+    public void distinctAOTermListWithSecondaryAoTerm() {
         AnatomyItem termOne = new AnatomyItem();
         termOne.setZdbID("ZDB-ANAT-011113-512");
         termOne.setNameOrder("Halle");
@@ -180,7 +180,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void singleGoTermList(){
+    public void singleGoTermList() {
         Term termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
@@ -205,7 +205,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void noGoTermList(){
+    public void noGoTermList() {
 
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setExpressionFound(true);
@@ -228,7 +228,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void multipleDistinctGoTermList(){
+    public void multipleDistinctGoTermList() {
         Term termOne = getNucleusTerm();
 
         Term termTwo = getCyokineTerm();
@@ -262,7 +262,7 @@ public class AntibodyServiceTest {
 
     private Term getCyokineTerm() {
         Term termTwo = new GenericTerm();
-        termTwo.setID("ZDB-TERM-091209-3709");
+        termTwo.setZdbID("ZDB-TERM-091209-3709");
         termTwo.setTermName("cytokine activity");
         termTwo.setOntology(Ontology.GO_MF);
         return termTwo;
@@ -270,14 +270,14 @@ public class AntibodyServiceTest {
 
     private Term getNucleusTerm() {
         Term termOne = new GenericTerm();
-        termOne.setID("ZDB-TERM-091209-4086");
+        termOne.setZdbID("ZDB-TERM-091209-4086");
         termOne.setTermName("nucleus");
         termOne.setOntology(Ontology.GO_CC);
         return termOne;
     }
 
     @Test
-    public void multipleRepeatingGoTermList(){
+    public void multipleRepeatingGoTermList() {
         Term termOne = getNucleusTerm();
         Term termTwo = getCyokineTerm();
 
@@ -311,7 +311,7 @@ public class AntibodyServiceTest {
     }
 
     @Test
-    public void multipleRepeatingGoTermListWithNull(){
+    public void multipleRepeatingGoTermListWithNull() {
         Term termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();

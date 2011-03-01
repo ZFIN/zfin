@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
+import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.gwt.GwtConversionTest;
@@ -17,9 +18,9 @@ import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
+import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
 import org.zfin.ontology.OntologyManagerTest;
-import org.zfin.ontology.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.people.repository.ProfileRepositoryTest;
@@ -53,6 +54,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         BODtoConversionServiceTest.class,
         CurationRPCTest.class,
         GwtConversionTest.class,
+        GafServiceTest.class,
         InfrastructureRepositoryTest.class,
         MarkerRepositoryTest.class,
         MergeMarkerDBTest.class,
@@ -81,7 +83,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,
         BlastRepositoryTest.class,
-		GBrowseRepositoryTest.class
+        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })
 

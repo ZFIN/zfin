@@ -38,7 +38,7 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
     public static final String HIBERNATE_PROP = "hibernate.properties";
     public static final String HIBERNATE_RENAMED = "hibernate.props";
     private static String FILE_SEP = System.getProperty("file.separator");
-    public static final String CLASSES_DIR = "home"+FILE_SEP+"WEB-INF"+FILE_SEP+"classes"+FILE_SEP;
+    public static final String CLASSES_DIR = "home" + FILE_SEP + "WEB-INF" + FILE_SEP + "classes" + FILE_SEP;
 
     public RunHibernateConfigurationChecks(String x) {
         super(x);
@@ -63,16 +63,16 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
     }
 
     private void renameHibernatePropteriesFile() {
-        File file = new File(CLASSES_DIR +HIBERNATE_PROP);
-        File renamedFile = new File(CLASSES_DIR +HIBERNATE_RENAMED);
+        File file = new File(CLASSES_DIR + HIBERNATE_PROP);
+        File renamedFile = new File(CLASSES_DIR + HIBERNATE_RENAMED);
         boolean success = file.renameTo(renamedFile);
         if (!success)
             System.out.println("Unable to rename Hibernate Property file");
     }
 
     private static void unnameHibernatepropFile() {
-        File file = new File(CLASSES_DIR +HIBERNATE_RENAMED);
-        File renamedFile = new File(CLASSES_DIR +HIBERNATE_PROP);
+        File file = new File(CLASSES_DIR + HIBERNATE_RENAMED);
+        File renamedFile = new File(CLASSES_DIR + HIBERNATE_PROP);
         boolean success = file.renameTo(renamedFile);
         if (!success)
             throw new RuntimeException("Unable to rename Hibernate Property file");
@@ -88,7 +88,7 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         zdbID = "ZDB-ANAT-010921-433";
         zdbID = "ZDB-ANAT-010921-455";
         AnatomyItem anatomyItem = (AnatomyItem) s.load(AnatomyItem.class, zdbID);
-        System.out.println(anatomyItem.getName());
+        System.out.println(anatomyItem.getTermName());
 
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
 //        List<AnatomyRelationshipType> types = ar.getAllAnatomyRelationshipTypes();
@@ -111,7 +111,7 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         getFigures();
         unnameHibernatepropFile();
         getZdbId();
-        
+
     }
 
     private static void getZdbId() {

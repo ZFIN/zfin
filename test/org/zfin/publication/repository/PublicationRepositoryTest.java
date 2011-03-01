@@ -37,8 +37,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private static AnatomyRepository anatomyRepository  = RepositoryFactory.getAnatomyRepository();
-
+    private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
 
     //    @Test
@@ -52,12 +51,10 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
             assertNotNull("Test publication is retrieved", testPublication);
             assertEquals("Test publication has the right title", "test publication", testPublication.getTitle());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -96,7 +93,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // somite
         String zdbID = "ZDB-TERM-100331-144";
         Term term = new GenericTerm();
-        term.setID(zdbID);
+        term.setZdbID(zdbID);
         PaginationResult<MarkerStatistic> paginationResult = publicationRepository.getAllExpressedMarkers(term, 0, 5);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
         assertEquals("5 genes", 5, paginationResult.getPopulatedResults().size());
@@ -122,7 +119,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // no olig2 gene as it is expressed only in a mutant fish
         String zdbID = "ZDB-TERM-100331-1214";
         Term term = new GenericTerm();
-        term.setID(zdbID);
+        term.setZdbID(zdbID);
         List<MarkerStatistic> list = publicationRepository.getAllExpressedMarkers(term, 0, 10).getPopulatedResults();
 //        assertEquals("10 genes", 10, list.size());
         assertNotNull(list);
@@ -173,7 +170,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
         Term item = new GenericTerm();
-        item.setID(aoZdbID);
+        item.setZdbID(aoZdbID);
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
@@ -186,7 +183,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
         Term item = new GenericTerm();
-        item.setID(aoZdbID);
+        item.setZdbID(aoZdbID);
         // Genotype: gli1^te370a/+
         String genotypeZdbID = "ZDB-GENO-070307-4";
         Genotype genotype = new Genotype();
@@ -268,7 +265,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //  midbrain
         String aoZdbID = "ZDB-TERM-100331-121";
         Term item = new GenericTerm();
-        item.setID(aoZdbID);
+        item.setZdbID(aoZdbID);
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 5);
 
         assertNotNull(genotypeResult);
@@ -293,6 +290,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 //        assertEquals("1 figure", 1, figs.size());
 
     }
+
     @Test
     public void getFiguresForGeno() {
         //  genotype adss^hi1433Tg
@@ -316,11 +314,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         feature.setZdbID(featZdbID);
         // brain
 
-        PaginationResult<Publication> pubs= publicationRepository.getAllAssociatedPublicationsForFeature(feature,0);
+        PaginationResult<Publication> pubs = publicationRepository.getAllAssociatedPublicationsForFeature(feature, 0);
         assertTrue(pubs.getPopulatedResults() != null);
 //        assertEquals("1 figure", 1, figs.size());
 
     }
+
     @Test
     public void getFiguresForGenotypeExp() {
         //  genotype adss^hi1433Tg
@@ -328,7 +327,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         Genotype geno = new Genotype();
         geno.setZdbID(genoZdbID);
         // brain
-        
+
 
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoExp(geno);
         assertTrue(figs.getPopulatedResults() != null);
@@ -345,7 +344,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //  lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
         Term item = new GenericTerm();
-        item.setID(aoZdbID);
+        item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByMorpholinoAndAnatomy(morpholino, item);
         assertTrue(figs != null);
 //        assertEquals("1 figure", 1, figs.size());
@@ -361,7 +360,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // brain
         String aoZdbID = "ZDB-TERM-100331-8";
         Term item = new GenericTerm();
-        item.setID(aoZdbID);
+        item.setZdbID(aoZdbID);
         int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
         assertTrue(publicationCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
@@ -376,7 +375,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         geno.setZdbID(genoZdbID);
         // brain
 
-         PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFiguresbyGeno(geno);
+        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFiguresbyGeno(geno);
         assertTrue(pubs.getPopulatedResults() != null);
 //        assertEquals("1 publication", 1, publications.size());
 
@@ -433,10 +432,10 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
     }
+
     @Test
 
 
-    
     public void getMarkersPerPublication() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -600,14 +599,14 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertNotNull("image has start stage", image.getStart());
         assertNotNull("image has end stage", image.getEnd());
         assertNull("image without stages has null start stage", imageWithoutStages.getStart());
-        assertNull("image without stages has null end stage",imageWithoutStages.getEnd()); 
+        assertNull("image without stages has null end stage", imageWithoutStages.getEnd());
 
     }
 
     @Test
     public void testImageAnatomy() {
 
-        Session session = HibernateUtil.currentSession();        
+        Session session = HibernateUtil.currentSession();
 
         String imageZdbID = "ZDB-IMAGE-080219-1";
 
@@ -616,7 +615,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
         assertTrue(image.getTerms().size() == 0);
 
-        Term liver = ontologyRepository.getTermByName("liver",Ontology.ANATOMY);
+        Term liver = ontologyRepository.getTermByName("liver", Ontology.ANATOMY);
         Term brain = ontologyRepository.getTermByName("brain", Ontology.ANATOMY);
 
         image.getTerms().add(liver);
@@ -627,7 +626,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         session.refresh(brain);
 
         assertTrue(liver.getImages().contains(image));
-        assertTrue(brain.getImages().contains(image));     
+        assertTrue(brain.getImages().contains(image));
 
         image.getTerms().remove(liver);
         image.getTerms().remove(brain);
@@ -637,7 +636,14 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         session.refresh(brain);
 
         assertFalse(liver.getImages().contains(image));
-        assertFalse(brain.getImages().contains(image)); 
+        assertFalse(brain.getImages().contains(image));
+
+    }
+
+    @Test
+    public void getPubByPubmedID() {
+        assertEquals(1, publicationRepository.getPublicationByPmid("18056260").size());
+        assertEquals(0, publicationRepository.getPublicationByPmid("asdfasf").size());
 
     }
 

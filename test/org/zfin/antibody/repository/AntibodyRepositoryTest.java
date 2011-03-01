@@ -592,7 +592,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAllAntibodiesByAOTerm() {
         String aoTermName = "forerunner cell group";
         Term term = new GenericTerm();
-        term.setID("ZDB-TERM-100331-22");
+        term.setZdbID("ZDB-TERM-100331-22");
         term.setTermName(aoTermName);
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
@@ -613,7 +613,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         //  secondary motor neuron
         String aoTermZdbID = "ZDB-TERM-100331-2304";
         Term term = new GenericTerm();
-        term.setID(aoTermZdbID);
+        term.setZdbID(aoTermZdbID);
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setTerm(term);
@@ -755,12 +755,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             antibody.setOwner(TestConfiguration.getPerson());
             session.save(antibody);
             session.flush();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
-        }
-        finally {
+        } finally {
             try {
                 tx.rollback();
             } catch (HibernateException e) {
@@ -785,12 +783,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             antibody.setAbbreviation("new name");
             session.update(antibody);
             session.flush();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
-        }
-        finally {
+        } finally {
             try {
                 tx.rollback();
             } catch (HibernateException e) {
@@ -821,12 +817,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             marker.setAbbreviation("newman");
             mr.renameMarker(marker, pub, MarkerHistory.Reason.NOT_SPECIFIED);
             session.flush();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
-        }
-        finally {
+        } finally {
             try {
                 tx.rollback();
             } catch (HibernateException e) {
@@ -864,7 +858,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodiesForAoTerm() {
         String aoTermName = "pancreas";
         Term term = new GenericTerm();
-        term.setID("ZDB-TERM-100331-130");
+        term.setZdbID("ZDB-TERM-100331-130");
         term.setTermName(aoTermName);
 
         Session session = HibernateUtil.currentSession();
@@ -906,7 +900,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyStatistics() {
         String aoTermName = "eye";
         Term term = new GenericTerm();
-        term.setID("ZDB-TERM-100331-100");
+        term.setZdbID("ZDB-TERM-100331-100");
         term.setTermName(aoTermName);
 
         PaginationBean pagination = new PaginationBean();
@@ -927,7 +921,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void antibodySummaryPage() {
         String aoTermName = "muscle pioneer";
         Term term = new GenericTerm();
-        term.setID("ZDB-TERM-100331-1053");
+        term.setZdbID("ZDB-TERM-100331-1053");
         term.setTermName(aoTermName);
 
         // real name is Ab-Eng
