@@ -33,7 +33,7 @@ public class ExpressionResultPresentationTest extends TermPresentation {
     private Term createTermByName(String name) {
         Term term = new GenericTerm();
         term.setTermName(name);
-        term.setID("ZDB-TERM-" + name);
+        term.setZdbID("ZDB-TERM-" + name);
         term.setOntology(Ontology.ANATOMY);
         return term;
     }

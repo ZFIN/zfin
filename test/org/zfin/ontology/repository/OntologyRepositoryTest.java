@@ -18,7 +18,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 /**
  * Repository for Ontology-related actions: mostly lookup.
  */
-public class OntologyRepositoryTest extends AbstractOntologyTest{
+public class OntologyRepositoryTest extends AbstractOntologyTest {
 
     static {
         TestConfiguration.configure();
@@ -36,9 +36,9 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
         assertNotNull(qualities);
         assertEquals(14, qualities.size());
 
-        int count = 0 ;
-        for(MatchingTerm matchingTerm : qualities){
-            count += (matchingTerm.getTerm().isObsolete() ? 1 : 0) ;
+        int count = 0;
+        for (MatchingTerm matchingTerm : qualities) {
+            count += (matchingTerm.getTerm().isObsolete() ? 1 : 0);
         }
         assertEquals(4, count);
 
@@ -68,13 +68,6 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     }
 
     @Test
-    public void getTransitiveClosure() {
-        List<TransitiveClosure> tcs = getOntologyRepository().getTransitiveClosure();
-        assertNotNull(tcs);
-    }
-
-
-    @Test
     public void getAnatomyRootTermInfo() {
         String anatomyRootID = "ZFA:0000037";
         Term term = getOntologyRepository().getTermByOboID(anatomyRootID);
@@ -82,19 +75,19 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     }
 
     @Test
-    public void loadAllTermsFromFiles() throws Exception{
+    public void loadAllTermsFromFiles() throws Exception {
         OntologyManager manager = OntologyManager.getInstanceFromFile(Ontology.ANATOMY);
         assertNotNull(manager);
     }
 
     @Test
-    public void loadAllTermsOfOntology() throws Exception{
+    public void loadAllTermsOfOntology() throws Exception {
         List<Term> terms = getOntologyRepository().getAllTermsFromOntology(Ontology.QUALITY);
         assertNotNull(terms);
     }
 
     @Test
-    public void loadOntologyMetatdataForAll() throws Exception{
+    public void loadOntologyMetatdataForAll() throws Exception {
         List<OntologyMetadata> metadata = getOntologyRepository().getAllOntologyMetadata();
         assertNotNull(metadata);
         assertEquals("ontology name", "sequence ontology", metadata.get(0).getName());
@@ -102,24 +95,25 @@ public class OntologyRepositoryTest extends AbstractOntologyTest{
     }
 
     @Test
-    public void loadOntologyMetatdataForQuality() throws Exception{
+    public void loadOntologyMetatdataForQuality() throws Exception {
         OntologyMetadata metadata = getOntologyRepository().getOntologyMetadata(Ontology.QUALITY.getOntologyName());
         assertNotNull(metadata);
         assertEquals("Default name space", "quality", metadata.getDefaultNamespace());
     }
 
     @Test
-    public void getPhenotypesWithSecondaryTerms() throws Exception{
-        List<Phenotype> phenotypesWithSecondaryTerms= getOntologyRepository().getPhenotypesWithSecondaryTerms();
+    public void getPhenotypesWithSecondaryTerms() throws Exception {
+        List<Phenotype> phenotypesWithSecondaryTerms = getOntologyRepository().getPhenotypesWithSecondaryTerms();
         assertNotNull(phenotypesWithSecondaryTerms);
     }
 
     @Override
     protected Ontology[] getOntologiesToLoad() {
         Ontology[] ontologies = new Ontology[2];
-        ontologies[0] =  Ontology.ANATOMY;
-        ontologies[1] =  Ontology.QUALITY;
-        return ontologies ;
+        ontologies[0] = Ontology.ANATOMY;
+        ontologies[1] = Ontology.QUALITY;
+        return ontologies;
     }
+
 
 }

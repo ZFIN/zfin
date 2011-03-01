@@ -1,7 +1,10 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.junit.Assert;
 import org.junit.Test;
+import org.zfin.framework.HibernateUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -39,20 +42,19 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     }
 
     @Test
-    public void dontTokenizeSmallWords(){
-        Set<Term> terms ;
-        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("disease") ;
-        assertTrue(terms.size()>5) ;
-        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("(for") ;
-        assertNull(terms) ;
-        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("a") ;
-        if(terms!=null){
-            for(Term term:terms){
-                assertTrue(term.getTermName().startsWith("a")) ;
+    public void dontTokenizeSmallWords() {
+        Set<Term> terms;
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("disease");
+        assertTrue(terms.size() > 5);
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("(for");
+        assertNull(terms);
+        terms = ontologyManager.getOntologyMap().get(Ontology.QUALITY).get("a");
+        if (terms != null) {
+            for (Term term : terms) {
+                assertTrue(term.getTermName().startsWith("a"));
             }
-        }
-        else{
-            assertNull(terms) ;
+        } else {
+            assertNull(terms);
         }
 
     }
@@ -78,6 +80,9 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void testRelatedTerms() {
+        initHibernate();
+        Session session = HibernateUtil.currentSession();
+        Assert.assertNotNull(session);
         Term term = ontologyManager.getTermByName(Ontology.ANATOMY, "B cell");
         List<TermRelationship> relatedTerms = term.getRelatedTerms();
         assertEquals(7, relatedTerms.size());
@@ -111,7 +116,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
         assertNotNull(qualityList);
-        assertTrue(qualityList.size()>0);
+        assertTrue(qualityList.size() > 0);
 
     }
 
@@ -145,7 +150,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
         Set<MatchingTerm> matches = service.getMatchingTerms(Ontology.QUALITY, "decreased p");
-        assertEquals(13, matches.size());
+        assertEquals(14, matches.size());
 
         // can not find decreased
         matches = service.getMatchingTerms(Ontology.QUALITY, "decreased");
@@ -153,7 +158,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     }
 
     @Test
-    public void getAllRelationshipsPerOntology(){
+    public void getAllRelationshipsPerOntology() {
         Set<String> relationships = OntologyService.getDistinctRelationships(Ontology.ANATOMY);
         assertNotNull(relationships);
     }
