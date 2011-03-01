@@ -107,9 +107,9 @@ public class AntibodyService {
                         continue;
                     Term term = result.getSuperterm();
                     Term subterm = result.getSubterm();
-                    String composedTermName = term.getID();
+                    String composedTermName = term.getZdbID();
                     if (subterm != null)
-                        composedTermName += subterm.getID();
+                        composedTermName += subterm.getZdbID();
                     distinctTerms.add(composedTermName);
                 }
             }
@@ -252,7 +252,7 @@ public class AntibodyService {
             String termName = item.getTermName();
             match.addMatchedString(termName);
             for (Term label : labelingTerms) {
-                if (label.getID().equals(item.getID())) {
+                if (label.getZdbID().equals(item.getZdbID())) {
                     match.addMatchingTerm(label.getTermName());
                     directMatchesFound.add(termName);
                 }
@@ -585,9 +585,9 @@ public class AntibodyService {
                             endStageName = endStage.getName();
 
                         // form the key
-                        String key = superterm.getID() + startStageName + endStageName;
+                        String key = superterm.getZdbID() + startStageName + endStageName;
                         if (subterm != null)
-                            key += subterm.getID();
+                            key += subterm.getZdbID();
 
                         AnatomyLabel labeling;
 

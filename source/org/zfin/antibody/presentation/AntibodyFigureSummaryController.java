@@ -39,12 +39,12 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         if (ab == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
 
-        Term superterm = OntologyManager.getInstance().getTermByID(form.getSuperTerm().getID());
+        Term superterm = OntologyManager.getInstance().getTermByID(form.getSuperTerm().getZdbID());
         form.setSuperTerm(superterm);
 
         Term subterm = null;
-        if (StringUtils.isNotEmpty(form.getSubTerm().getID())) {
-            subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getID());
+        if (StringUtils.isNotEmpty(form.getSubTerm().getZdbID())) {
+            subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getZdbID());
             form.setSubTerm(subterm);
         }
         DevelopmentStage startStage = getAnatomyRepository().getStage(form.getStartStage());

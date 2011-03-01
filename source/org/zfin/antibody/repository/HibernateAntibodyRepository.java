@@ -453,8 +453,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where (   (result.superterm.ID = :aoTermID_" + i + ")" +
-                        "                         OR result.subterm.ID = :aoTermID_" + i + ")" +
+                        "                  where (   (result.superterm.zdbID = :aoTermID_" + i + ")" +
+                        "                         OR result.subterm.zdbID = :aoTermID_" + i + ")" +
                         "                     AND result.expressionExperiment = experiment" +
                         "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                         "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
