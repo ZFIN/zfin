@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for Anatomy complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Anatomy">
  *   &lt;complexContent>
@@ -38,19 +38,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Anatomy", propOrder = {
-    "definition",
-    "description",
-    "name",
-    "oboId",
-    "stageEnd",
-    "stageStart",
-    "zdbId",
-    "link"
+        "definition",
+        "description",
+        "name",
+        "oboId",
+        "stageEnd",
+        "stageStart",
+        "zdbId",
+        "link"
 })
 @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
 public class Anatomy {
@@ -76,11 +74,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the definition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getDefinition() {
@@ -89,11 +85,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the definition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setDefinition(String value) {
@@ -102,11 +96,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getDescription() {
@@ -115,11 +107,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setDescription(String value) {
@@ -128,11 +118,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getName() {
@@ -141,11 +129,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setName(String value) {
@@ -154,11 +140,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the oboId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getOboId() {
@@ -167,11 +151,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the oboId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setOboId(String value) {
@@ -180,11 +162,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the stageEnd property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getStageEnd() {
@@ -193,11 +173,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the stageEnd property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setStageEnd(String value) {
@@ -206,11 +184,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the stageStart property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getStageStart() {
@@ -219,11 +195,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the stageStart property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setStageStart(String value) {
@@ -232,11 +206,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the zdbId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getZdbId() {
@@ -245,11 +217,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the zdbId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setZdbId(String value) {
@@ -258,11 +228,9 @@ public class Anatomy {
 
     /**
      * Gets the value of the link property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getLink() {
@@ -271,11 +239,9 @@ public class Anatomy {
 
     /**
      * Sets the value of the link property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setLink(String value) {

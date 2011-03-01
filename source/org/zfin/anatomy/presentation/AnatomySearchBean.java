@@ -53,7 +53,7 @@ public class AnatomySearchBean extends PaginationBean {
     private AnatomyStatistics anatomyStatisticsProbe;
     private AnatomyStatistics anatomyStatisticsAntibodies;
     private static final String NEWLINE = System.getProperty("line.separator");
-    private static final String TAB = "\t" ;
+    private static final String TAB = "\t";
     private int numberOfHighQualityProbes;
     private int markerCount;
     private SectionVisibility visibility = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
@@ -386,10 +386,9 @@ public class AnatomySearchBean extends PaginationBean {
         sb.append(NEWLINE);
         sb.append("Anatomy Item: ");
         sb.append(TAB);
-        if(anatomyItem==null){
+        if (anatomyItem == null) {
             sb.append("No Anatomy item");
-        }
-        else{
+        } else {
             sb.append(anatomyItem.getZdbID());
             sb.append(TAB);
             sb.append(anatomyItem.getOboID());
@@ -404,7 +403,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getWelcomeInputID() {
-        return aoTerm.getID();
+        return aoTerm.getZdbID();
     }
 
     public int getGenotypeCount() {
@@ -461,7 +460,7 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "0");
         url.addNamevaluePair("TA_selected_structures", getAoTerm().getTermName());
-        url.addNamevaluePair("xpatsel_processed_selected_structures", getAoTerm().getID());
+        url.addNamevaluePair("xpatsel_processed_selected_structures", getAoTerm().getZdbID());
         url.addNamevaluePair("xpatsel_processed_selected_structures_names", getAoTerm().getTermName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");
@@ -479,8 +478,8 @@ public class AnatomySearchBean extends PaginationBean {
         url.addNamevaluePair("MIval", "aa-fishselect.apg");
         url.addNamevaluePair("query_results", "exist");
         url.addNamevaluePair("START", "1");
-        url.addNamevaluePair("TA_selected_structures", getAoTerm().getID());
-        url.addNamevaluePair("fsel_processed_selected_structures", getAoTerm().getID());
+        url.addNamevaluePair("TA_selected_structures", getAoTerm().getZdbID());
+        url.addNamevaluePair("fsel_processed_selected_structures", getAoTerm().getZdbID());
         url.addNamevaluePair("fsel_processed_selected_structures_names", getAoTerm().getTermName());
         if (includeSubstructures)
             url.addNamevaluePair("include_substructures", "checked");

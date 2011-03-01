@@ -17,7 +17,7 @@ import java.util.List;
 /**
  */
 @Endpoint
-public class MarkerEndpoint extends AbstractMarkerWebService{
+public class MarkerEndpoint extends AbstractMarkerWebService {
 
 
     public static final String NAMESPACE_URI = "http://localhost/webservice/definitions";
@@ -31,56 +31,56 @@ public class MarkerEndpoint extends AbstractMarkerWebService{
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
 
-    public MarkerEndpoint() throws JDOMException{
+    public MarkerEndpoint() throws JDOMException {
     }
 
 
-    @PayloadRoot( localPart = GENE_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI )
+    @PayloadRoot(localPart = GENE_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneRetrieveResponse getGene(@RequestPayload GeneRetrieveRequest geneRequestElement) throws Exception {
 
         String geneZdbId = geneRequestElement.getGeneName();
         Marker returnGene = getGeneForValue(geneZdbId);
 
-        Gene gene = objectFactory.createGene() ;
-        gene = SchemaMapper.convertMarkerToGeneWebObject(gene,returnGene,
-                ( geneRequestElement.isExpressionAnatomyWildType() == null ? false : geneRequestElement.isExpressionAnatomyWildType())
+        Gene gene = objectFactory.createGene();
+        gene = SchemaMapper.convertMarkerToGeneWebObject(gene, returnGene,
+                (geneRequestElement.isExpressionAnatomyWildType() == null ? false : geneRequestElement.isExpressionAnatomyWildType())
         );
 
         GeneRetrieveResponse geneResponse = new GeneRetrieveResponse();
         geneResponse.setGene(gene);
 
-        return geneResponse ;
+        return geneResponse;
     }
 
-    @PayloadRoot( localPart = GENE_ANATOMY_EXPRESSION_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI )
+    @PayloadRoot(localPart = GENE_ANATOMY_EXPRESSION_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneExpressionAnatomyWildTypeResponse getGeneAnatomyExpression(@RequestPayload JAXBElement<String> geneRequestElement) throws Exception {
 
         String geneZdbId = geneRequestElement.getValue();
         Marker returnGene = getGeneForValue(geneZdbId);
 
-        List<Anatomy> anatomyReturnList ;
-        GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = objectFactory.createGeneExpressionAnatomyWildTypeResponse() ;
-        if(returnGene!=null){
+        List<Anatomy> anatomyReturnList;
+        GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = objectFactory.createGeneExpressionAnatomyWildTypeResponse();
+        if (returnGene != null) {
             List<AnatomyItem> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(returnGene.getZdbID());
             anatomyReturnList = SchemaMapper.convertAnatomyListFromAnatomyItemList(anatomyItemList);
-            anatomyExpressionRetrieveResponse.getAnatomy().addAll(anatomyReturnList) ;
+            anatomyExpressionRetrieveResponse.getAnatomy().addAll(anatomyReturnList);
         }
 
-        return anatomyExpressionRetrieveResponse ;
+        return anatomyExpressionRetrieveResponse;
     }
 
-    @PayloadRoot( localPart = GENE_SEARCH_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI )
+    @PayloadRoot(localPart = GENE_SEARCH_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneSearchResponse getGenesForName(@RequestPayload GeneSearchRequest geneRequestElement) throws Exception {
 
         String abbreviation = geneRequestElement.getGeneName();
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getGenesByAbbreviation(abbreviation) ;
+        List<Marker> markers = RepositoryFactory.getMarkerRepository().getGenesByAbbreviation(abbreviation);
 
         GeneSearchResponse geneSearchResponse = objectFactory.createGeneSearchResponse();
-        geneSearchResponse = SchemaMapper.convertMarkersToGeneWebObjects(geneSearchResponse,markers,
-                        ( geneRequestElement.isExpressionAnatomyWildType() == null ? false : geneRequestElement.isExpressionAnatomyWildType())
+        geneSearchResponse = SchemaMapper.convertMarkersToGeneWebObjects(geneSearchResponse, markers,
+                (geneRequestElement.isExpressionAnatomyWildType() == null ? false : geneRequestElement.isExpressionAnatomyWildType())
         );
 
         return geneSearchResponse;

@@ -135,7 +135,7 @@ public class GenotypeBean {
                     xpDisplay.getNonDuplicatedTerms().add(superterm);
 
                     if (subterm != null)
-						xpDisplay.getNonDuplicatedTerms().add(subterm);
+                        xpDisplay.getNonDuplicatedTerms().add(subterm);
 
                     xpDisplay.getExpressionResults().add(xpResult);
                     xpDisplay.setExpressedGene(expressedGene);
@@ -160,8 +160,8 @@ public class GenotypeBean {
                         xpDisplay.getExpressionResults().add(xpResult);
                         xpDisplay.getNonDuplicatedTerms().add(superterm);
 
-						if (subterm != null)
-						  xpDisplay.getNonDuplicatedTerms().add(subterm);
+                        if (subterm != null)
+                            xpDisplay.getNonDuplicatedTerms().add(subterm);
 
                         Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
                     }
@@ -254,17 +254,17 @@ public class GenotypeBean {
                 String keyGeno = genotype.getZdbID();
 
                 Term superTerm = genoFig.getSuperTerm();
-                String superTermID = superTerm.getID();
+                String superTermID = superTerm.getZdbID();
 
                 Term subTerm = genoFig.getSubTerm();
                 if (subTerm != null) {
-                    superTermID += subTerm.getID();
+                    superTermID += subTerm.getZdbID();
                 }
 
                 Term qualityTerm = genoFig.getQualityTerm();
                 String tag = genoFig.getTag();
 
-                String key = keyGeno + keyMO + superTermID + qualityTerm.getID() + tag;
+                String key = keyGeno + keyMO + superTermID + qualityTerm.getZdbID() + tag;
 
                 PhenotypeDisplay phenoDisplay;
 

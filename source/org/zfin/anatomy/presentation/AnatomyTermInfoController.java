@@ -29,7 +29,7 @@ public class AnatomyTermInfoController extends AnatomyTermDetailController {
 
 
         ModelAndView modelAndView = new ModelAndView("anatomy-terminfo.page", LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getName());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getTermName());
 
         return modelAndView;
     }

@@ -11,7 +11,7 @@ import org.zfin.ontology.Term;
  */
 public class AnatomyItemPresentation extends EntityPresentation {
 
-    private final static Logger logger = Logger.getLogger(AnatomyItemPresentation.class) ;
+    private final static Logger logger = Logger.getLogger(AnatomyItemPresentation.class);
 
     private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
     public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
@@ -23,7 +23,7 @@ public class AnatomyItemPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(AnatomyItem anatomyItem) {
-        return getLink(anatomyItem, anatomyItem.getName());
+        return getLink(anatomyItem, anatomyItem.getTermName());
     }
 
     /**
@@ -34,11 +34,11 @@ public class AnatomyItemPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(AnatomyItem anatomyItem, String name) {
-        return getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getName(), name);
+        return getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getTermName(), name);
     }
 
     public static String getName(AnatomyItem anatomyItem) {
-        return getSpanTag("none", anatomyItem.getName(), anatomyItem.getName());
+        return getSpanTag("none", anatomyItem.getTermName(), anatomyItem.getTermName());
     }
 
     public static String getWikiLink(Term term) {
@@ -46,8 +46,8 @@ public class AnatomyItemPresentation extends EntityPresentation {
             return getWikiLink("/action/" + uri, term.getOboID(), term.getTermName());
         else if (Ontology.isGoOntology(term.getOntology()))
             return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
-        else{
-            logger.error("unable to process term: "+ term + " while generating wiki link");
+        else {
+            logger.error("unable to process term: " + term + " while generating wiki link");
             return null;
         }
     }

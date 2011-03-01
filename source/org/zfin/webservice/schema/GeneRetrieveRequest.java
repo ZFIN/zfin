@@ -9,18 +9,14 @@
 package org.zfin.webservice.schema;
 
 import javax.annotation.Generated;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -33,13 +29,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "geneName",
-    "expressionAnatomyWildType"
+        "geneName",
+        "expressionAnatomyWildType"
 })
 @XmlRootElement(name = "GeneRetrieveRequest")
 @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -53,11 +47,9 @@ public class GeneRetrieveRequest {
 
     /**
      * Gets the value of the geneName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getGeneName() {
@@ -66,11 +58,9 @@ public class GeneRetrieveRequest {
 
     /**
      * Sets the value of the geneName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setGeneName(String value) {
@@ -79,11 +69,9 @@ public class GeneRetrieveRequest {
 
     /**
      * Gets the value of the expressionAnatomyWildType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public Boolean isExpressionAnatomyWildType() {
@@ -92,11 +80,9 @@ public class GeneRetrieveRequest {
 
     /**
      * Sets the value of the expressionAnatomyWildType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setExpressionAnatomyWildType(Boolean value) {

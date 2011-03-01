@@ -2,12 +2,7 @@ package org.zfin.anatomy;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.Image;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.TermAlias;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -24,63 +19,21 @@ import java.util.Set;
  * is not populated through a Hibernate Mapping since the stages are terms on the ao term (TERM table) but
  * do not contain all the info that the STAGE table contains.
  */
-public class AnatomyItem implements Term {
+public class AnatomyItem extends AbstractTerm {
 
-    private long itemID;
-    private String zdbID;
-    private String name;
-    private String oboID;
-    private DevelopmentStage start;
-    private DevelopmentStage end;
+    private static final String NEWLINE = System.getProperty("line.separator");
+    private static final String NEWLINE_PLUS_INDENT = NEWLINE + "    ";
+
     private String lowerCaseName;
-    private String definition;
     private String description;
-    private boolean obsolete;
     private boolean cellTerm;
     // used to do the order by
     private String nameOrder;
     private List<AnatomyRelationship> relatedItems;
     private Set<AnatomySynonym> synonyms;
 
-    //not mapped in hibernate, must be inserted via the term.
-    private Set<Image> images;
-
-    private List<TermRelationship> relationships;
-
-
-    private static final String NEWLINE = System.getProperty("line.separator");
-    private static final String NEWLINE_PLUS_INDENT = NEWLINE + "    ";
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getNameEscaped() {
-        return getName().replaceAll("'", "\\\\'");
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getItemID() {
-        return itemID;
-    }
-
-    public void setItemID(long itemID) {
-        this.itemID = itemID;
-    }
-
-    public String getOboID() {
-        return oboID;
+        return getTermName().replaceAll("'", "\\\\'");
     }
 
     public void setOntology(Ontology ontology) {
@@ -99,26 +52,6 @@ public class AnatomyItem implements Term {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void setOboID(String oboID) {
-        this.oboID = oboID;
-    }
-
-    public DevelopmentStage getStart() {
-        return start;
-    }
-
-    public void setStart(DevelopmentStage start) {
-        this.start = start;
-    }
-
-    public DevelopmentStage getEnd() {
-        return end;
-    }
-
-    public void setEnd(DevelopmentStage end) {
-        this.end = end;
-    }
-
     public String getDefinition() {
         return StringUtils.isEmpty(definition) ? null : definition;
     }
@@ -131,20 +64,12 @@ public class AnatomyItem implements Term {
         }
     }
 
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isObsolete() {
-        return obsolete;
     }
 
     public boolean isRoot() {
@@ -161,10 +86,6 @@ public class AnatomyItem implements Term {
 
     public void setSecondary(boolean secondary) {
         // Todo when Ao goes into term table
-    }
-
-    public void setObsolete(boolean obsolete) {
-        this.obsolete = obsolete;
     }
 
     public List<AnatomyRelationship> getRelatedItems() {
@@ -191,8 +112,8 @@ public class AnatomyItem implements Term {
         // Todo when Ao goes into term table
     }
 
-    public boolean isAliasesExist(){
-        return false ; 
+    public boolean isAliasesExist() {
+        return false;
     }
 
     public void setSynonyms(Set<AnatomySynonym> synonyms) {
@@ -203,13 +124,6 @@ public class AnatomyItem implements Term {
         this.relatedItems = relatedItems;
     }
 
-    public List<AnatomyRelationship> getAnatomyRelations() {
-        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
-        List<AnatomyRelationship> relations = ar.getAnatomyRelationships(this);
-        return relations;
-    }
-
-
     public String getNameOrder() {
         return nameOrder;
     }
@@ -218,29 +132,13 @@ public class AnatomyItem implements Term {
         this.nameOrder = nameOrder;
     }
 
-    public String getID() {
-        return zdbID;
-    }
-
-    public void setID(String id) {
-        // Todo when Ao goes into term table
-    }
-
-    public String getTermName() {
-        return name;
-    }
-
-    public void setTermName(String termName) {
-        // Todo when Ao goes into term table
-    }
-
-    public Set<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(Set<Image> images) {
-        this.images = images;
-    }
+//    public void setZdbID(String id) {
+//        // Todo when Ao goes into term table
+//    }
+//
+//    public void setTermName(String termName) {
+//        // Todo when Ao goes into term table
+//    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -250,7 +148,7 @@ public class AnatomyItem implements Term {
         sb.append(NEWLINE_PLUS_INDENT);
         sb.append("oboID: ").append(oboID);
         sb.append(NEWLINE_PLUS_INDENT);
-        sb.append("name: ").append(name);
+        sb.append("name: ").append(termName);
         sb.append(NEWLINE_PLUS_INDENT);
         sb.append("Obsolete: ").append(obsolete);
         sb.append(NEWLINE_PLUS_INDENT);
@@ -292,7 +190,7 @@ public class AnatomyItem implements Term {
         if (term == null)
             return +1;
         if (term instanceof AnatomyItem)
-            return nameOrder.compareTo(((AnatomyItem)term).getNameOrder());
+            return nameOrder.compareTo(((AnatomyItem) term).getNameOrder());
         return +1;
     }
 
@@ -310,7 +208,7 @@ public class AnatomyItem implements Term {
                         obsolete == term.isObsolete() &&
                         StringUtils.equals(definition, term.getDefinition()) &&
                         StringUtils.equals(description, term.getDescription()) &&
-                        StringUtils.equals(name, term.getName()) &&
+                        StringUtils.equals(termName, term.getTermName()) &&
                         StringUtils.equals(nameOrder, term.getNameOrder()) &&
                         StringUtils.equals(oboID, term.getOboID()) &&
                         StringUtils.equals(zdbID, term.getZdbID()) &&
@@ -325,8 +223,8 @@ public class AnatomyItem implements Term {
             hash = hash * definition.hashCode();
         if (description != null)
             hash += hash * description.hashCode();
-        if (name != null)
-            hash += hash * name.hashCode();
+        if (termName != null)
+            hash += hash * termName.hashCode();
         if (nameOrder != null)
             hash += hash * nameOrder.hashCode();
         if (oboID != null)
@@ -349,4 +247,6 @@ public class AnatomyItem implements Term {
         // ToDo: To be implemented
         throw new RuntimeException("Not yet implemented");
     }
+
+
 }

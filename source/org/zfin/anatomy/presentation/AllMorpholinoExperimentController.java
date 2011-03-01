@@ -31,13 +31,13 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
 
         if (form.getAoTerm() == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, "");
-        Term term = OntologyManager.getInstance().getTermByID(form.getAoTerm().getID());
+        Term term = OntologyManager.getInstance().getTermByID(form.getAoTerm().getZdbID());
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAoTerm().getID());
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAoTerm().getZdbID());
         form.setAoTerm(term);
 
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        Term anatomyItem = OntologyManager.getInstance().getTermByID(form.getAoTerm().getID());
+        Term anatomyItem = OntologyManager.getInstance().getTermByID(form.getAoTerm().getZdbID());
         List<GenotypeExperiment> morphResult =
                 mutantRepository.getGenotypeExperimentMorpholinos(anatomyItem, form.isWildtype());
         form.setWildtypeMorpholinoCount(morphResult.size());

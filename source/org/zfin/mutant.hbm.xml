@@ -68,11 +68,11 @@
             <key column="genofeat_geno_zdb_id"/>
             <one-to-many class="org.zfin.mutant.GenotypeFeature"/>
         </set>
-        
+
         <set name="externalNotes" lazy="true">
-            <key column="extnote_data_zdb_id" />
-            <one-to-many class="org.zfin.mutant.GenotypeExternalNote" />
-        </set>        
+            <key column="extnote_data_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.GenotypeExternalNote"/>
+        </set>
 
         <set name="dataNotes" lazy="true">
             <key column="dnote_data_zdb_id"/>
@@ -81,7 +81,7 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.GenotypeSupplier" />
+            <one-to-many class="org.zfin.people.GenotypeSupplier"/>
         </set>
 
         <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
@@ -102,6 +102,13 @@
         <property name="displayOrder" column="gflag_display_order" type="integer"/>
     </class>
 
+    <class name="org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource"
+           table="marker_go_term_evidence_annotation_created_by_source" mutable="false">
+        <id name="id" column="mrkrgoevcb_pk_id"/>
+        <property name="name" column="mrkrgoevcb_name" not-null="true"/>
+        <property name="url" column="mrkrgoevcb_url" not-null="false"/>
+    </class>
+
     <class name="org.zfin.mutant.MarkerGoTermEvidence" table="marker_go_term_evidence">
         <id name="zdbID" type="string">
             <column name="mrkrgoev_zdb_id" not-null="true"/>
@@ -117,10 +124,13 @@
         <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode"
                      not-null="true"/>
 
-        <property name="createdBy" column="mrkrgoev_contributed_by" not-null="false"/>
+        <many-to-one name="createdBy" column="mrkrgoev_contributed_by" not-null="false" class="org.zfin.people.Person"/>
         <property name="createdWhen" column="mrkrgoev_date_entered" not-null="true"/>
-        <property name="modifiedBy" column="mrkrgoev_modified_by" not-null="false"/>
+        <many-to-one name="modifiedBy" column="mrkrgoev_modified_by" not-null="false" class="org.zfin.people.Person"/>
         <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="true"/>
+        <property name="externalLoadDate" column="mrkrgoev_external_load_date" not-null="false"/>
+        <property name="organizationCreatedBy" column="mrkrgoev_annotation_organization_created_by" not-null="true"/>
+        <many-to-one name="gafOrganization" column="mrkrgoev_annotation_organization" not-null="true"/>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
 
@@ -129,6 +139,13 @@
             <one-to-many class="InferenceGroupMember"/>
         </set>
 
+    </class>
+
+    <class name="GafOrganization" table="marker_go_term_evidence_annotation_organization">
+        <id name="id" column="mrkrgoevas_pk_id"/>
+        <property name="organization" column="mrkrgoevas_annotation_organization" not-null="true"/>
+        <property name="definition" column="mrkrgoevas_definition" not-null="true"/>
+        <property name="url" column="mrkrgoevas_organization_url"/>
     </class>
 
     <class name="InferenceGroupMember" table="inference_group_member">
@@ -232,7 +249,7 @@
     </class>
 
     <class name="org.zfin.feature.Feature" table="feature">
-       <id name="zdbID" type="string">
+        <id name="zdbID" type="string">
             <column name="feature_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">ALT</param>
@@ -246,9 +263,9 @@
         <!--<property name="ftrTypeString" column="feature_type" not-null="true"/>-->
         <property name="transgenicSuffix" column="feature_tg_suffix"/>
         <property name="lineNumber" column="feature_line_number"/>
-        <property name="dominantFeature"  column="feature_dominant" type="boolean"/>
-        <property name="unspecifiedFeature"  column="feature_unspecified" type="boolean"/>
-        <property name="knownInsertionSite"  column="feature_known_insertion_site" type="boolean"/>
+        <property name="dominantFeature" column="feature_dominant" type="boolean"/>
+        <property name="unspecifiedFeature" column="feature_unspecified" type="boolean"/>
+        <property name="knownInsertionSite" column="feature_known_insertion_site" type="boolean"/>
         <property name="publicComments" column="feature_comments"/>
 
 
@@ -256,18 +273,18 @@
         <many-to-one name="featurePrefix" column="feature_lab_prefix_id" class="org.zfin.feature.FeaturePrefix"/>
 
         <set name="featureMarkerRelations" lazy="true">
-	            <key column="fmrel_ftr_zdb_id"/>
-	            <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
+            <key column="fmrel_ftr_zdb_id"/>
+            <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
         </set>
         <set name="genotypeFeatures" lazy="true">
-	            <key column="genofeat_feature_zdb_id"/>
-	            <one-to-many class="org.zfin.mutant.GenotypeFeature"/>
+            <key column="genofeat_feature_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.GenotypeFeature"/>
         </set>
         <set name="sources">
             <key column="ids_data_zdb_id" update="false"/>
             <one-to-many class="org.zfin.people.FeatureSource"/>
         </set>
-        <property name="type" column="feature_type" type="featureType" not-null="true" />
+        <property name="type" column="feature_type" type="featureType" not-null="true"/>
 
         <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
             <key column="dalias_data_zdb_id"/>
@@ -277,7 +294,7 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.FeatureSupplier" />
+            <one-to-many class="org.zfin.people.FeatureSupplier"/>
         </set>
 
         <set name="dataNotes" lazy="true">
@@ -317,8 +334,8 @@
 
         <many-to-one name="featureMarkerRelationshipType" column="fmrel_type" insert="false" update="false"
                      foreign-key="fmrel_type" class="org.zfin.feature.FeatureMarkerRelationshipType"/>
-        <many-to-one name="feature" class="org.zfin.feature.Feature" column="fmrel_ftr_zdb_id"  />
-        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id"  />
+        <many-to-one name="feature" class="org.zfin.feature.Feature" column="fmrel_ftr_zdb_id"/>
+        <many-to-one name="marker" class="org.zfin.marker.Marker" column="fmrel_mrkr_zdb_id"/>
 
 
         <set name="publications" lazy="true" cascade="all">
@@ -399,7 +416,7 @@
 
     <class name="org.zfin.feature.FeatureAssay" table="feature_assay">
 
-         <id name="pkid" type="int">
+        <id name="pkid" type="int">
             <column name="featassay_pk_id" not-null="true"/>
             <generator class="increment"/>
         </id>
@@ -432,8 +449,8 @@
     </class>
 
     <class name="org.zfin.feature.FeaturePrefix" table="feature_prefix">
-        <id name="featurePkID" type ="integer">
-            <column name="fp_pk_id" />
+        <id name="featurePkID" type="integer">
+            <column name="fp_pk_id"/>
         </id>
         <property name="prefixString" column="fp_prefix"/>
         <property name="institute" column="fp_institute_display"/>

@@ -38,8 +38,8 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     }
 
     public AnatomyItem getAnatomyItem() {
-        if(anatomyItem == null){
-            anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyTermByOboID(term.getOboID()) ;
+        if (anatomyItem == null) {
+            anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyTermByOboID(term.getOboID());
         }
         return anatomyItem;
     }
@@ -129,8 +129,8 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
      * @return integer that indicates comparison.
      */
     public int compareTo(AnatomyStatistics anatCompare) {
-        String compName = anatCompare.getAnatomyItem().getName();
-        String name = getAnatomyItem().getName();
+        String compName = anatCompare.getAnatomyItem().getTermName();
+        String name = getAnatomyItem().getTermName();
         return name.compareToIgnoreCase(compName);
     }
 

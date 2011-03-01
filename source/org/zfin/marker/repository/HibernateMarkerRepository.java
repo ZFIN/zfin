@@ -59,10 +59,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) session.get(Marker.class, zdbID);
     }
 
-    public Marker getGeneByID(String zdbID){
-        if(!zdbID.startsWith("ZDB-GENE")) return null ;
+    public Marker getGeneByID(String zdbID) {
+        if (!zdbID.startsWith("ZDB-GENE")) return null;
         return (Marker) HibernateUtil.currentSession().createCriteria(Marker.class)
-                .add(Restrictions.eq("zdbID",zdbID))
+                .add(Restrictions.eq("zdbID", zdbID))
                 .uniqueResult();
     }
 
@@ -160,8 +160,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         try {
             return (Marker) criteria1.uniqueResult();
         } catch (HibernateException e) {
-            LOG.debug("unable to return marker for abbrev ["+name+"]");
-            return null ;
+            LOG.debug("unable to return marker for abbrev [" + name + "]");
+            return null;
         }
     }
 
@@ -926,13 +926,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 //                + " order by m.abbreviationOrder asc " ;
         markerList.addAll(HibernateUtil.currentSession()
                 .createQuery(hql)
-                .setString("name","%"+name+"%")
-                .setParameterList("types",types)
+                .setString("name", "%" + name + "%")
+                .setParameterList("types", types)
                 .list());
 
-        Collections.sort(markerList,new MarkerAbbreviationComparator(name));
+        Collections.sort(markerList, new MarkerAbbreviationComparator(name));
 
-        return markerList ;
+        return markerList;
 
 //        Criteria criteria1 = session.createCriteria(Marker.class);
 //        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START));
@@ -950,7 +950,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType,String pubZdbId){
+    public List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId) {
         List<Marker> markerList = new ArrayList<Marker>();
 
         MarkerTypeGroup group = getMarkerTypeGroupByName(markerType.name());
@@ -966,18 +966,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 + " where lower(m.abbreviation) like lower(:name)  "
                 + " and pa.dataZdbID = m.zdbID  "
                 + " and pa.sourceZdbID = :publicationZdbId "
-                + " and m.markerType in (:types)  "; 
+                + " and m.markerType in (:types)  ";
 //                + " order by m.abbreviationOrder asc " ;
         markerList.addAll(HibernateUtil.currentSession()
                 .createQuery(hql)
-                .setString("name","%"+name+"%")
-                .setString("publicationZdbId",pubZdbId)
-                .setParameterList("types",types)
+                .setString("name", "%" + name + "%")
+                .setString("publicationZdbId", pubZdbId)
+                .setParameterList("types", types)
                 .list());
 
-        Collections.sort(markerList,new MarkerAbbreviationComparator(name));
+        Collections.sort(markerList, new MarkerAbbreviationComparator(name));
 
-        return markerList ;
+        return markerList;
     }
 
     // clone methods
@@ -1124,15 +1124,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (includeSubstructures) {
             hqlCount = "select count(distinct stat.probe) " +
                     "     from HighQualityProbeAOStatistics stat " +
-                    "     where stat.superterm.ID = :aoterm ";
+                    "     where stat.superterm.zdbID = :aoterm ";
         } else {
             hqlCount = "select count(distinct stat.probe) " +
                     "     from HighQualityProbeAOStatistics stat " +
-                    "     where stat.superterm.ID = :aoterm and " +
-                    "           stat.subterm.ID = :aoterm ";
+                    "     where stat.superterm.zdbID = :aoterm and " +
+                    "           stat.subterm.zdbID = :aoterm ";
         }
         Query query = session.createQuery(hqlCount);
-        query.setParameter("aoterm", aoTerm.getID());
+        query.setParameter("aoterm", aoTerm.getZdbID());
         int totalCount = ((Number) query.uniqueResult()).intValue();
 
 
@@ -1153,7 +1153,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
         SQLQuery sqlQquery = session.createSQLQuery(sqlQueryStr);
-        sqlQquery.setString("aoterm", aoTerm.getID());
+        sqlQquery.setString("aoterm", aoTerm.getZdbID());
         sqlQquery.setString("type", "High-Quality-Probe");
         sqlQquery.setFirstResult(pagination.getFirstRecord() - 1);
         sqlQquery.setMaxResults(pagination.getMaxDisplayRecords());
@@ -1196,7 +1196,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "           and fstat_img_zdb_id = img.img_zdb_id " +
                 "     order by gene.mrkr_abbrev_order ";
         SQLQuery sqlAllQquery = session.createSQLQuery(sqlQueryAllStr);
-        sqlAllQquery.setString("aoterm", aoTerm.getID());
+        sqlAllQquery.setString("aoterm", aoTerm.getZdbID());
         sqlAllQquery.setString("type", "High-Quality-Probe");
         ScrollableResults scrollableResults = sqlAllQquery.scroll();
         if (pagination.getFirstRecord() == 1) {
@@ -1486,23 +1486,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
     /**
      * Retrieve gene for a given Morpholino which is targeting it.
      *
-     * @param morpholino      valid Morpholino of Marker object.
+     * @param morpholino valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
     public List<Marker> getTargetGenesForMorpholino(Marker morpholino) {
-		if (morpholino == null)
-		    return null;
+        if (morpholino == null)
+            return null;
 
         Session session = currentSession();
         Criteria criteria = session.createCriteria(MarkerRelationship.class);
         criteria.add(Restrictions.eq("firstMarker", morpholino));
         criteria.add(Restrictions.eq("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
         List<MarkerRelationship> markerRelations = criteria.list();
-        if(markerRelations == null)
-        return null;
+        if (markerRelations == null)
+            return null;
 
         List<Marker> targetGenes = new ArrayList<Marker>(markerRelations.size());
-        for(MarkerRelationship relationship: markerRelations){
+        for (MarkerRelationship relationship : markerRelations) {
             targetGenes.add(relationship.getSecondMarker());
         }
         return targetGenes;

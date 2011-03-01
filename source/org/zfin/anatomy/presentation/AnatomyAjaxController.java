@@ -137,7 +137,7 @@ public class AnatomyAjaxController extends MultiActionController {
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
 
-        HibernateUtil.currentSession().flush() ; 
+        HibernateUtil.currentSession().flush();
 
         PaginationResult<AntibodyStatistics> antibodiesIncludingSubstructures = AnatomyService.getAntibodyStatistics(aoTerm, pagination, true);
         AnatomyStatistics statistics = new AnatomyStatistics();
@@ -154,7 +154,7 @@ public class AnatomyAjaxController extends MultiActionController {
         form.setHighQualityProbeGenes(hqp.getPopulatedResults());
         form.setNumberOfHighQualityProbes(hqp.getTotalCount());
 
-       PaginationResult<HighQualityProbe> hqpIncludingSubstructures = markerRepository.getHighQualityProbeStatistics(anatomyTerm, pagination, true);
+        PaginationResult<HighQualityProbe> hqpIncludingSubstructures = markerRepository.getHighQualityProbeStatistics(anatomyTerm, pagination, true);
         AnatomyStatistics statistics = new AnatomyStatistics();
         statistics.setNumberOfTotalDistinctObjects(hqpIncludingSubstructures.getTotalCount());
         statistics.setNumberOfObjects(hqp.getTotalCount());
@@ -184,7 +184,7 @@ public class AnatomyAjaxController extends MultiActionController {
         // maybe used later?
         form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
 
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         form.setAnatomyStatistics(statistics);
     }
 
@@ -198,7 +198,7 @@ public class AnatomyAjaxController extends MultiActionController {
         List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
         form.setGenotypeStatistics(genoStats);
 
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getZdbID());
         form.setAnatomyStatisticsMutant(statistics);
     }
 

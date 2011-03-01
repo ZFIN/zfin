@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -31,12 +31,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "gene"
+        "gene"
 })
 @XmlRootElement(name = "GeneRetrieveResponse")
 @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -47,11 +45,9 @@ public class GeneRetrieveResponse {
 
     /**
      * Gets the value of the gene property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Gene }
-     *     
+     *
+     * @return possible object is
+     *         {@link Gene }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public Gene getGene() {
@@ -60,11 +56,9 @@ public class GeneRetrieveResponse {
 
     /**
      * Sets the value of the gene property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Gene }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Gene }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setGene(Gene value) {

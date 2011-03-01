@@ -99,7 +99,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "   (term.lowerCaseName like :name or exists (from AnatomySynonym syn where syn.item = term " +
                 "                                           and syn.aliasLowerCase like :name and syn.aliasGroup.name <> :group))" +
                 " AND term.obsolete = :obsolete " +
-                " order by term.name";
+                " order by term.termName";
 
 
         Query query = session.createQuery(hql);
@@ -152,7 +152,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "                                           and syn.aliasLowerCase like :name )) " +
                 "   AND stats.type = :type " +
                 "   AND term.oboID = anatItem.oboID " +
-                "order by anatItem.name";
+                "order by anatItem.termName";
         Query query = session.createQuery(hql);
         query.setString("name", "%" + searchTerm.toLowerCase() + "%");
         query.setParameter("type", AnatomyStatistics.Type.GENE);
@@ -432,7 +432,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     public List<String> getAnatomyTermsForAutoComplete() {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select term.name FROM AnatomyItem term ";
+        String hql = "select term.termName FROM AnatomyItem term ";
         Query query = session.createQuery(hql);
         List<String> terms = null;
         terms = (List<String>) query.list();

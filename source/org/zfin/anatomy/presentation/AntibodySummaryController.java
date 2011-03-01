@@ -42,7 +42,7 @@ public class AntibodySummaryController extends AbstractCommandController {
         retrieveAntibodyData(term, form);
 
         ModelAndView modelAndView = new ModelAndView("antibody-summary.page", LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getName());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getTermName());
 
         return modelAndView;
     }

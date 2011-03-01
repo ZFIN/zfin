@@ -18,9 +18,9 @@ public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
     }
 
     public int compare(AnatomyItem termOne, AnatomyItem termTwo) {
-                          
-        String nameOne = termOne.getName();
-        String nameTwo = termTwo.getName();
+
+        String nameOne = termOne.getTermName();
+        String nameTwo = termTwo.getTermName();
         boolean isObsOne = termOne.isObsolete();
         boolean isObsTwo = termTwo.isObsolete();
 

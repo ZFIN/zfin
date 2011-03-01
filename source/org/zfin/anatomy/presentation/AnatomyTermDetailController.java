@@ -67,13 +67,13 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         }
 
         ModelAndView modelAndView = new ModelAndView("anatomy-item.page", LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getName());
+        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getTermName());
 
         return modelAndView;
     }
 
     private boolean hasExpressionData(Term anatomyTerm) {
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         if (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
             return true;
         // check for antibody records including substructures
@@ -92,7 +92,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private boolean hasPhenotypeData(Term anatomyTerm) {
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getZdbID());
         if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
             return true;
 
@@ -113,26 +113,26 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         try {
             String aoTermID = form.getAnatomyItem().getZdbID();
             Term term = null;
-            if(aoTermID!=null && aoTermID.startsWith("ZFA") && form.getId()==null){
+            if (aoTermID != null && aoTermID.startsWith("ZFA") && form.getId() == null) {
                 form.setId(aoTermID);
-                aoTermID = null ;
+                aoTermID = null;
             }
             if (aoTermID != null) {
-                if (aoTermID.contains(ActiveData.Type.TERM.name())){
+                if (aoTermID.contains(ActiveData.Type.TERM.name())) {
                     term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, aoTermID);
-                    if(term==null){
-                        LOG.error("Failed to find term for Term ID: "+ aoTermID);
-                        return null ;
+                    if (term == null) {
+                        LOG.error("Failed to find term for Term ID: " + aoTermID);
+                        return null;
                     }
                     ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
-                }else{
+                } else {
                     ai = anatomyRepository.getAnatomyTermByID(aoTermID);
                 }
                 // ToDo: This should make the above retrieval of the term from the anatomy_item table superfluous.
                 // For now we still use it to serve this page.
-                if(ai==null){
-                    LOG.error("Unable to retrieve anatomy item for term ID: "+aoTermID);
-                    return null ; 
+                if (ai == null) {
+                    LOG.error("Unable to retrieve anatomy item for term ID: " + aoTermID);
+                    return null;
                 }
                 form.setAnatomyItem(ai);
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
@@ -145,15 +145,14 @@ public class AnatomyTermDetailController extends AbstractCommandController {
                 } else if (id.startsWith("ZFA")) {
                     term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
                 }
-                if (term != null){
+                if (term != null) {
                     ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
                 }
             }
             form.setAoTerm(term);
-        }
-        catch (Exception
+        } catch (Exception
                 e) {
-            LOG.error("Failed to get anatomy term detail from " + form + "]: ",e);
+            LOG.error("Failed to get anatomy term detail from " + form + "]: ", e);
             ai = null;
         }
         if (ai == null) {

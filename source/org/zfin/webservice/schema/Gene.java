@@ -8,20 +8,20 @@
 
 package org.zfin.webservice.schema;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for Gene complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Gene">
  *   &lt;complexContent>
@@ -37,16 +37,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Gene", propOrder = {
-    "abbreviation",
-    "link",
-    "name",
-    "zdbId",
-    "expressionAnatomyWildType"
+        "abbreviation",
+        "link",
+        "name",
+        "zdbId",
+        "expressionAnatomyWildType"
 })
 @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
 public class Gene {
@@ -67,11 +65,9 @@ public class Gene {
 
     /**
      * Gets the value of the abbreviation property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getAbbreviation() {
@@ -80,11 +76,9 @@ public class Gene {
 
     /**
      * Sets the value of the abbreviation property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setAbbreviation(String value) {
@@ -93,11 +87,9 @@ public class Gene {
 
     /**
      * Gets the value of the link property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getLink() {
@@ -106,11 +98,9 @@ public class Gene {
 
     /**
      * Sets the value of the link property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setLink(String value) {
@@ -119,11 +109,9 @@ public class Gene {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getName() {
@@ -132,11 +120,9 @@ public class Gene {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setName(String value) {
@@ -145,11 +131,9 @@ public class Gene {
 
     /**
      * Gets the value of the zdbId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public String getZdbId() {
@@ -158,11 +142,9 @@ public class Gene {
 
     /**
      * Sets the value of the zdbId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public void setZdbId(String value) {
@@ -171,25 +153,23 @@ public class Gene {
 
     /**
      * Gets the value of the expressionAnatomyWildType property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the expressionAnatomyWildType property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExpressionAnatomyWildType().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Anatomy }
-     * 
-     * 
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2011-02-15T11:23:15-08:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
     public List<Anatomy> getExpressionAnatomyWildType() {

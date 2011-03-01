@@ -120,7 +120,7 @@ public final class AnatomyPresentation {
         queryString = queryString.toLowerCase().trim();
 
         for (AnatomyItem anatomyItem : terms) {
-            String term = anatomyItem.getName();
+            String term = anatomyItem.getTermName();
             AnatomyAutoCompleteTerm autoCompleteTerm = new AnatomyAutoCompleteTerm(term);
             autoCompleteTerm.setID(anatomyItem.getZdbID());
             // if a match is found on the term name skip the synonym matching logic.
@@ -161,14 +161,14 @@ public final class AnatomyPresentation {
             String alias = synOne.getName();
             String alias1 = synTwo.getName();
 
-            if(aliassig1 < aliassig2)
+            if (aliassig1 < aliassig2)
                 return -1;
-            else if(aliassig1 > aliassig2)
+            else if (aliassig1 > aliassig2)
                 return 1;
-            else if(aliassig1 == aliassig2)
-               return alias.compareToIgnoreCase(alias1);
+            else if (aliassig1 == aliassig2)
+                return alias.compareToIgnoreCase(alias1);
             else
-            return 0;
+                return 0;
         }
     }
 }

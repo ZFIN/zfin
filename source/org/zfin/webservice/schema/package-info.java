@@ -5,5 +5,4 @@
 // Generated on: 2011.02.15 at 11:23:15 AM PST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://localhost/webservice/definitions", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.zfin.webservice.schema;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://localhost/webservice/definitions", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.zfin.webservice.schema;

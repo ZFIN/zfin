@@ -55,7 +55,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         hyperLink.append("&xpatsel_processed_selected_structures_names=");
         hyperLink.append(aoTermUrlEncoded);
         hyperLink.append("&xpatsel_processed_selected_structures=");
-        hyperLink.append(term.getID());
+        hyperLink.append(term.getZdbID());
 
         if (author != null) {
             hyperLink.append("&authsearchtype=contains&author=");

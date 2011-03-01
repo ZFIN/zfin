@@ -45,7 +45,7 @@
             </generator>
         </id>
 
-        <property name="name">
+        <property name="termName">
             <column name="anatitem_name" not-null="false"/>
         </property>
 
@@ -112,8 +112,9 @@
     </class>
 
 
-    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence" table="anatomy_relationship_type" mutable="false">
-        <cache usage="read-only" />
+    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence" table="anatomy_relationship_type"
+           mutable="false">
+        <cache usage="read-only"/>
         <id name="typeID">
             <column name="areltype_dagedit_id" not-null="true"/>
             <generator class="native"/>
