@@ -313,7 +313,7 @@
     <!--</bean>-->
 
     <bean id="uniprotGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="name" value="GOA GO Load"/>
+        <property name="name" value="GOA GAF Load"/>
         <property name="group" value="GO"/>
         <property name="jobClass" value="org.zfin.datatransfer.go.service.GoaGafLoadJob"/>
     </bean>
