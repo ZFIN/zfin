@@ -64,5 +64,3 @@ $(TARGETDIR)/unload_zfin_morpholino.sql $(TARGETDIR)/unload_assembly_clone_gff.s
 	$(TARGETDIR)/GFF3Files.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
 
-ensembl : $(TARGETDIR)/GFF3Files.pl  \
-$(TARGETDIR)/load_drerio_ensembl_id.sql
