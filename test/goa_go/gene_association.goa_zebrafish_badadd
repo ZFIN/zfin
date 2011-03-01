@@ -1,0 +1,4 @@
+UniProtKB	Q567V6	eif3k	contributes_to	GO:0003743	GO_REF:0000024	ISS	UniProtKB:Q9UBQ5	F	Eukaryotic translation initiation factor 3 subunit K	eif3k|eif3s12|zgc:110726|IPI00498908|EIF3K_DANRE	protein	taxon:7955	20090528	UniProtKB		
+UniProtKB	Q567V6	eif3k		GO:0005852	GO_REF:0000024	ISS	UniProtKB:Q9UBQ5	C	Eukaryotic translation initiation factor 3 subunit K	eif3k|eif3s12|zgc:110726|IPI00498908|EIF3K_DANRE	protein	taxon:7955	20090528	UniProtKB		
+UniProtKB	Q567V6	eif3k		GO:0006413	GO_REF:0000024	ISS	UniProtKB:Q9UBQ5	P	Eukaryotic translation initiation factor 3 subunit K	eif3k|eif3s12|zgc:110726|IPI00498908|EIF3K_DANRE	protein	taxon:7955	20090528	UniProtKB		
+

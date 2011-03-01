@@ -1,0 +1,7 @@
+!gaf-version: 2.0
+UniProtKB	A0JMF7	haus6		GO:0003674	GO_REF:0000015	ND		F	HAUS augmin-like complex subunit 6	haus6|fam29a|zgc:153242|IPI00809984|HAUS6_DANRE	protein	taxon:7955	20090618	UniProtKB		
+UniProtKB	A2BID5	veph		GO:0005886	GO_REF:0000023	IEA	SP_SL:SL-0039	C	Ventricular zone-expressed PH domain-containing protein	veph|si:ch211-283j23.5|IPI00865231|IPI00503244|MELT_DANRE|A4IG20|Q8JIG6	protein	taxon:7955	20101211	UniProtKB		
+UniProtKB	Q5PYH5	dlg1l		GO:0007268	PMID:15660367	NAS		P	Discs large homolog 1-like protein	dlg1l|IPI00482217|DLG1L_DANRE	protein	taxon:7955	20050526	UniProtKB		
+UniProtKB	Q7ZVV0	mkks		GO:0032402	PMID:18381349	TAS		P	McKusick-Kaufman syndrome	mkks|bbs6|IPI00496967|Q7ZVV0_DANRE	protein	taxon:7955	20080517	BHF-UCL		
+UniProtKB	Q08CN2	azi1		GO:0060287	PMID:19254375	IMP		P	LOC563066 protein	LOC563066|azi1|IPI00962968|Q08CN2_DANRE	protein	taxon:7955	20090512	ZFIN		
+UniProtKB	Q7ZVV0	mkks		GO:0032402	PMID:18381349	IGI		P	McKusick-Kaufman syndrome	mkks|bbs6|IPI00496967|Q7ZVV0_DANRE	protein	taxon:1111	20081107	UniprotKB		

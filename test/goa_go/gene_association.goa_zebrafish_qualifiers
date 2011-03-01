@@ -1,0 +1,5 @@
+!gaf-version: 2.0
+UniProtKB	Q6PBN2	aida		GO:0046329	PMID:17681137	IMP		P	Axin interactor, dorsalization-associated protein	aida|zgc:73327|IPI00510720|AIDA_DANRE	protein	taxon:7955	20080604	UniProtKB		
+UniProtKB	Q6AZD3	meaf6	NOT	GO:0043984	GO_REF:0000024	ISS	UniProtKB:Q9HAF1	P	Chromatin modification-related protein MEAF6	meaf6|zgc:100869|IPI00488937|EAF6_DANRE	protein	taxon:7955	20090529	UniProtKB		
+UniProtKB	Q6DRI1	eif3ea	contributes_to	GO:0003743	GO_REF:0000024	ISS	UniProtKB:P60228	F	Eukaryotic translation initiation factor 3 subunit E-A	eif3ea|eif3s6a|int6|IPI00502102|EI3EA_DANRE|Q6P7X8|Q6TH16	protein	taxon:7955	20090528	UniProtKB		
+UniProtKB	Q6NW58	spast	colocalizes_with	GO:0015630	GO_REF:0000024	ISS	UniProtKB:Q9UBP0	C	Spastin	spast|spg4|zgc:85952|si:ch73-233a22.3|IPI00497843|SPAST_DANRE|Q6JUU0	protein	taxon:7955	20090528	UniProtKB		

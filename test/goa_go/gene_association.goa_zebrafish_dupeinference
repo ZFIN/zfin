@@ -1,0 +1,4 @@
+!gaf-version: 2.0
+UniProtKB	Q6PBN2	aida		GO:0046329	PMID:15492776	IMP		P	Axin interactor, dorsalization-associated protein	aida|zgc:73327|IPI00510720|AIDA_DANRE	protein	taxon:7955	20100928	MGI
+UniProtKB	Q6PBN2	aida	NOT	GO:0030178	PMID:17681137	IMP		P	Axin interactor, dorsalization-associated protein	aida|zgc:73327|IPI00510720|AIDA_DANRE	protein	taxon:7955	20080604	UniProtKB
+UniProtKB	Q6PBN2	aida		GO:0043496	GO_REF:0000024	ISS	UniProtKB:Q8C4Q6	P	Axin interactor, dorsalization-associated protein	aida|zgc:73327|IPI00510720|AIDA_DANRE	protein	taxon:7955	20080604	UniProtKB

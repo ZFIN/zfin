@@ -1,0 +1,3 @@
+!gaf-version: 2.0
+UniProtKB	Q6NW58	spast	colocalizes_with	GO:0003743	GO_REF:0000024	ISS	UniProtKB:Q9UBP0	C	Spastin	spast|spg4|zgc:85952|si:ch73-233a22.3|IPI00497843|SPAST_DANRE|Q6JUU0	protein	taxon:7955	20090528	UniProtKB		
+UniProtKB	Q6NW58	spast	colocalizes_with	GO:0015630	GO_REF:0000024	ISS	UniProtKB:Q9UBP0	C	Spastin	spast|spg4|zgc:85952|si:ch73-233a22.3|IPI00497843|SPAST_DANRE|Q6JUU0	protein	taxon:7955	20090528	UniProtKB		

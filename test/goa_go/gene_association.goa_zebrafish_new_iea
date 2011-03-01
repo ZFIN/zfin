@@ -1,0 +1,5 @@
+!gaf-version: 2.0
+UniProtKB	Q5BJB7	mrpl10		GO:0035085	GO_REF:0000023	IEA	SP_SL:SL-0173	C	39S ribosomal protein L10, mitochondrial	mrpl10|zgc:112529|IPI00496821|RM10_DANRE	protein	taxon:7955	20101211	UniProtKB		
+UniProtKB	Q1LVG7	atp5d		GO:0060170	GO_REF:0000020	IEA	HAMAP:MF_00530	F	ATP synthase, H+ transporting, mitochondrial F1 complex, delta subunit	atp5d|DKEY-28H18.6-001|IPI00512373|Q1LVG7_DANRE	protein	taxon:7955	20101211	UniProtKB		
+UniProtKB	Q5IGR6	ext1c		GO:0005929	GO_REF:0000024	ISS	UniProtKB:P97464	P	Exostosin-1c	ext1c|IPI00554354|EXT1C_DANRE	protein	taxon:7955	20050531	UniProtKB		
+UniProtKB	Q1LVG7	atp5d		GO:0044441	GO_REF:0000020	IEA	SP_SL:MF_00530	F	ATP synthase, H+ transporting, mitochondrial F1 complex, delta subunit	atp5d|DKEY-28H18.6-001|IPI00512373|Q1LVG7_DANRE	protein	taxon:7955	20101211	UniProtKB		
