@@ -45,7 +45,7 @@
   <?MIVAR>
   <form name=newdata method = post>
   <INPUT TYPE="hidden" name="MIval" value="aa-markergoentry.apg">
-  <center><b>GO annotations for <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
+  <center><b>GO annotations for <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i><?MIVAR>$mrkr_sym<?/MIVAR></i></a></b></center>
   <p>
 
   <hr><!--------------------  the second half is display section --------------------------------->

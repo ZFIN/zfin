@@ -51,7 +51,7 @@ Total of: ${fn:length(formBean.terms)}
                         ${term.oboID}
                 </td>
                 <td>
-                        ${term.ID}
+                        ${term.zdbID}
                 </td>
                 <td>
                     <c:if test="${term.obsolete}">

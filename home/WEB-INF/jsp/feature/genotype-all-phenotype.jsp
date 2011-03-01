@@ -52,7 +52,7 @@
                          <c:when test="${pheno.numberOfFigures >1}">
                            <c:choose>
                              <c:when test="${pheno.morpholino ne null}">
-                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.ID}&qualityID=${pheno.qualityTerm.ID}&tag=${pheno.tag}&includingMO=yes&moID=${pheno.morpholino.zdbID}&entIDsub=${pheno.entityTermSub.ID}'>
+                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.zdbID}&qualityID=${pheno.qualityTerm.zdbID}&tag=${pheno.tag}&includingMO=yes&moID=${pheno.morpholino.zdbID}&entIDsub=${pheno.entityTermSub.zdbID}'>
                                  ${pheno.numberOfFigures} figures</a>
                                <c:if test="${pheno.imgInFigure}">
                                  <img src="/images/camera_icon.gif" border="0" alt="with image">
@@ -60,7 +60,7 @@
                                <img src="/images/MO_icon.gif" border="0" alt="MO image">                                                                                                               
                              </c:when>
                              <c:otherwise>
-                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.ID}&qualityID=${pheno.qualityTerm.ID}&tag=${pheno.tag}&entIDsub=${pheno.entityTermSub.ID}'>
+                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.zdbID}&qualityID=${pheno.qualityTerm.zdbID}&tag=${pheno.tag}&entIDsub=${pheno.entityTermSub.zdbID}'>
                                  ${pheno.numberOfFigures} figures</a>
                                <c:if test="${pheno.imgInFigure}">
                                  <img src="/images/camera_icon.gif" border="0" alt="with image">

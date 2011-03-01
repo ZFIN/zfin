@@ -8,13 +8,13 @@
 
 <zfin2:dataManager zdbID="${formBean.anatomyItem.zdbID}"
                    oboID="${formBean.anatomyItem.oboID}"
-                   termID="${formBean.aoTerm.ID}"
+                   termID="${formBean.aoTerm.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="anatomy_item"/>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.anatomyItem.name}"/>
+        <tiles:putAttribute name="subjectName" value="${formBean.anatomyItem.termName}"/>
         <tiles:putAttribute name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
     </tiles:insertTemplate>
 </div>
@@ -25,7 +25,7 @@
                 <FONT SIZE=+1><STRONG>Name:</STRONG></FONT></td>
             <td>
                 <FONT SIZE=+1><STRONG>
-                    ${formBean.anatomyItem.name}
+                    ${formBean.anatomyItem.termName}
                 </STRONG></FONT>
                 <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
             </td>
@@ -132,7 +132,7 @@
 <hr width="80%">
 <div class="summary">
     <%// Number of Publications with an abstract that contains the anatomical structure %>
-    <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.name}&anon1textAllOneWord=1&query_results=exists'>Search
-        for publications with '${formBean.anatomyItem.name}' in abstract</A>
+    <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.termName}&anon1textAllOneWord=1&query_results=exists'>Search
+        for publications with '${formBean.anatomyItem.termName}' in abstract</A>
 </div>
 

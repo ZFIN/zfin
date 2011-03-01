@@ -2161,37 +2161,23 @@ union
     <?MISQL SQL="select distinct term_zdb_id,goev_display_order,term_name,'f' as mrkrgo_is_false_ref from term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_term_zdb_id=term_zdb_id and mrkrgoev_evidence_code=goev_code and term_ontology='$ontology' order by goev_display_order"><?/MISQL>
     <?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
 
-    <?MIBLOCK COND="$(>,$flgct,0)">
-       <?MIBLOCK COND="$(=,$flgct,2)">
-     	<?MIVAR NAME=$isnot>t<?/MIVAR>
-     	<?MIVAR NAME=$contribs>t<?/MIVAR>
-      <?MIELSE>
-        <?MIBLOCK COND="$(EC,$flag,not)">
-           <?MIVAR NAME=$isnot>t<?/MIVAR>
-        <?/MIBLOCK>
-        <?MIBLOCK COND="$(EC,$flag,contributes to)">
-        	<?MIVAR NAME=$contribs>t<?/MIVAR>
-        <?/MIBLOCK>
-     <?/MIBLOCK>
-   <?/MIBLOCK>
-   <?MIBLOCK COND="$(EC,$isnot,t)">
-  	<?MIVAR NAME=not><i>NOT</i><?/MIVAR>
-   <?MIELSE>
-  	<?MIVAR NAME=not><?/MIVAR>
-   <?/MIBLOCK>
    <?MIBLOCK COND="$(>,$anncount,0)">
 	<TR><TD nowrap><?MIVAR>$ontology_name<?/MIVAR></TD>
    <?/MIBLOCK>
-   <?MIBLOCK COND="$(OR,$(EC,$contribs,t),$(EC,$isnot,t))">
-     <?MIBLOCK COND="$(EC,$contribs,t)">
-      <td nowrap><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
-     <?MIELSE>
-      <td nowrap><i><?MIVAR>$not<?/MIVAR></i></td>
-     <?/MIBLOCK>
-   <?MIELSE>
-     <?MIBLOCK COND="$(EC,$qualifier,true)">
-       <td></td>
-     <?/MIBLOCK>
+    <?MIBLOCK COND="$(EC,$qualifier,true)">
+     <td nowrap>
+     <i>
+       <?MIVAR COND="$(EC,$flag,contributes to)">
+        Contributes to
+        <?/MIVAR>
+       <?MIVAR COND="$(EC,$flag,colocalizes with)">
+        Colocalizes with
+        <?/MIVAR>
+       <?MIVAR COND="$(EC,$flag,not)">
+        NOT
+        <?/MIVAR>
+     </i>
+     </td>
    <?/MIBLOCK>
 
    <?MIBLOCK COND="$(>,$anncount,1)">

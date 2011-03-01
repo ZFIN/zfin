@@ -57,7 +57,7 @@
                 <td>
                     <c:if test="${genoStat.numberOfFigures > 0}">
                         <c:if test="${genoStat.numberOfFigures > 1}">
-                            <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.aoTerm.ID}">
+                            <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-pheno_summary.apg&OID=${genoStat.genotype.zdbID}&anatID=${formBean.aoTerm.zdbID}">
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                         </c:if>
@@ -92,7 +92,7 @@
 <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.mutantsExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsMutant}"
-                                       structureSearchLink="?MIval=aa-fishselect.apg&compare=contains&fsel_inputname=&lg=0&mutagen=any&chrom_change=any&START=1&query_results=exist&fsel_processed_selected_structures_names=${formBean.aoTerm.termName}&fsel_processed_selected_structures=${formBean.aoTerm.ID}&structure_bool=and&fselFilterValue=moExcluded&WINSIZE=20&fishsel_calledBySelf=true"
+                                       structureSearchLink="?MIval=aa-fishselect.apg&compare=contains&fsel_inputname=&lg=0&mutagen=any&chrom_change=any&START=1&query_results=exist&fsel_processed_selected_structures_names=${formBean.aoTerm.termName}&fsel_processed_selected_structures=${formBean.aoTerm.zdbID}&structure_bool=and&fselFilterValue=moExcluded&WINSIZE=20&fishsel_calledBySelf=true"
                                        substructureSearchLink="/${formBean.mutantSearchLinkSubstructures}"
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"

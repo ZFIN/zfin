@@ -19,7 +19,7 @@
     </tr>
     <tr>
         <td class="bold">Term ID</td>
-        <td>${formBean.term.ID}</td>
+        <td>${formBean.term.zdbID}</td>
     </tr>
     <tr class="odd">
         <td class="bold">Definition</td>

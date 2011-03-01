@@ -62,7 +62,7 @@
     <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                            recordsExist="${formBean.inSituProbesExist}"
                                            anatomyStatistics="${formBean.anatomyStatisticsProbe}"
-                                           structureSearchLink="/action/anatomy/high-quality-probes?anatomyItem.zdbID=${formBean.aoTerm.ID}"
+                                           structureSearchLink="/action/anatomy/high-quality-probes?anatomyItem.zdbID=${formBean.aoTerm.zdbID}"
                                            choicePattern="0# Probes| 1# probe| 2# probes"
                                            allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
                                            totalRecordCount="${formBean.numberOfHighQualityProbes}"/>

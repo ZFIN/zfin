@@ -5,7 +5,7 @@
 
 <span class="postcomposedtermlink">
     <zfin:link entity="${superterm}"/>
-    <c:if test="${subterm ne null && subterm.ID ne null && subterm.ID ne ''}">
+    <c:if test="${subterm ne null && subterm.zdbID ne null && subterm.zdbID ne ''}">
         <zfin:link entity="${subterm}"/>
     </c:if>
 </span>

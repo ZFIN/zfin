@@ -31,7 +31,7 @@
                     <c:if test="${antibodyStats.numberOfFigures > 0}">
                         <!-- link to figure search page if more than one figure available-->
                         <c:if test="${antibodyStats.numberOfFigures > 1}">
-                            <a href='/action/antibody/figure-summary?superTerm.ID=${formBean.aoTerm.ID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
+                            <a href='/action/antibody/figure-summary?superTerm.ID=${formBean.aoTerm.zdbID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${antibodyStats.numberOfFigures}"
                                              includeNumber="true"/>
@@ -63,8 +63,8 @@
 <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.antibodiesExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsAntibodies}"
-                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.ID}&action=SEARCH"
-                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.ID}&action=SEARCH"
+                                       structureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=false&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.zdbID}&action=SEARCH"
+                                       substructureSearchLink="/action/antibody/search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=${formBean.aoTerm.termName}&antibodyCriteria.anatomyTermIDs=${formBean.aoTerm.zdbID}&action=SEARCH"
                                        choicePattern="0# antibodies| 1# antibody| 2# antibodies"
                                        allRecordsAreDisplayed="${formBean.allAntibodiesAreDisplayed}"
                                        totalRecordCount="${formBean.antibodyCount}"/>

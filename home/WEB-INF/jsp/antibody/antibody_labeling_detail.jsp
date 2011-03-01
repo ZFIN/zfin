@@ -60,7 +60,7 @@
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.ID}&subTerm.ID=${detailedLabeling.subterm.ID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
@@ -148,7 +148,7 @@
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.ID}&subTerm.ID=${detailedLabeling.subterm.ID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.ID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>

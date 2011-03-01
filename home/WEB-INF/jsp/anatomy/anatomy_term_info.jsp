@@ -52,7 +52,7 @@
             <FONT SIZE=+1><STRONG>Name:</STRONG></FONT></td>
         <td>
             <FONT SIZE=+1><STRONG>
-             ${formBean.anatomyItem.name}
+             ${formBean.anatomyItem.termName}
              <br>
              <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank"><font size="-1">Anatomy Details</font></a>
             </STRONG></FONT>
@@ -94,7 +94,7 @@
             <TD bgcolor="#EEEEEE">
                 <c:forEach var="session" items="${rt.items}">
                     <%--<zfin:link entity="${item}"/>--%>
-                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.name}</a>
+                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.termName}</a>
                     &nbsp;
                 </c:forEach>
             </TD>

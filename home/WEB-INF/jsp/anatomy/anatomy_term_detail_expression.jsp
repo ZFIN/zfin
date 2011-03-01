@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
-            new Ajax.Updater('${expressionSection}-genes', '/action/anatomy/show-expression-genes?zdbID=${formBean.aoTerm.ID}', {Method: 'get'});
-            new Ajax.Updater('${expressionSection}-inSituProbes', '/action/anatomy/show-expression-insitu-probes?zdbID=${formBean.aoTerm.ID}', {Method: 'get'});
-            new Ajax.Updater('${expressionSection}-antibodies', '/action/anatomy/show-expression-antibodies?zdbID=${formBean.aoTerm.ID}', {Method: 'get'});
+            new Ajax.Updater('${expressionSection}-genes', '/action/anatomy/show-expression-genes?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
+            new Ajax.Updater('${expressionSection}-inSituProbes', '/action/anatomy/show-expression-insitu-probes?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
+            new Ajax.Updater('${expressionSection}-antibodies', '/action/anatomy/show-expression-antibodies?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
             showSection('${expressionSection}', true);
         }
     </script>

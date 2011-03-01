@@ -174,14 +174,27 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
   <?MIVAR NAME=infername><?/MIVAR>
 
 <?MISQL SQL="
-       select gont_ontology_name,term_name,mrkrgoev_evidence_code,gont_order,term_ont_id,
-	      mrkrgoev_term_zdb_id,mrkrgoev_zdb_id, mrkrgoev_source_zdb_id,
-	      mrkrgoev_notes, mrkrgoev_gflag_name
-	 from term, marker_go_term_evidence, go_ontology
-	where mrkrgoev_mrkr_zdb_id='$OID' 
-	  and mrkrgoev_term_zdb_id=term_zdb_id
-	  and term_ontology=gont_ontology_internal_name
-        order by gont_order,mrkrgoev_evidence_code,term_name, mrkrgoev_gflag_name">
+      select
+g.gont_ontology_name,
+t.term_name,
+ev.mrkrgoev_evidence_code,
+g.gont_order,
+t.term_ont_id,
+ev.mrkrgoev_term_zdb_id,
+ev.mrkrgoev_zdb_id,
+ev.mrkrgoev_source_zdb_id,
+ev.mrkrgoev_notes,
+ev.mrkrgoev_gflag_name,
+ev.mrkrgoev_annotation_organization_created_by,
+org.mrkrgoevcb_name,
+org.mrkrgoevcb_url
+from term t
+join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
+join go_ontology g on t.term_ontology=g.gont_ontology_internal_name
+left join marker_go_term_evidence_annotation_created_by_source org on ev.mrkrgoev_annotation_organization_created_by=org.mrkrgoevcb_name 
+where ev.mrkrgoev_mrkr_zdb_id='$OID'
+order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_name
+      ; ">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
    <?MIVAR NAME=$goterm>$2<?/MIVAR>
@@ -192,10 +205,15 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
    <?MIVAR NAME=$sourcezdbid>$8<?/MIVAR>
    <?MIVAR NAME=$markergonotes>$9<?/MIVAR>
    <?MIVAR NAME=$flag>$10<?/MIVAR>
+   <?MIVAR NAME="organization">$11<?/MIVAR>
+   <?MIVAR NAME="organization_name">$12<?/MIVAR>
+   <?MIVAR NAME="organization_url">$13<?/MIVAR>
    <?MIVAR NAME=isnot>f<?/MIVAR>
    <?MIVAR NAME=contribs>f<?/MIVAR>
+   <?MIVAR NAME=colocalizeswith>f<?/MIVAR>
    <?MIVAR COND="$(EC,$flag,not)" NAME=$isnot>t<?/MIVAR>
    <?MIVAR COND="$(EC,$flag,contributes to)" NAME=$contribs>t<?/MIVAR>
+   <?MIVAR COND="$(EC,$flag,colocalizes with)" NAME=$colocalizeswith>t<?/MIVAR>
    <?MIBLOCK COND="$(EC,$isnot,t)">
  	 <?MIVAR NAME=not>NOT<?/MIVAR>
    <?MIELSE>
@@ -215,12 +233,20 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
      <?MIVAR>
      <td>$(IF,$(NC,$ontology,$lastonto),$ontology)
     </td> 
-     <?MIBLOCK COND="$(EC,$qualifier,true)">
-       <?MIBLOCK COND="$(EC,$contribs,t)">
-        <td nowrap><i><?MIVAR><i>$not</i><?/MIVAR> Contributes to<i></td>
-       <?MIELSE>
-        <td nowrap><i><?MIVAR><i>$not</i><?/MIVAR></td>
-       <?/MIBLOCK>
+    <?MIBLOCK COND="$(EC,$qualifier,true)">
+     <td nowrap>
+     <i>
+       <?MIVAR COND="$(EC,$contribs,t)">
+        Contributes to
+        <?/MIVAR>
+       <?MIVAR COND="$(EC,$colocalizeswith,t)">
+        Colocalizes with
+        <?/MIVAR>
+       <?MIVAR COND="$(EC,$isnot,t)">
+        NOT
+        <?/MIVAR>
+     </i>
+     </td>
      <?/MIBLOCK>
      <td><A HREF=$dbquery$goid>$goterm</A></TD>
      <td nowrap><A HREF="http://www.geneontology.org/GO.evidence.shtml#$(LOWER,$evidence)">$evidence</A></TD>
@@ -366,15 +392,27 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
  <?/MISQL>
 <?/MIBLOCK>  
 
-
+<td align=center>
 <?MIBLOCK COND="$(EC,$pubcount,1)">
-      <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$pubcount<?/MIVAR></a></td></tr>
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$sourcezdbid<?/MIVAR>"><?MIVAR>$pubcount<?/MIVAR></a>
 <?MIELSE>
        <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
        <?MIVAR NAME=$name><?/MIVAR>
        <?MIVAR>
-         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a></td></tr><?/MIVAR>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a><?/MIVAR>
 <?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(NE,$organization_url,),$(NE,$organization,ZFIN))">
+<?MIVAR>
+<a style="font-size: small;" href="$organization_url">$organization_name</a>
+<?/MIVAR>
+<?MIELSE COND="$(AND,$(EQ,$organization_url,),$(NE,$organization,ZFIN))">
+<?MIVAR>
+<span  style="font-size: small;">$organization</span>
+<?/MIVAR>
+<?/MIBLOCK>
+</td>
+
+</tr>
 
     <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
   

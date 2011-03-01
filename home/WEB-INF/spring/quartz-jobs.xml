@@ -24,6 +24,7 @@
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
+                <ref bean="uniprotGafLoadTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -73,7 +74,7 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Remove Go Terms From Withdrawn Markers"/>
                 <property name="group" value="GO"/>
-                <property name="jobClass" value="org.zfin.datatransfer.go.RemoveGoTermsFromWithdrawnMarkersJob"/>
+                <property name="jobClass" value="org.zfin.datatransfer.go.service.RemoveGoTermsFromWithdrawnMarkersJob"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
@@ -216,7 +217,7 @@
                     <map>
                         <entry key="oboFileName" value="quality.obo"/>
                         <entry key="oboFileUrl"
-                                  value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
+                               value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
                         <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
@@ -240,7 +241,7 @@
                     <map>
                         <entry key="oboFileName" value="gene-ontology.obo"/>
                         <entry key="oboFileUrl"
-                                  value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+                               value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
                         <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
@@ -264,7 +265,7 @@
                     <map>
                         <entry key="oboFileName" value="anatomy.obo"/>
                         <entry key="oboFileUrl"
-                                  value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
+                               value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
                         <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
@@ -288,7 +289,7 @@
                     <map>
                         <entry key="oboFileName" value="spatial.obo"/>
                         <entry key="oboFileUrl"
-                                  value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
+                               value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
                         <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
@@ -300,6 +301,30 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
         <property name="cronExpression" value="3 0 18 ? * SUN"/>
+    </bean>
+
+    <!--NOTE: these are both autowired in the zfinapp context-->
+    <!--<bean id="downloadService1" class="org.zfin.datatransfer.service.DownloadService"/>-->
+    <!--<bean id="gafService1" class="org.zfin.datatransfer.go.service.GafService"/>-->
+    <!--<bean id="uniprotGafLoadJob1" class="org.zfin.datatransfer.service.UniprotGafLoadJob">-->
+        <!--<property name="downloadService" ref="downloadService1"/>-->
+        <!--<property name="gafService" ref="gafService1"/>-->
+        <!--<property name="fanged" value="false"/>-->
+    <!--</bean>-->
+
+    <bean id="uniprotGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="name" value="GOA GO Load"/>
+        <property name="group" value="GO"/>
+        <property name="jobClass" value="org.zfin.datatransfer.go.service.GoaGafLoadJob"/>
+    </bean>
+
+
+    <bean id="uniprotGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="uniprotGafLoadJobBean">
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--goes off the 22nd of each month-->
+        <property name="cronExpression" value="0 50 03 22 * ?"/>
     </bean>
 
 </beans>

@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            new Ajax.Updater('${phenotypeSection}-mutants', '/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-morpholinos', '/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-non-wildtype-morpholinos', '/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.ID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-mutants', '/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-morpholinos', '/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
+            new Ajax.Updater('${phenotypeSection}-non-wildtype-morpholinos', '/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
             showSection('${phenotypeSection}', true);
         }
     </script>
