@@ -42,8 +42,9 @@ foreach $target (@infiles){
     system ("cp -p $data_cache/$target .");
 }
 print "generating tracks\n";
-my $cmd = "cat begin_work.sql " .
-    "unload_assembly_clone_gff.sql " .
+
+
+my $cmd = "cat unload_assembly_clone_gff.sql " .
     "load_drerio_vega_id.sql " .
     "unload_zfin_genes_gff.sql " .
     "unload_alias_scattered.sql " .
@@ -54,6 +55,6 @@ my $cmd = "cat begin_work.sql " .
     "unload_vega_chromosome_gff.sql " .
 #   "unload_mutant_gff.sql " .
 #   "unload_zfin_transcript.sql ".
-    "rollback.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess  <!--|DB_NAME|-->";
+    "drop_table_gff3.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess  <!--|DB_NAME|-->";
 
 system($cmd);

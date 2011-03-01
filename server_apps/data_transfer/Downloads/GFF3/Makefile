@@ -23,9 +23,9 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 GENERICS = load_drerio_vega_id.sql unload_pheno_gff.sql unload_zfin_genes_gff.sql \
 unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql GFF3Files.pl \
 unload_zfin_transcript.sql unload_antibody_gff.sql unload_zfin_morpholino.sql \
-unload_vega_chromosome_gff.sql unload_assembly_clone_gff.sql begin_work.sql
+unload_vega_chromosome_gff.sql unload_assembly_clone_gff.sql
 
-STATICS = gather_alias.awk rollback.sql
+STATICS = gather_alias.awk load_drerio_ensembl.sql drop_table_gff3.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -58,9 +58,11 @@ $(HTTP_DATA_TRANSFER_DIR) :
 run : $(TARGETDIR)/GFF3Files.pl         $(TARGETDIR)/load_drerio_vega_id.sql \
 $(TARGETDIR)/unload_pheno_gff.sql       $(TARGETDIR)/unload_zfin_genes_gff.sql \
 $(TARGETDIR)/unload_mutant_gff.sql      $(TARGETDIR)/unload_xpat_gff.sql \
-$(TARGETDIR)/unload_alias_scattered.sql $(TARGETDIR)/GFF3Files.pl \
-$(TARGETDIR)/gather_alias.awk           $(TARGETDIR)/rollback.sql \
-$(TARGETDIR)/unload_zfin_morpholino.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
-$(TARGETDIR)/begin_work.sql
+$(TARGETDIR)/unload_alias_scattered.sql $(TARGETDIR)/gather_alias.awk   \
+$(TARGETDIR)/drop_table_gff3.sql \
+$(TARGETDIR)/unload_zfin_morpholino.sql $(TARGETDIR)/unload_assembly_clone_gff.sql
 	$(TARGETDIR)/GFF3Files.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
+
+ensembl : $(TARGETDIR)/GFF3Files.pl  \
+$(TARGETDIR)/load_drerio_ensembl_id.sql

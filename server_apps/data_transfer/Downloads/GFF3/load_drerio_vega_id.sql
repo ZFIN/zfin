@@ -16,6 +16,7 @@ create table gff3(
     Parent  varchar(25),
     biotype varchar(55)
 ) fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+  EXTENT SIZE 63534  NEXT SIZE 10590  -- ~20% over Ensembl Zv9 61a
 ;
 
 -- this file is only regenerated with new vega loads
@@ -24,17 +25,17 @@ create table gff3(
 -- default cache location is /research/zprodmore/gff3/
 -- can be changed in calling file (GFF3Files.pl)
 
-
 load from 'drerio_vega_id.unl' insert into gff3;
 
 -- index transcripts
 create index gff3_parent_idx on gff3(parent) in idxdbs3;
-create index gff3_biotype_idx on gff3(biotype) in idxdbs3;
+create index gff3_feature_idx on  gff3(feature) in idxdbs3;
 
 -- index chromosones, vega|ensembl , SO type
-create index gff3_seqname_idx on gff3(seqname) in idxdbs2;
-create index gff3_source_idx on  gff3(source) in idxdbs1;
-create index gff3_feature_idx on  gff3(feature) in idxdbs3;
+-- not unless we have vega and ensembl in the same table same time
+--create index gff3_source_idx on  gff3(source) in idxdbs1;
+--create index gff3_seqname_idx on gff3(seqname) in idxdbs2;
+--create index gff3_biotype_idx on gff3(biotype) in idxdbs3;
 
 -- might need these if we get as far as "between" location location.
 --create index gff3_start_idx on  gff3(start) in idxdbs1;
