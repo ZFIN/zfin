@@ -18,6 +18,9 @@ echo 'execute function regen_genox(); update statistics for procedure' | dbacces
 echo "Starting regen_anatomy_counts at `date`"
 echo 'execute function regen_anatomy_counts(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
+echo "Starting regen_term at `date`"
+echo 'execute function regen_term(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
 echo "Starting regen_names at `date`"
 echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 

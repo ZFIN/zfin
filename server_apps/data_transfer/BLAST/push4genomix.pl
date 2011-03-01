@@ -7,6 +7,8 @@
 # is outputed to '|' delimited file to zfin ftp
 # site for genomix.cs.uoregon.edu to download.
 #
+# NOTE: THIS FILE IS DEPRECATED.  However, it may be useful to have this as a local table in the future.
+#
 
 use DBI;
 

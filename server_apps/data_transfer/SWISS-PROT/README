@@ -195,7 +195,7 @@ the three ontology files that are in "ontology.unl" or "ontsecgoid.unl".
 If a GO id has an entry in "ontsecgoid.unl" which means that the id is 
 actually outdated, we will replace it by the primary GO id. Then the GO 
 information with ontology are placed in the go_term table. The relationship 
-between ZFIN genes and their associated GO terms goes in the marker_go_term 
+between ZFIN genes and their associated GO terms goes in the marker_go_term_evidence
 table. The relationship and their sources (one of the two translation 
 tables) are recorded in the marker_go_term_evidence table. 
   The marker and GO term relationships are attributed to an internal 

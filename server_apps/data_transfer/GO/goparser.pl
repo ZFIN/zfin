@@ -61,6 +61,7 @@ sub goQlf()
      $qualf = $_[0];
      $qualf = 'NOT' if $qualf eq 'not';
      $qualf = 'contributes_to' if $qualf eq 'contributes to';
+     $qualf = 'colocalizes_with' if $qualf eq 'colocalizes with';
      return $qualf;
  }
 
@@ -92,8 +93,9 @@ sub goPub()
 sub goMod()
   {
     $mod_by =$_[0];
-    $source = 'ZFIN' if ($mod_by ne 'S-P Curators');
-    $source = 'UniProtKB' if ($mod_by eq 'S-P Curators');
+#    $source = 'ZFIN' if ($mod_by ne 'S-P Curators');
+#    $source = 'UniProtKB' if ($mod_by eq 'S-P Curators');
+    $source = $mod_by ;
     return $source;
   }
 sub goInf()

@@ -36,8 +36,7 @@ begin work;
 		mrkr_zdb_id		varchar(50),
 		go_zdb_id		varchar(50),
 		mrkrgoev_source		varchar(50),
-                mrkrgoev_inference 	varchar(80),
-		mrkrgoev_contributed_by	varchar(80)	 
+                mrkrgoev_inference 	varchar(80)
 	)with no log;
 
 	
@@ -45,7 +44,7 @@ begin work;
         insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
 					    mrkrgoev_inference, mrkrgoev_contributed_by)
 		select distinct db.dblink_linked_recid, term_zdb_id, "ZDB-PUB-031118-3", 
-		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
+		       "EC:"||ec.ec_acc
 		from db_link db, ec_goterm_with_dups ec, term
 		where db.dblink_acc_num = ec.ec_acc
 		  and term_ont_id = "GO:"||ec.goterm_id;
@@ -71,11 +70,9 @@ begin work;
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
-				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
-				mrkrgoev_modified_by)
+				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_annotation_organization,mrkrgoev_external_load_date)
 		select p.mrkrgoev_zdb_id,p.mrkr_zdb_id, p.go_zdb_id,
-		       p.mrkrgoev_source, "IEA", CURRENT,CURRENT,
-		       p.mrkrgoev_contributed_by, p.mrkrgoev_contributed_by
+		       p.mrkrgoev_source, "IEA", CURRENT,CURRENT, '5',CURRENT
 		  from pre_marker_go_evidence p
 		  where not exists (Select 'x' from marker a
 		  	    	   	   where a.mrkr_zdb_id = p.mrkr_zdb_id
