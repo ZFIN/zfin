@@ -67,7 +67,7 @@ public class EQReport {
 
     private Term getGoTerm(String id) {
         Term term = new GenericTerm();
-        term.setID(id);
+        term.setZdbID(id);
         return term;
     }
 

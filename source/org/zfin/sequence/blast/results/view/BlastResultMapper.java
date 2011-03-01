@@ -8,8 +8,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
-import org.zfin.marker.service.MarkerService;
 import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -156,7 +156,7 @@ public class BlastResultMapper {
         logger.debug("is root: " + isRoot);
         int numberOfSequences = 0;
         if (blastOutput.getZFINParameters().getTargetDatabases() != null) {
-            List<TargetDatabase> otherDatabasesFromQuery =  blastOutput.getZFINParameters().getTargetDatabases().getTargetDatabase();
+            List<TargetDatabase> otherDatabasesFromQuery = blastOutput.getZFINParameters().getTargetDatabases().getTargetDatabase();
             if (CollectionUtils.isNotEmpty(otherDatabasesFromQuery)) {
                 logger.debug("number of databii: " + otherDatabasesFromQuery.size());
                 for (TargetDatabase targetDatabase : otherDatabasesFromQuery) {
@@ -252,7 +252,7 @@ public class BlastResultMapper {
                 // if there are no hits in sequences, then assume we have a genomic clone
                 if (geneDBLink == null && cloneDBLink == null && transcriptDBLink == null) {
                     for (DBLink dbLink : dbLinks) {
-                        if(false==dbLink.getDataZdbID().startsWith("ZDB-ORTHO-")){
+                        if (false == dbLink.getDataZdbID().startsWith("ZDB-ORTHO-")) {
                             logger.debug("geneDBLink is null so setting cloneDBLink for a genomic: " + dbLink);
                             Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLink.getDataZdbID());
                             // if a genomic clone then we handle appropriately
@@ -284,12 +284,12 @@ public class BlastResultMapper {
                     hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
                     hitViewBean.setHitDBLink(cloneDBLink);
-                } else if (transcriptDBLink != null && false==TranscriptService.isSupportingSequence((TranscriptDBLink) transcriptDBLink)) {
+                } else if (transcriptDBLink != null && false == TranscriptService.isSupportingSequence((TranscriptDBLink) transcriptDBLink)) {
                     hitMarker = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
                     hitViewBean.setHitDBLink(transcriptDBLink);
                     TranscriptStatus transcriptStatus = ((Transcript) hitMarker).getStatus();
-                    hitViewBean.setWithdrawn( transcriptStatus==null ? false : transcriptStatus.getStatus()==TranscriptStatus.Status.WITHDRAWN_BY_SANGER);
+                    hitViewBean.setWithdrawn(transcriptStatus == null ? false : transcriptStatus.getStatus() == TranscriptStatus.Status.WITHDRAWN_BY_SANGER);
                 } else if (geneDBLink != null) {
                     genes.add(RepositoryFactory.getMarkerRepository().getMarkerByID(geneDBLink.getDataZdbID()));
                     hitViewBean.setHitDBLink(geneDBLink);
@@ -299,12 +299,11 @@ public class BlastResultMapper {
             // well, then its a morpholino
             else if (hitAccessionID.startsWith("ZDB-MRPHLNO")) {
                 hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(hitAccessionID);
-                if(hitMarker!=null){
+                if (hitMarker != null) {
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
                     hitViewBean.setMarkerIsHit(true);
-                }
-                else{
-                    logger.error("blast DB has a bad morpholino: "+ hitAccessionID);
+                } else {
+                    logger.error("blast DB has a bad morpholino: " + hitAccessionID);
                 }
             }
             // if there is no hit dblink, then use an accession
@@ -348,9 +347,9 @@ public class BlastResultMapper {
                     && hitViewBean.getHitDBLink().getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.VEGA_TRANS)) {
                 //todo: eventually handle multiple genes, just incase...
                 Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(hitMarker.getZdbID());
-                Set<RelatedMarker> relatedMarkers = TranscriptService.getRelatedGenes(transcript) ;
-                Marker gene ;
-                if(CollectionUtils.isNotEmpty(relatedMarkers)){
+                Set<RelatedMarker> relatedMarkers = TranscriptService.getRelatedGenes(transcript);
+                Marker gene;
+                if (CollectionUtils.isNotEmpty(relatedMarkers)) {
                     gene = relatedMarkers.iterator().next().getMarker();
                     //get gbrowse images
                     try {
@@ -359,9 +358,8 @@ public class BlastResultMapper {
                     } catch (Exception e) {
                         logger.error("Couldn't get GBrowse Feature " + e.getMessage());
                     }
-                }
-                else{
-                    logger.warn("unable to find related genes for a transcript: "+transcript);
+                } else {
+                    logger.warn("unable to find related genes for a transcript: " + transcript);
                 }
             }
 
@@ -371,7 +369,6 @@ public class BlastResultMapper {
 
         return blastResultBean;
     }
-
 
 
     public static Map<String, HitViewBean> getBeanMapForHits(List<Hit> hits) {
@@ -412,7 +409,7 @@ public class BlastResultMapper {
                     HighScoringPair highScoringPair = new HighScoringPair();
                     highScoringPair.setHspNumber(Integer.parseInt(hsp.getHspNum()));
                     highScoringPair.setQueryStrand(hsp.getHspQseq());
-                    if(hsp.getHspMidline()!=null){
+                    if (hsp.getHspMidline() != null) {
                         highScoringPair.setMidlineStrand(hsp.getHspMidline());
                     }
                     highScoringPair.setHitStrand(hsp.getHspHseq());
@@ -423,11 +420,11 @@ public class BlastResultMapper {
                     highScoringPair.setBitScore(Float.parseFloat(hsp.getHspBitScore()));
                     highScoringPair.setScore(Integer.parseInt(hsp.getHspScore()));
                     highScoringPair.setEValue(Float.parseFloat(hsp.getHspEvalue()));
-                    if(hsp.getHspAlignLen()!=null){
+                    if (hsp.getHspAlignLen() != null) {
                         highScoringPair.setAlignmentLength(Integer.parseInt(hsp.getHspAlignLen()));
                     }
                     highScoringPair.setIdentity(Integer.parseInt(hsp.getHspIdentity()));
-                    if(hsp.getHspPositive()!=null){
+                    if (hsp.getHspPositive() != null) {
                         highScoringPair.setPositive(Integer.parseInt(hsp.getHspPositive()));
                     }
 

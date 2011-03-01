@@ -1,6 +1,5 @@
 package org.zfin.sequence.service;
 
-import org.springframework.stereotype.Service;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -15,24 +14,24 @@ public class SequenceService {
 
     private final static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
-    private ReferenceDatabase omimHumanOrthologueDB ;
-    private ReferenceDatabase entrezGeneHumarnRefDB ;
-    private ReferenceDatabase entrezGeneMouseRefDB ;
+    private ReferenceDatabase omimHumanOrthologueDB;
+    private ReferenceDatabase entrezGeneHumarnRefDB;
+    private ReferenceDatabase entrezGeneMouseRefDB;
     private ReferenceDatabase uniprotDB;
 
     public ReferenceDatabase getOMIMHumanOrthologue() {
-        if(omimHumanOrthologueDB==null){
-            omimHumanOrthologueDB =  sequenceRepository.getReferenceDatabase(
+        if (omimHumanOrthologueDB == null) {
+            omimHumanOrthologueDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.OMIM,
                     ForeignDBDataType.DataType.ORTHOLOGUE,
                     ForeignDBDataType.SuperType.ORTHOLOGUE,
                     Species.HUMAN);
         }
-        return omimHumanOrthologueDB ;
+        return omimHumanOrthologueDB;
     }
 
     public ReferenceDatabase getEntrezGeneHumanRefDB() {
-        if(entrezGeneHumarnRefDB==null){
+        if (entrezGeneHumarnRefDB == null) {
             entrezGeneHumarnRefDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.ENTREZ_GENE,
                     ForeignDBDataType.DataType.ORTHOLOGUE,
@@ -40,30 +39,38 @@ public class SequenceService {
                     Species.HUMAN);
         }
 
-        return entrezGeneHumarnRefDB ;
+        return entrezGeneHumarnRefDB;
     }
 
     public ReferenceDatabase getEntrezGeneMouseRefDB() {
-        if(entrezGeneMouseRefDB==null){
-            entrezGeneMouseRefDB =  sequenceRepository.getReferenceDatabase(
+        if (entrezGeneMouseRefDB == null) {
+            entrezGeneMouseRefDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.ENTREZ_GENE,
                     ForeignDBDataType.DataType.ORTHOLOGUE,
                     ForeignDBDataType.SuperType.ORTHOLOGUE,
                     Species.MOUSE);
         }
 
-        return entrezGeneMouseRefDB ;
+        return entrezGeneMouseRefDB;
     }
 
     public ReferenceDatabase getUniprotDb() {
-        if(uniprotDB==null){
-            uniprotDB =  sequenceRepository.getReferenceDatabase(
+        if (uniprotDB == null) {
+            uniprotDB = sequenceRepository.getReferenceDatabase(
                     ForeignDB.AvailableName.UNIPROTKB,
                     ForeignDBDataType.DataType.POLYPEPTIDE,
                     ForeignDBDataType.SuperType.SEQUENCE,
                     Species.ZEBRAFISH);
         }
 
-        return uniprotDB ;
+        return uniprotDB;
     }
+
+    public static ReferenceDatabase getUniprotRefDB() {
+        return sequenceRepository.getZebrafishSequenceReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB
+                , ForeignDBDataType.DataType.POLYPEPTIDE
+        );
+    }
+
 }
