@@ -25,7 +25,7 @@ unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql GFF3Files.p
 unload_zfin_transcript.sql unload_antibody_gff.sql unload_zfin_morpholino.sql \
 unload_vega_chromosome_gff.sql unload_assembly_clone_gff.sql
 
-STATICS = gather_alias.awk load_drerio_ensembl.sql drop_table_gff3.sql
+STATICS = gather_alias.awk drop_table_gff3.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
