@@ -15,7 +15,7 @@ drop function populate_all_term_contains;
 --  define echoCommand lvarchar;
 
 --  let echoCommand = 'echo "' || get_time() || ' ' || log_message ||
-		       '" >> /tmp/regen_term_log.<!--|DB_NAME|-->';
+--		       '" >> /tmp/regen_term_log.<!--|DB_NAME|-->';
 --  system echoCommand;
 
 --end procedure;
