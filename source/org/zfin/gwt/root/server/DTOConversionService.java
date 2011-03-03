@@ -819,6 +819,7 @@ public class DTOConversionService {
         info.setOboID(term.getOboID());
         info.setName(term.getTermName());
         if (includeSynonyms) {
+            HibernateUtil.currentSession().refresh(term);
             info.setSynonyms(OntologyService.createSortedSynonymsFromTerm(term));
         }
         info.setDefinition(term.getDefinition());

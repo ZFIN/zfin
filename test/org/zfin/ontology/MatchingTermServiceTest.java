@@ -12,7 +12,8 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MatchingTermServiceTest extends AbstractDatabaseTest{
+public class MatchingTermServiceTest {
+//    public class MatchingTermServiceTest extends AbstractDatabaseTest{
 
     private final Logger logger = Logger.getLogger(MatchingTermServiceTest.class) ;
 

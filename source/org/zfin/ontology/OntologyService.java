@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.presentation.OntologyAutoCompleteTerm;
 import org.zfin.util.ListFormatter;
 
@@ -135,6 +136,7 @@ public final class OntologyService {
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 String displayName;
+                HibernateUtil.currentSession().refresh(rel);
                 if (rel.getTermTwo() == null)
                     log.error("No term two found for: " + rel.getZdbId());
                 if (rel.getTermTwo().equals(term)) {

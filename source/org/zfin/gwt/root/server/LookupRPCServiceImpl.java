@@ -379,6 +379,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
                 List<Term> terms = relationship.getItems();
                 for (Term item : terms) {
+                    HibernateUtil.currentSession().refresh(item);
                     TermInfo info = DTOConversionService.convertToTermInfo(item, ontology, false);
                     rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
                 }

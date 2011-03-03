@@ -23,10 +23,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
 
-    public OntologyManagerTest(){
-        initHibernate();
-    }
-
     @Override
     protected Ontology[] getOntologiesToLoad() {
         Ontology[] ontologies = new Ontology[4];
