@@ -2,9 +2,8 @@
 -- Estimated Run Time: 3 hours
 
 -- Drop all out-of-date functions.
-drop function regen_term;
+--drop function regen_term;
 drop function populate_all_term_contains;
-
 
 --{  Comment this out.  Use when you are trying to speed this up.
 -- Create function for logging timings.
