@@ -8,7 +8,7 @@
     ZFIN: The Zebrafish Model Organism Database
   </title>
   <link rel="alternate" type="application/rss+xml" title="RSS"
-      href="feed:https://wiki.zfin.org/createrssfeed.action?types=blogpost&spaces=jobs&spaces=meetings&spaces=news&title=ZFIN+Community+Wiki+RSS+Feed&labelString%3D&excludedSpaceKeys%3D&sort=created&maxResults=100&timeSpan=120&confirm=Create+RSS+Feed&showContent=false&showDiff=false&os_authType=basic">
+      href="feed:https://wiki.zfin.org/createrssfeed.action?types=blogpost&spaces=jobs&spaces=meetings&spaces=news&title=ZFIN+Community+Wiki+RSS+Feed&labelString%3D&excludedSpaceKeys%3D&sort=created&maxResults=100&timeSpan=120&confirm=Create+RSS+Feed&showContent=false&showDiff=false">
 </head>
 
 <?MISQL SQL="
