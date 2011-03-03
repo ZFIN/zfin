@@ -115,6 +115,7 @@ public abstract class AbstractTerm implements Term {
     }
 
     public boolean isAliasesExist() {
+        HibernateUtil.currentSession().refresh(this);
         return (synonyms != null && !synonyms.isEmpty());
     }
 

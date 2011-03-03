@@ -23,6 +23,10 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
 
+    public OntologyManagerTest(){
+        initHibernate();
+    }
+
     @Override
     protected Ontology[] getOntologiesToLoad() {
         Ontology[] ontologies = new Ontology[4];
@@ -33,12 +37,23 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         return ontologies;
     }
 
+
     @Test
     public void testTermByID() {
         assertNotNull(ontologyManager.getTermByID(Ontology.STAGE, "ZDB-TERM-100331-2430"));
         assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-2430"));
         assertNotNull(ontologyManager.getTermByID("ZDB-TERM-100331-1001"));
         assertNull(ontologyManager.getTermByID("ZDB-TERM-070117-73"));
+    }
+
+    @Test
+    public void testGetSorted() {
+        // forebrain has an alias
+        Term t = ontologyManager.getTermByID(Ontology.ANATOMY, "ZDB-TERM-100331-102");
+        assertNotNull(t);
+        List<String> synonyms = OntologyService.createSortedSynonymsFromTerm(t);
+        Assert.assertNotNull(synonyms);
+        Assert.assertTrue(synonyms.size()>0);
     }
 
     @Test
@@ -172,5 +187,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         term = ontologyManager.getTermByID(Ontology.ANATOMY, termID);
         assertNotNull(term);
     }
+
+
 
 }

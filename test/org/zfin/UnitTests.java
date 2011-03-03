@@ -84,7 +84,6 @@ import org.zfin.util.*;
         MailTest.class,
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
-        MatchingTermServiceTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,

@@ -20,6 +20,7 @@ import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
+import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyManagerTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
@@ -62,6 +63,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         OrthologyTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerSoapDbTest.class,
+        MatchingTermServiceTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
         ProfileRepositoryTest.class,

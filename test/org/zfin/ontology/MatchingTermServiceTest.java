@@ -2,6 +2,7 @@ package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
 import java.util.*;
@@ -11,7 +12,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MatchingTermServiceTest {
+public class MatchingTermServiceTest extends AbstractDatabaseTest{
 
     private final Logger logger = Logger.getLogger(MatchingTermServiceTest.class) ;
 
