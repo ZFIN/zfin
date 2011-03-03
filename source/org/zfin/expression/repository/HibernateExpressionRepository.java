@@ -948,7 +948,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "ee.gene.zdbID = :zdbID " +
                 "AND  er.expressionExperiment.zdbID = ee.zdbID " +
                 "AND er.expressionFound = :expressionFound " +
-                "AND er.superterm.id = t.id " +
+                "AND er.superterm.zdbID = t.zdbID " +
                 "AND t.oboID = ai.oboID " +
                 "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
                 "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +

@@ -157,7 +157,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermAllFigures() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.ID=ZDB-TERM-100331-1053&subTerm.ID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
                 assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that Fig. 3 from Zhou et al is present.
                 assertNotNull(page.getElementById("ZDB-FIG-090617-7"));
@@ -176,7 +176,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.ID=ZDB-TERM-100331-1053&subTerm.ID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=true");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=true");
                 assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
 
             } catch (IOException e) {
