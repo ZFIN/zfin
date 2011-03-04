@@ -62,13 +62,12 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMarkerGoTermEvidencesForPubZdbID() {
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("from MarkerGoTermEvidence ev")
-                .setMaxResults(1)
-                .uniqueResult();
-        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(markerGoTermEvidence.getSource().getZdbID());
+        String pubId = "ZDB-PUB-000309-33";
+        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(pubId);
         assertNotNull(evidences);
         logger.debug(evidences.size());
-        assertTrue(evidences.size() > 0);
+        assertTrue(evidences.size() > 3);
+        assertTrue(evidences.size() < 100);
     }
 
     @Test

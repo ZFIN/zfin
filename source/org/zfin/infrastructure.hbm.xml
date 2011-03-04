@@ -265,7 +265,7 @@
                                  END)"/>
 
         <property name="termName" column="term_name"/>
-        <property name="oboID" column="term_ont_id"/>
+        <property name="oboID" column="term_ont_id" />
         <property name="ontology" column="term_ontology" type="ontologyEnumeration"/>
         <property name="obsolete" column="term_is_obsolete"/>
         <property name="root" column="term_is_root"/>

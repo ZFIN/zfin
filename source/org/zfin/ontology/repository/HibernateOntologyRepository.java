@@ -272,13 +272,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * @return Generic Term
      */
     public GenericTerm getTermByZdbID(String termZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GenericTerm.class);
-        criteria.add(Restrictions.eq("ID", termZdbID));
-        GenericTerm term = (GenericTerm) criteria.uniqueResult();
-        if (term == null)
-            return null;
-        return term;
+        return (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, termZdbID);
     }
 
     /**

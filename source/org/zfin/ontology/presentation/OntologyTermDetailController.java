@@ -30,10 +30,10 @@ public class OntologyTermDetailController extends AbstractCommandController {
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "");
 
         Term term;
-        if (termID.contains(ActiveData.Type.TERM.name()))
-            term = OntologyManager.getInstance().getTermByID(termID);
-        else if (termID.contains(ActiveData.Type.ANAT.name())) {
-            term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+        if (termID.contains(ActiveData.Type.TERM.name())
+                ||  termID.contains(ActiveData.Type.ANAT.name() )){
+//            term = OntologyManager.getInstance().getTermByID(termID);
+            term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
         } else {
             // try an obo id
             term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);

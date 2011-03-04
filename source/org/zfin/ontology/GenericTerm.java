@@ -21,10 +21,12 @@ public class GenericTerm extends AbstractTerm {
         if (zdbID != null && genericTerm.getZdbID() != null) {
             return zdbID.equals(genericTerm.getZdbID());
         }
-        if (termName != null ? !termName.equals(genericTerm.getTermName()) : genericTerm.getTermName() != null)
+        if (termName != null ? !termName.equals(genericTerm.getTermName()) : genericTerm.getTermName() != null){
             return false;
-        if (oboID != null ? !oboID.equals(genericTerm.oboID) : genericTerm.oboID != null)
+		}
+        if (oboID != null ? !oboID.equals(genericTerm.getOboID()) : genericTerm.getOboID() != null){
             return false;
+		}
 
         return true;
     }

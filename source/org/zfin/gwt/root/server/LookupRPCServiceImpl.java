@@ -31,6 +31,7 @@ import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
@@ -362,7 +363,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termName + " in ontology [" + ontology.getOntologyName() + " in Ontology Manager found!");
             return null;
         }
-        GenericTerm term = getInfrastructureRepository().getTermByID(ontologyTerm.getZdbID());
+        GenericTerm term = getOntologyRepository().getTermByZdbID(ontologyTerm.getZdbID());
         if (term == null) {
             logger.warn("No term " + termName + " found!");
             return null;
@@ -481,7 +482,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         if (term == null) {
             if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
                 logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
-                term = RepositoryFactory.getInfrastructureRepository().getTermByID(value);
+                term = RepositoryFactory.getOntologyRepository().getTermByZdbID(value);
             }
             if (term == null) {
                 logger.info("Failed to find GO term[" + value + "]");

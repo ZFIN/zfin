@@ -248,14 +248,6 @@ public interface InfrastructureRepository {
     GenericTerm getTermByName(String termName, List<Ontology> ontologies);
 
     /**
-     * Retrieve Term by ZDB ID.
-     *
-     * @param termID term id
-     * @return Generic Term
-     */
-    GenericTerm getTermByID(String termID);
-
-    /**
      * Fetch a Data Alias Group entity for a given name
      *
      * @param name alias group object

@@ -3,6 +3,7 @@ package org.zfin.ontology;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.MatchingTermComparator;
+import org.zfin.framework.HibernateUtil ;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -31,6 +32,11 @@ public class MatchingTermService {
         String[] termsToMatch = query.toLowerCase().trim().split("\\s+") ;
         for(String termToMatch : termsToMatch){
             for(Term term : termMap.getSuggestedValues(termToMatch)){
+                // used to support testing only
+                // TODO: update when this gets more permanently fixed
+                if(term.getZdbID()!=null){
+                    HibernateUtil.currentSession().refresh(term) ;
+                }
 
                 // if term contains query
                 if(containsAllTokens(term.getTermName(),termsToMatch)

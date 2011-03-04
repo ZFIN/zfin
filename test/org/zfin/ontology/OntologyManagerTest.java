@@ -161,7 +161,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
         Set<MatchingTerm> matches = service.getMatchingTerms(Ontology.QUALITY, "decreased p");
-        assertEquals(14, matches.size());
+        assertEquals(15, matches.size());
 
         // can not find decreased
         matches = service.getMatchingTerms(Ontology.QUALITY, "decreased");

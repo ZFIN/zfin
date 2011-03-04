@@ -108,7 +108,7 @@ public class OntologyTermController extends AbstractCommandController {
         String termID = form.getTermID();
         if (termID == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "");
-        Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+        Term term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
         if (term == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, termID);
         form.setTerm(term);

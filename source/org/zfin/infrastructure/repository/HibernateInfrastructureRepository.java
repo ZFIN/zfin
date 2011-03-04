@@ -357,26 +357,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     /**
-     * Retrieve Term by ZDB ID from the gDAG table.
-     * If the ID is from the GOTERM table retrieve the corresponding term ID first.
-     *
-     * @param termID term id
-     * @return Generic Term
-     */
-    @SuppressWarnings("unchecked")
-    public GenericTerm getTermByID(String termID) {
-        if (StringUtils.isEmpty(termID))
-            return null;
-
-        Session session = HibernateUtil.currentSession();
-        GenericTerm term = null;
-        term = (GenericTerm) session.get(GenericTerm.class, termID);
-        if (term == null)
-            return null;
-        return term;
-    }
-
-    /**
      * Retrieve Root of given ontology.
      *
      * @param ontologyName ontology name
