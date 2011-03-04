@@ -75,6 +75,8 @@ elif [ $1 = "switch" ] ; then
     svnbranch-switch "$2" ; 
 elif [ $1 = "delete" ] ; then 
     svnbranch-delete "$2" ; 
+elif [ $1 = "deleterelease" ] ; then 
+    svnbranch-delete-release "$2" ;
 elif [ $1 = "deletetag" ] ; then 
     svnbranch-deletetag "$2" ; 
 elif [ $1 = "tagfromtrunk" ] ; then 

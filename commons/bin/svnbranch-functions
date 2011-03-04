@@ -150,6 +150,18 @@ function svnbranch-delete(){
     fi
 }
 
+function svnbranch-delete-release(){
+    NUM_RELEASES=`svn list $SVNROOT/ZFIN_WWW/releases | grep $1 | wc -l `
+    if [ $NUM_RELEASES = 1 ] ; then
+        SELECT_RELEASE=`svn list $SVNROOT/ZFIN_WWW/releases | grep $1  `
+        svn delete $SVNROOT/ZFIN_WWW/releases/$SELECT_RELEASE
+		echo "Deleting release: $SELECT_RELEASE" ; 
+    else
+        echo $NUM_RELEASES releases found for token [$1]. ;
+        svn list $SVNROOT/ZFIN_WWW/releases | grep $1 ;
+    fi
+}
+
 function svnbranch-deletetag(){
     NUM_BRANCHES=`svn list $SVNROOT/ZFIN_WWW/tags | grep $1 | wc -l `
     if [ $NUM_BRANCHES = 1 ] ; then
