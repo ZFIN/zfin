@@ -31,11 +31,11 @@
                 <!-- Highlight the search term or the highlight term if provided -->
                 <c:choose>
                     <c:when test="${formBean.stageSearch || formBean.termSearch}">
-                        <zfin:hightlight highlightEntity="${ao.anatomyItem.name}"
+                        <zfin:hightlight highlightEntity="${ao.anatomyItem.termName}"
                                          highlightString="${formBean.highlightText}"/>
                     </c:when>
                     <c:otherwise>
-                        <zfin:hightlight highlightEntity="${ao.anatomyItem.name}"
+                        <zfin:hightlight highlightEntity="${ao.anatomyItem.termName}"
                                          highlightString="${formBean.searchTerm}"/>
                     </c:otherwise>
                 </c:choose>
