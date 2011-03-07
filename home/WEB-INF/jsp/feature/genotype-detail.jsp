@@ -170,8 +170,17 @@
       </c:forEach>
     </c:when>
     <c:otherwise>
-      No data available
-    </c:otherwise>
+       <c:choose>
+          <c:when test="${formBean.genotype.extinct}">
+	    ${supplier.organization.name} <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif" text="extinct" alt="extinct" width="20" align="top" height="20">
+              <br/>
+          </c:when>
+          <c:otherwise>
+              No data available
+        </c:otherwise>
+           </c:choose>
+      </c:otherwise>
+
   </c:choose>
   </td></tr>
 </table>
