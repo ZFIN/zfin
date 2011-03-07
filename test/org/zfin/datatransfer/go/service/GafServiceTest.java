@@ -624,6 +624,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
         newEvidence.setModifiedBy(existingEvidence.getModifiedBy());
         newEvidence.setModifiedWhen(existingEvidence.getModifiedWhen());
         newEvidence.setOrganizationCreatedBy(existingEvidence.getOrganizationCreatedBy());
+        newEvidence.setInferredFrom(existingEvidence.getInferredFrom());
 
 
         newEvidence.setGoTerm(existingEvidence.getGoTerm());
