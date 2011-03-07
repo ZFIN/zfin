@@ -127,6 +127,18 @@
         <equals arg1="${DBNAME}" arg2="almdb"/>
     </condition>
 
+    <condition property="ishappy">
+        <equals arg1="${DBNAME}" arg2="hapdb"/>
+    </condition>
+
+    <condition property="istest">
+        <equals arg1="${DBNAME}" arg2="testdb"/>
+    </condition>
+
+    <condition property="istrunk">
+        <equals arg1="${DBNAME}" arg2="trunkdb"/>
+    </condition>
+
     <condition property="iszfinonembryonix">
         <and>
             <equals arg1="${DBNAME}" arg2="zfindb"/>
@@ -147,6 +159,15 @@
         <or>
             <equals arg1="${isalmost}" arg2="true"/>
             <equals arg1="${iszfinonhelix}" arg2="true"/>
+        </or>
+    </condition>
+
+    <condition property="isalmosthappytrunktest">
+        <or>
+            <equals arg1="${isalmost}" arg2="true"/>
+            <equals arg1="${ishappy}" arg2="true"/>
+            <equals arg1="${istrunk}" arg2="true"/>
+            <equals arg1="${istest}" arg2="true"/>
         </or>
     </condition>
 

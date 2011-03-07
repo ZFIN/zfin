@@ -3,7 +3,6 @@ package org.zfin.webservice;
 import org.junit.Test;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.zfin.TestConfiguration;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.webservice.client.*;
 
 import java.util.List;
@@ -15,13 +14,11 @@ import static org.junit.Assert.*;
  */
 public class MarkerSoapClientSmokeTest extends WebServiceGatewaySupport {
 
-    private String url;
     private org.zfin.webservice.client.Zfin service;
 
 
     public MarkerSoapClientSmokeTest() {
         TestConfiguration.configure();
-        url = ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/webservice/definitions";
         service = new ZfinService().getZfinSoap11();
     }
 
