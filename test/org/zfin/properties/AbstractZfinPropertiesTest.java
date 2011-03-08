@@ -9,7 +9,7 @@ import org.zfin.TestConfiguration;
  */
 public abstract class AbstractZfinPropertiesTest {
 
-    public static final String TEST_PROPERTIES_FILE = "./commons/env/test-properties.properties";
+    public static final String TEST_PROPERTIES_FILE = "./commons/env/test-unittest.properties";
     private String currentPropertyFile ;
 
     /**
