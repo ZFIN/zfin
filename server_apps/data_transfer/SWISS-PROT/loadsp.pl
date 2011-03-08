@@ -172,32 +172,27 @@ $numMarkersWithRedundantDblkNoteBefore = countData($sql);
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3");'; 
-           
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO");';
 $numIEABefore = countData($sql);         
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id = "ZDB-PUB-020723-1";'; 
+           and mrkrgoev_contributed_by = "ZFIN SP keyword 2 GO";';
            
 $numIEASP2GOBefore = countData($sql);
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id = "ZDB-PUB-020724-1";'; 
+           and mrkrgoev_contributed_by = "ZFIN InterPro 2 GO";';
            
 $numIEAInterPro2GOBefore = countData($sql);
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id = "ZDB-PUB-031118-3";';
+           and mrkrgoev_contributed_by = "ZFIN EC acc 2 GO";';
            
 $numIEAEC2GOBefore = countData($sql);
 
@@ -205,16 +200,14 @@ $numIEAEC2GOBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 $numIEAtermsBefore = countData($sql);           
 
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "cellular_component" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -223,8 +216,7 @@ $numIEAtermComponentBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "molecular_function" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -233,8 +225,7 @@ $numIEAtermFunctionBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "biological_process" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -243,8 +234,7 @@ $numIEAtermProcessBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
@@ -253,8 +243,7 @@ $numMrkrBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "cellular_component" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
@@ -264,8 +253,7 @@ $numMrkrComponentBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "molecular_function" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
@@ -275,14 +263,12 @@ $numMrkrFunctionBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
+           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "biological_process" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrProcessBefore = countData($sql); 
-
+$numMrkrProcessBefore = countData($sql);
 
 #--------------- Delete records from last SWISS-PROT loading-----
 
