@@ -124,20 +124,21 @@
     </condition>
 
     <condition property="isalmost">
-        <equals arg1="${DBNAME}" arg2="almdb"/>
+        <equals arg1="${INSTANCE}" arg2="almost"/>
     </condition>
 
-    <condition property="ishappy">
-        <equals arg1="${DBNAME}" arg2="hapdb"/>
+    <condition property="is-happy-zfin-org">
+        <equals arg1="${INSTANCE}" arg2="happy"/>
     </condition>
 
-    <condition property="istest">
-        <equals arg1="${DBNAME}" arg2="testdb"/>
+    <condition property="is-trunk-zfin-org">
+        <equals arg1="${INSTANCE}" arg2="trunk"/>
     </condition>
 
-    <condition property="istrunk">
-        <equals arg1="${DBNAME}" arg2="trunkdb"/>
+    <condition property="is-test-zfin-org">
+        <equals arg1="${INSTANCE}" arg2="test"/>
     </condition>
+
 
     <condition property="iszfinonembryonix">
         <and>
@@ -165,9 +166,9 @@
     <condition property="isalmosthappytrunktest">
         <or>
             <equals arg1="${isalmost}" arg2="true"/>
-            <equals arg1="${ishappy}" arg2="true"/>
-            <equals arg1="${istrunk}" arg2="true"/>
-            <equals arg1="${istest}" arg2="true"/>
+            <equals arg1="${is-happy-zfin-org}" arg2="true"/>
+            <equals arg1="${is-trunk-zfin-org}" arg2="true"/>
+            <equals arg1="${is-test-zfin-org}" arg2="true"/>
         </or>
     </condition>
 
@@ -187,9 +188,8 @@
         </not>
     </condition>
 
-    <condition property="is-happy-zfin-org">
-        <equals arg1="${INSTANCE}" arg2="happy"/>
-    </condition>
+
+
 
     <target name="dumpMachine" description="Dump machine type.">
         <echo message="INSTANCE:             ${INSTANCE}"/>
