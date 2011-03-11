@@ -41,6 +41,12 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 function doContact(new_contact_id,old_contact_id) {
 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id)
 }
+function changePrefix(new_prefix,old_prefix) {
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr_type=text&old_value='+old_prefix+'&new_value='+new_prefix)
+}
+function addPrefix(new_prefix,location,old_prefix) {
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr_type=text&old_value='+old_prefix+'&newloc='+location+'&new_value='+new_prefix)
+}
 
 function doDelete(pers_id) {
 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Lab_member&new_value=NON_member&pers_id='+pers_id)
@@ -76,6 +82,7 @@ select name, HTML_breaks(address), phone, fax, email, url, snapshot,
 <?MIVAR NAME=$snapshot>$7<?/MIVAR>
 <?MIVAR NAME=$contact_person>$8<?/MIVAR>
 <?MIVAR NAME=$lab_bio>$9<?/MIVAR>
+<?MIVAR NAME=$allele_prefix><?/MIVAR>
 
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
@@ -227,9 +234,10 @@ function editPrefix(OID){
    new Ajax.Updater('editPrefix', '/action/people/editLabPrefix?zdbID='+OID, {Method: 'get' });
 }
 </script>
-
+<?MICOMMENT>
   <INPUT TYPE=button value="Edit" onClick="editPrefix('$OID')">
   <div id="editPrefix"></div>
+<?/MICOMMENT>
 <?/MIVAR> 
 <?MISQL sql="
 select  fp.fp_prefix
@@ -249,6 +257,34 @@ select  fp.fp_prefix
 <?MIELSE>
   none assigned
 <?/MIBLOCK>
+<?MISQL sql="
+select  fp.fp_prefix
+    from lab l
+     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+    where zdb_id='$OID' 
+    and lfp.lfp_current_designation='t'
+    ;">
+<?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
+    <?/MISQL>
+<br>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MIVAR>
+  <SELECT NAME=labprefix onChange="changePrefix(this.options[this.selectedIndex].value,'$allele_prefix')">
+<!--<option $(IF,$(EC,$allele_prefix,NULL),SELECTED) value=NULL>Unspecified-->
+<?/MIVAR>
+<?MISQL sql="
+select  fp.fp_prefix
+     from feature_prefix fp
+     order by fp_prefix asc
+    ;">
+    <option $(IF,$(EC,$allele_prefix,$1),SELECTED) value=$1>$1
+  <?/MISQL>
+  </SELECT>
+
+<?/MIBLOCK>
+
+
 
 </TD>
 

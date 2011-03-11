@@ -22,6 +22,7 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$attr)" NAME=$attr>test<?/MIVAR>
 
 <!-- do some special prep if updating membership status. The lab position order is passed rather than position to avoid spaces in variables.  -->
 <?MIBLOCK COND="$(EC,$attr_type,special-status)">
@@ -45,8 +46,9 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
 
 <!-- insert update record for the update! -->
+<?MIBLOCK COND="$(NE,$attr,test)">
 <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name,  old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr', '$old_value', '$comments', current);"><?/MISQL>
-
+<?/MIBLOCK>
 <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
      DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
      IMAGE FIELD, THEN ACT ACCORDINGLY -->
@@ -54,14 +56,26 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
 <?MISQL COND="$(NXST,$null_image)" SQL="update lab set $attr=FILETOBLOB('$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
 
+<?MIBLOCK COND="$(NE,$attr,test)">
 <?MISQL COND="$(XST,$null_image)" SQL="update lab set $attr=NULL where zdb_id='$OID';"><?/MISQL>
+<?/MIBLOCK>
 <?/MIBLOCK> <!-- ends if its an image -->
-
+<?MIBLOCK COND="$(NE,$attr,test)">
 <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update lab set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
-
+<?/MIBLOCK>
 <!-- Special case for updating contact person also changes owner Informix won't allow trigger used in Illustra -->
 <?MISQL COND="$(EC,$attr,contact_person)" SQL="update lab set owner = '$new_value' where zdb_id='$OID';"><?/MISQL>
+<?MIBLOCK COND="$(EC,$attr,test)">
+  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_current_designation='t'"><?/MISQL>
+    <?MIVAR NAME=$lab_prefix_ct>$1<?/MIVAR>
+    <?MIBLOCK COND="$(=,1,$lab_prefix_ct)">
+      <?MISQL SQL="update lab_feature_prefix set lfp_current_designation='f' where lfp_lab_zdb_id='$OID'"><?/MISQL>
+      <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
+    <?MIELSE>
+      <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
+    <?/MIBLOCK>  
 
+<?/MIBLOCK>
 <!-- Special case for updating membership status -->
 <?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_lab set position='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
 
