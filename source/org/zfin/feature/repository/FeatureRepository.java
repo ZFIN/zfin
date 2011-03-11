@@ -105,9 +105,13 @@ public interface FeatureRepository {
 
     List<Feature> getFeaturesForLab(String labZdbId);
 
+    FeaturePrefix setNewLabPrefix(String prefix, String location);
+
+
     int setLabOfOriginForFeature(Lab existingLabOfOrigin, Feature feature);
 
     void deleteLabOfOriginForFeature(Feature feature);
 
     int addLabOfOriginForFeature(Feature feature, String labOfOrigin);
+
 }

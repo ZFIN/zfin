@@ -639,6 +639,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return prefix ;
     }
 
+
+     public FeaturePrefix setNewLabPrefix(String prefix, String location) {
+        logger.debug("enter addMarDataNote");
+        FeaturePrefix fpPrefix = new FeaturePrefix();
+        fpPrefix.setPrefixString(prefix);
+         fpPrefix.setInstitute(location);
+HibernateUtil.currentSession().save(fpPrefix);
+
+         return fpPrefix;
+     }
+
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID){
