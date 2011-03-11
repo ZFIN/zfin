@@ -1,10 +1,14 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.zfin.people.LabFeaturePrefix;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.constraints.Size;
+
 
 /**
  * Bean contains info for the LineDesignationController.
@@ -16,9 +20,16 @@ public class LineDesignationBean {
     private List<LabFeaturePrefixRow> labFeaturePrefixRows = null ;
     private List<FeaturePrefixLight> featurePrefixLightList = null ;
 
+    @NotEmpty(message="Lab Prefix cannot be blank")
+    private String lineDesig;
+    @NotEmpty(message="Lab Location cannot be blank")
+    private String lineLocation;
+
     public List<FeaturePrefixLight> getFeaturePrefixLightList() {
         return featurePrefixLightList;
     }
+
+
 
     public void setFeaturePrefixLightList(List<FeaturePrefixLight> featurePrefixLightList) {
         this.featurePrefixLightList = featurePrefixLightList;
@@ -75,5 +86,22 @@ public class LineDesignationBean {
     public List<LabFeaturePrefixRow> getLabFeaturePrefixRows(){
         return labFeaturePrefixRows;
     }
+
+    public String getLineDesig() {
+          return lineDesig;
+      }
+
+      public void setLineDesig(String lineDesig) {
+          this.lineDesig = lineDesig;
+      }
+
+      public String getLineLocation() {
+          return lineLocation;
+      }
+
+      public void setLineLocation(String lineLocation) {
+          this.lineLocation = lineLocation;
+      }
+
 
 }
