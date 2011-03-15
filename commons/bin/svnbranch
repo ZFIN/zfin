@@ -51,6 +51,7 @@ elif [ -z $2 ]; then if [ $1 != "mergefromtrunk" ] &&
 [ $1 != "current" ] && 
 [ $1 != "listreleases" ] && 
 [ $1 != "lastrelease" ] && 
+[ $1 != "switchrelease" ] && 
 [ $1 != "createrelease" ]; then
       usage ; 
     fi

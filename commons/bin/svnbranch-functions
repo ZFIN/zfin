@@ -95,20 +95,16 @@ function svnbranch-createrelease(){
 function svnbranch-switchrelease(){
 	printCurrentBranch ; # also sets $CURRENT_BRANCH
 
-#    LAST_RELEASE=`svn list $SVNROOT/ZFIN_WWW/releases | tail -1 | cut -d'/' -f1`
-#    echo "Last release: $LAST_RELEASE" ;
-
 	if [ -z $1 ]; then 
-	  RELEASE="";
+	  RELEASE=`svn list $SVNROOT/ZFIN_WWW/releases | tail -1 | cut -d'/' -f1`;
 	else
-	  RELEASE="-r$1"
+	  RELEASE="$1" # sets an explicit release
     fi
-	echo $BRANCH_NAME
 
-	EXECSTRING="svn copy $RELEASE $SVNROOT/ZFIN_WWW/trunk $SVNROOT/ZFIN_WWW/releases/$NEXT_RELEASE"
+	EXECSTRING="svn switch $SVNROOT/ZFIN_WWW/releases/$RELEASE"
     echo $EXECSTRING ; 
     $EXECSTRING ;
-	echo "Created release $BRANCH_NAME" ; 
+	echo "Switch to release $RELEASE" ; 
 }
 
 function svnbranch-createfrombranch(){
