@@ -21,7 +21,7 @@ public class MorpholinoStatisticsTest {
 
     @Test
     public void orderWithinSingleMoStatistics() {
-        MorpholinoStatistics stat = new MorpholinoStatistics(genoxOne, item);
+        MorpholinoStatistics stat = new MorpholinoStatistics(genoxOne, item.createGenericTerm());
         String targetGeneOrdering = stat.getTargetGeneOrder();
         assertEquals("slit1a, slit1b", targetGeneOrdering);
     }

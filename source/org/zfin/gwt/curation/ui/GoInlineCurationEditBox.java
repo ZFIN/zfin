@@ -55,6 +55,7 @@ public class GoInlineCurationEditBox extends AbstractGoCurationBox {
                 GoEvidenceValidator.validate(goEvidenceDTO);
             } catch (ValidationException e) {
                 setError(e.getMessage());
+                return ;
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO,

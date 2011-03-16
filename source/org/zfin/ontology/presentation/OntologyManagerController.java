@@ -38,11 +38,13 @@ public class OntologyManagerController extends AbstractCommandController {
             }
         }
         if (OntologyManager.hasStartedLoadingOntologies()) {
-            OntologyManager manager = OntologyManager.getInstance();
-            form.setOntologyManager(manager);
+            // init ontology manager loading?  shouldn't this already be happening?
+            OntologyManager.getInstance();
         } else {
             form.setOntologiesLoaded(false);
         }
+
+        form.setOntologyManager(OntologyManager.getInstance());
         // If this was an action request redirect to the normal page to
         // allow refresh of the page without submitting the action again.
         if (actionType != null)

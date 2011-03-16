@@ -38,7 +38,7 @@
                               wildcard="true"/>
             </td>
         </tr>
-        <c:if test="${formBean.anatomyItem.synonyms != null  }">
+        <c:if test="${not empty formBean.anatomyItem.synonyms}">
             <tr valign="top">
                 <td>
                     Synonyms:

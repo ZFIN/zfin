@@ -24,12 +24,15 @@ public enum Ontology implements Serializable {
     // PATO
     QUALITY("quality", "Phenotype and Trait Ontology", false),
     // PATO: Processes
+    // this is "Process Quality"
     QUALITY_PROCESSES("quality.process", "Phenotype and Trait Ontology: Quality of Process", false),
     // PATO: Processes
     QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "Phenotype and Trait Ontology: Relation of Process", false),
     // PATO: Qualities
+    // this is "physical object quality"
     QUALITY_QUALITIES("quality.quality", "Phenotype and Trait Ontology: Quality of Qualities", false),
     // PATO: Qualitative
+    // This is "qualitative"
     QUALITY_QUALITATIVE("pato.eq.quality.qualitative", "Phenotype and Trait Ontology: Quality of Qualities", false),
     // BP and MF
     // PATO: Processes

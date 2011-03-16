@@ -585,7 +585,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void ProbesStatistics() {
         String aoTermName = "brain";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-8");
         term.setTermName(aoTermName);
 
@@ -611,7 +611,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.beginTransaction();
         AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
         AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
-        String name = aoTerm.getStart().getName();
         String hql = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
                 "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
@@ -636,7 +635,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Marker gene = new Marker();
             gene.setZdbID((String) objects[2]);
             gene.setAbbreviation((String) objects[3]);
-            HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm);
+            HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm.createGenericTerm());
             hqp.addGene(gene);
             probes.add(hqp);
         }

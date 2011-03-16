@@ -6,9 +6,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.people.Person;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
 
 import javax.servlet.http.HttpSession;
@@ -203,10 +205,20 @@ public class ZfinJSPFunctions {
         return manager.isOntologyLoaded(ontology);
     }
 
-    public static Set<String> getDistinctRelationshipTypes(OntologyManager manager, Ontology ontology) {
-        if (manager == null || ontology == null)
-            return null;
-        return manager.getDistinctRelationshipTypes(ontology);
+    public static Set<String> getDistinctRelationshipTypes(Ontology ontology) {
+        List<GenericTermRelationship> termRelationships ;
+        if(ontology!=null){
+            termRelationships=  RepositoryFactory.getOntologyRepository().getAllRelationships(ontology);
+        }
+        else{
+            termRelationships=  RepositoryFactory.getOntologyRepository().getAllRelationships();
+        }
+        Set<String> relationships = new TreeSet<String>();
+        for(GenericTermRelationship genericTermRelationship : termRelationships){
+            relationships.add(genericTermRelationship.getType());
+        }
+
+        return relationships;
     }
 
     public static String getTimeDuration(Date start, Date end) {

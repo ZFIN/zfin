@@ -59,7 +59,7 @@
             <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
         </td>
     </tr>
-    <c:if test="${formBean.anatomyItem.synonyms != null  }">
+    <c:if test="${not empty formBean.anatomyItem.synonyms}">
         <tr valign="top">
             <td>
                 Synonyms:

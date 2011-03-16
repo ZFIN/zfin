@@ -25,9 +25,9 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.reno.service.RenoService;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.reno.service.RenoService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

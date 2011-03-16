@@ -38,7 +38,7 @@ public interface LookupRPCServiceAsync {
      * @param termID   term ID
      * @param async    callback
      */
-    void getTermInfo(OntologyDTO ontology, String termID, AsyncCallback<TermInfo> async);
+    void getTermInfo(OntologyDTO ontology, String termID, AsyncCallback<TermDTO> async);
 
     // validation methods
 

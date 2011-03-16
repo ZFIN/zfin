@@ -34,7 +34,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         if (!super.isValidNewPileStructure(phenotypeTerm))
             return false;
         TermDTO qualityTerm = phenotypeTerm.getQuality();
-        if (qualityTerm == null || StringUtils.isEmpty(qualityTerm.getTermName())) {
+        if (qualityTerm == null || StringUtils.isEmpty(qualityTerm.getName())) {
             errorMessages.add("No Quality term provided.");
             return false;
         }

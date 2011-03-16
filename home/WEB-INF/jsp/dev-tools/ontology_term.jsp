@@ -85,7 +85,7 @@
         <td class="bold" width="200" style="text-align:left">Parents
         </td>
     </tr>
-    <c:forEach var="relationship" items="${formBean.term.relatedTerms}">
+    <c:forEach var="relationship" items="${formBean.term.allDirectlyRelatedTerms}">
         <c:if test="${relationship.termTwo eq formBean.term}">
             <tr>
                 <td style="text-align:right">
@@ -97,10 +97,10 @@
     </c:forEach>
     <tr>
         <td class="bold" style="text-align:left">Immediate Children
-            (${fn:length(formBean.term.relatedTerms)})
+            (${fn:length(formBean.term.allDirectlyRelatedTerms)})
         </td>
     </tr>
-    <c:forEach var="relationship" items="${formBean.term.relatedTerms}">
+    <c:forEach var="relationship" items="${formBean.term.allDirectlyRelatedTerms}">
         <c:if test="${relationship.termOne eq formBean.term}">
             <tr>
                 <td style="text-align:right">${relationship.relationshipType}&nbsp; </td>

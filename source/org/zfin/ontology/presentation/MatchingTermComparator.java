@@ -39,7 +39,7 @@ public class MatchingTermComparator implements Comparator<MatchingTerm> {
 
         if(lhs.getTerm().equals(rhs.getTerm())) return 0 ;
 
-        if(lhs.getTerm().getTermName().equalsIgnoreCase(query) && !lhs.getTerm().isObsolete()){
+        if(lhs.getTerm().getName().equalsIgnoreCase(query) && !lhs.getTerm().isObsolete()){
             return -1  ;
         }
 
@@ -50,7 +50,7 @@ public class MatchingTermComparator implements Comparator<MatchingTerm> {
             return lhsCompare - rhsCompare;
         }
 
-        return comparator.compare(lhs.getTerm().getTermName().toLowerCase(),rhs.getTerm().getTermName().toLowerCase()) ;
+        return comparator.compare(lhs.getTerm().getName().toLowerCase(),rhs.getTerm().getName().toLowerCase()) ;
     }
 
     protected int scoreTerm(MatchingTerm term) {

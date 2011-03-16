@@ -24,7 +24,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -56,7 +56,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param anatomyTerm Anatomy Term
      * @return list of publications
      */
-    public List<Publication> getHighQualityProbePublications(Term anatomyTerm) {
+    public List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct exp.publication FROM ExpressionExperiment exp, ExpressionResult res, Clone clone   " +
                 "WHERE res.superterm = :aoTerm " +
@@ -180,12 +180,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param term AnatomyTerm
      * @return list of High quality probes.
      */
-    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term) {
+    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term) {
         return getHighQualityProbeNames(term, Integer.MAX_VALUE);
     }
 
 
-    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
+    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term, int maxRow) {
 
         String hql = "select distinct probe, marker " +
                 "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker marker " +
@@ -241,7 +241,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm) {
+    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm) {
         return getAllExpressedMarkers(anatomyTerm, 0, Integer.MAX_VALUE);
     }
 
@@ -256,7 +256,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param firstRow        first row
      * @param numberOfRecords number
      */
-    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(Term anatomyTerm, int firstRow, int numberOfRecords) {
+    public PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm, int firstRow, int numberOfRecords) {
         if (firstRow < 0)
             throw new RuntimeException("First Row number <" + firstRow + "> is invalid");
         // Hibernate starts at 0 while the argument expects to start at 1
@@ -334,7 +334,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param anatomyTerm Anatomy Term
      * @return number
      */
-    public int getTotalNumberOfFiguresPerAnatomyItem(Term anatomyTerm) {
+    public int getTotalNumberOfFiguresPerAnatomyItem(GenericTerm anatomyTerm) {
 
         Session session = HibernateUtil.currentSession();
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
@@ -364,7 +364,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param anatomyTerm ao term
      * @return number
      */
-    public int getTotalNumberOfImagesPerAnatomyItem(Term anatomyTerm) {
+    public int getTotalNumberOfImagesPerAnatomyItem(GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select count(image) from Image image, ExpressionResult res where " +
                 "res.superterm = :aoTerm AND " +
@@ -376,7 +376,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return ((Number) query.uniqueResult()).intValue();
     }
 
-    private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, Term anatomyTerm) {
+    private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
         if (list == null)
             return null;
 
@@ -494,7 +494,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return figures;
     }
 
-    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
+    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, GenericTerm aoTerm) {
         List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
         if (list != null) {
             for (Object[] array : list) {
@@ -519,7 +519,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @return list of figures
      */
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, Term aoTerm) {
+    public List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure from Figure figure, ExpressionExperiment exp, ");
@@ -543,7 +543,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, Term aoTerm) {
+    public List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure.publication from Figure figure, ExpressionExperiment exp, ExpressionResult res " +
@@ -575,7 +575,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, Term term) {
+    public List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm term) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
@@ -600,7 +600,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, Term term) {
+    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, Phenotype pheno, " +
@@ -689,7 +689,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return paginationResult;
     }
 
-    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, Term aoTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select publication from Publication as publication, Phenotype as phenotype where " +
                 " phenotype member of publication.phenotypes and " +
@@ -756,7 +756,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, Term aoTerm) {
+    public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
         String hql = " select count(distinct figure.publication.zdbID ) from " +
@@ -780,7 +780,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param aoTerm     anatomy Term
      * @return List of publications
      */
-    public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, Term aoTerm) {
+    public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
@@ -801,7 +801,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @return a set of figures
      */
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, Term anatomyTerm) {
+    public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
                 "     Genotype geno, GenotypeExperiment genox, Experiment experiment " +
@@ -1083,7 +1083,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, Term anatomyTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
 
         Criteria pubs = session.createCriteria(Publication.class);

@@ -15,8 +15,8 @@ import org.zfin.gwt.root.dto.ImageDTO;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -44,10 +44,8 @@ public class ImageRPCServiceImpl extends RemoteServiceServlet implements ImageRP
 
         ArrayList<TermDTO> termDTOs = new ArrayList<TermDTO>();        
         /* this will have to be refactored to use terms rather than anatomyitems */
-        for(Term term : image.getTerms()) {
-            TermDTO termDTO = new TermDTO();
-            termDTO.setTermName(term.getTermName());
-            termDTOs.add(termDTO);
+        for(GenericTerm term : image.getTerms()) {
+            termDTOs.add(DTOConversionService.convertToTermDTO(term));
         }
         dto.setAnatomyTerms(termDTOs);
 
@@ -58,24 +56,24 @@ public class ImageRPCServiceImpl extends RemoteServiceServlet implements ImageRP
 
         if (image.getStart() != null) {
             start.setZdbID(image.getStart().getZdbID());
-            start.setName(image.getStart().getName());
+            start.setNameLong(image.getStart().getName());
             dto.setStart(start);
         } else {
             //treat null as unknown in the interface
             start.setZdbID(unk.getZdbID());
-            start.setName(unk.getName());
+            start.setNameLong(unk.getName());
             dto.setStart(start);
         }
 
 
         if (image.getEnd() != null) {
             end.setZdbID(image.getEnd().getZdbID());
-            end.setName(image.getEnd().getName());
+            end.setNameLong(image.getEnd().getName());
             dto.setEnd(end);
         } else {
             //treat null as unknown in the interface
             end.setZdbID(unk.getZdbID());
-            end.setName(unk.getName());
+            end.setNameLong(unk.getName());
             dto.setEnd(end);
         }
         
@@ -88,11 +86,11 @@ public class ImageRPCServiceImpl extends RemoteServiceServlet implements ImageRP
 
         /* will become Term eventually */
         AnatomyItem anatomyTerm = anatomyRepository.getAnatomyItem(name);
-        Term term = ontologyRepository.getTermByName(name, Ontology.ANATOMY);
+        GenericTerm term = ontologyRepository.getTermByName(name, Ontology.ANATOMY);
         
         Image image = publicationRepository.getImageById(imageZdbID);
         TermDTO termDTO = new TermDTO();
-        termDTO.setTermName(anatomyTerm.getTermName());
+        termDTO.setName(anatomyTerm.getTermName());
 
 
         image.getTerms().add(term);
@@ -108,8 +106,7 @@ public class ImageRPCServiceImpl extends RemoteServiceServlet implements ImageRP
     public void removeTerm(String name, String imageZdbID) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        AnatomyItem anatomyTerm = anatomyRepository.getAnatomyItem(name);
-        Term term = ontologyRepository.getTermByName(name, Ontology.ANATOMY);
+        GenericTerm term = ontologyRepository.getTermByName(name, Ontology.ANATOMY);
 
         Image image = publicationRepository.getImageById(imageZdbID);
 

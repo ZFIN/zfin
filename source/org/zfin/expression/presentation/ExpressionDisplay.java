@@ -18,8 +18,9 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Set<Term> nonDuplicatedTerms;
 
     public int compareTo(ExpressionDisplay anotherExpressionDisplay) {
-        if (expressedGene == null)
+        if (expressedGene == null){
             return -1;
+        }
         return expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene());
     }
 

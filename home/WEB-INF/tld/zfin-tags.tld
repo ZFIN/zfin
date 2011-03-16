@@ -133,10 +133,10 @@
     </tag>
 
     <tag>
-        <name>hightlight</name>
-        <tagclass>org.zfin.framework.presentation.tags.HightlightTag</tagclass>
+        <name>highlight</name>
+        <tagclass>org.zfin.framework.presentation.tags.HighlightTag</tagclass>
         <bodycontent>empty</bodycontent>
-        <info>Hightlight a sub string within a given string (use highlightString)
+        <info>Highlight a sub string within a given string (use highlightString)
               or a string array (use highlightEntities) which highlights only the second and following components.
               By default the string replacement is case insensitive</info>
         <attribute>

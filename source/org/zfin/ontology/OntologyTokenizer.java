@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
 import java.util.Arrays;
@@ -76,8 +77,8 @@ public class OntologyTokenizer {
         return tokens;
     }
 
-    public int tokenizeTerm(Term term, PatriciaTrieMultiMap<Term> termMap) {
-        String exactTerm = term.getTermName().toLowerCase();
+    public int tokenizeTerm(TermDTO term, PatriciaTrieMultiMap<TermDTO> termMap) {
+        String exactTerm = term.getName().toLowerCase();
 
         int count = 0;
 
@@ -87,9 +88,9 @@ public class OntologyTokenizer {
         // handle aliases
         if (term.getAliases() != null) {
             // handle alias tokens
-            for (TermAlias alias : term.getAliases()) {
-                String aliasTerm = alias.getAlias().toLowerCase();
-                count += tokenizeTerm(aliasTerm, alias.getTerm(), termMap);
+            for (String alias : term.getAliases()) {
+                String aliasTerm = alias.toLowerCase();
+                count += tokenizeTerm(aliasTerm, term, termMap);
             }
 
         }
@@ -98,7 +99,7 @@ public class OntologyTokenizer {
 
     }
 
-    private int tokenizeTerm(String exactTerm, Term term, PatriciaTrieMultiMap<Term> termMap) {
+    private int tokenizeTerm(String exactTerm, TermDTO term, PatriciaTrieMultiMap<TermDTO> termMap) {
         int count = 0;
 
         // handle tokens
@@ -117,6 +118,7 @@ public class OntologyTokenizer {
                 termMap.put(term.getZdbID(), term);
                 ++count;
                 termMap.put(term.getOboID(), term);
+                ++count;
             }
             termMap.put(exactTerm, term);
             ++count;

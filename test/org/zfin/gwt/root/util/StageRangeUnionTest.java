@@ -20,10 +20,10 @@ public class StageRangeUnionTest {
         StageDTO start = new StageDTO();
         start.setStartHours(0.0F);
         efs.setStart(start);
-        start.setName("Zygote");
+        start.setNameLong("Zygote");
         StageDTO end = new StageDTO();
         end.setStartHours(0.75F);
-        end.setName("Prim-15");
+        end.setNameLong("Prim-15");
         efs.setEnd(end);
         dtos.add(efs);
 
@@ -40,20 +40,20 @@ public class StageRangeUnionTest {
         ExpressionFigureStageDTO efs1 = new ExpressionFigureStageDTO();
         StageDTO start = new StageDTO();
         start.setStartHours(0.0F);
-        start.setName("Zygote");
+        start.setNameLong("Zygote");
         efs1.setStart(start);
         StageDTO end = new StageDTO();
         end.setStartHours(2.0F);
-        end.setName("Prim-5");
+        end.setNameLong("Prim-5");
         efs1.setEnd(end);
         ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
         StageDTO startOne = new StageDTO();
         startOne.setStartHours(0.75F);
-        startOne.setName("Cell-8");
+        startOne.setNameLong("Cell-8");
         efs.setStart(startOne);
         StageDTO endOne = new StageDTO();
         endOne.setStartHours(3.0F);
-        endOne.setName("Prim-25");
+        endOne.setNameLong("Prim-25");
         efs.setEnd(endOne);
         dtos.add(efs1);
         dtos.add(efs);

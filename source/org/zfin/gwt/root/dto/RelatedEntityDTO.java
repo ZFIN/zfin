@@ -2,9 +2,11 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.io.Serializable;
+
 /**
  */
-public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
+public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , Serializable {
 
     // data
     protected String zdbID ;  // the primary key of this object
@@ -104,8 +106,10 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable  {
                 '}';
     }
 
+    @Override
     public int compareTo(Object o) {
         RelatedEntityDTO other = (RelatedEntityDTO)o;
         return getOrderingValue().compareTo(other.getOrderingValue());
     }
+
 }

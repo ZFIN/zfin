@@ -8,10 +8,10 @@ import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
-import org.zfin.gbrowse.GBrowseRepositoryTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
+import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
@@ -20,8 +20,8 @@ import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
-import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyManagerTest;
+import org.zfin.ontology.OntologySerializationTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.people.repository.ProfileRepositoryTest;
@@ -37,7 +37,6 @@ import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
-import org.zfin.util.BODtoConversionServiceTest;
 import org.zfin.webservice.MarkerSoapDbTest;
 
 
@@ -52,7 +51,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         AntibodyServiceTest.class,
-        BODtoConversionServiceTest.class,
+        DTOConversionServiceTest.class,
         CurationRPCTest.class,
         GwtConversionTest.class,
         GafServiceTest.class,
@@ -63,7 +62,6 @@ import org.zfin.webservice.MarkerSoapDbTest;
         OrthologyTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerSoapDbTest.class,
-        MatchingTermServiceTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
         ProfileRepositoryTest.class,
@@ -79,13 +77,14 @@ import org.zfin.webservice.MarkerSoapDbTest;
         OrthologyRepositoryTest.class,
         LinkageRepositoryTest.class,
         SingleCandidateRepositoryTest.class,
-        OntologyManagerTest.class,
         OntologyRepositoryTest.class,
         TranscriptRepositoryTest.class,
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,
         BlastRepositoryTest.class,
-        GBrowseRepositoryTest.class
+        OntologyManagerTest.class,
+        OntologySerializationTest.class
+//        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })
 

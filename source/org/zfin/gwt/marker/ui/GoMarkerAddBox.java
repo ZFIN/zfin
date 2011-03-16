@@ -76,6 +76,7 @@ public class GoMarkerAddBox extends GoInlineMarkerCloneBox {
                 GoEvidenceValidator.validate(goEvidenceDTO);
             } catch (ValidationException e) {
                 setError(e.getMessage());
+                return;
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,

@@ -21,7 +21,7 @@ public class PhenotypeService {
      * @param anatomyItem        Anatomy Term
      * @return HashMap
      */
-    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, Term anatomyItem) {
+    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, GenericTerm anatomyItem) {
         if (genotypeExperiment == null)
             return null;
         if (anatomyItem == null)
@@ -32,13 +32,13 @@ public class PhenotypeService {
         Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
 
         for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-            Term subTerm = phenotype.getSubterm();
+            GenericTerm subTerm = phenotype.getSubterm();
             if (StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) ||
                     (subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID()))) {
                 StringBuilder keyBuilder = new StringBuilder(50);
                 if (subTerm != null) {
                     keyBuilder.append(phenotype.getSubterm().getTermName());
-                    Term anatomyTerm = phenotype.getSuperterm();
+                    GenericTerm anatomyTerm = phenotype.getSuperterm();
                     keyBuilder.append(":");
                     keyBuilder.append(anatomyTerm.getTermName());
                     ////TODO
@@ -53,7 +53,7 @@ public class PhenotypeService {
                     keyBuilder.append(ANATOMY);
                 }
 
-                String termName = phenotype.getTerm().getTermName();
+                String termName = phenotype.getQualityTerm().getTermName();
                 StringBuilder termNameBuilder = new StringBuilder(50);
                 String tag = phenotype.getTag();
                 if (termName.equals(GenericTerm.QUALITY) && tag.equals(Phenotype.Tag.ABNORMAL.toString()))
@@ -108,7 +108,7 @@ public class PhenotypeService {
             for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
                 if (phenotype.getSuperterm() != null && phenotype.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
                     if (phenotype.getSubterm() == null)
-                        if (phenotype.getTerm().getTermName().equals("quality"))
+                        if (phenotype.getQualityTerm().getTermName().equals("quality"))
                             if (phenotype.getTag().equals(Phenotype.Tag.ABNORMAL.toString())) {
                                 if (phenotype.getStartStage().equals(mfs.getStart()) && phenotype.getEndStage().equals(mfs.getEnd()))
                                     if (phenotype.getPublication().equals(mfs.getPublication()))

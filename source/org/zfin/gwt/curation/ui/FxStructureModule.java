@@ -260,7 +260,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
             for (ExpressionPileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getExpressedTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
+                if (!structure.getExpressedTerm().getSuperterm().getName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             //Window.alert("SIZE: " + experiments.size());
@@ -500,7 +500,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
 
             for (ExpressionPileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getExpressedTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
+                if (!structure.getExpressedTerm().getSuperterm().getName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             reCreateStructurePileLink.setVisible(false);

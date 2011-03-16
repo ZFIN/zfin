@@ -1,6 +1,6 @@
 package org.zfin.mutant;
 
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
@@ -15,9 +15,9 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
     private String zdbID;
     private Person person;
     private Publication publication;
-    private Term superterm;
-    private Term subterm;
-    private Term quality;
+    private GenericTerm superterm;
+    private GenericTerm subterm;
+    private GenericTerm qualityTerm;
     private Phenotype.Tag tag;
     private Date date;
 
@@ -53,28 +53,28 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
         this.date = date;
     }
 
-    public Term getSuperterm() {
+    public GenericTerm getSuperterm() {
         return superterm;
     }
 
-    public void setSuperterm(Term superterm) {
+    public void setSuperterm(GenericTerm superterm) {
         this.superterm = superterm;
     }
 
-    public Term getSubterm() {
+    public GenericTerm getSubterm() {
         return subterm;
     }
 
-    public void setSubterm(Term subterm) {
+    public void setSubterm(GenericTerm subterm) {
         this.subterm = subterm;
     }
 
-    public Term getQuality() {
-        return quality;
+    public GenericTerm getQualityTerm() {
+        return qualityTerm;
     }
 
-    public void setQuality(Term quality) {
-        this.quality = quality;
+    public void setQualityTerm(GenericTerm qualityTerm) {
+        this.qualityTerm = qualityTerm;
     }
 
     public Phenotype.Tag getTag() {
@@ -101,7 +101,7 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
             return -1;
         if (subterm != null && o.getSubterm() != null)
             return subterm.getTermName().compareToIgnoreCase(o.getSubterm().getTermName());
-        return quality.getTermName().compareToIgnoreCase(o.getQuality().getTermName());
+        return qualityTerm.getTermName().compareToIgnoreCase(o.getQualityTerm().getTermName());
 
     }
 }

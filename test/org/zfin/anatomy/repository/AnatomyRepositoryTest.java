@@ -9,7 +9,6 @@ import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
 
 import java.util.List;
 import java.util.Set;
@@ -21,16 +20,21 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     /**
      * Check that synonyms are not of group 'secondary id'
+     * NOTE: there are only 9 alias's for all of anatomy_item
+     * Only one of which is secondary (for pharyngeal arch)
+     * However, this is not true for the term table.
      */
     @Test
     public void getAnatomyTermWithSynonyms() {
         // optic primordium
-        String termName = "optic primordium";
+        String termName = "pharyngeal arch 3-7";
 
         AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
         assertTrue(item != null);
         Set<AnatomySynonym> synonyms = item.getSynonyms();
-        assertTrue(synonyms != null);
+        assertNotNull(synonyms);
+        assertTrue(synonyms.size()>1);
+        assertTrue(synonyms.size()<4);
         // check that none of the synonyms are secondary ids
         for (AnatomySynonym syn : synonyms) {
             assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
@@ -40,8 +44,8 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getTotalNumberOfFiguresPerAnatomy() {
         // brain
-        String termName = "brain";
-        Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
+        String termName = "retinal bipolar neuron";
+        GenericTerm item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
 
         getPublicationRepository().getTotalNumberOfFiguresPerAnatomyItem(item);
         //assertEquals(1036, numOfFigures);
@@ -68,7 +72,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void compareWildTypeSelectionToFullForMorphs() {
-        Term item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
+        GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
         PaginationResult<GenotypeExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
         PaginationResult<GenotypeExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, false, null);
 
@@ -82,7 +86,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
-        Term item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
+        GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
         PaginationResult<GenotypeExperiment> genos = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
         assertNotNull(genos.getPopulatedResults());
         assertTrue(genos.getPopulatedResults().size() > 1);
@@ -103,7 +107,10 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     public void getAnatomyItemsWithoutDataAlias() {
         // 1 - get by name
         // extrascapula
-        String zdbID = "ZDB-ANAT-011113-588";
+//        String zdbID = "ZDB-ANAT-011113-588";
+
+        // raphe nucleus
+        String zdbID = "ZDB-ANAT-060331-54";
         List<AnatomyItem> terms;
         AnatomyItem term = getAnatomyRepository().getAnatomyTermByID(zdbID);
         assertNotNull(term);
@@ -112,9 +119,10 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         assertTrue("Should be 1 or more synonym because filtered secondary", synonyms.size() >= 1);
 
         // 2- get by synonym
-        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
+//        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
+        terms = getAnatomyRepository().getAnatomyItemsByName("median raphe nucleus", false);
         assertNotNull(terms);
-        assertTrue(terms.size() > 2);
+        assertEquals(1,terms.size());
 
         // 3- get by data alias
         terms = getAnatomyRepository().getAnatomyItemsByName("413", false);
@@ -172,7 +180,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getSubstructureAntibodies() {
         String aoTermName = "cranium";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-706");
         term.setTermName(aoTermName);
         assertNotNull(term);

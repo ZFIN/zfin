@@ -1,6 +1,6 @@
 package org.zfin.expression;
 
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
@@ -12,8 +12,8 @@ import java.util.Date;
  */
 public class ExpressionStructure implements Comparable<ExpressionStructure> {
 
-    private Term superterm;
-    private Term subterm;
+    private GenericTerm superterm;
+    private GenericTerm subterm;
     private String zdbID;
     private Person person;
     private Publication publication;
@@ -51,19 +51,19 @@ public class ExpressionStructure implements Comparable<ExpressionStructure> {
         this.date = date;
     }
 
-    public Term getSuperterm() {
+    public GenericTerm getSuperterm() {
         return superterm;
     }
 
-    public void setSuperterm(Term superterm) {
+    public void setSuperterm(GenericTerm superterm) {
         this.superterm = superterm;
     }
 
-    public Term getSubterm() {
+    public GenericTerm getSubterm() {
         return subterm;
     }
 
-    public void setSubterm(Term subterm) {
+    public void setSubterm(GenericTerm subterm) {
         this.subterm = subterm;
     }
 

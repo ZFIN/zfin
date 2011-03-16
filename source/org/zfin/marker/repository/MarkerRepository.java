@@ -8,7 +8,7 @@ import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
@@ -236,7 +236,7 @@ public interface MarkerRepository {
      * @param includeSubstructures boolean
      * @return pagination result
      */
-    PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures);
+    PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
     /**
      * Retrieve all distinct publications that contain a high quality probe
@@ -245,7 +245,7 @@ public interface MarkerRepository {
      * @param anatomyTerm Anatomy Term
      * @return list of publications
      */
-    List<Publication> getHighQualityProbePublications(Term anatomyTerm);
+    List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm);
 
     /**
      * Retrieve marker types by marker type groups

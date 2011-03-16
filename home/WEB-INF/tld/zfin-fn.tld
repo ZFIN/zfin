@@ -113,9 +113,9 @@
     </description>
     <name>getDistinctRelationshipTypes</name>
     <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.util.Set getDistinctRelationshipTypes(org.zfin.ontology.OntologyManager,org.zfin.ontology.Ontology)</function-signature>
+    <function-signature>java.util.Set getDistinctRelationshipTypes(org.zfin.ontology.Ontology)</function-signature>
     <example>
-      ${fn:getDistinctRelationshipTypes(ontologyManager, ontology))}">
+      ${fn:getDistinctRelationshipTypes(ontology))}">
     </example>
   </function>
 

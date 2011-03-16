@@ -232,7 +232,7 @@
         -->
         <many-to-one name="superterm" column="apato_superterm_zdb_id"/>
         <many-to-one name="subterm" column="apato_subterm_zdb_id"/>
-        <many-to-one name="term" column="apato_quality_zdb_id"/>
+        <many-to-one name="qualityTerm" column="apato_quality_zdb_id"/>
         <many-to-one name="publication" column="apato_pub_zdb_id"/>
         <many-to-one name="startStage" column="apato_start_stg_zdb_id"/>
         <many-to-one name="endStage" column="apato_end_stg_zdb_id"/>
@@ -536,7 +536,7 @@
         <property name="tag" column="api_tag" type="phenotypeTag"/>
         <many-to-one name="superterm" column="api_superterm_zdb_id"/>
         <many-to-one name="subterm" column="api_subterm_zdb_id"/>
-        <many-to-one name="quality" column="api_quality_zdb_id"/>
+        <many-to-one name="qualityTerm" column="api_quality_zdb_id"/>
 
     </class>
 

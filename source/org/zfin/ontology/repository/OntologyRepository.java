@@ -1,38 +1,29 @@
 package org.zfin.ontology.repository;
 
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
  */
 public interface OntologyRepository {
 
-    /**
-     * Retrieve a list of terms from the Quality ontology that match a given
-     * string.
-     *
-     * @param queryString query string
-     * @return list of quality terms
-     */
-    List<Term> getQualityTermsByQuery(String queryString);
-
-    /**
-     * Retrieve all terms from the quality ontology that are not obsoleted.
-     *
-     * @return list of quality terms
-     */
-    List<Term> getAllQualityTerms();
 
     /**
      * Retrieve all terms from a given ontology that are not obsoleted.
      *
      * @return list of terms
      */
-    List<Term> getAllTermsFromOntology(Ontology ontology);
+    List<GenericTerm> getAllTermsFromOntology(Ontology ontology);
 
+    int getNumberTermsForOntology(Ontology ontology) ;
     /**
      * Retrieve a collection of aliases that match a term of a given ontology.
      * An alias has to be unique within an ontology.
@@ -51,14 +42,14 @@ public interface OntologyRepository {
      * @param ontology ontology
      * @return list of relationships
      */
-    List<TermRelationship> getAllRelationships(Ontology ontology);
+    List<GenericTermRelationship> getAllRelationships(Ontology ontology);
 
     /**
      * Retrieve all Relationships.
      *
      * @return list of relationships
      */
-    List<TermRelationship> getAllRelationships();
+    List<GenericTermRelationship> getAllRelationships();
 
     /**
      * Retrieve Term by OBO ID.
@@ -74,13 +65,13 @@ public interface OntologyRepository {
      * @param genericTerm term
      * @return list of relationships
      */
-    List<TermRelationship> getTermRelationships(Term genericTerm);
+    List<GenericTermRelationship> getTermRelationships(Term genericTerm);
 
     /**
      * @param terms
      * @return
      */
-    List<TermRelationship> getTermRelationshipsForTerms(List<Term> terms);
+    List<GenericTermRelationship> getTermRelationshipsForTerms(List<Term> terms);
 
     /**
      * Retrieve all Children terms from a given term
@@ -92,19 +83,24 @@ public interface OntologyRepository {
 
     /**
      * Retrieve a term by name and ontology.
+     * Does not search for obsolete or secondary terms.
      *
      * @param termName term name
      * @param ontology Ontology
      * @return term
      */
-    Term getTermByName(String termName, Ontology ontology);
+    GenericTerm getTermByNameActive(String termName, Ontology ontology);
 
     /**
-     * Retrieve all parent/child relationships.
+     * Retrieve a term by name and ontology.
      *
-     * @return List of transitive closure
+     * @param termName term name
+     * @param ontology Ontology
+     * @return term
      */
-    List<TransitiveClosure> getTransitiveClosure();
+    GenericTerm getTermByName(String termName, Ontology ontology);
+
+    GenericTerm getTermByName(String termName, List<Ontology> ontology);
 
     /**
      * Retrieve Term by term zdb ID.
@@ -155,13 +151,29 @@ public interface OntologyRepository {
      * @param childTerm
      * @return
      */
-    boolean isParentChildRelationshipExist(Term parentTerm, Term childTerm);
+    boolean isParentChildRelationshipExist(GenericTerm parentTerm, GenericTerm childTerm);
 
-    List<Term> getParentDirectTerms(Term goTerm);
+    List<GenericTerm> getParentDirectTerms(GenericTerm goTerm);
 
-    List<Term> getParentTerms(Term goTerm, int distance);
+    List<GenericTerm> getParentTerms(GenericTerm goTerm, int distance);
 
-    List<Term> getChildDirectTerms(Term goTerm);
+    List<GenericTerm> getChildDirectTerms(GenericTerm goTerm);
 
-    List<Term> getChildTerms(Term goTerm, int distance);
+    List<GenericTerm> getChildTerms(GenericTerm goTerm, int distance);
+
+    List<GenericTerm> getAllChildTerms(GenericTerm goTerm) ;
+
+    List<TransitiveClosure> getChildrenTransitiveClosures(GenericTerm term);
+
+//    Map<String,List<TermRelationship>> getTermRelationshipsForOntology(Ontology ontology);
+
+    Ontology getProcessOrPhysicalObjectQualitySubOntologyForTerm(Term term);
+
+    DevelopmentStage getDevelopmentStageFromTerm(Term term);
+
+    Map<String,TermDTO> getTermDTOsFromOntology(Ontology ontology);
+
+    Collection<TermDTO> getTermDTOsFromOntologyNoRelation(Ontology stage);
+
+    Set<String> getAllChildZdbIDs(String rootZdbID);
 }

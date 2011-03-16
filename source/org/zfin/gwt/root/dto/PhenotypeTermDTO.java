@@ -28,7 +28,7 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
     public String getDisplayName() {
         StringBuilder composedTerm = new StringBuilder(super.getDisplayName());
         if (quality != null)
-            composedTerm.append(" - ").append(quality.getTermName());
+            composedTerm.append(" - ").append(quality.getName());
         return composedTerm.toString();
     }
 
@@ -61,16 +61,16 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
 
         PhenotypeTermDTO termDTO = (PhenotypeTermDTO) o;
 
-        String supertermID = superterm.getTermID();
-        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getTermID()) : termDTO.getSuperterm().getTermID() != null)
+        String supertermID = superterm.getZdbID();
+        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getZdbID()) : termDTO.getSuperterm().getZdbID() != null)
             return false;
         if (subterm != null) {
-            String subtermID = subterm.getTermID();
-            if (subtermID != null ? !subtermID.equals(termDTO.getSubterm().getTermID()) : termDTO.getSubterm().getTermID() != null)
+            String subtermID = subterm.getZdbID();
+            if (subtermID != null ? !subtermID.equals(termDTO.getSubterm().getZdbID()) : termDTO.getSubterm().getZdbID() != null)
                 return false;
         }
-        String qualityID = quality.getTermID();
-        if (qualityID != null ? !qualityID.equals(termDTO.getQuality().getTermID()) : termDTO.getQuality().getTermID() != null)
+        String qualityID = quality.getZdbID();
+        if (qualityID != null ? !qualityID.equals(termDTO.getQuality().getZdbID()) : termDTO.getQuality().getZdbID() != null)
             return false;
         if (tag != null ? !tag.equals(termDTO.getTag()) : termDTO.getTag() != null)
             return false;
@@ -80,10 +80,10 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
     @Override
     @SuppressWarnings({"NonFinalFieldReferencedInHashCode", "SuppressionAnnotation"})
     public int hashCode() {
-        int result = (superterm.getTermID() != null ? superterm.getTermID().hashCode() : 0);
+        int result = (superterm.getZdbID() != null ? superterm.getZdbID().hashCode() : 0);
         if (subterm != null)
-            result += subterm.getTermID() != null ? subterm.getTermID().hashCode() : 0;
-        result += quality.getTermID() != null ? quality.getTermID().hashCode() : 0;
+            result += subterm.getZdbID() != null ? subterm.getZdbID().hashCode() : 0;
+        result += quality.getZdbID() != null ? quality.getZdbID().hashCode() : 0;
         result += tag != null ? tag.hashCode() : 0;
         return result;
     }
@@ -96,10 +96,10 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
      */
     @Override
     public String getUniqueID() {
-        String composedID = superterm.getTermOboID();
+        String composedID = superterm.getOboID();
         if (subterm != null)
-            composedID += ":" + subterm.getTermOboID();
-        composedID += ":" + quality.getTermOboID();
+            composedID += ":" + subterm.getOboID();
+        composedID += ":" + quality.getOboID();
         composedID += ":" + tag;
         return composedID;
     }
@@ -113,7 +113,7 @@ public class PhenotypeTermDTO extends ExpressedTermDTO {
         PhenotypeTermDTO term = (PhenotypeTermDTO) o;
         if (super.compareTo(term) != 0)
             return super.compareTo(term);
-        return quality.getTermName().compareTo(term.getQuality().getTermName());
+        return quality.getName().compareTo(term.getQuality().getName());
     }
 
     public String toString() {

@@ -1,6 +1,5 @@
 package org.zfin.ontology;
 
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 
 import java.io.Serializable;
@@ -49,37 +48,46 @@ public interface Term extends Comparable<Term>, Serializable {
 
     Set<TermAlias> getAliases();
 
-    List<Term> getParents(String relationshipType);
+//    List<Term> getParents(String relationshipType);
 
     void setAliases(Set<TermAlias> aliases);
 
-    boolean isAliasesExist();
+//    boolean isAliasesExist();
 
     String getDefinition();
 
     void setDefinition(String definition);
 
-    List<TermRelationship> getRelatedTerms();
+    List<TermRelationship> getAllDirectlyRelatedTerms();
 
-    void setRelatedTerms(List<TermRelationship> relationships);
+//    void setRelatedTerms(List<TermRelationship> relationships);
 
     /**
      * Retrieves all terms that are immediate children of this term.
      *
      * @return list of children terms
      */
-    List<Term> getChildrenTerms();
+    Set<TermRelationship> getChildTermRelationships();
 
-    DevelopmentStage getStart();
+    void setChildTermRelationships(Set<TermRelationship> childTerms) ;
 
-    void setStart(DevelopmentStage stage);
+    Set<Term> getChildTerms();
 
-    DevelopmentStage getEnd();
+    Set<TermRelationship> getParentTermRelationships();
 
-    void setEnd(DevelopmentStage stage);
+    void setParentTermRelationships(Set<TermRelationship> childTerms) ;
+
+    Set<Term> getParentTerms();
+
+//    DevelopmentStage getStart();
+//
+//    void setStart(DevelopmentStage stage);
+//
+//    DevelopmentStage getEnd();
+//
+//    void setEnd(DevelopmentStage stage);
 
     Set<Image> getImages();
 
     void setImages(Set<Image> images);
-
 }

@@ -25,7 +25,7 @@ import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
@@ -1117,7 +1117,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+    public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         String hql = null;
         String hqlCount;
@@ -1308,7 +1308,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Publication> getHighQualityProbePublications(Term anatomyTerm) {
+    public List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql;
         hql = "select distinct stat.publication" +
@@ -1329,7 +1329,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param aoTerm anatom term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, Term aoTerm) {
+    private void populateProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, GenericTerm aoTerm) {
 
         if (record == null || record.getProbe() == null)
             return;
@@ -1377,7 +1377,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param aoTerm anatom term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, Term aoTerm) {
+    private void populateProbeStatisticsRecordOld(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, GenericTerm aoTerm) {
 
         if (record == null || record.getProbe() == null)
             return;

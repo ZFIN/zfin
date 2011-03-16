@@ -1,7 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -19,7 +19,7 @@ public class Image implements Serializable {
     private Integer width;
     private Integer height;
     private String thumbnail;
-    private Set<Term> terms;
+    private Set<GenericTerm> terms;
 
     private ImageStage imageStage;
 
@@ -80,11 +80,11 @@ public class Image implements Serializable {
         this.thumbnail = thumbnail;
     }
 
-    public Set<Term> getTerms() {
+    public Set<GenericTerm> getTerms() {
         return terms;
     }
 
-    public void setTerms(Set<Term> terms) {
+    public void setTerms(Set<GenericTerm> terms) {
         this.terms = terms;
     }
 

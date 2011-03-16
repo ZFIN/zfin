@@ -2,7 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import java.io.Serializable;
 
@@ -12,9 +12,9 @@ public class GenotypeFigure implements Serializable {
     private int id;
     private Genotype genotype;
     private Figure figure;
-    private Term superTerm;
-    private Term subTerm;
-    private Term qualityTerm;
+    private GenericTerm superTerm;
+    private GenericTerm subTerm;
+    private GenericTerm qualityTerm;
     private String tag;
     private Marker morpholino;
 
@@ -58,27 +58,27 @@ public class GenotypeFigure implements Serializable {
         this.tag = tag;
     }
 
-    public Term getSuperTerm() {
+    public GenericTerm getSuperTerm() {
         return superTerm;
     }
 
-    public void setSuperTerm(Term superTerm) {
+    public void setSuperTerm(GenericTerm superTerm) {
         this.superTerm = superTerm;
     }
 
-    public Term getSubTerm() {
+    public GenericTerm getSubTerm() {
         return subTerm;
     }
 
-    public void setSubTerm(Term subTerm) {
+    public void setSubTerm(GenericTerm subTerm) {
         this.subTerm = subTerm;
     }
 
-    public Term getQualityTerm() {
+    public GenericTerm getQualityTerm() {
         return qualityTerm;
     }
 
-    public void setQualityTerm(Term qualityTerm) {
+    public void setQualityTerm(GenericTerm qualityTerm) {
         this.qualityTerm = qualityTerm;
     }
 }

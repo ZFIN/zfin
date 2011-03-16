@@ -58,7 +58,7 @@ public class PhenotypeStructureModule extends AbstractStructureModule {
             displayedStructures.clear();
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getPhenotypeTerm().getSuperterm().getTermName().equals(StructurePile.UNSPECIFIED))
+                if (!structure.getPhenotypeTerm().getSuperterm().getName().equals(StructurePile.UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             displayTable.createStructureTable();

@@ -13,7 +13,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
@@ -171,8 +170,8 @@ public class LoadOntology extends AbstractScriptWrapper {
                 row.add(pheno.getPublication().getZdbID());
                 row.add(pheno.getPublication().getTitle());
                 row.add(pheno.getSuperterm().getTermName());
-                row.add(pheno.getTerm().getTermName());
-                row.add(pheno.getTerm().getZdbID());
+                row.add(pheno.getQualityTerm().getTermName());
+                row.add(pheno.getQualityTerm().getZdbID());
                 rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
@@ -657,21 +656,6 @@ public class LoadOntology extends AbstractScriptWrapper {
             } catch (IOException e) {
                 LOG.error("Could not close file " + unloadFile.getValue());
             }
-        }
-    }
-
-    // TODO: Will be used when we do the update directly from Java instead of unloading and loading all term infrastructure
-    // objects.
-    private OntologyManager ontologyManager;
-
-    private void loadOntologyManager() {
-        try {
-//            ontologyManager = OntologyManager.getInstance(Ontology.QUALITY);
-            ontologyManager = OntologyManager.getEmptyInstance();
-            ontologyManager.deserializeRelationships();
-            ontologyManager.deserializeOntology(Ontology.QUALITY);
-        } catch (Exception e) {
-            LOG.error("failed to load from file: " + ontologyManager, e);
         }
     }
 

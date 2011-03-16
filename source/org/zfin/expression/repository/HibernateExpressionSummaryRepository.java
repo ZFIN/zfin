@@ -7,6 +7,7 @@ import org.zfin.expression.ExpressionStageAnatomyContainer;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Gene;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 
 import java.util.Iterator;
@@ -33,7 +34,7 @@ public class HibernateExpressionSummaryRepository implements ExpressionSummaryRe
             Object[] tuple = (Object[]) stagesAndAnatomy.next();
 
             DevelopmentStage stage = (DevelopmentStage) tuple[0];
-            Term anat = (Term) tuple[1];
+            GenericTerm anat = (GenericTerm) tuple[1];
             Figure fig = (Figure) tuple[2];
 
             xsac.add(stage,anat,fig);

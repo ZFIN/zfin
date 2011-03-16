@@ -48,6 +48,7 @@ public class GoInlineCurationCloneBox extends GoInlineCurationAddBox {
                 GoEvidenceValidator.validate(goEvidenceDTO);
             } catch (ValidationException ve) {
                 setError(ve.getMessage());
+                return ;
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,

@@ -10,7 +10,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.PhenotypeService;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -23,14 +23,14 @@ import java.util.*;
 public class GenotypeStatistics extends EntityStatistics {
 
     private Genotype genotype;
-    private Term anatomyItem;
+    private GenericTerm anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
 
     public GenotypeStatistics(Genotype genotype) {
         this.genotype = genotype;
     }
 
-    public GenotypeStatistics(Genotype genotype, Term anatomyItem) {
+    public GenotypeStatistics(Genotype genotype, GenericTerm anatomyItem) {
         this.genotype = genotype;
         this.anatomyItem = anatomyItem;
     }

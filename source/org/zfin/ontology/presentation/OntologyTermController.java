@@ -4,10 +4,12 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import java.util.*;
 public class OntologyTermController extends AbstractCommandController {
 
     private String viewName;
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     public OntologyTermController() {
         setCommandClass(OntologyBean.class);
@@ -48,43 +51,42 @@ public class OntologyTermController extends AbstractCommandController {
             switch (actionType) {
                 case SHOW_KEYS:
                     // remap so that the list will be sorted
-                    Set<Map.Entry<String,Set<Term>>> entries = OntologyManager.getInstance()
-                            .getTermOntologyMap(ontology).entrySet() ;
-                    TreeMap<String,Set<Term>> keys = new TreeMap<String,Set<Term>>() ;
-                    for(Map.Entry<String,Set<Term>> entry: entries){
+                    Set<Map.Entry<String,Set<TermDTO>>> entries = OntologyManager.getInstance()
+                            .getTermOntologyMapCopy(ontology).entrySet() ;
+                    TreeMap<String,Set<TermDTO>> keys = new TreeMap<String,Set<TermDTO>>() ;
+                    for(Map.Entry<String,Set<TermDTO>> entry: entries){
                         keys.put(entry.getKey(),entry.getValue()) ;
                     }
                     form.setKeys(keys);
                     break;
                 case SHOW_VALUES:
-                    form.setValueMap(createValueMap(OntologyManager.getInstance().getTermOntologyMap(ontology))) ;
+                    form.setValueMap(createValueMap(OntologyManager.getInstance().getTermOntologyMapCopy(ontology))) ;
                     break;
                 case SHOW_ALIASES:
                 case SHOW_OBSOLETE_TERMS:
                 case SHOW_ALL_TERMS:
                 default:
-                    form.setTerms(OntologyManager.getInstance().getTermOntologyMap(ontology).getAllValues()) ;
+                    form.setTerms(OntologyManager.getInstance().getTermOntologyMapCopy(ontology).getAllValues()) ;
                     break ;
             }
         }
         form.setOntology(ontology);
-        form.setOntologyManager(OntologyManager.getInstance());
         return new ModelAndView(viewName, LookupStrings.FORM_BEAN, form);
     }
 
-    private Map<Term,List<String>> createValueMap(PatriciaTrieMultiMap<Term> termOntologyMap) {
-        Map<Term,List<String>> valueMap = new TreeMap<Term,List<String>>() ;
+    private Map<TermDTO,List<String>> createValueMap(PatriciaTrieMultiMap<TermDTO> termOntologyMap) {
+        Map<TermDTO,List<String>> valueMap = new TreeMap<TermDTO,List<String>>() ;
         // add them all by their termName first.
-        for(Term t: termOntologyMap.getAllValues() ){
+        for(TermDTO t: termOntologyMap.getAllValues() ){
             List<String> termNames = new ArrayList<String>() ;
-            termNames.add(t.getTermName()) ;
+            termNames.add(t.getName()) ;
             valueMap.put(t,termNames) ;
         }
 
         // assume that each term has now been added
         for(String s: termOntologyMap.keySet() ){
             try {
-                for(Term term: termOntologyMap.get(s)){
+                for(TermDTO term: termOntologyMap.get(s)){
                     if(!valueMap.get(term).contains(s)){
                         valueMap.get(term).add(s) ;
                     }
@@ -108,10 +110,11 @@ public class OntologyTermController extends AbstractCommandController {
         String termID = form.getTermID();
         if (termID == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "");
-        Term term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
         if (term == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, termID);
         form.setTerm(term);
+        form.setAllChildren(ontologyRepository.getChildrenTransitiveClosures(term));
         return new ModelAndView(viewName, LookupStrings.FORM_BEAN, form);
     }
 

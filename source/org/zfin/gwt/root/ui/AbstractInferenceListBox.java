@@ -147,7 +147,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                                         availableList.addItem(relatedEntityDTO.getDataZdbID(), "null");
                                     } else {
                                         availableList.addItem(relatedEntityDTO.getName(), 
-                                                relatedEntityDTO.getGoTerm().getTermOboID().substring(InferenceCategory.GO.prefix().length()));
+                                                relatedEntityDTO.getGoTerm().getOboID().substring(InferenceCategory.GO.prefix().length()));
                                     }
                                 }
                                 // return the first 1

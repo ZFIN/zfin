@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
 
 import static junit.framework.Assert.*;
 
@@ -16,8 +15,8 @@ public class ExpressionResultPresentationTest extends TermPresentation {
     @Test
     public void createExpressionResultHyperlink() {
         ExpressionResult result = new ExpressionResult();
-        Term superterm = createTermByName("eye");
-        Term subterm = createTermByName("melanocyte");
+        GenericTerm superterm = createTermByName("eye");
+        GenericTerm subterm = createTermByName("melanocyte");
         result.setSuperterm(superterm);
         result.setSubterm(subterm);
 
@@ -30,8 +29,8 @@ public class ExpressionResultPresentationTest extends TermPresentation {
     }
 
 
-    private Term createTermByName(String name) {
-        Term term = new GenericTerm();
+    private GenericTerm createTermByName(String name) {
+        GenericTerm term = new GenericTerm();
         term.setTermName(name);
         term.setZdbID("ZDB-TERM-" + name);
         term.setOntology(Ontology.ANATOMY);

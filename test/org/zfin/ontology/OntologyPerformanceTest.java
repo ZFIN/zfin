@@ -2,6 +2,7 @@ package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.infrastructure.TrieMultiMap;
 import org.zfin.util.AlphanumComparator;
@@ -34,9 +35,9 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
      */
     @Test
     public void ontologyPerfomanceTest() {
-        PatriciaTrieMultiMap<Term> patriciaTrie = ontologyManager.getOntologyMap().get(Ontology.QUALITY);
-        TrieMultiMap<Set<Term>> trieMultiMap = new TrieMultiMap<Set<Term>>();
-        HashMap<String, Set<Term>> hashMap = new HashMap<String, Set<Term>>();
+        PatriciaTrieMultiMap<TermDTO> patriciaTrie = ontologyManager.getOntologyMap().get(Ontology.QUALITY);
+        TrieMultiMap<Set<TermDTO>> trieMultiMap = new TrieMultiMap<Set<TermDTO>>();
+        HashMap<String, Set<TermDTO>> hashMap = new HashMap<String, Set<TermDTO>>();
         for (String key : patriciaTrie.keySet()) {
             trieMultiMap.put(key, patriciaTrie.get(key));
             hashMap.put(key, patriciaTrie.get(key));
@@ -91,7 +92,7 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
 
             // patTrie  test
             startTime = System.currentTimeMillis();
-            SortedMap<String, Set<Term>> resultMap;
+            SortedMap<String, Set<TermDTO>> resultMap;
             for (int j = 0; j < numIterations; j++) {
                 resultMap = patriciaTrie.getPrefixedBy(testWord);
                 if (hitCount != resultMap.size()) {
@@ -277,7 +278,7 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
             // individusal
             startTime = System.currentTimeMillis();
             for (int j = 0; j < numIterations; j++) {
-                termsGO_MF = service.getMatchingTerms(Ontology.GO_MF, testWord);
+                termsGO_MF = service.getMatchingTerms(testWord, Ontology.GO_MF);
             }
             finishTime = System.currentTimeMillis();
             patTrieSearchTime += (finishTime - startTime);
@@ -294,7 +295,7 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
             // composed
             startTime = System.currentTimeMillis();
             for (int j = 0; j < numIterations; j++) {
-                termsGO = service.getMatchingTerms(Ontology.GO, testWord);
+                termsGO = service.getMatchingTerms(testWord, Ontology.GO);
             }
             finishTime = System.currentTimeMillis();
             patTrieComposedSearchTime += (finishTime - startTime);
@@ -335,7 +336,7 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
             for (int j = 0; j < numIterations; j++) {
                 MatchingTermService matcher = new MatchingTermService();
                 startTime = System.currentTimeMillis();
-                Set<MatchingTerm> qualityList = matcher.getMatchingTerms(Ontology.GO, query);
+                Set<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.GO);
                 endTime = System.currentTimeMillis();
                 wordTimeToSearch += endTime - startTime;
             }

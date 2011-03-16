@@ -7,7 +7,6 @@ import org.zfin.ontology.Term;
 import java.util.Comparator;
 
 /**
- * Created by IntelliJ IDEA.
  */
 public class AntibodyLabelingDetailComparator implements Comparator<AnatomyLabel> {
 

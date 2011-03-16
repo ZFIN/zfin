@@ -9,7 +9,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -83,7 +83,7 @@ public interface AntibodyRepository {
      * @param aoTerm Anatomy Term
      * @return number of antibodies
      */
-    int getAntibodiesByAOTermCount(Term aoTerm);
+    int getAntibodiesByAOTermCount(GenericTerm aoTerm);
 
     /**
      * Retrieve antibodies for a given ao term.
@@ -96,7 +96,7 @@ public interface AntibodyRepository {
      * @param includeSubstructures boolean
      * @return number of antibodies
      */
-    PaginationResult<Antibody> getAntibodiesByAOTerm(Term aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
+    PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
 
     /**
      * Counts distinct figures that are associated to an expression result with a given
@@ -109,7 +109,7 @@ public interface AntibodyRepository {
      *                 all figures (if null)
      * @return number
      */
-    int getNumberOfFiguresPerAoTerm(Antibody antibody, Term aoTerm, Figure.Type type);
+    int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, Figure.Type type);
 
     /**
      * Get all figures for a given antibody and ao term.
@@ -118,7 +118,7 @@ public interface AntibodyRepository {
      * @param aoTerm   ao term
      * @return list of figures
      */
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, Term aoTerm);
+    public List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm);
 
     /**
      * Retrieve distinct publications for given antibody and ao term that have
@@ -128,7 +128,7 @@ public interface AntibodyRepository {
      * @param aoTerm   ao term
      * @return Pagination Result object
      */
-    PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, Term aoTerm);
+    PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm);
 
     /**
      * Lookup all distinct antibodies that are referenced in a given publication.
@@ -174,10 +174,10 @@ public interface AntibodyRepository {
      * @param includeSubstructures boolean
      * @return pagination result
      */
-    List<AntibodyStatistics> getAntibodyStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures);
+    List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
 
-    int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
+    int getAntibodyCount(GenericTerm anatomyItem, boolean includeSubstructure);
 
     /**
      * Retrieve all antibodies sorted by name.
@@ -195,7 +195,7 @@ public interface AntibodyRepository {
      *
      * @return figure list, ordered by pub year then figure label
      */
-    List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, Term superTerm, Term subTerm,
+    List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
                                                        DevelopmentStage start, DevelopmentStage end, boolean withImgOnly);
 
     /**
@@ -209,7 +209,7 @@ public interface AntibodyRepository {
      * @param withImgOnly only figures with images or not
      * @return  list of figures
      */
-    List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, Term term, boolean withImgOnly);
+    List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly);
 
 
     /**
@@ -218,7 +218,7 @@ public interface AntibodyRepository {
      *
      * @return terms associated with expression data about the antibody within the figure
      */
-    Set<Term> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
+    Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
                                             DevelopmentStage start, DevelopmentStage end);
 
 

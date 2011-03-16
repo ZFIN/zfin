@@ -19,7 +19,6 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MorpholinoSequence;
@@ -73,7 +72,7 @@ public class MutantRepositoryTest {
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
         AnatomyItem ai = ar.getAnatomyItem(name);
         List<Morpholino> morphs =
-                getMutantRepository().getPhenotypeMorpholinos(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                getMutantRepository().getPhenotypeMorpholinos(ai.createGenericTerm(), AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         assertNotNull("morphs exist", morphs);
 
     }
@@ -100,7 +99,7 @@ public class MutantRepositoryTest {
         AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
         AnatomyItem ai = ar.getAnatomyItem(name);
         PaginationResult<GenotypeExperiment> morphs =
-                getMutantRepository().getGenotypeExperimentMorpholinos(ai, true, null);
+                getMutantRepository().getGenotypeExperimentMorpholinos(ai.createGenericTerm(), true, null);
         assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }
@@ -194,16 +193,16 @@ public class MutantRepositoryTest {
     public void goTermsByMarkerAndPublication() {
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-040624-2");
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-020724-1");
-        List<Term> goTerms = getMutantRepository().getGoTermsByMarkerAndPublication(marker, publication);
-        System.out.println(goTerms.size());
+        List<GenericTerm> goTerms = getMutantRepository().getGoTermsByMarkerAndPublication(marker, publication);
+        LOG.debug(goTerms.size());
         assertTrue(goTerms.size() == 0);
     }
 
     @Test
     public void goTermsByPhenotypeAndPublication() {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-11");
-        List<Term> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
-        System.out.println(goTerms.size());
+        List<GenericTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
+        LOG.debug(goTerms.size());
         assertTrue(goTerms.size() > 0);
     }
 

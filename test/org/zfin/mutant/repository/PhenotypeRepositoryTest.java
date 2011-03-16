@@ -66,7 +66,7 @@ public class PhenotypeRepositoryTest {
         assertNotNull(structures);
         for (PhenotypeStructure structure : structures) {
             System.out.println(structure.getSuperterm().getTermName());
-            System.out.println(structure.getQuality().getTermName());
+            System.out.println(structure.getQualityTerm().getTermName());
         }
     }
 
@@ -237,7 +237,7 @@ public class PhenotypeRepositoryTest {
 
     private TermDTO createSuperterm(String supertermName, OntologyDTO ontology) {
         TermDTO dto = new TermDTO();
-        dto.setTermName(supertermName);
+        dto.setName(supertermName);
         dto.setOntology(ontology);
         return dto;
     }

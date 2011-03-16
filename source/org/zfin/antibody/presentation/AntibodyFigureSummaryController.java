@@ -9,8 +9,8 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,12 +39,12 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         if (ab == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
 
-        Term superterm = OntologyManager.getInstance().getTermByID(form.getSuperTerm().getZdbID());
+        GenericTerm superterm = RepositoryFactory.getOntologyRepository().getTermByZdbID(form.getSuperTerm().getZdbID());
         form.setSuperTerm(superterm);
 
-        Term subterm = null;
+        GenericTerm subterm = null;
         if (StringUtils.isNotEmpty(form.getSubTerm().getZdbID())) {
-            subterm = OntologyManager.getInstance().getTermByID(form.getSubTerm().getZdbID());
+            subterm = RepositoryFactory.getOntologyRepository().getTermByZdbID(form.getSubTerm().getZdbID());
             form.setSubTerm(subterm);
         }
         DevelopmentStage startStage = getAnatomyRepository().getStage(form.getStartStage());

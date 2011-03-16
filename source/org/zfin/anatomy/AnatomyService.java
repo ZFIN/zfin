@@ -7,7 +7,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -38,7 +38,7 @@ public class AnatomyService {
     }
 
 
-    public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(Term aoTerm,
+    public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm,
                                                                              PaginationBean pagination,
                                                                              boolean includeSubstructures){
         int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm,includeSubstructures) ;

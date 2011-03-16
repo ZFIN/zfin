@@ -7,7 +7,7 @@
 </c:if>
 <c:if test="${fn:length(anatomyTerms) > 0}">
     <ul style="list-style-type:none;"><c:forEach var="anatomyTerm" items="${anatomyTerms}">
-        <li><zfin:hightlight highlightEntity="${anatomyTerm.name}" highlightString="${formBean.query}"/></li>
+        <li><zfin:highlight highlightEntity="${anatomyTerm.name}" highlightString="${formBean.query}"/></li>
     </c:forEach>
     </ul>
 </c:if>

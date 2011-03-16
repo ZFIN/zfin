@@ -205,7 +205,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
             result.setStartStage(start);
             DevelopmentStage end = anatomyRep.getStageByID("ZDB-STAGE-010723-36");
             result.setEndStage(end);
-            Term term = new GenericTerm();
+            GenericTerm term = new GenericTerm();
             term.setTermName(Term.UNSPECIFIED);
             term.setZdbID("ZDB-TERM-100331-1055");
 

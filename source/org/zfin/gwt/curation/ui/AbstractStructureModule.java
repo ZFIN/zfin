@@ -229,7 +229,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getExpressedTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
+                if (!structure.getExpressedTerm().getSuperterm().getName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             //Window.alert("SIZE: " + experiments.size());
@@ -259,7 +259,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getPhenotypeTerm().getSuperterm().getTermName().equals(UNSPECIFIED))
+                if (!structure.getPhenotypeTerm().getSuperterm().getName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             reCreatePhenotypePileLink.setVisible(false);

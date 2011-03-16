@@ -31,6 +31,7 @@ public class GoInlineMarkerEditBox extends AbstractGoMarkerBox {
                 GoEvidenceValidator.validate(goEvidenceDTO);
             } catch (ValidationException e) {
                 setError(e.getMessage());
+                return ;
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().editMarkerGoTermEvidenceDTO(goEvidenceDTO,

@@ -16,7 +16,6 @@ import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -71,7 +70,7 @@ public class AnatomySearchBean extends PaginationBean {
     private List<AntibodyStatistics> antibodyStatistics;
     private List<MorpholinoStatistics> nonWildtypeMorpholinos;
     private boolean wildtype;
-    private Term aoTerm;
+    private GenericTerm aoTerm;
 
     public List getStages() {
         return stages;
@@ -98,13 +97,13 @@ public class AnatomySearchBean extends PaginationBean {
         return stage;
     }
 
-    public Term getAoTerm() {
+    public GenericTerm getAoTerm() {
         if (aoTerm == null)
             aoTerm = new GenericTerm();
         return aoTerm;
     }
 
-    public void setAoTerm(Term aoTerm) {
+    public void setAoTerm(GenericTerm aoTerm) {
         this.aoTerm = aoTerm;
     }
 

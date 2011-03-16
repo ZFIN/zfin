@@ -37,7 +37,7 @@ abstract public class AbstractPileStructureValidator<T extends ExpressedTermDTO>
     public boolean isValidNewPileStructure(T expressedTerm) {
         errorMessages.clear();
         TermDTO superTerm = expressedTerm.getSuperterm();
-        if (superTerm == null || StringUtils.isEmpty(expressedTerm.getSuperterm().getTermName())) {
+        if (superTerm == null || StringUtils.isEmpty(expressedTerm.getSuperterm().getName())) {
             errorMessages.add("No Superterm provided.");
             return false;
         }

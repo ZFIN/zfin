@@ -5,9 +5,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +28,12 @@ public class OntologyTermDetailController extends AbstractCommandController {
         if (termID == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "");
 
-        Term term;
-        if (termID.contains(ActiveData.Type.TERM.name())
-                ||  termID.contains(ActiveData.Type.ANAT.name() )){
-//            term = OntologyManager.getInstance().getTermByID(termID);
+        GenericTerm term;
+        if (termID.contains(ActiveData.Type.TERM.name())){
+            term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+        }
+        else
+        if( termID.contains(ActiveData.Type.ANAT.name() )){
             term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
         } else {
             // try an obo id
@@ -41,10 +42,12 @@ public class OntologyTermDetailController extends AbstractCommandController {
         if (term == null)
             return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, termID);
         if (term.getOntology().equals(Ontology.ANATOMY)) {
-            if (termID.contains(ActiveData.Type.ANAT.name()))
+            if (termID.contains(ActiveData.Type.ANAT.name())){
                 response.sendRedirect("/action/anatomy/term-detail?anatomyItem.zdbID=" + termID);
-            else
-                response.sendRedirect("/action/anatomy/term-detail?id=" + termID);
+            }
+            else{
+                response.sendRedirect("/action/anatomy/term-detail?id=" + term.getOboID());
+            }
         } else if (Ontology.isGoOntology(term.getOntology())) {
             response.sendRedirect("http://www.ebi.ac.uk/QuickGO/GTerm?id=" + term.getOboID());
         }

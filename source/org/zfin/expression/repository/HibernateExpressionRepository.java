@@ -22,9 +22,10 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -45,6 +46,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
 
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+
     public ExpressionStageAnatomyContainer getExpressionStages(Gene gene) {
         Session session = HibernateUtil.currentSession();
 
@@ -62,7 +65,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             Object[] tuple = (Object[]) stagesAndAnatomy.next();
 
             DevelopmentStage stage = (DevelopmentStage) tuple[0];
-            Term anat = (Term) tuple[1];
+            GenericTerm anat = (GenericTerm) tuple[1];
             Figure fig = (Figure) tuple[2];
 
             xsac.add(stage, anat, fig);
@@ -432,7 +435,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @SuppressWarnings("unchecked")
     private ExpressionResult getUnspecifiedExpressResult(ExpressionResult result) {
-        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ExpressionResult.class);
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
@@ -668,7 +671,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     private void createUnspecifiedExpressionResult(ExpressionResult result, Figure figure) {
         Session session = HibernateUtil.currentSession();
-        Term unspecifiedTerm = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        GenericTerm unspecifiedTerm = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
 
         ExpressionResult unspecifiedResult = new ExpressionResult();
         unspecifiedResult.setExpressionExperiment(result.getExpressionExperiment());
@@ -690,7 +693,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public Phenotype getUnspecifiedPhenotypeFromGenoxStagePub(Phenotype pheno) {
         Session session = HibernateUtil.currentSession();
 
-        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
 
         String hql = "select pheno from Phenotype pheno " +
                 "     where pheno.genotypeExperiment = :genox" +
@@ -729,7 +732,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public boolean pileStructureExists(ExpressedTermDTO expressedTerm, String publicationID) {
         if (publicationID == null)
             throw new NullPointerException("No Publication provided.");
-        String supertermName = expressedTerm.getSuperterm().getTermName();
+        String supertermName = expressedTerm.getSuperterm().getName();
         if (supertermName == null)
             throw new NullPointerException("No superterm provided.");
 
@@ -742,7 +745,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 throw new NullPointerException("No subterm ontology provided.");
             crit = session.createCriteria(ExpressionStructure.class);
             Criteria subterm = crit.createCriteria("subterm");
-            subterm.add(Restrictions.eq("termName", expressedTerm.getSubterm().getTermName()));
+            subterm.add(Restrictions.eq("termName", expressedTerm.getSubterm().getName()));
         } else {
             crit = session.createCriteria(ExpressionStructure.class);
             crit.add(Restrictions.isNull("subterm"));
@@ -799,7 +802,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         structure.setPerson(Person.getCurrentSecurityUser());
         structure.setPublication(publication);
         structure.setSuperterm(expressionResult.getSuperterm());
-        Term subTerm = expressionResult.getSubterm();
+        GenericTerm subTerm = expressionResult.getSubterm();
         if (subTerm != null) {
             structure.setSubterm(subTerm);
         }
@@ -832,7 +835,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return list of expressions
      */
     @Override
-    public List<ExpressionResult> getExpressionsWithEntity(Term term) {
+    public List<ExpressionResult> getExpressionsWithEntity(GenericTerm term) {
         String hql = "select distinct expression from ExpressionResult expression where " +
                 "(superterm = :term OR subterm = :term) " +
                 " AND expressionFound = :expressionFound ";
@@ -848,9 +851,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return list of expressions
      */
     @Override
-    public List<ExpressionResult> getExpressionsWithEntity(List<Term> terms) {
+    public List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms) {
         List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>(50);
-        for (Term term : terms) {
+        for (GenericTerm term : terms) {
             List<ExpressionResult> phenotypes = getExpressionsWithEntity(term);
             allExpressions.addAll(phenotypes);
         }
@@ -943,7 +946,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 //               "ORDER BY anatitem_name_order asc;"  ;
         String hql = "SELECT distinct ai " +
                 "FROM " +
-                "ExpressionResult er, ExpressionExperiment ee, Term t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
                 " WHERE " +
                 "ee.gene.zdbID = :zdbID " +
                 "AND  er.expressionExperiment.zdbID = ee.zdbID " +

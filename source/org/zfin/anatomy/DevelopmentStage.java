@@ -14,6 +14,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
     private String zdbID;
     private String oboID;
     private String name;
+    private String nameLong;
     private float hoursStart;
     private float hoursEnd;
     private String otherFeature;
@@ -44,6 +45,14 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameLong() {
+        return nameLong;
+    }
+
+    public void setNameLong(String nameLong) {
+        this.nameLong = nameLong;
     }
 
     public float getHoursStart() {

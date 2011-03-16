@@ -8,7 +8,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.TermInfo;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -162,9 +162,9 @@ public class LookupComposite extends Composite implements Revertible {
                         lookupRPC.getTermInfo(ontology,suggestion.getReplacementString(),
                                 new TermInfoCallBack(termInfoTable,suggestion.getReplacementString()){
                                     @Override
-                                    public void onSuccess(TermInfo termInfo) {
-                                        super.onSuccess(termInfo);
-                                        doSubmit(termInfo.getName());
+                                    public void onSuccess(TermDTO termInfoDTO) {
+                                        super.onSuccess(termInfoDTO);
+                                        doSubmit(termInfoDTO.getName());
                                     }
                                 }
                         );

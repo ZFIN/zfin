@@ -4,6 +4,7 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -22,7 +23,7 @@ public class MarkerStatistic extends EntityStatistics {
     private int numberOfFigures;
     private FigureStatistics figureStatistics;
     private Marker gene;
-    private Term anatomyTerm;
+    private GenericTerm anatomyTerm;
     private Set<Figure> figures;
 
     // Do not use!
@@ -31,7 +32,7 @@ public class MarkerStatistic extends EntityStatistics {
     public MarkerStatistic() {
     }
 
-    public MarkerStatistic(Term anatomyTerm, Marker gene) {
+    public MarkerStatistic(GenericTerm anatomyTerm, Marker gene) {
         this.anatomyTerm = anatomyTerm;
         this.gene = gene;
     }

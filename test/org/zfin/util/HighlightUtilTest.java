@@ -15,7 +15,7 @@ public class HighlightUtilTest {
         String text = "anti-DLX3b";
         String highlightString = "anTi-";
 
-        String hightlightString  = HighlightUtil.hightlightMatchHTML(text, highlightString, false);
+        String hightlightString  = HighlightUtil.highlightMatchHTML(text, highlightString, false);
 
         assertEquals("<b>anti-</b>DLX3b", hightlightString);
     }
@@ -25,7 +25,7 @@ public class HighlightUtilTest {
         String text = "anti-DLX3b";
         String highlightString = "dlX";
 
-        String hightlightString  = HighlightUtil.hightlightMatchHTML(text, highlightString, false);
+        String hightlightString  = HighlightUtil.highlightMatchHTML(text, highlightString, false);
 
         assertEquals("anti-<b>DLX</b>3b", hightlightString);
     }
@@ -35,7 +35,7 @@ public class HighlightUtilTest {
         String text = "anti-DLX3b";
         String highlightString = "dlX3b";
 
-        String hightlightString  = HighlightUtil.hightlightMatchHTML(text, highlightString, false);
+        String hightlightString  = HighlightUtil.highlightMatchHTML(text, highlightString, false);
 
         assertEquals("anti-<b>DLX3b</b>", hightlightString);
     }
@@ -45,7 +45,7 @@ public class HighlightUtilTest {
         String text = "anti-DLX3b";
         String highlightString = "dlX3g";
 
-        String hightlightString  = HighlightUtil.hightlightMatchHTML(text, highlightString, false);
+        String hightlightString  = HighlightUtil.highlightMatchHTML(text, highlightString, false);
 
         assertEquals(text, hightlightString);
     }

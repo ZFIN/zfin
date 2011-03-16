@@ -94,7 +94,7 @@ public class GoEvidenceValidator {
         validateInferences(dto);
         validateEvidenceVsPub(dto.getEvidenceCode(), dto.getPublicationZdbID(), dto.getFirstInference());
         validateProteinBinding(dto.getEvidenceCode(), dto.getInferredFrom(),
-                dto.getGoTerm().getTermOboID(), dto.getGoTerm().getOntology().getOntologyName(),
+                dto.getGoTerm().getOboID(), dto.getGoTerm().getOntology().getOntologyName(),
                 dto.getFlag());
     }
 

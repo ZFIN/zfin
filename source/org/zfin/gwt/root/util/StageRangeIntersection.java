@@ -38,7 +38,7 @@ public class StageRangeIntersection implements IsSerializable {
         this.start = start;
         this.end = end;
         startHours = start.getStartHours();
-        if (end.getName().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
+        if (end.getNameLong().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
             endHours = StageRangeUnion.UNKNOWN_END_HOURS;
         else
             endHours = end.getStartHours();
@@ -77,7 +77,7 @@ public class StageRangeIntersection implements IsSerializable {
     public void addNewRange(StageDTO startStage, StageDTO endStage) {
         float start = startStage.getStartHours();
         float end = endStage.getStartHours();
-        if (endStage.getName().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
+        if (endStage.getNameLong().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
             end = StageRangeUnion.UNKNOWN_END_HOURS;
         // first check if start < endHours and end > startHours
         if (start > endHours || end < startHours) {
@@ -115,7 +115,7 @@ public class StageRangeIntersection implements IsSerializable {
     public boolean isOverlap(StageDTO startStage, StageDTO endStage) {
         float start = startStage.getStartHours();
         float end = endStage.getStartHours();
-        if (endStage.getName().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
+        if (endStage.getNameLong().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
             end = StageRangeUnion.UNKNOWN_END_HOURS;
         if (!overlapRangeExists)
             return false;

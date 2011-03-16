@@ -41,19 +41,19 @@ public class AntibodyServiceTest {
         termThree.setNameOrder("Engel");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne);
+        resultOne.setSuperterm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo);
+        resultTwo.setSuperterm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperterm(termThree);
+        resultThree.setSuperterm(termThree.createGenericTerm());
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperterm(termThree);
+        resultFour.setSuperterm(termThree.createGenericTerm());
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -71,7 +71,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<Term> aoTerms = as.getDistinctAoTerms();
+        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -89,19 +89,19 @@ public class AntibodyServiceTest {
         termThree.setNameOrder("Halle");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne);
+        resultOne.setSuperterm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo);
+        resultTwo.setSuperterm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperterm(termThree);
+        resultThree.setSuperterm(termThree.createGenericTerm());
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperterm(termThree);
+        resultFour.setSuperterm(termThree.createGenericTerm());
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -120,7 +120,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<Term> aoTerms = as.getDistinctAoTerms();
+        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(2, aoTerms.size());
     }
@@ -138,12 +138,12 @@ public class AntibodyServiceTest {
         termThree.setNameOrder("Margor");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne);
+        resultOne.setSuperterm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
-        resultOne.setSubterm(termThree);
+        resultOne.setSubterm(termThree.createGenericTerm());
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo);
+        resultTwo.setSuperterm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -160,7 +160,7 @@ public class AntibodyServiceTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<Term> aoTerms = as.getDistinctAoTerms();
+        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -181,7 +181,7 @@ public class AntibodyServiceTest {
 
     @Test
     public void singleGoTermList() {
-        Term termOne = getNucleusTerm();
+        GenericTerm termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
@@ -229,9 +229,9 @@ public class AntibodyServiceTest {
 
     @Test
     public void multipleDistinctGoTermList() {
-        Term termOne = getNucleusTerm();
+        GenericTerm termOne = getNucleusTerm();
 
-        Term termTwo = getCyokineTerm();
+        GenericTerm termTwo = getCyokineTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
@@ -260,16 +260,16 @@ public class AntibodyServiceTest {
         assertEquals(2, goTerms.size());
     }
 
-    private Term getCyokineTerm() {
-        Term termTwo = new GenericTerm();
+    private GenericTerm getCyokineTerm() {
+        GenericTerm termTwo = new GenericTerm();
         termTwo.setZdbID("ZDB-TERM-091209-3709");
         termTwo.setTermName("cytokine activity");
         termTwo.setOntology(Ontology.GO_MF);
         return termTwo;
     }
 
-    private Term getNucleusTerm() {
-        Term termOne = new GenericTerm();
+    private GenericTerm getNucleusTerm() {
+        GenericTerm termOne = new GenericTerm();
         termOne.setZdbID("ZDB-TERM-091209-4086");
         termOne.setTermName("nucleus");
         termOne.setOntology(Ontology.GO_CC);
@@ -278,8 +278,8 @@ public class AntibodyServiceTest {
 
     @Test
     public void multipleRepeatingGoTermList() {
-        Term termOne = getNucleusTerm();
-        Term termTwo = getCyokineTerm();
+       GenericTerm termOne = getNucleusTerm();
+        GenericTerm termTwo = getCyokineTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);
@@ -312,7 +312,7 @@ public class AntibodyServiceTest {
 
     @Test
     public void multipleRepeatingGoTermListWithNull() {
-        Term termOne = getNucleusTerm();
+        GenericTerm termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setSubterm(termOne);

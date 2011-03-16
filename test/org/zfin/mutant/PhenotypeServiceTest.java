@@ -3,7 +3,6 @@ package org.zfin.mutant;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,8 +17,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class PhenotypeServiceTest {
 
-    private Term cellAnatomyTerm;
-    private Term anatomyTerm;
+    private GenericTerm cellAnatomyTerm;
+    private GenericTerm anatomyTerm;
     private static String aoTermZdbID = "ZDB-ANAT-010921-586";
     private static String cellAOZdbID = "ZDB-ANAT-050915-158";
     private static String GOZdbID = "ZDB-GO-050915-158";
@@ -69,7 +68,7 @@ public class PhenotypeServiceTest {
         GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
         term.setTermName(brightOrange);
-        pheno.setTerm(term);
+        pheno.setQualityTerm(term);
         Set<Phenotype> phenotypes = new HashSet<Phenotype>(1);
         phenotypes.add(pheno);
         genox.setPhenotypes(phenotypes);
@@ -96,21 +95,21 @@ public class PhenotypeServiceTest {
         GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
         term.setTermName(brightOrange);
-        pheno.setTerm(term);
+        pheno.setQualityTerm(term);
 
         Phenotype phenoTwo = new Phenotype();
         phenoTwo.setSuperterm(anatomyTerm);
         GenericTerm termTwo = new GenericTerm();
         String pink = "pink";
         termTwo.setTermName(pink);
-        phenoTwo.setTerm(termTwo);
+        phenoTwo.setQualityTerm(termTwo);
 
         Phenotype phenoThree = new Phenotype();
         phenoThree.setSuperterm(anatomyTerm);
         GenericTerm termThree = new GenericTerm();
         String angry = "angry";
         termThree.setTermName(angry);
-        phenoThree.setTerm(termThree);
+        phenoThree.setQualityTerm(termThree);
 
         Set<Phenotype> phenotypes = new HashSet<Phenotype>(3);
         phenotypes.add(pheno);
@@ -206,7 +205,7 @@ public class PhenotypeServiceTest {
         pheno.setSuperterm(anatomyTerm);
         GenericTerm term = new GenericTerm();
         term.setTermName(phenotypeName);
-        pheno.setTerm(term);
+        pheno.setQualityTerm(term);
         return pheno;
     }
 
@@ -216,18 +215,18 @@ public class PhenotypeServiceTest {
         pheno.setSuperterm(cellAnatomyTerm);
         GenericTerm term = new GenericTerm();
         term.setTermName(cellPhenotypeName);
-        pheno.setTerm(term);
+        pheno.setQualityTerm(term);
         return pheno;
     }
 
     private Phenotype getGOPhenotype(String goPhenotypeName) {
         Phenotype pheno = new Phenotype();
-        Term goterm = new GenericTerm();
+        GenericTerm goterm = new GenericTerm();
         goterm.setTermName(CILIUM);
         pheno.setSubterm(goterm);
         GenericTerm term = new GenericTerm();
         term.setTermName(goPhenotypeName);
-        pheno.setTerm(term);
+        pheno.setQualityTerm(term);
         pheno.setSuperterm(anatomyTerm);
         return pheno;
     }

@@ -82,9 +82,9 @@ public class PhenotypeFigureStageDTO extends AbstractFigureStageDTO<PhenotypeTer
             return genotype.compareTo(efs.getGenotype());
         if (!environment.equals(efs.getEnvironment()))
             return environment.compareTo(efs.getEnvironment());
-        if (!start.getName().equals(efs.getStart().getName()))
+        if (!start.getNameLong().equals(efs.getStart().getNameLong()))
             return (int) (start.getStartHours() * 10 - efs.getStart().getStartHours() * 10);
-        if (!end.getName().equals(efs.getEnd().getName()))
+        if (!end.getNameLong().equals(efs.getEnd().getNameLong()))
             return (int) (end.getStartHours() * 10 - efs.getEnd().getStartHours() * 10);
         return 0;
     }

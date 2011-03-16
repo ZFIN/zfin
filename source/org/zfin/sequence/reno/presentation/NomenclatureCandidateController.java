@@ -10,8 +10,8 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.reno.NomenclatureRun;
-import org.zfin.sequence.reno.service.RenoService;
 import org.zfin.sequence.reno.RunCandidate;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.HashSet;
 import java.util.List;

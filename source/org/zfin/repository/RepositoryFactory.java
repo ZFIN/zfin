@@ -267,6 +267,9 @@ public class RepositoryFactory {
     }
 
     public static PhenotypeRepository getPhenotypeRepository() {
+        if(phenotypeRep==null){
+            phenotypeRep = new HibernatePhenotypeRepository();
+        }
         return phenotypeRep;
     }
 
@@ -275,6 +278,9 @@ public class RepositoryFactory {
     }
 
     public static OntologyRepository getOntologyRepository() {
+        if(ontologyRepository==null){
+            ontologyRepository = new HibernateOntologyRepository();
+        }
         return ontologyRepository;
     }
 

@@ -23,7 +23,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -202,7 +202,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    public int getAntibodiesByAOTermCount(Term aoTerm) {
+    public int getAntibodiesByAOTermCount(GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Antibody.class);
         criteria.setProjection(Projections.countDistinct("zdbID"));
@@ -223,7 +223,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<Antibody> getAntibodiesByAOTerm(Term aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
+    public PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
@@ -257,7 +257,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
-    public int getNumberOfFiguresPerAoTerm(Antibody antibody, Term aoTerm, Figure.Type figureType) {
+    public int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, Figure.Type figureType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
         if (figureType != null && figureType == Figure.Type.TOD)
@@ -282,7 +282,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, Term aoTerm) {
+    public List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Figure.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -304,7 +304,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, Term aoTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         Criteria pubs = session.createCriteria(Publication.class);
         Criteria labeling = pubs.createCriteria("expressionExperiments");
@@ -502,7 +502,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     }
 
-    public List<AntibodyStatistics> getAntibodyStatistics(Term aoTerm, PaginationBean pagination, boolean includeSubstructures) {
+    public List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures) {
 
         String hql;
         // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
@@ -541,7 +541,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public int getAntibodyCount(Term aoTerm, boolean includeSubstructures) {
+    public int getAntibodyCount(GenericTerm aoTerm, boolean includeSubstructures) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +
@@ -590,7 +590,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @param aoTerm anatomy term
      * @param list   antibodyStatistics objects to be manipulated.
      */
-    private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, Term aoTerm) {
+    private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, GenericTerm aoTerm) {
 
         if (record == null || record.getAntibody() == null)
             return;
@@ -627,7 +627,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             list.add(newAntibodyStat);
     }
 
-    public List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, Term superTerm, Term subTerm,
+    public List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
                                                               DevelopmentStage start, DevelopmentStage end, boolean withImgOnly) {
 
         List<Figure> figures = new ArrayList<Figure>();
@@ -676,7 +676,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @param withImgOnly only figures with images or not
      * @return list of figures
      */
-    public List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, Term term, boolean withImgOnly) {
+    public List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly) {
         List<Figure> figures = new ArrayList<Figure>();
         Session session = HibernateUtil.currentSession();
 
@@ -704,10 +704,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return figures;
     }
 
-    public Set<Term> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
+    public Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
                                                    DevelopmentStage start, DevelopmentStage end) {
-        Set<Term> terms = new TreeSet<Term>();
-        Session session = HibernateUtil.currentSession();
+        Set<GenericTerm> terms = new TreeSet<GenericTerm>();
 
         String hql = "select xpatres from ExpressionResult xpatres " +
                 "   join xpatres.expressionExperiment " +

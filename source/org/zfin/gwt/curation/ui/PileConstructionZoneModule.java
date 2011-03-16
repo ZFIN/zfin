@@ -159,12 +159,12 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         //Window.alert(selectedEntity.name());
         switch (selectedEntity) {
             case SUPERTERM:
-                lookupRPC.getTermInfo(OntologyDTO.ANATOMY, term.getSuperterm().getTermID(),
-                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getTermID()));
+                lookupRPC.getTermInfo(OntologyDTO.ANATOMY, term.getSuperterm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getZdbID()));
                 break;
             case SUBTERM:
-                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getTermID(),
-                        new TermInfoCallBack(termInfoTable, term.getSubterm().getTermID()));
+                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getSubterm().getZdbID()));
                 break;
         }
         populateTermEntryUnits(term);
@@ -177,16 +177,16 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         //Window.alert(selectedEntity.name());
         switch (selectedEntity) {
             case SUPERTERM:
-                lookupRPC.getTermInfo(term.getSuperterm().getOntology(), term.getSuperterm().getTermID(),
-                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getTermID()));
+                lookupRPC.getTermInfo(term.getSuperterm().getOntology(), term.getSuperterm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getZdbID()));
                 break;
             case SUBTERM:
-                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getTermID(),
-                        new TermInfoCallBack(termInfoTable, term.getSubterm().getTermID()));
+                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getSubterm().getZdbID()));
                 break;
             case QUALITY:
-                lookupRPC.getTermInfo(term.getQuality().getOntology(), term.getQuality().getTermID(),
-                        new TermInfoCallBack(termInfoTable, term.getQuality().getTermID()));
+                lookupRPC.getTermInfo(term.getQuality().getOntology(), term.getQuality().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getQuality().getZdbID()));
         }
         errorElement.clearAllErrors();
         populateTermEntryUnitsPhenotype(term);
@@ -196,7 +196,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         populateTermEntryUnits(term);
         TermEntry quality = getQualityTerm();
         if (quality != null) {
-            quality.getTermTextBox().setText(term.getQuality().getTermName());
+            quality.getTermTextBox().setText(term.getQuality().getName());
             ZfinListBox selector = quality.getOntologySelector();
             if (selector != null && selector.getItemCount() > 0){
                 selector.selectEntryByDisplayName(term.getQuality().getOntology().getDisplayName());
@@ -213,7 +213,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     private void populateTermEntryUnits(ExpressedTermDTO term) {
         TermEntry superterm = getSuperterm();
         if (superterm != null) {
-            superterm.getTermTextBox().setText(term.getSuperterm().getTermName());
+            superterm.getTermTextBox().setText(term.getSuperterm().getName());
             ZfinListBox selector = superterm.getOntologySelector();
             if (selector != null && selector.getItemCount() > 0){
                 selector.selectEntryByDisplayName(term.getSuperterm().getOntology().getDisplayName());
@@ -227,7 +227,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             LookupComposite lookupEntryBox = subterm.getTermTextBox();
             TermDTO subtermDTO = term.getSubterm();
             if (subtermDTO != null) {
-                lookupEntryBox.setText(subtermDTO.getTermName());
+                lookupEntryBox.setText(subtermDTO.getName());
                 lookupEntryBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
                 lookupEntryBox.setOntology(subtermDTO.getOntology());
                 ZfinListBox selector = subterm.getOntologySelector();
@@ -360,7 +360,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                     @Override
                     public void onSuccess(TermDTO termDTO) {
                         if(termDTO!=null){
-                            lookupRPC.getTermInfo(ontology, termDTO.getTermID(), new TermInfoCallBack(termInfoTable, termDTO.getTermID()));
+                            lookupRPC.getTermInfo(ontology, termDTO.getZdbID(), new TermInfoCallBack(termInfoTable, termDTO.getZdbID()));
                         }
                     }
                 });
@@ -418,7 +418,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
         private TermDTO getTermDTO(TermEntry termEntry) {
             TermDTO superterm = new TermDTO();
-            superterm.setTermName(termEntry.getTermText());
+            superterm.setName(termEntry.getTermText());
             superterm.setOntology(termEntry.getSelectedOntology());
             return superterm;
         }
@@ -490,9 +490,9 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         }
 
         public void onClick(ClickEvent event) {
-            if (!termEntry.setTerm(termInfoTable.getCurrentTermInfo()))
+            if (!termEntry.setTerm(termInfoTable.getCurrentTermInfoDTO()))
                 errorElement.setText("The " + getPostComposedPart(termEntry) + " term does not allow terms from the <" +
-                        termInfoTable.getCurrentTermInfo().getOntology().getDisplayName() + "> ontology.");
+                        termInfoTable.getCurrentTermInfoDTO().getOntology().getDisplayName() + "> ontology.");
         }
 
     }

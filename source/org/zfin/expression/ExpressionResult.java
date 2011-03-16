@@ -3,7 +3,7 @@ package org.zfin.expression;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,14 +14,14 @@ import java.util.Set;
 public class ExpressionResult implements Comparable<ExpressionResult> {
 
     private String zdbID;
-    private Term superterm;
+    private GenericTerm superterm;
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private ExpressionExperiment expressionExperiment;
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
-    protected Term subterm;
+    protected GenericTerm subterm;
 
     public String getZdbID() {
         return zdbID;
@@ -85,19 +85,19 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
         this.endStage = endStage;
     }
 
-    public Term getSubterm() {
-        return subterm;
-    }
-
-    public Term getSuperterm() {
+    public GenericTerm getSuperterm() {
         return superterm;
     }
 
-    public void setSuperterm(Term superterm) {
+    public void setSuperterm(GenericTerm superterm) {
         this.superterm = superterm;
     }
 
-    public void setSubterm(Term subterm) {
+    public GenericTerm getSubterm() {
+        return subterm;
+    }
+
+    public void setSubterm(GenericTerm subterm) {
         this.subterm = subterm;
     }
 

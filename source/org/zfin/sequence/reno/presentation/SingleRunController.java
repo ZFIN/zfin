@@ -13,9 +13,9 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
-import org.zfin.sequence.reno.service.RenoService;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.reno.service.RenoService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

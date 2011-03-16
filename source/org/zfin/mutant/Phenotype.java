@@ -2,7 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
@@ -16,10 +16,10 @@ public class Phenotype implements Comparable<Phenotype> {
 
     private String zdbID;
     private GenotypeExperiment genotypeExperiment;
-    private Term superterm;
-    private Term subterm;
+    private GenericTerm superterm;
+    private GenericTerm subterm;
     // quality term
-    private Term term;
+    private GenericTerm qualityTerm;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private Set<Figure> figures;
@@ -36,29 +36,28 @@ public class Phenotype implements Comparable<Phenotype> {
         this.zdbID = zdbID;
     }
 
-
-    public Term getSubterm() {
-        return subterm;
-    }
-
-    public void setSubterm(Term subterm) {
-        this.subterm = subterm;
-    }
-
-    public Term getSuperterm() {
+    public GenericTerm getSuperterm() {
         return superterm;
     }
 
-    public void setSuperterm(Term superterm) {
+    public void setSuperterm(GenericTerm superterm) {
         this.superterm = superterm;
     }
 
-    public Term getTerm() {
-        return term;
+    public GenericTerm getSubterm() {
+        return subterm;
     }
 
-    public void setTerm(Term term) {
-        this.term = term;
+    public void setSubterm(GenericTerm subterm) {
+        this.subterm = subterm;
+    }
+
+    public GenericTerm getQualityTerm() {
+        return qualityTerm;
+    }
+
+    public void setQualityTerm(GenericTerm qualityTerm) {
+        this.qualityTerm = qualityTerm;
     }
 
     public DevelopmentStage getStartStage() {

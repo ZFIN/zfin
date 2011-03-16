@@ -2,8 +2,6 @@ package org.zfin.datatransfer.go;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
-import org.zfin.datatransfer.go.GafEntry;
-import org.zfin.datatransfer.go.GafParser;
 
 import java.io.File;
 import java.util.Arrays;

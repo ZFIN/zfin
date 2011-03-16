@@ -879,7 +879,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 String classSpan;
                 if (term.getTag().equals("normal")) {
                     classSpan = createSpanElement(term, WidgetUtil.PHENOTYPE_NORMAL);
-                } else if (term.getSuperterm().getTermName().equals("unspecified")) {
+                } else if (term.getSuperterm().getName().equals("unspecified")) {
                     classSpan = createSpanElement(term, "term-unspecified");
                 } else {
 

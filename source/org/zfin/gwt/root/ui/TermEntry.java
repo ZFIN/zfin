@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.dto.TermInfo;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
@@ -120,7 +119,7 @@ public class TermEntry extends HorizontalPanel {
                                     termTextBox.setErrorString("Unable to find term["+value+"]");
                                     return ;
                                 }
-                                termTextBox.setText(result.getTermName());
+                                termTextBox.setText(result.getName());
                                 isSubmitting =  false;
                             }
                         });
@@ -254,13 +253,13 @@ public class TermEntry extends HorizontalPanel {
      * Set a given term info on the term entry, i.e.
      * set the term name and select the correct ontology.
      * If successful return true, otherwise false.
-     * @param termInfo term info
+     * @param termInfoDTO term info
      * @return boolean
      */
-    public boolean setTerm(TermInfo termInfo) {
-        if (hasOntology(termInfo.getOntology())) {
-            termTextBox.setText(termInfo.getName());
-            setOntologySelector(termInfo.getOntology());
+    public boolean setTerm(TermDTO termInfoDTO) {
+        if (hasOntology(termInfoDTO.getOntology())) {
+            termTextBox.setText(termInfoDTO.getName());
+            setOntologySelector(termInfoDTO.getOntology());
             return true;
         } else {
             return false;

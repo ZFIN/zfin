@@ -20,7 +20,6 @@ import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
@@ -215,8 +214,8 @@ public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet impleme
         if (publication != null) {
             // get genes
             Marker marker = markerRepository.getMarkerByID(dto.getMarkerDTO().getZdbID());
-            List<Term> goTerms = mutantRepository.getGoTermsByMarkerAndPublication(marker, publication);
-            for (Term goTerm : goTerms) {
+            List<GenericTerm> goTerms = mutantRepository.getGoTermsByMarkerAndPublication(marker, publication);
+            for (GenericTerm goTerm : goTerms) {
                 GoEvidenceDTO relatedEntityDTO = new GoEvidenceDTO();
                 relatedEntityDTO.setName(goTerm.getTermName());
                 relatedEntityDTO.setZdbID(goTerm.getZdbID());

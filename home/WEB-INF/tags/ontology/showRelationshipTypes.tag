@@ -6,7 +6,7 @@
 
 <h2>List of Relationship Types for [${formBean.ontologyName}] ontology</h2>
 
-Total of: ${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontologyManager ,formBean.ontology))}
+Total of: ${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontology))}
 
 <table width="90%">
     <tr class="search-result-table-header left-top-aligned">
@@ -14,7 +14,7 @@ Total of: ${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontologyManager 
         <td width="300" class="sectionTitle">Relationship Name</td>
     </tr>
 
-    <c:forEach var="relation" items="${zfn:getDistinctRelationshipTypes(formBean.ontologyManager ,formBean.ontology)}" varStatus="loop">
+    <c:forEach var="relation" items="${zfn:getDistinctRelationshipTypes(formBean.ontology)}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td>
                         ${loop.index+1}

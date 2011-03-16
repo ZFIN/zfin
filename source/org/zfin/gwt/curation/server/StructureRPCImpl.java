@@ -7,6 +7,7 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.PileStructureExistsException;
@@ -15,11 +16,12 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -31,6 +33,8 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class StructureRPCImpl extends RemoteServiceServlet implements PileStructuresRPC {
 
     private static final Logger LOG = RootLogger.getLogger(StructureRPCImpl.class);
+
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     /**
      * Retrieve all phenotype structures on the structure pile.
@@ -223,9 +227,9 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
 
     private ExpressionStructure createSuperterm(ExpressedTermDTO expressedTerm, String publicationID)
             throws TermNotFoundException {
-        Term superterm = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, expressedTerm.getSuperterm().getTermName());
+        GenericTerm superterm = ontologyRepository.getTermByName(expressedTerm.getSuperterm().getName(), Ontology.ANATOMY);
         if (superterm == null)
-            throw new TermNotFoundException("No superterm [" + expressedTerm.getSuperterm().getTermName() + "] found.");
+            throw new TermNotFoundException("No superterm [" + expressedTerm.getSuperterm().getName() + "] found.");
         ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
         structure.setPerson(Person.getCurrentSecurityUser());
@@ -240,11 +244,11 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
     private PhenotypeStructure createPostComposedPhenotypeTerm(PhenotypeTermDTO phenotypeTerm, String publicationID)
             throws TermNotFoundException {
 
-        String superTermName = phenotypeTerm.getSuperterm().getTermName();
+        String superTermName = phenotypeTerm.getSuperterm().getName();
         if (StringUtils.isEmpty(superTermName))
             throw new TermNotFoundException("No superterm name provided.");
 
-        String qualityTermName = phenotypeTerm.getQuality().getTermName();
+        String qualityTermName = phenotypeTerm.getQuality().getName();
         if (StringUtils.isEmpty(qualityTermName))
             throw new TermNotFoundException("No quality term name provided.");
 
@@ -252,25 +256,27 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         if (StringUtils.isEmpty(tagName))
             throw new TermNotFoundException("No tagName name provided.");
 
-        List<Ontology> zfinOntology = Ontology.getOntologies(phenotypeTerm.getSuperterm().getOntology().getOntologyName());
-        Term superterm = OntologyManager.getInstance().getTermByName(zfinOntology, superTermName);
+        List<Ontology> zfinOntologies = Ontology.getOntologies(phenotypeTerm.getSuperterm().getOntology().getOntologyName());
+//        Term superterm = OntologyManager.getInstance().getTermByName(zfinOntology, superTermName);
+        GenericTerm superterm = RepositoryFactory.getOntologyRepository().getTermByName(superTermName, zfinOntologies);
         if (superterm == null)
             throw new TermNotFoundException("No Superterm named [" + superTermName + "] found.");
 
         PhenotypeStructure structure = new PhenotypeStructure();
         structure.setSuperterm(superterm);
         if (phenotypeTerm.getSubterm() != null) {
-            zfinOntology = Ontology.getOntologies(phenotypeTerm.getSubterm().getOntology().getOntologyName());
-            Term subterm = OntologyManager.getInstance().getTermByName(zfinOntology, phenotypeTerm.getSubterm().getTermName());
+            zfinOntologies = Ontology.getOntologies(phenotypeTerm.getSubterm().getOntology().getOntologyName());
+//            Term subterm = OntologyManager.getInstance().getTermByName(phenotypeTerm.getSubterm().getTermName(), zfinOntology);
+            GenericTerm subterm = ontologyRepository.getTermByName(phenotypeTerm.getSubterm().getName(), zfinOntologies);
             if (subterm == null)
-                throw new TermNotFoundException("No Subterm named [" + phenotypeTerm.getSubterm().getTermName() + "] found.");
+                throw new TermNotFoundException("No Subterm named [" + phenotypeTerm.getSubterm().getName() + "] found.");
             structure.setSubterm(subterm);
         }
-        zfinOntology = Ontology.getOntologies(phenotypeTerm.getQuality().getOntology().getOntologyName());
-        Term qualityTerm = OntologyManager.getInstance().getTermByName(zfinOntology, qualityTermName);
+        GenericTerm qualityTerm = ontologyRepository.getTermByName(qualityTermName, Ontology.QUALITY);
         if (qualityTerm == null)
-            throw new TermNotFoundException("No quality term named [" + qualityTermName + "] found.");
-        structure.setQuality(qualityTerm);
+            throw new TermNotFoundException("No quality term named [" + qualityTermName + "] found for ontology ["+ zfinOntologies +"]");
+
+        structure.setQualityTerm(qualityTerm);
         structure.setTag(Phenotype.Tag.getTagFromName(tagName));
         structure.setPerson(Person.getCurrentSecurityUser());
         getPhenotypeRepository().createPhenotypeStructure(structure, publicationID);
@@ -294,8 +300,13 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         dto.setCreator(person.getName());
         dto.setDate(structure.getDate());
         expDto.setSubterm(DTOConversionService.convertToTermDTO(structure.getSubterm()));
-        dto.setStart(DTOConversionService.convertToStageDTO(structure.getSuperterm().getStart()));
-        dto.setEnd(DTOConversionService.convertToStageDTO(structure.getSuperterm().getEnd()));
+
+        GenericTerm genericTerm = structure.getSuperterm();
+        if(genericTerm.getOntology()==Ontology.ANATOMY){
+            AnatomyItem anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyItem(genericTerm.getTermName());
+            dto.setStart(DTOConversionService.convertToStageDTO(anatomyItem.getStart()));
+            dto.setEnd(DTOConversionService.convertToStageDTO(anatomyItem.getEnd()));
+        }
         return dto;
 
     }
@@ -303,14 +314,14 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
     private ExpressionStructure createPostComposedTerm(ExpressedTermDTO expressedTerm, String publicationID)
             throws TermNotFoundException {
         Ontology supertermOntology = DTOConversionService.convertToOntology(expressedTerm.getSuperterm().getOntology());
-        Term superterm = OntologyManager.getInstance().getTermByName(supertermOntology, expressedTerm.getSuperterm().getTermName());
+        GenericTerm superterm = ontologyRepository.getTermByName(expressedTerm.getSuperterm().getName(), supertermOntology);
         if (superterm == null)
-            throw new TermNotFoundException("No Superterm term [" + expressedTerm.getSuperterm().getTermName() + "] found.");
+            throw new TermNotFoundException("No Superterm term [" + expressedTerm.getSuperterm().getName() + "] found.");
         ExpressionStructure structure;
         Ontology subtermOntology = DTOConversionService.convertToOntology(expressedTerm.getSubterm().getOntology());
-        Term subterm = OntologyManager.getInstance().getTermByName(subtermOntology, expressedTerm.getSubterm().getTermName());
+        GenericTerm subterm = ontologyRepository.getTermByName(expressedTerm.getSubterm().getName(), subtermOntology);
         if (subterm == null)
-            throw new TermNotFoundException(expressedTerm.getSubterm().getTermName(), OntologyDTO.ANATOMY);
+            throw new TermNotFoundException(expressedTerm.getSubterm().getName(), OntologyDTO.ANATOMY);
         ExpressionStructure aoStructure = new ExpressionStructure();
         aoStructure.setSuperterm(superterm);
         aoStructure.setSubterm(subterm);
@@ -339,7 +350,7 @@ public class StructureRPCImpl extends RemoteServiceServlet implements PileStruct
         if (structure.getSubterm() != null) {
             expDto.setSubterm(DTOConversionService.convertToTermDTO(structure.getSubterm()));
         }
-        expDto.setQuality(DTOConversionService.convertToTermDTO(structure.getQuality()));
+        expDto.setQuality(DTOConversionService.convertToTermDTO(structure.getQualityTerm()));
         expDto.setTag(structure.getTag().toString());
         return dto;
 

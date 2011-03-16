@@ -14,6 +14,7 @@ import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
@@ -21,6 +22,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.ExpressionResultPresentation;
+import org.zfin.ontology.presentation.TermDTOPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
@@ -107,6 +109,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = SourcePresentation.getLink((Organization) o);
         else if (o instanceof Term)
             link = TermPresentation.getLink((Term) o);
+        else if (o instanceof TermDTO)
+            link = TermDTOPresentation.getLink((TermDTO) o);
         else if (o instanceof ExpressionResult)
             link = ExpressionResultPresentation.getLink((ExpressionResult) o);
         else

@@ -23,9 +23,9 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public String getDisplayName() {
-        String composedTerm = superterm.getTermName();
+        String composedTerm = superterm.getName();
         if (subterm != null)
-            composedTerm += ":" + subterm.getTermName();
+            composedTerm += ":" + subterm.getName();
         return composedTerm;
     }
 
@@ -60,8 +60,8 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
 
         ExpressedTermDTO termDTO = (ExpressedTermDTO) o;
 
-        String supertermID = superterm.getTermID();
-        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getTermID()) : termDTO.getSuperterm().getTermID() != null)
+        String supertermID = superterm.getZdbID();
+        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getZdbID()) : termDTO.getSuperterm().getZdbID() != null)
             return false;
 
         if (subterm == null && termDTO.getSubterm() == null)
@@ -70,7 +70,7 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
                 (subterm == null && termDTO.getSubterm() != null))
             return false;
 
-        if (subterm.getTermID().equals(termDTO.getSubterm().getTermID()))
+        if (subterm.getZdbID().equals(termDTO.getSubterm().getZdbID()))
             return true;
 
         return false;
@@ -79,17 +79,17 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     @Override
     @SuppressWarnings({"NonFinalFieldReferencedInHashCode", "SuppressionAnnotation"})
     public int hashCode() {
-        int result = (superterm.getTermID() != null ? superterm.getTermID().hashCode() : 0);
+        int result = (superterm.getZdbID() != null ? superterm.getZdbID().hashCode() : 0);
         if (subterm != null)
-            result = 31 * result + subterm.getTermID().hashCode();
+            result = 31 * result + subterm.getZdbID().hashCode();
         result += expressionFound ? 43 : 13;
         return result;
     }
 
     public String getUniqueID() {
-        String composedID = superterm.getTermID();
+        String composedID = superterm.getZdbID();
         if (subterm != null)
-            composedID += ":" + subterm.getTermID();
+            composedID += ":" + subterm.getZdbID();
         return composedID;
     }
 
@@ -97,8 +97,8 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         if (o == null)
             return 1;
         // if the superterms are different sort by superterm
-        if (!superterm.getTermName().equals(o.getSuperterm().getTermName()))
-            return superterm.getTermName().compareToIgnoreCase(o.getSuperterm().getTermName());
+        if (!superterm.getName().equals(o.getSuperterm().getName()))
+            return superterm.getName().compareToIgnoreCase(o.getSuperterm().getName());
 
         // if superterms are the same sort by subterm.
         if (subterm == null && o.getSubterm() != null)
@@ -108,13 +108,13 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         if (subterm == null && o.getSubterm() == null)
             return 0;
 
-        if (subterm.getTermName().equalsIgnoreCase(o.getSubterm().getTermName())) {
+        if (subterm.getName().equalsIgnoreCase(o.getSubterm().getName())) {
             if (expressionFound && !o.isExpressionFound())
                 return -1;
             if (!expressionFound && o.isExpressionFound())
                 return 1;
         }
-        return subterm.getTermName().compareToIgnoreCase(o.getSubterm().getTermName());
+        return subterm.getName().compareToIgnoreCase(o.getSubterm().getName());
     }
 
     /**
@@ -125,14 +125,14 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
      * @return true or false
      */
     public boolean equalsByNameOnly(ExpressedTermDTO expressedTerm) {
-        if (!StringUtils.equals(superterm.getTermName(), expressedTerm.getSuperterm().getTermName()))
+        if (!StringUtils.equals(superterm.getName(), expressedTerm.getSuperterm().getName()))
             return false;
         if (subterm == null && expressedTerm.getSubterm() == null)
             return true;
         if ((subterm != null && expressedTerm.getSubterm() == null) ||
                 (subterm == null && expressedTerm.getSubterm() != null))
             return false;
-        if (!StringUtils.equals(subterm.getTermName(), expressedTerm.getSubterm().getTermName()))
+        if (!StringUtils.equals(subterm.getName(), expressedTerm.getSubterm().getName()))
             return false;
         return true;
     }

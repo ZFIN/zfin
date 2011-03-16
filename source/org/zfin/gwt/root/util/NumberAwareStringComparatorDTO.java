@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 /**
  * Comparator that is aware of numeric values.
+ * @deprecated  There is a bug in this that made this unusable for sorting TermDTO objects names.
  */
 public class NumberAwareStringComparatorDTO implements Comparator<String> {
 

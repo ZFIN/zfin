@@ -9,6 +9,30 @@ public class GenericTerm extends AbstractTerm {
 
     private transient final Logger logger = Logger.getLogger(GenericTerm.class);
 
+//    @Override
+//    public DevelopmentStage getStart() {
+////        if(true) throw new RuntimeException("Not yet implemented") ;
+//        return start;
+//    }
+//
+//    @Override
+//    public void setStart(DevelopmentStage stage) {
+////        if(true) throw new RuntimeException("Not yet implemented") ;
+//        this.start = stage;
+//    }
+//
+//    @Override
+//    public DevelopmentStage getEnd() {
+////        if(true) throw new RuntimeException("Not yet implemented") ;
+//        return end;
+//    }
+//
+//    @Override
+//    public void setEnd(DevelopmentStage stage) {
+////        if(true) throw new RuntimeException("Not yet implemented") ;
+//        this.end = stage;
+//    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

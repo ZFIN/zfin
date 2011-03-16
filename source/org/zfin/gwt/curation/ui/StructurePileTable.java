@@ -217,14 +217,14 @@ class StructurePileTable extends ZfinFlexTable {
     }
 
     private void createStructureElement(HorizontalPanel postcomposedTerm, ExpressedTermDTO expressedTerm) {
-        Hyperlink superterm = new Hyperlink(expressedTerm.getSuperterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        Hyperlink superterm = new Hyperlink(expressedTerm.getSuperterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
         superterm.addClickHandler(new InternalPileStructureClickHandler(expressedTerm, PostComposedPart.SUPERTERM));
         postcomposedTerm.add(superterm);
         Hyperlink subTerm;
         if (expressedTerm.getSubterm() != null) {
             Label colon = new Label(" : ");
             postcomposedTerm.add(colon);
-            subTerm = new Hyperlink(expressedTerm.getSubterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+            subTerm = new Hyperlink(expressedTerm.getSubterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
             subTerm.addClickHandler(new InternalPileStructureClickHandler(expressedTerm, PostComposedPart.SUBTERM));
             postcomposedTerm.add(subTerm);
         }
@@ -557,8 +557,8 @@ class StructurePileTable extends ZfinFlexTable {
 
         private void setSubterm(RelatedPileStructureDTO structure) {
             if (structure.getExpressedTerm().getSubterm() != null && selectedPileStructure.getExpressedTerm().getSubterm() != null) {
-                structure.getExpressedTerm().getSubterm().setTermID(selectedPileStructure.getExpressedTerm().getSubterm().getTermID());
-                structure.getExpressedTerm().getSubterm().setTermName(selectedPileStructure.getExpressedTerm().getSubterm().getTermName());
+                structure.getExpressedTerm().getSubterm().setZdbID(selectedPileStructure.getExpressedTerm().getSubterm().getZdbID());
+                structure.getExpressedTerm().getSubterm().setName(selectedPileStructure.getExpressedTerm().getSubterm().getName());
                 structure.getExpressedTerm().getSubterm().setOntology(selectedPileStructure.getExpressedTerm().getSubterm().getOntology());
             }
         }
@@ -603,7 +603,7 @@ class StructurePileTable extends ZfinFlexTable {
                 return false;
 
             for (ExpressionPileStructureDTO term : getDisplayTableMap().values()) {
-                if (term.getExpressedTerm().getSuperterm().getTermName().equals(structure.getExpressedTerm().getSuperterm().getTermName()))
+                if (term.getExpressedTerm().getSuperterm().getName().equals(structure.getExpressedTerm().getSuperterm().getName()))
                     return true;
             }
             return false;

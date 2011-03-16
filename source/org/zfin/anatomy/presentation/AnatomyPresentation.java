@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomySynonym;
@@ -85,9 +86,10 @@ public final class AnatomyPresentation {
      */
     private static Set<AnatomySynonym> sortSynonyms(AnatomyItem anatomyItem) {
         Set<AnatomySynonym> unsortedSynonyms = anatomyItem.getSynonyms();
-        if (unsortedSynonyms == null)
-            return null;
-        Set<AnatomySynonym> synonyms = new TreeSet<AnatomySynonym>(new SynonymSorting());
+        if (CollectionUtils.isEmpty(unsortedSynonyms)){
+            return null ;
+        }
+        Set<AnatomySynonym> synonyms = new TreeSet<AnatomySynonym>(new AnatomySynonymSorting());
         for (AnatomySynonym synonym : unsortedSynonyms) {
             synonyms.add(synonym);
         }
@@ -151,7 +153,7 @@ public final class AnatomyPresentation {
      * Inner class: Comparator that compares the alias names of the AnatomySynonym
      * and orders them alphabetically.
      */
-    public static class SynonymSorting implements Comparator<AnatomySynonym> {
+    public static class AnatomySynonymSorting implements Comparator<AnatomySynonym> {
 
         public int compare(AnatomySynonym synOne, AnatomySynonym synTwo) {
 

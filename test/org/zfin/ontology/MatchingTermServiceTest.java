@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.zfin.AbstractDatabaseTest;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
 import java.util.*;
@@ -12,8 +12,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-//public class MatchingTermServiceTest {
-    public class MatchingTermServiceTest extends AbstractDatabaseTest{
+public class MatchingTermServiceTest {
 
     private final Logger logger = Logger.getLogger(MatchingTermServiceTest.class) ;
 
@@ -33,7 +32,7 @@ import static org.junit.Assert.assertTrue;
         assertEquals("ggggg",strings[1]);
     }
 
-    private void dumpKeys(PatriciaTrieMultiMap<Term> termMap){
+    private void dumpKeys(PatriciaTrieMultiMap<TermDTO> termMap){
         for(String key: termMap.keySet()){
             logger.debug(key);
         }
@@ -43,25 +42,25 @@ import static org.junit.Assert.assertTrue;
     // for hit "A B C", should find (in this order) "A B C" (first), "A B" (second), "A","B", "C", "A C" (any order), "B C" (last)
     @Test
     public void testFindWithin(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
-        tokenizer.tokenizeTerm(createTermWithName("AAA BBB CCC"),termMap);
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
+        tokenizer.tokenizeTerm(createTermWithName("AAA BBB CCC"), termMap);
         dumpKeys(termMap);
-        assertEquals(1,service.getMatchingTerms(termMap,"aaa bbb ccc").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"A").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"B").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"C").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"a b").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"b c").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"ccc bbb").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"aaa ccc").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"ccc aaa").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"bbb aaa").size()) ;
+        assertEquals(1,service.getMatchingTerms("aaa bbb ccc", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("A", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("B", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("C", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("a b", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("b c", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("ccc bbb", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("aaa ccc", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("ccc aaa", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("bbb aaa", termMap).size()) ;
     }
 
     // test the order
     @Test
     public void testFindWithinOrder(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("AAA BBB CCC"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("BBB AAA CCC"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("CCC AAA BBB"),termMap);
@@ -69,20 +68,20 @@ import static org.junit.Assert.assertTrue;
         Set<MatchingTerm> matchingTerms ;
         Iterator<MatchingTerm> iterator ;
         
-        matchingTerms = service.getMatchingTerms(termMap,"a b c") ;
+        matchingTerms = service.getMatchingTerms("a b c", termMap) ;
         iterator = matchingTerms.iterator() ;
         assertEquals(3,matchingTerms.size()) ;
-        assertEquals("AAA BBB CCC",iterator.next().getTerm().getTermName()) ;
-        assertEquals("BBB AAA CCC",iterator.next().getTerm().getTermName()) ;
-        assertEquals("CCC AAA BBB",iterator.next().getTerm().getTermName()) ;
+        assertEquals("AAA BBB CCC",iterator.next().getTerm().getName()) ;
+        assertEquals("BBB AAA CCC",iterator.next().getTerm().getName()) ;
+        assertEquals("CCC AAA BBB",iterator.next().getTerm().getName()) ;
         
-        matchingTerms = service.getMatchingTerms(termMap,"b a c") ;
+        matchingTerms = service.getMatchingTerms("b a c", termMap) ;
         iterator = matchingTerms.iterator() ;
         assertEquals(3,matchingTerms.size()) ;
-        assertEquals("AAA BBB CCC",iterator.next().getTerm().getTermName()) ;
-        assertEquals("BBB AAA CCC",iterator.next().getTerm().getTermName()) ;
-        assertEquals("CCC AAA BBB",iterator.next().getTerm().getTermName()) ;
-        matchingTerms = service.getMatchingTerms(termMap,"c a b") ;
+        assertEquals("AAA BBB CCC",iterator.next().getTerm().getName()) ;
+        assertEquals("BBB AAA CCC",iterator.next().getTerm().getName()) ;
+        assertEquals("CCC AAA BBB",iterator.next().getTerm().getName()) ;
+        matchingTerms = service.getMatchingTerms("c a b", termMap) ;
 
 
     }
@@ -90,15 +89,15 @@ import static org.junit.Assert.assertTrue;
     // for hit "A B C", should find (in this order) "A B C" (first), "A B" (second), "A","B", "C", "A C" (any order), "B C" (last)
     @Test
     public void testFindWithinRealWords(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL),termMap);
-        assertEquals(1,service.getMatchingTerms(termMap,"melan stim hor").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"melan").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"stim").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"hor").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"melan stim").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"stim horm").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"melan horm").size()) ;
+        assertEquals(1,service.getMatchingTerms("melan stim hor", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("melan", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("stim", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("hor", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("melan stim", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("stim horm", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("melan horm", termMap).size()) ;
     }
 
 
@@ -106,25 +105,25 @@ import static org.junit.Assert.assertTrue;
     // for hits "ABC-123",
     @Test
     public void testTokenizeEntireWord(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("A'BCD-123-DEF GHI-456"),termMap);
         assertEquals(1,termMap.getAllValues().size()) ;
         assertEquals(8,termMap.size()) ;
-        assertEquals(0,service.getMatchingTerms(termMap,"abc").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"bcd").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"ghi").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"456").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"ghi-456").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"a'bcd").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"a'bcd-123-def ghi-456").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"A'BCD-123-DEF GHI-456").size()) ;
-        assertEquals(1,service.getMatchingTerms(termMap,"A'BCD-123-DEF 456").size()) ;
+        assertEquals(0,service.getMatchingTerms("abc", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("bcd", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("ghi", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("456", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("ghi-456", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("a'bcd", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("a'bcd-123-def ghi-456", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("A'BCD-123-DEF GHI-456", termMap).size()) ;
+        assertEquals(1,service.getMatchingTerms("A'BCD-123-DEF 456", termMap).size()) ;
     }
 
     @Test
     public void termMatchStartMela() {
 
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName(MELANOBLAST),termMap);
         tokenizer.tokenizeTerm(createTermWithName(MELANOCYTE),termMap);
         tokenizer.tokenizeTerm(createTermWithName(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL),termMap);
@@ -132,7 +131,7 @@ import static org.junit.Assert.assertTrue;
 
 
         String queryString = "mela";
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,queryString) ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(queryString, termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(4, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
@@ -141,18 +140,18 @@ import static org.junit.Assert.assertTrue;
         assertEquals(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL, iterator.next().getMatchingTermDisplay());
         assertEquals(MELANOPHORE_STRIPE, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"stim") ;
+        matchingTerms = service.getMatchingTerms("stim", termMap) ;
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"s") ;
+        matchingTerms = service.getMatchingTerms("s", termMap) ;
         assertEquals(2, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL, iterator.next().getMatchingTermDisplay());
         assertEquals(MELANOPHORE_STRIPE, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"cell") ;
+        matchingTerms = service.getMatchingTerms("cell", termMap) ;
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL, iterator.next().getMatchingTermDisplay());
@@ -161,13 +160,13 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void termMatchStartMel() {
-        PatriciaTrieMultiMap<Term> termMapLarge = new PatriciaTrieMultiMap<Term>() ;
-        for(Term term: createTermsList()){
-            termMapLarge.put(term.getTermName().toLowerCase(),term) ;
+        PatriciaTrieMultiMap<TermDTO> termMapLarge = new PatriciaTrieMultiMap<TermDTO>() ;
+        for(TermDTO term: createTermsList()){
+            termMapLarge.put(term.getName().toLowerCase(),term) ;
         }
 
         String queryString = "mel";
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMapLarge,queryString) ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(queryString, termMapLarge) ;
         assertNotNull(matchingTerms);
         assertEquals(7, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
@@ -182,7 +181,7 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void matchingObsoletes(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createObsoleteTermWithName(MELANOBLAST),termMap);
         tokenizer.tokenizeTerm(createObsoleteTermWithName(MELANOCYTE),termMap);
         tokenizer.tokenizeTerm(createTermWithName(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL),termMap);
@@ -190,7 +189,7 @@ import static org.junit.Assert.assertTrue;
 
         String queryString = "mela";
         MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,queryString) ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(queryString, termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(4, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
@@ -202,7 +201,7 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void matchingAliases(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithNameAndAlias(MELANOBLAST,"dental"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias(MELANOCYTE,"melangostar"),termMap);
         tokenizer.tokenizeTerm(createTermWithName(MELANOCYTE_STIMULATING_HORMONE_SECRETING_CELL),termMap);
@@ -214,13 +213,14 @@ import static org.junit.Assert.assertTrue;
         termMap.put("melangostar",createTermWithNameAndAlias(MELANOCYTE,"melangostar")) ;
 
         // there are only 4 values of type GenericTerm so this is correct
-        for(Object o : termMap.getAllValues()){
-            Term t = (Term) o ;
-            logger.debug(t.getTermName());
+        Collection<TermDTO> termDTOs =  termMap.getAllValues() ;
+        for(TermDTO termDTO : termDTOs){
+            logger.debug(termDTO.getName());
         }
+        // only add values, not aliases
         assertEquals(4,termMap.getAllValues().size());
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"mel") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("mel", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(4, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
@@ -230,7 +230,7 @@ import static org.junit.Assert.assertTrue;
         assertEquals(MELANOPHORE_STRIPE, iterator.next().getMatchingTermDisplay());
 
 
-        matchingTerms = service.getMatchingTerms(termMap,"dent") ;
+        matchingTerms = service.getMatchingTerms("dent", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(1, matchingTerms.size());
         MatchingTerm matchingTerm = matchingTerms.iterator().next() ;
@@ -239,12 +239,12 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void testDatDuplication(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("retina","retinas"),termMap);
         assertEquals(2,termMap.keySet().size()) ;
         assertEquals(1,termMap.getAllValues().size()) ;
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"retina") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("retina", termMap) ;
         assertEquals(1, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
         assertEquals("retina", iterator.next().getMatchingTermDisplay());
@@ -265,7 +265,7 @@ import static org.junit.Assert.assertTrue;
      */
     @Test
     public void testOrderingOfAliasVersusObsoleteVsDirect(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("dog cat"),termMap);
         tokenizer.tokenizeTerm(createObsoleteTermWithName("dog cat bird"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("cat","dog cat"),termMap);
@@ -273,33 +273,33 @@ import static org.junit.Assert.assertTrue;
         assertEquals(7,termMap.keySet().size()) ;
         assertEquals(3,termMap.getAllValues().size()) ;
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"cat") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("cat", termMap) ;
         assertEquals(3, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
         assertEquals("cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat bird" +MatchingTerm.OBSOLETE_SUFFIX, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"pig") ;
+        matchingTerms = service.getMatchingTerms("pig", termMap) ;
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("cat [pigeon cat]", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"dog") ;
+        matchingTerms = service.getMatchingTerms("dog", termMap) ;
         assertEquals(3, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("cat [dog cat]", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat bird" +MatchingTerm.OBSOLETE_SUFFIX, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"ca") ;
+        matchingTerms = service.getMatchingTerms("ca", termMap) ;
         assertEquals(3, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat bird" +MatchingTerm.OBSOLETE_SUFFIX, iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"bir") ;
+        matchingTerms = service.getMatchingTerms("bir", termMap) ;
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("dog cat bird" +MatchingTerm.OBSOLETE_SUFFIX, iterator.next().getMatchingTermDisplay());
@@ -307,28 +307,28 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void testOrderingForFirstVersusLast(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("dog cat"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("cat dog bird"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("bird dog cat"),termMap);
         assertEquals(6,termMap.keySet().size()) ;
         assertEquals(3,termMap.getAllValues().size()) ;
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"cat") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("cat", termMap) ;
         assertEquals(3, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
         assertEquals("cat dog bird", iterator.next().getMatchingTermDisplay());
         assertEquals("bird dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"dog") ;
+        matchingTerms = service.getMatchingTerms("dog", termMap) ;
         assertEquals(3, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("bird dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("cat dog bird", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"bir") ;
+        matchingTerms = service.getMatchingTerms("bir", termMap) ;
         assertEquals(2, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("bird dog cat", iterator.next().getMatchingTermDisplay());
@@ -338,14 +338,14 @@ import static org.junit.Assert.assertTrue;
     // tests direct hit
     @Test
     public void testDirectHitOrdering(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("dog cat"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("dog cat bird"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("cat"),termMap);
 
         assertEquals(5,termMap.keySet().size()) ;
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"cat") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("cat", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(3, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
@@ -353,7 +353,7 @@ import static org.junit.Assert.assertTrue;
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
         assertEquals("dog cat bird", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"dog cat") ;
+        matchingTerms = service.getMatchingTerms("dog cat", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(2, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
@@ -374,7 +374,7 @@ import static org.junit.Assert.assertTrue;
 
     @Test
     public void sortNumbers(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithName("cat 1"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("cat 2"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("cat 10"),termMap);
@@ -385,24 +385,24 @@ import static org.junit.Assert.assertTrue;
         tokenizer.tokenizeTerm(createTermWithName("cat 110"),termMap);
         tokenizer.tokenizeTerm(createTermWithName("cat 0"),termMap);
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"ca") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("ca", termMap) ;
         assertEquals(9,matchingTerms.size());
         Iterator<MatchingTerm> matchingTermIterator = matchingTerms.iterator();
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 0") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 1") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 2") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 10") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 20") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 21") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 100") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 110") ;
-        assertEquals(matchingTermIterator.next().getTerm().getTermName(),"cat 201") ; 
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 0") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 1") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 2") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 10") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 20") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 21") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 100") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 110") ;
+        assertEquals(matchingTermIterator.next().getTerm().getName(),"cat 201") ;
 
     }
 
     @Test
     public void createTerm(){
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("dog cat","cat1"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("dog cat","cat2"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("dog cat","cat31"),termMap);
@@ -410,19 +410,19 @@ import static org.junit.Assert.assertTrue;
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("dog cat","cat4"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("dog cat","cat5 doggy"),termMap);
 
-        Set<MatchingTerm> matchingTerms = service.getMatchingTerms(termMap,"ca") ;
+        Set<MatchingTerm> matchingTerms = service.getMatchingTerms("ca", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(1, matchingTerms.size());
         Iterator<MatchingTerm> iterator = matchingTerms.iterator() ;
         assertEquals("dog cat", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"dogg") ;
+        matchingTerms = service.getMatchingTerms("dogg", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
         assertEquals("dog cat [cat5 doggy]", iterator.next().getMatchingTermDisplay());
 
-        matchingTerms = service.getMatchingTerms(termMap,"cat3") ;
+        matchingTerms = service.getMatchingTerms("cat3", termMap) ;
         assertNotNull(matchingTerms);
         assertEquals(1, matchingTerms.size());
         iterator = matchingTerms.iterator() ;
@@ -432,10 +432,24 @@ import static org.junit.Assert.assertTrue;
     }
 
 
+    @Test
+    public void multipleValuePerKey(){
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
+        assertEquals(0,termMap.size());
+        tokenizer.tokenizeTerm(createTermWithName("AAA BBB CCC"),termMap);
+        assertEquals(4, termMap.size());
+        assertEquals(1, termMap.get("aaa").size());
+        tokenizer.tokenizeTerm(createTermWithName("BBB AAA CCC"), termMap);
+        assertEquals(5,termMap.size());
+        assertEquals(2, termMap.get("aaa").size());
+
+    }
+
+
 
 //    @Before
-    public static List<Term> createTermsList() {
-        List<Term> sampleTerms = new ArrayList<Term>(20);
+    public static List<TermDTO> createTermsList() {
+        List<TermDTO> sampleTerms = new ArrayList<TermDTO>(20);
         sampleTerms.add(createTermWithName("afferent lamellar arteriole"));
         sampleTerms.add(createTermWithName("ameloblast"));
         sampleTerms.add(createTermWithName("dorsal larval " + MELANOPHORE_STRIPE));
@@ -457,28 +471,28 @@ import static org.junit.Assert.assertTrue;
 
     }
 
-    public static Term createObsoleteTermWithName(String name){
-        Term term = createTermWithName(name);
+    public static TermDTO createObsoleteTermWithName(String name){
+        TermDTO term = createTermWithName(name);
         term.setObsolete(true);
         return term ;
     }
 
-    public static Term createTermWithName(String name) {
-        Term term = new GenericTerm();
-        term.setTermName(name);
+    public static TermDTO createTermWithName(String name) {
+        TermDTO term = new TermDTO();
+        term.setName(name);
         return term;
     }
 
-    public static Term createTermWithNameAndAlias(String name, String aliasName) {
-        GenericTerm term = new GenericTerm();
-        term.setTermName(name);
+    public static TermDTO createTermWithNameAndAlias(String name, String aliasName) {
+        TermDTO term = new TermDTO();
+        term.setName(name);
 
-        TermAlias alias = new TermAlias();
-        alias.setAlias(aliasName);
-        alias.setTerm(term);
+//        String alias = alalias = new TermDTO();
+//        alias.setName(aliasName);
+////        alias.setTerm(term);
 
-        Set<TermAlias> aliases = new HashSet<TermAlias>() ;
-        aliases.add(alias) ;
+        Set<String> aliases = new HashSet<String>() ;
+        aliases.add(aliasName) ;
 
         term.setAliases(aliases);
 //        term.setA

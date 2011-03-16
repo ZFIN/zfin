@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
@@ -35,7 +36,6 @@ import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
-import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.people.OrganizationUrlTest;
@@ -84,6 +84,7 @@ import org.zfin.util.*;
         MailTest.class,
         MarkerPresentationTest.class,
         MarkerServiceTest.class,
+        MatchingTermServiceTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
@@ -100,8 +101,8 @@ import org.zfin.util.*;
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,
-        SerializationTests.class,
         SequenceTest.class,
+        SerializationTests.class,
         SingleAssociatedGenesFromQueryTest.class,
         SiteSearchTest.class,
         SortAnatomyResultsTest.class,
@@ -115,10 +116,10 @@ import org.zfin.util.*;
         WidgetUtilTest.class,
         ZfinPropertiesTest.class,
 
-        ExecProcessTest.class
         // this test should be last (or near last)
         // because we need to make sure that it waits
         // for thread generation to finish
+        ExecProcessTest.class
 })
 
 public class UnitTests {

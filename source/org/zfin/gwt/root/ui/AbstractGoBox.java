@@ -185,9 +185,9 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         goTermButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TermInfo termInfo = termInfoComposite.getCurrentTermInfo();
-                if (termInfo != null) {
-                    LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO, termInfo.getName(), new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value", handlesError) {
+                TermDTO termInfoDTO = termInfoComposite.getCurrentTermInfoDTO();
+                if (termInfoDTO != null) {
+                    LookupRPCService.App.getInstance().getTermByName(OntologyDTO.GO, termInfoDTO.getName(), new MarkerEditCallBack<TermDTO>("Failed to retrieve GO value", handlesError) {
                         @Override
                         public void onSuccess(TermDTO result) {
                             temporaryGoTermDTO = result;
@@ -218,7 +218,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
             @Override
             public void dataChanged(RelatedEntityEvent<GoEvidenceDTO> dataChangedEvent) {
                 if (dataChangedEvent.getDTO().getGoTerm() != null) {
-                    String termID = dataChangedEvent.getDTO().getGoTerm().getTermOboID();
+                    String termID = dataChangedEvent.getDTO().getGoTerm().getOboID();
                     LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new GoTermInfoCallBack(termInfoComposite, termID));
                 }
             }
@@ -301,7 +301,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
                                 goEvidenceDTO.setGoTerm(temporaryGoTermDTO);
                                 fireGoTermChanged(new RelatedEntityEvent<GoEvidenceDTO>(goEvidenceDTO));
                                 handleDirty();
-                                goTermBox.setText(temporaryGoTermDTO.getTermName());
+                                goTermBox.setText(temporaryGoTermDTO.getName());
                                 clearError();
                                 isSubmitting = false;
                             }
@@ -342,7 +342,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
 
 
         if (dto.getGoTerm() != null) {
-            LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, dto.getGoTerm().getTermID(), new TermInfoCallBack(termInfoComposite, dto.getGoTerm().getName()));
+            LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, dto.getGoTerm().getZdbID(), new TermInfoCallBack(termInfoComposite, dto.getGoTerm().getName()));
         }
     }
 
@@ -465,12 +465,12 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         }
 
         @Override
-        public void onSuccess(TermInfo result) {
+        public void onSuccess(TermDTO result) {
             super.onSuccess(result);
             updateQualifiers(result);
         }
 
-        private void updateQualifiers(TermInfo result) {
+        private void updateQualifiers(TermDTO result) {
             if (result != null) {
                 evidenceFlagBox.clear();
                 evidenceFlagBox.addItem("NONE", "null");

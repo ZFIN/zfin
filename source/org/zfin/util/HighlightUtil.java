@@ -13,7 +13,7 @@ public class HighlightUtil {
      * @param caseSensitive   boolean
      * @return String
      */
-    public static String hightlightMatchHTML(String text, String highlightString, boolean caseSensitive) {
+    public static String highlightMatchHTML(String text, String highlightString, boolean caseSensitive) {
         if (text == null)
             return null;
 

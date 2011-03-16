@@ -82,9 +82,9 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
             return figure.getOrderingLabel().compareTo(efs.figure.getOrderingLabel());
         if (!experiment.equals(efs.getExperiment()))
             return experiment.compareTo(efs.getExperiment());
-        if (!start.getName().equals(efs.getStart().getName()))
+        if (!start.getNameLong().equals(efs.getStart().getNameLong()))
             return (int) (start.getStartHours() * 10 - efs.getStart().getStartHours() * 10);
-        if (!end.getName().equals(efs.getEnd().getName()))
+        if (!end.getNameLong().equals(efs.getEnd().getNameLong()))
             return (int) (end.getStartHours() * 10 - efs.getEnd().getStartHours() * 10);
         return 0;
     }

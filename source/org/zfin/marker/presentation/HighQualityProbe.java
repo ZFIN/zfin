@@ -3,7 +3,7 @@ package org.zfin.marker.presentation;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 /**
@@ -12,9 +12,9 @@ import org.zfin.publication.Publication;
 public class HighQualityProbe extends EntityStatistics {
 
     private Marker probe;
-    private Term aoTerm;
+    private GenericTerm aoTerm;
 
-    public HighQualityProbe(Marker probe, Term aoTerm) {
+    public HighQualityProbe(Marker probe, GenericTerm aoTerm) {
         this.probe = probe;
         this.aoTerm = aoTerm;
     }
@@ -27,7 +27,7 @@ public class HighQualityProbe extends EntityStatistics {
         return null;
     }
 
-    public Term getAnatomyTerm() {
+    public GenericTerm getAnatomyTerm() {
         return aoTerm;
     }
 }

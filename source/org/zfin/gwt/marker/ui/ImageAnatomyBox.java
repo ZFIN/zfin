@@ -68,7 +68,7 @@ public class ImageAnatomyBox extends AbstractStackComposite<ImageDTO> { //Relate
     protected void revertGUI() {
         stackTable.clear();
         for (TermDTO term : dto.getAnatomyTerms()) {
-            addToGUI(term.getTermName());
+            addToGUI(term.getName());
         }
     }
 
@@ -96,7 +96,7 @@ public class ImageAnatomyBox extends AbstractStackComposite<ImageDTO> { //Relate
                 new MarkerEditCallBack<TermDTO>("failed to add term to image: ") {
                     @Override
                     public void onSuccess(TermDTO result) {
-                        addToGUI(result.getTermName());
+                        addToGUI(result.getName());
                         notWorking();
                         resetInput();
                     }

@@ -1,28 +1,31 @@
 package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.TransitiveClosure;
 
 import java.util.*;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ *
+ * Bean used to view cached ontologies.
  */
 public class OntologyBean {
 
     private String action;
     private boolean ontologiesLoaded = true;
-    private OntologyManager ontologyManager;
     private String ontologyName;
     private Ontology ontology;
-    private Set<Term> terms;
+    private Set<TermDTO> terms;
     private String termID;
-    private Term term;
-    private Map<Term, List<String>> valueMap ;
-    private TreeMap<String,Set<Term>> keys ;
+    private GenericTerm term;
+    private Map<TermDTO, List<String>> valueMap ;
+    private TreeMap<String,Set<TermDTO>> keys ;
+    private List<TransitiveClosure> childrenTransitiveClosureSet ;
+    private OntologyManager ontologyManager ;
 
     public String getAction() {
         return action;
@@ -60,11 +63,11 @@ public class OntologyBean {
         this.termID = termID;
     }
 
-    public Term getTerm() {
+    public GenericTerm getTerm() {
         return term;
     }
 
-    public void setTerm(Term term) {
+    public void setTerm(GenericTerm term) {
         this.term = term;
     }
 
@@ -82,46 +85,42 @@ public class OntologyBean {
         this.ontologiesLoaded = ontologiesLoaded;
     }
 
-    public OntologyManager getOntologyManager() {
-        return ontologyManager;
-    }
-
-    public void setOntologyManager(OntologyManager ontologyManager) {
-        this.ontologyManager = ontologyManager;
-    }
-
-    public Set<Term> getTerms() {
-        return terms;
-    }
-
-    public List<Term> getOrderedTerms(){
-        List<Term> termList = new ArrayList<Term>(terms);
+    public List<TermDTO> getOrderedTerms(){
+        List<TermDTO> termList = new ArrayList<TermDTO>(terms);
         Collections.sort(termList);
         return termList;
     }
 
-    public void setTerms(Set<Term> terms) {
+    public Set<TermDTO> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(Set<TermDTO> terms) {
         this.terms = terms;
     }
 
-    public TreeMap<String, Set<Term>> getKeys() {
+    public TreeMap<String, Set<TermDTO>> getKeys() {
         return keys;
     }
 
-    public void setKeys(TreeMap<String, Set<Term>> keys) {
+    public void setKeys(TreeMap<String, Set<TermDTO>> keys) {
         this.keys = keys;
     }
 
     public List<TransitiveClosure> getAllChildren(){
-        return OntologyManager.getInstance().getAllChildren(term);
+        return childrenTransitiveClosureSet ;
     }
 
-    public Map<Term, List<String>> getValueMap() {
+    public void setAllChildren(List<TransitiveClosure> transitiveClosures){
+        this.childrenTransitiveClosureSet = transitiveClosures;
+    }
+
+    public Map<TermDTO, List<String>> getValueMap() {
         return valueMap;
     }
 
-    public void setValueMap(Map<Term, List<String>> valueMap) {
-        this.valueMap = valueMap ;
+    public void setValueMap(Map<TermDTO, List<String>> valueMap) {
+        this.valueMap = valueMap;
     }
 
     public Ontology getOntology() {
@@ -130,6 +129,14 @@ public class OntologyBean {
 
     public void setOntology(Ontology ontology) {
         this.ontology = ontology;
+    }
+
+    public OntologyManager getOntologyManager() {
+        return ontologyManager;
+    }
+
+    public void setOntologyManager(OntologyManager ontologyManager) {
+        this.ontologyManager = ontologyManager;
     }
 
     public static enum ActionType {

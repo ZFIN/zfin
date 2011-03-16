@@ -4,7 +4,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -14,9 +14,9 @@ import org.zfin.repository.RepositoryFactory;
 public class AntibodyStatistics extends EntityStatistics {
 
     private Antibody antibody;
-    private Term anatomyItem;
+    private GenericTerm anatomyItem;
 
-    public AntibodyStatistics(Antibody antibody, Term anatomyItem) {
+    public AntibodyStatistics(Antibody antibody, GenericTerm anatomyItem) {
         this.anatomyItem = anatomyItem;
         this.antibody = antibody;
     }
@@ -30,7 +30,7 @@ public class AntibodyStatistics extends EntityStatistics {
         return abRepository.getPublicationsWithFigures(antibody, anatomyItem);
     }
 
-    public Term getAnatomyItem() {
+    public GenericTerm getAnatomyItem() {
         return anatomyItem;
     }
 

@@ -4,8 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.people.Person;
-import org.zfin.sequence.reno.service.RenoService;
 import org.zfin.sequence.reno.RunCandidate;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package org.zfin.ontology;
 
+import org.zfin.gwt.root.dto.TermDTO;
+
 /**
  * COnvenience class to hold matching terms, the match type and the term alias if the match
  * was on an alias.
@@ -8,43 +10,48 @@ public class MatchingTerm {
 
     public final static String OBSOLETE_SUFFIX = " -- OBSOLETED TERM";
 
-    private Term term;
-    private TermAlias alias; // gives alias, if hit is on alias
+    private TermDTO term;
+    private String alias; // gives alias, if hit is on alias
     private String query;
 
-    public MatchingTerm(Term term, String query) {
+    public MatchingTerm(TermDTO term, String query) {
         this(term, query, null);
     }
 
-    public MatchingTerm(Term term, String query, TermAlias alias) {
-        this.term = term;
+    public MatchingTerm(TermDTO term, String query, String alias) {
+        if(term instanceof TermDTO){
+            this.term =  term;
+        }
+        else{
+            this.term = term;
+        }
         this.query = query;
         this.alias = alias;
     }
 
-    public Term getTerm() {
+    public TermDTO getTerm() {
         return term;
     }
 
     public boolean isHitAlias() {
-        return (alias != null && !term.getTermName().toLowerCase().contains(query));
+        return (alias != null && !term.getName().toLowerCase().contains(query));
     }
 
 
     public boolean startsWithQuery() {
-        return (term.getTermName().toLowerCase().startsWith(query));
+        return (term.getName().toLowerCase().startsWith(query));
     }
 
-    public TermAlias getAlias() {
+    public String getAlias() {
         return alias;
     }
 
     public String getMatchingTermDisplay() {
         StringBuilder sb = new StringBuilder(20);
-        sb.append(term.getTermName());
+        sb.append(term.getName());
         if (alias != null) {
             sb.append(" [");
-            sb.append(alias.getAlias());
+            sb.append(alias);
             sb.append("]");
         }
         if (term.isObsolete()) {

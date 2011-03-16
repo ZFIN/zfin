@@ -121,7 +121,7 @@ function start_tips() {
                                     <c:forEach var="matchingTerm" items="${antibodyStat.matchingText}"
                                                varStatus="loop">
                                         ${matchingTerm.descriptor}:
-                                        <zfin:hightlight highlightEntity="${matchingTerm.matchingString}"
+                                        <zfin:highlight highlightEntity="${matchingTerm.matchingString}"
                                                          highlightStrings="${matchingTerm.matchedStrings}"/> ${matchingTerm.appendix}
                                     </c:forEach>
                                 </c:when>
@@ -130,7 +130,7 @@ function start_tips() {
                                         <c:forEach var="matchingTerm" items="${antibodyStat.matchingText}"
                                                    varStatus="loop">
                                             <li>${matchingTerm.descriptor}:
-                                                <zfin:hightlight highlightEntity="${matchingTerm.matchingString}"
+                                                <zfin:highlight highlightEntity="${matchingTerm.matchingString}"
                                                                  highlightStrings="${matchingTerm.matchedStrings}"/>
                                                     ${matchingTerm.appendix}
                                             </li>

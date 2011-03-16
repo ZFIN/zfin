@@ -7,16 +7,14 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.TermInfo;
+import org.zfin.gwt.root.dto.RelationshipType;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Main composite for holding the Term Info.
@@ -24,8 +22,8 @@ import java.util.Map;
 public class TermInfoComposite extends FlexTable implements ValueChangeHandler<String> {
 
     private boolean usedHyperlinkClickListener;
-    private Map<String, TermInfo> historyMap = new HashMap<String, TermInfo>(5);
-    private TermInfo currentTermInfo;
+    private Map<String, TermDTO> historyMap = new HashMap<String, TermDTO>();
+    private TermDTO currentTermInfoDTO;
     private ErrorHandler errorElement = new SimpleErrorElement();
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     private final String DEFAULT_DIVIDER = "&nbsp;&bull;&nbsp;";
@@ -64,72 +62,64 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         setDefaultTermInfo();
     }
 
-    public void updateTermInfo(TermInfo termInfo, String historyToken) {
-        historyMap.put(historyToken, termInfo);
-        updateTermInfo(termInfo);
+    public void updateTermInfo(TermDTO termInfoDTO, String historyToken) {
+        historyMap.put(historyToken, termInfoDTO);
+        updateTermInfo(termInfoDTO);
     }
 
-    private void updateTermInfo(TermInfo termInfo) {
+    private void updateTermInfo(TermDTO termInfoDTO) {
         clear();
-        currentTermInfo = termInfo;
+        currentTermInfoDTO = termInfoDTO;
         int rowIndex = 0;
         int headerColumn = 0;
         int dataColumn = 1;
         addHeaderEntry(TerminfoTableHeader.TERM.getName(), rowIndex);
-        setWidget(rowIndex, dataColumn, new Label(termInfo.getName()));
+        setWidget(rowIndex, dataColumn, new Label(termInfoDTO.getName()));
         getCellFormatter().addStyleName(rowIndex++, headerColumn, WidgetUtil.BOLD);
 
         addHeaderEntry(TerminfoTableHeader.ID.getName(), rowIndex);
-        String idDisplay = termInfo.getOboID();
+        String idDisplay = termInfoDTO.getOboID();
         idDisplay += " [";
-        idDisplay += termInfo.getID();
+        idDisplay += termInfoDTO.getZdbID();
         idDisplay += "]";
         setWidget(rowIndex++, dataColumn, new Label(idDisplay));
 
-        if (termInfo.getSynonyms() != null && termInfo.getSynonyms().size() > 0) {
+        if (termInfoDTO.getAliases() != null && termInfoDTO.getAliases().size() > 0) {
             addHeaderEntry(TerminfoTableHeader.SYNONYMS.getName(), rowIndex);
             StringBuilder builder = new StringBuilder();
-            List<String> synonyms = termInfo.getSynonyms();
-            if (synonyms != null) {
-                for (int i = 0; i < synonyms.size(); i++) {
-                    builder.append(synonyms.get(i));
-                    if (i < synonyms.size() - 1) {
-                        builder.append(divider);
-                    }
+            List<String> synonyms = new ArrayList<String>(termInfoDTO.getAliases());
+            for (int i = 0; i < synonyms.size(); i++) {
+                builder.append(synonyms.get(i));
+                if (i < synonyms.size() - 1) {
+                    builder.append(divider);
                 }
             }
             setWidget(rowIndex++, 1, new HTML(builder.toString()));
         }
 
-        if (StringUtils.isNotEmpty(termInfo.getDefinition())) {
+        if (StringUtils.isNotEmpty(termInfoDTO.getDefinition())) {
             addHeaderEntry(TerminfoTableHeader.DEFINITION.getName(), rowIndex);
-            setWidget(rowIndex++, 1, new HTML(termInfo.getDefinition()));
+            setWidget(rowIndex++, 1, new HTML(termInfoDTO.getDefinition()));
         }
 
-        Map<String, List<TermInfo>> relatedTermsMap = termInfo.getRelatedTermInfos();
+        Map<String, Set<TermDTO>> relatedTermsMap = termInfoDTO.getAllRelatedTerms();
         if (relatedTermsMap != null) {
             for (String type : relatedTermsMap.keySet()) {
-                FlowPanel panel = new FlowPanel();
-                addHeaderEntry(type, rowIndex);
-                List<TermInfo> relatedTerms = relatedTermsMap.get(type);
-                Collections.sort(relatedTerms);
-                for (int i = 0; i < relatedTerms.size(); i++) {
-                    panel.add(createHyperlink(relatedTerms.get(i)));
-                    if (i < relatedTerms.size() - 1) {
-                        panel.add(new HTML(divider));
-                    }
+                if(false==RelationshipType.isStage(type)){
+                    rowIndex = createTermEntry(type, rowIndex,relatedTermsMap);
                 }
-                setWidget(rowIndex++, 1, panel);
             }
+            rowIndex = createTermEntry(RelationshipType.START_STAGE.getDisplay(),rowIndex,relatedTermsMap);
+            rowIndex = createTermEntry(RelationshipType.END_STAGE.getDisplay(),rowIndex,relatedTermsMap);
         }
         // comments
         addHeaderEntry(TerminfoTableHeader.COMMENT.getName(), rowIndex);
         if (noWrap) {
             getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
         }
-        setWidget(rowIndex++, 1, new Label(termInfo.getComment()));
+        setWidget(rowIndex++, 1, new Label(termInfoDTO.getComment()));
         // Obsolete
-        if (termInfo.isObsolete()) {
+        if (termInfoDTO.isObsolete()) {
             addHeaderEntry(TerminfoTableHeader.OBSOLETE.getName(), rowIndex);
             if (noWrap) {
                 getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
@@ -140,12 +130,45 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         }
     }
 
-    private Hyperlink createHyperlink(TermInfo info) {
-        Hyperlink link = new Hyperlink(info.getName(), info.getID());
+    private int createTermEntry(String type, int rowIndex, Map<String, Set<TermDTO>> relatedTermsMap){
+
+        Set<TermDTO> relatedTermDTOs = relatedTermsMap.get(type);
+        if(relatedTermDTOs==null) {
+            return rowIndex ;
+        }
+
+        FlowPanel panel = new FlowPanel();
+        addHeaderEntry(type, rowIndex);
+//                Collections.sort(relatedTermDTOs);
+//        for (int i = 0; i < relatedTermDTOs.size(); i++) {
+//            panel.add(createHyperlink(relatedTermDTOs.get(i)));
+//            if (i < relatedTermDTOs.size() - 1) {
+//                panel.add(new HTML(divider));
+//            }
+//        }
+
+        TermDTO termDTO ;
+        for ( Iterator<TermDTO> iterator = relatedTermDTOs.iterator() ;
+              iterator.hasNext() ;
+                ) {
+            termDTO = iterator.next();
+            panel.add(createHyperlink(termDTO));
+            if (iterator.hasNext()) {
+                panel.add(new HTML(divider));
+            }
+        }
+        setWidget(rowIndex, 1, panel);
+
+        return rowIndex +1 ;
+    }
+
+
+    private Hyperlink createHyperlink(TermDTO infoDTO) {
+        Hyperlink link = new Hyperlink(infoDTO.getName(), infoDTO.getZdbID());
         if (noWrap) {
             link.addStyleName(WidgetUtil.NO_WRAP);
         }
-        link.addClickHandler(new TermInfoClickListener(info, this));
+        link.addClickHandler(new TermInfoClickListener(infoDTO, this));
         return link;
     }
 
@@ -161,16 +184,16 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
     public void onValueChange(ValueChangeEvent event) {
         String historyToken = (String) event.getValue();
         //Window.alert("value "+historyToken);
-        TermInfo info = historyMap.get(historyToken);
-        if (info == null)
+        TermDTO infoDTO = historyMap.get(historyToken);
+        if (infoDTO == null)
             return;
         if (!usedHyperlinkClickListener)
-            updateTermInfo(info);
+            updateTermInfo(infoDTO);
         usedHyperlinkClickListener = false;
     }
 
-    public TermInfo getCurrentTermInfo() {
-        return currentTermInfo;
+    public TermDTO getCurrentTermInfoDTO() {
+        return currentTermInfoDTO;
     }
 
     public void addErrorHandler(ErrorHandler errorHandler) {
@@ -181,16 +204,16 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
 
     private class TermInfoClickListener implements ClickHandler {
 
-        private TermInfo termInfo;
+        private TermDTO termInfoDTO;
         private TermInfoComposite termInfoComposite;
 
-        private TermInfoClickListener(TermInfo info, TermInfoComposite termInfoComposite) {
-            this.termInfo = info;
+        private TermInfoClickListener(TermDTO infoDTO, TermInfoComposite termInfoComposite) {
+            this.termInfoDTO = infoDTO;
             this.termInfoComposite = termInfoComposite;
         }
 
         public void onClick(ClickEvent event) {
-            lookupRPC.getTermInfo(termInfo.getOntology(), termInfo.getID(), new TermInfoCallBack(termInfoComposite, termInfo.getID()));
+            lookupRPC.getTermInfo(termInfoDTO.getOntology(), termInfoDTO.getZdbID(), new TermInfoCallBack(termInfoComposite, termInfoDTO.getZdbID()));
             setUsedHyperlinkClickListener(true);
             errorElement.clearAllErrors();
         }

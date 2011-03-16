@@ -82,7 +82,7 @@
                             </c:if>
                         </td>
                         <td>
-                            <zfin:link entity="${phenotype.term}"/>
+                            <zfin:link entity="${phenotype.qualityTerm}"/>
                         </td>
                     </zfin:alternating-tr>
                 </c:forEach>

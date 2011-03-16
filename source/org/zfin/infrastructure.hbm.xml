@@ -248,7 +248,7 @@
         <property name="oldName" column="zrepld_old_name"/>
     </class>
 
-    <class name="org.zfin.ontology.Term" table="TERM">
+    <class name="org.zfin.ontology.GenericTerm" table="TERM">
 
         <id name="zdbID" type="string">
             <column name="term_zdb_id" not-null="true"/>
@@ -257,15 +257,8 @@
             </generator>
         </id>
 
-        <!--ToDO: Map ao and GO once they are moved into the TERM table -->
-        <discriminator type="string"
-                       formula="(CASE get_obj_type(term_zdb_id)
-                                    WHEN 'TERM'  THEN 'Generic-Term'
-                                    ELSE              'Generic-Term'
-                                 END)"/>
-
         <property name="termName" column="term_name"/>
-        <property name="oboID" column="term_ont_id" />
+        <property name="oboID" column="term_ont_id"/>
         <property name="ontology" column="term_ontology" type="ontologyEnumeration"/>
         <property name="obsolete" column="term_is_obsolete"/>
         <property name="root" column="term_is_root"/>
@@ -273,7 +266,7 @@
         <property name="comment" column="term_comment"/>
         <property name="definition" column="term_definition"/>
 
-        <set name="aliases" lazy="true">
+        <set name="aliases" lazy="false">
             <key column="dalias_data_zdb_id"/>
             <one-to-many class="org.zfin.ontology.TermAlias"/>
         </set>
@@ -283,12 +276,20 @@
             <many-to-many column="iit_img_zdb_id" class="org.zfin.expression.Image"/>
         </set>
 
-        <subclass name="org.zfin.ontology.GenericTerm" discriminator-value="Generic-Term">
-        </subclass>
+        <set name="childTermRelationships" lazy="true" table="term_relationship" inverse="true">
+            <key column="termrel_term_1_zdb_id"/>
+            <one-to-many class="org.zfin.ontology.GenericTermRelationship"/>
+        </set>
+
+        <set name="parentTermRelationships" lazy="true" table="term_relationship" inverse="true">
+            <key column="termrel_term_2_zdb_id"/>
+            <one-to-many class="org.zfin.ontology.GenericTermRelationship"/>
+        </set>
+
 
     </class>
 
-    <class name="org.zfin.ontology.TermRelationship" table="term_relationship">
+    <class name="org.zfin.ontology.GenericTermRelationship" table="term_relationship">
         <id name="zdbId">
             <column name="termrel_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">

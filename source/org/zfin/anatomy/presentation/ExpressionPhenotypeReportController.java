@@ -9,10 +9,8 @@ import org.zfin.antibody.presentation.AntibodySearchFormBean;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.OntologyService;
-import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +53,7 @@ public class ExpressionPhenotypeReportController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
                                     Object command, BindException errors) throws Exception {
         ExpressionPhenotypeReportBean expressionReportBean = (ExpressionPhenotypeReportBean) command;
-        List<Term> terms = getAllTermsToBeIncluded(expressionReportBean);
+        List<GenericTerm> terms = getAllTermsToBeIncluded(expressionReportBean);
         if (reportType != null && reportType.equals(ReportType.EXPRESSION.toString()))
             expressionReportBean.setAllExpressions(rep.getExpressionsWithEntity(terms));
         if (reportType != null && reportType.equals(ReportType.PHENOTYPE.toString()))
@@ -67,16 +65,19 @@ public class ExpressionPhenotypeReportController extends SimpleFormController {
         return view;
     }
 
-    private List<Term> getAllTermsToBeIncluded(ExpressionPhenotypeReportBean expressionReportBean) {
-        List<Term> allTerms = new ArrayList<Term>(50);
+    private List<GenericTerm> getAllTermsToBeIncluded(ExpressionPhenotypeReportBean expressionReportBean) {
+        List<GenericTerm> allTerms = new ArrayList<GenericTerm>();
         for (String id : expressionReportBean.getTermIDs()) {
-            Term term = OntologyManager.getInstance().getTermByID(id);
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(id);
             if (term != null) {
                 allTerms.add(term);
-                if (expressionReportBean.isIncludeSubstructures() && term.getOntology().equals(Ontology.ANATOMY))
-                    allTerms.addAll(OntologyService.getAllChildren(term));
-                if (expressionReportBean.isIncludeSubstructuresGo() && term.getOntology().equals(Ontology.GO_BP))
-                    allTerms.addAll(OntologyService.getAllChildren(term));
+                if ( (expressionReportBean.isIncludeSubstructures() && term.getOntology().equals(Ontology.ANATOMY))
+                        || (expressionReportBean.isIncludeSubstructuresGo() && term.getOntology().equals(Ontology.GO_BP))
+                        ){
+                    for(GenericTerm childTerm : RepositoryFactory.getOntologyRepository().getAllChildTerms(term)){
+                        allTerms.add(childTerm) ;
+                    }
+                }
             }
         }
         return allTerms;

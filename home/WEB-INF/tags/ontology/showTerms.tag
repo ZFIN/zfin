@@ -19,7 +19,8 @@
         All
     </c:otherwise>
     </c:choose>
-    Terms for [${formBean.ontologyName}] ontology</h2>
+    Terms for [${formBean.ontologyName}] ontology
+</h2>
 
 Total of: ${fn:length(formBean.terms)}
 
@@ -46,6 +47,7 @@ Total of: ${fn:length(formBean.terms)}
                 </td>
                 <td class="listContentBold">
                     <zfin:link entity="${term}"/>
+                    <%--${term.name}--%>
                 </td>
                 <td>
                         ${term.oboID}
@@ -60,10 +62,11 @@ Total of: ${fn:length(formBean.terms)}
                     <c:if test="${term.aliasesExist}">
                         <ul>
                             <c:forEach var="alias" items="${term.aliases}">
-                                <li>${alias.alias}</li>
+                                <li>${alias}</li>
                             </c:forEach>
                         </ul>
                     </c:if>
+
                 </td>
             </zfin:alternating-tr>
         </c:if>

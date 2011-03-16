@@ -17,7 +17,6 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -419,10 +418,10 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 
             AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
-            Term anatomy1 = new GenericTerm();
+            GenericTerm anatomy1 = new GenericTerm();
             anatomy1.setZdbID("ZDB-TERM-100331-1144");
             anatomy1.setTermName("pelvic fin");
-            Term anatomy2 = new GenericTerm();
+            GenericTerm anatomy2 = new GenericTerm();
             anatomy2.setZdbID("ZDB-TERM-100331-141");
             anatomy2.setTermName("pelvic fin");
 

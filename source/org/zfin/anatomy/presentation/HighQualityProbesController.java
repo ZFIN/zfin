@@ -9,9 +9,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +31,7 @@ public class HighQualityProbesController extends AbstractCommandController {
         AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
 
         HighQualityProbesController.LOG.info("Start High Quality Probes Controller");
-        Term term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, anatomyForm.getAnatomyItem().getZdbID());
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(anatomyForm.getAnatomyItem().getZdbID());
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, anatomyForm.getAnatomyItem().getZdbID());
 

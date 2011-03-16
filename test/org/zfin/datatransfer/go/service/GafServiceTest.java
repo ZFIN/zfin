@@ -628,7 +628,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
 
         newEvidence.setGoTerm(existingEvidence.getGoTerm());
-        List<Term> parentTerms;
+        List<GenericTerm> parentTerms;
         parentTerms = ontologyRepository.getParentDirectTerms(existingEvidence.getGoTerm());
         assertTrue(parentTerms.size() > 0);
 
@@ -647,7 +647,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
         assertFalse(existingEvidence.equals(newEvidence));
         assertTrue(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
 
-        List<Term> childTerms = ontologyRepository.getChildDirectTerms(existingEvidence.getGoTerm());
+        List<GenericTerm> childTerms = ontologyRepository.getChildDirectTerms(existingEvidence.getGoTerm());
         newEvidence.setGoTerm((GenericTerm) childTerms.iterator().next());
 
         assertFalse(existingEvidence.equals(newEvidence));
@@ -692,22 +692,21 @@ public class GafServiceTest extends AbstractDatabaseTest {
      */
     @Test
     public void testTransitive() {
-        Term regulationCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
+        GenericTerm regulationCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
         assertNotNull(regulationCiliumMovement);
         assertTrue(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, regulationCiliumMovement));
 
-        Term cellularComponentMovement = ontologyRepository.getTermByName("cellular component movement", Ontology.GO_BP);
+        GenericTerm cellularComponentMovement = ontologyRepository.getTermByName("cellular component movement", Ontology.GO_BP);
         assertNotNull(cellularComponentMovement);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, cellularComponentMovement));
         assertTrue(ontologyRepository.isParentChildRelationshipExist(cellularComponentMovement, regulationCiliumMovement));
-        ;
 
-        Term localization = ontologyRepository.getTermByName("localization", Ontology.GO_BP);
+        GenericTerm localization = ontologyRepository.getTermByName("localization", Ontology.GO_BP);
         assertNotNull(localization);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, localization));
         assertTrue(ontologyRepository.isParentChildRelationshipExist(localization, regulationCiliumMovement));
 
-        Term ciliumMovement = ontologyRepository.getTermByName("cilium movement", Ontology.GO_BP);
+        GenericTerm ciliumMovement = ontologyRepository.getTermByName("cilium movement", Ontology.GO_BP);
         assertNotNull(ciliumMovement);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(localization, ciliumMovement));
         assertFalse(ontologyRepository.isParentChildRelationshipExist(ciliumMovement, localization));
@@ -720,7 +719,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void getParentTerms() {
 //        Term ciliumMovement = getOntologyRepository().getTermByName("cilium movement", Ontology.GO_BP);
-        Term regulationOfCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
+        GenericTerm regulationOfCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
         assertEquals(3, ontologyRepository.getParentDirectTerms(regulationOfCiliumMovement).size());
         assertEquals(1, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 0).size());
         assertEquals(3, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size());

@@ -8,6 +8,7 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -32,6 +33,7 @@ import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.*;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -58,6 +60,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
     private static AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private static MutantRepository mutantRep = RepositoryFactory.getMutantRepository();
     private static PhenotypeRepository phenotypeRep = RepositoryFactory.getPhenotypeRepository();
+    private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     public List<MarkerDTO> getGenes(String pubID) throws PublicationNotFoundException {
 
@@ -595,14 +598,14 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         figures.add(expressionExperiment.getFigure());
         result.setFigures(figures);
 
-        Term unspecified = OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED);
+        GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
 
         result.setSuperterm(unspecified);
         result.setExpressionFound(true);
         ExpressedTermDTO unspecifiedTerm = new ExpressedTermDTO();
         TermDTO unspecifiedTermDTO = new TermDTO();
-        unspecifiedTermDTO.setTermName(Term.UNSPECIFIED);
-        unspecifiedTermDTO.setTermID(unspecified.getZdbID());
+        unspecifiedTermDTO.setName(Term.UNSPECIFIED);
+        unspecifiedTermDTO.setZdbID(unspecified.getZdbID());
         unspecifiedTerm.setSuperterm(unspecifiedTermDTO);
         unspecifiedTerm.setExpressionFound(true);
         figureAnnotation.addExpressedTerm(unspecifiedTerm);
@@ -932,20 +935,24 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      */
     public List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                                   StageRangeIntersection intersection) {
-        Term term = OntologyManager.getInstance().getTermByID(selectedPileStructure.getExpressedTerm().getSuperterm().getTermID());
-        List<TermRelationship> terms = term.getRelatedTerms();
+        GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getSuperterm().getZdbID());
+        List<TermRelationship> terms = term.getAllDirectlyRelatedTerms();
         List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(terms.size());
         for (TermRelationship rel : terms) {
             Term relatedTerm = rel.getRelatedTerm(term);
             // some terms may be stage terms and should be ignored.
-            if (relatedTerm == null)
+            if (relatedTerm == null){
                 throw new RuntimeException("No related term found for term: " + term.getZdbID());
-            if (!relatedTerm.getOntology().equals(Ontology.ANATOMY))
-                continue;
+            }
 
-            relatedTerm = OntologyManager.getInstance().getTermByID(relatedTerm.getZdbID());
-            StageDTO start = DTOConversionService.convertToStageDTO(relatedTerm.getStart());
-            StageDTO end = DTOConversionService.convertToStageDTO(relatedTerm.getEnd());
+            if (!relatedTerm.getOntology().equals(Ontology.ANATOMY)){
+                continue;
+            }
+
+            relatedTerm = ontologyRepository.getTermByZdbID(relatedTerm.getZdbID());
+            AnatomyItem anatomyItem = anatomyRep.getAnatomyTermByOboID(relatedTerm.getOboID());
+            StageDTO start = DTOConversionService.convertToStageDTO(anatomyItem.getStart());
+            StageDTO end = DTOConversionService.convertToStageDTO(anatomyItem.getEnd());
             if (intersection.isFullOverlap(start, end)) {
                 RelatedPileStructureDTO relatedStructure = populatePileStructureDTO(rel.getRelatedTerm(term));
                 relatedStructure.setRelatedStructure(selectedPileStructure);
@@ -965,9 +972,9 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         RelatedPileStructureDTO dto = new RelatedPileStructureDTO();
         ExpressedTermDTO expDto = new ExpressedTermDTO();
         TermDTO superterm = new TermDTO();
-        superterm.setTermName(term.getTermName());
-        superterm.setTermID(term.getZdbID());
-        superterm.setTermOboID(term.getOboID());
+        superterm.setName(term.getTermName());
+        superterm.setZdbID(term.getZdbID());
+        superterm.setOboID(term.getOboID());
         expDto.setSuperterm(superterm);
         dto.setExpressedTerm(expDto);
         return dto;
@@ -1028,14 +1035,14 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         setMainAttributes(experiment, expressionStructure, expressed, newExpression);
         if (expressionStructure.getSubterm() != null) {
             TermDTO subtermDto = new TermDTO();
-            subtermDto.setTermID(expressionStructure.getSubterm().getZdbID());
-            subtermDto.setTermName(expressionStructure.getSubterm().getTermName());
+            subtermDto.setZdbID(expressionStructure.getSubterm().getZdbID());
+            subtermDto.setName(expressionStructure.getSubterm().getTermName());
             expressedTerm.setSubterm(subtermDto);
         }
         expRepository.createExpressionResult(newExpression, experiment.getFigure());
         TermDTO subtermDto = new TermDTO();
-        subtermDto.setTermID(expressionStructure.getSuperterm().getZdbID());
-        subtermDto.setTermName(expressionStructure.getSuperterm().getZdbID());
+        subtermDto.setZdbID(expressionStructure.getSuperterm().getZdbID());
+        subtermDto.setName(expressionStructure.getSuperterm().getZdbID());
         expressedTerm.setExpressionFound(expressed);
         return expressedTerm;
     }

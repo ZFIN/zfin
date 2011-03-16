@@ -18,8 +18,7 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -62,7 +61,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         if (form.getSectionVisibility().isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE)) {
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
         } else {
-            boolean hasData = hasPhenotypeData(term);
+            boolean hasData = hasPhenotypeData(term.createGenericTerm());
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, hasData);
         }
 
@@ -72,7 +71,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return modelAndView;
     }
 
-    private boolean hasExpressionData(Term anatomyTerm) {
+    private boolean hasExpressionData(GenericTerm anatomyTerm) {
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatistics(anatomyTerm.getZdbID());
         if (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
             return true;
@@ -91,7 +90,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return false;
     }
 
-    private boolean hasPhenotypeData(Term anatomyTerm) {
+    private boolean hasPhenotypeData(GenericTerm anatomyTerm) {
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getZdbID());
         if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
             return true;
@@ -112,14 +111,14 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         AnatomyItem ai = null;
         try {
             String aoTermID = form.getAnatomyItem().getZdbID();
-            Term term = null;
+            GenericTerm term = null;
             if (aoTermID != null && aoTermID.startsWith("ZFA") && form.getId() == null) {
                 form.setId(aoTermID);
                 aoTermID = null;
             }
             if (aoTermID != null) {
                 if (aoTermID.contains(ActiveData.Type.TERM.name())) {
-                    term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, aoTermID);
+                    term = RepositoryFactory.getOntologyRepository().getTermByZdbID(aoTermID);
                     if (term == null) {
                         LOG.error("Failed to find term for Term ID: " + aoTermID);
                         return null;
@@ -138,10 +137,8 @@ public class AnatomyTermDetailController extends AbstractCommandController {
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
             } else {
                 String id = form.getId();
-                if (StringUtils.isEmpty(id))
+                if (StringUtils.isEmpty(id)){
                     return null;
-                if (id.contains(ActiveData.Type.TERM.name())) {
-                    term = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, id);
                 } else if (id.startsWith("ZFA")) {
                     term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
                 }

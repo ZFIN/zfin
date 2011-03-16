@@ -57,12 +57,12 @@ public class AntibodySummaryController extends AbstractCommandController {
 
     private void retrieveAntibodyData(AnatomyItem aoTerm, AnatomySearchBean form) {
 
-        int antibodyCount = antibodyRepository.getAntibodiesByAOTermCount(aoTerm);
+        int antibodyCount = antibodyRepository.getAntibodiesByAOTermCount(aoTerm.createGenericTerm());
         form.setAntibodyCount(antibodyCount);
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(-1);
-        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm, pagination, false);
+        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(aoTerm.createGenericTerm(), pagination, false);
         List<AntibodyStatistics> abStats = createAntibodyStatistics(antibodies.getPopulatedResults(), aoTerm);
         form.setAntibodyStatistics(abStats);
     }
@@ -73,7 +73,7 @@ public class AntibodySummaryController extends AbstractCommandController {
 
         List<AntibodyStatistics> stats = new ArrayList<AntibodyStatistics>();
         for (Antibody antibody : antibodies) {
-            AntibodyStatistics stat = new AntibodyStatistics(antibody, aoTerm);
+            AntibodyStatistics stat = new AntibodyStatistics(antibody, aoTerm.createGenericTerm());
             stats.add(stat);
         }
         return stats;

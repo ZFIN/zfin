@@ -27,15 +27,15 @@
             <!-- This creates the visual level in the graph -->
                 <span style="margin-left: <c:out value="${ao.indentationLevel}" />pt">
             </c:if>
-            <a href='/action/anatomy/term-detail?id=<c:out value="${ao.zdbID}"/>'>
-                <!-- Highlight the search term or the highlight term if provided -->
+            <a href='/action/anatomy/term-detail?anatomyItem.zdbID=<c:out value="${ao.zdbID}"/>'>
+                <%--<!-- Highlight the search term or the highlight term if provided -->--%>
                 <c:choose>
                     <c:when test="${formBean.stageSearch || formBean.termSearch}">
-                        <zfin:hightlight highlightEntity="${ao.anatomyItem.termName}"
+                        <zfin:highlight highlightEntity="${ao.anatomyItem.termName}"
                                          highlightString="${formBean.highlightText}"/>
                     </c:when>
                     <c:otherwise>
-                        <zfin:hightlight highlightEntity="${ao.anatomyItem.termName}"
+                        <zfin:highlight highlightEntity="${ao.anatomyItem.termName}"
                                          highlightString="${formBean.searchTerm}"/>
                     </c:otherwise>
                 </c:choose>
@@ -53,11 +53,11 @@
                             <!-- Highlight the search term or the hightlight term if provided -->
                             <c:choose>
                                 <c:when test="${formBean.stageSearch || formBean.termSearch} ">
-                                    <zfin:hightlight highlightEntity="${ao.formattedSynonymList}"
+                                    <zfin:highlight highlightEntity="${ao.formattedSynonymList}"
                                                      highlightString="${formBean.highlightText}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <zfin:hightlight highlightEntity="${ao.formattedSynonymList}"
+                                    <zfin:highlight highlightEntity="${ao.formattedSynonymList}"
                                                      highlightString="${formBean.searchTerm}"/>
                                 </c:otherwise>
                             </c:choose>

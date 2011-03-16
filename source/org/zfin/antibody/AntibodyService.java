@@ -13,13 +13,16 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.Genotype;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+
+//import org.zfin.ontology.OntologyManager;
 
 /**
  * Class that contains various methods retrieving aggregated info from
@@ -37,6 +40,7 @@ public class AntibodyService {
     private List<FigureSummaryDisplay> figureSummary;
 
     private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -243,12 +247,12 @@ public class AntibodyService {
         if (anatomyTerms == null || anatomyTerms.length == 0)
             return;
 
-        Set<Term> labelingTerms = getDistinctAoTerms();
+        Set<GenericTerm> labelingTerms = getDistinctAoTerms();
         // check for direct matches
         MatchingText match = new MatchingText(MatchingText.Type.AO_TERM);
         List<String> directMatchesFound = new ArrayList<String>();
         for (String searchTermID : anatomyTerms) {
-            Term item = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, searchTermID);
+            GenericTerm item = ontologyRepository.getTermByZdbID(searchTermID);
             String termName = item.getTermName();
             match.addMatchedString(termName);
             for (Term label : labelingTerms) {
@@ -276,11 +280,12 @@ public class AntibodyService {
                 // omit terms that were already matched
                 if (directMatchesFound.contains(searchTermID))
                     continue;
-                Term item = OntologyManager.getInstance().getTermByID(Ontology.ANATOMY, searchTermID);
+                GenericTerm item = ontologyRepository.getTermByZdbID(searchTermID);
                 String termName = item.getTermName();
                 match.addMatchedString(termName);
-                for (Term label : labelingTerms) {
-                    if (OntologyManager.getInstance().isSubstructureOf(label, item)) {
+                for (GenericTerm label : labelingTerms) {
+//                    if (OntologyManager.getInstance().isSubstructureOf(label, item)) {
+                    if (ontologyRepository.isParentChildRelationshipExist(item, label)) {
                         match.setAppendix("(" + label.getTermName() + ") ");
                         match.addMatchingTerm(termName);
                         break;
@@ -362,8 +367,8 @@ public class AntibodyService {
         }
     }
 
-    public Set<Term> getDistinctAoTerms() {
-        Set<Term> terms = new HashSet<Term>();
+    public Set<GenericTerm> getDistinctAoTerms() {
+        Set<GenericTerm> terms = new HashSet<GenericTerm>();
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
         if (experiments == null)
             return terms;
@@ -379,7 +384,7 @@ public class AntibodyService {
                     for (ExpressionResult result : results) {
                         if (result.isExpressionFound()) {
                             terms.add(result.getSuperterm());
-                            Term subterm = result.getSubterm();
+                            GenericTerm subterm = result.getSubterm();
                             if (subterm != null && subterm.getOntology().equals(Ontology.ANATOMY)) {
                                 terms.add(subterm);
                             }
@@ -670,7 +675,7 @@ public class AntibodyService {
      * @param endStage    end
      * @param withImgOnly images only
      */
-    public void createFigureSummary(Term superterm, Term subterm, DevelopmentStage startStage, DevelopmentStage endStage, boolean withImgOnly) {
+    public void createFigureSummary(GenericTerm superterm, GenericTerm subterm, DevelopmentStage startStage, DevelopmentStage endStage, boolean withImgOnly) {
 
         boolean superOrSubTerm = false;
         if (subterm == null && startStage == null && endStage == null)

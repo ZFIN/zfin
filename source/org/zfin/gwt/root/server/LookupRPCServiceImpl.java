@@ -5,6 +5,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -30,8 +31,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
@@ -116,20 +115,20 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      */
     public TermStatus validateTerm(String term, OntologyDTO ontologyDto) {
 
-        Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
         int foundInexactMatch = 0;
         if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
-            Term termObject = OntologyManager.getInstance().getTermByID(ontology, term);
+            TermDTO termObject = OntologyManager.getInstance().getTermByID(term, ontologyDto);
             if (termObject != null)
-                return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getTermName(), termObject.getZdbID());
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getName(), termObject.getZdbID());
             else
                 foundInexactMatch = 0;
         } else {
             MatchingTermService service = new MatchingTermService();
-            Set<MatchingTerm> terms = service.getMatchingTerms(ontology, term);
+            Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
+            Set<MatchingTerm> terms = service.getMatchingTerms(term, ontology);
 
             for (MatchingTerm anatomyItem : terms) {
-                String name = anatomyItem.getTerm().getTermName();
+                String name = anatomyItem.getTerm().getName();
                 if (name.equals(term)) {
                     return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getZdbID());
                 } else if (foundInexactMatch < 1 || name.contains(term)) {
@@ -173,10 +172,10 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             // Unfortunately, Response does not have an easy fix for this other than exceeding the Response. 
             MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
             highlighter.setMatch(query);
-            for (MatchingTerm term : matcher.getMatchingTerms(ontology, query)) {
+            for (MatchingTerm term : matcher.getMatchingTerms(query, ontology)) {
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion);
-                String termValue = (useIDAsValue ? term.getTerm().getZdbID() : term.getTerm().getTermName());
+                String termValue = (useIDAsValue ? term.getTerm().getZdbID() : term.getTerm().getName());
                 suggestions.add(new ItemSuggestion(displayName, termValue));
             }
         }
@@ -315,7 +314,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param termID   term id
      * @return term info if no term found return null
      */
-    public TermInfo getTermInfo(OntologyDTO ontology, String termID) {
+    public TermDTO getTermInfo(OntologyDTO ontology, String termID) {
         if (ontology == null) {
             logger.warn("No ontology provided");
             return null;
@@ -324,7 +323,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No termID provided");
             return null;
         }
-        return getGenericTermInfo(termID, ontology);
+        return getTermInfo(termID, ontology);
     }
 
     /**
@@ -334,10 +333,11 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
      * @param ontology Ontology
      * @return Term Info
      */
-    private TermInfo getGenericTermInfo(String termID, OntologyDTO ontology) {
-        Term term;
+    private TermDTO getTermInfo(String termID, OntologyDTO ontology) {
+        TermDTO term;
         if (termID.indexOf(ActiveData.Type.ANAT.toString()) > -1) {
-            term = getAnatomyRepository().getAnatomyTermByID(termID);
+            AnatomyItem anatomyItem = getAnatomyRepository().getAnatomyTermByID(termID);
+            term = OntologyManager.getInstance().getTermByID(anatomyItem.getOboID());
         } else {
             term = OntologyManager.getInstance().getTermByID(termID);
         }
@@ -346,47 +346,26 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
             logger.warn("No term " + termID + " found!");
             return null;
         }
-        TermInfo rootTermInfo = DTOConversionService.convertToTermInfo(term, ontology, true);
-        addRelatedTerms(term, rootTermInfo, ontology);
-        return rootTermInfo;
+//        TermInfoDTO rootTermInfoDTO = DTOConversionService.convertToTermInfoFromTermInfoDTO(term, ontology, true);
+//        TermInfoDTO rootTermInfoDTO = DTOConversionService.convert(term, ontology, true);
+//        addRelatedTerms(term, rootTermInfoDTO, ontology);
+//        return rootTermInfoDTO;
+        return term ;
 
     }
 
-    private TermInfo getGenericTermInfoByName(String termName, OntologyDTO ontologyDTO) {
-        Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
-        if (ontology == null) {
-            logger.warn("No Ontology [" + ontologyDTO.getOntologyName() + "] found!");
-            return null;
-        }
-        Term ontologyTerm = OntologyManager.getInstance().getTermByName(termName, ontology, true);
-        if (ontologyTerm == null) {
-            logger.warn("No term " + termName + " in ontology [" + ontology.getOntologyName() + " in Ontology Manager found!");
-            return null;
-        }
-        GenericTerm term = getOntologyRepository().getTermByZdbID(ontologyTerm.getZdbID());
-        if (term == null) {
-            logger.warn("No term " + termName + " found!");
-            return null;
-        }
-        TermInfo rootTermInfo = DTOConversionService.convertToTermInfo(term, ontologyDTO, true);
-        addRelatedTerms(term, rootTermInfo, ontologyDTO);
-        return rootTermInfo;
-
-    }
-
-    private void addRelatedTerms(Term term, TermInfo rootTermInfo, OntologyDTO ontology) {
-        List<org.zfin.ontology.RelationshipPresentation> relationships = OntologyService.getRelatedTerms(term);
-        if (relationships != null) {
-            for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
-                List<Term> terms = relationship.getItems();
-                for (Term item : terms) {
-                    HibernateUtil.currentSession().refresh(item);
-                    TermInfo info = DTOConversionService.convertToTermInfo(item, ontology, false);
-                    rootTermInfo.addRelatedTermInfo(relationship.getType(), info);
-                }
-            }
-        }
-    }
+//    private void addRelatedTerms(TermDTO term, TermInfoDTO rootTermInfoDTO, OntologyDTO ontology) {
+//        List<org.zfin.ontology.RelationshipPresentation> relationships = OntologyService.getRelatedTerms(term);
+//        if (relationships != null) {
+//            for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
+//                List<Term> terms = relationship.getItems();
+//                for (Term item : terms) {
+//                    TermInfoDTO infoDTO = DTOConversionService.convertToTermInfo(item, ontology, false);
+//                    rootTermInfoDTO.addRelatedTermInfo(relationship.getType(), infoDTO);
+//                }
+//            }
+//        }
+//    }
 
     public List<PublicationDTO> getRecentPublications(String key) {
         List<Publication> mostRecentPubs = PublicationService.getRecentPublications(getServletContext(), key);
@@ -473,7 +452,7 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
     public TermDTO getTermByName(OntologyDTO ontologyDTO, String value) {
         Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
 
-        Term term = null;
+        TermDTO term = null;
         for (Iterator<Ontology> iterator = ontology.getIndividualOntologies().iterator();
              iterator.hasNext() && term == null;) {
             ontology = iterator.next();
@@ -482,14 +461,14 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         if (term == null) {
             if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
                 logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
-                term = RepositoryFactory.getOntologyRepository().getTermByZdbID(value);
+                term = DTOConversionService.convertToTermDTOWithDirectRelationships(RepositoryFactory.getOntologyRepository().getTermByZdbID(value));
             }
             if (term == null) {
                 logger.info("Failed to find GO term[" + value + "]");
                 return null;
             }
         }
-        return DTOConversionService.convertToTermDTO(term);
+        return term;
     }
 }
 

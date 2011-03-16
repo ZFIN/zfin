@@ -1,7 +1,7 @@
 package org.zfin.anatomy;
 
 import org.zfin.anatomy.presentation.AnatomyPresentation;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     private int numberOfSynonyms;
     private AnatomyTreeInfo treeInfo;
     private Set<AnatomyTreeInfo> treeInfos;
-    private Term term;
+    private GenericTerm term;
 
     // ToDo: move into a formatting class for presentation layer
     private static final ChoiceFormat geneChoice = new ChoiceFormat("0#genes| 1#gene| 2#genes");
@@ -48,11 +48,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         this.anatomyItem = anatomyItem;
     }
 
-    public Term getTerm() {
+    public GenericTerm getTerm() {
         return term;
     }
 
-    public void setTerm(Term term) {
+    public void setTerm(GenericTerm term) {
         this.term = term;
     }
 

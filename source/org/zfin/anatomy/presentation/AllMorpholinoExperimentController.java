@@ -7,8 +7,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +30,13 @@ public class AllMorpholinoExperimentController extends AbstractCommandController
 
         if (form.getAoTerm() == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, "");
-        Term term = OntologyManager.getInstance().getTermByID(form.getAoTerm().getZdbID());
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(form.getAoTerm().getZdbID());
         if (term == null)
             return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAoTerm().getZdbID());
         form.setAoTerm(term);
 
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-        Term anatomyItem = OntologyManager.getInstance().getTermByID(form.getAoTerm().getZdbID());
+        GenericTerm anatomyItem = RepositoryFactory.getOntologyRepository().getTermByZdbID(form.getAoTerm().getZdbID());
         List<GenotypeExperiment> morphResult =
                 mutantRepository.getGenotypeExperimentMorpholinos(anatomyItem, form.isWildtype());
         form.setWildtypeMorpholinoCount(morphResult.size());

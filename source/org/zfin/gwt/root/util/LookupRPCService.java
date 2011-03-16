@@ -54,7 +54,7 @@ public interface LookupRPCService extends RemoteService {
      * @param termID   term ID
      * @return term info
      */
-    TermInfo getTermInfo(OntologyDTO ontology, String termID);
+    TermDTO getTermInfo(OntologyDTO ontology, String termID);
 
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)

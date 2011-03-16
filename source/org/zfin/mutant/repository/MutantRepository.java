@@ -8,7 +8,6 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MorpholinoSequence;
 
@@ -31,7 +30,7 @@ public interface MutantRepository {
      * @param numberOfRecords @return A list of Genotype objects.
      * @return list of genotypes
      */
-    PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords);
+    PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, int numberOfRecords);
 
     List<Genotype> getGenotypesByFeature(Feature feature);
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
@@ -44,9 +43,9 @@ public interface MutantRepository {
      * @param genotype Genotype
      * @return number
      */
-    int getNumberOfImagesPerAnatomyAndMutant(Term item, Genotype genotype);
+    int getNumberOfImagesPerAnatomyAndMutant(GenericTerm item, Genotype genotype);
 
-    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(Term item, Genotype genotype);
+    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype);
 
 
 
@@ -59,7 +58,7 @@ public interface MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    List<Morpholino> getPhenotypeMorpholinos(Term item, int numberOfRecords);
+    List<Morpholino> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords);
 
     /**
      * Retrieve number of morpholinos that show a gene expression in a given structure.
@@ -106,7 +105,7 @@ public interface MutantRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, int numberOfRecords);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, int numberOfRecords);
 
     /**
      * Retrieve all genotype objects that are associated to a morpholino.
@@ -117,7 +116,7 @@ public interface MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, boolean isWildtype);
+    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, boolean isWildtype);
 
     /**
      * Retrieve genotype objects that are associated to a morpholino within the range specified
@@ -130,7 +129,7 @@ public interface MutantRepository {
      * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, PaginationBean bean);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * Retrieve the list of morpholinos for a given genotype.
@@ -198,9 +197,9 @@ public interface MutantRepository {
 
     List<Genotype> getGenotypesForStandardAttribution(Publication publication);
 
-    List<Term> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
+    List<GenericTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
 
-    List<Term> getGoTermsByPhenotypeAndPublication(Publication publication);
+    List<GenericTerm> getGoTermsByPhenotypeAndPublication(Publication publication);
 
     InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
 
@@ -224,7 +223,7 @@ public interface MutantRepository {
      * @param term Term
      * @return list of phenotypes
      */
-    List<Phenotype> getPhenotypeWithEntity(Term term);
+    List<Phenotype> getPhenotypeWithEntity(GenericTerm term);
 
     /**
      * Retrieve all distinct marker go evidence objects for a given term.
@@ -232,11 +231,11 @@ public interface MutantRepository {
      * @param term term
      * @return list of marker go
      */
-    List<MarkerGoTermEvidence> getMarkerGoEvidence(Term term);
+    List<MarkerGoTermEvidence> getMarkerGoEvidence(GenericTerm term);
 
-    List<Phenotype> getPhenotypeWithEntity(List<Term> terms);
+    List<Phenotype> getPhenotypeWithEntity(List<GenericTerm> terms);
 
-    List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms);
+    List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
 
     List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
 

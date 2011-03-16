@@ -1,9 +1,11 @@
 package org.zfin.ontology;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.MatchingTermComparator;
-import org.zfin.framework.HibernateUtil ;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.TreeSet;
 public class MatchingTermService {
 
     public static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
+    private Logger logger = Logger.getLogger(MatchingTermService.class) ;
 
     private int maximumNumberOfMatches = MAXIMUM_NUMBER_OF_MATCHES ;
     private OntologyTokenizer tokenizer = new OntologyTokenizer();
@@ -27,19 +30,14 @@ public class MatchingTermService {
     }
 
 
-    protected Set<MatchingTerm> getMatchingTerms(PatriciaTrieMultiMap<Term> termMap,String query){
+    protected Set<MatchingTerm> getMatchingTerms(String query, PatriciaTrieMultiMap<TermDTO> termMap){
         Set<MatchingTerm> matchingTermSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
         String[] termsToMatch = query.toLowerCase().trim().split("\\s+") ;
         for(String termToMatch : termsToMatch){
-            for(Term term : termMap.getSuggestedValues(termToMatch)){
-                // used to support testing only
-                // TODO: update when this gets more permanently fixed
-                if(term.getZdbID()!=null){
-                    HibernateUtil.currentSession().refresh(term) ;
-                }
-
+            Set<TermDTO> matchedTerms = termMap.getSuggestedValues(termToMatch) ;
+            for(TermDTO term : matchedTerms){
                 // if term contains query
-                if(containsAllTokens(term.getTermName(),termsToMatch)
+                if(containsAllTokens(term.getName(),termsToMatch)
 //                        ||
 //                        !term.isAliasesExist()
                         ){
@@ -52,22 +50,26 @@ public class MatchingTermService {
                     // if no hits are found?!?? , then just add the last one I guess.
 
 
-                    TermAlias aliasToView = null ;
-                    for(Iterator<TermAlias> termAliasIterator = term.getAliases().iterator() ;
+                    String aliasToView = null ;
+                    for(Iterator<String> termAliasIterator = term.getAliases().iterator() ;
                         termAliasIterator.hasNext() && aliasToView==null ; ){
 
-                        TermAlias alias = termAliasIterator.next();
-                        if(containsAllTokens(alias.getAlias().toLowerCase(),termsToMatch)){
+                        String alias = termAliasIterator.next();
+                        if(containsAllTokens(alias.toLowerCase(),termsToMatch)){
                             aliasToView = alias ;
                         }
 
                     }
                     // if no hit found
-                    if(aliasToView==null ){
+                    if(aliasToView==null  && term.getAliases()!=null){
                         aliasToView = term.getAliases().iterator().next();
                     }
 
-                    if(containsAllTokens(aliasToView.getAlias(),termsToMatch)){
+                    if(aliasToView==null){
+                       logger.error("Alias has no name: "+ aliasToView + " for term : " + term + " query: "+ query);
+                    }
+                    else
+                    if(containsAllTokens(aliasToView,termsToMatch)){
                         matchingTermSet.add( new MatchingTerm(term,query, aliasToView) ) ;
                     }
                 }
@@ -117,11 +119,12 @@ public class MatchingTermService {
      * 2) Contains <br/>
      * 3) Obsolete
      *
-     * @param ontology Ontology
+     *
      * @param query    query string
+     * @param ontology Ontology
      * @return list of terms
      */
-    public Set<MatchingTerm> getMatchingTerms(Ontology ontology, String query) {
+    public Set<MatchingTerm> getMatchingTerms(String query, Ontology ontology) {
         Set<MatchingTerm> matchingTermsForSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
         if (StringUtils.isEmpty(query.trim())){
             return matchingTermsForSet ;
@@ -129,13 +132,29 @@ public class MatchingTermService {
 
         if(ontology.isComposedOntologies()){
             for(Ontology subOntology : ontology.getIndividualOntologies()){
-                matchingTermsForSet.addAll(getMatchingTerms(subOntology,query)) ;
+                matchingTermsForSet.addAll(getMatchingTerms(query, subOntology)) ;
             }
             return matchingTermsForSet ;
         }
 
-        PatriciaTrieMultiMap<Term> termMap = OntologyManager.getInstance().getTermOntologyMap(ontology);
-        matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
+//        PatriciaTrieMultiMap<TermDTO> termMap =
+//                OntologyManager.getInstance().getTermOntologyMapCopy(ontology);
+
+        for(OntologyDTO ontologyDTO : OntologyManager.getInstance().getOntologies(ontology)){
+            matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO))) ;
+        }
+
+//        if(ontology.isComposedOntologies()){
+//            for (Ontology subOntology : ontology.getIndividualOntologies()) {
+////                map.putAll(ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(subOntology)));
+//                matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
+//            }
+//        } else {
+////            map.putAll(ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)));
+//            matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
+//        }
+
+//        matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
 
         if(maximumNumberOfMatches>0 && matchingTermsForSet.size()>maximumNumberOfMatches){
             Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;

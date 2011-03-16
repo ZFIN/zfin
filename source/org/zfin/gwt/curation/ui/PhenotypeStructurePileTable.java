@@ -184,21 +184,21 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
     }
 
     private void createStructureElement(HorizontalPanel postcomposedTerm, PhenotypeTermDTO phenotypeTermDTO) {
-        Hyperlink superterm = new Hyperlink(phenotypeTermDTO.getSuperterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        Hyperlink superterm = new Hyperlink(phenotypeTermDTO.getSuperterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
         superterm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, PostComposedPart.SUPERTERM));
         postcomposedTerm.add(superterm);
         Hyperlink subTerm;
         if (phenotypeTermDTO.getSubterm() != null) {
             Label colon = new Label(" : ");
             postcomposedTerm.add(colon);
-            subTerm = new Hyperlink(phenotypeTermDTO.getSubterm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+            subTerm = new Hyperlink(phenotypeTermDTO.getSubterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
             subTerm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, PostComposedPart.SUBTERM));
             postcomposedTerm.add(subTerm);
         }
     }
 
     private void createQualityElement(Panel qualityTerm, PhenotypeTermDTO phenotypeTerm) {
-        Hyperlink quality = new Hyperlink(phenotypeTerm.getQuality().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        Hyperlink quality = new Hyperlink(phenotypeTerm.getQuality().getName(), STRUCTURE_CONSTRUCTION_ZONE);
         quality.addClickHandler(new InternalPileStructureClickHandler(phenotypeTerm, PostComposedPart.QUALITY));
         qualityTerm.add(quality);
     }

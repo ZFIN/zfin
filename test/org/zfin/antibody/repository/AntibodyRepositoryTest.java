@@ -34,7 +34,6 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Organization;
 import org.zfin.people.SourceUrl;
@@ -591,7 +590,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAllAntibodiesByAOTerm() {
         String aoTermName = "forerunner cell group";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-22");
         term.setTermName(aoTermName);
 
@@ -612,7 +611,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAllAntibodiesByAOTermSecondaryMotorNeuron() {
         //  secondary motor neuron
         String aoTermZdbID = "ZDB-TERM-100331-2304";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID(aoTermZdbID);
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
@@ -633,7 +632,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         String abZdbID = "ZDB-ATB-081003-2";
         Antibody antibody = getAntibodyRepository().getAntibodyByID(abZdbID);
         // spinal cord
-        Term aoTerm = getOntologyRepository().getTermByName("spinal cord", Ontology.ANATOMY);
+        GenericTerm aoTerm = getOntologyRepository().getTermByName("spinal cord", Ontology.ANATOMY);
 
         int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
         assertTrue(numOfFigures > 0);
@@ -653,7 +652,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         // cerebellum
         String aoID = "ZDB-ANAT-010921-522";
-        Term aoTerm = getOntologyRepository().getTermByName("cerebellum", Ontology.ANATOMY);
+        GenericTerm aoTerm = getOntologyRepository().getTermByName("cerebellum", Ontology.ANATOMY);
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
         assertNotNull(pubs);
@@ -849,7 +848,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         AnatomyItem aoTerm = getAnatomyRepository().getAnatomyItem(aoTermName);
 
-        PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
+        PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm.createGenericTerm());
         assertTrue(pubs != null);
     }
 
@@ -857,7 +856,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @SuppressWarnings("unchecked")
     public void getAntibodiesForAoTerm() {
         String aoTermName = "pancreas";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-130");
         term.setTermName(aoTermName);
 
@@ -899,7 +898,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAntibodyStatistics() {
         String aoTermName = "eye";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-100");
         term.setTermName(aoTermName);
 
@@ -920,7 +919,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void antibodySummaryPage() {
         String aoTermName = "muscle pioneer";
-        Term term = new GenericTerm();
+        GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-1053");
         term.setTermName(aoTermName);
 

@@ -3,10 +3,7 @@ package org.zfin.anatomy;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.*;
-import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +28,9 @@ public class AnatomyItem extends AbstractTerm {
     private String nameOrder;
     private List<AnatomyRelationship> relatedItems;
     private Set<AnatomySynonym> synonyms;
+
+    protected DevelopmentStage start;
+    protected DevelopmentStage end;
 
     public String getNameEscaped() {
         return getTermName().replaceAll("'", "\\\\'");
@@ -101,7 +101,8 @@ public class AnatomyItem extends AbstractTerm {
     }
 
     public Set<AnatomySynonym> getSynonyms() {
-        return (synonyms == null || synonyms.size() == 0) ? null : synonyms;
+//        return (synonyms == null || synonyms.size() == 0) ? null : synonyms;
+        return synonyms;
     }
 
     public Set<TermAlias> getAliases() {
@@ -140,6 +141,23 @@ public class AnatomyItem extends AbstractTerm {
 //        // Todo when Ao goes into term table
 //    }
 
+    public DevelopmentStage getStart() {
+        return start;
+    }
+
+    public void setStart(DevelopmentStage stage) {
+        this.start = stage;
+    }
+
+    public DevelopmentStage getEnd() {
+        return end;
+    }
+
+    public void setEnd(DevelopmentStage stage) {
+        this.end = stage;
+    }
+
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Anatomy Item [BO]");
@@ -171,20 +189,11 @@ public class AnatomyItem extends AbstractTerm {
         this.cellTerm = cellTerm;
     }
 
-    public List<TermRelationship> getRelatedTerms() {
-        if (relationships != null)
-            return relationships;
 
-        relationships = new ArrayList<TermRelationship>();
-        OntologyRepository ontologyOntologyRepository = RepositoryFactory.getOntologyRepository();
-        relationships.addAll(ontologyOntologyRepository.getTermRelationships(this));
-        return relationships;
-    }
-
-    @Override
-    public void setRelatedTerms(List<TermRelationship> relationships) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+//    @Override
+//    public void setRelatedTerms(List<TermRelationship> relationships) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//    }
 
     public int compareTo(Term term) {
         if (term == null)
@@ -243,10 +252,32 @@ public class AnatomyItem extends AbstractTerm {
      *
      * @return list of children terms
      */
-    public List<Term> getChildrenTerms() {
+    public Set<TermRelationship> getChildTermRelationships() {
         // ToDo: To be implemented
         throw new RuntimeException("Not yet implemented");
     }
 
+
+    /**
+     * TODO: Move to TermHelper
+     * @return
+     */
+    public GenericTerm createGenericTerm() {
+        GenericTerm genericTerm = new GenericTerm();
+        genericTerm.setZdbID(getZdbID());
+        genericTerm.setTermName(getTermName());
+        genericTerm.setOboID(getOboID());
+        genericTerm.setOntology(getOntology());
+        genericTerm.setRoot(isRoot());
+        genericTerm.setSecondary(isObsolete());
+        genericTerm.setSecondary(isSecondary());
+        genericTerm.setComment(getComment());
+        genericTerm.setDefinition(getDefinition());
+
+        genericTerm.setAliases(getAliases());
+        genericTerm.setImages(getImages());
+
+        return genericTerm;
+    }
 
 }

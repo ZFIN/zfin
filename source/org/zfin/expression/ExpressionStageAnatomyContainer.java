@@ -1,7 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ExpressionStageAnatomyContainer {
         return xsaList;
     }
 
-    public void add(DevelopmentStage stage, Term anat, Figure fig) {
+    public void add(DevelopmentStage stage, GenericTerm anat, Figure fig) {
         if (xsaList == null)
             xsaList = new ArrayList<ExpressionStageAnatomy>();
 

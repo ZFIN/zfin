@@ -3,17 +3,15 @@ package org.zfin.infrastructure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.zfin.ontology.GenericTerm;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.ontology.OntologyTokenizer;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.TermAlias;
 import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -23,9 +21,19 @@ public class SerializationTests {
 
     private OntologyTokenizer tokenizer = new OntologyTokenizer() ;
 
+
+    @Test
+    public void serializeTerm() throws Exception{
+        TermDTO termDTO = createTermWithName("key1 key2");
+        File tempSerialFile = FileUtil.serializeObject(termDTO, File.createTempFile("temp",".ser"));
+        tempSerialFile.deleteOnExit();
+        TermDTO desieralizedTermDTO = (TermDTO) FileUtil.deserializeOntologies(tempSerialFile) ;
+        assertEquals(termDTO,desieralizedTermDTO);
+    }
+
     @Test
     public void memoryTest() throws Exception{
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("key1 key2","key4"),termMap);
         tokenizer.tokenizeTerm(createTermWithNameAndAlias("key1 key2 key3","key4"),termMap);
 
@@ -34,12 +42,12 @@ public class SerializationTests {
             logger.debug(key + "-" + termMap.get(key));
         }
         logger.debug("values");
-        for(Term term:  termMap.getAllValues()){
+        for(TermDTO term:  termMap.getAllValues()){
             logger.debug(term) ;
         }
         File tempSerialFile = FileUtil.serializeObject(termMap, File.createTempFile("temp",".ser"));
         tempSerialFile.deleteOnExit();
-        PatriciaTrieMultiMap<Term> deserializedMap = (PatriciaTrieMultiMap<Term>) FileUtil.deserializeOntologies(tempSerialFile) ;
+        PatriciaTrieMultiMap<TermDTO> deserializedMap = (PatriciaTrieMultiMap<TermDTO>) FileUtil.deserializeOntologies(tempSerialFile) ;
 
         logger.debug("keys 2");
         assertTrue(CollectionUtils.isEqualCollection(termMap.keySet(),deserializedMap.keySet())) ;
@@ -48,7 +56,7 @@ public class SerializationTests {
             logger.debug(key + "-" + deserializedMap.get(key));
         }
         logger.debug("values 2");
-        for(Term term: deserializedMap.getAllValues()){
+        for(TermDTO term: deserializedMap.getAllValues()){
             logger.debug(term) ;
         }
     }
@@ -80,7 +88,7 @@ public class SerializationTests {
         int numberOfTerms = 100 ;
         Collection<String> words = generateRandomWords(numberOfTerms) ;
 
-        PatriciaTrieMultiMap<Term> patriciaTrieMultiMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> patriciaTrieMultiMap = new PatriciaTrieMultiMap<TermDTO>() ;
 
         for(String word: words){
             patriciaTrieMultiMap.put(word,createTermWithName(word)) ;
@@ -168,7 +176,7 @@ public class SerializationTests {
      */
     @Test
     public void serializationSizeTest() throws Exception{
-        PatriciaTrieMultiMap<Term> termMap = new PatriciaTrieMultiMap<Term>() ;
+        PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>() ;
 
         int numberOfTerms = 100 ;
 
@@ -182,7 +190,7 @@ public class SerializationTests {
         tempSerialFile.deleteOnExit();
 
 
-        Map<String,Set<Term>> map = new HashMap<String,Set<Term>>(numberOfTerms ) ;
+        Map<String,Set<TermDTO>> map = new HashMap<String,Set<TermDTO>>(numberOfTerms ) ;
 
         for(String word: words){
             map.put(word,termMap.get(word)) ;
@@ -284,25 +292,24 @@ public class SerializationTests {
     }
 
     
-    public static Term createTermWithNameAndAlias(String name, String aliasName) {
-        GenericTerm term = new GenericTerm();
-        term.setTermName(name);
+    public static TermDTO createTermWithNameAndAlias(String name, String aliasName) {
+        TermDTO term = new TermDTO();
+        term.setName(name);
 
-        TermAlias alias = new TermAlias();
-        alias.setAlias(aliasName);
-        alias.setTerm(term);
+//        TermDTO alias = new TermDTO();
+//        alias.setName(aliasName);
 
-        Set<TermAlias> aliases = new HashSet<TermAlias>() ;
-        aliases.add(alias) ;
+        Set<String> aliases = new HashSet<String>() ;
+        aliases.add(aliasName) ;
 
         term.setAliases(aliases);
 //        term.setA
         return term ;
     }
 
-    public static Term createTermWithName(String name) {
-        Term term = new GenericTerm();
-        term.setTermName(name);
+    public static TermDTO createTermWithName(String name) {
+        TermDTO term = new TermDTO();
+        term.setName(name);
         return term;
     }
 }

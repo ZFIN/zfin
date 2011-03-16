@@ -12,9 +12,10 @@ import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.*;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,9 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements CurationPhenotypeRPC {
 
-    private static final Logger LOG = Logger.getLogger(CurationPhenotypeRPCImpl.class);
+    private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
+
+    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
     public List<PhenotypeFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
 
@@ -49,7 +52,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                 if (phenotype.getSubterm() != null) {
                     termDto.setSubterm(DTOConversionService.convertToTermDTO(phenotype.getSubterm()));
                 }
-                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getTerm()));
+                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getQualityTerm()));
                 termDto.setTag(phenotype.getTag());
                 termDto.setZdbID(phenotype.getZdbID());
                 termStrings.add(termDto);
@@ -83,8 +86,8 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             }
             tx.commit();
         } catch (HibernateException e) {
+            logger.error("failed to create mutant figure stages",e);
             tx.rollback();
-            e.printStackTrace();
         }
         return returnRecords;
     }
@@ -126,7 +129,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             return;
         MutantFigureStage mutantFromDto = DTOConversionService.convertToMutantFigureStageFromDTO(figureAnnotation);
         if (mutantFromDto == null) {
-            LOG.info("No mutant figure stage record found: " + figureAnnotation);
+            logger.info("No mutant figure stage record found: " + figureAnnotation);
             return;
         }
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
@@ -161,7 +164,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                     PhenotypeStructure phenotypePileStructure = getPhenotypeRepository().getPhenotypePileStructure(pileStructure.getZdbID());
                     // ToDo: handle case pile structure is not found: throw exception (make sure a finally clause is added!
                     if (phenotypePileStructure == null)
-                        LOG.error("Could not find pile structure " + pileStructure.getZdbID());
+                        logger.error("Could not find pile structure " + pileStructure.getZdbID());
                     // add phenotype if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         PhenotypeTermDTO phenotypeTermDTO = addExpressionToAnnotation(mutant, phenotypePileStructure);
@@ -178,7 +181,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             }
             tx.commit();
         } catch (HibernateException e) {
-            LOG.error("Could not Add or Delete terms", e);
+            logger.error("Could not Add or Delete terms", e);
             tx.rollback();
             throw e;
         }
@@ -217,28 +220,28 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
 
             if (phenotype.getSuperterm().getZdbID().equals(phenotypePileStructure.getSuperterm().getZdbID())) {
                 // if quality term is not the same continue with next phenotype
-                if (!phenotype.getTerm().getZdbID().equals(phenotypePileStructure.getQuality().getZdbID()))
+                if (!phenotype.getQualityTerm().getZdbID().equals(phenotypePileStructure.getQualityTerm().getZdbID()))
                     continue;
                 // if tag is not the same continue with next phenotype
                 if (!phenotype.getTag().equals(phenotypePileStructure.getTag().toString()))
                     continue;
 
                 String subtermID = null;
-                Term term = phenotype.getSubterm();
+                GenericTerm term = phenotype.getSubterm();
                 if (term != null)
                     subtermID = term.getOboID();
                 // check if both subterms are null. If not ignore this phenotype as it is not the one
                 // we are asked to remove.
                 if (subtermID == null && phenotypePileStructure.getSubterm() == null) {
                     getPhenotypeRepository().deletePhenotype(phenotype, mutantFigureStage.getFigure());
-                    LOG.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName());
+                    logger.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName());
                     break;
                 }
                 if (subtermID != null && phenotypePileStructure.getSubterm() != null &&
                         term.getZdbID().equals(phenotypePileStructure.getSubterm().getZdbID())) {
                     getPhenotypeRepository().deletePhenotype(phenotype, mutantFigureStage.getFigure());
-                    Term subterm = phenotype.getSubterm();
-                    LOG.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName() + " : " + subterm.getTermName());
+                    GenericTerm subterm = phenotype.getSubterm();
+                    logger.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName() + " : " + subterm.getTermName());
                     break;
                 }
             }
@@ -264,19 +267,20 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         // create a new Phenotype record
         // create a new PhenotypeTermDTO object that is passed back to the RPC caller
         PhenotypeTermDTO expressedTerm = new PhenotypeTermDTO();
-        Term superterm = phenotypeStructure.getSuperterm();
-        Term subterm = phenotypeStructure.getSubterm();
+        GenericTerm superterm = phenotypeStructure.getSuperterm();
+        GenericTerm subterm = phenotypeStructure.getSubterm();
         Phenotype aoPhenotype = new Phenotype();
-        aoPhenotype.setSuperterm(OntologyManager.getInstance().getTermByID(superterm.getZdbID()));
-        if (subterm != null)
-            aoPhenotype.setSubterm(OntologyManager.getInstance().getTermByID(subterm.getZdbID()));
+        aoPhenotype.setSuperterm(ontologyRepository.getTermByZdbID(superterm.getZdbID()));
+        if (subterm != null){
+            aoPhenotype.setSubterm(ontologyRepository.getTermByZdbID(subterm.getZdbID()));
+        }
         aoPhenotype.addFigure(mutant.getFigure());
         aoPhenotype.setEndStage(mutant.getEnd());
         aoPhenotype.setStartStage(mutant.getStart());
         aoPhenotype.setGenotypeExperiment(mutant.getGenotypeExperiment());
         aoPhenotype.setPublication(mutant.getPublication());
         aoPhenotype.setTag(phenotypeStructure.getTag().toString());
-        aoPhenotype.setTerm(phenotypeStructure.getQuality());
+        aoPhenotype.setQualityTerm(phenotypeStructure.getQualityTerm());
         getPhenotypeRepository().createPhenotype(aoPhenotype, mutant.getFigure());
 
         TermDTO supertermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSuperterm());
@@ -294,7 +298,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             if (phenotype.getSuperterm().getZdbID().equals(pileStructure.getSuperterm().getZdbID())) {
                 // check if subterms are unequal
                 // if so continue loop checking for an existing phenotype
-                Term phenoSubterm = HibernateUtil.initializeAndUnproxy(phenotype.getSubterm());
+                GenericTerm phenoSubterm = HibernateUtil.initializeAndUnproxy(phenotype.getSubterm());
                 if ((phenoSubterm == null && pileStructure.getSubterm() != null) ||
                         (phenoSubterm != null && pileStructure.getSubterm() == null)) {
                     continue;
@@ -309,7 +313,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                     }
                 }
 
-                if (phenotype.getTerm().getOboID().equals(pileStructure.getQuality().getOboID())) {
+                if (phenotype.getQualityTerm().getOboID().equals(pileStructure.getQualityTerm().getOboID())) {
                     if (phenotype.getTag().equals(pileStructure.getTag().toString())) {
                         foundStructure = true;
                         break;

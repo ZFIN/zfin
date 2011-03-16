@@ -10,6 +10,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.PhenotypeService;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -21,11 +22,11 @@ import java.util.*;
 public class MorpholinoStatistics extends EntityStatistics {
 
     private GenotypeExperiment genoExperiment;
-    private Term anatomyItem;
+    private GenericTerm anatomyItem;
     private Set<Figure> figures;
     private String targetGeneOrder;
 
-    public MorpholinoStatistics(GenotypeExperiment genoExperiment, Term anatomyItem) {
+    public MorpholinoStatistics(GenotypeExperiment genoExperiment, GenericTerm anatomyItem) {
         this.anatomyItem = anatomyItem;
         this.genoExperiment = genoExperiment;
         targetGeneOrder = "";

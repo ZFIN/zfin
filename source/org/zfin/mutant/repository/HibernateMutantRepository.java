@@ -44,7 +44,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     private Logger logger = Logger.getLogger(HibernateMutantRepository.class);
 
-    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(Term item, boolean wildtype, int numberOfRecords) {
+    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         String hql =
@@ -80,6 +80,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "AND genofeat.genotype =geno " +
                         "AND genofeat.feature =feat " +
                         "AND type.name=feat.type " +
+//                        "AND type.name=feat.type.name " + // HQL interpets this wrong, but the above right
                         "ORDER by type.significance, geno.nameOrder ";
 
 
@@ -106,7 +107,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return genotypeFeatures;
     }
 
-    public int getNumberOfImagesPerAnatomyAndMutant(Term term, Genotype genotype) {
+    public int getNumberOfImagesPerAnatomyAndMutant(GenericTerm term, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct image) from Image image, Figure fig, ExpressionResult res, " +
@@ -126,7 +127,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return ((Number) query.uniqueResult()).intValue();
     }
 
-    public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(Term item, Genotype genotype) {
+    public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct figure.publication) from Figure figure, ExpressionResult res, " +
@@ -155,7 +156,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    public List<Morpholino> getPhenotypeMorpholinos(Term item, int numberOfRecords) {
+    public List<Morpholino> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         // This returns morpholinos by phenote annotations
@@ -198,18 +199,18 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, int numberOfRecords) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(numberOfRecords);
         return getGenotypeExperimentMorpholinos(item, isWildtype, bean);
     }
 
-    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, boolean isWildtype) {
+    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, boolean isWildtype) {
         return getGenotypeExperimentMorpholinos(item, isWildtype, null).getPopulatedResults();
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(Term item, Boolean isWildtype, PaginationBean bean) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
                 "FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, " +
@@ -457,11 +458,11 @@ public class HibernateMutantRepository implements MutantRepository {
         String hql = "select pheno from Phenotype pheno, Figure figure " +
                 "     where pheno.genotypeExperiment = :genox" +
                 "           and pheno.superterm = :unspecified " +
-                "           and pheno.term.zdbID= :qualityZdbID " +
+                "           and pheno.qualityTerm.zdbID= :qualityZdbID " +
                 "           and pheno.tag = :tag " +
                 "           and figure member of pheno.figures " +
                 "           and figure.zdbID = :figureID";
-        Term unspecified = getOntologyRepository().getTermByName(Term.UNSPECIFIED, Ontology.ANATOMY);
+        GenericTerm unspecified = getOntologyRepository().getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
         GenericTerm quality = RepositoryFactory.getInfrastructureRepository().getTermByName("quality", Ontology.QUALITY);
         Query query = session.createQuery(hql);
         query.setParameter("genox", genotypeExperiment);
@@ -545,7 +546,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return collection of terms
      */
     @SuppressWarnings({"unchecked"})
-    public List<Term> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
+    public List<GenericTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , GenericTerm g , MarkerGoTermEvidence ev " +
                 " where pa.dataZdbID=ev.zdbID " +
                 " and pa.publication.zdbID= :pubZdbID  " +
@@ -570,7 +571,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @SuppressWarnings({"unchecked"})
-    public List<Term> getGoTermsByPhenotypeAndPublication(Publication publication) {
+    public List<GenericTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
         String hql = "select distinct phenotype from Phenotype phenotype , GenericTerm g  " +
                 " where phenotype.publication.zdbID= :pubZdbID  " +
                 " and ( phenotype.subterm = g and g.oboID like :oboIDLike" +
@@ -736,7 +737,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return list of phenotypes
      */
     @Override
-    public List<Phenotype> getPhenotypeWithEntity(Term term) {
+    public List<Phenotype> getPhenotypeWithEntity(GenericTerm term) {
         String hql = "select distinct pheno from Phenotype pheno where " +
                 "(superterm = :term OR subterm = :term) " +
                 "AND tag = :tag";
@@ -753,7 +754,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return list of marker go
      */
     @Override
-    public List<MarkerGoTermEvidence> getMarkerGoEvidence(Term term) {
+    public List<MarkerGoTermEvidence> getMarkerGoEvidence(GenericTerm term) {
         String hql = "select distinct evidence from MarkerGoTermEvidence evidence where " +
                 " goTerm = :term ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
@@ -762,9 +763,9 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<Phenotype> getPhenotypeWithEntity(List<Term> terms) {
+    public List<Phenotype> getPhenotypeWithEntity(List<GenericTerm> terms) {
         List<Phenotype> allPhenotypes = new ArrayList<Phenotype>(50);
-        for (Term term : terms) {
+        for (GenericTerm term : terms) {
             List<Phenotype> phenotypes = getPhenotypeWithEntity(term);
             allPhenotypes.addAll(phenotypes);
         }
@@ -775,9 +776,9 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<MarkerGoTermEvidence> getMarkerGoEvidence(List<Term> terms) {
+    public List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms) {
         List<MarkerGoTermEvidence> allMarkerGo = new ArrayList<MarkerGoTermEvidence>();
-        for (Term term : terms) {
+        for (GenericTerm term : terms) {
             List<MarkerGoTermEvidence> goTermEvidences = getMarkerGoEvidence(term);
             allMarkerGo.addAll(goTermEvidences);
         }
@@ -831,7 +832,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select phenotype from Phenotype phenotype " +
-                "     where (phenotype.term.obsolete = 't' OR " +
+                "     where (phenotype.qualityTerm.obsolete = 't' OR " +
                 "    phenotype.superterm.obsolete = 't' OR " +
                 "    phenotype.subterm.obsolete = 't')";
         Query query = session.createQuery(hql);

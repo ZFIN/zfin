@@ -21,7 +21,7 @@
         Genes
     </tagunit:expectedResult>
     <tagunit:actualResult>
-        <zfin:hightlight name="ao" property="anatomyItem.name" hightlightName="bean"
+        <zfin:highlight name="ao" property="anatomyItem.name" hightlightName="bean"
                          hightlightProperty="highlightText"/>
     </tagunit:actualResult>
 </tagunit:assertEquals>

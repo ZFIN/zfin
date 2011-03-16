@@ -28,8 +28,9 @@
     </category>
 
     <category name="org.zfin" additivity="false">
-<!--		<priority value="DEBUG"/> -->
-		<priority value="warn"/>
+		<!--<priority value="DEBUG"/>-->
+        <priority value="INFO"/>
+		<!--<priority value="warn"/>-->
         <appender-ref ref="stdout"/>
     </category>
 
@@ -47,11 +48,11 @@
     <!-- Log the real SQL -->
     <category name="org.hibernate.SQL">
 		<priority value="warn"/>
-<!--        <priority value="DEBUG"/> -->
+        <!--<priority value="DEBUG"/>-->
     </category>
 
     <category name="org.hibernate.type">
-<!--        <priority value="trace"/> -->
+        <!--<priority value="trace"/>-->
 		<priority value="warn"/>
     </category>
 

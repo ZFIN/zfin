@@ -27,6 +27,7 @@
         </id>
 
         <property name="name" column="stg_name" not-null="false"/>
+        <property name="nameLong" column="stg_name_long" not-null="false"/>
         <property name="hoursStart" column="stg_hours_start" not-null="true"/>
         <property name="hoursEnd" column="stg_hours_end" not-null="false"/>
         <property name="otherFeature" column="stg_other_features" not-null="false"/>
@@ -106,7 +107,7 @@
         </property>
 
         <!-- do not do fetch="join" -->
-        <many-to-one name="term" class="org.zfin.ontology.Term"
+        <many-to-one name="term" class="org.zfin.ontology.GenericTerm"
                      column="anatstat_term_zdb_id" insert="false" update="false" fetch="join" lazy="false"/>
 
     </class>

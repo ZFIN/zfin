@@ -5,11 +5,13 @@ import org.hibernate.SessionFactory;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.Phenotype;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.OntologyManager;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
@@ -55,36 +57,35 @@ public class EQReport {
     private List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
     private List<MarkerGoTermEvidence> allMarkerGo = new ArrayList<MarkerGoTermEvidence>();
 
-    private List<Term> getGoTerms() {
+    private List<GenericTerm> getGoTerms() {
         String[] ids = {"ZDB-TERM-091209-16772", "ZDB-TERM-091209-18555", "ZDB-TERM-091209-16771", "ZDB-TERM-091209-18535", "ZDB-TERM-091209-18532",
                 "ZDB-TERM-091209-18535", "ZDB-TERM-091209-18547", "ZDB-TERM-091209-18554", "ZDB-TERM-091209-18534", "ZDB-TERM-091209-18546"};
-        List<Term> allTerms = new ArrayList<Term>(2);
+        List<GenericTerm> allTerms = new ArrayList<GenericTerm>(2);
         for (String id : ids) {
             allTerms.add(getGoTerm(id));
         }
         return allTerms;
     }
 
-    private Term getGoTerm(String id) {
-        Term term = new GenericTerm();
+    private GenericTerm getGoTerm(String id) {
+        GenericTerm term = new GenericTerm();
         term.setZdbID(id);
         return term;
     }
 
     public void createFirstReport(String[] ids) {
-        MutantRepository rep = RepositoryFactory.getMutantRepository();
-        List<Term> allTerms = new ArrayList<Term>(50);
+        List<GenericTerm> allTerms = new ArrayList<GenericTerm>(50);
         for (String id : ids) {
-            Term term = ontologyManager.getTermByID(id);
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(id);
             if (term != null) {
                 allTerms.add(term);
-                allTerms.addAll(OntologyService.getAllChildren(term));
+                allTerms.addAll(RepositoryFactory.getOntologyRepository().getAllChildTerms(term));
             }
             //logger.info("term name: " + term.getTermName());
         }
         System.out.println(allTerms);
-        for (Term term : allTerms) {
-            List<Phenotype> phenotypes = rep.getPhenotypeWithEntity(term);
+        for (GenericTerm term : allTerms) {
+            List<Phenotype> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypeWithEntity(term);
             allPhenotypes.addAll(phenotypes);
         }
         reportFile = "paula-first-file.txt";
@@ -93,17 +94,17 @@ public class EQReport {
 
     public void createSecondReport(String[] ids) {
         ExpressionRepository rep = RepositoryFactory.getExpressionRepository();
-        List<Term> allTerms = new ArrayList<Term>(50);
+        List<GenericTerm> allTerms = new ArrayList<GenericTerm>(50);
         for (String id : ids) {
-            Term term = ontologyManager.getTermByID(id);
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(id);
             if (term != null) {
                 allTerms.add(term);
-                allTerms.addAll(OntologyService.getAllChildren(term));
+                allTerms.addAll(RepositoryFactory.getOntologyRepository().getAllChildTerms(term));
             }
             //logger.info("term name: " + term.getTermName());
         }
         System.out.println(allTerms);
-        for (Term term : allTerms) {
+        for (GenericTerm term : allTerms) {
             List<ExpressionResult> phenotypes = rep.getExpressionsWithEntity(term);
             allExpressions.addAll(phenotypes);
         }
@@ -113,17 +114,17 @@ public class EQReport {
 
     public void createThirdReport(String[] ids) {
         MutantRepository rep = RepositoryFactory.getMutantRepository();
-        List<Term> allTerms = new ArrayList<Term>(50);
+        List<GenericTerm> allTerms = new ArrayList<GenericTerm>(50);
         for (String id : ids) {
-            Term term = ontologyManager.getTermByID(id);
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(id);
             if (term != null) {
                 allTerms.add(term);
-                allTerms.addAll(OntologyService.getAllChildren(term));
+                allTerms.addAll(RepositoryFactory.getOntologyRepository().getAllChildTerms(term));
             }
             //logger.info("term name: " + term.getTermName());
         }
         System.out.println(allTerms);
-        for (Term term : allTerms) {
+        for (GenericTerm term : allTerms) {
             List<MarkerGoTermEvidence> goTermEvidences = rep.getMarkerGoEvidence(term);
             allMarkerGo.addAll(goTermEvidences);
         }
@@ -133,9 +134,9 @@ public class EQReport {
 
     public void createGoReport() {
         MutantRepository rep = RepositoryFactory.getMutantRepository();
-        List<Term> allTerms = getGoTerms();
+        List<GenericTerm> allTerms = getGoTerms();
         System.out.println(allTerms);
-        for (Term term : allTerms) {
+        for (GenericTerm term : allTerms) {
             List<Phenotype> phenotypes = rep.getPhenotypeWithEntity(term);
             allPhenotypes.addAll(phenotypes);
         }
@@ -178,7 +179,7 @@ public class EQReport {
                 buffer.append(phenotype.getSubterm().getTermName());
             }
             buffer.append("\t");
-            buffer.append(phenotype.getTerm().getTermName());
+            buffer.append(phenotype.getQualityTerm().getTermName());
             reportLines.add(buffer);
         }
     }
@@ -272,7 +273,7 @@ public class EQReport {
             try {
                 fw.close();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         }
     }
@@ -291,9 +292,9 @@ public class EQReport {
         System.setProperty("java.io.tmpdir", "test/ontologies");
         try {
             ontologyManager = OntologyManager.getEmptyInstance();
-            ontologyManager.deserializeRelationships();
-            ontologyManager.deserializeOntology(Ontology.ANATOMY);
-            ontologyManager.deserializeOntology(Ontology.GO_BP);
+//            ontologyManager.deserializeRelationships();
+            ontologyManager.deserializeOntology(OntologyDTO.ANATOMY);
+            ontologyManager.deserializeOntology(OntologyDTO.GO_BP);
         } catch (Exception e) {
             logger.error("failed to load from file: " + ontologyManager, e);
         }

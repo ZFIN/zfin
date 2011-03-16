@@ -1,0 +1,59 @@
+package org.zfin.ontology;
+
+import org.zfin.gwt.root.dto.RelationshipType;
+
+/**
+ * This can be subsumed into GenericTermRelationships once AnatomyItem goes away
+ */
+public abstract class AbstractTermRelationship implements TermRelationship{
+
+    private String zdbId;
+    private String type;
+
+    public abstract Term getTermOne() ;
+    public abstract Term getTermTwo() ;
+
+    public String getZdbId() {
+        return zdbId;
+    }
+
+    public void setZdbId(String zdbId) {
+        this.zdbId = zdbId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public RelationshipType getRelationshipType() {
+        return RelationshipType.getRelationshipTypeByDbName(type);
+    }
+
+    public void setRelationshipType(RelationshipType relationshipType) {
+        type = relationshipType.getDbMappedName();
+    }
+
+    /**
+     * Retrieve the term that is related to the term provided.
+     * Return null if the term passed in is null or if the term passed in
+     * is not one of the two intrinsic terms.
+     *
+     * @param term Generic Term
+     * @return GenericTerm
+     */
+    public Term getRelatedTerm(Term term) {
+        if (term == null)
+            return null;
+        if (!(term.equals(getTermOne()) || term.equals(getTermTwo())))
+            return null;
+
+        if (term.equals(getTermOne()))
+            return getTermTwo();
+        else
+            return getTermOne();
+    }
+}

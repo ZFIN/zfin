@@ -10,24 +10,24 @@ import java.io.Serializable;
  */
 public class TransitiveClosure implements Serializable, Comparable<TransitiveClosure> {
 
-    private Term root;
-    private Term child;
+    private GenericTerm root;
+    private GenericTerm child;
     // this is the minimum number of terms you have to traverse to connect the root term with the child. 
     private int distance;
 
-    public Term getRoot() {
+    public GenericTerm getRoot() {
         return root;
     }
 
-    public void setRoot(Term root) {
+    public void setRoot(GenericTerm root) {
         this.root = root;
     }
 
-    public Term getChild() {
+    public GenericTerm getChild() {
         return child;
     }
 
-    public void setChild(Term child) {
+    public void setChild(GenericTerm child) {
         this.child = child;
     }
 
