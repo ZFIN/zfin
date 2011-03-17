@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -22,6 +23,7 @@ public class UniprotService {
     private SequenceService sequenceService = new SequenceService();
     private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private ReferenceDatabase uniprotReferenceDatabase = sequenceService.getUniprotDb();
+    private String uniprotUrl ;
 
     public Boolean validateAccession(String accession){
         if(CollectionUtils.isNotEmpty(sequenceRepository.getMarkerDBLinksForAccession(accession, uniprotReferenceDatabase))){
@@ -32,11 +34,19 @@ public class UniprotService {
 
     }
 
+    public String getUniprotBaseUrl() {
+        if(uniprotUrl==null){
+            HibernateUtil.currentSession().refresh(uniprotReferenceDatabase);
+            uniprotUrl = uniprotReferenceDatabase.getBaseURL();
+        }
+        return uniprotUrl;
+    }
+
     public Boolean validateAgainstUniprotWebsite(String accession) {
 
 
         HttpClient client = new HttpClient()   ;
-        GetMethod method = new GetMethod(uniprotReferenceDatabase.getBaseURL()+accession);
+        GetMethod method = new GetMethod(getUniprotBaseUrl()+accession);
         try {
             int statusCode = client.executeMethod(method);
             if(statusCode != HttpStatus.SC_OK){

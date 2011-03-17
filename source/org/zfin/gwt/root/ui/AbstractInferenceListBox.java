@@ -320,7 +320,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
 
         MarkerGoEvidenceRPCService.App.getInstance().validateAccession(valueToSend, inferenceCategoryList.getSelected(),
                 new MarkerEditCallBack<Boolean>("Failed to validate accession [" + valueToSend + "] " +
-                        "for inference [" + inferenceCategoryList.getSelected() + "]") {
+                        "for inference [" + inferenceCategoryList.getSelected() + "]",this) {
                     @Override
                     public void onSuccess(Boolean result) {
                         if (result) {
@@ -335,7 +335,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                     @Override
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
-                        handleDirty();
+//                        handleDirty();
                         notWorking();
                     }
                 });
