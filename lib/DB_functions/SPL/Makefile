@@ -52,8 +52,7 @@ FISH_STATS   = get_image_stats.sql \
 	       p_markers_present_absent_exclusive.sql \
 	       checkFeatureAbbrev.sql \
 	       updateConstructAbbrev.sql \
-	       checkDupFeaturePrefixLineDesignation.sql \
-               updatePrimaryLabFeaturePrefix.sql 
+	       checkDupFeaturePrefixLineDesignation.sql 
 LOAD_STATS   = p_zgc_load.sql
 XPAT_STATS   = populate_direct_submission_date.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
