@@ -104,8 +104,6 @@ sub goInf()
 
     $inf =~ s/GenBank:/EMBL:/g;
     $inf =~ s/GenPept:/protein_id:/;
-    $inf =~ s/RefSeq:NM_/NCBI_NM:NM_/;
-    $inf =~ s/RefSeq:NP_/NCBI_NP:NP_/;
     $inf =~ s/UniProt:/UniProtKB:/;
 
     if (index($inf,'\ ')==0) {
