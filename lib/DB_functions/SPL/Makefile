@@ -75,7 +75,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql\
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql \
 	       add_ab_ao_fast_search.sql create_all_terms_contains.sql 
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql  
@@ -103,7 +103,7 @@ ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql  clone_2_sanger.sql \
+MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql regen_term.sql clone_2_sanger.sql \
 		 get_genofeat_mp_zyg_html_display.sql
 
 GENERIC_AGGR = $(ZDB_AGGR) 
