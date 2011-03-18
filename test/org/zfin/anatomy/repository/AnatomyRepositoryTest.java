@@ -20,21 +20,16 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     /**
      * Check that synonyms are not of group 'secondary id'
-     * NOTE: there are only 9 alias's for all of anatomy_item
-     * Only one of which is secondary (for pharyngeal arch)
-     * However, this is not true for the term table.
      */
     @Test
     public void getAnatomyTermWithSynonyms() {
         // optic primordium
-        String termName = "pharyngeal arch 3-7";
+        String termName = "optic primordium";
 
         AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
         assertTrue(item != null);
         Set<AnatomySynonym> synonyms = item.getSynonyms();
         assertNotNull(synonyms);
-        assertTrue(synonyms.size()>1);
-        assertTrue(synonyms.size()<4);
         // check that none of the synonyms are secondary ids
         for (AnatomySynonym syn : synonyms) {
             assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
@@ -107,10 +102,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     public void getAnatomyItemsWithoutDataAlias() {
         // 1 - get by name
         // extrascapula
-//        String zdbID = "ZDB-ANAT-011113-588";
-
-        // raphe nucleus
-        String zdbID = "ZDB-ANAT-060331-54";
+        String zdbID = "ZDB-ANAT-011113-588";
         List<AnatomyItem> terms;
         AnatomyItem term = getAnatomyRepository().getAnatomyTermByID(zdbID);
         assertNotNull(term);
@@ -119,10 +111,9 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         assertTrue("Should be 1 or more synonym because filtered secondary", synonyms.size() >= 1);
 
         // 2- get by synonym
-//        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
-        terms = getAnatomyRepository().getAnatomyItemsByName("median raphe nucleus", false);
+        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
         assertNotNull(terms);
-        assertEquals(1,terms.size());
+        assertTrue(terms.size() > 2);
 
         // 3- get by data alias
         terms = getAnatomyRepository().getAnatomyItemsByName("413", false);
