@@ -38,7 +38,7 @@ else
 	echo "*** Just Testing load_ensdarg.sql into <!--|DB_NAME|--> .***  "
 	echo "To load use:  gmake run_commit"
 	echo ""
-	cat load_ensdarg.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|-->
+	cat load_ensdarg.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
 endif
 
 

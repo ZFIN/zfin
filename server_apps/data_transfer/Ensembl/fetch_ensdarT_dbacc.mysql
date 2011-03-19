@@ -1,0 +1,8 @@
+
+select distinct stable_id, dbprimary_acc
+ from  transcript_stable_id, object_xref, xref
+ where transcript_id = ensembl_id
+   and object_xref.xref_id = xref.xref_id
+   and external_db_id = 2310
+   and dbprimary_acc = display_label
+;
