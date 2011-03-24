@@ -53,32 +53,80 @@
         </move>
     </target>
 
-    <target name="run-indexer" depends="init" description="run the indexer">
+    <target name="run-indexer" depends="init, generate-detail-page-urls" description="run the indexer">
         <echo message="Launching Java Indexer"/>
         <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
-            <arg value="-d"/>
-            <arg value="${newIndexDir}"/>
             <arg value="-u"/>
             <arg value="${indexAppDir}/etc/searchurls.txt"/>
             <arg value="-e"/>
             <arg value="${indexAppDir}/etc/excludeurls.txt"/>
             <arg value="-c"/>
             <arg value="${indexAppDir}/etc/crawlonlyurls.txt"/>
-            <arg value="-q"/>
-            <arg value="${indexAppDir}/etc/allAPPPagesList.txt"/>
             <arg value="-t"/>
             <arg value="6"/>
             <arg value="-categoryDir"/>
             <arg value="${web-inf.dir}/conf"/>
-            <arg value="-l"/>
-            <arg value="${logsDir}"/>
-            <arg value="-v"/>
+            <arg value="-indexerDir"/>
+            <arg value="${indexAppDir}"/>
             <arg value="-zfinPropertiesDir"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
-	    <jvmarg value="-DINDEXER_WIKI_HOSTNAME=@INDEXER_WIKI_HOSTNAME@"/>
         </java>
+    </target>
 
+    <target name="run-indexer-test" depends="init" description="run the indexer">
+        <echo message="Launching Java Indexer"/>
+        <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-u"/>
+            <arg value="${indexAppDir}/etc/searchurls.txt"/>
+            <arg value="-e"/>
+            <arg value="${indexAppDir}/etc/excludeurls.txt"/>
+            <arg value="-c"/>
+            <arg value="${indexAppDir}/etc/crawlonlyurls.txt"/>
+            <arg value="-t"/>
+            <arg value="1"/>
+            <arg value="-indexerDir"/>
+            <arg value="${indexAppDir}"/>
+            <arg value="-categoryDir"/>
+            <arg value="${web-inf.dir}/conf"/>
+            <arg value="-numberOfDetailPages"/>
+            <arg value="3"/>
+            <arg value="-zfinPropertiesDir"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
+    <target name="generate-detail-page-urls" depends="init" description="generates the list of all entity detail page urls">
+        <echo message="Generate entity detail page URLs"/>
+        <java classname="org.zfin.uniquery.GenerateEntityDetailPageUrls" fork="yes" classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-log4jFilename"/>
+            <arg value="${logsDir}/log4j.xml"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-workingDirectory"/>
+            <arg value="server_apps/quicksearch"/>
+            <arg value="-numberOfDetailPages"/>
+            <arg value="0"/>
+        </java>
+    </target>
+
+    <target name="generate-detail-page-urls-test" depends="init" description="generates the list of all entity detail page urls">
+        <echo message="Generate entity detail page URLs"/>
+        <java classname="org.zfin.uniquery.GenerateEntityDetailPageUrls" fork="yes" classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-numberOfDetailPages"/>
+            <arg value="6"/>
+            <arg value="-log4jFilename"/>
+            <arg value="${logsDir}/log4j.xml"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-workingDirectory"/>
+            <arg value="server_apps/quicksearch"/>
+            <arg value="-numberOfDetailPages"/>
+            <arg value="5"/>
+        </java>
     </target>
 
     <target name="index" depends="create-new-index-folder, run-indexer, rotate-indexes"/>

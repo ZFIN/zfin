@@ -20,7 +20,7 @@
                     <span class="summaryTitle">${title}:</span>
                 </c:when>
                 <c:otherwise>                    
-                    <div class="summaryTitle">${title}:</div>
+                    <div class="summaryTitle">${title}</div>
                 </c:otherwise>
             </c:choose>
         </c:if>

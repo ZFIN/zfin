@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.properties.ZfinProperties;
 
 import java.util.Iterator;
@@ -38,9 +37,8 @@ public abstract class AbstractOntologyTest {
     protected void loadOntologyManager(){
         try {
             ontologyManager = OntologyManager.getEmptyInstance();
-//            ontologyManager.deserializeRelationships();
             for(Ontology ontology: getOntologiesToLoad()){
-                ontologyManager.deserializeOntology(DTOConversionService.convertToOntologyDTO(ontology));
+                ontologyManager.deserializeOntology(ontology);
             }
         } catch (Exception e) {
             logger.error("failed to load from file: " + ontologyManager,e);

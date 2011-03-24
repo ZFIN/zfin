@@ -110,6 +110,7 @@
         <mkdir dir="${classbin.dir}/resources"/>
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/hibernate-sysmaster.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/ehcache.xml" todir="${classbin.dir}"/>
         <copy todir="${classbin.dir}/org/zfin">
             <fileset dir="${hibernate.conf.dir}">

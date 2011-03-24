@@ -44,6 +44,9 @@ public class RelationshipDisplayNames {
      * @return display string
      */
     public static String getRelationshipName(String relationshipType, Ontology ontology, boolean forward) {
+        // unfortunately both versions are used in the obo file, e.g. 'part of' and 'part_of'
+        // the latter is the more official name.
+        relationshipType = relationshipType.replaceAll(" ", "_");
         String key = generatePropertyKey(ontology, relationshipType, forward);
         if (properties == null) {
             return createDefaultDisplayName(relationshipType, forward);

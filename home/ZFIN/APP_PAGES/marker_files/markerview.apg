@@ -63,7 +63,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
       </head>
 
       <body>
-         <p/>
+
          <h3>Redirecting to transcript details page: <?MIVAR><a href="/action/marker/transcript-view?zdbID=$OID">&nbsp;link</a><?/MIVAR></h3>
       </body>
     </html>
@@ -1109,7 +1109,7 @@ Only need to update clones, etc., which should be the only things that will have
 <?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg'
 	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');">
 	<hr width=80%>
-        <b>CLONE DATA: </b> $1
+        <b>CLONE DATA </b> $1
         <?MIVAR NAME="$mrkrview_mrkr_is_clone">1<?/MIVAR>
 <?/MISQL>
 
@@ -1130,7 +1130,7 @@ Only need to update clones, etc., which should be the only things that will have
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
   	<hr width=80%>
   	  <b>
-		CONSTRUCT FEATURES:
+		CONSTRUCT FEATURES
   	  </b>
    <?/MIVAR>
    <table width=100% cols=2 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
@@ -1252,11 +1252,12 @@ SQL="
 <?/MISQL>
 
 
-<HR width="80%">
-<b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
-
+<div class="summary">
+  <div>
+    <span class="summaryTitle">GENE EXPRESSION</span> (<a href="javascript:start_note('xpatselect_note')">current status</a>)
+   </div>
 <?MIBLOCK COND="$(!=,$mrkrview_xpatsource_count,0)">
-    <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+    <table class="summary horizontal-solidblock">
 
     <?MICOMMENT> query literature pub <?/MICOMMENT>
 
@@ -1265,7 +1266,7 @@ SQL="
     <?/MICOMMENT>
     <?MIVAR COND="$(EQ,$marker_type,GENE)"
     NAME="mrkrview_xpatsource_desc_sql">
-	select distinct pub_mini_ref
+	select distinct pub_mini_ref, zdb_id
        from expression_experiment join publication
        on xpatex_source_zdb_id = zdb_id
        join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
@@ -1290,7 +1291,7 @@ SQL="
     <?/MICOMMENT>
 <?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
    <?MIVAR  NAME="mrkrview_xpatsource_desc_sql">
-	select distinct pub_mini_ref
+	select distinct pub_mini_ref, zdb_id
           from expression_experiment
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
@@ -1306,7 +1307,7 @@ SQL="
 
     <?MIVAR COND="$(EQ,$marker_type,EFG)"
     NAME="mrkrview_xpatsource_desc_sql">
-	select distinct pub_mini_ref
+	select distinct pub_mini_ref, zdb_id
           from expression_experiment
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
@@ -1316,7 +1317,7 @@ SQL="
 
 
     <?MISQL SQL="$mrkrview_xpatsource_desc_sql">
-	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
+	<?MIVAR NAME=mrkrview_xpatsource_desc><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2'>$1</A><?/MIVAR>
     <?/MISQL>
     <?MICOMMENT>
       ========= if literature pub involved, display total figures ==========
@@ -1338,7 +1339,7 @@ SQL="
       <?/MICOMMENT>
      <?MIVAR COND="$(EQ,$marker_type,GENE)"
       NAME="mrkrview_xpatfig_count_sql">
-	 select count(distinct xpatfig_fig_zdb_id)::integer
+	 select distinct xpatfig_fig_zdb_id
            from expression_pattern_figure
                 join expression_result
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -1365,7 +1366,7 @@ SQL="
     <?/MICOMMENT>
 <?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
       <?MIVAR NAME=mrkrview_xpatfig_count_sql>
-	 select count(distinct xpatfig_fig_zdb_id)::integer
+	 select distinct xpatfig_fig_zdb_id
            from expression_pattern_figure
                 join expression_result
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -1377,7 +1378,7 @@ SQL="
 
 <?MIBLOCK COND="$(EQ,$marker_type,EFG)">
       <?MIVAR NAME=mrkrview_xpatfig_count_sql>
-	 select count(distinct xpatfig_fig_zdb_id)::integer
+	 select distinct xpatfig_fig_zdb_id
            from expression_pattern_figure
                 join expression_result
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -1388,13 +1389,23 @@ SQL="
 <?/MIBLOCK>
 
       <?MISQL SQL="$mrkrview_xpatfig_count_sql">
-       <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>
-       <?/MISQL>
-         <tr><td><b>All expression data: </b> </td>
+       <?MIVAR NAME=mrkrview_xpatfig_zdb_id>$1<?/MIVAR>
+      <?/MISQL>
+      <?MIVAR NAME=mrkrview_xpatfig_count>$MI_ROWCOUNT<?/MIVAR>
+         <tr>
+           <th>All&nbsp;expression&nbsp;data:</th>
 
-           <td> <?MIVAR>
-     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
-	        <?/MIVAR>
+           <td> 
+           <?MIBLOCK COND="$(>,$mrkrview_xpatfig_count,1)">
+             <?MIVAR>
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figures</a> from $mrkrview_xpatsource_desc
+	     <?/MIVAR>
+	   <?MIELSE>
+	       <?MISQL SQL="select fig_label from figure where fig_zdb_id = '$mrkrview_xpatfig_zdb_id';">
+	          <?MIVAR NAME=mrkrview_xpatfig_label>$1<?/MIVAR>
+               <?/MISQL>
+	       <?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrview_xpatfig_zdb_id'>$mrkrview_xpatfig_label</a> from $mrkrview_xpatsource_desc<?/MIVAR>
+	   <?/MIBLOCK>
            </td>
          </tr>
      <?/MIBLOCK>
@@ -1453,7 +1464,7 @@ SQL="
 
 	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 
-	    <tr><td><b>Directly submitted expression data: </b></td>
+	    <tr><th>Directly&nbsp;submitted&nbsp;expression&nbsp;data:</th>
 
          <?MIELSE>
 	    <tr><td>&nbsp;</td>
@@ -1485,12 +1496,12 @@ SQL="
 	   <?/MISQL>
 
            <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
-	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count $(IF,$(>,$mrkrview_xpatsubfig_count,1),figures,figure) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name]
-	   </td></tr>
+	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> [$mrkrview_xpatsub_probe_name] 
+	   </td></tr>	
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
        <?MIELSE>
           <?MISQL SQL="select count(distinct img_zdb_id)::integer
@@ -1505,12 +1516,12 @@ SQL="
           <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 
           <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
-	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count $(IF,$(>,$mrkrview_xpatsubfig_count,1),figures,figure) ($mrkrview_image_count images)</a>
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref
-	   </td></tr>
+	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> 
+	   </td></tr>	
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
       <?/MIBLOCK>
     <?/MISQL>
@@ -1538,7 +1549,7 @@ SQL="
 
 	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 
-	    <tr><td><b>Directly submitted expression data: </b></td>
+	    <tr><th>Directly&nbsp;submitted&nbsp;expression&nbsp;data:</th>
 
          <?MIELSE>
 	    <tr><td>&nbsp;</td>
@@ -1556,15 +1567,12 @@ SQL="
 <?MIVAR NAME=mrkrview_xpat_author>Mason<?/MIVAR>
 <?MIVAR NAME=mrkrview_xpat_resulttytpe>Unpublished<?/MIVAR>
 
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
-     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count figure(s)($mrkrview_image_count images)</a>
-<?MICOMMENT>
-	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
-<?/MICOMMENT>
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count $(IF,$(>,$mrkrview_xpatsubfig_count,1),figures,figure) ($mrkrview_image_count images)</a> 
 	 <?/MIVAR>
 
          <td>
-	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref
+	   $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> 
 	 </td></tr>
 <?/MISQL>
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
@@ -1614,8 +1622,8 @@ SQL="
 
 	<?MIVAR COND="$(AND,$(>,$(POSITION,$OID,GENE),0),$(>,$NUM_STAGES,0))">
 	<tr>
-	<td width="30%"><b>Wild Type Stages, Structures:</b></td>
-	<td width="70%">
+	<th>Wild&nbsp;Type&nbsp;Stages,&nbsp;Structures:</th>
+	<td>
 
 
 	 <?MIVAR COND="$(EQ,$FIRSTSTAGE,$LASTSTAGE)">
@@ -1685,14 +1693,14 @@ union
 
 	 <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
          <?MIVAR COND="$(EQ,$mrkrview_xpatsource_count,0)">
-             <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+             <table class="summary horizontal-solidblock">
          <?/MIVAR>
          <?MICOMMENT>
          If GEO does not have this accession, then none of the other databases will have it either, so this is safe to do here
          <?/MICOMMENT>
-         <tr >
-         <td width="30%"><b>Curated microarray expression:</b>
-         </td>
+         <tr>
+         <th>Curated&nbsp;microarray&nbsp;expression:
+         </th>
          <td align=left>
      <?MICOMMENT>
      They will all have the same dataId, so just using the last one will be okay
@@ -1795,10 +1803,6 @@ union
 <?/MIBLOCK> <?MICOMMENT>block for marker type=gene<?/MICOMMENT>
 
 
-
-
-
-
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
         <br>$1 End Expression section,Start Geno/Mutant section
@@ -1864,7 +1868,7 @@ union
      <hr width=80%>
       <table><tr><td valign="top">
       <b>
-         TRANSGENIC LINE(S) :
+         TRANSGENIC LINE(S):
       </b>
       </td>
       <td>
@@ -1898,6 +1902,7 @@ union
 	       ==============================
    <?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
+   <?MIVAR NAME="mrkrview_allele_display"><?/MIVAR>
    <?MISQL SQL="
  	 execute function get_mutants_html_link('$OID');">
 
@@ -1905,19 +1910,9 @@ union
    <?/MISQL>
    <?MIBLOCK COND="$(NC,$mrkrview_mutants_display,)">
 
-     <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-       <hr width=80%>
-       <b>
-	MUTANTS AND TARGETED KNOCKDOWNS:
-       </b> <br>
-       $(SETVAR,$display_mut_trg_title,t)
-     <?/MIVAR>
-     <?MIVAR>
-       <table width =100% border=0 bgcolor=$highlight>
-     <?/MIVAR>
-     <tr>
-     <td>
-       <b>Mutant line(s): &nbsp; </b>
+   <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">
+     <?MIVAR NAME="mrkrview_allele_display">$1<?/MIVAR>
+   <?/MISQL>
 
       <?MIVAR>
 	$mrkrview_mutants_display
@@ -1949,14 +1944,15 @@ union
   <?/MISQL>
   <?MISQL COND=$(EC,$mrkrview_tableExists,f) SQL="
     create temp table $mrkrview_temp_pato (
-    t_pato_zdb_id 	varchar(50)       ) with NO LOG;">
+    t_pato_zdb_id 	int       ) with NO LOG;">
   <?/MISQL>
 
   <?MISQL SQL="insert into $mrkrview_temp_pato
-               select apato_zdb_id
-                 from mutant_fast_search, atomic_phenotype
+               select phenos_pk_id
+                 from mutant_fast_search, phenotype_statement, phenotype_experiment
                 where mfs_mrkr_zdb_id ='$OID'
-      	          and mfs_genox_zdb_id = apato_genox_zdb_id ;">
+      	          and mfs_genox_zdb_id = phenox_genox_zdb_id
+      	          and phenos_phenox_pk_id = phenox_pk_id;">
   <?/MISQL>
 
   <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
@@ -1994,14 +1990,9 @@ union
 	        =================================
     <?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
-  <?MISQL SQL="select count(*)::integer
-	       from marker_relationship
-	      where mrel_mrkr_2_zdb_id = '$OID'
-		and mrel_type = 'knockdown reagent targets gene';">
 
-     <?MIVAR NAME=$mrkrview_agt_plural>$(IF,$(>,$1,1),<b>s</b>,)<?/MIVAR>
-  <?/MISQL>
 
+  <?MIVAR NAME="$mrkrview_morpholino_display"><?/MIVAR>
   <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev, mrel_zdb_id
 	       from marker_relationship
 		    join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
@@ -2012,36 +2003,69 @@ union
     <?MIVAR NAME=mrkrview_agt_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=mrkrview_agt_name>$2<?/MIVAR>
     <?MIVAR NAME=mrkrview_agt_mrel_zdb_id>$3<?/MIVAR>
-    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-        <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-	   <hr width=80%>
-	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>
-           $(SETVAR,$display_mut_trg_title,t)
-        <?/MIVAR>
-	<?MIVAR>
-	  <table width=100% border=0 bgcolor=$highlight>
-           <tr><td>
-  	     <b> Knockdown reagent$mrkrview_agt_plural: </b>
-	<?/MIVAR>
-    <?MIELSE>
-	, &nbsp;
+
+    <?MIVAR NAME="$mrkrview_morpholino_display">$mrkrview_morpholino_display
+
+      <?MIBLOCK COND="$(NOT,$(=,$MI_CURRENTROW,1))">,&nbsp;<?/MIBLOCK>
+
+      <?MIVAR COND="$(XST,$UPDATE)">
+         <input type=button value=Delete
+           onClick="Delete_mrel('$mrkrview_agt_zdb_id','knockdown reagent targets gene')">
+      <?/MIVAR>
+
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
+        $mrkrview_agt_name
+      </a>
+      <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?/MIVAR>
+  <?/MISQL>
+
+
+    <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE *** <?/MICOMMENT>
+
+    
+  <?MIBLOCK COND="$(OR,$(NC,$mrkrview_mutants_display,),$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
+
+  <div class="summary">
+	<div class="summaryTitle">MUTANTS AND TARGETED KNOCKDOWNS</div>
+
+    <table class="summary horizontal-solidblock">
+        <?MIBLOCK COND="$(NC,$mrkrview_mutants_display,)">
+          <tr>
+            <th>Mutant&nbsp;lines:</th>
+            <td><?MIVAR>$mrkrview_mutants_display<?/MIVAR></td>
+          </tr>
+        <?/MIBLOCK>
+
+        <?MIBLOCK COND="$(NC,$mrkrview_allele_display,)">
+          <tr>
+            <th>Alleles:</th>
+            <td><?MIVAR>$mrkrview_allele_display<?/MIVAR></td>
+          </tr>
+        <?/MIBLOCK>
+
+        <?MIBLOCK COND="$(NC,$mrkrview_morpholino_display,)">
+          <tr>        
+            <th>Knockdown&nbsp;reagents:</th>
+            <td><?MIVAR>$mrkrview_morpholino_display<?/MIVAR></td>
+          </tr>
+        <?/MIBLOCK>
+
+    </table>
+    </div>
+
     <?/MIBLOCK>
 
-    <?MIVAR COND="$(XST,$UPDATE)">
-       <input type=button value=Delete
-         onClick="Delete_mrel('$mrkrview_agt_zdb_id','knockdown reagent targets gene')">
-    <?/MIVAR>
-
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
-	$mrkrview_agt_name
-    </a>
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-  <?/MISQL>
-  <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
-    </td></tr></table>
-  <?/MIBLOCK>
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
 
+    <?MICOMMENT> *** DISPLAY PHENOTYPE TABLE ** <?/MICOMMENT>
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,MRPHLNO))">
+    <div class="summary">
+    <span class="summaryTitle">PHENOTYPE</span> (<a href="javascript:start_note('phenotype_note')">current status</a>)
+      <?MICOMMENT> *** call phenotype_miniview.apg to display the phenotype data *** <?/MICOMMENT>
+      <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+    </div>
+<?/MIBLOCK>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
@@ -2098,11 +2122,10 @@ union
 
  <?MIVAR NAME=$rowcount>$1<?/MIVAR>
  <?MIBLOCK COND="$(>,$rowcount,0)">
-	<hr width = "80%">
-  	<b>GENE PRODUCTS: </b>
-        <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
     <?MIVAR>
-	<p><b>Gene Ontology</b><?/MIVAR>
+	<div class="summary">
+	  <div class="summaryTitle">GENE ONTOLOGY</div>
+	  <?/MIVAR>
       <?MIVAR COND="$(XST,$UPDATE)">
       <INPUT TYPE=button value="Update" onClick="edit_go('$OID')">
     <?/MIVAR>
@@ -2110,10 +2133,9 @@ union
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 
-	<hr width = "80%">
-  	<b>GENE PRODUCTS: </b>
-        <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<p><b>Gene Ontology</b>
+	
+	<div class="summary">
+	  <div class="summaryTitle">GENE ONTOLOGY</div>
       <?MIVAR>
       <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR>
      <?/MIBLOCK>
@@ -2121,12 +2143,12 @@ union
 
     <?MIBLOCK COND="$(>,$rowcount,0)">
     <?MIVAR><TABLE class="summary"><?/MIVAR>
-    <TR bgcolor=#cccccc>
-         <th align=left width = 15%><b><A HREF="/zf_info/GO.html">Ontology</A></b></th>
+    <tr>
+         <th width = "15%"><A HREF="/zf_info/GO.html">Ontology</A></th>
         <?MIBLOCK COND="$(EC,$qualifier,true)">
-        <th align=left width = 13%><b>Qualifier</b></th>
+        <th width = "13%">Qualifier</th>
         <?/MIBLOCK>
-         <th><b>GO Term</b></th>
+         <th>GO Term</th>
 
 
 <!-- use vector storing the three ontology and loop through for display -->
@@ -2139,7 +2161,7 @@ union
     <?MIVAR NAME=contribs>f<?/MIVAR>
 
     <?MISQL SQL="
-      select first 1 term_ont_id, goev_display_order, term_name, mrkrgoev_zdb_id,mrkrgoev_gflag_name,gont_ontology_name
+      select first 1 term_ont_id, goev_display_order, get_entity_name_html(term_zdb_id), mrkrgoev_zdb_id,mrkrgoev_gflag_name,gont_ontology_name
         from term, go_evidence_code, marker_go_term_evidence, go_ontology
         where mrkrgoev_mrkr_zdb_id = '$OID'
           and mrkrgoev_term_zdb_id = term_zdb_id
@@ -2181,12 +2203,12 @@ union
    <?/MIBLOCK>
 
    <?MIBLOCK COND="$(>,$anncount,1)">
-       <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$(TRIM,$molterm)</a>
+       <?MIVAR><TD align=left>$molterm
      (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
    <?/MIBLOCK>
 
    <?MIBLOCK COND="$(=,$anncount,1)">
-     <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$molterm</a>
+     <?MIVAR><TD align=left>$molterm
      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
    <?/MIBLOCK>
    </TR>
@@ -2194,10 +2216,11 @@ union
 
 </TABLE>
   <?MIBLOCK COND="$(>,$rowcount,0)">
-    <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
-	<?MIVAR><TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
-</TR></TABLE>
+    <div>
+	<?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR>
+    </div>
   <?/MIBLOCK>
+  </div>
 <?/MIBLOCK> <?MICOMMENT> end rowcount > 0 (found some go terms) <?/MICOMMENT>
   <!--------------- end of Gene Ontology --------------->
 
@@ -2224,12 +2247,8 @@ union
 
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 
-        <?MIBLOCK COND="$(=,$titledisplay,0)">
-		<hr width = "80%">
-  		<b>GENE PRODUCTS: </b>
-		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<?/MIBLOCK>
-	<p><b>Protein Families, Domains and Sites: </b>
+
+	<p><b>Protein Families, Domains and Sites </b>
   	<?MIVAR>
 	 <?MIBLOCK COND="$(XST,$UPDATE)">
           <form name=updateps>
@@ -2257,7 +2276,7 @@ union
            <?/MIVAR>
            </form>
  	 <?/MIBLOCK> <?MICOMMENT>end of update <?/MICOMMENT>
-	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
+	<TABLE class="summary">
  	 <?/MIVAR>
         <TR>
     <?/MIBLOCK>  <?MICOMMENT> end of first row <?/MICOMMENT>
@@ -2288,7 +2307,7 @@ union
 <div id="markerviewtranscriptdetails">Loading Transcript Data... <img src="/images/ajax-loader.gif"/></div>
 <?MIVAR>
 <script type="text/javascript">
-  new Ajax.Updater('markerviewtranscriptdetails','/action/marker/related-transcripts?zdbID=$OID');
+  jQuery('#markerviewtranscriptdetails').load('/action/marker/related-transcripts?zdbID=$OID', function() { processPopupLinks(); });
 </script>
 <?/MIVAR>
 
@@ -2306,7 +2325,7 @@ union
   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
         <?MIBLOCK COND="$(=,$titledisplay,0)">
 		<hr width = "80%">
-  		<b>GENE PRODUCTS: </b>
+  		<b>GENE PRODUCTS </b>
 		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
 	<p><?MIVAR><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
@@ -2321,14 +2340,10 @@ union
   		  and mrel_type = 'gene product recognized by antibody';">
   <?/MISQL>
   <?MIBLOCK COND="$(>,$1,0)">
-        <?MIBLOCK COND="$(=,$titledisplay,0)">
-    		<hr width = "80%">
-      		<b>GENE PRODUCTS: </b>
-    		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<?/MIBLOCK>
-  <hr width = "80%">
-  <p><b>ANTIBODIES:</b>
-  <table width =100% border=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+        
+  <div class="summary">
+  <div class="summaryTitle">ANTIBODIES</div>
+  <table class="summary">
   <?MIVAR NAME=$antibodyID><?/MIVAR>
   <tr><td>
   <?MISQL SQL="select mrel_mrkr_2_zdb_id,mrkr_name
@@ -2406,9 +2421,9 @@ union
    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
   	<hr width=80%>
   	  <b>
-	     CONSTRUCTS WITH SEQUENCE FROM <?MIVAR><i>$abbrev</i>:<?/MIVAR>
+	     CONSTRUCTS WITH SEQUENCE FROM <?MIVAR><i>$abbrev</i><?/MIVAR>
   	  </b>
-   <table width=100% cols=2 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+   <table class="summary" cols=2>
     <tr>
      <td>
        <?MISQL SQL="select WebExplode(object,'mrkr_id=$OID') from webPages where ID='aa-mrkrgenolist.apg';">$1<?/MISQL>
@@ -2432,7 +2447,7 @@ union
 <div class="summary">
 <div id="clone_gbrowse_thumbnail_box"  style="display: none;" >
   <table class="summary solidblock" id="clone_gbrowse_thumbnail_box">
-    <caption>GBrowse:</caption>
+    <caption>GBROWSE</caption>
     <?MIVAR>
     <tr>
       <td style="text-align: center">
@@ -2497,9 +2512,9 @@ union
   <HR width="80%">
   <b>
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
-    SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
+    SEGMENT (CLONE AND PROBE) RELATIONSHIPS
   <?MIELSE>
-    MARKER RELATIONSHIPS:
+    MARKER RELATIONSHIPS
   <?/MIBLOCK>
   </b>
 <?/MIBLOCK>
@@ -2554,7 +2569,7 @@ union
 
 <?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
 
-<TABLE border=0 width=100%>
+<table class="summary horizontal-solidblock">
 	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$OID&mrkrrel_rel_direction=2_to_1') from webPages where ID='aa-markerrelationship.apg' ;">
        $1
     <?/MISQL>
@@ -2570,7 +2585,7 @@ union
        $1
     <?/MISQL>
    <?/MIBLOCK>
-</TABLE>
+</table>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form> <?MICOMMENT> end form updaterrel <?/MICOMMENT>
@@ -2641,7 +2656,7 @@ union
 
 <?MIBLOCK COND="$(OR,$mrkrview_nSequenceLinks,$(XST,$UPDATE))">
     <HR width="80%">
-    <a name=sequence><b>SEQUENCE INFORMATION:</b></a>
+    <a name=sequence><b>SEQUENCE INFORMATION</b></a>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -2741,14 +2756,15 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <?/MIBLOCK>  <?MICOMMENT> end update <?/MICOMMENT>
 
+<?MIVAR NAME="$row_class">even<?/MIVAR>
 
 <?MIBLOCK COND="$mrkrview_nSequenceLinks">
-  <TABLE class="summary">
+  <TABLE class="summary rowstripes">
     <TR>
-      <th width=30% bgcolor=#cccccc><b>Type</b></th>
-      <th width=40% bgcolor=#cccccc><b>Accession #</b></th>
-      <th class="length"><b>Length (bp/aa)</b></th>
-      <th class="analysis"><A HREF="javascript:start_help()"><b>Analysis</b></A></th>
+      <th width=30%>Type</th>
+      <th width=40%>Accession #</th>
+      <th class="length">Length (bp/aa)</th>
+      <th class="analysis">Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
     </TR>
     <?MIVAR NAME=$mrkrview_prevDataType><?/MIVAR>
     <?MIVAR NAME=$mrkrview_displayAllSequencesLink>0<?/MIVAR>
@@ -2827,6 +2843,9 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
       <?MIVAR NAME=data_type>$10<?/MIVAR>
       <?MIVAR NAME=mrkr_fdbc_zdb_id>$12<?/MIVAR>
 
+
+
+
       <?MIBLOCK COND="$(NE,$data_type,$mrkrview_prevDataType)">
         <?MICOMMENT>
           Data type changed.  Display first row for this data type.
@@ -2834,8 +2853,15 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           the source of GenBank accession has to be a one-character string
 	  to behave right in EC operation.
         <?/MICOMMENT>
+
+        <?MIBLOCK COND="$(EQ,$row_class,odd)">
+          <?MIVAR NAME="$row_class">even<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR NAME="$row_class">odd<?/MIVAR>
+        <?/MIBLOCK>
+
         <?MIVAR>
-          <TR>
+          <TR class="$row_class newgroup">
             <TD>
               $data_type
             </TD>
@@ -2882,17 +2908,15 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
         <?MIVAR NAME=$mrkrview_displayAllSequencesLink>1<?/MIVAR>
       <?/MIBLOCK>  <?MICOMMENT> end data type did or did not change <?/MICOMMENT>
     <?/MISQL>
-
-    <?MIBLOCK COND=$mrkrview_displayAllSequencesLink>
-      <TR>
-        <TD colspan=4>
-          <?MIVAR>
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($mrkrview_nSequenceLinks)</a>
-          <?/MIVAR>
-        </TD>
-      </TR>
-    <?/MIBLOCK>
   </TABLE>
+    <?MIBLOCK COND=$mrkrview_displayAllSequencesLink>
+      <div>
+        <?MIVAR>
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($mrkrview_nSequenceLinks)</a>
+        <?/MIVAR>
+      </div>
+    <?/MIBLOCK>
+
 <?/MIBLOCK> <?MICOMMENT> end there were sequence records <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -3009,10 +3033,9 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
   <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
     <HR width="80%">
-    <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES:</b><?/MIVAR>
-<br>
-<br>
+    <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES</b><?/MIVAR>
 <?MIBLOCK COND="$(XST,$UPDATE)">
+  
   <form name=updateother>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
   <br><br>
@@ -3053,7 +3076,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     <?MIBLOCK COND="$(XST,$dblink_other)">
         <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
         <?MIVAR>
-            <TABLE  width="100%" border=0 bgcolor="$highlight">
+            <TABLE  class="summary">
                 $dblink_other_table_row
             </TABLE>
         <?/MIVAR>
@@ -3078,9 +3101,9 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <?MIBLOCK COND="$(AND,$(NXST,$type_of_knockdown_reagent),$(=,$(POSITION,$OID,CONSTRCT),0), $(=,$(POSITION,$OID,-EFG-),0))">
   <hr width="80%" align = center>
-  <b>MAPPING INFORMATION:  </b>
+  <b>MAPPING INFORMATION  </b>
 
-  <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
+  <TABLE class="summary">
    <TR>
     <TD>
        &nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
@@ -3095,7 +3118,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
- <a name=orthologue><b>ORTHOLOGY:</b></a>
+ <a name=orthologue><b>ORTHOLOGY</b></a>
  <?MICOMMENT>at update mode, user will choose species, and invoke refresh<?/MICOMMENT>
  <?MIBLOCK COND="$(XST,$UPDATE)">
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>

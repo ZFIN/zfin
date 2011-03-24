@@ -3,6 +3,11 @@
 @import url("spiffycorners.css");
 @import url("footer.css");
 @import url("Lookup.css");
+@import url("datapage.css");
+@import url("popup.css");
+
+
+a { text-decoration: none; }
 
 .sidebar, .content, .header .acknowledgement {
     font-family: arial, sans-serif;
@@ -18,6 +23,7 @@ body {
     background: @SITE_BACKGROUND@ ;
 
 }
+
 
 hr {
     background-color: #FFFFFF;
@@ -178,15 +184,6 @@ table.data_manager a.root {
 
 .wildtype {
     font-style: normal;
-}
-
-/** Postcomposition of two ontology terms.
-    An underline to link them together, but
-    colored so that it looks like a break
-    between distinct terms              **/
-.postcomposedtermlink {
-    text-decoration: underline;
-    color: #000;
 }
 
 
@@ -495,12 +492,6 @@ img.clickable {
 
 .phenotype-table {
     line-height:90%;
-}
-
-a.wiki-link {
-    font-size: small;
-    background: transparent url(/images/external.png) no-repeat scroll right center;
-    padding-right: 13px;
 }
 
 .text-changed{

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.zfin.database">
+
+    <!-- View -->
+    <class name="DatabaseLock" table="syslocks" mutable="false">
+        <composite-id>
+            <key-property name="dbsName" column="dbsname"/>
+            <key-property name="rowId" column="rowidlk"/>
+            <key-property name="tableName" column="tabname"/>
+            <key-property name="type" column="type"/>
+        </composite-id>
+        <many-to-one name="session" column="owner"/>
+    </class>
+
+    <!-- View -->
+    <class name="SysSession" table="syssessions" mutable="false">
+        <id name="sid"/>
+
+        <set name="syslocks">
+            <key column="owner"/>
+            <one-to-many class="DatabaseLock"/>
+        </set>
+    </class>
+
+</hibernate-mapping>

@@ -1403,7 +1403,7 @@ function doValidateAndSubmit(currentTime ){
         <?MIBLOCK COND="$(=,$fsel_fig_count,1)">
           <?MIVAR>
             <span title="Phenotype observed in: $fsel_separate_anat_list">
-              <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,)
+              <A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure $(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A>&nbsp;$(IF,$(>,$fsel_MO_flag,0),<img src="/images/MO_icon.gif" border="0" alt="MO image">,) 
             </span>
           <?/MIVAR>
         <?MIELSE>
@@ -1610,7 +1610,7 @@ function doValidateAndSubmit(currentTime ){
                <?MIVAR>
 		<div id="pagination"></div>
 		<script type="text/javascript">
-		    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+		    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
 		</script>
 	 	<?/MIVAR>
 		<div id="pagination"></div>

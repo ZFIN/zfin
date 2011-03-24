@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * For display of figure information
  */
 public class ImageViewController extends AbstractCommandController {
-    private static Logger LOG = Logger.getLogger(PublicationSearchResultController.class);
+    private static Logger LOG = Logger.getLogger(ImageViewController.class);
     private String successView;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 

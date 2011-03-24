@@ -68,6 +68,7 @@ public class ZfinActionServlet extends DispatcherServlet {
                 WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
                 GBrowseHibernateUtil.closeSession();
+                SysmasterHibernateUtil.closeSession();
             }
         };
         t.start();
@@ -101,6 +102,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         // initialize Hibernate
         HibernateUtil.init();
         GBrowseHibernateUtil.init();
+        SysmasterHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
     }

@@ -38,25 +38,29 @@ public class ActiveData implements ZdbID {
         return id.contains(type.name());
     }
 
-    public Type validateID() {
-        if (zdbID == null) {
+    public static Type validateID(String id) {
+        if (id == null) {
             throw new InvalidZdbID();
         }
 
-        if (!zdbID.startsWith(ActiveSource.ZDB))
-            throw new InvalidZdbID(zdbID);
+        if (!id.startsWith(ActiveSource.ZDB))
+            throw new InvalidZdbID(id);
 
         Type type = null;
         for (Type zdbType : Type.values()) {
-            if (zdbID.contains(zdbType.name())) {
+            if (id.contains(zdbType.name())) {
                 type = zdbType;
             }
         }
 
         if (type == null) {
-            throw new InvalidZdbID(zdbID, Type.getValues());
+            throw new InvalidZdbID(id, Type.getValues());
         }
         return type;
+    }
+
+    public Type validateID() {
+        return validateID(zdbID);
     }
 
     public static Type getTypeForId(String ID) {
@@ -73,7 +77,6 @@ public class ActiveData implements ZdbID {
         ALT,
         ANAT,
         ANATCMK,
-        APATO,
         API,
         ATB,
         BAC,
@@ -91,7 +94,7 @@ public class ActiveData implements ZdbID {
         DNOTE,
         EFG,
         EST,
-        ETCONST,
+        ETCONSTRCT,
         EXP,
         EXPUNIT,
         EXCOND,
@@ -106,7 +109,7 @@ public class ActiveData implements ZdbID {
         GENO,
         GENOFE,
         GOTERM,
-        GTCONST,
+        GTCONSTRCT,
         IMAGE,
         IMAGEP,
         INFGRP,
@@ -122,6 +125,7 @@ public class ActiveData implements ZdbID {
         PAC,
         PNOTE,
         PROBELI,
+        PTCONSTRCT,
         RAPD,
         REFCROS,
         REGION,
@@ -133,7 +137,7 @@ public class ActiveData implements ZdbID {
         TEMP,
         TERM,
         TERMREL,
-        TGCONST,
+        TGCONSTRCT,
         TSCRIPT,
         URLREF,
         XPAT,

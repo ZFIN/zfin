@@ -2,16 +2,13 @@ package org.zfin.feature.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionResultTermComparator;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.GenotypeFigure;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.Term;
@@ -25,9 +22,8 @@ public class GenotypeBean {
     private GenotypeStatistics genotypeStatistics;
     private List<GenotypeFeature> genotypeFeatures;
     private List<GenotypeFigure> genotypeFigures;
+    private List<PhenotypeStatement> phenoStatements;
     private List<PhenotypeDisplay> phenoDisplays;
-    // a map of geno-MO-entity-quality-tag as keys and display obejects as values
-    private Map<String, PhenotypeDisplay> phenoMap;
     private List<ExpressionDisplay> expressionDisplays;
     private List<ExpressionResult> expressionResults;
 
@@ -77,6 +73,14 @@ public class GenotypeBean {
         this.genotypeFigures = genotypeFigures;
     }
 
+    public List<PhenotypeStatement> getPhenoStatements() {
+        return phenoStatements;
+    }
+
+    public void setPhenoStatements(List<PhenotypeStatement> phenoStatements) {
+        this.phenoStatements = phenoStatements;
+    }
+
     public List<ExpressionDisplay> getExpressionDisplays() {
         if (expressionResults == null || expressionResults.size() == 0)
             return null;
@@ -105,11 +109,16 @@ public class GenotypeBean {
         this.expressionDisplays = expressionDisplays;
     }
 
+    /**
+     * Create a list of expressionDisplay objects organized by expressed gene first,
+     * then by the experiment (note that in case of 1) standard or generic control
+     * 2) chemical condition(s), there could be one more experiments associated.
+     */
     private void createExpressionDisplays() {
         if (expressionResults == null || expressionResults.size() == 0)
             return;
 
-        // a map of zdbIDs of expressed genes as keys and display obejects as values
+        // a map of zdbIDs of expressed genes etc as keys and display obejects as values
         Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
 
         String keyGeno = genotype.getZdbID();
@@ -117,10 +126,16 @@ public class GenotypeBean {
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
+                Experiment exp = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+
                 String key = keyGeno + expressedGene.getZdbID();
 
-                Term superterm = xpResult.getSuperterm();
-                Term subterm = xpResult.getSubterm();
+                if (exp.isStandard())
+				    key = key + "standard";
+				else if (exp.isChemical())
+				    key = key + "chemical";
+				else
+                    key = key + exp.getZdbID();
 
                 Set<Figure> figs = xpResult.getFigures();
                 Publication pub = xpResult.getExpressionExperiment().getPublication();
@@ -129,51 +144,36 @@ public class GenotypeBean {
                 // if the key not in the map, instantiate a display object and add it to the map
                 // otherwise, get the display object from the map
                 if (!map.containsKey(key)) {
-                    xpDisplay = new ExpressionDisplay();
+                    xpDisplay = new ExpressionDisplay(expressedGene);
                     xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
-                    xpDisplay.setNonDuplicatedTerms(new HashSet<Term>());
-                    xpDisplay.getNonDuplicatedTerms().add(superterm);
-
-                    if (subterm != null)
-                        xpDisplay.getNonDuplicatedTerms().add(subterm);
+                    xpDisplay.setExperiment(exp);
 
                     xpDisplay.getExpressionResults().add(xpResult);
                     xpDisplay.setExpressedGene(expressedGene);
+
+                    xpDisplay.setFigures(new HashSet<Figure>());
+                    xpDisplay.getFigures().addAll(figs);
+
                     xpDisplay.setPublications(new HashSet<Publication>());
                     xpDisplay.getPublications().add(pub);
-                    xpDisplay.setFigures(figs);
-                    Set<ExperimentCondition> expConditions = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment().getExperimentConditions();
-                    if (expConditions != null) {
-                        for (ExperimentCondition cond : expConditions) {
-                            if (cond.getMorpholino() != null) {
-                                xpDisplay.setMoInExperiment(true);
-                                break;
-                            }
-                        }
-                    } else {
-                        xpDisplay.setMoInExperiment(false);
+
+                    if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                        map.put(key, xpDisplay);
                     }
-                    map.put(key, xpDisplay);
                 } else {
                     xpDisplay = map.get(key);
-                    if (!xpDisplay.getNonDuplicatedTerms().contains(superterm) && !xpDisplay.getNonDuplicatedTerms().contains(subterm)) {
-                        xpDisplay.getExpressionResults().add(xpResult);
-                        xpDisplay.getNonDuplicatedTerms().add(superterm);
+                    xpDisplay.getExpressionResults().add(xpResult);
 
-                        if (subterm != null)
-                            xpDisplay.getNonDuplicatedTerms().add(subterm);
+                    Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
 
-                        Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
-                    }
-                    xpDisplay.getPublications().add(pub);
                     xpDisplay.getFigures().addAll(figs);
+                    xpDisplay.getPublications().add(pub);
                 }
 
             }
         }
 
-
-        expressionDisplays = new ArrayList<ExpressionDisplay>();
+        expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
 
         if (map.values().size() > 0) {
             expressionDisplays.addAll(map.values());
@@ -201,27 +201,8 @@ public class GenotypeBean {
         }
     }
 
-    public int getTotalNumberOfExpressionFigures() {
-        if (expressionResults == null || expressionResults.size() == 0) {
-            return 0;
-        } else {
-            if (expressionDisplays == null)
-                createExpressionDisplays();
-
-            if (expressionDisplays != null) {
-                Set<Figure> allExpressionFigs = new HashSet<Figure>();
-                for (ExpressionDisplay xpDisp : expressionDisplays) {
-                    allExpressionFigs.addAll(xpDisp.getFigures());
-                }
-                return allExpressionFigs.size();
-            } else {
-                return 0;
-            }
-        }
-    }
-
     public List<PhenotypeDisplay> getPhenoDisplays() {
-        if (genotypeFigures == null)
+        if (phenoStatements == null)
             return null;
 
         if (phenoDisplays == null || phenoDisplays.size() == 0)
@@ -230,85 +211,62 @@ public class GenotypeBean {
         return phenoDisplays;
     }
 
+    /**
+     * Create a list of phenotypeDisplay objects organized by phenotype statement first,
+     * then by the associated experiment.
+     */
     private void createPhenoDisplays() {
-        if (genotypeFigures != null && genotypeFigures.size() > 0) {
+        if (phenoStatements != null && phenoStatements.size() > 0) {
 
-            // a map of geno-MO-entity-quality-tag as keys and display objects as values
-            phenoMap = new HashMap<String, PhenotypeDisplay>();
+            // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
+            Map<String, PhenotypeDisplay> phenoMap = new HashMap<String, PhenotypeDisplay>();
 
-            MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+            for (PhenotypeStatement pheno : phenoStatements) {
 
-            for (GenotypeFigure genoFig : genotypeFigures) {
-
-                Marker mo = genoFig.getMorpholino();
-                String keyMO;
-                if (mo == null) {
-                    keyMO = "";
-                } else {
-                    keyMO = mo.getZdbID();
-                }
-
-                Figure fig = genoFig.getFigure();
+                Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();
 
-                String keyGeno = genotype.getZdbID();
+                Experiment exp = pheno.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
 
-                Term superTerm = genoFig.getSuperTerm();
-                String superTermID = superTerm.getZdbID();
-
-                Term subTerm = genoFig.getSubTerm();
-                if (subTerm != null) {
-                    superTermID += subTerm.getZdbID();
-                }
-
-                Term qualityTerm = genoFig.getQualityTerm();
-                String tag = genoFig.getTag();
-
-                String key = keyGeno + keyMO + superTermID + qualityTerm.getZdbID() + tag;
+                String keyPheno = pheno.getPhenoStatementString();
+                String key;
+                if (exp.isStandard())
+				    key = keyPheno + "standard";
+				else if (exp.isChemical())
+				    key = keyPheno + "chemical";
+				else
+                    key = keyPheno + exp.getZdbID();
 
                 PhenotypeDisplay phenoDisplay;
 
                 // if the key not in the map, instantiate a display object and add it to the map
                 // otherwise, get the display object from the map
                 if (!phenoMap.containsKey(key)) {
-                    phenoDisplay = new PhenotypeDisplay();
-                    phenoDisplay.setGenotype(genotype);
-                    if (mo != null) {
-                        phenoDisplay.setMorpholino(mo);
-                        phenoDisplay.setMoInExperiment(true);
-                    } else {
-                        phenoDisplay.setMoInExperiment(false);
-                    }
+                    phenoDisplay = new PhenotypeDisplay(pheno);
+                    phenoDisplay.setPhenoStatement(pheno);
 
-                    phenoDisplay.setEntityTermSuper(superTerm);
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<Publication, SortedSet<Figure>>();
+                    SortedSet<Figure> figures = new TreeSet<Figure>();
+                    figures.add(fig);
+                    figuresPerPub.put(pub, figures);
 
-                    if (subTerm != null)
-                        phenoDisplay.setEntityTermSub(subTerm);
-
-                    phenoDisplay.setQualityTerm(qualityTerm);
-                    phenoDisplay.setTag(tag);
-
-                    if (phenoDisplay.getSingleFig() == null)
-                        phenoDisplay.setSingleFig(fig);
-
-                    phenoDisplay.setFigures(new HashSet<Figure>());
-                    phenoDisplay.getFigures().add(fig);
-
-                    if (phenoDisplay.getSinglePub() == null)
-                        phenoDisplay.setSinglePub(pub);
-
-                    phenoDisplay.setPublications(new HashSet<Publication>());
-                    phenoDisplay.getPublications().add(pub);
+                    phenoDisplay.setFiguresPerPub(figuresPerPub);
 
                     phenoMap.put(key, phenoDisplay);
                 } else {
                     phenoDisplay = phenoMap.get(key);
-                    phenoDisplay.getFigures().add(fig);
-                    phenoDisplay.getPublications().add(pub);
+
+                    if (phenoDisplay.getFiguresPerPub().containsKey(pub)) {
+                        phenoDisplay.getFiguresPerPub().get(pub).add(fig);
+                    } else {
+                        SortedSet<Figure> figures = new TreeSet<Figure>();
+                        figures.add(fig);
+                        phenoDisplay.getFiguresPerPub().put(pub, figures);
+                    }
                 }
             }
 
-            phenoDisplays = new ArrayList<PhenotypeDisplay>();
+            phenoDisplays = new ArrayList<PhenotypeDisplay>(phenoMap.size());
 
             if (phenoMap.values().size() > 0) {
                 phenoDisplays.addAll(phenoMap.values());
@@ -323,7 +281,7 @@ public class GenotypeBean {
     }
 
     public int getNumberOfPhenoDisplays() {
-        if (genotypeFigures == null || genotypeFigures.size() == 0) {
+        if (phenoStatements == null || phenoStatements.size() == 0) {
             return 0;
         } else {
             if (phenoDisplays == null)

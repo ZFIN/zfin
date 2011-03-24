@@ -1,6 +1,5 @@
 package org.zfin.gwt.marker.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -14,6 +13,7 @@ import org.zfin.gwt.root.dto.CloneTypesDTO;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  */
-public class CloneRPCServiceImpl extends RemoteServiceServlet implements CloneRPCService {
+public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements CloneRPCService {
 
     private transient Logger logger = Logger.getLogger(CloneRPCServiceImpl.class);
     private final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();

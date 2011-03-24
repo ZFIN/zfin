@@ -11,6 +11,9 @@
     <context:component-scan base-package="org.zfin.webservice"/>
     <context:component-scan base-package="org.zfin.people.rpc"/>
     <context:component-scan base-package="org.zfin.feature.presentation"/>
+    <context:component-scan base-package="org.zfin.expression.presentation"/>
+    <context:component-scan base-package="org.zfin.mutant.presentation"/>
+    <context:component-scan base-package="org.zfin.ontology.presentation"/>
     <context:component-scan base-package="org.zfin.wiki.presentation"/>
     <mvc:annotation-driven/>
 

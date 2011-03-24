@@ -22,15 +22,15 @@ public enum Ontology implements Serializable {
     // Subset of GO: Biological Process
     GO_BP("biological_process", "Gene Ontology: Biological Process", false),
     // PATO
-    QUALITY("quality", "Phenotype and Trait Ontology", false),
+    QUALITY("quality", "Phenotypic Quality Ontology", false),
     // PATO: Processes
     // this is "Process Quality"
-    QUALITY_PROCESSES("quality.process", "Phenotype and Trait Ontology: Quality of Process", false),
+    QUALITY_PROCESSES("quality.process", "quality", "Phenotype and Trait Ontology: Quality of Process", false),
     // PATO: Processes
-    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "Phenotype and Trait Ontology: Relation of Process", false),
+    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "quality", "Phenotype and Trait Ontology: Relation of Process", false),
     // PATO: Qualities
     // this is "physical object quality"
-    QUALITY_QUALITIES("quality.quality", "Phenotype and Trait Ontology: Quality of Qualities", false),
+    QUALITY_QUALITIES("quality.quality", "quality", "Phenotype and Trait Ontology: Quality of Qualities", false),
     // PATO: Qualitative
     // This is "qualitative"
     QUALITY_QUALITATIVE("pato.eq.quality.qualitative", "Phenotype and Trait Ontology: Quality of Qualities", false),
@@ -43,12 +43,21 @@ public enum Ontology implements Serializable {
 
     private String ontologyName;
     private String commonName;
+    private String dbOntologyName;
     private boolean composedOntologies;
 
     private Ontology(String name, String commonName, boolean composed) {
         this.ontologyName = name;
         this.commonName = commonName;
         this.composedOntologies = composed;
+        this.dbOntologyName = ontologyName;
+    }
+
+    private Ontology(String name, String dbOntologyName, String commonName, boolean composed) {
+        this.ontologyName = name;
+        this.commonName = commonName;
+        this.composedOntologies = composed;
+        this.dbOntologyName = dbOntologyName;
     }
 
     public String getOntologyName() {
@@ -67,6 +76,11 @@ public enum Ontology implements Serializable {
         return commonName;
     }
 
+    public String getDbOntologyName() {
+        return dbOntologyName;
+    }
+
+
     public static Ontology getOntology(String name) {
         for (Ontology ontology : values()) {
             if (ontology.getOntologyName().equals(name))
@@ -75,10 +89,10 @@ public enum Ontology implements Serializable {
         return null;
     }
 
-    public static Ontology[] getSerializableOntologies(){
+    public static Ontology[] getSerializableOntologies() {
         Ontology[] ontologies = new Ontology[9];
-        int i = 0 ;
-        ontologies[i++] = Ontology.STAGE ;
+        int i = 0;
+        ontologies[i++] = Ontology.STAGE;
         ontologies[i++] = Ontology.ANATOMY;
         ontologies[i++] = Ontology.QUALITY;
         ontologies[i++] = Ontology.QUALITY_PROCESSES;
@@ -88,7 +102,7 @@ public enum Ontology implements Serializable {
         ontologies[i++] = Ontology.GO_BP;
         ontologies[i] = Ontology.SPATIAL;
 
-        return ontologies ;
+        return ontologies;
     }
 
     public static List<Ontology> getOntologies(String name) {

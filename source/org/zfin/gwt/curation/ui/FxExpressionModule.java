@@ -242,7 +242,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
             String classSpan;
             if (!term.isExpressionFound()) {
                 classSpan = createSpanElement(term, WidgetUtil.RED);
-            } else if (term.getSuperterm().getName().equals("unspecified")) {
+            } else if (term.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
                 classSpan = createSpanElement(term, "term-unspecified");
             } else {
                 classSpan = createSpanElement(term, null);

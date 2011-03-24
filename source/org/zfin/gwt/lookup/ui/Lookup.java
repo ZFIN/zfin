@@ -62,6 +62,8 @@ public class Lookup extends Composite {
             if (keySet.contains(JSREF_ACTION)) {
                 if (lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_ANATOMY_SEARCH)) {
                     lookup.setAction(new AnatomySearchSubmitAction());
+                } else if (lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_TERM_SEARCH)) {
+                    lookup.setAction(new TermSearchSubmitAction(lookup.getOntology()));
                 } else if (lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_MARKER_ATTRIBUTE)) {
                     lookup.setAction(new MarkerAttributeSubmitAction(lookup.getOId()));
                 } else if (lookupProperties.get(JSREF_ACTION).equals(LookupComposite.ACTION_FEATURE_ATTRIBUTE)) {

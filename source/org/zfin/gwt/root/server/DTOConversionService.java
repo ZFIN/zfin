@@ -494,7 +494,7 @@ public class DTOConversionService {
      * @param mutantFigureStage Mutant Figure Stage DTO
      * @return mutant figure stage
      */
-    public static MutantFigureStage convertToMutantFigureStageFromDTO(PhenotypeFigureStageDTO mutantFigureStage) {
+    public static MutantFigureStage convertToMutantFigureStageFromDTO(PhenotypeExperimentDTO mutantFigureStage) {
         if (mutantFigureStage == null)
             return null;
 
@@ -519,19 +519,25 @@ public class DTOConversionService {
         return mfs;
     }
 
-    public static PhenotypeFigureStageDTO convertToPhenotypeFigureStageDTO(MutantFigureStage mutantFigureStage) {
-        PhenotypeFigureStageDTO dto = new PhenotypeFigureStageDTO();
-        dto.setPublicationID(mutantFigureStage.getPublication().getZdbID());
+    public static PhenotypeExperimentDTO convertToPhenotypeFigureStageDTO(PhenotypeExperiment mutantFigureStage) {
+        PhenotypeExperimentDTO dto = new PhenotypeExperimentDTO();
+        Figure figure = mutantFigureStage.getFigure();
+        // retrieve full figure object if not existent
+        if (figure.getPublication() == null) {
+            figure = RepositoryFactory.getPublicationRepository().getFigureByID(figure.getZdbID());
+            dto.setFigure(convertToFigureDTO(figure));
+        } else
+            dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
+        dto.setPublicationID(figure.getPublication().getZdbID());
         dto.setEnvironment(convertToEnvironmentDTO(mutantFigureStage.getGenotypeExperiment().getExperiment()));
-        dto.setStart(convertToStageDTO(mutantFigureStage.getStart()));
-        dto.setEnd(convertToStageDTO(mutantFigureStage.getEnd()));
-        dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
+        dto.setStart(convertToStageDTO(mutantFigureStage.getStartStage()));
+        dto.setEnd(convertToStageDTO(mutantFigureStage.getEndStage()));
         dto.setGenotype(convertToGenotypeDTO(mutantFigureStage.getGenotypeExperiment().getGenotype()));
-        Set<Phenotype> phenotypes = mutantFigureStage.getPhenotypes();
-        List<PhenotypeTermDTO> phenotypeTerms = new ArrayList<PhenotypeTermDTO>(5);
-        if (phenotypes != null) {
-            for (Phenotype phenotype : phenotypes) {
-                PhenotypeTermDTO phenotypeDto = convertToPhenotypeTermDTO(phenotype);
+        Set<PhenotypeStatement> phenoStatements = mutantFigureStage.getPhenotypeStatements();
+        List<PhenotypeStatementDTO> phenotypeTerms = new ArrayList<PhenotypeStatementDTO>(5);
+        if (phenoStatements != null) {
+            for (PhenotypeStatement phenotype : phenoStatements) {
+                PhenotypeStatementDTO phenotypeDto = convertToPhenotypeTermDTO(phenotype);
                 phenotypeTerms.add(phenotypeDto);
             }
         }
@@ -539,14 +545,38 @@ public class DTOConversionService {
         return dto;
     }
 
-    public static PhenotypeTermDTO convertToPhenotypeTermDTO(Phenotype phenotype) {
-        PhenotypeTermDTO dto = new PhenotypeTermDTO();
+    public static PhenotypeStatementDTO convertToPhenotypeTermDTO(PhenotypeStatement phenotype) {
+        PhenotypeStatementDTO dto = new PhenotypeStatementDTO();
         dto.setTag(phenotype.getTag());
-        dto.setQuality(convertToTermDTO(phenotype.getQualityTerm()));
-        dto.setSuperterm(convertToTermDTO(phenotype.getSuperterm()));
-        dto.setSubterm(convertToTermDTO(phenotype.getSubterm()));
-        dto.setZdbID(phenotype.getZdbID());
+        dto.setQuality(convertToTermDTO(phenotype.getQuality()));
+        dto.setEntity(convertToEntityDTO(phenotype.getEntity()));
+        dto.setRelatedEntity(convertToEntityDTO(phenotype.getRelatedEntity()));
+        dto.setId(phenotype.getId());
         return dto;
+    }
+
+    public static PhenotypeStructure getPhenotypeStructure(PhenotypeStatementDTO phenotypeDTO) throws TermNotFoundException {
+        PhenotypeStructure structure = new PhenotypeStructure();
+        EntityDTO entityDTO = phenotypeDTO.getEntity();
+        structure.setEntity(populatePostComposedEntity(entityDTO));
+        structure.setRelatedEntity(populatePostComposedEntity(phenotypeDTO.getRelatedEntity()));
+        GenericTerm quality = convertToTerm(phenotypeDTO.getQuality());
+        if (quality == null)
+            throw new TermNotFoundException("No valid quality term found: " + phenotypeDTO.getQuality().getTermName() +
+                    " and " + phenotypeDTO.getQuality().getOntology());
+        structure.setQualityTerm(quality);
+        if (phenotypeDTO.getTag() != null)
+            structure.setTag(PhenotypeStatement.Tag.getTagFromName(phenotypeDTO.getTag()));
+        return structure;
+    }
+
+    private static PostComposedEntity populatePostComposedEntity(EntityDTO entityDTO) throws TermNotFoundException {
+        if (entityDTO == null)
+            return null;
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
+        entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
+        return entity;
     }
 
     public static FishDTO convertToFishDTOFromGenotype(Genotype genotype) {
@@ -608,6 +638,25 @@ public class DTOConversionService {
     }
 
 
+    /**
+     * Given an ontology and a term name.
+     *
+     * @param termDTO term DTO
+     * @return term
+     */
+    public static GenericTerm convertToTerm(TermDTO termDTO) throws TermNotFoundException {
+        if (termDTO == null)
+            return null;
+        if (termDTO.getOntology() == null || StringUtils.isEmpty(termDTO.getTermName()))
+            return null;
+        Ontology ontology = convertToOntology(termDTO.getOntology());
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByName(termDTO.getTermName(),ontology);
+        // if no term found throw exception
+        if (term == null)
+            throw new TermNotFoundException("Could not find valid term for: " + ontology.getCommonName() + ":" + termDTO.getTermName());
+        return term;
+    }
+
     public static TermDTO convertToTermDTO(Term term) {
         if (term == null){
             return null;
@@ -641,10 +690,57 @@ public class DTOConversionService {
         if (ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
+        dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
         return dto;
 
+    }
+
+    public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure) {
+        if (structure == null)
+            return null;
+
+        GenericTerm term = structure.getQualityTerm();
+        Ontology entityOntology = getDefiningOntology(structure);
+        TermDTO dto = new TermDTO();
+        dto.setName(term.getTermName());
+        dto.setZdbID(term.getZdbID());
+        dto.setObsolete(term.isObsolete());
+        Ontology ontology = term.getOntology();
+        // ToDo: generalize this better...
+        if (ontology == Ontology.QUALITY) {
+            if (entityOntology == Ontology.GO_BP || entityOntology == Ontology.GO_MF)
+                ontology = Ontology.QUALITY_PROCESSES;
+            else
+                ontology = Ontology.QUALITY_QUALITIES;
+        }
+        dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
+        OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
+        dto.setOntology(ontologyDTO);
+        dto.setOboID(term.getOboID());
+        return dto;
+    }
+
+    private static Ontology getDefiningOntology(PhenotypeStructure structure) {
+        if (structure == null)
+            return null;
+        PostComposedEntity entity = structure.getEntity();
+        if (entity == null)
+            return null;
+        if (entity.getSubterm() != null)
+            return entity.getSubterm().getOntology();
+        return entity.getSuperterm().getOntology();
+    }
+
+    private static Set<String> convertToSubsetDTO(Set<Subset> subsets) {
+        if (subsets == null)
+            return null;
+        Set<String> subsetDtos = new HashSet<String>(subsets.size());
+        for (Subset subset : subsets) {
+            subsetDtos.add(subset.getInternalName());
+        }
+        return subsetDtos;
     }
 
     public static FigureDTO convertToFigureDTO(Figure figure) {
@@ -660,7 +756,10 @@ public class DTOConversionService {
         StageDTO dto = new StageDTO();
         dto.setZdbID(stage.getZdbID());
         dto.setNameLong(stage.getNameLong());
-        dto.setName(stage.getName() );
+        if (stage.getAbbreviation() == null) {
+            stage = RepositoryFactory.getAnatomyRepository().getStageByID(stage.getZdbID());
+        }
+        dto.setName(stage.getAbbreviation() + " " + stage.getTimeString());
         dto.setStartHours(stage.getHoursStart());
         dto.setEndHours(stage.getHoursEnd());
         dto.setAbbreviation(stage.getAbbreviation());
@@ -676,6 +775,9 @@ public class DTOConversionService {
     public static EnvironmentDTO convertToEnvironmentDTO(Experiment experiment) {
         EnvironmentDTO environment = new EnvironmentDTO();
         environment.setZdbID(experiment.getZdbID());
+        if (experiment.getName() == null) {
+            experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
+        }
         if (experiment.getName().startsWith("_"))
             environment.setName(experiment.getName().substring(1));
         else
@@ -692,18 +794,12 @@ public class DTOConversionService {
         return dto;
     }
 
-    public static PhenotypeTermDTO convertToPhenotypeTermDTO(PhenotypeStructure structure) {
-        PhenotypeTermDTO phenotypeTerm = new PhenotypeTermDTO();
-        TermDTO quality = convertToTermDTO(structure.getQualityTerm());
+    public static PhenotypeStatementDTO convertToPhenotypeTermDTO(PhenotypeStructure structure) {
+        PhenotypeStatementDTO phenotypeTerm = new PhenotypeStatementDTO();
+        TermDTO quality = convertQualityToTermDTO(structure);
         phenotypeTerm.setQuality(quality);
-
-        TermDTO superterm = convertToTermDTO(structure.getSuperterm());
-        phenotypeTerm.setSuperterm(superterm);
-
-        if (structure.getSubterm() != null) {
-            TermDTO subterm = convertToTermDTO(structure.getSubterm());
-            phenotypeTerm.setSubterm(subterm);
-        }
+        phenotypeTerm.setEntity(convertToEntityDTO(structure.getEntity()));
+        phenotypeTerm.setRelatedEntity(convertToEntityDTO(structure.getRelatedEntity()));
         phenotypeTerm.setTag(structure.getTag().toString());
         return phenotypeTerm;
     }
@@ -743,8 +839,12 @@ public class DTOConversionService {
         return experimentDTO;
     }
 
-    public static MutantFigureStage convertToMutantFigureStageFilter(PhenotypeFigureStageDTO dto) {
-        MutantFigureStage mfs = new MutantFigureStage();
+    public static PhenotypeExperiment convertToPhenotypeExperimentFilter(PhenotypeExperimentDTO dto) {
+        if (dto == null)
+            return null;
+
+        PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();
+        phenoExperiment.setId(dto.getId());
         Genotype genotype = new Genotype();
         genotype.setZdbID(dto.getGenotype().getZdbID());
         Experiment environment = new Experiment();
@@ -752,13 +852,20 @@ public class DTOConversionService {
         GenotypeExperiment genotypeExperiment = new GenotypeExperiment();
         genotypeExperiment.setGenotype(genotype);
         genotypeExperiment.setExperiment(environment);
-        mfs.setGenotypeExperiment(genotypeExperiment);
-        mfs.setStart(convertToDevelopmentStage(dto.getStart()));
-        mfs.setEnd(convertToDevelopmentStage(dto.getEnd()));
+        phenoExperiment.setGenotypeExperiment(genotypeExperiment);
+        phenoExperiment.setStartStage(convertToDevelopmentStage(dto.getStart()));
+        phenoExperiment.setEndStage(convertToDevelopmentStage(dto.getEnd()));
+        phenoExperiment.setFigure(convertToFigure(dto.getFigure()));
         Publication pub = new Publication();
         pub.setZdbID(dto.getPublicationID());
-        mfs.setPublication(pub);
-        return mfs;
+        return phenoExperiment;
+    }
+
+    public static Figure convertToFigure(FigureDTO figureDto) {
+        Figure figure = new FigureFigure();
+        figure.setZdbID(figureDto.getZdbID());
+        figure.setLabel(figureDto.getLabel());
+        return figure;
     }
 
     public static DevelopmentStage convertToDevelopmentStage(StageDTO start) {
@@ -770,9 +877,11 @@ public class DTOConversionService {
 
     public static ExpressedTermDTO convertToExpressedTermDTO(ComposedFxTerm term) {
         ExpressedTermDTO termDto = new ExpressedTermDTO();
-        termDto.setSuperterm(convertToTermDTO(term.getSuperTerm()));
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(convertToTermDTO(term.getSuperTerm()));
         if (term.getSubterm() != null)
-            termDto.setSubterm(convertToTermDTO(term.getSubterm()));
+            entity.setSubTerm(convertToTermDTO(term.getSubterm()));
+        termDto.setEntity(entity);
         termDto.setExpressionFound(term.isExpressionFound());
         termDto.setZdbID(term.getZdbID());
         return termDto;
@@ -783,22 +892,13 @@ public class DTOConversionService {
         dto.setZdbID(es.getZdbID());
         dto.setCreator(es.getPerson().getName());
         dto.setDate(es.getDate());
-        ExpressedTermDTO expressionTerm = new ExpressedTermDTO();
-        Term superterm = es.getSuperterm();
-        TermDTO supertermDTO = convertToTermDTO(superterm);
-        expressionTerm.setSuperterm(supertermDTO);
-
-        // if subterm available
-        if (es.getSubterm() != null) {
-            TermDTO subtermDTO = convertToTermDTO(es.getSubterm());
-            expressionTerm.setSubterm(subtermDTO);
-        }
+        ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
         dto.setExpressedTerm(expressionTerm);
-        if (superterm.getOntology().equals(Ontology.ANATOMY)) {
+        if (es.getSuperterm().getOntology().equals(Ontology.ANATOMY)) {
             // awkward but needs to be done until we have a better way to join in the stage info for a term.
-            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(superterm.getZdbID());
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(es.getSuperterm().getZdbID());
             AnatomyItem anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyItem(term.getTermName());
-            StageDTO start = convertToStageDTO(anatomyItem.getStart());
+	                StageDTO start = convertToStageDTO(anatomyItem.getStart());
             StageDTO end = convertToStageDTO(anatomyItem.getEnd());
             dto.setStart(start);
             dto.setEnd(end);
@@ -893,6 +993,17 @@ public class DTOConversionService {
 //        infoDTO.setObsolete(term.isObsolete());
 //        return infoDTO;
 //    }
+//        info.setSubsets(convertToSubsetDTO(term.getSubsets()));
+//        // try to use the provided ontology first as it may be more specific than
+        // the ontology from the term itself.
+    //        if (ontologyDTO != null) {
+    //            info.setOntology(ontologyDTO);/
+    //       } else if (term.getOntology() != null) {
+    //        info.setOntology(DTOConversionService.convertToOntologyDTO(term.getOntology()));
+    //    }
+    //    info.setObsolete(term.isObsolete());
+    //    return info;
+    // }
 
     public static FeatureMarkerRelationshipDTO convertToFeatureMarkerRelationshipDTO(FeatureMarkerRelationship featureMarkerRelationship) {
         FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = new FeatureMarkerRelationshipDTO();
@@ -1003,5 +1114,55 @@ public class DTOConversionService {
 //                return 0;
 //        }
 //    }
+
+
+    public static EntityDTO convertToEntityDTO(PostComposedEntity entity) {
+        if (entity == null)
+            return null;
+
+        EntityDTO dto = new EntityDTO();
+        dto.setSuperTerm(convertToTermDTO(entity.getSuperterm()));
+        dto.setSubTerm(convertToTermDTO(entity.getSubterm()));
+        return dto;
+    }
+
+    public static PhenotypeStructure convertToPhenotypeStructure(PhenotypeStatement phenotypeStatement) {
+        PhenotypeStructure phenoStructure = new PhenotypeStructure();
+        phenoStructure.setEntity(phenotypeStatement.getEntity());
+        phenoStructure.setRelatedEntity(phenotypeStatement.getRelatedEntity());
+        phenoStructure.setQualityTerm(phenotypeStatement.getQuality());
+        phenoStructure.setTag(PhenotypeStatement.Tag.getTagFromName(phenotypeStatement.getTag()));
+        return phenoStructure;
+    }
+
+    /**
+     * Note that this conversion does not populate the expression found attribute.
+     *
+     * @param expressionStructure ExpressionStructure
+     * @return ExpressedTermDTO
+     */
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
+        ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        expressedDTO.setEntity(entity);
+        return expressedDTO;
+    }
+
+    /**
+     * Populates the superterm only.
+     * expression found = false
+     *
+     * @param term Term
+     * @return ExpressedTermDTO
+     */
+    public static ExpressedTermDTO convertToExpressedTermDTO(Term term) {
+        ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(term));
+        expressedDTO.setEntity(entity);
+        return expressedDTO;
+    }
 
 }

@@ -5,13 +5,13 @@ package org.zfin.gwt.root.dto;
  */
 public class PhenotypePileStructureDTO extends AbstractPileStructureDTO implements Comparable<PhenotypePileStructureDTO> {
 
-    private PhenotypeTermDTO phenotypeTerm;
+    private PhenotypeStatementDTO phenotypeTerm;
 
-    public PhenotypeTermDTO getPhenotypeTerm() {
+    public PhenotypeStatementDTO getPhenotypeTerm() {
         return phenotypeTerm;
     }
 
-    public void setPhenotypeTerm(PhenotypeTermDTO phenotypeTerm) {
+    public void setPhenotypeTerm(PhenotypeStatementDTO phenotypeTerm) {
         this.phenotypeTerm = phenotypeTerm;
     }
 

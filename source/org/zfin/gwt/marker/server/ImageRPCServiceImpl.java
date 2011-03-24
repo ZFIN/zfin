@@ -1,6 +1,5 @@
 package org.zfin.gwt.marker.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -16,6 +15,7 @@ import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -24,7 +24,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageRPCServiceImpl extends RemoteServiceServlet implements ImageRPCService {
+public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements ImageRPCService {
 
     private transient Logger logger = Logger.getLogger(ImageRPCServiceImpl.class);
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();

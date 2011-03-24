@@ -6,10 +6,21 @@
 <%@ attribute name="marker" type="org.zfin.marker.Marker"
               rtexprvalue="true" required="true" %>
 
-<b>Name:</b> <zfin:name entity="${marker}"/> <br>
-<b>Symbol:</b> <zfin:abbrev entity="${marker}"/> <br>
-<b>Marker Type:</b> ${marker.markerType.name}</br>
+<table class="primary-entity-attributes">
 
-<zfin2:previousNames entity="${marker}"/>
+    <tr>
+      <th><span class="name-label">${marker.markerType.name}&nbsp;Name:</span></th>
+      <td><span class="name-value"><zfin:name entity="${marker}"/></span></td>
+    </tr>
+
+    <tr>
+      <th><span class="name-label">${marker.markerType.name}&nbsp;Abbreviation:</span></th>
+      <td><span class="name-value"><zfin:abbrev entity="${marker}"/></span></td>
+    </tr>
+
+    <zfin2:previousNames entity="${marker}"/>
+
+</table>
+
 
 <zfin2:notes hasNotes="${formBean.marker}"/>

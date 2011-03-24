@@ -1,18 +1,25 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.util.StringUtils;
 
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.
  */
 public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTermDTO> {
 
+    protected long id;
     protected String zdbID;
-    protected TermDTO superterm;
-    protected TermDTO subterm;
+    protected EntityDTO entity;
 
     private boolean expressionFound;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public boolean isExpressionFound() {
         return expressionFound;
@@ -23,26 +30,15 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
     }
 
     public String getDisplayName() {
-        String composedTerm = superterm.getName();
-        if (subterm != null)
-            composedTerm += ":" + subterm.getName();
-        return composedTerm;
+        return entity.getDisplayName();
     }
 
-    public TermDTO getSuperterm() {
-        return superterm;
+    public EntityDTO getEntity() {
+        return entity;
     }
 
-    public void setSuperterm(TermDTO superterm) {
-        this.superterm = superterm;
-    }
-
-    public TermDTO getSubterm() {
-        return subterm;
-    }
-
-    public void setSubterm(TermDTO subterm) {
-        this.subterm = subterm;
+    public void setEntity(EntityDTO entity) {
+        this.entity = entity;
     }
 
     public String getZdbID() {
@@ -53,68 +49,49 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         this.zdbID = zdbID;
     }
 
+    public TermDTO getTermDTO(EntityPart entityPart) {
+        switch (entityPart) {
+            case ENTITY_SUPERTERM:
+                if (entity == null)
+                    return null;
+                return entity.getSuperTerm();
+            case ENTITY_SUBTERM:
+                if (entity == null)
+                    return null;
+                return entity.getSubTerm();
+        }
+        return null;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         ExpressedTermDTO termDTO = (ExpressedTermDTO) o;
-
-        String supertermID = superterm.getZdbID();
-        if (supertermID != null ? !supertermID.equals(termDTO.getSuperterm().getZdbID()) : termDTO.getSuperterm().getZdbID() != null)
+        if (expressionFound != termDTO.isExpressionFound())
             return false;
 
-        if (subterm == null && termDTO.getSubterm() == null)
-            return true;
-        if ((subterm != null && termDTO.getSubterm() == null) ||
-                (subterm == null && termDTO.getSubterm() != null))
-            return false;
-
-        if (subterm.getZdbID().equals(termDTO.getSubterm().getZdbID()))
-            return true;
-
-        return false;
+        return entity.equals(termDTO.getEntity());
     }
 
     @Override
     @SuppressWarnings({"NonFinalFieldReferencedInHashCode", "SuppressionAnnotation"})
     public int hashCode() {
-        int result = (superterm.getZdbID() != null ? superterm.getZdbID().hashCode() : 0);
-        if (subterm != null)
-            result = 31 * result + subterm.getZdbID().hashCode();
+        int result = entity.hashCode();
         result += expressionFound ? 43 : 13;
         return result;
     }
 
     public String getUniqueID() {
-        String composedID = superterm.getZdbID();
-        if (subterm != null)
-            composedID += ":" + subterm.getZdbID();
-        return composedID;
+        return entity.getUniqueID();
     }
 
     public int compareTo(ExpressedTermDTO o) {
         if (o == null)
             return 1;
-        // if the superterms are different sort by superterm
-        if (!superterm.getName().equals(o.getSuperterm().getName()))
-            return superterm.getName().compareToIgnoreCase(o.getSuperterm().getName());
-
-        // if superterms are the same sort by subterm.
-        if (subterm == null && o.getSubterm() != null)
-            return -1;
-        if (subterm != null && o.getSubterm() == null)
-            return 1;
-        if (subterm == null && o.getSubterm() == null)
-            return 0;
-
-        if (subterm.getName().equalsIgnoreCase(o.getSubterm().getName())) {
-            if (expressionFound && !o.isExpressionFound())
-                return -1;
-            if (!expressionFound && o.isExpressionFound())
-                return 1;
-        }
-        return subterm.getName().compareToIgnoreCase(o.getSubterm().getName());
+        return entity.compareTo(o.getEntity());
     }
 
     /**
@@ -125,15 +102,6 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
      * @return true or false
      */
     public boolean equalsByNameOnly(ExpressedTermDTO expressedTerm) {
-        if (!StringUtils.equals(superterm.getName(), expressedTerm.getSuperterm().getName()))
-            return false;
-        if (subterm == null && expressedTerm.getSubterm() == null)
-            return true;
-        if ((subterm != null && expressedTerm.getSubterm() == null) ||
-                (subterm == null && expressedTerm.getSubterm() != null))
-            return false;
-        if (!StringUtils.equals(subterm.getName(), expressedTerm.getSubterm().getName()))
-            return false;
-        return true;
+        return entity.equalsByNameAndOntologyOnly(expressedTerm.getEntity());
     }
 }

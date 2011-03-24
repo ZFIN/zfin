@@ -112,4 +112,28 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
         return getOrderingValue().compareTo(other.getOrderingValue());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RelatedEntityDTO that = (RelatedEntityDTO) o;
+
+        if (editable != that.editable) return false;
+        if (link != null ? !link.equals(that.link) : that.link != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (publicationZdbID != null ? !publicationZdbID.equals(that.publicationZdbID) : that.publicationZdbID != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = publicationZdbID != null ? publicationZdbID.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (editable ? 1 : 0);
+        return result;
+    }
 }

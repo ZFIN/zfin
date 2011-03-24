@@ -1,3 +1,4 @@
+
 document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
 document.write("   <div id=\"footerlinks\"> ");

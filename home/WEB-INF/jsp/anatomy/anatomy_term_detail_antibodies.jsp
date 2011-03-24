@@ -3,24 +3,25 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<b>Antibodies</b>
+<div class="summary">
+<div class="summaryTitle">Antibodies</div>
 
 <c:if test="${formBean.antibodiesExist}">
-    <TABLE width="100%">
+    <table class="summary rowstripes">
         <tbody>
-        <TR class="search-result-table-header">
-            <TD width="20%">
+        <tr>
+            <th width="20%">
                 Antibody
-            </TD>
-            <TD width="20%">
+            </th>
+            <th width="20%">
                 Gene
-            </TD>
-            <TD width="60%">
+            </th>
+            <th width="60%">
                 Figures
-            </TD>
-        </TR>
-        <c:forEach var="antibodyStats" items="${formBean.antibodyStatistics}">
-            <tr class="search-result-table-entries">
+            </th>
+        </tr>
+        <c:forEach var="antibodyStats" items="${formBean.antibodyStatistics}" varStatus="loop">
+            <zfin:alternating-tr loopName="loop">
                 <td>
                     <zfin:link entity="${antibodyStats.antibody}"/>
                 </td>
@@ -31,7 +32,7 @@
                     <c:if test="${antibodyStats.numberOfFigures > 0}">
                         <!-- link to figure search page if more than one figure available-->
                         <c:if test="${antibodyStats.numberOfFigures > 1}">
-                            <a href='/action/antibody/figure-summary?superTerm.zdbID=${formBean.aoTerm.zdbID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
+                            <a href='/action/antibody/figure-summary?superTerm.ID=${formBean.aoTerm.zdbID}&antibody.zdbID=${antibodyStats.antibody.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                              integerEntity="${antibodyStats.numberOfFigures}"
                                              includeNumber="true"/>
@@ -44,7 +45,7 @@
                                                             integerEntity="${antibodyStats.numberOfFigures}"/>
                             </a>
                         </c:if>
-                        from
+                        <c:if test="${antibodyStats.numberOfImages > 0}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
                         <c:if test="${antibodyStats.numberOfPubs ==1}">
                             <zfin:link entity="${antibodyStats.singlePub}"/>
                         </c:if>
@@ -55,7 +56,7 @@
                         </c:if>
                     </c:if>
                 </td>
-            </tr>
+            </zfin:alternating-tr>
         </c:forEach>
         </tbody>
     </TABLE>
@@ -68,3 +69,4 @@
                                        choicePattern="0# antibodies| 1# antibody| 2# antibodies"
                                        allRecordsAreDisplayed="${formBean.allAntibodiesAreDisplayed}"
                                        totalRecordCount="${formBean.antibodyCount}"/>
+</div>

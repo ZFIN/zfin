@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,7 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
     protected GenericTerm subterm;
+    protected PostComposedEntity entity;
 
     public String getZdbID() {
         return zdbID;
@@ -86,19 +89,35 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
     }
 
     public GenericTerm getSuperterm() {
-        return superterm;
+        if (entity == null) return null;
+        else
+            return entity.getSuperterm();
     }
 
     public void setSuperterm(GenericTerm superterm) {
-        this.superterm = superterm;
+        if (entity == null)
+            entity = new PostComposedEntity();
+        entity.setSuperterm(superterm);
     }
 
     public GenericTerm getSubterm() {
-        return subterm;
+        if (entity == null) return null;
+        else
+            return entity.getSubterm();
     }
 
     public void setSubterm(GenericTerm subterm) {
-        this.subterm = subterm;
+        if (entity == null)
+            entity = new PostComposedEntity();
+        entity.setSubterm(subterm);
+    }
+
+    public PostComposedEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(PostComposedEntity entity) {
+        this.entity = entity;
     }
 
     public void removeFigure(Figure figure) {

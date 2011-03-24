@@ -43,7 +43,7 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/test-error-page">Test Error Page</a>
+        <a href="/action/ontology/version-info">Ontology Version Info</a>
     </td>
     <td>
         <a href="/action/blast/blast-files">Downloadable Blast Files</a>
@@ -66,7 +66,18 @@
         <a href="/action/dev-tools/blastable-databases">Blast Database Groups</a>
     </td>
 </tr>
-
+<tr>
+    <td></td>
+    <td>
+        <a href="/action/dev-tools/phenotype-curation-history">History: Phenotype Experiments</a>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td>
+        <a href="/action/dev-tools/phenotype-curation-history-statements">History: Phenotype Statements</a>
+    </td>
+</tr>
 
 <tr>
     <td>&nbsp;</td>

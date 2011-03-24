@@ -661,6 +661,28 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
 
+    /**
+     * Retrieves all marker ids with sequence information (accession numbers)
+     * @param firstNIds number of sequences to be returned
+     * @return list of markers
+     */
+    public List<String> getAllNSequences(int firstNIds){
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct dataZdbID from DBLink " +
+                "where referenceDatabase.foreignDBDataType.superType = :superType " +
+                " and dataZdbID not like :transcript "+
+                " group by dataZdbID  "+
+                " having count(accessionNumber) > 1   ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE);
+        query.setString("transcript", "ZDB-TSCRIPT%");
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+
+        return (List<String>) query.list();
+    }
+
 }
 
 

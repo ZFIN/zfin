@@ -15,27 +15,16 @@ public class ExpressedTermDTOTest {
 
     @Test
     public void sortSingleItemList() {
-        ExpressedTermDTO one = new ExpressedTermDTO();
-        TermDTO dtoOne = new TermDTO();
-        dtoOne.setName("secondary motor neuron");
-        one.setSuperterm(dtoOne);
-
+        ExpressedTermDTO one = getExpressedTermDTO("secondary motor neuron", null);
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(1);
         terms.add(one);
-
-        assertEquals("secondary motor neuron", terms.get(0).getSuperterm().getName());
+        assertEquals("secondary motor neuron", terms.get(0).getEntity().getSuperTerm().getTermName());
     }
 
     @Test
     public void sortWithoutSubtermsList() {
-        ExpressedTermDTO two = new ExpressedTermDTO();
-        TermDTO dtoTwo = new TermDTO();
-        dtoTwo.setName("primary motor neuron");
-        two.setSuperterm(dtoTwo);
-        ExpressedTermDTO one = new ExpressedTermDTO();
-        TermDTO dtoOne = new TermDTO();
-        dtoOne.setName("secondary motor neuron");
-        one.setSuperterm(dtoOne);
+        ExpressedTermDTO two = getExpressedTermDTO("primary motor neuron", null);
+        ExpressedTermDTO one = getExpressedTermDTO("secondary motor neuron", null);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -43,23 +32,14 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getName());
-        assertEquals("secondary motor neuron", terms.get(1).getSuperterm().getName());
+        assertEquals("primary motor neuron", terms.get(0).getEntity().getSuperTerm().getTermName());
+        assertEquals("secondary motor neuron", terms.get(1).getEntity().getSuperTerm().getTermName());
     }
 
     @Test
     public void sortWithOneSubterm() {
-        ExpressedTermDTO two = new ExpressedTermDTO();
-        TermDTO dtoTwo = new TermDTO();
-        dtoTwo.setName("primary motor neuron");
-        two.setSuperterm(dtoTwo);
-        TermDTO dtoTwoSub = new TermDTO();
-        dtoTwoSub.setName("cell some memberane");
-        two.setSubterm(dtoTwoSub);
-        ExpressedTermDTO one = new ExpressedTermDTO();
-        TermDTO dtoOneSuper = new TermDTO();
-        dtoOneSuper.setName("secondary motor neuron");
-        one.setSuperterm(dtoOneSuper);
+        ExpressedTermDTO two = getExpressedTermDTO("primary motor neuron", "cell some memberane");
+        ExpressedTermDTO one = getExpressedTermDTO("secondary motor neuron", null);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -67,23 +47,14 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getName());
-        assertEquals("secondary motor neuron", terms.get(1).getSuperterm().getName());
+        assertEquals("primary motor neuron", terms.get(0).getEntity().getSuperTerm().getTermName());
+        assertEquals("secondary motor neuron", terms.get(1).getEntity().getSuperTerm().getTermName());
     }
 
     @Test
     public void sortWithOneSubtermSameSuperterms() {
-        ExpressedTermDTO two = new ExpressedTermDTO();
-        TermDTO dtoTwo = new TermDTO();
-        dtoTwo.setName("primary motor neuron");
-        two.setSuperterm(dtoTwo);
-        TermDTO dtoTwoSub = new TermDTO();
-        dtoTwoSub.setName("cell some memberane");
-        two.setSubterm(dtoTwoSub);
-        ExpressedTermDTO one = new ExpressedTermDTO();
-        TermDTO dtoOneSuper = new TermDTO();
-        dtoOneSuper.setName("primary motor neuron");
-        one.setSuperterm(dtoOneSuper);
+        ExpressedTermDTO two = getExpressedTermDTO("primary motor neuron", "cell some membrane");
+        ExpressedTermDTO one = getExpressedTermDTO("primary motor neuron", null);
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -91,27 +62,15 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getName());
-        assertEquals("cell some membrane", terms.get(1).getSubterm().getName());
-        assertEquals("primary motor neuron", terms.get(1).getSuperterm().getName());
+        assertEquals("primary motor neuron", terms.get(0).getEntity().getSuperTerm().getTermName());
+        assertEquals("cell some membrane", terms.get(1).getEntity().getSubTerm().getTermName());
+        assertEquals("primary motor neuron", terms.get(1).getEntity().getSuperTerm().getTermName());
     }
 
     @Test
     public void sortWithTwoSubtermSameSuperterms() {
-        ExpressedTermDTO two = new ExpressedTermDTO();
-        TermDTO dtoTwo = new TermDTO();
-        dtoTwo.setName("primary motor neuron");
-        two.setSuperterm(dtoTwo);
-        TermDTO dtoTwoSub = new TermDTO();
-        dtoTwoSub.setName("cell some memberane");
-        two.setSubterm(dtoTwoSub);
-        ExpressedTermDTO one = new ExpressedTermDTO();
-        TermDTO dtoOneSuper = new TermDTO();
-        dtoOneSuper.setName("primary motor neuron");
-        one.setSuperterm(dtoOneSuper);
-        TermDTO dtoOneSub = new TermDTO();
-        dtoOneSub.setName("axon");
-        one.setSubterm(dtoOneSub);
+        ExpressedTermDTO two = getExpressedTermDTO("primary motor neuron", "cell some membrane");
+        ExpressedTermDTO one = getExpressedTermDTO("primary motor neuron", "axon");
 
         List<ExpressedTermDTO> terms = new ArrayList<ExpressedTermDTO>(2);
         terms.add(one);
@@ -119,9 +78,25 @@ public class ExpressedTermDTOTest {
 
         Collections.sort(terms);
 
-        assertEquals("primary motor neuron", terms.get(0).getSuperterm().getName());
-        assertEquals("cell some membrane", terms.get(1).getSubterm().getName());
-        assertEquals("axon", terms.get(0).getSubterm().getName());
-        assertEquals("primary motor neuron", terms.get(1).getSuperterm().getName());
+        assertEquals("primary motor neuron", terms.get(0).getEntity().getSuperTerm().getTermName());
+        assertEquals("cell some membrane", terms.get(1).getEntity().getSubTerm().getTermName());
+        assertEquals("axon", terms.get(0).getEntity().getSubTerm().getTermName());
+        assertEquals("primary motor neuron", terms.get(1).getEntity().getSuperTerm().getTermName());
     }
+
+    private ExpressedTermDTO getExpressedTermDTO(String supertermName, String subtermName) {
+        ExpressedTermDTO dto = new ExpressedTermDTO();
+        TermDTO supertermDTO = new TermDTO();
+        supertermDTO.setName(supertermName);
+        EntityDTO entity = new EntityDTO();
+        entity.setSuperTerm(supertermDTO);
+        if(subtermName != null){
+            TermDTO subtermDTO = new TermDTO();
+            subtermDTO.setName(subtermName);
+            entity.setSubTerm(subtermDTO);
+        }
+        dto.setEntity(entity);
+        return dto;
+    }
+
 }

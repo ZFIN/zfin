@@ -6,10 +6,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
-import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinFlexTable;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -96,14 +93,18 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
             getCellFormatter().setWidth(rowIndex, HeaderName.REMOVE_FROM_EXPRESSION.getIndex(), "15");
             setWidget(rowIndex, HeaderName.ADD.getIndex(), add);
             getCellFormatter().setWidth(rowIndex, HeaderName.ADD.getIndex(), "15");
-            HorizontalPanel postComposedTerm = new HorizontalPanel();
-            PhenotypeTermDTO expressedTerm = structure.getPhenotypeTerm();
-            postComposedTerm.setTitle(expressedTerm.getUniqueID());
-            createStructureElement(postComposedTerm, expressedTerm);
-            setWidget(rowIndex, HeaderName.ENTITY.getIndex(), postComposedTerm);
+            HorizontalPanel entity = new HorizontalPanel();
+            PhenotypeStatementDTO expressedTerm = structure.getPhenotypeTerm();
+            entity.setTitle(expressedTerm.getUniqueID());
+            createEntityStructureElement(entity, expressedTerm);
+            setWidget(rowIndex, HeaderName.ENTITY.getIndex(), entity);
             HorizontalPanel qualityTerm = new HorizontalPanel();
             createQualityElement(qualityTerm, expressedTerm);
             setWidget(rowIndex, HeaderName.QUALITY.getIndex(), qualityTerm);
+            HorizontalPanel relatedEntity = new HorizontalPanel();
+            relatedEntity.setTitle(expressedTerm.getUniqueID());
+            createRelatedEntityStructureElement(relatedEntity, expressedTerm);
+            setWidget(rowIndex, HeaderName.RELATED_ENTITY.getIndex(), relatedEntity);
             add.addClickHandler(new AddActionButtonListener(rowIndex, structure));
             Widget tagLabel = new HTML(structure.getPhenotypeTerm().getTag());
             setWidget(rowIndex, HeaderName.TAG.getIndex(), tagLabel);
@@ -183,23 +184,40 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
         return title;
     }
 
-    private void createStructureElement(HorizontalPanel postcomposedTerm, PhenotypeTermDTO phenotypeTermDTO) {
-        Hyperlink superterm = new Hyperlink(phenotypeTermDTO.getSuperterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
-        superterm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, PostComposedPart.SUPERTERM));
+    private void createEntityStructureElement(HorizontalPanel postcomposedTerm, PhenotypeStatementDTO phenotypeTermDTO) {
+        Hyperlink superterm = new Hyperlink(phenotypeTermDTO.getEntity().getSuperTerm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        superterm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, EntityPart.ENTITY_SUPERTERM));
         postcomposedTerm.add(superterm);
         Hyperlink subTerm;
-        if (phenotypeTermDTO.getSubterm() != null) {
+        if (phenotypeTermDTO.getEntity().getSubTerm() != null) {
             Label colon = new Label(" : ");
             postcomposedTerm.add(colon);
-            subTerm = new Hyperlink(phenotypeTermDTO.getSubterm().getName(), STRUCTURE_CONSTRUCTION_ZONE);
-            subTerm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, PostComposedPart.SUBTERM));
+            subTerm = new Hyperlink(phenotypeTermDTO.getEntity().getSubTerm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+            subTerm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, EntityPart.ENTITY_SUBTERM));
             postcomposedTerm.add(subTerm);
         }
     }
 
-    private void createQualityElement(Panel qualityTerm, PhenotypeTermDTO phenotypeTerm) {
+    private void createRelatedEntityStructureElement(HorizontalPanel postcomposedTerm, PhenotypeStatementDTO phenotypeTermDTO) {
+        if (phenotypeTermDTO.getRelatedEntity() == null || phenotypeTermDTO.getRelatedEntity().getSuperTerm() == null)
+            return;
+
+        Hyperlink superterm = new Hyperlink(phenotypeTermDTO.getRelatedEntity().getSuperTerm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+        superterm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, EntityPart.RELATED_ENTITY_SUPERTERM));
+        postcomposedTerm.add(superterm);
+        Hyperlink subTerm;
+        if (phenotypeTermDTO.getRelatedEntity().getSubTerm() != null) {
+            Label colon = new Label(" : ");
+            postcomposedTerm.add(colon);
+            subTerm = new Hyperlink(phenotypeTermDTO.getRelatedEntity().getSubTerm().getTermName(), STRUCTURE_CONSTRUCTION_ZONE);
+            subTerm.addClickHandler(new InternalPileStructureClickHandler(phenotypeTermDTO, EntityPart.RELATED_ENTITY_SUBTERM));
+            postcomposedTerm.add(subTerm);
+        }
+    }
+
+    private void createQualityElement(Panel qualityTerm, PhenotypeStatementDTO phenotypeTerm) {
         Hyperlink quality = new Hyperlink(phenotypeTerm.getQuality().getName(), STRUCTURE_CONSTRUCTION_ZONE);
-        quality.addClickHandler(new InternalPileStructureClickHandler(phenotypeTerm, PostComposedPart.QUALITY));
+        quality.addClickHandler(new InternalPileStructureClickHandler(phenotypeTerm, EntityPart.QUALITY));
         qualityTerm.add(quality);
     }
 
@@ -252,7 +270,7 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
      *
      * @param terms terms to be set to 'add'
      */
-    public void setCommonStructures(List<PhenotypeTermDTO> terms) {
+    public void setCommonStructures(List<PhenotypeStatementDTO> terms) {
         resetActionButtons();
         if (terms == null || terms.isEmpty())
             return;
@@ -265,7 +283,7 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
             Widget widget = getWidget(row, HeaderName.ENTITY.getIndex());
             if (widget instanceof HorizontalPanel) {
                 HorizontalPanel structurePanel = (HorizontalPanel) widget;
-                for (PhenotypeTermDTO term : terms) {
+                for (PhenotypeStatementDTO term : terms) {
                     if (structurePanel.getTitle().equals(term.getUniqueID())) {
                         RadioButton addButton = (RadioButton) getWidget(row, HeaderName.ADD.getIndex());
                         addButton.setValue(true);
@@ -370,10 +388,10 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
 
     private class InternalPileStructureClickHandler implements ClickHandler {
 
-        private PhenotypeTermDTO phenotypeTerm;
-        private PostComposedPart pileEntity;
+        private PhenotypeStatementDTO phenotypeTerm;
+        private EntityPart pileEntity;
 
-        public InternalPileStructureClickHandler(PhenotypeTermDTO phenotypeTerm, PostComposedPart pileEntity) {
+        public InternalPileStructureClickHandler(PhenotypeStatementDTO phenotypeTerm, EntityPart pileEntity) {
             this.phenotypeTerm = phenotypeTerm;
             this.pileEntity = pileEntity;
         }
@@ -392,8 +410,9 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
         ADD(2, ""),
         ENTITY(3, "Entity"),
         QUALITY(4, "Quality"),
-        TAG(5, "Tag"),
-        REMOVE(6, "Remove");
+        RELATED_ENTITY(5, "Related Entity"),
+        TAG(6, "Tag"),
+        REMOVE(7, "Remove");
 
         private int index;
         private String value;

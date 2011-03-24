@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 
 import java.util.List;
@@ -28,13 +28,13 @@ public interface CurationPhenotypeRPC extends RemoteService {
         }
     }
 
-    List<PhenotypeFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
+    List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID);
 
-    List<PhenotypeFigureStageDTO> createMutantFigureStages(List<PhenotypeFigureStageDTO> newFigureAnnotations);
+    List<PhenotypeExperimentDTO> createPhenotypeExperiments(List<PhenotypeExperimentDTO> newFigureAnnotations);
 
-    void deleteFigureAnnotation(PhenotypeFigureStageDTO figureAnnotation);
+    void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation);
 
-    List<PhenotypeFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> updateEntity);
+    List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity);
 
     /**
      * Checks if the phenotype structure pile needs to be recreated.

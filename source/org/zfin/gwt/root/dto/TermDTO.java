@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.ontology.Subset;
 
 import java.io.Serializable;
 import java.util.*;
@@ -17,7 +18,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     private String oboID;
     private String definition;
     private String comment;
-    private boolean obsolete ;
+    private boolean obsolete;
     private OntologyDTO ontology;
     private Set<TermDTO> childrenTerms; // should be a unique set
     private Set<TermDTO> parentTerms; // should be a unique set
@@ -25,11 +26,16 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     private Set<String> aliases; // should be a unique set
     private StageDTO startStage ;
     private StageDTO endStage ;
+    private Set<String> subsets;
 
     private String relationshipType ; // in the case that this is just a Term in a relationship
     private int significance; // when used as an alias
     //    private Map<String, List<TermInfoDTO>> relatedTermInfos = new TreeMap<String, List<TermInfoDTO>>(new RelationshipComparatorDTO());
     private Map<String,List<TermDTO>> relatedTermMap = null ;
+
+    public String getTermName() {
+        return name;
+    }
 
     public String getOboID() {
         return oboID;
@@ -69,6 +75,32 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
+    }
+
+    public Set<String> getSubsets() {
+        return subsets;
+    }
+
+    public void setSubsets(Set<String> subsets) {
+        this.subsets = subsets;
+    }
+
+    public boolean isSubsetOf(String subsetName) {
+        if (subsets == null)
+            return false;
+        return subsets.contains(subsetName);
+    }
+
+    public boolean isSubsetOf(SubsetDTO subset) {
+        if (subsets == null)
+            return false;
+        return isSubsetOf(subset.toString());
+    }
+
+    public boolean equalsByName(TermDTO term) {
+        if (term == null)
+            return false;
+        return StringUtils.equalsWithNullString(name, term.getTermName());
     }
 
     @Override
@@ -295,5 +327,37 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 //        return comparator.compare(getName(),term.getName());
         return getName().compareTo(term.getName());
 
+    }
+
+    public void addSubset(SubsetDTO relationalSlim) {
+        if (subsets == null)
+            subsets = new HashSet<String>(1);
+        subsets.add(relationalSlim.toString());
+    }
+
+    public boolean isPartOfSubset(SubsetDTO subset) {
+        if (subsets == null)
+            return false;
+        for (String subsetNameStr : subsets) {
+            if (subsetNameStr.equals(subset.toString()))
+                return true;
+        }
+        return false;
+    }
+
+    public List<TermDTO> getChildrenTerms(String relationshipType) {
+       return null;
+    }
+
+    public static final String RELATIONAL__SLIM = "relational_slim";
+
+    public boolean isRelatedTerm() {
+        if (subsets == null)
+            return false;
+        for (String subsetName : subsets) {
+            if (subsetName.equals(RELATIONAL__SLIM))
+                return true;
+        }
+        return false;
     }
 }

@@ -33,7 +33,11 @@
         <priority value="warn"/>
     </category>
 
-    <category name="org.zfin.ontology.datatransfer.LoadOntology" additivity="true">
+    <category name="org.zfin" additivity="true">
+        <priority value="info"/>
+    </category>
+
+    <category name="org.zfin.ontology.datatransfer" additivity="true">
         <priority value="debug"/>
         <appender-ref ref="queryAppender"/>
     </category>

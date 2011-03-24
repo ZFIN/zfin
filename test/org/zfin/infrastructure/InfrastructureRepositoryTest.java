@@ -8,12 +8,19 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.expression.Figure;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.people.Company;
+import org.zfin.people.Lab;
+import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
@@ -23,9 +30,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.*;
+import static junit.framework.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -73,12 +80,10 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             getInfrastructureRepository().insertRecordAttribution(dataZdbID, sourceZdbID);
             attribute = getInfrastructureRepository().getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNotNull("RecordAttribution found after insert", attribute);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
@@ -226,7 +231,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getExternalNote() {
         String externalNoteZdbID = "ZDB-EXTNOTE-080424-1";
 
-        ExternalNote note = getInfrastructureRepository().getExternalNoteByID(externalNoteZdbID);
+        getInfrastructureRepository().getExternalNoteByID(externalNoteZdbID);
 
     }
 
@@ -349,6 +354,61 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getFirst10Genotypes() {
+        List<String> allGenotypes = getInfrastructureRepository().getAllEntities(Genotype.class, "zdbID", 10);
+        assertNotNull(allGenotypes);
+        assertEquals(10, allGenotypes.size());
+    }
+
+    @Test
+    public void getFirst10Features() {
+        List<String> allFeatures = getInfrastructureRepository().getAllEntities(Feature.class, "zdbID", 10);
+        assertNotNull(allFeatures);
+        assertEquals(10, allFeatures.size());
+    }
+
+    @Test
+    public void getFirst10Figures() {
+        List<String> allFeatures = getInfrastructureRepository().getAllEntities(Figure.class, "zdbID", 10);
+        assertNotNull(allFeatures);
+        assertEquals(10, allFeatures.size());
+    }
+
+    @Test
+    public void getFirst10Labs() {
+        List<String> allCompanies = getInfrastructureRepository().getAllEntities(Lab.class, "zdbID", 10);
+        assertNotNull(allCompanies);
+        assertEquals(10, allCompanies.size());
+    }
+
+    @Test
+    public void getFirst10Companies() {
+        List<String> allCompanies = getInfrastructureRepository().getAllEntities(Company.class, "zdbID", 10);
+        assertNotNull(allCompanies);
+        assertEquals(10, allCompanies.size());
+    }
+
+    @Test
+    public void getFirst10Persons() {
+        List<String> allPersons = getInfrastructureRepository().getAllEntities(Person.class, "zdbID", 10);
+        assertNotNull(allPersons);
+        assertEquals(10, allPersons.size());
+    }
+
+    @Test
+    public void getFirst10Terms() {
+        List<String> allTerms = getInfrastructureRepository().getAllEntities(GenericTerm.class, "oboID", 10);
+        assertNotNull(allTerms);
+        assertEquals(10, allTerms.size());
+    }
+
+    @Test
+    public void getFirst10markerGoEvidenceCodes() {
+        List<String> allMarkerGoEvidences = getInfrastructureRepository().getAllEntities(MarkerGoTermEvidence.class, "marker.zdbID", 10);
+        assertNotNull(allMarkerGoEvidences);
+        assertEquals(10, allMarkerGoEvidences.size());
+    }
 }
 
 

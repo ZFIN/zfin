@@ -6,7 +6,7 @@
 <%
     String zdbID = request.getParameter("zdbID");
     if(zdbID==null){
-        zdbID = "ZDB-ATB-081002-19" ;
+        zdbID = "ZDB-ATB-110131-2" ;
     }
 
     String antibodyDefPubZdbID = request.getParameter("antibodyDefPubZdbID");

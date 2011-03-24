@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
-            new Ajax.Updater('${expressionSection}-genes', '/action/anatomy/show-expression-genes?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
-            new Ajax.Updater('${expressionSection}-inSituProbes', '/action/anatomy/show-expression-insitu-probes?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
-            new Ajax.Updater('${expressionSection}-antibodies', '/action/anatomy/show-expression-antibodies?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get'});
+            jQuery('#${expressionSection}-genes').load('/action/anatomy/show-expression-genes?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-inSituProbes').load('/action/anatomy/show-expression-insitu-probes?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-antibodies').load('/action/anatomy/show-expression-antibodies?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
             showSection('${expressionSection}', true);
         }
     </script>
@@ -29,12 +29,12 @@
         <div id="${expressionSection}-genes" class="indented-section"><span class="search-result-table-header">Genes with Most Figures</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
-        <p/>
+        <p></p>
 
         <div id="${expressionSection}-inSituProbes" class="indented-section"><span class="search-result-table-header">In Situ Probes</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
-        <p/>
+        <p></p>
 
         <div id="${expressionSection}-antibodies" class="indented-section"><span class="search-result-table-header">Antibodies</span>
             loading

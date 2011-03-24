@@ -11,8 +11,6 @@ public class LookupPopup extends PopupPanel {
     private final String ANATOMY_BASE_URL = "/action/anatomy/term-info?anatomyItem.zdbID=";
     private final String MARKER_BASE_URL = "/action/marker/mini-gene?zdbID=";
     private Frame frame;
-    private int height = 600;
-    private int width = 400;
     private String type;
 
     public LookupPopup(String type) {
@@ -30,9 +28,8 @@ public class LookupPopup extends PopupPanel {
 
     private void initGUI() {
         frame = new Frame();
-        frame.setHeight("" + height);
-        frame.setWidth("" + width);
         frame.setStylePrimaryName("gwt-Frame");
+        frame.addStyleName("xpatselect-anatomy-popup");
         setWidget(frame);
     }
 

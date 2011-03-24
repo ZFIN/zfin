@@ -33,19 +33,13 @@ public class DataAliasGroup implements Serializable {
         this.significance = significance;
     }
 
-    public enum Group implements Serializable{
+    public enum Group implements Serializable {
         ALIAS("alias"),
-        EXACT_ALIAS("exact alias"),
-        EXACT_PLURAL("exact plural"),
         PLURAL("plural"),
-        RELATED_ALIAS("related alias"),
-        RELATED_PLURAL("related plural"),
         SECONDARY_ID("secondary id"),
         SEQUENCE_SIMILARITY("sequence similarity"),
-        NARROW_ALIAS("narrow alias"),
-        BROAD_ALIAS("broad alias"),
-	SYSTEMATIC_SYNONYM("systematic_synonym"),
-	VERTEBRATE("vertebrate");
+        SYSTEMATIC_SYNONYM("systematic_synonym"),
+        VERTEBRATE("vertebrate");
 
         private String value;
 

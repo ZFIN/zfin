@@ -12,12 +12,13 @@ public class WikiIndexerTest {
         File categoryFile = new File("home", "WEB-INF");
         File file = new File(categoryFile, "conf");
 
-        String[] args = {"-d", "server_apps/quicksearch/indexes", "-u",
-                "server_apps/quicksearch/etc/searchurls-test.txt", "-v", "-t", "1",
-                "-l", "server_apps/quicksearch/logs",
-                "-q", "server_apps/quicksearch/etc/allStaticPages.txt",
+        String[] args = { "-u",
+                "server_apps/quicksearch/etc/searchurls-test.txt", "-t", "1",
                 "-categoryDir", file.getAbsolutePath(),
-                "-e", "server_apps/quicksearch/etc/excludeurls.txt"};
+                "-e", "server_apps/quicksearch/etc/excludeurls.txt",
+                "-indexerDir", "server_apps/quicksearch/",
+                "-numberOfDetailPages", "1",
+                "-zfinPropertiesDir", "home/WEB-INF/zfin.properties"};
         try {
             Indexer.main(args);
         } catch (Exception e) {

@@ -187,7 +187,8 @@ ev.mrkrgoev_notes,
 ev.mrkrgoev_gflag_name,
 ev.mrkrgoev_annotation_organization_created_by,
 org.mrkrgoevcb_name,
-org.mrkrgoevcb_url
+org.mrkrgoevcb_url,
+get_entity_name_html(t.term_zdb_id)
 from term t
 join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
 join go_ontology g on t.term_ontology=g.gont_ontology_internal_name
@@ -208,6 +209,7 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
    <?MIVAR NAME="organization">$11<?/MIVAR>
    <?MIVAR NAME="organization_name">$12<?/MIVAR>
    <?MIVAR NAME="organization_url">$13<?/MIVAR>
+   <?MIVAR NAME="$goterm_link">$14<?/MIVAR>
    <?MIVAR NAME=isnot>f<?/MIVAR>
    <?MIVAR NAME=contribs>f<?/MIVAR>
    <?MIVAR NAME=colocalizeswith>f<?/MIVAR>
@@ -248,7 +250,7 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
      </i>
      </td>
      <?/MIBLOCK>
-     <td><A HREF=$dbquery$goid>$goterm</A></TD>
+     <td>$goterm_link</TD>
      <td nowrap><A HREF="http://www.geneontology.org/GO.evidence.shtml#$(LOWER,$evidence)">$evidence</A></TD>
 
      <?MIVAR NAME=currinfs><?/MIVAR>

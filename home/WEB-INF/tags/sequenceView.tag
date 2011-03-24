@@ -47,11 +47,11 @@
 
     <div class="summary">
 
-       <div class="summaryTitle"> Sequence:</div>
-        <div style="background: #eee; border: 1px solid #ccc; min-width: 800px;">
+       <div class="summaryTitle">Sequence</div>
+        <div class="sequence-view-table-wrapper">
                 <%--todo: this should use an attribute, not a formBean, which is a nucleotideSequence --%>
             <c:forEach var="sequence" items="${sequences}" varStatus="index">
-            <table class="summary">
+            <table class="summary sequence-view">
                 <tr><td width="65%">
                             ${sequence.dbLink.accessionNumber}
                         <zfin:attribution entity="${sequence.dbLink}"/>

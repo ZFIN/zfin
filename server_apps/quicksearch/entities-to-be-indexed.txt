@@ -1,0 +1,11 @@
+1=Marker
+2=Feature
+3=Company
+4=Genotype
+5=Figure
+6=Lab
+7=MarkerGoTermEvidence
+8=Person
+9=Sequence
+10=GeneProductDesc
+11=Term

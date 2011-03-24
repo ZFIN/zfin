@@ -978,12 +978,10 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
               <TD nowrap>
 
-              <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
-              <?/MIVAR>
+              <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure</A><?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures </A>
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures</A>
 	      <?/MIVAR>
           
           <?MICOMMENT>
@@ -1033,16 +1031,14 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
               <?MIVAR NAME=mrkrsel_pheno_img_count>0<?/MIVAR>
               <?MIVAR NAME=mrkrsel_MO_flag>0<?/MIVAR>
-              <?MISQL SQL="select distinct apatofig_fig_zdb_id
-                             from mutant_fast_search, atomic_phenotype, apato_figure
+              <?MISQL SQL="select distinct phenox_fig_zdb_id
+                             from mutant_fast_search, phenotype_experiment
                             where mfs_mrkr_zdb_id ='$OID'
-      	                      and mfs_genox_zdb_id = apato_genox_zdb_id 
-      	                      and apatofig_apato_zdb_id = apato_zdb_id
-      	                      and exists (select NOTnormal.apato_zdb_id 
-                                            from atomic_phenotype NOTnormal 
-                                           where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
-                                             and NOTnormal.apato_tag != 'normal' 
-                                             and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id);">
+      	                      and mfs_genox_zdb_id = phenox_genox_zdb_id 
+      	                      and exists (select NOTnormal.phenos_pk_id 
+                                            from phenotype_statement NOTnormal 
+                                           where NOTnormal.phenos_phenox_pk_id = phenox_pk_id 
+                                             and NOTnormal.phenos_tag != 'normal');">
                 <?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
 
                 <?MICOMMENT> *** deciding on displaying camera icon or not <?/MICOMMENT>
@@ -1055,13 +1051,11 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
                 <?MICOMMENT> *** deciding on displaying MO icon or not <?/MICOMMENT>
                 <?MISQL COND="$(<,$mrkrsel_MO_flag,1)" 
                         SQL="select count(expcond_mrkr_zdb_id)
-       	                       from mutant_fast_search,genotype_experiment,experiment_condition,atomic_phenotype,apato_figure
+       	                       from mutant_fast_search,genotype_experiment,experiment_condition,phenotype_experiment
        	                      where mfs_mrkr_zdb_id = '$OID'
-       	                        and apato_genox_zdb_id = mfs_genox_zdb_id 
-       	                        and apatofig_apato_zdb_id = apato_zdb_id
-       	                        and apatofig_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id' 
+       	                        and phenox_genox_zdb_id = mfs_genox_zdb_id 
+       	                        and phenox_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id' 
        	                        and mfs_genox_zdb_id = genox_zdb_id
-       	                        and genox_zdb_id = mfs_genox_zdb_id
        	                        and expcond_exp_zdb_id = genox_exp_zdb_id
        	                        and expcond_mrkr_zdb_id is not null;">
                   <?MIVAR>$(SETVAR,$mrkrsel_MO_flag,$1)<?/MIVAR>
@@ -1072,12 +1066,10 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
               <TD nowrap>
 
-              <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
-              <?/MIVAR>
-
+              <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure</A><?/MIVAR>
+                  
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">	
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures </A>
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures</A>
               <?/MIVAR>
               
               <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">
@@ -1168,7 +1160,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
        <p/>
 	<div id="pagination"></div>
 	<script type="text/javascript">
-	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
 	</script>
  	<?/MIVAR>
 	<div id="pagination"></div>

@@ -21,9 +21,9 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Phenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.people.Person;
@@ -151,6 +151,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public ExpressionExperiment getExpressionExperiment(String experimentID) {
         Session session = HibernateUtil.currentSession();
         return (ExpressionExperiment) session.get(ExpressionExperiment.class, experimentID);
+    }
+
+    @Override
+    public ExpressionResult getExpressionResult(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        return (ExpressionResult) session.get(ExpressionResult.class,zdbID);
     }
 
     /**
@@ -441,7 +447,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
-        criteria.add(Restrictions.eq("superterm", unspecified));
+        criteria.add(Restrictions.eq("entity.superterm", unspecified));
         criteria.add(Restrictions.eq("expressionFound", true));
         return (ExpressionResult) criteria.uniqueResult();
     }
@@ -454,13 +460,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         criteria = session.createCriteria(ExpressionResult.class);
         Term subterm = result.getSubterm();
         if (subterm == null)
-            criteria.add(Restrictions.isNull("subterm"));
+            criteria.add(Restrictions.isNull("entity.subterm"));
         else
-            criteria.add(Restrictions.eq("subterm", result.getSubterm()));
+            criteria.add(Restrictions.eq("entity.subterm", result.getSubterm()));
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
-        criteria.add(Restrictions.eq("superterm", result.getSuperterm()));
+        criteria.add(Restrictions.eq("entity.superterm", result.getSuperterm()));
         criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
         return (List<ExpressionResult>) criteria.list();
     }
@@ -684,41 +690,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     /**
-     * Retrieve a phenotype based on a given phenotype with
-     * genox, start, end, pub, superterm = 'unspecified'
-     *
-     * @param pheno phenotype
-     * @return phenotype
-     */
-    public Phenotype getUnspecifiedPhenotypeFromGenoxStagePub(Phenotype pheno) {
-        Session session = HibernateUtil.currentSession();
-
-        GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
-
-        String hql = "select pheno from Phenotype pheno " +
-                "     where pheno.genotypeExperiment = :genox" +
-                "           and pheno.startStage = :start " +
-                "           and pheno.endStage = :end " +
-                "           and pheno.superterm = :anatomyTermID " +
-                "           and pheno.subterm is null " +
-                "           and pheno.publication = :publication";
-
-        Query query = session.createQuery(hql);
-        query.setEntity("genox", pheno.getGenotypeExperiment());
-        query.setEntity("start", pheno.getStartStage());
-        query.setEntity("end", pheno.getEndStage());
-        query.setParameter("anatomyTermID", unspecified);
-        query.setEntity("publication", pheno.getPublication());
-
-        @SuppressWarnings("unchecked")
-        List<Phenotype> list = (List<Phenotype>) query.list();
-        if (list == null || list.size() < 1)
-            return null;
-        else
-            return list.get(0);
-    }
-
-    /**
      * Check if a pile structure already exists.
      * check for:
      * suberterm
@@ -732,20 +703,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public boolean pileStructureExists(ExpressedTermDTO expressedTerm, String publicationID) {
         if (publicationID == null)
             throw new NullPointerException("No Publication provided.");
-        String supertermName = expressedTerm.getSuperterm().getName();
+        String supertermName = expressedTerm.getEntity().getSuperTerm().getTermName();
         if (supertermName == null)
             throw new NullPointerException("No superterm provided.");
 
         Session session = HibernateUtil.currentSession();
         Criteria crit;
 
-        if (expressedTerm.getSubterm() != null) {
-            OntologyDTO subtermOntology = expressedTerm.getSubterm().getOntology();
+        if (expressedTerm.getEntity().getSubTerm() != null) {
+            OntologyDTO subtermOntology = expressedTerm.getEntity().getSubTerm().getOntology();
             if (subtermOntology == null)
                 throw new NullPointerException("No subterm ontology provided.");
             crit = session.createCriteria(ExpressionStructure.class);
             Criteria subterm = crit.createCriteria("subterm");
-            subterm.add(Restrictions.eq("termName", expressedTerm.getSubterm().getName()));
+            subterm.add(Restrictions.eq("termName", expressedTerm.getEntity().getSubTerm().getTermName()));
         } else {
             crit = session.createCriteria(ExpressionStructure.class);
             crit.add(Restrictions.isNull("subterm"));
@@ -837,7 +808,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public List<ExpressionResult> getExpressionsWithEntity(GenericTerm term) {
         String hql = "select distinct expression from ExpressionResult expression where " +
-                "(superterm = :term OR subterm = :term) " +
+                "(entity.superterm = :term OR entity.subterm = :term) " +
                 " AND expressionFound = :expressionFound ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
@@ -951,7 +922,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "ee.gene.zdbID = :zdbID " +
                 "AND  er.expressionExperiment.zdbID = ee.zdbID " +
                 "AND er.expressionFound = :expressionFound " +
-                "AND er.superterm.zdbID = t.zdbID " +
+                "AND er.entity.superterm.zdbID = t.zdbID " +
                 "AND t.oboID = ai.oboID " +
                 "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
                 "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
@@ -965,4 +936,282 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 .setBoolean("wildType",true)
                 .list();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<AnatomyItem> getAnatomyForMarker(String zdbID){
+//       String sql = "SELECT distinct term_zdb_id" +
+//               "FROM " +
+//               "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item" +
+//               "WHERE" +
+//               "xpatex_gene_zdb_id = :zdbID " +
+//               "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+//               "AND xpatres_expression_found='t'" +
+//               "AND xpatres_superterm_zdb_id = term_zdb_id" +
+//               "AND term_ont_id = anatitem_obo_id" +
+//               "AND xpatex_genox_zdb_id = genox_zdb_id " +
+//               "AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  " +
+//               "AND geno_zdb_id  = genox_geno_zdb_id " +
+//               "AND geno_is_wildtype = 't' " +
+//               "ORDER BY anatitem_name_order asc;"  ;
+        String hql = "SELECT distinct ai " +
+                "FROM " +
+                "ExpressionResult er, ExpressionExperiment ee, Term t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+                " WHERE " +
+                "ee.gene.zdbID = :zdbID " +
+                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
+                "AND er.expressionFound = :expressionFound " +
+                "AND er.entity.superterm.id = t.id " +
+                "AND t.oboID = ai.oboID " +
+                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
+                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
+                "AND g.zdbID = ge.genotype.zdbID " +
+                "AND g.wildtype = :wildType  " +
+                "ORDER BY ai.nameOrder asc"  ;
+        return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("zdbID",zdbID)
+                .setParameter("experiment","_Standard")
+                .setBoolean("expressionFound",true)
+                .setBoolean("wildType",true)
+                .list();
+    }
+
+
+    
+
+    public List<Figure> getFigures(ExpressionSummaryCriteria expressionCriteria) {
+        List<Figure> figures = new ArrayList<Figure>();
+        //store strings for createAlias here, then only create what's necessary at the end.
+        Map<String,String> aliasMap = new HashMap<String,String>();
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Figure.class);
+
+
+        //duplicate createAlias statements are ok, so we'll put the necessary
+        //aliases in for any set of restrictions.
+
+        if (expressionCriteria.getGene() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.gene",expressionCriteria.getGene()));
+            logger.debug("gene: " + expressionCriteria.getGene().getZdbID());
+        }
+
+        if (expressionCriteria.getGenotypeExperiment() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.genotypeExperiment",expressionCriteria.getGenotypeExperiment()));
+            logger.debug("genox: " + expressionCriteria.getGenotypeExperiment().getZdbID());
+        }
+
+        if (expressionCriteria.getGenotype() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment","genox");
+            criteria.add(Restrictions.eq("genox.genotype",expressionCriteria.getGenotype()));
+            logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
+        }
+
+        if (expressionCriteria.getAntibody() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.antibody",expressionCriteria.getAntibody()));
+            logger.debug("antibody: " + expressionCriteria.getAntibody().getZdbID());
+        }
+
+        if (expressionCriteria.getEntity() != null) {
+
+            if (expressionCriteria.getEntity().getSuperterm() != null
+                    && expressionCriteria.getEntity().getSubterm() != null) {
+                aliasMap.put("expressionResults", "xpatres");
+                criteria.add(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getEntity().getSuperterm()));
+                criteria.add(Restrictions.eq("xpatres.entity.subterm", expressionCriteria.getEntity().getSubterm()));
+                logger.debug("superterm: " + expressionCriteria.getEntity().getSuperterm().getZdbID());
+                logger.debug("subterm:" + expressionCriteria.getEntity().getSuperterm().getZdbID());
+            }
+
+            if (expressionCriteria.getEntity().getSuperterm() != null
+                    && expressionCriteria.getEntity().getSubterm() == null) {
+                aliasMap.put("expressionResults", "xpatres");
+                criteria.add(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getEntity().getSuperterm()));                
+                criteria.add(Restrictions.isNull("xpatres.entity.subterm"));
+                logger.debug("subterm:" + expressionCriteria.getEntity().getSuperterm().getZdbID());
+            }
+
+        }
+
+
+        if (expressionCriteria.getSingleTermEitherPosition() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            criteria.add(Restrictions.or(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getSingleTermEitherPosition()),
+                Restrictions.eq("xpatres.entity.subterm", expressionCriteria.getSingleTermEitherPosition())));
+            logger.debug("single term, either position: " + expressionCriteria.getSingleTermEitherPosition().getZdbID());
+        }
+
+        if (expressionCriteria.getStart() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            criteria.add(Restrictions.eq("xpatres.startStage", expressionCriteria.getStart()));            
+            logger.debug("start stage: " + expressionCriteria.getStart().getZdbID());
+        }
+
+        if (expressionCriteria.getEnd() != null) {
+            aliasMap.put("expressionResults", "xpatres");
+            criteria.add(Restrictions.eq("xpatres.endStage", expressionCriteria.getEnd()));                        
+            logger.debug("end stage: " + expressionCriteria.getEnd().getZdbID());
+        }
+
+        if (expressionCriteria.isWithImagesOnly()) {
+            criteria.add(Restrictions.isNotEmpty("images"));
+            logger.debug("with images only");
+        }
+
+        if (expressionCriteria.isWildtypeOnly()) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.genotype", "geno");
+            criteria.add(Restrictions.eq("geno.wildtype", true));
+            logger.debug("wildtype only");
+        }
+
+       if (expressionCriteria.isStandardEnvironment()) {
+           aliasMap.put("expressionResults", "xpatres");
+           aliasMap.put("xpatres.expressionExperiment","xpatex");
+           aliasMap.put("xpatex.genotypeExperiment", "genox");
+           aliasMap.put("genox.experiment", "exp");
+           criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
+                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+           logger.debug("standard or generic-control only");
+       }
+
+       if (expressionCriteria.isChemicalEnvironment()) {
+           aliasMap.put("expressionResults", "xpatres");
+           aliasMap.put("xpatres.expressionExperiment","xpatex");
+           aliasMap.put("xpatex.genotypeExperiment", "genox");
+           aliasMap.put("genox.experiment", "exp");
+           aliasMap.put("exp.experimentConditions", "cond");
+           aliasMap.put("cond.conditionDataType","cdt");
+           criteria.add(Restrictions.eq("cdt.group","chemical"));
+           logger.debug("chemical environments only");
+       }
+
+        //now add all of the aliases that were marked as necessary above
+        for (Map.Entry<String,String> entry : aliasMap.entrySet()) {
+            criteria.createAlias(entry.getKey(), entry.getValue());
+        }
+
+        logger.debug("getting figures for an ExpressionSummaryCriteria object");
+        figures.addAll(criteria.list());
+        return figures;
+    }
+
+
+
+    @Override
+    public Set<ExpressionStatement> getExpressionStatements(ExpressionSummaryCriteria expressionCriteria) {
+        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
+        Set<ExpressionStatement> expressionStatements = new TreeSet<ExpressionStatement>();
+        Session session = HibernateUtil.currentSession();
+
+        //store strings for createAlias here, then only create what's necessary at the end.
+        Map<String,String> aliasMap = new HashMap<String,String>();
+
+        Criteria criteria = session.createCriteria(ExpressionResult.class);
+        Criteria figureCriteria = null;
+        //duplicate createAlias statements are ok, so we'll put the necessary
+        //aliases in for any set of restrictions.
+
+        if (expressionCriteria.getFigure() != null) {
+            //if there were hql, I would do member of..
+            if (figureCriteria == null)
+                figureCriteria = criteria.createCriteria("figures","figure");
+            figureCriteria.add(Restrictions.eq("zdbID",expressionCriteria.getFigure().getZdbID()));
+            logger.debug("figure: " + expressionCriteria.getFigure().getZdbID());
+        }
+
+        if (expressionCriteria.getGene() != null) {
+            aliasMap.put("expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.gene",expressionCriteria.getGene()));
+            logger.debug("gene: " + expressionCriteria.getGene().getZdbID());
+        }
+
+        if (expressionCriteria.getGenotypeExperiment() != null) {
+            aliasMap.put("expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.genotypeExperiment",expressionCriteria.getGenotypeExperiment()));
+            logger.debug("genox: " + expressionCriteria.getGenotypeExperiment().getZdbID());
+        }
+
+        if (expressionCriteria.getGenotype() != null) {
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            criteria.add(Restrictions.eq("genox.genotype", expressionCriteria.getGenotype()));
+            logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
+        }
+
+
+        if (expressionCriteria.getAntibody() != null) {
+            aliasMap.put("expressionExperiment","xpatex");
+            criteria.add(Restrictions.eq("xpatex.antibody",expressionCriteria.getAntibody()));
+            logger.debug("antibody: " + expressionCriteria.getAntibody().getZdbID());
+        }
+
+
+        if (expressionCriteria.getStart() != null) {
+            criteria.add(Restrictions.eq("startStage", expressionCriteria.getStart()));
+            logger.debug("start stage: " + expressionCriteria.getStart().getZdbID());
+        }
+
+        if (expressionCriteria.getEnd() != null) {
+            criteria.add(Restrictions.eq("endStage", expressionCriteria.getEnd()));
+            logger.debug("end stage: " + expressionCriteria.getEnd().getZdbID());
+        }
+
+        if (expressionCriteria.isWithImagesOnly() == true) {
+            if (figureCriteria == null)
+                figureCriteria = criteria.createCriteria("figures","figure");
+            figureCriteria.add(Restrictions.isNotEmpty("images"));
+            logger.debug("with images only");
+        }
+
+        if (expressionCriteria.isWildtypeOnly() == true) {
+            aliasMap.put("expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.genotype", "geno");
+            criteria.add(Restrictions.eq("geno.wildtype", true));
+            logger.debug("wildtype only");
+        }
+
+        if (expressionCriteria.isStandardEnvironment()) {
+            aliasMap.put("expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.experiment", "exp");
+            criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
+                    Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+            logger.debug("standard or generic-control only");
+        }
+
+        if (expressionCriteria.isChemicalEnvironment()) {
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.experiment", "exp");
+            aliasMap.put("exp.experimentConditions", "cond");
+            aliasMap.put("cond.conditionDataType","cdt");
+            criteria.add(Restrictions.eq("cdt.group","chemical"));
+            logger.debug("chemical environments only");
+        }
+
+        for (Map.Entry<String, String> entry : aliasMap.entrySet()) {
+            criteria.createAlias(entry.getKey(),entry.getValue());
+        }
+
+        logger.debug("getting terms for an ExpressionSummaryCriteria object");
+        results.addAll(criteria.list());
+        for (ExpressionResult result : results) {
+            ExpressionStatement statement = new ExpressionStatement();
+            statement.setEntity(result.getEntity());
+            statement.setExpressionFound(result.isExpressionFound());
+            expressionStatements.add(statement);
+        }
+        
+        return expressionStatements;
+    }
+
 }

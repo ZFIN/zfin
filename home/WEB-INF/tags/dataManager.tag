@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="zdbID" type="java.lang.String"
-              rtexprvalue="true" required="true" %>
+              rtexprvalue="true" required="false" %>
 <%@ attribute name="editURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
@@ -15,9 +15,11 @@
 <table class="data_manager">
     <tbody>
     <tr>
-        <td>
-            <b>ZFIN ID:</b> ${zdbID}
-        </td>
+        <c:if test="${!empty zdbID}">
+            <td>
+                <b>ZFIN ID:</b> ${zdbID}
+            </td>
+        </c:if>
         <c:if test="${!empty oboID}">
             <td>
                 <b>OBO ID:</b> ${oboID}

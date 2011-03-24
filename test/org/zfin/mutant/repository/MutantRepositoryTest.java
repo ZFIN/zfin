@@ -159,15 +159,6 @@ public class MutantRepositoryTest {
 
 
     @Test
-    public void retrieveDefaultPhenotype() {
-        String genoxID = "ZDB-GENOX-100111-1";
-        String figID = "ZDB-FIG-091215-69";
-
-        GenotypeExperiment genox = getMutantRepository().getGenotypeExperiment(genoxID);
-        Phenotype defaultPhenotype = getMutantRepository().getDefaultPhenotype(genox, figID);
-    }
-
-    @Test
     public void createDefaultPhenotype() {
         String genoxID = "ZDB-GENOX-100111-1";
         String figID = "ZDB-FIG-091215-69";
@@ -278,7 +269,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void phenotypesWithObsoleteTerms() {
-        List<Phenotype> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
+        List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertNotNull(phenotypes);
         assertEquals(0, phenotypes.size());
     }

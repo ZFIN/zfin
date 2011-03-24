@@ -30,7 +30,7 @@
                         ${title}
                     </c:when>
                     <c:otherwise>
-                        <zfin:link entity="${relatedTranscript.otherMarker}"/> TRANSCRIPTS:
+                        <zfin:link entity="${relatedTranscript.otherMarker}"/> TRANSCRIPTS
                     </c:otherwise>
                 </c:choose>
 
@@ -41,9 +41,7 @@
                     <th width="25%">Name</th>
                     <th style="width: 15%;" class="length">Length (bp)</th>
                     <th  style="width: 35%;" class="analysis">
-                        <a href="javascript:;"
-                           onclick="top.zfinhelp=open('/<zfin:webdriver/>?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html','helpwindow','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600');">
-                        <b>Analysis</b></a>
+                        Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a>
                     </th>
 
                     <th width="30%">

@@ -1,8 +1,8 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class FxPileStructureValidator extends AbstractPileStructureValidator<ExpressedTermDTO> {
 
-    public FxPileStructureValidator(Map<PostComposedPart, List<OntologyDTO>> termEntryMap) {
+    public FxPileStructureValidator(Map<EntityPart, List<OntologyDTO>> termEntryMap) {
         super(termEntryMap);
     }
 

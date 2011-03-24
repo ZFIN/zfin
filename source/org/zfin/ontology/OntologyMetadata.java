@@ -1,10 +1,13 @@
 package org.zfin.ontology;
 
+import java.util.Set;
+
 /**
  * This class holds the header info provided in the OBO file.
  */
 public class OntologyMetadata {
 
+    private long id;
     private String name;
     private int order;
     private String defaultNamespace;
@@ -15,6 +18,15 @@ public class OntologyMetadata {
     // software used to generate the obo file.
     private String generatedBy;
     private String remark;
+    private Set<Subset> subsets;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -88,6 +100,13 @@ public class OntologyMetadata {
         this.remark = remark;
     }
 
+    public Set<Subset> getSubsets() {
+        return subsets;
+    }
+
+    public void setSubsets(Set<Subset> subsets) {
+        this.subsets = subsets;
+    }
 
     @Override
     public String toString() {

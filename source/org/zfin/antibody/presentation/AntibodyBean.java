@@ -7,6 +7,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
@@ -21,6 +22,8 @@ import java.util.*;
 public class AntibodyBean extends PublicationListBean {
 
     protected Antibody antibody;
+
+    protected ExpressionSummaryCriteria expressionSummaryCriteria;
 
     protected Term superTerm;
     protected Term subTerm;
@@ -118,6 +121,14 @@ public class AntibodyBean extends PublicationListBean {
             return new TreeSet<ExternalNote>();
         }
         return new TreeSet<ExternalNote>(antibody.getExternalNotes());
+    }
+
+    public ExpressionSummaryCriteria getExpressionSummaryCriteria() {
+        return expressionSummaryCriteria;
+    }
+
+    public void setExpressionSummaryCriteria(ExpressionSummaryCriteria expressionSummaryCriteria) {
+        this.expressionSummaryCriteria = expressionSummaryCriteria;
     }
 
     public Set<Publication> getPublications() {

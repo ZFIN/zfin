@@ -9,14 +9,19 @@
 
 <html>
 <head>
-    <!--css in zfin.css, but want don't want to apply all of the zfin styles-->
+    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+
+    <%-- override some of zfin.css since this will come up in an iframe --%>
+
     <style type="text/css">
+
+        body {background: white; margin: 1px;}
         a.external{
             background: transparent url(/images/external.png) no-repeat scroll right center ;
             padding-right: 13px;
         }
 
-        a.close_link {
+        a.xpatanat-close_link {
             color:#333333;
             font-family:sans-serif;
             font-weight:bold;
@@ -36,34 +41,30 @@
 
 <p></p>
 
-<!-- Relationships -->
-<TABLE width="100%">
-    <tr valign=top>
-        <td colspan=2 align="right" valign="center">
-            <%--<a onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " href="javascript:;">[Add To Search]</a>--%>
-            <input type="button"  alt="Add To Search" value="Add To Search" onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " >
-            &nbsp;
-            &nbsp;
-            <a title="Close window" class="close_link" onclick="window.parent.hideTerm(); " href="javascript:">x</a>
-        </td>
-    </tr>
+<div style="float: right">
+    <input type="button"  alt="Add To Search" value="Add To Search" onclick="window.parent.useTerm('${formBean.anatomyItem.nameEscaped}'); " >
+    &nbsp;
+    &nbsp;
+    <a title="Close window" class="xpatanat-close_link" onclick="window.parent.hideTerm(); " href="javascript:">x</a>
+         
+</div>
+
+<TABLE width="100%" class="primary-entity-attributes">
     <tr>
-        <td width="80" valign=top>
-            <FONT SIZE=+1><STRONG>Name:</STRONG></FONT></td>
+        <th width="80" valign=top>
+            <span class="name-label">Name:</span>
         <td>
-            <FONT SIZE=+1><STRONG>
-             ${formBean.anatomyItem.termName}
+            <span class="name-value">${formBean.anatomyItem.name}</span>
              <br>
-             <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank"><font size="-1">Anatomy Details</font></a>
-            </STRONG></FONT>
+             <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank">Anatomy Details</a>
             <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
         </td>
     </tr>
     <c:if test="${not empty formBean.anatomyItem.synonyms}">
         <tr valign="top">
-            <td>
+            <th>
                 Synonyms:
-            </td>
+            </th>
             <td>
                 ${formBean.formattedSynonymList}
             </td>
@@ -71,64 +72,45 @@
     </c:if>
 
     <c:if test="${formBean.anatomyItem.formattedDefinition != null  }">
-        <tr valign="top">
-            <td>
+        <tr>
+            <th>
                 Definition:
-            </td>
+            </th>
             <td>
                 ${formBean.anatomyItem.formattedDefinition}
             </td>
         </tr>
     </c:if>
-    <TR>
-        <TD bgcolor="#CCCCCC" colspan=2>
-            <STRONG>Relationships</STRONG>
-            (<a  class="external" href="/zf_info/ontology_relationship_info.html" target="_blank">about</a>)
-        </TD>
-    </TR>
+    <tr>
+        <th>Appears&nbsp;at:</th>
+        <td><zfin:name entity="${formBean.anatomyItem.start}" longVersion="true"/></td>
+    </tr>
+    <tr>
+        <th>Evident&nbsp;until:</th>
+        <td><zfin:name entity="${formBean.anatomyItem.end}" longVersion="true"/></td>
+    </tr>
+  </table>
+
+
+  <div class="summary">
+  <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
+  <table class="summary horizontal-solidblock">
     <c:forEach var="rt" items="${formBean.relations}">
-        <TR>
-            <TD bgcolor="#EEEEEE" valign=top align=left width=110>
-                ${rt.type}:
-            </TD>
-            <TD bgcolor="#EEEEEE">
+        <tr>
+            <th>
+                    <%-- keep the relationship types from wrapping --%>
+                    ${fn:replace(rt.type," ","&nbsp;")}:
+            </th>
+            <td>
                 <c:forEach var="session" items="${rt.items}">
                     <%--<zfin:link entity="${item}"/>--%>
-                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.termName}</a>
+                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.name}</a>
                     &nbsp;
                 </c:forEach>
-            </TD>
-        </TR>
-
+            </td>
+        </tr>
     </c:forEach>
 </TABLE>
-
-<p>
-
-<p>
-<TABLE width="100%">
-    <TR>
-        <TD bgcolor="#CCCCCC">
-            <STRONG>Appears at</STRONG>
-        </TD>
-        <TD bgcolor="#CCCCCC">
-            <STRONG>Evident until</STRONG>
-        </TD>
-    </TR>
-    <TR>
-        <%
-            AnatomyItem ai = formBean.getAnatomyItem();
-            String startStage = StagePresentation.createDisplayEntry(ai.getStart());
-            String endStage = StagePresentation.createDisplayEntry(ai.getEnd());
-        %>
-        <TD bgcolor="#EEEEEE">
-            <%= startStage %>
-        </TD>
-        <TD bgcolor="#EEEEEE">
-            <%= endStage %>
-        </TD>
-    </TR>
-</TABLE>
-
+</div>
 
 </html>

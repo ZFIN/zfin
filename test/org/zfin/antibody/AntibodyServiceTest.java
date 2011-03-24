@@ -1,18 +1,22 @@
 package org.zfin.antibody;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.*;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
@@ -21,12 +25,15 @@ import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests AntibodyService class.
  */
-public class AntibodyServiceTest {
+public class AntibodyServiceTest extends AbstractDatabaseTest {
+
+        private static final Logger logger = Logger.getLogger(AntibodyServiceTest.class);
+
 
     @Test
     public void distinctAOTermList() {
@@ -405,5 +412,106 @@ public class AntibodyServiceTest {
         assertTrue(matchingTexts.size() > 0);
     }
 
+
+    /**
+     * From the anatomy page, the call passes in a single term and an antibody, but no stages
+     */
+    @Test
+    public void figureSummaryTestFromAnatomyPage() {
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081003-1");
+        assertNotNull(antibody);
+
+        GenericTerm slowMuscleCell = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009116");
+        assertNotNull(slowMuscleCell);
+
+        Figure fig2 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-100309-44");
+        Figure fig3 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-100309-45");
+        Figure slowMuscleSubtermFigure = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-090618-31");
+
+        AntibodyService antibodyService = new AntibodyService(antibody);
+
+
+        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, null, null, false);
+        antibodyService.createFigureSummary(criteria);
+
+
+        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<Figure> figures = new ArrayList<Figure>();
+
+
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
+            figures.add(figureSummary.getFigure());
+        }
+
+        //WT & std env tests
+
+        assertTrue("Figure Summary should include fig. 3", figures.contains(fig3));
+        assertFalse("Figure Summary should not contain fig. 2", figures.contains(fig2));
+
+    }
+
+
+    /**
+     * from the antibody page, it's a summary for a single antibody, a single stage and 
+     */
+    @Test
+    public void figureSummaryTestFromAntibodyPage() {
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081003-1");
+        assertNotNull(antibody);
+
+        GenericTerm slowMuscleCell = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009116");
+        assertNotNull(slowMuscleCell);
+        PostComposedEntity slowMuscleCellEntity = new PostComposedEntity();
+        slowMuscleCellEntity.setSuperterm(slowMuscleCell);
+        ExpressionStatement slowMuscleCellStatement = new ExpressionStatement();
+        slowMuscleCellStatement.setEntity(slowMuscleCellEntity);
+        slowMuscleCellStatement.setExpressionFound(true);
+
+
+        GenericTerm myotome = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0001056");
+        assertNotNull(myotome);
+        PostComposedEntity myotomeEntity = new PostComposedEntity();
+        myotomeEntity.setSuperterm(myotome);
+        ExpressionStatement myotomeStatement = new ExpressionStatement();
+        myotomeStatement.setEntity(myotomeEntity);
+        myotomeStatement.setExpressionFound(true);
+
+
+        DevelopmentStage prim5 = RepositoryFactory.getAnatomyRepository().getStageByID("ZDB-STAGE-010723-10");
+        assertNotNull(prim5);
+
+        Figure figS3 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-081117-50");
+
+        AntibodyService antibodyService = new AntibodyService(antibody);
+
+        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, prim5, prim5, false);
+        antibodyService.createFigureSummary(criteria);
+
+        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<Figure> figures = new ArrayList<Figure>();
+        Set<ExpressionStatement> statements = new HashSet<ExpressionStatement>();
+
+
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
+            figures.add(figureSummary.getFigure());
+            statements.addAll(figureSummary.getExpressionStatementList());
+
+            //all figures returned should have slow muscle cell
+            assertTrue(figureSummary.getPublication().getShortAuthorList() + " " + figureSummary.getFigure().getLabel()
+                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressionStatementList().contains(slowMuscleCellStatement));
+        }
+
+
+        //find the figure 6 summary, test against it
+        FigureSummaryDisplay figS3Summary = null;
+        for (FigureSummaryDisplay fs : figureSummaryList) {
+            if (fs.getFigure().equals(figS3))
+                figS3Summary = fs;
+        }
+        assertNotNull("figureSummaryList should have " + figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel(), figS3Summary);
+        assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressionStatementList().contains(myotomeStatement));
+
+
+    }
 
 }

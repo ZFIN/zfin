@@ -238,6 +238,13 @@ public interface InfrastructureRepository {
     GenericTerm getTermByName(String termName, Ontology ontology);
 
     /**
+     * Retrieve Term by ZDB ID.
+     *
+     * @param termID term id
+     * @return Generic Term
+     */
+    public GenericTerm getTermByID(String termID);
+    /**
      * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
      * Hopefully, there term is only found in a single ontology. Match has to be exact.
      *
@@ -289,7 +296,13 @@ public interface InfrastructureRepository {
 
     int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID);
 
-    int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID);
+    /**
+     * Number of phenotype experiments a genotype is being used.
+     * @param genotypeID  genotype
+     * @param publicationID  publication
+     * @return number of references
+     */
+    int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID);
 
     String getReplacedZdbID(String oldZdbID);
 
@@ -315,6 +328,19 @@ public interface InfrastructureRepository {
      * @return list of strings
      */
     List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement);
+
+    /**
+     * Retrieve all term ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     *
+     * @param clazz Entity to be retrieved
+     * @param idName unique id
+     * @param firstNIds number of records
+     * @return list of ids
+     */
+    public List<String> getAllEntities(Class clazz, String idName, int firstNIds);
+
 
 }
 

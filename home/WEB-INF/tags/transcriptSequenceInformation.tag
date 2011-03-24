@@ -15,9 +15,6 @@
         return true;
     }
 
-    function start_help(anchor) {
-        top.zfinhelp=open("/<zfin:webdriver/>?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
-    }
 </script>
 
 
@@ -35,15 +32,13 @@
 
 
 <zfin2:subsection title="${title}" test="${!empty sequenceInfo}">
-    <table class="summary solidblock sequenceinformation">
+    <table class="summary rowstripes">
             <tr>
-                <th width="25%"> Type </th>
+                <th width="25%"><a href="/action/marker/transcript-definitions#type">Type</a></th>
                 <th width="25%"> Accession # </th>
                 <th width="15%" style="text-align: right"> Length (bp/aa) </th>
                 <th width="35%" style="text-align: center">
-                    <a href="javascript:;"
-                       onclick="top.zfinhelp=open('/<zfin:webdriver/>?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html','helpwindow','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600');">
-                        <b>Analysis</b></a>
+                    Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a>
                 </th> <%-- filler column, just to take up space --%>
             </tr>
 

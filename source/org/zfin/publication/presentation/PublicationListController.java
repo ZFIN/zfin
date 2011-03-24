@@ -110,7 +110,7 @@ public class PublicationListController extends MultiActionController {
             InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
             ir.removeRecordAttributionForData(bean.getDisassociatedPubId(), ab.getZdbID());
             Person currentUser = Person.getCurrentSecurityUser();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);            
+            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
             tx.commit();
         } catch (Exception exception) {
             try {

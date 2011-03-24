@@ -45,27 +45,42 @@ public class HibernateSessionCreator implements FactoryBean {
         }
         Configuration config = createConfiguration(db);
         File[] hbmFiles = getHibernateConfigurationFiles();
-        if (hbmFiles != null) {
-            // first add filter.hbm.xml bug in Hibernate!!
-            for (File configurationFile : hbmFiles) {
-                if (configurationFile.getName().startsWith("filters.")) {
-                    config.addFile(configurationFile);
-                    break;
-                }
-            }
-            // now add the others
-            for (File configurationFile : hbmFiles) {
-                if (!configurationFile.getName().startsWith("filter.")) {
-                    config.addFile(configurationFile);
-                }
-            }
-            HibernateUtil.init(config.buildSessionFactory());
+        if (hbmFiles == null)
+            throw new RuntimeException("No Hibernate mapping files found!");
+
+        LOG.info("Hibernate Mapping files being used:");
+        for (File file : hbmFiles){
+            LOG.info(file.getAbsolutePath());
         }
+
+        // first add filter.hbm.xml bug in Hibernate!!
+        for (File configurationFile : hbmFiles) {
+            if (configurationFile.getName().startsWith("filters.")) {
+                config.addFile(configurationFile);
+                break;
+            }
+        }
+        // now add the others
+        for (File configurationFile : hbmFiles) {
+            if (!configurationFile.getName().startsWith("filter.")) {
+                config.addFile(configurationFile);
+            }
+        }
+        HibernateUtil.init(config.buildSessionFactory());
     }
 
     private static File[] getHibernateConfigurationFiles() {
         // first in the source directory
         File hibernateConfDir = FileUtil.createFileFromStrings("source", "org", "zfin");
+        // if not found in the source (used for testing) then check in the classpath
+        if (hibernateConfDir == null || !hibernateConfDir.exists()) {
+            // a bit hacky...
+            ClassLoader cl = HibernateSessionCreator.class.getClassLoader();
+            String directory = cl.getResource("org/zfin/filters.hbm.xml").toString();
+            directory = directory.substring(0, directory.lastIndexOf("/"));
+            directory = directory.replace("file:/", "");
+            hibernateConfDir = FileUtil.createFileFromStrings(directory);
+        }
         File[] hibernateConfigurationFiles = hibernateConfDir.listFiles(new HibernateFilenameFilter());
         if (hibernateConfigurationFiles == null) {
             // then search in the classpath

@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class FxCurationModule implements HandlesError {
         expressionModule.setPileStructure(structureModule);
         structureModule.setExpressionSection(expressionModule);
         experimentModule.setExpressionSection(expressionModule);
-        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
 
         PileConstructionZoneModule constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
         constructionZoneModule.setStructureValidator(new FxPileStructureValidator(termEntryMap));
@@ -52,17 +52,17 @@ public class FxCurationModule implements HandlesError {
         pileConstructionZoneModule = constructionZoneModule;
     }
 
-    private Map<PostComposedPart, List<OntologyDTO>> getTermEntryMap() {
-        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = new TreeMap<PostComposedPart, List<OntologyDTO>>();
+    private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = new TreeMap<EntityPart, List<OntologyDTO>>();
         List<OntologyDTO> superterm = new ArrayList<OntologyDTO>(1);
         superterm.add(OntologyDTO.ANATOMY);
-        termEntryMap.put(PostComposedPart.SUPERTERM, superterm);
+        termEntryMap.put(EntityPart.ENTITY_SUPERTERM, superterm);
 
         List<OntologyDTO> subterm = new ArrayList<OntologyDTO>(3);
         subterm.add(OntologyDTO.ANATOMY);
         subterm.add(OntologyDTO.GO_CC);
         subterm.add(OntologyDTO.SPATIAL);
-        termEntryMap.put(PostComposedPart.SUBTERM, subterm);
+        termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
 
         return termEntryMap;
     }

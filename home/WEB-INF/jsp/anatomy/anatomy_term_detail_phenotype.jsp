@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            new Ajax.Updater('${phenotypeSection}-mutants', '/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-morpholinos', '/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
-            new Ajax.Updater('${phenotypeSection}-non-wildtype-morpholinos', '/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', {Method: 'get' });
+            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); } );
+            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
             showSection('${phenotypeSection}', true);
         }
     </script>
@@ -30,13 +30,13 @@
                 class="search-result-table-header">Mutants</span> loading
             <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
-        <p/>
+        <p></p>
 
         <div id="${phenotypeSection}-morpholinos" class="indented-section"><span
                 class="search-result-table-header">Wildtype Morpholinos</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
-        <p/>
+        <p></p>
 
         <div id="${phenotypeSection}-non-wildtype-morpholinos" class="indented-section"><span
                 class="search-result-table-header">Non-wildtype Morpholinos</span>

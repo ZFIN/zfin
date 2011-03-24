@@ -213,8 +213,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = labeling.createCriteria("expressionResults");
         // check AO1 and AO2 
         results.add(Restrictions.or(
-                Restrictions.eq("superterm", aoTerm),
-                Restrictions.eq("subterm", aoTerm)));
+                Restrictions.eq("entity.superterm", aoTerm),
+                Restrictions.eq("entity.subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
@@ -236,14 +236,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       and geno = genox.genotype ");
         hql.append("       and geno.wildtype = :wildType ");
         if (includeSubstructures) {
-            hql.append("   and ( res.superterm = :aoTerm  OR res.subterm = :aoTerm" +
+            hql.append("   and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm" +
                     "                                       OR exists ( select 1 from TransitiveClosure child " +
-                    "                  where res.superterm = child.child AND child.root = :aoTerm ) " +
+                    "                  where res.entity.superterm = child.child AND child.root = :aoTerm ) " +
                     "                                       OR exists ( select 1 from TransitiveClosure child " +
-                    "                  where res.subterm = child.child AND child.root = :aoTerm ) " +
+                    "                  where res.entity.subterm = child.child AND child.root = :aoTerm ) " +
                     ") ");
         } else
-            hql.append("       and (res.superterm = :aoTerm OR res.subterm = :aoTerm) ");
+            hql.append("       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ");
         hql.append("       and res.expressionFound = :expressionFound ");
         hql.append("       and exp = genox.experiment ");
         hql.append("       and exp.name in (:standard , :generic ) ");
@@ -268,8 +268,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = criteria.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("superterm", aoTerm),
-                Restrictions.eq("subterm", aoTerm)));
+                Restrictions.eq("entity.superterm", aoTerm),
+                Restrictions.eq("entity.subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -289,8 +289,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = criteria.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("superterm", aoTerm),
-                Restrictions.eq("subterm", aoTerm)));
+                Restrictions.eq("entity.superterm", aoTerm),
+                Restrictions.eq("entity.subterm", aoTerm)));
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
@@ -312,8 +312,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria results = labeling.createCriteria("expressionResults");
         // check AO1 and AO2
         results.add(Restrictions.or(
-                Restrictions.eq("superterm", aoTerm),
-                Restrictions.eq("subterm", aoTerm)));
+                Restrictions.eq("entity.superterm", aoTerm),
+                Restrictions.eq("entity.subterm", aoTerm)));
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
         Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
@@ -453,16 +453,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
                 hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where (   (result.superterm.zdbID = :aoTermID_" + i + ")" +
-                        "                         OR result.subterm.zdbID = :aoTermID_" + i + ")" +
+                        "                  where (   (result.entity.superterm.zdbID = :aoTermID_" + i + ")" +
+                        "                         OR result.entity.subterm.zdbID = :aoTermID_" + i + ")" +
                         "                     AND result.expressionExperiment = experiment" +
                         "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                         "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
                         "                     AND result.expressionFound = 't' ) ");
                 if (searchCriteria.isIncludeSubstructures())
                     hql.append("     OR exists ( select result from ExpressionResult result, TransitiveClosure child " +
-                            "                  where (result.superterm = child.child OR " +
-                            "                         result.subterm = child.child) " +
+                            "                  where (result.entity.superterm = child.child OR " +
+                            "                         result.entity.subterm = child.child) " +
                             "                       AND child.root = :aoTermID_" + i +
                             "                     AND result.expressionExperiment = experiment" +
                             "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
@@ -521,8 +521,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
 
         while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecords() + 1) {
-            //Object[] record = scrollableResults.get(0);
-            //AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) record[0];
             AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.get(0);
             populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
         }
@@ -647,12 +645,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         criteria.add(Restrictions.eq("geno.wildtype", true));
         criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
                 Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
-        criteria.add(Restrictions.eq("xpatres.superterm", superTerm));
+        criteria.add(Restrictions.eq("xpatres.entity.superterm", superTerm));
 
         if (subTerm != null)
-            criteria.add(Restrictions.eq("xpatres.subterm", subTerm));
+            criteria.add(Restrictions.eq("xpatres.entity.subterm", subTerm));
         else
-            criteria.add(Restrictions.isNull("xpatres.subterm"));
+            criteria.add(Restrictions.isNull("xpatres.entity.subterm"));
 
         if (start != null)
             criteria.add(Restrictions.eq("xpatres.startStage", start));
@@ -694,8 +692,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         criteria.add(Restrictions.eq("geno.wildtype", true));
         criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
                 Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
-        criteria.add(Restrictions.or(Restrictions.eq("xpatres.superterm", term),
-                Restrictions.eq("xpatres.subterm", term)));
+        criteria.add(Restrictions.or(Restrictions.eq("xpatres.entity.superterm", term),
+                Restrictions.eq("xpatres.entity.subterm", term)));
 
         if (withImgOnly)
             criteria.add(Restrictions.isNotEmpty("images"));
@@ -711,8 +709,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql = "select xpatres from ExpressionResult xpatres " +
                 "   join xpatres.expressionExperiment " +
                 "   join xpatres.figures " +
-                "   join fetch xpatres.superterm " +
-                "   left outer join fetch xpatres.subterm " +
+                "   join fetch xpatres.entity.superterm " +
+                "   left outer join fetch xpatres.entity.subterm " +
                 " where :figure member of xpatres.figures " +
                 "   and xpatres.expressionFound = :expressionFound " +
                 "   and xpatres.expressionExperiment.antibody = :antibody " +

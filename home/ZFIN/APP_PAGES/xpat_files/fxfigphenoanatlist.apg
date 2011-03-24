@@ -106,74 +106,70 @@ stage range, experiment, or expression_found in the same figure.
              where fdb_db_name = 'QuickGO';">
 <?MIVAR NAME=$fxfigphenogo_url>$1<?/MIVAR>
 <?/MISQL> 
+
+
+
+<?MIVAR NAME="$fxfigphenoanat_term_list"><?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_entity_long_list_dom_class">phenotype-anatomy-long-list-element-$(REPLACE,$fxfigphenoanat_fig_zdb_id,"-","")<?/MIVAR>
+<?MIVAR NAME="$fxfigphenoanat_entity_short_list_dom_class">phenotype-anatomy-short-list-element-$(REPLACE,$fxfigphenoanat_fig_zdb_id,"-","")<?/MIVAR>
+
+<?MIVAR>
+  <style>
+    .$fxfigphenoanat_entity_long_list_dom_class { display: none }
+  </style>
+<?/MIVAR>
+
+
+
 <?MISQL SQL="
-    SELECT distinct get_postcomposed_term_html(apato_superterm_zdb_id, apato_subterm_zdb_id),
-                    lower(term_name) as term_name_order
-      FROM apato_figure, atomic_phenotype, term superterm
-     WHERE apatofig_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
-       and apato_superterm_zdb_id = term_zdb_id
-       and apatofig_apato_zdb_id = apato_zdb_id
-       and apato_tag != 'normal'
-     order by term_name_order">
+    SELECT distinct get_postcomposed_term_html(phenos_entity_1_superterm_zdb_id, phenos_entity_1_subterm_zdb_id),
+                    lower(super.term_name) as superterm_name_order, lower(sub.term_name) as subterm_name_order
+      FROM phenotype_experiment, phenotype_statement, term super, outer term sub
+     WHERE phenox_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
+       and phenox_pk_id = phenos_phenox_pk_id
+       and phenos_entity_1_superterm_zdb_id = super.term_zdb_id
+       and phenos_entity_1_subterm_zdb_id = sub.term_zdb_id
+    UNION 
+    SELECT distinct get_postcomposed_term_html(phenos_entity_2_superterm_zdb_id, phenos_entity_2_subterm_zdb_id),
+                    lower(sub.term_name) as superterm_name_order, lower(sub.term_name) as subterm_name_order
+      FROM phenotype_experiment, phenotype_statement, term super, outer term sub
+     WHERE phenox_fig_zdb_id = '$fxfigphenoanat_fig_zdb_id'
+       and phenox_pk_id = phenos_phenox_pk_id
+       and phenos_entity_2_superterm_zdb_id = super.term_zdb_id
+       and phenos_entity_2_subterm_zdb_id = sub.term_zdb_id
+     order by superterm_name_order, subterm_name_order">
    <?MIVAR NAME="$fxfigphenoanat_term_html">$1<?/MIVAR>
 
-    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=fxfigphenoanat_short_list>$fxfigphenoanat_Label $fxfigphenoanat_term_html<?/MIVAR>
-      <?MIVAR NAME=fxfigphenoanat_long_list>$fxfigphenoanat_Label $fxfigphenoanat_term_html<?/MIVAR>
-    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfigphenoanat_condensed_count)>
-      <?MIVAR>$(VECAPPEND,fxfigphenoanat_long_list,$fxfigphenoanat_term_html)
-      <?/MIVAR>
-      <?MIVAR>$(VECAPPEND,fxfigphenoanat_short_list,$fxfigphenoanat_term_html)
-      <?/MIVAR>
-    <?MIELSE>
-      <?MIVAR>$(VECAPPEND,fxfigphenoanat_long_list,$fxfigphenoanat_term_html)
-      <?/MIVAR>
-    <?/MIBLOCK>
+   <?MICOMMENT> ** add a comma if it's not the first element ** <?/MICOMMENT>
+
+   <?MIBLOCK COND="$(<,$MI_CURRENTROW,5)">
+     <?MIVAR NAME="$fxfigphenoanat_term_list" COND="$(NE,$fxfigphenoanat_term_list,)">$fxfigphenoanat_term_list,&nbsp;<?/MIVAR>
+     <?MIVAR NAME="$fxfigphenoanat_term_html"><span>$fxfigphenoanat_term_html</span><?/MIVAR>
+   <?MIELSE>
+     <?MIVAR NAME="$fxfigphenoanat_term_list" COND="$(NE,$fxfigphenoanat_term_list,)">$fxfigphenoanat_term_list<span class="$fxfigphenoanat_entity_long_list_dom_class">,&nbsp;</span><?/MIVAR>
+     <?MIVAR NAME="$fxfigphenoanat_term_html"><span class="$fxfigphenoanat_entity_long_list_dom_class">$fxfigphenoanat_term_html</span><?/MIVAR>
+   <?/MIBLOCK>
+
+
+   <?MIVAR NAME="$fxfigphenoanat_term_list">$(CONCAT,$fxfigphenoanat_term_list,$fxfigphenoanat_term_html)<?/MIVAR>
 <?/MISQL>
+<?MIVAR NAME="$fxfigphenoanat_count">$MI_ROWCOUNT<?/MIVAR>
 
-  <?MIVAR NAME=fxfigphenoanat_separate_short_list SEPARATE=", ">$fxfigphenoanat_short_list<?/MIVAR>
-  <?MIVAR NAME=fxfigphenoanat_separate_long_list SEPARATE=", ">$fxfigphenoanat_long_list<?/MIVAR>
-  
-  <?MIVAR NAME=fxfigphenoanat_escape_short_list>$(REPLACE,$fxfigphenoanat_separate_short_list,"'","")<?/MIVAR>
-  <?MIVAR NAME=fxfigphenoanat_escape_long_list>$(REPLACE,$fxfigphenoanat_separate_long_list,"'","")<?/MIVAR>
-  
-  <?MIVAR NAME=fxfigphenoanat_zdb_minus>$(REPLACE,$fxfigphenoanat_fig_zdb_id,"-","")<?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_left_arrow><img class="clickable" border=0 onClick="jQuery('.$fxfigphenoanat_entity_long_list_dom_class').toggle();jQuery('.$fxfigphenoanat_entity_short_list_dom_class').toggle();" src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfigphenoanat_right_arrow> ... <span class="clickable" onclick="jQuery('.$fxfigphenoanat_entity_long_list_dom_class').toggle();jQuery('.$fxfigphenoanat_entity_short_list_dom_class').toggle();">(all $fxfigphenoanat_count) <img border=0 src=/images/right_arrow.gif></span><?/MIVAR>
 
-<?MIVAR NAME=$fxfigphenoanat_left_arrow><img border=0 onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfigphenoanat_right_arrow><img onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
-
-  
-<script>
+<?MIBLOCK COND="$(<,$fxfigphenoanat_count,5)">
   <?MIVAR>
-function updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(display_option) {
-    
-    var long_display = "$fxfigphenoanat_escape_long_list  <a href=\"javascript:updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(\'short\');\">$fxfigphenoanat_left_arrow</a>";
-    var short_display = "$fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus(\'long\')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow";
-
-    if (display_option == "long") {
-        updateInnerHTMLAnat('phenoanatomyList$fxfigphenoanat_zdb_minus',long_display)
-    }
-    else {
-        updateInnerHTMLAnat('phenoanatomyList$fxfigphenoanat_zdb_minus',short_display)    
-    }
-}
-  <?/MIVAR>
-</script>
-<?MIBLOCK COND="$(EQ,$fxfigphenoanat_escape_short_list,)">
-     <?MIVAR NAME=$fxfignanat_escape_short_list>$fxfigphenoanat_Label $fxfigphenoanat_escape_short_list<?/MIVAR>
-<?/MIBLOCK>
-<?MIVAR><span id="phenoanatomyList$fxfigphenoanat_zdb_minus"><?/MIVAR>
-<?MIBLOCK COND="$(<,$(VECSIZE,$fxfigphenoanat_long_list),$fxfigphenoanat_max_count)">
-  <?MIVAR>
-    $fxfigphenoanat_escape_long_list
+    $fxfigphenoanat_Label $fxfigphenoanat_term_list
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-    $fxfigphenoanat_escape_short_list ... <a href=javascript:onClick=updatePhenoAnatomyList$fxfigphenoanat_zdb_minus('long')>(all $(VECSIZE,$fxfigphenoanat_long_list))</a> $fxfigphenoanat_right_arrow
+    $fxfigphenoanat_Label
+    $fxfigphenoanat_term_list 
+    <span class="$fxfigphenoanat_entity_long_list_dom_class">$fxfigphenoanat_left_arrow</span> 
+    <span class="$fxfigphenoanat_entity_short_list_dom_class">$fxfigphenoanat_right_arrow</span>
   <?/MIVAR>
 <?/MIBLOCK>
-
-</span>
 
 <?MICOMMENT>
   ============================================================================

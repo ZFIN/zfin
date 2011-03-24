@@ -243,6 +243,7 @@ function list_all(user_access) {
 	      <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
        <?/MIBLOCK>
      <?MIELSE>
+	<?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
 	    <?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
      <?/MIBLOCK> <?MICOMMENT> end whether to split out each word <?/MICOMMENT>
   <?/MIBLOCK>
@@ -394,6 +395,7 @@ function list_all(user_access) {
 	</TR>
 </TABLE>
 
+
 <input type=hidden name=MIval value=aa-pubprintable.apg>
 <?MIVAR COND="$(XST,$title)"> <input type=hidden name=title value="$title"><?/MIVAR>
 <?MIVAR COND="$(XST,$authors)"> <input type=hidden name=authors value="$authors"><?/MIVAR>
@@ -513,7 +515,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
                <?MIVAR>
 		<div id="pagination"></div>
 		<script type="text/javascript">
-		    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+		    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
 		</script>
 	 	<?/MIVAR>
 		<div id="pagination"></div>

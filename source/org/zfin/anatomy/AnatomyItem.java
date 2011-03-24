@@ -2,10 +2,11 @@ package org.zfin.anatomy;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Image;
 import org.zfin.ontology.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.
@@ -109,6 +110,10 @@ public class AnatomyItem extends AbstractTerm {
         return null;
     }
 
+    public SortedSet<TermAlias> getSortedAliases() {
+        return null;
+    }
+
     public void setAliases(Set<TermAlias> aliases) {
         // Todo when Ao goes into term table
     }
@@ -157,6 +162,26 @@ public class AnatomyItem extends AbstractTerm {
         this.end = stage;
     }
 
+
+    @Override
+    public Set<Subset> getSubsets() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setSubsets(Set<Subset> subsets) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean isPartOfSubset(Subset subset) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean isPartOfSubset(String subsetName) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -257,7 +282,17 @@ public class AnatomyItem extends AbstractTerm {
         throw new RuntimeException("Not yet implemented");
     }
 
-
+    /**
+     * Retrieves all terms that are immediate children of this term
+     * by a given relationship type
+     *
+     * @return list of children terms
+     */
+    @Override
+    public List<Term> getChildrenTerms(String relationshipType) {
+        // ToDo: To be implemented
+        throw new RuntimeException("Not yet implemented");
+    }
     /**
      * TODO: Move to TermHelper
      * @return

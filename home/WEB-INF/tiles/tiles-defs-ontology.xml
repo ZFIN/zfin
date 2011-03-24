@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="ontology/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/ontology/{1}.jsp"/>
+    </definition>
+
+    <definition name="ontology/*.insert" template="/WEB-INF/jsp/ontology/{1}.jsp"/>
+
+    <definition name="ontology/*.popup" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/ontology/{1}.jsp"/>
+    </definition>
+
+<!--
+
+    <definition name="ontology-term.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN: Term: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/ontology/ontology-term.jsp"/>
+    </definition>
+-->
+
+
+</tiles-definitions>

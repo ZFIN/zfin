@@ -7,14 +7,21 @@ INPUT VARS:
   G_hideHeaderAndFooter   exists for indexing, if called, the header links won't show up
 <?/MICOMMENT>
 
+<script type="text/javascript" src="/javascript/prototype.js"></script>
 
+<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/css/zfin.css">
 <link rel="stylesheet" type="text/css" href="/css/header.css">
 
+
 <script type="text/javascript" src="/javascript/prototype.js"></script>
 
 <script type="text/javascript">
+
+//avoid prototype conflicts
+jQuery.noConflict();
 
 /** mostly this kind of thing is bad, but there's a 
     tiny bit of css we want for IE only  **/

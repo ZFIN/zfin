@@ -42,8 +42,8 @@ public interface PileStructuresRPC extends RemoteService {
      * @param phenotypeTermDTO Phenotype Term dto
      * @param publicationID    pub id
      */
-    PhenotypePileStructureDTO createPhenotypePileStructure(PhenotypeTermDTO phenotypeTermDTO, String publicationID)
-            throws PileStructureExistsException, TermNotFoundException;
+    PhenotypePileStructureDTO createPhenotypePileStructure(PhenotypeStatementDTO phenotypeTermDTO, String publicationID)
+            throws PileStructureExistsException, TermNotFoundException, RelatedEntityNotFoundException;
 
 
     /**

@@ -8,6 +8,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 
 /**
  * Controller that obtains the meta data for the database.
@@ -24,6 +28,10 @@ public class ApplicationContextController extends AbstractCommandController {
         WebApplicationContext context = RequestContextUtils.getWebApplicationContext(request);
         form.setApplicationContext(context);
 
-        return new ModelAndView("application-context-info", LookupStrings.FORM_BEAN, form);
+        ModelAndView modelAndView = new ModelAndView("application-context-info", LookupStrings.FORM_BEAN, form);
+        RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
+
+        modelAndView.addObject("runtimeMXBean", mxbean);
+        return modelAndView;
     }
 }

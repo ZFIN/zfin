@@ -1,12 +1,12 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.event.logical.shared.HighlightEvent;
-import com.google.gwt.event.logical.shared.HighlightHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.*;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.LookupRPCService;
@@ -55,18 +55,22 @@ public class LookupComposite extends Composite implements Revertible {
     public static final String MARKER_LOOKUP_AND_TYPE = "MARKER_LOOKUP_AND_TYPE";
     private Collection<String> types = new ArrayList<String>(10);
     private OntologyDTO ontology;
+    boolean validatedTerm;
 
     // variables
     private final static String EMPTY_STRING = "&nbsp;";
 
     // actions
     public final static String ACTION_ANATOMY_SEARCH = "ANATOMY_SEARCH";
+    public final static String ACTION_TERM_SEARCH = "TERM_SEARCH";
     public final static String ACTION_GENEDOM_AND_EFG_SEARCH = "GENEDOM_AND_EFG_SEARCH";
     public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE";
     public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE";
     private SubmitAction action = null;
     private HighlightAction highlightAction = null;
     private String onclick;
+    private boolean checkForRelationalSubset;
+    private CheckSubsetEventHandler subsetEventHandler;
 
     // options
     protected String inputName = "search";
@@ -77,7 +81,7 @@ public class LookupComposite extends Composite implements Revertible {
     protected int suggestBoxWidth = 30;
     protected String oId = null;
     protected int limit = ItemSuggestOracle.NO_LIMIT;
-    protected boolean submitOnEnter = false ;
+    protected boolean submitOnEnter = false;
 
     // later option
     private int minLookupLength = 3;
@@ -85,7 +89,7 @@ public class LookupComposite extends Composite implements Revertible {
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     public static final String SHOW_TYPE = "SHOW_TYPE";
-    private boolean useIdAsValue = false ;
+    private boolean useIdAsValue = false;
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
@@ -103,8 +107,13 @@ public class LookupComposite extends Composite implements Revertible {
         DOM.setElementProperty(textBox.getElement(), "id", inputName);
         textBox.setVisibleLength(suggestBoxWidth);
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
+        textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> stringValueChangeEvent) {
+                markUnValidateText();
+            }
+        });
         suggestBox = new SuggestBox(oracle, textBox);
-
         addSuggestBoxHandlers();
         //suggestBox.
 
@@ -122,16 +131,16 @@ public class LookupComposite extends Composite implements Revertible {
         textBox.setFocus(true);
         initWidget(rootPanel);
         RootPanel panel = RootPanel.get(TERM_INFO);
-        if (panel != null && termInfoTable==null) {
+        if (panel != null && termInfoTable == null) {
             termInfoTable = new TermInfoComposite(false);
             termInfoTable.clear();
             panel.add(termInfoTable);
 
-            if(highlightAction==null){
-                setHighlightAction(new HighlightAction(){
+            if (highlightAction == null) {
+                setHighlightAction(new HighlightAction() {
                     @Override
                     public void onHighlight(String termID) {
-                        if(termID!=null && false== termID.startsWith(ItemSuggestCallback.END_ELLIPSE)){
+                        if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSE)) {
                             lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
                         }
                     }
@@ -158,9 +167,9 @@ public class LookupComposite extends Composite implements Revertible {
                     suggestBox.setText(currentText);
                     doSubmit(currentText);
                 } else if (suggestion.getReplacementString() != null) {
-                    if(useIdAsValue && termInfoTable !=null){
-                        lookupRPC.getTermInfo(ontology,suggestion.getReplacementString(),
-                                new TermInfoCallBack(termInfoTable,suggestion.getReplacementString()){
+                    if (useIdAsValue && termInfoTable != null) {
+                        lookupRPC.getTermInfo(ontology, suggestion.getReplacementString(),
+                                new TermInfoCallBack(termInfoTable, suggestion.getReplacementString()) {
                                     @Override
                                     public void onSuccess(TermDTO termInfoDTO) {
                                         super.onSuccess(termInfoDTO);
@@ -168,8 +177,7 @@ public class LookupComposite extends Composite implements Revertible {
                                     }
                                 }
                         );
-                    }
-                    else{
+                    } else {
                         doSubmit(suggestion.getReplacementString());
                     }
                 }
@@ -200,14 +208,12 @@ public class LookupComposite extends Composite implements Revertible {
 
         suggestBox.addKeyUpHandler(new KeyUpHandler() {
             public void onKeyUp(KeyUpEvent keyUpEvent) {
-                if (keyUpEvent.isDownArrow()){
+                if (keyUpEvent.isDownArrow()) {
                     if (textBox.getText() != null && textBox.getText().length() > 0) {
                         currentText = textBox.getText();
                     }
-                }
-                else
-                if (submitOnEnter && keyUpEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
-                    if(suggestBox.getText() != null && suggestBox.getText().trim().length()>2){
+                } else if (submitOnEnter && keyUpEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                    if (suggestBox.getText() != null && suggestBox.getText().trim().length() > 2) {
                         doSubmit(suggestBox.getText().trim());
                     }
                 }
@@ -255,17 +261,30 @@ public class LookupComposite extends Composite implements Revertible {
         }
     }
 
-    protected void doSubmit(String text) {
+    protected void doSubmit(final String text) {
         if (action != null) {
             suggestBox.setFocus(false);
             action.doSubmit(text);
         }
         if (onclick != null)
             runOnclickJavaScriptMethod(onclick);
+        if (checkForRelationalSubset) {
+            // Need to delay this check to allow for the action.submit()
+            // to finish first. Otherwise that ajax call is not being processed for some unknown reason!
+            // First: populate the term entry field with the correct term
+            // Second: check for relational term type.
+            DeferredCommand.addCommand(new Command() {
+                @Override
+                public void execute() {
+                    subsetEventHandler.onEvent(text);
+                }
+            });
+        }
+        unsetUnValidatedTextMarkup();
     }
 
     private native void runOnclickJavaScriptMethod(String name)/*-{
-            $wnd.submitForm(string);
+        $wnd.submitForm(string);
     }-*/;
 
     public void setErrorString(String text) {
@@ -517,5 +536,43 @@ public class LookupComposite extends Composite implements Revertible {
 
     public boolean isSuggestionListShowing() {
         return suggestBox.isSuggestionListShowing();
+    }
+
+    public void addOnBlurHandler(BlurHandler blurHandler) {
+        textBox.addBlurHandler(blurHandler);
+    }
+
+    public void setCheckForRelationalSubset(boolean checkForRelationalSubset) {
+        this.checkForRelationalSubset = checkForRelationalSubset;
+    }
+
+    public void setSubsetEventHandler(CheckSubsetEventHandler subsetEventHandler) {
+        this.subsetEventHandler = subsetEventHandler;
+    }
+
+    public void markUnValidateText() {
+        textBox.setStyleName("error");
+        validatedTerm = false;
+    }
+
+    public void unsetUnValidatedTextMarkup() {
+        String styleClass = textBox.getStyleName();
+        styleClass = styleClass.replace("error", "");
+        textBox.setStyleName(styleClass);
+        validatedTerm = true;
+    }
+
+    // Check if the term is validated (black) or un-validated (red)
+    public boolean hasValidateTerm() {
+        return validatedTerm;
+    }
+
+    public void setValidationStyle(boolean isValidated) {
+        String styleClass = textBox.getStyleName();
+        if (isValidated) {
+            unsetUnValidatedTextMarkup();
+        } else {
+            markUnValidateText();
+        }
     }
 }

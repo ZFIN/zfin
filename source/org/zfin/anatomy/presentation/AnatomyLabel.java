@@ -1,11 +1,15 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.expression.spel.ExpressionState;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -14,10 +18,9 @@ import java.util.*;
 
 public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
-    private Term superterm;
-    private Term subterm;
-    private DevelopmentStage startStage;
-    private DevelopmentStage endStage;
+    private ExpressionResult expressionResult;
+    private ExpressionStatement expressionStatement;
+
     private Set<Publication> publications;
     private Set<Figure> figures;
 
@@ -26,13 +29,16 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     private boolean figureWithImage;
     private boolean notAllFiguresTextOnly;
 
-    public AnatomyLabel(Term superterm, Term subterm, DevelopmentStage startStage, DevelopmentStage endStage) {
-        if (superterm == null)
-            throw new NullPointerException("No Anatomy Term provided.");
-        this.superterm = superterm;
-        this.subterm = subterm;
-        this.startStage = startStage;
-        this.endStage = endStage;
+    public AnatomyLabel(ExpressionResult result) {
+        expressionResult = result;
+
+        if (result.getEntity() == null || result.getEntity().getSuperterm() == null)
+            throw new NullPointerException("No Term provided.");
+
+        expressionStatement = new ExpressionStatement();
+        expressionStatement.setEntity(expressionResult.getEntity());
+        expressionStatement.setExpressionFound(expressionResult.isExpressionFound());
+
         publications = new HashSet<Publication>();
         figures = new HashSet<Figure>();
         assays = new TreeSet<ExpressionAssay>();
@@ -42,28 +48,29 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
      public static final ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
     static public ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
 
-    public Term getSuperterm() {
-        return superterm;
+    public ExpressionResult getExpressionResult() {
+        return expressionResult;
     }
 
-    public void setSuperterm(Term superterm) {
-        this.superterm = superterm;
+    public ExpressionStatement getExpressionStatement() {
+        return expressionStatement;
+    }
+
+    //KLS - I'm leaving the lower level getters in for convenience, but in the long run they may not be necessary
+    public Term getSuperterm() {
+        return expressionResult.getEntity().getSuperterm();
     }
 
     public Term getSubterm() {
-        return subterm;
-    }
-
-    public void setSubterm(Term subterm) {
-        this.subterm = subterm;
+        return expressionResult.getEntity().getSubterm();
     }
 
     public DevelopmentStage getStartStage() {
-        return startStage;
+        return expressionResult.getStartStage();
     }
 
     public DevelopmentStage getEndStage() {
-        return endStage;
+        return expressionResult.getEndStage();
     }
 
     public Set<Publication> getPublications() {
@@ -114,6 +121,9 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
      * TODO: Someone needs to add doc to this.  I fixed the NPE in the code (fogbugz 5732), but I'm unclear as to
      * what the function of it should be.
      *
+     * KLS -- coming across this, it seems to sort based only on the terms and not on the stages, I'm converting
+     *        it to just compare the ExpressionStatement belonging to the label...
+     *
      * @param anotherDisplay
      * @return
      */
@@ -121,14 +131,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         if (anotherDisplay == null) {
             return 1;
         }
-        int result = superterm.compareTo(anotherDisplay.getSuperterm());
-        if (result != 0) {
-            return 0;
-        }
-        if (subterm != null) {
-            return subterm.compareTo(anotherDisplay.getSubterm());
-        }
-        return 0;
+        return expressionStatement.compareTo(anotherDisplay.getExpressionStatement());
     }
 
     public Figure getSingleFigure() {
@@ -173,7 +176,18 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     }
 
     public boolean isFigureWithImage() {
-        return figureWithImage;
+        if (figures == null || figures.isEmpty()) {
+            return false;
+        }
+
+        boolean withImg = false;
+        for (Figure fig : figures) {
+             if (fig.getImages() != null && fig.getImages().size() > 0) {
+                 withImg = true;
+                 break;
+             }
+        }
+        return withImg;
     }
 
     public void setFigureWithImage(boolean figureWithImage) {
@@ -181,9 +195,10 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     }
 
     public String getAoAndPostCompostTerm() {
-        if (subterm == null)
-            return superterm.getTermName();
-        return superterm.getTermName() + subterm.getTermName();
+        if (expressionResult.getEntity().getSubterm() == null)
+            return expressionResult.getEntity().getSubterm().getTermName();
+        return expressionResult.getEntity().getSuperterm().getTermName()
+                + expressionResult.getEntity().getSubterm().getTermName();
     }
 
     public boolean isNotAllFiguresTextOnly() {

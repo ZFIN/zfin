@@ -7,26 +7,24 @@
               rtexprvalue="true" required="true" %>
 
 
-<div style="display: inline;font-size: large; font-weight: bold; margin-top: 1em;">
-    Antibody Name:
-        <%--<div style="display:inline;vertical-align:middle;font-size:large;">--%>
-        <%--<strong>--%>
-    <zfin:name entity="${antibody}"/>
-    <script type="text/javascript">
-    new Ajax.Updater('wikiLink','/webapp/wiki/wikiLink/${antibody.name}');
-    </script>
-    <span id="wikiLink" style="display:inline;vertical-align:baseline;font-size:small;"> </span>
-</div>
-
-<zfin2:previousNames entity="${antibody}"/>
-
-<br>
+<table class="primary-entity-attributes">
+  <tr>
+    <th><span class="name-label">Antibody&nbsp;Name:</span></th>
+    <td><span class="name-value"><zfin:name entity="${antibody}"/></span></td>
+  </tr>
+  <zfin2:previousNames entity="${antibody}"/>
+  <zfin2:antibodyData antibody="${antibody}" antibodyStat="${antibodyStat}"/>
+  <tr>
+      <th>Wiki:</th>
+      <td>
+          <script type="text/javascript">
+              jQuery(document).ready(function() {
+                  jQuery('#wikiLink').load('/webapp/wiki/wikiLink/${antibody.name}');
+              });
+          </script>
+          <span id="wikiLink"> </span>
+      </td>
+  </tr>
+</table>
 
 <zfin2:notes hasNotes="${antibody}"/>
-
-<br>
-
-<zfin2:antibodyData antibody="${antibody}" antibodyStat="${antibodyStat}"/>
-
-
-<%--</table>--%>

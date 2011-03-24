@@ -45,7 +45,7 @@
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/dicer
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFCC
+<!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu

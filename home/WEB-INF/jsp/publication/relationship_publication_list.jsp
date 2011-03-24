@@ -1,10 +1,9 @@
-<%--
-  Created by IntelliJ IDEA.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerRelationshipBean" scope="request"/>
 
 <table bgcolor="#eeeeee" border="0" width="100%">
     <tbody>
@@ -31,7 +30,6 @@
 <p>
 
 <form>
-
     <c:if test="${formBean.numOfPublishedPublications > 1 || formBean.numOfUnpublishedPublications > 1}">
         <c:choose>
             <c:when test="${formBean.orderBy == 'author'}">

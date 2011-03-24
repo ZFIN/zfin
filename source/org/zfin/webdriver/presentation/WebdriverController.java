@@ -9,6 +9,7 @@ import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.util.servlet.ServletService;
@@ -59,6 +60,7 @@ public class WebdriverController extends AbstractCommandController {
         } catch (SQLException sql) {
             tx.rollback();
             LOG.error(sql);
+            LOG.error(DbSystemUtil.getLockInfo());
         } catch (HibernateException e) {
             tx.rollback();
             LOG.error(e);

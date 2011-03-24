@@ -1,7 +1,6 @@
 package org.zfin.gwt.root.server;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -11,6 +10,7 @@ import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
 import org.zfin.gwt.root.ui.ItemSuggestion;
 import org.zfin.gwt.root.ui.LookupComposite;
@@ -36,9 +36,10 @@ import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 /**
  *
  */
-public class LookupRPCServiceImpl extends RemoteServiceServlet implements LookupRPCService {
+public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements LookupRPCService {
 
     private static final Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
+    private static final String QUERY_PREFIX = ":";
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient Highlighter highlighter = new Highlighter();
 
@@ -164,6 +165,17 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
+
+        // check if an ontology is provided as a prefix in the query string
+        // if so, strip off that prefix and switch over to new ontology
+        if (query.contains(QUERY_PREFIX)) {
+            int indexOfColon = query.indexOf(QUERY_PREFIX);
+            String ontologyString = query.substring(0, indexOfColon);
+            if (Ontology.getOntology(ontologyString) != null) {
+                ontology = Ontology.getOntology(ontologyString);
+                query = query.substring(indexOfColon + 1);
+            }
+        }
 
         Collection<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
@@ -453,22 +465,49 @@ public class LookupRPCServiceImpl extends RemoteServiceServlet implements Lookup
         Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
 
         TermDTO term = null;
+        // In case the term name is the ZDB_TERM id
+        if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
+            term = OntologyManager.getInstance().getTermByID(value);
+            return term;
+        }
+
         for (Iterator<Ontology> iterator = ontology.getIndividualOntologies().iterator();
              iterator.hasNext() && term == null;) {
             ontology = iterator.next();
             term = OntologyManager.getInstance().getTermByName(value, ontology, true);
         }
+
+        // Still null then maybe the Ontology Manager is not yet instantiated with this ontology.
         if (term == null) {
             if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
-                logger.info("GO term [" + value + "] not cached; trying to retrieve from database.");
+                logger.info("Term [" + value + "] not found in OntologyManager: Trying to retrieve from database.");
                 term = DTOConversionService.convertToTermDTOWithDirectRelationships(RepositoryFactory.getOntologyRepository().getTermByZdbID(value));
             }
             if (term == null) {
-                logger.info("Failed to find GO term[" + value + "]");
+                logger.info("Failed to find term [" + value + "]");
                 return null;
             }
         }
         return term;
+    }
+
+    /**
+     * Check if a given term name is a quality relational term
+     *
+     * @param termName term name
+     */
+    @Override
+    public boolean isTermRelationalQuality(String termName) {
+        if (termName == null)
+            return false;
+
+        TermDTO term;
+        if (ActiveData.isValidActiveData(termName, ActiveData.Type.TERM))
+            term = OntologyManager.getInstance().getTermByID( termName, OntologyDTO.QUALITY);
+        else
+            term = OntologyManager.getInstance().getTermByName(termName, Ontology.QUALITY);
+        return term != null && term.isPartOfSubset(SubsetDTO.RELATIONAL_SLIM);
+
     }
 }
 

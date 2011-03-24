@@ -5,7 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 
 /**
@@ -29,7 +29,7 @@ public class RemovePhenotypePileStructureClickHandler implements ClickHandler {
     }
 
     public void onClick(ClickEvent event) {
-        PhenotypeTermDTO dto = structure.getPhenotypeTerm();
+        PhenotypeStatementDTO dto = structure.getPhenotypeTerm();
         if (expressionModule.getExpressedTermDTOs().contains(dto)) {
             Window.alert("Please remove the expression records first");
             errorMessage.setError("Please remove the expression records that use this structure first.");

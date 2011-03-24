@@ -1,0 +1,179 @@
+/* the overlayed element */
+.simple_overlay {
+
+	/* must be initially hidden */
+	display:none;
+
+	/* place overlay on top of other elements */
+	z-index:10000;
+
+	/* styling */
+	background-color:#fff;
+
+	width:675px;
+	min-height:100px;
+
+    
+    border:5px solid #066;
+    
+    /* padding: 10px; */
+    
+
+	/* browser specific */
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+
+	-moz-box-shadow:10px 10px 3px 0px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+
+    /* CSS3 standard */
+    border-radius: 10px;
+    box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+
+}
+
+
+/* close button positioned on upper right corner */
+.simple_overlay .close {
+	background-image:url(/images/close.png);
+	position:absolute;
+	right:-15px;
+	top:-15px;
+	cursor:pointer;
+	height:35px;
+	width:35px;
+}
+
+
+    div.popup-header {
+        margin-top: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-bottom: 3px;
+        background: #eee;
+        padding: 5px;
+        font-weight: bold;
+
+        /* browser specific */
+        -moz-border-radius-topleft:5px;
+        -webkit-border-radius-topleft:5px;
+        -moz-border-radius-topright:5px;
+        -webkit-border-radius-topright:5px;
+
+        /* CSS3 standard */
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+
+        border-bottom: 2px solid #ccc;
+
+    }
+
+    div.popup-body {
+
+        max-height:400px;
+        overflow-y: auto;
+
+        /* browser specific */
+        -moz-border-radius-bottomleft:5px;
+        -webkit-border-radius-bottomleft:5px;
+        -moz-border-radius-bottomright:5px;
+        -webkit-border-radius-bottomright:5px;
+
+        /* CSS3 standard */
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        padding: 5px;
+
+    }
+
+    div.phenotype-popup-body {
+        padding: 0px;
+    }
+
+    hr.popup-divider {
+        background-color: #ddd; height:2px; width:100%; padding: 0px ; margin: 0px;
+    }
+
+
+.imghover_popup {
+  display: none; 
+
+  border: 2px solid black;
+  color: white;
+  background: black;
+/*  width: 500px;
+  min-height: 200px; */
+
+  padding: 5px;
+
+  /* browser specific */
+  -moz-box-shadow:0 0 5px 3px #000;
+  -webkit-box-shadow: 0 0 5px #000;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+
+  /* CSS3 standard */
+  box-shadow: 0 0 5px #000;
+  border-radius: 3px;
+
+}
+
+.imghover_popup img {
+  border-style: none;
+}
+
+.imghover_popup a {
+  color: white;
+}
+
+.figpop_image {
+  margin-top: 5px;
+}
+
+.close_link { display: none; }
+
+/* hide it here, show it in the popup code, so that
+   browsers that don't support the popup code won't
+   see a popup icon */
+.data-popup-link { display: none;}
+
+a.popup-link img { text-decoration: none; }
+
+.data-popup-link:after {
+    content: url(/images/popup-link-icon.png);
+    padding-top: 2px;
+    margin-left: 4px;
+    margin-right: 0px;
+    text-decoration: none;
+    opacity: 0.5;
+    white-space: nowrap;
+}
+
+.data-popup-link:hover:after {
+    content: url(/images/popup-link-icon-hover.png);
+    padding-top: 2px;
+    margin-left: 4px;
+    margin-right: 0px;
+    text-decoration: none;
+    opacity: 0.8;
+    white-space: nowrap;
+
+}
+
+
+.help-popup-link:after {
+    content: url(/images/help.gif);
+    padding-top: 2px;    
+    margin-left: 2px;
+    margin-right: 5px;
+}
+
+
+.info-popup-link:after {
+    content: url(/images/info.gif);
+    padding-top: 2px;        
+    margin-left: 3px;
+    margin-right: 5px;
+}
+

@@ -6,7 +6,7 @@ create procedure regen_genofig_create_temp_tables()
   --
   -- PRECONDITIONS:
   --   regen_genofig_clean_exp_with_morph_temp may already exist.
-  --   regen_genofig_not_normal_apato_temp may already exist.
+  --   regen_genofig_not_normal_temp may already exist.
   --   regen_genofig_temp
   --   regen_genofig_input_zdb_id_temp
   --
@@ -23,7 +23,7 @@ create procedure regen_genofig_create_temp_tables()
   -- EFFECTS:
   --   Success:
   --     regen_genofig_clean_exp_with_morph_temp exists and is empty.
-  --     regen_genofig_not_normal_apato_temp exists and is empty.
+  --     regen_genofig_not_normal_temp exists and is empty.
   --     regen_genofig_temp exists and is empty
   --     regen_genofig_input_zdb_id_temp exists and is empty
   --   Error:
@@ -66,21 +66,21 @@ create procedure regen_genofig_create_temp_tables()
 
 
     -- -------------------------------------------------------------------
-    --   create regen_genofig_not_normal_apato_temp
+    --   create regen_genofig_not_normal_temp
     -- -------------------------------------------------------------------
 
-    create temp table regen_genofig_not_normal_apato_temp  
+    create temp table regen_genofig_not_normal_temp  
       (        
-	rgfnna_apato_zdb_id		varchar(50),
-	rgfnna_apato_genox_zdb_id	varchar(50),
-	rgfnna_apato_superterm_zdb_id	varchar(50),
-	rgfnna_apato_subterm_zdb_id	varchar(50),
-	rgfnna_apato_quality_zdb_id	varchar(50),
-	rgfnna_apato_tag	        varchar(25)
+	rgfnna_zdb_id		int8,
+	rgfnna_genox_zdb_id	varchar(50),
+	rgfnna_superterm_zdb_id	varchar(50),
+	rgfnna_subterm_zdb_id	varchar(50),
+	rgfnna_quality_zdb_id	varchar(50),
+	rgfnna_tag	        varchar(25)
       ) with NO LOG;
 
-    create index regen_genofig_not_normal_apato_temp_primary_foreign_key 
-    on regen_genofig_not_normal_apato_temp (rgfnna_apato_genox_zdb_id) 
+    create index regen_genofig_not_normal_temp_primary_foreign_key 
+    on regen_genofig_not_normal_temp (rgfnna_genox_zdb_id) 
     using btree ;
 
      
@@ -97,7 +97,8 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_subterm_zdb_id	varchar(50),
 	rgf_quality_zdb_id	varchar(50) not null,
 	rgf_tag 	        varchar(25) not null,
-	rgf_morph_zdb_id	varchar(50)
+	rgf_morph_zdb_id	varchar(50),
+	rgf_phenox_pk_id	int8
       ) with no log;
 
   end

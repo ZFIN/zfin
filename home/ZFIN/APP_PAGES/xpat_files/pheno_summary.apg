@@ -30,7 +30,6 @@ DEBUGGING:
   $debug_timing is in this page, but only before results are displayed
 
 <?/MICOMMENT>
-
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -90,6 +89,7 @@ DEBUGGING:
 <?/MISQL>  
 
 <?MICOMMENT> ** if the phenotype summary is for genotype ** <?/MICOMMENT>
+<?MICOMMENT> ** after E2 project is done, the phenotype summary will never be called from genotype any more, but still called from feature page and mutant search result ** <?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
  <?MICOMMENT> ** if the phenotype summary is for genotype with specific anatomy structure(s) ** <?/MICOMMENT>
  <?MIBLOCK COND="$(AND,$(XST,$phenosum_concted_AO_IDs),$(NE,$phenosum_concted_AO_IDs,))">
@@ -149,8 +149,8 @@ DEBUGGING:
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(XST,$envID),$(NE,$envID,))">
-    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_from,$(CONCAT,$phenosum_getPheno_sql_from,$phenosum_getPheno_sql_comma apato_figure $phenosum_getPheno_sql_comma atomic_phenotype $phenosum_getPheno_sql_comma genotype_experiment))<?/MIVAR>            
-    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_fig_zdb_id = apatofig_fig_zdb_id and apatofig_apato_zdb_id = apato_zdb_id and $phenosum_getPheno_sql_leftPar apato_subterm_zdb_id = '$anatID' or apato_superterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar and apato_genox_zdb_id = genox_zdb_id and genox_exp_zdb_id = '$envID' and not exists $phenosum_getPheno_sql_leftPar select 'x' from experiment_condition where expcond_exp_zdb_id = genox_exp_zdb_id and expcond_mrkr_zdb_id = '' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_from,$(CONCAT,$phenosum_getPheno_sql_from,$phenosum_getPheno_sql_comma phenotype_experiment $phenosum_getPheno_sql_comma phenotype_statement $phenosum_getPheno_sql_comma genotype_experiment))<?/MIVAR>            
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_fig_zdb_id = phenox_fig_zdb_id and phenos_phenox_pk_id = phenox_pk_id and $phenosum_getPheno_sql_leftPar phenos_entity_1_superterm_zdb_id = '$anatID' or phenos_entity_1_subterm_zdb_id = '$anatID' or phenos_entity_2_superterm_zdb_id = '$anatID' or phenos_entity_2_subterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar and phenox_genox_zdb_id = genox_zdb_id and genox_exp_zdb_id = '$envID' and not exists $phenosum_getPheno_sql_leftPar select 'x' from experiment_condition where expcond_exp_zdb_id = genox_exp_zdb_id and expcond_mrkr_zdb_id = '' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(XST,$entID),$(NE,$entID,)$(XST,$qualityID),$(NE,$qualityID,),$(XST,$tag),$(NE,$tag,))">
@@ -181,22 +181,20 @@ DEBUGGING:
     $phenosum_getPheno_sql_from
     $phenosum_getPheno_sql_where
  <?/MIVAR> 
-  
-<?MIELSE> <?MICOMMENT> ** if the phenotype summary is for gene / MO ** <?/MICOMMENT>
+ 
+<?MIELSE> <?MICOMMENT> ** if the phenotype summary is called from gene / MO page ** <?/MICOMMENT>
   <?MIVAR NAME="$phenosum_getPheno_sql">
     insert into $phenosum_phenodata
          select distinct zdb_id, pub_mini_ref, fig_zdb_id, fig_label, fig_full_label, genox_geno_zdb_id 
-           from apato_figure, atomic_phenotype, genotype_experiment, figure, publication , mutant_fast_search 
+           from phenotype_experiment, genotype_experiment, figure, publication , mutant_fast_search 
           where mfs_mrkr_zdb_id = '$OID' 
-            and apatofig_apato_zdb_id = apato_zdb_id 
-            and apato_genox_zdb_id = genox_zdb_id 
-            and apatofig_fig_zdb_id = fig_zdb_id 
+            and mfs_genox_zdb_id = phenox_genox_zdb_id 
+            and genox_zdb_id = phenox_genox_zdb_id
+            and phenox_fig_zdb_id = fig_zdb_id 
             and fig_source_zdb_id = zdb_id 
-            and mfs_genox_zdb_id = genox_zdb_id 
-            and exists (select 'x' from atomic_phenotype NOTnormal 
-                         where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
-                           and NOTnormal.apato_tag != "normal" 
-                           and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id) 
+            and exists (select 'x' from phenotype_statement NOTnormal 
+                         where NOTnormal.phenos_phenox_pk_id = phenox_pk_id 
+                           and NOTnormal.phenos_tag != "normal") 
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -491,11 +489,10 @@ DEBUGGING:
 
       <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE)">
         <?MIVAR NAME=phenosum_sql_MO>select distinct mrkr_abbrev, mrkr_abbrev_order, mrkr_zdb_id
-       	              from mutant_fast_search, genotype_experiment, experiment_condition, marker, atomic_phenotype, apato_figure
+       	              from mutant_fast_search, genotype_experiment, experiment_condition, marker, phenotype_experiment
        	             where mfs_mrkr_zdb_id = '$OID'
-       	               and apato_genox_zdb_id = mfs_genox_zdb_id 
-       	               and apatofig_apato_zdb_id = apato_zdb_id
-       	               and apatofig_fig_zdb_id = '$phenosum_fig_zdb' 
+       	               and phenox_genox_zdb_id = mfs_genox_zdb_id 
+       	               and phenox_fig_zdb_id = '$phenosum_fig_zdb' 
        	               and mfs_genox_zdb_id = genox_zdb_id
        	               and genox_geno_zdb_id = '$phenosum_geno_zdb'
        	               and expcond_exp_zdb_id = genox_exp_zdb_id
@@ -555,11 +552,15 @@ DEBUGGING:
    	    function expandMOList$phenosum_mo_elem_id() {
      	      var elem = document.getElementById('$phenosum_mo_elem_id');
               elem.innerHTML = "$phenosum_mo_long_list_escp <a href=javascript:onClick=shrinkMOList$phenosum_mo_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+              processPopupLinks();
+
 	    }
 
    	    function shrinkMOList$phenosum_mo_elem_id() {
               var elem = document.getElementById('$phenosum_mo_elem_id');
               elem.innerHTML = "$phenosum_mo_short_list_escp ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+              processPopupLinks();
+
 	    }
 
           <?/MIVAR>
@@ -582,18 +583,32 @@ DEBUGGING:
       <?MIBLOCK COND="$(OR,$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE),$(EC,$(SUBSTR,$OID,1,8),ZDB-MRPH))">
         <?MIVAR NAME=phenosum_sql_entities>
           select distinct super.term_zdb_id, lower(super.term_name),
-	  	 sub.term_zdb_id, lower(sub.term_name)
-            from atomic_phenotype, apato_figure, genotype_experiment, mutant_fast_search, term as super,
+	  	 sub.term_zdb_id, lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
+            from phenotype_statement, phenotype_experiment, genotype_experiment, mutant_fast_search, term as super,
 	    	 OUTER term as sub
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
              and genox_geno_zdb_id = '$phenosum_geno_zdb'
-             and apato_genox_zdb_id = mfs_genox_zdb_id
-             and apatofig_apato_zdb_id = apato_zdb_id
-             and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
-             and apato_subterm_zdb_id = sub.term_zdb_id
-	     and apato_superterm_zdb_id = super.term_zdb_id
- 	     and apato_tag != 'normal'
+             and phenox_genox_zdb_id = mfs_genox_zdb_id
+             and phenox_pk_id = phenos_phenox_pk_id
+             and phenox_fig_zdb_id = '$phenosum_fig_zdb'
+             and phenos_entity_1_superterm_zdb_id = super.term_zdb_id
+	     and phenos_entity_1_subterm_zdb_id = sub.term_zdb_id
+ 	     and phenos_tag != 'normal'
+ 	  union
+          select distinct super.term_zdb_id, lower(super.term_name),
+	  	 sub.term_zdb_id, lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
+            from phenotype_statement, phenotype_experiment, genotype_experiment, mutant_fast_search, term as super,
+	    	 OUTER term as sub
+           where mfs_mrkr_zdb_id = '$OID'
+             and mfs_genox_zdb_id = genox_zdb_id
+             and genox_geno_zdb_id = '$phenosum_geno_zdb'
+             and phenox_genox_zdb_id = mfs_genox_zdb_id
+             and phenox_pk_id = phenos_phenox_pk_id
+             and phenox_fig_zdb_id = '$phenosum_fig_zdb'
+             and phenos_entity_2_superterm_zdb_id = super.term_zdb_id
+	     and phenos_entity_2_subterm_zdb_id = sub.term_zdb_id
+ 	     and phenos_tag != 'normal' 	  
         <?/MIVAR>
        
       <?MIELSE>  <?MICOMMENT> *** entity list for genotype <?/MICOMMENT>
@@ -601,7 +616,8 @@ DEBUGGING:
         <?MICOMMENT> *** entity list for morphant of WT genotype/Tg, with regard to a target gene <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
           <?MIVAR NAME=phenosum_sql_entities1>
-            select distinct super.term_zdb_id, lower(super.term_name), sub.term_zdb_id, lower(sub.term_name)
+            select distinct super.term_zdb_id, lower(super.term_name), sub.term_zdb_id, 
+                            lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
               from term as super, OUTER term as sub, genotype_figure_fast_search, marker_relationship
              where gffs_geno_zdb_id = '$OID'
  	       and gffs_fig_zdb_id = '$phenosum_fig_zdb'
@@ -614,7 +630,7 @@ DEBUGGING:
         <?MIELSE> <?MICOMMENT> *** entity list for genotypes linked from genotype page or mutant search result page <?/MICOMMENT>
           <?MIVAR NAME=phenosum_sql_entities1>
             select distinct super.term_zdb_id, lower(super.term_name),
-                            sub.term_zdb_id, lower(sub.term_name)
+                            sub.term_zdb_id, lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
               from term as super, OUTER term as sub, genotype_figure_fast_search
              where gffs_geno_zdb_id = '$OID'
                and gffs_fig_zdb_id = '$phenosum_fig_zdb'
@@ -633,56 +649,60 @@ DEBUGGING:
           <?MIVAR NAME=phenosum_sql_entities_nonMO>$phenosum_sql_entities1 and gffs_morph_zdb_id is null
           <?/MIVAR>
 
+
+
+<?MIVAR NAME="$phenosum_motermlist_term_list"><?/MIVAR>
+<?MIVAR NAME="$phenosum_motermlist_entity_long_list_dom_class">phenotype-mo-anatomy-long-list-element-$(REPLACE,$phenosum_fig_zdb,"-","")<?/MIVAR>
+<?MIVAR NAME="$phenosum_motermlist_entity_short_list_dom_class">phenotype-mo-anatomy-short-list-element-$(REPLACE,$phenosum_fig_zdb,"-","")<?/MIVAR>
+
+<?MIVAR>
+  <style>
+    .$phenosum_motermlist_entity_long_list_dom_class { display: none }
+  </style>
+<?/MIVAR>
+
           <?MISQL SQL="$phenosum_sql_entities_nonMO order by lower(super.term_name); ">
+                 <?MIVAR NAME="$phenosum_motermlist_term_html">$5<?/MIVAR>
+
+                 <?MIVAR NAME=phenosum_anatitem_html_nonMO><span nowrap>$5</span><?/MIVAR>
+
            
 	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
 
-        <?MISQL SQL="execute function get_postcomposed_term_html('$1', '$3')">
-                 <?MIVAR NAME=phenosum_anatitem_html_nonMO><span nowrap>$1</span><?/MIVAR>
-         <?/MISQL>
 
-            $(SETVAR,$phenosum_anat_counter_nonMO,$(+,$phenosum_anat_counter_nonMO,1))
-  	    <?MIBLOCK COND=$(=,$currentIndex,1)>
-     	      <?MIVAR NAME=phenosum_anat_short_list_nonMO>$phenosum_anatitem_html_nonMO<?/MIVAR>
-      	      <?MIVAR NAME=phenosum_anat_long_list_nonMO>$phenosum_anatitem_html_nonMO<?/MIVAR>         
-	    <?MIELSE>
-	      <?MIVAR COND="$(<=,$phenosum_anat_counter_nonMO,$phenosum_anat_short_list_cap)">
-	        $(VECAPPEND,$phenosum_anat_short_list_nonMO,$phenosum_anatitem_html_nonMO)
-              <?/MIVAR>
-              <?MIVAR>
-                $(VECAPPEND,$phenosum_anat_long_list_nonMO,$phenosum_anatitem_html_nonMO)
-              <?/MIVAR>
-            <?/MIBLOCK>
+
+   
+
+   <?MICOMMENT> ** add a comma if it's not the first element ** <?/MICOMMENT>
+
+   <?MIBLOCK COND="$(<,$currentIndex,5)">
+     <?MIVAR NAME="$phenosum_motermlist_term_list" COND="$(NE,$phenosum_motermlist_term_list,)">$phenosum_motermlist_term_list,&nbsp;<?/MIVAR>
+     <?MIVAR NAME="$phenosum_motermlist_term_html"><span>$phenosum_motermlist_term_html</span><?/MIVAR>
+   <?MIELSE>
+     <?MIVAR NAME="$phenosum_motermlist_term_list" COND="$(NE,$phenosum_motermlist_term_list,)">$phenosum_motermlist_term_list<span class="$phenosum_motermlist_entity_long_list_dom_class">,&nbsp;</span><?/MIVAR>
+     <?MIVAR NAME="$phenosum_motermlist_term_html"><span class="$phenosum_motermlist_entity_long_list_dom_class">$phenosum_motermlist_term_html</span><?/MIVAR>
+   <?/MIBLOCK>
+
+   <?MIVAR NAME="$phenosum_motermlist_term_list">$(CONCAT,$phenosum_motermlist_term_list,$phenosum_motermlist_term_html)<?/MIVAR>
 
           <?/MISQL>
 
-          <?MIVAR NAME=phenosum_anat_short_list_sepa_nonMO SEPARATE=", ">$phenosum_anat_short_list_nonMO<?/MIVAR>
-          <?MIVAR NAME=phenosum_anat_long_list_sepa_nonMO SEPARATE=", ">$phenosum_anat_long_list_nonMO<?/MIVAR>
-          <?MIVAR NAME=phenosum_anat_short_list_escp_nonMO>$(REPLACE,$phenosum_anat_short_list_sepa_nonMO,"'","")<?/MIVAR>    
-          <?MIVAR NAME=phenosum_anat_long_list_escp_nonMO>$(REPLACE,$phenosum_anat_long_list_sepa_nonMO,"'","")<?/MIVAR>
+<?MIVAR NAME="$phenosum_motermlist_count">$MI_ROWCOUNT<?/MIVAR>
 
-          <?MIVAR><span id="$phenosum_anat_elem_id_nonMO">
-            $phenosum_anat_short_list_escp_nonMO<?/MIVAR>
+<?MIVAR NAME=$phenosum_motermlist_left_arrow><img class="clickable" border=0 onClick="jQuery('.$phenosum_motermlist_entity_long_list_dom_class').toggle();jQuery('.$phenosum_motermlist_entity_short_list_dom_class').toggle();" src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$phenosum_motermlist_right_arrow> ... <span class="clickable" onclick="jQuery('.$phenosum_motermlist_entity_long_list_dom_class').toggle();jQuery('.$phenosum_motermlist_entity_short_list_dom_class').toggle();">(all $phenosum_motermlist_count) <img border=0 src=/images/right_arrow.gif></span><?/MIVAR>
 
-            <?MIVAR COND="$(>,$MI_ROWCOUNT,$phenosum_anat_short_list_cap)">   
-              ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id_nonMO()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
-            <?/MIVAR>
-          </span>
-       
-          <script>
-            <?MIVAR>
-   	      function expandAnatomyList$phenosum_anat_elem_id_nonMO() {
-     	        var elem = document.getElementById('$phenosum_anat_elem_id_nonMO');
-                elem.innerHTML = '$phenosum_anat_long_list_escp_nonMO <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id_nonMO()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
-	      }
-
-   	      function shrinkAnatomyList$phenosum_anat_elem_id_nonMO() {
-                var elem = document.getElementById('$phenosum_anat_elem_id_nonMO');
-                elem.innerHTML = '$phenosum_anat_short_list_escp_nonMO ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id_nonMO()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
-	      }
-
-            <?/MIVAR>
-          </script>        
+<?MIBLOCK COND="$(<,$phenosum_motermlist_count,5)">
+  <?MIVAR>
+    $phenosum_motermlist_term_list
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    $phenosum_motermlist_term_list 
+    <span class="$phenosum_motermlist_entity_long_list_dom_class">$phenosum_motermlist_left_arrow</span> 
+    <span class="$phenosum_motermlist_entity_short_list_dom_class">$phenosum_motermlist_right_arrow</span>
+  <?/MIVAR>
+<?/MIBLOCK>
 
           <?MIVAR NAME=phenosum_sql_entities>$phenosum_sql_entities1 and gffs_morph_zdb_id is not null
           <?/MIVAR>
@@ -693,62 +713,57 @@ DEBUGGING:
         <?/MIBLOCK>
       <?/MIBLOCK>
   
+<?MIVAR NAME="$phenosum_termlist_term_list"><?/MIVAR>
+<?MIVAR NAME="$phenosum_termlist_entity_long_list_dom_class">phenotype-anatomy-long-list-element-$(REPLACE,$phenosum_fig_zdb,"-","")<?/MIVAR>
+<?MIVAR NAME="$phenosum_termlist_entity_short_list_dom_class">phenotype-anatomy-short-list-element-$(REPLACE,$phenosum_fig_zdb,"-","")<?/MIVAR>
+
+<?MIVAR>
+  <style>
+    .$phenosum_termlist_entity_long_list_dom_class { display: none ;}
+  </style>
+<?/MIVAR>
+
       <?MISQL SQL="$phenosum_sql_entities order by lower(super.term_name), lower(sub.term_name); ">
 
-	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
-         <?MISQL SQL="execute function get_postcomposed_term_html('$1','$3')">
-	 	 <?MIVAR NAME=phenosum_anatitem_html><span nowrap>$1</span><?/MIVAR>
-         <?/MISQL>
+        <?MIVAR NAME="$phenosum_termlist_term_html">$5<?/MIVAR>
+	<?MIVAR NAME=phenosum_anatitem_html><span nowrap>$5</span><?/MIVAR>
 
-          $(SETVAR,$phenosum_anat_counter,$(+,$phenosum_anat_counter,1))
-  	  <?MIBLOCK COND=$(=,$currentIndex,1)>
-     	    <?MIVAR NAME=phenosum_anat_short_list>$phenosum_anatitem_html<?/MIVAR>
-      	    <?MIVAR NAME=phenosum_anat_long_list>$phenosum_anatitem_html<?/MIVAR>         
-	  <?MIELSE>
-	    <?MIVAR COND="$(<=,$phenosum_anat_counter,$phenosum_anat_short_list_cap)">
-	       $(VECAPPEND,$phenosum_anat_short_list,$phenosum_anatitem_html)
-            <?/MIVAR>
-            <?MIVAR>
-              $(VECAPPEND,$phenosum_anat_long_list,$phenosum_anatitem_html)
-            <?/MIVAR>
-          <?/MIBLOCK>
+	   <?MIVAR name=currentIndex>$MI_CURRENTROW<?/MIVAR>
+                 
+
+
+   <?MICOMMENT> ** add a comma if it's not the first element ** <?/MICOMMENT>
+   <?MIBLOCK COND="$(<,$currentIndex,5)">
+     <?MIVAR NAME="$phenosum_termlist_term_list" COND="$(NE,$phenosum_termlist_term_list,)">$phenosum_termlist_term_list,&nbsp;<?/MIVAR>
+     <?MIVAR NAME="$phenosum_termlist_term_html"><span>$phenosum_termlist_term_html</span><?/MIVAR>
+   <?MIELSE>
+     <?MIVAR NAME="$phenosum_termlist_term_list" COND="$(NE,$phenosum_termlist_term_list,)">$phenosum_termlist_term_list<span class="$phenosum_termlist_entity_long_list_dom_class">,&nbsp;</span><?/MIVAR>
+     <?MIVAR NAME="$phenosum_termlist_term_html"><span class="$phenosum_termlist_entity_long_list_dom_class">$phenosum_termlist_term_html</span><?/MIVAR>
+   <?/MIBLOCK>
+
+   <?MIVAR NAME="$phenosum_termlist_term_list">$(CONCAT,$phenosum_termlist_term_list,$phenosum_termlist_term_html)<?/MIVAR>
+
 
       <?/MISQL>
 
-    <?MIVAR NAME=phenosum_anat_short_list_sepa SEPARATE=", ">$phenosum_anat_short_list<?/MIVAR>
-    <?MIVAR NAME=phenosum_anat_long_list_sepa SEPARATE=", ">$phenosum_anat_long_list<?/MIVAR>
-    <?MIVAR NAME=phenosum_anat_short_list_escp>$(REPLACE,$phenosum_anat_short_list_sepa,"'","")<?/MIVAR>
-    
-    <?MIVAR NAME=phenosum_anat_long_list_escp>$(REPLACE,$phenosum_anat_long_list_sepa,"'","")<?/MIVAR>
+<?MIVAR NAME="$phenosum_termlist_count">$MI_ROWCOUNT<?/MIVAR>
 
-      <?MIVAR><span id="$phenosum_anat_elem_id">
-        $phenosum_anat_short_list_escp<?/MIVAR>
+<?MIVAR NAME=$phenosum_termlist_left_arrow><img class="clickable" border=0 onClick="jQuery('.$phenosum_termlist_entity_long_list_dom_class').toggle();jQuery('.$phenosum_termlist_entity_short_list_dom_class').toggle();" src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$phenosum_termlist_right_arrow> ... <span class="clickable" onclick="jQuery('.$phenosum_termlist_entity_long_list_dom_class').toggle();jQuery('.$phenosum_termlist_entity_short_list_dom_class').toggle();">(all $phenosum_termlist_count) <img border=0 src=/images/right_arrow.gif></span><?/MIVAR>
 
+<?MIBLOCK COND="$(<,$phenosum_termlist_count,5)">
+  <?MIVAR>
+    $phenosum_termlist_term_list
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    $phenosum_termlist_term_list 
+    <span class="$phenosum_termlist_entity_long_list_dom_class">$phenosum_termlist_left_arrow</span> 
+    <span class="$phenosum_termlist_entity_short_list_dom_class">$phenosum_termlist_right_arrow</span>
+  <?/MIVAR>
+<?/MIBLOCK>
 
-        <?MIVAR COND="$(>,$MI_ROWCOUNT,$phenosum_anat_short_list_cap)">   
-          ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
-        <?/MIVAR>
-      </span>
-       
-      <script>
-        <?MIVAR>
-   	  function expandAnatomyList$phenosum_anat_elem_id() {
-     	    var elem = document.getElementById('$phenosum_anat_elem_id');
-            elem.innerHTML = '$phenosum_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
-	  }
-
-   	  function shrinkAnatomyList$phenosum_anat_elem_id() {
-            var elem = document.getElementById('$phenosum_anat_elem_id');
-            elem.innerHTML = '$phenosum_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
-	  }
-
-        <?/MIVAR>
-      </script>        
-
-      <?MIVAR COND="$(XST,$phenosum_anat_long_list)">$(UNSETVAR,phenosum_anat_long_list)<?/MIVAR>
-      <?MIVAR COND="$(XST,$phenosum_anat_short_list)">$(UNSETVAR,phenosum_anat_short_list)<?/MIVAR>
-      <?MIVAR COND="$(XST,$phenosum_anat_long_list_nonMO)">$(UNSETVAR,phenosum_anat_long_list_nonMO)<?/MIVAR>
-      <?MIVAR COND="$(XST,$phenosum_anat_short_list_nonMO)">$(UNSETVAR,phenosum_anat_short_list_nonMO)<?/MIVAR>            
+         
     </td>
   </tr>
     

@@ -127,7 +127,7 @@ OUPUT:
     <?/MISQL> 	
 
     <?MIVAR>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$cds_exp_zdb_id"> $cds_display </a>
+      <a href="/action/expression/experiment?id=$cds_exp_zdb_id"> $cds_display </a>
     <?/MIVAR>
 
   <?/MIBLOCK> <?MICOMMENT>display condition only if non-standard<?/MICOMMENT>

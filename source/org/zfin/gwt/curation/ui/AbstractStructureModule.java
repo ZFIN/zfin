@@ -6,9 +6,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
-import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  */
-public abstract class AbstractStructureModule extends Composite implements StructurePile<PhenotypeTermDTO, PhenotypeFigureStageDTO, PhenotypePileStructureDTO> {
+public abstract class AbstractStructureModule extends Composite implements StructurePile<PhenotypeStatementDTO, PhenotypeExperimentDTO, PhenotypePileStructureDTO> {
 
     // div-elements
     public static final String SHOW_HIDE_STRUCTURES = "show-hide-structures";
@@ -65,7 +65,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
     // injected variables
     protected String publicationID;
-    protected ExpressionSection<PhenotypeTermDTO, PhenotypeFigureStageDTO> expressionSection;
+    protected ExpressionSection<PhenotypeStatementDTO, PhenotypeExperimentDTO> expressionSection;
 
     private static final String UNSPECIFIED = "unspecified";
 
@@ -109,7 +109,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
     private void initSizePanel() {
         Widget boxCheckAndSize = new BoxCheckAndSize(false, RootPanel.get(STRUCTURES_DISPLAY), publicationID);
-        boxCheckAndSize.setWidth("100%"); 
+        boxCheckAndSize.setWidth("100%");
         boxCheckAndSize.setStyleName("yourinputwelcome");
         RootPanel.get(CHECK_SIZE_BAR).add(boxCheckAndSize);
     }
@@ -159,11 +159,11 @@ public abstract class AbstractStructureModule extends Composite implements Struc
      *
      * @param phenotypeTerms list of PhenotypeTermDTO
      */
-    protected void selectUnSelectStructuresOnPile(List<PhenotypeTermDTO> phenotypeTerms) {
+    protected void selectUnSelectStructuresOnPile(List<PhenotypeStatementDTO> phenotypeTerms) {
         if (phenotypeTerms == null)
-            return;
-
-        displayTable.setCommonStructures(phenotypeTerms);
+            displayTable.resetActionButtons();
+        else
+            displayTable.setCommonStructures(phenotypeTerms);
     }
 
     /**
@@ -198,7 +198,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
      * @param phenotypeTerm pile structure that is checked against the currently displayed structures.
      * @return true or false
      */
-    public boolean hasStructureOnPile(PhenotypeTermDTO phenotypeTerm) {
+    public boolean hasStructureOnPile(PhenotypeStatementDTO phenotypeTerm) {
         if (phenotypeTerm == null)
             return false;
 
@@ -229,7 +229,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getExpressedTerm().getSuperterm().getName().equals(UNSPECIFIED))
+                if (!structure.getExpressedTerm().getEntity().getSuperTerm().getTermName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             //Window.alert("SIZE: " + experiments.size());
@@ -259,7 +259,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getPhenotypeTerm().getSuperterm().getName().equals(UNSPECIFIED))
+                if (!structure.getPhenotypeTerm().getEntity().getSuperTerm().getTermName().equals(UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             reCreatePhenotypePileLink.setVisible(false);
@@ -380,7 +380,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
         @Override
         public void onFailureCleanup() {
-            
+
         }
     }
 
@@ -388,15 +388,15 @@ public abstract class AbstractStructureModule extends Composite implements Struc
 
         public void onClick(ClickEvent widget) {
             //Window.alert("Update Structures");
-            UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> updateEntity = getSelectedStructures();
-            List<PhenotypeFigureStageDTO> efs = getSelectedMutants();
+            UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity = getSelectedStructures();
+            List<PhenotypeExperimentDTO> efs = getSelectedMutants();
             updateEntity.setFigureAnnotations(efs);
             phenotypeRPCAsync.updateStructuresForExpression(updateEntity, new UpdateExpressionCallback());
         }
 
-        private UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> getSelectedStructures() {
+        private UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> getSelectedStructures() {
             Set<Integer> keys = displayTable.getDisplayTableMap().keySet();
-            UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> dto = new UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO>();
+            UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> dto = new UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO>();
             for (Integer row : keys) {
                 RadioButton add = displayTable.getAddRadioButton(row);
                 RadioButton remove = displayTable.getRemoveRadioButton(row);
@@ -416,20 +416,20 @@ public abstract class AbstractStructureModule extends Composite implements Struc
             return dto;
         }
 
-        private List<PhenotypeFigureStageDTO> getSelectedMutants() {
+        private List<PhenotypeExperimentDTO> getSelectedMutants() {
             return expressionSection.getSelectedExpressions();
         }
 
     }
 
-    private class UpdateExpressionCallback extends ZfinAsyncCallback<List<PhenotypeFigureStageDTO>> {
+    private class UpdateExpressionCallback extends ZfinAsyncCallback<List<PhenotypeExperimentDTO>> {
 
         UpdateExpressionCallback() {
             super("Error while update Figure Annotations with pile structures ", errorElement);
         }
 
         @Override
-        public void onSuccess(List<PhenotypeFigureStageDTO> updatedFigureAnnotations) {
+        public void onSuccess(List<PhenotypeExperimentDTO> updatedFigureAnnotations) {
             //Window.alert("Success");
             // update the expression list
             expressionSection.postUpdateStructuresOnExpression();

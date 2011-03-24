@@ -47,17 +47,6 @@ $dateTime = `/bin/date`;
 chop($dateTime);
 print ("$dateTime: Launching Java indexer.\n");
 
-#------------------------------
-# Generate full listing of all APP Pages for the Indexer to use
-# this step has been added to avoid crawling the website unnecessarily
-# to discover APP pages which we can determine using SQL instead, faster.
-#
-# Filename generated: allAPPPagesList.txt
-$status = system("$uniqueryDir/makeStaticIndex.pl");
-if ($status) {
-    abort($status, "makeStaticIndex.pl failed.");
-}
-
 # generate the new indexes
 $status = 
     system("/usr/local/bin/ant -f $uniqueryDir/build.xml index");

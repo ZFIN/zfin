@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib
 
-SUBDIRS = DB_functions DB_triggers Perl 
+SUBDIRS = DB_functions DB_triggers Perl Java
 POSTLOADDB_SUBDIRS = DB_functions DB_triggers
 
 # ---------------  Production Rules  ------------------------------------

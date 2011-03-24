@@ -11,11 +11,20 @@ import java.util.List;
  */
 public abstract class AbstractFigureStageDTO<T extends ExpressedTermDTO> implements IsSerializable {
 
+    private long id;
     protected FigureDTO figure;
     protected StageDTO start;
     protected StageDTO end;
     private String publicationID;
     private List<T> expressedTerms = new ArrayList<T>(10);
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     /**
      * Return the stage range in the format:
@@ -77,35 +86,6 @@ public abstract class AbstractFigureStageDTO<T extends ExpressedTermDTO> impleme
 
     public void setPublicationID(String publicationID) {
         this.publicationID = publicationID;
-    }
-
-    public String getUniqueID() {
-        StringBuilder sb = new StringBuilder(100);
-        sb.append(figure.getZdbID());
-        sb.append(":");
-        sb.append(start.getZdbID());
-        sb.append(":");
-        sb.append(end.getZdbID());
-        return sb.toString();
-    }
-
-    /**
-     * This is a compound ID of the format:
-     * figureID:startStageID:endStageID.
-     *
-     * @param uniqueID concatenated unique ID.
-     */
-    public void setUniqueID(String uniqueID) {
-        String[] ids = uniqueID.split(":");
-        if (ids.length != 3)
-            throw new RuntimeException("unique id '" + uniqueID + "'not in the format figureID:startStageID:endStageID");
-        figure.setZdbID(ids[1]);
-        if (start == null)
-            start = new StageDTO();
-        if (end == null)
-            end = new StageDTO();
-        start.setZdbID(ids[2]);
-        end.setZdbID(ids[3]);
     }
 
 }

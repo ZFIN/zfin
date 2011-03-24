@@ -1,10 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
-import org.zfin.gwt.root.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,21 +26,29 @@ public class PhenotypeStructureModule extends AbstractStructureModule {
     }
 
 
-    public void updateFigureAnnotations(List<PhenotypeFigureStageDTO> figureAnnotations) {
-        if (figureAnnotations == null)
+    public void updateFigureAnnotations(List<PhenotypeExperimentDTO> figureAnnotations) {
+        if (figureAnnotations == null || figureAnnotations.size() == 0){
+            selectUnSelectStructuresOnPile(null);
             return;
+        }
 
         // get the intersection of all structure, i.e. all structures common to selected mutants.
-        List<PhenotypeTermDTO> intersectionOfStructures = new ArrayList<PhenotypeTermDTO>(figureAnnotations.size());
-        // needed to filter out the first element of the collection.
+        List<PhenotypeStatementDTO> intersectionOfStructures = new ArrayList<PhenotypeStatementDTO>(5);
+        // the first element goes in first
+        intersectionOfStructures.addAll(figureAnnotations.get(0).getExpressedTerms());
         int index = 0;
-        for (PhenotypeFigureStageDTO figureAnnotation : figureAnnotations) {
-            if (index == 0)
-                intersectionOfStructures.addAll(figureAnnotation.getExpressedTerms());
-            else {
-                intersectionOfStructures = (List<PhenotypeTermDTO>) CollectionUtils.intersection(intersectionOfStructures, figureAnnotation.getExpressedTerms());
+        for (PhenotypeExperimentDTO figureAnnotation : figureAnnotations) {
+            if (index++ == 0)
+                continue;
+            List<PhenotypeStatementDTO> overlapStructures = new ArrayList<PhenotypeStatementDTO>(4);
+            // assumes that a single figure annotation cannot have duplicate records.
+            for (PhenotypeStatementDTO newTermDTO : figureAnnotation.getExpressedTerms()) {
+                for (PhenotypeStatementDTO termDTO : intersectionOfStructures) {
+                    if (newTermDTO.equalsByNameOnly(termDTO))
+                        overlapStructures.add(termDTO);
+                }
             }
-            index++;
+            intersectionOfStructures = new ArrayList<PhenotypeStatementDTO>(overlapStructures);
         }
         selectUnSelectStructuresOnPile(intersectionOfStructures);
 
@@ -58,7 +65,7 @@ public class PhenotypeStructureModule extends AbstractStructureModule {
             displayedStructures.clear();
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'
-                if (!structure.getPhenotypeTerm().getSuperterm().getName().equals(StructurePile.UNSPECIFIED))
+                if (!structure.getPhenotypeTerm().getEntity().getSuperTerm().getTermName().equals(StructurePile.UNSPECIFIED))
                     displayedStructures.add(structure);
             }
             displayTable.createStructureTable();

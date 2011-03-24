@@ -73,7 +73,7 @@ fdbc.fdbcont_zdb_id='$seqt_fdbc_zdb_id'
 order by bdb.blastdb_tool_display_order 
  ;">
    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-<FORM>
+<FORM style="margin: 0px;">
  <SELECT onChange="return jump(this);">
   <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
   <?/MIVAR>

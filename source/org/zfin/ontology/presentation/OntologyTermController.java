@@ -1,8 +1,11 @@
 package org.zfin.ontology.presentation;
 
-import org.springframework.validation.BindException;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -12,36 +15,28 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
  * Controller that serves the overview page of all loaded ontologies.
  */
-public class OntologyTermController extends AbstractCommandController {
+@Controller
+public class OntologyTermController {
 
     private String viewName;
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
-    public OntologyTermController() {
-        setCommandClass(OntologyBean.class);
-    }
+    private static Logger logger = Logger.getLogger(OntologyTermController.class);
 
-    @Override
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        OntologyBean form = (OntologyBean) command;
-
+    @RequestMapping("/terms")
+    private String getModelAndViewForListOfTerms(@RequestParam String action,
+                                                 @RequestParam String ontologyName,
+                                                 Model model) {
+        OntologyBean form = new OntologyBean();
+        model.addAttribute("formBean",form);
+        form.setAction(action);
         OntologyBean.ActionType actionType = form.getActionType();
-        if (actionType.equals(OntologyBean.ActionType.SHOW_TERM)) {
-            return getModelAndViewForSingleTerm(form);
-        }
-        return getModelAndViewForListOfTerms(form);
-    }
-
-    private ModelAndView getModelAndViewForListOfTerms(OntologyBean form) {
-        OntologyBean.ActionType actionType = form.getActionType();
-        Ontology ontology = Ontology.getOntology(form.getOntologyName());
+        Ontology ontology = Ontology.getOntology(ontologyName);
         if (actionType != null) {
 //            List<Term> values = new ArrayList<Term>() ;
 //            values.addAll(OntologyManager.getInstance().getTermOntologyMap(ontology).values()) ;
@@ -71,7 +66,7 @@ public class OntologyTermController extends AbstractCommandController {
             }
         }
         form.setOntology(ontology);
-        return new ModelAndView(viewName, LookupStrings.FORM_BEAN, form);
+        return "ontology/ontology_terms.page";
     }
 
     private Map<TermDTO,List<String>> createValueMap(PatriciaTrieMultiMap<TermDTO> termOntologyMap) {

@@ -1,8 +1,7 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.*;
 
 import java.util.*;
 
@@ -26,22 +25,23 @@ public class PhenotypeService {
             return null;
         if (anatomyItem == null)
             return null;
-        if (genotypeExperiment.getPhenotypes() == null)
+        if (genotypeExperiment.getPhenotypeExperiments() == null)
             return null;
 
         Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
 
-        for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-            GenericTerm subTerm = phenotype.getSubterm();
-            if (StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) ||
-                    (subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID()))) {
-                StringBuilder keyBuilder = new StringBuilder(50);
-                if (subTerm != null) {
-                    keyBuilder.append(phenotype.getSubterm().getTermName());
-                    GenericTerm anatomyTerm = phenotype.getSuperterm();
-                    keyBuilder.append(":");
-                    keyBuilder.append(anatomyTerm.getTermName());
-                    ////TODO
+        for (PhenotypeExperiment phenotype : genotypeExperiment.getPhenotypeExperiments()) {
+            for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
+                GenericTerm subTerm = phenoStatement.getEntity().getSubterm();
+                if (StringUtils.equals(phenoStatement.getEntity().getSuperterm().getZdbID(), anatomyItem.getZdbID()) ||
+                        (subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID()))) {
+                    StringBuilder keyBuilder = new StringBuilder(50);
+                    if (subTerm != null) {
+                        keyBuilder.append(phenoStatement.getEntity().getSubterm().getTermName());
+                        Term anatomyTerm = phenoStatement.getEntity().getSuperterm();
+                        keyBuilder.append(":");
+                        keyBuilder.append(anatomyTerm.getTermName());
+                        ////TODO
 /*
                     if (anatomyTerm.isCellTerm()) {
                         keyBuilder.append(anatomyTerm.getName());
@@ -49,29 +49,67 @@ public class PhenotypeService {
                         keyBuilder.append(ANATOMY);
                     }
 */
-                } else {
-                    keyBuilder.append(ANATOMY);
-                }
+                    } else {
+                        keyBuilder.append(ANATOMY);
+                    }
 
-                String termName = phenotype.getQualityTerm().getTermName();
-                StringBuilder termNameBuilder = new StringBuilder(50);
-                String tag = phenotype.getTag();
-                if (termName.equals(GenericTerm.QUALITY) && tag.equals(Phenotype.Tag.ABNORMAL.toString()))
-                    termNameBuilder.append(Phenotype.Tag.ABNORMAL.toString());
-                else if (tag != null && tag.equals(Phenotype.Tag.NORMAL.toString()))
-                    continue;
-                else
-                    termNameBuilder.append(termName);
+                    String termName = phenoStatement.getQuality().getTermName();
+                    StringBuilder termNameBuilder = new StringBuilder(50);
+                    String tag = phenoStatement.getTag();
+                    if (termName.equals(GenericTerm.QUALITY) && tag.equals(PhenotypeStatement.Tag.ABNORMAL.toString()))
+                        termNameBuilder.append(PhenotypeStatement.Tag.ABNORMAL.toString());
+                    else if (tag != null && tag.equals(PhenotypeStatement.Tag.NORMAL.toString()))
+                        continue;
+                    else
+                        termNameBuilder.append(termName);
 
-                Set<String> phenotypes = map.get(keyBuilder.toString());
-                if (phenotypes == null) {
-                    phenotypes = new TreeSet<String>();
+                    Set<String> phenotypes = map.get(keyBuilder.toString());
+                    if (phenotypes == null) {
+                        phenotypes = new TreeSet<String>();
+                    }
+                    phenotypes.add(termNameBuilder.toString());
+                    map.put(keyBuilder.toString(), phenotypes);
                 }
-                phenotypes.add(termNameBuilder.toString());
-                map.put(keyBuilder.toString(), phenotypes);
             }
         }
         return map;
+    }
+
+    /**
+     * Retrieve a list of phenotype statements that contain the given term
+     * in any position (E1 or E2) in a given genotype experiment
+     *
+     * @param genoExperiment Genotype Experiment
+     * @param term           Term
+     * @return list of phenotype statements
+     */
+    public static Set<PhenotypeStatement> getPhenotypeStatements(GenotypeExperiment genoExperiment, GenericTerm term) {
+        if (genoExperiment == null || term == null)
+            return null;
+
+        Set<PhenotypeStatement> phenoStatements = new HashSet<PhenotypeStatement>(5);
+        for (PhenotypeExperiment phenox : genoExperiment.getPhenotypeExperiments()) {
+            for (PhenotypeStatement statement : phenox.getPhenotypeStatements()) {
+                if (statement.contains(term))
+                    phenoStatements.add(statement);
+
+            }
+        }
+        // since I do not want to change the equals() method to ignore the PK id
+        // I have to create a distinct list myself.
+        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenoStatements.size());
+        for (PhenotypeStatement statement : phenoStatements) {
+            boolean recordFound = false;
+            for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
+                if (distinctStatement.equalsByPhenotype(statement)) {
+                    recordFound = true;
+                    break;
+                }
+            }
+            if (!recordFound)
+                distinctPhenoStatements.add(statement);
+        }
+        return distinctPhenoStatements;
     }
 
     private static class PhenotypeComparator implements Comparator<String> {
@@ -92,32 +130,28 @@ public class PhenotypeService {
     /**
      * Return the default phenotype if it exists:
      * check:
-     * 1) AO superterm = unspecified
-     * 2) Quality = quality
-     * 3) Tag = abnormal
-     * 4) stages the same
-     * 5) publication the same
+     * 1) entity superterm = unspecified [AO]
+     * 2) entity subterm = null
+     * 3) Quality = quality
+     * 4) related superterm = null
+     * 5) related subterm = null
+     * 6) Tag = abnormal
      *
-     * @param mfs
-     * @return
+     * @param phenoExperiment PhenotypeExperiment
+     * @return PhenotypeStatement
      */
-    public static Phenotype getDefaultPhenotype(MutantFigureStage mfs) {
-        GenotypeExperiment genotypeExperiment = mfs.getGenotypeExperiment();
-        Phenotype defaultPhenotype = null;
-        if (genotypeExperiment.getPhenotypes() != null) {
-            for (Phenotype phenotype : genotypeExperiment.getPhenotypes()) {
-                if (phenotype.getSuperterm() != null && phenotype.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
-                    if (phenotype.getSubterm() == null)
-                        if (phenotype.getQualityTerm().getTermName().equals("quality"))
-                            if (phenotype.getTag().equals(Phenotype.Tag.ABNORMAL.toString())) {
-                                if (phenotype.getStartStage().equals(mfs.getStart()) && phenotype.getEndStage().equals(mfs.getEnd()))
-                                    if (phenotype.getPublication().equals(mfs.getPublication()))
-                                        defaultPhenotype = phenotype;
-                            }
-            }
-        }
-        return defaultPhenotype;
+/*
+    public static PhenotypeStatement getDefaultPhenotypeStatement(PhenotypeExperiment phenoExperiment) {
+        PhenotypeStatement defaultStatement = new PhenotypeStatement();
+        defaultStatement.setPhenotypeExperiment(phenoExperiment);
+        defaultStatement.setTag(PhenotypeStatement.Tag.ABNORMAL.toString());
+        defaultStatement.setQuality(OntologyManager.getInstance().getTermByName(Ontology.QUALITY, "quality"));
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED));
+        defaultStatement.setEntity(entity);
+        return defaultStatement;
     }
+*/
 
 
 }

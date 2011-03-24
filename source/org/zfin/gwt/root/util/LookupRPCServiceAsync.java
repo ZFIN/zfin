@@ -2,6 +2,7 @@ package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import org.zfin.gwt.curation.ui.PileConstructionZoneModule;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
@@ -62,4 +63,11 @@ public interface LookupRPCServiceAsync {
     void getAllZfinProperties(AsyncCallback<Map<String, String>> async);
 
     void getTermByName(OntologyDTO ontologyDTO, String value, AsyncCallback<TermDTO> async);
+
+    /**
+     * Check if a given term name is a quality relational term 
+     * @param termName term name
+     * @param relatedQualityCheckCallback call back
+     */
+    void isTermRelationalQuality(String termName, AsyncCallback<Boolean> relatedQualityCheckCallback);
 }

@@ -85,6 +85,14 @@ public interface SequenceRepository {
     Set<String> getGenbankXpatCdnaDBLinks();
 
     List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName genbank, ForeignDBDataType.DataType genomic);
+
+    /**
+     * Retrieves all marker ids with sequence information (accession numbers)
+     * @param firstNIds number of sequences to be returned
+     * @return list of markers
+     */
+    List<String> getAllNSequences(int firstNIds);
+
 }
 
 

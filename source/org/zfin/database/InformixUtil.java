@@ -2,6 +2,7 @@ package org.zfin.database;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.zfin.util.LoggingUtil;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -24,6 +25,7 @@ public class InformixUtil {
      * @param arguments     array of arguments that are passed into the procedure call.
      */
     public static void runInformixProcedure(String procedureName, String... arguments) {
+        LoggingUtil loggingUtil = new LoggingUtil(LOG);
         Session session = currentSession();
         // ensure that all records are being processed before this call.
         session.flush();
@@ -31,11 +33,15 @@ public class InformixUtil {
         CallableStatement statement = null;
         StringBuffer sql = new StringBuffer("EXECUTE PROCEDURE ");
         sql.append(procedureName);
+        StringBuilder argumentString = new StringBuilder();
         if (arguments != null) {
             sql.append("(");
             for (String argument : arguments) {
                 sql.append("?,");
+                argumentString.append(argument);
+                argumentString.append(", ");
             }
+            argumentString.delete(argumentString.length() - 2, argumentString.length() - 1);
             sql.deleteCharAt(sql.length() - 1);
             sql.append(")");
         }
@@ -49,12 +55,19 @@ public class InformixUtil {
                 }
             }
             statement.execute();
-        }
-        catch (SQLException exception) {
+            String fullFunctionCall = sql.toString();
+            if (arguments != null) {
+                for (String argument : arguments) {
+                    fullFunctionCall = fullFunctionCall.replaceFirst("\\?", argument);
+                }
+            }
+            String newline = System.getProperty("line.separator");
+            loggingUtil.logDuration("Duration of procedure execution: " + newline + fullFunctionCall);
+        } catch (SQLException exception) {
             LOG.error("could not run " + procedureName + "()", exception);
+            LOG.error(DbSystemUtil.getLockInfo());
             throw new RuntimeException(exception);
-        }
-        finally {
+        } finally {
             try {
                 if (statement != null)
                     statement.close();

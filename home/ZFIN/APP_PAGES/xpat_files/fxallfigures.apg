@@ -264,7 +264,10 @@ and clone_problem_type is not null
        <?MIELSE>
              <?MIVAR NAME=$fxallfig_has_results>no<?/MIVAR>
        <?/MIBLOCK> 
-       <?MISQL SQL="select * from atomic_phenotype,apato_figure where apatofig_fig_zdb_id='$fxallfig_fig_zdb_id' and apatofig_apato_zdb_id = apato_zdb_id"><?/MISQL>
+       <?MISQL SQL="select phenox_pk_id
+                      from phenotype_experiment 
+                     where phenox_fig_zdb_id = '$fxallfig_fig_zdb_id';">
+       <?/MISQL>
        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)"> 
              <?MIVAR NAME=$fxallfig_has_patoresults>yes<?/MIVAR>
        <?MIELSE>

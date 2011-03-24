@@ -67,5 +67,33 @@
     position: relative ; 
 }
 
+.xpatselect-anatomy-popup {
+    /* copied from .simple_overlay in popup.css, if they used the same popup method,
+       they could use the same class, but since one is created to be displayed
+       and simple_overlay exists but is hidden by default */
 
+    /* styling */
+	background-color:#fff;
+
+	width:675px;
+    height: 500px;
+    overflow-y: auto;
+
+    border:3px solid #066;
+
+    padding: 10px;
+
+
+	/* browser specific */
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+
+	-moz-box-shadow:10px 10px 3px 0px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+
+    /* CSS3 standard */
+   border-radius: 10px;
+    box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+
+}
 

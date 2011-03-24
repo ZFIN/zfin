@@ -1,12 +1,11 @@
 <?MICOMMENT>
 
-FILE: xpatfeatexp.apg
+FILE: xpatfeatexpcondn.apg
 PREFIX: fxp_ 
 
 DESCRIPTION:
-   This subroutine accepts genotype_experiment zdb id, and generates a
-   string of genotype background and experiment condition defined by that. It
-   makes use of xpatexpcdnsummary.apg to generate condition summary. 
+   This subroutine accepts figure zdb id, and generates a
+   string of experiment conditions
 
 INPUT VARS:
 	fxp_zdb_id: genotype experiment zdb id 
@@ -15,9 +14,7 @@ OUTPUT VARS:
         none
 
 OUPUT:
-   A string of fish line and condition if not Standard.
-   The genotype background embeds hotlink to genoytpe view page, the condition
-   summary embeds hotlink to environment page.
+   A string of  experiment conditions
 
 <?/MICOMMENT>
 
@@ -34,31 +31,15 @@ OUPUT:
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR NAME=$new_exp_id><?/MIVAR>
-<?MISQL SQL="select distinct apato_genox_zdb_id,genox_exp_zdb_id from atomic_phenotype,apato_figure, genotype_experiment
-             where apato_zdb_id=apatofig_apato_zdb_id
-             and apatofig_fig_zdb_id='$fxp_fig_zdb_id'
-             and apato_genox_zdb_id=genox_zdb_id">
-
-<?MIVAR NAME=$fxp_zdb_id>$1<?/MIVAR>
-<?MIVAR NAME=$exp_id>$2<?/MIVAR>
+<?MISQL SQL="select distinct genox_exp_zdb_id 
+               from phenotype_experiment, genotype_experiment
+              where phenox_fig_zdb_id = '$fxp_fig_zdb_id'
+                and genox_zdb_id = phenox_genox_zdb_id">
+  
+   <?MIVAR NAME=$exp_id>$1<?/MIVAR>
    <?MIBLOCK COND="$(NE,$exp_id,$new_exp_id)"> 
-  <?MISQL SQL="
-	select  
-	       distinct genox_exp_zdb_id
- 	  from genotype_experiment
-	 where genox_zdb_id = '$fxp_zdb_id'
-         order by genox_exp_zdb_id;">
 
-	<?MIVAR NAME=fxp_exp_zdb_id>$1<?/MIVAR>
-
-  <?/MISQL>
-  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-     ERROR: Invalid genotype experiment zdb id.
-
-  <?MIELSE>
-
-     <?MISQL SQL="select WebExplode(object,
-				   'cds_exp_zdb_id=$fxp_exp_zdb_id') 
+     <?MISQL SQL="select WebExplode(object, 'cds_exp_zdb_id=$exp_id') 
 		    from webPages 
 		   where ID='aa-xpatexpcdnlist.apg';">
      <?/MISQL>
@@ -70,10 +51,9 @@ OUPUT:
 
 
      <?MIVAR>
-$(IF,$(NE,$fxp_exp_html,),"; "$fxp_exp_html)
-<?/MIVAR>
-<?/MIBLOCK>
+       $(IF,$(NE,$fxp_exp_html,),"; "$fxp_exp_html)
+     <?/MIVAR>
+   <?/MIBLOCK>
  
-   <?/MIBLOCK> <?MICOMMENT> end if genox zdb id is valid <?/MICOMMENT>
-<?MIVAR NAME=$new_exp_id>$exp_id<?/MIVAR>
+   <?MIVAR NAME=$new_exp_id>$exp_id<?/MIVAR>
 <?/MISQL>

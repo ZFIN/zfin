@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Set;
  * Domain object.
  */
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
-public class Experiment {
+public class Experiment implements Comparable<Experiment> {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-control";
@@ -26,6 +27,7 @@ public class Experiment {
     private String name;
     private Publication publication;
     private Set<ExperimentCondition> experimentConditions;
+
 
     public String getZdbID() {
         return zdbID;
@@ -73,5 +75,36 @@ public class Experiment {
 
     public boolean isStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
+    }
+
+    public boolean isChemical() {
+		if (experimentConditions == null || experimentConditions.isEmpty()) {
+            return false;
+	    }
+
+        boolean allChemical = true;
+        for (ExperimentCondition expCdt: experimentConditions) {
+            if (!expCdt.isChemicalCondition()) {
+                allChemical = false;
+                break;
+		    }
+        }
+        return allChemical;
+    }
+
+    public int compareTo(Experiment o) {
+        if (this.isStandard() && !o.isStandard()) {
+            return -1;
+        }  else if (!this.isStandard() && o.isStandard()) {
+            return 1;
+        }  else {
+			if (this.isChemical() && !o.isChemical()) {
+                return -1;
+            }  else if (!this.isChemical() && o.isChemical()) {
+                return 1;
+		    }  else {
+                return 0;
+		    }
+        }
     }
 }

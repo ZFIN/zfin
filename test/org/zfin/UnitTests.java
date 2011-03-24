@@ -17,6 +17,7 @@ import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
 import org.zfin.gwt.curation.ui.FeatureMarkerRelationshipTest;
 import org.zfin.gwt.curation.ui.FeatureValidationTest;
+import org.zfin.gwt.curation.ui.PatoPileStructureValidatorTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
 import org.zfin.gwt.root.server.HighlighterTest;
@@ -32,6 +33,7 @@ import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStructureTest;
+import org.zfin.mutant.PhenotypeStatementTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
@@ -94,8 +96,11 @@ import org.zfin.util.*;
         OrthologyEvidenceFastSearchTest.class,
         OrthologyValidationTest.class,
         PaginationBeanTest.class,
+        PatoPileStructureValidatorTest.class,
         PhenotypeServiceTest.class,
+        PhenotypeStatementTest.class,
         PhenotypeStructureTest.class,
+        PhenotypeStatementTest.class,
         PublicationTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,

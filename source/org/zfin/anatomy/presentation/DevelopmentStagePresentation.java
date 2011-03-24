@@ -18,21 +18,25 @@ public class DevelopmentStagePresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(DevelopmentStage stage, boolean longVersion) {
-        if (longVersion) {
-            String stageName = StagePresentation.createDisplayEntry(stage);
-            return getGeneralHyperLink(uri + stage.abbreviation(), stageName);
-        } else
-            return getGeneralHyperLink(uri + stage.abbreviation(), stage.getAbbreviation());
+        return getGeneralHyperLink(uri + stage.abbreviation(), getName(stage, longVersion));
     }
 
     /**
      * Generate the name of the link
      *
      * @param stage DevelopmentStage
+     * @param longVersion display the long version if true
      * @return name of the hyerplink.
      */
-    public static String getName(DevelopmentStage stage) {
-        return getSpanTag("none", stage.getName(), stage.getName());
+    public static String getName(DevelopmentStage stage, boolean longVersion) {
+        String stageName;
+        String longName = StagePresentation.createDisplayEntry(stage);
+        if (longVersion)
+            stageName = longName;
+        else
+            stageName = stage.getAbbreviation();
+
+        return getSpanTag("stage", longName, stageName);
     }
 
 }

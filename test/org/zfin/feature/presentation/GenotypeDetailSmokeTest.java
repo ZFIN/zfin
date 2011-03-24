@@ -25,10 +25,10 @@ public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
                 assertNotNull(htmlSpan);
                 assertEquals("alcama", htmlSpan.getTextContent());
 
-                // There should a morpholino in the Phenotype section with abbreviation 'MO4-apex1'
-                htmlSpan = (HtmlSpan) page.getByXPath("//span[@title='MO4-apex1']").get(0);
+                // There should a morpholino in the Phenotype section with abbreviation 'MO4-foxn4'
+                htmlSpan = (HtmlSpan) page.getByXPath("//span[@title='MO1-foxn4']").get(0);
                 assertNotNull(htmlSpan);
-                assertEquals("MO4-apex1", htmlSpan.getTextContent());
+                assertEquals("MO1-foxn4", htmlSpan.getTextContent());
 
             } catch (Exception e) {
                 fail(e.toString());

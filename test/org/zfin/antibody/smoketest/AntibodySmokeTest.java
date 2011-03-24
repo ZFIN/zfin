@@ -159,9 +159,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
                 assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
-                // check that Fig. 3 from Zhou et al is present.
-                assertNotNull(page.getElementById("ZDB-FIG-090617-7"));
-
+                // check that Pub Zhou et al is present.
+                assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
 
             } catch (IOException e) {
                 fail(e.toString());
@@ -194,8 +193,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=ZDB-TERM-091209-4086&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
                 assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
-                // check that Fig. 4 from Liu et al is present.
-                assertNotNull(page.getElementById("ZDB-FIG-091016-57"));
+                // check that pub Liu et al is present.
+                assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
 
             } catch (IOException e) {
                 fail(e.toString());

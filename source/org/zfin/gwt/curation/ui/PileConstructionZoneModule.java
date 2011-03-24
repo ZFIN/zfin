@@ -1,12 +1,10 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.*;
 
@@ -36,21 +34,25 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     public static final String STRUCTURE_PILE_CONSTRUCTION_ZONE = "structure-pile-construction-zone";
     public static final String SUBMIT_RESET = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-submit-reset";
     public static final String SWAP_TERMS = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-swap-terms";
+    public static final String SWAP_RELATED_TERMS = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-swap-related-terms";
     public static final String ERRORS = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-errors";
     public static final String TERMINFO = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-terminfo";
     public static final String TAG = "tag";
+    public static final String RELATED_TERMS_PANEL = "related-terms-panel";
 
     // GUI elements
-    private Map<PostComposedPart, TermEntry> termEntryUnitsMap = new HashMap<PostComposedPart, TermEntry>(3);
+    private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<EntityPart, TermEntry>(5);
     private Button swapTermsButton = new Button("Swap Terms &uarr;&darr;");
+    private Button swapRelatedTermsButton = new Button("Swap Related Terms &uarr;&darr;");
     private Button submitButton = new Button("Add");
     private Button resetButton = new Button("Reset");
     private SimpleErrorElement errorElement = new SimpleErrorElement(ERRORS);
     private TermInfoComposite termInfoTable;
     private ZfinListBox tagList;
     private Label historyLabelTermInfo = new Label();
+    private boolean isQualityRelational;
 
-    private Map<PostComposedPart, List<OntologyDTO>> termEntryMap;
+    private Map<EntityPart, List<OntologyDTO>> termEntryMap;
     private Collection<TermEntry> termEntryUnits = new ArrayList<TermEntry>(3);
 
     private Collection<PileStructureListener> pileListener = new ArrayList<PileStructureListener>(2);
@@ -63,7 +65,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     private PileStructuresRPCAsync pileStructureRPCAsync = PileStructuresRPC.App.getInstance();
 
-    public PileConstructionZoneModule(String publicationID, Map<PostComposedPart, List<OntologyDTO>> termEntryMap) {
+    public PileConstructionZoneModule(String publicationID, Map<EntityPart, List<OntologyDTO>> termEntryMap) {
         this.publicationID = publicationID;
         this.termEntryMap = termEntryMap;
         initGUI();
@@ -71,6 +73,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
     private void initGUI() {
         RootPanel.get(SWAP_TERMS).add(swapTermsButton);
+        if (RootPanel.get(SWAP_RELATED_TERMS) != null)
+            RootPanel.get(SWAP_RELATED_TERMS).add(swapRelatedTermsButton);
         HorizontalPanel submitResetPanel = new HorizontalPanel();
         submitButton.addClickHandler(new AddNewStructureClickListener());
         submitResetPanel.add(submitButton);
@@ -84,12 +88,25 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         termInfoPanel.add(termInfoTable);
         RootPanel.get(TERMINFO).add(termInfoPanel);
         addClickListener();
+        // set related panel invisible if it exists
+        setVisibilityForRelatedEntityPanel(false);
+    }
+
+    private void setVisibilityForRelatedEntityPanel(boolean visibility) {
+        if (RootPanel.get(RELATED_TERMS_PANEL) != null) {
+            RootPanel.get(RELATED_TERMS_PANEL).setVisible(visibility);
+            // remove any entry in case the related entity is
+            if (!visibility) {
+                getTermEntry(EntityPart.RELATED_ENTITY_SUPERTERM).reset();
+                getTermEntry(EntityPart.RELATED_ENTITY_SUBTERM).reset();
+            }
+        }
     }
 
     private void createTermEntryUnits() {
-        for (Map.Entry<PostComposedPart, List<OntologyDTO>> postComposedEntry : termEntryMap.entrySet()) {
+        for (Map.Entry<EntityPart, List<OntologyDTO>> postComposedEntry : termEntryMap.entrySet()) {
             List<OntologyDTO> ontologies = postComposedEntry.getValue();
-            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey(),termInfoTable);
+            TermEntry termEntry = new TermEntry(ontologies, postComposedEntry.getKey(), termInfoTable);
             termEntry.getCopyFromTerminfoToTextButton().addClickHandler(
                     new CopyTermToEntryFieldClickListener(termEntry));
             String divName = getDivName(postComposedEntry.getKey());
@@ -98,10 +115,14 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             termEntryUnitsMap.put(postComposedEntry.getKey(), termEntry);
             RootPanel.get(divName).add(termEntry);
         }
-        // add dependency handler to super term changes
-        OntologyDependencyHandler handler = new OntologyDependencyHandler(getSuperterm(), getQualityTerm());
-        getSuperterm().addOnOntologyChangeHandler(handler);
-        if (termEntryMap.containsKey(PostComposedPart.QUALITY)) {
+        // add dependency handler to super and sub term changes
+        if (termEntryMap.containsKey(EntityPart.QUALITY)) {
+            TermEntry qualityTermEntry = getTermEntry(EntityPart.QUALITY);
+            qualityTermEntry.setSubsetCheckHandler(new CheckSubsetEventHandler(new RelatedQualityCheckCallback()));
+            TermEntry superTerm = getTermEntry(EntityPart.ENTITY_SUPERTERM);
+            superTerm.addOnOntologyChangeHandler(new OntologyDependencyHandler(superTerm, termEntryUnitsMap));
+            TermEntry subTerm = getTermEntry(EntityPart.ENTITY_SUBTERM);
+            subTerm.addOnOntologyChangeHandler(new OntologyDependencyHandler(subTerm, termEntryUnitsMap));
             tagList = new ZfinListBox(false);
             tagList.addItem("abnormal");
             tagList.addItem("normal");
@@ -131,7 +152,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     }
 
     private void addClickListener() {
-        swapTermsButton.addClickHandler(new SwapTermsClickListener());
+        swapTermsButton.addClickHandler(new SwapTermsClickListener(false));
+        swapRelatedTermsButton.addClickHandler(new SwapTermsClickListener(true));
         resetButton.addClickHandler(new ResetClickListener());
     }
 
@@ -146,64 +168,64 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
     /**
      * This method takes an ExpressedTermDTO and pre-populates the construction
-     * zone with the given entities. The PostComposedPart defines which part
+     * zone with the given entities. The EntityPart defines which part
      * should be displayed in the term info box.
      * A pile structure consists (currently) of Superterm : Subterm : Quality
      *
      * @param term           full post-composed structure
      * @param selectedEntity entity
      */
-    public void prepopulateConstructionZone(ExpressedTermDTO term, PostComposedPart selectedEntity) {
+    public void prepopulateConstructionZone(ExpressedTermDTO term, EntityPart selectedEntity) {
         // ToDo: go through each TermEntryPart in a more scalable way. Requires ExpressedTermDTO to
-        // to make use of PostComposedPart object
+        // to make use of EntityPart object
         //Window.alert(selectedEntity.name());
         switch (selectedEntity) {
-            case SUPERTERM:
-                lookupRPC.getTermInfo(OntologyDTO.ANATOMY, term.getSuperterm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getZdbID()));
+            case ENTITY_SUPERTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID()));
                 break;
-            case SUBTERM:
-                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getSubterm().getZdbID()));
+            case ENTITY_SUBTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID()));
                 break;
         }
         populateTermEntryUnits(term);
         errorElement.clearAllErrors();
     }
 
-    public void prepopulateConstructionZoneWithPhenotype(PhenotypeTermDTO term, PostComposedPart selectedEntity) {
+    public void prepopulateConstructionZoneWithPhenotype(PhenotypeStatementDTO term, EntityPart selectedEntity) {
         // ToDo: go through each TermEntryPart in a more scalable way. Requires ExpressedTermDTO to
-        // to make use of PostComposedPart object
+        // to make use of EntityPart object
         //Window.alert(selectedEntity.name());
         switch (selectedEntity) {
-            case SUPERTERM:
-                lookupRPC.getTermInfo(term.getSuperterm().getOntology(), term.getSuperterm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getSuperterm().getZdbID()));
+            case ENTITY_SUPERTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSuperTerm().getOntology(), term.getEntity().getSuperTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSuperTerm().getZdbID()));
                 break;
-            case SUBTERM:
-                lookupRPC.getTermInfo(term.getSubterm().getOntology(), term.getSubterm().getZdbID(),
-                        new TermInfoCallBack(termInfoTable, term.getSubterm().getZdbID()));
+            case ENTITY_SUBTERM:
+                lookupRPC.getTermInfo(term.getEntity().getSubTerm().getOntology(), term.getEntity().getSubTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getEntity().getSubTerm().getZdbID()));
                 break;
             case QUALITY:
                 lookupRPC.getTermInfo(term.getQuality().getOntology(), term.getQuality().getZdbID(),
                         new TermInfoCallBack(termInfoTable, term.getQuality().getZdbID()));
+                isQualityRelational = term.getQuality().isSubsetOf(SubsetDTO.RELATIONAL_SLIM);
+                break;
+            case RELATED_ENTITY_SUPERTERM:
+                lookupRPC.getTermInfo(term.getRelatedEntity().getSuperTerm().getOntology(), term.getRelatedEntity().getSuperTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSuperTerm().getZdbID()));
+                break;
+            case RELATED_ENTITY_SUBTERM:
+                lookupRPC.getTermInfo(term.getRelatedEntity().getSubTerm().getOntology(), term.getRelatedEntity().getSubTerm().getZdbID(),
+                        new TermInfoCallBack(termInfoTable, term.getRelatedEntity().getSubTerm().getZdbID()));
+                break;
         }
         errorElement.clearAllErrors();
         populateTermEntryUnitsPhenotype(term);
     }
 
-    private void populateTermEntryUnitsPhenotype(PhenotypeTermDTO term) {
+    private void populateTermEntryUnitsPhenotype(PhenotypeStatementDTO term) {
         populateTermEntryUnits(term);
-        TermEntry quality = getQualityTerm();
-        if (quality != null) {
-            quality.getTermTextBox().setText(term.getQuality().getName());
-            ZfinListBox selector = quality.getOntologySelector();
-            if (selector != null && selector.getItemCount() > 0){
-                selector.selectEntryByDisplayName(term.getQuality().getOntology().getDisplayName());
-            }
-            LookupComposite lookupEntryBox = quality.getTermTextBox();
-            lookupEntryBox.setOntology(term.getQuality().getOntology());
-        }
         String tag = term.getTag();
         if (tag != null) {
             tagList.selectEntryByDisplayName(tag);
@@ -211,35 +233,63 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     }
 
     private void populateTermEntryUnits(ExpressedTermDTO term) {
-        TermEntry superterm = getSuperterm();
-        if (superterm != null) {
-            superterm.getTermTextBox().setText(term.getSuperterm().getName());
-            ZfinListBox selector = superterm.getOntologySelector();
-            if (selector != null && selector.getItemCount() > 0){
-                selector.selectEntryByDisplayName(term.getSuperterm().getOntology().getDisplayName());
-            }
-            LookupComposite lookupEntryBox = superterm.getTermTextBox();
-            lookupEntryBox.setOntology(term.getSuperterm().getOntology());
-        }
+        resetConstructionValuesZone();
+        for (EntityPart entityPart : EntityPart.values())
+            populateSingleTermEntry(term, entityPart);
 
-        TermEntry subterm = getSubterm();
-        if (subterm != null) {
-            LookupComposite lookupEntryBox = subterm.getTermTextBox();
-            TermDTO subtermDTO = term.getSubterm();
-            if (subtermDTO != null) {
-                lookupEntryBox.setText(subtermDTO.getName());
-                lookupEntryBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
-                lookupEntryBox.setOntology(subtermDTO.getOntology());
-                ZfinListBox selector = subterm.getOntologySelector();
-                if (selector != null && selector.getItemCount() > 0) {
-                    selector.selectEntryByDisplayName(subtermDTO.getOntology().getDisplayName());
-                }
-            } else {
-                // set to default if no subterm available to clear out any previous entries
-                lookupEntryBox.setText("");
+    }
+
+    private void populateTermEntryUnits(PhenotypeStatementDTO term) {
+        resetConstructionValuesZone();
+        for (EntityPart entityPart : EntityPart.values())
+            populateSingleTermEntry(term, entityPart);
+    }
+
+    private void resetConstructionValuesZone() {
+        resetConstructionZone();
+        for (EntityPart entityPart : EntityPart.values()) {
+            TermEntry termEntry = getTermEntry(entityPart);
+            if (termEntry != null) {
+                termEntry.reset();
             }
         }
+        setVisibilityForRelatedEntityPanel(false);
+    }
 
+    private void populateSingleTermEntry(ExpressedTermDTO term, EntityPart entityPart) {
+        TermEntry termEntry = getTermEntry(entityPart);
+        if (termEntry != null) {
+            TermDTO termDTO = null;
+            switch (entityPart) {
+                case ENTITY_SUPERTERM:
+                    termDTO = term.getTermDTO(EntityPart.ENTITY_SUPERTERM);
+                    break;
+                case ENTITY_SUBTERM:
+                    termDTO = term.getTermDTO(EntityPart.ENTITY_SUBTERM);
+                    break;
+                case RELATED_ENTITY_SUPERTERM:
+                    termDTO = term.getTermDTO(EntityPart.RELATED_ENTITY_SUPERTERM);
+                    if (termDTO != null)
+                        setVisibilityForRelatedEntityPanel(true);
+                    break;
+                case RELATED_ENTITY_SUBTERM:
+                    termDTO = term.getTermDTO(EntityPart.RELATED_ENTITY_SUBTERM);
+                    break;
+                case QUALITY:
+                    termDTO = term.getTermDTO(EntityPart.QUALITY);
+                    break;
+            }
+            if (termDTO == null)
+                return;
+            termEntry.getTermTextBox().setText(termDTO.getTermName());
+            ZfinListBox selector = termEntry.getOntologySelector();
+            if (selector != null && selector.getItemCount() > 0) {
+                selector.selectEntryByDisplayName(termDTO.getOntology().getDisplayName());
+            }
+            LookupComposite lookupEntryBox = termEntry.getTermTextBox();
+            lookupEntryBox.setOntology(termDTO.getOntology());
+            lookupEntryBox.unsetUnValidatedTextMarkup();
+        }
     }
 
     /**
@@ -275,12 +325,21 @@ public class PileConstructionZoneModule extends Composite implements Constructio
      * Checks if the superterm and the subterm can be swapped.
      * 1) if each ontology selector has the matching ontology
      *
+     * @param isRelatedEntity applies to the related entity or the entity
      * @return true if swappable or false otherwise
      */
-    public boolean canSwapSupertermAndSubterm() {
-        TermEntry superterm = getSuperterm();
-        OntologyDTO selectedSupertermOntology = getSuperterm().getSelectedOntology();
-        TermEntry subterm = getSubterm();
+    public boolean canSwapSupertermAndSubterm(boolean isRelatedEntity) {
+        TermEntry superterm;
+        if (isRelatedEntity)
+            superterm = getTermEntry(EntityPart.RELATED_ENTITY_SUPERTERM);
+        else
+            superterm = getTermEntry(EntityPart.ENTITY_SUPERTERM);
+        OntologyDTO selectedSupertermOntology = superterm.getSelectedOntology();
+        TermEntry subterm;
+        if (isRelatedEntity)
+            subterm = getTermEntry(EntityPart.RELATED_ENTITY_SUBTERM);
+        else
+            subterm = getTermEntry(EntityPart.ENTITY_SUBTERM);
         OntologyDTO selectedSubtermOntology = subterm.getSelectedOntology();
         if (!superterm.hasOntology(selectedSubtermOntology)) {
             errorElement.setText("Superterm does not have a " + selectedSubtermOntology.getDisplayName() + " Ontology choice.");
@@ -296,32 +355,15 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     /**
      * Retrieve the TermEntryUnit object pertaining to the superterm.
      *
-     * @return TermEntryUnit
+     * @param entityPart Entity part
+     * @return TermEntry Unit
      */
-    private TermEntry getSuperterm() {
-        return termEntryUnitsMap.get(PostComposedPart.SUPERTERM);
+    private TermEntry getTermEntry(EntityPart entityPart) {
+        return termEntryUnitsMap.get(entityPart);
     }
 
-    /**
-     * Retrieve the TermEntryUnit object pertaining to the subterm.
-     *
-     * @return TermEntryUnit
-     */
-    private TermEntry getSubterm() {
-        return termEntryUnitsMap.get(PostComposedPart.SUBTERM);
-    }
-
-    /**
-     * Retrieve the TermEntryUnit object pertaining to the quality.
-     *
-     * @return TermEntryUnit
-     */
-    private TermEntry getQualityTerm() {
-        return termEntryUnitsMap.get(PostComposedPart.QUALITY);
-    }
-
-    private PostComposedPart getPostComposedPart(TermEntry termEntry) {
-        for (PostComposedPart part : termEntryUnitsMap.keySet()) {
+    private EntityPart getPostComposedPart(TermEntry termEntry) {
+        for (EntityPart part : termEntryUnitsMap.keySet()) {
             if (termEntryUnitsMap.get(part).equals(termEntry))
                 return part;
         }
@@ -332,10 +374,21 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
     private class SwapTermsClickListener implements ClickHandler {
 
+        private boolean isRelatedEntity;
+
+        public SwapTermsClickListener(boolean isRelatedEntity) {
+            this.isRelatedEntity = isRelatedEntity;
+        }
+
         public void onClick(ClickEvent widget) {
             errorElement.clearAllErrors();
-            if (canSwapSupertermAndSubterm())
-                getSuperterm().swapTerms(getSubterm());
+            if (canSwapSupertermAndSubterm(isRelatedEntity)) {
+                if (isRelatedEntity)
+                    getTermEntry(EntityPart.RELATED_ENTITY_SUPERTERM).swapTerms(getTermEntry(EntityPart.RELATED_ENTITY_SUBTERM));
+                else
+                    getTermEntry(EntityPart.ENTITY_SUPERTERM).swapTerms(getTermEntry(EntityPart.ENTITY_SUBTERM));
+
+            }
 
         }
 
@@ -354,12 +407,12 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             errorElement.clearAllErrors();
             final OntologyDTO ontology = termEntryUnit.getSelectedOntology();
             String termName = termEntryUnit.getTermText();
-            if (!termEntryUnit.isSuggestionListShowing() && StringUtils.isNotEmpty(termName)){
-                lookupRPC.getTermByName(ontology,termName,new ZfinAsyncCallback<TermDTO>(
-                        "Failed to find term: " + termName + " for ontology: " +ontology.getDisplayName(),null){
+            if (!termEntryUnit.isSuggestionListShowing() && StringUtils.isNotEmpty(termName)) {
+                lookupRPC.getTermByName(ontology, termName, new ZfinAsyncCallback<TermDTO>(
+                        "Failed to find term: " + termName + " for ontology: " + ontology.getDisplayName(), null) {
                     @Override
                     public void onSuccess(TermDTO termDTO) {
-                        if(termDTO!=null){
+                        if (termDTO != null) {
                             lookupRPC.getTermInfo(ontology, termDTO.getZdbID(), new TermInfoCallBack(termInfoTable, termDTO.getZdbID()));
                         }
                     }
@@ -374,29 +427,48 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
         public void onClick(ClickEvent event) {
             boolean isPhenotype = false;
-            if (termEntryMap.containsKey(PostComposedPart.QUALITY))
+            if (termEntryMap.containsKey(EntityPart.QUALITY))
                 isPhenotype = true;
-            PhenotypeTermDTO termDTO = new PhenotypeTermDTO();
-            for (Map.Entry<PostComposedPart, TermEntry> postComposedPartTermEntryEntry : termEntryUnitsMap.entrySet()) {
+            PhenotypeStatementDTO termDTO = new PhenotypeStatementDTO();
+            // ToDO: unify with FX, i.e. have FX also use entity instead of straight subterm setter
+            EntityDTO entityDTO = new EntityDTO();
+            termDTO.setEntity(entityDTO);
+            EntityDTO relatedEntityDTO = new EntityDTO();
+            for (Map.Entry<EntityPart, TermEntry> postComposedPartTermEntryEntry : termEntryUnitsMap.entrySet()) {
                 TermEntry termEntry = postComposedPartTermEntryEntry.getValue();
                 switch (postComposedPartTermEntryEntry.getKey()) {
-                    case SUPERTERM:
+                    case ENTITY_SUPERTERM:
                         if (StringUtils.isNotEmpty(termEntry.getTermText())) {
-                            termDTO.setSuperterm(getTermDTO(termEntry));
+                            entityDTO.setSuperTerm(getTermDTO(termEntry));
                         }
                         break;
-                    case SUBTERM:
+                    case ENTITY_SUBTERM:
                         if (StringUtils.isNotEmpty(termEntry.getTermText())) {
-                            termDTO.setSubterm(getTermDTO(termEntry));
+                            entityDTO.setSubTerm(getTermDTO(termEntry));
                         }
                         break;
                     case QUALITY:
                         if (StringUtils.isNotEmpty(termEntry.getTermText())) {
                             termDTO.setQuality(getTermDTO(termEntry));
+                            // awkward but we need to somehow pass on the relational-type for validation purposes
+                            if (isQualityRelational)
+                                termDTO.getQuality().addSubset(SubsetDTO.RELATIONAL_SLIM);
+                        }
+                        break;
+                    case RELATED_ENTITY_SUPERTERM:
+                        if (StringUtils.isNotEmpty(termEntry.getTermText())) {
+                            relatedEntityDTO.setSuperTerm(getTermDTO(termEntry));
+                        }
+                        break;
+                    case RELATED_ENTITY_SUBTERM:
+                        if (StringUtils.isNotEmpty(termEntry.getTermText())) {
+                            relatedEntityDTO.setSubTerm(getTermDTO(termEntry));
                         }
                         break;
                 }
             }
+            if (relatedEntityDTO != null)
+                termDTO.setRelatedEntity(relatedEntityDTO);
             if (isPhenotype) {
                 String tag = tagList.getItemText(tagList.getSelectedIndex());
                 termDTO.setTag(tag);
@@ -451,6 +523,9 @@ public class PileConstructionZoneModule extends Composite implements Constructio
 
         public void onFailure(Throwable throwable) {
             errorElement.setText(throwable.getMessage());
+            if (throwable instanceof RelatedEntityNotFoundException) {
+                setVisibilityForRelatedEntityPanel(true);
+            }
         }
 
         /**
@@ -464,8 +539,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             for (PileStructureListener listener : pileListener) {
                 listener.onPileStructureCreation(pileStructure);
             }
+            resetConstructionValuesZone();
             resetButton.click();
-            errorElement.clearAllErrors();
         }
     }
 
@@ -477,6 +552,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             }
             termInfoTable.setToDefault();
             errorElement.clearAllErrors();
+            setVisibilityForRelatedEntityPanel(false);
         }
 
     }
@@ -490,11 +566,58 @@ public class PileConstructionZoneModule extends Composite implements Constructio
         }
 
         public void onClick(ClickEvent event) {
-            if (!termEntry.setTerm(termInfoTable.getCurrentTermInfoDTO()))
+            TermDTO termInfo = termInfoTable.getCurrentTermInfoDTO();
+            if (!termEntry.setTerm(termInfo)) {
                 errorElement.setText("The " + getPostComposedPart(termEntry) + " term does not allow terms from the <" +
-                        termInfoTable.getCurrentTermInfoDTO().getOntology().getDisplayName() + "> ontology.");
+                        termInfo.getOntology().getDisplayName() + "> ontology.");
+            }
+            if (termEntry.getTermPart().equals(EntityPart.QUALITY)) {
+                setVisibilityForRelatedEntityPanel(termInfoTable.getCurrentTermInfoDTO().isRelatedTerm());
+            }
         }
 
     }
 
+    private class RelatedQualityCheckCallback implements AsyncCallback<Boolean> {
+
+        public void onFailure(Throwable throwable) {
+            errorElement.setText(throwable.getMessage());
+        }
+
+        /**
+         * Returns the pile Structure entity
+         *
+         * @param isRelational true or false
+         */
+        public void onSuccess(Boolean isRelational) {
+            if (isRelational && isEntity(OntologyDTO.GO_MF)) {
+                errorElement.setError("Cannot use a relational term with GO MF. Please choose a different Quality term.");
+            } else {
+                setVisibilityForRelatedEntityPanel(isRelational);
+            }
+            isQualityRelational = isRelational;
+        }
+    }
+
+    /**
+     * Check if the entity term is of ontology type given in the argument,
+     * i.e. either as a sole super term or as post-composed subterm.
+     *
+     * @param ontology Ontology
+     * @return true / false
+     */
+    public boolean isEntity(OntologyDTO ontology) {
+        TermEntry subTermEntry = getTermEntry(EntityPart.ENTITY_SUBTERM);
+        TermEntry superTermEntry = getTermEntry(EntityPart.ENTITY_SUPERTERM);
+        OntologyDTO selectedSupertermOntology = superTermEntry.getSelectedOntology();
+        if (subTermEntry.getTermText() != null && subTermEntry.getTermText().length() > 2) {
+            OntologyDTO selectedSubtermOntology = subTermEntry.getSelectedOntology();
+            if (selectedSubtermOntology == ontology)
+                return true;
+        }
+        if (selectedSupertermOntology == ontology) {
+            return true;
+        }
+        return false;
+    }
 }

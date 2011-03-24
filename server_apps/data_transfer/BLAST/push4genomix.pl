@@ -123,12 +123,11 @@ sub generateGeneDataFile () {
 
         # query phenotype fig
 	$sql = "
-                select apatofig_fig_zdb_id
-                  from mutant_fast_search, atomic_phenotype, apato_figure, image
+                select phenox_fig_zdb_id
+                  from mutant_fast_search, phenotype_experiment, figure, image
                  where mfs_mrkr_zdb_id = '$gene_zdb_id'
                    and mfs_genox_zdb_id = apato_genox_zdb_id
-                   and apato_zdb_id = apatofig_apato_zdb_id
-                   and apatofig_fig_zdb_id = img_fig_zdb_id";
+                   and phenox_fig_zdb_id = img_fig_zdb_id";
 
 	if ($dbh->selectrow_array ($sql)) {
 	    $has_pato_img = 1;
@@ -139,10 +138,10 @@ sub generateGeneDataFile () {
 	if (!$has_pato_img) {
 
 	    $sql = "
-                select apato_zdb_id
-                  from mutant_fast_search, atomic_phenotype
+                select phenox_fig_zdb_id
+                  from mutant_fast_search, phenotype_experiment
                  where mfs_mrkr_zdb_id = '$gene_zdb_id'
-                   and mfs_genox_zdb_id = apato_genox_zdb_id       ";
+                   and mfs_genox_zdb_id = phenox_genox_zdb_id       ";
 
 	    $has_pato = 1 if $dbh->selectrow_array ($sql);
 	}

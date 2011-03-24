@@ -1,14 +1,21 @@
 package org.zfin.framework.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
@@ -88,6 +95,34 @@ public class DatabaseInfoController extends MultiActionController {
         return modelAndView;
     }
 
+    public ModelAndView phenotypeCurationHistoryHandler(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        List<PhenotypeExperiment> phenotypeExperiments = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeExperiments(5);
+        ModelAndView modelAndView = new ModelAndView("phenotype-curation-history.page", "phenotypeExperiments", phenotypeExperiments);
+        return modelAndView;
+    }
+
+    public ModelAndView phenotypeCurationHistoryStatementsHandler(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        String experimentIDString = request.getParameter("experimentID");
+        int experimentID = 0;
+        if (!StringUtils.isEmpty(experimentIDString))
+            experimentID = Integer.parseInt(experimentIDString);
+        List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeStatements(experimentID, 2);
+        ModelAndView modelAndView = new ModelAndView("phenotype-curation-history-statements.page", "phenotypeStatements", phenotypeStatements);
+        return modelAndView;
+    }
+
+    public ModelAndView singleThreadInfoHandler(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+
+        String threadId = request.getParameter("threadID");
+        ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
+        int threadID = Integer.parseInt(threadId);
+        // stack trace depth: show all
+        return new ModelAndView("single-thread-info", "thread", mxbean.getThreadInfo(threadID, Integer.MAX_VALUE));
+    }
+
     public ModelAndView threadInfoHandler(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         Thread currentThread = Thread.currentThread();
@@ -98,7 +133,7 @@ public class DatabaseInfoController extends MultiActionController {
             Thread t = (Thread) iter.next();
             StackTraceElement[] stack = (StackTraceElement[]) all.get(t);
         }
-
+        ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
         ThreadGroup threadGroup = currentThread.getThreadGroup();
         ThreadGroup parent = threadGroup;
         List<ThreadGroup> threadGroups = new ArrayList<ThreadGroup>();
@@ -110,7 +145,15 @@ public class DatabaseInfoController extends MultiActionController {
             parent = parentTemp;
         }
         List<Thread> allThreads = getThreads(parent);
-        return new ModelAndView("thread-info", "threads", allThreads);
+        ModelAndView threads = new ModelAndView("thread-info", "threads", allThreads);
+        threads.addObject("threadMXBean", mxbean);
+        ThreadInfo[] attributeValue = mxbean.dumpAllThreads(true, true);
+        List<ThreadInfo> threadInfos = Arrays.asList(attributeValue);
+        Collections.sort(threadInfos, new ThreadInfoSorting());
+        threads.addObject("allThreads", threadInfos);
+        threads.addObject("deadlockedThreads", mxbean.findDeadlockedThreads());
+        threads.addObject("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
+        return threads;
     }
 
     public List<Thread> getThreads(ThreadGroup group) {
@@ -150,5 +193,13 @@ public class DatabaseInfoController extends MultiActionController {
         return meta;
     }
 
+    class ThreadInfoSorting implements Comparator<ThreadInfo> {
+
+
+        @Override
+        public int compare(ThreadInfo o1, ThreadInfo o2) {
+            return o1.getThreadState().compareTo(o2.getThreadState());
+        }
+    }
 
 }

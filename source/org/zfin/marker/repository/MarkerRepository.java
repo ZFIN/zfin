@@ -17,6 +17,7 @@ import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -275,4 +276,29 @@ public interface MarkerRepository {
      */
     boolean isMarkerExists(String abbreviation);
 
+    /**
+     * Retrieves all marker IDs if no number is given or the first N markers for firstN = 0;
+     * @param firstN number of markers to be returned
+     * @return list of markers
+     */
+    List<String> getNMarkersPerType(int firstN);
+
+    /**
+     * Retrieves all marker IDs.
+     * @return list of markers
+     */
+    List<String> getAllMarkers();
+
+    /**
+     * Retrieve all distinct marker types used in the marker table
+     * @return list of marker types
+     */
+    List<MarkerType> getAllMarkerTypes();
+
+    /**
+     * Retrieve all gene ids of genes that have a SwissProt external note.
+     * @param firstNIds number of records to be returned
+     * @return list of gene ids
+     */
+    List<String> getNMarkersWithUniProtNote(int firstNIds);
 }

@@ -92,6 +92,21 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/expression/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/phenotype/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/ontology/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>zfin</servlet-name>
         <servlet-class>org.zfin.framework.ZfinActionServlet</servlet-class>

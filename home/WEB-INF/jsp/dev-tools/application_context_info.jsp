@@ -1,31 +1,56 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<jsp:useBean id="formBean" scope="request" type="org.zfin.framework.presentation.ApplicationContextBean"/>
+<jsp:useBean id="runtimeMXBean" scope="request" type="java.lang.management.RuntimeMXBean"/>
 
-<table cellpadding="2" cellspacing="1" border="0" width="50%">
-
-    <tr><td colspan="3" class="sectionTitle">We Application Context Information</td></tr>
+<table class="primary-entity-attributes">
     <tr>
-        <td width="130" class="sectionTitle">Key</td>
-        <td class="sectionTitle">Value</td>
+        <th><span class="name-label">Web Application Context Information</span></th>
+    </tr>
+</table>
+
+<p/>
+
+<table class="summary">
+    <tr>
+        <th>Key</th>
+        <th>Value</th>
     </tr>
     <tr>
-        <td valign=top class="listContentBold">
-            Display Name: </td>
-        <td colspan="2" class="listContent">
-            ${formBean.applicationContext.displayName}
+        <td> Display Name</td>
+        <td> ${formBean.applicationContext.displayName} </td>
+    </tr>
+    <tr>
+        <td> Server Start Day</td>
+        <td>
+            <zfin2:displayDay date="${formBean.startup}"/>
         </td>
     </tr>
     <tr>
-        <td valign=top class="listContentBold">
-            Server Start Day: </td>
-        <td class="listContent">
-            <fmt:formatDate value="${formBean.startup}" type="date"/>
-        </td>
-    </tr>
-    <tr>
-        <td valign=top class="listContentBold">
-            Server Start Time: </td>
-        <td class="listContent">
+        <td> Server Start Time</td>
+        <td>
             <fmt:formatDate value="${formBean.startup}" type="Time"/>
         </td>
     </tr>
+    <tr>
+        <td> Server Name</td>
+        <td> ${runtimeMXBean.name} </td>
+    </tr>
+    <tr>
+        <td> Management Spec Version</td>
+        <td> ${runtimeMXBean.managementSpecVersion} </td>
+    </tr>
 </table>
+
+<p/>
+
+<table class="summary">
+    <tr>
+        <th>JVM Startup Argument</th>
+    </tr>
+    <c:forEach var="argument" items="${runtimeMXBean.inputArguments}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop">
+            <td>${argument}</td>
+        </zfin:alternating-tr>
+    </c:forEach>
+</table>
+

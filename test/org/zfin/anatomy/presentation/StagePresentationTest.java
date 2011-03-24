@@ -70,7 +70,7 @@ public class StagePresentationTest {
         stage.setHoursStart(30);
         stage.setHoursEnd(36);
         String link = DevelopmentStagePresentation.getLink(stage, false);
-        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\">Prim-15</a>", link);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\"><span class=\"stage\" title=\"Pharyngula:Prim-15 (30.0h-36.0h)\">Prim-15</span></a>", link);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class StagePresentationTest {
         stage.setHoursStart(30);
         stage.setHoursEnd(36);
         String link = DevelopmentStagePresentation.getLink(stage, true);
-        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\">Pharyngula:Prim-15 (30.0h-36.0h)</a>", link);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Pharyngula\"><span class=\"stage\" title=\"Pharyngula:Prim-15 (30.0h-36.0h)\">Pharyngula:Prim-15 (30.0h-36.0h)</span></a>", link);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class StagePresentationTest {
         stage.setHoursStart(0);
         stage.setHoursEnd(17520);
         String link = DevelopmentStagePresentation.getLink(stage, true);
-        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Unknown\">Unknown</a>", link);
+        assertEquals("<a href=\"/zf_info/zfbook/stages/index.html#Unknown\"><span class=\"stage\" title=\"Unknown\">Unknown</span></a>", link);
     }
 
 }

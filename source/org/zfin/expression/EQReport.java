@@ -8,10 +8,12 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
@@ -43,17 +45,17 @@ public class EQReport {
         report.printToFile();
     }
 
-    private List<Phenotype> removeDuplicates(List<Phenotype> allPhenotypes) {
-        Set<Phenotype> phenos = new HashSet<Phenotype>();
-        for (Phenotype pheno : allPhenotypes) {
+    private List<PhenotypeStatement> removeDuplicates(List<PhenotypeStatement> allPhenotypes) {
+        Set<PhenotypeStatement> phenos = new HashSet<PhenotypeStatement>();
+        for (PhenotypeStatement pheno : allPhenotypes) {
             phenos.add(pheno);
         }
-        ArrayList<Phenotype> phenotypeArrayList = new ArrayList<Phenotype>(phenos.size());
+        ArrayList<PhenotypeStatement> phenotypeArrayList = new ArrayList<PhenotypeStatement>(phenos.size());
         phenotypeArrayList.addAll(phenos);
         return phenotypeArrayList;
     }
 
-    private List<Phenotype> allPhenotypes = new ArrayList<Phenotype>();
+    private List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
     private List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
     private List<MarkerGoTermEvidence> allMarkerGo = new ArrayList<MarkerGoTermEvidence>();
 
@@ -84,10 +86,8 @@ public class EQReport {
             //logger.info("term name: " + term.getTermName());
         }
         System.out.println(allTerms);
-        for (GenericTerm term : allTerms) {
-            List<Phenotype> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypeWithEntity(term);
-            allPhenotypes.addAll(phenotypes);
-        }
+        List<PhenotypeStatement> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypeWithEntity(allTerms);
+        allPhenotypes.addAll(phenotypes);
         reportFile = "paula-first-file.txt";
         createPhenotypeReportLines(allPhenotypes);
     }
@@ -136,16 +136,14 @@ public class EQReport {
         MutantRepository rep = RepositoryFactory.getMutantRepository();
         List<GenericTerm> allTerms = getGoTerms();
         System.out.println(allTerms);
-        for (GenericTerm term : allTerms) {
-            List<Phenotype> phenotypes = rep.getPhenotypeWithEntity(term);
-            allPhenotypes.addAll(phenotypes);
-        }
+        List<PhenotypeStatement> phenotypes = rep.getPhenotypeWithEntity(allTerms);
+        allPhenotypes.addAll(phenotypes);
         String name = "";
     }
 
     private List<StringBuffer> reportLines = new ArrayList<StringBuffer>();
 
-    private void createPhenotypeReportLines(List<Phenotype> phenotypes) {
+    private void createPhenotypeReportLines(List<PhenotypeStatement> phenotypes) {
         if (phenotypes == null)
             return;
         StringBuffer buffer = new StringBuffer();
@@ -157,11 +155,11 @@ public class EQReport {
         buffer.append("\t");
         buffer.append("Quality ");
         reportLines.add(buffer);
-        for (Phenotype phenotype : phenotypes) {
+        for (PhenotypeStatement phenotype : phenotypes) {
             buffer = new StringBuffer();
-            buffer.append(phenotype.getGenotypeExperiment().getGenotype().getName());
+            buffer.append(phenotype.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getName());
             buffer.append("\t");
-            Set<ExperimentCondition> conditions = phenotype.getGenotypeExperiment().getExperiment().getMorpholinoConditions();
+            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getGenotypeExperiment().getExperiment().getMorpholinoConditions();
             if (conditions != null && conditions.size() > 0) {
                 for (ExperimentCondition condition : conditions) {
                     buffer.append(condition.getMorpholino().getName());
@@ -173,13 +171,22 @@ public class EQReport {
                 buffer.append(" ");
             }
             buffer.append("\t");
-            buffer.append(phenotype.getSuperterm().getTermName());
-            if (phenotype.getSubterm() != null) {
+            buffer.append(phenotype.getEntity().getSuperterm().getTermName());
+            if (phenotype.getEntity().getSubterm() != null) {
                 buffer.append(" : ");
-                buffer.append(phenotype.getSubterm().getTermName());
+                buffer.append(phenotype.getEntity().getSubterm().getTermName());
+            }
+            if (phenotype.getRelatedEntity() != null) {
+                if (phenotype.getRelatedEntity().getSuperterm() != null) {
+                    buffer.append(phenotype.getRelatedEntity().getSuperterm().getTermName());
+                    if (phenotype.getRelatedEntity().getSubterm() != null) {
+                        buffer.append(" : ");
+                        buffer.append(phenotype.getRelatedEntity().getSubterm().getTermName());
+                    }
+                }
             }
             buffer.append("\t");
-            buffer.append(phenotype.getQualityTerm().getTermName());
+            buffer.append(phenotype.getQuality().getTermName());
             reportLines.add(buffer);
         }
     }
@@ -279,6 +286,7 @@ public class EQReport {
     }
 
     static {
+        ZfinProperties.init("home/WEB-INF/zfin.properties");
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator(false);
@@ -292,9 +300,8 @@ public class EQReport {
         System.setProperty("java.io.tmpdir", "test/ontologies");
         try {
             ontologyManager = OntologyManager.getEmptyInstance();
-//            ontologyManager.deserializeRelationships();
-            ontologyManager.deserializeOntology(OntologyDTO.ANATOMY);
-            ontologyManager.deserializeOntology(OntologyDTO.GO_BP);
+            ontologyManager.deserializeOntology(Ontology.ANATOMY);
+            ontologyManager.deserializeOntology(Ontology.GO_BP);
         } catch (Exception e) {
             logger.error("failed to load from file: " + ontologyManager, e);
         }

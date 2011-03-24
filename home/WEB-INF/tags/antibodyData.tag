@@ -7,50 +7,49 @@
 <%@ attribute name="antibodyStat" type="org.zfin.antibody.AntibodyService"
               rtexprvalue="true" required="true" %>
 
-<table>
+<%-- this tag is intended to be a fragment of the primary entity attributes table of the
+     antibody object, so the table tag is defined in antibodyHead.tag --%>
 
     <tr>
-        <td>
-            <b> Host Organism: </b>
-        </td>
+        <th>
+            Host Organism:
+        </th>
         <td>
             <span id="host organism">${antibody.hostSpecies}</span>
         </td>
     </tr>
 
     <tr>
-        <td>
-            <b> Immunogen Organism: </b>
-        </td>
+        <th>
+            Immunogen Organism:
+        </th>
         <td>
             <span id="immunogen organism">${antibody.immunogenSpecies}</span>
         </td>
     </tr>
 
     <tr>
+        <th>
+            Isotype:
+        </th>
         <td>
-            <b> Isotype: </b>
-        </td>
-        <td>
-            ${antibody.heavyChainIsotype}
-            <c:if
+            ${antibody.heavyChainIsotype}<c:if
                     test="${antibody.heavyChainIsotype != null && antibody.lightChainIsotype != null}">,
-            </c:if>
-            <font face="symbol">${antibody.lightChainIsotype}</font>
+            </c:if><font face="symbol">${antibody.lightChainIsotype}</font>
         </td>
     </tr>
     <tr>
-        <td>
-            <b> Type: </b>
-        </td>
+        <th>
+            Type:
+        </th>
         <td>
             <span id="clonal type">${antibody.clonalType}</span>
         </td>
     </tr>
     <tr>
-        <td>
-            <b> Assays: </b>
-        </td>
+        <th>
+            Assays:
+        </th>
         <td>
             <c:forEach var="assay" items="${antibodyStat.distinctAssayNames}" varStatus="loop">
                 ${assay}
@@ -61,9 +60,9 @@
         </td>
     </tr>
     <tr>
-        <td width="180">
-            <b><b>Antigen Genes:</b> </b>
-        </td>
+        <th>
+            Antigen&nbsp;Genes:
+        </th>
         <td>
             <c:forEach var="antigenRel" items="${antibodyStat.sortedAntigenRelationships}" varStatus="loop">
                 <zfin:link entity="${antigenRel.firstMarker}"/>
@@ -77,10 +76,8 @@
                         </c:otherwise>
                     </c:choose>
                 </c:if>
-                <c:if test="${!loop.last}">
-                    ,&nbsp;
-                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
             </c:forEach>
         </td>
     </tr>
-</table>
+

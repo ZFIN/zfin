@@ -23,12 +23,12 @@
 <zfin2:antibodyHead antibody="${formBean.antibody}"  antibodyStat="${formBean.antibodyStat}"/>
 
 
-<p></p>
-<b>NOTES:</b>
+<div class="summary">
+<span class="summaryTitle">NOTES</span>
 <c:if test="${formBean.numOfUsageNotes eq null || formBean.numOfUsageNotes ==0 }">
     None Submitted
 </c:if>
-
+</div>
 <c:if test="${formBean.numOfUsageNotes > 0}">
     <table width=100% border=0 cellspacing=0>
         <tr bgcolor="#cccccc">
@@ -47,14 +47,16 @@
         </c:forEach>
     </table>
 </c:if>
-<p></p>
 
-<b>ANATOMICAL LABELING</b>&nbsp;
+
+<div class="summary">
+<div class="summaryTitle">ANATOMICAL LABELING</div>
 <c:import url="/WEB-INF/jsp/antibody/antibody_labeling_detail.jsp"/>
+</div>
 
-<p></p>
-<b>SOURCE:</b>
-<br/>
+<div class="summary">
+<div class="summaryTitle">SOURCE</div>
+
 <c:choose>
     <c:when test="${formBean.antibody.suppliers ne null && fn:length(formBean.antibody.suppliers) > 0}">
         <table width=100% border=0 cellspacing=0>
@@ -95,7 +97,8 @@
         </table>
     </c:otherwise>
 </c:choose>
+</div>
 
-<hr width="80%">
+<div class="summary">
 <a href="publication-list?antibody.zdbID=${formBean.antibody.zdbID}&orderBy=author">CITATIONS</a>&nbsp;&nbsp;(${formBean.numOfPublications})
-
+</div>

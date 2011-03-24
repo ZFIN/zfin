@@ -109,7 +109,7 @@ $xpdetres_imagesOnlyConstraint
   <caption class="searchresults"> 
     <?MIVAR> Expression Pattern Search Results for 
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_geneZdbId">$xpdetres_geneAbbrev</a> 
-       <br> <small>($xpdetres_figCount figure(s) with expression from $xpdetres_pubCount publication(s) )</small>
+       <br> <small>($xpdetres_figCount $(IF,$(>,$xpdetres_figCount,1),figures,figure) with expression from $xpdetres_pubCount $(IF,$(>,$xpdetres_pubCount,1),publications, publication))</small>
        <?MIBLOCK COND="$(NXST,$xpdetres_imagesOnly)">        
         <?MIVAR>
           <br> 

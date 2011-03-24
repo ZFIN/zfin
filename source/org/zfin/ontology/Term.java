@@ -5,6 +5,7 @@ import org.zfin.expression.Image;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Basic interface definition for a term in an ontology.
@@ -50,6 +51,8 @@ public interface Term extends Comparable<Term>, Serializable {
 
 //    List<Term> getParents(String relationshipType);
 
+    SortedSet<TermAlias> getSortedAliases();
+
     void setAliases(Set<TermAlias> aliases);
 
 //    boolean isAliasesExist();
@@ -70,6 +73,13 @@ public interface Term extends Comparable<Term>, Serializable {
     Set<TermRelationship> getChildTermRelationships();
 
     void setChildTermRelationships(Set<TermRelationship> childTerms) ;
+    /**
+     * Retrieves all terms that are immediate children of this term
+     * via a given relationship type
+     *
+     * @return list of children terms
+     */
+    List<Term> getChildrenTerms(String relationshipType);
 
     Set<Term> getChildTerms();
 
@@ -90,4 +100,28 @@ public interface Term extends Comparable<Term>, Serializable {
     Set<Image> getImages();
 
     void setImages(Set<Image> images);
+    Set<Subset> getSubsets();
+
+    void setSubsets(Set<Subset> subsets);
+
+    /**
+     * Check if the term is part of the given sub set.
+     *
+     * @param subset subset
+     * @return true or false
+     */
+    boolean isPartOfSubset(Subset subset);
+
+    /**
+     * Check if the term is part of the given sub set name.
+     *
+     * @param subsetName subset name
+     * @return true or false
+     */
+    boolean isPartOfSubset(String subsetName);
+
+    public boolean equals(Object o);
+
+    public int hashCode();
+
 }

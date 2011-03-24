@@ -18,15 +18,14 @@
         <tiles:putAttribute name="subjectID" value="${formBean.anatomyItem.zdbID}"/>
     </tiles:insertTemplate>
 </div>
-<div class="summary">
-    <table width="100%">
+
+    <table class="primary-entity-attributes">
         <tr>
-            <td width="80">
-                <FONT SIZE=+1><STRONG>Name:</STRONG></FONT></td>
+            <th>
+                <span class="name-label">Name:</span>
+            </th>
             <td>
-                <FONT SIZE=+1><STRONG>
-                    ${formBean.anatomyItem.termName}
-                </STRONG></FONT>
+                <span class="name-value">${formBean.anatomyItem.termName}</span>
                 <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
             </td>
             <td valign="top" align="right" width="5%">
@@ -39,10 +38,10 @@
             </td>
         </tr>
         <c:if test="${not empty formBean.anatomyItem.synonyms}">
-            <tr valign="top">
-                <td>
+            <tr>
+                <th>
                     Synonyms:
-                </td>
+                </th>
                 <td>
                         ${formBean.formattedSynonymList}
                 </td>
@@ -50,17 +49,26 @@
         </c:if>
 
         <c:if test="${formBean.anatomyItem.definition != null  }">
-            <tr valign="top">
-                <td>
+            <tr>
+                <th>
                     Definition:
-                </td>
+                </th>
                 <td>
                         ${formBean.anatomyItem.definition}
                 </td>
             </tr>
         </c:if>
+        <tr>
+            <th>Appears&nbsp;at:</th>
+            <td><zfin:link entity="${formBean.anatomyItem.start}" longVersion="true"/></td>
+        </tr>
+        <tr>
+            <th>Evident&nbsp;until:</th>
+            <td><zfin:link entity="${formBean.anatomyItem.end}" longVersion="true" /></td>
+        </tr>
+
     </table>
-</div>
+
 
 <c:if test="${!empty formBean.anatomyItem.images}">
    <div class="summary">
@@ -71,41 +79,18 @@
 </c:if>
 
 <div class="summary">
-    <TABLE width="100%">
-        <TR>
-            <TD bgcolor="#CCCCCC" width="50%">
-                <STRONG>Appears at</STRONG>
-            </TD>
-            <TD bgcolor="#CCCCCC">
-                <STRONG>Evident until</STRONG>
-            </TD>
-        </TR>
-        <TR>
-            <TD bgcolor="#EEEEEE">
-                <zfin:link entity="${formBean.anatomyItem.start}" longVersion="true"/>
-            </TD>
-            <TD bgcolor="#EEEEEE">
-                <zfin:link entity="${formBean.anatomyItem.end}"/>
-            </TD>
-        </TR>
-    </TABLE>
-</div>
-
-<div class="summary">
     <!-- Relationships -->
-    <TABLE width="100%" class="summary">
-        <TR>
-            <TD bgcolor="#CCCCCC" colspan=2>
-                <STRONG>Relationships</STRONG>
-                (<a href="/zf_info/ontology_relationship_info.html">about</a>)
-            </TD>
-        </TR>
+    <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
+    <table class="summary horizontal-solidblock">
+
         <c:forEach var="rt" items="${formBean.relations}">
-            <TR>
-                <TD bgcolor="#EEEEEE" valign=top align=left width=110>
-                        ${rt.type}:
-                </TD>
-                <TD bgcolor="#EEEEEE">
+            <tr>
+                <th>
+                        <%-- keep the relationship types from wrapping --%>
+                        ${fn:replace(rt.type," ","&nbsp;")}:
+                        
+                </th>
+                <TD>
                     <c:forEach var="session" items="${rt.items}">
                         <zfin:link entity="${session}" name="anatomy-visibility"/> &nbsp;
                         &nbsp;
@@ -115,8 +100,6 @@
         </c:forEach>
     </TABLE>
 </div>
-
-<hr width="80%">
 
 <%--   If you would like to display the Show All link 
 <zfin2:sectionVisibilityShowAll sectionVisibility="${formBean.sectionVisibility}"
@@ -129,10 +112,9 @@
 
 <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
 
-<hr width="80%">
 <div class="summary">
     <%// Number of Publications with an abstract that contains the anatomical structure %>
-    <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=${formBean.anatomyItem.termName}&anon1textAllOneWord=1&query_results=exists'>Search
+    <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.anatomyItem.termName}"/>&anon1textAllOneWord=1&query_results=exists'>Search
         for publications with '${formBean.anatomyItem.termName}' in abstract</A>
 </div>
 

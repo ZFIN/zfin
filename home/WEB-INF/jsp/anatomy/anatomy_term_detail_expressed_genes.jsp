@@ -3,24 +3,25 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<b>
+<div class="summary">
+<div class="summaryTitle">
     <span title="Genes with Most Figures, annotated to ${formBean.aoTerm.termName}, substructures excluded">
         Genes with Most Figures
     </span>
-</b>
+</div>
 <c:if test="${formBean.expressedGenesExist}">
-    <TABLE width="100%">
+    <table class="summary rowstripes">
         <tbody>
-        <TR class="search-result-table-header">
-            <TD width="40%" colspan="2">
+        <tr>
+            <th width="40%" colspan="2">
                 Gene
-            </TD>
-            <TD width="60%">
+            </th>
+            <th width="60%">
                 Figures
-            </TD>
-        </TR>
-        <c:forEach var="expressedGene" items="${formBean.allExpressedMarkers}">
-            <tr class="search-result-table-entries">
+            </th>
+        </tr>
+        <c:forEach var="expressedGene" items="${formBean.allExpressedMarkers}" varStatus="loop">
+            <zfin:alternating-tr loopName="loop">
                 <td colspan="2">
                     <zfin:link entity="${expressedGene.markerStat.gene}"/>
                 </td>
@@ -40,7 +41,8 @@
                             </a>
                         </c:if>
                     </c:if>
-                    from
+                    <c:if test="${expressedGene.markerStat.numberOfFigures > 1 }"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;from</c:if>
+                    <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }"><c:if test="${expressedGene.markerStat.figure.label ne 'text only' }"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from</c:if>
                     <c:if test="${expressedGene.markerStat.numberOfPublications ==1}">
                         <zfin:link entity="${expressedGene.markerStat.singlePublication}"/>
                     </c:if>
@@ -50,7 +52,7 @@
                                      includeNumber="true"/>
                     </c:if>
                 </td>
-            </tr>
+            </zfin:alternating-tr>
         </c:forEach>
         </tbody>
     </TABLE>
@@ -65,3 +67,4 @@
                                        totalRecordCount="${formBean.totalNumberOfExpressedGenes}"
                                        displayImages="true"
                                        imageCount="${formBean.totalNumberOfFiguresPerAnatomyItem}"/>
+</div>

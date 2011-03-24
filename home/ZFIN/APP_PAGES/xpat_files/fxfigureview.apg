@@ -32,6 +32,14 @@ fxfigstgrng.apg
 
 <?/MIERROR>
 
+
+
+<HTML>
+<head>
+<?MICOMMENT> ** this has to occur above other elements to 
+                force IE8 into standards mode ** <?/MICOMMENT>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+
 <!--this javascript is needed to display the list of anatomy items-->
 <script>
 function updateInnerHTML(element_id,html_to_display) {
@@ -43,9 +51,6 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
     c1.innerHTML = html_to_display;
 }
 </script>
-
-<HTML>
-<head>
 
 <!--stylesheet for caption formatting-->
 
@@ -225,9 +230,9 @@ patterns associated with the figure
 <?/MISQL>
 <?MIVAR NAME=fxfigview_atbresultct>$1<?/MIVAR>
 
-<?MISQL SQL="select count(apatofig_apato_zdb_id)::integer 
-              from apato_figure 
-              where apatofig_fig_zdb_id='$OID'">
+<?MISQL SQL="select count(phenox_pk_id)::integer 
+              from phenotype_experiment 
+              where phenox_fig_zdb_id = '$OID'">
 <?/MISQL>
 <?MIVAR NAME=fxfigview_pato_resultct>$1<?/MIVAR>
 <?MICOMMENT>Begin expression pattern condition <?/MICOMMENT>
@@ -526,22 +531,18 @@ and display them one after the other horizontally
       <th title="Genotype + environment">Fish</th>
       <th></th> 
       <th>Stage</th>
-      <th>Observed in</th>
       <th>Phenotype</th>
       <p>
       <?MISQL SQL="
            select distinct genox_geno_zdb_id, geno_display_name, geno_name_order
            from
-           figure,genotype_experiment, genotype,
-           atomic_phenotype,apato_figure
-           where
-           fig_zdb_id='$fxfigview_fig_zdb_id'
-           and fig_zdb_id=apatofig_fig_zdb_id
-           and apatofig_apato_zdb_id=apato_zdb_id
-           and genox_zdb_id = apato_genox_zdb_id
+           figure,genotype_experiment, genotype, phenotype_experiment
+           where fig_zdb_id = '$fxfigview_fig_zdb_id'
+           and fig_zdb_id = phenox_fig_zdb_id
+           and genox_zdb_id = phenox_genox_zdb_id
            and genox_geno_zdb_id = geno_zdb_id
           order by geno_name_order">
-           <?MIVAR NAME=$fxphenoinfo_genoxid>$1<?/MIVAR>
+           <?MIVAR NAME=$fxphenoinfo_genoid>$1<?/MIVAR>
           
  
            <?MIBLOCK COND="$(NXST,$fxfigview_rowcolor)">
@@ -550,7 +551,7 @@ and display them one after the other horizontally
             <?/MIBLOCK>
            <?/MIBLOCK>
            <a name="phenodetails"></a>
-           <?MISQL SQL="select WebExplode(object,'OID=$fxphenoinfo_genoxid&fxphenoinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxphenoinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxphenoinfo.apg';">$1<?/MISQL>
+           <?MISQL SQL="select WebExplode(object,'OID=$fxphenoinfo_genoid&fxphenoinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxphenoinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxphenoinfo.apg';">$1<?/MISQL>
            <?MIVAR NAME=$fxfigview_rowcolor>$fxphenoinfo_lastcolor<?/MIVAR>
       <?/MISQL>
     </table>

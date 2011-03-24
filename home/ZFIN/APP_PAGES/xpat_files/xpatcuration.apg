@@ -278,7 +278,7 @@ EFFECTS
                         <td align="center" bgcolor="#006666" width="1">
                         </td>
                         <td align="top">
-                            <div id="structure-pile-construction-zone-subterm-info"></div>
+                            <div id="structure-pile-construction-zone-entity_subterm-info"></div>
                             <p>
                             </p>
                             <span class="indent2"><b><i>within the</i></b></span>
@@ -290,7 +290,7 @@ EFFECTS
                 <table>
                     <tr>
                         <td>
-                            <div id="structure-pile-construction-zone-superterm-info"></div>
+                            <div id="structure-pile-construction-zone-entity_superterm-info"></div>
                         </td>
                     </tr>
                 </table>

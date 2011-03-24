@@ -3,17 +3,25 @@ package org.zfin.uniquery;
 import cvu.html.HTMLTokenizer;
 import cvu.html.TagToken;
 import cvu.html.TextToken;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.ontology.datatransfer.CronJobReport;
+import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.uniquery.presentation.SearchBean;
+import org.zfin.util.DateUtil;
 import org.zfin.util.FileUtil;
 import org.zfin.wiki.WikiLoginException;
 
@@ -21,8 +29,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Security;
 import java.util.*;
+
+import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 
 
 /**
@@ -55,27 +64,26 @@ import java.util.*;
  * 10 threads hogs system resources and saves only about 10% time over 4 threads
  * 1-thread barely affects system performance so can be used occasionally during working hours
  */
-public class Indexer implements Runnable {
+public class Indexer extends AbstractScriptWrapper implements Runnable {
 
     private static final String lineSep = System.getProperty("line.separator");
     private final Logger logger = Logger.getLogger(Indexer.class);
 
     private String indexDir;
-    private List<String> URLsToIndex;
-    private List<String> staticIndex;
-    private List<String> include;
-    private List<String> exclude;
-    private List<String> crawlOnly;
-    private List<Thread> threadList;
+    private String indexRootDir;
+    private List<String> URLsToIndex = new ArrayList<String>();
+    private List<String> staticIndex = new ArrayList<String>();
+    private List<String> include = new ArrayList<String>();
+    private List<String> exclude = new ArrayList<String>();
+    private List<String> crawlOnly = new ArrayList<String>();
+    private List<Thread> threadList = new ArrayList<Thread>();
     private boolean incremental;
 
-    private boolean groksHTTPS;
-
     private IndexWriter index;
-    private Set<String> discoveredURLs;
-    private Map<String, Boolean> mimeTypes;
+    private Set<String> discoveredURLs = new TreeSet<String>();
+    private Map<String, Boolean> mimeTypes = new HashMap<String, Boolean>();
 
-    private int threads;
+    private int threads = 2;
 
     private int bytes;
 
@@ -86,7 +94,8 @@ public class Indexer implements Runnable {
     private long timeSpentOptimizing = 0;
     private int filesIndexed = 0;
 
-    private boolean verbose = false;
+    // log each indexed file in log
+    private boolean verbose = true;
     private String logDirectory = ".";
     private PrintWriter log = null;
     private PrintWriter indexedUrlLog = null;
@@ -98,82 +107,97 @@ public class Indexer implements Runnable {
     private static int errorCount = 0;
     private static final String INDEXED_URLS_LOG = "/indexedUrls.log";
     private static final String CRAWLED_URLS_LOG = "/crawledUrls.log";
+    private int numberOfDetailPages;
+    private CronJobReport cronJobReport;
+
+    static {
+        options.addOption(OptionBuilder.withArgName("indexerDir").hasArg().withDescription("site search directory").create("indexerDir"));
+        options.addOption(OptionBuilder.withArgName("u").hasArg().withDescription("search urls").create("u"));
+        options.addOption(OptionBuilder.withArgName("e").hasArg().withDescription("exclude urls").create("e"));
+        options.addOption(OptionBuilder.withArgName("c").hasArg().withDescription("crawl urls").create("c"));
+        options.addOption(OptionBuilder.withArgName("q").hasArg().withDescription("all view pages").create("t"));
+        options.addOption(OptionBuilder.withArgName("t").hasArg().withDescription("number of threads").create("t"));
+        options.addOption(OptionBuilder.withArgName("numberOfDetailPages").hasArg().withDescription("number of pages per entity").create("numberOfDetailPages"));
+        options.addOption(OptionBuilder.withArgName("categoryDir").hasArg().withDescription("search urls").create("categoryDir"));
+        options.addOption(OptionBuilder.withArgName("zfinPropertiesDir").hasArg().withDescription("zfin.properties path").create("zfinPropertiesDir"));
+    }
 
 
     /**
      * Main entry point.
      *
-     * @param argv arguments
+     * @param arguments arguments
      * @throws Exception exception
      */
-    public static void main(String argv[]) throws Exception {
+    public static void main(String arguments[]) throws Exception {
         //DOMConfigurator.configure("server_apps/quicksearch/logs/log4j.xml");
         //initializeLog4j();
-        long start = System.currentTimeMillis();
-        Indexer s = new Indexer(argv);
-        s.go();
-        long end = System.currentTimeMillis();
+        CommandLine commandLine = parseArguments(arguments, "index ");
+        //initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
+        Indexer indexer = new Indexer(commandLine);
+
         IntegratedJavaMailSender smtp = new IntegratedJavaMailSender();
         if (errorCount > 100) {
             smtp.sendMail("Error while indexing " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
                     "Too many errors [" + errorCount + "]", ZfinProperties.getIndexerReportEmailAddresses());
             System.exit(-1);
-        } else {
-            String message = "Indexing took " + (end - start) / 1000. + " seconds";
-            message += System.getProperty("line.separator");
-            message += "Indexed " + s.getNumberOfIndexedUrls() + " urls";
-            smtp.sendMail("Indexer finished for " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
-                    message, ZfinProperties.getIndexerReportEmailAddresses());
-            System.exit(0);
         }
     }
 
-
-    /**
-     * Initialize variables and open log writer streams.
-     *
-     * @param argv parameters
-     */
-    public Indexer(String argv[]) {
+    public Indexer(CommandLine commandLine) throws IOException {
+        cronJobReport = new CronJobReport("Site Search Indexer: ");
+        cronJobReport.start();
+        parseCommandlineOptions(commandLine);
         try {
-            groksHTTPS = true;
-            incremental = false;
-            threads = 2;
-            bytes = 0;
-            include = new ArrayList<String>();
-            exclude = new ArrayList<String>();
-            crawlOnly = new ArrayList<String>();
-            URLsToIndex = new ArrayList<String>();
-            staticIndex = new ArrayList<String>();
-            threadList = new ArrayList<Thread>();
-            discoveredURLs = new TreeSet<String>();
-            mimeTypes = new HashMap<String, Boolean>();
-            parseArgs(argv);
-
-            /* 
-            * The "staticIndex" is what the main comments above refer to as
-            * the list of "data page URLs."  This has sped up performance dramatically
-            * by reducing wasted time spent crawling data pages we can pre-determine
-            * from the database.
-            */
+            initLogFiles();
+            File configurationFile = new File(indexRootDir, "indexer.xml");
+            FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext("file:" + configurationFile.getAbsolutePath());
+            GenerateEntityDetailPageUrls generateUrls = (GenerateEntityDetailPageUrls) context.getBean("detailPageGenerator");
+            generateUrls.setDetailEntityProperties(indexRootDir, propertiesFileName);
+            generateUrls.setNumberOfRecordsPerEntities(numberOfDetailPages);
+            generateUrls.generateAllUrls();
+            loadFromFile(generateUrls.getDetailPageFilePath(), staticIndex);
             URLsToIndex.addAll(staticIndex);
+            go();
+            // generate detail page url list
+            CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.INDEXER_REPORT_EMAIL));
+            cronJobUtil.emailReport("site-search-indexer-report.ftl", cronJobReport);
 
-            //memUsage = new PrintWriter(new FileWriter(logDirectory + "/memusage.log"));
-            log = new PrintWriter(new FileWriter(logDirectory + "/spider.log"));
-            indexedUrlLog = new PrintWriter(new FileWriter(logDirectory + INDEXED_URLS_LOG));
-            crawledUrlLog = new PrintWriter(new FileWriter(logDirectory + CRAWLED_URLS_LOG));
-            ignoredUrlLog = new PrintWriter(new FileWriter(logDirectory + "/ignoredUrls.log"));
-            malformedUrlLog = new PrintWriter(new FileWriter(logDirectory + "/malformedUrls.log"));
-            loadFileLog = new PrintWriter(new FileWriter(logDirectory + "/loadFileLog.log"));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace(log);
-	    IntegratedJavaMailSender smtp = new IntegratedJavaMailSender();
+            logger.error(e);
+            cronJobReport.error(e.getMessage());
+            IntegratedJavaMailSender smtp = new IntegratedJavaMailSender();
             smtp.sendMail("Error while indexing " + ZfinPropertiesEnum.DOMAIN_NAME.value(),
-			  "Exception: " + e.getMessage(), ZfinProperties.getIndexerReportEmailAddresses());
+                    "Exception: " + e.getMessage(), ZfinProperties.getIndexerReportEmailAddresses());
 
         }
+    }
+
+    private void initLogFiles() throws IOException {
+        log = new PrintWriter(new FileWriter(logDirectory + "/spider.log"));
+        indexedUrlLog = new PrintWriter(new FileWriter(logDirectory + INDEXED_URLS_LOG));
+        crawledUrlLog = new PrintWriter(new FileWriter(logDirectory + CRAWLED_URLS_LOG));
+        ignoredUrlLog = new PrintWriter(new FileWriter(logDirectory + "/ignoredUrls.log"));
+        malformedUrlLog = new PrintWriter(new FileWriter(logDirectory + "/malformedUrls.log"));
+        loadFileLog = new PrintWriter(new FileWriter(logDirectory + "/loadFileLog.log"));
+        mimeTypes.put("text/html", Boolean.TRUE);
+        mimeTypes.put("text/plain", Boolean.TRUE);
+        mimeTypes.put("text/html;charset=ISO-8859-1", Boolean.TRUE);
+        mimeTypes.put("text/html;charset=UTF-8", Boolean.TRUE);
+    }
+
+    private void parseCommandlineOptions(CommandLine commandLine) throws IOException {
+        indexRootDir = commandLine.getOptionValue("indexerDir");
+        indexDir = FileUtil.createAbsolutePath(indexRootDir, "new_indexes");
+        loadFromFile(commandLine.getOptionValue("u"), URLsToIndex);
+        loadFromFile(commandLine.getOptionValue("e"), exclude);
+        threads = Integer.parseInt(commandLine.getOptionValue("t"));
+        numberOfDetailPages = Integer.parseInt(commandLine.getOptionValue("numberOfDetailPages"));
+        initSiteSearchCategories(commandLine.getOptionValue("categoryDir"));
+        propertiesFileName = commandLine.getOptionValue("zfinPropertiesDir");
+        initAll(propertiesFileName);
+        logDirectory = FileUtil.createAbsolutePath(indexRootDir, "logs");
     }
 
     private int getNumberOfIndexedUrls() {
@@ -194,28 +218,13 @@ public class Indexer implements Runnable {
      */
     public void go() throws Exception {
         // create the index directory -- or append to existing
-        //log.println("Starting indexer at: " + Calendar.getInstance().getTime());
-        log.println("Creating index in: " + indexDir);
+        cronJobReport.start();
+        reportMessage("Creating index in: " + indexDir);
         log.flush();
         if (incremental) {
             log.println("    - using incremental mode");
         }
         index = new IndexWriter(new File(indexDir), new ZfinAnalyzer(), !incremental);
-
-        // check if we can do https URLs.
-        // to date, this does not actually work, HTTPS calls require appropriate
-        // certificates and handling which we are not doing here; more work is needed
-        // for this to work
-        try {
-            System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-            new URL("https://www.bitmechanic.com/");
-        }
-        catch (Exception e) {
-            groksHTTPS = false;
-            log.println("Disabling support for https URLs");
-        }
-
 
         // generate the specified number of threads and begin indexing
         // from "run()" method below
@@ -230,13 +239,11 @@ public class Indexer implements Runnable {
             child.join();
         }
         long elapsed = System.currentTimeMillis() - start;
-
         // index the community wiki
-        //todo: enable after wiki goes live: 
         indexWiki();
 
         // after all threads have completed, close the index and write appropriate logs
-        log.println("Indexed " + filesIndexed + " URLs (" + (bytes / 1024) + " KB) in " + (elapsed / 1000) + " seconds");
+        reportMessage("Indexed " + filesIndexed + " URLs (" + (bytes / 1024) + " KB) in " + DateUtil.getTimeDuration(0, elapsed));
         log.println("Optimizing index");
 
         long optimizingStart = System.currentTimeMillis();
@@ -244,14 +251,23 @@ public class Indexer implements Runnable {
         index.close();
         timeSpentOptimizing += (System.currentTimeMillis() - optimizingStart);
 
-        log.println("Time spent loading: " + timeSpentLoading / 1000 + " seconds");
-        log.println("Time spent parsing: " + timeSpentParsing / 1000 + " seconds");
-        log.println("Time spent indexing: " + timeSpentIndexing / 1000 + " seconds");
-        log.println("Time spent urlProcessing: " + timeSpentUrlProcessing / 1000 + " seconds");
-        log.println("Time spent optimizing: " + timeSpentOptimizing / 1000 + " seconds");
+        reportMessage("Time spent loading: " + DateUtil.getTimeDuration(0, timeSpentLoading));
+        reportMessage("Time spent parsing: " + DateUtil.getTimeDuration(0, timeSpentParsing));
+        reportMessage("Time spent indexing: " + DateUtil.getTimeDuration(0, timeSpentIndexing));
+        reportMessage("Time spent urlProcessing: " + DateUtil.getTimeDuration(0, timeSpentUrlProcessing));
+        reportMessage("Time spent optimizing: " + DateUtil.getTimeDuration(0, timeSpentOptimizing));
 
         createStatistics();
         closeResources();
+        if (errorCount > 100) {
+            cronJobReport.error("Too many errors: " + errorCount);
+        }
+        cronJobReport.finish();
+    }
+
+    private void reportMessage(String message) {
+        log.println(message);
+        cronJobReport.addMessageToSection(message, "Main");
     }
 
     private void closeResources() {
@@ -263,13 +279,13 @@ public class Indexer implements Runnable {
     }
 
     public void createStatistics() {
-        log.println("Statistics for indexed pages:");
-        createStatistics(INDEXED_URLS_LOG);
-        log.println("Statistics for crawled pages:");
-        createStatistics(CRAWLED_URLS_LOG);
+        String reportSubsectionTitle = "Statistics for indexed pages:";
+        createStatistics(INDEXED_URLS_LOG, reportSubsectionTitle);
+        reportSubsectionTitle = "Statistics for crawled pages:";
+        createStatistics(CRAWLED_URLS_LOG, reportSubsectionTitle);
     }
 
-    private void createStatistics(String fileName) {
+    private void createStatistics(String fileName, String reportSubsectionTitle) {
         File indexedUrls;
         FileReader fileReader = null;
         LineNumberReader lineNumberReader = null;
@@ -284,10 +300,13 @@ public class Indexer implements Runnable {
             }
             for (Object o : stats.getStatisticsMap().keySet()) {
                 String category = (String) o;
-                log.println(category + ": " + stats.getStatisticsMap().get(category));
+                String message = category + ": " + stats.getStatisticsMap().get(category);
+                log.println(message);
+                cronJobReport.addMessageToSection(message, reportSubsectionTitle);
             }
         } catch (IOException e) {
             log.write("Error: " + e.getMessage());
+            cronJobReport.error(e);
             e.printStackTrace();
         } finally {
             try {
@@ -298,6 +317,7 @@ public class Indexer implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
                 log.write("Error: " + e.getMessage());
+                cronJobReport.error(e);
             }
         }
     }
@@ -320,7 +340,12 @@ public class Indexer implements Runnable {
             return;
         }
 
+        int numberOfPages = 0;
         for (WebPageSummary summary : urlSummaryList) {
+            if (numberOfDetailPages > 0) {
+                if (numberOfPages++ > numberOfDetailPages)
+                    break;
+            }
             addToIndexer(summary);
             filesIndexed++;
             bytes += summary.getBody().length();
@@ -345,8 +370,7 @@ public class Indexer implements Runnable {
                 //url = StringUtils.replaceOnce(url,"http://quark.zfin.org","https://hoover.zfin.org");
                 indexURL(url);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.println(Thread.currentThread().getName() + ": aborting with error");
             e.printStackTrace(log);
         }
@@ -425,20 +449,20 @@ public class Indexer implements Runnable {
         try {
             // download and parse the HTML page from the given url
             summary = loadURL(url);
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             errorCount++;
             log.println(Thread.currentThread().getName() + ": encountered error in malformed URL: " + url);
             e.printStackTrace(log);
             e.printStackTrace();
             log.flush();
-        }
-        catch (IOException e) {
+            cronJobReport.error(e);
+        } catch (IOException e) {
             errorCount++;
             log.println(Thread.currentThread().getName() + ": encountered error while loading URL: " + url);
             e.printStackTrace(log);
             e.printStackTrace();
             log.flush();
+            cronJobReport.error(e);
         }
 
 
@@ -449,13 +473,13 @@ public class Indexer implements Runnable {
             if (summary.getBody().startsWith("Dynamic Page Generation Error")) {
                 try {
                     throw new Exception("Encountered dynamic page generation error for url: " + url);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     errorCount++;
                     log.println(Thread.currentThread().getName() + ": encountered dynamic page generation error: " + url);
                     e.printStackTrace(log);
                     e.printStackTrace();
                     log.flush();
+                    cronJobReport.error(e);
                 }
             }
 
@@ -468,8 +492,7 @@ public class Indexer implements Runnable {
                 */
             try {
                 updateSummary(summary);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 errorCount++;
                 log.println(Thread.currentThread().getName() + ": encountered error while updating summary: " + url);
                 e.printStackTrace(log);
@@ -557,6 +580,7 @@ public class Indexer implements Runnable {
             } else {
                 doc.add(new Field(SearchBean.BODY, "", Field.Store.YES, Field.Index.TOKENIZED));
                 log.println(Thread.currentThread().getName() + ": no body text for URL: " + url);
+                cronJobReport.warning(Thread.currentThread().getName() + ": no body text for URL: " + url);
             }
 
             String title = summary.getAdjustedTitle();
@@ -572,13 +596,13 @@ public class Indexer implements Runnable {
                 // index the document (the results of parsing URL)
                 index.addDocument(doc);
                 filesIndexed++;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 errorCount++;
                 log.println(Thread.currentThread().getName() + ": encountered error while indexing URL: " + url);
                 e.printStackTrace(log);
                 e.printStackTrace();
                 log.flush();
+                cronJobReport.error(e);
             }
         }
     }
@@ -640,7 +664,7 @@ public class Indexer implements Runnable {
                         new_url = firstPart + secondPart;
                     }
 
-                    if (new_url.startsWith("http://") || (new_url.startsWith("https://") && groksHTTPS)) {
+                    if (new_url.startsWith("http://")) {
                         // verify we're on the same host and port
                         URL u = new URL(new_url);
                         if (u.getHost().equals(summary.getUrl().getHost()) && u.getPort() == summary.getUrl().getPort()) {
@@ -762,10 +786,11 @@ public class Indexer implements Runnable {
                 }
             } else {
                 errorCount++;
-                log.println("Unexpected response code: " + uc.getResponseCode() + " for URL: " + url);
+                final String message = "Unexpected response code: " + uc.getResponseCode() + " for URL: " + url;
+                log.println(message);
+                cronJobReport.warning(message);
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             // 404
             errorCount++;
             log.println("No content found for URL: " + url);
@@ -779,71 +804,7 @@ public class Indexer implements Runnable {
     }
 
 
-    /**
-     * Parse the command line arguments.
-     *
-     * @param argv arguments
-     * @throws java.io.IOException exception from loading data from a file.
-     */
-    private void parseArgs(String argv[]) throws IOException {
-        for (int i = 0; i < argv.length; i++) {
-            if (argv[i].equals("-d")) {
-                indexDir = argv[++i];
-                System.out.println(indexDir);
-            } else if (argv[i].equals("-q")) // "q" stands for quick since static index is very quick
-            {
-                loadFromFile(argv[++i], staticIndex);
-            } else if (argv[i].equals("-u")) {
-                loadFromFile(argv[++i], URLsToIndex);
-            } else if (argv[i].equals("-i")) {
-                loadFromFile(argv[++i], include);
-            } else if (argv[i].equals("-e")) {
-                loadFromFile(argv[++i], exclude);
-            } else if (argv[i].equals("-c")) {
-                loadFromFile(argv[++i], crawlOnly);
-            } else if (argv[i].equals("-a")) {
-                incremental = true;
-            } else if (argv[i].equals("-m")) {
-                mimeTypes.put(argv[++i], Boolean.TRUE);
-            } else if (argv[i].equals("-t")) {
-                threads = Integer.parseInt(argv[++i]);
-            } else if (argv[i].equals("-categoryDir")) {
-                initSiteSearchCategories(argv[++i]);
-            } else if (argv[i].equals("-zfinPropertiesDir")) {
-//                ZfinProperties.init(argv[++i], "zfin-properties.xml");
-                ZfinProperties.init(argv[++i]);
-            } else if (argv[i].equals("-l")) {
-                StringBuffer buf = new StringBuffer(argv[++i]);
-                if (buf.charAt(buf.length() - 1) == '/') {
-                    buf.deleteCharAt(buf.length() - 1);
-                }
-                logDirectory = buf.toString();
-            } else if (argv[i].equals("-v")) {
-                verbose = true;
-            } else {
-                log.println("Ignoring unknown argument: " + argv[i]);
-            }
-        }
-
-        if (URLsToIndex.size() == 0) {
-            throw new IllegalArgumentException("Missing required argument: -u [url file]");
-        }
-        if (indexDir == null) {
-            throw new IllegalArgumentException("Missing required argument: -d [index dir]");
-        }
-
-        if (threads < 1) {
-            throw new IllegalArgumentException("Invalid number of threads: " + threads);
-        }
-
-        if (mimeTypes.size() == 0) {
-            // add default MIME types
-            mimeTypes.put("text/html", Boolean.TRUE);
-            mimeTypes.put("text/plain", Boolean.TRUE);
-            mimeTypes.put("text/html;charset=ISO-8859-1", Boolean.TRUE);
-            mimeTypes.put("text/html;charset=UTF-8", Boolean.TRUE);
-        }
-    }
+    private String propertiesFileName;
 
     private static void initializeLog4j() {
         URL resource = Thread.currentThread().getContextClassLoader().getResource("log4j.xml");

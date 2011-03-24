@@ -62,7 +62,7 @@ EFFECTS
 
 
  <?MISQL SQL="
-         select mrkr_zdb_id, mrkr_name
+         select distinct mrkr_zdb_id, mrkr_name
            from marker_relationship, marker
           where mrel_mrkr_2_zdb_id = '$mrkr_id'
             and mrel_mrkr_1_zdb_id = mrkr_zdb_id

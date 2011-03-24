@@ -17,20 +17,30 @@
 <%@ tag body-content="scriptless" %>
 <%@attribute name="expressionResults" type="java.util.Collection" %>
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
-<%@attribute name="id" type="java.lang.String" %>
+<%@attribute name="id" type="java.lang.String" required="false" %>
 <%@attribute name="showAttributionLinks" type="java.lang.Boolean" required="false" %>
+<%@attribute name="suppressPopupLinks" type="java.lang.Boolean" required="false" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:if test="${showAttributionLinks == null}">
     <c:set var="showAttributionLinks" value="false"/>
 </c:if>
 
+<c:if test="${suppressPopupLinks == null}">
+    <c:set var="suppressPopupLinks" value="false"/>
+</c:if>
+
+<c:if test="${id == null}">
+    <c:set var="id" value="${zfn:generateRandomDomID()}"/>
+</c:if>
+
+
     <c:if test="${fn:length(expressionResults) > 0 }">
         <c:choose>
             <c:when test="${fn:length(expressionResults) > maxNumber }">
             <span style="display:inline;" id="${id}-short">
             <c:forEach var="hyperlinkEntity" items="${expressionResults}" varStatus="loop" end="${maxNumber -1}">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
+                <zfin:link entity="${hyperlinkEntity}" suppressPopupLink="${suppressPopupLinks}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
             </c:forEach>
                 <nobr>
                     (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(expressionResults)}</a>)
@@ -40,7 +50,7 @@
                 </span>
             <span style="display:none;" id="${id}-long">
             <c:forEach var="hyperlinkEntity" items="${expressionResults}" varStatus="loop">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
+                <zfin:link entity="${hyperlinkEntity}" suppressPopupLink="${suppressPopupLinks}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity.superterm}"/></c:if><c:if test="${!loop.last}">, </c:if>
             </c:forEach>&nbsp;
                 <img onclick="showEntityList('${id}', false)"  class="clickable"
                      src="/images/left_arrow.gif" alt="collapse" title="Show only first ${maxNumber+1} terms">

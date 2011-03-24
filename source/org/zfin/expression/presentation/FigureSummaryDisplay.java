@@ -1,6 +1,9 @@
 package org.zfin.expression.presentation;
 
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -11,7 +14,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private Figure figure;
     private int imgCount;
     private String thumbnail;
-    private List<Term> terms;
+    private List<ExpressionStatement> expressionStatementList;
 
     private boolean publicationDisplayed;
 
@@ -39,20 +42,20 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.thumbnail = thumbnail;
     }
 
-    public List<Term> getTerms() {
-        return terms;
-    }
-
-    public void setTerms(List<Term> terms) {
-        this.terms = terms;
-    }
-
     public boolean isPublicationDisplayed() {
         return publicationDisplayed;
     }
 
     public void setPublicationDisplayed(boolean publicationDisplayed) {
         this.publicationDisplayed = publicationDisplayed;
+    }
+
+    public List<ExpressionStatement> getExpressionStatementList() {
+        return expressionStatementList;
+    }
+
+    public void setExpressionStatementList(List<ExpressionStatement> expressionStatementList) {
+        this.expressionStatementList = expressionStatementList;
     }
 
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {

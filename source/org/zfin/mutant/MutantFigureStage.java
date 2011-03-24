@@ -17,7 +17,7 @@ public class MutantFigureStage {
     private Figure figure;
     private DevelopmentStage start;
     private DevelopmentStage end;
-    private Set<Phenotype> phenotypes;
+    private PhenotypeExperiment phenotypeExperiment;
     private Publication publication;
 
     public Figure getFigure() {
@@ -56,20 +56,20 @@ public class MutantFigureStage {
         this.genotypeExperiment = genotypeExperiment;
     }
 
-    public Set<Phenotype> getPhenotypes() {
-        return phenotypes;
-    }
-
-    public void setPhenotypes(Set<Phenotype> phenotypes) {
-        this.phenotypes = phenotypes;
-    }
-
     public Publication getPublication() {
         return publication;
     }
 
     public void setPublication(Publication publication) {
         this.publication = publication;
+    }
+
+    public PhenotypeExperiment getPhenotypeExperiment() {
+        return phenotypeExperiment;
+    }
+
+    public void setPhenotypeExperiment(PhenotypeExperiment phenotypeExperiment) {
+        this.phenotypeExperiment = phenotypeExperiment;
     }
 
     @Override
@@ -96,14 +96,6 @@ public class MutantFigureStage {
         return result;
     }
 
-    public void addPhenotype(Phenotype result) {
-        if (phenotypes == null)
-            phenotypes = new HashSet<Phenotype>(5);
-        phenotypes.add(result);
-        start = result.getStartStage();
-        end = result.getEndStage();
-    }
-
     /**
      * Return phenotypes that match this mutant in
      * 1) start stage
@@ -113,16 +105,16 @@ public class MutantFigureStage {
      *
      * @return set of mutants
      */
-    public Set<Phenotype> getMatchingMutantPhenotypes() {
-        Set<Phenotype> phenos = genotypeExperiment.getPhenotypes();
+    public Set<PhenotypeExperiment> getMatchingMutantPhenotypes() {
+        Set<PhenotypeExperiment> phenos = genotypeExperiment.getPhenotypeExperiments();
         if (phenos == null)
             return null;
-        Set<Phenotype> mutantPhenotypes = new HashSet<Phenotype>(5);
-        for (Phenotype pheno : phenos) {
-            if (pheno.getStartStage().equals(start) && pheno.getEndStage().equals(end))
-                if (pheno.getPublication().getZdbID().equals(publication.getZdbID())) {
-                    if (pheno.getFigures().contains(figure))
-                        mutantPhenotypes.add(pheno);
+        Set<PhenotypeExperiment> mutantPhenotypes = new HashSet<PhenotypeExperiment>(5);
+        for (PhenotypeExperiment phenoExperiment : phenos) {
+            if (phenoExperiment.getStartStage().equals(start) && phenoExperiment.getEndStage().equals(end))
+                if (phenoExperiment.getFigure().getPublication().getZdbID().equals(publication.getZdbID())) {
+                    if (phenoExperiment.getFigure().equals(figure))
+                        mutantPhenotypes.add(phenoExperiment);
                 }
         }
         return mutantPhenotypes;

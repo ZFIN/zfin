@@ -149,12 +149,13 @@ a:hover{
 
 .gwt-PopupPanel {
   border: black ;
-  width: 1px ;
+
+
 }
 
 .gwt-PopupPanel .popupContent{
     color: white;
-    opacity:0; 
+    opacity:0; width: 400px ;
 }
 
 .externalLink{

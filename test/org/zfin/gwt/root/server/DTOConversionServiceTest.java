@@ -10,7 +10,6 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +47,7 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest{
         geno.setZdbID(genotypeID);
         FigureDTO fig = new FigureDTO();
         fig.setZdbID(figureID);
-        PhenotypeFigureStageDTO pfs = new PhenotypeFigureStageDTO();
+        PhenotypeExperimentDTO pfs = new PhenotypeExperimentDTO();
         pfs.setGenotype(geno);
         pfs.setStart(start);
         pfs.setEnd(end);

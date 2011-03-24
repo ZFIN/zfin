@@ -7,17 +7,27 @@
 <Context path="/" docBase="@TARGETROOT@/home"
          antiResourceLocking="false" antiJARLocking="false" swallowOutput="true" privileged="true">
 
-<Resource name="jdbc/zfin" auth="Container"
-                type="javax.sql.DataSource" username="zfinner" password="Rtwm4ts"
-                driverClassName="com.informix.jdbc.IfxDriver" 
-                url="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=5"
-                maxActive="40" maxIdle="10"/>
+ <Resource name="jdbc/zfin" auth="Container" factory="org.apache.naming.factory.BeanFactory"
+           description="Database Connections" 
+           type="com.mchange.v2.c3p0.ComboPooledDataSource" 
+           user="zfinner" password="Rtwm4ts"
+           driverClass="com.informix.jdbc.IfxDriver" 
+           jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6"
+           maxPoolSize="8" minPoolSize="6" />
 
   <Resource name="jdbc/gbrowse" auth="Container"
             type="javax.sql.DataSource" username="nobody"
             driverClassName="com.mysql.jdbc.Driver"
             url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@"  	 
             maxActive="8" maxIdle="4"/>
+
+ <Resource name="jdbc/sysmaster" auth="Container" factory="org.apache.naming.factory.BeanFactory"
+           description="Database Connections" 
+           type="com.mchange.v2.c3p0.ComboPooledDataSource" 
+           user="zfinner" password="Rtwm4ts"
+           driverClass="com.informix.jdbc.IfxDriver" 
+           jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6"
+           maxPoolSize="8" minPoolSize="2" />
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"
                  fileDateFormat="yyyy-MM"

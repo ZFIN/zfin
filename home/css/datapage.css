@@ -1,0 +1,97 @@
+
+.name-label, .name-value {
+    font-size: large;   
+    font-weight: bold;
+}
+
+
+/* special cases for the name section */
+
+/* terms can have HUGE synonyms, display them one per line */
+.term-detail-page span.alias-value {
+    display: block;
+    margin-left: 2em;
+    text-indent: -2em;
+}
+
+/* remove the commas, since we're doing it line by line */
+.term-detail-page span .alias-separator {
+    display: none;
+
+}
+
+/* title bar over the top of sub-pages of a data page */
+.data-sub-page-title {
+    font-size: large;
+    font-weight: bold;
+    background: #ccc;    
+}
+
+
+/* entity attribute table stuff here */
+
+table.primary-entity-attributes {
+    border-collapse: collapse;
+    clear:both;
+    margin-top: .3em;
+
+}
+
+
+table.primary-entity-attributes th {    
+    text-align: left;
+    vertical-align: top;
+    padding-right: 1em;
+    padding-top: .1em;
+    padding-bottom: .1em;
+}
+
+table.primary-entity-attributes th.genotype-name-label,
+table.primary-entity-attributes td.genotype-name-value {
+   vertical-align: baseline;
+}
+
+table.primary-entity-attributes td {
+    text-align: left;
+    vertical-align: top;
+    padding-top: .1em;
+    padding-bottom: .1em;
+}
+
+div.ontology-term-mini-summary {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+table.ontology-term-mini-summary {
+    border-collapse: collapse;
+}
+
+table.ontology-term-mini-summary th {
+    font-weight: normal;
+    text-align: left;
+    vertical-align: top;
+    padding-right: 1em;
+}
+
+table.ontology-term-mini-summary td {
+    text-align: left;
+    vertical-align: top;
+}
+
+table.ontology-term-mini-summary th.name,
+table.ontology-term-mini-summary td.name {
+    font-weight: bold
+}
+
+.related-ontology-term {
+    display: block;
+    margin-left: 2em;
+    text-indent: -2em;
+}
+
+.related-ontology-term-separator {
+    display: none;
+}
+

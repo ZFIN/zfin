@@ -17,4 +17,10 @@
         <put-attribute name="body" value="/WEB-INF/jsp/record_not_found.jsp"/>
     </definition>
 
+    <definition name="record-not-found.popup" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/record_not_found.jsp"/>
+    </definition>
+
+
+
 </tiles-definitions>

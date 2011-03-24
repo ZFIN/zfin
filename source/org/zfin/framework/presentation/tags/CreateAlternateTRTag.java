@@ -81,7 +81,8 @@ public class CreateAlternateTRTag extends TagSupport {
         else
             sb.append(" even ");
 
-        if (isNewGroup && groupByBean != null) {
+        //if not grouping by anything, treat every row as a new group
+        if (isNewGroup || groupByBean == null) {
             sb.append(" newgroup ");
             groupIndex++;
         }

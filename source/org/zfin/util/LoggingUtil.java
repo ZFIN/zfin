@@ -14,6 +14,22 @@ public class LoggingUtil {
 
     private static final String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir");
 
+    private long startTime;
+    private Logger log;
+
+    public LoggingUtil(Logger log) {
+        startTime = System.currentTimeMillis();
+        this.log = log;
+    }
+
+    public LoggingUtil() {
+        startTime = System.currentTimeMillis();
+    }
+
+    public void logDuration(String message) {
+        log.info(message + ": " + DateUtil.getTimeDuration(startTime));
+    }
+
     public static void removeAppender(Logger log, Appender appender) {
         log.removeAppender(appender);
     }
@@ -37,5 +53,6 @@ public class LoggingUtil {
         }
         return appender;
     }
+
 
 }

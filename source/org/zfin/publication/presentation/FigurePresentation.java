@@ -16,7 +16,7 @@ public class FigurePresentation extends EntityPresentation {
      * @param figure figure
      */
     public static String getLink(Figure figure) {
-        return getWebdriverLink(uri, figure.getZdbID(), figure.getLabel());
+        return getWebdriverLink(uri, figure.getZdbID(), figure.getLabel().replaceAll(" ", "&nbsp;"));
     }
 
     public static String getUrl(Figure figure) {

@@ -50,12 +50,11 @@ EFFECTS
 
   <?MIVAR NAME=$fxfigfl_sql>
        SELECT distinct get_geno_name_with_bg_html_link(geno_zdb_id), geno_name_order, geno_zdb_id
-         FROM genotype_experiment, genotype, figure, atomic_phenotype, apato_figure
+         FROM genotype_experiment, genotype, figure, phenotype_statement, phenotype_experiment
         WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
-          AND fig_zdb_id=apatofig_fig_zdb_id
-          AND apatofig_apato_zdb_id=apato_zdb_id
-	  AND fig_source_zdb_id =  apato_pub_zdb_id
-          AND apato_genox_zdb_id = genox_zdb_id
+          AND fig_zdb_id = phenox_fig_zdb_id
+          AND phenox_pk_id = phenos_phenox_pk_id
+          AND genox_zdb_id = phenox_genox_zdb_id
           AND genox_geno_zdb_id = geno_zdb_id
      ORDER BY geno_name_order;
   <?/MIVAR>

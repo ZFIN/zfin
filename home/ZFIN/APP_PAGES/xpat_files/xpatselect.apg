@@ -1,3 +1,5 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <?MICOMMENT>
 
 FILE:     xpatselect.apg
@@ -702,7 +704,7 @@ function openChild(childWinUrl,childWinName) {
        <p/>
 	<div id="pagination"></div>
 	<script type="text/javascript">
-	    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$totalRecords', {Method: 'get' });
+	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$totalRecords');
 	</script>
  	<?/MIVAR>
 	<div id="pagination"></div>
@@ -758,9 +760,13 @@ function openChild(childWinUrl,childWinName) {
 	<?MIELSE>
           <a name=modify></a><b>Modify your search.</b> 
 	<?/MIBLOCK>
-    &nbsp;&nbsp; &ndash; &nbsp;&nbsp; 
-    <a id="xpsel_expression_details" href="javascript:start_tips();">Search Tips</a>
-
+    <a href="/ZFIN/misc_html/xpatselect_search_tips.html" class="popup-link help-popup-link"
+       id="xpatsel_expression_tips" rel="#searchtips"></a>
+    <?MICOMMENT>
+    <div class="simple_overlay" id="searchtips">
+        <div class="popup-content"></div>
+    </div>
+    <?/MICOMMENT>
       </td>
 
       <td bgcolor="<!--|SIDEBAR_COLOR|-->" align=right>

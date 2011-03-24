@@ -5,7 +5,7 @@ import org.zfin.antibody.presentation.AntibodySearchFormBean;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ExpressionPhenotypeReportBean extends PaginationBean {
 
     // submission variable
     private List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
-    private List<Phenotype> allPhenotype = new ArrayList<Phenotype>();
+    private List<PhenotypeStatement> allPhenotype = new ArrayList<PhenotypeStatement>();
     private List<MarkerGoTermEvidence> allGoEvidences = new ArrayList<MarkerGoTermEvidence>();
 
     public String getAnatomyTermNames() {
@@ -131,11 +131,11 @@ public class ExpressionPhenotypeReportBean extends PaginationBean {
         setTotalRecords(allExpressions.size());
     }
 
-    public List<Phenotype> getAllPhenotype() {
+    public List<PhenotypeStatement> getAllPhenotype() {
         return allPhenotype;
     }
 
-    public void setAllPhenotype(List<Phenotype> allPhenotype) {
+    public void setAllPhenotype(List<PhenotypeStatement> allPhenotype) {
         this.allPhenotype = allPhenotype;
         setTotalRecords(allPhenotype.size());
     }

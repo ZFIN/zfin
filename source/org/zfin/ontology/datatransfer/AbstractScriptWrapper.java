@@ -1,11 +1,14 @@
 package org.zfin.ontology.datatransfer;
 
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateSysmasterSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.properties.ZfinProperties;
 
 /**
@@ -22,6 +25,11 @@ public class AbstractScriptWrapper {
         initDatabase();
     }
 
+    protected void initAll(String propertyDirectory) {
+        ZfinProperties.init(propertyDirectory);
+        initDatabase();
+    }
+
     protected void initProperties() {
         ZfinProperties.init();
     }
@@ -30,6 +38,10 @@ public class AbstractScriptWrapper {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
+        }
+        SessionFactory sessionSysmasterFactory = SysmasterHibernateUtil.getSessionFactory();
+        if (sessionSysmasterFactory == null) {
+            new HibernateSysmasterSessionCreator();
         }
     }
 
@@ -44,6 +56,29 @@ public class AbstractScriptWrapper {
 
     public enum ScriptExecutionStatus {
         SUCCESS, ERROR, WARNING, INFO, FATAL
+    }
+
+    protected static CommandLine parseArguments(String[] args, String usageHelpMessage) {
+        CommandLine commandLine = null;
+        try {
+            // parse the command line arguments
+            CommandLineParser parser = new GnuParser();
+            commandLine = parser.parse(options, args);
+        } catch (ParseException exp) {
+            LOG.error("Parsing failed.  Reason: " + exp.getMessage());
+            System.exit(-1);
+        }
+        if (commandLine == null || commandLine.getOptions().length == 0) {
+            // automatically generate the help statement
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(usageHelpMessage, options);
+            System.exit(-1);
+        }
+        return commandLine;
+    }
+
+    protected static void initializeLogger(String log4jFilename) {
+        DOMConfigurator.configure(log4jFilename);
     }
 
     private static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);

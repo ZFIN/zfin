@@ -19,10 +19,10 @@
 <zfin2:subsection title="${title}"
                   test="${!empty relationships}">
 
-    <table class="summary gridlines markerrelationships">
+    <table class="summary horizontal-solidblock">
         <c:forEach var="entry" items="${relationships}">
             <tr>
-                <td nowrap="nowrap" width="20%">${entry.key} <%-- relationship label --%></td>
+                <th>${fn:replace(entry.key," ","&nbsp;")} <%-- relationship label --%></th>
                 <td>
                     <c:forEach var="typeMap" items="${entry.value}" >
                         <div>

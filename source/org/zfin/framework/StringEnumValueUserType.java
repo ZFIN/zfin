@@ -84,7 +84,11 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         if (value == null) {
             st.setNull(index, Hibernate.STRING.sqlType());
         } else {
-            st.setString(index, value.toString());
+            if (value instanceof Ontology) {
+                Ontology ontology = (Ontology) value;
+                st.setString(index, ontology.getDbOntologyName());
+            } else
+                st.setString(index, value.toString());
         }
     }
 

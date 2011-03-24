@@ -27,7 +27,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW RefSeq SWISS-PROT GXP GO ZIRC Downloads GenPept ZGC LoadOntology \
-	  Sanger Genbank Anatomy ORTHO PATO Load transcript 
+	  Sanger Genbank Anatomy ORTHO Load transcript 
 
 GENERICS = pull.sh
 

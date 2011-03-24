@@ -66,9 +66,9 @@ Message: $MI_ERRORMSG
                    and (exists (select xpatex_zdb_id
                                  from expression_experiment
                                 where xpatex_genox_zdb_id = genox_zdb_id)
-                      or exists (select apato_zdb_id
-                                 from atomic_phenotype
-                                where apato_genox_zdb_id = genox_zdb_id)
+                      or exists (select phenox_pk_id
+                                 from phenotype_experiment
+                                where phenox_genox_zdb_id = genox_zdb_id)
 			) ;">
             <?/MISQL>         
             <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">

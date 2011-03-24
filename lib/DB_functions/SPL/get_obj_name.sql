@@ -258,11 +258,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from expression_results
       where xpatres_zdb_id = zdbId;
-  elif (objType = "APATO") then
-    select apato_zdb_id		-- don't have names, use ZDB ID
-      into objName
-      from atomic_phenotype
-      where apato_zdb_id = zdbId;
   elif (objType = "API") then
     select api_zdb_id		-- don't have names, use ZDB ID
       into objName

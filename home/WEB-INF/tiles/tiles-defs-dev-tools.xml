@@ -46,6 +46,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/thread_info.jsp"/>
     </definition>
 
+    <definition name="single-thread-info" extends="dev_layout">
+        <put-attribute name="staticTitle" value="Thread Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/single_thread_info.jsp"/>
+    </definition>
+
     <definition name="file-content" extends="dev_layout">
         <put-attribute name="staticTitle" value="Property File"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_property_file.jsp"/>
@@ -234,6 +239,16 @@
     <definition name="zfin-properties.page" extends="dev_layout">
         <put-attribute name="staticTitle" value="Zfin Properties Enum Values"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/zfin_properties.jsp"/>
+    </definition>
+
+    <definition name="phenotype-curation-history.page" extends="dev_layout">
+        <put-attribute name="staticTitle" value="Phenotype Curation History"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/phenotype_curation_history.jsp"/>
+    </definition>
+
+    <definition name="phenotype-curation-history-statements.page" extends="dev_layout">
+        <put-attribute name="staticTitle" value="Phenotype Curation History"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/phenotype_curation_history_statements.jsp"/>
     </definition>
 
     <definition name="create-error.page" extends="dev_layout">

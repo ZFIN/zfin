@@ -18,6 +18,7 @@ public class RelationshipPresentation {
 
     public void setType(String type) {
         this.type = type;
+        //this.type = type.replaceAll(" ", "&nbsp;");
     }
 
     public List<AnatomyItem> getItems() {

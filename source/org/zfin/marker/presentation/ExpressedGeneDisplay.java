@@ -55,6 +55,23 @@ public class ExpressedGeneDisplay {
     }
 
 
+    /**
+     * Calculates the number of images found in all images from all publications for the gene.
+     *
+     * @return Number of images as a interger
+     */
+    public int getNumOfImgs() {
+        Set<Figure> figures = markerStat.getGene().getFigures();
+        // calculate if the number is not set.
+        int numberOfImages = 0;
+        if (figures != null) {
+            for (Figure fig : figures) {
+                numberOfImages += fig.getImages().size();
+            }
+        }
+        return numberOfImages;
+    }
+
     public MarkerStatistic getMarkerStat() {
         return markerStat;
     }

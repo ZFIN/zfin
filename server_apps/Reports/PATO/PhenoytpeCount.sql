@@ -10,12 +10,12 @@ with no log ;
 insert into tmp_genes_with_phenos
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
-	atomic_phenotype, 
+	phenotype_experiment,
 	genotype_experiment,
 	genotype_feature, 
 	feature_marker_relationship
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_type = 'is allele of' 
@@ -35,13 +35,13 @@ insert into tmp_genes_with_phenos_m
         genotype_experiment, 
 	genotype_feature,
 	genotype,
-        atomic_phenotype, 
+        phenotype_experiment,
 	feature_marker_relationship
    where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
-   and apato_genox_zdb_id = genox_zdb_id
+   and phenox_genox_zdb_id = genox_zdb_id
    and mrel_mrkr_1_zdb_id != fmrel_mrkr_zdb_id
    and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
    and geno_is_wildtype = 'f';
@@ -60,10 +60,10 @@ insert into tmp_genes_with_phenos_m_w
 	experiment_condition,
         genotype_experiment,
 	genotype,
-        atomic_phenotype
+        phenotype_experiment
    where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
-   and apato_genox_zdb_id = genox_zdb_id
+   and phenox_genox_zdb_id = genox_zdb_id
    and geno_is_wildtype = 't'
    and geno_zdb_id = genox_geno_Zdb_id;
 
@@ -77,20 +77,18 @@ with no log ;
 insert into tmp_genes_with_phenos_imgs 
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
-	atomic_phenotype, 
+	phenotype_experiment,
 	genotype_experiment,
 	genotype_feature, 
 	feature_marker_relationship,
-	apato_figure, 
-	image, 
+	image,
 	figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and fmrel_type = 'is allele of' 
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
   and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION';
@@ -108,18 +106,16 @@ insert into tmp_genes_with_phenos_imgs_m
 	experiment_condition,
         genotype_experiment, 
 	genotype_feature,
-        atomic_phenotype,
+        phenotype_experiment,
 	figure, 
-	apato_figure, 
 	image, genotype
    where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and genox_geno_zdb_id = geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
-   and apato_genox_zdb_id = genox_zdb_id
-   and apatofig_apato_Zdb_id = apato_zdb_id
-   and apatofig_fig_zdb_id = fig_zdb_id
+   and phenox_genox_zdb_id = genox_zdb_id
+   and phenox_fig_zdb_id = fig_zdb_id
    and img_fig_zdb_id = fig_zdb_id
    and img_image is not null
  and get_feature_type(genofeat_feature_zdb_id) != 'TRANSGENIC_INSERTION'
@@ -136,11 +132,11 @@ with no log ;
 
 insert into tmp_genes_with_phenos_non_tg
 select distinct fmrel_ftr_zdb_id
- from genotype, atomic_phenotype, genotype_experiment,
+ from genotype, phenotype_experiment, genotype_experiment,
 	genotype_feature, feature_marker_relationship
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and fmrel_type = 'is allele of' 
  and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION';
@@ -154,16 +150,15 @@ with no log ;
 
 insert into tmp_genes_with_phenos_imgs_non_tgs
 select distinct fmrel_ftr_zdb_id
- from genotype, atomic_phenotype, genotype_experiment,
+ from genotype, phenotype_experiment, genotype_experiment,
 	genotype_feature, feature_marker_relationship,
-	apato_figure, image, figure
+	image, figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and fmrel_type = 'is allele of' 
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
  and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION';
@@ -181,7 +176,7 @@ with no log ;
 insert into tmp_tg_genes_with_phenos
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
-	atomic_phenotype, 
+	phenotype_experiment,
 	genotype_experiment,
         genotype_feature, 
 	feature_marker_relationship, 
@@ -190,7 +185,7 @@ select distinct fmrel_mrkr_zdb_id
 and genofeat_geno_zdb_id = geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 and genofeat_feature_zdb_id = feature_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
 and fmrel_type in ('contains phenotypic sequence feature')
  and get_feature_type(fmrel_ftr_zdb_id) = 'TRANSGENIC_INSERTION'
  and get_obj_type(fmrel_mrkr_zdb_id) = 'TGCONSTRCT'
@@ -205,17 +200,16 @@ with no log ;
 
 insert into tmp_genes_with_phenos_imgs_tgs
 select distinct fmrel_mrkr_zdb_id
- from genotype, atomic_phenotype, genotype_experiment,
+ from genotype, phenotype_experiment, genotype_experiment,
 	genotype_feature, feature_marker_relationship,
-	apato_figure, image, figure
+	image, figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and genofeat_geno_zdb_id = geno_zdb_id
  and fmrel_type in ('contains sequence feature', 'contains phenotypic sequence feature') 
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
   and get_feature_type(fmrel_ftr_zdb_id) = 'TRANSGENIC_INSERTION';
@@ -234,7 +228,7 @@ insert into tmp_genes_with_phenos_m_tg
         genotype_experiment, 
 	genotype_feature,
 	genotype,
-        atomic_phenotype
+        phenotype_experiment
    where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
@@ -243,7 +237,7 @@ insert into tmp_genes_with_phenos_m_tg
    and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION'
    and geno_zdb_id = genofeat_geno_zdb_id
    and geno_is_wildtype = 'f'
-   and apato_genox_zdb_id = genox_Zdb_id;
+   and phenox_genox_zdb_id = genox_Zdb_id;
 
 select count(*) from tmp_genes_with_phenos_m_tg;
 
@@ -258,16 +252,14 @@ insert into tmp_genes_with_phenos_imgs_tgs_m
 	experiment_condition,
         genotype_experiment, 
 	genotype_feature,
-        atomic_phenotype,
+        phenotype_experiment,
 	figure, 
-	apato_figure, 
 	image
    where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
-   and apato_genox_zdb_id = genox_zdb_id
-   and apatofig_apato_Zdb_id = apato_zdb_id
-   and apatofig_fig_zdb_id = fig_zdb_id
+   and phenox_genox_zdb_id = genox_zdb_id
+   and phenox_fig_zdb_id = fig_zdb_id
    and img_fig_zdb_id = fig_zdb_id
    and img_image is not null
  and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION';
@@ -281,10 +273,10 @@ with no log ;
 
 insert into tmp_genes_with_phenos_tg
 select distinct genofeat_feature_zdb_id
- from genotype, atomic_phenotype, genotype_experiment,
+ from genotype, phenotype_experiment, genotype_experiment,
 	genotype_feature
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION';
 
@@ -297,14 +289,13 @@ with no log ;
 
 insert into tmp_genes_with_phenos_tg
 select distinct genofeat_feature_zdb_id
- from genotype, atomic_phenotype, genotype_experiment,
-	genotype_feature,apato_figure, image, figure
+ from genotype, phenotype_experiment, genotype_experiment,
+	genotype_feature, image, figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION'
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null;
 
@@ -314,19 +305,17 @@ select count(*) from tmp_genes_with_phenos_imgs_trans ;
 
 select distinct fmrel_mrkr_zdb_id as gene_id
  from genotype, 
-	atomic_phenotype, 
+	phenotype_experiment,
 	genotype_experiment,
 	genotype_feature, 
 	feature_marker_relationship,
-	apato_figure, 
-	image, 
+	image,
 	figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
  and fmrel_type = 'contains sequence feature'
@@ -368,9 +357,10 @@ create temp table tmp_papers_with_phenotype_ds (paper_id varchar(50))
 with no log ;
 
 insert into tmp_papers_with_phenotype_ds
-  select distinct apato_pub_zdb_id
-    from atomic_phenotype, publication
-    where apato_pub_zdb_id = zdb_id
+  select distinct fig_source_zdb_id
+    from phenotype_experiment, publication, figure
+    where fig_source_zdb_id = zdb_id
+        and fig_zdb_id = phenox_fig_zdb_id
         and jtype = 'Curation';
 
 select count(*) from tmp_papers_with_phenotype_ds;
@@ -381,9 +371,10 @@ create temp table tmp_papers_with_phenotype_ds_r (paper_id varchar(50))
 with no log ;
 
 insert into tmp_papers_with_phenotype_ds_r
-  select distinct apato_zdb_id
-    from atomic_phenotype, publication
-    where apato_pub_zdb_id = zdb_id
+  select distinct fig_source_zdb_id
+    from phenotype_experiment, publication, figure
+    where fig_source_zdb_id = zdb_id
+        and fig_zdb_id = phenox_fig_zdb_id
         and jtype = 'Curation';
 
 select count(*) from tmp_papers_with_phenotype_ds_r;
@@ -394,10 +385,11 @@ create temp table tmp_papers_with_phenotype (paper_id varchar(50))
 with no log ;
 
 insert into tmp_papers_with_phenotype
-  select distinct apato_pub_zdb_id
-    from atomic_phenotype, publication
-    where apato_pub_zdb_id = zdb_id
-	and jtype != 'Curation'
+  select distinct fig_source_zdb_id
+    from phenotype_experiment, publication, figure
+    where fig_source_zdb_id = zdb_id
+        and phenox_fig_zdb_id  = fig_zdb_id
+	    and jtype != 'Curation'
         and jtype != 'Unpublished';
 
 select count(*) from tmp_papers_with_phenotype;
@@ -408,8 +400,8 @@ create temp table tmp_phenotype (paper_id varchar(50))
 with no log ;
 
 insert into tmp_phenotype
-  select distinct apato_zdb_id
-    from atomic_phenotype;
+  select distinct phenos_pk_id
+    from phenotype_statement;
 
 select count(*) from tmp_phenotype;
 
@@ -437,16 +429,15 @@ select count(*) from tmp_genes_with_expression_images ;
 !echo "total number of distinct genes with images (either FX or PATO images).  genes included: those in non-transgenic genotypes with phenotype images, those in non-transgeinc genotype-backgrounds with FX images, those in FX experiments" ;
 
 select distinct fmrel_mrkr_zdb_id as gene_id
- from genotype, atomic_phenotype, genotype_experiment,
+ from genotype, phenotype_experiment, genotype_experiment,
 	genotype_feature, feature_marker_relationship,
-	apato_figure, image, figure
+	image, figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
- and apato_genox_zdb_id = genox_zdb_id
+ and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and fmrel_type = 'is allele of' 
- and apatofig_apato_Zdb_id = apato_zdb_id
- and apatofig_fig_zdb_id = fig_zdb_id
+ and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
  and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION'

@@ -55,7 +55,6 @@ public class MarkerPresentation extends EntityPresentation {
             try {
                 return getTranscriptLink((Transcript) marker);
             } catch (ClassCastException e) {
-                logger.warn("failed to cast, refetching transcript explicitly: " + marker.getZdbID(),e);
                 return getTranscriptLink(RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(marker.getZdbID()));
             }
         } else if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {

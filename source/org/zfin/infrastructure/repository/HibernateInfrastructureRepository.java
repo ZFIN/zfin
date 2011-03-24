@@ -4,6 +4,7 @@
  */
 package org.zfin.infrastructure.repository;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -13,6 +14,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
@@ -61,9 +63,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         ActiveData a = getActiveData(zdbID);
         if (a == null) {
             logger.error("unable to find zdbID in active data to delete [" + zdbID + "]");
-        } else {
-            deleteActiveData(a);
+            return;
         }
+        deleteActiveData(a);
     }
 
     public int deleteActiveDataByZdbID(List<String> zdbIDs) {
@@ -354,6 +356,27 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         return null;
     }
+
+    /**
+     * Retrieve Term by ZDB ID from the gDAG table.
+     * If the ID is from the GOTERM table retrieve the corresponding term ID first.
+     *
+     * @param termID term id
+     * @return Generic Term
+     */
+    @SuppressWarnings("unchecked")
+    public GenericTerm getTermByID(String termID) {
+        if (StringUtils.isEmpty(termID))
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+        GenericTerm term = null;
+        term = (GenericTerm) session.get(GenericTerm.class, termID);
+        if (term == null)
+            return null;
+        return term;
+    }
+
 
     /**
      * Retrieve Root of given ontology.
@@ -889,26 +912,24 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         );
     }
 
-    public int getGenotypePhenotypeRecordAttributions(String zdbID, String pubZdbID) {
-//select * from record_attribution ra, atomic_phenotype ph, genotype_experiment ge
-//where
-//ra.recattrib_data_zdb_id=ph.apato_zdb_id
-//and
-//ph.apato_genox_zdb_id=ge.genox_zdb_id
-//and
-//ge.genox_geno_zdb_id = 'ZDB-GENO-000405-1'
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                "  select count(*)  " +
-                " from record_attribution ra, atomic_phenotype ph, genotype_experiment ge " +
-                " where ra.recattrib_data_zdb_id = ph.apato_zdb_id " +
-                " and ph.apato_genox_zdb_id = ge.genox_zdb_id " +
-                " and ge.genox_geno_zdb_id = :zdbID " +
-                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
-                "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
-        );
+    /**
+     * Number of phenotype experiments a genotype is being used.
+     *
+     * @param genotypeID    genotype
+     * @param publicationID publication
+     * @return number of references
+     */
+    public int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select phenox from PhenotypeExperiment phenox where " +
+                " phenox.genotypeExperiment.genotype.id = :genotypeID and " +
+                " phenox.figure.publication.id = :publicationID ";
+        Query query = session.createQuery(hql);
+        query.setString("genotypeID", genotypeID);
+        query.setString("publicationID", publicationID);
+        List list = query.list();
+
+        return list == null ? 0 : list.size();
     }
 
     @SuppressWarnings("unchecked")
@@ -947,6 +968,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
                     "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
                     jdbcStatement.getHumanReadableQueryString(), exception);
+            logger.error(DbSystemUtil.getLockInfo());
             throw new RuntimeException(exception);
         } finally {
             try {
@@ -983,7 +1005,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
             ResultSetMetaData rsMetaData = rs.getMetaData();
             statement = connection.prepareStatement(jdbcStatement.getQuery());
-            boolean lastRwoExecuted = false;
             for (List<String> individualRow : data) {
                 int index = 1;
                 for (String column : individualRow) {
@@ -1000,11 +1021,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 // execute batch if batch size is reached or if no more records are found.
                 if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
                     statement.executeBatch();
-                    logger.debug("Batch inserted records up to #: " + accumulatedBatchCounter);
+                    logger.info("Batch inserted records up to #: " + accumulatedBatchCounter);
                     // reset the index that keeps track of the current batch size
                     currentBatchSize = 0;
                 }
                 session.flush();
+                session.clear();
             }
         } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
@@ -1015,6 +1037,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 logger.error("Record number " + index1 + ", record: " + data.get(index1));
             }
             error = true;
+            logger.error(DbSystemUtil.getLockInfo());
             throw new RuntimeException(exception);
         } finally {
             try {
@@ -1064,6 +1087,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             }
         } catch (SQLException exception) {
             logger.error("Record number " + index + ", record: " + data.get(index));
+            logger.error(DbSystemUtil.getLockInfo());
         } finally {
             try {
                 if (rs != null)
@@ -1117,6 +1141,33 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         return data;
     }
+
+    /**
+     * Retrieve all term ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     *
+     * @param clazz     Entity to be retrieved
+     * @param idName    unique id
+     * @param firstNIds number of records
+     * @return list of ids
+     */
+    @Override
+    public List<String> getAllEntities(Class clazz, String idName, int firstNIds) {
+        if (firstNIds < 0)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        // Todo: Check if entity is mapped in Hibernate
+        if (session.getSessionFactory().getClassMetadata(clazz) == null)
+            throw new NullPointerException("No Entity of type " + clazz.getName() + " found in Hibernate mapping file.");
+
+        String hql = "select distinct " + idName + " from " + clazz.getSimpleName() + " order by " + idName;
+        Query query = session.createQuery(hql);
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        return query.list();
+    }
+
 }
 
 

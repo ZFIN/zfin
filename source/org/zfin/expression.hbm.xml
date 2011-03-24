@@ -148,8 +148,11 @@
         <many-to-one name="expressionExperiment" class="org.zfin.expression.ExpressionExperiment"
                      column="xpatres_xpatex_zdb_id" not-null="true"/>
 
-        <many-to-one name="subterm" class="org.zfin.ontology.GenericTerm" column="xpatres_subterm_zdb_id"/>
-        <many-to-one name="superterm" class="org.zfin.ontology.GenericTerm" column="xpatres_superterm_zdb_id"/>
+        <component name="entity">
+            <many-to-one name="subterm" column="xpatres_subterm_zdb_id"/>
+            <many-to-one name="superterm" column="xpatres_superterm_zdb_id"/>
+        </component>
+
         <many-to-one name="startStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_start_stg_zdb_id"/>
         <many-to-one name="endStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_end_stg_zdb_id"/>
 
@@ -215,7 +218,7 @@
     </class>
 
     <query name="stageanatomyfigure"><![CDATA[
-        select stage, xpatres.superterm, xpatres.figures
+        select stage, xpatres.entity.superterm, xpatres.figures
         from org.zfin.anatomy.DevelopmentStage stage,
              org.zfin.expression.ExpressionResult xpatres,
              org.zfin.expression.ExpressionExperiment xpatex
@@ -223,13 +226,13 @@
           and xpatres member of xpatex.expressionResults
           and xpatex.genotypeExperiment.experiment.name in ('_Standard','_Generic-control')
           and xpatex.genotypeExperiment.genotype.wildtype = true
-          and xpatres.superterm.termName <> :unspecified
+          and xpatres.entity.superterm.termName <> :unspecified
           and xpatres.startStage.name <> :unknown
           and stage.hoursStart >= xpatres.startStage.hoursStart
           and stage.hoursEnd <= xpatres.endStage.hoursEnd
-        order by stage.hoursStart, xpatres.superterm.termName
+        order by stage.hoursStart, xpatres.entity.superterm.termName
        ]]>
-    </query>       
+    </query>
 
     <sql-query name="antibodyAOFastSearchUpdate" callable="true">
         {call add_ab_ao_fast_search(:expressionZdbID)}

@@ -65,24 +65,24 @@
                 <c:forEach var="phenotype" items="${formBean.allPhenotype}" varStatus="loop">
                     <zfin:alternating-tr loopName="loop">
                         <td>
-                            <zfin:link entity="${phenotype.genotypeExperiment.genotype}"/>
+                            <zfin:link entity="${phenotype.phenotypeExperiment.genotypeExperiment.genotype}"/>
                         </td>
                         <td>
-                            <c:if test="${phenotype.genotypeExperiment.experiment.experimentConditions ne null}">
+                            <c:if test="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions ne null}">
                                 <c:forEach var="morpholino"
-                                           items="${phenotype.genotypeExperiment.experiment.experimentConditions}">
+                                           items="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions}">
                                     ${morpholino.morpholino.abbreviation},
                                 </c:forEach>
                             </c:if>
                         </td>
                         <td>
-                            <zfin:link entity="${phenotype.superterm}"/>
-                            <c:if test="${phenotype.subterm ne null}"> :
-                                <zfin:link entity="${phenotype.subterm}"/>
+                            <zfin:link entity="${phenotype.entity.superterm}"/>
+                            <c:if test="${phenotype.entity.subterm ne null}"> :
+                                <zfin:link entity="${phenotype.entity.subterm}"/>
                             </c:if>
                         </td>
                         <td>
-                            <zfin:link entity="${phenotype.qualityTerm}"/>
+                            <zfin:link entity="${phenotype.quality}"/>
                         </td>
                     </zfin:alternating-tr>
                 </c:forEach>

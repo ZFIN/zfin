@@ -133,7 +133,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?/MISQL>
 
     
-    <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
+    <TABLE class="summary" cellpadding=5>
     
     <?MIBLOCK COND="$(OR,$(EC,$mrkr_type,EST),$(EC,$mrkr_type,cDNA))">
       <?MIVAR>

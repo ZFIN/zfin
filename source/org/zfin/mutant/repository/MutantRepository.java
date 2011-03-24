@@ -169,14 +169,12 @@ public interface MutantRepository {
     boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID);
 
     /**
-     * Retrieve the default phenotype for a given figure and genotype experiment.
-     * If it does not exist, it return null.
+     * Lookup a term by name. Term must not be obsolete.
      *
-     * @param genotypeExperiment genotype Experiment
-     * @param figureID           figure id
-     * @return phenotype
+     * @param termName term name
+     * @return Term object
      */
-    Phenotype getDefaultPhenotype(GenotypeExperiment genotypeExperiment, String figureID);
+    GenericTerm getQualityTermByName(String termName);
 
     /**
      * Retrieve a genotype experiment by PK.
@@ -187,13 +185,22 @@ public interface MutantRepository {
     GenotypeExperiment getGenotypeExperiment(String genotypeExperimentID);
 
     /**
-     * Remove a mutant figure stage record:
-     * 1) All phenotypes and their association to figures.
+     * Retrieve a genotype experiment by the natural key, geno & exp zdb_ids
+     *
+     * @param genotypeZdbID ak
+     * @param experimentZdbID ak
+     * @return genox
+     */
+    GenotypeExperiment getGenotypeExperiment(String genotypeZdbID, String experimentZdbID);
+
+    /**
+     * Remove a PhenotypeExperiment record:
+     * 1) All phenotype statements
      * 2) the genotype experiment if unused any more
      *
-     * @param mutant Mutants
+     * @param phenotypeExperiment PhenotypeExperiment
      */
-    void deleteMutantFigureStage(MutantFigureStage mutant);
+    void deletePhenotypeExperiment(PhenotypeExperiment phenotypeExperiment);
 
     List<Genotype> getGenotypesForStandardAttribution(Publication publication);
 
@@ -217,15 +224,6 @@ public interface MutantRepository {
     List<MorpholinoSequence> getMorpholinosWithMarkerRelationships();
 
     /**
-     * Retrieve phenotypes that have an annotation to a given term
-     * with tag=abnormal and the term either in super or sub position
-     *
-     * @param term Term
-     * @return list of phenotypes
-     */
-    List<Phenotype> getPhenotypeWithEntity(GenericTerm term);
-
-    /**
      * Retrieve all distinct marker go evidence objects for a given term.
      *
      * @param term term
@@ -233,17 +231,36 @@ public interface MutantRepository {
      */
     List<MarkerGoTermEvidence> getMarkerGoEvidence(GenericTerm term);
 
-    List<Phenotype> getPhenotypeWithEntity(List<GenericTerm> terms);
+    /**
+     * Retrieve phenotypes that have an annotation to a given term
+     * with tag=abnormal and the term either in super or sub position
+     *
+     * @param term Term
+     * @return list of phenotypes
+     */
+    List<PhenotypeStatement> getPhenotypeWithEntity(GenericTerm term);
+
+    List<PhenotypeStatement> getPhenotypeWithEntity(List<GenericTerm> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
 
     List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
 
+    PhenotypeStatement getPhenotypeStatementById(Long Id);
 
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
      * @return list of phenotypes
      */
-    List<Phenotype> getPhenotypesOnObsoletedTerms();
+    List<PhenotypeStatement> getPhenotypesOnObsoletedTerms();
+
+    /**
+     * Returns a list phenotype statements that are related to
+     * a given genotype.
+     *
+     * @param genotype   Genotype
+     * @return list of phenotype statement objects
+     */
+    List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
 }
 

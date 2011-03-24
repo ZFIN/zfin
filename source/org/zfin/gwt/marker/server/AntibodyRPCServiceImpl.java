@@ -1,6 +1,5 @@
 package org.zfin.gwt.marker.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
@@ -14,6 +13,7 @@ import org.zfin.gwt.root.dto.AntibodyTypesDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  */
-public class AntibodyRPCServiceImpl extends RemoteServiceServlet implements AntibodyRPCService {
+public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements AntibodyRPCService {
 
     private transient Logger logger = Logger.getLogger(AntibodyRPCServiceImpl.class);
     private final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();

@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
@@ -12,6 +11,7 @@ import org.zfin.gwt.curation.ui.CurationFilterRPC;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * GWT class to facilitate ajax calls related to the curation filter bar.
  */
-public class CurationFilterRPCImpl extends RemoteServiceServlet implements CurationFilterRPC {
+public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements CurationFilterRPC {
 
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();

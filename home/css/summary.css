@@ -2,11 +2,14 @@
 
 table.summary {
   width: 100%;
-  /* clear: both; */
   border-collapse: collapse;
-  /* border: 1px solid #ccc; */ /* this looks good, but maybe too drastic */
+  border: 1px solid #ccc;
   background: #eee;
   clear: both;
+
+  /* just enough margin so that lowercase p's & q's don't touch */
+  margin-top: .1em;
+
 }
 
 div.summary {
@@ -17,8 +20,8 @@ div.summary {
 table.summary caption, h3.summary, span.summaryTitle, div.summaryTitle {
   font-weight: bold;
   text-align: left;
-/*  padding-left: .2em;*/
   padding-bottom: .2em;
+  
 }
 
 table.summary th {
@@ -80,9 +83,10 @@ ul.summary li {
 
 /* small stripes (w/top border dividers) summary table styling */
 
-table.rowstripes tr.newgroup { border-top: 1px solid #ccc; }
+table.summary.rowstripes tr.newgroup { border-top: 1px solid #ccc; } 
 table.rowstripes tr.odd { background-color: #eee; }
-table.rowstripes tr.even { background-color: #fff }
+table.rowstripes tr.even { background-color: #fff; }
+table.summary.rowstripes { border: 1px solid #ccc; }
 
 /* large striped (one per group) summary table styling */
 table.groupstripes { border: 1px solid #ccc; }
@@ -105,6 +109,15 @@ table.groupstripes-hover tr.experiment-row:hover { background-color: #CCFFFF; }
 table.solidblock tr.newgroup { border-top: 1px solid #ccc; }
 table.solidblock tr.odd, tr.even { background-color: #eee; }
 table.solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
+table.summary.solidblock { border: 1px solid #ccc; }
+
+
+/* horizontal solid block summary table styling */
+table.horizontal-solidblock tr.newgroup { border-top: 1px solid #ccc; } /* not sure if this will be used */
+table.horizontal-solidblock tr.odd, tr.even { background-color: #eee; }
+table.horizontal-solidblock tr.oddgroup, tr.evengroup { background-color: #eee; }
+table.summary.horizontal-solidblock { border: 1px solid #ccc; }
+table.horizontal-solidblock th { background-color: #eee; padding-right: 1em; width: 10%; }
 
 /* table with grey boxes over white gridlines */
 table.gridlines {
@@ -112,3 +125,7 @@ table.gridlines {
     border-collapse: separate;
 }
 table.gridlines td { background-color: #eee; }
+
+/* sequenceView.tag is a strange beast, and requires some exceptions */
+div.sequence-view-table-wrapper { border: 1px solid #ccc; min-width: 800px; }
+table.summary.sequence-view { border: none; margin: 0px;}

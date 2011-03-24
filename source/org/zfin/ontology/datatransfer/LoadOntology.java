@@ -9,9 +9,10 @@ import org.obo.dataadapter.OBOParseEngine;
 import org.obo.dataadapter.OBOParseException;
 import org.obo.datamodel.*;
 import org.obo.history.SessionHistoryList;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -21,6 +22,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 import org.zfin.util.DbScriptFileParser;
+import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -38,6 +40,7 @@ import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
  * -oboFile <obo file name>
  * -log4jFilename <log4j.xml file>
  * -dbScriptFileName <*.sql file>
+ * -propertyFile <path to zfin.properties location>
  * <p/>
  * This class assumes the latest obo file has already been downloaded from the corresponding site.
  * See {@link DownloadOntology}.
@@ -50,6 +53,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         options.addOption(oboFileNameOption);
         options.addOption(log4jFileOption);
         options.addOption(dbScriptFileOption);
+        options.addOption(webrootDirectory);
     }
 
     private OBOSession oboSession;
@@ -67,37 +71,61 @@ public class LoadOntology extends AbstractScriptWrapper {
     private OntologyMetadata oboMetadata;
     private ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
 
+    /**
+     * Used from within the web app. No initialization needed.
+     *
+     * @param oboFile
+     * @param scriptFiles
+     * @throws IOException
+     */
     public LoadOntology(String oboFile, String... scriptFiles) throws IOException {
+        initializeLoad(oboFile, scriptFiles);
+        cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
+    }
+
+    public LoadOntology(String oboFile, String propertyDirectory, String... scriptFiles) throws IOException {
+        initializeLoad(oboFile, scriptFiles);
+        if (propertyDirectory == null)
+            initAll();
+        else
+            initAll(propertyDirectory + "/WEB-INF/zfin.properties");
+        if (propertyDirectory == null)
+            throw new RuntimeException("No property file found.");
+        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(propertyDirectory);
+        cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
+    }
+
+    private void initializeLoad(String oboFile, String[] scriptFiles) throws IOException {
         oboFilename = oboFile;
         this.dbScriptFiles = scriptFiles;
-        if (!checkFileExists(oboFilename))
+        if (!FileUtil.checkFileExists(oboFilename))
             throw new IOException("No OBO file <" + oboFile + "> found. You may have to download the obo file first.");
         if (dbScriptFiles != null) {
             for (String dbScriptFile : dbScriptFiles)
-                if (!checkFileExists(dbScriptFile))
+                if (!FileUtil.checkFileExists(dbScriptFile))
                     throw new IOException("No DB script file <" + dbScriptFile + "> found!");
         }
-        cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
     }
 
     public static void main(String[] arguments) {
         LOG = Logger.getLogger(LoadOntology.class);
         LOG.info("Start Ontology Loader class: " + (new Date()).toString());
-        CommandLine commandLine = parseArguments(arguments);
+        CommandLine commandLine = parseArguments(arguments, "load <>");
         initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
         String oboFile = commandLine.getOptionValue(oboFileNameOption.getOpt());
         String dbScriptFilesNames = commandLine.getOptionValue(dbScriptFileOption.getOpt());
+        String propertyFileName = commandLine.getOptionValue(webrootDirectory.getOpt());
         String[] dbScriptFiles = dbScriptFilesNames.split(",");
         LOG.info("Loading obo file: " + oboFile);
 
         LoadOntology loader = null;
         try {
-            loader = new LoadOntology(oboFile, dbScriptFiles);
+            loader = new LoadOntology(oboFile, propertyFileName, dbScriptFiles);
         } catch (IOException e) {
             LOG.error(e.getMessage());
             System.exit(-1);
         }
-        loader.initAll();
+        LOG.info("Property: " + ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
         if (loader.initialize(oboFile, cronJobUtil))
             loader.runOntologyUpdateProcess();
@@ -161,17 +189,17 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
-        List<Phenotype> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
+        List<PhenotypeStatement> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
             List<List<String>> rows = new ArrayList<List<String>>(phenotypes.size());
-            for (Phenotype pheno : phenotypes) {
+            for (PhenotypeStatement pheno : phenotypes) {
                 List<String> row = new ArrayList<String>();
-                row.add(pheno.getPublication().getZdbID());
-                row.add(pheno.getPublication().getTitle());
-                row.add(pheno.getSuperterm().getTermName());
-                row.add(pheno.getQualityTerm().getTermName());
-                row.add(pheno.getQualityTerm().getZdbID());
+                row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
+                row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
+                row.add(pheno.getEntity().getSuperterm().getTermName());
+                row.add(pheno.getQuality().getTermName());
+                row.add(pheno.getQuality().getZdbID());
                 rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
@@ -224,7 +252,25 @@ public class LoadOntology extends AbstractScriptWrapper {
             List<List<String>> rows = dataMap.get(UnloadFile.UPDATED_TERMS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated");
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term names");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
+        }
+        // updated term definitions report.
+        if (dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue()) != null) {
+            List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue());
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term definitions");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
+        }
+        // updated term comments report.
+        if (dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue()) != null) {
+            List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue());
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term comments");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
         }
@@ -243,14 +289,16 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void updateExpressionReport() {
         // secondary terms replaced report.
-        replacedTerms(dataMap.get(UnloadFile.EXPRESSION_SUBTERM_UPDATES.getValue()), "Super term", "Expression");
+        replacedTerms(dataMap.get(UnloadFile.EXPRESSION_SUPERTERM_UPDATES.getValue()), "Super term", "Expression");
         replacedTerms(dataMap.get(UnloadFile.EXPRESSION_SUBTERM_UPDATES.getValue()), "Sub term", "Expression");
     }
 
     private void updatePhenotypesReport() {
         // secondary terms replaced report.
-        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUPERTERM_UPDATES.getValue()), "Super term", "Phenotype");
-        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUBTERM_UPDATES.getValue()), "Sub term", "Phenotype");
+        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUPERTERM_UPDATES.getValue()), "Entity Super term", "Phenotype");
+        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUBTERM_UPDATES.getValue()), "Entity Sub term", "Phenotype");
+        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUPERTERM_UPDATES.getValue()), "Related Entity Super term", "Phenotype");
+        replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_SUBTERM_UPDATES.getValue()), "Related Entity Sub term", "Phenotype");
         replacedTerms(dataMap.get(UnloadFile.PHENOTYPE_QUALITY_UPDATES.getValue()), "Quality term", "Phenotype");
     }
 
@@ -280,6 +328,8 @@ public class LoadOntology extends AbstractScriptWrapper {
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
         for (DatabaseJdbcStatement statement : queries) {
             LOG.info("Statement " + statement.getLocationInfo() + ": " + statement.getHumanReadableQueryString());
+            if (statement.isInformixWorkStatement())
+                continue;
             if (statement.isLoadStatement()) {
                 List<List<String>> data = dataMap.get(statement.getDataKey());
                 if (data == null) {
@@ -319,6 +369,8 @@ public class LoadOntology extends AbstractScriptWrapper {
             } else {
                 infrastructureRep.executeJdbcStatement(statement);
             }
+            if (LOG.isDebugEnabled())
+                LOG.debug(DbSystemUtil.getLockInfo());
         }
     }
 
@@ -332,10 +384,6 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
         parseOboFile();
         return true;
-    }
-
-    private static void initializeLogger(String log4jFilename) {
-        DOMConfigurator.configure(log4jFilename);
     }
 
     private void parseOboFile() {
@@ -391,11 +439,6 @@ public class LoadOntology extends AbstractScriptWrapper {
                 appendFormattedRecord(UnloadFile.SYNTYPEDEFS_HEADER, oboSession.getDefaultNamespace().getID(), synonymType.getID(), synonymType.getName(), getSynonymDescriptor(synonymType.getScope()), "syntypedefs");
             }
         }
-/*
-        Ontology ontology = Ontology.getOntology(oboSession.getDefaultNamespace().getID());
-        Set<Term> terms = OntologyManager.getInstance().getAllTerms(ontology);
-        LOG.info("Number of Terms in database: " + terms.size());
-*/
         String message = "Number of Terms in obo file: " + numberOfTerms;
         LOG.info(message);
         report.addMessageToSection(message, "Header");
@@ -482,17 +525,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             LOG.info("New Version    : " + oboMetadata.toString());
             LOG.info("Current Version: " + dbMetadata.toString());
             // update version number on all namespaces found in this obo file.
-            for (Namespace namespace : oboSession.getNamespaces()) {
-                dbMetadata = ontologyRepository.getOntologyMetadata(namespace.getID());
-                if (dbMetadata == null) {
-                    dbMetadata = new OntologyMetadata();
-                    dbMetadata.setName(namespace.getID());
-                    dbMetadata.setDefaultNamespace(oboSession.getDefaultNamespace().getID());
-                    updateMetadata(dbMetadata, oboMetadata);
-                    ontologyRepository.saveNewDbMetaData(dbMetadata);
-                } else
-                    updateMetadata(dbMetadata, oboMetadata);
-            }
+            updateMetadata(dbMetadata, oboMetadata);
         } else {
             LOG.info("Current Version: " + dbMetadata.toString());
         }
@@ -546,33 +579,6 @@ public class LoadOntology extends AbstractScriptWrapper {
         return revision.substring(0, endOfRevision).trim();
     }
 
-    private boolean checkFileExists(String fileName) {
-        File file = new File(fileName);
-        if (file.exists())
-            return true;
-        LOG.error("File not found: " + file.getAbsolutePath());
-        return false;
-    }
-
-    private static CommandLine parseArguments(String[] args) {
-        CommandLine commandLine = null;
-        try {
-            // parse the command line arguments
-            CommandLineParser parser = new GnuParser();
-            commandLine = parser.parse(options, args);
-        } catch (ParseException exp) {
-            LOG.error("Parsing failed.  Reason: " + exp.getMessage());
-            System.exit(-1);
-        }
-        if (commandLine == null || commandLine.getOptions().length == 0) {
-            // automatically generate the help statement
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("load ontology", options);
-            System.exit(-1);
-        }
-        return commandLine;
-    }
-
     public void setLogger(Logger log) {
         LOG = log;
     }
@@ -596,10 +602,15 @@ public class LoadOntology extends AbstractScriptWrapper {
         EXPRESSION_SUBTERM_UPDATES("expression-subterm-updates.unl"),
         PHENOTYPE_SUPERTERM_UPDATES("phenotype-superterm-updates.unl"),
         PHENOTYPE_SUBTERM_UPDATES("phenotype-subterm-updates.unl"),
+        PHENOTYPE_RELATED_ENITTY_SUPERTERM_UPDATES("phenotype-related-entity-superterm-updates.unl"),
+        PHENOTYPE_RELATED_ENITTY_SUBTERM_UPDATES("phenotype-related-enityt-subterm-updates.unl"),
         PHENOTYPE_QUALITY_UPDATES("phenotype-quality-updates.unl"),
         SYNTYPEDEFS_HEADER("syntypedefs_header.unl"),
         SEC_UNLOAD_REPORT("sec_unload_report.unl"),
         SEC_UNLOAD("sec_unload.unl"),
+        MODIFIED_TERM_NAMES("modified_term_names.unl"),
+        MODIFIED_TERM_DEFINITIONS("modified_term_definitions.unl"),
+        MODIFIED_TERM_COMMENTS("modified_term_comments.unl"),
         SUBSETDEFS_HEADER("subsetdefs_header.unl");
         private String value;
 

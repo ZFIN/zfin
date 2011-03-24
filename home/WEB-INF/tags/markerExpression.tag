@@ -17,7 +17,7 @@
 
     <hr width="80%"/>
     <div class="summary">
-    <table class="summary solidblock geneexpressionblock">
+    <table class="summary horizontal-solidblock geneexpressionblock">
         <caption>GENE EXPRESSION: <small>(<a href="javascript:start_note('xpatselect_note')">current status</a>)</small>  </caption>
         <c:if test="${markerExpression.allExpressionData.totalCount > 0}">
             <tr>

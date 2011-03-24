@@ -71,7 +71,7 @@ create dba function regen_genox() returning integer
   --
   --    To turn tracing on uncomment the next statement
   --
-  --
+set debug file to 'trace.out';
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
   --    is causing problems.  Add a "trace off;" after the last piece of
@@ -83,7 +83,7 @@ create dba function regen_genox() returning integer
   --    trace, move the "trace on;" to be later in the file and then rerun.
   -- ---------------------------------------------------------------------
 
-
+trace on;   
   -- set standard set of session params
 
   execute procedure set_session_params();
@@ -129,7 +129,7 @@ create dba function regen_genox() returning integer
 			       ' ISAM Error: ' || isamError::varchar(200) ||
 			       ' ErrorText: '  || errorText || 
 		               ' ErrorHint: '  || errorHint ||
-			       '" >> /tmp/regen_genox_exception_luckdb';
+			       '" >> /tmp/regen_genox_exception_<!--|DB_NAME|-->';
 	system exceptionMessage;
 
 	-- Change the mode of the regen_genox_exception file.  This is
@@ -137,7 +137,7 @@ create dba function regen_genox() returning integer
 	-- rerun the function from either the web page (as zfishweb) or 
 	-- from dbaccess (as whoever).
 
-	system '/bin/chmod 666 /tmp/regen_genox_exception_luckdb';
+	system '/bin/chmod 666 /tmp/regen_genox_exception_<!--|DB_NAME|-->';
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
@@ -234,6 +234,9 @@ create dba function regen_genox() returning integer
         gffs_quality_zdb_id varchar(50) not null,
         gffs_tag varchar(25) not null,
         gffs_morph_zdb_id varchar(50),
+        gffs_phenox_pk_id int8 not null,
+	gffs_date_created DATETIME YEAR TO SECOND 
+			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
         gffs_serial_id serial8 not null
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
@@ -243,7 +246,7 @@ create dba function regen_genox() returning integer
 
     -- --------------------------------------------------------------------------------------
     -- --------------------------------------------------------------------------------------
-    --   create regen_genofig_clean_exp_with_morph_temp, regen_genofig_not_normal_apato_temp,
+    --   create regen_genofig_clean_exp_with_morph_temp, regen_genofig_not_normal_temp,
     --          regen_genofig_temp, regen_genofig_input_zdb_id_temp
     -- --------------------------------------------------------------------------------------
     -- --------------------------------------------------------------------------------------
@@ -265,7 +268,7 @@ create dba function regen_genox() returning integer
     let errorHint = "find clean experiments";
     execute procedure regen_genofig_clean_exp();
     
---trace on;   
+
     let errorHint = "fill fast search tables";
     execute procedure regen_genofig_process();
 

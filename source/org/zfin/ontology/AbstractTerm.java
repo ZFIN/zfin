@@ -1,13 +1,11 @@
 package org.zfin.ontology;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.expression.Image;
 import org.zfin.util.NumberAwareStringComparator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Basic implementation of the Term interface.
@@ -28,6 +26,7 @@ public abstract class AbstractTerm implements Term {
     protected Set<TermAlias> synonyms;
     protected String definition;
     protected Set<Image> images;
+    private Set<Subset> subsets;
 
     protected Set<TermRelationship> childTermRelationships;
     protected Set<TermRelationship> parentTermRelationships;
@@ -37,6 +36,7 @@ public abstract class AbstractTerm implements Term {
     // (would lead to a StackOverflowError)
     transient protected List<TermRelationship> relationships;
 //    protected List<Term> children;
+
     // These attributes are set during object creation through a service.
     // they are currently not mapped.
 
@@ -110,6 +110,10 @@ public abstract class AbstractTerm implements Term {
 
     public void setAliases(Set<TermAlias> synonyms) {
         this.synonyms = synonyms;
+    }
+
+    public SortedSet getSortedAliases() {
+        return new TreeSet<TermAlias>(synonyms);
     }
 
     public boolean isAliasesExist() {
@@ -215,28 +219,31 @@ public abstract class AbstractTerm implements Term {
         this.images = images;
     }
 
-//    /**
-//     * Get parent relationship for this type.
-//     *
-//     * @param relationshipType Type of relationship tree to traverse
-//     */
-//    @Override
-//    public List<Term> getParents(String relationshipType) {
-//        List<Term> terms = new ArrayList<Term>();
-//        if (isRoot()) return terms;
-//
-//        if (relationships != null) {
-//            for (TermRelationship termRelationship : relationships) {
-//                if (termRelationship.getType().equals(relationshipType)) {
-//                    if (termRelationship.getTermTwo().getZdbID().equals(zdbID)) {
-//                        terms.add(termRelationship.getTermOne());
-//                    }
-//                }
-//            }
-//        }
-//
-//        return terms;
-//    }
+    @Override
+    public Set<Subset> getSubsets() {
+        return subsets;
+    }
+
+    @Override
+    public void setSubsets(Set<Subset> subsets) {
+        this.subsets = subsets;
+    }
+
+    @Override
+    public boolean isPartOfSubset(Subset subset) {
+        return !(this.subsets == null || subset == null) && subsets.contains(subset);
+    }
+
+    @Override
+    public boolean isPartOfSubset(String subsetName) {
+        if (subsets == null)
+            return false;
+        for (Subset subset : subsets) {
+            if (subset.getInternalName().equals(subsetName.toLowerCase().trim()))
+                return true;
+        }
+        return false;
+    }
 
     @Override
     public int hashCode() {

@@ -1,6 +1,6 @@
 <?MICOMMENT>
 
-FILE: xpatexpcdnsummary.apg
+FILE: xpatexpcdnlist.apg
 PREFIX: cds_ 
 
 DESCRIPTION:
@@ -95,7 +95,7 @@ OUPUT:
 	      <?MIVAR>$(SETVAR,$cds_display,MO:$cds_gene_sym)<?/MIVAR>
            <?MIELSE>
 	      <?MIVAR COND="$(=,$(POSITION,$cds_uniq_gene_list,$cds_gene_sym$cds_delimiter),0)">
-		$(SETVAR,$cds_display,$cds_display$cds_delimiter$cds_gene_sym)
+		$(SETVAR,$cds_display,$cds_display$(IF,$(EC,$cds_display,),,$cds_delimiter)$cds_gene_sym)
 	      <?/MIVAR>	     
 	   <?/MIBLOCK>
 
@@ -110,10 +110,10 @@ OUPUT:
 	  	   
            <?MIBLOCK COND="$(OR,$(NC,$cds_cdt_group_pre,),$(NC,$cds_cdt_group,$cds_cdt_group_pre))">
 	     <?MIVAR>
-		$(SETVAR, $cds_display,$cds_display$cds_delimiter $cds_cdt_group:$cds_cdt_name)
+		$(SETVAR, $cds_display,$cds_display$(IF,$(EC,$cds_display,),,$cds_delimiter) $cds_cdt_group:$cds_cdt_name)
              <?/MIVAR>	
 	    <?MIELSE>
-	       $(SETVAR,$cds_display,$cds_display$cds_delimiter$cds_cdt_name)
+	       $(SETVAR,$cds_display,$cds_display$(IF,$(EC,$cds_display,),,$cds_delimiter)$cds_cdt_name)
 	    <?/MIBLOCK>
 
         <?/MIBLOCK> <?MICOMMENT>end of whether morpholino condition<?/MICOMMENT>
@@ -127,7 +127,7 @@ OUPUT:
     <?/MISQL> 	
 
     <?MIVAR>
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$cds_exp_zdb_id"> $cds_display </a>
+      <a href="/action/expression/experiment?id=$cds_exp_zdb_id"> $cds_display </a>
     <?/MIVAR>
 
   <?/MIBLOCK> <?MICOMMENT>display condition only if non-standard<?/MICOMMENT>

@@ -89,8 +89,19 @@ public abstract class EntityStatistics {
     }
 
     public int getNumberOfImages() {
-        return images.size();
+        if (figs == null || figs.isEmpty())   {
+            return 0;
+        }
+        if (images != null && !images.isEmpty())   {
+            return images.size();
+        }
+        Set<Image> imgs = new HashSet<Image>() ;
+        for (Figure fig : figs) {
+            imgs.addAll(fig.getImages()) ;
+        }
+        return imgs.size();
     }
+
 
     public Image getImage() {
         if (images == null || images.size() != 1)

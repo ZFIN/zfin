@@ -22,22 +22,24 @@ public class DateUtil {
     public static String getTimeDuration(Date start, Date end) {
         if (end == null)
             end = new Date();
-        long streamLength = end.getTime() - start.getTime();
+        long timeDifference = end.getTime() - start.getTime();
         StringBuffer dateDisplay = new StringBuffer();
-        if (streamLength > MILLISECONDS_PER_HOUR) {
-            dateDisplay.append(streamLength / MILLISECONDS_PER_HOUR);
+        if (timeDifference > MILLISECONDS_PER_HOUR) {
+            dateDisplay.append(timeDifference / MILLISECONDS_PER_HOUR);
             dateDisplay.append(" hours ");
         }
-        if (streamLength > MILLISECONDS_PER_MINUTE) {
-            dateDisplay.append((streamLength / MILLISECONDS_PER_MINUTE) % 60);
+        else if (timeDifference > MILLISECONDS_PER_MINUTE) {
+            dateDisplay.append((timeDifference / MILLISECONDS_PER_MINUTE) % 60);
             dateDisplay.append(" minutes ");
         }
-        if (streamLength > MILLISECONDS_PER_SECOND) {
-            dateDisplay.append((streamLength / MILLISECONDS_PER_SECOND) % 60);
+        else if (timeDifference > MILLISECONDS_PER_SECOND) {
+            dateDisplay.append((timeDifference / MILLISECONDS_PER_SECOND) % 60);
             dateDisplay.append(" seconds ");
         }
-        if (dateDisplay.length() == 0)
-            dateDisplay.append("0 seconds");
+        else {
+            dateDisplay.append(timeDifference );
+            dateDisplay.append(" ms ");
+        }
         return dateDisplay.toString();
     }
 

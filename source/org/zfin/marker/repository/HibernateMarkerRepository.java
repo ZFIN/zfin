@@ -11,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
@@ -836,6 +837,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             LOG.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
         } catch (SQLException e) {
             LOG.error("Could not run: " + sql, e);
+            LOG.error(DbSystemUtil.getLockInfo());
         } finally {
             if (statement != null)
                 try {
@@ -1056,11 +1058,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public boolean getGeneHasPhenotype(Marker gene) {
-        String hql = "select count(apato_zdb_id) " +
-                "from mutant_fast_search, atomic_phenotype " +
+        String sql = "select count(phenox_pk_id) " +
+                "from mutant_fast_search, phenotype_experiment " +
                 "where mfs_mrkr_zdb_id = :geneZdbID " +
-                "and mfs_genox_zdb_id = apato_genox_zdb_id ";
-        Query query = currentSession().createSQLQuery(hql);
+                "and mfs_genox_zdb_id = phenox_genox_zdb_id ";
+        Query query = currentSession().createSQLQuery(sql);
         query.setString("geneZdbID", gene.getZdbID());
 
         return (((Number) query.uniqueResult()).longValue() > 0);
@@ -1068,12 +1070,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public boolean getGeneHasPhenotypeImage(Marker gene) {
         String sql = " " +
-                "select apatofig_fig_zdb_id " +
-                "from mutant_fast_search, atomic_phenotype, apato_figure, image " +
+                "select phenox_fig_zdb_id " +
+                "from mutant_fast_search, phenotype_experiment, image " +
                 "where mfs_mrkr_zdb_id = :geneZdbID " +
-                "and mfs_genox_zdb_id = apato_genox_zdb_id " +
-                "and apato_zdb_id = apatofig_apato_zdb_id " +
-                "and apatofig_fig_zdb_id = img_fig_zdb_id";
+                "and mfs_genox_zdb_id = phenox_genox_zdb_id " +
+                "and phenox_fig_zdb_id = img_fig_zdb_id";
         Query query = currentSession().createSQLQuery(sql);
         query.setString("geneZdbID", gene.getZdbID());
         return (query.list().size() > 0);
@@ -1524,6 +1525,81 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria.add(Restrictions.eq("abbreviation", abbreviation.toLowerCase()));
         Marker marker = (Marker) criteria.uniqueResult();
         return marker != null;
+    }
+
+    /**
+     * Retrieves firstN markers of each marker type.
+     * If firstN = 0 retrieve all markers
+     * If firstN < 0 return null
+     *
+     * @param firstN number of markers to be returned
+     * @return list of markers
+     */
+    @Override
+    public List<String> getNMarkersPerType(int firstN) {
+        if (firstN < 0)
+            return null;
+        if (firstN == 0)
+            return getAllMarkers();
+
+        Session session = HibernateUtil.currentSession();
+        List<MarkerType> markerTypes = getAllMarkerTypes();
+
+        // we have about 20 different marker types
+        List<String> allIds = new ArrayList<String>(20 * firstN);
+        for (MarkerType markerType : markerTypes) {
+            String hql = "select zdbID from Marker where markerType = :markerType " +
+                    "order by zdbID";
+            Query query = session.createQuery(hql);
+            query.setParameter("markerType", markerType);
+            query.setMaxResults(firstN);
+            allIds.addAll(query.list());
+        }
+        return allIds;
+    }
+
+    /**
+     * Retrieve all distinct marker types used in the marker table
+     *
+     * @return list of marker types
+     */
+    public List<MarkerType> getAllMarkerTypes() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct markerType from Marker";
+        Query query = session.createQuery(hql);
+        return query.list();
+    }
+
+    /**
+     * Retrieve all gene ids of genes that have a SwissProt external note.
+     * @param firstNIds number of records to be returned
+     * @return list of gene ids
+     */
+    @Override
+    public List<String> getNMarkersWithUniProtNote(int firstNIds) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct accession.dataZdbID from DBLink accession, ExternalNote note" +
+                " where accession.referenceDatabase.foreignDB.dbName = :sourceName " +
+                " and note.externalDataZdbID = accession.zdbID " +
+                " order by accession.dataZdbID";
+        Query query = session.createQuery(hql);
+        query.setString("sourceName", "UniProtKB");
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        return query.list();
+    }
+
+    /**
+     * Retrieves all markers if no number is given or the first N markers for firstN = 0;
+     *
+     * @return list of markers
+     */
+    @Override
+    public List<String> getAllMarkers() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select zdbID from Marker order by zdbID";
+        Query query = session.createQuery(hql);
+        return query.list();
     }
 
 }

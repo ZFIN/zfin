@@ -5,12 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.GenotypeFigure;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -48,7 +50,6 @@ public class GenotypeDetailController {
         }
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
-
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form,genotype);
             retrieveExpressionData(form, genotype);
@@ -56,59 +57,75 @@ public class GenotypeDetailController {
             retrievePublicationData(form, genotype);
 	    }
 
-
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName());
 
-        return "genotype/genotype-detail.page" ;
+        return "genotype/genotype-detail.page";
     }
 
-    private void retrieveGenotypeAndFeatureData(GenotypeBean form, Genotype genotype) {
-		List<GenotypeFeature> genotypeFeatures = mutantRepository.getGenotypeFeaturesByGenotype(genotype);
-		form.setGenotypeFeatures(genotypeFeatures);
-
-		GenotypeStatistics genoStat = new GenotypeStatistics(genotype);
-        form.setGenotypeStatistics(genoStat);
-    }
-
-    private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {
-		List<ExpressionResult> xpRslts = expressionRepository.getExpressionResultsByGenotype(genotype);
-
-        form.setExpressionResults(xpRslts);
-	}
-
-    private void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
-        List<GenotypeFigure> genoFigs = mutantRepository.getCleanGenoFigsByGenotype(genotype);
-
-        form.setGenotypeFigures(genoFigs);
-
-	}
-
-    private void retrievePublicationData(GenotypeBean form, Genotype genotype) {
-        form.setTotalNumberOfPublications(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForGenotype(genotype, 0).getTotalCount());
-    }
-
-    @RequestMapping( value={
-            "/show_all_phenotype" // this is the current style, have not changed
-    }
-    )
-    protected String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
-        LOG.debug("Start All Phenotype Controller");
-        Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
-        if (genotype == null){
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+    @RequestMapping(value = {"/show_all_expression"})
+    protected String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
+        LOG.debug("Start All Expressions for Genotype");
+        Genotype genotype = mutantRepository.getGenotypeByID(genoID);
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, genoID);
             return "record-not-found.page";
         }
 
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
 
-        List<GenotypeFigure> genoFigs = mutantRepository.getCleanGenoFigsByGenotype(genotype);
-
-        form.setGenotypeFigures(genoFigs);
+        retrieveExpressionData(form, genotype);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with "+genotype.getName());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName());
+        return "genotype/genotype_all_expression.page";
+    }
+
+    private void retrieveGenotypeAndFeatureData(GenotypeBean form, Genotype genotype) {
+        List<GenotypeFeature> genotypeFeatures = mutantRepository.getGenotypeFeaturesByGenotype(genotype);
+        form.setGenotypeFeatures(genotypeFeatures);
+
+        GenotypeStatistics genoStat = new GenotypeStatistics(genotype);
+        form.setGenotypeStatistics(genoStat);
+    }
+
+    private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {
+        List<ExpressionResult> xpRslts = expressionRepository.getExpressionResultsByGenotype(genotype);
+
+        form.setExpressionResults(xpRslts);
+    }
+
+    private void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
+        List<PhenotypeStatement> phenoStatements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+
+        form.setPhenoStatements(phenoStatements);
+
+    }
+
+    private void retrievePublicationData(GenotypeBean form, Genotype genotype) {
+        form.setTotalNumberOfPublications(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForGenotype(genotype, 0).getTotalCount());
+    }
+
+    @RequestMapping(value = {
+            "/show_all_phenotype" // this is the current style, have not changed
+    }
+    )
+    protected String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
+        LOG.debug("Start All Phenotype Controller");
+        Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return "record-not-found.page";
+        }
+
+        GenotypeBean form = new GenotypeBean();
+        form.setGenotype(genotype);
+                
+        retrievePhenotypeData(form, genotype);
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
 
         return "genotype/genotype-all-phenotype.page";
     }

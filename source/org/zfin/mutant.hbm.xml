@@ -10,7 +10,7 @@
 <hibernate-mapping package="org.zfin.mutant">
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="phenotypeTag">
-        <param name="enumClassname">org.zfin.mutant.Phenotype$Tag</param>
+        <param name="enumClassname">org.zfin.mutant.PhenotypeStatement$Tag</param>
     </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="featureHistoryReason">
@@ -203,9 +203,9 @@
             <column name="genox_geno_zdb_id"/>
         </many-to-one>
 
-        <set name="phenotypes" lazy="true" inverse="true">
-            <key column="apato_genox_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.Phenotype"/>
+        <set name="phenotypeExperiments" lazy="true" inverse="true">
+            <key column="phenox_genox_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>
         </set>
 
         <set name="expressionExperiments" lazy="true">
@@ -214,42 +214,50 @@
         </set>
     </class>
 
-    <class name="org.zfin.mutant.Phenotype" table="atomic_phenotype">
-        <id name="zdbID" type="string">
-            <column name="apato_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">APATO</param>
-                <param name="insertActiveData">true</param>
-            </generator>
+    <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
+        <id name="id" type="long">
+            <column name="phenox_pk_id" not-null="true"/>
+            <generator class="increment"/>
         </id>
+        <many-to-one name="genotypeExperiment" column="phenox_genox_zdb_id"/>
+        <many-to-one name="startStage" column="phenox_start_stg_zdb_id"/>
+        <many-to-one name="endStage" column="phenox_end_stg_zdb_id"/>
+        <many-to-one name="figure" column="phenox_fig_zdb_id"/>
+        <property name="dateCreated" column="phenox_created_date"/>
+        <property name="dateLastModified" column="phenox_last_modified"/>
 
-        <many-to-one name="genotypeExperiment" class="org.zfin.mutant.GenotypeExperiment">
-            <column name="apato_genox_zdb_id"/>
-        </many-to-one>
-
-        <!--
-                <property name="patoSuperTermzdbID" column="apato_superterm_zdb_id"/>
-        -->
-        <many-to-one name="superterm" column="apato_superterm_zdb_id"/>
-        <many-to-one name="subterm" column="apato_subterm_zdb_id"/>
-        <many-to-one name="qualityTerm" column="apato_quality_zdb_id"/>
-        <many-to-one name="publication" column="apato_pub_zdb_id"/>
-        <many-to-one name="startStage" column="apato_start_stg_zdb_id"/>
-        <many-to-one name="endStage" column="apato_end_stg_zdb_id"/>
-        <!--
-        ToDo: mark tag as phenotypeTag type when this col is cleaned up
-        -->
-        <property name="tag" column="apato_tag"/>
-
-        <set name="figures" lazy="true" table="apato_figure">
-            <key column="apatofig_apato_zdb_id"/>
-            <many-to-many class="org.zfin.expression.Figure" column="apatofig_fig_zdb_id"/>
+        <set name="phenotypeStatements" lazy="true" inverse="true">
+            <key column="phenos_phenox_pk_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeStatement"/>
         </set>
 
     </class>
 
+    <class name="org.zfin.mutant.PhenotypeStatement" table="phenotype_statement">
+        <id name="id" type="long">
+            <column name="phenos_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="dateCreated" column="phenos_created_date" not-null="true"/>
+        <many-to-one name="phenotypeExperiment" column="phenos_phenox_pk_id" not-null="true"/>
+        <component name="entity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="phenos_entity_1_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="phenos_entity_1_subterm_zdb_id"/>
+        </component>
+        <many-to-one name="quality" column="phenos_quality_zdb_id"/>
+        <component name="relatedEntity"  class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="phenos_entity_2_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="phenos_entity_2_subterm_zdb_id"/>
+        </component>
+        <property name="tag" column="phenos_tag"/>
+    </class>
+
     <class name="org.zfin.feature.Feature" table="feature">
-        <id name="zdbID" type="string">
+       <id name="zdbID" type="string">
             <column name="feature_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">ALT</param>
@@ -357,6 +365,8 @@
 
         <property name="value" column="expcond_value"/>
 
+        <property name="comments" column="expcond_comments"/>
+
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
             <column name="expcond_exp_zdb_id"/>
         </many-to-one>
@@ -369,6 +379,27 @@
         <many-to-one name="morpholino" class="org.zfin.marker.Marker">
             <column name="expcond_mrkr_zdb_id"/>
         </many-to-one>
+
+        <many-to-one name="conditionDataType" class="org.zfin.expression.ConditionDataType">
+            <column name="expcond_cdt_zdb_id"/>
+        </many-to-one>
+
+    </class>
+
+    <class name="org.zfin.expression.ConditionDataType" table="condition_data_type">
+
+        <id name="zdbID" type="string">
+            <column name="cdt_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">CDT</param>
+            </generator>
+        </id>
+
+        <property name="name" column="cdt_name"/>
+
+        <property name="group" column="cdt_group"/>
+
+        <property name="significance" column="cdt_significance" type="int"/>
 
     </class>
 
@@ -454,7 +485,6 @@
         </id>
         <property name="prefixString" column="fp_prefix"/>
         <property name="institute" column="fp_institute_display"/>
-
     </class>
 
 
@@ -534,8 +564,18 @@
         <many-to-one name="person" column="api_curator_zdb_id"/>
         <property name="date" column="api_date"/>
         <property name="tag" column="api_tag" type="phenotypeTag"/>
-        <many-to-one name="superterm" column="api_superterm_zdb_id"/>
-        <many-to-one name="subterm" column="api_subterm_zdb_id"/>
+        <component name="entity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="api_entity_1_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="api_entity_1_subterm_zdb_id"/>
+        </component>
+        <component name="relatedEntity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="api_entity_2_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="api_entity_2_subterm_zdb_id"/>
+        </component>
         <many-to-one name="qualityTerm" column="api_quality_zdb_id"/>
 
     </class>

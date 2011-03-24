@@ -1,10 +1,10 @@
 package org.zfin.gwt.root.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.SessionSaveService;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.Person;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  */
 @SuppressWarnings({"GwtServiceNotRegistered"})
-public class SessionSaveServiceImpl extends RemoteServiceServlet implements SessionSaveService {
+public class SessionSaveServiceImpl extends ZfinRemoteServiceServlet implements SessionSaveService {
 
     private Logger log = Logger.getLogger(SessionSaveServiceImpl.class);
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();

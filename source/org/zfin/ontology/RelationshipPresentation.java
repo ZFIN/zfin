@@ -3,11 +3,13 @@ package org.zfin.ontology;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * Please provide JavaDoc info!!!
+ * This data structure is used for providing anatomy/term relationship information
+ * on the jsp.
  */
 public class RelationshipPresentation implements Comparable<RelationshipPresentation> {
 
@@ -34,6 +36,7 @@ public class RelationshipPresentation implements Comparable<RelationshipPresenta
         if(items == null)
             items = new ArrayList<Term>();
         items.add(term);
+        Collections.sort(items);
     }
     @Override
     public int compareTo(RelationshipPresentation o) {

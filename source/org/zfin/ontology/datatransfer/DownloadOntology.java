@@ -44,7 +44,7 @@ public class DownloadOntology extends AbstractScriptWrapper {
     public static void main(String[] args) throws OBOParseException {
         //DOMConfigurator.configure("server_apps\\data_transfer\\LoadOntology\\log4j.xml");
         //DOMConfigurator.configure("log4j.xml");
-        CommandLine commandLine = parseArguments(args);
+        CommandLine commandLine = parseArguments(args, "load <>");
         String path = commandLine.getOptionValue(oboFileName.getOpt());
         String downloadUrl = commandLine.getOptionValue(oboFileURL.getOpt());
         LOG.info("Downloading obo file: " + downloadUrl);
@@ -85,26 +85,6 @@ public class DownloadOntology extends AbstractScriptWrapper {
                 LOG.error("could not close resources");
             }
         }
-    }
-
-    private static CommandLine parseArguments(String[] args) {
-        CommandLine commandLine = null;
-        try {
-            // parse the command line arguments
-            CommandLineParser parser = new GnuParser();
-            commandLine = parser.parse(options, args);
-        }
-        catch (ParseException exp) {
-            LOG.error("Parsing failed.  Reason: " + exp.getMessage());
-            System.exit(-1);
-        }
-        if (commandLine == null || commandLine.getOptions().length == 0) {
-            // automatically generate the help statement
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("load ontology", options);
-            System.exit(-1);
-        }
-        return commandLine;
     }
 
 }

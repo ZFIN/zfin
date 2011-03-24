@@ -14,9 +14,9 @@ create procedure regen_genofig_clean_exp()
   --
   -- EFFECTS:
   --   Success:
-  --     Clean versions of experiment condition and "not normal' data for apato
+  --     Clean versions of experiment condition and "not normal' data for phenotype
   --     records are populated into temp tables regen_genofig_clean_exp_with_morph_temp
-  --     and regen_genofig_not_normal_apato_temp.
+  --     and regen_genofig_not_normal_temp.
   --   Error:
   --     None or some of the data will be added to the temp tables.
   --     Transaction has not been committed or rolled back.
@@ -40,11 +40,20 @@ create procedure regen_genofig_clean_exp()
                        and cdt_group != "morpholino");
 
 
-  -- gather the "not normal" apato records
-  insert into regen_genofig_not_normal_apato_temp
-    (rgfnna_apato_zdb_id,rgfnna_apato_genox_zdb_id,rgfnna_apato_superterm_zdb_id,rgfnna_apato_subterm_zdb_id,rgfnna_apato_quality_zdb_id,rgfnna_apato_tag)
-    select distinct apato_zdb_id,apato_genox_zdb_id,apato_superterm_zdb_id,apato_subterm_zdb_id,apato_quality_zdb_id,apato_tag
-      from atomic_phenotype
-     where apato_tag != 'normal';
+  -- gather the "not normal" phenotype records
+  insert into regen_genofig_not_normal_temp
+    (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
+    select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_1_superterm_zdb_id,phenos_entity_1_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
+      from phenotype_experiment, phenotype_statement
+     where phenox_pk_id = phenos_phenox_pk_id
+       and phenos_tag != 'normal';
+
+  insert into regen_genofig_not_normal_temp
+    (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
+    select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_2_superterm_zdb_id,phenos_entity_2_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
+      from phenotype_experiment, phenotype_statement
+     where phenox_pk_id = phenos_phenox_pk_id
+       and phenos_tag != 'normal'
+       and phenos_entity_2_superterm_zdb_id is not null;
 
 end procedure;

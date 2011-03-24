@@ -3,7 +3,7 @@ package org.zfin.ontology;
 import org.zfin.gwt.root.dto.TermDTO;
 
 /**
- * COnvenience class to hold matching terms, the match type and the term alias if the match
+ * Convenience class to hold matching terms, the match type and the term alias if the match
  * was on an alias.
  */
 public class MatchingTerm {

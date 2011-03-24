@@ -313,6 +313,21 @@ public final class FileUtil {
         return file;
     }
 
+    public static boolean checkFileExists(String fileName) {
+        File file = new File(fileName);
+        if (file.exists())
+            return true;
+        LOG.error("File not found: " + file.getAbsolutePath());
+        return false;
+    }
+
+    public static boolean checkFileExists(File file) {
+        if (file.exists())
+            return true;
+        LOG.error("File not found: " + file.getAbsolutePath());
+        return false;
+    }
+
     public static File createOntologySerializationFile(String serializedFileName) {
         String tempDir = System.getProperty("java.io.tmpdir");
         File file = new File(tempDir, DATA_TRANSFER);

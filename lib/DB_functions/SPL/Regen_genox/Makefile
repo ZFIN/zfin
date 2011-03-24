@@ -24,7 +24,7 @@ STATIC_PROCS = regen_genox_finish.sql regen_genox_create_temp_tables.sql \
                regen_genox_process.sql regen_genox_marker.sql  \
                regen_genofig_clean_exp.sql regen_genofig_create_temp_tables.sql \
                regen_genofig_finish.sql regen_genofig_process.sql \
-               regen_genofig_genotype.sql regen_genofig_geno_finish.sql
+               regen_genofig_genotype.sql regen_genofig_geno_finish.sql regen_genofig_process_indiv.sql
 GENERIC_PROCS = regen_genox.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))

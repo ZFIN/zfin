@@ -1,15 +1,16 @@
 package org.zfin.gwt.root.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
@@ -37,7 +38,7 @@ import java.util.*;
 
 /**
  */
-public class MarkerGoEvidenceRPCServiceImpl extends RemoteServiceServlet implements MarkerGoEvidenceRPCService {
+public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet implements MarkerGoEvidenceRPCService {
 
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();

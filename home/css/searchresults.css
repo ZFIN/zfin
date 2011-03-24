@@ -26,36 +26,36 @@ table.searchresults caption {
     padding-bottom: 15px;
 }
 
-td.anatomy {
+table.searchresults td.anatomy {
     font-size: small;
     vertical-align: top;
 }
 
-td.thumbnail {
+table.searchresults td.thumbnail {
     text-align: right;
 }
 
-td.small {
+table.searchresults td.small {
     font-size: small;
 }
 
-tr.odd {
+table.searchresults tr.odd {
     background-color: #EEEEEE;
 }
 
-tr.newgroup {
-    border-top: 1px solid #ccc; 
+table.searchresults tr.newgroup {
+    /* just a placeholder, not defined for the default style */
 }
 
-tr.even {
+table.searchresults tr.even {
     background-color: #fff;
 }
 
-tr.oddgroup {
+table.searchresults tr.oddgroup {
 /* just a placeholder, not defined for the default style */
 }
 
-tr.evengroup {
+table.searchresults tr.evengroup {
 /* just a placeholder, not defined for the default style */
 }
 

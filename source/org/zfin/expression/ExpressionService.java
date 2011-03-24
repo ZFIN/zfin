@@ -3,6 +3,7 @@ package org.zfin.expression;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.expression.presentation.MarkerExpressionInstance;
 import org.zfin.expression.repository.ExpressionRepository;
@@ -11,6 +12,10 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -20,15 +25,13 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Service Class that deals with Marker related logic.
  */
 public class ExpressionService {
+
 
     private static Logger logger = Logger.getLogger(ExpressionService.class);
 

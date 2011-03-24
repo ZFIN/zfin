@@ -1,5 +1,6 @@
 package org.zfin.expression.presentation;
 
+import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
@@ -13,24 +14,21 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Marker expressedGene;
     private Set<Publication> publications;
     private Set<Figure> figures;
-    private boolean moInExperiment;
     private List<ExpressionResult> expressionResults;
-    private Set<Term> nonDuplicatedTerms;
+    private Experiment experiment;
+
+    public ExpressionDisplay(Marker expressedGene) {
+        this .expressedGene = expressedGene;
+    }
 
     public int compareTo(ExpressionDisplay anotherExpressionDisplay) {
         if (expressedGene == null){
             return -1;
         }
+        else if (expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene()) == 0)
+            return experiment.compareTo(anotherExpressionDisplay.getExperiment());
         return expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene());
     }
-
-    public Set<Term> getNonDuplicatedTerms() {
-		return nonDuplicatedTerms;
-    }
-
-    public void setNonDuplicatedTerms(Set<Term> nonDuplicatedTerms) {
-		this.nonDuplicatedTerms = nonDuplicatedTerms;
-	}
 
     public Set<Figure> getFigures() {
         return figures;
@@ -46,7 +44,19 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
 		} else {
 			return figures.size();
 		}
-	}
+    }
+
+    public Figure getSingleFigure() {
+		if (figures == null || figures.size() != 1)
+		   return null;
+
+        Figure singleFigure = null;
+		for (Figure fig : figures) {
+		   singleFigure = fig;
+           break;
+		}
+        return singleFigure;
+    }
 
     public Publication getSinglePublication() {
 		if (publications == null || publications.size() != 1)
@@ -73,7 +83,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
 		} else {
 			return publications.size();
 		}
-	}
+    }
 
     public Marker getExpressedGene() {
         return expressedGene;
@@ -83,32 +93,32 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
         this.expressedGene = expressedGene;
     }
 
-    public boolean isMoInExperiment() {
-        return moInExperiment;
-    }
-
-    public void setMoInExperiment(boolean moInExperiment) {
-        this.moInExperiment = moInExperiment;
-    }
-
     public boolean isImgInFigure() {
-        if (figures == null || figures.size() == 0)
+        if (noFigureOrFigureWithNoLabel())   {
             return false;
-        for (Figure fig : figures) {
-           if (fig.getImages() != null && fig.getImages().size() > 0)
-			   return true;
         }
-        return false;
+        boolean thereIsImg = false;
+        for (Figure fig : figures) {
+            if (!fig.isImgless()) {
+                thereIsImg = true;
+                break;
+            }
+        }
+        return thereIsImg;
     }
 
-    public Figure getSingleFig() {
-		if (figures == null || figures.size() == 0)
-		  return null;
-
-		for (Figure fig : figures)
-          return fig;
-
-        return null;
+    public boolean noFigureOrFigureWithNoLabel() {
+        if (figures == null || figures.isEmpty())   {
+            return true;
+        }
+        boolean noFigureLabel = false;
+        for (Figure fig : figures) {
+            if (fig.getLabel() == null) {
+                noFigureLabel = true;
+                break;
+            }
+        }
+        return noFigureLabel;
     }
 
     public List<ExpressionResult> getExpressionResults() {
@@ -117,5 +127,13 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
 
     public void setExpressionResults(List<ExpressionResult> expressionResults) {
         this.expressionResults = expressionResults;
+    }
+
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
     }
 }

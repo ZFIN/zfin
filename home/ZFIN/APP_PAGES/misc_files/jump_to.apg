@@ -78,7 +78,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 
 
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EXP-),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EXP-),0)">/action/expression/experiment?id=$record<?/MIVAR>
 
 <?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
       the best place to go right now. For direct submission pub, like Thisse, there isn't 

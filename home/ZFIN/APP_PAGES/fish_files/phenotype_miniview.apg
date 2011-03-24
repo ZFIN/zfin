@@ -36,17 +36,14 @@
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=phenosum_count_fig_sql>
-    select distinct apatofig_fig_zdb_id 
-      from apato_figure, atomic_phenotype, genotype_experiment, mutant_fast_search 
+    select distinct phenox_fig_zdb_id 
+      from phenotype_experiment, mutant_fast_search 
      where mfs_mrkr_zdb_id = '$OID'
-       and mfs_genox_zdb_id = genox_zdb_id  
-       and apato_genox_zdb_id = genox_zdb_id 
-       and apatofig_apato_zdb_id = apato_zdb_id        
-       and exists (select NOTnormal.apato_zdb_id 
-                     from atomic_phenotype NOTnormal 
-                    where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
-                      and NOTnormal.apato_tag != "normal" 
-                      and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id)   
+       and phenox_genox_zdb_id = mfs_genox_zdb_id 
+       and exists (select NOTnormal.phenos_pk_id 
+                     from phenotype_statement NOTnormal 
+                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id 
+                      and NOTnormal.phenos_tag != "normal")   
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -70,18 +67,15 @@
   <?MIELSE>
     <?MIVAR NAME=phenosum_count_pub_sql>
       select distinct pub_mini_ref, zdb_id 
-        from apato_figure, atomic_phenotype, genotype_experiment, figure, publication, mutant_fast_search 
+        from phenotype_experiment, figure, publication, mutant_fast_search 
        where mfs_mrkr_zdb_id = '$OID' 
-         and mfs_genox_zdb_id = genox_zdb_id 
-         and apato_genox_zdb_id = genox_zdb_id
-         and apatofig_apato_zdb_id = apato_zdb_id  
-         and apatofig_fig_zdb_id = fig_zdb_id 
+         and mfs_genox_zdb_id = phenox_genox_zdb_id 
+         and phenox_fig_zdb_id = fig_zdb_id 
          and fig_source_zdb_id = zdb_id 
-         and exists (select NOTnormal.apato_zdb_id 
-                       from atomic_phenotype NOTnormal 
-                      where NOTnormal.apato_genox_zdb_id = mfs_genox_zdb_id 
-                        and NOTnormal.apato_tag != "normal" 
-                        and apatofig_apato_zdb_id = NOTnormal.apato_zdb_id)   
+         and exists (select NOTnormal.phenos_pk_id 
+                     from phenotype_statement NOTnormal 
+                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id 
+                      and NOTnormal.phenos_tag != "normal")    
     <?/MIVAR>
   <?/MIBLOCK>
 
@@ -103,14 +97,19 @@
       <?MIVAR>$(SETVAR,$phmview_pato_link,pheno_summary.apg&OID=$OID&includingMO=yes&morphantsOnly=yes)<?/MIVAR>
     <?/MIBLOCK>
   <?/MIBLOCK>
-
+  <table class="summary horizontal-solidblock">
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
-
-    <?MIVAR><table width="100%" border="0" bgcolor="$highlight"><?/MIVAR>        
     <tr>
-      <td width="15%"><b>&nbsp;&nbsp;Data: </b> </td>
-      <td width="85%">
-        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figure<?MIVAR>$(IF,$(>,$phmview_pato_fig_count,1),s,)<?/MIVAR></a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
+      <th>Data:</th>
+      <td>
+        <?MIBLOCK COND="$(>,$phmview_pato_fig_count,1)">
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link">$phmview_pato_fig_count<?/MIVAR> figures</a> from <?MIVAR>$phmview_pato_source_desc<?/MIVAR>
+	<?MIELSE>
+	  <?MISQL SQL="select fig_label from figure where fig_zdb_id = '$phmview_pato_fig_zdb_id';">
+	      <?MIVAR NAME=phmview_fig_label>$1<?/MIVAR>
+          <?/MISQL>
+	  <?MIVAR><a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link'>$phmview_fig_label</a> from $phmview_pato_source_desc<?/MIVAR>
+	<?/MIBLOCK>
       </td>
     </tr>
 
@@ -121,79 +120,73 @@
 
   <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     <?MIVAR NAME=phmview_entity_sql>
-	     select distinct super.term_zdb_id, sub.term_zdb_id, lower(super.term_name)
+	     select get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id), lower(super.term_name)
                from $phmview_input_figentity_table, term as super, OUTER term as sub
               where t_superterm_zdb_id = super.term_zdb_id
 	        and t_subterm_zdb_id = sub.term_zdb_id
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=phmview_entity_sql>
-	     select distinct super.term_zdb_id, sub.term_zdb_id, lower(super.term_name)
-               from $phmview_input_table, atomic_phenotype, term as super, OUTER term as sub
-              where t_pato_zdb_id = apato_zdb_id
-	        and apato_subterm_zdb_id = sub.term_zdb_id
-		and apato_superterm_zdb_id = super.term_zdb_id
-	        and apato_tag != 'normal'
+	     select get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id), lower(super.term_name)
+               from $phmview_input_table, phenotype_statement, term as super, OUTER term as sub
+              where t_pato_zdb_id = phenos_pk_id
+	        and phenos_entity_1_superterm_zdb_id = super.term_zdb_id
+		and phenos_entity_1_subterm_zdb_id = sub.term_zdb_id
+	        and phenos_tag != 'normal'
+	     union
+	     select get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id), lower(super.term_name)
+               from $phmview_input_table, phenotype_statement, term as super, OUTER term as sub
+              where t_pato_zdb_id = phenos_pk_id
+	        and phenos_entity_2_superterm_zdb_id = super.term_zdb_id
+		and phenos_entity_2_subterm_zdb_id = sub.term_zdb_id
+	        and phenos_tag != 'normal'	     
     <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> *** display the phenotype block for gene or MO page <?/MICOMMENT>
   <?MIBLOCK COND="$(NE,$(SUBSTR,$OID,1,8),ZDB-GENO)">
     
+  <?MIVAR NAME="$phmview_term_list"><?/MIVAR>
+
+  <?MIVAR>
+    <style>
+      .phmview_entity_long_list_dom_class { display: none }
+    </style>
+  <?/MIVAR>
+
+
     <?MISQL SQL="$phmview_entity_sql order by lower(super.term_name);">
-        <?MIVAR name="indexCount">$MI_CURRENTROW<?/MIVAR>
-    
-        <?MISQL SQL="execute function get_postcomposed_term_html('$1','$2')">
-                 <?MIVAR NAME=phmview_anatitem_html><span nowrap>$1</span><?/MIVAR>
-         <?/MISQL>
+        <?MIVAR NAME="$phmview_term_html">$1<?/MIVAR>
 
-      $(SETVAR,$phmview_entity_counter,$(+,$phmview_entity_counter,1))
-        <?MIBLOCK COND=$(=,$indexCount,1)>
-     	  <?MIVAR NAME=phmview_entity_short_list>$phmview_anatitem_html<?/MIVAR>
-      	  <?MIVAR NAME=phmview_entity_long_list>$phmview_anatitem_html<?/MIVAR>         
-	<?MIELSE>
-	  <?MIVAR COND="$(<=,$phmview_entity_counter,$phmview_entity_short_list_cap)">
-	     $(VECAPPEND,$phmview_entity_short_list,$phmview_anatitem_html)
-          <?/MIVAR>
-          <?MIVAR>
-            $(VECAPPEND,$phmview_entity_long_list,$phmview_anatitem_html)
-          <?/MIVAR>
+        <?MICOMMENT> ** add a comma if it's not the first element ** <?/MICOMMENT>        
+        <?MIBLOCK COND="$(<,$MI_CURRENTROW,5)">
+          <?MIVAR NAME="$phmview_term_list" COND="$(NE,$phmview_term_list,)">$phmview_term_list,&nbsp;<?/MIVAR>
+          <?MIVAR NAME="$phmview_term_html"><span>$phmview_term_html</span><?/MIVAR>
+        <?MIELSE>
+          <?MIVAR NAME="$phmview_term_list" COND="$(NE,$phmview_term_list,)">$phmview_term_list<span class="phmview_entity_long_list_dom_class">,&nbsp;</span><?/MIVAR>
+          <?MIVAR NAME="$phmview_term_html"><span class="phmview_entity_long_list_dom_class">$phmview_term_html</span><?/MIVAR>
         <?/MIBLOCK>
+
+        <?MIVAR NAME="$phmview_term_list">$(CONCAT,$phmview_term_list,$phmview_term_html)<?/MIVAR>
+
     <?/MISQL>
+    <?MIVAR NAME="$phmview_count">$MI_ROWCOUNT<?/MIVAR>
 
-    <?MIVAR NAME=phmview_entity_totalnum>$MI_ROWCOUNT<?/MIVAR>
-
-    <?MIVAR NAME=phmview_entity_short_list_sepa SEPARATE=", ">$phmview_entity_short_list<?/MIVAR>
-    <?MIVAR NAME=phmview_entity_long_list_sepa SEPARATE=", ">$phmview_entity_long_list<?/MIVAR>
-    <?MIVAR NAME=phmview_entity_short_list_escp>$(REPLACE,$phmview_entity_short_list_sepa,"'","")<?/MIVAR>    
-    <?MIVAR NAME=phmview_entity_long_list_escp>$(REPLACE,$phmview_entity_long_list_sepa,"'","")<?/MIVAR>
+    <?MIVAR NAME=$phmview_left_arrow><img class="clickable" border=0 onClick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();" src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+    <?MIVAR NAME=$phmview_right_arrow> ... <span class="clickable" onclick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();">(all $phmview_count) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></span><?/MIVAR>
 
     <tr>
-      <td width="15%" valign="top">&nbsp;&nbsp;<b>Observed in: </b></td>
-      <td width="85%"> 
-        <script>
-           <?MIVAR>
-   	   function expandAnatomyList() {
-     	       var elem = document.getElementById("anatomyList");
-               elem.innerHTML = "$phmview_entity_long_list_escp <a href=javascript:onClick=shrinkAnatomyList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
-	   }
-
-   	   function shrinkAnatomyList() {
-     	       var elem = document.getElementById("anatomyList");
-               elem.innerHTML = "$phmview_entity_short_list_escp ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
-	   }
-
-	   <?/MIVAR>
-        </script> 
-
-        <span id="anatomyList">
-         <?MIVAR>$phmview_entity_short_list_escp<?/MIVAR>
-
-         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phmview_entity_short_list_cap)">   
-	   ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+      <th>Observed&nbsp;in:</th>
+      <td>
+        <?MIBLOCK COND="$(<,$phmview_count,5)">
+          <?MIVAR>$phmview_term_list<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR>
+            $phmview_term_list 
+            <span class="phmview_entity_long_list_dom_class">$phmview_left_arrow</span> 
+            <span class="phmview_entity_short_list_dom_class">$phmview_right_arrow</span>
          <?/MIVAR>
-       </span>
-
+        <?/MIBLOCK>
      </td>
     </tr>
 

@@ -112,6 +112,22 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
             rowIndex = createTermEntry(RelationshipType.START_STAGE.getDisplay(),rowIndex,relatedTermsMap);
             rowIndex = createTermEntry(RelationshipType.END_STAGE.getDisplay(),rowIndex,relatedTermsMap);
         }
+        // subsets
+        if (currentTermInfoDTO.getSubsets() != null && currentTermInfoDTO.getSubsets().size() > 0) {
+            addHeaderEntry(TerminfoTableHeader.SUBSETS.getName(), rowIndex);
+            StringBuilder builder = new StringBuilder();
+            Set<String> subsets = currentTermInfoDTO.getSubsets();
+            Iterator<String> iterator = subsets.iterator();
+            int size = 1;
+            while (iterator.hasNext()) {
+                builder.append(iterator.next());
+                if (size < subsets.size()) {
+                    builder.append(divider);
+                }
+                size++;
+            }
+            setWidget(rowIndex++, 1, new HTML(builder.toString()));
+        }
         // comments
         addHeaderEntry(TerminfoTableHeader.COMMENT.getName(), rowIndex);
         if (noWrap) {
@@ -228,7 +244,8 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         DEFINITION(3, "Definition:"),
         PARENTS(4, "PARENTS:"),
         CHILDREN(5, "CHILDREN:"),
-        COMMENT(8, "COMMENTS:"),
+        SUBSETS(6, "Subsets:"),
+        COMMENT(8, "Comments:"),
         OBSOLETE(9, "Obsolete:");
 
         private int index;

@@ -9,11 +9,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodySearchFormBean" scope="request"/>
 
-<script type="text/javascript">
-function start_tips() {
-  top.zfinhelp=open("/ZFIN/misc_html/antibody_search_tips.html","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=500,height=400");
-}
-</script>
 
 
 <c:choose>
@@ -24,7 +19,10 @@ function start_tips() {
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
                         Search for Antibodies
             </span>
-                    &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>                   
+                   
+                    <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"
+                       ></a>
+
                 </td>
                 <td align="right" class="titlebar">
                     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -157,7 +155,9 @@ function start_tips() {
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
                         <a name="modify-search">Modify your search </a>
             </span>
-                &nbsp;&nbsp; <a href="javascript:start_tips();">Search Tips</a>
+                
+                <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"
+                   ></a>
             </td>
         </tr>
     </table>

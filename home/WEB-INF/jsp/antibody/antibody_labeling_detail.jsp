@@ -6,10 +6,10 @@
 <c:set var="abDetailLabeling" value="${formBean.antibodyStat.antibodyDetailedLabelings}" />
 
 <c:if test="${fn:length(abDetailLabeling) ne null && fn:length(abDetailLabeling) > 0}">
-    <div id="short-version" class="summary">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults groupstripes">
-            <tr bgcolor="#ccccc0">
-                <th>Anatomy : Substructure</th>
+    <div id="short-version">
+        <table class="summary groupstripes">
+            <tr>
+                <th>Anatomy</th>
                 <th>Stage</th>
                 <th><a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
                 <th>Gene</th>
@@ -20,15 +20,12 @@
                        varStatus="loop" end="4">
                 <zfin:alternating-tr loopName="loop"
                                      groupBeanCollection="${abDetailLabeling}"
-                                     groupByBean="aoAndPostCompostTerm">
+                                     groupByBean="expressionStatement">
                     <td>
                         <zfin:groupByDisplay loopName="loop"
                                              groupBeanCollection="${abDetailLabeling}"
-                                             groupByBean="aoAndPostCompostTerm">
-                            <zfin:link entity="${detailedLabeling.superterm}"/>
-                            <c:if test="${detailedLabeling.subterm != null}"> :
-                                <zfin:link entity="${detailedLabeling.subterm}"/>
-                            </c:if>
+                                             groupByBean="expressionStatement">
+                            <zfin:link entity="${detailedLabeling.expressionStatement}"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>
@@ -45,19 +42,16 @@
 
                     <td>
                         <c:forEach var="probeStats" items="${detailedLabeling.antigenGenes}" varStatus="status">
-                            <zfin:link entity="${probeStats}"/>
-                            <c:if test="${!status.last}">
-                                ,&nbsp;
-                            </c:if>
+                            <zfin:link entity="${probeStats}"/><c:if test="${!status.last}">,&nbsp;</c:if>
                         </c:forEach>
                     </td>
                     <td>
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
-                                    id="${detailedLabeling.singleFigure.zdbID}">
-                                    ${detailedLabeling.numberOfFiguresDisplay}
+                                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}" id="${detailedLabeling.singleFigure.zdbID}">
+                                       <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
+                                                            integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
@@ -75,29 +69,27 @@
                             &nbsp;from&nbsp;
                             <c:if test="${detailedLabeling.numberOfPublications > 1}">${detailedLabeling.numberOfPublicationsDisplay}</c:if>
                             <c:if test="${detailedLabeling.numberOfPublications == 1}">
-                                ${detailedLabeling.singlePublication.shortAuthorList}
+                                <zfin:link entity="${detailedLabeling.singlePublication}"/>
                             </c:if>
                         </c:if>
                     </td>
                 </zfin:alternating-tr>
             </c:forEach>
-            <tr>
-                <td>
-                    <c:if test="${fn:length(abDetailLabeling) > 5}">
-                        <br/>&nbsp;&nbsp;
-                        <a href="javascript:expand()">
-                            <img src="/images/darrow.gif" alt="expand" border="0">
-                            Show all</a>
-                        ${formBean.antibodyStat.numberOfDistinctComposedTerms} labeled structures
-                    </c:if>
-                </td>
-            </tr>
         </table>
+        <div>
+            <c:if test="${fn:length(abDetailLabeling) > 5}">
+                &nbsp;&nbsp;
+                <a href="javascript:expand()">
+                    <img src="/images/darrow.gif" alt="expand" border="0">
+                    Show all</a>
+            ${formBean.antibodyStat.numberOfDistinctComposedTerms} labeled structures
+            </c:if>
+        </div>
     </div>
 
-    <div style="display:none" id="long-version" class="summary">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="searchresults groupstripes">
-            <tr bgcolor="#ccccc0">
+    <div style="display:none" id="long-version">
+        <table class="summary groupstripes">
+            <tr>
                 <th>Anatomy</th>
                 <th>Stage</th>
                 <th><a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxassayabbrev.apg">Assay</a></th>
@@ -109,15 +101,12 @@
                        varStatus="loop">
                 <zfin:alternating-tr loopName="loop"
                                      groupBeanCollection="${abDetailLabeling}"
-                                     groupByBean="aoAndPostCompostTerm">
+                                     groupByBean="expressionStatement">
                     <td>
                         <zfin:groupByDisplay loopName="loop"
                                              groupBeanCollection="${abDetailLabeling}"
-                                             groupByBean="aoAndPostCompostTerm">
-                            <zfin:link entity="${detailedLabeling.superterm}"/>
-                            <c:if test="${detailedLabeling.subterm != null}"> :
-                                <zfin:link entity="${detailedLabeling.subterm}"/>
-                            </c:if>
+                                             groupByBean="expressionStatement">
+                            <zfin:link entity="${detailedLabeling.expressionStatement}"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>
@@ -134,10 +123,7 @@
 
                     <td>
                         <c:forEach var="probeStats" items="${detailedLabeling.antigenGenes}" varStatus="status">
-                            <zfin:link entity="${probeStats}"/>
-                            <c:if test="${!status.last}">
-                                ,&nbsp;
-                            </c:if>
+                            <zfin:link entity="${probeStats}"/><c:if test="${!status.last}">,&nbsp;</c:if>
                         </c:forEach>
                     </td>
                     <td>
@@ -145,7 +131,8 @@
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
                                     <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
-                                    ${detailedLabeling.numberOfFiguresDisplay}
+                                       <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
+                                                            integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
@@ -163,7 +150,7 @@
                             &nbsp;from&nbsp;
                             <c:if test="${detailedLabeling.numberOfPublications > 1}">${detailedLabeling.numberOfPublicationsDisplay}</c:if>
                             <c:if test="${detailedLabeling.numberOfPublications == 1}">
-                                ${detailedLabeling.singlePublication.shortAuthorList}
+                                <zfin:link entity="${detailedLabeling.singlePublication}"/>
                             </c:if>
                         </c:if>
                     </td>
@@ -171,13 +158,16 @@
             </c:forEach>
             <tr>
                 <td>
-                    <br/>&nbsp;&nbsp;
-                    <a href="javascript:collapse()">
-                        <img src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
-                        Show first</a> 5 labeled structures
+
                 </td>
             </tr>
         </table>
+        <div>
+            &nbsp;&nbsp;
+            <a href="javascript:collapse()">
+                <img src="/images/up.gif" alt="expand" title="Show first 5 structures" border="0">
+                Show first</a> 5 labeled structures
+        </div>
     </div>
 </c:if>
 

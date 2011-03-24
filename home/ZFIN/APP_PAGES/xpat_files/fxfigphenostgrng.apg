@@ -86,21 +86,17 @@ EFFECTS
   <?/MICOMMENT>
   <?MIVAR NAME=$fxfigst_start_stg_sql>
       SELECT first 1 get_stg_name_html(stg_zdb_id, 'abbrev'), stg_name_long
-        FROM apato_figure join atomic_phenotype
-	       on apatofig_apato_zdb_id = apato_zdb_id
-             join stage
-	       on apato_start_stg_zdb_id = stg_zdb_id
-       WHERE apatofig_fig_zdb_id = '$fxfigst_fig_zdb_id'
+        FROM phenotype_experiment,stage	       
+       WHERE phenox_fig_zdb_id = '$fxfigst_fig_zdb_id'
+         AND phenox_start_stg_zdb_id = stg_zdb_id
     ORDER BY stg_hours_start asc;
   <?/MIVAR>
 
   <?MIVAR NAME=$fxfigst_end_stg_sql>
       SELECT first 1 get_stg_name_html(stg_zdb_id, 'abbrev'), stg_name_long
-        FROM apato_figure join atomic_phenotype
-	       on apatofig_apato_zdb_id = apato_zdb_id
-             join stage
-	       on apato_start_stg_zdb_id = stg_zdb_id
-       WHERE apatofig_fig_zdb_id = '$fxfigst_fig_zdb_id'
+        FROM phenotype_experiment, stage	       
+       WHERE phenox_fig_zdb_id = '$fxfigst_fig_zdb_id'
+         AND phenox_end_stg_zdb_id = stg_zdb_id
     ORDER BY stg_hours_end desc;
   <?/MIVAR>
 

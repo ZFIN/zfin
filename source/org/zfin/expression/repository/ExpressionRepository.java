@@ -8,12 +8,13 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Phenotype;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -40,6 +41,13 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
+
+    /**
+     * Get a single expression result record by id
+     * @param zdbID id
+     * @return expression result
+     */
+    ExpressionResult getExpressionResult(String zdbID);
 
     /**
      * Retrieve an assay by name.
@@ -199,15 +207,6 @@ public interface ExpressionRepository {
     void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure);
 
     /**
-     * Retrieve a phenotype based on a given phenotype with
-     * genox, start, end, pub, superterm = 'unspecified'
-     *
-     * @param pheno phenotype
-     * @return phenotype
-     */
-    Phenotype getUnspecifiedPhenotypeFromGenoxStagePub(Phenotype pheno);
-
-    /**
      * Check if a pile structure already exists.
      * check for:
      * suberterm
@@ -259,4 +258,25 @@ public interface ExpressionRepository {
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
 
     List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID);
+
+    List<AnatomyItem> getAnatomyForMarker(String zdbID);
+
+
+    /**
+     * Query to popuplate the figure/pub list for an expression summary page
+     * @param expressionCriteria entities / booleans that should be in the matching
+     * xpatex records
+     * @return a list of figures matching the criteria
+     */
+    List<Figure> getFigures(ExpressionSummaryCriteria expressionCriteria);
+
+
+    /**
+     * Get ExpressionResults matching given criteria
+     * @param expressionCriteria criteria to match
+     * @return ExpressionStatements
+     */
+    Set<ExpressionStatement> getExpressionStatements(ExpressionSummaryCriteria expressionCriteria);
+
+
 }

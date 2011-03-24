@@ -39,6 +39,11 @@ OUTPUT:
     ERROR: markerrelationship.apg has no mrkrrel_rel_direction passed in.
 <?/MIVAR>
 
+<?MISQL SQL="select get_mrkr_abbrev_html(mrkr_zdb_id) 
+                    from marker where mrkr_zdb_id = '$mrkrrel_mrkr_zdb_id';">
+  <?MIVAR NAME="$mrkrrel_mrkr_abbrev_html">$1<?/MIVAR>
+<?/MISQL>
+
 <?MIBLOCK COND="$(EC,$mrkrrel_rel_direction,2_to_1)">
     <?MIVAR NAME=mrkrrel_sql>
 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
@@ -103,13 +108,12 @@ OUTPUT:
         </tr>
       <?/MIVAR>
 	  <tr>
-        <td bgcolor=#EEEEEE>       			
-	      <?MIVAR> 
-			$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) 
-            $mrkrrel_mrel_comments
+        <th>       			
+	      <?MIVAR>$
+			$(IF,$(>,$(POSITION,$OID,GENE),0),$mrkrrel_mrkr_abbrev_html,$name)&nbsp;$(REPLACE,$mrkrrel_mrel_comments, ,&nbsp;)
 	      <?/MIVAR>
-        </td>
-  	    <td align=left width=80% bgcolor=#EEEEEE>
+        </th>
+  	    <td>
       <?MICOMMENT>for a new mrel_type, reinitiate the seg_mrkr_type<?/MICOMMENT>
 	  <?MIVAR>$(SETVAR,$mrkrrel_last_seg_mrkr_type,)<?/MIVAR>
     <?/MIBLOCK>   
@@ -121,8 +125,7 @@ OUTPUT:
         <?MIVAR>
 		    <font size=-1>[$mrkrrel_seg_mrkr_type]</font>
 		 <?/MIVAR>
-    <?MIELSE>
-          ,
+    <?MIELSE>,
     <?/MIBLOCK>
   
     <?MIVAR COND="$(XST,$UPDATE)">

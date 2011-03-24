@@ -3,6 +3,7 @@ package org.zfin.ontology;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.SubsetDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 
 import java.util.Iterator;
@@ -20,14 +21,18 @@ import static org.junit.Assert.assertTrue;
 public class OntologyManagerTest extends AbstractOntologyTest {
 
     private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
+    protected static final String QUALITY_TERM_DECREASED_AGE = "PATO:0001765";
+    protected static final String QUALITY_TERM_DECREASED_RATE = "PATO:0000911";
 
     @Override
     protected Ontology[] getOntologiesToLoad() {
-        Ontology[] ontologies = new Ontology[4];
+        Ontology[] ontologies = new Ontology[6];
         ontologies[0] = Ontology.ANATOMY;
         ontologies[1] = Ontology.QUALITY;
         ontologies[2] = Ontology.STAGE;
         ontologies[3] = Ontology.SPATIAL;
+        ontologies[4] = Ontology.QUALITY_PROCESSES;
+        ontologies[5] = Ontology.QUALITY_QUALITIES;
         return ontologies;
     }
 
@@ -168,18 +173,12 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
         Set<MatchingTerm> matches = service.getMatchingTerms("decreased p", Ontology.QUALITY);
-        assertEquals(15, matches.size());
+        assertTrue(matches.size() > 10);
 
         // can not find decreased
         matches = service.getMatchingTerms("decreased", Ontology.QUALITY);
         assertEquals(service.getMaximumNumberOfMatches(), matches.size());
     }
-
-//    @Test
-//    public void getAllRelationshipsPerOntology() {
-//        Set<String> relationships = OntologyService.getDistinctRelationships(OntologyDTO.ANATOMY);
-//        assertNotNull(relationships);
-//    }
 
     @Test
     public void testObsoleteTerm() {
@@ -191,6 +190,48 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNotNull(term);
     }
 
+    @Test
+    public void testRelationalTerm() {
+        // fused with
+        String termID = "ZDB-TERM-070117-643";
+        TermDTO term = ontologyManager.getTermByID(termID,OntologyDTO.QUALITY);
+        assertNotNull(term);
+        assertTrue(term.isPartOfSubset(SubsetDTO.RELATIONAL_SLIM));
+    }
+
+    /**
+     * The term 'normal' is suppressed in the process and object slim, We do not
+     * want those terms to be suggested in the auto-complete.
+     */
+    @Test
+    public void noNormalTermInQualityOntology() {
+        // 'normal' term should be excluded in the process and object slim of PATO
+        TermDTO term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL,OntologyDTO.QUALITY_PROCESSES);
+        assertNull(term);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL,OntologyDTO.QUALITY_QUALITIES);
+        assertNull(term);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_QUALITIES_ROOT,OntologyDTO.QUALITY_QUALITIES);
+        assertNotNull(term);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_PROCESSES_ROOT,OntologyDTO.QUALITY_PROCESSES);
+        assertNotNull(term);
+    }
+
+    /**
+     * 'decreased age' should not be part of the process slim, ensuring that children from the
+     * 'normal' term and relationship type 'decreased_in_magnitude_relative_to' are not included
+     * int the slim built.
+     *
+     * The same pertains to 'decreased rate' which should not be part of the object slim.
+     * Just two examples.
+     */
+    @Test
+    public void noRelativeRelationshipBelowNormalTermInQualityProcessOntology() {
+        // 'normal' term should be excluded in the process and object slim of PATO
+        TermDTO term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_AGE,OntologyDTO.QUALITY_PROCESSES);
+        assertNull("'decreased age' should not be part of the process slim", term);
+        term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_RATE,OntologyDTO.QUALITY_QUALITIES);
+        assertNull("'decreased rate' should not be part of the object slim", term);
+    }
 
     @Test
     public void loadAllTermsFromFiles() throws Exception {

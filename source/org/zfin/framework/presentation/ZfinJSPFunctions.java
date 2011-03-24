@@ -14,6 +14,9 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
 
 import javax.servlet.http.HttpSession;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.*;
 
 /**
@@ -41,9 +44,9 @@ public class ZfinJSPFunctions {
 
     /**
      * Turn newlines to <br/>. If escapeAll is set to true then
-     * escape html characters to be plan strings. 
+     * escape html characters to be plan strings.
      *
-     * @param string character string
+     * @param string    character string
      * @param escapeAll boolean
      * @return String
      */
@@ -240,17 +243,15 @@ public class ZfinJSPFunctions {
     public static String getPerson(HttpSession session) {
         if (session == null)
             return null;
-        String name = (String) session.getAttribute(WebAttributes.LAST_USERNAME);
+        String name = "Guest";
         SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (StringUtils.isNotEmpty(name) && securityContext != null) {
+        if (securityContext != null && securityContext.getAuthentication() != null) {
             name = ((Person) securityContext.getAuthentication().getPrincipal()).getFullName();
-        } else {
-            name = "Guest";
         }
         return name;
     }
 
-    public static boolean isToday(Date date){
+    public static boolean isToday(Date date) {
         Calendar now = GregorianCalendar.getInstance();
         Calendar givenDate = GregorianCalendar.getInstance();
         givenDate.setTime(date);
@@ -258,7 +259,7 @@ public class ZfinJSPFunctions {
                 now.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static boolean isTomorrow(Date date){
+    public static boolean isTomorrow(Date date) {
         Calendar tomorrow = GregorianCalendar.getInstance();
         tomorrow.add(Calendar.DAY_OF_MONTH, 1);
         Calendar givenDate = GregorianCalendar.getInstance();
@@ -267,12 +268,36 @@ public class ZfinJSPFunctions {
                 tomorrow.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static boolean isYesterday(Date date){
+    public static boolean isYesterday(Date date) {
         Calendar yesterday = GregorianCalendar.getInstance();
         yesterday.add(Calendar.DAY_OF_MONTH, -1);
         Calendar givenDate = GregorianCalendar.getInstance();
         givenDate.setTime(date);
         return yesterday.get(Calendar.MONTH) == givenDate.get(Calendar.MONTH) &&
                 yesterday.get(Calendar.DAY_OF_MONTH) == givenDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static String generateRandomDomID() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Retrieve the latest zfin method invocation on a given thread.
+     * If no zfin class involved give last method call.
+     *
+     * @param threadID thread ID
+     * @return method being called on this thread.
+     */
+    public static String lastZfinCall(int threadID) {
+        ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
+        ThreadInfo threadInfo = mxbean.getThreadInfo(threadID, Integer.MAX_VALUE);
+        if (threadInfo == null)
+            return null;
+        StackTraceElement[] stackTraceElements = threadInfo.getStackTrace();
+        for (StackTraceElement element : stackTraceElements) {
+            if (element.getClassName().startsWith("org.zfin"))
+                return element.toString();
+        }
+        return null;
     }
 }

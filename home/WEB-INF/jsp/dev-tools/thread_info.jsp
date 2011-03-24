@@ -1,29 +1,42 @@
+<jsp:useBean id="threadMXBean" scope="request" type="java.lang.management.ThreadMXBean"/>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table border="1">
-    Current Thread: <%= Thread.currentThread().getName()%> <BR>
+<table class="primary-entity-attributes">
     <tr>
-        <td class="item-bold">No</td>
-        <td class="item-bold"> Thread Group Name</td>
-        <td class="item-bold">Thread Name</td>
-        <td class="item-bold">Is Alive</td>
-        <td class="item-bold">Priority</td>
-        <td class="item-bold">Is Daemon</td>
-        <td class="item-bold">Is Interrupted</td>
-        <td class="item-bold">Stop</td>
+        <th><span class="name-label">Thread Summary</span></th>
     </tr>
+</table>
 
-    <c:forEach var="thread" items="${threads}" varStatus="position">
-        <tr>
-        <tr>
-            <td class="item"><c:out value="${position.count}" /></td>
-            <td class="item"><c:out value="${thread.threadGroup.name}" /></td>
-            <td class="item"><c:out value="${thread.name}" /></td>
-            <td class="item"><c:out value="${thread.alive}" /></td>
-            <td class="item"><c:out value="${thread.priority}" /></td>
-            <td class="item"><c:out value="${thread.daemon}" /></td>
-            <td class="item"><c:out value="${thread.interrupted}" /></td>
-            <td class="item"><a href="/spring/thread-info?groupName=&threadName=">stop</a></td>
-        </tr>
+<div class="summary">
+    <div class="summaryTitle">Number of Threads: ${threadMXBean.threadCount}
+    <div class="summaryTitle"> Current Thread: <%= Thread.currentThread().getName()%></div>
+    <div class="summaryTitle"> Deadlocked Threads: ${deadlockedThreads}</div>
+    <div class="summaryTitle"> Monitor Deadlocked Threads: ${monitorDeadlockedThreads}</div>
+    </div>
+</div>
+
+
+<table class="summary">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>State</th>
+        <th>Suspended</th>
+    </tr>
+    <c:forEach var="thread" items="${allThreads}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop">
+            <td>${loop.index}</td>
+            <td><a href="single-thread-info?threadID=${thread.threadId}"> ${thread.threadName}</a>
+                <a href="single-thread-info?threadID=${thread.threadId}" class="popup-link data-popup-link"/>
+                <c:set var="methodName" value="${zfn:lastZfinCall(thread.threadId)}"/>
+                                <c:if test="${methodName != null}">
+                    <br/><span style="float:right;">[${methodName}]</span></c:if>
+            </td>
+            <td>${thread.threadState}</td>
+            <td>${thread.suspended}</td>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>
+
+    <div class="summaryTitle"> Total Thread count started: ${threadMXBean.totalStartedThreadCount}
+    <div class="summaryTitle"> Peak Thread count: ${threadMXBean.peakThreadCount}

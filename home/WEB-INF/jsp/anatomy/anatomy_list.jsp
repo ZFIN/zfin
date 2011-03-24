@@ -1,9 +1,12 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+
 <table class="searchresults rowstripes">
 
     <c:if test="${!formBean.stageSearch}">
 
-        <caption class="searchresults">
+        <caption class="searchresults" id="Results for emb search">
             <zfin:collectionSize collectionEntity="${formBean.statisticItems}"/>
             <zfin:choice collectionEntity="${formBean.statisticItems}" choicePattern="0# Results| 1# Result| 2# Results"
                          scope="Request"/>
@@ -50,7 +53,7 @@
         <td>
             <c:if test="${ao.numberOfSynonyms > 0}">
                         <span class="anatomy-list-notes">
-                            <!-- Highlight the search term or the hightlight term if provided -->
+                            <!-- Highlight the search term or the highlight term if provided -->
                             <c:choose>
                                 <c:when test="${formBean.stageSearch || formBean.termSearch} ">
                                     <zfin:highlight highlightEntity="${ao.formattedSynonymList}"

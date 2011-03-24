@@ -6,23 +6,25 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
-import org.zfin.expression.Image;
+import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
+import org.zfin.expression.presentation.ExperimentPresentation;
+import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.GenotypePresentation;
+import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.ExpressionResultPresentation;
 import org.zfin.ontology.presentation.TermDTOPresentation;
+import org.zfin.ontology.presentation.PhenotypePresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
@@ -59,12 +61,10 @@ import java.util.Collection;
  */
 public class CreateLinkTag extends BodyTagSupport {
 
-    private static Logger LOG = Logger.getLogger(CreateLinkTag.class);
     private Object entity;
     private String name;
     private boolean longVersion;
-
-    private Logger logger = Logger.getLogger(CreateLinkTag.class);
+    private boolean suppressPopupLink;
 
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -72,7 +72,7 @@ public class CreateLinkTag extends BodyTagSupport {
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
 
-        String link;
+        String link;        
         if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RelatedMarker)
@@ -101,18 +101,26 @@ public class CreateLinkTag extends BodyTagSupport {
             link = GenotypePresentation.getLink((Genotype) o);
         else if (o instanceof Feature)
             link = FeaturePresentation.getLink((Feature) o);
+        else if (o instanceof Experiment)
+            link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink);
         else if (o instanceof ExperimentCondition)
-            link = ExperimentConditionPresentation.getLink((ExperimentCondition) o);
+            link = ExperimentConditionPresentation.getLink((ExperimentCondition) o, suppressPopupLink);
         else if (o instanceof DevelopmentStage)
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Organization)
             link = SourcePresentation.getLink((Organization) o);
         else if (o instanceof Term)
-            link = TermPresentation.getLink((Term) o);
+            link = TermPresentation.getLink((Term) o, suppressPopupLink);
+        else if (o instanceof PostComposedEntity)
+            link = TermPresentation.getLink((PostComposedEntity) o, suppressPopupLink);
         else if (o instanceof TermDTO)
             link = TermDTOPresentation.getLink((TermDTO) o);
         else if (o instanceof ExpressionResult)
-            link = ExpressionResultPresentation.getLink((ExpressionResult) o);
+            link = ExpressionResultPresentation.getLink((ExpressionResult) o, suppressPopupLink);
+        else if (o instanceof ExpressionStatement)
+            link = ExpressionStatementPresentation.getLink((ExpressionStatement) o, suppressPopupLink);
+        else if (o instanceof PhenotypeStatement)
+            link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;
@@ -203,5 +211,13 @@ public class CreateLinkTag extends BodyTagSupport {
 
     public void setLongVersion(boolean longVersion) {
         this.longVersion = longVersion;
+    }
+
+    public boolean isSuppressPopupLink() {
+        return suppressPopupLink;
+    }
+
+    public void setSuppressPopupLink(boolean suppressPopupLink) {
+        this.suppressPopupLink = suppressPopupLink;
     }
 }

@@ -84,7 +84,7 @@
 <div id="update-experiments"></div>
 <table width="100%">
     <tr>
-        <td  class="right-align-box">
+        <td class="right-align-box">
             <div id="structures-check-size-bar"></div>
         </td>
     </tr>
@@ -130,7 +130,7 @@
                         <td align="center" bgcolor="#006666" width="1">
                         </td>
                         <td align="top">
-                            <div id="structure-pile-construction-zone-subterm-info"></div>
+                            <div id="structure-pile-construction-zone-entity_subterm-info"></div>
                             <p>
                             </p>
                             <span class="indent2"><b><i>within the</i></b></span>
@@ -142,7 +142,7 @@
                 <table>
                     <tr>
                         <td>
-                            <div id="structure-pile-construction-zone-superterm-info"></div>
+                            <div id="structure-pile-construction-zone-entity_superterm-info"></div>
                         </td>
                     </tr>
                 </table>
@@ -153,6 +153,42 @@
                             <div id="structure-pile-construction-zone-quality-info"></div>
                         </td>
                     </tr>
+                </table>
+                <div id="related-terms-panel">
+                    <div class="dots"></div>
+                    <table>
+                        <tr>
+                            <td align="left" width="100" class="bold">Superterm
+                            </td>
+                            <td class="bold">:</td>
+                            <td align="right" width="150" class="bold">Subterm
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table border="0" cellpadding="5" cellspacing="3">
+                        <tr>
+                            <td align="center" bgcolor="#006666" width="1">
+                            </td>
+                            <td align="top">
+                                <div id="structure-pile-construction-zone-related_entity_subterm-info"></div>
+                                <p>
+                                </p>
+                                <span class="indent2"><b><i>within the</i></b></span>
+                                <span id="structure-pile-construction-zone-swap-related-terms" class="indent3"></span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="structure-pile-construction-zone-related_entity_superterm-info"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table>
                     <tr>
                         <td>
                             <div id="tag"></div>
@@ -191,5 +227,8 @@
     .indent2 {
         margin-left: 100px;
     }
-    .indent3 {margin-left:70px;}
+
+    .indent3 {
+        margin-left: 70px;
+    }
 </style>

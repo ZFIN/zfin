@@ -1,23 +1,21 @@
 <?MICOMMENT>
 
-FILE:     fxphenoinfogene.apg
-PREFIX:   fxinfo__
+FILE:     fxphenoinfo.apg
+PREFIX:   fxphenoinfo_
 
-This displays a list of expression pattern results for a gene. The results include genotype background, stage and structure and assay.
-
-1. for figview.apg, each gene abbrev is an anchor to a data section.
-2. display a list of comma separated gene abbrevs.
+This displays a list of phenotype info for a genotype. 
+The results include genotype and its background, stage and phenotype.
 
 
 INPUT VARS:
-  $fxinfo_fig_zdb_id           figure zdb-id.
-  $fxinfo_source_zdb_id        pub zdb id
+  $OID                           genotype zdb-id
+  $fxphenoinfo_fig_zdb_id        figure zdb id
 
 OUTPUT VARS:
   None.
 
 OUTPUT:
-  A table of phenotype results for  a genotype.
+  A table of phenotype results for a genotype.
 
 EFFECTS
 
@@ -47,29 +45,21 @@ EFFECTS
 <?MISQL SQL="
                select distinct geno_display_name, 
                        st1.stg_abbrev s1, st2.stg_abbrev s2,
-                       apato_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, 
-                       get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , 
+                       phenox_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, 
+                       get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2, 
                        st1.stg_hours_start sh1, st1.stg_hours_end sh2, 
-                       apato_tag, apato_quality_zdb_id, 
-                       quality.term_name, get_geno_name_html_link('$OID') as geno_link,
-                       get_postcomposed_term_html(apato_superterm_zdb_id, apato_subterm_zdb_id),
-                       apato_subterm_zdb_id
-              from
-                     figure,atomic_phenotype,
-                     apato_figure,genotype_experiment,
-                     genotype, stage st1, stage st2, term quality
-              where
-                     genox_geno_zdb_id = '$OID'
-                     and genox_zdb_id = apato_genox_zdb_id
-                     and fig_zdb_id='$fxphenoinfo_fig_zdb_id'
-                     and fig_zdb_id=apatofig_fig_zdb_id 
-                     and apatofig_apato_zdb_id=apato_zdb_id 
-                     and genox_geno_zdb_id=geno_zdb_id
-                     and apato_start_stg_zdb_id=st1.stg_zdb_id
-                     and apato_end_stg_zdb_id=st2.stg_zdb_id
-                     and apato_quality_zdb_id=quality.term_zdb_id
-               order by 
-                     apato_genox_zdb_id, geno_display_name,apato_subterm_zdb_id,sh1">
+                       get_geno_name_html_link('$OID') as geno_link,
+                       get_phenotype_link_html(phenos_pk_id) as pheno_link,
+                       get_phenotype_popup_link_html(phenos_pk_id) as pheno_popup_link                       
+                 from phenotype_statement, phenotype_experiment, genotype_experiment, genotype, stage st1, stage st2
+                where genox_geno_zdb_id = '$OID'
+                  and genox_zdb_id = phenox_genox_zdb_id
+                  and phenox_fig_zdb_id = '$fxphenoinfo_fig_zdb_id'
+                  and phenox_pk_id = phenos_phenox_pk_id 
+                  and genox_geno_zdb_id = geno_zdb_id
+                  and phenox_start_stg_zdb_id = st1.stg_zdb_id
+                  and phenox_end_stg_zdb_id = st2.stg_zdb_id
+               order by phenox_genox_zdb_id, geno_display_name, pheno_link, sh1">
 
                     <?MIVAR NAME=$fxphenoinfo_geno_name>$1<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_start_stage>$2<?/MIVAR>
@@ -77,20 +67,20 @@ EFFECTS
                     <?MIVAR NAME=$fxphenoinfo_genox>$4<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_stage1>$5<?/MIVAR>
                     <?MIVAR NAME=$fxphenoinfo_stage2>$6<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_tag>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_quality_name>$11<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_genolink>$12<?/MIVAR>
-                    <?MIVAR NAME=$fxphenoinfo_link>$13<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_genolink>$9<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_phenolink>$10<?/MIVAR>
+                    <?MIVAR NAME=$fxphenoinfo_phenopopuplink>$11<?/MIVAR>
+
 
 
                     <?MIBLOCK COND=$(EQ,$fxphenoinfo_start_stage,$fxphenoinfo_end_stage)>
                       <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1<?/MIVAR>
                     <?MIELSE>
                      <?MIBLOCK COND="$(NE,$fxphenoinfo_stage2,Unknown)">
-                      <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1 to $fxphenoinfo_stage2<?/MIVAR>
-                    <?MIELSE>
-                      <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1<?/MIVAR>
-                    <?/MIBLOCK>
+                       <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1 to $fxphenoinfo_stage2<?/MIVAR>
+                     <?MIELSE>
+                       <?MIVAR NAME=$fxphenoinfo_stage>$fxphenoinfo_stage1<?/MIVAR>
+                     <?/MIBLOCK>
                     <?/MIBLOCK>
 
 
@@ -112,13 +102,8 @@ EFFECTS
                            <td></td>
                        <?/MIBLOCK>
 
-                       <td><?MIVAR>$fxphenoinfo_link<?/MIVAR></td>
-<?MIBLOCK COND="$(OR,$(EC,$fxphenoinfo_quality_name,quantitative),$(EC,$fxphenoinfo_quality_name,quality))">
-                   <td><?MIVAR>$fxphenoinfo_tag<?/MIVAR></td> 
-<?MIELSE>
+                       <td><?MIVAR>$fxphenoinfo_phenolink $fxphenoinfo_phenopopuplink<?/MIVAR></td>
 
-                   <td><?MIVAR>$fxphenoinfo_quality_name, $fxphenoinfo_tag<?/MIVAR></td> 
-<?/MIBLOCK>
                <!--set variables-->     
                     <?MIBLOCK COND=$(EQ,$3,$4)>
                       <?MIVAR NAME=$fxphenoinfo_laststage>$3<?/MIVAR>

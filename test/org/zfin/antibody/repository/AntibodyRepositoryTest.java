@@ -361,6 +361,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                     foundGene = true;
                 }
                 Set<MarkerAlias> aliases = marker.getAliases();
+                if (aliases == null)
+                    continue;
                 for (MarkerAlias alias : aliases) {
                     if (alias.getAlias().indexOf(antigenName) > -1) {
                         foundAB = ab;
@@ -447,6 +449,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                     foundGene = true;
                 }
                 Set<MarkerAlias> aliases = marker.getAliases();
+                if (aliases == null)
+                    continue;
                 for (MarkerAlias alias : aliases) {
                     if (alias.getAlias().indexOf(antigenName) > -1) {
                         foundAB = ab;

@@ -23,16 +23,35 @@ create function get_postcomposed_term_html ( supertermZdbId varchar(50),
   -- --------------------------------------------------------------------- 
 
   define resultHtml lvarchar;
-  define supertermHtml lvarchar;
-  define subtermHtml lvarchar;
+  define supertermId lvarchar;
+  define supertermName lvarchar;
+  define supertermOntology lvarchar;
+  define subtermId lvarchar;
+  define subtermName lvarchar;
+  define subtermOntology lvarchar; 
 
-  let supertermHtml = get_entity_name_html(supertermZdbId);
-  let subtermHtml = get_entity_name_html(subtermZdbId);
+  select term_name, term_ont_id, term_ontology
+  into supertermName, supertermID, supertermOntology
+  from term
+  where term_zdb_id = supertermZdbId;
 
-  if (subtermHtml is not null) then
-    let resultHtml = '<span class=postcomposedtermlink>' || supertermHtml || '&nbsp;' || subtermHtml || '</span>' ;
+  select term_name, term_ont_id, term_ontology
+  into subtermName, subtermID, subtermOntology
+  from term
+  where term_zdb_id = subtermZdbId;
+
+
+  -- todo: add ontology name as a span title?
+
+  if (subtermID is null) then
+    let resultHtml = get_entity_name_html(supertermZdbId);
   else 
-    let resultHtml = supertermHtml;
+    let resultHtml = '<a href="/action/ontology/post-composed-term-detail?superTermID=' 
+                     || supertermID || '&subTermID=' || subtermID || '">' 
+                     || supertermName || '&nbsp;' || subtermName || '</a>' 
+                     || '<a class="popup-link data-popup-link"'
+                     || ' href="/action/ontology/post-composed-term-detail-popup?superTermID=' 
+                     || supertermID || '&subTermID=' || subtermID || '"></a>';
   end if
 
   return resultHtml;

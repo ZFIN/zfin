@@ -17,6 +17,7 @@ public class CurationTestController extends SimplePassThroughController {
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        publicationID = httpServletRequest.getParameter("publicationID");
         if (StringUtils.isEmpty(publicationID))
             publicationID = "ZDB-PUB-961014-496";
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);

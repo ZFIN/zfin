@@ -1,6 +1,4 @@
--- loadTerms.sql
-
---begin work;
+begin work;
 
 create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(30), remark varchar(100))
 with no log;
@@ -8,8 +6,7 @@ with no log;
 load from ontology_header.unl
   insert into tmp_header;
 
-unload to 'debug' 
-	Select * from tmp_header;
+select * from tmp_header;
 
 create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
 with no log;
@@ -17,30 +14,14 @@ with no log;
 load from syntypedefs_header.unl
   insert into tmp_syndef;
 
-unload to 'debug'
-	Select * from tmp_syndef;
-
 update tmp_syndef
   set scoper = trim(scoper);
 
-update tmp_syndef
-  set scoper = type
-  where scoper is null;
+--update tmp_syndef
+--  set scoper = type
+--  where scoper is null;
 
-update tmp_syndef
-  set scoper = 'exact alias'
- where scoper = 'EXACT';
-
-update tmp_syndef
-  set scoper = 'plural'
-  where scoper = 'PLURAL';
-
-update tmp_syndef
-  set type = 'plural'
-  where type = 'PLURAL';
-
-unload to 'debug'
-	Select * from tmp_syndef;
+select * from tmp_syndef;
 
 delete from tmp_syndef
   where exists (select 'x' from alias_group
@@ -51,7 +32,8 @@ delete from tmp_syndef
 --  where not exists (Select 'x' from alias_scope
 --  	    	   	   where aliasscope_scope = scoper);
 
-insert into alias_scope (aliasscope_scope)
+!echo "alias_scope new addition.";
+unload to new_scopes.unl
   select distinct scoper from tmp_syndef
   where not exists (Select 'x' from alias_scope
   	    	   	   where aliasscope_scope = scoper)
@@ -61,24 +43,21 @@ update alias_group
   set aliasgrp_definition  = (select def from tmp_syndef
       			     	     where type = aliasgrp_name);
 
-!echo "alias_group new group addition";
-insert into alias_group (aliasgrp_name, aliasgrp_significance, aliasgrp_definition, aliasgrp_aliasscope_id)
-   select trim(type), 
-   	  (select max(aliasgrp_significance)+1 from alias_group),
-   	  trim(def),
-	  (select aliasscope_pk_id from alias_scope where aliasscope_scope = trim(scoper))
+!echo "alias_group new group addition.";
+unload to new_aliases.unl
+   select trim(type) as aliasType,
+   	  (select max(aliasgrp_significance)+1 from alias_group) as aliasGroupSignificance,
+   	  trim(def) as definition
      from tmp_syndef
-     where not exists (Select 'x' from alias_group 
+     where not exists (Select 'x' from alias_group
      	       	      	      where aliasgrp_name = type);
 
 create temp table tmp_suggestion (id varchar(30), suggested_id varchar(30), consider varchar(10))
 with no log;
 
-load from term_consider.unl 
+load from term_consider.unl
  insert into tmp_suggestion;
 
-unload to 'debug'
-	Select * from tmp_suggestion;
 
 create temp table tmp_term_onto_with_dups (
 		term_id			varchar(50),
@@ -93,22 +72,11 @@ create temp table tmp_term_onto_with_dups (
 
 load from term_parsed.unl insert into tmp_term_onto_with_dups;
 
-unload to 'debug'
-	Select * from tmp_term_onto_with_dups;
-
 update tmp_term_onto_with_dups
-  set term_onto = (Select default_namespace 
+  set term_onto = (Select default_namespace
       		  	  from tmp_header
 			  )
 where term_onto is null;
-
-unload to 'debug' 
-	Select default_namespace 
-      		  	  from tmp_header;
-
-
-unload to 'default_namespace.txt'
-    Select default_namespace from tmp_header;
 
 create temp table tmp_term_onto_no_dups (
 		term_id			varchar(50),
@@ -119,13 +87,12 @@ create temp table tmp_term_onto_no_dups (
 		term_is_obsolete	boolean default 'f'
 	)with no log;
 
-
 insert into tmp_term_onto_no_dups
-  select distinct term_id, 
-			trim(term_name), 
-			term_onto, 
+  select distinct term_id,
+			trim(term_name),
+			term_onto,
 			trim(term_definition),
-			term_comment, 
+			term_comment,
 			term_is_obsolete
 	from tmp_term_onto_with_dups ;
 
@@ -152,26 +119,28 @@ create temp table tmp_term 	(
 			 term_ontology		varchar(30),
 			 term_definition	lvarchar,
 			 term_comment		lvarchar,
-			 term_is_obsolete	boolean default 'f'
+			 term_is_obsolete	boolean default 'f',
+			 term_ontology_id  int8
 	)
 with no log;
 
-insert into tmp_term (term_zdb_id, 
-			term_id, 
-			term_name, 
+insert into tmp_term (
+			term_id,
+			term_name,
 			term_ontology,
 			term_is_obsolete,
 			term_definition,
-			term_comment)
-  select get_id('TERM'),
-	term_id,
+			term_comment,
+			term_ontology_id)
+	select term_id,
 	term_name,
 	term_onto,
 	term_is_obsolete,
 	term_definition,
-	term_comment
+	term_comment,
+	(select ont_pk_id from ontology, tmp_header where ont_ontology_name = default_namespace)
     from tmp_term_onto_no_dups ;
-	
+
 unload to 'new_terms.unl'
   select term_id, term_name
     from tmp_term
@@ -180,90 +149,245 @@ unload to 'new_terms.unl'
 			   where term.term_ont_id = tmp_term.term_id);
 
 
-unload to 'debug'
-  select *
-    from tmp_term_onto_no_dups n; 
+select * from tmp_term_onto_with_dups
+ where term_id = 'GO:0000758' ;
 
--- somehow java does not get the correct values when trying to use this unload statament directly.
--- work around: create temp table, load the updated terms into it and then unload that table.
+select * from tmp_term_onto_no_dups
+ where term_id = 'GO:0000758' ;
 
-create temp table updated_terms (new_Term varchar(255), old_Term varchar(255), id varchar(50))
-with no log;
+select * from term
+ where term_ont_id = 'GO:0000758' ;
 
-insert into updated_terms
+
+unload to 'updated_terms.unl'
   select n.term_name, g.term_name, g.term_ont_id
     from tmp_term_onto_no_dups n, term g
     where n.term_id = g.term_ont_id
-    and n.term_name != g.term_name;
-
-unload to 'updated_terms.unl'
-  select new_Term, old_term, id from updated_terms;
+    and n.term_name not like g.term_name;
 
 !echo "update the term table with new names where the term id is the same term id in the obo file" ;
 
---update statistics high for table tmp_term; 
+--update statistics high for table tmp_term;
+
+-- filter out term records that need to be update because
+-- the name has changed
+
+create temp table tmp_term_name_changed 	(
+			 term_id		varchar(50),
+			 term_name		varchar(255)
+	)
+with no log;
+
+--unload to debug
+--  select * from tmp_term_onto_no_dups;
+
+insert into tmp_term_name_changed 
+  select
+  	no_dups.term_id,
+  	no_dups.term_name
+  from tmp_term_onto_no_dups no_dups, TERM term
+  where 
+  	term.term_ont_id = no_dups.term_id AND
+  	term.term_name != no_dups.term_name AND
+        term.term_is_Secondary = 'f';
+
+unload to modified_term_names.unl
+  select newTerm.term_name, oldTerm.term_name, oldTerm.term_ont_id 
+  from tmp_term_name_changed newTerm, TERM oldTerm;
+
+unload to debug
+  select term_name, term_id from tmp_term_name_changed;
+
+unload to debug
+  select a.term_name, term.term_name, term.term_ont_id
+  from tmp_term_name_changed a, term term
+		   where term.term_ont_id = a.term_id;
 
 update term
-  set term_name = (select a.term_name 
-			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id)
-  where exists (select 'x'
-			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id)
-  and term_is_obsolete = 'f'
- and term_is_Secondary = 'f';
+  set term_name = (select a.term_name
+   		   from tmp_term_name_changed a
+		   where term_ont_id = a.term_id)
+where exists (select 'x'
+		from tmp_term_name_changed a
+		where term_ont_id = term_id);
 
+-- filter out term records with modified definitions
+create temp table tmp_term_definition_changed 	(
+			 term_definition		lvarchar,
+			 term_definition_old		lvarchar,
+			 term_id		varchar(50)
+	)
+with no log;
 
---select count(*) from term 
--- where exists (select a.term_definition 
---			from tmp_term_onto_no_dups a
---			where term_ont_id = term_id);
---select first 5* from tmp_term_onto_no_dups;
+insert into tmp_term_definition_changed 
+  select
+  	no_dups.term_definition,
+  	term.term_definition,
+  	no_dups.term_id
+  from tmp_term_onto_no_dups no_dups, TERM term
+  where 
+  	term.term_ont_id = no_dups.term_id AND
+  	term.term_definition != no_dups.term_definition AND
+        term.term_is_Secondary = 'f';
+
+unload to modified_term_definitions.unl
+  select * from tmp_term_definition_changed;
 
 update term
-  set term_definition = (select a.term_definition 
-			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id
-			)
-  where exists (select 'x'
-			from tmp_term_onto_no_dups a
-			where term_ont_id = term_id)
-  and term_is_obsolete = 'f'
- and term_is_secondary = 'f';
+  set term_definition = (select a.term_definition
+   		   from tmp_term_definition_changed a
+		   where term_ont_id = a.term_id)
+where exists (select 'x'
+		from tmp_term_definition_changed a
+		where term_ont_id = term_id);
 
 
-!echo "insert the new term_ids into zdb_active_data" ;
+-- filter out term records with modified comments
+create temp table tmp_term_comment_changed 	(
+			 term_comment		lvarchar,
+			 term_comment_old		lvarchar,
+			 term_id		varchar(50)
+	)
+with no log;
 
-delete from tmp_term
-  where exists (select 'x' from term where term_ont_id = term_id);
+insert into tmp_term_comment_changed 
+  select
+  	no_dups.term_comment,
+  	term.term_comment,
+  	no_dups.term_id
+  from tmp_term_onto_no_dups no_dups, TERM term
+  where 
+  	term.term_ont_id = no_dups.term_id AND
+  	term.term_comment != no_dups.term_comment AND
+        term.term_is_Secondary = 'f';
 
-insert into zdb_active_data 
-  select term_Zdb_id
-    from tmp_term 
-    where not exists (Select 'x'
-			from zdb_active_data
-			where zactvd_zdb_id = term_zdb_id);
+--unload to debug
+--  select term_comment, term_id from tmp_term_comment_changed;
+
+--unload to modified_term_comments.unl
+--  select newTerm.term_comment, oldTerm.term_comment, oldTerm.term_ont_id
+--  from tmp_term_comment_changed newTerm, TERM oldTerm;
+
+update term
+  set term_comment = (select a.term_comment
+   		   from tmp_term_comment_changed a
+		   where term_ont_id = a.term_id)
+where exists (select 'x'
+		from tmp_term_comment_changed a
+		where term_ont_id = term_id);
+
 
 --!echo "insert the new terms into the term table, obsolete and all" ;
 
 update tmp_term
   set term_is_obsolete = 'f'
-  where term_is_obsolete is null ; 
+  where term_is_obsolete is null ;
 
-insert into term (term_zdb_id, 
-			term_ont_id, 
-			term_name, 
+update ontology
+  set ont_format_version = (Select format_ver from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+update ontology
+  set ont_data_version = (Select data_ver from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+update ontology
+  set ont_current_date = (Select datet from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+update ontology
+  set ont_saved_by = (Select saved_by from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+update ontology
+  set ont_import = (Select auto from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+update ontology
+  set ont_remark = (Select remark from tmp_header where default_namespace = ont_default_namespace)
+  where exists (Select 'x' from tmp_header where ont_default_namespace = default_namespace);
+
+
+!echo "this is where new ontologies are born.";
+
+  select distinct term_ontology,
+  	 	  (select max(ont_order)+1 from ontology),
+		  format_ver,
+		  default_namespace,
+		  data_ver,
+		  saved_by,
+		  remark
+   from tmp_term, tmp_header
+  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
+
+insert into ontology (ont_ontology_name,
+       	    	     ont_order,
+		     ont_format_version,
+		     ont_default_namespace,
+		     ont_data_version,
+		     ont_saved_by,
+		     ont_remark)
+  select distinct term_ontology,
+  	 	  (select max(ont_order)+1 from ontology),
+		  format_ver,
+		  default_namespace,
+		  data_ver,
+		  saved_by,
+		  remark
+   from tmp_term, tmp_header
+  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
+
+
+unload to debug
+ select * from ontology;
+-- get term IDs for new terms
+
+--unload to debug
+-- select * from tmp_term;
+
+-- remove terms that already exist in TERM table
+-- and keep only the new terms.
+delete from tmp_term
+  where exists (select 'x' from term where term_ont_id = term_id);
+
+!echo "number of records in tmp_term before removing existing terms" ;
+
+-- unload to debug
+-- select * from tmp_term;
+
+update tmp_term set term_zdb_id =  get_id('TERM');
+
+!echo "number of records in tmp_term after  removing existing terms" ;
+
+unload to debug
+  select * from tmp_term;
+
+!echo "insert the new term_ids into zdb_active_data" ;
+
+-- insert new ids into zdb_active_data
+insert into zdb_active_data
+  select term_Zdb_id
+    from tmp_term
+    where not exists (Select 'x'
+			from zdb_active_data
+			where zactvd_zdb_id = term_zdb_id);
+
+insert into term (term_zdb_id,
+			term_ont_id,
+			term_name,
 			term_ontology,
 			term_is_obsolete,
 			term_comment,
-			term_definition)
+			term_definition,
+			term_ontology_Id)
   select term_zdb_id,
 	term_id,
 	term_name,
 	term_ontology,
 	term_is_obsolete,
 	term_comment,
-	term_definition
+	term_definition,
+	term_ontology_id
     from tmp_term ;
 
 --update statistics high for table term ;
@@ -274,6 +398,22 @@ with no log ;
 load from term_obsolete.unl
   insert into tmp_obsoletes ;
 
+!echo "Number of total obsoletes in obo file";
+
+unload to debug
+    select count(*) from tmp_obsoletes;
+
+delete from tmp_obsoletes
+where exists ( select 'x'
+		from tmp_obsoletes obsolete, term term
+		where term.term_ont_id = obsolete.term_id
+		      AND term.term_is_obsolete = 't');
+
+!echo "Terms that were obsoleted: ";
+
+unload to debug
+    select * from tmp_obsoletes;
+
 update term
   set term_is_obsolete = 't'
   where exists (select 'x'
@@ -283,7 +423,7 @@ update term
 --secondary terms.
 
 
-create temp table sec_dups 
+create temp table sec_dups
   (
     prim_id varchar(50),
     sec_id varchar(50)
@@ -295,8 +435,8 @@ load from term_secondary.unl
 create temp table sec_oks
   (
     prim_id varchar(50),
-    sec_id varchar(50), 
-    prim_zdb_id varchar(50), 
+    sec_id varchar(50),
+    prim_zdb_id varchar(50),
     sec_zdb_id varchar(50)
   );
 
@@ -307,16 +447,16 @@ insert into sec_oks (sec_id, prim_id)
     from sec_dups ;
 
 update sec_oks
-  set prim_zdb_id = (select term_zdb_id 
+  set prim_zdb_id = (select term_zdb_id
       		       from term
 		       where term_ont_id = prim_id);
 
 update sec_oks
-  set sec_zdb_id = (select term_zdb_id 
+  set sec_zdb_id = (select term_zdb_id
       		       from term
 		       where term_ont_id = sec_id);
 
-create temp table sec_unload 
+create temp table sec_unload
   (
     prim_id varchar(50),
     sec_id varchar(50)
@@ -325,6 +465,29 @@ create temp table sec_unload
 --update the secondary terms in ZFIN
 
 !echo "here is the secondary update for  terms" ;
+
+!echo "Number of secondary (merged) terms in obo file";
+
+unload to debug
+    select count(*) from sec_oks;
+
+!echo "Secondary (merged) terms in obo file";
+
+unload to debug
+    select * from sec_oks;
+
+-- delete existing secondary from temp table as they need not be dealt with any more.
+
+delete from sec_oks
+where exists ( select 'x'
+		from sec_oks, term
+		where term_ont_id = sec_id
+		      AND term_is_secondary = 't');
+
+!echo "Terms that were merged (became secondary): ";
+
+unload to debug
+    select * from sec_oks;
 
 update term
   set term_is_secondary = 't'
@@ -340,15 +503,15 @@ update term
 --    and not exists (Select 'x'
 --		  from sec_oks
 --		  where term_ont_id = sec_id);
- 
+
 --set these back to primary for now
 
 --update term
 --  set term_is_secondary = 'f'
 --  where not exists (Select 'x'
 --		  from sec_oks
---		  where term_ont_id = sec_id) 
---  and term_is_secondary = 't' 
+--		  where term_ont_id = sec_id)
+--  and term_is_secondary = 't'
 
 
 !echo "now deal with relationships" ;
@@ -359,24 +522,11 @@ create temp table tmp_rels (
 	termrel_type varchar(100)
  ) with no log ;
 
-create index tmp_rels_1_index 
-  on tmp_rels (termrel_term_1_id)
-  using btree in idxdbs3;
-
-create index tmp_rels_2_index 
-  on tmp_rels (termrel_term_2_id)
-  using btree in idxdbs3;
-
-create index tmp_reltype_index_rels
-  on tmp_rels (termrel_type)
-  using btree in idxdbs3;
-
 
 load from term_relationships.unl
   insert into tmp_rels ;
 
-unload to 'debug'
-    Select * from tmp_rels;
+select distinct termrel_type from tmp_rels;
 
 insert into term_relationship_type (termreltype_name)
   select distinct termrel_type from tmp_rels
@@ -416,7 +566,7 @@ update tmp_rels_zdb
 --update statistics high for table tmp_rels ;
 --update statistics high for table term ;
 
-delete from tmp_rels_zdb 
+delete from tmp_rels_zdb
  where exists (Select 'x' from term_relationship a
        	      	      where ttermrel_term_1_zdb_id = a.termrel_term_1_zdb_id
 		      and ttermrel_term_2_zdb_id = a.termrel_term_2_zdb_id
@@ -445,17 +595,30 @@ update tmp_zfin_rels
   set termrel_zdb_id = get_id("TERMREL");
 
 
-create index tmp_rel_1_index 
+create index tmp_rel_1_index
   on tmp_zfin_rels (termrel_term_1_zdb_id)
   using btree in idxdbs2;
 
-create index tmp_rel_2_index 
+create index tmp_rel_2_index
   on tmp_zfin_rels (termrel_term_2_zdb_id)
   using btree in idxdbs2;
 
-create index tmp_reltype_index_zfin_rels 
+create index tmp_reltype_index_zfin_rels
   on tmp_zfin_rels (termrel_type)
   using btree in idxdbs2;
+
+
+create index tmp_rels_1_index
+  on tmp_rels (termrel_term_1_id)
+  using btree in idxdbs3;
+
+create index tmp_rels_2_index
+  on tmp_rels (termrel_term_2_id)
+  using btree in idxdbs3;
+
+create index tmp_reltype_index_rels
+  on tmp_rels (termrel_type)
+  using btree in idxdbs3;
 
 
 --update statistics high for table zdb_active_data;
@@ -465,12 +628,12 @@ create index tmp_reltype_index_zfin_rels
 
 !echo "add any new term relationship types" ;
 
-insert into term_relationship_type 
+insert into term_relationship_type
   select distinct termrel_type
 		from tmp_zfin_rels
 		where not exists (Select 'x'
 					from term_relationship_type
-					where termreltype_name = termrel_type); 
+					where termreltype_name = termrel_type);
 
 !echo "term relationships with null term_2s?";
 
@@ -479,7 +642,7 @@ delete from tmp_zfin_rels
 
 insert into zdb_active_data
   select termrel_zdb_id
-    from tmp_zfin_rels 
+    from tmp_zfin_rels
 	where not exists (select 'x'
 				from zdb_active_data
 				where zactvd_zdb_id = termrel_zdb_id);
@@ -528,10 +691,6 @@ delete from term_relationship
 create temp table tmp_syns (term_id varchar(30),synonym varchar(255),scoper varchar(30),type varchar(30), syn varchar(30))
 with no log;
 
-create index tmp_syn_synonym_index
-  on tmp_syns(synonym)
-  using btree in idxdbs3;
-
 
 !echo "start of the synonym loading";
 load from term_synonyms.unl
@@ -545,32 +704,12 @@ update tmp_syns
   where trim(type) like "[%";
 
 update tmp_syns
-  set scoper = 'narrow alias'
-  where scoper ='NARROW';
-
-update tmp_syns
-  set scoper = 'exact alias'
-  where scoper = 'EXACT';
-
-update tmp_syns
-  set scoper = 'broad alias'
-  where scoper = 'BROAD';
-
-update tmp_syns
-  set scoper = 'related alias'
-  where scoper = 'RELATED';
-
-update tmp_syns
-  set scoper = 'plural'
-  where scoper = 'PLURAL';
-
-update tmp_syns
-  set type = scoper
+  set type = 'alias'
   where type is null ;
 
-update tmp_syns
-  set type = 'plural'
- where type = 'PLURAL';
+create index tmp_syn_synonym_index
+  on tmp_syns(synonym)
+  using btree in idxdbs3;
 
 --update statistics high for table tmp_syns;
 --update statistics high for table data_alias;
@@ -578,9 +717,9 @@ update tmp_syns
 --update statistics high for table tmp_term_onto_no_dups;
 
 insert into alias_scope (aliasscope_scope)
-  select distinct scoper 
+  select distinct scoper
   	 from tmp_syns
-  	 where not  exists (Select 'x'	
+  	 where not  exists (Select 'x'
 	       	    	   	   from alias_scope
 				   where aliasscope_scope = scoper);
 
@@ -603,12 +742,12 @@ delete from tmp_syns
 		       and term_ont_id = term_id
 		       and dalias_group_id = aliasgrp_pk_id
 		       and dalias_alias = synonym);
-  	       	       
+
 
 --update data_alias
---  set dalias_group_id = (select aliasgrp_pk_id 
---      		      	    from tmp_syns, 
---      		      		term, 
+--  set dalias_group_id = (select aliasgrp_pk_id
+--      		      	    from tmp_syns,
+--      		      		term,
 --				alias_group
 --      		    	    where term_ont_id = term_id
 --			    and aliasgrp_name = type
@@ -639,9 +778,16 @@ select count(*) from tmp_syns_with_ids where data_id is not null;
 
 delete from tmp_syns_with_ids where data_id is null;
 
+
+delete from tmp_syns_with_ids where not exists (Select 'x' from alias_group
+       	    		      	    	       where aliasgrp_name = type);
+
+delete from tmp_syns_with_ids where not exists (Select 'x' from alias_scope
+       	    		      	    	       where aliasscope_scope = scoper);
+
 select distinct type from tmp_syns_with_ids;
 
-select distinct scoper from tmp_syns_with_ids;
+select distinct scoper from tmp_syns_with_ids where scoper != type;
 
 update tmp_syns_with_ids
   set zdb_id = get_id("DALIAS");
@@ -649,14 +795,14 @@ update tmp_syns_with_ids
 insert into zdb_active_data
   select zdb_id from tmp_syns_with_ids;
 
-select distinct type 
+select distinct type
   from tmp_syns_with_ids
-  where not exists (Select 'x' 
-  	    	   	   from alias_group 
+  where not exists (Select 'x'
+  	    	   	   from alias_group
 			   where aliasgrp_name = type);
-			   
-insert into data_alias (dalias_zdb_id, dalias_alias, dalias_group_id, dalias_data_zdb_id)
-  select zdb_id, synonym, (select aliasgrp_pk_id from alias_group where trim(aliasgrp_name)=type),data_id
+
+insert into data_alias (dalias_zdb_id, dalias_alias, dalias_group_id, dalias_scope_id, dalias_data_zdb_id)
+  select zdb_id, synonym, (select aliasgrp_pk_id from alias_group where aliasgrp_name = type), (select aliasscope_pk_id from alias_scope where trim(aliasscope_scope)=scoper),data_id
     from tmp_syns_with_ids;
 
 select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
@@ -679,11 +825,11 @@ select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
 --create temp table tmp_xrefs_with_fdbcont_dblink (id varchar(30), xref_db varchar(100),xref_id varchar(100), xref varchar(10), fdbcont_id varchar(50), dblink_id varchar(50))
 -- with no log;
 
---select distinct xref_db from tmp_xrefs where not exists 
---(Select 'x' from foreign_db 
+--select distinct xref_db from tmp_xrefs where not exists
+--(Select 'x' from foreign_db
 --  	    	   	   where fdb_db_name = xref_db);
 --delete from tmp_xrefs
---  where not exists (Select 'x' from foreign_db 
+--  where not exists (Select 'x' from foreign_db
 --  	    	   	   where fdb_db_name = xref_db);
 
 --insert into tmp_xrefs_with_fdbcont_dblink (id, xref_db, xref_id, xref,fdbcont_id)
@@ -724,7 +870,7 @@ select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
 --insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id, dblink_acc_num_display)
 --  select dblink_id, (select term_zdb_id from term where term_ont_id = id),
 --  	 xref_id,fdbcont_id,xref_id
---    from tmp_xrefs_with_fdbcont_dblink; 
+--    from tmp_xrefs_with_fdbcont_dblink;
 
 
 !echo "load term replacements";
@@ -770,10 +916,23 @@ with no log;
 load from subsetdefs_header.unl
   insert into tmp_subset;
 
+  select default_namespace from tmp_header;
+
+  Select * from ontology_subset, ontology, tmp_header
+		       where default_namespace = ont_default_namespace
+		       and ont_pk_id = osubset_ont_id;
+
 delete from tmp_subset
-  where exists (Select 'x' from ontology_subset
+  where exists (Select 'x' from ontology_subset, ontology, tmp_header
   	       	       where osubset_subset_name = subset_name
-		       and osubset_subset_definition =subset_def);
+		       and osubset_subset_definition =subset_def
+		       and default_namespace = ont_default_namespace
+		       and ont_pk_id = osubset_ont_id);
+
+!echo "records in tmp_subset after deletion.";
+
+unload to 'debug'
+  select * from tmp_subset;
 
 update ontology_subset
    set osubset_subset_definition = (select subset_def 
@@ -783,13 +942,14 @@ update ontology_subset
    	 		where subset_name =osubset_subset_name
 			and subset_def != osubset_subset_definition); 
 
-insert into ontology_subset(osubset_subset_name, osubset_subset_definition)
-  select distinct subset_name, subset_def
-    from tmp_subset
+insert into ontology_subset(osubset_subset_name, osubset_subset_definition, osubset_ont_id)
+  select distinct subset_name, subset_def, ont_pk_id
+    from tmp_subset, ontology, tmp_header
    where not exists (Select 'x' from ontology_subset
    	     	    	    where osubset_subset_name = subset_name
-			    and subset_def = osubset_subset_definition);
-
+			    and subset_def = osubset_subset_definition
+		        and osubset_ont_id = ont_pk_id)
+   and 	default_namespace = ont_default_namespace;
 
 create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(40), subset varchar(10))
  with no log;
@@ -797,16 +957,35 @@ create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(40),
 load from term_subset.unl
   insert into tmp_term_subset;
 
-unload to 'debug'
-	Select * from tmp_term_subset;
-
 !echo "delete from term_subset";
+
+unload to delete_term_subset
+select * from term_subset
+  where not exists (Select 'x' from tmp_term_subset, term, ontology_subset
+  	    	   	   where term_id = term_ont_id
+			   and termsub_subset_id = osubset_pk_id
+			   and subset_name = osubset_subset_name)
+  and exists (Select 'x' from tmp_term, term
+      	     	     where term_ont_id = term_id
+		     );
 
 
 delete from term_subset
-       where exists (select 'x' from ontology_subset, tmp_term_subset
-			    where osubset_pk_id = termsub_subset_id
-			    and subset_name = osubset_subset_name);
+  where not exists (Select 'x' from tmp_term_subset, term, ontology_subset
+  	    	   	   where term_id = term_ont_id 
+			   and termsub_subset_id = osubset_pk_id
+			   and subset_name = osubset_subset_name) 
+  and exists (Select 'x' from tmp_term, term
+      	     	     where term_ont_id = term_id
+		     );
+
+
+delete from tmp_term_subset
+  where exists (select 'x' from term_subset, ontology_subset, term
+  	       	       where term_ont_id = term_id
+		       and termsub_subset_id = osubset_pk_id
+		       and subset_name = osubset_subset_name);
+
 
 insert into term_subset (termsub_term_zdb_id, termsub_subset_id)
   select distinct term_zdb_id, osubset_pk_id
@@ -815,57 +994,6 @@ insert into term_subset (termsub_term_zdb_id, termsub_subset_id)
     and osubset_subset_name = subset_name;
 
 
---create a table for unload to report
-
-insert into sec_unload (sec_id, prim_id)
-  select sec_id, prim_id
-    from sec_oks
-    where exists (select 'x' from
-		    term where term_ont_id = sec_id) ;
-
-unload to 'sec_unload.unl'
-  select * from sec_unload;
-
-unload to 'debug'
-  select * from sec_unload;
-
-create temp table sec_unload_report
-  (
-    sec_id varchar(50),
-    prim_id varchar(50),
-    term_name varchar(255),
-    onto varchar(50),
-    geno_handle	varchar(255),
-    exp_name varchar(255),
-    apato_pub_zdb_id varchar(50)
-  );
-
-insert into sec_unload_report
-  select sec_id,
-	prim_id,
-	term_name,
-	term_ontology,
- 	geno_handle,
-	exp_name,
-	apato_pub_zdb_id
-    from sec_unload,
-		term,
-		atomic_phenotype,
-		genotype,
-		genotype_experiment,
-		experiment
-    where sec_id = term_ont_id
-    and apato_quality_zdb_id = term_zdb_id
-    and apato_genox_zdb_id = genox_zdb_id
-    and genox_exP_zdb_id = exp_zdb_id
-    and genox_geno_zdb_id = geno_zdb_id ;
-
-unload to 'sec_unload_report.unl'
-  select * from sec_unload_report;
-
-unload to 'debug'
-  select * from sec_unload_report;
-
 --rollback work;
---commit work;
+commit work;
 

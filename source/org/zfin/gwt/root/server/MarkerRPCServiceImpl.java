@@ -1,6 +1,5 @@
 package org.zfin.gwt.root.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -13,6 +12,7 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.gwt.root.ui.DBLinkNotFoundException;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
@@ -40,7 +40,7 @@ import java.util.*;
 
 /**
  */
-public class MarkerRPCServiceImpl extends RemoteServiceServlet implements MarkerRPCService {
+public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements MarkerRPCService {
 
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();

@@ -2,9 +2,6 @@ package org.zfin.publication;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
-import org.zfin.mutant.Phenotype;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -31,7 +28,6 @@ public class Publication implements Comparable<Publication>, Serializable {
     private GregorianCalendar closeDate;
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
-    private Set<Phenotype> phenotypes;
     private Set<Figure> figures;
 
     private boolean deletable;
@@ -71,14 +67,6 @@ public class Publication implements Comparable<Publication>, Serializable {
 
     public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
         this.expressionExperiments = expressionExperiments;
-    }
-
-    public Set<Phenotype> getPhenotypes() {
-        return phenotypes;
-    }
-
-    public void setPhenotypes(Set<Phenotype> phenotypes) {
-        this.phenotypes = phenotypes;
     }
 
     public String getAuthors() {
@@ -170,9 +158,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     }
 
     public Set<Figure> getFigures() {
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        return null;
-        //return pr.getFiguresByPublication(zdbID);
+        return figures;
     }
 
     public void setFigures(Set<Figure> figures) {
@@ -220,6 +206,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     }
 
     public int compareTo(Publication anotherPublication) {
+
         if (publicationDate == null)
             return -1;
         if (anotherPublication.getPublicationDate() == null)
@@ -232,6 +219,14 @@ public class Publication implements Comparable<Publication>, Serializable {
         // in case the 2 publications have the same publication dates,
         // compare the authors
         return authors.compareToIgnoreCase(anotherPublication.getAuthors());
+
+        /*
+        if (shortAuthorList == null)
+            return -1;
+        if (anotherPublication.getShortAuthorList() == null)
+            return +1;
+        return shortAuthorList.compareToIgnoreCase(anotherPublication.getShortAuthorList());
+        */
     }
 
     public boolean isUnpublished() {
@@ -257,5 +252,19 @@ public class Publication implements Comparable<Publication>, Serializable {
     public int hashCode() {
         return zdbID.hashCode();
     }
+
+    public boolean isNoFigure () {
+        if (figures == null || figures.isEmpty() ) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isForMutantDataFromOldLiterature () {
+		if (zdbID.equalsIgnoreCase("ZDB-PUB-060503-2")) {
+            return true;
+        }
+        return false;
+	}
 
 }

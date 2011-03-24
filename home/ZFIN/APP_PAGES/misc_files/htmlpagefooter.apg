@@ -1,6 +1,60 @@
 
 </div> <!-- allcontent -->
 
+<script>
+
+function randomUniqueID(prefix) {
+  var id = prefix + Math.floor( Math.random()*99999 );
+  // if the id exists, try again
+  if ( document.getElementById(id) != undefined ) {
+    return randomUniqueID(prefix);
+  } else {
+    return id;
+  }
+
+
+}
+
+function processPopupLinks() {
+  jQuery('.popup-link').each( function() {
+    div_id = randomUniqueID("popup-");
+    jQuery(this).attr("rel","#"+div_id);
+    div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
+    jQuery('body').append(div_html);
+
+
+    if (jQuery(this).overlay != undefined)
+        this.style.display = "inline";
+
+  });
+
+  jQuery('.popup-link').overlay({
+	   mask: {
+  		           color: '#000',
+		           loadSpeed: 100,
+		           opacity: 0.15
+	   },
+	   onBeforeLoad: function() {
+
+
+			// grab wrapper element inside content
+			var wrap = this.getOverlay().find(".popup-content");
+
+			// load the page specified in the trigger
+			wrap.load(this.getTrigger().attr("href"));
+	   }
+
+	});
+}
+
+
+
+jQuery(document).ready(processPopupLinks);
+
+
+</script>
+
+
 <div id="footer">
 
   <div id="footerlinks">

@@ -4,25 +4,27 @@
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
 <c:if test="${formBean.inSituProbesExist}">
-    <b>In Situ Probes</b>: <a href="/zf_info/stars.html"> Recommended </a> by
+<div class="summary">
+<div>
+    <span class="summaryTitle">In Situ Probes</span>: <a href="/zf_info/stars.html"> Recommended </a> by
     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
         Thisse lab</a>
-
-    <TABLE width="100%">
+</div>
+    <TABLE class="summary rowstripes">
         <tbody>
-            <TR class="search-result-table-header">
-                <TD width="20%">
+            <tr>
+                <th width="20%">
                     Gene
-                </TD>
-                <TD width="20%">
+                </th>
+                <th width="20%">
                     Probe
-                </TD>
-                <TD width="60%">
+                </th>
+                <th width="60%">
                     Figures
-                </TD>
-            </TR>
-            <c:forEach var="probeStats" items="${formBean.highQualityProbeGenes}">
-                <tr class="search-result-table-entries">
+                </th>
+            </tr>
+            <c:forEach var="probeStats" items="${formBean.highQualityProbeGenes}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop">
                     <td>
                         <zfin:link entity="${probeStats.genes}"/>
                     </td>
@@ -44,7 +46,7 @@
                                                                 integerEntity="${probeStats.numberOfFigures}"/>
                                 </a>
                             </c:if>
-                            from
+                            <c:if test="${probeStats.numberOfImages > 0}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
                             <c:if test="${probeStats.numberOfPubs ==1}">
                                 <zfin:link entity="${probeStats.singlePub}"/>
                             </c:if>
@@ -55,7 +57,7 @@
                             </c:if>
                         </c:if>
                     </td>
-                </tr>
+                </zfin:alternating-tr>
             </c:forEach>
         </tbody>
     </TABLE>
@@ -67,3 +69,4 @@
                                            allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
                                            totalRecordCount="${formBean.numberOfHighQualityProbes}"/>
 </c:if>  
+</div>

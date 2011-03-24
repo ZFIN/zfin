@@ -3,27 +3,28 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<span class="bold">Mutant and Transgenic Lines</span>
+<div class="summary">
+<div class="summaryTitle">Mutant and Transgenic Lines</div>
 
 <c:if test="${formBean.mutantsExist}">
-    <table width="100%">
+    <table class="summary rowstripes">
         <tbody>
-        <TR class="search-result-table-header">
-            <TD width="20%">
+        <tr>
+            <th width="15%">
                 Genotype (Background)
-            </TD>
-            <TD width="20%">
+            </th>
+            <th width="15%">
                 Affected Genes
-            </TD>
-            <TD width="20%">
+            </th>
+            <th width="50%">
                 Phenotype
-            </TD>
-            <TD width="40%">
+            </th>
+            <th width="20%">
                 Figures
-            </TD>
-        </TR>
-        <c:forEach var="genoStat" items="${formBean.genotypeStatistics}">
-            <tr class="search-result-table-entries">
+            </th>
+        </tr>
+        <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
+            <zfin:alternating-tr loopName="loop">
                 <td>
                     <zfin:link entity="${genoStat.genotype}"/>
                     <c:if test="${fn:length(genoStat.genotype.associatedGenotypes)>0}">
@@ -37,22 +38,9 @@
                     <zfin:link entity="${genoStat.affectedMarkers}"/>
                 </td>
                 <td>
-                    <c:forEach var="phenotypes" items="${genoStat.phenotypeDescriptions}"
-                               varStatus="ontologyLoop">
-                    <c:if test="${phenotypes.key != 'ANATOMY'}">
-                    [${phenotypes.key}]:
-                    <div style="margin-left:20px">
-                        </c:if>
-                        <c:if test="${phenotypes.key == 'ANATOMY'}">
-                        <div style="margin-left:0">
-                            </c:if>
-                            <c:forEach var="phenotype" items="${phenotypes.value}" varStatus="loop">
-                                ${phenotype}<c:if test="${!loop.last}">, </c:if>
-                            </c:forEach>
-                            <c:if test="${!ontologyLoop.last}">
-                        </div>
-                        </c:if>
-                        </c:forEach>
+                    <c:forEach var="statement" items="${genoStat.phenotypeStatements}" varStatus="loop">
+                        <zfin:link entity="${statement}"/>  <c:if test="${!loop.last}"><br/></c:if>
+                    </c:forEach>
                 </td>
                 <td>
                     <c:if test="${genoStat.numberOfFigures > 0}">
@@ -71,7 +59,7 @@
                     <c:if test="${genoStat.numberOfFigures == 0}">
                         --
                     </c:if>
-                    from
+                    <c:if test="${genoStat.imgInFigure}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
                     <c:if test="${genoStat.numberOfPublications ==1}">
                         <zfin:link entity="${genoStat.singlePublication}"/>
                     </c:if>
@@ -84,7 +72,7 @@
                         --
                     </c:if>
                 </td>
-            </tr>
+            </zfin:alternating-tr>
         </c:forEach>
         </tbody>
     </table>
@@ -98,3 +86,4 @@
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
                                        totalRecordCount="${formBean.genotypeCount}"
                                        useWebdriverURL="true"/>
+</div>

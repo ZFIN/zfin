@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
+import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.PostComposedPart;
 import org.zfin.gwt.root.ui.HandlesError;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class PhenotypeCurationModule implements HandlesError {
         StructurePile structureModule = new PhenotypeStructureModule(publicationID);
         mutantExpressionModule.setPileStructure(structureModule);
         structureModule.setExpressionSection(mutantExpressionModule);
-        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = getTermEntryMap();
 
         PileConstructionZoneModule constructionZoneModule = new PileConstructionZoneModule(publicationID, termEntryMap);
         constructionZoneModule.setStructureValidator(new PatoPileStructureValidator(termEntryMap));
@@ -49,32 +49,40 @@ public class PhenotypeCurationModule implements HandlesError {
         pileConstructionZoneModule = constructionZoneModule;
     }
 
-    private Map<PostComposedPart, List<OntologyDTO>> getTermEntryMap() {
-        Map<PostComposedPart, List<OntologyDTO>> termEntryMap = new TreeMap<PostComposedPart, List<OntologyDTO>>();
+    private Map<EntityPart, List<OntologyDTO>> getTermEntryMap() {
+        Map<EntityPart, List<OntologyDTO>> termEntryMap = new TreeMap<EntityPart, List<OntologyDTO>>();
         List<OntologyDTO> superterm = new ArrayList<OntologyDTO>(4);
         superterm.add(OntologyDTO.ANATOMY);
         superterm.add(OntologyDTO.GO_BP_MF);
         superterm.add(OntologyDTO.GO_MF);
         superterm.add(OntologyDTO.GO_BP);
-        termEntryMap.put(PostComposedPart.SUPERTERM, superterm);
+        termEntryMap.put(EntityPart.ENTITY_SUPERTERM, superterm);
 
         List<OntologyDTO> subterm = new ArrayList<OntologyDTO>(4);
         subterm.add(OntologyDTO.ANATOMY);
         subterm.add(OntologyDTO.GO_CC);
         subterm.add(OntologyDTO.GO_MF);
         subterm.add(OntologyDTO.SPATIAL);
-        termEntryMap.put(PostComposedPart.SUBTERM, subterm);
+        termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
 
         List<OntologyDTO> quality = new ArrayList<OntologyDTO>(1);
         quality.add(OntologyDTO.QUALITY_QUALITIES);
         quality.add(OntologyDTO.QUALITY_PROCESSES);
-/*
-        quality.add(OntologyDTO.QUALITY_QUALITATIVE);
-        quality.add(OntologyDTO.QUALITY_QUALITIES_RELATIONAL);
-        quality.add(OntologyDTO.QUALITY_PROCESSES_RELATIONAL);
-*/
-        quality.add(OntologyDTO.QUALITY);
-        termEntryMap.put(PostComposedPart.QUALITY, quality);
+
+        List<OntologyDTO> relatedSuperterm = new ArrayList<OntologyDTO>(3);
+        relatedSuperterm.add(OntologyDTO.ANATOMY);
+        relatedSuperterm.add(OntologyDTO.GO_MF);
+        relatedSuperterm.add(OntologyDTO.GO_BP);
+        termEntryMap.put(EntityPart.RELATED_ENTITY_SUPERTERM, relatedSuperterm);
+
+        List<OntologyDTO> relatedSubterm = new ArrayList<OntologyDTO>(3);
+        relatedSubterm.add(OntologyDTO.ANATOMY);
+        relatedSubterm.add(OntologyDTO.GO_CC);
+        relatedSubterm.add(OntologyDTO.SPATIAL);
+        relatedSubterm.add(OntologyDTO.GO_MF);
+        termEntryMap.put(EntityPart.RELATED_ENTITY_SUBTERM, relatedSubterm);
+
+        termEntryMap.put(EntityPart.QUALITY, quality);
 
         return termEntryMap;
     }

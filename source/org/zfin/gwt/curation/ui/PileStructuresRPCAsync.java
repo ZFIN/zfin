@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.ExpressionPileStructureDTO;
 import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
+import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public interface PileStructuresRPCAsync {
      * @param publicationID Publication
      * @param callback      callback
      */
-    void createPhenotypePileStructure(PhenotypeTermDTO phenotypeTerm, String publicationID, AsyncCallback<PhenotypePileStructureDTO> callback);
+    void createPhenotypePileStructure(PhenotypeStatementDTO phenotypeTerm, String publicationID, AsyncCallback<PhenotypePileStructureDTO> callback);
 
     void deleteStructure(ExpressionPileStructureDTO structure, AsyncCallback<ExpressionPileStructureDTO> callback);
 

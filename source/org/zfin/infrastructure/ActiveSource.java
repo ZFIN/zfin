@@ -17,7 +17,7 @@ public class ActiveSource implements ZdbID, Serializable {
         this.zdbID = zdbID;
     }
 
-    public Type validateID(String zdbID) {
+    public static Type validateID(String zdbID) {
         if (zdbID == null) {
             throw new InvalidZdbID();
         }

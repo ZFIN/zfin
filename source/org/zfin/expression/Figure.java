@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Figure domain business object. It is a figure referenced in a publication.
  */
-public abstract class Figure implements Serializable {
+public abstract class Figure implements Serializable, Comparable<Figure> {
 
     public enum Type {
         FIGURE("figure"),
@@ -113,5 +113,14 @@ public abstract class Figure implements Serializable {
         return zdbID.hashCode();
     }
 
+    public int compareTo(Figure compFig) {
+        return orderingLabel.compareTo(compFig.getOrderingLabel());
+    }
 
+    public boolean isImgless() {
+        if (images == null || images.isEmpty())
+            return true;
+        else
+            return false;
+    }
 }

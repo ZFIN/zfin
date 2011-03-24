@@ -158,6 +158,7 @@ Create dba function regen_feature_ao_fast_search()
 				       fstat_gene_zdb_id,
 				       fstat_fig_zdb_id,
 				       fstat_pub_zdb_id,
+				       fstat_pub_zdb_id,
 				       fstat_xpatres_zdb_id,
 				       fstat_type,
 				       fstat_img_zdb_id
@@ -277,9 +278,8 @@ Create dba function regen_feature_ao_fast_search()
       let errorHint = "rename feature_stats_temp to feature_stats";
       rename table feature_stats to feature_stats_working;
       rename table feature_stats_temp to feature_stats ;
-
-
       truncate table feature_stats_working reuse storage;
+
    commit work;
 
    begin work;

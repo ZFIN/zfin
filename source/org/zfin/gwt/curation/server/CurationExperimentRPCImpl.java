@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +21,7 @@ import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.curation.ui.SessionVariable;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
@@ -29,7 +29,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.*;
@@ -49,7 +49,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
  * Implementation of RPC calls from the client.
  * Handles curation related calls.
  */
-public class CurationExperimentRPCImpl extends RemoteServiceServlet implements CurationExperimentRPC {
+public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implements CurationExperimentRPC {
 
     private final static Logger LOG = RootLogger.getLogger(CurationExperimentRPCImpl.class);
 
@@ -602,11 +602,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
         result.setSuperterm(unspecified);
         result.setExpressionFound(true);
-        ExpressedTermDTO unspecifiedTerm = new ExpressedTermDTO();
-        TermDTO unspecifiedTermDTO = new TermDTO();
-        unspecifiedTermDTO.setName(Term.UNSPECIFIED);
-        unspecifiedTermDTO.setZdbID(unspecified.getZdbID());
-        unspecifiedTerm.setSuperterm(unspecifiedTermDTO);
+        ExpressedTermDTO unspecifiedTerm = DTOConversionService.convertToExpressedTermDTO(unspecified);
         unspecifiedTerm.setExpressionFound(true);
         figureAnnotation.addExpressedTerm(unspecifiedTerm);
         ExpressionRepository expressionRep = RepositoryFactory.getExpressionRepository();
@@ -740,18 +736,14 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
         Figure figure = pubRepository.getFigureByID(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());
-        Phenotype phenotype = new Phenotype();
-        phenotype.setPublication(expressionExperiment.getPublication());
-        phenotype.setEndStage(end);
-        phenotype.setStartStage(start);
-        phenotype.setGenotypeExperiment(expressionExperiment.getGenotypeExperiment());
-        Set<Figure> figures = new HashSet<Figure>(1);
-        figures.add(figure);
-        phenotype.setFigures(figures);
-
+        PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();
+        phenoExperiment.setFigure(figure);
+        phenoExperiment.setStartStage(start);
+        phenoExperiment.setEndStage(end);
+        phenoExperiment.setGenotypeExperiment(expressionExperiment.getGenotypeExperiment());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            phenotypeRep.createDefaultPhenotype(phenotype);
+            phenotypeRep.createPhenotypeExperiment(phenoExperiment);
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
@@ -935,7 +927,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
      */
     public List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
                                                                   StageRangeIntersection intersection) {
-        GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getSuperterm().getZdbID());
+        GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getEntity().getSuperTerm().getZdbID());
         List<TermRelationship> terms = term.getAllDirectlyRelatedTerms();
         List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(terms.size());
         for (TermRelationship rel : terms) {
@@ -970,12 +962,7 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
             return null;
 
         RelatedPileStructureDTO dto = new RelatedPileStructureDTO();
-        ExpressedTermDTO expDto = new ExpressedTermDTO();
-        TermDTO superterm = new TermDTO();
-        superterm.setName(term.getTermName());
-        superterm.setZdbID(term.getZdbID());
-        superterm.setOboID(term.getOboID());
-        expDto.setSuperterm(superterm);
+        ExpressedTermDTO expDto = DTOConversionService.convertToExpressedTermDTO(term);
         dto.setExpressedTerm(expDto);
         return dto;
     }
@@ -1029,16 +1016,10 @@ public class CurationExperimentRPCImpl extends RemoteServiceServlet implements C
 
         // create a new ExpressionResult record
         // create a new ExpressedTermDTO object that is passed back to the RPC caller
-        ExpressedTermDTO expressedTerm = new ExpressedTermDTO();
+        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(expressionStructure);
         ExpressionResult newExpression = new ExpressionResult();
         newExpression.setSubterm(expressionStructure.getSubterm());
         setMainAttributes(experiment, expressionStructure, expressed, newExpression);
-        if (expressionStructure.getSubterm() != null) {
-            TermDTO subtermDto = new TermDTO();
-            subtermDto.setZdbID(expressionStructure.getSubterm().getZdbID());
-            subtermDto.setName(expressionStructure.getSubterm().getTermName());
-            expressedTerm.setSubterm(subtermDto);
-        }
         expRepository.createExpressionResult(newExpression, experiment.getFigure());
         TermDTO subtermDto = new TermDTO();
         subtermDto.setZdbID(expressionStructure.getSuperterm().getZdbID());

@@ -78,4 +78,11 @@ public interface LookupRPCService extends RemoteService {
     Map<String,String> getAllZfinProperties();
 
     TermDTO getTermByName(OntologyDTO ontologyDTO,String value) ;
+
+    /**
+     * Check if a given term name is a quality relational term
+     *
+     * @param termName                    term name
+     */
+    boolean isTermRelationalQuality(String termName);
 }

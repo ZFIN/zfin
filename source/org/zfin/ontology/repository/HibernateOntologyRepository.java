@@ -10,7 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
 import java.util.*;
@@ -57,7 +57,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "        tr.termrel_term_2_zdb_id as child," +      //  8
                 "        tr.termrel_type as childType," +  /// 9
                 "        tr2.termrel_term_1_zdb_id as parent," + // 10
-                "        tr2.termrel_type as parentType" +  // 11
+                "        tr2.termrel_type as parentType," +  // 11
+                "        ontsubset.osubset_subset_name as subsetName" +  // 12
                 "    from" +
                 "        TERM this_ " +
                 "    left outer join" +
@@ -65,6 +66,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "            on this_.term_zdb_id=aliases2_.dalias_data_zdb_id " +
                 "    left outer join term_relationship tr on tr.termrel_term_1_zdb_id= this_.term_zdb_id  " +
                 "    left outer join term_relationship tr2 on tr2.termrel_term_2_zdb_id=this_.term_zdb_id" +
+                "    left outer join term_subset termSubset on termSubset.termsub_term_zdb_id=this_.term_zdb_id" +
+                "    left outer join ontology_subset ontsubset on ontsubset.osubset_pk_id =termSubset.termsub_subset_id" +
                 "    where" +
                 "        this_.term_ontology= :ontology " +
                 "        and this_.term_is_secondary= :secondary  " +
@@ -106,6 +109,16 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 termDTO.setAliases(aliases);
             }
 
+            // handle subset info
+            if(result[12] != null ){
+                Set<String> subsets = termDTO.getSubsets() ;
+                if(subsets == null){
+                    subsets = new TreeSet<String>() ;
+                }
+                subsets.add(result[12].toString()) ;
+                termDTO.setSubsets(subsets);
+            }
+
 
             // if a child term .. . . .
             if(result[8] != null){
@@ -119,7 +132,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 childTerms.add(childDTO);
                 termDTO.setChildrenTerms(childTerms);
             }
-
 
             // if a parent term .. . . .
             if(result[10] != null){
@@ -359,6 +371,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.eq("termName", termName));
         criteria.add(Restrictions.eq("ontology", ontology));
+        criteria.add(Restrictions.eq("secondary", false));
         return (GenericTerm) criteria.uniqueResult();
     }
 
@@ -368,6 +381,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.eq("termName", termName));
         criteria.add(Restrictions.in("ontology", ontology));
+        criteria.add(Restrictions.eq("secondary", false));
         return (GenericTerm) criteria.uniqueResult();
     }
 
@@ -380,6 +394,18 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     public GenericTerm getTermByZdbID(String termZdbID) {
         return (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, termZdbID);
+    }
+
+    /**
+     * Retrieve all subset definition from all ontologies in the database.
+     *
+     * @return set of subsets
+     */
+    @Override
+    public List<Subset> getAllSubsets() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Subset.class);
+        return (List<Subset>) criteria.list();
     }
 
     /**
@@ -404,7 +430,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public OntologyMetadata getOntologyMetadata(String name) {
         Session session = HibernateUtil.currentSession();
-        return (OntologyMetadata) session.get(OntologyMetadata.class, name);
+        Criteria criteria = session.createCriteria(OntologyMetadata.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (OntologyMetadata) criteria.uniqueResult();
     }
 
     @Override
@@ -420,17 +448,18 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * @return list of phenotypes
      */
     @Override
-    public List<Phenotype> getPhenotypesWithSecondaryTerms() {
+    public List<PhenotypeStatement> getPhenotypesWithSecondaryTerms() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select phenotype from Phenotype phenotype " +
-                "left outer join phenotype.subterm " +
+        String hql = "select phenotype from PhenotypeStatement phenotype " +
                 "where " +
-                "((phenotype.superterm.secondary = :isSecondary) or" +
-                "(phenotype.subterm.secondary = :isSecondary) or " +
-                "(phenotype.qualityTerm.secondary = :isSecondary )) ";
+                "((phenotype.entity.superterm.secondary = :isSecondary) or" +
+                "(phenotype.entity.subterm.secondary = :isSecondary) or " +
+                "(phenotype.relatedEntity.superterm.secondary = :isSecondary) or" +
+                "(phenotype.relatedEntity.subterm.secondary = :isSecondary) or " +
+                "(phenotype.quality.secondary = :isSecondary )) ";
         Query query = session.createQuery(hql);
         query.setBoolean("isSecondary", true);
-        List<Phenotype> phenotypesOnSuperterms = (List<Phenotype>) query.list();
+        List<PhenotypeStatement> phenotypesOnSuperterms = (List<PhenotypeStatement>) query.list();
         return phenotypesOnSuperterms;
     }
 
@@ -652,5 +681,72 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
         return returnZdbIDs ;
 
+    }
+
+    /**
+     * Retrieve all term ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     *
+     * @param firstNIds number of records
+     * @return list of ids
+     */
+    @Override
+    public List<String> getAllTerms(int firstNIds) {
+        if (firstNIds < 0)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        String hql = "select id from GenericTerm " +
+                " where secondary = :secondary order by id";
+        Query query = session.createQuery(hql);
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        query.setBoolean("secondary", false);
+        return query.list();
+    }
+
+    /**
+     * Retrieves firstN terms of each ontology.
+     * If firstN = 0 retrieve all terms
+     * If firstN < 0 return null
+     *
+     * Note: No terms marked as secondary are retrieved (those terms are removed
+     * from the obo file and only function as an alias and a place holder for a
+     * previously used oboID so it does not get re-used.
+     *
+     * @param firstNIds number of markers to be returned
+     * @return list of terms
+     */
+    @Override
+    public List<String> getFirstNTermsPerOntology(int firstNIds) {
+        if (firstNIds < 0)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        List<Ontology> ontologies = getDistinctOntologies();
+        if (ontologies == null)
+            return null;
+
+        // currently 6 different ontologies used.
+        List<String> allTerms = new ArrayList<String>(6 * firstNIds);
+        for (Ontology ontology : ontologies) {
+            String hql = "select oboID from GenericTerm where ontology = :ontology " +
+                    " AND secondary = :secondary " +
+                    "order by oboID";
+            Query query = session.createQuery(hql);
+            query.setParameter("ontology", ontology);
+            query.setBoolean("secondary", false);
+            if (firstNIds > 0)
+                query.setMaxResults(firstNIds);
+            allTerms.addAll(query.list());
+        }
+        return allTerms;
+    }
+
+    private List<Ontology> getDistinctOntologies
+            () {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct ontology from GenericTerm order by ontology";
+        Query query = session.createQuery(hql);
+        return query.list();
     }
 }

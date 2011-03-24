@@ -48,6 +48,10 @@
         <priority value="warn"/>
     </category>
 
+    <category name="org.zfin.ontology" additivity="true">
+        <priority value="info"/>
+    </category>
+
     <root>
         <priority value="warn"/>
         <appender-ref ref="console"/>

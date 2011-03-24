@@ -69,6 +69,10 @@ OPTIONAL VARS:
     <?/MISQL>
     <?MISQL SQL="UPDATE publication SET pub_completion_date = TODAY WHERE zdb_id = '$OID';"><?/MISQL>
 
+
+
+
+
       <?MICOMMENT>  Delete all entries for this pub in temp_infrastructure tables <?/MICOMMENT>
       <?MISQL SQL="SELECT xpatinf_zdb_id 
                    FROM expression_pattern_infrastructure
@@ -386,8 +390,14 @@ OPTIONAL VARS:
     <?/MIBLOCK>
   <?MIELSE>
     <input type=button value="ReOpen Paper" onClick="openPaper()";>
-  <?/MIBLOCK>
-  </form> 
+   <?/MIBLOCK>
+    <div id="unfinished-phenotype-curation" class="error"></div>
+   <?MIVAR>
+    <script type="text/javascript">
+        jQuery('#unfinished-phenotype-curation').load('/action/publication/close-curation?publicationID=$OID');
+    </script>
+   <?/MIVAR>
+ </form> 
 
 
 <?MICOMMENT> 
@@ -413,6 +423,7 @@ OPTIONAL VARS:
   <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=status>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+
 <!--  
   <table bgcolor="<!--|SIDEBAR_COLOR|-->">
     <tr>
@@ -422,6 +433,7 @@ OPTIONAL VARS:
     </tr>
   </table>
 -->  
+
 
   <a name=topics></a>
   <TABLE cellspacing=0 cellpadding=5 width=66%>

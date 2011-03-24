@@ -2,6 +2,7 @@ package org.zfin.webdriver.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.framework.HibernateUtil;
 
 import java.sql.Connection;
@@ -47,6 +48,7 @@ public class HibernateWebExplodeRepository implements WebExplodeRepository {
         }
         catch (SQLException sqle) {
             LOG.error("could not run getwebExplode() Query: ", sqle);
+            LOG.error(DbSystemUtil.getLockInfo());
             throw sqle;
         }
         finally {

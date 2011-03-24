@@ -266,7 +266,7 @@ to the left of each item.
                <?MIVAR>
 		<div id="pagination"></div>
 		<script type="text/javascript">
-		    new Ajax.Updater('pagination','/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs', {Method: 'get' });
+		    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
 		</script>
 	 	<?/MIVAR>
 		<div id="pagination"></div>

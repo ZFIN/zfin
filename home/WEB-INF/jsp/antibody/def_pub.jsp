@@ -63,10 +63,10 @@
 <script type="text/javascript">
     function getPubDetail(pubID) {
         //alert("Pub ID: " + pubID);
-        var pars = "hello";
-        if (pubID != null && pubID != '' && pubID != '-' && pubID != '--')
-            new Ajax.Updater('pub-detail', "/action/def-pub?zdbID=" + pubID, {method:"get", parameters: pars});
-        else {
+        if (pubID != null && pubID != '' && pubID != '-' && pubID != '--') {
+            jQuery('#pub-detail').load("/action/def-pub?zdbID=" + pubID);
+
+        } else {
             //alert("Pub ID: " + pubID);
             document.getElementById('pub-detail').innerHTML = '<span style="color: red;font-weight:bold;text-align:center;">Please provide a Publication</span> <br/><hr/>';
         }

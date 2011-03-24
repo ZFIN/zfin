@@ -3,6 +3,7 @@ package org.zfin.mutant;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ public class PhenotypeServiceTest {
 
     private GenericTerm cellAnatomyTerm;
     private GenericTerm anatomyTerm;
+    private GenericTerm goTerm;
     private static String aoTermZdbID = "ZDB-ANAT-010921-586";
     private static String cellAOZdbID = "ZDB-ANAT-050915-158";
     private static String GOZdbID = "ZDB-GO-050915-158";
@@ -39,7 +41,11 @@ public class PhenotypeServiceTest {
         cellAnatomyTerm = new GenericTerm();
         cellAnatomyTerm.setZdbID(cellAOZdbID);
         cellAnatomyTerm.setTermName("muscle cell");
-        //cellAnatomyTerm.setCellTerm(true);
+
+        goTerm = new GenericTerm();
+        goTerm.setZdbID(GOZdbID);
+        goTerm.setTermName(CILIUM);
+        //goTerm.setCellTerm(true);
     }
 
     @Test
@@ -63,15 +69,15 @@ public class PhenotypeServiceTest {
     @Test
     public void singleAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
-        Phenotype pheno = new Phenotype();
-        pheno.setSuperterm(anatomyTerm);
-        GenericTerm term = new GenericTerm();
+        PhenotypeExperiment phenoExp = new PhenotypeExperiment();
         String brightOrange = "bright orange";
-        term.setTermName(brightOrange);
-        pheno.setQualityTerm(term);
-        Set<Phenotype> phenotypes = new HashSet<Phenotype>(1);
+        PhenotypeStatement pheno = createPhenotypeStatement(anatomyTerm, null, null, null, brightOrange);
+        Set<PhenotypeStatement> phenotypes = new HashSet<PhenotypeStatement>(1);
         phenotypes.add(pheno);
-        genox.setPhenotypes(phenotypes);
+        phenoExp.setPhenotypeStatements(phenotypes);
+        Set<PhenotypeExperiment> phenoExperiments = new HashSet<PhenotypeExperiment>(1);
+        phenoExperiments.add(phenoExp);
+        genox.setPhenotypeExperiments(phenoExperiments);
 
         Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
@@ -90,32 +96,23 @@ public class PhenotypeServiceTest {
     @Test
     public void ThreeAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
-        Phenotype pheno = new Phenotype();
-        pheno.setSuperterm(anatomyTerm);
-        GenericTerm term = new GenericTerm();
         String brightOrange = "bright orange";
-        term.setTermName(brightOrange);
-        pheno.setQualityTerm(term);
-
-        Phenotype phenoTwo = new Phenotype();
-        phenoTwo.setSuperterm(anatomyTerm);
-        GenericTerm termTwo = new GenericTerm();
         String pink = "pink";
-        termTwo.setTermName(pink);
-        phenoTwo.setQualityTerm(termTwo);
-
-        Phenotype phenoThree = new Phenotype();
-        phenoThree.setSuperterm(anatomyTerm);
-        GenericTerm termThree = new GenericTerm();
         String angry = "angry";
-        termThree.setTermName(angry);
-        phenoThree.setQualityTerm(termThree);
+        PhenotypeStatement statementOne = createPhenotypeStatement(anatomyTerm, null, null, null, brightOrange);
+        PhenotypeStatement statementTwo = createPhenotypeStatement(anatomyTerm, null, null, null, pink);
+        PhenotypeStatement statementThree = createPhenotypeStatement(anatomyTerm, null, null, null, angry);
 
-        Set<Phenotype> phenotypes = new HashSet<Phenotype>(3);
-        phenotypes.add(pheno);
-        phenotypes.add(phenoTwo);
-        phenotypes.add(phenoThree);
-        genox.setPhenotypes(phenotypes);
+        Set<PhenotypeStatement> phenotypes = new HashSet<PhenotypeStatement>(3);
+        phenotypes.add(statementOne);
+        phenotypes.add(statementTwo);
+        phenotypes.add(statementThree);
+
+        PhenotypeExperiment phenoExp = new PhenotypeExperiment();
+        Set<PhenotypeExperiment> phenoExperiments = new HashSet<PhenotypeExperiment>(1);
+        phenoExp.setPhenotypeStatements(phenotypes);
+        phenoExperiments.add(phenoExp);
+        genox.setPhenotypeExperiments(phenoExperiments);
 
         Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
@@ -132,7 +129,7 @@ public class PhenotypeServiceTest {
 
 
     /**
-     * Nine phenotypes, three in AO, three in cell AO, and three in Go-cellcomponent
+     * Nine phenotypes, three in AO, three in cell AO, and three in Go-cell component.
      * Check correct ontology, each of the three phenotype terms sorted by name,
      * overall grouped by:
      * 1) AO terms
@@ -145,27 +142,43 @@ public class PhenotypeServiceTest {
         String pink = "pink";
         String angry = "angry";
 
-        Set<Phenotype> phenotypes = new HashSet<Phenotype>();
-        phenotypes.add(getAOPhenotype(brightOrange));
-        phenotypes.add(getAOPhenotype(pink));
-        phenotypes.add(getAOPhenotype(angry));
+        PhenotypeStatement statementOne = createPhenotypeStatement(anatomyTerm, null, null, null, brightOrange);
+        PhenotypeStatement statementTwo = createPhenotypeStatement(anatomyTerm, null, null, null, pink);
+        PhenotypeStatement statementThree = createPhenotypeStatement(anatomyTerm, null, null, null, angry);
+
+        Set<PhenotypeStatement> phenotypes = new HashSet<PhenotypeStatement>(3);
+        phenotypes.add(statementOne);
+        phenotypes.add(statementTwo);
+        phenotypes.add(statementThree);
 
         String diastatic = "diastatic";
         String paleYellow = "pale yellow";
         String increasedSize = "increased size";
-        phenotypes.add(getCellAOPhenotype(diastatic));
-        phenotypes.add(getCellAOPhenotype(paleYellow));
-        phenotypes.add(getCellAOPhenotype(increasedSize));
+        PhenotypeStatement statementFour = createPhenotypeStatement(anatomyTerm, cellAnatomyTerm, null, null, diastatic);
+        PhenotypeStatement statementFive = createPhenotypeStatement(anatomyTerm, cellAnatomyTerm, null, null, paleYellow);
+        PhenotypeStatement statementSix = createPhenotypeStatement(anatomyTerm, cellAnatomyTerm, null, null, increasedSize);
+
+        phenotypes.add(statementFour);
+        phenotypes.add(statementFive);
+        phenotypes.add(statementSix);
 
         String lightPurple = "light purple";
         String disorganized = "disorganized";
         String cystic = "cystic";
-        phenotypes.add(getGOPhenotype(lightPurple));
-        phenotypes.add(getGOPhenotype(disorganized));
-        phenotypes.add(getGOPhenotype(cystic));
+        PhenotypeStatement statementSeven = createPhenotypeStatement(anatomyTerm, goTerm, null, null, lightPurple);
+        PhenotypeStatement statementEight = createPhenotypeStatement(anatomyTerm, goTerm, null, null, disorganized);
+        PhenotypeStatement statementNine = createPhenotypeStatement(anatomyTerm, goTerm, null, null, cystic);
+
+        phenotypes.add(statementSeven);
+        phenotypes.add(statementEight);
+        phenotypes.add(statementNine);
 
         GenotypeExperiment genox = new GenotypeExperiment();
-        genox.setPhenotypes(phenotypes);
+        PhenotypeExperiment phenoExp = new PhenotypeExperiment();
+        Set<PhenotypeExperiment> phenoExperiments = new HashSet<PhenotypeExperiment>(1);
+        phenoExp.setPhenotypeStatements(phenotypes);
+        phenoExperiments.add(phenoExp);
+        genox.setPhenotypeExperiments(phenoExperiments);
 
         Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map != null);
@@ -190,7 +203,7 @@ public class PhenotypeServiceTest {
         assertEquals(lightPurple, iterator.next());
 
         terms = termIterator.next();
-        final String name = "pronephros:" + muscleCell;
+        String name = muscleCell + ":pronephros";
         assertEquals(name, terms);
         assertTrue(map.get(name).size() == 3);
         desc = map.get(name);
@@ -200,34 +213,17 @@ public class PhenotypeServiceTest {
         assertEquals(paleYellow, iterator.next());
     }
 
-    private Phenotype getAOPhenotype(String phenotypeName) {
-        Phenotype pheno = new Phenotype();
-        pheno.setSuperterm(anatomyTerm);
-        GenericTerm term = new GenericTerm();
-        term.setTermName(phenotypeName);
-        pheno.setQualityTerm(term);
-        return pheno;
+    private PhenotypeStatement createPhenotypeStatement(GenericTerm superTerm, GenericTerm subterm, GenericTerm relatedSuperterm, GenericTerm relatedSubterm, String qualityName) {
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(superTerm);
+        entity.setSubterm(subterm);
+
+        PhenotypeStatement statement = new PhenotypeStatement();
+        statement.setEntity(entity);
+        GenericTerm quality = new GenericTerm();
+        quality.setTermName(qualityName);
+        statement.setQuality(quality);
+        return statement;
     }
 
-    private Phenotype getCellAOPhenotype(String cellPhenotypeName) {
-        Phenotype pheno = new Phenotype();
-        pheno.setSubterm(anatomyTerm);
-        pheno.setSuperterm(cellAnatomyTerm);
-        GenericTerm term = new GenericTerm();
-        term.setTermName(cellPhenotypeName);
-        pheno.setQualityTerm(term);
-        return pheno;
-    }
-
-    private Phenotype getGOPhenotype(String goPhenotypeName) {
-        Phenotype pheno = new Phenotype();
-        GenericTerm goterm = new GenericTerm();
-        goterm.setTermName(CILIUM);
-        pheno.setSubterm(goterm);
-        GenericTerm term = new GenericTerm();
-        term.setTermName(goPhenotypeName);
-        pheno.setQualityTerm(term);
-        pheno.setSuperterm(anatomyTerm);
-        return pheno;
-    }
 }

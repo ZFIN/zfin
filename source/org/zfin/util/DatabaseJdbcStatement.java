@@ -5,6 +5,9 @@ package org.zfin.util;
  */
 public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
+    public static final String BEGIN_WORK = "BEGIN WORK";
+    public static final String COMMIT_WORK = "COMMIT WORK";
+    public static final String ROLLBACK_WORK = "ROLLBACK WORK";
     private StringBuffer query = new StringBuffer(50);
     private String scriptFile;
     private int startLine = -1;
@@ -135,6 +138,13 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public boolean isLoadStatement() {
         return load;
+    }
+
+    public boolean isInformixWorkStatement() {
+        if (query == null)
+            return false;
+        String queryString = query.toString().trim().toUpperCase();
+        return queryString.startsWith(BEGIN_WORK) || queryString.startsWith(COMMIT_WORK)|| queryString.startsWith(ROLLBACK_WORK);
     }
 
     public String getDataKey() {

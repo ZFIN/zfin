@@ -1,111 +1,92 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
-  version="2.0">
-    
-  <description>ZFIN functions library</description>
-  <display-name>ZFIN functions</display-name>
-  <tlib-version>1.1</tlib-version>
-  <short-name>zfn</short-name>
-  <uri></uri>
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
 
-  <function>
-    <description>
-      Replace special characters, such as carriage returns so JS would not choke.
-    </description>
-    <name>escapeForJavaScript</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String escapeJavaScript(java.lang.String)</function-signature>
-    <example>
-      ${fn:escapeForJavaScript(name)}">
-    </example>
-  </function>
+    <description>ZFIN functions library</description>
+    <display-name>ZFIN functions</display-name>
+    <tlib-version>1.1</tlib-version>
+    <short-name>zfn</short-name>
+    <uri></uri>
 
-  <function>
-    <description>                                    
-      Replace special characters, such as carriage returns so JS would not choke.
-    </description>
-    <name>escapeHtml</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String escapeHtml(java.lang.String, boolean)</function-signature>
-    <example>
-      ${fn:escapeHtml(name)}">
-    </example>
- </function>
-    
-  <function>
-    <description>
-      Determine if a given section is set to show or hide
-    </description>
-    <name>isSectionVisible</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>boolean isSectionVisible(java.lang.String, org.zfin.framework.presentation.SectionVisibility)</function-signature>
-    <example>
-      ${fn:isSectionVisible(name, visibility)}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Replace special characters, such as carriage returns so JS would not choke.
+        </description>
+        <name>escapeForJavaScript</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String escapeJavaScript(java.lang.String)</function-signature>
+        <example>
+            ${fn:escapeForJavaScript(name)}">
+        </example>
+    </function>
 
-  <function>
-    <description>
-      Determine if a given section has data
-    </description>
-    <name>dataAvailable</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>boolean dataAvailable(java.lang.String,org.zfin.framework.presentation.SectionVisibility)</function-signature>
-    <example>
-      ${fn:dataAvailable(name, visibility)}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Replace special characters, such as carriage returns so JS would not choke.
+        </description>
+        <name>escapeHtml</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String escapeHtml(java.lang.String, boolean)</function-signature>
+        <example>
+            ${fn:escapeHtml(name)}">
+        </example>
+    </function>
 
-  <function>
-    <description>
-      Remove a given key-value pair that pertains to the sectionVisibility
-    </description>
-    <name>removeQueryParameter</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String removeQueryParameter(java.lang.String,java.lang.String,java.lang.String)</function-signature>
-    <example>
-      ${fn:removeQueryParameter(queryString, 'hideSection')}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Determine if a given section is set to show or hide
+        </description>
+        <name>isSectionVisible</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isSectionVisible(java.lang.String,
+            org.zfin.framework.presentation.SectionVisibility)
+        </function-signature>
+        <example>
+            ${fn:isSectionVisible(name, visibility)}">
+        </example>
+    </function>
 
-  <function>
-    <description>
-      Remove key-value pairs that pertain to the sectionVisibility
-    </description>
-    <name>removeAllVisibleQueryParameters</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String removeAllVisibleQueryParameters(java.lang.String,java.lang.String)</function-signature>
-    <example>
-      ${fn:removeAllVisibleQueryParameters(queryString, 'visibility.')}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Determine if a given section has data
+        </description>
+        <name>dataAvailable</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean dataAvailable(java.lang.String,org.zfin.framework.presentation.SectionVisibility)
+        </function-signature>
+        <example>
+            ${fn:dataAvailable(name, visibility)}">
+        </example>
+    </function>
 
-  <function>
-    <description>
-      Remove key-value pairs that pertain to the sectionVisibility
-    </description>
-    <name>removeAllVisibilityQueryParameters</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String removeAllVisibilityQueryParameters(java.lang.String,java.lang.String,java.lang.String[])</function-signature>
-    <example>
-      ${fn:removeAllVisibilityQueryParameters(queryString, 'visibility.', AnatomySearchBean.Section.getValues())}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Remove a given key-value pair that pertains to the sectionVisibility
+        </description>
+        <name>removeQueryParameter</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String removeQueryParameter(java.lang.String,java.lang.String,java.lang.String)
+        </function-signature>
+        <example>
+            ${fn:removeQueryParameter(queryString, 'hideSection')}">
+        </example>
+    </function>
 
-  <function>
-    <description>
-      Check if a given ontology is already loaded.
-    </description>
-    <name>isOntologyLoaded</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>boolean isOntologyLoaded(org.zfin.ontology.OntologyManager, org.zfin.ontology.Ontology)</function-signature>
-    <example>
-      ${fn:isOntologyLoaded(ontologyManager, ontology))}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Remove key-value pairs that pertain to the sectionVisibility
+        </description>
+        <name>removeAllVisibleQueryParameters</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String removeAllVisibleQueryParameters(java.lang.String,java.lang.String)
+        </function-signature>
+        <example>
+            ${fn:removeAllVisibleQueryParameters(queryString, 'visibility.')}">
+        </example>
+    </function>
 
 <function>
     <description>
@@ -118,76 +99,129 @@
       ${fn:getDistinctRelationshipTypes(ontology))}">
     </example>
   </function>
-
-<function>
-    <description>
-      Turn the difference of date and time into a time string
-    </description>
-    <name>getTimeDuration</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String getTimeDuration(java.util.Date,java.util.Date)</function-signature>
-    <example>
-      ${fn:getTimeDuration(start, end))}">
-    </example>
-  </function>
-
-<function>
-    <description>
-      Turn the difference of date and time into a time string
-    </description>
-    <name>getTimeBetweenRequests</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String getTimeBetweenRequests(java.util.List, int)</function-signature>
-    <example>
-      ${fn:getTimeBetweenRequests(start, end))}">
-    </example>
-  </function>
-
-<function>
-    <description>
-      Turn the difference of date and time into a time string
-    </description>
-    <name>getPerson</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String getPerson(javax.servlet.http.HttpSession)</function-signature>
-    <example>
-      ${fn:getPerson(session))}">
-    </example>
-  </function>
+    <function>
+        <description>
+            Remove key-value pairs that pertain to the sectionVisibility
+        </description>
+        <name>removeAllVisibilityQueryParameters</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String
+            removeAllVisibilityQueryParameters(java.lang.String,java.lang.String,java.lang.String[])
+        </function-signature>
+        <example>
+            ${fn:removeAllVisibilityQueryParameters(queryString, 'visibility.', AnatomySearchBean.Section.getValues())}">
+        </example>
+    </function>
 
     <function>
         <description>
-          Determine if a given date is on today's day
+            Check if a given ontology is already loaded.
+        </description>
+        <name>isOntologyLoaded</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isOntologyLoaded(org.zfin.ontology.OntologyManager, org.zfin.ontology.Ontology)
+        </function-signature>
+        <example>
+            ${fn:isOntologyLoaded(ontologyManager, ontology))}">
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Turn the difference of date and time into a time string
+        </description>
+        <name>getTimeDuration</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getTimeDuration(java.util.Date,java.util.Date)</function-signature>
+        <example>
+            ${fn:getTimeDuration(start, end))}">
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Turn the difference of date and time into a time string
+        </description>
+        <name>getTimeBetweenRequests</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getTimeBetweenRequests(java.util.List, int)</function-signature>
+        <example>
+            ${fn:getTimeBetweenRequests(start, end))}">
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Turn the difference of date and time into a time string
+        </description>
+        <name>getPerson</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getPerson(javax.servlet.http.HttpSession)</function-signature>
+        <example>
+            ${fn:getPerson(session))}">
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Determine if a given date is on today's day
         </description>
         <name>isToday</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>boolean isToday(java.util.Date)</function-signature>
         <example>
-          ${fn:isToday(date)}">
+            ${fn:isToday(date)}">
         </example>
-      </function>
+    </function>
 
     <function>
         <description>
-          Determine if a given date is on today's day
+            Determine if a given date is on today's day
         </description>
         <name>isTomorrow</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>boolean isTomorrow(java.util.Date)</function-signature>
         <example>
-          ${fn:isTomorrow(date)}">
+            ${fn:isTomorrow(date)}">
         </example>
-      </function>
+    </function>
 
     <function>
         <description>
-          Determine if a given date is on today's day
+            Determine if a given date is on today's day
         </description>
         <name>isYesterday</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>boolean isYesterday(java.util.Date)</function-signature>
         <example>
-          ${fn:isYesterday(date)}">
+            ${fn:isYesterday(date)}">
         </example>
-      </function>
+    </function>
+
+    <function>
+        <description>
+            Generate a random valid DOM id
+        </description>
+        <name>generateRandomDomID</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String generateRandomDomID()</function-signature>
+        <example>
+            ${fn:generateRandomDomID()}
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Retrieve the latest zfin method invocation on a given thread.
+            If no zfin class involved give last method call
+        </description>
+        <name>lastZfinCall</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String lastZfinCall(int))</function-signature>
+        <example>
+            ${fn:lastZfinCall(1333)}
+        </example>
+    </function>
+
+
 </taglib>

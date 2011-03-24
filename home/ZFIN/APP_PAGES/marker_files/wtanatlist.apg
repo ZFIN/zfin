@@ -90,8 +90,16 @@ stage range, experiment, or expression_found in the same figure.
   <?MIVAR NAME="$wtanatlst_Label">$wtanatlst_defaultLabel<?/MIVAR>
 <?/MIBLOCK>
 
+<?MIVAR NAME="$wtanatlst_term_list"><?/MIVAR>
+
+<?MIVAR>
+  <style>
+    .wt-term-list-long { display: none }
+  </style>
+<?/MIVAR>
+
 <?MISQL SQL="
-	SELECT distinct term_name, term_zdb_id, anatitem_name_order
+	SELECT distinct term_name, term_zdb_id, anatitem_name_order, get_postcomposed_term_html(xpatres_superterm_zdb_id, xpatres_subterm_zdb_id)
 	FROM 
 	expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item
 	WHERE
@@ -105,77 +113,38 @@ stage range, experiment, or expression_found in the same figure.
 	AND geno_zdb_id  = genox_geno_zdb_id 
 	AND geno_is_wildtype = 't' 
 	ORDER BY anatitem_name_order asc;">
-    <?MIVAR NAME="$wtanatlst_anatitem_html"><span nowrap><a href=/action/anatomy/term-detail?anatomyItem.zdbID=$2>$1</a></span><?/MIVAR>
+    <?MIVAR NAME="$wtanatlst_term_html">$4<?/MIVAR>
 
-    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=wtanatlst_short_list>$wtanatlst_Label $wtanatlst_anatitem_html<?/MIVAR>
-      <?MIVAR NAME=wtanatlst_long_list>$wtanatlst_Label $wtanatlst_anatitem_html<?/MIVAR>
-    <?MIELSE COND=$(<,$MI_CURRENTROW,$wtanatlst_condensed_count)>
-      <?MIVAR>$(VECAPPEND,wtanatlst_long_list,$wtanatlst_anatitem_html)
-      <?/MIVAR>
-      <?MIVAR>$(VECAPPEND,wtanatlst_short_list,$wtanatlst_anatitem_html)
-      <?/MIVAR>
-    <?MIELSE>
-      <?MIVAR>$(VECAPPEND,wtanatlst_long_list,$wtanatlst_anatitem_html)
-      <?/MIVAR>
-    <?/MIBLOCK>
+   <?MICOMMENT> ** add a comma if it's not the first element ** <?/MICOMMENT>
+
+   <?MIBLOCK COND="$(<,$MI_CURRENTROW,5)">
+     <?MIVAR NAME="$wtanatlst_term_list" COND="$(NE,$wtanatlst_term_list,)">$wtanatlst_term_list, <?/MIVAR>
+     <?MIVAR NAME="$wtanatlst_term_html"><span>$wtanatlst_term_html</span><?/MIVAR>
+   <?MIELSE>
+     <?MIVAR NAME="$wtanatlst_term_list" COND="$(NE,$wtanatlst_term_list,)">$wtanatlst_term_list<span class="wt-term-list-long">, </span><?/MIVAR>
+     <?MIVAR NAME="$wtanatlst_term_html"><span class="wt-term-list-long">$wtanatlst_term_html</span><?/MIVAR>
+   <?/MIBLOCK>
+
+   <?MIVAR NAME="$wtanatlst_term_list">$(CONCAT,$wtanatlst_term_list,$wtanatlst_term_html)<?/MIVAR>
+
 <?/MISQL>
+<?MIVAR NAME="$wtanatlst_count">$MI_ROWCOUNT<?/MIVAR>
 
 
-  <?MIVAR NAME=wtanatlst_separate_short_list SEPARATE=", ">$wtanatlst_short_list<?/MIVAR>
-  <?MIVAR NAME=wtanatlst_separate_long_list SEPARATE=", ">$wtanatlst_long_list<?/MIVAR>
-  
-  <?MIVAR NAME=wtanatlst_escape_short_list>$(REPLACE,$wtanatlst_separate_short_list,"'","")<?/MIVAR>
-  <?MIVAR NAME=wtanatlst_escape_long_list>$(REPLACE,$wtanatlst_separate_long_list,"'","")<?/MIVAR>
-  
+<?MIVAR NAME=$wtanatlst_left_arrow><img class="clickable" border=0 onClick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();" src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_right_arrow> ... <span class="clickable" onclick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();">(all $wtanatlst_count) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></span><?/MIVAR>
 
-<?MIVAR NAME=$wtanatlst_left_arrow><img border=0 onClick=updateWTAnatomyList('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$wtanatlst_right_arrow><img onClick=updateWTAnatomyList('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
-
-  
-<script>
+<?MIBLOCK COND="$(<,$wtanatlst_count,5)">
   <?MIVAR>
-function updateWTAnatomyList(display_option) {
-    var long_display = "$wtanatlst_escape_long_list  <a href=\"javascript:updateWTAnatomyList('short');\">$wtanatlst_left_arrow</a>";
-    var short_display = "$wtanatlst_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$wtanatlst_long_list))</a> $wtanatlst_right_arrow";
-
-    if (display_option == "long") {
-        updateInnerHTML('wtAnatomyList',long_display)
-    }
-    else {
-        updateInnerHTML('wtAnatomyList',short_display)    
-    }
-}
-  <?/MIVAR>
-</script>
-<?MIBLOCK COND="$(EQ,$wtanatlst_escape_short_list,)">
-     <?MIVAR NAME=$fxfignanat_escape_short_list>$wtanatlst_Label $wtanatlst_escape_short_list<?/MIVAR>
-<?/MIBLOCK>
-<?MIVAR><span id="wtAnatomyList"><?/MIVAR>
-<?MIBLOCK COND="$(<,$(VECSIZE,$wtanatlst_long_list),$wtanatlst_max_count)">
-  <?MIVAR>
-    $wtanatlst_escape_long_list
+    $wtanatlst_Label $wtanatlst_term_list
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-    $wtanatlst_escape_short_list ... <a href=javascript:onClick=updateWTAnatomyList('long')>(all $(VECSIZE,$wtanatlst_long_list))</a> $wtanatlst_right_arrow
+    $wtanatlst_Label
+    $wtanatlst_term_list 
+    <span class="wt-term-list-long">$wtanatlst_left_arrow</span> 
+    <span class="wt-term-list-short">$wtanatlst_right_arrow</span>
   <?/MIVAR>
 <?/MIBLOCK>
 
-</span>
 
-<?MICOMMENT>
-  ============================================================================
-  ==========  Unset any existence vars, before the next call of this page
-  ============================================================================
-<?/MICOMMENT>
-
-<?MIVAR>
-  $(UNSETVAR,$wtanatlst_Label)
-  $(UNSETVAR,$wtanatlst_short_list)  
-  $(UNSETVAR,$wtanatlst_long_list)  
-  $(UNSETVAR,$wtanatlst_separate_short_list)
-  $(UNSETVAR,$wtanatlst_separate_long_list)
-  $(UNSETVAR,$wtanatlst_escape_short_list)
-  $(UNSETVAR,$wtanatlst_escape_long_list)
-<?/MIVAR>

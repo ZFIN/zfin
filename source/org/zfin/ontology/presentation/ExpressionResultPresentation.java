@@ -1,59 +1,49 @@
 package org.zfin.ontology.presentation;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
+import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.ontology.Term;
 
 /**
  * Display the full list of post composed terms and their hyperlink.
  */
-public class ExpressionResultPresentation extends TermPresentation {
+public class ExpressionResultPresentation extends ExpressionStatementPresentation {
 
-    private static final String uri = "ontology/term-detail?termID=";
+    private static final Logger logger = Logger.getLogger(ExpressionResultPresentation.class);
 
     /**
      * Create hyperlink to term detail page.
      *
      * @param expressionResult ExpressionResult
+     * @param suppressPopupLink hide the popup link icon
      * @return hyperlink hyperlink
      */
-    public static String getLink(ExpressionResult expressionResult) {
+    public static String getLink(ExpressionResult expressionResult, boolean suppressPopupLink) {
         if (expressionResult == null)
             return null;
-        StringBuffer postComposedTermHyperlink = new StringBuffer(50);
-        if (!expressionResult.isExpressionFound())
-            postComposedTermHyperlink.append(getNotExpressedElement());
-        postComposedTermHyperlink.append("<span class=\"postcomposedtermlink\">");
-        postComposedTermHyperlink.append(getLink(expressionResult.getSuperterm()));
-        if (expressionResult.getSubterm() != null) {
-            postComposedTermHyperlink.append("&nbsp;");
-            postComposedTermHyperlink.append(getLink(expressionResult.getSubterm()));
-        }
-        postComposedTermHyperlink.append("</span>");
-        return postComposedTermHyperlink.toString();
+
+        ExpressionStatement expressionStatement = new ExpressionStatement();
+        expressionStatement.setEntity(expressionResult.getEntity());
+        expressionStatement.setExpressionFound(expressionResult.isExpressionFound());
+
+        return getLink(expressionStatement, suppressPopupLink);
     }
 
-    private static String getNotExpressedElement() {
-        String notExpressedTitle = "The gene was reported as NOT expressed in this structure.";
-        StringBuffer notExpressedSpan = new StringBuffer(25 + notExpressedTitle.length());
-        notExpressedSpan.append("<span title=\"");
-        notExpressedSpan.append(notExpressedTitle);
-        notExpressedSpan.append("\">");
-        notExpressedSpan.append("(not)");
-        notExpressedSpan.append("</span> ");
-        return notExpressedSpan.toString();
-    }
 
-    /**
-     * Generates a Marker link using the Abbreviation
-     *
-     * @param term term
-     * @param name name attribute in hyperlink
-     * @return html for term link
-     */
-    public static String getLink(Term term, String name) {
-        if (term == null || name == null)
+
+    public static String getName(ExpressionResult expressionResult) {
+        if (expressionResult == null)
             return null;
-        return getTomcatLinkWithTitle(uri, term.getZdbID(), term.getTermName(), name, term.getOntology().getCommonName());
+
+        ExpressionStatement expressionStatement = new ExpressionStatement();
+        expressionStatement.setEntity(expressionResult.getEntity());
+        expressionStatement.setExpressionFound(expressionResult.isExpressionFound());
+
+        return getName(expressionStatement);
     }
+
 
 }

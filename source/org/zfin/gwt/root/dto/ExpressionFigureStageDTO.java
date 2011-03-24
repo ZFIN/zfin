@@ -38,7 +38,6 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
         this.patoExists = patoExists;
     }
 
-    @Override
     public String getUniqueID() {
         StringBuilder sb = new StringBuilder(experiment.getExperimentZdbID());
         sb.append(":");
@@ -56,7 +55,6 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
      *
      * @param uniqueID concatenated unique ID.
      */
-    @Override
     public void setUniqueID(String uniqueID) {
         String[] ids = uniqueID.split(":");
         if (ids.length != 4)

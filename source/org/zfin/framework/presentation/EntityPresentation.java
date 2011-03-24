@@ -28,7 +28,7 @@ public abstract class EntityPresentation {
         return sb;
     }
 
-    private static StringBuilder getTomcatHyperLinkStart() {
+    protected static StringBuilder getTomcatHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"/action/");
         return sb;
@@ -103,6 +103,16 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    protected static String getTomcatLink(String uri, String zdbID, String abbreviation) {
+        StringBuilder sb = getTomcatHyperLinkStart();
+        sb.append(uri);
+        sb.append(zdbID);
+        sb.append("\">");
+        sb.append(abbreviation);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
     protected static String getTomcatLinkWithTitle(String uri, String zdbID, String abbreviation, String name, String title) {
         StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);
@@ -117,6 +127,20 @@ public abstract class EntityPresentation {
             sb.append(title);
         sb.append("\">");
         sb.append(abbreviation);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
+    public static String getTomcatPopupLink(String uri, String zdbID, String title) {
+        StringBuilder sb = getTomcatHyperLinkStart();
+        sb.append(uri);
+        sb.append(zdbID);
+        sb.append("\"");
+        sb.append(" class=\"popup-link data-popup-link\"");
+        sb.append(" title=\"");
+        if (title != null)
+            sb.append(title);
+        sb.append("\">");
         sb.append("</a>");
         return sb.toString();
     }
@@ -156,16 +180,15 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
-    //    http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-GENO-080327-132
-    public static String getJumpToLink(String zdbID) {
-        StringBuilder sb = new StringBuilder();
+    public static String getJumpToLink(String zdbID){
+        StringBuilder sb = new StringBuilder() ;
         sb.append(ZfinPropertiesEnum.NON_SECURE_HTTP.value());
         sb.append(ZfinPropertiesEnum.DOMAIN_NAME.value());
         sb.append("/");
         sb.append(ZfinPropertiesEnum.WEBDRIVER_LOC.value());
         sb.append("/ZFIN_jump?record=");
         sb.append(zdbID);
-        return sb.toString();
+        return sb.toString() ;
     }
 
     /* I made this method public because it won't generally be necessary for

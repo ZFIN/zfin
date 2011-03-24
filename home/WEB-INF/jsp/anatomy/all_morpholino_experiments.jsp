@@ -6,8 +6,8 @@
 <table border="0" width="100%">
     <tbody>
         <tr align="left">
-            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments (<c:if test="${formBean.wildtype}">wild-type</c:if>
-                <c:if test="${!formBean.wildtype}">mutant</c:if>)
+            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments
+                (<c:if test="${formBean.wildtype}">wild-type</c:if><c:if test="${!formBean.wildtype}">mutant</c:if>)
              for:</b>
                 <zfin:link entity="${formBean.aoTerm}" />
             </td>
@@ -51,22 +51,9 @@
                     <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/>
                 </td>
                 <td>
-                    <c:forEach var="phenotypes" items="${morpholinoStat.phenotypeDescriptions}"
-                               varStatus="ontologyLoop">
-                    <c:if test="${phenotypes.key != 'ANATOMY'}">
-                    [${phenotypes.key}]:
-                    <div style="margin-left:20px">
-                        </c:if>
-                        <c:if test="${phenotypes.key == 'ANATOMY'}">
-                        <div style="margin-left:0px">
-                            </c:if>
-                            <c:forEach var="phenotype" items="${phenotypes.value}" varStatus="loop">
-                                ${phenotype}<c:if test="${!loop.last}">, </c:if>
-                            </c:forEach>
-                            <c:if test="${!ontologyLoop.last}">
-                        </div>
-                        </c:if>
-                        </c:forEach>
+                    <c:forEach var="statement" items="${morpholinoStat.phenotypeStatements}" varStatus="loop">
+                        <zfin:link entity="${statement}"/> <c:if test="${!loop.last}"><br/></c:if>
+                    </c:forEach>
                 </td>
                 <td>
                     <c:if test="${morpholinoStat.numberOfFigures > 0}">
@@ -78,11 +65,11 @@
                         </c:if>
                         <c:if test="${morpholinoStat.numberOfFigures == 1 }">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${morpholinoStat.figure.zdbID}'>
-                                <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                             integerEntity="${morpholinoStat.numberOfFigures}" includeNumber="true"/>
+                                <zfin2:figureOrTextOnlyLink figure="${morpholinoStat.figure}"
+                                                            integerEntity="${morpholinoStat.numberOfFigures}"/>
                             </a>
                         </c:if>
-                        from
+                        <c:if test="${morpholinoStat.imgInFigure}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
                         <c:if test="${morpholinoStat.numberOfPublications ==1}">
                             <zfin:link entity="${morpholinoStat.singlePublication}"/>
                         </c:if>

@@ -1,6 +1,5 @@
 package org.zfin.gwt.marker.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -11,6 +10,7 @@ import org.zfin.gwt.marker.ui.TranscriptTypeStatusMismatchException;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -31,7 +31,7 @@ import java.util.*;
 
 /**
  */
-public class TranscriptRPCServiceImpl extends RemoteServiceServlet implements TranscriptRPCService {
+public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implements TranscriptRPCService {
 
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private transient InfrastructureRepository infrastructureRepository

@@ -12,7 +12,14 @@
                 <%= Figure.Type.TOD.getName()%>
             </c:when>
             <c:otherwise>
-                1  <%= Figure.Type.FIGURE.getName()%>
+              <c:choose>
+                <c:when test="${figure != null && figure.label != null && !figure.publication.unpublished}">
+                  ${figure.label}
+                </c:when>
+                <c:otherwise>
+                  1 <%= Figure.Type.FIGURE.getName()%>
+                </c:otherwise>
+              </c:choose>            
             </c:otherwise>
         </c:choose>
     </c:when>
@@ -22,9 +29,14 @@
                <span title="${figureStatistic.numberOfFigures}"> <%= Figure.Type.TOD.getName()%></span>
             </c:when>
             <c:otherwise>
-                <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                             integerEntity="${integerEntity}"
-                             includeNumber="true"/>
+              <c:choose>
+                <c:when test="${figure != null && figure.label != null && !figure.publication.unpublished}">
+                  ${figure.label}
+                </c:when>
+                <c:otherwise>
+                  1 <%= Figure.Type.FIGURE.getName()%>
+                </c:otherwise>
+              </c:choose>            
             </c:otherwise>
         </c:choose>
     </c:otherwise>

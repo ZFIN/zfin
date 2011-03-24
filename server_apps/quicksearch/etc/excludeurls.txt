@@ -16,6 +16,7 @@ gbrowse
 mapper_select.cgi
 action/login
 mailto
+CurrentDataModel/db.html
 
 # We do not want to crawl select pages.
 # These (especially xpatselect) take a long time to crawl.
@@ -38,8 +39,9 @@ aa-orthoviewdetailed.apg
 action/anatomy/term-detail
 action/anatomy/search
 action/antibody
-action/ontology/term-detail
+action/ontology
 action/feature/detail
+action/genotype/
 marker/transcript-view
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg

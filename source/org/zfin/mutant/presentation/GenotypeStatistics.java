@@ -8,8 +8,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -44,6 +43,20 @@ public class GenotypeStatistics extends EntityStatistics {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem);
         }
         return figureResults.getTotalCount();
+    }
+
+    public boolean isImgInFigure() {
+        if (figureResults == null || figureResults.getTotalCount() == 0)  {
+            return false;
+        }
+        boolean thereIsImg = false;
+        for (Figure fig : figureResults.getPopulatedResults()) {
+            if (!fig.isImgless()) {
+                thereIsImg = true;
+                break;
+            }
+        }
+        return thereIsImg;
     }
 
     /**
@@ -83,13 +96,13 @@ public class GenotypeStatistics extends EntityStatistics {
         return markers;
     }
 
-    public Map<String, Set> getPhenotypeDescriptions() {
-        Map<String, Set> phenotypes = new HashMap<String, Set>();
-        Set<GenotypeExperiment> genotypeExperiments = genotype.getGenotypeExperiments();
-        for (GenotypeExperiment genoExperiment : genotypeExperiments) {
-            phenotypes.putAll(PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem));
+
+    public Set<PhenotypeStatement> getPhenotypeStatements() {
+        Set<PhenotypeStatement> phenotypeStatements = new HashSet<PhenotypeStatement>();
+        for (GenotypeExperiment genoExperiment : genotype.getGenotypeExperiments()) {
+            phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(genoExperiment, anatomyItem));
         }
-        return phenotypes;
+        return phenotypeStatements;
     }
 
 

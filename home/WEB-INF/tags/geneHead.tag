@@ -5,13 +5,21 @@
 
 <%@ attribute name="gene" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 
-<b>Gene Name:</b> <zfin:name entity="${gene}"/> <br>
-<b>Gene Symbol:</b> <zfin:abbrev entity="${gene}"/> <br>
+<table class="primary-entity-attributes">
+    <tr>
+        <th><span class="name-label">Gene Name:</span></th>
+        <td><span class="name-value"><zfin:name entity="${gene}"/></span></td>
+    </tr>
+    <tr>
+        <th><span class="name-label">Gene Symbol:</span></th>
+        <td><span class="name-value"><zfin:abbrev entity="${gene}"/></span></td>
+    </tr>
+    
+    <zfin2:previousNames label="Previous Names:" entity="${formBean.marker}"/>
 
-<zfin2:previousNames entity="${formBean.marker}"/>
+</table>
 
-<br>
-<br>
+
 <zfin2:notes hasNotes="${formBean.marker}"/>
 
 

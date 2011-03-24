@@ -3,33 +3,33 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<b>Morpholino Experiments in Wild-type Fish</b>
-
-<c:if test="${!formBean.morpholinoExist}">
+<div class="summary">
+    <div class="summaryTitle">Morpholino Experiments in Wild-type Fish</div>
+    <c:if test="${!formBean.morpholinoExist}">
         <br/>No data available
-</c:if>
-<c:if test="${formBean.morpholinoExist}">
-    <table width="100%">
-        <tbody>
-            <TR class="search-result-table-header">
-                <TD width="20%">
+    </c:if>
+    <c:if test="${formBean.morpholinoExist}">
+        <table class="summary rowstripes">
+            <tbody>
+            <tr>
+                <th width="15%">
                     Target Genes
-                </TD>
-                <TD width="20%">
+                </th>
+                <th width="15%">
                     Morpholinos
-                </TD>
-                <TD width="20%">
+                </th>
+                <th width="20%">
                     Genotype
-                </TD>
-                <TD width="20%">
+                </th>
+                <th width="30%">
                     Phenotype
-                </TD>
-                <TD width="20%">
+                </th>
+                <th width="20%">
                     Figures
-                </TD>
-            </TR>
-            <c:forEach var="morpholinoStat" items="${formBean.allMorpholinos}">
-                <tr class="search-result-table-entries" valign="top">
+                </th>
+            </tr>
+            <c:forEach var="morpholinoStat" items="${formBean.allMorpholinos}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop">
                     <td>
                         <zfin:link entity="${morpholinoStat.morpholinoMarkers}"/>
                     </td>
@@ -40,22 +40,9 @@
                         <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/>
                     </td>
                     <td>
-                        <c:forEach var="phenotypes" items="${morpholinoStat.phenotypeDescriptions}"
-                                   varStatus="ontologyLoop">
-                        <c:if test="${phenotypes.key != 'ANATOMY'}">
-                        [${phenotypes.key}]:
-                        <div style="margin-left:20px">
-                            </c:if>
-                            <c:if test="${phenotypes.key == 'ANATOMY'}">
-                            <div style="margin-left:0px">
-                                </c:if>
-                                <c:forEach var="phenotype" items="${phenotypes.value}" varStatus="loop">
-                                    ${phenotype}<c:if test="${!loop.last}">, </c:if>
-                                </c:forEach>
-                                <c:if test="${!ontologyLoop.last}">
-                            </div>
-                            </c:if>
-                            </c:forEach>
+                        <c:forEach var="statement" items="${morpholinoStat.phenotypeStatements}" varStatus="loop">
+                            <zfin:link entity="${statement}"/> <c:if test="${!loop.last}"><br/></c:if>
+                        </c:forEach>
                     </td>
                     <td>
                         <c:if test="${morpholinoStat.numberOfFigures > 0}">
@@ -68,14 +55,15 @@
                             </c:if>
                             <c:if test="${morpholinoStat.numberOfFigures == 1 }">
                                 <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-fxfigureview.apg&OID=${morpholinoStat.figure.zdbID}">
-                                    <zfin2:figureOrTextOnlyLink figure="${morpholinoStat.figure}" integerEntity="${morpholinoStat.numberOfFigures}"/>
+                                    <zfin2:figureOrTextOnlyLink figure="${morpholinoStat.figure}"
+                                                                integerEntity="${morpholinoStat.numberOfFigures}"/>
                                 </a>
                             </c:if>
                         </c:if>
                         <c:if test="${morpholinoStat.numberOfFigures == 0}">
                             --
                         </c:if>
-                        from
+                        <c:if test="${morpholinoStat.imgInFigure}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
                         <c:if test="${morpholinoStat.numberOfPublications ==1}">
                             <zfin:link entity="${morpholinoStat.singlePublication}"/>
                         </c:if>
@@ -84,17 +72,17 @@
                                          integerEntity="${morpholinoStat.numberOfPublications}"
                                          includeNumber="true"/>
                         </c:if>
-                    <c:if test="${morpholinoStat.numberOfFigures == 0}">
-                        --
-                    </c:if>
-                </td>
-            </tr>
-        </c:forEach>
-    </tbody>
-</table>
-    <c:if test="${!formBean.allWildtypeMorpholinosAreDisplayed}">
-        <table width="100%">
-            <tbody>
+                        <c:if test="${morpholinoStat.numberOfFigures == 0}">
+                            --
+                        </c:if>
+                    </td>
+                </zfin:alternating-tr>
+            </c:forEach>
+            </tbody>
+        </table>
+        <c:if test="${!formBean.allWildtypeMorpholinosAreDisplayed}">
+            <table width="100%">
+                <tbody>
                 <tr align="left">
                     <td>
                         Show all
@@ -105,7 +93,8 @@
                         </a>
                     </td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </c:if>
     </c:if>
-</c:if>
+</div>

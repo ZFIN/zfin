@@ -6,7 +6,7 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
   -- Given the ZDB ID of term, 
   -- this returns the name of the entity and a link
 
-  --
+  --  
   -- INPUT VARS: 
   --   entityZdbId   Get the name of this entity
   -- 
@@ -29,43 +29,15 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
 
   let entityNameHtml = NULL;
 
-  select term_name into entityName
+  select term_name, term_ont_id, term_ontology
+  into entityName, entityOntologyId, entityOntologyName
   from term
   where term_zdb_id = entityZdbId;
 
-  select term_ont_id into entityOntologyId
-  from term
-  where term_zdb_id = entityZdbId;
-
-  select term_ontology into entityOntologyName
-  from term
-  where term_zdb_id = entityZdbId;
-
-  if (entityOntologyName = "zebrafish_anatomy") then
-
-     let entityNameHtml = '<a href=/action/anatomy/term-detail?id=' || entityOntologyId || '>' || entityName || '</a>';
-
-  elif (   (entityOntologyName = "biological_process")
-        or (entityOntologyName = "cellular_component")
-        or (entityOntologyName = "molecular_function") ) then
-
---    select fdb_db_query into goUrl 
---    from foreign_db 
---    where fdb_db_name = 'QuickGO';
-
---  selecting from the database gives urls like GO:GO:0000  hardcode for now..
-
-    let goUrl = "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=";
-
-    let entityNameHtml = '<a href=' || goUrl || entityOntologyId || '>' || entityName || '</a>';
-
-  elif(entityOntologyName = "spatial") then
-
-    let entityNameHtml = '<span>' || entityName || '</span>';  
-
-  else
-     let entityNameHtml = entityName;
-  end if
+  let entityNameHtml = '<a href="/action/ontology/term-detail?termID=' || entityOntologyId 
+                       || '">' ||  entityName || '</a>' 
+                       || '<a class="popup-link data-popup-link" ' 
+                       || 'href="/action/ontology/term-detail-popup?termID=' || entityOntologyId || '"></a>'  ;
 
   return entityNameHtml;
 

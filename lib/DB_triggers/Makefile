@@ -27,10 +27,6 @@ TRIGGERS = \
 	anatomy_items_update_trigger.sql \
 	anatomy_relationship_insert_trigger.sql \
 	anatomy_relationship_update_trigger.sql \
-	atomic_phenotype_insert_trigger.sql \
-	atomic_phenotype_update_trigger.sql \
-	apatoinf_insert_trigger.sql \
-	apatoinf_update_trigger.sql \
 	clone_problem_type_insert_trigger.sql \
 	clone_problem_type_update_trigger.sql \
 	data_alias_insert_trigger.sql \

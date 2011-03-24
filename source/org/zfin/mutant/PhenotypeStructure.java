@@ -1,24 +1,25 @@
 package org.zfin.mutant;
 
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 
 import java.util.Date;
 
 /**
- * This holds a single phenotype structure, consisting of a superterm (AO), a subterm, a quality term and
- * a tag.
+ * This holds a single phenotype structure, consisting of a post-composed entity, a quality term,
+ * a post-composed related entity  and a tag.
  */
 public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
 
     private String zdbID;
     private Person person;
     private Publication publication;
-    private GenericTerm superterm;
-    private GenericTerm subterm;
+    private PostComposedEntity entity;
+    private PostComposedEntity relatedEntity;
     private GenericTerm qualityTerm;
-    private Phenotype.Tag tag;
+    private PhenotypeStatement.Tag tag;
     private Date date;
 
     public String getZdbID() {
@@ -53,20 +54,20 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
         this.date = date;
     }
 
-    public GenericTerm getSuperterm() {
-        return superterm;
+    public PostComposedEntity getEntity() {
+        return entity;
     }
 
-    public void setSuperterm(GenericTerm superterm) {
-        this.superterm = superterm;
+    public void setEntity(PostComposedEntity entity) {
+        this.entity = entity;
     }
 
-    public GenericTerm getSubterm() {
-        return subterm;
+    public PostComposedEntity getRelatedEntity() {
+        return relatedEntity;
     }
 
-    public void setSubterm(GenericTerm subterm) {
-        this.subterm = subterm;
+    public void setRelatedEntity(PostComposedEntity relatedEntity) {
+        this.relatedEntity = relatedEntity;
     }
 
     public GenericTerm getQualityTerm() {
@@ -77,11 +78,11 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
         this.qualityTerm = qualityTerm;
     }
 
-    public Phenotype.Tag getTag() {
+    public PhenotypeStatement.Tag getTag() {
         return tag;
     }
 
-    public void setTag(Phenotype.Tag tag) {
+    public void setTag(PhenotypeStatement.Tag tag) {
         this.tag = tag;
     }
 
@@ -89,19 +90,61 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
         return "";
     }
 
-    public int compareTo(PhenotypeStructure o) {
-        if (!(o instanceof PhenotypeStructure))
-            throw new RuntimeException("Comparable class not of type PhenotypeStructure");
+    @Override
+    public String toString() {
+        return "PhenotypeStructure{" +
+                "entity=" + entity +
+                ", relatedEntity=" + relatedEntity +
+                ", quality=" + qualityTerm +
+                ", tag=" + tag +
+                '}';
+    }
 
-        if (!superterm.equals(o.getSuperterm()))
-            return superterm.getTermName().compareToIgnoreCase(o.getSuperterm().getTermName());
-        if (subterm != null && o.getSubterm() == null)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PhenotypeStructure that = (PhenotypeStructure) o;
+
+        if (entity != null ? !entity.equals(that.entity) : that.entity != null) return false;
+        if (qualityTerm != null ? !qualityTerm.equals(that.qualityTerm) : that.qualityTerm != null) return false;
+        if (relatedEntity != null ? !relatedEntity.equals(that.relatedEntity) : that.relatedEntity != null)
+            return false;
+        if (tag != that.tag) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = entity != null ? entity.hashCode() : 0;
+        result = 31 * result + (relatedEntity != null ? relatedEntity.hashCode() : 0);
+        result = 31 * result + (qualityTerm != null ? qualityTerm.hashCode() : 0);
+        result = 31 * result + (tag != null ? tag.hashCode() : 0);
+        return result;
+    }
+
+    public int compareTo(PhenotypeStructure o) {
+
+        if (!entity.getSuperterm().equals(o.getEntity().getSuperterm()))
+            return entity.getSuperterm().getTermName().compareToIgnoreCase(o.entity.getSuperterm().getTermName());
+        if (entity.getSubterm() != null && o.entity.getSubterm() == null)
             return 1;
-        if (subterm == null && o.getSubterm() != null)
+        if (entity.getSubterm() == null && o.entity.getSubterm() != null)
             return -1;
-        if (subterm != null && o.getSubterm() != null)
-            return subterm.getTermName().compareToIgnoreCase(o.getSubterm().getTermName());
+        if (entity.getSubterm() != null && o.entity.getSubterm() != null)
+            return entity.getSubterm().getTermName().compareToIgnoreCase(o.entity.getSubterm().getTermName());
         return qualityTerm.getTermName().compareToIgnoreCase(o.getQualityTerm().getTermName());
 
+    }
+
+    public PhenotypeStatement getPhenotypeStatement() {
+        PhenotypeStatement statement = new PhenotypeStatement();
+        statement.setEntity(entity);
+        statement.setRelatedEntity(relatedEntity);
+        statement.setTag(tag.toString());
+        statement.setQuality(qualityTerm);
+        return statement;
     }
 }

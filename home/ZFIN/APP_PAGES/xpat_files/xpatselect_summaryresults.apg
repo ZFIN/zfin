@@ -87,12 +87,16 @@ OUTPUT VARS:
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrevLink">$3<?/MIVAR>  
     
-      <?MISQL SQL=" select count(distinct xpat_fig_zdb_id)::Integer
+      <?MISQL SQL=" select distinct xpat_fig_zdb_id
                     from $xpsumres_resultTable
                     where xpat_gene_zdb_id = '$xpsumres_geneZdbId'">
-        <?MIVAR NAME="xpsumres_figCount">$1<?/MIVAR>
-      <?/MISQL>      
-   
+        <?MIVAR NAME="xpsumres_fig_zdb_id">$1<?/MIVAR>
+      <?/MISQL>     
+      <?MIVAR NAME="xpsumres_figCount">$MI_ROWCOUNT<?/MIVAR>
+
+      <?MIBLOCK COND="$(=, $xpsumres_figCount, 1)">
+      
+      <?/MIBLOCK>   
 
     <?MISQL SQL="
 	select distinct publication.zdb_id, publication.pub_mini_ref
@@ -128,7 +132,7 @@ OUTPUT VARS:
                      necessarily follow the scheme of pretending that they're each a different pub. <?/MICOMMENT>
 
           <?MIBLOCK COND="$(EC,$xpsumres_pubCount,1)">
-            <?MIVAR NAME="$xpsumres_figsFrom">$xpsumres_pubMiniRef<?/MIVAR>
+            <?MIVAR NAME="$xpsumres_figsFrom"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpsumres_pub_zdb_id>$xpsumres_pubMiniRef</A><?/MIVAR>
           <?MIELSE>
             <?MIVAR NAME="$xpsumres_figsFrom">$xpsumres_pubCount publications<?/MIVAR>
           <?/MIBLOCK>
@@ -151,13 +155,21 @@ OUTPUT VARS:
          
        	     <?MIVAR COND="$(!=,$1,0)" NAME="$xpsumres_cameraTag"><img src="/images/camera_icon.gif" border=0 alt="with image(s)"><?/MIVAR>
          <?/MISQL> 
-          
-         <?MIVAR>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=$xpsumres_geneZdbId&gene_name=$xpsumres_geneAbbrev&searchtype=equals&$xpsumres_baseUrl">
-            $xpsumres_figCount figure(s)</a>
-          from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)  
-          
-         <?/MIVAR>
+
+         <?MIBLOCK COND="$(>,$xpsumres_figCount,1)">          
+           <?MIVAR>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=$xpsumres_geneZdbId&gene_name=$xpsumres_geneAbbrev&searchtype=equals&$xpsumres_baseUrl">
+              $xpsumres_figCount figures</a>
+            from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)            
+           <?/MIVAR>
+	 <?MIELSE>
+	   <?MISQL SQL="select fig_label from figure where fig_zdb_id = '$xpsumres_fig_zdb_id';">
+	      <?MIVAR NAME=xpsumres_fig_label>$1<?/MIVAR>
+           <?/MISQL>
+	   <?MIVAR>
+	     <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$xpsumres_fig_zdb_id'>$xpsumres_fig_label</a> from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)
+           <?/MIVAR>
+	 <?/MIBLOCK>
        </td>
 
        <?MICOMMENT> *** stage range column *** <?/MICOMMENT>

@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -14,56 +13,58 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.LoggingUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * GWT controller for the Pheno tab page
  */
-public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements CurationPhenotypeRPC {
+public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implements CurationPhenotypeRPC {
 
     private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
-    public List<PhenotypeFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
+    public List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
 
-        List<MutantFigureStage> phenotypes = getPhenotypeRepository().getMutantExpressionsByFigureFish(experimentFilter.getPublicationID(),
+        List<PhenotypeExperiment> phenotypes = getPhenotypeRepository().getMutantExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
         if (phenotypes == null)
             return null;
-        List<PhenotypeFigureStageDTO> dtos = new ArrayList<PhenotypeFigureStageDTO>(30);
-        for (MutantFigureStage efs : phenotypes) {
-            PhenotypeFigureStageDTO dto = new PhenotypeFigureStageDTO();
-            dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
-            dto.setStart(DTOConversionService.convertToStageDTO(efs.getStart()));
-            dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEnd())));
-            List<PhenotypeTermDTO> termStrings = new ArrayList<PhenotypeTermDTO>(5);
-            for (Phenotype phenotype : efs.getPhenotypes()) {
-                PhenotypeTermDTO termDto = new PhenotypeTermDTO();
-                termDto.setSuperterm(DTOConversionService.convertToTermDTO(phenotype.getSuperterm()));
-                if (phenotype.getSubterm() != null) {
-                    termDto.setSubterm(DTOConversionService.convertToTermDTO(phenotype.getSubterm()));
-                }
-                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getQualityTerm()));
+        List<PhenotypeExperimentDTO> dtos = new ArrayList<PhenotypeExperimentDTO>(30);
+        for (PhenotypeExperiment phenotypeExperiment : phenotypes) {
+            PhenotypeExperimentDTO dto = new PhenotypeExperimentDTO();
+            dto.setId(phenotypeExperiment.getId());
+            dto.setFigure(DTOConversionService.convertToFigureDTO(phenotypeExperiment.getFigure()));
+            dto.setStart(DTOConversionService.convertToStageDTO(phenotypeExperiment.getStartStage()));
+            dto.setEnd((DTOConversionService.convertToStageDTO(phenotypeExperiment.getEndStage())));
+            List<PhenotypeStatementDTO> termStrings = new ArrayList<PhenotypeStatementDTO>(5);
+            for (PhenotypeStatement phenotype : phenotypeExperiment.getPhenotypeStatements()) {
+                PhenotypeStatementDTO termDto = new PhenotypeStatementDTO();
+                termDto.setEntity(DTOConversionService.convertToEntityDTO(phenotype.getEntity()));
+                termDto.setRelatedEntity(DTOConversionService.convertToEntityDTO(phenotype.getRelatedEntity()));
+                termDto.setQuality(DTOConversionService.convertToTermDTO(phenotype.getQuality()));
                 termDto.setTag(phenotype.getTag());
-                termDto.setZdbID(phenotype.getZdbID());
+                termDto.setId(phenotype.getId());
                 termStrings.add(termDto);
 
             }
             //dto.setExpressedIn(formatter.getFormattedString());
             Collections.sort(termStrings);
             dto.setExpressedTerms(termStrings);
-            GenotypeDTO genotype = DTOConversionService.convertToGenotypeDTO(efs.getGenotypeExperiment().getGenotype());
+            GenotypeDTO genotype = DTOConversionService.convertToGenotypeDTO(phenotypeExperiment.getGenotypeExperiment().getGenotype());
             dto.setGenotype(genotype);
-            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(efs.getGenotypeExperiment().getExperiment()));
+            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(phenotypeExperiment.getGenotypeExperiment().getExperiment()));
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }
@@ -71,18 +72,18 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         return dtos;
     }
 
-    public List<PhenotypeFigureStageDTO> createMutantFigureStages(List<PhenotypeFigureStageDTO> newFigureAnnotations) {
+    public List<PhenotypeExperimentDTO> createPhenotypeExperiments(List<PhenotypeExperimentDTO> newFigureAnnotations) {
         if (newFigureAnnotations == null)
             return null;
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
-        List<PhenotypeFigureStageDTO> returnRecords = new ArrayList<PhenotypeFigureStageDTO>(newFigureAnnotations.size());
+        List<PhenotypeExperimentDTO> returnRecords = new ArrayList<PhenotypeExperimentDTO>(newFigureAnnotations.size());
         try {
             tx = session.beginTransaction();
-            for (PhenotypeFigureStageDTO pfs : newFigureAnnotations) {
-                MutantFigureStage mfs = createMutantFigureStageWithDefaultPhenotype(pfs);
-                returnRecords.add(DTOConversionService.convertToPhenotypeFigureStageDTO(mfs));
+            for (PhenotypeExperimentDTO pfs : newFigureAnnotations) {
+                PhenotypeExperiment phenoExperiment = createPhenotypeExperiment(pfs);
+                returnRecords.add(DTOConversionService.convertToPhenotypeFigureStageDTO(phenoExperiment));
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -94,47 +95,40 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
 
     /**
      * This creates a mutant figure stage record with a default phenotype, i.e.
-     * AO:unspecified - quality [abnormal]. If the phenotype exists already for a figure reuse it.
+     * AO:unspecified - quality [abnormal].
      *
      * @param mutantFigureStage Mutant Figure Stage
+     * @return PhenotypeExperiment
      */
-    private MutantFigureStage createMutantFigureStageWithDefaultPhenotype(PhenotypeFigureStageDTO mutantFigureStage) {
-        MutantFigureStage mfs = DTOConversionService.convertToMutantFigureStageFromDTO(mutantFigureStage);
+    private PhenotypeExperiment createPhenotypeExperiment(PhenotypeExperimentDTO mutantFigureStage) {
+        PhenotypeExperiment phenoExperiment = DTOConversionService.convertToPhenotypeExperimentFilter(mutantFigureStage);
+        // check if there is a genotypes experiment already.
+        // if not create a new one.
+        GenotypeExperiment genotypeExperiment = getExpressionRepository().getGenotypeExperimentByExperimentIDAndGenotype(
+                mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getGenotype().getZdbID());
         // create a new genotype experiment if needed
-        GenotypeExperiment genotypeExperiment = mfs.getGenotypeExperiment();
         if (genotypeExperiment == null) {
             genotypeExperiment =
                     getExpressionRepository().createGenoteypExperiment(mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getGenotype().getZdbID());
-            mfs.setGenotypeExperiment(genotypeExperiment);
         }
-
-        // creating new mutant record so far...
-        // create the default phenotype
-        // check if default phenotype exists
-        Phenotype defaultPhenotype = PhenotypeService.getDefaultPhenotype(mfs);
-        if (defaultPhenotype == null) {
-            getPhenotypeRepository().createDefaultPhenotype(mfs);
-        } else {
-            defaultPhenotype.addFigure(mfs.getFigure());
-        }
-        return mfs;
+        phenoExperiment.setGenotypeExperiment(genotypeExperiment);
+        getPhenotypeRepository().createPhenotypeExperiment(phenoExperiment);
+        return phenoExperiment;
     }
 
-    public void deleteFigureAnnotation(PhenotypeFigureStageDTO figureAnnotation) {
+    public void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation) {
         if (figureAnnotation == null)
             return;
-        if (figureAnnotation.getFigure().getZdbID() == null ||
-                figureAnnotation.getStart().getZdbID() == null ||
-                figureAnnotation.getEnd().getZdbID() == null)
+        if (figureAnnotation.getId() == 0)
             return;
-        MutantFigureStage mutantFromDto = DTOConversionService.convertToMutantFigureStageFromDTO(figureAnnotation);
-        if (mutantFromDto == null) {
-            logger.info("No mutant figure stage record found: " + figureAnnotation);
+        PhenotypeExperiment phenotypeExperiment = getPhenotypeRepository().getPhenotypeExperiment(figureAnnotation.getId());
+        if (phenotypeExperiment == null) {
+            logger.info("No phenotype experiment record found for: " + figureAnnotation);
             return;
         }
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            getMutantRepository().deleteMutantFigureStage(mutantFromDto);
+            getMutantRepository().deletePhenotypeExperiment(phenotypeExperiment);
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
@@ -142,8 +136,9 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         }
     }
 
-    public List<PhenotypeFigureStageDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> updateEntity) {
-        List<PhenotypeFigureStageDTO> mutantsToBeAnnotated = updateEntity.getFigureAnnotations();
+    public List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity) {
+        LoggingUtil loggingUtil = new LoggingUtil(logger);
+        List<PhenotypeExperimentDTO> mutantsToBeAnnotated = updateEntity.getFigureAnnotations();
         if (mutantsToBeAnnotated == null)
             return null;
 
@@ -151,23 +146,26 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         if (pileStructures == null || pileStructures.isEmpty())
             return null;
 
-
-        List<PhenotypeFigureStageDTO> updatedAnnotations = new ArrayList<PhenotypeFigureStageDTO>(5);
+        // Collect all phenotype experiments being used
+        Set<PhenotypeExperiment> phenotypeExperiments = new HashSet<PhenotypeExperiment>();
+        List<PhenotypeExperimentDTO> updatedAnnotations = new ArrayList<PhenotypeExperimentDTO>(5);
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             // for each figure annotation check which structures need to be added or removed
-            for (PhenotypeFigureStageDTO dto : mutantsToBeAnnotated) {
-                MutantFigureStage filterMutantFigureStage = DTOConversionService.convertToMutantFigureStageFilter(dto);
-                MutantFigureStage mutant = getPhenotypeRepository().getMutant(filterMutantFigureStage, dto.getFigure().getZdbID());
+            for (PhenotypeExperimentDTO dto : mutantsToBeAnnotated) {
+                PhenotypeExperiment filterMutantFigureStage = DTOConversionService.convertToPhenotypeExperimentFilter(dto);
+                PhenotypeExperiment phenoExperiment = getPhenotypeRepository().getPhenotypeExperiment(filterMutantFigureStage);
+                phenotypeExperiments.add(phenoExperiment);
                 // ToDo: handle case mutant is not found: throw exception (make sure a finally clause is added!
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
                     PhenotypeStructure phenotypePileStructure = getPhenotypeRepository().getPhenotypePileStructure(pileStructure.getZdbID());
-                    // ToDo: handle case pile structure is not found: throw exception (make sure a finally clause is added!
-                    if (phenotypePileStructure == null)
+                    if (phenotypePileStructure == null) {
                         logger.error("Could not find pile structure " + pileStructure.getZdbID());
+                        continue;
+                    }
                     // add phenotype if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
-                        PhenotypeTermDTO phenotypeTermDTO = addExpressionToAnnotation(mutant, phenotypePileStructure);
+                        PhenotypeStatementDTO phenotypeTermDTO = addExpressionToAnnotation(phenoExperiment, phenotypePileStructure);
                         if (phenotypeTermDTO != null) {
                             dto.addExpressedTerm(phenotypeTermDTO);
                             updatedAnnotations.add(dto);
@@ -175,9 +173,12 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
                     }
                     // remove expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.REMOVE) {
-                        removePhenotypeStructureFromMutant(phenotypePileStructure, mutant);
+                        removePhenotypeStructureFromMutant(phenotypePileStructure, phenoExperiment);
                     }
                 }
+            }
+            for(PhenotypeExperiment phenotypeExperiment: phenotypeExperiments){
+                getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -185,9 +186,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
             tx.rollback();
             throw e;
         }
-        for (PhenotypeFigureStageDTO dto : mutantsToBeAnnotated) {
-            //setFigureAnnotationStatus(dto, false);
-        }
+        loggingUtil.logDuration("Duration of updateStructuresForExpression() method: ");
         return updatedAnnotations;
     }
 
@@ -204,7 +203,7 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
         Publication publication = getPublicationRepository().getPublication(publicationID);
         if (publication.getCloseDate() != null)
             return false;
-        Collection<MutantFigureStage> mutants = getPhenotypeRepository().getMutantExpressionsByFigureFish(publicationID, null, null, null);
+        Collection<PhenotypeExperiment> mutants = getPhenotypeRepository().getMutantExpressionsByFigureFish(publicationID, null, null, null);
         Collection<PhenotypeStructure> structures = getPhenotypeRepository().retrievePhenotypeStructures(publicationID);
         return CollectionUtils.isNotEmpty(mutants) && CollectionUtils.isEmpty(structures);
     }
@@ -212,38 +211,15 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
     /**
      * Delete a phenotype pile structure from a given mutant record.
      *
-     * @param phenotypePileStructure phenotype pile structure
-     * @param mutantFigureStage      mutant figure stage record
+     * @param pileStructure   phenotype pile structure
+     * @param phenoExperiment mutant figure stage record
      */
-    private void removePhenotypeStructureFromMutant(PhenotypeStructure phenotypePileStructure, MutantFigureStage mutantFigureStage) {
-        for (Phenotype phenotype : mutantFigureStage.getPhenotypes()) {
-
-            if (phenotype.getSuperterm().getZdbID().equals(phenotypePileStructure.getSuperterm().getZdbID())) {
-                // if quality term is not the same continue with next phenotype
-                if (!phenotype.getQualityTerm().getZdbID().equals(phenotypePileStructure.getQualityTerm().getZdbID()))
-                    continue;
-                // if tag is not the same continue with next phenotype
-                if (!phenotype.getTag().equals(phenotypePileStructure.getTag().toString()))
-                    continue;
-
-                String subtermID = null;
-                GenericTerm term = phenotype.getSubterm();
-                if (term != null)
-                    subtermID = term.getOboID();
-                // check if both subterms are null. If not ignore this phenotype as it is not the one
-                // we are asked to remove.
-                if (subtermID == null && phenotypePileStructure.getSubterm() == null) {
-                    getPhenotypeRepository().deletePhenotype(phenotype, mutantFigureStage.getFigure());
-                    logger.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName());
-                    break;
-                }
-                if (subtermID != null && phenotypePileStructure.getSubterm() != null &&
-                        term.getZdbID().equals(phenotypePileStructure.getSubterm().getZdbID())) {
-                    getPhenotypeRepository().deletePhenotype(phenotype, mutantFigureStage.getFigure());
-                    GenericTerm subterm = phenotype.getSubterm();
-                    logger.info("Removed Phenotype:  " + phenotype.getSuperterm().getTermName() + " : " + subterm.getTermName());
-                    break;
-                }
+    private void removePhenotypeStructureFromMutant(PhenotypeStructure pileStructure, PhenotypeExperiment phenoExperiment) {
+        for (PhenotypeStatement phenoStatement : phenoExperiment.getPhenotypeStatements()) {
+            PhenotypeStructure comparisonPhenotypeStructure = DTOConversionService.convertToPhenotypeStructure(phenoStatement);
+            if (comparisonPhenotypeStructure.equals(pileStructure)) {
+                getPhenotypeRepository().deletePhenotypeStatement(phenoStatement);
+                logger.info("Removed phenotype statement: " + phenoStatement.getDisplayName());
             }
         }
     }
@@ -254,74 +230,36 @@ public class CurationPhenotypeRPCImpl extends RemoteServiceServlet implements Cu
      * the expressed-modifier. We allow to add the same composed term twice, once with
      * 'not'  modifier and once without it.
      *
-     * @param mutant             ExpressionExperiment
+     * @param phenoExperiment    PhenotypeExperiment
      * @param phenotypeStructure structure selected from the pile
      * @return expressedTermDTO used to return to RPC caller
      */
-    private PhenotypeTermDTO addExpressionToAnnotation(MutantFigureStage mutant,
+    private PhenotypeStatementDTO addExpressionToAnnotation(PhenotypeExperiment phenoExperiment,
                                                        PhenotypeStructure phenotypeStructure) {
         // do nothing term already exists for mutant
-        if (hasMutantGivenPhenotypeStructure(mutant, phenotypeStructure))
+        if (hasMutantGivenPhenotypeStructure(phenoExperiment, phenotypeStructure))
             return null;
 
-        // create a new Phenotype record
+        // create a new Phenotype Statement record
         // create a new PhenotypeTermDTO object that is passed back to the RPC caller
-        PhenotypeTermDTO expressedTerm = new PhenotypeTermDTO();
-        GenericTerm superterm = phenotypeStructure.getSuperterm();
-        GenericTerm subterm = phenotypeStructure.getSubterm();
-        Phenotype aoPhenotype = new Phenotype();
-        aoPhenotype.setSuperterm(ontologyRepository.getTermByZdbID(superterm.getZdbID()));
-        if (subterm != null){
-            aoPhenotype.setSubterm(ontologyRepository.getTermByZdbID(subterm.getZdbID()));
-        }
-        aoPhenotype.addFigure(mutant.getFigure());
-        aoPhenotype.setEndStage(mutant.getEnd());
-        aoPhenotype.setStartStage(mutant.getStart());
-        aoPhenotype.setGenotypeExperiment(mutant.getGenotypeExperiment());
-        aoPhenotype.setPublication(mutant.getPublication());
-        aoPhenotype.setTag(phenotypeStructure.getTag().toString());
-        aoPhenotype.setQualityTerm(phenotypeStructure.getQualityTerm());
-        getPhenotypeRepository().createPhenotype(aoPhenotype, mutant.getFigure());
-
-        TermDTO supertermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSuperterm());
-        expressedTerm.setSuperterm(supertermDto);
-        if (subterm != null) {
-            TermDTO subtermDto = DTOConversionService.convertToTermDTO(phenotypeStructure.getSubterm());
-            expressedTerm.setSubterm(subtermDto);
-        }
-        return expressedTerm;
+        PhenotypeStatementDTO phenotypeTermDTO = DTOConversionService.convertToPhenotypeTermDTO(phenotypeStructure);
+        PhenotypeStatement phenoStatement = phenotypeStructure.getPhenotypeStatement();
+        phenoStatement.setPhenotypeExperiment(phenoExperiment);
+        getPhenotypeRepository().createPhenotypeStatement(phenoStatement);
+        logger.info("Added phenotype statement: " + phenoStatement.getDisplayName());
+        return phenotypeTermDTO;
     }
 
-    private boolean hasMutantGivenPhenotypeStructure(MutantFigureStage mutant, PhenotypeStructure pileStructure) {
-        boolean foundStructure = false;
-        for (Phenotype phenotype : mutant.getPhenotypes()) {
-            if (phenotype.getSuperterm().getZdbID().equals(pileStructure.getSuperterm().getZdbID())) {
-                // check if subterms are unequal
-                // if so continue loop checking for an existing phenotype
-                GenericTerm phenoSubterm = HibernateUtil.initializeAndUnproxy(phenotype.getSubterm());
-                if ((phenoSubterm == null && pileStructure.getSubterm() != null) ||
-                        (phenoSubterm != null && pileStructure.getSubterm() == null)) {
-                    continue;
-                }
+    private boolean hasMutantGivenPhenotypeStructure(PhenotypeExperiment mutant, PhenotypeStructure pileStructure) {
+        if (mutant == null || pileStructure == null)
+            return false;
 
-                if (phenoSubterm != null && pileStructure.getSubterm() != null) {
-                    String phenotypeID = phenoSubterm.getZdbID();
-                    String pileStructureID = pileStructure.getSubterm().getZdbID();
-                    if (!phenotypeID.equals(pileStructureID)) {
-                        // terms are different in the sub term
-                        continue;
-                    }
-                }
-
-                if (phenotype.getQualityTerm().getOboID().equals(pileStructure.getQualityTerm().getOboID())) {
-                    if (phenotype.getTag().equals(pileStructure.getTag().toString())) {
-                        foundStructure = true;
-                        break;
-                    }
-                }
-            }
+        for (PhenotypeStatement phenotype : mutant.getPhenotypeStatements()) {
+            PhenotypeStructure comparisonPhenotypeStructure = DTOConversionService.convertToPhenotypeStructure(phenotype);
+            if (comparisonPhenotypeStructure.equals(pileStructure))
+                return true;
         }
-        return foundStructure;
+        return false;
     }
 
 }

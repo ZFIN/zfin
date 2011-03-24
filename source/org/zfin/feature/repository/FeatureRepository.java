@@ -114,4 +114,12 @@ public interface FeatureRepository {
 
     int addLabOfOriginForFeature(Feature feature, String labOfOrigin);
 
+    /**
+     * Retrieve all feature ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     * @param firstNIds
+     * @return list of ids
+     */
+    List<String> getAllFeatures(int firstNIds);
 }

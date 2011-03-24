@@ -5,54 +5,92 @@
 
 <%@ attribute name="isThisseProbe" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
+<%-- this is intended to be a fragment of the primary entity attributes table called from within
+cloneHead.tag ... that's why there's no table tag here, just rows --%>
 
-<hr width="80%"/>
-<div class="summary">
-<table class="summary solidblock clonedata">
-    <caption>CLONE DATA:</caption>
     <tr>
-        <td><b>Library:</b> ${clone.probeLibrary.name}</td>
-        <td><b>Species:</b> ${clone.probeLibrary.species}</td>
-        <td><b>Sex:</b> ${clone.probeLibrary.sex}</td>
-    </tr>
-    <tr>
-        <td><b>Cloning Site:</b> ${clone.cloningSite}</td>
-        <td><b>Digest:</b> ${clone.digest}</td>
-        <td><b>Insert Size:</b> ${clone.insertSize}</td>
-    </tr>
-    <tr>
-        <td><b>Vector:</b> ${clone.vector.name}</td>
-        <td><b>Vector Type:</b> ${clone.vector.type}</td>
-    </tr>
-    <tr>
-        <td><b>Polymerase:</b> ${clone.polymeraseName}</td>
-        <td><b>Insert Size:</b> ${clone.insertSize}</td>
+      <th>Library:</th>
+      <td>${clone.probeLibrary.name}</td>
     </tr>
 
     <tr>
-        <td colspan="3">
-            <b>PCR Amplification:</b> <br>
-            ${clone.pcrAmplification}
-        </td>
+      <th>Species:</th>
+      <td>${clone.probeLibrary.species}</td>
+    </tr>
+
+
+    <tr>
+      <th>Sex:</th>
+      <td>${clone.probeLibrary.sex}</td>
+    </tr>
+
+    <tr>
+      <th>Cloning Site:</th>
+      <td>${clone.cloningSite}</td>
+    </tr>
+
+    <tr>
+      <th>Digest:</th>
+      <td>${clone.digest}</td>
+    </tr>
+
+    <tr>
+      <th>Insert Size:</th>
+      <td>${clone.insertSize}</td>
+    </tr>
+
+    <tr>
+      <th></th>
+      <td></td>
+    </tr>
+
+    <tr>
+      <th>Vector:</th>
+      <td>${clone.vector.name}</td>
+    </tr>
+
+    <tr>
+      <th>Vector Type:</th>
+      <td>${clone.vector.type}</td>
+    </tr>
+
+    <tr>
+      <th>Polymerase:</th>
+      <td>${clone.polymeraseName}</td>
+    </tr>
+
+    <tr>
+      <th>Insert Size:</th>
+      <td>${clone.insertSize}</td>
+    </tr>
+
+    <tr>
+      <th>PCR Amplification:</th>
+      <td>${clone.pcrAmplification}</td>
     </tr>
 
     <c:if test="${!empty clone.suppliers}">
         <tr>
-            <td colspan="3">
-                <b>Source:</b> <br>
+            <th>Source:</th>
+            <td>
                 <c:forEach var="supplier" items="${clone.suppliers}">
-                   <zfin:link entity="${supplier.organization}"/>
-                   <small>
-                        (<a href="${supplier.orderURL}${supplier.accNum}">${supplier.organization.organizationOrderURL.hyperlinkName}</a>)
-                   </small>
+                    <div>
+                        <zfin:link entity="${supplier.organization}"/>
+                        <small>
+                            (<a href="${supplier.orderURL}${supplier.accNum}">${supplier.organization.organizationOrderURL.hyperlinkName}</a>)
+                        </small>
+                    </div>
                 </c:forEach>
             </td>
         </tr>
     </c:if>
+
     <c:if test="${!empty clone.rating}">
         <tr>
-            <td colspan="3">
-                <a href="/zf_info/stars.html"><b>Quality:</b></a>
+            <th>
+                <a href="/zf_info/stars.html">Quality:</a>
+            </th>
+            <td>
                 <img src="/images/${clone.rating+1}0stars.gif" alt="Rating ${clone.rating +1}">
                 (
                 <c:choose>
@@ -69,10 +107,9 @@
 
     <c:if test="${isThisseProbe}">
         <tr>
-            <TD colspan="3" nowrap><a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a></TD>
+            <th>Protocol:</th>
+            <td>
+                <a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a>
+            </td>
         </tr>
     </c:if>
-
-
-</table>
-</div>

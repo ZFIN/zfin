@@ -58,7 +58,6 @@ XPAT_STATS   = populate_direct_submission_date.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \
-	       p_quality_term_not_obsolete_or_secondary.sql \
 	       p_term_is_not_obsolete_or_secondary.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
@@ -75,9 +74,9 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql \
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql\
 	       add_ab_ao_fast_search.sql create_all_terms_contains.sql 
-REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql 
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
@@ -96,7 +95,8 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
-	get_entity_name_html.sql get_postcomposed_term_html.sql regen_anatomy_counts.sql
+	get_entity_name_html.sql get_postcomposed_term_html.sql regen_anatomy_counts.sql \
+	get_phenotype_link_html.sql get_phenotype_popup_link_html.sql
 # insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
 # are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
@@ -108,14 +108,14 @@ MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql regen_term.sql clone_2_sange
 
 GENERIC_AGGR = $(ZDB_AGGR) 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) \
-		get_mrkr_name_html_link.sql get_mrkr_url.sql get_mutants_html_link.sql \
-	        get_mrkr_abbrev_html_link.sql get_geno_name_html_link.sql \
-		get_geno_name_with_bg_html_link.sql \
-		get_genotype_backgrounds_html_link.sql  
+		get_mutants_html_link.sql get_mrkr_url.sql	         	
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(XPAT_STATS) \
-		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql
+		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql \
+		get_mrkr_name_html_link.sql get_mrkr_abbrev_html_link.sql \
+		get_geno_name_html_link.sql get_geno_name_with_bg_html_link.sql \
+		get_genotype_backgrounds_html_link.sql  get_genofeat_mp_zyg_html_display.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))

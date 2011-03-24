@@ -2,10 +2,7 @@ package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.TransitiveClosure;
+import org.zfin.ontology.*;
 
 import java.util.*;
 
@@ -26,6 +23,8 @@ public class OntologyBean {
     private TreeMap<String,Set<TermDTO>> keys ;
     private List<TransitiveClosure> childrenTransitiveClosureSet ;
     private OntologyManager ontologyManager ;
+    private List<RelationshipPresentation> termRelationships;
+    private List<OntologyMetadata> metadataList;
 
     public String getAction() {
         return action;
@@ -137,6 +136,22 @@ public class OntologyBean {
 
     public void setOntologyManager(OntologyManager ontologyManager) {
         this.ontologyManager = ontologyManager;
+    }
+
+    public List<OntologyMetadata> getMetadataList() {
+        return metadataList;
+    }
+
+    public void setMetadataList(List<OntologyMetadata> metadataList) {
+        this.metadataList = metadataList;
+    }
+
+    public List<RelationshipPresentation> getTermRelationships() {
+        return termRelationships;
+    }
+
+    public void setTermRelationships(List<RelationshipPresentation> termRelationships) {
+        this.termRelationships = termRelationships;
     }
 
     public static enum ActionType {

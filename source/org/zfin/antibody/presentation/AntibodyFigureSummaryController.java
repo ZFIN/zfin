@@ -8,9 +8,13 @@ import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
+import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +51,7 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
             subterm = RepositoryFactory.getOntologyRepository().getTermByZdbID(form.getSubTerm().getZdbID());
             form.setSubTerm(subterm);
         }
+
         DevelopmentStage startStage = getAnatomyRepository().getStage(form.getStartStage());
         form.setStartStage(startStage);
 
@@ -54,7 +59,11 @@ public class AntibodyFigureSummaryController extends AbstractCommandController {
         form.setEndStage(endStage);
 
         AntibodyService abStat = new AntibodyService(ab);
-        abStat.createFigureSummary(superterm, subterm, startStage, endStage, form.isOnlyFiguresWithImg());
+
+        ExpressionSummaryCriteria criteria = abStat.createExpressionSummaryCriteria(superterm, subterm, startStage, endStage, form.isOnlyFiguresWithImg());
+        form.setExpressionSummaryCriteria(criteria);
+        abStat.createFigureSummary(criteria);
+
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 

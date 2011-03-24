@@ -59,6 +59,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * Retrieve a list of all feature for a given publication.
      * Features need to be directly attributed to the publication in question.
+     *
      * @param publicationID publication
      * @return list of features
      */
@@ -710,6 +711,27 @@ HibernateUtil.currentSession().save(fpPrefix);
                     + " records updated: "+ recordsUpdated);
         }
         return recordsUpdated;
+    }
+
+    /**
+     * Retrieve all feature ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     *
+     * @param firstNIds number of records to return
+     * @return list of ids
+     */
+    @Override
+    public List<String> getAllFeatures(int firstNIds) {
+        if (firstNIds < 0)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        String hql = "select zdbID from Feature order by zdbID";
+        Query query = session.createQuery(hql);
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        return query.list();
+
     }
 }
 

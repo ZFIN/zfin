@@ -1,9 +1,7 @@
 package org.zfin.mutant.repository;
 
-import org.zfin.expression.Figure;
-import org.zfin.gwt.root.dto.PhenotypeTermDTO;
-import org.zfin.mutant.MutantFigureStage;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
 
 import java.util.List;
@@ -33,11 +31,11 @@ public interface PhenotypeRepository {
     /**
      * Check if a phenotype structure is already on the pile.
      *
-     * @param phenotypeTerm phenotype structure
-     * @param publicationID Publication
-     * @return boolean
+     * @param phenotypeStructure PhenotypeStructure
+     * @param publicationID      Publication
+     * @return boolean true or false
      */
-    boolean isPhenotypePileStructureExists(PhenotypeTermDTO phenotypeTerm, String publicationID);
+    boolean isPhenotypePileStructureExists(PhenotypeStructure phenotypeStructure, String publicationID);
 
     /**
      * Check if a given Phenotype Structure already exists on the pile
@@ -71,27 +69,16 @@ public interface PhenotypeRepository {
      * @param featureID     feature
      * @return list of phenotype experiment figure stage records
      */
-    List<MutantFigureStage> getMutantExpressionsByFigureFish(String publicationID, String figureID, String genotypeID, String featureID);
+    List<PhenotypeExperiment> getMutantExpressionsByFigureFish(String publicationID, String figureID, String genotypeID, String featureID);
 
     /**
-     * Retrieve Mutant Figure Stage record
+     * Retrieve phenotype experiment record from the unique key
      *
-     * @param genotypeID    genotype
-     * @param figureID      figure
-     * @param startID       start stage
-     * @param endID         end stage
-     * @param publicationID Publication
-     * @return MutantFigureStage
-     */
-    MutantFigureStage getMutant(String genotypeID, String figureID, String startID, String endID, String publicationID);
-
-    /**
-     * Retrieve a mutant figure stage record from the unique key
-     * @param mutantFigureStage mutant figure stage unique key
-     * @param figureID figure
+     * @param phenotypeExperimentFilter phenotype experiment:
+     *                                  unique figure, stage, genotype, environment
      * @return full mutant figure stage record
      */
-    MutantFigureStage getMutant(MutantFigureStage mutantFigureStage, String figureID);
+    PhenotypeExperiment getPhenotypeExperiment(PhenotypeExperiment phenotypeExperimentFilter);
 
     /**
      * Retrieve a pile phenotype structure
@@ -102,50 +89,11 @@ public interface PhenotypeRepository {
     public PhenotypeStructure getPhenotypePileStructure(String pileStructureID);
 
     /**
-     * Create a new phenotype record.
-     *
-     * @param phenotype Phenotype
-     * @param figure    Figure
-     */
-    void createPhenotype(Phenotype phenotype, Figure figure);
-
-    /**
      * Run database script to regenerate fast search tables.
      *
-     * @param phenotype Phenotype
+     * @param phenotype PhenotypeStatement
      */
-    public void runRegenGenotypeFigureScript(Phenotype phenotype);
-
-    /**
-     * Remove a phenotype associated to a given figure.
-     * If the phenotype is associated to more than one figure then only
-     * the association is removed. Otherwise, the phenotype record is deleted as well.
-     *
-     * @param phenotype phenotype
-     * @param figure    Figure
-     */
-    void deletePhenotype(Phenotype phenotype, Figure figure);
-
-    /**
-     * Create a default phenotype record for a given mutant figure stage.
-     *
-     * @param mfs MutantFigureStage
-     * @return Phenotype
-     */
-    Phenotype createDefaultPhenotype(MutantFigureStage mfs);
-
-    /**
-     * Create a default phenotype record.
-     * Default:
-     * AO term: unspecified
-     * Quality term: quality
-     * Tag: normal
-     *
-     * @param phenotype Phenotype
-     * @return default phenotype
-     */
-    Phenotype createDefaultPhenotype(Phenotype phenotype);
-
+    public void runRegenGenotypeFigureScript(PhenotypeExperiment phenotype);
 
     /**
      * Retrieve a list of phenotypes used for a given publication.
@@ -153,7 +101,7 @@ public interface PhenotypeRepository {
      * @param publicationID publication
      * @return set of phenotypes
      */
-    List<Phenotype> getAllPhenotypes(String publicationID);
+    List<PhenotypeExperiment> getAllPhenotypes(String publicationID);
 
     /**
      * Create the Phenotype pile structure pile if it does not already exist.
@@ -162,4 +110,58 @@ public interface PhenotypeRepository {
      * @param publicationID publication
      */
     void createPhenotypePile(String publicationID);
+
+    /**
+     * Create a new phenotype statement.
+     *
+     * @param phenoStatement PhenotypeStatement
+     */
+    void createPhenotypeStatement(PhenotypeStatement phenoStatement);
+
+    /**
+     * Delete an existing phenotype statement.
+     *
+     * @param phenoStatement PhenotypeStatement
+     */
+    void deletePhenotypeStatement(PhenotypeStatement phenoStatement);
+
+    /**
+     * Create a new phenotype experiment record.
+     *
+     * @param phenoExperiment
+     */
+    void createPhenotypeExperiment(PhenotypeExperiment phenoExperiment);
+
+    /**
+     * Retrieve phenotype experiment by id.
+     *
+     * @param id PK
+     * @return Phenotype experiment
+     */
+    PhenotypeExperiment getPhenotypeExperiment(long id);
+
+    /**
+     * Retrieve a list of phenotype experiment objects that do not have a phenotype statements.
+     *
+     * @param publicationID pub id
+     * @return list of phenotype experiments
+     */
+    List<PhenotypeExperiment> getPhenotypeExperimentsWithoutAnnotation(String publicationID);
+
+    /**
+     * Retrieve all phenotype experiments that have been created in the last n days.
+     *
+     * @param days in the last days
+     * @return list of phenotype experiments
+     */
+    List<PhenotypeExperiment> getLatestPhenotypeExperiments(int days);
+
+    /**
+     * Retrieve all phenotype statements that have been created in the last n days.
+     *
+     * @param experimentID phenotype Experiment ID
+     * @param days in the last days
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days);
 }

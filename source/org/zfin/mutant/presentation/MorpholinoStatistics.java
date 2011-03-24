@@ -1,6 +1,5 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
@@ -8,9 +7,10 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Phenotype;
+import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -64,27 +64,50 @@ public class MorpholinoStatistics extends EntityStatistics {
         return morpholinoGenes;
     }
 
-    public Map<String, Set<String>> getPhenotypeDescriptions() {
-        return PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem);
+    public Set<PhenotypeStatement> getPhenotypeStatements() {
+        return PhenotypeService.getPhenotypeStatements(genoExperiment, anatomyItem);
     }
 
     @Override
     public int getNumberOfFigures() {
         if (figures == null) {
-            for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-                Term subTerm = phenotype.getSubterm();
-                if ((subTerm != null && StringUtils.equals(subTerm.getZdbID(), anatomyItem.getZdbID())) ||
-                        StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) &&
-                                !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
-                    if (figures == null)
-                        figures = new HashSet<Figure>(5);
-                    figures.addAll(phenotype.getFigures());
+            figures = new HashSet<Figure>(5);
+            for (PhenotypeExperiment phenotype : genoExperiment.getPhenotypeExperiments()) {
+                for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
+                    if (phenoStatement.hasAffectedTerm(anatomyItem))
+                        figures.add(phenotype.getFigure());
                 }
             }
         }
-        if (figures == null)
-            return 0;
         return figures.size();
+    }
+
+    public boolean isImgInFigure() {
+        if (isNoFigureOrFigLabel())   {
+            return false;
+        }
+        boolean thereIsImg = false;
+        for (Figure fig : figures) {
+            if (!fig.isImgless()) {
+                thereIsImg = true;
+                break;
+            }
+        }
+        return thereIsImg;
+    }
+
+    public boolean isNoFigureOrFigLabel() {
+        if (figures == null || figures.isEmpty())   {
+            return true;
+        }
+        boolean thereIsFigLabel = false;
+        for (Figure fig : figures) {
+            if (fig.getLabel() == null) {
+                thereIsFigLabel = true;
+                break;
+            }
+        }
+        return thereIsFigLabel;
     }
 
     @Override
@@ -96,13 +119,11 @@ public class MorpholinoStatistics extends EntityStatistics {
 
     @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        Set<Publication> pubs = new HashSet<Publication>(5);
-        for (Phenotype phenotype : genoExperiment.getPhenotypes()) {
-            Term subterm = phenotype.getSubterm();
-            if ((subterm != null && StringUtils.equals(subterm.getZdbID(), anatomyItem.getZdbID())) ||
-                    StringUtils.equals(phenotype.getSuperterm().getZdbID(), anatomyItem.getZdbID()) &&
-                            !phenotype.getTag().equals(Phenotype.Tag.NORMAL.toString())) {
-                pubs.add(phenotype.getPublication());
+        Set<Publication>pubs = new HashSet<Publication>(5);
+        for (PhenotypeExperiment phenotype : genoExperiment.getPhenotypeExperiments()) {
+            for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
+                if (phenoStatement.hasAffectedTerm(anatomyItem))
+                    pubs.add(phenotype.getFigure().getPublication());
             }
         }
         List<Publication> pubList = new ArrayList<Publication>(pubs);

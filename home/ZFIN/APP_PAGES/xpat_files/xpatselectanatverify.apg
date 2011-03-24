@@ -160,21 +160,43 @@ ORDER BY 3,1
      <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, genotype 
-              where genox_zdb_id = apato_genox_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, genotype 
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_subterm_zdb_id = '$xpanatv_item_zdb_id';">
+                and phenos_entity_1_superterm_zdb_id = '$xpanatv_item_zdb_id';">
      <?/MISQL>
      <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, genotype 
-              where genox_zdb_id = apato_genox_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, genotype 
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_superterm_zdb_id = '$xpanatv_item_zdb_id';">
+                and phenos_entity_1_subterm_zdb_id = '$xpanatv_item_zdb_id';">
      <?/MISQL>   
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, genotype 
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and phenos_entity_2_superterm_zdb_id = '$xpanatv_item_zdb_id';">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, genotype 
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and phenos_entity_2_subterm_zdb_id = '$xpanatv_item_zdb_id';">
+     <?/MISQL>        
   
      <?MICOMMENT> -------------------------------------------------------------
              -- include substructure
@@ -183,24 +205,48 @@ ORDER BY 3,1
        <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, all_term_contains, genotype
-              where genox_zdb_id = apato_genox_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, all_term_contains, genotype
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_subterm_zdb_id = alltermcon_contained_zdb_id
+                and phenos_entity_1_superterm_zdb_id = alltermcon_contained_zdb_id
                 and alltermcon_container_zdb_id = '$xpanatv_item_zdb_id';">
        <?/MISQL>
        <?MISQL SQL="
 	insert into $temp_on_anat(g_zdb_id)
 	     select genox_geno_zdb_id
-	       from genotype_experiment, atomic_phenotype, all_term_contains, genotype
-              where genox_zdb_id = apato_genox_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, all_term_contains, genotype
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
                 and genox_geno_zdb_id = geno_zdb_id
                 and geno_is_wildtype = 'f'
-                and apato_superterm_zdb_id = alltermcon_contained_zdb_id
+                and phenos_entity_1_subterm_zdb_id = alltermcon_contained_zdb_id
                 and alltermcon_container_zdb_id = '$xpanatv_item_zdb_id';">
-       <?/MISQL>  
-
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, all_term_contains, genotype
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and phenos_entity_2_superterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id = '$xpanatv_item_zdb_id';">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, phenotype_experiment, phenotype_statement, all_term_contains, genotype
+              where genox_zdb_id = phenox_genox_zdb_id
+                and phenox_pk_id = phenos_phenox_pk_id
+                and genox_geno_zdb_id = geno_zdb_id
+                and geno_is_wildtype = 'f'
+                and phenos_entity_2_subterm_zdb_id = alltermcon_contained_zdb_id
+                and alltermcon_container_zdb_id = '$xpanatv_item_zdb_id';">
+       <?/MISQL>
+       
        <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
        <?/MISQL>  
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
@@ -211,6 +257,7 @@ ORDER BY 3,1
 	        <label class="error">no mutant/transgenic data</label>
               <?/MIBLOCK>
         <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
+        
      <?/MIBLOCK>
             <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
               <?MIVAR>$xpanatv_matchingText<?/MIVAR>

@@ -3,7 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
-import org.zfin.gwt.root.dto.PhenotypeFigureStageDTO;
+import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.List;
  */
 public interface CurationPhenotypeRPCAsync {
 
-    void getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID, AsyncCallback<List<PhenotypeFigureStageDTO>> async);
+    void getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID, AsyncCallback<List<PhenotypeExperimentDTO>> async);
 
-    void createMutantFigureStages(List<PhenotypeFigureStageDTO> newFigureAnnotations, AsyncCallback<List<PhenotypeFigureStageDTO>> callback);
+    void createPhenotypeExperiments(List<PhenotypeExperimentDTO> newFigureAnnotations, AsyncCallback<List<PhenotypeExperimentDTO>> callback);
 
-    void deleteFigureAnnotation(PhenotypeFigureStageDTO figureAnnotation, AsyncCallback callback);
+    void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation, AsyncCallback callback);
 
-    void updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeFigureStageDTO> updateEntity, AsyncCallback<List<PhenotypeFigureStageDTO>> callback);
+    void updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity, AsyncCallback<List<PhenotypeExperimentDTO>> callback);
 
     /**
      * Checks if the phenotype structure pile needs to be recreated.
      * Yes, if
      * 1) publication is open
-     * 2) one or more mutant records with non-unspecifiec structures exist
+     * 2) one or more mutant records with non-unspecified structures exist
      * 3) phenotype pile is empty
      * @param publicationID publication
      * @param callback callback

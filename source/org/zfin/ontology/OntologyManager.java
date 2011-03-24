@@ -10,10 +10,8 @@ import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.OntologyLoadingEntity;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.FileUtil;
+import org.zfin.util.DateUtil;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -25,13 +23,15 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  * 1) a map with (term name, term)<br/>
  * 2) a map with (alias, term)<br/>
  * This allows to retrieve matches against a term name and an alias.
- *
+ * <p/>
  * NOTE: This class should ONLY used CachedTermDTO!!! never GenericTermDTO
  */
 public class OntologyManager {
 
     protected final static String QUALITY_PROCESSES_ROOT = "PATO:0001236";
     protected final static String QUALITY_QUALITIES_ROOT = "PATO:0001241";
+    protected static final String QUALITATIVE_TERM = "PATO:0000068";
+    protected static final String QUALITY_TERM_NORMAL = "PATO:0000461";
 
     public static final int NUMBER_OF_SERIALIZABLE_ONTOLOGIES = Ontology.getSerializableOntologies().length;
     private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<OntologyDTO, PatriciaTrieMultiMap<TermDTO>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
@@ -45,7 +45,6 @@ public class OntologyManager {
     // distinct relationship Types used in an ontology
 //    private Map<OntologyDTO, Set<String>> distinctRelationshipTypes = new HashMap<OntologyDTO, Set<String>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
     private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
-    // name of serialized file.
 
     /**
      * A map of all terms as a key and a list of terms that are children of the key term given by the transitive closure.
@@ -60,10 +59,10 @@ public class OntologyManager {
 
     private static Map<OntologyDTO, Double> loadingTimeMap = new HashMap<OntologyDTO, Double>(10);
     private static final Object LOADING_FLAG = new Object();
-    public static final String SERIALIZED_LOOKUP_SUFFIX = "-lookup.ser";
-    public static final String LOADING_STATS_SER = "loading-statistics.ser";
 
     private static Ontology singleOntology = null;
+    private Map<Ontology, Set> excludedTerms = new HashMap<Ontology, Set>(5);
+    private static OntologySerializationService ontologySerializationService;
 
     private static int activeCount, aliasCount, obsoleteCount;
     private static long startTime, endTime;
@@ -88,12 +87,14 @@ public class OntologyManager {
     /**
      * Exists as a singleton only, except for tests.
      */
-    protected OntologyManager() { }
+    protected OntologyManager() {
+    }
 
     public static OntologyManager getEmptyInstance() {
 
         if (ontologyManager == null) {
             ontologyManager = new OntologyManager();
+            ontologySerializationService = new OntologySerializationService(ontologyManager);
         }
         return ontologyManager;
     }
@@ -110,6 +111,7 @@ public class OntologyManager {
 
     public static OntologyManager getInstanceFromFile() throws Exception {
         ontologyManager = new OntologyManager();
+        ontologySerializationService = new OntologySerializationService(ontologyManager);
         try {
             ontologyManager.deserializeOntologies();
         } catch (Exception e) {
@@ -119,11 +121,13 @@ public class OntologyManager {
         return ontologyManager;
     }
 
-    public static OntologyManager getInstanceFromFile(OntologyDTO ontology) throws Exception {
+    public static OntologyManager getInstanceFromFile(OntologyDTO ontologyDto) throws Exception {
         if (ontologyManager == null) {
             ontologyManager = new OntologyManager();
+            ontologySerializationService = new OntologySerializationService(ontologyManager);
         }
-        ontologyManager.deserializeOntology(ontology);
+        Ontology ontology = Ontology.getOntology(ontologyDto.getDBName());
+        ontologySerializationService.deserializeOntology(ontology);
         return ontologyManager;
     }
 
@@ -156,11 +160,11 @@ public class OntologyManager {
         long startTime = System.currentTimeMillis();
         synchronized (LOADING_FLAG) {
             ontologyManager = new OntologyManager();
+            if (ontologySerializationService == null)
+                ontologySerializationService = new OntologySerializationService(ontologyManager);
             ontologyManager.loadOntologiesFromDatabase();
         }
-        long endTime = System.currentTimeMillis();
-        double loadingTimeInSeconds = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
-        logger.info("Finished loading all ontologies: took " + loadingTimeInSeconds + " seconds.");
+        logger.info("Finished loading all ontologies: took " + DateUtil.getTimeDuration(startTime));
     }
 
     protected void loadOntologiesFromDatabase() {
@@ -168,7 +172,7 @@ public class OntologyManager {
 //            List<GenericTermRelationship> relationships = getOntologyRepository().getAllRelationships();
 //            allRelationships = createRelationshipsMap(relationships);
             initSingleOntologyMap(singleOntology);
-            serializeOntology(singleOntology);
+            ontologySerializationService.serializeOntology(singleOntology);
 //            if (singleOntology == Ontology.ANATOMY) {
 //                loadTransitiveClosure();
 //            }
@@ -218,85 +222,47 @@ public class OntologyManager {
 
 //        initSingleOntologyMap(Ontology.ANATOMY);
         initOntologyMapFast(Ontology.ANATOMY);
-        serializeOntologyInThread(Ontology.ANATOMY);
+        serializeOntology(Ontology.ANATOMY);
 
 //        populateStageInformationForAnatomy();
 
         // define the root ontology for Quality here
 //        initSingleOntologyMap(Ontology.QUALITY);
         initOntologyMapFast(Ontology.QUALITY);
-        serializeOntologyInThread(Ontology.QUALITY);
+        serializeOntology(Ontology.QUALITY);
 
         // Quality  Processes and Objects
         // Root is "process quality"
-        initRootOntologyFast(QUALITY_PROCESSES_ROOT, Ontology.QUALITY_PROCESSES);
-//        initRootOntologyMap(Ontology.QUALITY_PROCESSES, Ontology.QUALITY, "PATO:0001236");
-        serializeOntologyInThread(Ontology.QUALITY_PROCESSES);
+        // Quality Processes and Objects
+        // exclude 'normal' term from process and quality ontology.
+        Set<String> excludedTermsIds = new HashSet<String>(2);
+        excludedTermsIds.add(QUALITY_TERM_NORMAL);
+        excludedTerms.put(Ontology.QUALITY_PROCESSES, excludedTermsIds);
+        excludedTerms.put(Ontology.QUALITY_QUALITIES, excludedTermsIds);
+        initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM);
+        serializeOntology(Ontology.QUALITY_PROCESSES);
+        initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
+        serializeOntology(Ontology.QUALITY_QUALITIES);
 
-        // Root is "physical object quality"
-        initRootOntologyFast(QUALITY_QUALITIES_ROOT, Ontology.QUALITY_QUALITIES);
-//        initRootOntologyMap(Ontology.QUALITY_QUALITIES, Ontology.QUALITY, "PATO:0001241");
-        serializeOntologyInThread(Ontology.QUALITY_QUALITIES);
+        //addSubTreeToOntologyMap(Ontology.QUALITY_PROCESSES, "PATO:0000068", RelationshipType.IS_A.toString());
+        //addSubTreeToOntologyMap(Ontology.QUALITY_QUALITIES, "PATO:0000068", RelationshipType.IS_A.toString());
 
-        // GO ontology
-//        initSingleOntologyMap(Ontology.GO_CC);
+        // GO ontologies
         initOntologyMapFast(Ontology.GO_CC);
-        serializeOntologyInThread(Ontology.GO_CC);
-//        initSingleOntologyMap(Ontology.GO_MF);
+        serializeOntology(Ontology.GO_CC);
         initOntologyMapFast(Ontology.GO_MF);
-        serializeOntologyInThread(Ontology.GO_MF);
-//        initSingleOntologyMap(Ontology.GO_BP);
+        serializeOntology(Ontology.GO_MF);
         initOntologyMapFast(Ontology.GO_BP);
-        serializeOntologyInThread(Ontology.GO_BP);
-//        HibernateUtil.currentSession().clear();
+        serializeOntology(Ontology.GO_BP);
 
-        serializeObject(loadingData, LOADING_STATS_SER);
-        // transitive closure
-//        loadTransitiveClosure();
-//        serializeObject(allRelatedChildrenMap, TRANSITIVE_CLOSURE_SER);
-//        serializeObject(distinctRelationshipTypes, RELATIONSHIP_TYPES_SER);
+        //ontologySerializationService.serializeLoadData(loadingData);
     }
-
-    private void serializeOntologyInThread(final Ontology ontology) {
-        new Thread() {
-            @Override
-            public void run() {
-                serializeOntology(ontology);
-            }
-        }.start();
-    }
-
-//    private void loadTermRelationshipsFromDatabase() {
-//        resetCounter();
-//        List<GenericTermRelationship> relationships = getOntologyRepository().getAllRelationships();
-//        loadTermRelationships(relationships);
-////        serializeTermRelationships();
-//    }
-
-
-//    private void serializeTermRelationships() {
-//        startTime = System.currentTimeMillis();
-//        File lookupFile = FileUtil.serializeObject(allRelationships,
-//                FileUtil.createOntologySerializationFile(ALL_RELATIONSHIPS));
-//        endTime = System.currentTimeMillis();
-//        double time = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
-//
-//        logger.info("Time to serialize relationships: " + time + " seconds.");
-//        logger.info("Lookup file path[" + lookupFile.getAbsolutePath() + "] size: " + (lookupFile.length() / 1024) + "kB");
-//    }
-
-//    public void loadTermRelationships(List<GenericTermRelationship> relationships) {
-//        allRelationships = createRelationshipsMap(relationships);
-//        endTime = System.currentTimeMillis();
-//        double time = (double) (endTime - startTime) / MILLISECONDS_PER_SECOND;
-//        logger.info("Time to load relationships from database: " + time + " seconds.");
-//    }
 
     /**
-     * @deprecated
      * @param subOntology
      * @param rootOntology
      * @param rootOboIDs
+     * @deprecated
      */
     protected void initRootOntologyMap(Ontology subOntology, Ontology rootOntology, String... rootOboIDs) {
         long startTime = System.currentTimeMillis();
@@ -307,7 +273,7 @@ public class OntologyManager {
         Set<TermDTO> childrenSet = new HashSet<TermDTO>(averageMaximumNumOfChildren);
         for (String rootOboID : rootOboIDs) {
             Term rootTerm = getOntologyRepository().getTermByOboID(rootOboID);
-            for(Term childTerm : rootTerm.getChildTerms()){
+            for (Term childTerm : rootTerm.getChildTerms()) {
                 TermDTO childTermDTO = DTOConversionService.convertToTermDTOWithDirectRelationships(childTerm);
                 children.add(childTermDTO);
                 childrenSet.add(childTermDTO);
@@ -320,6 +286,12 @@ public class OntologyManager {
         while (childrenSet.size() > 0) {
             TermDTO currentTermDTO = childrenSet.iterator().next();
             childrenSet.remove(currentTermDTO);
+            Set excludedTermIds = excludedTerms.get(subOntology);
+            if (excludedTermIds != null) {
+                // do not add excluded terms or any of its children.
+                if (excludedTermIds.contains(currentTermDTO.getOboID()))
+                    continue;
+            }
             Set<TermDTO> newChildren = currentTermDTO.getChildrenTerms();
             if (newChildren != null && !newChildren.isEmpty()) {
                 for (TermDTO child : newChildren) {
@@ -354,6 +326,55 @@ public class OntologyManager {
         logLoading(subOntology, startTime, endTime, dateStarted, activeCount, obsoleteCount, aliasCount,
                 termMap.keySet().size(), termMap.getAllValues().size());
         loadingTimeMap.put(subOntologyDTO, loadingTimeInSeconds);
+        ontologySerializationService.serializeOntology(subOntology);
+    }
+
+    private void addSubTreeToOntologyMap(Ontology ontology, String subTreeRootOboID, String relationshipType) {
+        int averageMaximumNumOfChildren = 10;
+
+        List<TermDTO> children = new ArrayList<TermDTO>(averageMaximumNumOfChildren);
+        Set<TermDTO> childrenSet = new HashSet<TermDTO>(averageMaximumNumOfChildren);
+        GenericTerm rootTerm = getOntologyRepository().getTermByOboID(subTreeRootOboID);
+        List<Term> childTerms = rootTerm.getChildrenTerms(relationshipType);
+        for (Term term : childTerms) {
+            children.add(DTOConversionService.convertToTermDTO(term));
+            childrenSet.add(DTOConversionService.convertToTermDTO(term));
+        }
+        PatriciaTrieMultiMap<TermDTO> termMap = getTermOntologyMapCopy(ontology);
+        int obsoleteCount = 0;
+        int aliasCount = 0;
+        int activeCount = 0;
+        while (childrenSet.size() > 0) {
+            TermDTO currentTerm = childrenSet.iterator().next();
+            childrenSet.remove(currentTerm);
+            List<TermDTO> newChildren = currentTerm.getChildrenTerms(relationshipType);
+            // add new children to children's collections
+            if (newChildren != null && !newChildren.isEmpty()) {
+                for (TermDTO child : newChildren) {
+                    if (children.contains(child)) {
+                        logger.info("Term already processed: " + child.getTermName() + " [" + child.getZdbID());
+                    } else {
+                        children.add(child);
+                        childrenSet.add(child);
+                    }
+                }
+            }
+            TermDTO term = getTermByID(currentTerm.getZdbID(), currentTerm.getOntology());
+            if (term == null)
+                logger.error("Child Term <" + currentTerm.getZdbID() + "> not found in Root ontology " + ontology.getOntologyName());
+            else {
+                tokenizer.tokenizeTerm(currentTerm, termMap);
+                if (currentTerm.isObsolete()) {
+                    ++obsoleteCount;
+                } else {
+                    ++activeCount;
+                }
+                if (term.getAliases() != null) {
+                    aliasCount += term.getAliases().size();
+                }
+            }
+        }
+        ontologyTermDTOMap.put(DTOConversionService.convertToOntologyDTO(ontology), termMap);
     }
 
 
@@ -381,7 +402,6 @@ public class OntologyManager {
 
 
     /**
-     *
      * @param ontology
      */
     public void initOntologyMapFastNoRelations(Ontology ontology) {
@@ -390,7 +410,7 @@ public class OntologyManager {
         createMapForTerms(termDTOs, ontology);
     }
 
-    private PatriciaTrieMultiMap<TermDTO> createMapForTerms(Collection<TermDTO> termDTOs,Ontology ontology){
+    private PatriciaTrieMultiMap<TermDTO> createMapForTerms(Collection<TermDTO> termDTOs, Ontology ontology) {
         long nextTime = System.currentTimeMillis();
         PatriciaTrieMultiMap<TermDTO> termMap = new PatriciaTrieMultiMap<TermDTO>();
         if (termDTOs == null) {
@@ -422,16 +442,16 @@ public class OntologyManager {
     public void initOntologyMapFast(Ontology ontology) {
 
         resetCounter();
-        Map<String,TermDTO> termDTOMap = getOntologyRepository().getTermDTOsFromOntology(ontology);
+        Map<String, TermDTO> termDTOMap = getOntologyRepository().getTermDTOsFromOntology(ontology);
         Collection<TermDTO> termDTOs = OntologyService.populateRelationships(termDTOMap, this);
 
-        createMapForTerms(termDTOs,ontology);
+        createMapForTerms(termDTOs, ontology);
     }
 
     /**
-     * @deprecated
      * @param terms
      * @param ontology
+     * @deprecated
      */
     public void loadTermsIntoOntology(List<GenericTerm> terms, Ontology ontology) {
 
@@ -444,10 +464,9 @@ public class OntologyManager {
         }
 
         for (Term term : terms) {
-            if(term.getOntology()==Ontology.STAGE){
+            if (term.getOntology() == Ontology.STAGE) {
                 tokenizer.tokenizeTerm(DTOConversionService.convertToTermDTO(term), termMap);
-            }
-            else {
+            } else {
                 tokenizer.tokenizeTerm(DTOConversionService.convertToTermDTOWithDirectRelationships(term), termMap);
             }
             if (term.isObsolete()) {
@@ -468,6 +487,7 @@ public class OntologyManager {
         endTime = System.currentTimeMillis();
         logLoading(ontology, startTime, endTime, dateStarted, activeCount, obsoleteCount, aliasCount,
                 termMap.keySet().size(), termMap.getAllValues().size());
+        ontologySerializationService.serializeOntology(ontology);
     }
 
     /**
@@ -600,7 +620,6 @@ public class OntologyManager {
     /**
      * Retrieve a copy of the internal map for a given ontology or set.
      *
-     *
      * @param ontology Ontology
      * @return map
      */
@@ -623,7 +642,6 @@ public class OntologyManager {
      * Retrieve a term by ID (internal) or Obo ID from a given ontology.
      * Not just a zdbID so use "ID".
      *
-     *
      * @param id       term ID
      * @param ontology ontology
      * @return term
@@ -633,7 +651,7 @@ public class OntologyManager {
         //if (CollectionUtils.isNotEmpty(terms)) {
         if (terms != null && terms.size() > 0) {
             if (terms.size() != 1) {
-                logger.error("multiple terms [" + terms.size() + "] returned for termID: " + id);
+                logger.warn("multiple terms [" + terms.size() + "] returned for termID: " + id);
             }
             return terms.iterator().next();
         }
@@ -642,7 +660,6 @@ public class OntologyManager {
 
     public boolean isOntologyLoaded(Ontology ontology) {
         return ontologyTermDTOMap != null && ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)) != null;
-
     }
 
     /**
@@ -703,20 +720,20 @@ public class OntologyManager {
             // now we construct a map
             for (Ontology subOntology : ontology.getIndividualOntologies()) {
                 // will this be one or multiple
-                PatriciaTrieMultiMap<TermDTO> termMap  = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(subOntology));
-                if(termMap!=null && termMap.get(lookupValue)!=null){
+                PatriciaTrieMultiMap<TermDTO> termMap = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(subOntology));
+                if (termMap != null && termMap.get(lookupValue) != null) {
                     terms.addAll(termMap.get(lookupValue));
                 }
             }
         } else {
-            PatriciaTrieMultiMap<TermDTO> termMap  = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology));
-            if(termMap!=null && termMap.get(lookupValue)!=null){
+            PatriciaTrieMultiMap<TermDTO> termMap = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology));
+            if (termMap != null && termMap.get(lookupValue) != null) {
                 terms.addAll(termMap.get(lookupValue));
             }
         }
 
 
-        if (terms.size()==0) {
+        if (terms.size() == 0) {
             logger.info("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
             return null;
         } else {
@@ -733,7 +750,6 @@ public class OntologyManager {
 
     /**
      * Retrieve a term by name from a given ontology.
-     *
      *
      * @param termName term name
      * @param ontology ontology
@@ -785,7 +801,6 @@ public class OntologyManager {
 //    public Map<OntologyDTO, Double> getOntologyLoadingTimes() {
 //        return Collections.unmodifiableMap(loadingTimeMap);
 //    }
-
     public Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> getOntologyMap() {
         return ontologyTermDTOMap;
     }
@@ -831,196 +846,29 @@ public class OntologyManager {
 //        serializeTermRelationships();
         for (Ontology ontology : Ontology.getSerializableOntologies()) {
             if (!ontology.isComposedOntologies()) {
-                serializeOntology(ontology);
+                ontologySerializationService.serializeOntology(ontology);
             }
         }
     }
 
     public void deserializeOntologies() throws Exception {
-//        deserializeRelationships();
-//        deserializeInfrastructureFiles();
-        deserializeLoadingStatistic();
+        //        deserializeLoadingStatistic();
+        deserializeInfrastructureFiles();
         for (Ontology ontology : Ontology.getSerializableOntologies()) {
             if (!ontology.isComposedOntologies()) {
-                deserializeOntology(DTOConversionService.convertToOntologyDTO(ontology));
+                ontologySerializationService.deserializeOntology(ontology);
             }
         }
     }
 
-//    public void deserializeInfrastructureFiles() throws Exception {
-//        deserializeLoadingStatistic();
-////        deserializeTransitiveClosure();
-////        deserializeRelationshipTypes();
-//    }
-
-//    private void deserializeRelationshipTypes() throws Exception {
-//        long start = System.currentTimeMillis();
-//        File lookupFile;
-//        try {
-//            lookupFile = FileUtil.createOntologySerializationFile(RELATIONSHIP_TYPES_SER);
-//            if (!lookupFile.exists() || !lookupFile.canRead()) {
-//                throw new IOException("Lookup file does not exist or has bad permissions: " + lookupFile.getAbsolutePath());
-//            }
-//            logger.info("Lookup file: " + lookupFile + " size:" + lookupFile.length() + " last modified: " + new Date(lookupFile.lastModified()));
-//
-//            distinctRelationshipTypes = (Map<OntologyDTO, Set<String>>) FileUtil.deserializeOntologies(lookupFile);
-//        } catch (Exception e) {
-//            logger.error("Failed to deserialize the files", e);
-//            throw e;
-//        }
-//        long end = System.currentTimeMillis();
-//        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-//
-//        logger.info("Time to deserialize ontology[" + ALL_RELATIONSHIPS + "]: " + time + " seconds.");
-//    }
-
-    /**
-     * Retrieve the relationships between terms from a serialized file.
-     *
-     * @throws Exception throws exception when deserialization fails.
-     */
-//    public void deserializeRelationships() throws Exception {
-//        long start = System.currentTimeMillis();
-//        File lookupFile;
-//        try {
-//            lookupFile = FileUtil.createOntologySerializationFile(ALL_RELATIONSHIPS);
-//            if (!lookupFile.exists() || !lookupFile.canRead()) {
-//                throw new IOException("Lookup file does not exist or has bad permissions: " + lookupFile.getAbsolutePath());
-//            }
-//            logger.info("Lookup file: " + lookupFile + " size:" + lookupFile.length() + " last modified: " + new Date(lookupFile.lastModified()));
-//
-//            allRelationships = (Map<String, List<TermRelationship>>) FileUtil.deserializeOntologies(lookupFile);
-//        } catch (Exception e) {
-//            logger.error("Failed to deserialize the files", e);
-//            throw e;
-//        }
-//        long end = System.currentTimeMillis();
-//        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-//
-//        logger.info("Time to deserialize ontology[" + ALL_RELATIONSHIPS + "]: " + time + " seconds.");
-//    }
-
-
-    /**
-     * Here, we serialize 2 objects
-     *
-     * @param ontology Ontology.
-     * @throws IOException Thrown if problem writing to file.
-     */
-    @SuppressWarnings("unchecked")
-    public void deserializeOntology(OntologyDTO ontology) throws Exception {
-        long start = System.currentTimeMillis();
-        File lookupFile;
-        try {
-            lookupFile = FileUtil.createOntologySerializationFile(ontology.name() + SERIALIZED_LOOKUP_SUFFIX);
-            if (!lookupFile.exists() || !lookupFile.canRead()) {
-                throw new IOException("Lookup file does not exist or has bad permissions: " + lookupFile.getAbsolutePath());
-            }
-            logger.info("Lookup file: " + lookupFile + " size:" + lookupFile.length() + " last modified: " + new Date(lookupFile.lastModified()));
-
-            PatriciaTrieMultiMap<TermDTO> lookupMap =
-                    (PatriciaTrieMultiMap<TermDTO>) FileUtil.deserializeOntologies(lookupFile);
-            lookupMap.rebuild();
-            ontologyTermDTOMap.remove(ontology);
-            ontologyTermDTOMap.put(ontology, lookupMap);
-        } catch (Exception e) {
-            logger.error("Failed to deserialize the files", e);
-            throw e;
-        }
-        long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-
-        logger.info("Time to deserialize ontology[" + ontology.name() + "]: " + time + " seconds.");
-    }
-
-
-    /**
-     * Deserialize the OBO id - term id mapping.
-     */
-    public void deserializeLoadingStatistic() throws Exception {
-        long start = System.currentTimeMillis();
-        File idFile;
-        try {
-            // load id obo mapping
-            idFile = FileUtil.createOntologySerializationFile(LOADING_STATS_SER);
-            if (!idFile.exists() || !idFile.canRead()) {
-                throw new IOException("file does not exist or has bad permissions: " + idFile.getAbsolutePath());
-            }
-            logger.info("file: " + idFile + " size:" + idFile.length() + " last modified: " + new Date(idFile.lastModified()));
-            loadingData = (Map<OntologyDTO, OntologyLoadingEntity>) FileUtil.deserializeOntologies(idFile);
-            logger.info(LOADING_STATS_SER + " file: " + idFile + " size:" + idFile.length() + " last modified: " + new Date(idFile.lastModified()));
-
-        } catch (Exception e) {
-            logger.error("Failed to deserialize the files", e);
-            throw e;
-        }
-        long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-        logger.info("Time to deserialize loading statistics: " + time + " seconds.");
-    }
-
-    /**
-     * Deserialize the OBO id - term id mapping.
-     */
-//    public void deserializeTransitiveClosure() throws Exception {
-//        long start = System.currentTimeMillis();
-//        File idFile;
-//        try {
-//            // load id obo mapping
-//            idFile = FileUtil.createOntologySerializationFile(TRANSITIVE_CLOSURE_SER);
-//            if (!idFile.exists() || !idFile.canRead()) {
-//                throw new IOException("idFile file does not exist or has bad permissions: " + idFile.getAbsolutePath());
-//            }
-//            logger.info("idFile file: " + idFile + " size:" + idFile.length() + " last modified: " + new Date(idFile.lastModified()));
-//            allRelatedChildrenMap = (Map<TermDTO, List<TransitiveClosure>>) FileUtil.deserializeOntologies(idFile);
-//            logger.info(TRANSITIVE_CLOSURE_SER + " file: " + idFile + " size:" + idFile.length() + " last modified: " + new Date(idFile.lastModified()));
-//
-//        } catch (Exception e) {
-//            logger.error("Failed to deserialize the files", e);
-//            throw e;
-//        }
-//        long end = System.currentTimeMillis();
-//        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-//        logger.info("Time to deserialize obo id mapping: " + time + " seconds.");
-//    }
-
-    /**
-     * Here, we serialize 2 objects
-     *
-     * @param ontology Ontology.
-     */
-    public void serializeOntology(Ontology ontology) {
-        long start = System.currentTimeMillis();
-        PatriciaTrieMultiMap<TermDTO> mapToSerialize = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)) ;
-        File lookupFile = FileUtil.serializeObject(mapToSerialize,
-                FileUtil.createOntologySerializationFile(ontology.name() + SERIALIZED_LOOKUP_SUFFIX));
-        long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-
-        logger.info("Time to serialize ontology[" + ontology.name() + "]: " + time + " seconds.");
-        logger.info("Lookup file path[" + lookupFile.getAbsolutePath() + "] size: " + (lookupFile.length() / 1024) + "kB");
-    }
-
-    public void serializeObject(Object object, String fileName) {
-        if (object == null || fileName == null)
-            return;
-
-        if (ontologyManager == null)
-            getInstance();
-        long start = System.currentTimeMillis();
-        File file = FileUtil.serializeObject(object,
-                FileUtil.createOntologySerializationFile(fileName));
-        long end = System.currentTimeMillis();
-        double time = (double) (end - start) / MILLISECONDS_PER_SECOND;
-        logger.info("Time to serialize " + fileName + " [" + object.getClass().getSimpleName() + "]: " + time + " seconds.");
-        logger.info("Lookup file path [" + file.getAbsolutePath() + "] size: " + (file.length() / 1024) + "kB");
+    public void deserializeInfrastructureFiles() throws Exception {
+        ontologySerializationService.deserializeLoadingStatistic();
     }
 
     /**
      * Retrieve a term by term name and a list of ontologies.
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
-     *
      *
      * @param termName      term name
      * @param ontologies    collection of ontologies
@@ -1044,7 +892,6 @@ public class OntologyManager {
      * The logic loops over all ontologies and returns the term from the ontology
      * in which it is found first. If no term is found a null is returned.
      *
-     *
      * @param termName   term name
      * @param ontologies collection of ontologies
      * @return term object
@@ -1054,52 +901,94 @@ public class OntologyManager {
     }
 
     public Set<OntologyDTO> getOntologies(Ontology ontology) {
-        Set<OntologyDTO> ontologyDTOs = new HashSet<OntologyDTO>() ;
+        Set<OntologyDTO> ontologyDTOs = new HashSet<OntologyDTO>();
 
         if (ontology.isComposedOntologies()) {
             for (Ontology subOntology : ontology.getIndividualOntologies()) {
-                ontologyDTOs.add(DTOConversionService.convertToOntologyDTO(subOntology)) ;
+                ontologyDTOs.add(DTOConversionService.convertToOntologyDTO(subOntology));
             }
+        } else {
+            ontologyDTOs.add(DTOConversionService.convertToOntologyDTO(ontology));
         }
-        else {
-            ontologyDTOs.add(DTOConversionService.convertToOntologyDTO(ontology)) ;
-        }
-        return ontologyDTOs ;
+        return ontologyDTOs;
     }
 
     public PatriciaTrieMultiMap<TermDTO> getTermsForOntology(OntologyDTO ontologyDTO) {
         return ontologyTermDTOMap.get(ontologyDTO);
     }
 
-    public void initRootOntologyFast(String rootZdbID,Ontology ontology){
+    /**
+     * Create slim ontology from a given ontology and given root terms including all their children.
+     *
+     * @param ontology Ontology
+     * @param rootIDs  root terms to be included in the slim.
+     */
+    public void initRootOntologyFast(Ontology ontology, String... rootIDs) {
+        if (ontology == null || rootIDs == null)
+            return;
+
         resetCounter();
-
-        TermDTO termDTO = getTermByID(rootZdbID);
-        TermDTO rootDTO = new TermDTO();
-
-        rootDTO.shallowCopyFrom(termDTO);
         Set<TermDTO> termsToProcess = new HashSet<TermDTO>();
-        termsToProcess.add(rootDTO);
+        for (String rootID : rootIDs) {
+            TermDTO termDTO = getTermByID(rootID);
 
-        Set<String> childZdbIDs = RepositoryFactory.getOntologyRepository().getAllChildZdbIDs(termDTO.getZdbID());
+            TermDTO rootDTO = new TermDTO();
+            rootDTO.shallowCopyFrom(termDTO);
+            termsToProcess.add(rootDTO);
+            Set<String> childZdbIDs = RepositoryFactory.getOntologyRepository().getAllChildZdbIDs(termDTO.getZdbID());
 
-        for(String childZdbID : childZdbIDs){
-            termsToProcess.add(getTermByID(childZdbID));
+            for (String childZdbID : childZdbIDs) {
+                TermDTO childTerm = getTermByID(childZdbID);
+                Set excludedTermIds = excludedTerms.get(ontology);
+                if (excludedTermIds != null) {
+                    // do not add excluded terms or any of its children.
+                    if (excludedTermIds.contains(childTerm.getOboID())){
+                        logger.info("Excluded Term: "+childTerm);
+                        continue;
+                    }
+                }
+                termsToProcess.add(childTerm);
+            }
         }
-
-        createMapForTerms(termsToProcess,ontology);
+        createMapForTerms(termsToProcess, ontology);
     }
 
     public void initQualityProcessesRootOntology() {
 //        ontologyManager.initRootOntologyMap(Ontology.QUALITY_PROCESSES,Ontology.QUALITY, "PATO:0001236");
 
-        initRootOntologyFast(QUALITY_PROCESSES_ROOT, Ontology.QUALITY_PROCESSES);
+        initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT);
     }
 
     public void initQualityQualitiesRootOntology() {
         //To change body of created methods use File | Settings | File Templates.
     }
 
+
+    void setLoadingData(Map<OntologyDTO, OntologyLoadingEntity> loadingData) {
+        this.loadingData = loadingData;
+    }
+
+    public Set<TermDTO> getTermsByNames(String termName) {
+        Set<TermDTO> terms = new HashSet<TermDTO>(5);
+        for (Ontology ontology : Ontology.values()) {
+            TermDTO term = getTermByName(termName, ontology);
+            if (term != null)
+                terms.add(term);
+        }
+        return terms;
+    }
+
+    public void deserializeOntology(Ontology ontology) throws Exception {
+        if (ontologySerializationService == null)
+            ontologySerializationService = new OntologySerializationService(this);
+        ontologySerializationService.deserializeOntology(ontology);
+    }
+
+    public void serializeOntology(Ontology ontology) {
+        if (ontologySerializationService == null)
+            ontologySerializationService = new OntologySerializationService(this);
+        ontologySerializationService.serializeOntology(ontology);
+    }
 
     public enum LoadingMode {
         DATABASE, SERIALIZED_FILE
