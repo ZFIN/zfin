@@ -71,7 +71,7 @@ create dba function regen_genox() returning integer
   --
   --    To turn tracing on uncomment the next statement
   --
-set debug file to 'trace.out';
+--set debug file to 'trace.out';
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
   --    is causing problems.  Add a "trace off;" after the last piece of
@@ -83,7 +83,7 @@ set debug file to 'trace.out';
   --    trace, move the "trace on;" to be later in the file and then rerun.
   -- ---------------------------------------------------------------------
 
-trace on;   
+--trace on;   
   -- set standard set of session params
 
   execute procedure set_session_params();
