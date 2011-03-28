@@ -226,32 +226,33 @@ begin work;
 		mrkr_zdb_id		varchar(50),
 		go_zdb_id		varchar(50),
 		mrkrgoev_source		varchar(50),
-                mrkrgoev_inference 	varchar(80)
+                mrkrgoev_inference 	varchar(80),
+                mrkrgoev_note           lvarchar
 	)with no log;
 
 --!echo 'Load spkw'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
-					    mrkrgoev_inference)
+					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct sk.mrkr_zdb_id, term_zdb_id, "ZDB-PUB-020723-1", 
-		       "SP_KW:"||sg.sp_kwd_id
+		       "SP_KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
 		  from sp_kwd sk,  spkw_goterm_with_dups sg, term
 		 where sk.sp_kwd = sg.sp_kwd_name
 		   and term_ont_id = "GO:"||sg.goterm_id;
 
 --!echo 'Load intepro'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
-					    mrkrgoev_inference)
+					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-020724-1",
-		       "InterPro:"||ip.ip_acc
+		       "InterPro:"||ip.ip_acc, "ZFIN InterPro 2 GO"
 		  from pre_db_link db, ip_goterm_with_dups ip, term
 	 	 where db.acc_num = ip.ip_acc
 		   and term_ont_id = "GO:"||ip.goterm_id;
 	
 --!echo 'Load ec'
         insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
-					    mrkrgoev_inference)
+					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-031118-3", 
-		       "EC:"||ec.ec_acc
+		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
 		from pre_db_link db, ec_goterm_with_dups ec, term
 		where db.acc_num = ec.ec_acc
 		  and term_ont_id = "GO:"||ec.goterm_id;
@@ -281,10 +282,10 @@ begin work;
 
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
-				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
-				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_annotation_organization,mrkrgoev_external_load_date)
-		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id,
-		       p.mrkrgoev_source, "IEA", CURRENT,CURRENT, '5',CURRENT
+				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_date_entered,mrkrgoev_date_modified,
+				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
+		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, "IEA", 
+		       CURRENT, CURRENT, '5', CURRENT, p.mrkrgoev_note
 		  from pre_marker_go_evidence p
 		  where not exists (Select 'x' from marker a
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id

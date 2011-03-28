@@ -29,7 +29,8 @@ insert into uniprot_records_without_attri (uniprot_records_zdb_id)
 select mrkrgoev_zdb_id 
 from marker_go_term_evidence 
 where mrkrgoev_evidence_code = "IEA" 
-and mrkrgoev_contributed_by = "ZFIN SP keyword 2 GO" 
+and mrkrgoev_annotation_organization = "5"
+and mrkrgoev_source_zdb_id = "ZDB-PUB-020723-1" 
 and not exists (select * from record_attribution where recattrib_data_zdb_id = mrkrgoev_zdb_id);
 !echo '		into temp table uniprot_records_without_attri'
 
@@ -46,7 +47,8 @@ insert into uniprot_records_without_attri (uniprot_records_zdb_id)
 select mrkrgoev_zdb_id 
 from marker_go_term_evidence 
 where mrkrgoev_evidence_code = "IEA" 
-and mrkrgoev_contributed_by = "ZFIN InterPro 2 GO" 
+and mrkrgoev_annotation_organization = "5"
+and mrkrgoev_source_zdb_id = "ZDB-PUB-020724-1" 
 and not exists (select * from record_attribution where recattrib_data_zdb_id = mrkrgoev_zdb_id);
 !echo '		into temp table uniprot_records_without_attri'
 
@@ -63,7 +65,8 @@ insert into uniprot_records_without_attri (uniprot_records_zdb_id)
 select mrkrgoev_zdb_id 
 from marker_go_term_evidence 
 where mrkrgoev_evidence_code = "IEA" 
-and mrkrgoev_contributed_by = "ZFIN EC acc 2 GO" 
+and mrkrgoev_annotation_organization = "5"
+and mrkrgoev_source_zdb_id = "ZDB-PUB-031118-3" 
 and not exists (select * from record_attribution where recattrib_data_zdb_id = mrkrgoev_zdb_id);
 !echo '		into temp table uniprot_records_without_attri'
 

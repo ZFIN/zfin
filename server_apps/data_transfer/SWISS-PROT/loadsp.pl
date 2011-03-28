@@ -172,27 +172,27 @@ $numMarkersWithRedundantDblkNoteBefore = countData($sql);
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO");';
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO");';
 $numIEABefore = countData($sql);         
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_contributed_by = "ZFIN SP keyword 2 GO";';
+           and mrkrgoev_notes = "ZFIN SP keyword 2 GO";';
            
 $numIEASP2GOBefore = countData($sql);
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_contributed_by = "ZFIN InterPro 2 GO";';
+           and mrkrgoev_notes = "ZFIN InterPro 2 GO";';
            
 $numIEAInterPro2GOBefore = countData($sql);
 
 $sql = 'select mrkrgoev_zdb_id 
           from marker_go_term_evidence 
          where mrkrgoev_evidence_code = "IEA" 
-           and mrkrgoev_contributed_by = "ZFIN EC acc 2 GO";';
+           and mrkrgoev_notes = "ZFIN EC acc 2 GO";';
            
 $numIEAEC2GOBefore = countData($sql);
 
@@ -200,14 +200,14 @@ $numIEAEC2GOBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 $numIEAtermsBefore = countData($sql);           
 
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "cellular_component" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -216,7 +216,7 @@ $numIEAtermComponentBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "molecular_function" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -225,7 +225,7 @@ $numIEAtermFunctionBefore = countData($sql);
 $sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "biological_process" 
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
@@ -234,7 +234,7 @@ $numIEAtermProcessBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
@@ -243,7 +243,7 @@ $numMrkrBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "cellular_component" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
@@ -253,7 +253,7 @@ $numMrkrComponentBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "molecular_function" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
@@ -263,7 +263,7 @@ $numMrkrFunctionBefore = countData($sql);
 $sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
          where term_ont_id like "GO%" 
            and mrkrgoev_evidence_code = "IEA"
-           and mrkrgoev_contributed_by in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
+           and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and term_ontology = "biological_process" 
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
@@ -553,12 +553,12 @@ print POSTLOADREPORT "----------------------------------------\t-----------\t---
 print POSTLOADREPORT "db_link records                         \t";
 print POSTLOADREPORT "$numDblinkBefore   \t";
 print POSTLOADREPORT "$numDblinkAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numDblinkAfter - $numDblinkBefore) / $numDblinkBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numDblinkAfter - $numDblinkBefore) / $numDblinkBefore * 100 if ($numDblinkBefore > 0);
 
 print POSTLOADREPORT "external_note with db_link              \t";
 print POSTLOADREPORT "$numExternalNoteBefore        \t";
 print POSTLOADREPORT "$numExternalNoteAfter       \t";
-printf POSTLOADREPORT "%.2f\n", ($numExternalNoteAfter - $numExternalNoteBefore) / $numExternalNoteBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numExternalNoteAfter - $numExternalNoteBefore) / $numExternalNoteBefore * 100 if ($numExternalNoteBefore > 0);
 
 
 print POSTLOADREPORT "genes with duplicated db_link notes      \t";
@@ -571,66 +571,66 @@ print POSTLOADREPORT "----------------------------------------\t-----------\t---
 print POSTLOADREPORT "marker_go_term_evidence IEA records     \t";
 print POSTLOADREPORT "$numIEABefore      \t";
 print POSTLOADREPORT "$numIEAAfter      \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAAfter - $numIEABefore) / $numIEABefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAAfter - $numIEABefore) / $numIEABefore * 100 if ($numIEABefore > 0);
 
 print POSTLOADREPORT "marker_go_term_evidence records from SP \t";
 print POSTLOADREPORT "$numIEASP2GOBefore   \t";
 print POSTLOADREPORT "$numIEASP2GOAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEASP2GOAfter - $numIEASP2GOBefore) / $numIEASP2GOBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEASP2GOAfter - $numIEASP2GOBefore) / $numIEASP2GOBefore * 100 if ($numIEASP2GOBefore > 0);
 
 print POSTLOADREPORT "marker_go_term_evidence records from IP \t";
 print POSTLOADREPORT "$numIEAInterPro2GOBefore   \t";
 print POSTLOADREPORT "$numIEAInterPro2GOAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAInterPro2GOAfter - $numIEAInterPro2GOBefore) / $numIEAInterPro2GOBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAInterPro2GOAfter - $numIEAInterPro2GOBefore) / $numIEAInterPro2GOBefore * 100 if ($numIEAInterPro2GOBefore > 0);
 
 print POSTLOADREPORT "marker_go_term_evidence records from EC \t";
 print POSTLOADREPORT "$numIEAEC2GOBefore        \t";
 print POSTLOADREPORT "$numIEAEC2GOAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAEC2GOAfter - $numIEAEC2GOBefore) / $numIEAEC2GOBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAEC2GOAfter - $numIEAEC2GOBefore) / $numIEAEC2GOBefore * 100 if ($numIEAEC2GOBefore > 0);
 
 print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
 
 print POSTLOADREPORT "go terms with IEA annotation            \t";
 print POSTLOADREPORT "$numIEAtermsBefore        \t";
 print POSTLOADREPORT "$numIEAtermsAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermsAfter - $numIEAtermsBefore) / $numIEAtermsBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAtermsAfter - $numIEAtermsBefore) / $numIEAtermsBefore * 100 if ($numIEAtermsBefore > 0);
 
 print POSTLOADREPORT "component go terms with IEA             \t";
 print POSTLOADREPORT "$numIEAtermComponentBefore           \t";
 print POSTLOADREPORT "$numIEAtermComponentAfter           \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
 
 print POSTLOADREPORT "function go terms with IEA              \t";
 print POSTLOADREPORT "$numIEAtermFunctionBefore        \t";
 print POSTLOADREPORT "$numIEAtermFunctionAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermFunctionAfter - $numIEAtermFunctionBefore) / $numIEAtermFunctionBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAtermFunctionAfter - $numIEAtermFunctionBefore) / $numIEAtermFunctionBefore * 100 if ($numIEAtermFunctionBefore > 0);
 
 print POSTLOADREPORT "process go terms with IEA               \t";
 print POSTLOADREPORT "$numIEAtermProcessBefore         \t";
 print POSTLOADREPORT "$numIEAtermProcessAfter         \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermProcessAfter - $numIEAtermProcessBefore) / $numIEAtermProcessBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAtermProcessAfter - $numIEAtermProcessBefore) / $numIEAtermProcessBefore * 100 if ($numIEAtermProcessBefore > 0);
 
 print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
 
 print POSTLOADREPORT "markers with IEA annotation                \t";
 print POSTLOADREPORT "$numMrkrBefore        \t";
 print POSTLOADREPORT "$numMrkrAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrAfter - $numMrkrBefore) / $numMrkrBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numMrkrAfter - $numMrkrBefore) / $numMrkrBefore * 100 if ($numMrkrBefore > 0);
 
 print POSTLOADREPORT "markers with IEA annotation component     \t";
 print POSTLOADREPORT "$numIEAtermComponentBefore           \t";
 print POSTLOADREPORT "$numIEAtermComponentAfter           \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
 
 print POSTLOADREPORT "markers with IEA annotation function      \t";
 print POSTLOADREPORT "$numMrkrFunctionBefore        \t";
 print POSTLOADREPORT "$numMrkrFunctionAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrFunctionAfter - $numMrkrFunctionBefore) / $numMrkrFunctionBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numMrkrFunctionAfter - $numMrkrFunctionBefore) / $numMrkrFunctionBefore * 100 if ($numMrkrFunctionBefore > 0);
 
 print POSTLOADREPORT "markers with IEA annotation process      \t";
 print POSTLOADREPORT "$numMrkrProcessBefore         \t";
 print POSTLOADREPORT "$numMrkrProcessAfter         \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) / $numMrkrProcessBefore * 100;
+printf POSTLOADREPORT "%.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) / $numMrkrProcessBefore * 100 if ($numMrkrProcessBefore > 0);
 
 print "All done \n";
 close (POSTLOADREPORT);
