@@ -102,7 +102,7 @@ public class OntologyTermDetailController {
 
     @RequestMapping(value = {("/term-detail-popup")})
     public String getTermDetailPopup(@RequestParam String termID, Model model) {
-        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
             return "record-not-found.popup";
