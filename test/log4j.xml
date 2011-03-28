@@ -29,15 +29,16 @@
 
     <category name="org.zfin" additivity="false">
 		<!--<priority value="DEBUG"/>-->
-        <priority value="INFO"/>
-		<!--<priority value="warn"/>-->
+        <!--<priority value="INFO"/>-->
+		<priority value="warn"/>
         <appender-ref ref="stdout"/>
     </category>
 
     <!-- Log the actual Hibernate Query Language (HQL) expression -->
     <category name="org.hibernate.impl.SessionImpl">
 <!--        <priority value="DEBUG"/>-->
-		<priority value="INFO"/> 
+		<!--<priority value="INFO"/>-->
+        <priority value="WARN"/>
     </category>
 
     <!-- Log the substitution parameters in the HQL expression -->

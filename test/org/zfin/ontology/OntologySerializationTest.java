@@ -13,7 +13,9 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.FileUtil;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,30 +38,30 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
-    private static String testTempDirectory = "test/ontologies";
+    private static String testTempDirectory = "test-delete";
     private static String oldTempDirectory;
+    private static File testDirectory ;
 
     @Before
     public void setTempDirectory() {
         if (oldTempDirectory == null || false == oldTempDirectory.equals(testTempDirectory)) {
             oldTempDirectory = System.getProperty("java.io.tmpdir");
             System.setProperty("java.io.tmpdir", testTempDirectory);
+            testDirectory = new File(testTempDirectory) ;
+            assertTrue(testDirectory.mkdir());
         }
-//        if(ontologyManager==null){
-//            loadOntologyManager();
-//        }
     }
 
     @After
-    public void restsetTempDirectory() {
+    public void resetTempDirectory() {
         System.setProperty("java.io.tmpdir", oldTempDirectory);
+        assertTrue(FileUtil.deleteDirectory(testDirectory));
     }
 
     @Test
     public void serializeStage() throws Exception {
         List<DevelopmentStage> developmentStageList = HibernateUtil.currentSession().createCriteria(DevelopmentStage.class).list();
         OntologyManager ontologyManager = new OntologyManager();
-//        ontologyManager.initSingleOntologyMap(Ontology.STAGE);
         ontologyManager.initOntologyMapFastNoRelations(Ontology.STAGE);
         assertNotNull(ontologyManager.getTermByName("Adult", Ontology.STAGE));
         PatriciaTrieMultiMap<TermDTO> stageMap = ontologyManager.getOntologyMap().get(OntologyDTO.STAGE);

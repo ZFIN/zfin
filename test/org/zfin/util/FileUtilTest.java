@@ -103,6 +103,21 @@ public class FileUtilTest {
         assertEquals(13, numOfLines);
     }
 
+    @Test
+    public void deleteDirectory() throws Exception{
+        File dirTop = new File("test/delete-me") ;
+        assertTrue(dirTop.mkdir());
+        File dirNext = new File("test/delete-me/delete-you") ;
+        assertTrue(dirNext.mkdir());
+        File file1 = new File("test/delete-me/bob.txt") ;
+        assertTrue(file1.createNewFile()) ;
+        File file2 = new File("test/delete-me/delete-you/bob.txt") ;
+        assertTrue(file2.createNewFile()) ;
+
+        assertTrue(FileUtil.deleteDirectory(dirTop));
+
+    }
+
     private void setTestDirectories() {
         testLoadDirectory.mkdir();
 
