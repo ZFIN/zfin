@@ -2503,7 +2503,32 @@ sub mrkrgoevObsoleteAnnotationsFound ($) {
   }
   &recordResult($routineName, $nRecords);
 }
+#---------------------------------------------------------------
+# check for obsolete annotations
 
+# Parameter
+#  $     Email Address for recipient
+#
+sub experimentNullValue ($) {
+
+  my $routineName = "experimentNullValue";
+
+  my $sql = 'select distinct expcond_exp_zdb_id from experiment_condition
+                where expcond_value = "NULL"'
+              ;
+
+  my @colDesc = ("expcond_exp_zdb_id");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Experiments with null values";
+    my $errMsg = "$nRecords annotations exist with null experiment values";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+}
 
 #---------------------------------------------------------------
 # check for secondary annotations
@@ -2776,6 +2801,7 @@ my $publicationEmail = "<!--|VALIDATION_EMAIL_PUBLICATION|-->";
 
 
 if($daily) {
+    experimentNullValue($dbaEmail);
     allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
     transcriptsOnMoreThanOneGene($transcriptEmail);
     tscriptLoadIdMatchesDBLink($transcriptEmail);
