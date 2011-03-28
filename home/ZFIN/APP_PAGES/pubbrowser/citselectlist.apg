@@ -17,6 +17,7 @@
       p.pub_date,
       recattrib_source_type,
       recattrib_data_zdb_id,
-      p.pub_completion_date
+      p.pub_completion_date,
+      p.pub_is_indexed
     <?/MIVAR>
     

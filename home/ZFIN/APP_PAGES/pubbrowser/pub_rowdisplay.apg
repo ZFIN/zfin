@@ -27,6 +27,7 @@ EFFECTS
 
   <?MIVAR NAME=pubrd_previous_pub><?/MIVAR>
   <?MIVAR NAME=pub_G_count>0<?/MIVAR>
+  <?MIVAR NAME=$comma>,<?/MIVAR>
 
 
 <?MIBLOCK COND=$(EC,$pub_G_display,count)>
@@ -63,6 +64,7 @@ EFFECTS
  	<?MIVAR NAME=$pubrd_recattrib_src_type>$(URLENCODE,$10)<?/MIVAR>
  	<?MIVAR NAME=$pubrd_pub_data_id>$11<?/MIVAR>
 	<?MIVAR NAME=$pubrd_pub_completion_date>$12<?/MIVAR>
+	<?MIVAR NAME=$pubrd_pub_indexed>$13<?/MIVAR>
  	
          <?MIBLOCK COND="$(NE,$pubrd_pub_zdb_id,$pubrd_previous_pub)">
            <?MIVAR>
@@ -79,6 +81,7 @@ EFFECTS
 		<?MIVAR COND="$(EC,$ZDB_access,root)">
   		$(IF,$(NE,$pubrd_pub_completion_date,),&nbsp;&nbsp;&nbsp;CLOSED,&nbsp;&nbsp;&nbsp;OPEN)
 		<?/MIVAR>
+		<?MIVAR COND="$(EC,$ZDB_access,root)">$(IF,$(EQ,$pubrd_pub_indexed,t),$comma&nbsp;INDEXED)<?/MIVAR>
              </DIV>
      	  </TD>
    	  </TR>

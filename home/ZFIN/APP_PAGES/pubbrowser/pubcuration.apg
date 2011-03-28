@@ -18,6 +18,7 @@ OPTIONAL VARS:
   $reassignTopic :: topic name
   $reassignCurator :: curator ZDB-ID to assign $reassignTopic
   $calling_apg :: url to recreate the state of the calling page
+  $paper_indexting :: indexed the paper
 
 <?/MICOMMENT>
 
@@ -93,6 +94,14 @@ OPTIONAL VARS:
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,open))>
     <?MISQL SQL="UPDATE publication SET pub_completion_date = NULL WHERE zdb_id = '$OID';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$paper_indexting),$(EC,$paper_indexting,yes))>
+        <?MISQL SQL="update publication
+	                set pub_is_indexed = 't'
+                      where zdb_id = '$OID';">
+        <?/MISQL>
+        <?MIVAR>$(SETVAR,$paper_indexting,no)<?/MIVAR>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$pnote)>
@@ -179,6 +188,14 @@ OPTIONAL VARS:
         var pnote = 'Reopen Paper';
         <?MIVAR>
         replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=open&pnote="+pnote);
+        <?/MIVAR>
+      }
+
+      function indexPaper(){
+        var pnote = 'Indexed paper';
+
+        <?MIVAR>
+        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_indexting=yes&pnote="+pnote);
         <?/MIVAR>
       }
       
@@ -298,8 +315,10 @@ OPTIONAL VARS:
   <?MISQL SQL="SELECT pub_file FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_file>$1<?/MIVAR>
   
-  <?MISQL SQL="SELECT pub_completion_date FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
+  <?MISQL SQL="SELECT pub_completion_date, pub_is_indexed, pub_indexed_date FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
+  <?MIVAR NAME=$pub_is_indexed>$2<?/MIVAR>
+  <?MIVAR NAME=$pub_indexed_date>$3<?/MIVAR>
   
     
   <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload  
@@ -321,10 +340,13 @@ OPTIONAL VARS:
   <table cellspacing=0 cellpadding=3 width=100% col=3>
     <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
       <td>
-        <FONT SIZE=+1><b> Curation </b></FONT> 
-        <?MIVAR>
-          $(IF,$(NE,$pub_completion_date,NULL),<FONT color=red>Closed: $pub_completion_date</FONT>)
-        <?/MIVAR>
+        <FONT SIZE=+1><b> Curation </b></FONT>
+        <FONT color=red>
+        <?MIVAR>$(IF,$(NE,$pub_completion_date,NULL),Closed: $pub_completion_date)<?/MIVAR><?MIVAR>$(IF,$(AND,$(NE,$pub_completion_date,NULL),$(EQ,$pub_is_indexed,t)),",")<?/MIVAR>
+        <?MIBLOCK COND="$(EQ,$pub_is_indexed,t)">
+          <?MIVAR>Indexed: $pub_indexed_date<?/MIVAR>
+        <?/MIBLOCK>
+        </FONT>
       </td>
       <td align=center>
         <?MIVAR>$OID<?/MIVAR>
@@ -390,7 +412,12 @@ OPTIONAL VARS:
     <?/MIBLOCK>
   <?MIELSE>
     <input type=button value="ReOpen Paper" onClick="openPaper()";>
-   <?/MIBLOCK>
+  <?/MIBLOCK>
+   
+  <?MIBLOCK COND="$(EC,$pub_is_indexed,f)">
+    &nbsp;&nbsp;&nbsp;<input type=button value="Indexed" onClick="indexPaper()";>
+  <?/MIBLOCK>
+   
     <div id="unfinished-phenotype-curation" class="error"></div>
    <?MIVAR>
     <script type="text/javascript">

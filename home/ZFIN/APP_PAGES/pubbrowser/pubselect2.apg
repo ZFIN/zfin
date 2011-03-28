@@ -53,6 +53,7 @@ INCOMPLETE ...
 <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>Any<?/MIVAR>
 <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>Any<?/MIVAR>
 <?MIVAR COND="$(NXST,$topic_found)" NAME=$topic_found><?/MIVAR>
+<?MIVAR NAME=$comma>,<?/MIVAR>
 
   </head>
 
@@ -263,9 +264,11 @@ function list_all(user_access) {
       $(VECAPPEND,$constraint,status = '$pub_status')
     <?/MIVAR>
     
-    <?MIVAR COND="$(NC,$cur_status,Any)">
-      $(VECAPPEND,$constraint,pub_completion_date $cur_status NULL)
-    <?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(NC,$cur_status,Any),$(NC,$cur_status,indexed))">
+      <?MIVAR>$(VECAPPEND,$constraint,pub_completion_date $cur_status NULL)<?/MIVAR>
+    <?MIELSE COND="$(AND,$(NC,$cur_status,Any),$(EC,$cur_status,indexed))">
+      <?MIVAR>$(VECAPPEND,$constraint, "pub_is_indexed = 't'")<?/MIVAR>
+    <?/MIBLOCK>
   
     <?MIBLOCK COND="$(OR,$(NC,$curator,Anyone),
                          $(NC,$cur_topic,Any),
@@ -455,8 +458,9 @@ function list_all(user_access) {
 <!--- Query Database --->
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, jrnl_abbrev, pub_volume, pub_pages, lower(authors), pub_completion_date, status from $target_tables $constraint $order_clause;">
+	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, jrnl_abbrev, pub_volume, pub_pages, lower(authors), pub_completion_date, status, pub_is_indexed from $target_tables $constraint $order_clause;">
 <?MIVAR NAME=PUB_COMPLETION>$9<?/MIVAR>
+<?MIVAR NAME=PUB_INDEXED>$11<?/MIVAR>
 <TR>
 <?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
 <TD valign=top> 
@@ -481,9 +485,9 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 
 <TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
 </TD>
-<?MIVAR COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
-  <TD>$(IF,$(NE,$PUB_COMPLETION,),CLOSED&nbsp;&nbsp;,OPEN&nbsp;&nbsp;)</TD>
-<?/MIVAR>
+<?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
+  <TD><?MIVAR>$(IF,$(NE,$PUB_COMPLETION,),CLOSED,OPEN)<?/MIVAR><?MIVAR>$(IF,$(EQ,$PUB_INDEXED,t),$comma&nbsp;INDEXED)<?/MIVAR></TD>
+<?/MIBLOCK>
 </TR>
 <p>
 		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
@@ -765,9 +769,10 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
       <td>
         <b>Curation Status: </b>
         <SELECT NAME=cur_status onChange='document.critform.START.value = "";'>
-          <OPTION VALUE="Any" $(IF,$(EC,$cur_status,Any),SELECTED)> Any
-          <OPTION VALUE="is not" $(IF,$(EC,$cur_status,"is not"),SELECTED)> Closed
-          <OPTION VALUE="is" $(IF,$(EC,$cur_status,is),SELECTED)> Open
+          <OPTION VALUE="Any" $(IF,$(EC,$cur_status,Any),SELECTED)>Any</OPTION>
+          <OPTION VALUE="is not" $(IF,$(EC,$cur_status,"is not"),SELECTED)>Closed</OPTION>
+          <OPTION VALUE="is" $(IF,$(EC,$cur_status,is),SELECTED)>Open</OPTION>
+          <OPTION VALUE="indexed" $(IF,$(EC,$cur_status,indexed),SELECTED)>Indexed</OPTION>
         </SELECT>  
       </td>
     </tr>
