@@ -116,7 +116,9 @@ foreach rpt run/reports [
         ]
         ;;;print [count: 1 + count  tab  (clip-normal-float hit/expect)  tab  hit/prob]
    ]
-   if  buf-size <= length? hit-buf [write  write/append %hit.unl hit-buf clear hit-buf]
+   either buf-size > length? hit-buf
+    [write/append %hit.unl hit-buf clear hit-buf]
+    [print ["Wow! need buf-size: "  length? hit-buf  tab now/time]] ;; warn when buffer is huge
 ]
 
 write %report.unl rpt-buf
