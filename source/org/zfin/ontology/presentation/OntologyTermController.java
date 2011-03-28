@@ -33,6 +33,8 @@ public class OntologyTermController {
                                                  @RequestParam String ontologyName,
                                                  Model model) {
         OntologyBean form = new OntologyBean();
+        form.setOntologyName(ontologyName);
+        form.setOntology(Ontology.getOntology(ontologyName));
         model.addAttribute("formBean",form);
         form.setAction(action);
         OntologyBean.ActionType actionType = form.getActionType();

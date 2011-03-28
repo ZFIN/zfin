@@ -138,18 +138,6 @@ public class MatchingTermService {
             matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO)));
         }
 
-//        if(ontology.isComposedOntologies()){
-//            for (Ontology subOntology : ontology.getIndividualOntologies()) {
-////                map.putAll(ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(subOntology)));
-//                matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
-//            }
-//        } else {
-////            map.putAll(ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)));
-//            matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
-//        }
-
-//        matchingTermsForSet.addAll(getMatchingTerms(termMap,query)) ;
-
         if(maximumNumberOfMatches>0 && matchingTermsForSet.size()>maximumNumberOfMatches){
             Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
             int i = 0 ;

@@ -162,7 +162,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return suggestions
      */
     private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology, boolean useIDAsValue) {
-        HibernateUtil.currentSession();
+//        HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
 
@@ -358,26 +358,9 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             logger.warn("No term " + termID + " found!");
             return null;
         }
-//        TermInfoDTO rootTermInfoDTO = DTOConversionService.convertToTermInfoFromTermInfoDTO(term, ontology, true);
-//        TermInfoDTO rootTermInfoDTO = DTOConversionService.convert(term, ontology, true);
-//        addRelatedTerms(term, rootTermInfoDTO, ontology);
-//        return rootTermInfoDTO;
         return term ;
 
     }
-
-//    private void addRelatedTerms(TermDTO term, TermInfoDTO rootTermInfoDTO, OntologyDTO ontology) {
-//        List<org.zfin.ontology.RelationshipPresentation> relationships = OntologyService.getRelatedTerms(term);
-//        if (relationships != null) {
-//            for (org.zfin.ontology.RelationshipPresentation relationship : relationships) {
-//                List<Term> terms = relationship.getItems();
-//                for (Term item : terms) {
-//                    TermInfoDTO infoDTO = DTOConversionService.convertToTermInfo(item, ontology, false);
-//                    rootTermInfoDTO.addRelatedTermInfo(relationship.getType(), infoDTO);
-//                }
-//            }
-//        }
-//    }
 
     public List<PublicationDTO> getRecentPublications(String key) {
         List<Publication> mostRecentPubs = PublicationService.getRecentPublications(getServletContext(), key);

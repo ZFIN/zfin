@@ -32,6 +32,7 @@
     </c:choose>
     <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
     <%= LookupTable.JSREF_USE_TERM_TABLE%>: false,
+    <%= LookupTable.JSREF_USE_ID_AS_TERM%>: true,
     <%= Lookup.JSREF_LIMIT%>: 25
     }
 

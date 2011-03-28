@@ -35,15 +35,6 @@ public class OntologyManager {
 
     public static final int NUMBER_OF_SERIALIZABLE_ONTOLOGIES = Ontology.getSerializableOntologies().length;
     private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<OntologyDTO, PatriciaTrieMultiMap<TermDTO>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
-    // holds all relationships between terms.
-    // this object only exists during initialization of the ontologies.
-    // The helper class does not reference the TermDTO object rather the PKs only to allow this
-    // object to be serialized. Since every term has a relationship to all children and parents, through the
-    // parents and children relationships each term is indirectly related to all terms in the Ontology
-    // which would upon serialization lead to infinite loops and ultimately a StackOverflowError
-//    private Map<String, List<TermDTORelationship>> allRelationships;
-    // distinct relationship Types used in an ontology
-//    private Map<OntologyDTO, Set<String>> distinctRelationshipTypes = new HashMap<OntologyDTO, Set<String>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
     private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
 
     /**
@@ -169,65 +160,25 @@ public class OntologyManager {
 
     protected void loadOntologiesFromDatabase() {
         if (singleOntology != null) {
-//            List<GenericTermRelationship> relationships = getOntologyRepository().getAllRelationships();
-//            allRelationships = createRelationshipsMap(relationships);
-            initSingleOntologyMap(singleOntology);
+            initOntologyMapFast(singleOntology);
             ontologySerializationService.serializeOntology(singleOntology);
-//            if (singleOntology == Ontology.ANATOMY) {
-//                loadTransitiveClosure();
-//            }
         } else {
             loadDefaultOntologiesFromDatabase();
-//            loadTransitiveClosure();
         }
     }
 
-//    /**
-//     * Load the transitive closure, the object that contains the children terms for each term in all ontologies.
-//     * Currently, we only have the closure info for the Anatomy ontology.
-//     */
-//    private void loadTransitiveClosure() {
-//        List<TransitiveClosure> closures = getOntologyRepository().getTransitiveClosureForAnatomy();
-//        if (closures == null || closures.size() == 0)
-//            return;
-//
-//        // for now we hard-code the size to the size of the anatomy ontology.
-//        allRelatedChildrenMap = new HashMap<TermDTO, List<TransitiveClosure>>(getTermOntologyMap(Ontology.ANATOMY).size());
-//        for (TransitiveClosure closure : closures) {
-//            TermDTO root = closure.getRoot().createTermDTO();
-//            TermDTO omRoot = getTermByID(root.getZdbID(), root.getOntology());
-//            List<TransitiveClosure> children = allRelatedChildrenMap.get(omRoot);
-//            if (children == null)
-//                children = new ArrayList<TransitiveClosure>(10);
-//            children.add(closure);
-//            Collections.sort(children);
-//            allRelatedChildrenMap.put(omRoot, children);
-//        }
-//        logger.info("Loading Transitive closure for  " + allRelatedChildrenMap.size() + " terms. The total number of connections is " + closures.size());
-//    }
 
     private void loadDefaultOntologiesFromDatabase() {
-        // load relationships
-//        loadTermRelationshipsFromDatabase();
-        // Spatial Modifier
 
-//        initSingleOntologyMap(Ontology.SPATIAL);
         initOntologyMapFast(Ontology.SPATIAL);
         serializeOntology(Ontology.SPATIAL);
 
-//        initSingleOntologyMap(Ontology.STAGE);
-//        initSingleOntologyMap(Ontology.STAGE);
         initOntologyMapFastNoRelations(Ontology.STAGE);
         serializeOntology(Ontology.STAGE);
 
-//        initSingleOntologyMap(Ontology.ANATOMY);
         initOntologyMapFast(Ontology.ANATOMY);
         serializeOntology(Ontology.ANATOMY);
 
-//        populateStageInformationForAnatomy();
-
-        // define the root ontology for Quality here
-//        initSingleOntologyMap(Ontology.QUALITY);
         initOntologyMapFast(Ontology.QUALITY);
         serializeOntology(Ontology.QUALITY);
 
@@ -244,9 +195,6 @@ public class OntologyManager {
         initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
         serializeOntology(Ontology.QUALITY_QUALITIES);
 
-        //addSubTreeToOntologyMap(Ontology.QUALITY_PROCESSES, "PATO:0000068", RelationshipType.IS_A.toString());
-        //addSubTreeToOntologyMap(Ontology.QUALITY_QUALITIES, "PATO:0000068", RelationshipType.IS_A.toString());
-
         // GO ontologies
         initOntologyMapFast(Ontology.GO_CC);
         serializeOntology(Ontology.GO_CC);
@@ -254,8 +202,6 @@ public class OntologyManager {
         serializeOntology(Ontology.GO_MF);
         initOntologyMapFast(Ontology.GO_BP);
         serializeOntology(Ontology.GO_BP);
-
-        //ontologySerializationService.serializeLoadData(loadingData);
     }
 
     /**
@@ -327,54 +273,6 @@ public class OntologyManager {
                 termMap.keySet().size(), termMap.getAllValues().size());
         loadingTimeMap.put(subOntologyDTO, loadingTimeInSeconds);
         ontologySerializationService.serializeOntology(subOntology);
-    }
-
-    private void addSubTreeToOntologyMap(Ontology ontology, String subTreeRootOboID, String relationshipType) {
-        int averageMaximumNumOfChildren = 10;
-
-        List<TermDTO> children = new ArrayList<TermDTO>(averageMaximumNumOfChildren);
-        Set<TermDTO> childrenSet = new HashSet<TermDTO>(averageMaximumNumOfChildren);
-        GenericTerm rootTerm = getOntologyRepository().getTermByOboID(subTreeRootOboID);
-        List<Term> childTerms = rootTerm.getChildrenTerms(relationshipType);
-        for (Term term : childTerms) {
-            children.add(DTOConversionService.convertToTermDTO(term));
-            childrenSet.add(DTOConversionService.convertToTermDTO(term));
-        }
-        PatriciaTrieMultiMap<TermDTO> termMap = getTermOntologyMapCopy(ontology);
-        int obsoleteCount = 0;
-        int aliasCount = 0;
-        int activeCount = 0;
-        while (childrenSet.size() > 0) {
-            TermDTO currentTerm = childrenSet.iterator().next();
-            childrenSet.remove(currentTerm);
-            List<TermDTO> newChildren = currentTerm.getChildrenTerms(relationshipType);
-            // add new children to children's collections
-            if (newChildren != null && !newChildren.isEmpty()) {
-                for (TermDTO child : newChildren) {
-                    if (children.contains(child)) {
-                        logger.info("Term already processed: " + child.getTermName() + " [" + child.getZdbID());
-                    } else {
-                        children.add(child);
-                        childrenSet.add(child);
-                    }
-                }
-            }
-            TermDTO term = getTermByID(currentTerm.getZdbID(), currentTerm.getOntology());
-            if (term == null)
-                logger.error("Child Term <" + currentTerm.getZdbID() + "> not found in Root ontology " + ontology.getOntologyName());
-            else {
-                tokenizer.tokenizeTerm(currentTerm, termMap);
-                if (currentTerm.isObsolete()) {
-                    ++obsoleteCount;
-                } else {
-                    ++activeCount;
-                }
-                if (term.getAliases() != null) {
-                    aliasCount += term.getAliases().size();
-                }
-            }
-        }
-        ontologyTermDTOMap.put(DTOConversionService.convertToOntologyDTO(ontology), termMap);
     }
 
 
@@ -482,7 +380,6 @@ public class OntologyManager {
         }
         ontologyTermDTOMap.put(DTOConversionService.convertToOntologyDTO(ontology), termMap);
         logger.debug("to have loaded ontologies : " + (System.currentTimeMillis() - nextTime) / MILLISECONDS_PER_SECOND + "s");
-//        nextTime = System.currentTimeMillis();
 
         endTime = System.currentTimeMillis();
         logLoading(ontology, startTime, endTime, dateStarted, activeCount, obsoleteCount, aliasCount,
@@ -490,102 +387,6 @@ public class OntologyManager {
         ontologySerializationService.serializeOntology(ontology);
     }
 
-    /**
-     * Only for those ontologies that are not the stage ontology.
-     *
-     * @param terms    all terms of a given ontology
-     * @param ontology given ontology
-     */
-//    public void populateRelationshipsFromDatabase(Iterable<TermDTO> terms, Ontology ontology) {
-////        if (ontology == Ontology.STAGE)
-////            return;
-//
-//        Map<String,List<TermRelationship>> relationshipsForOntology = RepositoryFactory.getOntologyRepository().getTermRelationshipsForOntology(ontology);
-//        if(relationshipsForOntology.size()==0){
-//            return ;
-//        }
-//
-//        // populate the relationships onto each term
-//        for (TermDTO term : terms) {
-//            List<TermRelationship> termRelationships =  relationshipsForOntology.get(term.getZdbID());
-//            term.setRelatedTerms(termRelationships);
-//            if (termRelationships != null) {
-//                List<TermRelationship> relatedTermDTOs = new ArrayList<TermRelationship>(relationshipsForOntology.size());
-//                for (TermRelationship termRelationship : termRelationships) {
-//                    // is this even necessary?
-////                    termRelationship.setTermDTOOne(termRelationship.getTermOne());
-////                    termRelationship.setTermDTOTwo(termRelationship.getTermTwo());
-//                    relatedTermDTOs.add(termRelationship);
-//                    // add relationship type to map
-//                    addRelationshipType(ontology, termRelationship.getType());
-//                }
-//                term.setRelatedTerms(relatedTermDTOs);
-//            }
-//        }
-//    }
-//
-//    private void addRelationshipType(Ontology ontology, String type) {
-//        Set<String> relationshipTypes = distinctRelationshipTypes.get(ontology);
-//        if (relationshipTypes == null) {
-//            relationshipTypes = new HashSet<String>();
-//        }
-//        relationshipTypes.add(type);
-//        distinctRelationshipTypes.put(ontology, relationshipTypes);
-//    }
-
-
-//    private Map<String, List<TermRelationship>> createRelationshipsMap(List<TermRelationship> relationships) {
-//        Map<String, List<TermRelationship>> map = new HashMap<String, List<TermRelationship>>(relationships.size());
-//        for (TermRelationship relationship : relationships) {
-//            List<TermRelationship> relListOne;
-//            relListOne = map.get(relationship.getTermOne().getZdbID());
-//            if (relListOne == null) {
-//                int averageNumOfRelationships = 5;
-//                relListOne = new ArrayList<TermRelationship>(averageNumOfRelationships);
-//            }
-//            relListOne.add(relationship);
-//            map.put(relationship.getTermOne().getZdbID(), relListOne);
-//
-//            List<TermRelationship> relList;
-//            relList = map.get(relationship.getTermTwo().getZdbID());
-//            if (relList == null) {
-//                int averageNumOfRelationships = 5;
-//                relList = new ArrayList<TermRelationship>(averageNumOfRelationships);
-//            }
-//            relList.add(relationship);
-//            map.put(relationship.getTermTwo().getZdbID(), relList);
-//        }
-//        return map;
-//    }
-
-    /**
-     * Check if the ontology is anatomy and then get the stage info and set it onto the term object.
-     *
-     */
-//    private void populateStageInformationForAnatomy() {
-//        // only anatomy terms have stages defined.
-//
-//        Map<String, DevelopmentStage> developmentStageMap = getAllStageMap();
-//        List<GenericTerm> anatomyTerms = RepositoryFactory.getOntologyRepository().getAllTermsFromOntology(Ontology.ANATOMY);
-//        for (GenericTerm term : anatomyTerms) {
-//            TermDTO termDTO = getTermByID(term.getZdbID());
-//            List<TermRelationship> relatedTerms = term.getAllDirectlyRelatedTerms();
-//            if (relatedTerms != null){
-//                for (TermRelationship relatedTermDTO : relatedTerms) {
-//                    // ToDo: temporary until we know why this relationship name is changed back and forth.
-//                    if (relatedTermDTO.getType().equals("start stage") || relatedTermDTO.getType().equals("start")) {
-//                        String relatedTermDTOOboId = relatedTermDTO.getRelatedTerm(term).getOboID();
-//                        DevelopmentStage start = developmentStageMap.get(relatedTermDTOOboId);
-//                        termDTO.setStartStage(DTOConversionService.convertToStageDTO(start));
-//                    } else if (relatedTermDTO.getType().equals("end stage") || relatedTermDTO.getType().equals("end")) {
-//                        String relatedTermDTOOboId = relatedTermDTO.getRelatedTerm(term).getOboID();
-//                        DevelopmentStage end = developmentStageMap.get(relatedTermDTOOboId);
-//                        termDTO.setEndStage(DTOConversionService.convertToStageDTO(end));
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Create a map of all stages found in the stage table.
@@ -648,10 +449,16 @@ public class OntologyManager {
      */
     public TermDTO getTermByID(String id, OntologyDTO ontology) {
         Set<TermDTO> terms = ontologyTermDTOMap.get(ontology).get(id);
-        //if (CollectionUtils.isNotEmpty(terms)) {
         if (terms != null && terms.size() > 0) {
             if (terms.size() != 1) {
                 logger.warn("multiple terms [" + terms.size() + "] returned for termID: " + id);
+            }
+            // return if an exact match, otherwise, return the first one
+            for(TermDTO t : terms){
+                // name is the only thing that will register multiple hits
+               if(t.getName().equals(id)){
+                   return t ;
+               }
             }
             return terms.iterator().next();
         }
@@ -759,48 +566,7 @@ public class OntologyManager {
         return getTermByName(termName, ontology, false);
     }
 
-    /**
-     * Check if the first term is a substructure of the second (root) term via
-     * any type of relationship. It basically checks if the transitive closure has
-     * an association between the two terms.
-     *
-     * @param child child term of the root term
-     * @param root  parent term
-     * @return true or false
-     */
-//    public boolean isSubstructureOf(Term child, Term root) {
-//        List<TransitiveClosure> children = allRelatedChildrenMap.get(root);
-//        // return if no children are found for the root term.
-//        if (children == null) {
-//            return false;
-//        }
-//        // ToDO: Need to loop over list rather than use .contains() method because the terms maybe be proxied
-//        for (TransitiveClosure childTermDTO : children) {
-//            if (childTermDTO.getChild().getZdbID().equals(child.getZdbID()))
-//                return true;
-//        }
-//        return false;
-//    }
 
-    /**
-     * Retrieve all children for a given parent term. This ignores the type or relationship by including
-     * any relationship between the parent term and the child term.
-     *
-     * @param parent term
-     * @return list of all children
-     */
-//    public List<TransitiveClosure> getAllChildren(TermDTO parent) {
-//        return allRelatedChildrenMap.get(parent);
-//    }
-
-    /**
-     * Returns an unmodifiable map of the loading times for each ontology being loaded
-     *
-     * @return map of loading times in seconds.
-     */
-//    public Map<OntologyDTO, Double> getOntologyLoadingTimes() {
-//        return Collections.unmodifiableMap(loadingTimeMap);
-//    }
     public Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> getOntologyMap() {
         return ontologyTermDTOMap;
     }
@@ -843,7 +609,6 @@ public class OntologyManager {
     }
 
     public void serializeOntologies() {
-//        serializeTermRelationships();
         for (Ontology ontology : Ontology.getSerializableOntologies()) {
             if (!ontology.isComposedOntologies()) {
                 ontologySerializationService.serializeOntology(ontology);
@@ -852,7 +617,6 @@ public class OntologyManager {
     }
 
     public void deserializeOntologies() throws Exception {
-        //        deserializeLoadingStatistic();
         deserializeInfrastructureFiles();
         for (Ontology ontology : Ontology.getSerializableOntologies()) {
             if (!ontology.isComposedOntologies()) {
@@ -954,8 +718,6 @@ public class OntologyManager {
     }
 
     public void initQualityProcessesRootOntology() {
-//        ontologyManager.initRootOntologyMap(Ontology.QUALITY_PROCESSES,Ontology.QUALITY, "PATO:0001236");
-
         initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT);
     }
 

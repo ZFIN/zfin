@@ -266,5 +266,12 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertEquals(21, anatomyList.size());
     }
 
+    @Test
+    public void shouldGetExactTerm(){
+        String query = "epithelium";
+        TermDTO termDTO = ontologyManager.getTermByID(query);
+        assertEquals(query,termDTO.getName());
+    }
+
 
 }
