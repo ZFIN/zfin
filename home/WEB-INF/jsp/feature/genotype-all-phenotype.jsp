@@ -3,94 +3,46 @@
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
 
-<table border="0" width="100%">
-    <tbody>
-        <tr align="left">
-            <td><strong>All ${formBean.numberOfPhenoDisplays} phenotypes for:</strong>
-                <em><zfin:link entity="${formBean.genotype}"/></em>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="summary">
+<div class="summaryTitle">
+All ${formBean.numberOfPhenoDisplays} phenotypes for:
+                <zfin:link entity="${formBean.genotype}"/>
+</div>
 
-        <table width="100%">
+        <table class="summary rowstripes">
             <tbody>
-                <TR class="search-result-table-header">
-                    <TD width="15%">
-                        Conditions
-                    </TD>
-                    <TD width="20%">
-                        Observed in
-                    </TD>
-                    <TD width="30%">
+                <tr>
+                    <th width="48%">
                         Phenotype
-                    </TD>
-                    <TD width="35%">
+                    </th>
+                    <th width="17%">
+                        Conditions
+                    </th>
+                    <th width="35%">
                         Figures
-                    </TD>
-                </TR>
-                <c:forEach var="pheno" items="${formBean.phenoDisplays}" varStatus="loop">
-                <tr class="search-result-table-entries">
-                    <td>
-                       <c:choose>
-                         <c:when test="${pheno.morpholino ne null}">
-                             <zfin:link entity="${pheno.morpholino}"/>
-                         </c:when>
-                         <c:otherwise>
-                             Standard or control
-                         </c:otherwise>
-                       </c:choose>  
-                    </td>
-                    <td>
-                        <zfin2:displayPostcomposedTerm superTerm="${pheno.entityTermSuper}" supTerm="${pheno.entityTermSub}" />
-                    </td>
-                    <td>
-                       ${pheno.qualityTerm.termName}, ${pheno.tag}
-                    </td>
-                    <td>
-                       <c:choose>
-                         <c:when test="${pheno.numberOfFigures >1}">
-                           <c:choose>
-                             <c:when test="${pheno.morpholino ne null}">
-                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.zdbID}&qualityID=${pheno.qualityTerm.zdbID}&tag=${pheno.tag}&includingMO=yes&moID=${pheno.morpholino.zdbID}&entIDsub=${pheno.entityTermSub.zdbID}'>
-                                 ${pheno.numberOfFigures} figures</a>
-                               <c:if test="${pheno.imgInFigure}">
-                                 <img src="/images/camera_icon.gif" border="0" alt="with image">
-                               </c:if>
-                               <img src="/images/MO_icon.gif" border="0" alt="MO image">                                                                                                               
-                             </c:when>
-                             <c:otherwise>
-                               <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${formBean.genotype.zdbID}&entID=${pheno.entityTermSuper.zdbID}&qualityID=${pheno.qualityTerm.zdbID}&tag=${pheno.tag}&entIDsub=${pheno.entityTermSub.zdbID}'>
-                                 ${pheno.numberOfFigures} figures</a>
-                               <c:if test="${pheno.imgInFigure}">
-                                 <img src="/images/camera_icon.gif" border="0" alt="with image">
-                               </c:if>
-                             </c:otherwise>
-                           </c:choose>
-                         </c:when>
-                         <c:otherwise>
-                           <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${pheno.singleFig.zdbID}'>
-                             1 figure</a>
-                           <c:if test="${pheno.imgInFigure}">
-                             <img src="/images/camera_icon.gif" border="0" alt="with image">
-                           </c:if>     
-                           <c:if test="${pheno.moInExperiment}">
-                             <img src="/images/MO_icon.gif" border="0" alt="MO image">
-                           </c:if>                             
-                         </c:otherwise>
-                       </c:choose>
-                         &nbsp;from                        
-                       <c:choose>
-                            <c:when test="${pheno.numberOfPubs > 1 }">
-                                ${pheno.numberOfPubs} publications
-                            </c:when>
-                            <c:otherwise>
-                                <zfin:link entity="${pheno.singlePub}"/>
-                            </c:otherwise>
-                       </c:choose>  
-                    </td>
+                    </th>
                 </tr>
+                <c:forEach var="pheno" items="${formBean.phenoDisplays}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop">
+                    <td>
+                      <zfin:link entity="${pheno.phenoStatement}"/>
+                    </td>
+                    <td>
+                      <zfin:link entity="${pheno.experiment}"/>
+                    </td>
+                    <td>
+		       <c:forEach var="figsPub" items="${pheno.figuresPerPub}">
+		         <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
+		           <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${fig.zdbID}'><zfin2:figureOrTextOnlyLink figure="${fig}" integerEntity="1"/></a>
+		           <c:if test="${!fig.imgless}"><img src="/images/camera_icon.gif" border="0" alt="with image"></c:if>
+		           <c:if test="${!figloop.last}">,&nbsp;</c:if>
+		         </c:forEach>
+		           from <zfin:link entity="${figsPub.key}"/><br/>
+		       </c:forEach>
+                    </td>
+                </zfin:alternating-tr>
                 </c:forEach>
 
             </tbody>
         </table>
+</div>
