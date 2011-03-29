@@ -66,15 +66,36 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <!-- Special case for updating contact person also changes owner Informix won't allow trigger used in Illustra -->
 <?MISQL COND="$(EC,$attr,contact_person)" SQL="update lab set owner = '$new_value' where zdb_id='$OID';"><?/MISQL>
 <?MIBLOCK COND="$(EC,$attr,test)">
+<?MIBLOCK COND="$(NE,$new_value,NULL)">
+<?MISQL SQL="select fp_pk_id from feature_prefix where fp_prefix='$new_value'">
+   <?MIVAR NAME=new_labprefix_id>$1<?/MIVAR>
+<?/MISQL>
   <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_current_designation='t'"><?/MISQL>
     <?MIVAR NAME=$lab_prefix_ct>$1<?/MIVAR>
     <?MIBLOCK COND="$(=,1,$lab_prefix_ct)">
       <?MISQL SQL="update lab_feature_prefix set lfp_current_designation='f' where lfp_lab_zdb_id='$OID'"><?/MISQL>
+  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_prefix_id='$new_labprefix_id'"><?/MISQL>
+    <?MIVAR NAME=$newlab_prefix_ct>$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(=,1,$newlab_prefix_ct)">
+      <?MISQL SQL="update lab_feature_prefix set lfp_current_designation='t' where lfp_lab_zdb_id='$OID' and lfp_prefix_id='$new_labprefix_id'"><?/MISQL>
+     <?MIELSE>
       <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
+<?/MIBLOCK>
     <?MIELSE>
       <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
-    <?/MIBLOCK>  
 
+    <?/MIBLOCK>  
+<?MIELSE>
+
+  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_current_designation='t'"><?/MISQL>
+    <?MIVAR NAME=$lab_prefix_ct>$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(=,1,$lab_prefix_ct)">
+
+      <?MISQL SQL="delete from  lab_feature_prefix where lfp_lab_zdb_id='$OID'"><?/MISQL>
+     <?/MIBLOCK>
+<?/MIBLOCK>
 <?/MIBLOCK>
 <!-- Special case for updating membership status -->
 <?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_lab set position='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>

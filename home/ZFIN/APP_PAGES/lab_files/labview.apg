@@ -251,9 +251,14 @@ select  fp.fp_prefix
     <?/MISQL>
   <b>Line Designation: </b>
 <?MIBLOCK COND="$(XST,$allele_prefix)">
+<?MIBLOCK COND="$(NE,$allele_prefix,)">
   <?MIVAR>
   $allele_prefix
   <?/MIVAR>
+<?MIELSE>
+
+  none assigned
+<?/MIBLOCK>
 <?MIELSE>
   none assigned
 <?/MIBLOCK>
@@ -271,7 +276,8 @@ select  fp.fp_prefix
 <?MIBLOCK COND="$(XST,$UPDATE)">
 <?MIVAR>
   <SELECT NAME=labprefix onChange="changePrefix(this.options[this.selectedIndex].value,'$allele_prefix')">
-<!--<option $(IF,$(EC,$allele_prefix,NULL),SELECTED) value=NULL>Unspecified-->
+  <!--  <option value=''></option>-->
+<option $(IF,$(EC,$allele_prefix,NULL),SELECTED) value=NULL>
 <?/MIVAR>
 <?MISQL sql="
 select  fp.fp_prefix
