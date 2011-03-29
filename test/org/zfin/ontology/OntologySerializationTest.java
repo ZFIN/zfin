@@ -223,55 +223,6 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     }
 
-////    @Test
-//    public void serializeAnatomy() throws Exception{
-//        List<GenericTerm> termList = ontologyRepository.getAllTermsFromOntology(Ontology.ANATOMY);
-//        OntologyManager ontologyManager = new OntologyManager();
-//        ontologyManager.initSingleOntologyMap(Ontology.ANATOMY);
-//        TermDTO termToSerialize = ontologyManager.getTermByName("liver", Ontology.ANATOMY ) ;
-//        assertNotNull(termToSerialize);
-//        PatriciaTrieMultiMap<TermDTO> anatomyMap = ontologyManager.getOntologyMap().get(OntologyDTO.ANATOMY);
-//
-//        assertEquals(termList.size(), anatomyMap.getAllValues().size());
-//
-//        ontologyManager.serializeOntology(Ontology.ANATOMY);
-//        ontologyManager.deserializeOntology(OntologyDTO.ANATOMY);
-//
-//
-//        anatomyMap = ontologyManager.getOntologyMap().get(OntologyDTO.ANATOMY);
-//        assertEquals(termList.size(), anatomyMap.getAllValues().size());
-//        TermDTO termDeserialized = ontologyManager.getTermByName("liver", Ontology.ANATOMY);
-//        assertNotNull(termDeserialized );
-//        assertEquals(termToSerialize, termDeserialized);
-//
-//
-//        Term termFromDatabase = ontologyRepository.getTermByName("liver",Ontology.ANATOMY);
-//        assertNotNull(termFromDatabase);
-//
-//        assertEquals(termFromDatabase .getZdbID(),termDeserialized .getZdbID()) ;
-//        assertEquals(termFromDatabase.getTermName(),termDeserialized.getName()) ;
-//        assertEquals(termFromDatabase .getAliases().size(),termDeserialized .getAliases().size()) ;
-//        assertEquals(termFromDatabase.getParentTerms().size(),termDeserialized .getParentTerms().size());
-//        assertEquals(termFromDatabase.getChildTerms().size(), termDeserialized .getChildrenTerms().size());
-//        Map<String,List<TermDTO>> allRelatedTerms = termDeserialized .getAllRelatedTerms() ;
-//        assertEquals(5, allRelatedTerms.keySet().size()); // starts axis, finishes axis, is_a
-//        assertEquals(15,allRelatedTerms.get("part of").size()) ;
-//        assertEquals(1,allRelatedTerms.get("start stage").size()) ;
-//        assertEquals(1,allRelatedTerms.get("end stage").size()) ;
-//        assertEquals(1,allRelatedTerms.get("is_a").size()) ;
-//        assertEquals(1,allRelatedTerms.get("develops from").size()) ;
-//        assertEquals(termFromDatabase .getComment(),termDeserialized .getComment()) ;
-//        assertEquals(termFromDatabase .getDefinition(),termDeserialized .getDefinition()) ;
-//        assertEquals(termFromDatabase .getOboID(),termDeserialized .getOboID()) ;
-//
-//        assertNotNull(termDeserialized.getStartStage());
-//        assertNotNull(termDeserialized.getEndStage());
-//        assertEquals("Adult",termDeserialized.getEndStage().getName());
-//        assertEquals("Pharyngula:Prim-15",termDeserialized.getStartStage().getName());
-//        // TODO: Note that this won't work with quality . . . grr
-////        assertEquals(termFromDatabase .getOntology().getOntologyName(),termDeserialized .getOntology().getOntologyName()) ;
-//    }
-
 
     @Test
     public void serializeAnatomy() {

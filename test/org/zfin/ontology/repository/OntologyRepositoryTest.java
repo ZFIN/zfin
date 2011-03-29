@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
@@ -52,12 +51,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void loadAllTermsFromFiles() throws Exception {
-        OntologyManager manager = OntologyManager.getInstanceFromFile(OntologyDTO.ANATOMY);
-        Assert.assertNotNull(manager);
-    }
-
-    @Test
     public void loadAllTermsOfOntology() throws Exception {
         List<GenericTerm> terms = ontologyRepository.getAllTermsFromOntology(Ontology.QUALITY);
         Assert.assertNotNull(terms);
@@ -65,7 +58,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void checkTermSubset() throws Exception {
-        List<Subset> subsets = ontologyRepository.getAllSubsets();
         Term term = ontologyRepository.getTermByName("fused with", Ontology.QUALITY);
         assertNotNull(term);
         Set<Subset> subs = term.getSubsets();

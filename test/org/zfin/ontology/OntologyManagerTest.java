@@ -45,16 +45,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNull(ontologyManager.getTermByID("ZDB-TERM-070117-73"));
     }
 
-//    @Test
-//    public void testGetSorted() {
-//        // forebrain has an alias
-//        TermDTO t = ontologyManager.getTermByID("ZDB-TERM-100331-102", OntologyDTO.ANATOMY);
-//        assertNotNull(t);
-//        List<AliasDTO> synonyms = DTOConversionService.sortSynonyms(t);
-//        Assert.assertNotNull(synonyms);
-//        Assert.assertTrue(synonyms.size()>0);
-//    }
-
     @Test
     public void dontTokenizeSmallWords() {
         Set<TermDTO> terms;
