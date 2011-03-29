@@ -805,6 +805,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
+
     <?MICOMMENT>alias is sent over in an URLENCODED format,
            test showed that it is converted back automatically,
 	   even with "'" replaced by "''"
@@ -814,10 +815,33 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 	  from record_attribution, data_alias
 	 where recattrib_data_zdb_id = dalias_zdb_id
 	   and dalias_data_zdb_id = '$OID'
-	   and dalias_alias = '$old_value' ; ">
- 
+	   and dalias_alias = '$old_value' 
+       ; ">
+
       <?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
     <?/MISQL>			
+
+    <?MIVAR NAME="old_dalias_zdb_id"><?/MIVAR>
+    <?MIVAR NAME="fixalias"><?/MIVAR>
+    <?MISQL SQL="
+	select dalias_zdb_id, dalias_alias
+	  from data_alias
+	 where dalias_data_zdb_id = '$OID'
+	   and dalias_alias = '$old_value' 
+    ;">
+       <?MIVAR NAME="old_dalias_zdb_id">$1<?/MIVAR>
+       <?MIVAR NAME="fixalias">$2<?/MIVAR>
+    <?/MISQL>
+
+
+    <?MISQL COND="$(AND,$(NE,$old_dalias_zdb_id,NOVALUE),$(NE,$fixalias,NOVALUE))" SQL="
+        update marker_history
+        set mhist_mrkr_prev_name='$fixalias', mhist_dalias_zdb_id = null 
+        where
+        mhist_dalias_zdb_id='$old_dalias_zdb_id'
+    ;">
+    <?/MISQL>
+
 
     <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
       delete from zdb_active_data
