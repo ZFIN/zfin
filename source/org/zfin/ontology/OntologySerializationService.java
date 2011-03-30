@@ -70,12 +70,12 @@ public final class OntologySerializationService {
         LOGGER.info("Lookup file path [" + file.getAbsolutePath() + "] size: " + (file.length() / 1024) + "kB");
     }
 
-    public void serializeLoadData(Map<Ontology, OntologyLoadingEntity> loadingData) {
+    public void serializeLoadData(Map<OntologyDTO, OntologyLoadingEntity> loadingData) {
         serializeObject(loadingData, LOADING_STATS_SER);
     }
 
     private Object deserializeFile(String fileName) throws Exception {
-        Object entity = null;
+        Object entity;
         long start = System.currentTimeMillis();
         File lookupFile;
         try {
@@ -94,6 +94,7 @@ public final class OntologySerializationService {
     }
 
 
+    @SuppressWarnings({"unchecked"})
     public void deserializeOntology(Ontology ontology) throws Exception {
         PatriciaTrieMultiMap<TermDTO> lookupMap = (PatriciaTrieMultiMap<TermDTO>) deserializeFile(ontology.name() + SERIALIZED_LOOKUP_SUFFIX);
         lookupMap.rebuild();
@@ -101,6 +102,7 @@ public final class OntologySerializationService {
         ontologyManager.getOntologyMap().put(DTOConversionService.convertToOntologyDTO(ontology), lookupMap);
     }
 
+    @SuppressWarnings({"unchecked"})
     void deserializeLoadingStatistic() throws Exception {
         ontologyManager.setLoadingData((Map<OntologyDTO, OntologyLoadingEntity>) deserializeFile(LOADING_STATS_SER));
     }

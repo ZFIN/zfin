@@ -14,8 +14,11 @@
                 <prop key="/antibody/disassociate-publication">showPublicationList</prop>
                 <prop key="/antibody/add-publication">showPublicationList</prop>
                 <prop key="/publication/image-popup">imageViewPopup</prop>
+<!--
                 <prop key="/publication/view-publication-detail">publicationViewDetail</prop>
+-->
                 <prop key="/publication/publication-search-result">publicationSearchResult</prop>
+                <prop key="/publication/close-curation">publicationCuration</prop>
             </props>
         </property>
     </bean>
@@ -47,6 +50,18 @@
                     <bean class="org.zfin.publication.presentation.AddPublicationValidator"/>
                 </entry>
             </map>
+        </property>
+    </bean>
+
+    <bean name="publicationCuration" class="org.zfin.publication.presentation.ClosePublicationAjaxController">
+        <property name="methodNameResolver" ref="publicationCurationActionResolver"/>
+    </bean>
+
+    <bean id="publicationCurationActionResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/publication/close-curation">closePublicationHandler</prop>
+            </props>
         </property>
     </bean>
 

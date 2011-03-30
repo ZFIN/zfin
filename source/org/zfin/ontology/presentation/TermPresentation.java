@@ -60,15 +60,13 @@ public class TermPresentation extends EntityPresentation {
         if (term == null || name == null)
             return null;
         String title = term.getOntology().getCommonName();
-        if (term.getChildTerms() != null && term.getChildTerms().size() > 0)
-            title += " (" + term.getChildTerms().size() + ")";
         return getTomcatLinkWithTitle(uri, term.getOboID(), term.getTermName(), name, title);
     }
 
 
     public static String getPopupLink(Term term) {
         StringBuilder sb = new StringBuilder(100);
-        sb.append(getTomcatPopupLink(popupUri, String.valueOf(term.getZdbID()),
+        sb.append(getTomcatPopupLink(popupUri, String.valueOf(term.getOboID()),
                 "Term definition, synonyms and links"));
         return sb.toString();
 

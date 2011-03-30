@@ -65,7 +65,6 @@
 
     <target name="load-quality-ontology"  depends="init">
         <property name="localOboFile" value="${run-directory}/quality.obo"/>
-        <property name="scriptFiles" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
         <antcall target="load-ontology" />
     </target>
 
@@ -76,7 +75,7 @@
     </target>
 
     <target name="load-ontology" description="Run the ontology loader">
-        <property name="scriptFiles" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,dropTempTables.sql"/>
+        <property name="scriptFiles" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.LoadOntology" fork="yes" maxmemory="256m"
               classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>

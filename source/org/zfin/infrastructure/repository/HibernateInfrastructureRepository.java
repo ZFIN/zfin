@@ -963,6 +963,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         try {
             statement = connection.createStatement();
             statement.execute(jdbcStatement.getQuery());
+            int updateCount = statement.getUpdateCount();
+            logger.info("Number of updated rows: "+updateCount);
             session.flush();
         } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +

@@ -188,8 +188,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // make sure we get the proper parent
         Set<TermDTO> parentTerms = postTermDTO.getParentTerms();
         assertNotNull(parentTerms);
-        assertEquals(1, parentTerms.size());
-        assertEquals(antTermDTO.getZdbID(), parentTerms.iterator().next().getZdbID());
+        assertEquals(2, parentTerms.size());
 
         // make sure we have the proper children
         Set<TermDTO> childTermDTOs = antTermDTO.getChildrenTerms();

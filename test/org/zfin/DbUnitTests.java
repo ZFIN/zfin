@@ -82,8 +82,8 @@ import org.zfin.webservice.MarkerSoapDbTest;
         DisplayGroupRepositoryTest.class,
         GoEvidenceTest.class,
         BlastRepositoryTest.class,
-        OntologyManagerTest.class,
-        OntologySerializationTest.class
+        OntologyManagerTest.class
+//        OntologySerializationTest.class
 //        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })

@@ -67,10 +67,10 @@ public class DownloadOntology extends AbstractScriptWrapper {
         try {
             is = httpURLConnection.getInputStream();
             os = new FileOutputStream(path);
-            int character;
-            while ((character = is.read()) != -1) {
-                os.write(character);
-            }
+            byte[] temp = new byte[1024];
+            int numOfBytesRead;
+            while ((numOfBytesRead = is.read(temp)) > 0)
+                os.write(temp, 0, numOfBytesRead);
         } catch (IOException e) {
             LOG.error("Error while reading the file", e);
         } finally {

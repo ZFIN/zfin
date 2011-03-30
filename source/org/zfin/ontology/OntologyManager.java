@@ -169,7 +169,6 @@ public class OntologyManager {
 
 
     private void loadDefaultOntologiesFromDatabase() {
-
         initOntologyMapFast(Ontology.SPATIAL);
         serializeOntology(Ontology.SPATIAL);
 
@@ -202,6 +201,8 @@ public class OntologyManager {
         serializeOntology(Ontology.GO_MF);
         initOntologyMapFast(Ontology.GO_BP);
         serializeOntology(Ontology.GO_BP);
+
+        ontologySerializationService.serializeLoadData(loadingData);
     }
 
     /**
