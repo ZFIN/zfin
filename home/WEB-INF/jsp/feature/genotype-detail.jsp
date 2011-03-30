@@ -141,7 +141,7 @@
       <c:forEach var="supplier" items="${formBean.genotype.suppliers}" varStatus="status">
         <c:choose>
           <c:when test="${formBean.genotype.extinct}">
-	    ${supplier.organization.name} &nbsp; &nbsp;<font size="3" color="red">extinct</font><img src="/images/warning-noborder.gif" text="extinct" alt="extinct" width="20" align="top" height="20>
+	    ${supplier.organization.name} &nbsp; &nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" text="extinct" alt="extinct" width="20" align="top" height="20>
               <br/>
           </c:when>
           <c:otherwise>
