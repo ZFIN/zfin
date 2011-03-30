@@ -33,14 +33,9 @@ Disallow: /action/anatomy/search
 #Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-*
 # Created via a crawl error
 Disallow: /zf_info/dbase/PAPERS/CurrentDataModel/db.html
-
+# Don't want bots crawling gbrowse
 Disallow: /cgi-perl/gbrowse*
-
-User-Agent: msnbot/1.1
-Disallow: /
-
-User-Agent: msnbot/2.0b
-Disallow: /
+Crawl-delay: 1
 
 User-Agent: Yeti/1.0
 Disallow: /
