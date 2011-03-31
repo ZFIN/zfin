@@ -21,7 +21,8 @@ update tmp_syndef
 --  set scoper = type
 --  where scoper is null;
 
-select * from tmp_syndef;
+unload to debug
+    select * from tmp_syndef;
 
 delete from tmp_syndef
   where exists (select 'x' from alias_group
@@ -39,8 +40,12 @@ unload to new_scopes.unl
   	    	   	   where aliasscope_scope = scoper)
   and scoper is not null;
 
+-- update alias definition if it has changed.
+
 update alias_group
   set aliasgrp_definition  = (select def from tmp_syndef
+      			     	     where type = aliasgrp_name)
+  where aliasgrp_definition != (select def from tmp_syndef
       			     	     where type = aliasgrp_name);
 
 !echo "alias_group new group addition.";
@@ -309,38 +314,34 @@ update ontology
 
 
 !echo "this is where new ontologies are born.";
+-- Needs to be refactored to only create new ontologies from a default namespace.
+--  select distinct term_ontology,
+--  	 	  (select max(ont_order)+1 from ontology),
+--		  format_ver,
+--		  default_namespace,
+--		  data_ver,
+--		  saved_by,
+--		  remark
+--  from tmp_term, tmp_header
+--where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
 
-  select distinct term_ontology,
-  	 	  (select max(ont_order)+1 from ontology),
-		  format_ver,
-		  default_namespace,
-		  data_ver,
-		  saved_by,
-		  remark
-   from tmp_term, tmp_header
-  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
+--insert into ontology (ont_ontology_name,
+--       	    	     ont_order,
+--		     ont_format_version,
+--		     ont_default_namespace,
+--		     ont_data_version,
+--		     ont_saved_by,
+--		     ont_remark)
+-- select distinct term_ontology,
+--  	 	  (select max(ont_order)+1 from ontology),
+--		  format_ver,
+--		  default_namespace,
+--		  data_ver,
+--		  saved_by,
+--		  remark
+--   from tmp_term, tmp_header
+--  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
 
-insert into ontology (ont_ontology_name,
-       	    	     ont_order,
-		     ont_format_version,
-		     ont_default_namespace,
-		     ont_data_version,
-		     ont_saved_by,
-		     ont_remark)
-  select distinct term_ontology,
-  	 	  (select max(ont_order)+1 from ontology),
-		  format_ver,
-		  default_namespace,
-		  data_ver,
-		  saved_by,
-		  remark
-   from tmp_term, tmp_header
-  where not exists (Select 'x' from ontology where ont_ontology_name = term_ontology);
-
-
-unload to debug
- select * from ontology;
--- get term IDs for new terms
 
 --unload to debug
 -- select * from tmp_term;
