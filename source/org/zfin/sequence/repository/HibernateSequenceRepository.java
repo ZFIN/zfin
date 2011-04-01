@@ -208,20 +208,25 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @SuppressWarnings("unchecked")
     public List<String> getGenbankCdnaDBLinks(){
         return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
-                "select " +
-                "dblink_acc_num " +
-                "from db_link " +
-                "where dblink_fdbcont_zdb_id in " +
-                "( " +
-                "   select " +
-                "   fdbcont_zdb_id " +
-                "   from foreign_db_contains, foreign_db, foreign_db_data_type " +
-                "   where (fdb_db_name = 'GenBank' or fdb_db_name = 'RefSeq') " +
-                "   and fdbdt_data_type = 'RNA' " +
-                "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
-                "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
-                ")   " +
-                "").list() ;
+                "select  dbl.dblink_acc_num from db_link dbl , marker m, marker_type_group_member gm " +
+                "where dbl.dblink_fdbcont_zdb_id in  " +
+                "(  " +
+                "   select  " +
+                "   fdbc.fdbcont_zdb_id  " +
+                "   from foreign_db_contains fdbc, foreign_db db, foreign_db_data_type dt  " +
+                "   where " +
+                "   db.fdb_db_name in( 'GenBank', 'RefSeq')  " +
+                "   and " +
+                "   dt.fdbdt_data_type = 'RNA'  " +
+                "   and " +
+                "   fdbc.fdbcont_fdb_db_id = db.fdb_db_pk_id  " +
+                "   and " +
+                "   fdbc.fdbcont_fdbdt_id = dt.fdbdt_pk_id  " +
+                ")  " +
+                "and m.mrkr_zdb_id=dbl.dblink_linked_recid " +
+                "and gm.mtgrpmem_mrkr_type=m.mrkr_type " +
+                "and gm.mtgrpmem_mrkr_type_group in ('GENEDOM','CDNA_AND_EST') " +
+                " ").list();
     }
 
     /**

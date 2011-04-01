@@ -153,6 +153,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(dblinks);
         assertTrue(dblinks.size() > 1000);
         assertTrue(dblinks.contains("NM_131644"));
+        assertFalse(dblinks.contains("EE708906"));
     }
 
     //    @Test
