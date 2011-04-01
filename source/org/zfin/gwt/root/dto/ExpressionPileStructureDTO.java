@@ -16,11 +16,11 @@ public class ExpressionPileStructureDTO extends AbstractPileStructureDTO impleme
      * @return stage range.
      */
     public String getStageRange() {
-        String startStageName = start.getNameLong();
+        String startStageName = start.getDisplay();
         if (start.getZdbID().equals(end.getZdbID())) {
             return startStageName;
         }
-        return startStageName + " - " + end.getNameLong();
+        return startStageName + " - " + end.getDisplay();
     }
 
     public ExpressionPileStructureDTO copy() {

@@ -21,7 +21,8 @@ public class StageRangeIntersectionTest {
         StageDTO start = new StageDTO();
         start.setStartHours(0.0F);
         efs.setStart(start);
-        start.setNameLong("Willibald");
+        start.setAbbreviation("Willibald");
+        start.setAbbreviation("Willibald");
         StageDTO end = new StageDTO();
         end.setStartHours(0.75F);
         efs.setEnd(end);
@@ -43,7 +44,7 @@ public class StageRangeIntersectionTest {
         efs1.setStart(start);
         StageDTO end = new StageDTO();
         end.setStartHours(2.0F);
-        end.setNameLong("Harry");
+        end.setAbbreviation("Harry");
         efs1.setEnd(end);
         ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
         StageDTO startOne = new StageDTO();
@@ -51,7 +52,7 @@ public class StageRangeIntersectionTest {
         efs.setStart(startOne);
         StageDTO endOne = new StageDTO();
         endOne.setStartHours(3.0F);
-        endOne.setNameLong("Werner");
+        endOne.setAbbreviation("Werner");
         efs.setEnd(endOne);
         dtos.add(efs1);
         dtos.add(efs);
@@ -61,7 +62,7 @@ public class StageRangeIntersectionTest {
         assertEquals(2.0F, stageRange.getEndHours());
 
         start.setStartHours(0.0F);
-        start.setNameLong("Guenther");
+        start.setAbbreviation("Guenther");
         assertTrue(!stageRange.isOverlap(start, start));
         start.setStartHours(1.0F);
         end.setStartHours(5.0F);
@@ -77,7 +78,7 @@ public class StageRangeIntersectionTest {
         efs1.setStart(start);
         StageDTO end = new StageDTO();
         end.setStartHours(2.0F);
-        end.setNameLong("Hilde");
+        end.setAbbreviation("Hilde");
         efs1.setEnd(end);
         ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
         StageDTO startOne = new StageDTO();
@@ -85,7 +86,7 @@ public class StageRangeIntersectionTest {
         efs.setStart(startOne);
         StageDTO endOne = new StageDTO();
         endOne.setStartHours(17520.0F);
-        endOne.setNameLong("Gertrud");
+        endOne.setAbbreviation("Gertrud");
         efs.setEnd(endOne);
         dtos.add(efs1);
         dtos.add(efs);
@@ -112,7 +113,7 @@ public class StageRangeIntersectionTest {
         start.setStartHours(19.0F);
         StageDTO end = new StageDTO();
         end.setStartHours(19.0F);
-        end.setNameLong("Walter");
+        end.setAbbreviation("Walter");
         StageRangeIntersection stageRange = new StageRangeIntersection(start, end);
         start.setStartHours(0.0F);
         end.setStartHours(2160.0F);
@@ -128,7 +129,7 @@ public class StageRangeIntersectionTest {
         efs1.setStart(start);
         StageDTO end = new StageDTO();
         end.setStartHours(2.0F);
-        end.setNameLong("Holger");
+        end.setAbbreviation("Holger");
         efs1.setEnd(end);
         ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
         StageDTO startOne = new StageDTO();
@@ -136,7 +137,7 @@ public class StageRangeIntersectionTest {
         efs.setStart(startOne);
         StageDTO endOne = new StageDTO();
         endOne.setStartHours(4.0F);
-        endOne.setNameLong("Mausi");
+        endOne.setAbbreviation("Mausi");
         efs.setEnd(endOne);
         dtos.add(efs1);
         dtos.add(efs);

@@ -16,8 +16,13 @@ public class StageDTO implements IsSerializable , Serializable {
     private String oboID ;
     private String nameLong;
     private String abbreviation;
+    private String timeString;
     private float startHours = -1.0f;
     private float endHours = -1.0f;
+
+    public String getDisplay(){
+        return abbreviation + " " + timeString ;
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -73,5 +78,13 @@ public class StageDTO implements IsSerializable , Serializable {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
     }
 }

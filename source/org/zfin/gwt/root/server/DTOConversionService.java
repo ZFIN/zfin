@@ -763,6 +763,7 @@ public class DTOConversionService {
         dto.setStartHours(stage.getHoursStart());
         dto.setEndHours(stage.getHoursEnd());
         dto.setAbbreviation(stage.getAbbreviation());
+        dto.setTimeString(stage.getTimeString());
         return dto;
     }
 
@@ -871,7 +872,7 @@ public class DTOConversionService {
     public static DevelopmentStage convertToDevelopmentStage(StageDTO start) {
         DevelopmentStage stage = new DevelopmentStage();
         stage.setZdbID(start.getZdbID());
-        stage.setName(start.getNameLong());
+        stage.setName(start.getName());
         return stage;
     }
 

@@ -174,18 +174,12 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveExpressionStructures() {
-        String pubID = "ZDB-PUB-990507-16";
+        String pubID = "ZDB-PUB-030728-18";
 
         List<ExpressionStructure> structures = expRep.retrieveExpressionStructures(pubID);
         assertNotNull(structures);
-    }
-
-    @Test
-    public void retrieveFigureAnnotation() {
-        String pubID = "ZDB-PUB-990507-16";
-
-        List<ExpressionStructure> structures = expRep.retrieveExpressionStructures(pubID);
-        assertNotNull(structures);
+        assertTrue(structures.size()>15);
+        assertTrue(structures.size()<40);
     }
 
     // Excluded until we have the ontologyManager loaded into memory for the unit tests.

@@ -33,16 +33,6 @@ public class StageRangeUnion implements IsSerializable {
         calculateUnion();
     }
 
-    public StageRangeUnion(StageDTO start, StageDTO end) {
-        this.startDTO = start;
-        this.endDTO = end;
-        startHours = start.getStartHours();
-        if (end.getNameLong().equals(UNKNOWN_ABBREVIATION))
-            endHours = UNKNOWN_END_HOURS;
-        else
-            endHours = end.getStartHours();
-    }
-
     /**
      * Calculates the stage range that all ranges in the collection have in common.
      * Exception occurs:
@@ -64,8 +54,8 @@ public class StageRangeUnion implements IsSerializable {
             if (index == 0) {
                 startHours = efs.getStart().getStartHours();
                 endHours = efs.getEnd().getStartHours();
-                startStageName = efs.getStart().getNameLong();
-                endStageName = efs.getEnd().getNameLong();
+                startStageName = efs.getStart().getName();
+                endStageName = efs.getEnd().getName();
                 startDTO = efs.getStart();
                 endDTO = efs.getEnd();
             } else {
@@ -78,18 +68,18 @@ public class StageRangeUnion implements IsSerializable {
     public void addNewRange(StageDTO startStage, StageDTO endStage) {
         float start = startStage.getStartHours();
         float end = endStage.getStartHours();
-        if (endStage.getNameLong().equals(UNKNOWN_ABBREVIATION))
+        if (endStage.getAbbreviation().equals(UNKNOWN_ABBREVIATION))
             end = UNKNOWN_END_HOURS;
         // first check if start < endHours and end > startHours
 
         if (startHours > start) {
             startHours = start;
-            startStageName = startStage.getNameLong();
+            startStageName = startStage.getName();
             startDTO = startStage;
         }
         if (endHours < end) {
             endHours = end;
-            endStageName = endStage.getNameLong();
+            endStageName = endStage.getName();
             endDTO = endStage;
         }
     }
@@ -103,8 +93,9 @@ public class StageRangeUnion implements IsSerializable {
     }
 
     public StageDTO getStart() {
-        if (startDTO.getNameLong() == null)
-            startDTO.setNameLong("None");
+        if (startDTO.getName() == null){
+            startDTO.setName("None");
+        }
         return startDTO;
     }
 
@@ -113,8 +104,9 @@ public class StageRangeUnion implements IsSerializable {
     }
 
     public StageDTO getEnd() {
-        if (endDTO.getNameLong() == null)
-            endDTO.setNameLong("None");
+        if (endDTO.getName() == null){
+            endDTO.setName("None");
+        }
         return endDTO;
     }
 

@@ -36,8 +36,8 @@ public abstract class AbstractFigureStageDTO<T extends ExpressedTermDTO> impleme
     public String getStageRange() {
         String startID = start.getZdbID();
         String endID = end.getZdbID();
-        String startName = start.getNameLong();
-        String endName = end.getNameLong();
+        String startName = start.getDisplay();
+        String endName = end.getDisplay();
         if (startID.equals(endID)) {
             return startName;
         }

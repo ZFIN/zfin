@@ -197,9 +197,9 @@ public class StageSelector extends VerticalPanel {
         endStageList.clear();
         multiStartStageList.clear();
         for (StageDTO stageDTO : stages) {
-            startStageList.addItem(stageDTO.getNameLong(), stageDTO.getZdbID());
-            endStageList.addItem(stageDTO.getNameLong(), stageDTO.getZdbID());
-            multiStartStageList.addItem(stageDTO.getNameLong(), stageDTO.getZdbID());
+            startStageList.addItem(stageDTO.getDisplay(), stageDTO.getZdbID());
+            endStageList.addItem(stageDTO.getDisplay(), stageDTO.getZdbID());
+            multiStartStageList.addItem(stageDTO.getDisplay(), stageDTO.getZdbID());
         }
     }
 
