@@ -31,6 +31,8 @@ public class Publication implements Comparable<Publication>, Serializable {
     private Set<Figure> figures;
 
     private boolean deletable;
+    private boolean indexed;
+    private GregorianCalendar indexedDate;
 
     //todo: make type into a proper enum, with tests
     //for now I only need one value, so I'll just be quick and dirty
@@ -99,6 +101,14 @@ public class Publication implements Comparable<Publication>, Serializable {
 
     public void setCloseDate(GregorianCalendar closeDate) {
         this.closeDate = closeDate;
+    }
+
+    public GregorianCalendar getIndexedDate() {
+        return indexedDate;
+    }
+
+    public void setIndexedDate(GregorianCalendar indexedDate) {
+        this.indexedDate = indexedDate;
     }
 
     public Journal getJournal() {
@@ -241,6 +251,14 @@ public class Publication implements Comparable<Publication>, Serializable {
         this.deletable = deletable;
     }
 
+    public boolean isIndexed() {
+        return indexed;
+    }
+
+    public void setIndexed(boolean indexed) {
+        this.indexed = indexed;
+    }
+
     public boolean equals(Object otherPublication) {
         if (!(otherPublication instanceof Publication))
             return false;
@@ -266,5 +284,12 @@ public class Publication implements Comparable<Publication>, Serializable {
         }
         return false;
 	}
+
+    public boolean isOpen () {
+        if (closeDate == null) {
+            return true;
+        }
+        return false;
+    }
 
 }

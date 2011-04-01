@@ -39,6 +39,8 @@
         <property name="accessionNumber" column="accession_no" lazy="true"/>
         <property name="fileName" column="pub_file" lazy="true"/>
         <property name="doi" column="pub_doi" lazy="true"/>
+        <property name="indexed" column="pub_is_indexed"/>
+        <property name="indexedDate" column="pub_indexed_date"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
                      update="false"/>
