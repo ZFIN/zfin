@@ -35,7 +35,7 @@ SUBDIRS = anatomy catch dbase images monitor movies news \
 	zfbook sequence 2006_tutorial
 
 GENERICS = defs.html  nomen.html zfprbs.html downloads.html \
-	nomen_tutorial.html stars.html new_gene.html new_line.html \
+	nomen_tutorial.html stars.html \
 	syntax_help.html
 
 STATICS = 227.gif fish.gif logo.jpeg genome.html updates.html  citation.html \

@@ -5,7 +5,7 @@
                    title="Search by name, accession number, LG, vector or sequence type">
          <strong>Genes / Markers / Clones</strong></a></li>
      <ul>
-            <li><a href="/zf_info/nomen.html" 
+            <li><a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>   
             <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>

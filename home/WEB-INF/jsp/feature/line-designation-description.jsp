@@ -33,4 +33,4 @@ basis. All labs producing fish lines at the same institution should seek to shar
  Recessive alleles from Children's Hospital, Boston - <i>dly<sup>cz3321</sup></i>,  <i>egy<sup>cz5</sup></i><br>
  Recessive allele from University of Pennsylvania, with appended letters - <i>bbp<sup>p58cd</sup></i></p>
 
-<p>For more information, you can refer to the <a href="/zf_info/nomen.html#3">Zebrafish   Nomenclature Guidelines</a>. To request a new letter designation for your laboratory,   please contact <a href="mailto:zfinadmn@zfin.org">ZFIN</a>.</p>
+<p>For more information, you can refer to the <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-3.1">Zebrafish   Nomenclature Guidelines</a>. To request a new letter designation for your laboratory,   please contact <a href="mailto:zfinadmn@zfin.org">ZFIN</a>.</p>

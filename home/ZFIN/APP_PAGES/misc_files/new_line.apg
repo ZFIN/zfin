@@ -83,10 +83,9 @@ If you have a ZFIN <a href="/action/login">login</a>, this page will be accessib
 <p><strong>Nomenclature Resources</strong></p>
 Before proposing and reserving a name, review the current guidelines and search existing records in ZFIN for possible naming conflicts
 <ul style="line-height:1.5">
-  <li>Guides to Nomenclature for <a href="../../zf_info/nomen.html#2.">Mutants</a> and <a href="../../zf_info/nomen.html#6.3.">Transgenes</a></li>
+  <li>Guides to Nomenclature for <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-1.3">Mutants</a> and <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-4.3">Transgenes</a></li>
 
-  <li><a href="/action/feature/line-designations">Laboratory Allele
-      Designations</a></li>
+  <li><a href="/action/feature/line-designations">Laboratory Allele Designations</a></li>
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Search
       Existing Lines in ZFIN</a></li>
 </ul>
