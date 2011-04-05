@@ -20,11 +20,13 @@ echo "Using Ensembl release: $cur"
 if ($1 == "commit") then
 	echo "*** COMMITING load_ensdarT_dbacc.sql <!--|DB_NAME|--> ***"
 	cat load_ensdarT_dbacc.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	# incase log is not there
+	touch fetch_ensembl.log 
 	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
 else
 	echo ""
 	echo "*** Just Testing load_ensdarT_dbacc.sql into <!--|DB_NAME|--> .***  "
 	echo "To load use:  gmake run_transcript_commit"
 	echo ""
-	cat load_ensdarT_dbacc.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	cat load_ensdarT_dbacc.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a  <!--|DB_NAME|-->
 endif
