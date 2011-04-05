@@ -367,16 +367,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public GenericTerm getTermByName(String termName, Ontology ontology) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GenericTerm.class);
-        criteria.add(Restrictions.eq("termName", termName));
-        criteria.add(Restrictions.eq("ontology", ontology));
-        criteria.add(Restrictions.eq("secondary", false));
-        return (GenericTerm) criteria.uniqueResult();
+        return getTermByName(termName,ontology.getIndividualOntologies());
     }
 
     @Override
-    public GenericTerm getTermByName(String termName, List<Ontology> ontology) {
+    public GenericTerm getTermByName(String termName, Collection<Ontology> ontology) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.eq("termName", termName));

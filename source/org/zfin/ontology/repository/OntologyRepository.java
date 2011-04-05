@@ -100,7 +100,7 @@ public interface OntologyRepository {
      */
     GenericTerm getTermByName(String termName, Ontology ontology);
 
-    GenericTerm getTermByName(String termName, List<Ontology> ontology);
+    GenericTerm getTermByName(String termName, Collection<Ontology> ontology);
 
     /**
      * Retrieve Term by term zdb ID.

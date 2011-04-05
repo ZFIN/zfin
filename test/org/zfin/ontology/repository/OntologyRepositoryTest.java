@@ -279,4 +279,17 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
+    @Test
+    public void getTermByNameForComposedOntologies(){
+        String termName = "retinal isomerase activity";
+        try {
+            GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.GO_BP_MF);
+            assertNotNull(term);
+        } catch (NonUniqueResultException e) {
+            fail("Found more than one term with name '" + termName + "'");
+        } catch (Exception e) {
+            fail("An error occurred");
+
+        }
+    }
 }
