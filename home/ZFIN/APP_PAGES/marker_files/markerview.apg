@@ -1914,16 +1914,6 @@ union
      <?MIVAR NAME="mrkrview_allele_display">$1<?/MIVAR>
    <?/MISQL>
 
-      <?MIVAR>
-	$mrkrview_mutants_display
-      <?/MIVAR>
-    </td></tr>
-      <tr><td> <b>Allele(s): &nbsp; </b>
-<?MIVAR>
-<?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">$1<?/MISQL>
-<?/MIVAR>
-<td></tr>
-    </table>
   <?/MIBLOCK><?MICOMMENT> -- end if there is mutants --<?/MICOMMENT>
 <?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
 
@@ -1955,32 +1945,6 @@ union
       	          and phenos_phenox_pk_id = phenox_pk_id;">
   <?/MISQL>
 
-  <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
-    <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-      <hr width=80%>
-      <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>
-      $(SETVAR,$display_mut_trg_title,t)
-    <?/MIVAR>
-
-    <?MIBLOCK COND="$(XST,$type_of_genedom)">
-      <?MISQL SQL="select count(*)::integer
-	             from marker_relationship
-	            where mrel_mrkr_2_zdb_id = '$OID'
-		      and mrel_type = 'knockdown reagent targets gene';">
-        <?MIVAR NAME=$mrkrview_agt_plural_pheno>$(IF,$(>,$1,0),t,f)<?/MIVAR>
-      <?/MISQL>
-    <?/MIBLOCK>
-
-  <?/MIBLOCK>
-
-  <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
-    <tr><td>
-       <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
-    </td></tr>
-  </table>
-
-  <?MICOMMENT> *** call phenotype_miniview.apg to display the phenotype data *** <?/MICOMMENT>
-  <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
 
@@ -2183,23 +2147,37 @@ union
     <?MISQL SQL="select distinct term_zdb_id,goev_display_order,term_name,'f' as mrkrgo_is_false_ref from term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_term_zdb_id=term_zdb_id and mrkrgoev_evidence_code=goev_code and term_ontology='$ontology' order by goev_display_order"><?/MISQL>
     <?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
 
+    <?MIBLOCK COND="$(>,$flgct,0)">
+       <?MIBLOCK COND="$(=,$flgct,2)">
+     	<?MIVAR NAME=$isnot>t<?/MIVAR>
+     	<?MIVAR NAME=$contribs>t<?/MIVAR>
+      <?MIELSE>
+        <?MIBLOCK COND="$(EC,$flag,not)">
+           <?MIVAR NAME=$isnot>t<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK COND="$(EC,$flag,contributes to)">
+        	<?MIVAR NAME=$contribs>t<?/MIVAR>
+        <?/MIBLOCK>
+     <?/MIBLOCK>
+   <?/MIBLOCK>
+   <?MIBLOCK COND="$(EC,$isnot,t)">
+  	<?MIVAR NAME=not><i>NOT</i><?/MIVAR>
+   <?MIELSE>
+  	<?MIVAR NAME=not><?/MIVAR>
+   <?/MIBLOCK>
    <?MIBLOCK COND="$(>,$anncount,0)">
 	<TR><TD nowrap><?MIVAR>$ontology_name<?/MIVAR></TD>
    <?/MIBLOCK>
+   <?MIBLOCK COND="$(OR,$(EC,$contribs,t),$(EC,$isnot,t))">
+     <?MIBLOCK COND="$(EC,$contribs,t)">
+      <td nowrap><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
+     <?MIELSE>
+      <td nowrap><i><?MIVAR>$not<?/MIVAR></i></td>
+     <?/MIBLOCK>
+   <?MIELSE>
     <?MIBLOCK COND="$(EC,$qualifier,true)">
-     <td nowrap>
-     <i>
-       <?MIVAR COND="$(EC,$flag,contributes to)">
-        Contributes to
-        <?/MIVAR>
-       <?MIVAR COND="$(EC,$flag,colocalizes with)">
-        Colocalizes with
-        <?/MIVAR>
-       <?MIVAR COND="$(EC,$flag,not)">
-        NOT
-        <?/MIVAR>
-     </i>
-     </td>
+       <td></td>
+     <?/MIBLOCK>
    <?/MIBLOCK>
 
    <?MIBLOCK COND="$(>,$anncount,1)">
