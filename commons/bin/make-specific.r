@@ -115,9 +115,11 @@ either here: find buffer start-tag
     [ if not find here end-tag[
         print ["MAKESPECIFIC WARNING NO END tag in: " generic]
         translated:  buffer
+        quit/return FAIL
       ]
     ][print ["MAKESPECIFIC WARNING NO START tag in: " generic]
       translated:  buffer
+      quit/return FAIL
     ]
 
 
@@ -143,9 +145,11 @@ if empty? translated[
 ;;; sanity check on untranslated tags
 if find translated start-tag[
     print ["MAKESPECIFIC WARNING unmatched START tag in: " generic]
+    quit/return FAIL
 ]
 if find translated end-tag[
     print ["MAKESPECIFIC WARNING unmatched END tag in:" generic]
+    quit/return FAIL
 ]
 
 ;;; write specific file out
