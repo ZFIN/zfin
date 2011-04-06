@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.RelationshipType;
+import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -156,6 +158,68 @@ public class OntologyManager {
             ontologyManager.loadOntologiesFromDatabase();
         }
         logger.info("Finished loading all ontologies: took " + DateUtil.getTimeDuration(startTime));
+    }
+
+    public static Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap){
+
+        // pass two fills in the rest of the child / parent type info
+        for(TermDTO termDTO : termDTOMap.values()){
+
+            // populate child
+            if(termDTO.getChildrenTerms()!=null){
+                for(TermDTO childTerm : termDTO.getChildrenTerms()){
+                    TermDTO cachedTerm = termDTOMap.get(childTerm.getZdbID()) ;
+                    if(cachedTerm == null){
+                        cachedTerm = ontologyManager.getTermByID(childTerm.getZdbID());
+                    }
+
+                    if(cachedTerm==null){
+                        logger.error("Term is not cached, will create bad cache: "+childTerm);
+                    }
+                    else{
+                        childTerm.shallowCopyFrom(cachedTerm);
+                    }
+                }
+            }
+
+
+            // populate parent term
+            if(termDTO.getParentTerms()!=null){
+                for(TermDTO parentTerm : termDTO.getParentTerms()){
+                    // for the purpose of working with anatomy, the stage parent is not always in the ontology
+                    TermDTO cachedTerm = termDTOMap.get(parentTerm.getZdbID()) ;
+                    if(cachedTerm == null){
+                        cachedTerm = ontologyManager.getTermByID(parentTerm.getZdbID());
+                    }
+
+                    if(cachedTerm==null){
+                        logger.error("Term is not cached, will create bad cache: "+parentTerm);
+                    }
+                    else{
+                        parentTerm.shallowCopyFrom(cachedTerm);
+
+                        // handle anatomy here
+                        if(parentTerm.getRelationshipType().equals(RelationshipType.START_STAGE.getDbMappedName())){
+                            StageDTO stageDTO = new StageDTO();
+                            stageDTO.setZdbID(parentTerm.getZdbID());
+                            stageDTO.setOboID(parentTerm.getOboID());
+                            stageDTO.setName(parentTerm.getName());
+                            termDTO.setStartStage(stageDTO);
+                        }
+                        else
+                        if(parentTerm.getRelationshipType().equals(RelationshipType.END_STAGE.getDbMappedName())){
+                            StageDTO stageDTO = new StageDTO();
+                            stageDTO.setZdbID(parentTerm.getZdbID());
+                            stageDTO.setOboID(parentTerm.getOboID());
+                            stageDTO.setName(parentTerm.getName());
+                            termDTO.setEndStage(stageDTO);
+                        }
+                    }
+                }
+            }
+        }
+
+        return termDTOMap.values();  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected void loadOntologiesFromDatabase() {
@@ -339,11 +403,9 @@ public class OntologyManager {
     }
 
     public void initOntologyMapFast(Ontology ontology) {
-
         resetCounter();
         Map<String, TermDTO> termDTOMap = getOntologyRepository().getTermDTOsFromOntology(ontology);
-        Collection<TermDTO> termDTOs = OntologyService.populateRelationships(termDTOMap, this);
-
+        Collection<TermDTO> termDTOs = populateRelationships(termDTOMap);
         createMapForTerms(termDTOs, ontology);
     }
 

@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,9 +55,10 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
     }
 
     @After
-    public void resetTempDirectory() {
+    public void resetTempDirectory() throws IOException {
         System.setProperty("java.io.tmpdir", oldTempDirectory);
-        assertTrue(FileUtil.deleteDirectory(testDirectory));
+        FileUtils.deleteDirectory(testDirectory);
+        assertFalse(testDirectory.exists());
     }
 
     @Test

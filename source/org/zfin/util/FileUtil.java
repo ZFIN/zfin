@@ -1,5 +1,7 @@
 package org.zfin.util;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -321,13 +323,6 @@ public final class FileUtil {
         return false;
     }
 
-    public static boolean checkFileExists(File file) {
-        if (file.exists())
-            return true;
-        LOG.error("File not found: " + file.getAbsolutePath());
-        return false;
-    }
-
     public static File createOntologySerializationFile(String serializedFileName) {
         String tempDir = System.getProperty("java.io.tmpdir");
         File file = new File(tempDir, DATA_TRANSFER);
@@ -361,32 +356,16 @@ public final class FileUtil {
     public static Object deserializeOntologies(File file) throws Exception {
         FileInputStream fileInputStream = new FileInputStream(file);
         ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
-//        BufferedReader reader = new BufferedReader(new FileReader(file)) ;
-//        xStream.setMode(XStream.ID_REFERENCES) ;
-//        ObjectInputStream inputStream = xStream.createObjectInputStream(reader) ;
         return inputStream.readObject();
     }
 
     /**
-     * Create a File from an array of strings that define a path.
-     *
-     * @param pathElements strings in the order of the file path
-     * @return file to the concatenated file or directory
+     * TODO: Convert to use IOUtils.readLines().size(); ?
+     * TODO: remove?  not used be any active methods as far as I can tell
+     * @param filename
+     * @return
+     * @throws IOException
      */
-    public static File getFileFromPath(String... pathElements) {
-        if (pathElements == null || pathElements.length == 0)
-            return null;
-
-        File file = new File(pathElements[0]);
-        if (pathElements.length == 1)
-            return file;
-
-        for (int index = 1; index < pathElements.length; index++) {
-            file = new File(file, pathElements[index]);
-        }
-        return file;
-    }
-
     public static int countLines(String filename) throws IOException {
         LineNumberReader reader = new LineNumberReader(new FileReader(filename));
         int cnt;
@@ -396,24 +375,6 @@ public final class FileUtil {
         cnt = reader.getLineNumber();
         reader.close();
         return cnt;
-    }
-
-    /**
-     * A convenience method for deleting directories.
-     */
-    public static boolean deleteDirectory(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = deleteDirectory(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-
-        // The directory is now empty so delete it
-        return dir.delete();
     }
 
 }

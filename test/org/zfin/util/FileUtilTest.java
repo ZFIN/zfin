@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -106,6 +107,10 @@ public class FileUtilTest {
     @Test
     public void deleteDirectory() throws Exception{
         File dirTop = new File("test/delete-me") ;
+        if(dirTop.exists()){
+            FileUtils.deleteDirectory(dirTop);
+            assertFalse(dirTop.exists());
+        }
         assertTrue(dirTop.mkdir());
         File dirNext = new File("test/delete-me/delete-you") ;
         assertTrue(dirNext.mkdir());
@@ -114,7 +119,8 @@ public class FileUtilTest {
         File file2 = new File("test/delete-me/delete-you/bob.txt") ;
         assertTrue(file2.createNewFile()) ;
 
-        assertTrue(FileUtil.deleteDirectory(dirTop));
+        FileUtils.deleteDirectory(dirTop);
+        assertFalse(dirTop.exists());
 
     }
 
