@@ -244,7 +244,7 @@ create dba function "informix".regen_term()
 	  alltermcon_min_contain_distance	integer not null
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 256 next size 256 
+	extent size 12800 next size 51200 
 	lock mode page;
 
       -- create temp index.  dropped when table renamed
