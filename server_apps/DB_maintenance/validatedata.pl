@@ -2373,6 +2373,15 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
                 and b.mrkrgoev_zdb_id = ib.infgrmem_mrkrgoev_zdb_id
                 and a.mrkrgoev_zdb_id > b.mrkrgoev_zdb_id
                 and ia.infgrmem_inferred_from = ib.infgrmem_inferred_from
+                and
+            (
+               ( a.mrkrgoev_gflag_name is null
+                  and b.mrkrgoev_gflag_name is null)
+               or
+               ( ( a.mrkrgoev_gflag_name is not null or b.mrkrgoev_gflag_name is not null)
+                  and a.mrkrgoev_gflag_name=b.mrkrgoev_gflag_name
+               )
+            )
              group by a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id,
                       a.mrkrgoev_mrkr_zdb_id, b.mrkrgoev_mrkr_zdb_id';
   
