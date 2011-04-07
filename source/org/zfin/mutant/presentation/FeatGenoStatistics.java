@@ -101,36 +101,28 @@ public class FeatGenoStatistics {
 
 
     public Boolean getIsImage() {
-        isImage = false;
         imgfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGeno(genotype);
-        numberOfImgFigures = imgfigureResults.getTotalCount();
-        /*     if (figureResults == null || figureResults.getTotalCount() != 1) {
-            throw new RuntimeException("Can call this method only when there is exactly one figure");
-        }*/
-        if (numberOfImgFigures != 0) {
-            imgfigure = imgfigureResults.getPopulatedResults().get(0);
-            if (imgfigure.getImages() != null && imgfigure.getImages().size() > 0) {
-                return isImage = true;
+        boolean thereIsImg = false;
+        for (Figure fig : imgfigureResults.getPopulatedResults()) {
+            if (!fig.isImgless()) {
+                thereIsImg = true;
+                break;
             }
         }
-        return isImage;
+        return thereIsImg;
     }
 
 
     public Boolean getIsImageExp() {
-        isImageExp = false;
         expimgfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
-        numberOfExpImgs = expimgfigureResults.getTotalCount();
-        /*     if (figureResults == null || figureResults.getTotalCount() != 1) {
-            throw new RuntimeException("Can call this method only when there is exactly one figure");
-        }*/
-        if (numberOfExpImgs != 0) {
-            expimg = expimgfigureResults.getPopulatedResults().get(0);
-            if (expimg.getImages() != null && expimg.getImages().size() > 0) {
-                return isImageExp = true;
+        boolean thereIsImg = false;
+        for (Figure fig : expimgfigureResults.getPopulatedResults()) {
+            if (!fig.isImgless()) {
+                thereIsImg = true;
+                break;
             }
         }
-        return isImageExp;
+        return thereIsImg;
     }
 
 
@@ -179,7 +171,7 @@ public class FeatGenoStatistics {
                     markers.add(marker);
                 }
             }
-  
+
         }
         return markers;
     }
