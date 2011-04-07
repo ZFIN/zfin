@@ -231,7 +231,7 @@ print(LOG "Using dump $dumpDir/$latestDump\n");
 $status = system("/private/ZfinLinks/Commons/bin/stoptomcat.pl");
 
 # check whether jsvc processes are terminated
-my $jsvc_pid = `pgrep -P 1 -u root,informix jsvc`;
+my $jsvc_pid = `ps -fu root | grep jsvc | grep almost | awk '{print $2}'`;
 $jsvc_pid =~ s/\n/ /g;
 if ( $jsvc_pid ) {
     print (STDERR "Tomcat failed to exit, jsvc process: $jsvc_pid. Please check catalina.out \n");
