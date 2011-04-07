@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -29,6 +30,18 @@ public class OntologyController {
         OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         form.setMetadataList(ontologyRepository.getAllOntologyMetadata());
         return "ontology/version-info.page";
+    }
+
+    @RequestMapping("/reload-ontology")
+    private String forceOntologyLoad(@RequestParam(required = true) String ontologyName,
+                                     Model model) {
+        Ontology ontology = Ontology.getOntology(ontologyName);
+        if(ontology == null){
+            model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
+            return "record-not-found.popup";
+        }
+        OntologyManager.getInstance().reloadOntology(ontology);
+        return "redirect:version-info";
     }
 
 }

@@ -7,111 +7,121 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public enum OntologyDTO implements IsSerializable {
 
-    ANATOMY(0, "AO", "zebrafish_anatomy"){
+    ANATOMY(0, "AO", "zebrafish_anatomy", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_QUALITIES;
         }
     },
     // full GO ontology
-    GO(1, "GO", "cellular_component,molecular_function,biological_process"){
+    GO(1, "GO", "cellular_component,molecular_function,biological_process", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY;
         }
     },
     // Subset of GO: Cellular Components
-    GO_CC(2, "GO-CC", "cellular_component"){
+    GO_CC(2, "GO-CC", "cellular_component", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_QUALITIES;
         }
     },
     // Subset of GO: Molecular Function
-    GO_MF(3, "GO-MF", "molecular_function"){
+    GO_MF(3, "GO-MF", "molecular_function", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_PROCESSES;
         }
     },
     // Subset of GO: Biological Process
-    GO_BP(4, "GO-BP", "biological_process"){
+    GO_BP(4, "GO-BP", "biological_process", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_PROCESSES;
         }
     },
     // PATO
-    QUALITY(5, "Quality - ALL", "quality"){
+    QUALITY(5, "Quality - ALL", "quality", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    QUALITY_PROCESSES(6, "Quality - Processes", "quality.process"){
+    QUALITY_PROCESSES(6, "Quality - Processes", "quality", "quality.process", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    QUALITY_QUALITIES(7, "Quality - Objects", "quality.quality"){
+    QUALITY_QUALITIES(7, "Quality - Objects", "quality", "quality.quality", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    QUALITY_QUALITIES_RELATIONAL(8, "Quality - Relational Objects", "quality.object.relational"){
+    QUALITY_QUALITIES_RELATIONAL(8, "Quality - Relational Objects", "quality", "quality.object.relational", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    QUALITY_PROCESSES_RELATIONAL(9, "Quality - Relational Processes", "quality.process.relational"){
+    QUALITY_PROCESSES_RELATIONAL(9, "Quality - Relational Processes", "quality", "quality.process.relational", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    QUALITY_QUALITATIVE(10, "Quality - Qualitative", "quality.qualitative"){
+    QUALITY_QUALITATIVE(10, "Quality - Qualitative", "quality", "quality.qualitative", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    GO_MF_CC(11, "GO-MF / GO-CC", "molecular_function,cellular_component"){
+    GO_MF_CC(11, "GO-MF / GO-CC", "molecular_function,cellular_component", true) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY;
         }
     },
-    GO_BP_MF(12, "GO-BP / GO-MF", "biological_process,molecular_function"){
+    GO_BP_MF(12, "GO-BP / GO-MF", "biological_process,molecular_function", true) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_PROCESSES;
         }
     },
-    SPATIAL(13, "Spatial", "spatial"){
+    SPATIAL(13, "Spatial", "spatial", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_QUALITIES;
         }
     },
-    STAGE(14, "stages", "zebrafish_stages"){
+    STAGE(14, "stages", "zebrafish_stages", false) {
         @Override
-        public OntologyDTO getAssociatedQualityOntology(){
+        public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
-    }
-    ;
+    };
 
     private int index;
     private String displayName;
     private String ontologyName;
+    private boolean composedOntologies;
+    private String subtreeOntology;
 
-    private OntologyDTO(int index, String value, String name) {
+    private OntologyDTO(int index, String value, String name, boolean composedOntology) {
         this.index = index;
         this.displayName = value;
         this.ontologyName = name;
+        this.composedOntologies = composedOntology;
+    }
+
+    private OntologyDTO(int index, String value, String subtreeOntology, String name, boolean composedOntology) {
+        this.index = index;
+        this.displayName = value;
+        this.ontologyName = name;
+        this.composedOntologies = composedOntology;
+        this.subtreeOntology = subtreeOntology;
     }
 
     public String getDisplayName() {
@@ -159,6 +169,14 @@ public enum OntologyDTO implements IsSerializable {
     }
 
     public abstract OntologyDTO getAssociatedQualityOntology();
+
+    public String getSubtreeOntology() {
+        return subtreeOntology;
+    }
+
+    public boolean isSubtreeOntology(OntologyDTO ontology) {
+        return (subtreeOntology != null && subtreeOntology.equals(ontology.getOntologyName()));
+    }
 
 }
 

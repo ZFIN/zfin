@@ -82,6 +82,8 @@ public enum Ontology implements Serializable {
 
 
     public static Ontology getOntology(String name) {
+        if (name == null)
+            return null;
         for (Ontology ontology : values()) {
             if (ontology.getOntologyName().equals(name))
                 return ontology;
@@ -178,5 +180,18 @@ public enum Ontology implements Serializable {
         if (ontology.equals(SPATIAL))
             return true;
         return false;
+    }
+
+    /**
+     * Retrieve the root ontology if the existing ontology is a slim.
+     *
+     * @return Ontology
+     */
+    public Ontology getRootOntology() {
+        Ontology rootOntology = getOntology(dbOntologyName);
+        if(rootOntology == null)
+            return this;
+        else
+            return rootOntology;
     }
 }

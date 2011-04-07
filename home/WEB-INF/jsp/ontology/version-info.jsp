@@ -2,6 +2,9 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
+Back to <a href="/action/dev-tools/home"> Dev-tools</a>
+<p></p>
+
 <span class="summaryTitle">List of Ontologies</span>
 <table class="searchresults">
     <tr style="background: #ccc">
@@ -10,6 +13,7 @@
         <th>Date</th>
         <th>Modified By</th>
         <th>Default Namespace</th>
+        <th>Reload from DB</th>
     </tr>
     <c:forEach var="metaData" items="${formBean.metadataList}" varStatus="loop">
         <zfin:alternating-tr loopName="loop" groupBeanCollection="${formBean.metadataList}">
@@ -26,6 +30,7 @@
             <td>${metaData.date}</td>
             <td>${metaData.savedBy}</td>
             <td>${metaData.defaultNamespace}</td>
+            <td><a href="reload-ontology?ontologyName=${metaData.name}">${metaData.name}</a></td>
         </zfin:alternating-tr>
     </c:forEach>
 </table>

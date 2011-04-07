@@ -264,8 +264,17 @@ public class TermEntry extends HorizontalPanel {
         return OntologyDTO.getOntologyByDescriptor(ontology);
     }
 
-    public boolean hasOntology(OntologyDTO selectedSubtermOntology) {
-        return ontologies.contains(selectedSubtermOntology);
+    // check if the ontology provided is an option in the
+    // ontology selection box.
+    // If the ontologies are Quality check if the selection
+    // is at least a sub tree of the provided ontology
+    public boolean hasOntology(OntologyDTO ontology) {
+        if(ontology == OntologyDTO.QUALITY){
+            for(OntologyDTO ontologyOption: ontologies)
+                if(ontologyOption.isSubtreeOntology(ontology))
+                    return true;
+        }
+        return ontologies.contains(ontology);
     }
 
     public boolean isSuggestionListShowing() {

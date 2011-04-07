@@ -411,6 +411,16 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 lookupRPC.getTermByName(ontology, termName, new ZfinAsyncCallback<TermDTO>(
                         "Failed to find term: " + termName + " for ontology: " + ontology.getDisplayName(), null) {
                     @Override
+                    public void onFailure(Throwable throwable) {
+                        if (throwable instanceof TermNotFoundException){
+                            TermNotFoundException exception = (TermNotFoundException) throwable;
+                            errorElement.setError(exception.getMessage());
+                            termEntryUnit.getTermTextBox().setValidationStyle(false);
+                        }else
+                            super.onFailure(throwable);
+                    }
+
+                    @Override
                     public void onSuccess(TermDTO termDTO) {
                         if (termDTO != null) {
                             lookupRPC.getTermInfo(ontology, termDTO.getZdbID(), new TermInfoCallBack(termInfoTable, termDTO.getZdbID()));
@@ -573,6 +583,17 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             }
             if (termEntry.getTermPart().equals(EntityPart.QUALITY)) {
                 setVisibilityForRelatedEntityPanel(termInfoTable.getCurrentTermInfoDTO().isRelatedTerm());
+            }
+            // check if the new term name is valid
+            if(termInfo.getOntology() == OntologyDTO.QUALITY){
+                lookupRPC.getTermByName(termEntry.getSelectedOntology(), termInfo.getTermName(),
+                        new ZfinAsyncCallback<TermDTO>(
+                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + termEntry.getSelectedOntology(), null) {
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                 termEntry.getTermTextBox().setValidationStyle(false);
+                            }
+                        });
             }
         }
 

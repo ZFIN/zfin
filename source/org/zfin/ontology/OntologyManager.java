@@ -517,11 +517,11 @@ public class OntologyManager {
                 logger.warn("multiple terms [" + terms.size() + "] returned for termID: " + id);
             }
             // return if an exact match, otherwise, return the first one
-            for(TermDTO t : terms){
+            for (TermDTO t : terms) {
                 // name is the only thing that will register multiple hits
-               if(t.getName().equals(id)){
-                   return t ;
-               }
+                if (t.getName().equals(id)) {
+                    return t;
+                }
             }
             return terms.iterator().next();
         }
@@ -754,10 +754,14 @@ public class OntologyManager {
         if (ontology == null || rootIDs == null)
             return;
 
+        // get root ontology
+        Ontology rootOntology = ontology.getRootOntology();
+        OntologyDTO rootOntologyDTO = DTOConversionService.convertToOntologyDTO(rootOntology);
         resetCounter();
         Set<TermDTO> termsToProcess = new HashSet<TermDTO>();
         for (String rootID : rootIDs) {
-            TermDTO termDTO = getTermByID(rootID);
+            TermDTO termDTO = getTermByID(rootID, rootOntologyDTO);
+            termsToProcess.add(termDTO);
 
             TermDTO rootDTO = new TermDTO();
             rootDTO.shallowCopyFrom(termDTO);
@@ -765,12 +769,12 @@ public class OntologyManager {
             Set<String> childZdbIDs = RepositoryFactory.getOntologyRepository().getAllChildZdbIDs(termDTO.getZdbID());
 
             for (String childZdbID : childZdbIDs) {
-                TermDTO childTerm = getTermByID(childZdbID);
+                TermDTO childTerm = getTermByID(childZdbID, rootOntologyDTO);
                 Set excludedTermIds = excludedTerms.get(ontology);
                 if (excludedTermIds != null) {
                     // do not add excluded terms or any of its children.
-                    if (excludedTermIds.contains(childTerm.getOboID())){
-                        logger.info("Excluded Term: "+childTerm);
+                    if (excludedTermIds.contains(childTerm.getOboID())) {
+                        logger.info("Excluded Term: " + childTerm);
                         continue;
                     }
                 }
@@ -813,6 +817,34 @@ public class OntologyManager {
         if (ontologySerializationService == null)
             ontologySerializationService = new OntologySerializationService(this);
         ontologySerializationService.serializeOntology(ontology);
+    }
+
+    /**
+     * Reload a given ontology from the database and serialize it to disk.
+     * If the ontology is PATO also re-load the slims.
+     *
+     * @param ontology Ontology
+     */
+    public void reloadOntology(Ontology ontology) {
+        if (ontology.equals(Ontology.ANATOMY_FULL)) {
+            reloadOntology(Ontology.ANATOMY);
+            reloadOntology(Ontology.STAGE);
+            return;
+        }
+        if (ontology.equals(Ontology.GO_ONTOLOGY)) {
+            reloadOntology(Ontology.GO_CC);
+            reloadOntology(Ontology.GO_MF);
+            reloadOntology(Ontology.GO_BP);
+            return;
+        }
+        initOntologyMapFast(ontology);
+        serializeOntology(ontology);
+        if (ontology.equals(Ontology.QUALITY)) {
+            initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM);
+            serializeOntology(Ontology.QUALITY_PROCESSES);
+            initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
+            serializeOntology(Ontology.QUALITY_QUALITIES);
+        }
     }
 
     public enum LoadingMode {

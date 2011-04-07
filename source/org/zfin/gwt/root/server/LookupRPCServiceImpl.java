@@ -358,7 +358,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             logger.warn("No term " + termID + " found!");
             return null;
         }
-        return term ;
+        return term;
 
     }
 
@@ -444,7 +444,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
     }
 
 
-    public TermDTO getTermByName(OntologyDTO ontologyDTO, String value) {
+    public TermDTO getTermByName(OntologyDTO ontologyDTO, String value) throws TermNotFoundException {
         Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
 
         TermDTO term = null;
@@ -468,7 +468,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             }
             if (term == null) {
                 logger.info("Failed to find term [" + value + "]");
-                return null;
+                throw new TermNotFoundException("Failed to find term [" + value + "] in <" + ontologyDTO.getDisplayName() + ">");
             }
         }
         return term;
@@ -486,7 +486,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
         TermDTO term;
         if (ActiveData.isValidActiveData(termName, ActiveData.Type.TERM))
-            term = OntologyManager.getInstance().getTermByID( termName, OntologyDTO.QUALITY);
+            term = OntologyManager.getInstance().getTermByID(termName, OntologyDTO.QUALITY);
         else
             term = OntologyManager.getInstance().getTermByName(termName, Ontology.QUALITY);
         return term != null && term.isPartOfSubset(SubsetDTO.RELATIONAL_SLIM);
