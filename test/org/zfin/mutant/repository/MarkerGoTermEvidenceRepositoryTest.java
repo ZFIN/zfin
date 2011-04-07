@@ -143,7 +143,8 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         GafOrganization gafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.ZFIN);
         List<String> zdbIds = markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization);
         assertNotNull(zdbIds);
-        assertTrue(zdbIds.size() > 100000);
+    // typically about 20K now that they have been moved to Uniprot as the source
+        assertTrue(zdbIds.size() > 10000);
         assertTrue(zdbIds.size() < 1000000);
     }
 
