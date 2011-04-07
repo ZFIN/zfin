@@ -54,7 +54,7 @@
         <th width="80" valign=top>
             <span class="name-label">Name:</span>
         <td>
-            <span class="name-value">${formBean.anatomyItem.name}</span>
+            <span class="name-value">${formBean.anatomyItem.termName}</span>
              <br>
              <a href="/action/anatomy/term-detail?anatomyItem.zdbID=${formBean.anatomyItem.zdbID}" class="external" target="_blank">Anatomy Details</a>
             <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
@@ -102,9 +102,9 @@
                     ${fn:replace(rt.type," ","&nbsp;")}:
             </th>
             <td>
-                <c:forEach var="session" items="${rt.items}">
+                <c:forEach var="item" items="${rt.items}">
                     <%--<zfin:link entity="${item}"/>--%>
-                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${session.zdbID}">${session.name}</a>
+                    <a href="/action/anatomy/term-info?anatomyItem.zdbID=${item.zdbID}">${item.termName}</a>
                     &nbsp;
                 </c:forEach>
             </td>
