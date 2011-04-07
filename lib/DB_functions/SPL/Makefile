@@ -74,9 +74,8 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql\
-	       add_ab_ao_fast_search.sql create_all_terms_contains.sql 
-REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql 
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql create_all_terms_contains.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
@@ -103,9 +102,10 @@ ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql regen_term.sql clone_2_sanger.sql \
+MULTIPLE_PROCS_STATIC = insert_clone.sql clone_2_sanger.sql \
 		 get_genofeat_mp_zyg_html_display.sql
 
+MULTIPLE_PROCS_GENERIC = regen_anatomy.sql regen_term.sql 
 GENERIC_AGGR = $(ZDB_AGGR) 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) \
 		get_mutants_html_link.sql get_mrkr_url.sql	         	
@@ -119,7 +119,8 @@ STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
-MULTIPLE_PROC_TARGETS = $(foreach SPEC, $(MULTIPLE_PROCS), $(TARGETDIR)/$(SPEC))
+MULTIPLE_PROC_TARGETS_G = $(foreach SPEC, $(MULTIPLE_PROCS_GENERIC), $(TARGETDIR)/$(SPEC))
+MULTIPLE_PROC_TARGETS_S = $(foreach SPEC, $(MULTIPLE_PROCS_STATIC), $(TARGETDIR)/$(SPEC))
 SPECIFIC_AGGR_TARGETS = $(foreach SPEC, $(GENERIC_AGGR), $(TARGETDIR)/$(SPEC))
 
 ENDEMICTARGETS_POSTTARGETS = $(SPECIFIC_PROC_TARGETS) $(STATIC_PROC_TARGETS) \
@@ -142,12 +143,19 @@ $(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 	$(DBACCESS) $(DBNAME) $@
 	echo 'update statistics for procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME)
 
-$(MULTIPLE_PROC_TARGETS) : $(TARGETDIR)/% : %
+$(MULTIPLE_PROC_TARGETS_G) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
 	-$(DBACCESS) $(DBNAME) $@
 
+$(MULTIPLE_PROC_TARGETS_S) : $(TARGETDIR)/% : %
+	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
+
+	-$(DBACCESS) $(DBNAME) $@
+
 $(SPECIFIC_AGGR_TARGETS) : $(TARGETDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
 	-echo 'drop aggregate $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME) > /dev/null 2>&1
 	$(DBACCESS) $(DBNAME) $@
 

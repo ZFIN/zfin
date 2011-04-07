@@ -1,4 +1,4 @@
-
+drop function get_genofeat_mp_zyg_html_display;
 drop function get_zygocity_symbol;
 
 -----------------------------------------------------------------
