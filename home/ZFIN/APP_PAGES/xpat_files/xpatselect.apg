@@ -154,11 +154,11 @@ function call_submit() {
 
 
   // Added for backward compliants.  TA_selected_structures no longer necessary.
-  document.critform.TA_selected_structures = document.critform.xpatsel_processed_selected_structures ;  
+  document.critform.TA_selected_structures = document.critform.xpatsel_processed_selected_structures ; 
   try{
       termStatus = getValidationStatus() ;
       currentTime = new Date() ;  // wait up to 4 seconds
-      intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+      intervalId = setTimeout('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
   }
   catch(e){
       // if not defined or some other problem, then go ahead and submit

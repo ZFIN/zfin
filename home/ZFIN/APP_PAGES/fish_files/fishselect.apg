@@ -47,7 +47,7 @@ function call_submit() {
       validateLookup() ;
       termStatus = getValidationStatus() ;
       currentTime = new Date() ;  // wait up to 4 seconds
-      intervalId = setInterval('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
+      intervalId = setTimeout('doValidateAndSubmit('+currentTime.getMilliseconds()+');',pauseIcrement) ; 
   }
   catch(e){
       // if not defined or some other problem, then go ahead and submit
