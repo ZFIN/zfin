@@ -84,26 +84,6 @@ select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type
  from marker order by 1;
 -- create other names file
 
-create temp table tmp_alias (current_id varchar(50), current_name varchar(255),
-       current_abbrev varchar(255), alias varchar(255))
-with no log;
-
-  insert into tmp_alias
-  select mrkr_zdb_id as current_id, mrkr_name as current_name,
-		mrkr_abbrev as current_abbrev, dalias_alias as alias
-    from marker, data_alias
-    where dalias_data_zdb_id = mrkr_zdb_id;
-
-   insert into tmp_alias
-   select feature_zdb_id, feature_name,feature_abbrev, dalias_alias
-    from feature, data_alias
-    where feature_zdb_id = dalias_data_zdb_id;
-
-   insert into tmp_alias
-   select geno_zdb_id, geno_display_name, geno_handle, dalias_alias
-    from genotype, data_alias
-    where dalias_data_zdb_id = geno_Zdb_id;
-
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'
   DELIMITER "	"
@@ -369,8 +349,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
    and phenox_fig_zdb_id = fig_zdb_id
  order by geno_zdb_id, fig_source_zdb_id;
 
-! echo "Inserted data into file phenotype.txt"
-
 -- generate a file with xpatex and associated figure zdbid's
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'
@@ -429,29 +407,6 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
  order by geno_zdb_id, fig_source_zdb_id ;
 
 
--- generate a file to map experiment id to environment condition description
-
-insert into tmp_env
- select exp_zdb_id, cdt_group,
-        case when expcond_mrkr_zdb_id is not null
-             then expcond_mrkr_zdb_id
-	     else cdt_name
- 	end, expcond_value, expunit_name, expcond_comments
-   from experiment, experiment_condition, condition_data_type, experiment_unit
-  where exp_zdb_id = expcond_exp_zdb_id
-    and expcond_cdt_zdb_id = cdt_zdb_id
-    and expcond_expunit_zdb_id = expunit_zdb_id
-    and exists (select 't'
-                  from genotype_experiment, phenotype_experiment
-                 where exp_zdb_id = genox_exp_zdb_id
-                   and genox_zdb_id = phenox_genox_zdb_id);
-
--- special handling for _Generic-control
-insert into tmp_env
- select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
-   from experiment
-  where exp_name = "_Generic-control";
-
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'
  DELIMITER "	"
@@ -466,9 +421,9 @@ select exp_zdb_id, cdt_group,
    and expcond_expunit_zdb_id = expunit_zdb_id
    and exists (
 	select 't'
-	 from genotype_experiment, atomic_phenotype
+	 from genotype_experiment, phenotype_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
-	   and genox_zdb_id = apato_genox_zdb_id
+	   and genox_zdb_id = phenox_genox_zdb_id
 )
 union
 -- special handling for _Generic-control--insert into tmp_env
@@ -924,23 +879,24 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'"
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'
  DELIMITER "	"
-
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name, 
-startStage.stg_name, endStage.stg_name, xpatex_assay_name
-from marker
-join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
-join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
-join genotype on geno_zdb_id = genox_geno_zdb_id
-join experiment on exp_zdb_id = genox_exp_zdb_id
-join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
-join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id 
-join stage endStage on xpatres_end_stg_zdb_id = endStage.stg_zdb_id 
-join term super on xpatres_superterm_zdb_id = super.term_zdb_id
-left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id
-where     geno_is_wildtype = 't'
-      and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5')
-      and xpatres_expression_found = 't'
-order by mrkr_zdb_id;
+select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
+	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name
+ from marker
+ join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
+ join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+ join genotype on geno_zdb_id = genox_geno_zdb_id
+ join experiment on exp_zdb_id = genox_exp_zdb_id
+ join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
+ join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id
+ join stage endStage on xpatres_end_stg_zdb_id = endStage.stg_zdb_id
+ join term super on xpatres_superterm_zdb_id = super.term_zdb_id
+ left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id  -- why slow
+ where geno_is_wildtype = 't'
+   --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
+   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
+   and xpatres_expression_found = 't'
+ order by mrkr_zdb_id
+;
 
 {
 case 4402  Weekly download file available via the web.
@@ -1012,7 +968,7 @@ select distinct dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrk
 drop table lamhdi_tmp;
 
 -- download file Case 4200 as reuqested by uniprot
-
+       
 select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
  from record_attribution
  where recattrib_data_zdb_id[1,8] = 'ZDB-GENE'
@@ -1028,31 +984,29 @@ update statistics medium for table tmp_gene_pubcount;
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'"
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'
 select geneid, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
- from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,
- 	tmp_gene_pubcount, expression_experiment
- where geneid=dblink_linked_recid
-   and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
-   and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
-   and fdb.fdb_db_name = 'UniProtKB'
-   and geneid=xpatex_gene_zdb_id
-   and xpatex_source_zdb_id=zdb_id
-   and pubcount <= 20
-   and jtype='Journal'
+from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
+and geneid=xpatex_gene_zdb_id
+and xpatex_source_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
- from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,
- 	tmp_gene_pubcount, marker_go_term_evidence
- where geneid=dblink_linked_recid
-   and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
-   and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
-   and fdb.fdb_db_name = 'UniProtKB'
-   and geneid=mrkrgoev_mrkr_zdb_id
-   and mrkrgoev_source_zdb_id=zdb_id
-   and pubcount <= 20
-   and jtype='Journal'
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, marker_go_term_evidence
+where geneid=dblink_linked_recid
+and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+and fdb.fdb_db_name = 'UniProtKB'
+and geneid=mrkrgoev_mrkr_zdb_id
+and mrkrgoev_source_zdb_id=zdb_id
+and pubcount <= 20
+and jtype='Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
 where geneid=dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1071,7 +1025,7 @@ and exp_zdb_id=genox_exp_zdb_id
 and phenos_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from phenotype_experiment, phenotype_statement, figure, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
+from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
@@ -1085,10 +1039,9 @@ and fig_source_zdb_id = zdb_id
 and pubcount <= 20
 and jtype='Journal'
 and phenos_tag!='normal'
->>>>>>> .merge-right.r23287
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from phenotype_experiment, phenotype_statement, figure, gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search, marker_relationship
+from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search, marker_relationship
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
@@ -1105,7 +1058,7 @@ and jtype = 'Journal'
 and phenos_tag != 'normal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,gene_pubcount, marker_go_term_evidence
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, marker_go_term_evidence
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1116,7 +1069,7 @@ and pubcount > 20
 and jtype = 'Journal'
 union
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1135,7 +1088,7 @@ and exp_zdb_id=genox_exp_zdb_id
 and phenos_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from phenotype_experiment, phenotype_statement, figure, gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
+from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
@@ -1151,7 +1104,7 @@ and jtype='Journal'
 and phenos_tag !='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
-from phenotype_experiment, phenotype_statement, figure, gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search, marker_relationship
+from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search, marker_relationship
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
@@ -1166,6 +1119,8 @@ and fig_source_zdb_id = zdb_id
 and pubcount > 20
 and phenos_tag !='normal'
 and jtype='Journal';
+
+drop table tmp_gene_pubcount;
 
 -- download file Case 4693 as reuqested by uniprot
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfinpubs.txt'"
