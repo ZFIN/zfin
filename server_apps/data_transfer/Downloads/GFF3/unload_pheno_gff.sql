@@ -12,12 +12,11 @@ select vg.seqname,
        'gene_id=' || gene.mrkr_zdb_id ||';Name='
        || gene.mrkr_abbrev  ||';Alias='|| gene.mrkr_zdb_id attribute
 
-from atomic_phenotype, apato_figure, mutant_fast_search,
+from phenotype_experiment, mutant_fast_search,
 	db_link, marker_relationship, marker gene,
 	gff3 vg, gff3 vt
 
-where apatofig_apato_zdb_id = apato_zdb_id        --  idx-idx
-  and apato_genox_zdb_id    = mfs_genox_zdb_id    --  idx-idx
+where phenox_genox_zdb_id  = mfs_genox_zdb_id    --  idx-idx
   and mfs_mrkr_zdb_id      = gene.mrkr_zdb_id    --  idx-idx
   and mrkr_zdb_id[1,8]      = 'ZDB-GENE'
 
