@@ -28,7 +28,7 @@
                 <td rowspan="3" valign="top" align="right" width="5%">
                     <zfin2:lookup ontology="${formBean.term.ontology}"
                                   action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
-                                  wildcard="true"/>
+                                  wildcard="true" useIdAsTerm="true"/>
                 </td>
             </authz:authorize>
         </tr>

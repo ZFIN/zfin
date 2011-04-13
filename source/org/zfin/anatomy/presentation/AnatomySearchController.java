@@ -11,6 +11,9 @@ import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.ontology.OntologyManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,9 +88,15 @@ public class AnatomySearchController extends AbstractCommandController {
 
     private void runTermSearch(AnatomySearchBean anatomyForm) {
         String searchTerm = anatomyForm.getSearchTerm();
-        AnatomyItem term = anatomyRepository.getAnatomyItem(searchTerm);
+        AnatomyItem term;
+        if (ActiveData.isValidActiveData(searchTerm, ActiveData.Type.TERM)) {
+            TermDTO termDTO = OntologyManager.getInstance().getTermByID(searchTerm);
+            term = anatomyRepository.getAnatomyTermByOboID(termDTO.getOboID());
+        } else {
+            term = anatomyRepository.getAnatomyItem(searchTerm);
+        }
         // if the search contains a wild-card, then don't return a single item
-        if (term != null && false==anatomyForm.isWildCard()) {
+        if (term != null && false == anatomyForm.isWildCard()) {
             AnatomyStatistics stat = new AnatomyStatistics();
             stat.setAnatomyItem(term);
             List<AnatomyStatistics> stats = new ArrayList<AnatomyStatistics>();

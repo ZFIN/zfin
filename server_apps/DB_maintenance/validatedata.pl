@@ -364,17 +364,16 @@ sub phenotypeAnnotationUnspecified ($$) {
 	
   my $routineName = "phenotypeAnnotationUnspecified";
        
-  my $sql = "select distinct apato_pub_zdb_id
-      from atomic_phenotype
-      join curation
-        on apato_pub_zdb_id = cur_pub_zdb_id
-      join person 
-        on cur_curator_zdb_id = zdb_id
-      where cur_topic='Phenotype'
-        and cur_closed_date is not null
-        and apato_superterm_zdb_id = 'ZDB-TERM-100331-1055'
-        and email = '$_[0]'
-      order by apato_pub_zdb_id ";
+  my $sql = "select distinct fig_source_zdb_id from figure
+        join curation on fig_source_zdb_id = cur_pub_zdb_id
+        join person   on cur_curator_zdb_id = zdb_id
+        where
+        cur_topic='Phenotype'
+        AND cur_closed_date is not null
+        AND fig_zdb_id in (
+        select phenox_fig_zdb_id from phenotype_experiment where not exists
+        (select * from phenotype_statement  where phenos_phenox_pk_id = phenox_pk_id))
+        and email = '$_[0]'";
 
   my @colDesc = ("Publication zdb id ");
 

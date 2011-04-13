@@ -29,13 +29,11 @@ public class OntologyTermDetailController {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
             return "record-not-found.page";
         }
-        //redirect immediately for ANAT zdbIDs
-
-        OntologyBean form = new OntologyBean();
-
+        //redirect to anatomy detail page for ANAT zdbIDs
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT))
             return "redirect:/action/anatomy/term-detail?anatomyItem.zdbID=" + termID;
 
+        OntologyBean form = new OntologyBean();
         GenericTerm term = null;
         if (termID.contains(ActiveData.Type.TERM.name())) {
             term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
@@ -44,15 +42,10 @@ public class OntologyTermDetailController {
             term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
         }
 
-        //unfortunately this doesn't work...but it really needs to.
-        //a term coming from the database needs to have it's relationships injected
-        //if (term != null)
-        //    term.setRelatedTerms(RepositoryFactory.getOntologyRepository().getTermRelationships(term));
-
         //if an anatomy term was linked by obo id, we still want to view it as an anatomy page
         //  (for now)
         if (term != null && term.getOntology().equals(Ontology.ANATOMY)) {
-            return "redirect:/action/anatomy/term-detail?id=" + termID;
+            return "redirect:/action/anatomy/term-detail?anatomyItem.zdbID=" + termID;
         }
 
         // check if the term name contains an asterisk at the end of the string, indicating that
@@ -76,7 +69,7 @@ public class OntologyTermDetailController {
         }
 
         // try by name
-        if (ontologyName != null) {
+        if (term == null && ontologyName != null) {
             Ontology ontology = Ontology.getOntology(ontologyName);
             term = RepositoryFactory.getOntologyRepository().getTermByName(termID, ontology);
         }
@@ -87,7 +80,6 @@ public class OntologyTermDetailController {
             return "record-not-found.page";
         }
 
-        List<TermRelationship> termRels = term.getAllDirectlyRelatedTerms();
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTerms(term);
         Collections.sort(termRelationships);
 

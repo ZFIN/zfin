@@ -34,7 +34,7 @@
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontology="<%= Ontology.ANATOMY%>"
                               action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"
-                              wildcard="true"/>
+                              wildcard="true"  useIdAsTerm="false"/>
             </td>
         </tr>
         <c:if test="${not empty formBean.anatomyItem.synonyms}">

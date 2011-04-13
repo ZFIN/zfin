@@ -755,6 +755,10 @@ public class OntologyManager {
             return;
 
         // get root ontology
+        // necessary to get fully populated terms including related terms
+        // through getTermById() method. A slim does not go back to the database
+        // and retrieve all terms and their related terms, but only the related term ids.
+        // See FB case 6786
         Ontology rootOntology = ontology.getRootOntology();
         OntologyDTO rootOntologyDTO = DTOConversionService.convertToOntologyDTO(rootOntology);
         resetCounter();

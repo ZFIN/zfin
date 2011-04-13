@@ -15,8 +15,9 @@ load from subsetdefs_header.unl
 
   select default_namespace from tmp_header;
 
-  Select * from ontology_subset, ontology, tmp_header
+  Select count(*) from ontology_subset, ontology, tmp_header
 		       where default_namespace = ont_default_namespace
+		       and osubset_subset_name = subset_name
 		       and ont_pk_id = osubset_ont_id;
 
 delete from tmp_subset
@@ -27,6 +28,9 @@ delete from tmp_subset
 		       and ont_pk_id = osubset_ont_id);
 
 !echo "records in tmp_subset after deletion.";
+
+unload to 'debug'
+  select count(*) from tmp_subset;
 
 unload to 'debug'
   select * from tmp_subset;
@@ -72,7 +76,7 @@ select * from term_subset
 		     );
 
 
--- remove all subset records that are not found in thet oob fie.
+-- remove all subset records that are not found in the obo fie.
 
 delete from term_subset
   where not exists (Select 'x' from tmp_term_subset, term, ontology_subset, ontology, tmp_header

@@ -49,7 +49,7 @@ print ("$dateTime: Launching Java indexer.\n");
 
 # generate the new indexes
 $status = 
-    system("/usr/local/bin/ant -f $uniqueryDir/build.xml index");
+    system("/private/bin/ant -f $uniqueryDir/build.xml index");
 if ($status) {
     abort($status, "Spider failed.");
 }

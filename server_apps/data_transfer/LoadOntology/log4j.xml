@@ -38,7 +38,7 @@
     </category>
 
     <category name="org.zfin.ontology.datatransfer" additivity="true">
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="queryAppender"/>
     </category>
 
