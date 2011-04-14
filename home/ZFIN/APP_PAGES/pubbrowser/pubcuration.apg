@@ -315,10 +315,11 @@ OPTIONAL VARS:
   <?MISQL SQL="SELECT pub_file FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_file>$1<?/MIVAR>
   
-  <?MISQL SQL="SELECT pub_completion_date, pub_is_indexed, pub_indexed_date FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
+  <?MISQL SQL="SELECT pub_completion_date, pub_is_indexed, pub_indexed_date, jtype FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
   <?MIVAR NAME=$pub_is_indexed>$2<?/MIVAR>
   <?MIVAR NAME=$pub_indexed_date>$3<?/MIVAR>
+  <?MIVAR NAME=$pub_jtype>$4<?/MIVAR>
   
     
   <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload  
@@ -352,9 +353,12 @@ OPTIONAL VARS:
         <?MIVAR>$OID<?/MIVAR>
       </td>
       <td align=right>
-        <?MIVAR>
+<?MICOMMENT>Bugz6808 checking for pub type to disable Cuartion links<?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(NC,$pub_jtype,Unpublished),$(NC,$pub_jtype,Curation))">        
+<?MIVAR>
           $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
-        <?/MIVAR>
+<?/MIVAR>
+<?/MIBLOCK>
       </td>
     </tr>
     <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">

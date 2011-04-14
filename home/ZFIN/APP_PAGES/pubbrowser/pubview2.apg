@@ -115,6 +115,9 @@ displays a publication record, or many publication records if > 1 returned.
        <?MIVAR NAME=$pubview_colon>:<?/MIVAR>
    <?/MIBLOCK>
    <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon$pubview2_pub_pages<?/MIVAR>
+<?MIBLOCK COND="$(EC,$jtype,Active_Curation)">
+<?MIVAR NAME=$jtype>Active Curation<?/MIVAR>
+<?/MIBLOCK>
    <?MIVAR NAME=$pubview_source COND="$(NC,$jtype,Unpublished)">$pubview_source ($jtype)<?/MIVAR>
    
      
@@ -245,9 +248,13 @@ Number exists
     <A HREF="<!--|PDF_LOAD|-->/$pub_file">PDF</A>
   <?/MIVAR>
   <?MIVAR COND="$(EC,$pub_file,)">
+<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation))">
+<?MIVAR>
     Upload a PDF from the 
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
     page.
+<?/MIVAR>
+<?/MIBLOCK>
   <?/MIVAR>
   <P>
 <?/MIVAR>

@@ -205,6 +205,7 @@ a new or updated existing pub
     <option $(IF,$(EC,$q_jtype,Book),SELECTED)>Book
     <option $(IF,$(EC,$q_jtype,Chapter),SELECTED)>Chapter
     <option $(IF,$(EC,$q_jtype,Curation),SELECTED)>Curation
+    <option $(IF,$(EC,$q_jtype,Active_Curation),SELECTED)>Active_Curation
     <option $(IF,$(EC,$q_jtype,Other),SELECTED)>Other
     <option $(IF,$(EC,$q_jtype,Unpublished),SELECTED)>Unpublished
     </SELECT>
