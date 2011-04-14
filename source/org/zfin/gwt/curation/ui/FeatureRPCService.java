@@ -39,6 +39,8 @@ public interface FeatureRPCService extends RemoteService {
     List<FeatureMarkerRelationshipDTO> getFeaturesMarkerRelationshipsForPub(String publicationZdbID);
     void addFeatureAlias(String name, String ftrZdbID,String pubZdbID);
     void removeFeatureAlias(String name, String ftrZdbID);
+     void addFeatureSequence(String name, String ftrZdbID,String pubZdbID);
+    void removeFeatureSequence(String name, String ftrZdbID);
     void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
     List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum ftrTypeDisplay);
     List<MarkerDTO> getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID);

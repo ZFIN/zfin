@@ -172,6 +172,7 @@ public class FeatureEditBox extends AbstractFeatureBox {
         isDirty = (labDesignationBox.isDirty(dto.getLabPrefix()) || isDirty)  ;
         isDirty = (lineNumberBox.isDirty(dto.getLineNumber()) || isDirty)  ;
         isDirty = (labOfOriginBox.isDirty(dto.getLabOfOrigin()) || isDirty)  ;
+        isDirty = (featureSequenceBox.isDirty(dto.getFeatureSequence()) || isDirty) ;
         return isDirty ;
     }
 
@@ -246,6 +247,7 @@ public class FeatureEditBox extends AbstractFeatureBox {
             featureEditList.setIndexForValue(dto.getZdbID()) ;
         }
         featureAliasList.setDTO(dto);
+        featureSequenceList.setDTO(dto);
         labDesignationBox.clear();
         lineNumberBox.setValue(dto.getLineNumber());
         mutagenBox.setIndexForText(dto.getMutagen());
@@ -264,6 +266,10 @@ public class FeatureEditBox extends AbstractFeatureBox {
         featureDisplayName.setValue(dto.getName());
         zdbIdHTML.setText(dto.getZdbID());
         featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
+         //if(dto.getFeatureSequences().get(0)!=null){
+             //dto.getFeatureSequence()
+        featureSequenceBox.setText(dto.getFeatureSequence());
+
     }
 
 
@@ -279,6 +285,7 @@ public class FeatureEditBox extends AbstractFeatureBox {
         titlePanel.add(removeRelatedEntityButton) ;
         table.setWidget(FeatureTableLayout.TITLE.row(),1,titlePanel);
         table.setWidget(FeatureTableLayout.ALIAS.row(),1,featureAliasList);
+        table.setWidget(FeatureTableLayout.GENBANK.row(),1,featureSequenceList);
         table.setHTML(FeatureTableLayout.NOTE.row(), 0, "<b>Notes:</b>");
         table.setWidget(FeatureTableLayout.NOTE.row(),1,featureNoteBox);
         saveButton.setText(TEXT_SAVE);
@@ -311,6 +318,7 @@ public class FeatureEditBox extends AbstractFeatureBox {
                             featureEditList.setIndexForValue(dto.getZdbID());
                             featureEditList.setEnabled(true);
                             featureAliasList.setDTO(dto);
+                            featureSequenceList.setDTO(dto);
                             revertGUI();
                         }
                     });
@@ -363,6 +371,7 @@ public class FeatureEditBox extends AbstractFeatureBox {
         mutagenBox.setDirty(false);
         lineNumberBox.setDirty(false);
         featureDisplayName.setDirty(false) ;
+        featureSequenceBox.setDirty(false);
 
 //        revertGUI();
     }

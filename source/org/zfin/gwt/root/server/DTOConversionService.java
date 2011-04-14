@@ -393,6 +393,7 @@ public class DTOConversionService {
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
 
+
         // if not unspecified
         if (!(featureDTO.getFeatureType().isUnspecified())) {
             if (featureDTO.getLineNumber() != null) {
@@ -460,6 +461,7 @@ public class DTOConversionService {
 
         featureDTO.setDominant(feature.getDominantFeature());
         featureDTO.setKnownInsertionSite(feature.getKnownInsertionSite());
+//       featureDTO.setFeatureSequence(feature.getFeatDBLink().getAccessionNumber());
         FeaturePrefix featurePrefix = feature.getFeaturePrefix();
         if (featurePrefix != null) {
             featureDTO.setLabPrefix(featurePrefix.getPrefixString());
@@ -472,6 +474,7 @@ public class DTOConversionService {
 
 
         featureDTO.setFeatureAliases(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
+       featureDTO.setFeatureSequences(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
         return featureDTO;
     }
 
@@ -1055,6 +1058,7 @@ public class DTOConversionService {
         featureDTO.setName(escapeString(featureDTO.getName()));
         featureDTO.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
         featureDTO.setAlias(escapeString(featureDTO.getAlias()));
+       featureDTO.setFeatureSequence(escapeString(featureDTO.getFeatureSequence()));
         featureDTO.setOptionalName(escapeString(featureDTO.getOptionalName()));
     }
 
@@ -1062,6 +1066,7 @@ public class DTOConversionService {
         featureDTO.setName(unescapeString(featureDTO.getName()));
         featureDTO.setAbbreviation(unescapeString(featureDTO.getAbbreviation()));
         featureDTO.setAlias(unescapeString(featureDTO.getAlias()));
+        featureDTO.setFeatureSequence(unescapeString(featureDTO.getFeatureSequence()));
         featureDTO.setOptionalName(unescapeString(featureDTO.getOptionalName()));
     }
 

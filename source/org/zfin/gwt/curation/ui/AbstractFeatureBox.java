@@ -27,7 +27,9 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
     protected final StringListBox featureTypeBox = new StringListBox(false);
     protected final StringTextBox featureNameBox = new StringTextBox();
     protected final StringTextBox featureAliasBox = new StringTextBox(); // used in add
+    protected final StringTextBox featureSequenceBox=new StringTextBox();
     protected final FeatureAliasList featureAliasList = new FeatureAliasList(); // used only in edit
+    protected final FeatureSequenceList featureSequenceList = new FeatureSequenceList(); // used only in edit
     protected final StringListBox labOfOriginBox = new StringListBox(false);
     protected final StringListBox labDesignationBox = new StringListBox(false);
     protected final StringTextBox lineNumberBox = new StringTextBox();
@@ -205,6 +207,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         suffixLabel.setVisible(false);
         featureSuffixBox.setVisible(false);
         featureAliasBox.setEnabled(true);
+        featureSequenceBox.setEnabled(true);
 
         featureNameBox.setVisible(true);
         featureNameBox.setEnabled(false);
@@ -241,6 +244,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 labDesignationBox.setEnabled(false);
                 lineNumberBox.setEnabled(false);
                 featureAliasBox.setEnabled(false);
+                featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
                 mutagenBox.setEnabled(false);
@@ -256,6 +260,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 labDesignationBox.setEnabled(false);
                 lineNumberBox.setEnabled(false);
                 featureAliasBox.setEnabled(false);
+                featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
                 mutagenBox.setEnabled(false);
@@ -303,6 +308,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         if (knownInsertionCheckBox.getValue()){
             featureDTO.setTransgenicSuffix(featureSuffixBox.getSelectedText());
         }
+        featureDTO.setFeatureSequence(featureSequenceBox.getText());
 
         // we set the name right at the end, once everything has been set
         // this is the wrong place to do this check
@@ -362,6 +368,9 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
         table.setHTML(FeatureTableLayout.ALIAS.row(), 0, "<b>Alias:</b>");
         table.setWidget(FeatureTableLayout.ALIAS.row(), 1, featureAliasBox);
+
+        table.setHTML(FeatureTableLayout.GENBANK.row(), 0, "<b>Sequence:</b>");
+        table.setWidget(FeatureTableLayout.GENBANK.row(), 1, featureSequenceBox);
 
         table.setHTML(FeatureTableLayout.PROTOCOL.row(), 0, "<b>Mutagenesis Protocol: </b>");
         protocolPanel.add(mutageeBox);
@@ -427,9 +436,10 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         LAB_DESIGNATION(3) ,
         NAME(4) ,
         ALIAS(5) ,
-        PROTOCOL(6) ,
-        NOTE(7) ,
-        NAME_DISPLAY(8) ,
+        GENBANK(6),
+        PROTOCOL(7) ,
+        NOTE(8) ,
+        NAME_DISPLAY(9) ,
         ;
 
 
@@ -459,8 +469,12 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         constructTextBox.setText("");
         featureAliasBox.setEnabled(false);
         featureAliasBox.clear();
+        featureSequenceBox.setEnabled(false);
+        featureSequenceBox.clear();
         featureAliasList.working();
         featureAliasList.resetInput();
+        featureSequenceList.working();
+        featureSequenceList.resetInput();
         mutageeBox.setEnabled(false);
         mutageeBox.setSelectedIndex(0);
         mutagenBox.setEnabled(false);
@@ -504,6 +518,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         dominantCheckBox.setEnabled(false);
         featureNameBox.setEnabled(false);
         featureAliasBox.setEnabled(false);
+        featureSequenceBox.setEnabled(false);
         mutageeBox.setEnabled(false);
         mutagenBox.setEnabled(false);
         publicNoteBox.setEnabled(false);
