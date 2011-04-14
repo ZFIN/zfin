@@ -100,6 +100,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 getTermEntry(EntityPart.RELATED_ENTITY_SUPERTERM).reset();
                 getTermEntry(EntityPart.RELATED_ENTITY_SUBTERM).reset();
             }
+            isQualityRelational = visibility;
         }
     }
 
