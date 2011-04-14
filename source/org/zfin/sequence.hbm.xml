@@ -182,6 +182,7 @@
                     WHEN 'ZDB-ORTHO' THEN 'ORTH'
                     WHEN 'ZDB-ANAT-' THEN 'ANAT'
                     WHEN 'ZDB-TSCRI' THEN 'TSCR'
+                    WHEN 'ZDB-ALT' THEN 'ALT'
                     ELSE  'MARK'
                   END
                 )"
@@ -213,6 +214,9 @@
         </subclass>
         <subclass name="org.zfin.anatomy.AnatomyDBLink" discriminator-value="ANAT">
             <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.ontology.GenericTerm" not-null="true"/>
+        </subclass>
+        <subclass name="org.zfin.sequence.FeatureDBLink" discriminator-value="ALT" >
+            <many-to-one name="feature" column="dblink_linked_recid" class="org.zfin.feature.Feature" not-null="true" fetch="select"/>
         </subclass>
     </class>
 
