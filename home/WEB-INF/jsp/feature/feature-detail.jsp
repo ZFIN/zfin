@@ -279,6 +279,30 @@
 
 
 </tr>
+<c:if test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">
+    <tr>
+        <td>
+            <b> Sequence: </b>
+        </td>
+        <td>
+            <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
+                <%--${featureGenbank.accessionNumber}--%>
+                <zfin:link entity="${featureGenbank}"/>
+                <c:if test="${featureGenbank.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${featureGenbank.publicationCount == 1}">
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureGenbank.singlePublication.zdbID}">${featureGenbank.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbank.zdbID}">${featureGenbank.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:forEach>
+        </td>
+    </tr>
+</c:if>
 
 <tr>
     <td width="150" valign="top">
