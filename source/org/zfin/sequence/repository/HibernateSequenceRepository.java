@@ -343,6 +343,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (DBLink) criteria.uniqueResult();
     }
 
+      public FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID,
+                                          ReferenceDatabase referenceDatabases) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(FeatureDBLink.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("referenceDatabase", referenceDatabases));
+        criteria.add(Restrictions.eq("accessionNumber", accessionString));
+        return (FeatureDBLink) criteria.uniqueResult();
+    }
+
     public List<MarkerDBLink> getDBLinksForMarkerExcludingReferenceDatabases(Marker marker,
                                                                              ForeignDBDataType.DataType refType,
                                                                              ReferenceDatabase... referenceDatabases) {
@@ -623,6 +633,19 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("accession", accession);
         query.setString("markerZdbID", markerZdbID);
         query.setString("referenceDBName", referenceDBName);
+        return (DBLink) query.uniqueResult();
+    }
+
+    @Override
+    public DBLink getDBLink(String featureZDbID, String accession) {
+         Session session = HibernateUtil.currentSession();
+        String hql = "from DBLink mdbl where mdbl.accessionNumber = :accession " +
+                " and mdbl.dataZdbID = :markerZdbID " ;
+
+        Query query = session.createQuery(hql);
+        query.setString("accession", accession);
+        query.setString("markerZdbID", featureZDbID);
+
         return (DBLink) query.uniqueResult();
     }
 

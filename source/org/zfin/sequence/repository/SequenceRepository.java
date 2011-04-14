@@ -52,6 +52,8 @@ public interface SequenceRepository {
     DBLink getDBLinkByID(String zdbID);
 
     DBLink getDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
+    FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
+
 
     List<MarkerDBLink> getDBLinksForMarker(Marker marker, ReferenceDatabase... referenceDatabases);
 
@@ -75,6 +77,7 @@ public interface SequenceRepository {
     MarkerDBLinkList getSummaryMarkerDBLinksForMarker(Marker marker);
 
     DBLink getDBLink(String markerZdbID, String accession, String referenceDBName);
+    DBLink getDBLink(String featureZDbID,String accession);
 
     List<ReferenceDatabase> getReferenceDatabasesWithInternalBlast();
 
