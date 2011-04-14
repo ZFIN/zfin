@@ -9,6 +9,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.FeatureDBLink;
 
 import java.util.*;
 
@@ -114,5 +115,13 @@ public class FeatureService {
             featureAliasList.add(featureAlias.getAlias());
         }
         return featureAliasList;
+    }
+    public static List<String> getFeatureSequences(Feature feature) {
+        Set<FeatureDBLink> featureSequences = feature.getDbLinks();
+        List<String> featureDBLinkList = new ArrayList<String>();
+        for (FeatureDBLink featureDBLink : featureSequences) {
+            featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+        }
+        return featureDBLinkList;
     }
 }

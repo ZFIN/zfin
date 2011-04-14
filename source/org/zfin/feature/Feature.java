@@ -11,6 +11,8 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.people.FeatureSource;
 import org.zfin.people.FeatureSupplier;
+import org.zfin.sequence.FeatureDBLink;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +35,15 @@ public class Feature implements EntityNotes{
     private Set<PublicationAttribution> publications;
     private Set<GenotypeFeature> genotypeFeatures;
     private String abbreviationOrder;
+
+    public FeatureDBLink getFeatDBLink() {
+        return featDBLink;
+    }
+
+    public void setFeatDBLink(FeatureDBLink featDBLink) {
+        this.featDBLink = featDBLink;
+    }
+
     private String nameOrder;
     private Boolean isKnownInsertionSite;
     private Boolean isDominantFeature;
@@ -45,6 +56,8 @@ public class Feature implements EntityNotes{
     private Set<FeatureSource> sources;
     private Set<FeatureAlias> aliases;
     private FeatureAssay featureAssay;
+    private Set<FeatureDBLink> dbLinks;
+    private FeatureDBLink featDBLink;
 
 
     public String getTransgenicSuffix() {
@@ -287,6 +300,14 @@ public class Feature implements EntityNotes{
             }
         }
         return constructs;
+    }
+
+    public Set<FeatureDBLink> getDbLinks() {
+        return dbLinks;
+    }
+
+    public void setDbLinks(Set<FeatureDBLink> dbLinks) {
+        this.dbLinks = dbLinks;
     }
 
     @Override

@@ -13,6 +13,8 @@ import org.zfin.people.Lab;
 import org.zfin.people.LabFeaturePrefix;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.FeatureDBLink;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -94,6 +96,7 @@ public interface FeatureRepository {
     Feature getFeatureByAbbreviation(String featureAbbrev);
 
     void deleteFeatureAlias(Feature feature, FeatureAlias alias);
+    void deleteFeatureDBLink(Feature feature, DBLink sequence);
 
     DataNote addFeatureDataNote(Feature feature, String noteData, Person person);
 

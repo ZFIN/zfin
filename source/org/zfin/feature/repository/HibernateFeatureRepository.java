@@ -29,6 +29,8 @@ import org.zfin.people.LabFeaturePrefix;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.FeatureDBLink;
 
 import java.util.*;
 
@@ -477,6 +479,31 @@ public class HibernateFeatureRepository implements FeatureRepository {
         // run the fast search table script so the alias is not showing up any more.
         //runFeatureNameFastSearchUpdate(feature);
     }
+
+
+    public void deleteFeatureDBLink(Feature feature, DBLink sequence) {
+           if (feature == null)
+               throw new RuntimeException("No marker object provided.");
+           if (sequence == null)
+               throw new RuntimeException("No alias object provided.");
+           // check that the alias belongs to the marker
+           if (!feature.getDbLinks().contains(sequence))
+               throw new RuntimeException("Alias '" + sequence + "' does not belong to the marker '" + feature + "'! " +
+                       "Cannot remove such an alias.");
+           // remove the ZDB active data record with cascade.
+
+
+
+
+           infrastructureRepository.deleteActiveDataByZdbID(sequence.getZdbID());
+           currentSession().flush();
+
+           currentSession().refresh(feature);
+
+           // run the fast search table script so the alias is not showing up any more.
+           //runFeatureNameFastSearchUpdate(feature);
+       }
+
 
     @Override
     public Feature getFeatureByAbbreviation(String name) {
