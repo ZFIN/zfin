@@ -61,7 +61,7 @@
 <!--|VALIDATION_EMAIL_MORPHOLINO|-->	staylor\@cs.uoregon.edu bayrakt\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_MUTANT|-->	dhowe\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_OTHER|-->	informix\@cs.uoregon.edu
-<!--|VALIDATION_EMAIL_PUBLICATION|-->	holle\@zfin.org holly\@zfin.org knight\@uoneuro.uoregon.edu
+<!--|VALIDATION_EMAIL_PUBLICATION|-->	mochla\@zfin.org holly\@zfin.org knight\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	ndunn\@uoregon.edu sramacha\@uoneuro.uoregon.edu informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@cs.uoregon.edu kevin\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	mirror/webdriver

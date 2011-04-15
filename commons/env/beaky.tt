@@ -30,7 +30,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
-<!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
+<!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	tomc\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
