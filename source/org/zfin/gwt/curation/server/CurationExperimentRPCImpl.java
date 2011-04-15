@@ -526,7 +526,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             Collections.sort(termStrings);
             dto.setExpressedTerms(termStrings);
             dto.setPatoExists(mutantRep.isPatoExists(efs.getExpressionExperiment().getGenotypeExperiment().getZdbID(),
-                    efs.getFigure().getZdbID(), efs.getStart().getZdbID(), efs.getEnd().getZdbID()));
+                    efs.getFigure().getZdbID(), efs.getStart().getZdbID(), efs.getEnd().getZdbID(), experimentFilter.getPublicationID()));
             dtos.add(dto);
         }
         Collections.sort(dtos);

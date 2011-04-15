@@ -27,7 +27,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.MorpholinoSequence;
 
@@ -435,25 +434,43 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param figureID             figure
      * @param startID              start   stage
      * @param endID                end     stage
+     * @param publicationID        publication
      * @return boolean
      */
-    public boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID) {
+    public boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID, String publicationID) {
+        if (genotypeExperimentID == null) {
+            throw new NullPointerException("Invalid call to method: genoxExperimentID is null");
+        }
+        if (figureID == null) {
+            throw new NullPointerException("Invalid call to method: figureID is null");
+        }
+        if (startID == null) {
+            throw new NullPointerException("Invalid call to method: startID is null");
+        }
+        if (endID == null) {
+            throw new NullPointerException("Invalid call to method: endID is null");
+        }
+        if (publicationID == null) {
+            throw new NullPointerException("Invalid call to method: publicationID is null");
+        }
+        long start = System.currentTimeMillis();
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select pheno from PhenotypeStatement pheno, Figure figure " +
+        String hql = "select count(pheno) from PhenotypeStatement pheno, Figure figure " +
                 "     where pheno.phenotypeExperiment.genotypeExperiment.zdbID = :genoxID" +
                 "           and pheno.phenotypeExperiment.startStage.zdbID = :startID " +
                 "           and pheno.phenotypeExperiment.endStage.zdbID = :endID " +
-                "           and pheno.phenotypeExperiment.figure.zdbID = :figureID ";
+                "           and pheno.phenotypeExperiment.figure.zdbID = :figureID " +
+                "           and figure.publication.zdbID = :publicationID ";
         Query query = session.createQuery(hql);
         query.setString("genoxID", genotypeExperimentID);
         query.setString("startID", startID);
         query.setString("endID", endID);
         query.setString("figureID", figureID);
+        query.setString("publicationID", publicationID);
 
-        List list = query.list();
-        return (list != null && list.size() > 0);
-
+        long numberOfRecords = (Long) query.uniqueResult();
+        return (numberOfRecords > 0);
     }
 
     /**
@@ -727,7 +744,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "where m.markerType =  :markerType ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
-        query.setString("markerType", Marker.Type.MRPHLNO.toString() );
+        query.setString("markerType", Marker.Type.MRPHLNO.toString());
         List<Object[]> sequences = query
                 .list();
 

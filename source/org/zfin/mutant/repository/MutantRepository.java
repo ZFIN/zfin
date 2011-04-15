@@ -161,13 +161,15 @@ public interface MutantRepository {
     /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
+     *
      * @param genotypeExperimentID expression experiment
      * @param figureID             figure
      * @param startID              start   stage
      * @param endID                end     stage
+     * @param publicationID      publication
      * @return boolean
      */
-    boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID);
+    boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID, String publicationID);
 
     /**
      * Lookup a term by name. Term must not be obsolete.

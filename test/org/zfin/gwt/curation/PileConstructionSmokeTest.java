@@ -57,7 +57,7 @@ public class PileConstructionSmokeTest extends AbstractSecureSmokeTest {
 
                 // ADD: MF[triglyceride lipase activity] : AO[eye] - PATO[decreased rate] - AO[] : AO[]
                 // gives error: Cannot post-compose MF with AO
-                setSingleTermEntry("quality.process", "decreased rate", EntityPart.QUALITY_NAME, page);
+                setSingleTermEntry("quality.process", "decreased sensitivity of a process", EntityPart.QUALITY_NAME, page);
                 setSingleTermEntry("zebrafish_anatomy", "eye", EntityPart.ENTITY_SUBTERM_NAME, page);
                 validateErrorOnSubmission(page);
 

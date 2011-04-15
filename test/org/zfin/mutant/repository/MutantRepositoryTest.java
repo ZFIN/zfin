@@ -22,6 +22,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.util.DateUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -87,7 +88,7 @@ public class MutantRepositoryTest {
 
         List<Genotype> genos = getMutantRepository().getGenotypesByFeature(ftr);
         assertNotNull("genos exist", genos);
-        assertTrue("genos exist", genos.size()>0);
+        assertTrue("genos exist", genos.size() > 0);
 
     }
 
@@ -152,11 +153,24 @@ public class MutantRepositoryTest {
         String startID = "ZDB-STAGE-010723-4";
         String endID = "ZDB-STAGE-010723-4";
 
-        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID);
+        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, null);
         assertTrue(!patoExists);
 
     }
 
+    @Test
+    public void checkForPatoRecordPerformance() {
+        String genoxID = "ZDB-GENOX-041102-1540";
+        String figureID = "ZDB-FIG-110413-2";
+        String startID = "ZDB-STAGE-010723-10";
+        String endID = "ZDB-STAGE-010723-10";
+        String publicationID = "ZDB-PUB-090828-23";
+        long start = System.currentTimeMillis();
+        getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
+        long end = System.currentTimeMillis();
+        if ((end - start) > 4000)
+            fail("Time to execute getMutantRepository().isPatoExists() is too long: " + DateUtil.getTimeDuration(start));
+    }
 
     @Test
     public void createDefaultPhenotype() {
@@ -252,18 +266,17 @@ public class MutantRepositoryTest {
 
             newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
             assertEquals(1, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
-        }
-        finally {
+        } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
-    public void getMorpholinosWithMarkerRelationships(){
+    public void getMorpholinosWithMarkerRelationships() {
         List<MorpholinoSequence> morpholinos = mutantRepository.getMorpholinosWithMarkerRelationships();
         assertNotNull(morpholinos);
-        LOG.info("# of morpholinos: "+ morpholinos.size());
-        assertTrue(morpholinos.size()>3000);
+        LOG.info("# of morpholinos: " + morpholinos.size());
+        assertTrue(morpholinos.size() > 3000);
         assertNotNull(morpholinos.get(0).getSequence());
     }
 
