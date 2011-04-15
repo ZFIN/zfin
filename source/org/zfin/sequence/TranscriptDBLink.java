@@ -62,22 +62,22 @@ public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBL
     }
 
     /**
-     * Sort by accessionNBumber, reference DB id, and finally marker name
+     * Sort by  reference DB id, accessionNumber, and finally marker name
      *
      * @param transcriptDBLink
      * @return Java object comparison
      */
     public int compareTo(TranscriptDBLink transcriptDBLink) {
 
-        int accCompare = getAccessionNumber().compareTo(transcriptDBLink.getAccessionNumber());
-        if (accCompare != 0) {
-            return accCompare;
-        }
-
         int refDBCompare = getReferenceDatabase().getZdbID().compareTo(transcriptDBLink.getReferenceDatabase().getZdbID());
         if (refDBCompare != 0) {
             return refDBCompare;
         }
+
+        int accCompare = getAccessionNumber().compareTo(transcriptDBLink.getAccessionNumber());
+        if (accCompare != 0) {
+            return accCompare;
+       }
 
         int markerCompare = getTranscript().getZdbID().compareTo(transcriptDBLink.getTranscript().getZdbID());
         if (markerCompare != 0) {

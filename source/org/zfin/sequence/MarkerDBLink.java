@@ -63,22 +63,23 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
     }
 
     /**
-     * Sort by accessionNBumber, reference DB id, and finally marker name
+     * Sort by reference DB id, accessionNumber,and finally marker name
      *
      * @param markerDBLink MarkerDBLink to compare to.
      * @return Returns java comparison
      */
     public int compareTo(MarkerDBLink markerDBLink) {
 
+        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(markerDBLink.getReferenceDatabase().getZdbID());
+        if (refDBCompare != 0) {
+            return refDBCompare;
+        }
+
         int accCompare = getAccessionNumber().compareTo(markerDBLink.getAccessionNumber());
         if (accCompare != 0) {
             return accCompare;
         }
 
-        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(markerDBLink.getReferenceDatabase().getZdbID());
-        if (refDBCompare != 0) {
-            return refDBCompare;
-        }
 
         int markerCompare = getMarker().getZdbID().compareTo(markerDBLink.getMarker().getZdbID());
         if (markerCompare != 0) {

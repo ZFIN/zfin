@@ -3,7 +3,7 @@ package org.zfin.sequence;
 /**
 
  */
-public class ForeignDB {
+public class ForeignDB implements Comparable<ForeignDB> {
 
     private Long dbID;
     private AvailableName dbName;
@@ -58,6 +58,14 @@ public class ForeignDB {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public int compareTo(ForeignDB other) {
+        if (other == null)
+            return 1;
+        if (significance.compareTo(other.getSignificance()) != 0)
+            return significance.compareTo(other.getSignificance());
+        return dbName.compareTo(other.getDbName());
     }
 
 

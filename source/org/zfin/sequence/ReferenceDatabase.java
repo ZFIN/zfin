@@ -96,6 +96,10 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
 
     public int compareTo(ReferenceDatabase otherRefDB) {
         if (otherRefDB == null) return +1;
+
+        if (foreignDB.compareTo(otherRefDB.getForeignDB()) != 0)
+            return foreignDB.compareTo(otherRefDB.getForeignDB());
+
         return foreignDB.getDbName().compareTo(otherRefDB.getForeignDB().getDbName());
     }
 

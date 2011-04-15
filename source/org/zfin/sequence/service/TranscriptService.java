@@ -171,7 +171,10 @@ public class TranscriptService {
     public static SummaryDBLinkDisplay getSummaryPages(Transcript transcript) {
         SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
 
-        for (DBLink dblink : transcript.getTranscriptDBLinks()) {
+        TreeSet<TranscriptDBLink> sortedDBLinks = new TreeSet<TranscriptDBLink>();
+        sortedDBLinks.addAll(transcript.getTranscriptDBLinks());
+
+        for (DBLink dblink : sortedDBLinks) {
             if (dblink.isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE))
                 sp.addDBLink(dblink);
         }
