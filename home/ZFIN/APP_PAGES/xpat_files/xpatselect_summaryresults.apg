@@ -78,14 +78,16 @@ OUTPUT VARS:
 
   <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
      select distinct mrkr_zdb_id, mrkr_abbrev,
-       	    get_mrkr_abbrev_html_link(mrkr_zdb_id), 
+       	    mrkr_zdb_id, 
             mrkr_abbrev_order,xpat_matching_signif
        from $xpsumres_resultTable
             join marker on mrkr_zdb_id = xpat_gene_zdb_id
      order by xpat_matching_signif, mrkr_abbrev_order;">
     <?MIVAR NAME="xpsumres_geneZdbId">$1<?/MIVAR>
     <?MIVAR NAME="xpsumres_geneAbbrev">$2<?/MIVAR>
-    <?MIVAR NAME="xpsumres_geneAbbrevLink">$3<?/MIVAR>  
+    <?MIVAR NAME="xpsumres_geneAbbrevLink">
+      <?MISQL SQL="select get_mrkr_abbrev_html_link('$3') from single">$1<?/MISQL>
+    <?/MIVAR>  
     
       <?MISQL SQL=" select distinct xpat_fig_zdb_id
                     from $xpsumres_resultTable
