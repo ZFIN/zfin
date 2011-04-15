@@ -54,7 +54,7 @@
                                                             integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.zdbID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
@@ -135,7 +135,7 @@
                                                             integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
+                                    <a href="figure-summary?antibody.zdbID=${formBean.antibody.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.zdbID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
                                     ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
