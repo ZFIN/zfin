@@ -26,6 +26,25 @@ public class FeatureDTO extends RelatedEntityDTO {
     protected String lineNumber;
     protected String labPrefix;
     protected List<String> featureAliases;
+    protected String featureSequence;
+    protected List<String> featureSequences;
+
+    public String getFeatureSequence() {
+        return featureSequence;
+    }
+
+    public void setFeatureSequence(String featureSequence) {
+        this.featureSequence = featureSequence;
+    }
+
+    public List<String> getFeatureSequences() {
+        return featureSequences;
+    }
+
+    public void setFeatureSequences(List<String> featureSequences) {
+        this.featureSequences = featureSequences;
+    }
+
     protected String labOfOrigin;
     protected String transgenicSuffix;
     protected int labPrefixID;
@@ -182,6 +201,8 @@ public class FeatureDTO extends RelatedEntityDTO {
     }
 
 
+
+
     /**
      * Only returning the shallow values.
      *
@@ -199,6 +220,7 @@ public class FeatureDTO extends RelatedEntityDTO {
         featureDTO.curatorNotes = curatorNotes;
         featureDTO.dominant = dominant ;
         featureDTO.featureAliases = featureAliases ;
+        featureDTO.featureSequence = featureSequence ;
         featureDTO.featureAssay = featureAssay ;
         featureDTO.featureType = featureType ;
         featureDTO.knownInsertionSite = knownInsertionSite ;
