@@ -9,6 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.List;
@@ -217,6 +218,8 @@ public interface MutantRepository {
 
     FeatureAlias getSpecificDataAlias(Feature feature, String alias) ;
 
+    FeatureDBLink getSpecificDBLink(Feature feature, String sequence) ;
+
     int getZFINInferences(String zdbID, String zdbID1);
 
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
@@ -262,5 +265,6 @@ public interface MutantRepository {
      * @return list of phenotype statement objects
      */
     List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
+    void runFeatureNameFastSearchUpdate(Feature feature);
 }
 

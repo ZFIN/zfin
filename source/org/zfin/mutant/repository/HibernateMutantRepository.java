@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
@@ -26,8 +27,13 @@ import org.zfin.ontology.Ontology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.MorpholinoSequence;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -41,6 +47,7 @@ public class HibernateMutantRepository implements MutantRepository {
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     private Logger logger = Logger.getLogger(HibernateMutantRepository.class);
+
 
     public PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
@@ -626,6 +633,18 @@ public class HibernateMutantRepository implements MutantRepository {
         return (FeatureAlias) criteria.uniqueResult();
     }
 
+    public FeatureDBLink getSpecificDBLink(Feature feature, String accessionNumber) {
+         Session session = HibernateUtil.currentSession();
+          String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
+                " ftrDbLink.feature = :feature " ;
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("feature", feature);
+        return (FeatureDBLink) query.uniqueResult();
+
+
+
+    }
+
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
@@ -863,5 +882,30 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("genotype", genotype);
 
         return (List<PhenotypeStatement>) query.list();
+    }
+
+
+     public void runFeatureNameFastSearchUpdate(Feature feature) {
+        Session session = currentSession();
+        Connection connection = session.connection();
+        CallableStatement statement = null;
+        String sql = "execute procedure regen_names_feature(?)";
+        try {
+            statement = connection.prepareCall(sql);
+            String zdbID = feature.getZdbID();
+            statement.setString(1, zdbID);
+            statement.execute();
+            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
+        } catch (SQLException e) {
+            logger.error("Could not run: " + sql, e);
+            logger.error(DbSystemUtil.getLockInfo());
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+        }
     }
 }
