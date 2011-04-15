@@ -566,9 +566,9 @@ function jump(form_select){
     <?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
     <FONT size=+1><b>
 <?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(XST,$type_of_construct))">
-      <?MIVAR>$title:<i>$name</i><?/MIVAR>
+      <?MIVAR>$title:&nbsp;<i>$name</i><?/MIVAR>
 <?MIELSE>
-      <?MIVAR>$title:$name<?/MIVAR>
+      <?MIVAR>$title:&nbsp;$name<?/MIVAR>
 
 <?/MIBLOCK>
     </b></FONT>
