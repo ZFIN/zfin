@@ -152,8 +152,9 @@ public class MutantRepositoryTest {
         String figureID = "ZDB-FIG-050720-1";
         String startID = "ZDB-STAGE-010723-4";
         String endID = "ZDB-STAGE-010723-4";
+        String publicationID = "ZDB-PUB-090828-23";
 
-        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, null);
+        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
         assertTrue(!patoExists);
 
     }
