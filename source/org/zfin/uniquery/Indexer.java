@@ -107,7 +107,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private static int errorCount = 0;
     private static final String INDEXED_URLS_LOG = "/indexedUrls.log";
     private static final String CRAWLED_URLS_LOG = "/crawledUrls.log";
-    private int numberOfDetailPages;
+    private int numberOfDetailPages = 0;
     private CronJobReport cronJobReport;
 
     static {
@@ -193,7 +193,11 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         loadFromFile(commandLine.getOptionValue("u"), URLsToIndex);
         loadFromFile(commandLine.getOptionValue("e"), exclude);
         threads = Integer.parseInt(commandLine.getOptionValue("t"));
-        numberOfDetailPages = Integer.parseInt(commandLine.getOptionValue("numberOfDetailPages"));
+        try {
+            numberOfDetailPages = Integer.parseInt(commandLine.getOptionValue("numberOfDetailPages"));
+        } catch (NumberFormatException e) {
+            // ignore as the variable is set to '0' by default.
+        }
         initSiteSearchCategories(commandLine.getOptionValue("categoryDir"));
         propertiesFileName = commandLine.getOptionValue("zfinPropertiesDir");
         initAll(propertiesFileName);
@@ -414,7 +418,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * This is the aspect of "crawling" where, for new URLS, we add it to
      * our list of urls to index.
      * <p/>
-     * We must becareful to not add a url we have previously added (discoveredURLs).
+     * We must be careful to not add a url we have previously added (discoveredURLs).
      * Also, once we add the new url, we must keep track of the fact that
      * we have done so so that we don't do it again.
      *
