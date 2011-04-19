@@ -87,6 +87,10 @@ TRIGGERS = \
 	person_address_update_trigger.sql \
 	persaddress_insert_trigger.sql \
 	persaddress_update_trigger.sql \
+	phenotype_experiment_insert_trigger.sql \
+	phenotype_experiment_update_trigger.sql \
+	phenotype_statement_insert_trigger.sql \
+	phenotype_statement_update_trigger.sql \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	publication_completion_date_update_trigger.sql \
