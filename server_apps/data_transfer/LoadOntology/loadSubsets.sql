@@ -15,7 +15,7 @@ load from subsetdefs_header.unl
 
   select default_namespace from tmp_header;
 
-  Select count(*) from ontology_subset, ontology, tmp_header
+  Select count(*) from ontology_subset, ontology, tmp_header, tmp_subset
 		       where default_namespace = ont_default_namespace
 		       and osubset_subset_name = subset_name
 		       and ont_pk_id = osubset_ont_id;
