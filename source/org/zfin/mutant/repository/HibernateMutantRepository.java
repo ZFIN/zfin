@@ -456,11 +456,11 @@ public class HibernateMutantRepository implements MutantRepository {
         long start = System.currentTimeMillis();
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select count(pheno) from PhenotypeStatement pheno, Figure figure " +
-                "     where pheno.phenotypeExperiment.genotypeExperiment.zdbID = :genoxID" +
-                "           and pheno.phenotypeExperiment.startStage.zdbID = :startID " +
-                "           and pheno.phenotypeExperiment.endStage.zdbID = :endID " +
-                "           and pheno.phenotypeExperiment.figure.zdbID = :figureID " +
+        String hql = "select count(phenox) from PhenotypeExperiment phenox, Figure figure " +
+                "     where phenox.genotypeExperiment.zdbID = :genoxID" +
+                "           and phenox.startStage.zdbID = :startID " +
+                "           and phenox.endStage.zdbID = :endID " +
+                "           and phenox.figure.zdbID = :figureID " +
                 "           and figure.publication.zdbID = :publicationID ";
         Query query = session.createQuery(hql);
         query.setString("genoxID", genotypeExperimentID);
