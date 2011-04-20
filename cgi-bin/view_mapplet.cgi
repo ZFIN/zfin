@@ -250,7 +250,7 @@
 	elsif($unique < 1) { #! defined $rowref ){ #
 	  print $Q->header(). "\n".
 		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
-		 "<script type=\"text/javascript\" src=\"/header.js\"></script>" ."\n";
+		 "<script type=\"text/javascript\" src=\"/javascript/header.js\"></script>" ."\n";
       mapper_select(Q);
       print
 	     "<p><p><p><p>No mapping data is available for ".
@@ -747,22 +747,7 @@
     my $POprint ='';
     for $panel (@allpanels) { $POprint = $POprint . $panel . "|"; }### kevin's code
 
-    print "</td><td>" . $Q->start_form (
-				  -method=>'GET',
-				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/print_map.cgi',
-				  -encoding=>'application/x-www-form-urlencoded',
-				  -name=>'print_map',
-				  -target=>'print'
-				 ). "\n".
-				   $Q->submit(-name=>"New Window with Printer Friendly  Map") . "\n".
-				     $Q->hidden("height",$g_height)."\n".
-				       $Q->hidden("width" ,$g_width)."\n".
-  				         $Q->hidden("panel_order",$POprint)."\n".
-					   $Q->hidden("data",$g_printdata )."\n".
-					     $Q->end_form."\n </td>\n";
-
-
-    print "</tr></table>";
+    print "</td></tr></table>";
 
     ### ~KS
     ### print zoom buttons and percentages

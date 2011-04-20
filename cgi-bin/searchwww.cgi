@@ -162,7 +162,7 @@ $hit_count=0;
 
 print "Content-type: text/HTML\n\n<HTML>";
 
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'>
+ print "<script language='JavaScript' src='/javascript/header.js'>
  </script>";
 
 print "<table width='100%'><TR><TD width='80%'><font size=+1><b>RESULTS: Search for $search_string</b></font></TD><TD width='20%'><a href=#modify>Modify Search</a></TD></TR></table>\n\n<UL>";
@@ -192,6 +192,6 @@ print "</TR></TABLE>";
 print "</form>";
 
 
-print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script></HTML>";
+print "<script language='JavaScript' src='/javascript/footer.js'></script></HTML>";
 
 

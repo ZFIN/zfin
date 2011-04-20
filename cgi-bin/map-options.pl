@@ -96,7 +96,7 @@ ENDCSS
  print "</STYLE>";
 
 
- print "<script language='JavaScript1.2' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+ print "<script language='JavaScript1.2' src='/javascript/header.js'></script>";
 
  if  (  $query->param ('ZMAP')   ) {
    print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options');
@@ -291,7 +291,7 @@ my $buf ='';
  print '</form>';
 # print $query->endform();
 
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+ print "<script language='JavaScript' src='/javascript/footer.js'></script>";
 
  print $query->end_html;
 

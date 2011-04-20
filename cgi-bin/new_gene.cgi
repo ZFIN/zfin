@@ -20,11 +20,11 @@ sub print_confirmation {
 print <<EOA;
 Content-type: text/HTML\n\n
 <HTML>
-<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
+<script language="JavaScript" src="/javascript/header.js"></script>
 
 Thank you for your submission.  A confirmation email has been sent to you.  Your submission has been forwarded to the ZFIN nomenclature coordinator, who may contact you if additional information is required.
 <p>
-<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>
+<script language="JavaScript" src="/javascript/footer.js"></script>
 
 EOA
 }

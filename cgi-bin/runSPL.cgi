@@ -10,7 +10,7 @@
 
  print $Q->header();
  print $Q->start_html(-TITLE=>"ZFIN Regen",-BGCOLOR=>'white')."\n";
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+ print "<script language='JavaScript' src='/javascript/header.js'></script>";
   ### the hard coded env paths need a better idea
   $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
   $ENV{INFORMIXSERVER}   = '<!--|INFORMIX_SERVER|-->';
@@ -33,7 +33,7 @@
    print "Started at $modtime <br>";
    print "Please wait, and retry later. <br>";
    print "<font></TD></TR></TABLE></CENTER>";
-   print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+   print "<script language='JavaScript' src='/javascript/footer.js'></script>";
    print  $Q->end_html."\n"; 
    $dbh->disconnect;
    exit;
@@ -116,7 +116,7 @@
 
   print "<font></TD></TR></TABLE></CENTER>";
 
-  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+  print "<script language='JavaScript' src='/javascript/footer.js'></script>";
   print  $Q->end_html."\n";
   $dbh->disconnect;
 }
