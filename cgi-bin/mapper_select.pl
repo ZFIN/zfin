@@ -119,6 +119,11 @@ ENDJS
   print "\n<SCRIPT>\n window.name='mapper' \n</SCRIPT>\n";
   print "\n";
 
+  print "<div style=\"width: 150px; font-size: small; float: right; margin: .75em; padding: .5em; border: 1px solid red ; background-color: #eee\">The ZFIN Genetic Map Viewer requires that you install";
+  print " a <a href=\"http://www.java.com/getjava/\">Java plugin</a>";
+  print " and may not function properly in all browsers. <br><br>  ";
+  print " Try <a href=\"/genome-browser/\">GBrowse</a> to view current genomic annotations.</div>";
+
   print "<TABLE width=700 border=0><TR><TD>\n";
 
   print $Q->start_form(-name=>'mapplet', -action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-method=>'post',-onSubmit=>'return call_mapplet();');
@@ -131,6 +136,7 @@ ENDJS
    print "<FONT SIZE=4><b>View a map region, choose either a marker or location</b></font>";
    print "\n";
    print "</TD></TR></TABLE>";
+   
 
 
    print "<TABLE width=100% border=0 cellspacing=0 cellpadding=4>";
