@@ -115,27 +115,22 @@ get_id(mi_lvarchar *name)
   if (conn == NULL) {
     EXCEPTION("ERROR: conn is NULL\n");
   }
+ 
   sprintf (cmdbuf, 				/* Update sequence */
-	   "update zdb_object_type set zobjtype_seq = zobjtype_seq+1 where zobjtype_name = \'%s\';",
+	   "select %s_seq.nextval from single;",
 	   name_s);
   if (send_sql(conn, &ss, cmdbuf) != 1) {
 
-    /* The row does not exist.  We used to to create it here (see r1.17 of 
-     * zextend.c), but we decided to no longer support automatic insertion
-     * of ZDB object types.  They must now be inserted manually by a ZFIN
-     * technologist when the object type is first needed.  The hope is that
-     * forcing a manual insert will also remind the technologist of other
-     * things that must also be done when an object type is first created.
-     * See the discussion of the zdb_object_table in the ZFIN doc for 
-     * a list of things that must be done when a new object type is created. 
+    /* The sequence does not exist.  Must create a new sequence for each new
+       type of ZDB id.
      */
     sprintf (cmdbuf,
 	     "Attemtpt to generate ZDB ID for unknown object type: %s", name_s);
     EXCEPTION(cmdbuf);
   }
   sprintf (cmdbuf, 			/* Get values */
-	   "select zobjtype_day, zobjtype_seq from zdb_object_type where zobjtype_name = \'%s\';",
-	   name_s);
+	   "select zobjtype_day, %s_seq.currval from zdb_object_type where zobjtype_name = \'%s\'",
+	   name_s,name_s);
   if (send_sql(conn, &ss, cmdbuf) != 1) {
     EXCEPTION("Cant select row in get_id");
   }
@@ -154,8 +149,8 @@ get_id(mi_lvarchar *name)
     /* last time this name was used was another day so start over */
 
     sprintf (cmdbuf, 			/* Clear seq number */
-	     "update zdb_object_type set (zobjtype_day, zobjtype_seq) = (today, %s) where zobjtype_name = \'%s\';",
-	     SEQ_START, name_s);
+	     "update zdb_object_type set zobjtype_day = today where zobjtype_name = \'%s\'; alter sequence %s_seq restart with 2",
+	     name_s,name_s,SEQ_START);
     if (send_sql(conn, &ss, cmdbuf) != 1) {			/* Send it */
       EXCEPTION("Cant clear sequence count in get_id");
     }
