@@ -658,7 +658,7 @@ create dba function "informix".regen_anatomy()
       create unique index anatomy_display_primary_key_index
         on anatomy_display (anatdisp_stg_zdb_id,
 			    anatdisp_seq_num)
-	fillfactor 100
+	
 	in idxdbs1;
       alter table anatomy_display add constraint 
         primary key (anatdisp_stg_zdb_id, anatdisp_seq_num)
@@ -669,7 +669,7 @@ create dba function "informix".regen_anatomy()
       let errorHint = "anatdisp_stg_zdb_id_index";
       create index anatdisp_stg_zdb_id_index
         on anatomy_display (anatdisp_stg_zdb_id)
-	fillfactor 100
+	
 	in idxdbs1;
       alter table anatomy_display add constraint
         foreign key (anatdisp_stg_zdb_id)
@@ -680,7 +680,7 @@ create dba function "informix".regen_anatomy()
       let errorHint = "anatdisp_item_zdb_id_index";
       create index anatdisp_item_zdb_id_index
         on anatomy_display (anatdisp_item_zdb_id)
-	fillfactor 100
+	
 	in idxdbs1;
       alter table anatomy_display add constraint
         foreign key (anatdisp_item_zdb_id)
@@ -691,7 +691,7 @@ create dba function "informix".regen_anatomy()
       let errorHint = "anatdisp_item_name_index";
       create index anatdisp_item_name_index
         on anatomy_display (anatdisp_item_name)
-	fillfactor 100
+	
 	in idxdbs1;
 
 
@@ -707,7 +707,7 @@ create dba function "informix".regen_anatomy()
       create unique index all_anatomy_contains_primary_key_index
         on all_anatomy_contains (allanatcon_container_zdb_id,     
 				 allanatcon_contained_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_anatomy_contains add constraint
         primary key (allanatcon_container_zdb_id,     
@@ -719,7 +719,7 @@ create dba function "informix".regen_anatomy()
       let errorHint = "allanatcon_container_zdb_id_index";
       create index allanatcon_container_zdb_id_index
         on all_anatomy_contains (allanatcon_container_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_anatomy_contains add constraint
         foreign key (allanatcon_container_zdb_id)
@@ -730,7 +730,7 @@ create dba function "informix".regen_anatomy()
       let errorHint = "allanatcon_contained_zdb_id_index";
       create index allanatcon_contained_zdb_id_index
         on all_anatomy_contains (allanatcon_contained_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_anatomy_contains add constraint
         foreign key (allanatcon_contained_zdb_id)

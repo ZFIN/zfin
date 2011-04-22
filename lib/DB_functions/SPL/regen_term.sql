@@ -324,7 +324,7 @@ create dba function "informix".regen_term()
       create unique index all_term_contains_primary_key_index
         on all_term_contains (alltermcon_container_zdb_id,     
 				 alltermcon_contained_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_term_contains add constraint
         primary key (alltermcon_container_zdb_id,     
@@ -336,7 +336,7 @@ create dba function "informix".regen_term()
       let errorHint = "alltermcon_container_zdb_id_index";
       create index alltermcon_container_zdb_id_index
         on all_term_contains (alltermcon_container_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_term_contains add constraint
         foreign key (alltermcon_container_zdb_id)
@@ -347,7 +347,7 @@ create dba function "informix".regen_term()
       let errorHint = "alltermcon_contained_zdb_id_index";
       create index alltermcon_contained_zdb_id_index
         on all_term_contains (alltermcon_contained_zdb_id)
-	fillfactor 100
+	
 	in idxdbs2;
       alter table all_term_contains add constraint
         foreign key (alltermcon_contained_zdb_id)
