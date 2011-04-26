@@ -19,7 +19,7 @@
       <td>
           <script type="text/javascript">
               jQuery(document).ready(function() {
-                  jQuery('#wikiLink').load('/webapp/wiki/wikiLink/${antibody.name}');
+                  jQuery('#wikiLink').load('/webapp/wiki/wikiLink/${antibody.zdbID}');
               });
           </script>
           <span id="wikiLink"> </span>
