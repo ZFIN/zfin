@@ -54,8 +54,11 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
     }
 
     protected void insertTestPersonIntoDatabase() {
-        HibernateUtil.createTransaction();
         createTestPersonObject();
+        Person existingPerson = RepositoryFactory.getProfileRepository().getPersonByName(person.getAccountInfo().getLogin());
+        if(existingPerson != null && existingPerson.getAccountInfo() != null && existingPerson.getAccountInfo().getLogin() != null)
+            return;
+        HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(person);
         HibernateUtil.currentSession().flush();
 
