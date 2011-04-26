@@ -117,7 +117,7 @@ public interface MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, boolean isWildtype);
+    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype);
 
     /**
      * Retrieve genotype objects that are associated to a morpholino within the range specified

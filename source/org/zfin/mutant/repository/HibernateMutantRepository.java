@@ -214,7 +214,7 @@ public class HibernateMutantRepository implements MutantRepository {
         return getGenotypeExperimentMorpholinos(item, isWildtype, bean);
     }
 
-    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, boolean isWildtype) {
+    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype) {
         return getGenotypeExperimentMorpholinos(item, isWildtype, null).getPopulatedResults();
     }
 
@@ -235,13 +235,15 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       con.experiment = exp AND " +
                 "       genotypeExperiment.genotype = geno AND " +
                 "       marker = con.morpholino AND " +
-                "       geno.wildtype = :isWildtype AND " +
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
+        if(isWildtype != null)
+            hql += " AND geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        query.setBoolean("isWildtype", isWildtype);
+        if(isWildtype != null)
+            query.setBoolean("isWildtype", isWildtype);
 
         // no boundaries defined, all records
         if (bean == null) {

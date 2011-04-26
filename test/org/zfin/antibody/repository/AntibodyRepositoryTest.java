@@ -941,4 +941,16 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(figures.size() > 7);
 
     }
+
+    @Test
+    public void antibodyAoStatistics() {
+        // check if there are any antibodies for a given AO
+        // brain
+        String termID = "ZDB-TERM-100331-8";
+        GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
+        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
+        assertTrue(numberOfAntibodiesPerAOTerm > 50);
+        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
+        assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
+    }
 }

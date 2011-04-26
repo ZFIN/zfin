@@ -187,17 +187,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term, int maxRow) {
 
-        String hql = "select distinct probe, marker " +
-                "FROM ExpressionExperiment exp, ExpressionResult res, Clone clone, Marker marker " +
-                "WHERE  res.entity.superterm.zdbID = :ID " +
+        String hql = "select distinct exp.probe, marker " +
+                "FROM ExpressionExperiment exp, ExpressionResult res, Marker marker " +
+                "WHERE  res.entity.superterm = :term " +
                 "AND res.expressionExperiment = exp " +
-                "AND exp.probe = clone " +
+                "AND exp.probe.rating = 4 " +
                 "AND exp.gene = marker " +
-                "AND clone.rating = 4 " +
                 "ORDER by marker.abbreviationOrder  ";
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
-        query.setString("ID", term.getZdbID());
+        query.setParameter("term", term);
         ScrollableResults results = query.scroll();
 
 

@@ -61,7 +61,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         if (form.getSectionVisibility().isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE)) {
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
         } else {
-            boolean hasData = hasPhenotypeData(term.createGenericTerm());
+            boolean hasData = hasPhenotypeData(term);
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, hasData);
         }
 
@@ -78,8 +78,8 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         // check for antibody records including substructures
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(1);
-        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodiesByAOTerm(anatomyTerm, pagination, true);
-        if (antibodies != null && antibodies.getTotalCount() > 0)
+        int numOfAntibodies = antibodyRepository.getAntibodyCount(anatomyTerm, true);
+        if (numOfAntibodies > 0)
             return true;
 
         // check for in situ probes
@@ -90,21 +90,16 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return false;
     }
 
-    private boolean hasPhenotypeData(GenericTerm anatomyTerm) {
-        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(anatomyTerm.getZdbID());
+    private boolean hasPhenotypeData(AnatomyItem anatomyTerm) {
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
+        AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(term.getZdbID());
         if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
             return true;
 
-        // check for wild type MOs
-        PaginationResult<GenotypeExperiment> morphs =
-                mutantRepository.getGenotypeExperimentMorpholinos(anatomyTerm, true, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        if (morphs != null && morphs.getTotalCount() > 0)
-            return true;
-
-        // check for non-wild-type MOs
-        morphs =
-                mutantRepository.getGenotypeExperimentMorpholinos(anatomyTerm, false, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        return morphs != null && morphs.getTotalCount() > 0;
+        // check for MOs
+        List<GenotypeExperiment> morphs =
+                mutantRepository.getGenotypeExperimentMorpholinos(term, null);
+        return morphs != null && morphs.size() > 0;
     }
 
     protected AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
@@ -137,7 +132,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
             } else {
                 String id = form.getId();
-                if (StringUtils.isEmpty(id)){
+                if (StringUtils.isEmpty(id)) {
                     return null;
                 } else if (id.startsWith("ZFA")) {
                     term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);

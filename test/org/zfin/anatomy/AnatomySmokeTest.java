@@ -1,6 +1,7 @@
 package org.zfin.anatomy;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.FrameWindow;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
@@ -23,6 +24,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 assertEquals("", htmlInput.getValueAttribute());
                 htmlInput.setValueAttribute("pelv");
                 assertEquals("pelv", htmlInput.getValueAttribute());
+                List<FrameWindow> iFrames = page.getFrames();
+                assertNotNull(iFrames);
+                assertEquals(1, iFrames.size());
             } catch (Exception e) {
                 fail(e.toString());
             }

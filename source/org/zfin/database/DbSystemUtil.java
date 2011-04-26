@@ -1,5 +1,6 @@
 package org.zfin.database;
 
+import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 import org.zfin.database.repository.SysmasterRepository;
@@ -9,16 +10,28 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Utility class: Retrieve 
+ * Utility class: Retrieve
  */
 public class DbSystemUtil {
 
     private static final CellStyle rightAlign = new CellStyle(CellStyle.HorizontalAlign.right);
+    private static final Logger LOG = Logger.getLogger("database locking");
+
+    /**
+     * Log info about locks in the database.
+     * This method is catching any exception to not cause an
+     * exception in the main thread execution.
+     */
+    public static void logLockInfo() {
+        if (LOG.isDebugEnabled())
+            LOG.debug(getLockInfo());
+    }
 
     /**
      * Collect info about locks in the database.
-     * This method is catching any exception to not cause an 
+     * This method is catching any exception to not cause an
      * exception in the main thread execution.
+     *
      * @return formatted lock info
      */
     public static String getLockInfo() {

@@ -369,8 +369,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             } else {
                 infrastructureRep.executeJdbcStatement(statement);
             }
-            if (LOG.isDebugEnabled())
-                LOG.debug(DbSystemUtil.getLockInfo());
+            DbSystemUtil.logLockInfo();
         }
     }
 

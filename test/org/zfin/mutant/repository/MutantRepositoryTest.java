@@ -282,6 +282,16 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void phenotypeExistForAOTerm() {
+        // bile canaliculus
+        String oboID = "ZFA:0005163 ";
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(oboID);
+        List<GenotypeExperiment> genox = mutantRepository.getGenotypeExperimentMorpholinos(term, null);
+        assertNotNull(genox);
+        assertTrue(genox.size() >= 0);
+    }
+
+    @Test
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertNotNull(phenotypes);
