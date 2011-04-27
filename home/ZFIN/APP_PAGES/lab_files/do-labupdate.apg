@@ -56,12 +56,16 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
 <?MISQL COND="$(NXST,$null_image)" SQL="update lab set $attr=FILETOBLOB('$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
 
+<?MIBLOCK COND="$(NE,$attr,location)">
 <?MIBLOCK COND="$(NE,$attr,test)">
 <?MISQL COND="$(XST,$null_image)" SQL="update lab set $attr=NULL where zdb_id='$OID';"><?/MISQL>
 <?/MIBLOCK>
+<?/MIBLOCK>
 <?/MIBLOCK> <!-- ends if its an image -->
+<?MIBLOCK COND="$(NE,$attr,location)">
 <?MIBLOCK COND="$(NE,$attr,test)">
 <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update lab set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+<?/MIBLOCK>
 <?/MIBLOCK>
 <!-- Special case for updating contact person also changes owner Informix won't allow trigger used in Illustra -->
 <?MISQL COND="$(EC,$attr,contact_person)" SQL="update lab set owner = '$new_value' where zdb_id='$OID';"><?/MISQL>
@@ -100,6 +104,20 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <!-- Special case for updating membership status -->
 <?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_lab set position='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
 
+<?MIBLOCK COND="$(EC,$attr,location)">
+
+<?MISQL SQL="select  fp.fp_prefix
+    from lab l
+     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+    where zdb_id='$OID'
+    ;">
+<?MIVAR NAME=$lab_prefix>$1<?/MIVAR>
+<?/MISQL>
+<?MIVAR>
+<?MISQL SQL="update feature_prefix set fp_institute_display='$new_value' where fp_prefix='$lab_prefix'"><?/MISQL><?/MIVAR>
+
+<?/MIBLOCK>
 <!-- Special case for where we are deleting a person from lab membership -->
 <?MIBLOCK COND="$(EC,$attr_type,special-delete)">
 <?MISQL SQL="delete from int_person_lab  where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
