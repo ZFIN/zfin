@@ -100,7 +100,7 @@ display summarized orthology data on gene page.
 
   <TR>
     <TD><b>Zebrafish</b></TD>
-    <?MIVAR><TD>$abbrev</TD><?/MIVAR>
+    <?MIVAR><TD><i>$abbrev</i></TD><?/MIVAR>
         
     <?MICOMMENT> *** Displaying zebrafish chromosome info begins here *** <?/MICOMMENT>
     <?MISQL NAME=$longChrString 
@@ -154,7 +154,7 @@ display summarized orthology data on gene page.
     <TR>
       <?MIVAR>
         <TD><b>$organism</b></TD>
-        <TD>$symbol</TD>   
+        <TD><i>$symbol</i></TD>   
       <?/MIVAR>   
       <?MIBLOCK COND="$(OR,$(EC,$organism,Human),$(EC,$organism,Mouse))">
         <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">

@@ -57,7 +57,7 @@ display detailed orthology data.
 <?/MISQL>
 
 <?MIVAR>
-  <title>Orthology Details of $mrkr_abbrev</title>
+  <title>Orthology Details of <i>$mrkr_abbrev</i></title>
 <?/MIVAR>
 
 <body>
@@ -122,7 +122,7 @@ display detailed orthology data.
 
     <TR style="background-color: rgb(238,238,238)">
       <TD><b>Zebrafish</b></TD>
-      <?MIVAR><TD>$abbrev</TD><?/MIVAR>
+      <?MIVAR><TD><i>$abbrev</i></TD><?/MIVAR>
         
       <?MICOMMENT> *** Displaying zebrafish chromosome info begins here *** <?/MICOMMENT>
       <?MISQL NAME=$longChrString 
@@ -181,7 +181,7 @@ display detailed orthology data.
       <TR style=$trColor>
         <?MIVAR>
         <TD><b>$organism</b></TD>
-        <TD>$symbol</TD>   
+        <TD><i>$symbol</i></TD>   
         <?/MIVAR>   
         <?MIBLOCK COND="$(OR,$(EC,$organism,Human),$(EC,$organism,Mouse))">
           <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">
