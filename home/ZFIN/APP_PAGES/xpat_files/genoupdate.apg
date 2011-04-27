@@ -84,7 +84,7 @@ EFFECTS
     <?/MISQL> 
 
     <?MISQL SQL="
-        select WebExplode(object,'permission=root&recweb_rec_id=$genoup_geno_zdb_id&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=record_attribution&recweb_new_value=$OID&recweb_comments=create+new+record') 
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=geno_zdb_id&recweb_new_value=$genoup_geno_zdb_id&recweb_comments=create+new+genotype') 
         from webPages where ID='aa-record_web_update.apg';">
     <?/MISQL>
    
