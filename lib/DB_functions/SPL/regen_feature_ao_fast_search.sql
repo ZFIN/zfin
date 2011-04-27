@@ -158,7 +158,6 @@ Create dba function regen_feature_ao_fast_search()
 				       fstat_gene_zdb_id,
 				       fstat_fig_zdb_id,
 				       fstat_pub_zdb_id,
-				       fstat_pub_zdb_id,
 				       fstat_xpatres_zdb_id,
 				       fstat_type,
 				       fstat_img_zdb_id
@@ -293,7 +292,6 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_pub_zdb_id,
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
-
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, 
 		       xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id,
 		       'Antibody' 
