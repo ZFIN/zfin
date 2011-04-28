@@ -137,9 +137,9 @@ public class PhenotypeStatementDTO extends ExpressedTermDTO {
             return entity.compareTo(term.getEntity());
         if (quality.compareTo(term.getQuality()) != 0)
             return quality.compareTo(term.getQuality());
-        if (relatedEntity.compareTo(term.getRelatedEntity()) != 0)
-            return relatedEntity.compareTo(term.getRelatedEntity());
-        return 0;
+        if (relatedEntity == null)
+            return -1;
+        return relatedEntity.compareTo(term.getRelatedEntity());
     }
 
     public String toString() {
