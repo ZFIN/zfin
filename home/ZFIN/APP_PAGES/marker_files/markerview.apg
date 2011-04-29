@@ -903,7 +903,7 @@ Only need to update clones, etc., which should be the only things that will have
             <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
             <?MIVAR>
             <OPTION VALUE=$(CONCAT,$ncbi_blast_url,$mrkrview_sequence)>NCBI BLAST            </OPTION>
-            <OPTION VALUE=$fdb_url_snpblast> SNP BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$fdb_url_snpblast,$mrkrview_sequence)> SNP BLAST</OPTION>
             <OPTION VALUE=$(CONCAT,$zfin_url_blastn,$mrkrview_sequence)> ZFIN BLAST</OPTION>
             <?/MIVAR>
        </SELECT>
