@@ -92,8 +92,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         String anatomyRootID = "ZFA:0000108"; // fin
         GenericTerm term = ontologyRepository.getTermByOboID(anatomyRootID);
         List<TransitiveClosure> transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
-        assertTrue(transitiveClosures.size() > 5);
-        assertTrue(transitiveClosures.size() < 20);
+        assertTrue(transitiveClosures.size() > 199);
+        assertTrue(transitiveClosures.size() < 400);
     }
 
     @Test
