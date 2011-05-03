@@ -159,6 +159,9 @@ function list_all(user_access) {
 <?MIBLOCK COND="$(XST,$clear_all)">
   <?MIVAR  NAME=constraint COND="$(NXST,$constraint)"><?/MIVAR>
   <?MIVAR NAME=constraint>status = 'active'<?/MIVAR> 
+  <?MIVAR>  
+    $(VECAPPEND,$constraint,"pub_jrnl_zdb_id = jrnl_zdb_id")
+  <?/MIVAR>
   
 <?MIELSE COND="$(XST,$pub_acc_constraint)">
   <?MIVAR>  
@@ -413,6 +416,7 @@ function list_all(user_access) {
 
 <hr width=90%>
 
+
 <TABLE width=100% border=0>
   <TR>
     <TD width=20%>&nbsp;</TD>
@@ -479,15 +483,19 @@ function list_all(user_access) {
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$3"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")
+<?/MIVAR>
+
 <?MIBLOCK COND="$(AND,$(NC,$pubsel2_jtype,Unpublished),$(NC,$pubsel2_jtype,Curation))">
 <?MIVAR>
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
 <?/MIVAR>
 <?/MIBLOCK>
 
-$(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
-</TD></DIV>
+<?MIVAR>
+$(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</DIV>")
 <?/MIVAR>
+</TD>
+
 <TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
 </TD>
 <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
