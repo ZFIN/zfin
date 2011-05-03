@@ -19,6 +19,7 @@ import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
+import org.zfin.properties.ZfinProperties;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -153,9 +154,9 @@ public class MergeService {
 
 
         try {
-            AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto, antibodyToDelete);
-//            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibodyToMergeInto, antibodyToMergeInto.getAbbreviation());
-//            AntibodyWikiWebService.getInstance().moveComments(antibodyToDelete,antibodyToMergeInto);
+            if(ZfinProperties.isPushToWiki()){
+                AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto, antibodyToDelete);
+            }
         } catch (Exception e) {
             logger.error("Failed to update antibody: " + antibodyToMergeInto, e);
         }
@@ -465,7 +466,9 @@ public class MergeService {
     public static boolean deleteAntibody(Antibody antibody) {
 
         try {
-            AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
+            if(ZfinProperties.isPushToWiki()){
+                AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
+            }
         } catch (Exception e) {
             logger.error("Failed to remove antibody: "+antibody,e);
         }
