@@ -19,7 +19,7 @@
     <table class="primary-entity-attributes">
 
         <tr>
-            <th><span class="name-label">Term&nbsp;Name:</span></th>
+            <th width="5%"><span class="name-label">Term&nbsp;Name:</span></th>
             <td><span class="name-value">${formBean.term.termName}</span></td>
             <authz:authorize ifAnyGranted="root">
                 <td valign="top" align="right" width="5%">

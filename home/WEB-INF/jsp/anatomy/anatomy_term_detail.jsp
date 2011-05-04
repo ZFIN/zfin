@@ -21,7 +21,7 @@
 
     <table class="primary-entity-attributes">
         <tr>
-            <th>
+            <th width=5%>
                 <span class="name-label">Name:</span>
             </th>
             <td>
