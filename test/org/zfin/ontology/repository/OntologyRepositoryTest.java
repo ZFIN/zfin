@@ -169,7 +169,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertEquals(t.getChildTermRelationships().size(),t.getChildTerms().size());
         assertEquals(1, t.getParentTerms().size());
         assertEquals(1, t.getParentTermRelationships().size());
-        assertEquals(8, t.getAllDirectlyRelatedTerms().size());
         assertThat(t.getAllDirectlyRelatedTerms().size(),greaterThan(6));
         assertThat(t.getAllDirectlyRelatedTerms().size(),lessThan(10));
 
