@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -159,11 +162,16 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // choose a term that has both children and parents
         // size
         Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
-        assertEquals(7, t.getChildTermRelationships().size());
-        assertEquals(7, t.getChildTerms().size());
+        assertThat(t.getChildTermRelationships().size(),greaterThan(4));
+        assertThat(t.getChildTermRelationships().size(),lessThan(10));
+        assertThat(t.getChildTerms().size(),greaterThan(4));
+        assertThat(t.getChildTerms().size(),lessThan(10));
+        assertEquals(t.getChildTermRelationships().size(),t.getChildTerms().size());
         assertEquals(1, t.getParentTerms().size());
         assertEquals(1, t.getParentTermRelationships().size());
         assertEquals(8, t.getAllDirectlyRelatedTerms().size());
+        assertThat(t.getAllDirectlyRelatedTerms().size(),greaterThan(6));
+        assertThat(t.getAllDirectlyRelatedTerms().size(),lessThan(10));
 
         for (TermRelationship tr : t.getChildTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermOne().getZdbID());
