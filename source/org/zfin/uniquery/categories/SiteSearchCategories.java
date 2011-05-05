@@ -2,6 +2,7 @@ package org.zfin.uniquery.categories;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.UrlPattern;
 import org.zfin.uniquery.ZfinAnalyzer;
@@ -178,7 +179,11 @@ public final class SiteSearchCategories {
                     if (matcher.find()) {
                         String matchedString = matcher.group();
                         matchedString = matchedString.substring(2, matchedString.length() - 1);
-                        String environmentVariable = System.getProperty(matchedString);
+                        // first try ZfinProperties
+                        String environmentVariable = ZfinPropertiesEnum.valueOf(matchedString).toString();
+                        // try Java Property
+                        if (StringUtils.isEmpty(environmentVariable))
+                            environmentVariable = System.getProperty(matchedString);
                         // try an environment variable with the same name.
                         if (StringUtils.isEmpty(environmentVariable))
                             environmentVariable = System.getenv(matchedString);
