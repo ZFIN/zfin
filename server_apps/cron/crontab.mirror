@@ -29,8 +29,8 @@
 # 
 # SMTWT    after     Validate data
 45 23 * * 0-4 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;validatedata.pl -d  mirrordb
-# SMTWTF   2am reload of mirrordb (aka: validatedb)
-00 02 * * 0-5 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
+# TWTFS   2am reload of mirrordb 
+00 02 * * 2-6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
@@ -38,6 +38,11 @@
 #
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
 00 03 * * 6 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance; validatedata.pl -d -w mirrordb 
+#
+#
+#
+00 06 * * 1-5 /research/zusers/trunk/reload_trunk.sh
+#
 #
 # ========================================================================
 # ====                   MONTHLY SCRIPTS                              ====
