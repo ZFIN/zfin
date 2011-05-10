@@ -115,8 +115,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 //assertEquals("ZFIN: Gene: alcama", genePage.getTitleText());
                 assertNotNull(genePage);
 
-                // check figure view:  Ke et al., 2008
-                hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-080325-45");
+                // check figure view:  Fig. 7 from Chen et al., 2008
+                hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-081230-8");
                 HtmlPage figurePage = hyperlink.click();
                 assertNotNull(figurePage);
 
