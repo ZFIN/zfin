@@ -573,7 +573,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         }
 
 
-        return term.getOntology();  //To change body of implemented methods use File | Settings | File Templates.
+        return term.getOntology();
     }
 
     //    @Override

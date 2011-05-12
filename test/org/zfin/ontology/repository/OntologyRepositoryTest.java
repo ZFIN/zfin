@@ -141,7 +141,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
         // a quality term with neither as root
         // root is quality_qualitative, not process or quality objective process
-        GenericTerm term3 = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-1484");
+        GenericTerm term3 = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-397");
         assertNotSame(Ontology.QUALITY_PROCESSES, ontologyRepository.getProcessOrPhysicalObjectQualitySubOntologyForTerm(term3));
         assertNotSame(Ontology.QUALITY_QUALITIES, ontologyRepository.getProcessOrPhysicalObjectQualitySubOntologyForTerm(term3));
         assertEquals(Ontology.QUALITY, ontologyRepository.getProcessOrPhysicalObjectQualitySubOntologyForTerm(term3));
