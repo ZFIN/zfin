@@ -13,6 +13,7 @@ This file is called from either xpatselect.apg or fishselect.apg (with parameter
 INPUT VARS:
   xpanatv_processed_selected_structures		pipe seperated list of user entered terms
   xpanatv_anatomy_error_occured			this should come in as f, but could leave as t
+  xpanatv_include_substructures			optional, default will be t 
 
 OUTPUT VARS:
   xpanatv_anatomy_zdb_id_list	anatitem_zdb_id vector of anatomy items that match the terms entered.
@@ -26,6 +27,12 @@ OUTPUT:
 
 
 <?MICOMMENT> *** Process variables ***   <?/MICOMMENT>
+
+<?MIBLOCK COND="$(NXST,$xpanatv_include_substructures)">
+  setting include substructures to default
+  <?MIVAR NAME=$xpanatv_include_substructures>t<?/MIVAR>
+<?/MIBLOCK>
+
 
 <?MIVAR NAME=xpanatv_index>0<?/MIVAR>
 <?MIVAR NAME=xpanatv_strCount>1<?/MIVAR>
@@ -65,7 +72,7 @@ OUTPUT:
     <?/MIBLOCK>
       </strong>
       <br>
-    <font size=-1>(including substructures, all stages)</font>
+    <font size=-1>(<?MIBLOCK COND="$(EC,$xpanatv_include_substructures,t)"> including substructures, <?/MIBLOCK>all stages)</font>
     </td>
   </tr>
   <?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
@@ -118,21 +125,68 @@ ORDER BY 3,1
             <?/MIVAR>
           </td>
           <td bgcolor="#EEEEEE">
-            <?MIBLOCK COND="$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
 
-              <?MISQL SQL="select anatstat_total_distinct_count 
-                           from anatomy_stats 
-                           where anatstat_term_zdb_id = '$xpanatv_item_zdb_id' 
-                             and anatstat_object_type = 'GENE';">
-                <?MIVAR name=$xpanatv_totalcount>$1<?/MIVAR>
+          <?MIVAR NAME="$xpanatv_direct_sql">
+                          select 't' from single where exists 
+                            (select 'x' 
+                             from expression_result, expression_experiment,
+                                             expression_pattern_figure
+                             where xpatres_superterm_zdb_id = '$xpanatv_item_zdb_id'
+                               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+                               and xpatfig_xpatres_zdb_id = xpatres_zdb_id      
+                               and xpatex_gene_zdb_id is not null
+                               and xpatres_expression_found = 't');
+          <?/MIVAR>
+
+          <?MIVAR NAME="$xpanatv_substructure_sql">
+                           select 't' from single where exists 
+                            (select 'x' 
+                             from expression_result, expression_experiment,
+                                             expression_pattern_figure
+                             where xpatres_superterm_zdb_id = '$xpanatv_item_zdb_id'
+                               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+                               and xpatfig_xpatres_zdb_id = xpatres_zdb_id      
+                               and xpatex_gene_zdb_id is not null
+                               and xpatres_expression_found = 't'
+                             union
+                             select 'x' from expression_result, expression_experiment,
+                                             expression_pattern_figure, all_term_contains
+                             where alltermcon_container_zdb_id = '$xpanatv_item_zdb_id'
+                               and xpatres_superterm_zdb_id = alltermcon_contained_zdb_id
+                               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+                               and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                               and xpatres_expression_found = 't'
+                               and xpatex_gene_zdb_id is not null );
+          <?/MIVAR>
+
+            <?MIBLOCK COND="$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
+              <?MIVAR name=$xpanatv_has_direct_expression>false<?/MIVAR>
+              <?MISQL SQL=" $xpanatv_direct_sql">
+                <?MIVAR name=$xpanatv_has_direct_expression>true<?/MIVAR>
+              <?/MISQL>
+              <?MIVAR name=$xpanatv_has_expression>false<?/MIVAR>
+              <?MISQL SQL=" $xpanatv_substructure_sql">
+                <?MIVAR name=$xpanatv_has_expression>true<?/MIVAR>
               <?/MISQL>
 
-              <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>expression for <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> genes<?/MIVAR>
-              <?MIELSE>
-	        <label class="error">no expression data</label>
-              <?/MIBLOCK>
+              <?MIBLOCK COND="$(EQ,$xpanatv_include_substructures,t)">
+                <?MIBLOCK COND="$(EQ,$xpanatv_has_expression,true)"> 
+                  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_item_zdb_id&xpatsel_processed_selected_structures_names=$xpanatv_item_name" target="_parent">has expression data</A><?/MIVAR>
+                <?MIELSE>
+                  <label class="error">has no expression data</label>
+                <?/MIBLOCK>
+              <?MIELSE>  <?MICOMMENT> ** include substructures is false ** <?/MICOMMENT>
+                <?MIBLOCK COND="$(EQ,$xpanatv_has_direct_expression,true)">
+                   <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_item_zdb_id&xpatsel_processed_selected_structures_names=$xpanatv_item_name" target="_parent">has expression data</A><?/MIVAR>
+                <?/MIBLOCK>
+                <?MIBLOCK COND="$(AND,$(EQ,$xpanatv_has_direct_expression,false),$(EQ,$xpanatv_has_expression,true))">
+                  <?MIVAR>has expression data only via <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_item_zdb_id&xpatsel_processed_selected_structures_names=$xpanatv_item_name" target="_parent">substructures</A><?/MIVAR>
+                <?/MIBLOCK>
+                <?MIBLOCK COND="$(AND,$(EQ,$xpanatv_has_expression,false),$(EQ,$xpanatv_has_direct_expression,false))">
+                  <label class="error">has no expression data</label>
+                <?/MIBLOCK>
 
+              <?/MIBLOCK>
      <?MIELSE COND="$(AND,$(XST,$xpanatv_called_from),$(EC,$xpanatv_called_from,mutantpage))"> <?MICOMMENT> called from fishselect.apg <?/MICOMMENT>
      <?MICOMMENT>------------------------------------------------------------
                -- temp table $temp_on_anat holds geno zdb ids 

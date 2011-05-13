@@ -375,11 +375,18 @@ function openChild(childWinUrl,childWinName) {
     <br>$1 Before anatomy verification
   <?/MISQL>
 
+    <?MIBLOCK COND="$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked))">
+      <?MIVAR NAME="$xpatsel_xpanatv_include_substructures">t<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME="$xpatsel_xpanatv_include_substructures">f<?/MIVAR>
+    <?/MIBLOCK>
+
+
     <?MICOMMENT> pass in $xpatsel_processed_selected_structures, retrieve xpanatv_anatomy_zdb_id_list, 
                  xpanatv_anatomy_error_occured<?/MICOMMENT>
     <?MIVAR NAME=xpatsel_anatomy_expression>
     <?MISQL SQL="
-    select WebExplode(object, 'xpanatv_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$xpatsel_anatomy_error_occured')
+    select WebExplode(object, 'xpanatv_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$xpatsel_anatomy_error_occured&xpanatv_include_substructures=$xpatsel_xpanatv_include_substructures')
       from webpages 
       where id = 'aa-xpatselectanatverify.apg';">
     $1
