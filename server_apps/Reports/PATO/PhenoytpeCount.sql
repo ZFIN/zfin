@@ -371,10 +371,11 @@ create temp table tmp_papers_with_phenotype_ds_r (paper_id varchar(50))
 with no log ;
 
 insert into tmp_papers_with_phenotype_ds_r
-  select distinct fig_source_zdb_id
-    from phenotype_experiment, publication, figure
+select distinct phenos_pk_id
+    from phenotype_statement, publication, figure, phenotype_experiment
     where fig_source_zdb_id = zdb_id
         and fig_zdb_id = phenox_fig_zdb_id
+        and phenox_pk_id = phenos_phenox_pk_id
         and jtype = 'Curation';
 
 select count(*) from tmp_papers_with_phenotype_ds_r;
