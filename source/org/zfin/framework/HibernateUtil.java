@@ -5,6 +5,7 @@ import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.proxy.HibernateProxy;
 import org.zfin.infrastructure.DataAliasGroup;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.SessionCreator;
 
 /**
@@ -59,6 +60,14 @@ public class HibernateUtil {
         return currentSession().beginTransaction();
     }
 
+    public static Transaction createTransactionWithLowPDQ() {
+        Transaction transaction = currentSession().beginTransaction();
+        String pdqQuery = "SET PDQPRIORITY 20 ";
+        RepositoryFactory.getInfrastructureRepository().executeJdbcQuery(pdqQuery);
+        currentSession().flush();
+        return transaction;
+    }
+
     public static void rollbackTransaction() {
         try {
             Transaction t = currentSession().getTransaction();
@@ -69,6 +78,16 @@ public class HibernateUtil {
     }
 
     public static void flushAndCommitCurrentSession() {
+        currentSession().flush();
+        currentSession().getTransaction().commit();
+    }
+
+    /**
+     * Need to set the PDQPRIORITY back to a high value.
+     */
+    public static void flushAndCommitCurrentSessionWithLowPdq() {
+        String pdqQuery = "SET PDQPRIORITY 80 ";
+        RepositoryFactory.getInfrastructureRepository().executeJdbcQuery(pdqQuery);
         currentSession().flush();
         currentSession().getTransaction().commit();
     }

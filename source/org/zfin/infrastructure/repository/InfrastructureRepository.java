@@ -323,6 +323,11 @@ public interface InfrastructureRepository {
     void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data);
 
     /**
+     * Execute a query with a native JDBC call
+     * @param query query string
+     */
+    void executeJdbcQuery(String query);
+    /**
      * Return a set of data from a native SELECT statement.
      * @param statement jdbc query
      * @return list of strings

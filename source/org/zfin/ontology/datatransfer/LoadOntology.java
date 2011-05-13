@@ -135,7 +135,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         //ontologyLoader.openAllFiles();
         if (processOboFile()) {
             try {
-                HibernateUtil.createTransaction();
+                HibernateUtil.createTransactionWithLowPDQ();
                 LOG.info("Duration of Loader: " + DateUtil.getTimeDuration(sectionTime));
                 report.addMessageToSection("Finished Processing Obo file", "Parse Obo File");
                 sectionTime = System.currentTimeMillis();
@@ -152,7 +152,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                     report.addMessageToSection("Finish Time: " + new Date() + "\n", sectionName);
                     report.addMessageToSection("Duration: " + DateUtil.getTimeDuration(startTimeLong), sectionName);
                 }
-                HibernateUtil.flushAndCommitCurrentSession();
+                HibernateUtil.flushAndCommitCurrentSessionWithLowPdq();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);

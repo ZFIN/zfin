@@ -964,7 +964,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             statement = connection.createStatement();
             statement.execute(jdbcStatement.getQuery());
             int updateCount = statement.getUpdateCount();
-            logger.info("Number of updated rows: "+updateCount);
+            logger.info("Number of updated rows: " + updateCount);
             session.flush();
         } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
@@ -1061,6 +1061,33 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         long end = System.currentTimeMillis();
         logger.debug("Insertion:  " + jdbcStatement.getHumanReadableQueryString());
         logger.info("Finished Insertion of " + data.size() + " records in " + DateUtil.getTimeDuration(start, end));
+        session.flush();
+    }
+
+    public void executeJdbcQuery(String query) {
+        long start = System.currentTimeMillis();
+        Session session = currentSession();
+        Connection connection = session.connection();
+        ResultSet rs = null;
+        try {
+            Statement st = connection.createStatement();
+            int returnNumber = st.executeUpdate(query);
+            session.flush();
+            session.clear();
+        } catch (SQLException exception) {
+            logger.error("could not execute  '" + query + "' ", exception);
+            throw new RuntimeException(exception);
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+            } catch (SQLException e) {
+                // ignore
+            }
+        }
+        long end = System.currentTimeMillis();
+        logger.debug("Query:  " + query);
+        logger.info("Query took " + DateUtil.getTimeDuration(start, end));
         session.flush();
     }
 
