@@ -7,9 +7,8 @@
 <%@ attribute name="width" required="false"%>
 
 <c:if test="${!empty gbrowseImages}">
-  <a class="gbrowse_hover">
-      GB
-      <span class="gbrowse_popup"><zfin2:gbrowseImageStack gbrowseImages="${gbrowseImages}"/></span>
-  </a>
+  <a class="gbrowse_hover">GB</a>
+  <div class="gbrowse_popup"><zfin2:gbrowseImageStack gbrowseImages="${gbrowseImages}"/></div>
+  <script> jQuery(document).ready(function() { jQuery('.gbrowse_hover').tooltip().dynamic({ bottom: { direction: 'down'}}); }); </script>
 
 </c:if>

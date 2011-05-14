@@ -177,3 +177,17 @@ a.popup-link img { text-decoration: none; }
     margin-right: 5px;
 }
 
+
+
+a.gbrowse_hover{
+    background-color:#cfc;
+    font-weight: bold;
+    color:#000;
+    text-decoration:none}
+
+.gbrowse_popup{display: none}
+
+a.gbrowse_hover:hover .gbrowse_popup{ /*the span will display just on :hover state*/
+   background-color:#fff; color:#000;
+   text-align: center;
+}

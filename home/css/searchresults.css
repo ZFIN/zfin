@@ -59,21 +59,3 @@ table.searchresults tr.evengroup {
 /* just a placeholder, not defined for the default style */
 }
 
-a.gbrowse_hover{
-    position:relative; /*this is the key*/
-    z-index:24; background-color:#cfc;
-    font-weight: bold;
-    color:#000;
-    text-decoration:none}
-
-a.gbrowse_hover:hover{z-index:25; background-color:#ff0}
-
-a.gbrowse_hover span.gbrowse_popup{display: none}
-
-a.gbrowse_hover:hover span.gbrowse_popup{ /*the span will display just on :hover state*/
-    display:block;
-    position:absolute;
-    top:2em; left:-350px;
-    /*border:1px solid #fff;*/
-    background-color:#fff; color:#000;
-   text-align: center}
