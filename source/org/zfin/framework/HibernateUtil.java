@@ -8,6 +8,9 @@ import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.SessionCreator;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  * Utility class for web applications to make a database session object
  * available via the framework of Hibernate.
@@ -114,6 +117,11 @@ public class HibernateUtil {
             localSession.set(s);
         }
         s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
+        try {
+            s.connection().setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+        } catch (SQLException e) {
+            log.error(e);
+        }
         return s;
     }
 
