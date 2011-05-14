@@ -119,10 +119,19 @@ ENDJS
   print "\n<SCRIPT>\n window.name='mapper' \n</SCRIPT>\n";
   print "\n";
 
-  print "<div style=\"width: 150px; font-size: small; float: right; margin: .75em; padding: .5em; border: 1px solid red ; background-color: #eee\">The ZFIN Genetic Map Viewer requires that you install";
-  print " a <a href=\"http://www.java.com/getjava/\">Java plugin</a>";
-  print " and may not function properly in all browsers. <br><br>  ";
-  print " Try <a href=\"/genome-browser/\">GBrowse</a> to view current genomic annotations.</div>";
+  my $OLDCODENOTE=<<OLDCODENOTE;
+
+  <div style="width: 150px; font-size: small; float: right; margin: .75em; padding: .5em; border: 1px solid red ; background-color: #eee">
+  The ZFIN Genetic Map Viewer requires that you install
+  a <a href="http://www.java.com/getjava/">Java plugin</a>
+  and may not function properly in all browsers. <br><br>
+  Try <a href="/genome-browser/">GBrowse</a> to view current genomic annotations. <br><br>
+  If you need data that you can't access here and isn't in GBrowse, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-your_input_welcome.apg&subject=Mapping%20Data&page=mapviewer">Let us know!</a>
+  </div>
+  
+OLDCODENOTE
+
+  print $OLDCODENOTE;
 
   print "<TABLE width=700 border=0><TR><TD>\n";
 
