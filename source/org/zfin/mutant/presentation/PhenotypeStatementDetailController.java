@@ -30,6 +30,13 @@ public class PhenotypeStatementDetailController  {
     @RequestMapping(value = {"/phenotype-statement"})
     protected String getPhenotypeStatementPage(@RequestParam Long id, Model model) {
         PhenotypeStatement phenotypeStatement = mutantRepository.getPhenotypeStatementById(id);
+
+        if (phenotypeStatement == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, id);
+            return "record-not-found.page";
+        }
+
+
         model.addAttribute("phenotypeStatement",phenotypeStatement);
         model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
 
@@ -40,6 +47,12 @@ public class PhenotypeStatementDetailController  {
     @RequestMapping(value = {"/phenotype-statement-popup"})
     protected String getPhenotypeStatementPopup(@RequestParam Long id, Model model) {
         PhenotypeStatement phenotypeStatement = mutantRepository.getPhenotypeStatementById(id);
+
+        if (phenotypeStatement == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, id);
+            return "record-not-found.popup";
+        }
+
         model.addAttribute("phenotypeStatement",phenotypeStatement);
         model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
 
