@@ -129,6 +129,8 @@ public class HibernateSessionCreator implements FactoryBean {
         String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
         String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
         String connectionString = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
+        connectionString +=";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
+
 //        System.out.println("connectionString: " + connectionString) ; 
         config.setProperty("hibernate.connection.url", connectionString);
         config.setProperty("hibernate.connection.username", "zfinner");

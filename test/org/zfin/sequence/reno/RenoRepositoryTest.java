@@ -46,8 +46,9 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             assertNotSame("Redundancy runs returned 0", 0, repository.getRedundancyRuns().size());
             boolean found = false;
             for (Run run : redundancyRuns) {
-                if (run.getName().equals("TestRedundandcy")) {
+                if (run.getName().equals("TestRedundancy")) {
                     found = true;
+                    break;
                 }
             }
             // Test Run found
@@ -493,7 +494,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
         RedundancyRun run1 = new RedundancyRun();
         run1.setRelationPublication(publication1);
         run1.setNomenclaturePublication(publication2);
-        run1.setName("TestRedundandcy");
+        run1.setName("TestRedundancy");
 //        run1.setType(Run.Type.REDUNDANCY);
         run1.setProgram("BLASTN");
         Date date = new Date();
@@ -629,7 +630,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             session.getTransaction().rollback();
             HibernateUtil.closeSession();  // use the HibernateUtil since it knows about closing and opening sessions
 
-            session = HibernateUtil.currentSession(); // get a new open session from the sssion factory
+            session = HibernateUtil.currentSession(); // get a new open session from the session factory
             session.beginTransaction();
             Map<String, Object> returnMap2 = insertTestData();
 

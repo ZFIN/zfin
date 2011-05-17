@@ -111,6 +111,8 @@ public class HibernateUtil {
         }
 
         Session s = localSession.get();
+        if (s != null)
+            return s;
         // Open a new ZfinSession, if this Thread has none yet
         if (s == null) {
             s = sessionFactory.openSession();
