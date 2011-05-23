@@ -8,6 +8,12 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.wiki.WikiSynchronizationReport;
+import org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used to run wiki code once (as opposed to out of a cron job.
@@ -71,6 +77,16 @@ public class WikiScriptRunner {
     public static void main(String args[]) {
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
         try {
+
+            List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
+            Map<String, Antibody> zfinAntibodyHashMap = new HashMap<String, Antibody>();
+            String pageTitle ;
+            for(Antibody antibody : antibodies){
+                pageTitle = AntibodyWikiWebService.getInstance().getWikiTitleFromAntibody(antibody);
+                zfinAntibodyHashMap.put(pageTitle, antibody);
+            }
+            WikiSynchronizationReport wikiSynchronizationReport = new WikiSynchronizationReport(true);
+            AntibodyWikiWebService.getInstance().validateAntibodiesOnWikiWithZFIN(zfinAntibodyHashMap,wikiSynchronizationReport);
 //            WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
 //            wikiScriptRunner.addWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");

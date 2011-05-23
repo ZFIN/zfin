@@ -3,6 +3,7 @@ package org.zfin.wiki.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.biojava.stats.svm.tools.SVM_Light;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
@@ -107,7 +108,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         return name.replaceAll("\\/", "-");
     }
 
-    private String getWikiTitleFromAntibody(Antibody antibody) {
+    protected String getWikiTitleFromAntibody(Antibody antibody) {
         return getWikiTitleFromAntibodyName(antibody.getName()) ;
     }
 
@@ -431,7 +432,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             return;
         }
 
-        HashMap<String, Antibody> zfinAntibodyHashMap = new HashMap<String, Antibody>();
+        Map<String, Antibody> zfinAntibodyHashMap = new HashMap<String, Antibody>();
         WikiSynchronizationReport wikiSynchronizationReport = new WikiSynchronizationReport(true);
         String pageTitle;
         clearAntibodyTemplate();
@@ -605,12 +606,12 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @return number of dropped antibodies.
      */
 
-    public WikiSynchronizationReport validateAntibodiesOnWikiWithZFIN(HashMap<String, Antibody> zfinAntibodyHashMap,
+    public WikiSynchronizationReport validateAntibodiesOnWikiWithZFIN(Map<String, Antibody> zfinAntibodyHashMap,
                                                                       WikiSynchronizationReport wikiSynchronizationReport) {
 
         int numAntibodies = zfinAntibodyHashMap.values().size();
         // get all pages for the zfin_antibody label
-        RemoteSearchResult[] remoteSearchResults = new RemoteSearchResult[0];
+        RemoteSearchResult[] remoteSearchResults ;
         try {
             remoteSearchResults = service.getLabelContentByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue());
         } catch (Exception e) {
@@ -626,7 +627,17 @@ public class AntibodyWikiWebService extends WikiWebService {
             for (RemoteSearchResult remoteSearchResult : remoteSearchResults) {
                 if (false == zfinAntibodyHashMap.containsKey(remoteSearchResult.getTitle())) {
                     try {
-                        wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
+                        if(remoteSearchResult.getExcerpt().contains("{live-template:antibody}")){
+                            String errorString = "Trying to remove a user-generated page for some reason, fixing label: "+remoteSearchResult.getTitle() + " " + remoteSearchResult.getUrl();
+                            wikiSynchronizationReport.addErrorPage(errorString);
+                            logger.error(errorString);
+                            service.removeLabelByName(token,Label.ZFIN_ANTIBODY_LABEL.getValue(),remoteSearchResult.getId());
+                            service.addLabelByName(token,Label.COMMUNITY_ANTIBODY.getValue(),remoteSearchResult.getId());
+                        }
+                        else{
+                            logger.info("trying to drop!: " + remoteSearchResult.getTitle());
+                            wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
+                        }
                     } catch (Exception e) {
                         logger.error("failed to drop page: " + remoteSearchResult.getTitle(), e);
                         wikiSynchronizationReport.addErrorPage(remoteSearchResult.getTitle());
