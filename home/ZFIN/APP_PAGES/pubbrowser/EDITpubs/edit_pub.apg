@@ -134,12 +134,29 @@ a new or updated existing pub
     </TR>
     <TR>
   <?/MIVAR>
-  <TD colspan=2 align=center>
+<?MICOMMENT>
+code added for Bugz 6986<?/MICOMMENT>
+<?MISQL  SQL="select jtype from publication where zdb_id='$OID'">
+<?MIVAR NAME=pub_jtype>$1<?/MIVAR>
+<?/MISQL>
+<?MIBLOCK COND="$(EC,$pub_jtype,Unpublished)">
+  <?MISQL SQL="select count(*) from record_attribution where recattrib_source_zdb_id='$OID'">
+   <?MIBLOCK COND="$(!=,0,$1)">
+    <?MIVAR NAME=$pub_donotdelete>t<?/MIVAR>
+   <?/MIBLOCK>
+<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(NXST,$pub_donotdelete)">
+<TD colspan=2 align=center>
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
     <font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
   <?/MIVAR>
   </TD></TR>
+<?/MIBLOCK>
   </TABLE>
+
   <p>
 
   <?MIVAR>
