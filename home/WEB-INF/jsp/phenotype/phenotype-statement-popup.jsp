@@ -7,6 +7,16 @@
 <div class="popup-body phenotype-popup-body">
   <div>
 
+  <c:if test="${phenotypeStatement.tag eq 'normal'}">
+      <div style="margin: 1em;">
+      The "(normal or recovered)" tag is used when the annotation of a normal phenotype is notable
+      or when the annotation represents a recovered normal phenotype, such as that
+      resulting from the addition of a morpholino or the creation of a complex
+      mutant genotype.
+      </div>
+      <hr class="popup-divider"/>
+  </c:if>
+
 <%--
       <zfin2:termMiniSummary term="${phenotypeStatement.entity.superterm}"/>
       <c:if test="${!empty phenotypeStatement.entity.subterm}">
