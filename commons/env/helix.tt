@@ -18,7 +18,7 @@
 <!--|DOMAIN_NAME|-->	zfin.org
 <!--|FTP_ROOT|-->	/research/zprod/ftp
 <!--|GBROWSE_DB|-->	vega_current
-<!--|GBROWSE_DB_HOST|-->	gbrowse.zfin.org
+<!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu ndunn\@uoregon.edu xshao\@cs.uoregon.edu
