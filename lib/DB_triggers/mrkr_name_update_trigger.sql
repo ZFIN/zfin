@@ -12,5 +12,6 @@ create trigger mrkr_name_update_trigger
                 into marker.mrkr_name_order,
         execute procedure mhist_event (newM.mrkr_zdb_id,'renamed',
                 newM.mrkr_name, oldM.mrkr_name),
-	execute procedure p_update_related_genotype_names (newM.mrkr_zdb_id)
+	execute procedure p_update_related_genotype_names (newM.mrkr_zdb_id),
+	execute procedure updateConstructAbbrev (newM.mrkr_zdb_id, newM.mrkr_name, newM.mrkr_type)
       );
