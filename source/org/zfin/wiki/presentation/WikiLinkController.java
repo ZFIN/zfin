@@ -21,7 +21,13 @@ public class WikiLinkController {
     @RequestMapping(value = "/wikiLink/{zdbID}")
     protected String getWikiLink(@PathVariable String zdbID, Model model) throws Exception {
 
-        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
+        Antibody antibody ;
+        if(zdbID.startsWith("ZDB-ATB")){
+            antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
+        }
+        else{
+            antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByAbbrev(zdbID);
+        }
         if(antibody!=null){
             try {
                 model.addAttribute("name", antibody.getName());
@@ -33,7 +39,7 @@ public class WikiLinkController {
             }
         }
         else{
-            logger.error("Unable to find antibody for ID: " + antibody.getZdbID());
+            logger.error("Unable to find antibody for key: " + zdbID);
         }
 
         return "wiki/wiki-link.insert";
