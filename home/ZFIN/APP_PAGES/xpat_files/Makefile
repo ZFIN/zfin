@@ -36,7 +36,7 @@ fxfigstgrng.apg fxassayabbrev.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeate
 fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg genotypecuration.apg attribupdate.apg \
 genoupdate.apg patocuration.apg fxfigphenostgrng.apg xpatcurreset.apg \
 wordcompletion.apg xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
-xpatfeatexpcondn.apg
+xpatfeatexpcondn.apg xpatview.apg
 
 # Use default rules for app page directories.
 
