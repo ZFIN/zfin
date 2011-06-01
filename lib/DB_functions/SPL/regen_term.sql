@@ -5,7 +5,22 @@
 drop function regen_term;
 drop function populate_all_term_contains;
 
+--{  Comment this out.  Use when you are trying to speed this up.
+-- Create function for logging timings.
+--drop procedure regen_term_log;
 
+--create procedure regen_term_log(log_message lvarchar)
+
+--  define echoCommand lvarchar;
+
+--  let echoCommand = 'echo "' || get_time() || ' ' || log_message ||
+--		       '" >> /tmp/regen_term_log.<!--|DB_NAME|-->';
+--  system echoCommand;
+
+--end procedure;
+--}
+
+-- Create recursive functions in reverse order of execution.
 
 
 -- ---------------------------------------------------------------------
@@ -36,8 +51,8 @@ create function populate_all_term_contains()
 	   termrel_term_2_zdb_id, 
 	   dist
     from term_relationship
-    where termrel_type in ('is_a','part_of', 'part of')
- 
+    where termrel_type in ('is_a','part_of','regulates','positively_regulates','negatively_regulates');
+
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
   while (delta  <  (select count(*) from all_term_contains_new) )
@@ -62,13 +77,12 @@ create function populate_all_term_contains()
 	      -- checking for duplicates here is where the time gets absurd  
 	      -- (2:30 vs 0:06), so 
 	      --   "kill em all and let god sort them out later"
-	  and a.termrel_type in ('is_a', 'part_of', 'part of')
+	  and a.termrel_type in ('is_a', 'part_of','regulates','positively_regulates','negatively_regulates')
 	      -- all_term_contains doesn't want develops_from relationships,
 	      -- and it's better to explicitly include rather than exclude,
 	      -- since we want the behavior to stay the same the next time
 	      -- a new type is added
- 
-	     
+	  ;
 
   end while
 
@@ -116,7 +130,7 @@ create dba function "informix".regen_term()
 
   -- see regen_names.sql for details on how to debug SPL routines.
 
-  set debug file to "/tmp/debug_regen_term.swrdb";
+  set debug file to "/tmp/debug_regen_term.<!--|DB_NAME|-->";
   --trace on;
 
   begin	-- global exception handler
@@ -166,7 +180,7 @@ create dba function "informix".regen_term()
                                ' ISAM Error: ' || isamError::varchar(200) ||
                                ' ErrorText: ' || errorText ||
                                ' ErrorHint: ' || errorHint ||
-                               '" >> /tmp/regen_term_exception.swrdb';
+                               '" >> /tmp/regen_term_exception.<!--|DB_NAME|-->';
         system exceptionMessage;
 
         -- Change the mode of the regen_term_exception file.  This is
@@ -174,7 +188,7 @@ create dba function "informix".regen_term()
         -- rerun the function from dbaccess as whatever user we want, and
 	-- to reuse an existing regen_term_exception file.
 
-        system '/bin/chmod 666 /tmp/regen_term_exception.swrdb';
+        system '/bin/chmod 666 /tmp/regen_term_exception.<!--|DB_NAME|-->';
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
@@ -200,25 +214,17 @@ create dba function "informix".regen_term()
         return 1;
       end if
 
-
-
-
       -- =================    CREATE OUTPUT TABLES     =======================
 
       let errorhint = "create fast search tables";
-
-      --use a new table to collect data in case of an error; drop the old table
-      --and rename the new table before returning.
-
-      -- ---- TERM_DISPLAY ----
-
 
       -- ---- ALL_TERM_CONTAINS ----
       let errorHint = "Creating all_term_contains_new";
       -- this table stores every term term with every ancestor 
       -- that has a contains relationship and the shortest distance 
       -- between each pair.  In this case, a contains relationship
-      -- is being defined as dagedit_id's "is_a" and "part_of", which
+      -- is being defined as dagedit_id's "is_a", "part_of", "regulates", 
+      -- "positively_regulates", and "negatively_regulates", which
       -- leaves out "develops_from".  Unfortunately, the only place
       -- where that is defined is in this file, when we have a generic
       -- DAG, we will probably need relationship type groups so that
@@ -238,7 +244,7 @@ create dba function "informix".regen_term()
 	  alltermcon_min_contain_distance	integer not null
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 256 next size 256 
+	extent size 12800 next size 51200 
 	lock mode page;
 
       -- create temp index.  dropped when table renamed
@@ -250,7 +256,6 @@ create dba function "informix".regen_term()
 
       -- =================   POPULATE TABLES   ===============================
 
-
       -- -----------------------------------------------------------------------
       --     ALL_TERM_CONTAINS_NEW
       -- -----------------------------------------------------------------------
@@ -259,6 +264,7 @@ create dba function "informix".regen_term()
 
       execute function populate_all_term_contains()
         into nRows;
+
 
       update statistics high for table all_term_contains_new;
 
@@ -281,7 +287,6 @@ create dba function "informix".regen_term()
       on exception in (-206)
 	      -- ignore any table that doesn't already exist
       end exception with resume;
-
 
       drop table all_term_contains;
 
@@ -308,9 +313,6 @@ create dba function "informix".regen_term()
 	raise exception esql, eisam;
       end exception;
 
- 
- 
-     
       -- ---- ALL_TERM_CONTAINS ----
 
       rename table all_term_contains_new to all_term_contains;
@@ -334,7 +336,7 @@ create dba function "informix".regen_term()
       let errorHint = "alltermcon_container_zdb_id_index";
       create index alltermcon_container_zdb_id_index
         on all_term_contains (alltermcon_container_zdb_id)
-	using btree
+	
 	in idxdbs2;
       alter table all_term_contains add constraint
         foreign key (alltermcon_container_zdb_id)
@@ -362,7 +364,6 @@ create dba function "informix".regen_term()
   -- Update statistics on tables that were just created.
 
   begin work;
-
   update statistics high for table all_term_contains;
   commit work;
 
