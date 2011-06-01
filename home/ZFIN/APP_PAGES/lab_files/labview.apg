@@ -229,7 +229,8 @@ $1</A>
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value=Update onClick="doit('location','text','Institution')">
 <?/MIVAR> 
-
+<?MIVAR NAME=lab_inst><?/MIVAR>
+<b>Institution: </b> 
 <?MISQL sql="
 select  fp.fp_institute_display
     from lab l
@@ -240,8 +241,7 @@ select  fp.fp_institute_display
 <?MIVAR NAME=$lab_inst>$1<?/MIVAR>
     <?/MISQL>
 
-<b>Institution: </b> 
-<?MIVAR COND=$(NE,$lab_inst,NULL)>
+<?MIVAR COND=$(NE,$lab_inst,)>
   $lab_inst <?/MIVAR>
 <br>
 
