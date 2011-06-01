@@ -51,7 +51,7 @@ create function populate_all_term_contains()
 	   termrel_term_2_zdb_id, 
 	   dist
     from term_relationship
-    where termrel_type in ('is_a','part_of','regulates','positively_regulates','negatively_regulates');
+    where termrel_type in ('is_a','part_of','part of','regulates','positively_regulates','negatively_regulates');
 
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
@@ -77,7 +77,7 @@ create function populate_all_term_contains()
 	      -- checking for duplicates here is where the time gets absurd  
 	      -- (2:30 vs 0:06), so 
 	      --   "kill em all and let god sort them out later"
-	  and a.termrel_type in ('is_a', 'part_of','regulates','positively_regulates','negatively_regulates')
+	  and a.termrel_type in ('is_a', 'part_of','regulates','positively_regulates','negatively_regulates','part of')
 	      -- all_term_contains doesn't want develops_from relationships,
 	      -- and it's better to explicitly include rather than exclude,
 	      -- since we want the behavior to stay the same the next time
@@ -324,7 +324,7 @@ create dba function "informix".regen_term()
       create unique index all_term_contains_primary_key_index
         on all_term_contains (alltermcon_container_zdb_id,     
 				 alltermcon_contained_zdb_id)
-	
+	using btree
 	in idxdbs2;
       alter table all_term_contains add constraint
         primary key (alltermcon_container_zdb_id,     
@@ -336,7 +336,7 @@ create dba function "informix".regen_term()
       let errorHint = "alltermcon_container_zdb_id_index";
       create index alltermcon_container_zdb_id_index
         on all_term_contains (alltermcon_container_zdb_id)
-	
+	using btree
 	in idxdbs2;
       alter table all_term_contains add constraint
         foreign key (alltermcon_container_zdb_id)
@@ -347,7 +347,7 @@ create dba function "informix".regen_term()
       let errorHint = "alltermcon_contained_zdb_id_index";
       create index alltermcon_contained_zdb_id_index
         on all_term_contains (alltermcon_contained_zdb_id)
-	
+	fillfactor 100
 	in idxdbs2;
       alter table all_term_contains add constraint
         foreign key (alltermcon_contained_zdb_id)
