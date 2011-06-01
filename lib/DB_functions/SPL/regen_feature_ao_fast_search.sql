@@ -137,7 +137,7 @@ Create dba function regen_feature_ao_fast_search()
 		fstat_img_zdb_id varchar(50)
 	) 
         fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-	extent size 1024 next size 1024 ;
+	extent size 25600 next size 10240 ;
    
 
       let errorHint = "insert into feature_stats_temp";
