@@ -26,7 +26,7 @@ public class WikiLinkController {
             antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
         }
         else{
-            antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByAbbrev(zdbID);
+            antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByAbbrev(zdbID.toLowerCase());
         }
         if(antibody!=null){
             try {
