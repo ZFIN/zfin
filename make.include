@@ -164,7 +164,7 @@ JAVAC      = $(JAVAHOME)/bin/javac
 
 JDBCHOME     = /private/apps/jdbc3
 
-JAVACFLAGS =
+JAVACFLAGS = -source 1.4 -target 1.4 
 
 
 # --- Tomcat related

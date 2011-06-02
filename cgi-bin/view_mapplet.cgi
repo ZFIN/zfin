@@ -255,7 +255,7 @@
       print
 	     "<p><p><p><p>No mapping data is available for ".
 		 "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
-		 "<script type=\"text/javascript\"' src=\"/footer.js\"></script>";
+		 "<script type=\"text/javascript\"' src=\"/javascript/footer.js\"></script>";
 	  exit 1;
 	}
 	###
@@ -713,7 +713,7 @@
   $note = $note . " <p> END NOTE <P>\n";
   print $Q->header . "\n";
   print $Q->start_html(-TITLE => "ZFIN View Map", -bgcolor=> 'white')."\n";
-  print "<script type=\"text/javascript\" src=\"/header.js\"></script>";
+  print "<script type=\"text/javascript\" src=\"/javascript/header.js\"></script>";
 
   ### based on error codes emit the dynamic part of the page
   if ($g_error == 0 && $g_data) {
@@ -886,7 +886,7 @@
 #    print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
 #  }
 
-  print "<script type=\"text/javascript\" src=\"/footer.js\"></script>";
+  print "<script type=\"text/javascript\" src=\"/javascript/footer.js\"></script>";
   print  $Q->end_html."\n";
   $dbh->disconnect;
 

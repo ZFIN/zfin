@@ -249,11 +249,11 @@
             elsif(  $unique < 1) { #! defined $rowref ) {
                 print $Q->header(). "\n".
                 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
-                "<script type=\"text/javascript\" src=\"/header.js\"></script>" ."\n";
+                "<script type=\"text/javascript\" src=\"/javascript/header.js\"></script>" ."\n";
                 mapper_select(Q);
                 print  "<p><p><p><p>No mapping data is available for ".
                 "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
-                "<script type=\"text/javascript\" src=\"/footer.js\"></script>";
+                "<script type=\"text/javascript\" src=\"/javascript/footer.js\"></script>";
                 exit 1;
             }
 	###
@@ -911,7 +911,7 @@
 #  }
 
 
-  print "<script type=\"text/javascript\" src=\"/footer.js\"></script>";
+  print "<script type=\"text/javascript\" src=\"/javascript/footer.js\"></script>";
   print  $Q->end_html."\n";
   $dbh->disconnect;
 
