@@ -18,6 +18,7 @@ public class WikiIndexerTest {
                 "-e", "server_apps/quicksearch/etc/excludeurls.txt",
                 "-indexerDir", "server_apps/quicksearch/",
                 "-numberOfDetailPages", "1",
+                "-createDetailPageList", "false",
                 "-zfinPropertiesDir", "home/WEB-INF/zfin.properties"};
         try {
             Indexer.main(args);

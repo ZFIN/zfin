@@ -116,8 +116,7 @@ public class GenerateEntityDetailPageUrls extends AbstractScriptWrapper {
 
     public void saveUrlsInfile() {
         try {
-            fullDetailPagePath = FileUtil.createAbsolutePath(rootDirectory, "etc", outputFileName);
-            saveUrlsInFile(fullDetailPagePath);
+            saveUrlsInFile(getDetailPageFilePath());
         } catch (FileNotFoundException e) {
             LOG.error("Error during file output creation");
         }
@@ -126,7 +125,7 @@ public class GenerateEntityDetailPageUrls extends AbstractScriptWrapper {
     private String fullDetailPagePath;
 
     public String getDetailPageFilePath() {
-        return fullDetailPagePath;
+        return FileUtil.createAbsolutePath(rootDirectory, "etc", outputFileName);
     }
 
     private void saveUrlsInFile(String fileName) throws FileNotFoundException {

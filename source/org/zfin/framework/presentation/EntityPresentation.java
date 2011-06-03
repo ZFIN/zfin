@@ -180,15 +180,15 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
-    public static String getJumpToLink(String zdbID){
-        StringBuilder sb = new StringBuilder() ;
+    public static String getJumpToLink(String zdbID) {
+        StringBuilder sb = new StringBuilder();
         sb.append(ZfinPropertiesEnum.NON_SECURE_HTTP.value());
         sb.append(ZfinPropertiesEnum.DOMAIN_NAME.value());
         sb.append("/");
         sb.append(ZfinPropertiesEnum.WEBDRIVER_LOC.value());
         sb.append("/ZFIN_jump?record=");
         sb.append(zdbID);
-        return sb.toString() ;
+        return sb.toString();
     }
 
     /* I made this method public because it won't generally be necessary for
@@ -203,11 +203,17 @@ public abstract class EntityPresentation {
         sb.append("<span class=\"");
         sb.append(cssClassName);
         sb.append("\" title=\"");
-        sb.append(title);
+        sb.append(replaceSupTags(title));
         sb.append("\">");
         sb.append(name);
         sb.append("</span>");
         return sb.toString();
+    }
+
+    public static String replaceSupTags(String title) {
+        title = title.replaceAll("<sup>", " [");
+        title = title.replaceAll("</sup>", "]");
+        return title;
     }
 
     public static String getGeneralHyperLink(String url, String linkName) {

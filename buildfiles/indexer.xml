@@ -94,6 +94,8 @@
             <arg value="3"/>
             <arg value="-zfinPropertiesDir"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-createDetailPageList"/>
+            <arg value="true"/>
         </java>
     </target>
 

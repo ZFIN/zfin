@@ -58,7 +58,10 @@ public class GenotypeDetailController {
 	    }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName());
+        String genotypeName = genotype.getName();
+        genotypeName = genotypeName.replaceAll("<sup>","^");
+        genotypeName = genotypeName.replaceAll("</sup>","");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
         return "genotype/genotype-detail.page";
     }

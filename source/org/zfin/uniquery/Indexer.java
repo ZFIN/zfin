@@ -4,7 +4,6 @@ import cvu.html.HTMLTokenizer;
 import cvu.html.TagToken;
 import cvu.html.TextToken;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +13,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
@@ -30,8 +30,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
-import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 
 
 /**
@@ -78,6 +76,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private List<String> crawlOnly = new ArrayList<String>();
     private List<Thread> threadList = new ArrayList<Thread>();
     private boolean incremental;
+    private boolean createDetailPageList = true;
 
     private IndexWriter index;
     private Set<String> discoveredURLs = new TreeSet<String>();
@@ -120,6 +119,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         options.addOption(OptionBuilder.withArgName("numberOfDetailPages").hasArg().withDescription("number of pages per entity").create("numberOfDetailPages"));
         options.addOption(OptionBuilder.withArgName("categoryDir").hasArg().withDescription("search urls").create("categoryDir"));
         options.addOption(OptionBuilder.withArgName("zfinPropertiesDir").hasArg().withDescription("zfin.properties path").create("zfinPropertiesDir"));
+        options.addOption(OptionBuilder.withArgName("createDetailPageList").hasArg().withDescription("Create the list of view pages").create("createDetailPageList"));
     }
 
 
@@ -155,7 +155,8 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             GenerateEntityDetailPageUrls generateUrls = (GenerateEntityDetailPageUrls) context.getBean("detailPageGenerator");
             generateUrls.setDetailEntityProperties(indexRootDir, propertiesFileName);
             generateUrls.setNumberOfRecordsPerEntities(numberOfDetailPages);
-            generateUrls.generateAllUrls();
+            if (createDetailPageList)
+                generateUrls.generateAllUrls();
             loadFromFile(generateUrls.getDetailPageFilePath(), staticIndex);
             URLsToIndex.addAll(staticIndex);
             go();
@@ -190,6 +191,10 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private void parseCommandlineOptions(CommandLine commandLine) throws IOException {
         indexRootDir = commandLine.getOptionValue("indexerDir");
         indexDir = FileUtil.createAbsolutePath(indexRootDir, "new_indexes");
+        String createDetailPagesStr = commandLine.getOptionValue("createDetailPageList");
+        if (createDetailPagesStr != null) {
+            createDetailPageList = Boolean.getBoolean(createDetailPagesStr);
+        }
         loadFromFile(commandLine.getOptionValue("u"), URLsToIndex);
         loadFromFile(commandLine.getOptionValue("e"), exclude);
         threads = Integer.parseInt(commandLine.getOptionValue("t"));
@@ -623,6 +628,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         boolean inScriptTag = false;
         StringBuffer strippedText = new StringBuffer();
         List<String> tmp_urls = new ArrayList<String>();
+        summary.setBody(EntityPresentation.replaceSupTags(summary.getBody()));
         HTMLTokenizer ht = new HTMLTokenizer(new StringReader(summary.getBody()));
         for (Enumeration e = ht.getTokens(); e.hasMoreElements();) {
             Object obj = e.nextElement();
@@ -639,11 +645,31 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 } else if ("frame".equals(tagName)) {
                     new_url = tag.getAttributes().get("src");
                 } else if ("title".equals(tagName) && e.hasMoreElements() && !tag.isEndTag()) {
-                    obj = e.nextElement();
-                    if (obj instanceof TextToken) {
-                        TextToken title = (TextToken) obj;
-                        summary.setTitle(title.getText());
+                    // need to check all tokens until we hit a </title> tag
+                    StringBuffer titleString = new StringBuffer();
+                    while (e.hasMoreElements()) {
+                        obj = e.nextElement();
+                        if (obj instanceof TextToken) {
+                            titleString.append(obj);
+                        }
+                        if (obj instanceof TagToken) {
+                            TagToken internalTag = (TagToken) obj;
+                            if (internalTag.getName().equals("title") && internalTag.isEndTag()) {
+                                summary.setTitle(titleString.toString());
+                                break;
+                            }
+                            if (internalTag.getName().equals("sup")&& !internalTag.isEndTag()) {
+                                titleString.append(" [");
+                                obj = e.nextElement();
+                                if (obj instanceof TextToken)
+                                    titleString.append(((TextToken) obj).getText());
+                            }
+                            if (internalTag.getName().equals("sup") && internalTag.isEndTag()) {
+                                titleString.append("]");
+                            }
+                        }
                     }
+
                 } else if ("script".equals(tagName) && !tag.isEndTag()) {
                     inScriptTag = true;
                 } else if ("script".equals(tagName) && tag.isEndTag()) {
@@ -691,9 +717,14 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             }
         }
 
-        summary.setText(strippedText.toString());
+        summary.setText(stripSpecialCharacters(strippedText.toString()));
         summary.setUrls(new String[tmp_urls.size()]);
         tmp_urls.toArray(summary.getUrls());
+    }
+
+    public String stripSpecialCharacters(String text){
+        text = text.replaceAll("&nbsp;","");
+        return text;
     }
 
 

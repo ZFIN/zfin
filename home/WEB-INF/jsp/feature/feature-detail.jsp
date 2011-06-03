@@ -3,14 +3,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<%--<jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>--%>
+<jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="feature"/>
-
-
-
 
 <table width="100%" border="0">
 <tr>
