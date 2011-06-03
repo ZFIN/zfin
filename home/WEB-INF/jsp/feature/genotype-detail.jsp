@@ -135,39 +135,37 @@
         </c:otherwise>
       </c:choose>
     </th>
-      <td>
+    <td>
   <c:choose>
     <c:when test="${formBean.genotype.suppliers ne null && fn:length(formBean.genotype.suppliers) > 0}">
       <c:forEach var="supplier" items="${formBean.genotype.suppliers}" varStatus="status">
         <c:choose>
           <c:when test="${formBean.genotype.extinct}">
-	    ${supplier.organization.name} &nbsp; &nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" text="Extinct" alt="extinct" width="20" align="top" height="20>
-              <br/>
+	      ${supplier.organization.name}&nbsp;&nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20">&nbsp;
           </c:when>
           <c:otherwise>
             <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
-	      ${supplier.organization.name}</a>
+	      ${supplier.organization.name}</a>          
 	    <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
             <c:if test="${supplier.zirc}">(<a href="http://zebrafish.org/zirc/fish/lineAll.php?OID=${formBean.genotype.zdbID}"><font size="-1">order this</font></a>)
             </c:if>
             <c:if test="${supplier.riken}">(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.genotype.zdbID}"><font size="-1">order this</font></a>)
             </c:if>
+            <c:if test="${!status.last}"><br/></c:if>
           </c:otherwise>
-        </c:choose>
-        <c:if test="${!status.last}"><br/></c:if>
+         </c:choose>
       </c:forEach>
     </c:when>
     <c:otherwise>
-<c:choose>
+      <c:choose>
           <c:when test="${formBean.genotype.extinct}">
- 	     ${supplier.organization.name} <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif" text="Extinct" alt="extinct" width="20" align="top" height="20">
- 	              <br/>
- 	          </c:when>
- 	          <c:otherwise>
+ 	     <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif" alt="extinct" width="20" align="top" height="20">
+ 	  </c:when>
+ 	  <c:otherwise>
  	              No data available
- 	        </c:otherwise>
- 	           </c:choose>
- 	      </c:otherwise>
+ 	  </c:otherwise>
+      </c:choose>
+    </c:otherwise>
   </c:choose>
   </td></tr>
 </table>
@@ -188,7 +186,7 @@
 
 <c:if test="${formBean.genotype.externalNotes ne null && fn:length(formBean.genotype.externalNotes) > 0 }">
 <div class="summary">
-<div class="summaryTitle">Note:</div>
+<b>Note:</b>
   <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
     <div>
     ${extNote.note}
@@ -205,7 +203,7 @@
 <b>GENOTYPE COMPOSITION</b>
 <c:choose>
     <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
-            <table class="summary">
+            <table class="summary rowstripes">
                 <tbody>
                 <tr>
                     <th width="20%">
@@ -226,7 +224,7 @@
 
                 </tr>
                 <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
-                <tr>
+                <zfin:alternating-tr loopName="loop">
                     <td>
                       <c:choose>
                         <c:when test="${genoFeat.feature.numberOfRelatedGenotypes > 1}">
@@ -259,7 +257,7 @@
                             </c:if>
                          </c:forEach>
                     </td>
-                </tr>
+                </zfin:alternating-tr>
                 </c:forEach>
 
                 </tbody>
