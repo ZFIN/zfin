@@ -186,7 +186,7 @@
   </div>
 </authz:authorize>
 
-
+<c:if test="${formBean.genotype.externalNotes ne null && fn:length(formBean.genotype.externalNotes) > 0 }">
 <div class="summary">
 <div class="summaryTitle">Note:</div>
   <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
@@ -198,12 +198,13 @@
      </div>
   </c:forEach>
 </div>
+</c:if>
 
 <c:if test="${!formBean.genotype.wildtype}">
 <div class="summary">
 <b>GENOTYPE COMPOSITION</b>
 <c:choose>
-    <c:when test="${fn:length(formBean.genotypeFeatures) ne null && fn:length(formBean.genotypeFeatures) > 0 }">
+    <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
             <table class="summary">
                 <tbody>
                 <tr>
