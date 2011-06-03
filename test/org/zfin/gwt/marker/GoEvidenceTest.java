@@ -20,6 +20,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -66,10 +67,11 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         String zdbID2 = "ZDB-MRKRGOEV-031125-8";
         goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID2) ;
         assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID2,goEvidenceDTO.getZdbID());
-        assertEquals(0,goEvidenceDTO.getInferredFrom().size());
+        assertEquals(zdbID2, goEvidenceDTO.getZdbID());
+        assertEquals(1,goEvidenceDTO.getInferredFrom().size());
+        assertThat(goEvidenceDTO.getNote().length(), greaterThan(10));
         assertEquals("ZDB-GENE-010717-1",goEvidenceDTO.getMarkerDTO().getZdbID());
-        assertNotNull(goEvidenceDTO.getFlag());
+        assertNull(goEvidenceDTO.getFlag());
 
     }
 
