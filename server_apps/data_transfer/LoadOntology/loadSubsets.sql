@@ -58,36 +58,45 @@ create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(40),
 load from term_subset.unl
   insert into tmp_term_subset;
 
+create temp table tmp_full_term_subset (full_term_zdb_id varchar(40), term_id varchar(40), subset_name varchar(40), subset varchar(10))
+ with no log;
+
+insert into tmp_full_term_subset (full_term_zdb_id, term_id, subset_name, subset)
+select
+(select term_zdb_id from term where term_ont_Id = term_id), term_id, subset_name, subset from tmp_term_subset;
+
 unload to debug
-    select count(*) from tmp_term_subset;
+    select count(*) from tmp_full_term_subset;
 
 !echo "delete from term_subset";
 
-unload to debug
-select * from term_subset
-  where not exists (Select 'x' from tmp_term_subset, term, ontology_subset, ontology, tmp_header
-  	    	   	   where term_id = term_ont_id
-			   and termsub_subset_id = osubset_pk_id
+select count(*) from term_subset
+  where not exists (Select 'x' from tmp_full_term_subset, ontology_subset, ontology, tmp_header
+  	    	   	   where termsub_subset_id = osubset_pk_id
+			   and termsub_term_zdb_id = full_term_zdb_id
 			   and subset_name = osubset_subset_name
 			   and default_namespace = ont_default_namespace
     			   and ont_pk_id = osubset_ont_id)
-  and exists (Select 'x' from tmp_term, term
-      	     	     where term_ont_id = term_id
-		     );
+  and exists (Select 'x' from term as t, ontology, ontology_subset, tmp_header
+                           where termsub_term_zdb_id = t.term_zdb_id and
+                                 ont_ontology_name = default_namespace and
+                                 osubset_ont_id = ont_pk_id and
+                                 termsub_subset_id = osubset_pk_id);
 
-
--- remove all subset records that are not found in the obo fie.
+-- remove all subset records that are not found in the obo file.
 
 delete from term_subset
-  where not exists (Select 'x' from tmp_term_subset, term, ontology_subset, ontology, tmp_header
-  	    	   	   where term_id = term_ont_id
-			   and termsub_subset_id = osubset_pk_id
+  where not exists (Select 'x' from tmp_full_term_subset, ontology_subset, ontology, tmp_header
+  	    	   	   where termsub_subset_id = osubset_pk_id
+			   and termsub_term_zdb_id = full_term_zdb_id
 			   and subset_name = osubset_subset_name
 			   and default_namespace = ont_default_namespace
     			   and ont_pk_id = osubset_ont_id)
-  and exists (Select 'x' from tmp_term, term
-      	     	     where term_ont_id = term_id
-		     );
+  and exists (Select 'x' from term as t, ontology, ontology_subset, tmp_header
+                           where termsub_term_zdb_id = t.term_zdb_id and
+                                 ont_ontology_name = default_namespace and
+                                 osubset_ont_id = ont_pk_id and
+                                 termsub_subset_id = osubset_pk_id);
 
 -- select all term subset records that are about to be inserted.
 
