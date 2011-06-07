@@ -104,7 +104,7 @@ create dba function "informix".regen_genotype_display()
 	delete from tmp_genotype
   		where genotype_handle = '' ;
 
-   let errorHint = "update genotype";
+   let errorHint = "update genotype handle";
 
 	update genotype
   		set geno_handle = (select genotype_handle
@@ -116,6 +116,8 @@ create dba function "informix".regen_genotype_display()
 		  		from tmp_genotype
                   		where geno_zdb_id = genotype_id);
 
+   let errorHint = "update geno_display_name";
+
 	update genotype
   		set geno_display_name = (select genotype_display
 						from tmp_genotype
@@ -124,7 +126,9 @@ create dba function "informix".regen_genotype_display()
 			 			and genotype_display != '')
   		where exists (select 'x'
 		  		from tmp_genotype
-                  		where geno_zdb_id = genotype_id);
+                  		where geno_zdb_id = genotype_id
+				and genotype_display is not null
+				and genotype_display != '');
 
 
     commit work;
