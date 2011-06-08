@@ -278,5 +278,15 @@ public interface ExpressionRepository {
      */
     Set<ExpressionStatement> getExpressionStatements(ExpressionSummaryCriteria expressionCriteria);
 
+    /**
+     * Retrieve all expression result objects that annotate with a secondary term.
+     * @return
+     */
+    public List<ExpressionResult> getExpressionOnSecondaryTerms();
 
+    /**
+     * Retrieve list of expression result records that use obsoleted terms in the annotation.
+     * @return
+     */
+    List<ExpressionResult> getExpressionOnObsoletedTerms();
 }

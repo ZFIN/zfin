@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import junit.framework.Assert;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Before;
@@ -178,8 +179,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionStructure> structures = expRep.retrieveExpressionStructures(pubID);
         assertNotNull(structures);
-        assertTrue(structures.size()>15);
-        assertTrue(structures.size()<40);
+        assertTrue(structures.size() > 15);
+        assertTrue(structures.size() < 40);
     }
 
     // Excluded until we have the ontologyManager loaded into memory for the unit tests.
@@ -239,6 +240,20 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String genotypeID = "ZDB-GENO-030530-1";
         GenotypeExperiment genox = expRep.getGenotypeExperimentByGenotypeID(genotypeID);
         assertNotNull(genox);
+    }
+
+    @Test
+    public void getExpressionOnSecondaryTerms() {
+        List<ExpressionResult> expressionResults = expRep.getExpressionOnSecondaryTerms();
+        assertNotNull(expressionResults);
+        Assert.assertEquals(0, expressionResults.size());
+    }
+
+    @Test
+    public void getExpressionOnObsoletedTerms() {
+        List<ExpressionResult> expressionResults = expRep.getExpressionOnObsoletedTerms();
+        assertNotNull(expressionResults);
+        Assert.assertEquals(0, expressionResults.size());
     }
 
     @Test

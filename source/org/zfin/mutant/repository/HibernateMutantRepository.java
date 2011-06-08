@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
@@ -237,12 +238,12 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       marker = con.morpholino AND " +
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
-        if(isWildtype != null)
+        if (isWildtype != null)
             hql += " AND geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        if(isWildtype != null)
+        if (isWildtype != null)
             query.setBoolean("isWildtype", isWildtype);
 
         // no boundaries defined, all records
@@ -653,13 +654,12 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public FeatureDBLink getSpecificDBLink(Feature feature, String accessionNumber) {
-         Session session = HibernateUtil.currentSession();
-          String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
-                " ftrDbLink.feature = :feature " ;
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
+                " ftrDbLink.feature = :feature ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("feature", feature);
         return (FeatureDBLink) query.uniqueResult();
-
 
 
     }
@@ -871,17 +871,40 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeStatement> getPhenotypesOnObsoletedTerms() {
         Session session = HibernateUtil.currentSession();
+        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
 
         String hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where (phenotype.quality.obsolete = :obsolete OR " +
-                "    phenotype.entity.superterm.obsolete = :obsolete OR " +
-                "    phenotype.entity.subterm.obsolete = :obsolete OR " +
-                "    phenotype.relatedEntity.superterm.obsolete = :obsolete OR " +
-                "    phenotype.relatedEntity.subterm.obsolete = :obsolete)";
+                "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
         Query query = session.createQuery(hql);
         query.setBoolean("obsolete", true);
 
-        return (List<PhenotypeStatement>) query.list();
+        allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete";
+        Query queryEntitySuper = session.createQuery(hql);
+        queryEntitySuper.setBoolean("obsolete", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("obsolete", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
+        Query queryRelatedEntitySuper = session.createQuery(hql);
+        queryRelatedEntitySuper.setBoolean("obsolete", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
+        Query queryRelatedEntitySub = session.createQuery(hql);
+        queryRelatedEntitySub.setBoolean("obsolete", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
+
+        return allPhenotypes;
     }
 
     /**
@@ -904,7 +927,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
 
-     public void runFeatureNameFastSearchUpdate(Feature feature) {
+    public void runFeatureNameFastSearchUpdate(Feature feature) {
         Session session = currentSession();
         Connection connection = session.connection();
         CallableStatement statement = null;
@@ -926,5 +949,49 @@ public class HibernateMutantRepository implements MutantRepository {
                     logger.error(e);
                 }
         }
+    }
+
+    /**
+     * Returns list of phenotype statements that are annotated with a term marked secondary.
+     *
+     * @return list of phenotype statements.
+     */
+    @Override
+    public List<PhenotypeStatement> getPhenotypesOnSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
+
+        String hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.quality is not null AND phenotype.quality.secondary = :secondary";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+
+        allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.secondary = :secondary";
+        Query queryEntitySuper = session.createQuery(hql);
+        queryEntitySuper.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.secondary = :secondary";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.secondary = :secondary";
+        Query queryRelatedEntitySuper = session.createQuery(hql);
+        queryRelatedEntitySuper.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.secondary = :secondary";
+        Query queryRelatedEntitySub = session.createQuery(hql);
+        queryRelatedEntitySub.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
+
+        return allPhenotypes;
     }
 }

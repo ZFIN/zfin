@@ -21,6 +21,7 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -1212,6 +1213,51 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
         
         return expressionStatements;
+    }
+
+    public List<ExpressionResult> getExpressionOnSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+
+        String hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = :secondary";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+
+        allExpressions.addAll((List<ExpressionResult>) query.list());
+
+        hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.secondary = :secondary";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("secondary", true);
+        allExpressions.addAll((List<ExpressionResult>) queryEntitySub.list());
+
+        return allExpressions;
+    }
+
+    /**
+     * Retrieve list of expression result records that use obsoleted terms in the annotation.
+     * @return
+     */
+    @Override
+    public List<ExpressionResult> getExpressionOnObsoletedTerms() {
+        Session session = HibernateUtil.currentSession();
+        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+
+        String hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.obsolete = :obsolete";
+        Query query = session.createQuery(hql);
+        query.setBoolean("obsolete", true);
+
+        allExpressions.addAll((List<ExpressionResult>) query.list());
+
+        hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.obsolete = :obsolete";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("obsolete", true);
+        allExpressions.addAll((List<ExpressionResult>) queryEntitySub.list());
+
+        return allExpressions;
     }
 
 }

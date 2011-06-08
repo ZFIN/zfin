@@ -5,9 +5,9 @@
         <th>#</th>
         <th width="150">Publication ID</th>
         <th>Title</th>
-        <th width="250">Super Term Name</th>
-        <th width="250">Quality Term Name</th>
-        <th>Quality Term ID</th>
+        <th width="250">Phenotype</th>
+        <th width="250">Obsoleted Term Name</th>
+        <th>Obsoleted Term ID</th>
     </tr>
 <#list root.rows as row>
     <#if row_index%2==0>

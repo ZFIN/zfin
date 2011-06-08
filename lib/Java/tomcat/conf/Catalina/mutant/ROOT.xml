@@ -13,7 +13,7 @@
            user="zfinner" password="Rtwm4ts"
            driverClass="com.informix.jdbc.IfxDriver" 
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high;IFX_ISOLATION_LEVEL=DR"
            maxPoolSize="8" minPoolSize="6" />
 
   <Resource name="jdbc/gbrowse" auth="Container"
@@ -28,7 +28,7 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
            user="zfinner" password="Rtwm4ts"
            driverClass="com.informix.jdbc.IfxDriver" 
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high;IFX_ISOLATION_LEVEL=DR"
            maxPoolSize="8" minPoolSize="2" />
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"

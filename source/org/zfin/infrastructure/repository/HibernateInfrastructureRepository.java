@@ -998,7 +998,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Connection connection = session.connection();
         PreparedStatement statement = null;
         ResultSet rs = null;
-        int batchSize = 50;
+        int batchSize = 200;
         int accumulatedBatchCounter = 0;
         int currentBatchSize = 0;
         boolean error = false;

@@ -298,4 +298,11 @@ public class MutantRepositoryTest {
         assertEquals(0, phenotypes.size());
     }
 
+    @Test
+    public void phenotypesWithSecondaryTerms() {
+        List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnSecondaryTerms();
+        assertNotNull(phenotypes);
+        assertEquals(0, phenotypes.size());
+    }
+
 }

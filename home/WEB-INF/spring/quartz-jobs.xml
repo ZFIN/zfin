@@ -219,7 +219,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Quality Ontology"/>
                     </map>
@@ -243,7 +243,7 @@
                         <entry key="oboFileUrl"
                                value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Gene Ontology"/>
                     </map>
@@ -267,7 +267,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Anatomy Ontology"/>
                     </map>
@@ -291,7 +291,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Spatial Ontology"/>
                     </map>

@@ -268,5 +268,13 @@ public interface MutantRepository {
      */
     List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
     void runFeatureNameFastSearchUpdate(Feature feature);
+
+    /**
+     * Returns list of phenotype statements that are annotated with a term marked secondary.
+     *
+     * @return list of pheno statements.
+     */
+    List<PhenotypeStatement> getPhenotypesOnSecondaryTerms();
+
 }
 

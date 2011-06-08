@@ -1,8 +1,8 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
 import org.obo.dataadapter.OBOParseEngine;
@@ -10,11 +10,14 @@ import org.obo.dataadapter.OBOParseException;
 import org.obo.datamodel.*;
 import org.obo.history.SessionHistoryList;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyMetadata;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -197,9 +200,23 @@ public class LoadOntology extends AbstractScriptWrapper {
                 List<String> row = new ArrayList<String>();
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
-                row.add(pheno.getEntity().getSuperterm().getTermName());
-                row.add(pheno.getQuality().getTermName());
-                row.add(pheno.getQuality().getZdbID());
+                row.add(pheno.getDisplayName());
+                GenericTerm obsoletedTerm = null;
+                if (pheno.getEntity().getSuperterm().isObsolete()) {
+                    obsoletedTerm = pheno.getEntity().getSuperterm();
+                } else if (pheno.getEntity().getSubterm() != null && pheno.getEntity().getSubterm().isObsolete()) {
+                    obsoletedTerm = pheno.getEntity().getSubterm();
+                } else if (pheno.getQuality() != null && pheno.getQuality().isObsolete()) {
+                    obsoletedTerm = pheno.getQuality();
+                } else if (pheno.getRelatedEntity() != null) {
+                    PostComposedEntity entity = pheno.getRelatedEntity();
+                    if (entity.getSuperterm() != null && entity.getSuperterm().isObsolete())
+                        obsoletedTerm = entity.getSuperterm();
+                    if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
+                        obsoletedTerm = entity.getSubterm();
+                }
+                row.add(obsoletedTerm.getTermName());
+                row.add(obsoletedTerm.getOboID());
                 rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
@@ -208,26 +225,105 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.warning("Found phenotypes with obsoleted terms.");
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
         }
+        // check if any secondary IDs are used in any expression annotation:
+        List<ExpressionResult> obsoletedTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
+        if (obsoletedTermsUsedExpression != null && obsoletedTermsUsedExpression.size() > 0) {
+            LOG.warn("Expression annotations found that use obsoleted term ids");
+            StringBuffer buffer = new StringBuffer();
+            String messageHeader = "Expression annotations found that use obsoleted term ids";
+            buffer.append(messageHeader);
+            report.addMessageToSection(messageHeader, "Post-Processing");
+            List<List<String>> rows = new ArrayList<List<String>>(obsoletedTermsUsedExpression.size());
+            for (ExpressionResult expressionResult : obsoletedTermsUsedExpression) {
+                List<String> row = new ArrayList<String>();
+                row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
+                row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
+                row.add(expressionResult.getEntity().getDisplayName());
+                GenericTerm obsoletedTerm = null;
+                if (expressionResult.getEntity().getSuperterm().isObsolete()) {
+                    obsoletedTerm = expressionResult.getEntity().getSuperterm();
+                } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isObsolete()) {
+                    obsoletedTerm = expressionResult.getEntity().getSubterm();
+                }
+                if (obsoletedTerm != null) {
+                    row.add(obsoletedTerm.getTermName());
+                    row.add(obsoletedTerm.getOboID());
+                    rows.add(row);
+                }
+            }
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " expression annotations with obsolete terms");
+            cronReport.warning("Found expressions with obsolete terms.");
+            cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
+        }
         // check if any secondary IDs are used in any annotation:
-        List<List<String>> secondaryTermsUsed = dataMap.get(UnloadFile.SECONDARY_TERMS_USED.getValue());
+        List<PhenotypeStatement> secondaryTermsUsed = RepositoryFactory.getMutantRepository().getPhenotypesOnSecondaryTerms();
         if (secondaryTermsUsed != null && secondaryTermsUsed.size() > 0) {
             LOG.warn("Pato annotations found that use secondary term ids");
             StringBuffer buffer = new StringBuffer();
             String messageHeader = "Pato annotations found that use secondary term ids";
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
-            for (List<String> row : secondaryTermsUsed) {
-                StringBuilder builder = new StringBuilder();
-                for (String column : row) {
-                    builder.append(column);
-                    builder.append("/t");
+            List<List<String>> rows = new ArrayList<List<String>>(secondaryTermsUsed.size());
+            for (PhenotypeStatement pheno : secondaryTermsUsed) {
+                List<String> row = new ArrayList<String>();
+                row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
+                row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
+                row.add(pheno.getDisplayName());
+                GenericTerm secondaryTerm = null;
+                if (pheno.getEntity().getSuperterm().isSecondary()) {
+                    secondaryTerm = pheno.getEntity().getSuperterm();
+                } else if (pheno.getEntity().getSubterm() != null && pheno.getEntity().getSubterm().isSecondary()) {
+                    secondaryTerm = pheno.getEntity().getSubterm();
+                } else if (pheno.getQuality() != null && pheno.getQuality().isSecondary()) {
+                    secondaryTerm = pheno.getQuality();
+                } else if (pheno.getRelatedEntity() != null) {
+                    PostComposedEntity entity = pheno.getRelatedEntity();
+                    if (entity.getSuperterm() != null && entity.getSuperterm().isSecondary())
+                        secondaryTerm = entity.getSuperterm();
+                    if (entity.getSubterm() != null && entity.getSubterm().isSecondary())
+                        secondaryTerm = entity.getSubterm();
                 }
-                LOG.warn(builder.toString());
-                report.addMessageToSection(builder.toString(), "Post-Processing");
-                buffer.append(builder.toString());
-                buffer.append("\r");
+                row.add(secondaryTerm.getTermName());
+                row.add(secondaryTerm.getOboID());
+                rows.add(row);
             }
-            cronJobUtil.emailReport("Ontology Loader: " + ontology.getOntologyName(), buffer.toString(), ScriptExecutionStatus.INFO);
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " annotations with secondary terms");
+            cronReport.warning("Found phenotypes with secondary terms.");
+            cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
+        }
+        // check if any secondary IDs are used in any expression annotation:
+        List<ExpressionResult> secondaryTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnSecondaryTerms();
+        if (secondaryTermsUsedExpression != null && secondaryTermsUsedExpression.size() > 0) {
+            LOG.warn("Expression annotations found that use secondary term ids");
+            StringBuffer buffer = new StringBuffer();
+            String messageHeader = "Expression annotations found that use secondary term ids";
+            buffer.append(messageHeader);
+            report.addMessageToSection(messageHeader, "Post-Processing");
+            List<List<String>> rows = new ArrayList<List<String>>(secondaryTermsUsedExpression.size());
+            for (ExpressionResult expressionResult : secondaryTermsUsedExpression) {
+                List<String> row = new ArrayList<String>();
+                row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
+                row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
+                row.add(expressionResult.getEntity().getDisplayName());
+                GenericTerm secondaryTerm = null;
+                if (expressionResult.getEntity().getSuperterm().isSecondary()) {
+                    secondaryTerm = expressionResult.getEntity().getSuperterm();
+                } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isSecondary()) {
+                    secondaryTerm = expressionResult.getEntity().getSubterm();
+                }
+                row.add(secondaryTerm.getTermName());
+                row.add(secondaryTerm.getOboID());
+                rows.add(row);
+            }
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " expression annotations with secondary terms");
+            cronReport.warning("Found expressions with secondary terms.");
+            cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
         }
         // missing terms with OBO id report.
         if (dataMap.get(UnloadFile.TERMS_MISSING_OBO_ID.getValue()) != null) {
@@ -316,6 +412,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDbScriptFile(String dbScriptFile) {
+        LOG.setLevel(Level.DEBUG);
         File file = new File(dbScriptFile);
         if (!file.exists()) {
             LOG.error("Could not find script file " + file.getAbsolutePath());
