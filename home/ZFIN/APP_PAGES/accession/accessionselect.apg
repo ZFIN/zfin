@@ -107,19 +107,11 @@
   <?/MIBLOCK> <!-- no ZDB in the accession num -->
 
 
-  <!--  THIS BLOCK HANDLES ZDB ID SEARCHES  -->
+  <!--  THIS BLOCK REDIRECTS ZDB_IDs TO ZFIN_jump -->
 
   <?MIBLOCK COND="$(>,$(POSITION,$aname,ZDB),0)">
     
-     <?MICOMMENT> ** Most of this logic really shouldn't be here, it should be in an SPL function
-                     that can be shared in lots of places.  Currently (3/4/09) a method like that
-                     exists for marker - so we'll try that method first, and only if it fails
-                     will the rest of the logic in this page go forward **   <?/MICOMMENT>
-
-     <?MICOMMENT> ** First, try get_mrkr_url($aname) - then split on the zdb_id if that fails ** <?/MICOMMENT>
-     <?MISQL SQL="select get_mrkr_url('$aname') from marker where mrkr_zdb_id = '$aname';">
-       <?MIVAR NAME="$full_url">$1<?/MIVAR>
-     <?/MISQL>     
+     <?MIVAR NAME="$full_url">/cgi-bin/ZFIN_jump?record=$aname<?/MIVAR>
 
      <?MIBLOCK COND="$(XST,$full_url)">
        <?MIVAR>
@@ -127,91 +119,7 @@
          window.location.replace("$full_url")
        </script>
        <?/MIVAR>
-     <?MIELSE> <?MICOMMENT> ** didn't find full url, build one from the zdb_id ** <?/MICOMMENT>
-
-
-     <?MIVAR NAME=$start_page>NULL<?/MIVAR>
-     <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
-
-      <?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-labview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENO),0)">/action/genotype/genotype-detail?zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">/action/genotype/genotype-detail?zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
-
-<?MICOMMENT>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-markerview.apg<?/MIVAR>	
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,CDNA),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENEP),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,MRPHLNO),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,CONSTRCT),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REGION),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC_END),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
-<?/MICOMMENT>
-
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$OID<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ALT),0)">/action/feature/feature-detail?zdbID=$OID<?/MIVAR>
-
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
-
-
-
-      <?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
-          the best place to go right now. For direct submission pub, like Thisse, there isn't 
-          a truely all figures page, but all figures page per probe. 
-      <?/MICOMMENT>
-      <?MIBLOCK COND="$(>,$(POSITION,$aname,XPAT),0)">
-        <?MISQL SQL="
-		select xpatex_source_zdb_id,jtype, xpatex_probe_feature_zdb_id
-                  from expression_experiment
-		       join publication on xpatex_source_zdb_id = zdb_id
-	         where xpatex_zdb_id = '$aname';">
-         <?/MISQL>
-    	 <?MIVAR NAME=xpat_pub_id>$1<?/MIVAR>
-    	 <?MIVAR NAME=xpat_pub_type>$2<?/MIVAR>
-   	 <?MIVAR NAME=xpat_probe_id>$3<?/MIVAR>
-   	 <?MIVAR NAME=$conditional_probe><?/MIVAR>
-    	 <?MIVAR COND="$(EC,$xpat_pub_type,Unpublished)">
-	    $(SETVAR,$conditional_probe,fxallfig_probe_zdb_id=$xpat_probe_id)
-    	 <?/MIVAR>
-         <?MIVAR NAME=$start_page>aa-fxallfigures.apg&$conditional_probe<?/MIVAR>
-         <?MIVAR>$(SETVAR,$OID,$xpat_pub_id)<?/MIVAR>
-      <?/MIBLOCK>   
-
-    <?MIBLOCK COND="$(EC,$start_page,NULL)">
-      <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
-      </form>
-      <?/MIBLOCK>
-    <?MIBLOCK COND="$(>,$(POSITION,$start_page,action),0)">
-    <?MIVAR>
-    <script>
-      window.location.replace("$start_page")
-    </script>
-      <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIBLOCK COND="$(=,$(POSITION,$start_page,action),0)">
-    <script>
-      <?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID")<?/MIVAR>
-    </script>
-    <?/MIBLOCK>
-  <!-- ends if valid start page, not null  -->
-
-
-  <?/MIBLOCK> <?MICOMMENT> ** ends XST $full_url ** <?/MICOMMENT>
-
+     <?/MIBLOCK> <?MICOMMENT> ** ends XST $full_url ** <?/MICOMMENT>
   <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
 
 
