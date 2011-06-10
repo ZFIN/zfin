@@ -413,7 +413,7 @@ var ENTER_KEY = 13;
           <?MIBLOCK COND="$(NXST,$hide_sequence)">
             <td valign=top>
               <b>Sequence:</b>           
-              <input type=button value="Reverse" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){reverseSequence(document.newdata.newmrkrReportedSequence.value, 'reversed')}};"> 
+              <input type=button value="Reverse" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){reverseSequence(document.newdata.newmrkrReportedSequence.value, 'reversed')};"> 
               <input type=button value="Complement" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){complementSequence(document.newdata.newmrkrReportedSequence.value, 'complemented')};"> 
               <input type=button value="mRNA-->MO" onClick="reverseComplementSequence();"> 
             </td>
