@@ -152,7 +152,7 @@
 <!--|LN54_CONTACT_EMAIL|-->		zfinadmn\@zfin.org
 
 # zfin administrative email
-<!--|ZFIN_ADMIN|-->			knight\@uoneuro.uoregon.edu hbauer\@uoneuro.uoregon.edu staylor\@cs.uoregon.edu
+<!--|ZFIN_ADMIN|-->			knight\@uoneuro.uoregon.edu mochla\@zfin.org staylor\@cs.uoregon.edu
 
 # web administration email
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu ndunn\@uoregon.edu 

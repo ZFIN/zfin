@@ -125,7 +125,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: curators\@zfin.org,hbauer\@uoneuro.uoregon.edu,zfinadmn\@zfin.org\n";
+    print MAIL "To: curators\@zfin.org,mochla\@zfin.org,zfinadmn\@zfin.org\n";
 #    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
     print MAIL "Subject: Publications Entered Today\n";
     while($line = <REPORT>)
