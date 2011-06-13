@@ -60,3 +60,4 @@ aa-externalredirect.apg
 aa-externallink.apg
 aa-pubmedredirect.apg
 aa-pubmedlink.apg
+aa-markergoview.apg
