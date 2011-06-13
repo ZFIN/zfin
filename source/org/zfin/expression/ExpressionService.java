@@ -14,6 +14,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
@@ -135,4 +136,37 @@ public class ExpressionService {
         return markerExpression;
     }
 
+    /**
+     * Return the set of obsoleted terms from an expression record.
+     * Could be one or both terms.
+     *
+     * @param expressionResult expression
+     * @return set of obsolseted terms
+     */
+    public static Set<GenericTerm> getObsoleteTerm(ExpressionResult expressionResult) {
+        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(2);
+        if (expressionResult.getEntity().getSuperterm().isObsolete()) {
+            obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
+        } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isObsolete()) {
+            obsoletedTerms.add(expressionResult.getEntity().getSubterm());
+        }
+        return obsoletedTerms;
+    }
+
+    /**
+     * Return the set of obsoleted terms from an expression record.
+     * Could be one or both terms.
+     *
+     * @param expressionResult expression
+     * @return set of obsolseted terms
+     */
+    public static Set<GenericTerm> getSecondaryTerm(ExpressionResult expressionResult) {
+        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(2);
+        if (expressionResult.getEntity().getSuperterm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
+        } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isSecondary()) {
+            obsoletedTerms.add(expressionResult.getEntity().getSubterm());
+        }
+        return obsoletedTerms;
+    }
 }

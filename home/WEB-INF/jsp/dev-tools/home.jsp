@@ -78,7 +78,12 @@
         <a href="/action/dev-tools/phenotype-curation-history-statements">History: Phenotype Statements</a>
     </td>
 </tr>
-
+<tr>
+    <td></td>
+    <td>
+        <a href="/action/ontology/reports">Ontology Reports</a>
+    </td>
+</tr>
 <tr>
     <td>&nbsp;</td>
     <td>&nbsp;</td>

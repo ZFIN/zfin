@@ -112,6 +112,54 @@ public class PhenotypeService {
         return distinctPhenoStatements;
     }
 
+    /**
+     * Returns obsoleted terms from the possible 5-term combination.
+     *
+     * @param phenotypeStatement phenotype statement
+     * @return list of obsoleted terms
+     */
+    public static Set<GenericTerm> getObsoleteTerm(PhenotypeStatement phenotypeStatement) {
+        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(3);
+        if (phenotypeStatement.getEntity().getSuperterm().isObsolete()) {
+            obsoletedTerms.add(phenotypeStatement.getEntity().getSuperterm());
+        } else if (phenotypeStatement.getEntity().getSubterm() != null && phenotypeStatement.getEntity().getSubterm().isObsolete()) {
+            obsoletedTerms.add(phenotypeStatement.getEntity().getSubterm());
+        } else if (phenotypeStatement.getQuality() != null && phenotypeStatement.getQuality().isObsolete()) {
+            obsoletedTerms.add(phenotypeStatement.getQuality());
+        } else if (phenotypeStatement.getRelatedEntity() != null) {
+            PostComposedEntity entity = phenotypeStatement.getRelatedEntity();
+            if (entity.getSuperterm() != null && entity.getSuperterm().isObsolete())
+                obsoletedTerms.add(entity.getSuperterm());
+            if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
+                obsoletedTerms.add(entity.getSubterm());
+        }
+        return obsoletedTerms;
+    }
+
+    /**
+     * Returns obsoleted terms from the possible 5-term combination.
+     *
+     * @param phenotypeStatement phenotype statement
+     * @return list of obsoleted terms
+     */
+    public static Set<GenericTerm> getSecondaryTerm(PhenotypeStatement phenotypeStatement) {
+        Set<GenericTerm> secondaryTerms = new HashSet<GenericTerm>(3);
+        if (phenotypeStatement.getEntity().getSuperterm().isSecondary()) {
+            secondaryTerms.add(phenotypeStatement.getEntity().getSuperterm());
+        } else if (phenotypeStatement.getEntity().getSubterm() != null && phenotypeStatement.getEntity().getSubterm().isSecondary()) {
+            secondaryTerms.add(phenotypeStatement.getEntity().getSubterm());
+        } else if (phenotypeStatement.getQuality() != null && phenotypeStatement.getQuality().isSecondary()) {
+            secondaryTerms.add(phenotypeStatement.getQuality());
+        } else if (phenotypeStatement.getRelatedEntity() != null) {
+            PostComposedEntity entity = phenotypeStatement.getRelatedEntity();
+            if (entity.getSuperterm() != null && entity.getSuperterm().isSecondary())
+                secondaryTerms.add(entity.getSuperterm());
+            if (entity.getSubterm() != null && entity.getSubterm().isSecondary())
+                secondaryTerms.add(entity.getSubterm());
+        }
+        return secondaryTerms;
+    }
+
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
             if (o1 == null)

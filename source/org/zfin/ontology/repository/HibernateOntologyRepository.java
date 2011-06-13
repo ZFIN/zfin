@@ -6,10 +6,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
@@ -43,7 +45,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     @Override
-    public Map<String,TermDTO> getTermDTOsFromOntology(Ontology ontology) {
+    public Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology) {
         String sql = " " +
                 "select" +
                 "        this_.term_zdb_id as term1_43_2_," + // 0
@@ -71,62 +73,62 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "    where" +
                 "        this_.term_ontology= :ontology " +
                 "        and this_.term_is_secondary= :secondary  " +
-                "  " ;
+                "  ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setBoolean("secondary",false);
+        query.setBoolean("secondary", false);
         query.setString("ontology", ontology.getOntologyName());
 //        query.setMaxResults(5);
 
         List<Object[]> queryList = query.list();
 
-        Map<String,TermDTO> termDTOMap = new HashMap<String,TermDTO>();
+        Map<String, TermDTO> termDTOMap = new HashMap<String, TermDTO>();
         // pass one get the results into the map
-        for(Object[] result : queryList){
+        for (Object[] result : queryList) {
             // denormalized over child, parent, and alias
             TermDTO termDTO = termDTOMap.get(result[0].toString());
-            if(termDTO==null){
+            if (termDTO == null) {
                 termDTO = new TermDTO();
                 termDTO.setZdbID(result[0].toString());
                 termDTO.setName(result[1].toString());
                 termDTO.setOboID(result[2].toString());
-                termDTO.setOntology(DTOConversionService.convertToOntologyDTO(Ontology.getOntology(result[3].toString()))) ;
+                termDTO.setOntology(DTOConversionService.convertToOntologyDTO(Ontology.getOntology(result[3].toString())));
                 termDTO.setObsolete(Boolean.valueOf(result[4].toString()));
-                if(result[5]!=null){
+                if (result[5] != null) {
                     termDTO.setComment(result[5].toString());
                 }
-                if(result[6]!=null){
+                if (result[6] != null) {
                     termDTO.setDefinition(result[6].toString());
                 }
             }
 
             // handle alias
-            if(result[7] != null ){
-                Set<String> aliases = termDTO.getAliases() ;
-                if(aliases == null){
-                    aliases = new TreeSet<String>() ;
+            if (result[7] != null) {
+                Set<String> aliases = termDTO.getAliases();
+                if (aliases == null) {
+                    aliases = new TreeSet<String>();
                 }
-                aliases.add(result[7].toString()) ;
+                aliases.add(result[7].toString());
                 termDTO.setAliases(aliases);
             }
 
             // handle subset info
-            if(result[12] != null ){
-                Set<String> subsets = termDTO.getSubsets() ;
-                if(subsets == null){
-                    subsets = new TreeSet<String>() ;
+            if (result[12] != null) {
+                Set<String> subsets = termDTO.getSubsets();
+                if (subsets == null) {
+                    subsets = new TreeSet<String>();
                 }
-                subsets.add(result[12].toString()) ;
+                subsets.add(result[12].toString());
                 termDTO.setSubsets(subsets);
             }
 
 
             // if a child term .. . . .
-            if(result[8] != null){
+            if (result[8] != null) {
                 TermDTO childDTO = new TermDTO();
                 childDTO.setZdbID(result[8].toString());
                 childDTO.setRelationshipType(result[9].toString());
                 Set<TermDTO> childTerms = termDTO.getChildrenTerms();
-                if(childTerms==null){
+                if (childTerms == null) {
                     childTerms = new HashSet<TermDTO>();
                 }
                 childTerms.add(childDTO);
@@ -134,34 +136,34 @@ public class HibernateOntologyRepository implements OntologyRepository {
             }
 
             // if a parent term .. . . .
-            if(result[10] != null){
+            if (result[10] != null) {
                 TermDTO parentDTO = new TermDTO();
                 parentDTO.setZdbID(result[10].toString());
                 parentDTO.setRelationshipType(result[11].toString());
                 Set<TermDTO> parentTerms = termDTO.getParentTerms();
-                if(parentTerms==null){
+                if (parentTerms == null) {
                     parentTerms = new HashSet<TermDTO>();
                 }
                 parentTerms.add(parentDTO);
                 termDTO.setParentTerms(parentTerms);
             }
 
-            termDTOMap.put(result[0].toString(),termDTO);
+            termDTOMap.put(result[0].toString(), termDTO);
         }
 
-        return termDTOMap ;
+        return termDTOMap;
     }
 
     @Override
     public int getNumberTermsForOntology(Ontology ontology) {
-        String hql =  " " +
+        String hql = " " +
                 " select count(*) from GenericTerm t  " +
                 " where t.ontology = :ontology  " +
                 " and t.secondary = :secondary " +
                 "";
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
-        query.setParameter("ontology",ontology);
+        query.setParameter("ontology", ontology);
         query.setBoolean("secondary", false);
         return Integer.valueOf(query.uniqueResult().toString()).intValue();
     }
@@ -190,11 +192,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<GenericTermRelationship> getAllRelationships(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
         String hql = " select distinct relationships from GenericTermRelationship as relationships";
-        if (ontology != null){
+        if (ontology != null) {
             hql += " where   termOne.ontology = :ontology OR termTwo.ontology = :ontology";
         }
         Query query = session.createQuery(hql);
-        if (ontology != null){
+        if (ontology != null) {
             query.setParameter("ontology", ontology);
         }
         return (List<GenericTermRelationship>) query.list();
@@ -367,7 +369,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public GenericTerm getTermByName(String termName, Ontology ontology) {
-        return getTermByName(termName,ontology.getIndividualOntologies());
+        return getTermByName(termName, ontology.getIndividualOntologies());
     }
 
     @Override
@@ -509,9 +511,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public List<GenericTerm> getChildTerms(GenericTerm goTerm, int distance) {
         String hql = " select t from TransitiveClosure tc join tc.child as t " +
-                " where tc.root.id = :goTermId " ;
-        if(distance>=0){
-            hql += " and tc.distance = :distance " ;
+                " where tc.root.id = :goTermId ";
+        if (distance >= 0) {
+            hql += " and tc.distance = :distance ";
         }
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
@@ -523,7 +525,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     public List<GenericTerm> getAllChildTerms(GenericTerm goTerm) {
-        return getChildTerms(goTerm,-1);
+        return getChildTerms(goTerm, -1);
     }
 
     @Override
@@ -542,33 +544,34 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * If ROOT is PATO:0001236 then QUALITY_PROCESS   // ZDB-TERM-070117-1237
      * If ROOT is PATO:0001241 then QUALITY_QUALITIES //ZDB-TERM-070117-1242
      * // else return the term's ontology
+     *
      * @param term
      * @return
      */
     @Override
     public Ontology getProcessOrPhysicalObjectQualitySubOntologyForTerm(Term term) {
 
-        int value ;
+        int value;
 
         String sqlQualityProcesses = "select count(*) from all_term_contains atc  " +
                 "where " +
                 "atc.alltermcon_container_zdb_id=:rootQualityTerm " +
                 "and  " +
-                "atc.alltermcon_contained_zdb_id=:termZdbID " ;
+                "atc.alltermcon_contained_zdb_id=:termZdbID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sqlQualityProcesses)
-                .setString("termZdbID",term.getZdbID());
+                .setString("termZdbID", term.getZdbID());
 
 
-        query.setString("rootQualityTerm","ZDB-TERM-070117-1237") ;
-        value = Integer.valueOf(query.uniqueResult().toString()) ;
-        if(value>0){
-            return Ontology.QUALITY_PROCESSES ;
+        query.setString("rootQualityTerm", "ZDB-TERM-070117-1237");
+        value = Integer.valueOf(query.uniqueResult().toString());
+        if (value > 0) {
+            return Ontology.QUALITY_PROCESSES;
         }
 
-        query.setString("rootQualityTerm","ZDB-TERM-070117-1242") ;
-        value = Integer.valueOf(query.uniqueResult().toString()) ;
-        if(value>0){
+        query.setString("rootQualityTerm", "ZDB-TERM-070117-1242");
+        value = Integer.valueOf(query.uniqueResult().toString());
+        if (value > 0) {
             return Ontology.QUALITY_QUALITIES;
         }
 
@@ -595,6 +598,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Get obo id from relationship
+     *
      * @param term
      * @return
      */
@@ -621,9 +625,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "    where" +
                 "        this_.term_ontology= :ontology " +
                 "        and this_.term_is_secondary= :secondary  " +
-                "  " ;
+                "  ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setBoolean("secondary",false);
+        query.setBoolean("secondary", false);
         query.setString("ontology", stage.getOntologyName());
 //        query.setMaxResults(5);
 
@@ -631,7 +635,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
         Set<TermDTO> termDTOMap = new TreeSet<TermDTO>();
         // pass one get the results into the map
-        for(Object[] result : queryList){
+        for (Object[] result : queryList) {
             // denormalized over child, parent, and alias
             TermDTO termDTO = new TermDTO();
             termDTO.setZdbID(result[0].toString());
@@ -639,42 +643,41 @@ public class HibernateOntologyRepository implements OntologyRepository {
             termDTO.setOboID(result[2].toString());
             termDTO.setOntology(DTOConversionService.convertToOntologyDTO(Ontology.getOntology(result[3].toString())));
             termDTO.setObsolete(Boolean.valueOf(result[4].toString()));
-            if(result[5]!=null){
+            if (result[5] != null) {
                 termDTO.setComment(result[5].toString());
             }
-            if(result[6]!=null){
+            if (result[6] != null) {
                 termDTO.setDefinition(result[6].toString());
             }
 
             termDTOMap.add(termDTO);
         }
 
-        return termDTOMap ;
+        return termDTOMap;
     }
 
     @Override
-    public Set<String> getAllChildZdbIDs(String zdbID){
+    public Set<String> getAllChildZdbIDs(String zdbID) {
 
         String sql = " select atc.alltermcon_contained_zdb_id from all_term_contains atc " +
                 "join term t on atc.alltermcon_contained_zdb_id=t.term_zdb_id " +
                 "where " +
                 "atc.alltermcon_container_zdb_id=:rootZdbID " +
                 "and " +
-                "t.term_is_secondary='f' " ;
+                "t.term_is_secondary='f' ";
 
-                List<Object> results = HibernateUtil.currentSession().createSQLQuery(sql)
+        List<Object> results = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("rootZdbID", zdbID)
-                .list()
-                ;
+                .list();
 
         Set<String> returnZdbIDs = new HashSet<String>();
 
-        for(Object result : results){
+        for (Object result : results) {
             returnZdbIDs.add(result.toString());
         }
 
 
-        return returnZdbIDs ;
+        return returnZdbIDs;
 
     }
 
@@ -704,7 +707,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * Retrieves firstN terms of each ontology.
      * If firstN = 0 retrieve all terms
      * If firstN < 0 return null
-     *
+     * <p/>
      * Note: No terms marked as secondary are retrieved (those terms are removed
      * from the obo file and only function as an alias and a place holder for a
      * previously used oboID so it does not get re-used.
@@ -737,8 +740,125 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return allTerms;
     }
 
-    private List<Ontology> getDistinctOntologies
-            () {
+    /**
+     * Retrieve all terms that replace an obsoleted term.
+     *
+     * @param obsoletedTerm obsoleted Term
+     * @return list of terms
+     */
+    @Override
+    public List<ReplacementTerm> getReplacedByTerms(GenericTerm obsoletedTerm) {
+        if (!obsoletedTerm.isObsolete())
+            return null;
+        Session session = HibernateUtil.currentSession();
+        String hql = " from ReplacementTerm " +
+                " where obsoletedTerm = :obsoletedTerm";
+        Query query = session.createQuery(hql);
+        query.setParameter("obsoletedTerm", obsoletedTerm);
+        return query.list();
+    }
+
+    /**
+     * Retrieve all terms that can be considered for a given obsoleted term.
+     * @param obsoletedTerm obsoleted Term
+     * @return list of terms
+     */
+    @Override
+    public List<ConsiderTerm> getConsiderTerms(GenericTerm obsoletedTerm) {
+        if (!obsoletedTerm.isObsolete())
+            return null;
+        Session session = HibernateUtil.currentSession();
+        String hql = " from ConsiderTerm " +
+                " where obsoletedTerm = :obsoletedTerm";
+        Query query = session.createQuery(hql);
+        query.setParameter("obsoletedTerm", obsoletedTerm);
+        return query.list();
+    }
+
+    /**
+     * Retrieve phenotypes with secondary terms annotated.
+     * @return phenotypes
+     */
+    @Override
+    public List<PhenotypeStatement> getPhenotypesOnSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
+
+        String hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.quality is not null AND phenotype.quality.secondary = :secondary";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+
+        allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.secondary = :secondary";
+        Query queryEntitySuper = session.createQuery(hql);
+        queryEntitySuper.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.secondary = :secondary";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.secondary = :secondary";
+        Query queryRelatedEntitySuper = session.createQuery(hql);
+        queryRelatedEntitySuper.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.secondary = :secondary";
+        Query queryRelatedEntitySub = session.createQuery(hql);
+        queryRelatedEntitySub.setBoolean("secondary", true);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
+
+        return allPhenotypes;
+    }
+
+    /**
+     * Retrieve expressions with secondary terms annotated.
+     * @return expressions
+     */
+    @Override
+    public List<ExpressionResult> getExpressionsOnSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+
+        String hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = :secondary";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+
+        allExpressions.addAll((List<ExpressionResult>) query.list());
+
+        hql = "select result from ExpressionResult result " +
+                "     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.secondary = :secondary";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("secondary", true);
+        allExpressions.addAll((List<ExpressionResult>) queryEntitySub.list());
+
+        return allExpressions;
+    }
+
+    /**
+     * Retrieve go evidences with secondary terms annotated.
+     * @return expressions
+     */
+    @Override
+    public List<MarkerGoTermEvidence> getGoEvidenceOnSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select goEvidence from MarkerGoTermEvidence goEvidence " +
+                "     where goEvidence.goTerm.secondary = :secondary";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+
+        return (List<MarkerGoTermEvidence>) query.list();
+    }
+
+    private List<Ontology> getDistinctOntologies() {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct ontology from GenericTerm order by ontology";
         Query query = session.createQuery(hql);

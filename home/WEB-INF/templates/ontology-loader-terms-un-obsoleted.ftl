@@ -1,18 +1,18 @@
 <#include "header-template.ftl">
-<span class="section-title">Annotations that use obsoleted Terms</span>
-
-<span>(See also the <a href="http://${domain}/action/ontology/obsolete-term-report">online report</a>)
-</span>
-
 <table class="rowstripes">
     <tr>
+        <th colspan="2" class="header-table">The following terms were un-obsoleted</th>
+    </tr>
+</table>
+<hr/>
+<table class="rowstripes">
+    <tr class="header-table">
         <th>#</th>
-        <th width="150">Publication ID</th>
-        <th>Title</th>
-        <th width="250">Phenotype</th>
-        <th width="250">Obsoleted Term</th>
-        <th>Replaced By</th>
-        <th>Consider</th>
+        <th width="150">Term ID</th>
+        <th >OBO ID</th>
+        <th width="250">Term Name</th>
+        <th >Ontology</th>
+        <th >Obsolete</th>
     </tr>
 <#list root.rows as row>
     <#if row_index%2==0>
@@ -26,7 +26,6 @@
     <td>${row[2]}</td>
     <td>${row[3]}</td>
     <td>${row[4]}</td>
-    <td>${row[5]}</td>
 </tr>
 </#list>
 </table>

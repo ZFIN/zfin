@@ -15,6 +15,8 @@ public abstract class EntityPresentation {
     protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
     public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
     public static final String ZFIN_JUMP_URL = "/ZFIN_jump?record=";
+    public static String domain;
+    public static final String CURATION_URI = "?MIval=aa-curation.apg&";
 
     /**
      * Uses ZfinProperties to get webdriver link information
@@ -30,7 +32,10 @@ public abstract class EntityPresentation {
 
     protected static StringBuilder getTomcatHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<a href=\"/action/");
+        if (domain != null)
+            sb.append("<a href=\"" + domain + "/action/");
+        else
+            sb.append("<a href=\"/action/");
         return sb;
     }
 

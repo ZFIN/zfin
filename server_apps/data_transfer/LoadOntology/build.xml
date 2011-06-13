@@ -75,8 +75,8 @@
     </target>
 
     <target name="load-ontology" description="Run the ontology loader">
-        <property name="scriptFiles" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
-        <java classname="org.zfin.ontology.datatransfer.LoadOntology" fork="yes" maxmemory="256m"
+        <property name="scriptFiles" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+        <java classname="org.zfin.ontology.datatransfer.LoadOntology" fork="yes" maxmemory="512m"
               classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>

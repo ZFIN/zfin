@@ -1,7 +1,9 @@
 package org.zfin.ontology.repository;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
@@ -204,4 +206,36 @@ public interface OntologyRepository {
      * @return list of terms
      */
     List<String> getFirstNTermsPerOntology(int firstNIds);
+
+    /**
+     * Retrieve all terms that replace an obsoleted term.
+     * @param obsoletedTerm obsoleted Term
+     * @return list of terms
+     */
+    List<ReplacementTerm> getReplacedByTerms(GenericTerm obsoletedTerm);
+
+    /**
+     * Retrieve all terms that can be considered for a given obsoleted term.
+     * @param obsoletedTerm obsoleted Term
+     * @return list of terms
+     */
+    List<ConsiderTerm> getConsiderTerms(GenericTerm obsoletedTerm);
+
+    /**
+     * Retrieve phenotypes with secondary terms annotated.
+     * @return phenotypes
+     */
+    List<PhenotypeStatement> getPhenotypesOnSecondaryTerms();
+
+    /**
+     * Retrieve expressions with secondary terms annotated.
+     * @return expressions
+     */
+    List<ExpressionResult> getExpressionsOnSecondaryTerms();
+
+    /**
+     * Retrieve go evidences with secondary terms annotated.
+     * @return expressions
+     */
+    List<MarkerGoTermEvidence> getGoEvidenceOnSecondaryTerms();
 }

@@ -19,6 +19,7 @@
 <table class="summary">
     <tr>
         <th>Id</th>
+        <th>Thread Id</th>
         <th>Name</th>
         <th>State</th>
         <th>Suspended</th>
@@ -26,11 +27,10 @@
     <c:forEach var="thread" items="${allThreads}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td>${loop.index}</td>
+            <td>${thread.threadId}</td>
             <td><a href="single-thread-info?threadID=${thread.threadId}"> ${thread.threadName}</a>
                 <a href="single-thread-info?threadID=${thread.threadId}" class="popup-link data-popup-link"/>
-                <c:set var="methodName" value="${zfn:lastZfinCall(thread.threadId)}"/>
-                                <c:if test="${methodName != null}">
-                    <br/><span style="float:right;">[${methodName}]</span></c:if>
+                ${zfn:lastZfinCall(thread.threadId)}
             </td>
             <td>${thread.threadState}</td>
             <td>${thread.suspended}</td>

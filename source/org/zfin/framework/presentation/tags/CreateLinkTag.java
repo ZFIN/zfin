@@ -65,6 +65,7 @@ public class CreateLinkTag extends BodyTagSupport {
     private String name;
     private boolean longVersion;
     private boolean suppressPopupLink;
+    private boolean curationLink;
 
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -116,11 +117,11 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof TermDTO)
             link = TermDTOPresentation.getLink((TermDTO) o);
         else if (o instanceof ExpressionResult)
-            link = ExpressionResultPresentation.getLink((ExpressionResult) o, suppressPopupLink);
+            link = ExpressionResultPresentation.getLink((ExpressionResult) o, suppressPopupLink, curationLink);
         else if (o instanceof ExpressionStatement)
             link = ExpressionStatementPresentation.getLink((ExpressionStatement) o, suppressPopupLink);
         else if (o instanceof PhenotypeStatement)
-            link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink);
+            link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink, curationLink);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;
@@ -219,5 +220,13 @@ public class CreateLinkTag extends BodyTagSupport {
 
     public void setSuppressPopupLink(boolean suppressPopupLink) {
         this.suppressPopupLink = suppressPopupLink;
+    }
+
+    public boolean isCurationLink() {
+        return curationLink;
+    }
+
+    public void setCurationLink(boolean curationLink) {
+        this.curationLink = curationLink;
     }
 }

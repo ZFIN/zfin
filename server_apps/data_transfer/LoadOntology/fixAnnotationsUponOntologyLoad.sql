@@ -206,6 +206,9 @@ update expression_result
 		       and term_zdb_id = sec_zdb_id);
 
 -- update sub terms
+unload to 'debug'
+  select * from sec_oks;
+
 unload to 'expression-subterm-updates.unl'
     select distinct xpatres_zdb_id, sub.term_zdb_id, sub.term_name, replacement.term_zdb_id, replacement.term_name
       from expression_result, term as sub, term as replacement, sec_oks
@@ -223,6 +226,27 @@ update expression_result
   where exists (Select term_zdb_id from term, sec_oks
   	       	       where term_is_Secondary = 't'
 		       and xpatres_subterm_zdb_id = term_zdb_id
+		       and term_zdb_id = sec_zdb_id);
+
+
+-- update go evidences
+unload to 'go-evidence-updates.unl'
+    select distinct mrkrgoev_source_zdb_id, mrkrgoev_mrkr_zdb_id, sub.term_zdb_id, sub.term_name, replacement.term_zdb_id, replacement.term_name
+      from marker_go_term_evidence, term as sub, term as replacement, sec_oks
+      where exists (Select 'x' from term
+                       where term_is_Secondary = 't'
+                   and mrkrgoev_term_zdb_id = term_zdb_id)
+      and sub.term_zdb_id = mrkrgoev_term_zdb_id
+      and replacement.term_zdb_id = prim_zdb_id
+      and sec_zdb_id = mrkrgoev_term_zdb_id;
+
+update marker_go_term_evidence
+  set mrkrgoev_term_zdb_id = (Select prim_zdb_id
+      			        from sec_oks
+				where sec_zdb_id = mrkrgoev_term_zdb_id)
+  where exists (Select term_zdb_id from term, sec_oks
+  	       	       where term_is_Secondary = 't'
+		       and mrkrgoev_term_zdb_id = term_zdb_id
 		       and term_zdb_id = sec_zdb_id);
 
 

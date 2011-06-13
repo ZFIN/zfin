@@ -1,11 +1,9 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
-import org.zfin.ontology.Term;
 
 /**
  * Display the full list of post composed terms and their hyperlink.
@@ -17,14 +15,15 @@ public class ExpressionResultPresentation extends ExpressionStatementPresentatio
     /**
      * Create hyperlink to term detail page.
      *
-     * @param expressionResult ExpressionResult
+     * @param expressionResult  ExpressionResult
      * @param suppressPopupLink hide the popup link icon
      * @return hyperlink hyperlink
      */
-    public static String getLink(ExpressionResult expressionResult, boolean suppressPopupLink) {
+    public static String getLink(ExpressionResult expressionResult, boolean suppressPopupLink, boolean curationLink) {
         if (expressionResult == null)
             return null;
-
+        if (curationLink)
+            return getCurationLink(expressionResult);
         ExpressionStatement expressionStatement = new ExpressionStatement();
         expressionStatement.setEntity(expressionResult.getEntity());
         expressionStatement.setExpressionFound(expressionResult.isExpressionFound());
@@ -32,6 +31,10 @@ public class ExpressionResultPresentation extends ExpressionStatementPresentatio
         return getLink(expressionStatement, suppressPopupLink);
     }
 
+    private static String getCurationLink(ExpressionResult expressionResult) {
+        return getWebdriverLink(CURATION_URI+"&pubcur_c_tab=FX", expressionResult.getExpressionExperiment().getPublication().getZdbID(),
+                "edit");
+    }
 
 
     public static String getName(ExpressionResult expressionResult) {

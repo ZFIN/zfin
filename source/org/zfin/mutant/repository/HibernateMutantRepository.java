@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
@@ -25,6 +24,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -993,5 +993,102 @@ public class HibernateMutantRepository implements MutantRepository {
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
 
         return allPhenotypes;
+    }
+
+    /**
+     * Returns list of MarkerGoTermEvidence statements that are annotated with a term marked obsolete.
+     *
+     * @return list of MarkerGoTermEvidence statements.
+     */
+    @Override
+    public List<MarkerGoTermEvidence> getGoEvidenceOnObsoletedTerms() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select goEvidence from MarkerGoTermEvidence goEvidence " +
+                "     where goEvidence.goTerm.obsolete = :obsolete";
+        Query query = session.createQuery(hql);
+        query.setBoolean("obsolete", true);
+
+        return (List<MarkerGoTermEvidence>) query.list();
+    }
+
+    /**
+     * Retrieve a histogram of phenotype terms usage.
+     *
+     * @return list of histograms
+     */
+    @Override
+    public Map<TermHistogramBean, Long> getTermPhenotypeUsage() {
+        Session session = HibernateUtil.currentSession();
+        Map<TermHistogramBean, Long> histogram = new TreeMap<TermHistogramBean, Long>();
+
+        // retrieve entity.superterm
+        String hql = "select phenotype.entity.superterm.zdbID, phenotype.entity.superterm.termName," +
+                "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
+                "     group by phenotype.entity.superterm.zdbID,  phenotype.entity.superterm.termName" +
+                " order by count(phenotype.entity.superterm) desc";
+        Query query = session.createQuery(hql);
+        List<Object[]> result = query.list();
+        if (result != null) {
+            for (Object[] row : result) {
+                TermHistogramBean termUsageHistogram = new TermHistogramBean();
+                termUsageHistogram.setTermID((String) row[0]);
+                termUsageHistogram.setTermName((String) row[1]);
+                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+            }
+        }
+        // retrieve entity.subterm
+        hql = "select phenotype.entity.subterm.zdbID, phenotype.entity.subterm.termName," +
+                "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
+                "     group by phenotype.entity.subterm.zdbID,  phenotype.entity.subterm.termName" +
+                " order by count(phenotype.entity.subterm) desc";
+        Query queryEntitySubterm = session.createQuery(hql);
+        List<Object[]> resultEntitySubterm = queryEntitySubterm.list();
+        if (resultEntitySubterm != null) {
+            for (Object[] row : resultEntitySubterm) {
+                TermHistogramBean termUsageHistogram = new TermHistogramBean();
+                termUsageHistogram.setTermID((String) row[0]);
+                termUsageHistogram.setTermName((String) row[1]);
+                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+            }
+        }
+        // retrieve related entity.superterm
+        hql = "select phenotype.relatedEntity.superterm.zdbID, phenotype.relatedEntity.superterm.termName," +
+                "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
+                "     group by phenotype.relatedEntity.superterm.zdbID,  phenotype.relatedEntity.superterm.termName" +
+                " order by count(phenotype.relatedEntity.superterm) desc";
+        Query queryRelatedEntitySuperbterm = session.createQuery(hql);
+        List<Object[]> resultRelatedEntitySuperterm = queryRelatedEntitySuperbterm.list();
+        if (resultRelatedEntitySuperterm != null) {
+            for (Object[] row : resultRelatedEntitySuperterm) {
+                TermHistogramBean termUsageHistogram = new TermHistogramBean();
+                termUsageHistogram.setTermID((String) row[0]);
+                termUsageHistogram.setTermName((String) row[1]);
+                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+            }
+        }
+        // retrieve related entity.subterm
+        hql = "select phenotype.relatedEntity.subterm.zdbID, phenotype.relatedEntity.subterm.termName," +
+                "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
+                "     group by phenotype.relatedEntity.subterm.zdbID,  phenotype.relatedEntity.subterm.termName" +
+                " order by count(phenotype.relatedEntity.subterm) desc";
+        Query queryRelatedEntitySubterm = session.createQuery(hql);
+        List<Object[]> resultRelatedEntitySubterm = queryRelatedEntitySubterm.list();
+        if (resultRelatedEntitySubterm != null) {
+            for (Object[] row : resultRelatedEntitySubterm) {
+                TermHistogramBean termUsageHistogram = new TermHistogramBean();
+                termUsageHistogram.setTermID((String) row[0]);
+                termUsageHistogram.setTermName((String) row[1]);
+                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+            }
+        }
+        return histogram;
+    }
+
+    private void addToHistogram(TermHistogramBean termUsageHistogram, Long number, Map<TermHistogramBean, Long> histogram) {
+        Long termUsage = histogram.get(termUsageHistogram);
+        if (termUsage != null)
+            histogram.put(termUsageHistogram, termUsage + number);
+        else
+            histogram.put(termUsageHistogram, number);
     }
 }

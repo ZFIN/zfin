@@ -10,7 +10,7 @@ import org.zfin.ontology.Term;
 public class TermPresentation extends EntityPresentation {
 
     private static final String POSTCOMPOSED_TERM_SEPARATOR = "&nbsp;";
-    private static final String uri = "ontology/term-detail?termID=";
+    public static final String uri = "ontology/term-detail?termID=";
     private static final String popupUri = "ontology/term-detail-popup?termID=";
     private static final String postComposedUri = "ontology/post-composed-term-detail?";
     private static final String postComposedPopupUri = "ontology/post-composed-term-detail-popup?";

@@ -33,6 +33,9 @@ update sec_oks
       		       from term
 		       where term_ont_id = sec_id);
 
+unload to 'debug'
+  select * from sec_oks;
+
 create temp table sec_unload
   (
     prim_id varchar(50),
@@ -60,22 +63,7 @@ unload to debug
 		from term
 		      where term_is_secondary = 't' AND term_ontology= 'quality';
 
-unload to debug
-select *
-		from  term
-		where term_ont_id = 'PATO:0001641'
-		      AND term_is_secondary = 't';
-
-delete from sec_oks
-where exists ( select 'x'
-		from term
-		where term_ont_id = sec_id
-		      AND term_is_secondary = 't');
-
 !echo "Terms that were merged (became secondary): ";
-
-unload to debug
-    select * from sec_oks;
 
 update term
   set term_is_secondary = 't'

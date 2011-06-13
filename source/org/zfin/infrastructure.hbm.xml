@@ -348,4 +348,22 @@
     </class>
 
 
+    <class name="org.zfin.ontology.ReplacementTerm" table="OBSOLETE_TERM_REPLACEMENT">
+        <id name="id">
+            <column name="obstermrep_pk_id" not-null="true"/>
+        </id>
+
+        <many-to-one name="obsoletedTerm" column="obstermrep_term_zdb_id" />
+        <many-to-one name="replacementTerm" column="obstermrep_term_replacement_zdb_id" />
+    </class>
+
+    <class name="org.zfin.ontology.ConsiderTerm" table="OBSOLETE_TERM_SUGGESTION">
+        <id name="id">
+            <column name="obstermsug_pk_id" not-null="true"/>
+        </id>
+
+        <many-to-one name="obsoletedTerm" column="obstermsug_term_zdb_id" />
+        <many-to-one name="considerTerm" column="obstermsug_term_suggestion_zdb_id" />
+    </class>
+
 </hibernate-mapping>

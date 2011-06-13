@@ -19,6 +19,7 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MorpholinoSequence;
@@ -26,6 +27,7 @@ import org.zfin.util.DateUtil;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -296,6 +298,20 @@ public class MutantRepositoryTest {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertNotNull(phenotypes);
         assertEquals(0, phenotypes.size());
+    }
+
+    //@Test
+    public void getGoEvidenceOnObsoletedTerms() {
+        List<MarkerGoTermEvidence> goEvidence = mutantRepository.getGoEvidenceOnObsoletedTerms();
+        assertNotNull(goEvidence);
+        assertEquals(0, goEvidence.size());
+    }
+
+    @Test
+    public void getTermPhenotypeUsage() {
+        Map<TermHistogramBean, Long> termHistogramBeanLongMap = mutantRepository.getTermPhenotypeUsage();
+        assertNotNull(termHistogramBeanLongMap);
+        assertTrue(termHistogramBeanLongMap.size() > 0);
     }
 
     @Test

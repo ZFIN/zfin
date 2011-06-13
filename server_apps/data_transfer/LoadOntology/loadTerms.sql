@@ -402,12 +402,43 @@ load from term_obsolete.unl
 !echo "Number of total obsoletes in obo file";
 
 unload to debug
-    select count(*) from tmp_obsoletes;
+    select * from tmp_obsoletes;
 
-delete from tmp_obsoletes
-where exists ( select 'x'
-		from tmp_obsoletes obsolete, term term
+
+-- set all other terms back to obsolete = 'f'
+
+-- obsoletes from term table
+create temp table tmp_term_obsoletes (term_id varchar(50))
+with no log ;
+
+insert into tmp_term_obsoletes (term_id)
+  select term.term_ont_id from term as term , tmp_term_onto_no_dups as t where 
+    term.term_ont_id = t.term_id 
+    and term.term_is_obsolete = 't'
+    and t.term_is_obsolete = 'f';
+    	     
+unload to debug
+    select * from tmp_term_obsoletes;
+
+update term set term_is_obsolete = 'f'
+  where exists (select 'x' from tmp_term_obsoletes as obs
+                where obs.term_id = term_ont_id);
+
+unload to 'terms_un_obsoleted.txt'
+ select t.* from term as t, tmp_term_obsoletes as obs
+  where obs.term_id = t.term_ont_id;
+
+unload to debug
+ select * from tmp_obsoletes as obsolete
+  where exists ( select 'x'
+		from term term
 		where term.term_ont_id = obsolete.term_id
+		      AND term.term_is_obsolete = 't');
+
+delete from tmp_obsoletes 
+  where exists ( select 'x'
+		from term term
+		where term.term_ont_id = term_id
 		      AND term.term_is_obsolete = 't');
 
 !echo "Terms that were obsoleted: ";
@@ -421,7 +452,6 @@ update term
 			from tmp_obsoletes
 			where term_ont_id = term_id);
 
-
 !echo "load term replacements";
 
 create temp table tmp_replaced (replaced_id varchar(50), term_id varchar(50), termrep varchar(20))
@@ -430,12 +460,22 @@ with no log;
 load from term_replaced.unl
   insert into tmp_replaced;
 
+unload to debug
+    select * from tmp_replaced;
+
+unload to debug
+ select * from obsolete_term_replacement
+  where exists (Select 'x' from term, tmp_term_onto_with_dups
+  	       	       where term_ont_id = term_id
+		       and term_zdb_id = obstermrep_term_zdb_id);
+
 delete from obsolete_term_replacement
   where exists (Select 'x' from term, tmp_term_onto_with_dups
   	       	       where term_ont_id = term_id
 		       and term_zdb_id = obstermrep_term_zdb_id);
 
-select count(*) from obsolete_term_replacement;
+unload to debug
+  select * from obsolete_term_replacement;
 
 insert into obsolete_term_replacement (obstermrep_term_zdb_id, obstermrep_term_replacement_zdb_id)
   select a.term_zdb_id, b.term_zdb_id
@@ -443,7 +483,25 @@ insert into obsolete_term_replacement (obstermrep_term_zdb_id, obstermrep_term_r
     where a.term_ont_id = term_id
     and b.term_ont_id = replaced_id;
 
-!echo "LOAD SUGGESTIONS";
+unload to debug
+  select * from obsolete_term_replacement;
+
+!echo "LOAD SUGGESTIONS aka consider";
+
+create temp table tmp_consider (term_id varchar(50), replaced_id varchar(50), termrep varchar(20))
+with no log;
+
+load from term_consider.unl
+  insert into tmp_consider;
+
+unload to debug
+    select * from tmp_consider;
+
+unload to debug
+ select * from obsolete_term_suggestion
+  where exists (Select 'x' from term, tmp_term_onto_with_dups
+  	       	       where term_ont_id = term_id
+		       and term_zdb_id = obstermsug_term_zdb_id);
 
 delete from obsolete_term_suggestion
   where exists (Select 'x' from term, tmp_term_onto_with_dups

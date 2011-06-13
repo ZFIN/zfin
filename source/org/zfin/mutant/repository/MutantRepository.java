@@ -8,11 +8,13 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -272,9 +274,21 @@ public interface MutantRepository {
     /**
      * Returns list of phenotype statements that are annotated with a term marked secondary.
      *
-     * @return list of pheno statements.
+     * @return list of PhenotypeStatement statements.
      */
     List<PhenotypeStatement> getPhenotypesOnSecondaryTerms();
 
+    /**
+     * Returns list of MarkerGoTermEvidence statements that are annotated with a term marked obsolete.
+     *
+     * @return list of MarkerGoTermEvidence statements.
+     */
+    List<MarkerGoTermEvidence> getGoEvidenceOnObsoletedTerms();
+
+    /**
+     * Retrieve a histogram of phenotype terms usage.
+     * @return  list of histograms
+     */
+    Map<TermHistogramBean, Long> getTermPhenotypeUsage();
 }
 

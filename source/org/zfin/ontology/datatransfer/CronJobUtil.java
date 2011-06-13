@@ -21,6 +21,7 @@ public class CronJobUtil {
 
     private String[] recipients;
     private AbstractZfinMailSender smtpServer = new IntegratedJavaMailSender();
+    private Map<String, Object> objectMap = new HashMap<String, Object>();
 
     public CronJobUtil(String[] recipients) {
         this.recipients = recipients;
@@ -65,6 +66,7 @@ public class CronJobUtil {
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<String, Object>();
             root.put("root", report);
+            root.putAll(objectMap);
             template.process(root, writer);
             writer.flush();
         } catch (IOException e) {
@@ -77,6 +79,10 @@ public class CronJobUtil {
         LOG.debug("Email Body:");
         LOG.debug(writer.getBuffer().toString());
         emailReport(report.getJobName(), writer.getBuffer().toString(), report.getStatus(), filename);
+    }
+
+    public void addObjectToTemplateMap(String name, Object object){
+        objectMap.put(name, object);
     }
 
     private static final Logger LOG = Logger.getLogger(CronJobUtil.class);

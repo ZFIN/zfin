@@ -17,28 +17,35 @@ public class PhenotypePresentation extends TermPresentation {
     private static final String popupUri = "phenotype/phenotype-statement-popup?id=";
 
 
-    public static String getLink(PhenotypeStatement phenotypeStatement, boolean suppressPopupLink) {
+    public static String getLink(PhenotypeStatement phenotypeStatement, boolean suppressPopupLink, boolean curationLink) {
         if (phenotypeStatement == null)
             return null;
+        if (curationLink)
+            return getCurationLink(phenotypeStatement);
         StringBuilder phenotypeLink = new StringBuilder(100);
         phenotypeLink.append(getNormalTagNote(phenotypeStatement));
-        phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()), 
-               getNameWithoutNormalText(phenotypeStatement)));
+        phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()),
+                getNameWithoutNormalText(phenotypeStatement)));
         if (!suppressPopupLink) {
             phenotypeLink.append(getPopupLink(phenotypeStatement));
         }
         return phenotypeLink.toString();
     }
 
+    private static String getCurationLink(PhenotypeStatement phenotypeStatement) {
+        return getWebdriverLink(CURATION_URI+"&pubcur_c_tab=PHENO&OID=", phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
+                "edit");
+    }
+
     /**
      * In the context of a phenotype statement, this name sounds a little funny,
      * but the idea is to show the names of all the entities in the correct formatting.
-     *
+     * <p/>
      * That means it should look like the getLink method in terms of syntax and order,
      * and just differ in that nothing is a link.
-     * 
-     * @param phenotypeStatement
-     * @return
+     *
+     * @param phenotypeStatement  PhenotypeStatement
+     * @return  name
      */
     public static String getName(PhenotypeStatement phenotypeStatement) {
         if (phenotypeStatement == null)
@@ -53,6 +60,7 @@ public class PhenotypePresentation extends TermPresentation {
     /**
      * Splitting the tag notes out from the rest of the phenotypeStatement allows one part to be linked
      * and the other not, while still keeping the display consistent between getName and getLink
+     *
      * @param phenotypeStatement
      * @return
      */
@@ -66,10 +74,10 @@ public class PhenotypePresentation extends TermPresentation {
     }
 
 
-
     /**
      * We don't want to link the (normal or recovered) part, so this method creates
      * the bit without the normal explanation
+     *
      * @param phenotypeStatement
      * @return
      */
@@ -77,7 +85,7 @@ public class PhenotypePresentation extends TermPresentation {
         if (phenotypeStatement == null)
             return null;
         StringBuilder phenotypeName = new StringBuilder(100);
-                phenotypeName.append(getName(phenotypeStatement.getEntity()));
+        phenotypeName.append(getName(phenotypeStatement.getEntity()));
         phenotypeName.append(PHENOTYPE_STATEMENT_SEPARATOR);
         phenotypeName.append(getName(phenotypeStatement.getQuality()));
         if (phenotypeStatement.getRelatedEntity() != null) {
@@ -101,7 +109,7 @@ public class PhenotypePresentation extends TermPresentation {
     public static String getPopupLink(PhenotypeStatement phenotypeStatement) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(getTomcatPopupLink(popupUri, String.valueOf(phenotypeStatement.getId()),
-                "Phenotype definitions and synonyms" ));
+                "Phenotype definitions and synonyms"));
         return sb.toString();
 
     }

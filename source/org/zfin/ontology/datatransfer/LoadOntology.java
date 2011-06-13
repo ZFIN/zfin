@@ -1,7 +1,7 @@
 package org.zfin.ontology.datatransfer;
 
-import org.apache.commons.cli.*;
-import org.apache.log4j.Level;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
@@ -11,13 +11,13 @@ import org.obo.datamodel.*;
 import org.obo.history.SessionHistoryList;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyMetadata;
-import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.*;
+import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -77,9 +77,9 @@ public class LoadOntology extends AbstractScriptWrapper {
     /**
      * Used from within the web app. No initialization needed.
      *
-     * @param oboFile
-     * @param scriptFiles
-     * @throws IOException
+     * @param oboFile     obo file name
+     * @param scriptFiles array of script files
+     * @throws IOException file not found exception
      */
     public LoadOntology(String oboFile, String... scriptFiles) throws IOException {
         initializeLoad(oboFile, scriptFiles);
@@ -192,6 +192,7 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
+        TermPresentation.domain = "http://" + ZfinPropertiesEnum.DOMAIN_NAME;
         List<PhenotypeStatement> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
@@ -201,28 +202,25 @@ public class LoadOntology extends AbstractScriptWrapper {
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
                 row.add(pheno.getDisplayName());
-                GenericTerm obsoletedTerm = null;
-                if (pheno.getEntity().getSuperterm().isObsolete()) {
-                    obsoletedTerm = pheno.getEntity().getSuperterm();
-                } else if (pheno.getEntity().getSubterm() != null && pheno.getEntity().getSubterm().isObsolete()) {
-                    obsoletedTerm = pheno.getEntity().getSubterm();
-                } else if (pheno.getQuality() != null && pheno.getQuality().isObsolete()) {
-                    obsoletedTerm = pheno.getQuality();
-                } else if (pheno.getRelatedEntity() != null) {
-                    PostComposedEntity entity = pheno.getRelatedEntity();
-                    if (entity.getSuperterm() != null && entity.getSuperterm().isObsolete())
-                        obsoletedTerm = entity.getSuperterm();
-                    if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
-                        obsoletedTerm = entity.getSubterm();
+                Set<GenericTerm> obsoletedTerms = PhenotypeService.getObsoleteTerm(pheno);
+                StringBuilder hyperlink = new StringBuilder();
+                StringBuilder replaceLinks = new StringBuilder();
+                StringBuilder considerLinks = new StringBuilder();
+                for (GenericTerm obsoletedTerm : obsoletedTerms){
+                    hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
+                    replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
+                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm))  ;
                 }
-                row.add(obsoletedTerm.getTermName());
-                row.add(obsoletedTerm.getOboID());
+                row.add(hyperlink.toString());
+                row.add(replaceLinks.toString());
+                row.add(considerLinks.toString());
                 rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
             cronReport.appendToSubject(" - " + rows.size() + " annotations with obsoleted PATO terms");
             cronReport.warning("Found phenotypes with obsoleted terms.");
+            cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
         }
         // check if any secondary IDs are used in any expression annotation:
@@ -239,17 +237,19 @@ public class LoadOntology extends AbstractScriptWrapper {
                 row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
                 row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
-                GenericTerm obsoletedTerm = null;
-                if (expressionResult.getEntity().getSuperterm().isObsolete()) {
-                    obsoletedTerm = expressionResult.getEntity().getSuperterm();
-                } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isObsolete()) {
-                    obsoletedTerm = expressionResult.getEntity().getSubterm();
+                Set<GenericTerm> obsoletedTerms = ExpressionService.getObsoleteTerm(expressionResult);
+                StringBuilder hyperlink = new StringBuilder();
+                StringBuilder replaceLinks = new StringBuilder();
+                StringBuilder considerLinks = new StringBuilder();
+                for (GenericTerm obsoletedTerm : obsoletedTerms){
+                    hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
+                    replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
+                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm))  ;
                 }
-                if (obsoletedTerm != null) {
-                    row.add(obsoletedTerm.getTermName());
-                    row.add(obsoletedTerm.getOboID());
-                    rows.add(row);
-                }
+                row.add(hyperlink.toString());
+                row.add(replaceLinks.toString());
+                row.add(considerLinks.toString());
+                rows.add(row);
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -334,6 +334,15 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-terms-missing-obo-id.ftl", cronReport);
         }
+        // missing terms with OBO id report.
+        if (dataMap.get(UnloadFile.TERMS_UN_OBSOLETED_ID.getValue()) != null) {
+            List<List<String>> rows = dataMap.get(UnloadFile.TERMS_UN_OBSOLETED_ID.getValue());
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " terms are un-obsoleted");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-terms-un-obsoleted.ftl", cronReport);
+        }
         // new terms report.
         if (dataMap.get(UnloadFile.NEW_TERMS.getValue()) != null) {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_TERMS.getValue());
@@ -383,6 +392,37 @@ public class LoadOntology extends AbstractScriptWrapper {
         updateExpressionReport();
     }
 
+    private StringBuilder getListOfHyperlinksOfConsiderTerms(GenericTerm obsoletedTerm) {
+        List<ConsiderTerm> considerTerms = RepositoryFactory.getOntologyRepository().getConsiderTerms(obsoletedTerm);
+        StringBuilder considerBuilder = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(considerTerms)) {
+            for (ConsiderTerm term : considerTerms) {
+                String hyperlink = TermPresentation.getLink(term.getConsiderTerm(), true);
+                considerBuilder.append(hyperlink);
+                considerBuilder.append(", ");
+            }
+            considerBuilder.deleteCharAt(considerBuilder.length() - 1);
+            considerBuilder.deleteCharAt(considerBuilder.length() - 1);
+        }
+        return considerBuilder;
+    }
+
+    private StringBuilder getListOfHyperlinksOfReplacedByTerms(GenericTerm obsoletedTerm) {
+        List<ReplacementTerm> replacedByTerms = RepositoryFactory.getOntologyRepository().getReplacedByTerms(obsoletedTerm);
+        StringBuilder builder = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(replacedByTerms)) {
+            LOG.info("creating replaced by Term list");
+            for (ReplacementTerm term : replacedByTerms) {
+                String hyperlink = TermPresentation.getLink(term.getReplacementTerm(), true);
+                builder.append(hyperlink);
+                builder.append(", ");
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            builder.deleteCharAt(builder.length() - 1);
+        }
+        return builder;
+    }
+
     private void updateExpressionReport() {
         // secondary terms replaced report.
         replacedTerms(dataMap.get(UnloadFile.EXPRESSION_SUPERTERM_UPDATES.getValue()), "Super term", "Expression");
@@ -412,7 +452,6 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDbScriptFile(String dbScriptFile) {
-        LOG.setLevel(Level.DEBUG);
         File file = new File(dbScriptFile);
         if (!file.exists()) {
             LOG.error("Could not find script file " + file.getAbsolutePath());
@@ -692,6 +731,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         TERM_XREF("term_xref.unl"),
         ONTOLOGY_HEADER("ontology_header.unl"),
         TERMS_MISSING_OBO_ID("terms_missing_obo_id.txt"),
+        TERMS_UN_OBSOLETED_ID("terms_un_obsoleted.txt"),
         NEW_TERMS("new_terms.unl"),
         UPDATED_TERMS("updated_terms.unl"),
         EXPRESSION_SUPERTERM_UPDATES("expression-superterm-updates.unl"),

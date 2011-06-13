@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
@@ -162,15 +164,15 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // choose a term that has both children and parents
         // size
         Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
-        assertThat(t.getChildTermRelationships().size(),greaterThan(4));
-        assertThat(t.getChildTermRelationships().size(),lessThan(10));
-        assertThat(t.getChildTerms().size(),greaterThan(4));
-        assertThat(t.getChildTerms().size(),lessThan(10));
-        assertEquals(t.getChildTermRelationships().size(),t.getChildTerms().size());
+        assertThat(t.getChildTermRelationships().size(), greaterThan(4));
+        assertThat(t.getChildTermRelationships().size(), lessThan(10));
+        assertThat(t.getChildTerms().size(), greaterThan(4));
+        assertThat(t.getChildTerms().size(), lessThan(10));
+        assertEquals(t.getChildTermRelationships().size(), t.getChildTerms().size());
         assertEquals(1, t.getParentTerms().size());
         assertEquals(1, t.getParentTermRelationships().size());
-        assertThat(t.getAllDirectlyRelatedTerms().size(),greaterThan(6));
-        assertThat(t.getAllDirectlyRelatedTerms().size(),lessThan(10));
+        assertThat(t.getAllDirectlyRelatedTerms().size(), greaterThan(6));
+        assertThat(t.getAllDirectlyRelatedTerms().size(), lessThan(10));
 
         for (TermRelationship tr : t.getChildTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermOne().getZdbID());
@@ -195,7 +197,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // make sure we get the proper parent
         Set<TermDTO> parentTerms = postTermDTO.getParentTerms();
         assertNotNull(parentTerms);
-        assertTrue(parentTerms.size() >=1);
+        assertTrue(parentTerms.size() >= 1);
 
         // make sure we have the proper children
         Set<TermDTO> childTermDTOs = antTermDTO.getChildrenTerms();
@@ -260,6 +262,26 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getReplacedByTerm() {
+        // obsoleted term with a replaced_by term suggestion
+        // repairsome
+        GenericTerm obsoletedTerm = ontologyRepository.getTermByOboID("GO:0000108");
+        List<ReplacementTerm> allTerms = ontologyRepository.getReplacedByTerms(obsoletedTerm);
+        assertNotNull(allTerms);
+        assertEquals(1, allTerms.size());
+    }
+
+    @Test
+    public void getConsiderTerms() {
+        // obsoleted term with three consider terms
+        // nucleosome modeling
+        GenericTerm obsoletedTerm = ontologyRepository.getTermByOboID("GO:0016583");
+        List<ConsiderTerm> allTerms = ontologyRepository.getConsiderTerms(obsoletedTerm);
+        assertNotNull(allTerms);
+        assertEquals(1, allTerms.size());
+    }
+
+    @Test
     public void lookupByTermNameExcludesSecondaryTerms() {
         // PATO term that exists as a secondary term in our term table.
         // ensure that only one term is retrieved.
@@ -287,7 +309,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getTermByNameForComposedOntologies(){
+    public void getTermByNameForComposedOntologies() {
         String termName = "retinal isomerase activity";
         try {
             GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.GO_BP_MF);
@@ -298,5 +320,23 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
             fail("An error occurred");
 
         }
+    }
+
+    @Test
+    public void getGoEvidenceOnSecondaryTerms() {
+        List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
+        assertTrue(term == null || term.size() == 0);
+    }
+
+    @Test
+    public void getExpressionsOnSecondaryTerms() {
+        List<ExpressionResult> term = ontologyRepository.getExpressionsOnSecondaryTerms();
+        assertTrue(term == null || term.size() == 0);
+    }
+
+    @Test
+    public void getPhenotypesOnSecondaryTerms() {
+        List<PhenotypeStatement> term = ontologyRepository.getPhenotypesOnSecondaryTerms();
+        assertTrue(term == null || term.size() == 0);
     }
 }
