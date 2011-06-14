@@ -91,7 +91,7 @@ public class CreateFiguresLinkTag extends TagSupport {
         hyperLink.append("?MIval=aa-xpatselect.apg");
         hyperLink.append("&query_results=true");
         hyperLink.append("&START=0");
-        hyperLink.append("&searchtype=contains");
+        hyperLink.append("&searchtype=equals");
         hyperLink.append("&xpatsel_calledBySelf=true");
         hyperLink.append("&mutsearchtype=contains");
         hyperLink.append("&MOsearchtype=contains");
