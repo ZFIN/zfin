@@ -229,7 +229,8 @@ update expression_result
 		       and term_zdb_id = sec_zdb_id);
 
 
--- update go evidences
+-- update go annotations 
+-- only those records that are created by ZFIN, not the imported annotations. 
 unload to 'go-evidence-updates.unl'
     select distinct mrkrgoev_source_zdb_id, mrkrgoev_mrkr_zdb_id, sub.term_zdb_id, sub.term_name, replacement.term_zdb_id, replacement.term_name
       from marker_go_term_evidence, term as sub, term as replacement, sec_oks
@@ -247,7 +248,8 @@ update marker_go_term_evidence
   where exists (Select term_zdb_id from term, sec_oks
   	       	       where term_is_Secondary = 't'
 		       and mrkrgoev_term_zdb_id = term_zdb_id
-		       and term_zdb_id = sec_zdb_id);
+		       and term_zdb_id = sec_zdb_id 
+		       and mrkrgoev_annotation_organization_created_by = 'ZFIN');
 
 
 insert into sec_unload (sec_id, prim_id)
