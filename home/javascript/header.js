@@ -385,7 +385,7 @@ document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/zirc/documents/payment.php\">Payment Help</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/zirc/documents/health.php\">Health Services</a>");
+document.write("       <a href=\"/zirc/health/index.php\">Health Services</a>");
 document.write("     </div>");
 document.write("     <div id=\"hdr-zfinlinks\" class=\"hdr-linkbar\"> ");
 document.write("       <a href=\"/\">Home</a>");
@@ -415,11 +415,11 @@ document.write("     <a href=\"/\"></a> ");
 
 document.write("     <a href=\"/\">Home</a> "); 
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"http://wiki.zfin.org/display/general/ZFIN+Community+Wiki\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
+document.write(" <a href=\"https://wiki.zfin.org/\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/zf_info/news/jobs.html\" title=\"Zebrafish-related job announcements\">Jobs</a>");
+document.write(" <a href=\"https://wiki.zfin.org/display/jobs\" title=\"Zebrafish-related job announcements\">Jobs</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/zf_info/news/mtgs.html\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
+document.write(" <a href=\"https://wiki.zfin.org/display/meetings\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
  document.write("    <a href=\"/zf_info/news/newsgroup.html\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

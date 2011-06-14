@@ -363,7 +363,7 @@ function hdrSetTabs() {
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
       <a href="/zirc/documents/payment.php">Payment Help</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-      <a href="/zirc/documents/health.php">Health Services</a>
+      <a href="/zirc/health/index.php">Health Services</a>
 
     </div>
     <div id="hdr-zfinlinks" class="hdr-linkbar" 
@@ -393,12 +393,12 @@ function hdrSetTabs() {
     <div id="hdr-generallinks" class="hdr-linkbar" style="display: none;">
      <a href="/">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="http://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/news/jobs.html" title="Zebrafish-related job announcements">Jobs</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
-     <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>
-     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
+     <a href="https://wiki.zfin.org" title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+     <a href="https://wiki.zfin.org/display/jobs" title="Zebrafish-related job announcements">Jobs</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+     <a href="https://wiki.zfin.org/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>
+     <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
      <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-"> 
      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75"  title="Search for zebrafish researchers by name or address">People</a>
