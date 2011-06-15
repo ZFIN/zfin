@@ -1,7 +1,6 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.util.StringUtils;
 
 /**
  * Data Transfer Object for a post-composed term, i.e. super term : sub term
@@ -60,10 +59,12 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
         EntityDTO entityDTO = (EntityDTO) o;
         if (!superTerm.equals(entityDTO.getSuperTerm()))
             return false;
-        if (subTerm != null)
+        if (subTerm != null && entityDTO.getSubTerm() != null)
             return subTerm.equals(entityDTO.getSubTerm());
+        else if(subTerm == null && entityDTO.getSubTerm() == null)
+            return true;
         else
-            return entityDTO.getSuperTerm() == null;
+            return false;
     }
 
     @Override
@@ -95,15 +96,20 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
         return 0;
     }
 
-    public boolean equalsByNameAndOntologyOnly(EntityDTO relatedEntity) {
-        if (relatedEntity == null && superTerm != null)
+    public boolean equalsByNameAndOntologyOnly(EntityDTO comparisonEntity) {
+        if (superTerm == null) {
+            return comparisonEntity == null || comparisonEntity.getSuperTerm() == null;
+        }
+        if (comparisonEntity == null)
             return false;
-        if (superTerm == null && subTerm == null && relatedEntity == null)
-            return true;
-        if (superTerm == null && relatedEntity != null && relatedEntity.getSuperTerm() != null)
+        if (comparisonEntity.getSuperTerm() == null)
             return false;
-        if (subTerm != null && !subTerm.equalsByName(relatedEntity.getSubTerm()))
+        if ((subTerm != null && comparisonEntity.getSubTerm() == null) ||
+                (subTerm == null && comparisonEntity.getSubTerm() != null))
             return false;
-        return superTerm.equalsByName(relatedEntity.getSuperTerm());
+        if (subTerm != null && comparisonEntity.getSubTerm() != null)
+            if (!subTerm.equalsByName(comparisonEntity.getSubTerm()))
+                return false;
+        return superTerm.equalsByName(comparisonEntity.getSuperTerm());
     }
 }

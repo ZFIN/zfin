@@ -100,6 +100,8 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     public boolean equalsByName(TermDTO term) {
         if (term == null)
             return false;
+        if(!ontology.equals(term.getOntology()))
+            return false;
         return StringUtils.equalsWithNullString(name, term.getTermName());
     }
 
