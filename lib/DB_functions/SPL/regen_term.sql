@@ -248,10 +248,10 @@ create dba function "informix".regen_term()
 	lock mode page;
 
       -- create temp index.  dropped when table renamed
-      create index all_term_contains_new_primary_key_index
+      create index  all_term_contains_new_primary_key_index
         on all_term_contains_new (alltermcon_container_zdb_id,     
 				     alltermcon_contained_zdb_id)
-	in idxdbs2;
+	in idxdbs2 online;
 
 
       -- =================   POPULATE TABLES   ===============================
@@ -334,10 +334,10 @@ create dba function "informix".regen_term()
       -- foreign keys
 
       let errorHint = "alltermcon_container_zdb_id_index";
-      create index alltermcon_container_zdb_id_index
+      create index  alltermcon_container_zdb_id_index
         on all_term_contains (alltermcon_container_zdb_id)
 	using btree
-	in idxdbs2;
+	in idxdbs2 online;
       alter table all_term_contains add constraint
         foreign key (alltermcon_container_zdb_id)
 	references term
@@ -348,7 +348,7 @@ create dba function "informix".regen_term()
       create index alltermcon_contained_zdb_id_index
         on all_term_contains (alltermcon_contained_zdb_id)
 	fillfactor 100
-	in idxdbs2;
+	in idxdbs2 online;
       alter table all_term_contains add constraint
         foreign key (alltermcon_contained_zdb_id)
 	references term
