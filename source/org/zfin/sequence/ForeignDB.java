@@ -80,6 +80,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ENSEMBL_TRANS("Ensembl_Trans"),
         ENSEMBL_SNP("Ensembl_SNP"),
         ENTREZ_GENE("Entrez Gene"),
+        ENSEMBL("Ensembl"),
         FLYBASE("FLYBASE"),
         FLYBASE_ANATOMY("FLYBASE-Anatomy"),
         GDB("GDB"),
