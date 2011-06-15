@@ -38,6 +38,8 @@ public class EFetchDefline implements Defline {
 
     @Override
     public boolean equals(Object o) {
+        if(o == null)
+            return false;
         return this.toString().equals(o.toString()) ;
     }
 }

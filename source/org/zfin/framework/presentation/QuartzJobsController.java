@@ -162,7 +162,7 @@ public class QuartzJobsController extends AbstractCommandController {
         this.scheduler = scheduler;
     }
 
-    class QuartzJobInfoNextFireTimeComparator implements Comparator<QuartzJobInfo> {
+    static class QuartzJobInfoNextFireTimeComparator implements Comparator<QuartzJobInfo> {
 
         @Override
         public int compare(QuartzJobInfo o1, QuartzJobInfo o2) {

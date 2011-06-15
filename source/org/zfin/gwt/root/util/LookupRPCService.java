@@ -85,4 +85,12 @@ public interface LookupRPCService extends RemoteService {
      * @param termName                    term name
      */
     boolean isTermRelationalQuality(String termName);
+
+    /**
+     * Retrieve the ontology for a given term ID
+     *
+     * @param termID   term id
+     */
+    OntologyDTO getOntology(String termID);
+
 }

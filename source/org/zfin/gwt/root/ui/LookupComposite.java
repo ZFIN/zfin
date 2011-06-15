@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -71,6 +72,7 @@ public class LookupComposite extends Composite implements Revertible {
     private String onclick;
     private boolean checkForRelationalSubset;
     private CheckSubsetEventHandler subsetEventHandler;
+    private SingleOntologySelectionEventHandler singleOntologySelectionHandler;
 
     // options
     protected String inputName = "search";
@@ -140,7 +142,7 @@ public class LookupComposite extends Composite implements Revertible {
                 setHighlightAction(new HighlightAction() {
                     @Override
                     public void onHighlight(String termID) {
-                        if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSE)) {
+                        if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
                             lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
                         }
                     }
@@ -280,7 +282,17 @@ public class LookupComposite extends Composite implements Revertible {
                 }
             });
         }
+        setToSingleOntologySelection(text);
         unsetUnValidatedTextMarkup();
+    }
+
+    private void setToSingleOntologySelection(final String termID) {
+        DeferredCommand.addCommand(new Command() {
+            @Override
+            public void execute() {
+                singleOntologySelectionHandler.onEvent(termID);
+            }
+        });
     }
 
     private native void runOnclickJavaScriptMethod(String name)/*-{
@@ -548,6 +560,10 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void setSubsetEventHandler(CheckSubsetEventHandler subsetEventHandler) {
         this.subsetEventHandler = subsetEventHandler;
+    }
+
+    public void setSingleOntologySelectionEventHandler(SingleOntologySelectionEventHandler singleOntologySelectionEventHandler) {
+        this.singleOntologySelectionHandler = singleOntologySelectionEventHandler;
     }
 
     public void markUnValidateText() {

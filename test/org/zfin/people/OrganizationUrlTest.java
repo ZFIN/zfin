@@ -105,7 +105,7 @@ public class OrganizationUrlTest implements Serializable {
     }
 
     @Test
-    public void OrgEquality(){
+    public void organizationEquality(){
         SourceUrl businessPurposeOne;
         SourceUrl businessPurposeTwo;
         SourceUrl businessPurposeThree;

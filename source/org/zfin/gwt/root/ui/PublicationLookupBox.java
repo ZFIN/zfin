@@ -132,7 +132,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
             if (publicationAbstractDTO.getTitle().length() < MAX_LENGTH) {
                 defaultPubList.addItem(publicationAbstractDTO.getTitle(), publicationAbstractDTO.getZdbID());
             } else {
-                defaultPubList.addItem(publicationAbstractDTO.getTitle().substring(0, MAX_LENGTH) + ItemSuggestCallback.END_ELLIPSE, publicationAbstractDTO.getZdbID());
+                defaultPubList.addItem(publicationAbstractDTO.getTitle().substring(0, MAX_LENGTH) + ItemSuggestCallback.END_ELLIPSIS, publicationAbstractDTO.getZdbID());
             }
         }
     }

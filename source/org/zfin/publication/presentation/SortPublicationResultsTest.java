@@ -6,10 +6,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * Test class fot eh publication sorting comparator.
@@ -67,22 +64,22 @@ public class SortPublicationResultsTest extends TestCase {
         Publication pubOne = new Publication();
         pubOne.setZdbID("ZDB-PUB-051203-1");
         pubOne.setTitle("Evolutionary Theory of Zebrafish and Human");
-        pubOne.setPublicationDate(new GregorianCalendar(2005, 12, 3));
+        pubOne.setPublicationDate(new GregorianCalendar(2005, Calendar.DECEMBER, 3));
 
         Publication pubTwo = new Publication();
         pubTwo.setZdbID("ZDB-PUB-000220-1");
         pubTwo.setTitle("Phylogenetic Tree");
-        pubTwo.setPublicationDate(new GregorianCalendar(2000, 2, 20));
+        pubTwo.setPublicationDate(new GregorianCalendar(2000, Calendar.FEBRUARY, 20));
 
         Publication pubThree = new Publication();
         pubThree.setZdbID("ZDB-PUB-950513-3");
         pubThree.setTitle("Phylogenetic Tree");
-        pubThree.setPublicationDate(new GregorianCalendar(1995, 5, 13));
+        pubThree.setPublicationDate(new GregorianCalendar(1995, Calendar.MAY, 13));
 
         Publication pubFour = new Publication();
         pubFour.setZdbID("ZDB-PUB-020930-34");
         pubFour.setTitle("Phylogenetic Tree");
-        pubFour.setPublicationDate(new GregorianCalendar(2002, 9, 30));
+        pubFour.setPublicationDate(new GregorianCalendar(2002, Calendar.SEPTEMBER, 30));
 
         publications = new ArrayList<Publication>(5);
         publications.add(pubOne);

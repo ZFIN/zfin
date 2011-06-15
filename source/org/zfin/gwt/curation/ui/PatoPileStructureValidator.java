@@ -37,7 +37,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
             errorMessages.add("No Quality term provided.");
             return false;
         }
-         // Check for valid quality
+        // Check for valid quality
         if (!EntityQualityOntologyPair.isValidCombination(phenotypeTerm.getEntity(), qualityTerm.getOntology())) {
             errorMessages.add("Not a valid combination of post-composed entity term and quality.");
             return false;
@@ -216,6 +216,28 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
             this.entitySub = entitySub;
             this.relatedEntitySuper = relatedEntitySuper;
             this.relatedEntitySub = relatedEntitySub;
+        }
+
+        public static boolean isValidCombination(OntologyDTO entitySuper, OntologyDTO entitySub, OntologyDTO relatedEntitySuper, OntologyDTO relatedEntitySub) {
+            PhenotypeStatementDTO phenotypeStatementDTO = new PhenotypeStatementDTO();
+            EntityDTO entity = new EntityDTO();
+            TermDTO superTerm = new TermDTO();
+            superTerm.setOntology(entitySuper);
+            TermDTO subTerm = new TermDTO();
+            superTerm.setOntology(entitySub);
+            entity.setSuperTerm(superTerm);
+            entity.setSuperTerm(subTerm);
+            phenotypeStatementDTO.setEntity(entity);
+            // related entity
+            EntityDTO relateEntity = new EntityDTO();
+            TermDTO superTermRelated = new TermDTO();
+            superTermRelated.setOntology(relatedEntitySuper);
+            TermDTO subTermRelated = new TermDTO();
+            subTermRelated.setOntology(relatedEntitySub);
+            relateEntity.setSuperTerm(superTermRelated);
+            relateEntity.setSuperTerm(subTermRelated);
+            phenotypeStatementDTO.setRelatedEntity(relateEntity);
+            return isValidCombination(phenotypeStatementDTO);
         }
 
         public static boolean isValidCombination(PhenotypeStatementDTO phenotype) {

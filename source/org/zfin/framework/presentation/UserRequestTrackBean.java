@@ -96,7 +96,7 @@ public class UserRequestTrackBean {
         this.urlSearchString = urlSearchString;
     }
 
-    class ClickstreamComparator implements Comparator<ZfinRequestBean> {
+    static class ClickstreamComparator implements Comparator<ZfinRequestBean> {
 
         @Override
         public int compare(ZfinRequestBean o1, ZfinRequestBean o2) {

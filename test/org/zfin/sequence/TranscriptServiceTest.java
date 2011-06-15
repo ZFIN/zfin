@@ -53,7 +53,7 @@ public class TranscriptServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void TranscriptStatusCompareTest() {
+    public void transcriptStatusCompareTest() {
         TranscriptStatus A = RepositoryFactory.getMarkerRepository().getTranscriptStatusForName("ambiguous orf");
         TranscriptStatus alsoA = RepositoryFactory.getMarkerRepository().getTranscriptStatusForName("ambiguous orf");
         TranscriptStatus B = RepositoryFactory.getMarkerRepository().getTranscriptStatusForName("predicted");

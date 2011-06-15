@@ -40,7 +40,7 @@ public class SiteSearchTest {
     FSDirectory fsDirectory;
 
     @Test
-    public void IndexText() {
+    public void indexText() {
         createIndex();
 
         String queryString = "Antibody";

@@ -492,6 +492,20 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         return term != null && term.isPartOfSubset(SubsetDTO.RELATIONAL_SLIM);
 
     }
+
+    /**
+     * Retrieve the ontology for a given term ID
+     *
+     * @param termID term id
+     */
+    @Override
+    public OntologyDTO getOntology(String termID) {
+        if (termID == null)
+            return null;
+
+        TermDTO term = OntologyManager.getInstance().getTermByID(termID);
+        return term.getOntology();
+    }
 }
 
 

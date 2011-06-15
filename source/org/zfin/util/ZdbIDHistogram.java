@@ -37,12 +37,15 @@ public class ZdbIDHistogram {
      * @return true if this Pair equals the Pair parameter, false otherwise.
      */
     public boolean equals(Object obj) {
-        if (obj == null) return false;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ZdbIDHistogram))
+            return false;
 
         ZdbIDHistogram that = (ZdbIDHistogram) obj;
 
-        return this.aoID.equals(that.numberOfOccurrences) &&
-                this.aoID.equals(that.numberOfOccurrences);
+        return this.aoID.equals(that.aoID) &&
+                this.numberOfOccurrences.equals(that.numberOfOccurrences);
     }
 
     public String toString() {

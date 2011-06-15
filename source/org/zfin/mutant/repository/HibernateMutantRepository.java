@@ -530,7 +530,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // delete all phenotype statements records.
         Session session = HibernateUtil.currentSession();
-        if (phenotypes != null || !phenotypes.isEmpty()) {
+        if (phenotypes != null) {
             for (PhenotypeStatement phenotype : phenotypes) {
                 session.delete(phenotype);
             }
@@ -1033,7 +1033,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 TermHistogramBean termUsageHistogram = new TermHistogramBean();
                 termUsageHistogram.setTermID((String) row[0]);
                 termUsageHistogram.setTermName((String) row[1]);
-                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+                addToHistogram(termUsageHistogram, (Long) row[2], histogram);
             }
         }
         // retrieve entity.subterm
@@ -1048,7 +1048,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 TermHistogramBean termUsageHistogram = new TermHistogramBean();
                 termUsageHistogram.setTermID((String) row[0]);
                 termUsageHistogram.setTermName((String) row[1]);
-                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+                addToHistogram(termUsageHistogram, (Long) row[2], histogram);
             }
         }
         // retrieve related entity.superterm
@@ -1063,7 +1063,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 TermHistogramBean termUsageHistogram = new TermHistogramBean();
                 termUsageHistogram.setTermID((String) row[0]);
                 termUsageHistogram.setTermName((String) row[1]);
-                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+                addToHistogram(termUsageHistogram, (Long) row[2], histogram);
             }
         }
         // retrieve related entity.subterm
@@ -1078,7 +1078,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 TermHistogramBean termUsageHistogram = new TermHistogramBean();
                 termUsageHistogram.setTermID((String) row[0]);
                 termUsageHistogram.setTermName((String) row[1]);
-                addToHistogram(termUsageHistogram, (Long)row[2], histogram);
+                addToHistogram(termUsageHistogram, (Long) row[2], histogram);
             }
         }
         return histogram;

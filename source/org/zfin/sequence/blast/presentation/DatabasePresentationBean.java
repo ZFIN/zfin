@@ -183,14 +183,14 @@ public class DatabasePresentationBean implements Comparable<DatabasePresentation
         if (CollectionUtils.isNotEmpty(directChildren)) {
             String directChildrenString = "";
             for (Database database : directChildren) {
-                directChildrenString.concat(database.getAbbrev().toString());
+                directChildrenString = directChildrenString.concat(database.getAbbrev().toString());
             }
             sb.append(", directChildren=").append(directChildrenString);
         }
         if (CollectionUtils.isNotEmpty(leaves)) {
             String leavesString = "";
             for (Database database : leaves) {
-                leavesString.concat(database.getAbbrev().toString());
+                leavesString = leavesString.concat(database.getAbbrev().toString());
             }
             sb.append(", leaves=").append(leavesString);
         }

@@ -13,7 +13,7 @@ public class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response
     private SuggestOracle.Request request;
     private SuggestOracle.Callback callback;
     private LookupComposite lookup;
-    public static final String END_ELLIPSE = "..." ;
+    public static final String END_ELLIPSIS = "..." ;
 
     public ItemSuggestCallback(SuggestOracle.Request req, SuggestOracle.Callback call, LookupComposite lookup) {
         request = req;
@@ -54,9 +54,9 @@ public class ItemSuggestCallback implements AsyncCallback<SuggestOracle.Response
                 iterator.remove();
             }
             if (lookup.isWildCard()) {
-                suggestions.add(new ItemSuggestion(END_ELLIPSE, request.getQuery()));
+                suggestions.add(new ItemSuggestion(END_ELLIPSIS, request.getQuery()));
             } else {
-                suggestions.add(new ItemSuggestion(END_ELLIPSE, null));
+                suggestions.add(new ItemSuggestion(END_ELLIPSIS, null));
             }
         }
 

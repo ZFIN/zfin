@@ -33,6 +33,14 @@ public class PhenotypeStatementDTO extends ExpressedTermDTO {
         this.relatedEntity = relatedEntity;
     }
 
+    public boolean hasRelatedEntity(){
+        if(relatedEntity == null)
+            return false;
+        if(relatedEntity.getSuperTerm() == null && relatedEntity.getSubTerm() == null)
+            return false;
+        return true;
+    }
+
     @Override
     public String getDisplayName() {
         StringBuilder composedTerm = new StringBuilder(entity.getDisplayName());

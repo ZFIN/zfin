@@ -583,7 +583,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void ProbesStatistics() {
+    public void probesStatistics() {
         String aoTermName = "brain";
         GenericTerm term = new GenericTerm();
         term.setZdbID("ZDB-TERM-100331-8");

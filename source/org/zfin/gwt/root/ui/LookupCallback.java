@@ -38,7 +38,7 @@ public class LookupCallback implements AsyncCallback<SuggestOracle.Response> {
                     iterator.remove();
                 }
             }
-            collection.add(new ItemSuggestion(ItemSuggestCallback.END_ELLIPSE, null));
+            collection.add(new ItemSuggestion(ItemSuggestCallback.END_ELLIPSIS, null));
         }
 
 

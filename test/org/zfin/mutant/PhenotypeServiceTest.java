@@ -94,7 +94,7 @@ public class PhenotypeServiceTest {
      * Check correct ontology, three phenotype terms sorted by name
      */
     @Test
-    public void ThreeAOPhenotype() {
+    public void threeAOPhenotype() {
         GenotypeExperiment genox = new GenotypeExperiment();
         String brightOrange = "bright orange";
         String pink = "pink";
@@ -136,7 +136,7 @@ public class PhenotypeServiceTest {
      * 2) sorted by term name.
      */
     @Test
-    public void ThreeAOThreeAOCellThreeGOPhenotype() {
+    public void threeAOThreeAOCellThreeGOPhenotype() {
 
         String brightOrange = "bright orange";
         String pink = "pink";

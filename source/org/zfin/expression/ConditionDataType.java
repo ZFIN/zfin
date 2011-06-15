@@ -45,10 +45,7 @@ public class ConditionDataType implements Comparable<ConditionDataType> {
 
     @Override
     public int compareTo(ConditionDataType o) {
-        Integer thisSignificance = new Integer(significance);
-        Integer thatSignificance = new Integer(o.getSignificance());
-
-        return thisSignificance.compareTo(thatSignificance);
+        return significance - o.getSignificance();
 
     }
 }

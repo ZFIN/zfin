@@ -8,6 +8,8 @@ import org.hibernate.Transaction;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.ui.InvalidPhenotypeException;
+import org.zfin.gwt.curation.ui.PatoPileStructureValidator;
 import org.zfin.gwt.curation.ui.PileStructureExistsException;
 import org.zfin.gwt.curation.ui.PileStructuresRPC;
 import org.zfin.gwt.root.dto.*;
@@ -120,14 +122,20 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
     /**
      * Create a new structure for the pile.
      *
-     * @param phenotypeDTO  Expressed Term dto
+     * @param phenotypeDTO  phenotype statement dto
      * @param publicationID pub id
      */
     public PhenotypePileStructureDTO createPhenotypePileStructure(PhenotypeStatementDTO phenotypeDTO, String publicationID)
-            throws PileStructureExistsException, TermNotFoundException, RelatedEntityNotFoundException {
+            throws PileStructureExistsException, TermNotFoundException, RelatedEntityNotFoundException, InvalidPhenotypeException {
 
         if (phenotypeDTO == null || publicationID == null)
             throw new TermNotFoundException("No Term or publication provided");
+
+        if (phenotypeDTO.hasRelatedEntity() && !PatoPileStructureValidator.EntityRelatedEntityOntologyPair.isValidCombination(phenotypeDTO)) {
+            InvalidPhenotypeException exception = new InvalidPhenotypeException(phenotypeDTO);
+            LOG.info(exception.getMessage());
+            throw exception;
+        }
 
         LOG.info("Request: Create Composed term: " + phenotypeDTO.getDisplayName());
         PhenotypeStructure structure = DTOConversionService.getPhenotypeStructure(phenotypeDTO);
@@ -164,6 +172,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             if ((structure.getRelatedEntity() == null || structure.getRelatedEntity().getSuperterm() == null))
                 throw new RelatedEntityNotFoundException("No related entity found for related quality [" + structure.getQualityTerm().getTermName() + "]");
         }
+
     }
 
     /**
@@ -281,7 +290,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         dto.setDate(structure.getDate());
 
         GenericTerm genericTerm = structure.getSuperterm();
-        if(genericTerm.getOntology()==Ontology.ANATOMY){
+        if (genericTerm.getOntology() == Ontology.ANATOMY) {
             AnatomyItem anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyItem(genericTerm.getTermName());
             dto.setStart(DTOConversionService.convertToStageDTO(anatomyItem.getStart()));
             dto.setEnd(DTOConversionService.convertToStageDTO(anatomyItem.getEnd()));

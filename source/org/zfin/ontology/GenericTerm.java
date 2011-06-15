@@ -74,7 +74,7 @@ public class GenericTerm extends AbstractTerm {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null)
+        if (o == null || !(o instanceof GenericTerm))
             return false;
 
         GenericTerm genericTerm = (GenericTerm) o;

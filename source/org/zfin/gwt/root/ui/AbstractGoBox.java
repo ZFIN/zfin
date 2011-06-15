@@ -208,7 +208,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         goTermBox.setHighlightAction(new HighlightAction() {
             @Override
             public void onHighlight(String termID) {
-                if (false == termID.startsWith(ItemSuggestCallback.END_ELLIPSE)) {
+                if (false == termID.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
                     LookupRPCService.App.getInstance().getTermInfo(OntologyDTO.GO, termID, new TermInfoCallBack(termInfoComposite, termID));
                 }
             }

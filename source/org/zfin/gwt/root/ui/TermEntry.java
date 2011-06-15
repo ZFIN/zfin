@@ -8,10 +8,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
-import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.gwt.root.util.NullpointerException;
-import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.gwt.root.util.WidgetUtil;
+import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
+import org.zfin.gwt.root.util.*;
 
 import java.util.List;
 
@@ -30,6 +28,8 @@ public class TermEntry extends HorizontalPanel {
     // ontologies used
     private List<OntologyDTO> ontologies;
     private EntityPart termPart;
+
+    private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
 
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, TermInfoComposite termInfoComposite) {
         this(ontologies, termPart);
@@ -53,7 +53,7 @@ public class TermEntry extends HorizontalPanel {
             termTextBox.setHighlightAction(new HighlightAction() {
                 @Override
                 public void onHighlight(String termID) {
-                    if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSE)) {
+                    if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
                         LookupRPCService.App.getInstance().getTermInfo(termTextBox.getOntology(), termID, new TermInfoCallBack(termInfoComposite, termID));
                     }
                 }
@@ -89,6 +89,7 @@ public class TermEntry extends HorizontalPanel {
         addOntologySelector();
         addLookupTermBox();
         addCopyFromTermInfoButton();
+        termTextBox.setSingleOntologySelectionEventHandler(new SingleOntologySelectionEventHandler(new SingleOntologySelectionCallBack()));
     }
 
     private void addCopyFromTermInfoButton() {
@@ -342,4 +343,22 @@ public class TermEntry extends HorizontalPanel {
     public EntityPart getTermPart() {
         return termPart;
     }
+
+    private class SingleOntologySelectionCallBack implements AsyncCallback<OntologyDTO> {
+
+        public void onFailure(Throwable throwable) {
+        }
+
+        /**
+         * Returns the ontology for a given term ID
+         *
+         * @param ontologyDTO ontology
+         */
+        public void onSuccess(OntologyDTO ontologyDTO) {
+            //Window.alert("Success");
+            setOntologySelector(ontologyDTO);
+        }
+    }
+
+
 }

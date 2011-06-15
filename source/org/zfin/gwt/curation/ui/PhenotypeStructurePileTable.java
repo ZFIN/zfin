@@ -371,7 +371,7 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
 
     // ********* Click Handler, etc
 
-    private class AddActionButtonListener implements ClickHandler {
+    private static class AddActionButtonListener implements ClickHandler {
 
         private PhenotypePileStructureDTO pileStructure;
         private int row;
