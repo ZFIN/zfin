@@ -52,5 +52,7 @@ drop table tmp_consider;
 
 drop table tmp_term_obsoletes;
 
+drop table tmp_full_term_subset;
+
 --drop table updated_terms;
 
