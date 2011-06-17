@@ -62,7 +62,7 @@ EFFECTS
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MISQL SQL="select jtype from publication where zdb_id = '$OID';">
-  <?MIVAR NAME="pubcur_is_safe_jtype" COND="$(OR,$(EC,$1,Journal),$(EC,$1,Review),$(EC,$1,Curation))">1<?/MIVAR>
+  <?MIVAR NAME="pubcur_is_safe_jtype" COND="$(OR,$(EC,$1,Journal),$(EC,$1,Review),$(EC,$1,Curation),$(EC,$1,Active_Curation))">1<?/MIVAR>
 <?/MISQL>
 
 
