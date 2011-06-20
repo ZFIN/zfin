@@ -34,7 +34,7 @@ public class OntologyManager {
     protected final static String QUALITY_QUALITIES_ROOT = "PATO:0001241";
     protected static final String QUALITATIVE_TERM = "PATO:0000068";
     protected static final String QUALITY_TERM_NORMAL = "PATO:0000461";
-    protected static final String QUALITY_TERM_ABNORMAL = "PATO:0000460";
+    protected static final String MPATH_NEOPLASM_ROOT = "MPATH:218";
 
     public static final int NUMBER_OF_SERIALIZABLE_ONTOLOGIES = Ontology.getSerializableOntologies().length;
     private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<OntologyDTO, PatriciaTrieMultiMap<TermDTO>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
@@ -246,19 +246,28 @@ public class OntologyManager {
         initOntologyMapFast(Ontology.QUALITY);
         serializeOntology(Ontology.QUALITY);
 
+        initOntologyMapFast(Ontology.MPATH);
+        serializeOntology(Ontology.MPATH);
+
+        initOntologyMapFast(Ontology.BEHAVIOR);
+        serializeOntology(Ontology.BEHAVIOR);
+
         // Quality  Processes and Objects
         // Root is "process quality"
         // Quality Processes and Objects
         // exclude 'normal' term from process and quality ontology.
         Set<String> excludedTermsIds = new HashSet<String>(2);
         excludedTermsIds.add(QUALITY_TERM_NORMAL);
-        excludedTermsIds.add(QUALITY_TERM_ABNORMAL);
         excludedTerms.put(Ontology.QUALITY_PROCESSES, excludedTermsIds);
         excludedTerms.put(Ontology.QUALITY_QUALITIES, excludedTermsIds);
+        excludedTerms.put(Ontology.MPATH_NEOPLASM, excludedTermsIds);
+
         initRootOntologyFast(Ontology.QUALITY_PROCESSES, QUALITY_PROCESSES_ROOT, QUALITATIVE_TERM);
         serializeOntology(Ontology.QUALITY_PROCESSES);
         initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
         serializeOntology(Ontology.QUALITY_QUALITIES);
+        initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
+        serializeOntology(Ontology.MPATH_NEOPLASM);
 
         // GO ontologies
         initOntologyMapFast(Ontology.GO_CC);
@@ -850,6 +859,10 @@ public class OntologyManager {
             serializeOntology(Ontology.QUALITY_PROCESSES);
             initRootOntologyFast(Ontology.QUALITY_QUALITIES, QUALITY_QUALITIES_ROOT, QUALITATIVE_TERM);
             serializeOntology(Ontology.QUALITY_QUALITIES);
+        }
+        if (ontology.equals(Ontology.MPATH)) {
+          initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
+          serializeOntology(Ontology.MPATH_NEOPLASM);
         }
     }
 

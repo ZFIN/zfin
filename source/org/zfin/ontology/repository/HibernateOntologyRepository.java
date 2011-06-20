@@ -379,6 +379,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         criteria.add(Restrictions.eq("termName", termName));
         criteria.add(Restrictions.in("ontology", ontology));
         criteria.add(Restrictions.eq("secondary", false));
+        criteria.add(Restrictions.eq("obsolete", false));
         return (GenericTerm) criteria.uniqueResult();
     }
 

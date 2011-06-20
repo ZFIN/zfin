@@ -63,6 +63,7 @@ public class PhenotypeCurationModule implements HandlesError {
         subterm.add(OntologyDTO.GO_CC);
         subterm.add(OntologyDTO.GO_MF);
         subterm.add(OntologyDTO.SPATIAL);
+        subterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
 
         List<OntologyDTO> quality = new ArrayList<OntologyDTO>(1);
@@ -80,6 +81,7 @@ public class PhenotypeCurationModule implements HandlesError {
         relatedSubterm.add(OntologyDTO.GO_CC);
         relatedSubterm.add(OntologyDTO.SPATIAL);
         relatedSubterm.add(OntologyDTO.GO_MF);
+        relatedSubterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.RELATED_ENTITY_SUBTERM, relatedSubterm);
 
         termEntryMap.put(EntityPart.QUALITY, quality);

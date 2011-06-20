@@ -351,7 +351,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             AnatomyItem anatomyItem = getAnatomyRepository().getAnatomyTermByID(termID);
             term = OntologyManager.getInstance().getTermByID(anatomyItem.getOboID());
         } else {
-            term = OntologyManager.getInstance().getTermByID(termID);
+            term = OntologyManager.getInstance().getTermByID(termID,ontology);
+            if (term.getOntology()==OntologyDTO.MPATH)   {
+                term.setOntology(OntologyDTO.MPATH_NEOPLASM);
+            }
         }
 
         if (term == null) {

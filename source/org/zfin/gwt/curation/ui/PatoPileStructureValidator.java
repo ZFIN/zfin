@@ -83,6 +83,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         AO_AO_OB(ANATOMY, ANATOMY, QUALITY_QUALITIES),
         AO_CC_OB(ANATOMY, GO_CC, QUALITY_QUALITIES),
         AO_SP_OB(ANATOMY, SPATIAL, QUALITY_QUALITIES),
+        AO_MPATH_OB(ANATOMY, MPATH_NEOPLASM, QUALITY_QUALITIES),
         BP_x_PR(GO_BP, null, QUALITY_PROCESSES),
         MF_x_PR(GO_MF, null, QUALITY_PROCESSES),
         MFBP_x_PR(GO_BP_MF, null, QUALITY_PROCESSES),
@@ -138,6 +139,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         AO_CC(ANATOMY, GO_CC),
         AO_SP(ANATOMY, SPATIAL),
         AO_MF(ANATOMY, GO_MF),
+        AO_MPATH(ANATOMY, MPATH_NEOPLASM),
         BP_x(GO_BP, null),
         MF_x(GO_MF, null),
         BPMF_x(GO_BP_MF, null);
@@ -189,6 +191,7 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         AO_AO_AO_AO(ANATOMY, ANATOMY, ANATOMY, ANATOMY),
         AO_AO_AO_CC(ANATOMY, ANATOMY, ANATOMY, GO_CC),
         AO_AO_AO_SP(ANATOMY, ANATOMY, ANATOMY, SPATIAL),
+        AO_AO_AO_MPATH(ANATOMY, ANATOMY, ANATOMY, MPATH_NEOPLASM),
 
         AO_CC_AO_x(ANATOMY, GO_CC, ANATOMY, null),
         AO_CC_AO_AO(ANATOMY, GO_CC, ANATOMY, ANATOMY),

@@ -693,6 +693,9 @@ public class DTOConversionService {
         if (ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
+        if (ontology == Ontology.MPATH){
+            ontology = Ontology.MPATH_NEOPLASM;
+        }
         dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
@@ -939,6 +942,12 @@ public class DTOConversionService {
                 return OntologyDTO.STAGE;
             case SPATIAL:
                 return OntologyDTO.SPATIAL;
+            case MPATH:
+                return OntologyDTO.MPATH;
+            case MPATH_NEOPLASM:
+                return OntologyDTO.MPATH_NEOPLASM;
+            case BEHAVIOR:
+                return OntologyDTO.BEHAVIOR;
         }
         return null;
     }
@@ -973,6 +982,13 @@ public class DTOConversionService {
                 return Ontology.STAGE;
             case SPATIAL:
                 return Ontology.SPATIAL;
+            case MPATH:
+                return Ontology.MPATH;
+             case MPATH_NEOPLASM:
+                return Ontology.MPATH_NEOPLASM;
+            case BEHAVIOR:
+                return Ontology.BEHAVIOR;
+
         }
         return null;
     }

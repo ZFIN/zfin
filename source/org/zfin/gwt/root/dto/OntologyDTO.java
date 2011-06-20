@@ -101,6 +101,25 @@ public enum OntologyDTO implements IsSerializable {
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
+    },
+    MPATH(15, "MPATH", "mouse_pathology.ontology", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
+
+     MPATH_NEOPLASM(16, "MPATH-Neoplasm","mouse_pathology.ontology","mpath_neoplasm", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
+    BEHAVIOR(17, "BEHAVIOR", "behavior_ontology", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
     };
 
     private int index;
