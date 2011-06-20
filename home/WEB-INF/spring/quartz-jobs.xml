@@ -21,6 +21,8 @@
                 <ref bean="loadAnatomyOntology"/>
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
+                <ref bean="loadMPATHOntology"/>
+                <ref bean="loadBehaviorOntology"/>
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
@@ -219,7 +221,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Quality Ontology"/>
                     </map>
@@ -243,7 +245,7 @@
                         <entry key="oboFileUrl"
                                value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Gene Ontology"/>
                     </map>
@@ -267,7 +269,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Anatomy Ontology"/>
                     </map>
@@ -291,7 +293,7 @@
                         <entry key="oboFileUrl"
                                value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
                         <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
-                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Spatial Ontology"/>
                     </map>
@@ -303,6 +305,54 @@
         <property name="cronExpression" value="3 0 17 ? * MON-FRI"/>
     </bean>
 
+
+     <bean id="loadMPATHOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="MPATH Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="mouse_pathology.obo"/>
+                        <entry key="oboFileUrl"
+                               value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load MPATH Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="4 0 17 ? * MON-FRI"/>
+    </bean>
+
+     <bean id="loadBehaviorOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Behavior Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="behavior.obo"/>
+                        <entry key="oboFileUrl"
+                               value="http://behavior-ontology.googlecode.com/svn/trunk/behavior.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Behavior Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="5 0 17 ? * MON-FRI"/>
+    </bean>
     <!--NOTE: these are both autowired in the zfinapp context-->
     <!--<bean id="downloadService1" class="org.zfin.datatransfer.service.DownloadService"/>-->
     <!--<bean id="gafService1" class="org.zfin.datatransfer.go.service.GafService"/>-->
