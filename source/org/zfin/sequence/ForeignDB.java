@@ -112,7 +112,6 @@ public class ForeignDB implements Comparable<ForeignDB> {
         SP_KW("SP_KW"),
         SP_SL("SP_SL"),
         TAO("TAO"),
-        TRACEVIEW("TraceView"),
         UNIGENE("UniGene"),
         UNIPROTKB("UniProtKB"),
         UNISTS("UniSTS"),
