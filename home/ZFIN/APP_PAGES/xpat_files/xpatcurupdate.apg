@@ -208,7 +208,7 @@ EFFECTS
 
     <?MICOMMENT> *** ONLY insert non null values.   <?/MICOMMENT>    
 
-    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_add_value),$(NC,$xpcur_G_cond_add_value,))>
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_add_value),$(NC,$xpcur_G_cond_add_value,),$(NC,$xpcur_G_cond_add_value,NULL))>
         
         <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns , expcond_value<?/MIVAR>
         
