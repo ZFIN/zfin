@@ -102,7 +102,7 @@ while ($cur->fetch) {
     print REPORT "These figures are from publications with expression or phenotype data where\n";
     print REPORT "permission to use images was originally denied, but is now granted.\n\n";
     print REPORT "For more information, including how to get figures to be ignored by this check,\n";
-    print REPORT "see https://wiki.zfin.org/display/doc/FX+Permisssion+Check\n\n";
+    print REPORT "see https://wiki.zfin.org/display/doc/Phenotype+and+expression+figure+permission+check\n\n";
     
 
     # prepare the query to get the lite figures that should
