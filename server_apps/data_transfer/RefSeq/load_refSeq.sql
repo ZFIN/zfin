@@ -3,7 +3,7 @@
 --documentation ON 05/31/02. Script will LOADnothing if RefSeq files are 
 --not well formatted.
 --
---
+-- 
 --2005/03 LocusLink is discontinued.
 --Load files from Entrez Gene.
 --ftp://ftp.ncbi.nih.gov/gene/DATA
@@ -269,9 +269,9 @@ CREATE INDEX uni_ll_id_index ON uni_gene
 CREATE INDEX uni_cluster_id_index ON uni_gene
     (uni_cluster_id) using btree;
 
-
+{
 --TMP_DB_LINK
-CREATE TEMP TABLE tmp_db_link
+CREATE TABLE tmp_db_link
   (
     tmp_linked_recid 	varchar(50),
     tmp_db_name 	varchar(50),
@@ -289,7 +289,7 @@ CREATE INDEX tmp_acc_num_index ON tmp_db_link
     (tmp_acc_num) using btree;
 CREATE INDEX tmp_db_name_index ON tmp_db_link
     (tmp_db_name) using btree;
-
+}
 
 CREATE TEMP TABLE tmp_put_genpept_on_segment
   (
@@ -298,6 +298,10 @@ CREATE TEMP TABLE tmp_put_genpept_on_segment
   )
 with no log;
 
+CREATE INDEX tmp_pept_acc_index ON tmp_put_genpept_on_segment
+    (pept_acc) using btree;
+CREATE INDEX tmp_seg_zdb_index ON tmp_put_genpept_on_segment
+    (seg_zdb) using btree;
 
 CREATE TEMP TABLE tmp_non_unique_pept_acc
   (
@@ -452,7 +456,7 @@ where exists
    where tmp_db_name = "GenPept" 
    and pept_acc = tmp_acc_num);
 
-select seg_zdb from tmp_put_genpept_on_segment,tmp_db_link where pept_acc = tmp_acc_num group by 1 having count(*) > 1;
+--select seg_zdb from tmp_put_genpept_on_segment,tmp_db_link where pept_acc = tmp_acc_num group by 1 having count(*) > 1;
 
 
 !echo 'insert ZF_LL INTO temp_db_link'
@@ -463,7 +467,7 @@ INSERT INTO tmp_db_link
     llzdb_ll_id,
     'uncurated ' || TODAY || ' Entrez load',
     'x',
-    'x',
+    'ZDB-FDBCONT-040412-1',
     ''
   FROM ll_zdb, marker
   WHERE llzdb_zdb_id = mrkr_zdb_id
@@ -476,8 +480,8 @@ INSERT INTO tmp_db_link
 --| DROP TEMPORARY LOAD TABLES |--
 ----------------------------------
 
-DROP TABLE REF_SEQ_ACC;
-DROP TABLE GENBANK_ACC;
+--DROP TABLE REF_SEQ_ACC;
+--DROP TABLE GENBANK_ACC;
 
 
 ------------------------------------------------------
@@ -565,12 +569,13 @@ Unload to "xpat_dblink.unl"
   Select tmpfx_dblink_zdb_id 
     from tmp_xpat_dblink;
 
+{
 DELETE FROM zdb_active_data 
   WHERE exists (
   	SELECT link_id 
 	FROM automated_dblink 
         WHERE link_id = zactvd_zdb_id);
-
+}
       
 
 -- ======================= --
@@ -578,13 +583,13 @@ DELETE FROM zdb_active_data
 -- ======================= --
 
 -- --------------  DELETE REDUNDANT DB_LINKS  ----------------- --
-UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
-UPDATE STATISTICS HIGH FOR TABLE db_link;
+--UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
+--UPDATE STATISTICS HIGH FOR TABLE db_link;
 
 -- 06/15/2004
 -- GenPept links from the Entrez load have precedence.
 -- Conflicting GenPepts should be deleted.
-
+{
     delete from zdb_active_data
     where exists
       (
@@ -595,7 +600,7 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
           and dblink_zdb_id = recattrib_data_zdb_id
           and recattrib_source_zdb_id = "ZDB-PUB-030924-6"      
       );
-    
+}    
 
 --Redundant links. A record with Marker/Acc_num/DB exists in ZFIN. Delete the matching record in tmp_db_link.
 
@@ -781,10 +786,10 @@ WHERE exists
 
 -- ---------  CREATE DB_LINK ZDB IDs  ----------- --
 -- Don't add zdb_ids until all redundant data has been removed.
-
+{
   UPDATE tmp_db_link
   SET tmp_dblink_zdb_id = get_id('DBLINK');
-
+}
 -- RefSeq Lengths
 UPDATE db_link
 SET dblink_length = (SELECT acclen_length 
@@ -817,11 +822,12 @@ WHERE exists
 
 -- ------------------  add new links  ---------------------- --
 !echo 'add active data'
+{
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Entrez Gene";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenBank";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenPept";
- 
+
 
 !echo 'insert new db_links'
 INSERT INTO db_link
@@ -909,7 +915,7 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     FROM db_link, tmp_db_link
     WHERE dblink_zdb_id = tmp_dblink_zdb_id
 ;
-
+}
 
       
 ----------------------------------------------
@@ -929,22 +935,22 @@ WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
   AND fdb1.fdb_db_name = "GenPept"
   AND exists (
       SELECT *
-      FROM db_link AS refseq, foreign_db_contains AS fdbcont2, foreign_db as fdb2
-      WHERE refseq.dblink_fdbcont_zdb_id = fdbcont2.fdbcont_zdb_id
+      FROM tmp_db_link AS refseq, foreign_db_contains AS fdbcont2, foreign_db as fdb2
+      WHERE refseq.tmp_fdbcont_zdb_id = fdbcont2.fdbcont_zdb_id
         AND fdb2.fdb_db_name = "RefSeq"
 	AND fdbcont2.fdbcont_fdb_db_id = fdb2.fdb_db_pk_id
-        AND refseq.dblink_acc_num = genpept.dblink_acc_num
+        AND refseq.tmp_acc_num = genpept.dblink_acc_num
       );
-        
+{        
 DELETE FROM zdb_active_data 
     WHERE EXISTS (SELECT 'x' 
     	  	     FROM overlapping_acc_num
 		     WHERE dblink_zdb_id = zactvd_zdb_id);
-
+}
 
 -- ------------------  UNI_GENE  ------------------- --
 !echo 'remove existing temp_db_link records'
-DELETE FROM tmp_db_link;
+--DELETE FROM tmp_db_link;
 
 !echo 'INSERT INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -998,6 +1004,31 @@ WHERE EXISTS (SELECT 'x'
       		    FROM unigene_link
 		    WHERE dblink_acc_num = tmp_acc_num);
 
+
+    SELECT dblink_linked_recid, fdb_db_name as db_name, dblink_acc_num
+    FROM db_link, tmp_db_link, foreign_db_contains, foreign_db, 
+    	 	  foreign_db_data_type
+    WHERE dblink_linked_recid = tmp_linked_recid
+      AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      AND fdbcont_fdbdt_id = fdbdt_pk_id
+      AND fdbcont_fdb_db_id = fdb_db_pk_id
+      AND fdb_db_name = tmp_db_name
+      AND dblink_acc_num = tmp_acc_num
+    into temp tmp_redund_db_link;
+    
+
+    DELETE FROM tmp_db_link
+    WHERE exists 
+      (
+        SELECT *
+        FROM tmp_redund_db_link
+        WHERE db_name = tmp_db_name
+          AND dblink_acc_num = tmp_acc_num
+          AND dblink_linked_recid = tmp_linked_recid
+      );
+
+
+
 !echo 'add active source AND active data'
 UPDATE tmp_db_link
 SET tmp_dblink_zdb_id = get_id('DBLINK');
@@ -1027,6 +1058,10 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT tmp_dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM tmp_db_link
 ;
+
+delete from tmp_db_link;
+
+
 
 --rollback work;
 commit work;
