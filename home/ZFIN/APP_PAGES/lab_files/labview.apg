@@ -236,11 +236,10 @@ select  fp.fp_institute_display
     from lab l
      join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
      join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
-    where zdb_id='$OID' 
+    where zdb_id='$OID' and lfp_current_designation='t' 
     ;">
 <?MIVAR NAME=$lab_inst>$1<?/MIVAR>
     <?/MISQL>
-
 <?MIVAR COND=$(NE,$lab_inst,)>
   $lab_inst <?/MIVAR>
 <br>
