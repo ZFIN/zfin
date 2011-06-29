@@ -258,7 +258,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(allTerms);
         // BP, MF, CC, PATO, SM, ZFA, ZFS and the ominous pato.ontology
         // (which hopefully will go away soon)
-        assertEquals(14, allTerms.size());
+        assertEquals(18, allTerms.size());
     }
 
     @Test
