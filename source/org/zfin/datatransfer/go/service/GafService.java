@@ -162,7 +162,7 @@ public class GafService {
     }
 
     public MarkerGoTermEvidence generateAnnotation(GafEntry gafEntry, Marker gene, GafOrganization gafOrganization)
-            throws GafValidationError {
+            throws GafAnnotationExistsError, GafValidationError {
         // lookup GO annotation
         GenericTerm goTerm = getGoTerm(gafEntry);
 
@@ -375,6 +375,13 @@ public class GafService {
         }
     }
 
+    public void addAnnotationsBatch(List<MarkerGoTermEvidence> batchToAdd, GafJobData gafJobData) throws GafValidationError {
+
+        for (MarkerGoTermEvidence markerGoTermEvidence : batchToAdd) {
+            addAnnotation(markerGoTermEvidence, gafJobData);
+        }
+    }
+
     public void addAnnotations(GafJobData gafJobData) throws GafValidationError {
 
         for (MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()) {
@@ -382,4 +389,16 @@ public class GafService {
         }
     }
 
+    public int removeEntriesBatch(List<GafJobEntry> batchToRemove, GafJobData gafJobData) {
+        List<String> zdbIDs = new ArrayList<String>();
+        for(GafJobEntry gafJobEntry : batchToRemove){
+            zdbIDs.add(gafJobEntry.getZdbID());
+        }
+
+        // delete record attributions and then evidences directly
+        RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);
+
+        //To change body of created methods use File | Settings | File Templates.
+        return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
+    }
 }

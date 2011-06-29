@@ -496,7 +496,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
     @SuppressWarnings("unchecked")
-    public int deleteRecordAttributionByDataZdbID(List<String> dataZdbIDs) {
+    public int deleteRecordAttributionByDataZdbIDs(List<String> dataZdbIDs) {
         for (String zdbID : dataZdbIDs) {
             logger.debug("zdbID: " + zdbID);
         }

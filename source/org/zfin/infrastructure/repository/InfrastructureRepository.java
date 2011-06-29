@@ -105,7 +105,7 @@ public interface InfrastructureRepository {
 
     public int removeRecordAttributionForData(String zdbID, String datazdbID);
 
-    int deleteRecordAttributionByDataZdbID(List<String> dataZdbIDs);
+    int deleteRecordAttributionByDataZdbIDs(List<String> dataZdbIDs);
 
     int removeRecordAttributionForPub(String zdbID);
 

@@ -38,4 +38,6 @@ public interface MarkerGoTermEvidenceRepository {
     List<String> getEvidencesForGafOrganization(GafOrganization gafOrganization);
 
     List<MarkerGoTermEvidence> getLikeMarkerGoTermEvidencesButGo(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
+
+    int deleteMarkerGoTermEvidenceByZdbIDs(List<String> zdbIDs);
 }

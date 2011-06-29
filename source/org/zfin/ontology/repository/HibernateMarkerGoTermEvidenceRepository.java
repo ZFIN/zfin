@@ -165,4 +165,15 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         return (List<MarkerGoTermEvidence>) query.list();
     }
 
+    @Override
+    public int deleteMarkerGoTermEvidenceByZdbIDs(List<String> zdbIDs) {
+
+        String hql = " delete from MarkerGoTermEvidence ev where ev.zdbID in (:zdbIDs) ";
+
+        int deleted = HibernateUtil.currentSession().createQuery(hql)
+                .setParameterList("zdbIDs",zdbIDs)
+                .executeUpdate();
+
+        return deleted;
+    }
 }

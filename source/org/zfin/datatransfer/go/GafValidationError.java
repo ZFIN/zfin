@@ -14,10 +14,10 @@ public class GafValidationError extends Exception {
     }
 
     public GafValidationError(String s, GafEntry gafEntry, Exception e) {
-        super(s + ":\n" + gafEntry, e);
+        super(s + ":\n" + gafEntry, e.fillInStackTrace());
     }
 
     public GafValidationError(String s, Exception e) {
-        super(s, e);
+        super(s, e.fillInStackTrace());
     }
 }

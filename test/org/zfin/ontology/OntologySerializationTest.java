@@ -14,7 +14,6 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 /**
@@ -50,6 +51,7 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
             oldTempDirectory = System.getProperty("java.io.tmpdir");
             System.setProperty("java.io.tmpdir", testTempDirectory);
             testDirectory = new File(testTempDirectory) ;
+            assertTrue(!testDirectory.exists() || testDirectory.delete());
             assertTrue(testDirectory.mkdir());
         }
     }
@@ -135,7 +137,7 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     }
 
-    //    @Test
+//        @Test
     public void serializeQuality() throws Exception {
         long startTime = System.currentTimeMillis();
         int termCount = ontologyRepository.getNumberTermsForOntology(Ontology.QUALITY);
@@ -198,14 +200,14 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 //        ontologyManager.initRootOntologyMap(Ontology.QUALITY_PROCESSES,Ontology.QUALITY, "PATO:0001236");
 //        ontologyManager.initQualityProcessesRootOntology();
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_PROCESSES, OntologyManager.QUALITY_PROCESSES_ROOT);
-        assertTrue(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() < 100);
-        assertTrue(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() > 94);
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , lessThan(120) );
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , greaterThan(94));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_PROCESSES);
 
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_QUALITIES, OntologyManager.QUALITY_QUALITIES_ROOT);
-        assertTrue(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() < 1300);
-        assertTrue(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() > 1100);
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , lessThan(1300));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , greaterThan(1100));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_QUALITIES);
 
@@ -227,10 +229,11 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
+    // typically this is too long to run
+//    @Test
     public void serializeAnatomy() {
         long startTime, endTime;
-        OntologyManager ontologyManager = new OntologyManager();
+        OntologyManager ontologyManager = OntologyManager.getEmptyInstance();
 
         startTime = System.currentTimeMillis();
         ontologyManager.initOntologyMapFastNoRelations(Ontology.STAGE); // correct for this

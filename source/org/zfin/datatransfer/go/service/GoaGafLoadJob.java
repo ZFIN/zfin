@@ -16,8 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -61,6 +60,7 @@ public class GoaGafLoadJob implements Job {
     private GafService gafService = new GafService();
     //    @Autowired
     private GafParser gafParser = new GafParser();
+    private final int BATCH_SIZE = 20;
 
     public GoaGafLoadJob() {
     }
@@ -90,15 +90,13 @@ public class GoaGafLoadJob implements Job {
 
             gafService.processGoaGafEntries(gafEntries, gafJobData);
 
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafJobData);
-            HibernateUtil.flushAndCommitCurrentSession();
+            addAnnotations(gafJobData);
+
+            // I have to add the annotations in order to calculate the ones to remove
 
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
-            HibernateUtil.createTransaction();
-            gafService.removeEntries(gafJobData);
-            HibernateUtil.flushAndCommitCurrentSession();
+            removeAnnotations(gafJobData);
 
             String summary = gafJobData.toString();
             message.append(summary).append("\n\n");
@@ -133,9 +131,15 @@ public class GoaGafLoadJob implements Job {
 
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
-            HibernateUtil.rollbackTransaction();
+
+            // if transaction exists, then roll back
+            if(HibernateUtil.currentSession().getTransaction()!=null){
+                HibernateUtil.rollbackTransaction();
+            }
+
             (new IntegratedJavaMailSender()).sendMail("Errors in GOA load: " + (new Date()).toString()
-                    , "Error in GOA load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString(),
+                    , "Error in GOA load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString()
+                    + " Summary of GOA Load: " + message.toString(),
                     ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_ERR));
         } finally {
             downloadService = null;
@@ -143,5 +147,63 @@ public class GoaGafLoadJob implements Job {
         }
 
     }
+
+    private void addAnnotations(GafJobData gafJobData) {
+        Set<MarkerGoTermEvidence> evidencesToAdd = gafJobData.getNewEntries();
+        Iterator<MarkerGoTermEvidence> iteratorToAdd = evidencesToAdd.iterator();
+
+        while(iteratorToAdd.hasNext()){
+            // build batch
+            List<MarkerGoTermEvidence> batchToAdd = new ArrayList<MarkerGoTermEvidence>();
+            for(int i = 0 ; i < BATCH_SIZE && iteratorToAdd.hasNext() ; ++i){
+                MarkerGoTermEvidence markerGoTermEvidence = iteratorToAdd.next();
+                batchToAdd.add(markerGoTermEvidence);
+            }
+            try {
+                HibernateUtil.createTransaction();
+                gafService.addAnnotationsBatch(batchToAdd,gafJobData);
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (Exception e) {
+                HibernateUtil.rollbackTransaction();
+                String error = "Failed to add batch: " ;
+                for(MarkerGoTermEvidence markerGoTermEvidence : batchToAdd ){
+                    error += markerGoTermEvidence.toString() + "\n";
+                }
+                GafValidationError gafValidationError = new GafValidationError(error,e) ;
+                logger.error(gafValidationError);
+                gafJobData.addError(gafValidationError);
+            }
+        }
+    }
+
+    private void removeAnnotations(GafJobData gafJobData) {
+        List<GafJobEntry> evidencesToRemove = gafJobData.getRemovedEntries();
+        Iterator<GafJobEntry> iteratorToRemove  = evidencesToRemove.iterator();
+
+        // create batch
+        while(iteratorToRemove.hasNext()){
+            // build batch
+            List<GafJobEntry> batchToRemove = new ArrayList<GafJobEntry>();
+            for(int i = 0 ; i < BATCH_SIZE && iteratorToRemove.hasNext() ; ++i){
+                GafJobEntry removeEntry = iteratorToRemove.next();
+                batchToRemove.add(removeEntry);
+            }
+            try {
+                HibernateUtil.createTransaction();
+                gafService.removeEntriesBatch(batchToRemove, gafJobData);
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (Exception e) {
+                HibernateUtil.rollbackTransaction();
+                String error = "Failed to remove batch: " ;
+                for(GafJobEntry evidenceToRemove : batchToRemove ){
+                    error += evidenceToRemove.toString() + "\n";
+                }
+                GafValidationError gafValidationError = new GafValidationError(error,e) ;
+                logger.error(gafValidationError);
+                gafJobData.addError(gafValidationError);
+            }
+        }
+    }
+
 
 }
