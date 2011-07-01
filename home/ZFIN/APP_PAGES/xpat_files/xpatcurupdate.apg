@@ -174,6 +174,7 @@ EFFECTS
   <?MIBLOCK COND=$(XST,$xpcur_G_cond_add)>
     <?MIVAR COND=$(NXST,$xpcur_G_cond_add_comments) NAME=xpcur_G_cond_add_comments><?/MIVAR>
     <?MIVAR COND=$(NXST,$xpcur_G_cond_add_value) NAME=xpcur_G_cond_add_value><?/MIVAR>
+    <?MIVAR COND=$(EQ,$xpcur_G_cond_add_value,NULL) NAME=xpcur_G_cond_add_value><?/MIVAR>
   
     <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
     <?MISQL SQL="execute function get_id('EXPCOND');">$(SETVAR,$xpcurup_expcond_zdb_id,$1)<?/MISQL>
