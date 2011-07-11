@@ -11,6 +11,7 @@ import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -138,6 +139,7 @@ public class GenotypeBean {
                     key = key + exp.getZdbID();
 
                 Set<Figure> figs = xpResult.getFigures();
+                GenericTerm term = xpResult.getSuperterm();
                 Publication pub = xpResult.getExpressionExperiment().getPublication();
 
                 ExpressionDisplay xpDisplay;
@@ -147,8 +149,11 @@ public class GenotypeBean {
                     xpDisplay = new ExpressionDisplay(expressedGene);
                     xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
                     xpDisplay.setExperiment(exp);
+                    xpDisplay.setExpressionTerms(new HashSet<GenericTerm>());
 
                     xpDisplay.getExpressionResults().add(xpResult);
+                    xpDisplay.getExpressionTerms().add(term);
+
                     xpDisplay.setExpressedGene(expressedGene);
 
                     xpDisplay.setFigures(new HashSet<Figure>());
@@ -162,7 +167,11 @@ public class GenotypeBean {
                     }
                 } else {
                     xpDisplay = map.get(key);
-                    xpDisplay.getExpressionResults().add(xpResult);
+
+                    if (!xpDisplay.getExpressionTerms().contains(term)) {
+                      xpDisplay.getExpressionResults().add(xpResult);
+                      xpDisplay.getExpressionTerms().add(term);
+                    }
 
                     Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
 

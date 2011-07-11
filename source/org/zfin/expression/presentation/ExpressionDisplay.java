@@ -4,6 +4,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -16,6 +17,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Set<Figure> figures;
     private List<ExpressionResult> expressionResults;
     private Experiment experiment;
+    private Set<GenericTerm> expressionTerms;
 
     public ExpressionDisplay(Marker expressedGene) {
         this .expressedGene = expressedGene;
@@ -135,5 +137,13 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
 
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
+    }
+
+    public Set<GenericTerm> getExpressionTerms() {
+        return expressionTerms;
+    }
+
+    public void setExpressionTerms(Set<GenericTerm> expressionTerms) {
+        this.expressionTerms = expressionTerms;
     }
 }
