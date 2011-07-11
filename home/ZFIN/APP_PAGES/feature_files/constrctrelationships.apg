@@ -96,7 +96,7 @@ EFFECTS
               </td>
               <td> $featrel_feat_type </td>
               <td> $featrel_rel_type
-              <td><?MIVAR COND=$(NC,$featrel_mrkr_abbrev,NULL)><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$featrel_mrkr_zdb_id">$featrel_mrkr_abbrev</a><?/MIVAR></td>
+              <td><?MIVAR COND=$(NC,$featrel_mrkr_abbrev,NULL)><a href="/action/marker/view/$featrel_mrkr_zdb_id">$featrel_mrkr_abbrev</a><?/MIVAR></td>
               <td align=center>
                 <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$featrel_relation_zdb_id','relation')"><?/MIVAR>
               </td> 

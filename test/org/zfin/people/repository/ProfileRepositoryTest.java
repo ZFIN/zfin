@@ -3,10 +3,12 @@ package org.zfin.people.repository;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.people.AccountInfo;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.Organization;
 import org.zfin.people.Person;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -170,6 +172,35 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
         Organization organization1 = (Organization) HibernateUtil.currentSession().get(Organization.class,"ZDB-LAB-001018-2") ;
         assertNotNull(organization1);
         organization1.toString();
+    }
+
+    @Test
+    public void getSuppliersLinkForMarker(){
+        // test lab
+        List<OrganizationLink> organizationLinks ;
+        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-CDNA-080114-74");
+        assertEquals(1,organizationLinks.size());
+        String linkText1 = "<a href=\"/"+ ZfinProperties.getWebDriver()+"?MIval=aa-labview.apg&OID=ZDB-LAB-060808-1\">Wright Lab</a>";
+        linkText1 += " ";
+        linkText1 += "<span style=\"font-size: small;\">(<a href=\"/"+ZfinProperties.getWebDriver()+"?MIval=aa-labview.apg&OID=ZDB-LAB-060808-1\">order this</a>)</span>";
+        assertEquals(linkText1,organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
+
+        // test has source url
+        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-FOSMID-100127-525");
+        assertEquals(1,organizationLinks.size());
+        String linkText2 = "<a href=\"/"+ ZfinProperties.getWebDriver()+"?MIval=aa-labview.apg&OID=ZDB-LAB-040701-1\">BACPAC Resources Center (BPRC)</a>";
+        linkText2 += " ";
+        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://bacpac.chori.org/order_clones.php?cloneList=CH1073-18O17\">order this</a>)</span>";
+        assertEquals(linkText2,organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
+
+        // test company
+        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-BAC-040724-57");
+        assertEquals(1,organizationLinks.size());
+        String linkText3 = "<a href=\"/"+ ZfinProperties.getWebDriver()+"?MIval=aa-companyview.apg&OID=ZDB-COMPANY-051101-1\">ImaGenes GmbH (formerly RZPD)</a>";
+        linkText3 += " ";
+        linkText3 += "<span style=\"font-size: small;\">(<a href=\"http://www.rzpd.de/gene?option=search&searchStr=DKEY-164M15\">order this</a>)</span>";
+        assertEquals(linkText3,organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
+
     }
 
 }

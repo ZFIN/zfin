@@ -1,8 +1,10 @@
 package org.zfin.ontology.repository;
 
+import org.zfin.marker.Marker;
 import org.zfin.mutant.GafOrganization;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.ontology.Ontology;
 
 import java.util.List;
 
@@ -40,4 +42,8 @@ public interface MarkerGoTermEvidenceRepository {
     List<MarkerGoTermEvidence> getLikeMarkerGoTermEvidencesButGo(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
     int deleteMarkerGoTermEvidenceByZdbIDs(List<String> zdbIDs);
+
+    int getEvidenceForMarkerCount(Marker m);
+
+    MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m,Ontology ontology);
 }

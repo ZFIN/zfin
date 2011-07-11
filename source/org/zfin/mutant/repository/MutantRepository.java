@@ -269,6 +269,7 @@ public interface MutantRepository {
      * @return list of phenotype statement objects
      */
     List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
+
     void runFeatureNameFastSearchUpdate(Feature feature);
 
     /**
@@ -290,5 +291,14 @@ public interface MutantRepository {
      * @return  list of histograms
      */
     Map<TermHistogramBean, Long> getTermPhenotypeUsage();
+
+    String getMutantLinesDisplay(String zdbID);
+
+    List<FeaturePresentationBean> getAllelesForMarker(String zdbID);
+
+    List<Marker> getKnockdownReagents(Marker gene);
+
+    List<String> getTransgenicLines(Marker construct);
+
 }
 

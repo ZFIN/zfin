@@ -63,7 +63,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
 	       p_insert_marker_go_ev.sql p_populate_go_root_terms.sql \
-	       p_check_drop_go_root_term.sql \
+	       p_check_drop_go_root_term.sql  get_mrkr_url.sql \
 	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql p_update_clone_relationship.sql \
 
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
@@ -108,7 +108,7 @@ MULTIPLE_PROCS_STATIC = insert_clone.sql clone_2_sanger.sql \
 MULTIPLE_PROCS_GENERIC = regen_anatomy.sql regen_term.sql 
 GENERIC_AGGR = $(ZDB_AGGR) 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) \
-		get_mutants_html_link.sql get_mrkr_url.sql	         	
+		get_mutants_html_link.sql 	         	
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(XPAT_STATS) \

@@ -7,6 +7,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.marker.presentation.SequenceInfo;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.service.TranscriptService;
@@ -34,7 +35,7 @@ public class TranscriptServiceTest extends AbstractDatabaseTest {
         assertTrue("pax6a relatedTranscripts object is not empty", relatedTranscripts.size() > 0);
         assertNotNull("A transcript of pax6a can be converted to Transcript", transcript );
         assertNotNull("A pax6a transcript has a Transcript.transcriptType", transcript.getTranscriptType());
-        
+
         Set<RelatedMarker> relatedGenes = TranscriptService.getRelatedGenes(transcript);
         Marker relatedGene = ((RelatedMarker)relatedGenes.iterator().next()).getMarker();
         assertNotNull("transcript has at least one gene", relatedGene);
@@ -68,5 +69,15 @@ public class TranscriptServiceTest extends AbstractDatabaseTest {
         assertFalse("One real TranscriptStatus and one null-typed are not equal", TranscriptStatus.equals(A,B));
 
     }
+
+
+    @Test
+    public void getSupportingSequenceInfo(){
+        Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID("ZDB-TSCRIPT-090929-6229");
+        assertNotNull(transcript);
+        SequenceInfo sequenceInfo = TranscriptService.getSupportingSequenceInfo(transcript)  ;
+        assertNotNull(sequenceInfo);
+    }
+
 
 }

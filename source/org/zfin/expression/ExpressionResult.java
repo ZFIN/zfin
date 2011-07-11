@@ -5,7 +5,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,14 +15,14 @@ import java.util.Set;
 public class ExpressionResult implements Comparable<ExpressionResult> {
 
     private String zdbID;
-    private GenericTerm superterm;
+    private GenericTerm superTerm;
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private ExpressionExperiment expressionExperiment;
     private Set<ExpressionResult> expressionResults;
     private Set<Figure> figures;
-    protected GenericTerm subterm;
+    protected GenericTerm subTerm;
     protected PostComposedEntity entity;
 
     public String getZdbID() {
@@ -88,28 +87,28 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
         this.endStage = endStage;
     }
 
-    public GenericTerm getSuperterm() {
+    public GenericTerm getSuperTerm() {
         if (entity == null) return null;
         else
             return entity.getSuperterm();
     }
 
-    public void setSuperterm(GenericTerm superterm) {
+    public void setSuperTerm(GenericTerm superTerm) {
         if (entity == null)
             entity = new PostComposedEntity();
-        entity.setSuperterm(superterm);
+        entity.setSuperterm(superTerm);
     }
 
-    public GenericTerm getSubterm() {
+    public GenericTerm getSubTerm() {
         if (entity == null) return null;
         else
             return entity.getSubterm();
     }
 
-    public void setSubterm(GenericTerm subterm) {
+    public void setSubTerm(GenericTerm subTerm) {
         if (entity == null)
             entity = new PostComposedEntity();
-        entity.setSubterm(subterm);
+        entity.setSubterm(subTerm);
     }
 
     public PostComposedEntity getEntity() {

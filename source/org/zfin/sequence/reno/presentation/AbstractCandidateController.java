@@ -161,7 +161,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
             humanOrtholog.setOrganism(Species.HUMAN);
 
             Set<OrthoEvidence> orthoEvidences = RenoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
-            humanOrtholog.setEvidence(orthoEvidences);
+            humanOrtholog.setEvidences(orthoEvidences);
             LOG.info("Orthology: " + humanOrtholog);
             Updates up = new Updates();
             Date date = new Date();
@@ -190,7 +190,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
             mouseOrtholog.setAccession(targetMouseAccession);
             mouseOrtholog.setOrganism(Species.MOUSE);
             Set<OrthoEvidence> orthoEvidences = RenoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
-            mouseOrtholog.setEvidence(orthoEvidences);
+            mouseOrtholog.setEvidences(orthoEvidences);
             Updates up = new Updates();
             Date date = new Date();
             Person currentUser = Person.getCurrentSecurityUser();

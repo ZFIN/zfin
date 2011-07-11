@@ -10,7 +10,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.ontology.datatransfer.DownloadOntology;
-import org.zfin.ontology.datatransfer.LoadOntology;
+import org.zfin.ontology.datatransfer.service.LoadOntology;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.DateUtil;

@@ -74,7 +74,7 @@ EFFECTS
 
     <?MIBLOCK COND="$(XST,$xpatselrow_showGene)">
       <?MIVAR>
-	<i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpatselrow_geneZdbId">$xpatselrow_geneAbbrev</a>&nbsp;&nbsp;- $xpatselrow_geneName</i>
+	<i><a href="/action/marker/view/$xpatselrow_geneZdbId">$xpatselrow_geneAbbrev</a>&nbsp;&nbsp;- $xpatselrow_geneName</i>
       <?/MIVAR>
     <?MIELSE>
       &nbsp;

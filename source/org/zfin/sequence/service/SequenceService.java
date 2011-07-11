@@ -1,11 +1,16 @@
 package org.zfin.sequence.service;
 
+import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.SummaryDBLinkDisplay;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
+
+import java.util.List;
 
 /**
  */
@@ -73,4 +78,10 @@ public class SequenceService {
         );
     }
 
+    public static SummaryDBLinkDisplay getProteinProducts(Marker gene) {
+        List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
+        SummaryDBLinkDisplay summaryDBLinkDisplay = new SummaryDBLinkDisplay();
+        summaryDBLinkDisplay.addAllDBlinks(dbLinkList);
+        return summaryDBLinkDisplay ;
+    }
 }

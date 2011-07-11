@@ -1,12 +1,12 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -15,24 +15,26 @@ import org.zfin.marker.TranscriptType;
 import org.zfin.people.Person;
 import org.zfin.sequence.service.TranscriptService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  */
-public class TranscriptAddController extends SimpleFormController {
+@Controller
+public class TranscriptAddController {
 
     private static Logger logger = Logger.getLogger(TranscriptAddController.class);
 
     public static final String LOOKUP_TRANSCRIPT_TYPES = "transcriptTypes";
 
-    //    protected Map referenceData(HttpServletRequest httpServletRequest,Object command, Error errors) throws Exception {
+    private TranscriptAddValidator validator=new TranscriptAddValidator();
 
-    protected Map referenceData(HttpServletRequest httpServletRequest, Object o, Errors errors) throws Exception {
-        TranscriptAddBean transcriptAddBean = (TranscriptAddBean) o;
+    @RequestMapping( value = "/transcript-add",method = RequestMethod.GET)
+    public String getView(
+            Model model ,
+            @ModelAttribute("formBean") TranscriptAddBean formBean
+            ,BindingResult result
+    ) {
 
         Map<String, String> types = new LinkedHashMap<String, String>();
         types.put("", "Choose Type");
@@ -51,51 +53,41 @@ public class TranscriptAddController extends SimpleFormController {
         }
 
 
-        Map refMap = new HashMap();
-        refMap.put(LookupStrings.DYNAMIC_TITLE, "Add Transcript");
-        refMap.put("types", types);
-        refMap.put("statuses", statuses);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Transcript");
+        model.addAttribute("types", types);
+        model.addAttribute("statuses", statuses);
 
-        String name = httpServletRequest.getParameter("name");
-        logger.info("name: " + name);
-        transcriptAddBean.setName(name);
-        return refMap;
+        return "marker/transcript-add.page";
     }
 
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
-        TranscriptAddBean transcriptAddBean = (TranscriptAddBean) command;
-        transcriptAddBean.setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
+    @RequestMapping( value = "/transcript-add",method = RequestMethod.POST)
+    protected String addTranscript(Model model
+            , @ModelAttribute("formBean") TranscriptAddBean formBean
+            , BindingResult result) throws Exception {
+
+        validator.validate(formBean, result);
 
         // create transcript
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        ModelAndView modelAndView;
-        try {
-            Marker marker = TranscriptService.createTranscript(transcriptAddBean);
+        if(result.hasErrors()){
+            return getView(model, formBean,result);
+        }
 
-            // get zdbID and return to edti page
-//        String zdbID = "ZDB-EST-000426-1181";
+        try {
+            formBean.setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
+            HibernateUtil.createTransaction();
+            Marker marker = TranscriptService.createTranscript(formBean);
             String zdbID = marker.getZdbID();
-            modelAndView = new ModelAndView("redirect:marker-edit?zdbID=" + zdbID);
-            tx.commit();
-            return modelAndView;
+            HibernateUtil.flushAndCommitCurrentSession();
+            return "redirect:marker-edit?zdbID=" + zdbID;
         }
         catch (Exception e) {
-            logger.error(e);
-            tx.rollback();
+            logger.error(e) ;
+            HibernateUtil.rollbackTransaction();
             // todo: add some errors here
-            modelAndView = new ModelAndView("marker/transcript-add.page");
+            result.reject("no lookup","Failed to add transcript: "+e.getMessage());
+            return getView(model, formBean,result);
         }
-        return modelAndView;
     }
 
-    //    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-//                                                 HttpServletResponse httpServletResponse) throws Exception {
-//
-//
-//        return modelAndView ;
-//
-//    }
 }

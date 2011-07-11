@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.datatransfer.doi.DOITest;
 import org.zfin.datatransfer.microarray.MicroarrayServiceTest;
 import org.zfin.sequence.blast.BlastDBServiceTest;
-import org.zfin.sequence.blast.BlastServiceTest;
+import org.zfin.sequence.blast.WebServiceSoapClientTest;
 import org.zfin.wiki.WikiConnectTest;
 
 /**
@@ -17,7 +17,7 @@ import org.zfin.wiki.WikiConnectTest;
 @Suite.SuiteClasses({
         WikiConnectTest.class,
         MicroarrayServiceTest.class,
-        BlastServiceTest.class,
+        WebServiceSoapClientTest.class,
         BlastDBServiceTest.class,
         DOITest.class
 //        PostForeignTest.class

@@ -58,7 +58,7 @@
     <td width=85%><font><b>
         <?MIVAR>
 	  Gene Name:  <i>$mrkr_name</i><br>
-	  Gene Symbol: <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$mrkr_abbrev</i></a>
+	  Gene Symbol: <a href="/action/marker/view/$OID"><i>$mrkr_abbrev</i></a>
 	<?/MIVAR>
         </b></font>	
     </td>

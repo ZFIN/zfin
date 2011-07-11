@@ -2,9 +2,6 @@ package org.zfin.gwt.root.server.rpc;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.log4j.Logger;
-import org.nocrala.tools.texttablefmt.CellStyle;
-import org.nocrala.tools.texttablefmt.Table;
-import org.zfin.people.Person;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

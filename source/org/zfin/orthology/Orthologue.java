@@ -24,7 +24,25 @@ public class Orthologue implements Comparable {
     private String abbreviation;
     private String name;
 
-    private Set<OrthoEvidence> evidence;
+    private Set<OrthoEvidence> evidences;
+    private String chromosome;
+    private String position;
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
 
 
     public EntrezProtRelation getAccession() {
@@ -81,12 +99,12 @@ public class Orthologue implements Comparable {
     }
 
 
-    public Set<OrthoEvidence> getEvidence() {
-        return evidence;
+    public Set<OrthoEvidence> getEvidences() {
+        return evidences;
     }
 
-    public void setEvidence(Set<OrthoEvidence> evidence) {
-        this.evidence = evidence;
+    public void setEvidences(Set<OrthoEvidence> evidences) {
+        this.evidences = evidences;
     }
 
     public String toString() {
@@ -103,7 +121,7 @@ public class Orthologue implements Comparable {
         sb.append(lineFeed);
         sb.append("organism: " + organism);
         sb.append(lineFeed);
-        sb.append(evidence);
+        sb.append(evidences);
         return sb.toString();
     }
 }

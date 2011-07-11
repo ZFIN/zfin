@@ -1,7 +1,9 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 
 import java.util.*;
 

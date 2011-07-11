@@ -1,8 +1,6 @@
 package org.zfin.uniquery;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -7,18 +7,16 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
-import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
+import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.EntrezProtRelation;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.*;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 public interface MarkerRepository {
@@ -37,6 +35,8 @@ public interface MarkerRepository {
     Transcript getTranscriptByVegaID(String vegaID);
 
     List<String> getTranscriptTypes();
+
+    Marker getMarkerByAbbreviationIgnoreCase(String abbreviation) ;
 
     Marker getMarkerByAbbreviation(String abbreviation);
 
@@ -301,4 +301,36 @@ public interface MarkerRepository {
      * @return list of gene ids
      */
     List<String> getNMarkersWithUniProtNote(int firstNIds);
+
+    boolean getHasMarkerHistory(String zdbId);
+
+    List<PreviousNameLight> getPreviousNamesLight(Marker gene);
+
+    String getVariantForSnp(String zdbID);
+
+    List<MarkerSequence> getMarkerSequences(Marker marker);
+
+    List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
+
+    List<Marker> getMarkersByAlias(String key);
+
+    List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
+
+    List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) ;
+
+    List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) ;
+
+    List<GeneProductsBean> getGeneProducts(String zdbID);
+
+    boolean isFromChimericClone(String zdbID);
+
+    boolean cloneHasSnp(Clone clone);
+
+    List<MarkerSupplier> getSuppliersForMarker(String zdbID);
+
+    boolean markerExistsForZdbID(String zdbID);
+
+    List<String> getMarkerZdbIdsForType(Marker.Type gene);
+
+   Map<String,String> getGeoMarkerCandidates();
 }

@@ -82,7 +82,7 @@ public class OrthologyEvidenceFastSearchTest {
         evidenceOne.setPublication(pub);
         Set<OrthoEvidence> evidences = new HashSet<OrthoEvidence>();
         evidences.add(evidenceOne);
-        orthologyOne.setEvidence(evidences);
+        orthologyOne.setEvidences(evidences);
 
         Orthologue orthologyTwo = new Orthologue();
         orthologyTwo.setOrganism(Species.MOUSE);
@@ -92,7 +92,7 @@ public class OrthologyEvidenceFastSearchTest {
         evidenceThree.setPublication(pub);
         Set<OrthoEvidence> evidencesTwo = new HashSet<OrthoEvidence>();
         evidencesTwo.add(evidenceThree);
-        orthologyTwo.setEvidence(evidencesTwo);
+        orthologyTwo.setEvidences(evidencesTwo);
 
         Set<Orthologue> orthologs = new HashSet<Orthologue>();
         orthologs.add(orthologyOne);
@@ -131,7 +131,7 @@ public class OrthologyEvidenceFastSearchTest {
         Set<OrthoEvidence> evidences = new HashSet<OrthoEvidence>();
         evidences.add(evidenceOne);
         evidences.add(evidenceTwo);
-        orthologyOne.setEvidence(evidences);
+        orthologyOne.setEvidences(evidences);
 
         Orthologue orthologyTwo = new Orthologue();
         orthologyTwo.setOrganism(Species.MOUSE);
@@ -145,7 +145,7 @@ public class OrthologyEvidenceFastSearchTest {
         Set<OrthoEvidence> evidencesTwo = new HashSet<OrthoEvidence>();
         evidencesTwo.add(evidenceThree);
         evidencesTwo.add(evidenceFour);
-        orthologyTwo.setEvidence(evidencesTwo);
+        orthologyTwo.setEvidences(evidencesTwo);
 
         Set<Orthologue> orthologs = new HashSet<Orthologue>();
         orthologs.add(orthologyOne);

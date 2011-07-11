@@ -27,22 +27,30 @@
         <property name="name" column="ortho_name"/>
         <property name="abbreviation" column="ortho_abbrev"/>
         <property name="organism" column="organism" type="organism"/>
+        <property name="chromosome" column="ortho_chromosome" type="string"/>
+        <property name="position" column="ortho_position" type="string"/>
         <many-to-one name="gene" column="c_gene_id" class="org.zfin.marker.Marker" not-null="true"/>
+
+        <!--<property name="evidenceCode" column="oev_evidence_code" type="string"/>-->
 
         <!-- this is an exotic beast, according to the book.
              it maps a collection of orthoEvidence objects,
-            OrthoEvidence has a similarly complex mapping
-        <set name="evidence" table="orthologue_evidence">
-            <key column="oev_ortho_zdb_id"/>
-            <composite-element class="org.zfin.orthology.OrthoEvidence">
-                <parent name="orthologue"/>
+            OrthoEvidence has a similarly complex mapping-->
+        <!--<set name="evidences" table="orthologue_evidence_code">-->
+            <!--<key column="oev_ortho_zdb_id"/>-->
+            <!--<one-to-many class="EvidenceCode"/>-->
+        <!--</set>-->
+        <!--<set name="evidence" table="orthologue_evidence">-->
+            <!--<key column="oev_ortho_zdb_id"/>-->
+            <!--<composite-element class="org.zfin.orthology.OrthoEvidence">-->
+                <!--<parent name="orthologue"/>-->
 
-                <many-to-one name="orthologueEvidenceCode" column="oev_evidence_code"
-                    not-null="true" class="org.zfin.orthology.EvidenceCode"/>
-                <many-to-one name="orthologuePublication" column="oev_pub_zdb_id"
-                    not-null="true" class="org.zfin.publication.Publication"/>
-            </composite-element>
-        </set>-->
+                <!--<many-to-one name="orthologueEvidenceCode" column="oev_evidence_code"-->
+                    <!--not-null="true" class="org.zfin.orthology.EvidenceCode"/>-->
+                <!--<many-to-one name="orthologuePublication" column="oev_pub_zdb_id"-->
+                    <!--not-null="true" class="org.zfin.publication.Publication"/>-->
+            <!--</composite-element>-->
+        <!--</set>&ndash;&gt;-->
 
     </class>
 
@@ -161,6 +169,7 @@
             <column name="oevcode_code" not-null="true"/>
             <generator class="native"/>
         </id>
+        <property name="order" column="oevcode_order" type="java.lang.Integer" not-null="true"/>
 
     </class>
 

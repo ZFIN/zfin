@@ -1,10 +1,11 @@
 package org.zfin.ontology.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionService;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -20,6 +21,9 @@ import java.util.Set;
  */
 @Controller
 public class OntologyReportsController {
+
+    @Autowired
+    private ExpressionService expressionService ;
 
     @RequestMapping("/reports")
     private String createTermUsageReport(Model model) {
@@ -53,7 +57,7 @@ public class OntologyReportsController {
             List<ExpressionObsoleteTermReport> expressionSecondaryTermReports = new ArrayList<ExpressionObsoleteTermReport>(expressionsWithSecondaryTerms.size());
             for (ExpressionResult phenotypeStatement : expressionsWithSecondaryTerms) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
-                Set<GenericTerm> obsoletedTermSet = ExpressionService.getSecondaryTerm(phenotypeStatement);
+                Set<GenericTerm> obsoletedTermSet = expressionService.getSecondaryTerm(phenotypeStatement);
                 report.setObsoletedTermList(obsoletedTermSet);
                 if (obsoletedTermSet != null) {
                     for (GenericTerm obsoletedTerm : obsoletedTermSet) {

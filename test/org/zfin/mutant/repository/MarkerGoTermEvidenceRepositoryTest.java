@@ -13,6 +13,7 @@ import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -201,4 +202,20 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getEvidenceForMarkerCount(){
+       Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+       int count = markerGoTermEvidenceRepository.getEvidenceForMarkerCount(m);
+        assertTrue(count > 20);
+        assertTrue(count < 60);
+    }
+
+
+    @Test
+    public void getFirstEvidenceForMarkerOntology(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_BP));
+        assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_MF));
+        assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_CC));
+    }
 }

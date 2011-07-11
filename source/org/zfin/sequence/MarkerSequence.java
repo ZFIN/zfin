@@ -12,6 +12,19 @@ public class MarkerSequence {
     private Long offsetStop;
     private String variation;
 
+    public String getStartToOffset(){
+        return sequence.substring(0,offsetStart.intValue()-1);
+    }
+
+    public String getAmbiguity(){
+        return sequence.substring(offsetStart.intValue()-1,offsetStart.intValue());
+    }
+
+    public String getOffsetToEnd(){
+        return sequence.substring(offsetStart.intValue());
+    }
+
+
     public String getZdbID() {
         return zdbID;
     }

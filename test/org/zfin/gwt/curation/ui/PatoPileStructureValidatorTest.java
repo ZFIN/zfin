@@ -1,7 +1,10 @@
 package org.zfin.gwt.curation.ui;
 
 import org.junit.Test;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.EntityDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 
 import static junit.framework.Assert.assertTrue;
 import static org.zfin.gwt.root.dto.OntologyDTO.*;

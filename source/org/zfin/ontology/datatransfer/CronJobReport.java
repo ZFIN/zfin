@@ -55,7 +55,7 @@ public class CronJobReport {
         builder.append("Summary Report: ");
         builder.append("Cron job Name: ");
         builder.append(jobName);
-        builder.append("Curation: ");
+        builder.append("Duration: ");
         builder.append(DateUtil.getTimeDuration(startTime));
         builder.append("Start time: ");
         builder.append(new Date(startTime));
@@ -146,8 +146,9 @@ public class CronJobReport {
         }
 
         StackTraceElement[] elements = throwable.getStackTrace();
-        if (throwable.getMessage() != null)
+        if (throwable.getMessage() != null){
             errorString.append(throwable.getMessage() + "\n");
+        }
         errorString.append(throwable.toString() + "\n");
         for (StackTraceElement element : elements) {
             errorString.append(element + "\n");

@@ -25,14 +25,14 @@ public class IndexingStatisticsTest {
                 "http://nagel.zfin.org/zf_info/zfbook/stages/figs/fig3.html",
                 "http://nagel.zfin.org/zf_info/zfbook/stages/figs/fig4.html",
                 "http://nagel.zfin.org/zf_info/zfbook/stages/figs/fig5.html",
-                "http://nagel.zfin.org/action/antibody/detail?antibody.zdbID=ZDB-ATB-090203-2",
-                "http://nagel.zfin.org/action/antibody/detail?antibody.zdbID=ZDB-ATB-090204-1",
-                "http://nagel.zfin.org/action/antibody/detail?antibody.zdbID=ZDB-ATB-090204-2",
-                "http://frost.zfin.org/frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-990415-72",
-                "http://frost.zfin.org/frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-990415-72",
-                "http://frost.zfin.org/frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-CDNA-990415-72",
-                "http://frost.zfin.org/frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-EFG-990415-72",
-                "http://frost.zfin.org/frost/webdriver?MIval=aa-markerview.apg&OID=ZDB-TRANSG-990415-72"};
+                "http://nagel.zfin.org/action/marker/view/ZDB-ATB-090203-2",
+                "http://nagel.zfin.org/action/marker/view/ZDB-ATB-090204-1",
+                "http://nagel.zfin.org/action/marker/view/ZDB-ATB-090204-2",
+                "http://frost.zfin.org/action/marker/view/ZDB-GENE-990415-72",
+                "http://frost.zfin.org/action/marker/view/ZDB-GENE-990415-72",
+                "http://frost.zfin.org/action/marker/view/ZDB-CDNA-990415-72",
+                "http://frost.zfin.org/action/marker/view/ZDB-EFG-990415-72",
+                "http://frost.zfin.org/action/marker/view/ZDB-TRANSG-990415-72"};
         IndexingStatistics stats = new IndexingStatistics();
         for (String url : urls) {
             stats.addUrl(url);

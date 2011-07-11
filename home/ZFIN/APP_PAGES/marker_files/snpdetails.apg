@@ -51,3 +51,4 @@ OUTPUT:
                  <?MIVAR>  <font size=-1>[SNP]</font> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-snpview.apg&OID=$snp_mrkr_zdb_id&snppubs=$snpdet_snppubcount">
         Retrieval Details</a> <?/MIVAR>
                  <?MIVAR><A HREF="/action/marker/snp-publication-list?markerID=$OID&orderBy=author">($snpdet_snppubcount)<?/MIVAR></a>
+

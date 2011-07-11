@@ -21,10 +21,7 @@ import java.util.Set;
 public class MarkerPresentation extends EntityPresentation {
 
     private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
-    public static final String marker_uri = "?MIval=aa-markerview.apg&OID=";
-    public static final String transcript_uri = "marker/transcript-view?zdbID=";
-    public static final String clone_uri = "marker/clone-view?zdbID=";
-    public static final String antibody_uri = "antibody/detail?antibody.zdbID=";
+    public static final String marker_uri = "marker/view/";
 
     /**
      * Generates an html formatted marker name
@@ -69,7 +66,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     /**
      * Should be of the form.
-     * [atp6va0a1|http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     * [atp6va0a1|http://zfin.org/action/marker/view/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
      *
      * @param marker Marker to render.
      * @return A rendered wiki link.
@@ -80,20 +77,20 @@ public class MarkerPresentation extends EntityPresentation {
 
 
     public static String getMarkerLink(Marker marker) {
-        return getWebdriverLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getZdbID());
+        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getName());
     }
 
     public static String getTranscriptLink(Transcript transcript) {
-        return getTomcatLink(transcript_uri, transcript.getZdbID(), getName(transcript), null)  + (transcript.isWithdrawn() ? WITHDRAWN: "") ;
+        return getTomcatLink(marker_uri, transcript.getZdbID(), getName(transcript), null)  + (transcript.isWithdrawn() ? WITHDRAWN: "") ;
     }
 
     public static String getCloneLink(Marker marker) {
 //        return getTomcatLink(clone_uri, marker.getZdbID(), getAbbreviation(marker));
-        return getWebdriverLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
+        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getTomcatLink(antibody_uri, marker.getZdbID(), marker.getName(), null,marker.getAbbreviation()); 
+        return getTomcatLink(marker_uri, marker.getZdbID(), marker.getName(), null,marker.getAbbreviation());
     }
 
     /**
@@ -161,11 +158,48 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getAbbreviation(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM))
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
+        }
         else
+        if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)){
+            cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();
+        }
+        else{
             cssClassName = NONGENEDOMMARKER;
+        }
         return getSpanTag(cssClassName, marker.getName(), marker.getAbbreviation());
+    }
+
+    /**
+     * Create an attribution link for a MarkerDBLink
+     *
+     * @param marker to attribute, ok if it has no attributions
+     * @return link html
+     */
+    public static String getAttributionLink(Marker marker) {
+
+        StringBuilder sb = new StringBuilder("");
+
+        if (marker.getPublications().size() == 1) {
+            sb.append(" (");
+            sb.append(PublicationPresentation.getLink(marker.getPublications().iterator().next().getSourceZdbID(), "1"));
+            sb.append(")");
+        } else if (marker.getPublications().size() > 1) {
+            /* todo: there should be some more infrastructure for the showpubs links */
+            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
+            uri.append("&orgOID=");
+            uri.append(marker.getZdbID());
+            uri.append("&rtype=marker&recattrsrctype=standard");
+            uri.append("&OID=");
+            String count = String.valueOf(marker.getPublications().size());
+
+            sb.append(" (");
+            sb.append(getWebdriverLink(uri.toString(), marker.getZdbID(), count));
+            sb.append(")");
+        }
+
+        return sb.toString();
     }
 
     /**

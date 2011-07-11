@@ -18,7 +18,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.sql.SQLException;
 
 /**
  * This servlet filter creates a Hibernate session for each incoming request

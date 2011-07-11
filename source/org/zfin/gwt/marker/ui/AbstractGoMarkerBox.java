@@ -22,7 +22,7 @@ public abstract class AbstractGoMarkerBox extends AbstractGoBox{
     protected void revertGUI() {
         super.revertGUI();
         if(dto.getMarkerDTO()!=null){
-            geneLabel = new HTML("<a href=\"/cgi-bin/webdriver?MIval=aa-markerview.apg&OID="+dto.getMarkerDTO().getZdbID()+"\">"+dto.getMarkerDTO().getName()+"</a>");
+            geneLabel = new HTML("<a href=\"/action/marker/view/"+dto.getMarkerDTO().getZdbID()+"\">"+dto.getMarkerDTO().getName()+"</a>");
             ((GoEditTable) table).setGeneLabel(geneLabel);
         }
     }
@@ -30,7 +30,7 @@ public abstract class AbstractGoMarkerBox extends AbstractGoBox{
     @Override
     protected void setValues() {
         super.setValues();
-        geneLabel = new HTML("<a href=\"/cgi-bin/webdriver?MIval=aa-markerview.apg&OID="+dto.getMarkerDTO().getZdbID()+"\">"+dto.getMarkerDTO().getName()+"</a>");
+        geneLabel = new HTML("<a href=\"/action/marker/view/"+dto.getMarkerDTO().getZdbID()+"\">"+dto.getMarkerDTO().getName()+"</a>");
         ((GoEditTable) table).setGeneLabel(geneLabel);
         inferenceListBox.setDTO(createDTOFromGUI());
     }

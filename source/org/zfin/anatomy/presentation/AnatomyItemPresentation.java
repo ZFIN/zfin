@@ -15,6 +15,7 @@ public class AnatomyItemPresentation extends EntityPresentation {
 
     private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
     public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
+    private static final String popupUri = "ontology/term-detail-popup?termID=";
 
     /**
      * Generates a link using the anatomy items name.
@@ -23,18 +24,32 @@ public class AnatomyItemPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(AnatomyItem anatomyItem) {
-        return getLink(anatomyItem, anatomyItem.getTermName());
+        return getLink(anatomyItem, anatomyItem.getTermName(),false);
     }
 
     /**
      * Generates a Marker link using the Abbreviation
      *
+     *
      * @param anatomyItem Run
      * @param name        name attribute in hyperlink
+     * @param suppressPopupLink
      * @return html for marker link
      */
-    public static String getLink(AnatomyItem anatomyItem, String name) {
-        return getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getTermName(), name);
+    public static String getLink(AnatomyItem anatomyItem, String name, boolean suppressPopupLink) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getTomcatLink(uri, anatomyItem.getZdbID(), anatomyItem.getTermName(), name));
+        if(!suppressPopupLink){
+            sb.append(getPopupLink(anatomyItem));
+        }
+        return sb.toString();
+    }
+
+    private static Object getPopupLink(AnatomyItem anatomyItem) {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append(getTomcatPopupLink(popupUri, String.valueOf(anatomyItem.getOboID()),
+                "Term definition, synonyms and links"));
+        return sb.toString();
     }
 
     public static String getName(AnatomyItem anatomyItem) {

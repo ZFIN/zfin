@@ -5,22 +5,26 @@
 
 <%@ attribute name="marker" type="org.zfin.marker.Marker"
               rtexprvalue="true" required="true" %>
+<%@ attribute name="typeName" type="java.lang.String" required="false" rtexprvalue="true" %>
+<%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
+
+<c:if test="${empty typeName}">
+    <c:set var="typeName">${marker.markerType.displayName}</c:set>
+</c:if>
 
 <table class="primary-entity-attributes">
 
     <tr>
-      <th><span class="name-label">${marker.markerType.name}&nbsp;Name:</span></th>
+      <th><span class="name-label">${typeName}&nbsp;Name:</span></th>
       <td><span class="name-value"><zfin:name entity="${marker}"/></span></td>
     </tr>
 
-    <tr>
-      <th><span class="name-label">${marker.markerType.name}&nbsp;Abbreviation:</span></th>
-      <td><span class="name-value"><zfin:abbrev entity="${marker}"/></span></td>
-    </tr>
-
-    <zfin2:previousNames entity="${marker}"/>
+    <c:if test="${!empty previousNames}">
+        <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
+    </c:if>
+    <%--<zfin2:notes hasNotes="${formBean.marker}"/>--%>
+    <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
 
 </table>
 
 
-<zfin2:notes hasNotes="${formBean.marker}"/>

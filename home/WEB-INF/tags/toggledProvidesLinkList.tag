@@ -1,0 +1,62 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<%-- Display of ProvidesLink in a table --%>
+
+<%@ attribute name="collection" required="true"
+              rtexprvalue="true" type="java.util.List" %>
+<%@ attribute name="maxNumber" required="false" type="java.lang.Integer" rtexprvalue="true" %>
+<%@ attribute name="suffix" type="java.lang.String" required="false" %>
+<%@attribute name="id" type="java.lang.String" %>
+
+<c:if test="${empty suffix}">
+    <c:set var="suffix" value=", "/>
+</c:if>
+
+<c:if test="${fn:length(collection) > 0 }">
+    <c:choose>
+        <c:when test="${fn:length(collection) > maxNumber }">
+
+            <script type="text/javascript">
+                function showEntityList(element_id, displayLongVersion) {
+                    var shortElement = document.getElementById(element_id + '-short');
+                    var longElement = document.getElementById(element_id + '-long');
+                    if (displayLongVersion) {
+                        shortElement.style.display = "none";
+                        longElement.style.display = "inline";
+                    } else {
+                        shortElement.style.display = "inline";
+                        longElement.style.display = "none";
+                    }
+                }
+            </script>
+
+            <span style="display:inline;" id="${id}-short">
+            <c:forEach var="entry" items="${collection}" varStatus="loop" end="${maxNumber -1}">
+                ${entry.link}${!loop.last and empty entry.attributionLink ? suffix : ""}
+                ${entry.attributionLink}${!loop.last and !empty entry.attributionLink ? suffix : ""}
+            </c:forEach>
+                <nobr>
+                    (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(collection)}</a>)
+                    <img onclick="showEntityList('${id}', true)" class="clickable"
+                         src="/images/right_arrow.gif" alt="expand" title="Show all ${fn:length(collection)} terms">
+                </nobr>
+                </span>
+            <span style="display:none;" id="${id}-long">
+            <c:forEach var="entry" items="${collection}" varStatus="loop">
+                ${entry.link}${!loop.last and empty entry.attributionLink ? suffix : ""}
+                ${entry.attributionLink}${!loop.last and !empty entry.attributionLink ? suffix : ""}
+            </c:forEach>&nbsp;
+                <img onclick="showEntityList('${id}', false)"  class="clickable"
+                     src="/images/left_arrow.gif" alt="collapse" title="Show only first ${maxNumber+1} terms">
+                </span>
+        </c:when>
+        <c:otherwise>
+            <c:forEach var="entry" items="${collection}" varStatus="loop">
+                ${entry.link}${!loop.last and empty entry.attributionLink ? suffix : ""}
+                ${entry.attributionLink}${!loop.last and !empty entry.attributionLink ? suffix : ""}
+            </c:forEach>
+        </c:otherwise>
+    </c:choose>
+</c:if>
+
+

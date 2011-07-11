@@ -1,10 +1,11 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.HibernateUtil;
@@ -13,8 +14,6 @@ import org.zfin.marker.MergeService;
 import org.zfin.publication.CurationPresentation;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,19 +23,21 @@ import java.util.Set;
  * <p/>
  * 1. If there is a problem durint the
  */
-public class DeleteMarkerController extends AbstractCommandController {
+@Controller
+public class DeleteMarkerController {
 
-    @Override
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        DeleteBean deleteBean = (DeleteBean) command;
+    private Logger logger = Logger.getLogger(DeleteMarkerController.class);
 
-        ModelAndView modelAndView = new ModelAndView("marker/delete-marker.page");
-        modelAndView.addObject(getCommandName(), deleteBean);
-        modelAndView.addObject("errors", errors);
+    @RequestMapping(value ="/delete")
+    public String deleteMarker(
+            @RequestParam("zdbIDToDelete") String zdbIDToDelete
+            ,  @ModelAttribute("formBean") DeleteBean formBean
+            ) throws Exception {
 
+        formBean.setZdbIDToDelete(zdbIDToDelete);
 
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(deleteBean.getZdbIDToDelete());
-        deleteBean.setMarkerToDelete(marker);
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
+        formBean.setMarkerToDelete(marker);
 
         // a bit of validation, maybe put somewhere else
         if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
@@ -56,10 +57,8 @@ public class DeleteMarkerController extends AbstractCommandController {
                     argString += (iter.hasNext() ? "<br> " : "");
                 }
 
-                ObjectError error = new ObjectError(getCommandName(), new String[]{}, new String[]{},
-                        "Antibody can not be deleted, being used in " + numExpression + " expression records in " + pubs.size() + " pubs: <br>" + argString);
-                errors.addError(error);
-                return modelAndView;
+                formBean.addError("Antibody can not be deleted, being used in " + numExpression + " expression records in " + pubs.size() + " pubs: <br>" + argString);
+                return "marker/delete-marker.page";
             }
         }
 
@@ -70,12 +69,11 @@ public class DeleteMarkerController extends AbstractCommandController {
             HibernateUtil.flushAndCommitCurrentSession();
         }
         catch (Exception e) {
-            logger.error("Failed to delete marker: " + deleteBean, e);
+            logger.error("Failed to delete marker: " + formBean, e);
             HibernateUtil.rollbackTransaction();
-            ObjectError error = new ObjectError(getCommandName(), new String[]{}, new String[]{}, "Failed to delete marker: " + deleteBean + "<br>" + e.getMessage());
-            errors.addError(error);
+            formBean.addError("Failed to delete marker: " + formBean  + "<br>" + e.getMessage());
         }
 
-        return modelAndView;
+        return "marker/delete-marker.page";
     }
 }

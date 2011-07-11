@@ -2,8 +2,10 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.Species;
@@ -15,33 +17,39 @@ import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * This class shows stemloops for a specified gene.
  */
-public class StemLoopController extends AbstractController {
+@Controller
+public class StemLoopController {
 
     private static Logger logger = Logger.getLogger(MiniGeneController.class);
+    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private ReferenceDatabase referenceDatabase ;
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
-        String zdbID = httpServletRequest.getParameter(LookupStrings.ZDB_ID);
-        logger.info("zdbID: " + zdbID);
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        logger.info("marker: " + marker);
-        SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-
+    public StemLoopController(){
         // should be only Loaded MiRNA Stem Loop
-        ReferenceDatabase referenceDatabase = sequenceRepository.getReferenceDatabase(
+        referenceDatabase = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.MIRBASE_STEM_LOOP,
                 ForeignDBDataType.DataType.OTHER,
                 ForeignDBDataType.SuperType.SUMMARY_PAGE,
                 Species.ZEBRAFISH
         );
-        List<Sequence> sequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, referenceDatabase);
+    }
+
+    @RequestMapping(value="/stemloop-sequence")
+    public String getStemLoopInfo(Model model
+            ,@RequestParam("zdbID") String zdbID
+    ) throws Exception {
+        logger.debug("zdbID: " + zdbID);
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        logger.debug("marker: " + marker);
+
+        // should be only Loaded MiRNA Stem Loop
+        List<Sequence> sequences = MountedWublastBlastService.getInstance()
+                .getSequencesForMarker(marker, referenceDatabase);
 
         // if there are none there, then load the curated microRNA stem loops
         if (CollectionUtils.isEmpty(sequences)) {
@@ -50,7 +58,7 @@ public class StemLoopController extends AbstractController {
             sequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, referenceDatabase);
         }
 
-        ModelAndView modelAndView = new ModelAndView("marker/stemloop-sequence.insert", LookupStrings.FORM_BEAN, sequences);
-        return modelAndView;
+        model.addAttribute(LookupStrings.FORM_BEAN,sequences);
+        return "marker/stemloop-sequence.insert";
     }
 }

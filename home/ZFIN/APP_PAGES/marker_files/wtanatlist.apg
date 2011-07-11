@@ -101,16 +101,16 @@ stage range, experiment, or expression_found in the same figure.
 <?MISQL SQL="
 	SELECT distinct term_name, term_zdb_id, anatitem_name_order, get_postcomposed_term_html(xpatres_superterm_zdb_id, xpatres_subterm_zdb_id)
 	FROM 
-	expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item
+	expression_result , expression_experiment, term , genotype_experiment, genotype, anatomy_item
 	WHERE
 	xpatex_gene_zdb_id = '$wtanatlst_gene_zdb_id'
 	AND  xpatres_xpatex_zdb_id = xpatex_zdb_id 
 	AND xpatres_expression_found='t'
 	AND xpatres_superterm_zdb_id = term_zdb_id
 	AND term_ont_id = anatitem_obo_id
-	AND xpatex_genox_zdb_id = genox_zdb_id 
-	AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  
-	AND geno_zdb_id  = genox_geno_zdb_id 
+	AND xpatex_genox_zdb_id = genox_zdb_id
+    AND genox_is_standard = 't'
+	AND geno_zdb_id  = genox_geno_zdb_id
 	AND geno_is_wildtype = 't' 
 	ORDER BY anatitem_name_order asc;">
     <?MIVAR NAME="$wtanatlst_term_html">$4<?/MIVAR>

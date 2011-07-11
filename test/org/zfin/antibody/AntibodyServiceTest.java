@@ -48,19 +48,19 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         termThree.setNameOrder("Engel");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo.createGenericTerm());
+        resultTwo.setSuperTerm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperterm(termThree.createGenericTerm());
+        resultThree.setSuperTerm(termThree.createGenericTerm());
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperterm(termThree.createGenericTerm());
+        resultFour.setSuperTerm(termThree.createGenericTerm());
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -96,19 +96,19 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         termThree.setNameOrder("Halle");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo.createGenericTerm());
+        resultTwo.setSuperTerm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperterm(termThree.createGenericTerm());
+        resultThree.setSuperTerm(termThree.createGenericTerm());
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperterm(termThree.createGenericTerm());
+        resultFour.setSuperTerm(termThree.createGenericTerm());
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -145,12 +145,12 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         termThree.setNameOrder("Margor");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperterm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(termOne.createGenericTerm());
         resultOne.setExpressionFound(true);
-        resultOne.setSubterm(termThree.createGenericTerm());
+        resultOne.setSubTerm(termThree.createGenericTerm());
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperterm(termTwo.createGenericTerm());
+        resultTwo.setSuperTerm(termTwo.createGenericTerm());
         resultTwo.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -191,7 +191,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSubterm(termOne);
+        resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -241,11 +241,11 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termTwo = getCyokineTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSubterm(termOne);
+        resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSubterm(termTwo);
+        resultTwo.setSubTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -289,14 +289,14 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termTwo = getCyokineTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSubterm(termOne);
+        resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSubterm(termTwo);
+        resultTwo.setSubTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSubterm(termOne);
+        resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
         results.add(resultOne);
@@ -322,14 +322,14 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termOne = getNucleusTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSubterm(termOne);
+        resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSubterm(termOne);
+        resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();

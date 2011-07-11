@@ -14,8 +14,8 @@
     </c:set>
 </c:if>
 
-<zfin2:subsection title="${title}"
-                  test="${!empty links}">
+<zfin2:subsectionMarker title="${title}"
+                  test="${!empty links}" noDataText="No links to external site">
     <table class="summary">
         <tr>
                 <%-- entry.key is the database name--%>
@@ -23,7 +23,7 @@
                 <td>
                     <%-- entry.value is the MarkerDBLink --%>
                     <c:forEach var="dblink" items="${entry.value}">
-                        <li>
+                        <li style="list-style-type:none;">
                             <zfin:link entity="${dblink}"/>
                             <zfin:attribution entity="${dblink}"/>
                         </li>
@@ -32,4 +32,4 @@
             </c:forEach>
         </tr>
     </table>
-</zfin2:subsection>
+</zfin2:subsectionMarker>

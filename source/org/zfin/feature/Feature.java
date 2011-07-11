@@ -12,7 +12,6 @@ import org.zfin.mutant.GenotypeFeature;
 import org.zfin.people.FeatureSource;
 import org.zfin.people.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
-import org.zfin.sequence.MarkerDBLink;
 
 import java.util.HashSet;
 import java.util.Set;

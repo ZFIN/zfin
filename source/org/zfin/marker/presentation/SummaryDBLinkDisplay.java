@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ReferenceDatabase;
 
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -27,4 +28,9 @@ public class SummaryDBLinkDisplay extends TreeMap<ReferenceDatabase, TreeSet<DBL
         }
     }
 
+    public void addAllDBlinks(List<DBLink> dbLinkList) {
+        for(DBLink dbLink : dbLinkList){
+            addDBLink(dbLink);
+        }
+    }
 }

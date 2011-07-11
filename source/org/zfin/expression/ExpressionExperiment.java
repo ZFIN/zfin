@@ -166,14 +166,14 @@ public class ExpressionExperiment {
      * @return Indicates if these records are too similar (false) or not (true).
      */
     private boolean canMergeExpressionResult(ExpressionResult era,ExpressionResult erb){
-        if(!era.getSuperterm().equals(erb.getSuperterm())) return true ;
+        if(!era.getSuperTerm().equals(erb.getSuperTerm())) return true ;
         if(!era.getStartStage().equals(erb.getStartStage())) return true ;
         if(!era.getEndStage().equals(erb.getEndStage())) return true ;
         if(!era.isExpressionFound()==erb.isExpressionFound()) return true ;
-        if(era.getSubterm()==null && erb.getSubterm()!=null) return true ;
-        if(era.getSubterm()!=null && erb.getSubterm()==null) return true ;
-        if(era.getSubterm()!=null && erb.getSubterm()!=null &&
-                false==era.getSubterm().equals(erb.getSubterm())) return true ;
+        if(era.getSubTerm()==null && erb.getSubTerm()!=null) return true ;
+        if(era.getSubTerm()!=null && erb.getSubTerm()==null) return true ;
+        if(era.getSubTerm()!=null && erb.getSubTerm()!=null &&
+                false==era.getSubTerm().equals(erb.getSubTerm())) return true ;
 
         return false ;
     }

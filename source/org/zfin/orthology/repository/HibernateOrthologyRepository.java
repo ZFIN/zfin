@@ -3,6 +3,8 @@ package org.zfin.orthology.repository;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.ResultTransformer;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
@@ -11,12 +13,10 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.presentation.DBLinkPresentation;
 import org.zfin.util.FilterType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -634,7 +634,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         currentSession().save(orthologue);
         currentSession().save(up);
         String orthologyZdbID = orthologue.getZdbID();
-        Set<OrthoEvidence> evidences = orthologue.getEvidence();
+        Set<OrthoEvidence> evidences = orthologue.getEvidences();
         for (OrthoEvidence evidence : evidences) {
             evidence.setOrthologueZdbID(orthologyZdbID);
             currentSession().save(evidence);
@@ -657,4 +657,109 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         }
     }
 
+    @Override
+    public List<OrthologyPresentationRow> getOrthologyForGene(Marker m) {
+        String sql = " select distinct o.organism ,o.ortho_abbrev,o.ortho_chromosome, " +
+                "o.ortho_position,oe.oev_evidence_code , fdb.fdb_db_name,dbl.dblink_acc_num, " +
+                "fdb.fdb_db_query,fdb.fdb_url_suffix " +
+                "from orthologue o  " +
+                "join orthologue_evidence oe on o.zdb_id=oe.oev_ortho_zdb_id " +
+                "left outer join db_link dbl on o.zdb_id=dbl.dblink_linked_recid " +
+                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                "join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id " +
+                "where o.c_gene_id=:markerZdbId " +
+                "and fdb.fdb_db_significance<10 ";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", m.getZdbID())
+                .setResultTransformer(new ResultTransformer() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        OrthologyPresentationRow row = new OrthologyPresentationRow();
+                        row.setSpecies(tuple[0].toString());
+                        row.setAbbreviation(tuple[1].toString());
+                        if (tuple[2] != null) {
+                            row.setChromosome(tuple[2].toString());
+                        }
+                        if (tuple[3] != null) {
+                            row.setPosition(tuple[3].toString());
+                        }
+                        if (tuple[4] != null) {
+                            row.addEvidenceCode(tuple[4].toString());
+                        }
+                        if (tuple[6] != null) {
+                            row.addAccession(DBLinkPresentation.getGeneralHyperLink(
+                                    tuple[7].toString()+tuple[6]
+                                            +(tuple[8]!=null ? tuple[8].toString() : ""),   // url
+                                    tuple[5] + ":"+tuple[6])      // name
+                            );
+                        }
+
+
+                        return row;
+                    }
+
+                    /**
+                     * Here we compact the list.
+                     * @param collection
+                     * @return
+                     */
+                    @Override
+                    public List transformList(List collection) {
+                        Map<String, OrthologyPresentationRow> condensed = new HashMap<String, OrthologyPresentationRow>();
+                        for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                            OrthologyPresentationRow row = (OrthologyPresentationRow) iter.next();
+                            if (condensed.containsKey(row.getSpecies())) {
+                                OrthologyPresentationRow rowInstance = condensed.get(row.getSpecies());
+                                rowInstance.copyFrom(row);
+                            } else {
+                                condensed.put(row.getSpecies(), row);
+                            }
+                        }
+
+                        return new ArrayList<OrthologyPresentationRow>(condensed.values());
+                    }
+                })
+                .list();
+    }
+
+    @Override
+    public List<String> getEvidenceCodes(Marker gene) {
+//        String sql = " select distinct oe.oev_evidence_code , oec.oevcode_order  " +
+//                "from orthologue o  " +
+//                "join orthologue_evidence oe on o.zdb_id=oe.oev_ortho_zdb_id " +
+//                "join orthologue_evidence_code oec on oec.oevcode_code=oe.oev_evidence_code " +
+//                "where o.c_gene_id=:markerZdbId  " +
+//                "order by oec.oevcode_order  ";
+//
+//
+//        return HibernateUtil.currentSession().createSQLQuery(sql)
+//                .setString("markerZdbId",gene.getZdbID())
+//                .setResultTransformer(new BasicTransformerAdapter() {
+//                    @Override
+//                    public Object transformTuple(Object[] tuple, String[] aliases) {
+//                        return tuple[0].toString();
+//                    }
+//                })
+//                .list();
+
+
+        String sql = " select distinct oe.orthologueEvidenceCode , ec.order " +
+                "from Orthologue o , OrthoEvidence oe, EvidenceCode ec " +
+                "where o.zdbID=oe.orthologueZdbID " +
+                "and ec.code=oe.orthologueEvidenceCode " +
+                "and o.gene = :gene " +
+//                "join orthologue_evidence_code oec on oec.oevcode_code=oe.oev_evidence_code " +
+                "order by ec.order  ";
+
+
+        return HibernateUtil.currentSession().createQuery(sql)
+                .setParameter("gene", gene)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        return tuple[0].toString();
+                    }
+                })
+                .list();
+    }
 }

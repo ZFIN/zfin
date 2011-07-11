@@ -72,8 +72,8 @@ public class ExperimentFigureStage {
         terms = new ArrayList<ComposedFxTerm>();
         for (ExpressionResult result : expressionResults) {
             ComposedFxTerm term = new ComposedFxTerm();
-            term.setSuperTerm(result.getSuperterm());
-            term.setSubterm(result.getSubterm());
+            term.setSuperTerm(result.getSuperTerm());
+            term.setSubterm(result.getSubTerm());
             term.setExpressionFound(result.isExpressionFound());
             term.setZdbID(result.getZdbID());
             terms.add(term);

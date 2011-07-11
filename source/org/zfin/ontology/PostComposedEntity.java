@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * A class to group superterm and subterm into a single object,
  * intended to be used as a component in expression and phenotype

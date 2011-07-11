@@ -471,6 +471,13 @@ function jump(form_select){
       </SCRIPT>
 
      <!-- user authorization check------------------------------->
+        <?MIVAR COND="$(NXST,$UPDATE)" >
+                <meta http-equiv="refresh" content="0;url=/action/marker/view/$OID">
+                This page is for updates only.
+                <a href="/action/marker/view/$OID">
+                Moving to new marker page.
+                </a>
+        <?/MIVAR>
 
       <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $marker_type') from webPages where ID='aa-secure_navigation.apg';">$1
       <?/MISQL>
@@ -542,9 +549,19 @@ function jump(form_select){
        style="font-size: large;"
        href="javascript:"
         onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
-       >[View Marker]</a>
+       >[OLD View Marker]</a>
      </center>
    </form>
+
+        <form>
+        <center>
+        <a
+        style="font-size: large;"
+        href="javascript:"
+        onClick="document.location.replace('/action/marker/view/$OID')"
+        >[View Marker]</a>
+        </center>
+        </form>
 <?/MIVAR>
 
 
@@ -826,7 +843,14 @@ Only need to update clones, etc., which should be the only things that will have
       <INPUT TYPE=button
         value="Update Sequence"
         <?MIVAR>
-        onClick="if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)}">
+        onClick="
+        if(document.newdata.seqdata_action.selectedIndex==0){
+            actionSequence(4); 
+        }
+
+        if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
+            update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
+        }">
         <?/MIVAR>
         <br>
         </td></tr>
@@ -980,7 +1004,7 @@ Only need to update clones, etc., which should be the only things that will have
          onClick="Delete_mrel('$mrkrview_trg_gene_zdb_id','knockdown reagent targets gene')">
     <?/MIVAR>
     $mrkrview_trg_gene_link
-    <!-- <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a> -->
+    <!-- <a href="/action/marker/view/$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a> -->
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
@@ -1395,7 +1419,7 @@ SQL="
          <tr>
            <th>All&nbsp;expression&nbsp;data:</th>
 
-           <td> 
+           <td>
            <?MIBLOCK COND="$(>,$mrkrview_xpatfig_count,1)">
              <?MIVAR>
      	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figures</a> from $mrkrview_xpatsource_desc
@@ -1500,8 +1524,8 @@ SQL="
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> [$mrkrview_xpatsub_probe_name] 
-	   </td></tr>	
+	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> [$mrkrview_xpatsub_probe_name]
+	   </td></tr>
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
        <?MIELSE>
           <?MISQL SQL="select count(distinct img_zdb_id)::integer
@@ -1520,8 +1544,8 @@ SQL="
 	   <?/MIVAR>
 
            <td>
-	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> 
-	   </td></tr>	
+	     $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A>
+	   </td></tr>
          <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
       <?/MIBLOCK>
     <?/MISQL>
@@ -1567,12 +1591,12 @@ SQL="
 <?MIVAR NAME=mrkrview_xpat_author>Mason<?/MIVAR>
 <?MIVAR NAME=mrkrview_xpat_resulttytpe>Unpublished<?/MIVAR>
 
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
-     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count $(IF,$(>,$mrkrview_xpatsubfig_count,1),figures,figure) ($mrkrview_image_count images)</a> 
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID&xpatsel_jtype=Unpublished&author=$mrkrview_xpat_author">$mrkrview_xpatsubfig_count $(IF,$(>,$mrkrview_xpatsubfig_count,1),figures,figure) ($mrkrview_image_count images)</a>
 	 <?/MIVAR>
 
          <td>
-	   $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A> 
+	   $mrkrview_xpatsubfig_count_html from <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrview_xpatsubpub_id>$mrkrview_xpatsubpub_miniref</A>
 	 </td></tr>
 <?/MISQL>
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
@@ -1584,7 +1608,7 @@ SQL="
      <?MICOMMENT>Show only if OID is a GENE and contains expression<?/MICOMMENT>
      <?MICOMMENT>Do not show if expression is WITHDRAWN: or 'chimeric'<?/MICOMMENT>
 	 <?MISQL SQL="
-	 SELECT  get_stg_name_long_html(stg_zdb_id) from expression_result , expression_experiment,  genotype_experiment, experiment , genotype, stage, expression_pattern_figure
+	 SELECT  get_stg_name_long_html(stg_zdb_id) from expression_result , expression_experiment,  genotype_experiment, genotype, stage, expression_pattern_figure
 	 WHERE xpatex_gene_zdb_id = '$OID'
 	 AND
      (
@@ -1597,7 +1621,7 @@ SQL="
 	 AND xpatres_expression_found='t'
 	 AND xpatres_xpatex_zdb_id = xpatex_zdb_id
 	 AND  xpatex_genox_zdb_id = genox_zdb_id
-	 AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'
+     AND genox_is_standard = 't'
 	 AND geno_zdb_id  = genox_geno_zdb_id and geno_is_wildtype = 't'
      AND not exists(
          select 'x' from clone
@@ -1977,7 +2001,7 @@ union
            onClick="Delete_mrel('$mrkrview_agt_zdb_id','knockdown reagent targets gene')">
       <?/MIVAR>
 
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
+      <a href="/action/marker/view/$mrkrview_agt_zdb_id">
         $mrkrview_agt_name
       </a>
       <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -1987,7 +2011,7 @@ union
 
     <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE *** <?/MICOMMENT>
 
-    
+
   <?MIBLOCK COND="$(OR,$(NC,$mrkrview_mutants_display,),$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
 
   <div class="summary">
@@ -2009,7 +2033,7 @@ union
         <?/MIBLOCK>
 
         <?MIBLOCK COND="$(NC,$mrkrview_morpholino_display,)">
-          <tr>        
+          <tr>
             <th>Knockdown&nbsp;reagents:</th>
             <td><?MIVAR>$mrkrview_morpholino_display<?/MIVAR></td>
           </tr>
@@ -2097,7 +2121,7 @@ union
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 
-	
+
 	<div class="summary">
 	  <div class="summaryTitle">GENE ONTOLOGY</div>
       <?MIVAR>
@@ -2318,7 +2342,7 @@ union
   		  and mrel_type = 'gene product recognized by antibody';">
   <?/MISQL>
   <?MIBLOCK COND="$(>,$1,0)">
-        
+
   <div class="summary">
   <div class="summaryTitle">ANTIBODIES</div>
   <table class="summary">
@@ -2852,7 +2876,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
                   select mrkr_abbrev, mrkr_zdb_id
                     from marker
                     where mrkr_zdb_id = '$related_zdb_id'; ">
-                  ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
+                  ( <A HREF="/action/marker/view/$related_zdb_id">$related_mrkr_abbrev</A> )
                 <?/MISQL>
 
                 <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
@@ -3013,7 +3037,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES</b><?/MIVAR>
 <?MIBLOCK COND="$(XST,$UPDATE)">
-  
+
   <form name=updateother>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
   <br><br>

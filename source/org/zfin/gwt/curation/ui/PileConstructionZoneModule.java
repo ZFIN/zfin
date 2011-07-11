@@ -1,7 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.dom.client.*;
-import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;

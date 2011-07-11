@@ -3,10 +3,10 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 
-import static org.zfin.gwt.root.dto.OntologyDTO.*;
-
 import java.util.List;
 import java.util.Map;
+
+import static org.zfin.gwt.root.dto.OntologyDTO.*;
 
 /**
  * Structure Validator for Pato Pile Construction Zone.

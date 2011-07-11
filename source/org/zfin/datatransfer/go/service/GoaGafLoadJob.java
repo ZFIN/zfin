@@ -173,6 +173,10 @@ public class GoaGafLoadJob implements Job {
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
             }
+            // the theory is that these were being left open . . . this should fix that
+            finally{
+                HibernateUtil.closeSession();
+            }
         }
     }
 

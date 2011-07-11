@@ -1,6 +1,7 @@
 package org.zfin.people.repository;
 
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.people.*;
 
 import java.util.List;
@@ -152,4 +153,6 @@ public interface ProfileRepository {
     CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
 
     Lab getLabById(String labZdbId);
+
+    List<OrganizationLink> getSupplierLinksForZdbId(String zdbID);
 }

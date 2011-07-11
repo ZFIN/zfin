@@ -8,7 +8,6 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -72,11 +71,11 @@ public class AntibodyService {
                 for (ExpressionResult result : results) {
                     if (!result.isExpressionFound())
                         continue;
-                    Term term = result.getSuperterm();
+                    Term term = result.getSuperTerm();
                     if (!distinctAoTerms.contains(term))
                         distinctAoTerms.add(term);
                     // add the secondary term if available
-                    Term subterm = result.getSubterm();
+                    Term subterm = result.getSubTerm();
                     if (subterm != null)
                         if (!distinctAoTerms.contains(subterm))
                             distinctAoTerms.add(subterm);
@@ -111,8 +110,8 @@ public class AntibodyService {
                 for (ExpressionResult result : results) {
                     if (!result.isExpressionFound())
                         continue;
-                    Term term = result.getSuperterm();
-                    Term subterm = result.getSubterm();
+                    Term term = result.getSuperTerm();
+                    Term subterm = result.getSubTerm();
                     String composedTermName = term.getZdbID();
                     if (subterm != null)
                         composedTermName += subterm.getZdbID();
@@ -150,7 +149,7 @@ public class AntibodyService {
                     if (!result.isExpressionFound())
                         continue;
 
-                    Term goTerm = result.getSubterm();
+                    Term goTerm = result.getSubTerm();
                     if (goTerm != null && Ontology.isGoOntology(goTerm.getOntology())) {
                         if (!distinctGoTerms.contains(goTerm))
                             distinctGoTerms.add(goTerm);
@@ -385,8 +384,8 @@ public class AntibodyService {
                 if (results != null) {
                     for (ExpressionResult result : results) {
                         if (result.isExpressionFound()) {
-                            terms.add(result.getSuperterm());
-                            GenericTerm subterm = result.getSubterm();
+                            terms.add(result.getSuperTerm());
+                            GenericTerm subterm = result.getSubTerm();
                             if (subterm != null && subterm.getOntology().equals(Ontology.ANATOMY)) {
                                 terms.add(subterm);
                             }
@@ -416,7 +415,7 @@ public class AntibodyService {
         return assayNames;
     }
 
-    public SortedSet<MarkerRelationship> getSortedAntigenRelationships() {
+    public Set<MarkerRelationship> getSortedAntigenRelationships() {
         Set<MarkerRelationship> relationships = antibody.getSecondMarkerRelationships();
         if (relationships == null) {
             return new TreeSet<MarkerRelationship>();
@@ -479,9 +478,9 @@ public class AntibodyService {
                 // loop thru the set of ExpressionResult objects to get the related data
                 for (ExpressionResult result : results) {
                     if (result.isExpressionFound()) {
-                        Term ao = result.getSuperterm();
+                        Term ao = result.getSuperTerm();
 
-                        Term cc = result.getSubterm();
+                        Term cc = result.getSubTerm();
                         String ccName;
                         if (cc == null) {
                             ccName = "";
@@ -573,8 +572,8 @@ public class AntibodyService {
                 for (ExpressionResult result : results) {
                     if (result.isExpressionFound()) {
 
-                        Term subterm = result.getSubterm();
-                        Term superterm = result.getSuperterm();
+                        Term subterm = result.getSubTerm();
+                        Term superterm = result.getSuperTerm();
 
                         DevelopmentStage startStage = result.getStartStage();
                         String startStageName;

@@ -739,9 +739,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
 
         for (ExpressionResult expressionResult : expressionResults) {
-            terms.add(expressionResult.getSuperterm());
-            if (expressionResult.getSubterm() != null)
-                terms.add(expressionResult.getSubterm());
+            terms.add(expressionResult.getSuperTerm());
+            if (expressionResult.getSubTerm() != null)
+                terms.add(expressionResult.getSubTerm());
         }
 
         return terms;

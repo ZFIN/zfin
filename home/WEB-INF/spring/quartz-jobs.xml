@@ -182,7 +182,8 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Microarray Update"/>
                 <property name="group" value="Microarray"/>
-                <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayJob"/>
+                <!--<property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayDbLinkJob"/>-->
+                <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>

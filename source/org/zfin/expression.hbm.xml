@@ -217,6 +217,18 @@
         <many-to-one name="subterm" column="xpatinf_subterm_zdb_id"/>
     </class>
 
+
+    <!--<class name="org.zfin.expression.WildtypeExpressionExperiment" table="wildtype_expression_experiment" mutable="false">-->
+        <!--<id name="id" column="id" type="java.lang.Long"/>-->
+
+        <!--<many-to-one name="expressionExperiment" column="wee_ee_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>-->
+        <!--<many-to-one name="gene" column="wee_marker_zdb_id" class="org.zfin.marker.Marker"/>-->
+        <!--<many-to-one name="superTerm" column="wee_super_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
+        <!--<many-to-one name="subTerm" column="wee_sub_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
+        <!--<many-to-one name="startStage" column="wee_start_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
+        <!--<many-to-one name="endStage" column="wee_end_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
+    <!--</class>-->
+
     <query name="stageanatomyfigure"><![CDATA[
         select stage, xpatres.entity.superterm, xpatres.figures
         from org.zfin.anatomy.DevelopmentStage stage,
@@ -224,7 +236,7 @@
              org.zfin.expression.ExpressionExperiment xpatex
         where xpatex.gene.zdbID = :geneZdbID
           and xpatres member of xpatex.expressionResults
-          and xpatex.genotypeExperiment.experiment.name in ('_Standard','_Generic-control')
+          and xpatex.genotypeExperiment.standardOrGenericControl = 't'
           and xpatex.genotypeExperiment.genotype.wildtype = true
           and xpatres.entity.superterm.termName <> :unspecified
           and xpatres.startStage.name <> :unknown

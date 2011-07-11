@@ -28,6 +28,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 
@@ -646,5 +648,40 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getNumberAssociatedPublicationsForMarker(){
+
+        Marker m ;
+        int numberPubs ;
+
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertThat(numberPubs,greaterThan(15));
+        assertThat(numberPubs, lessThan(35));
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax6a");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertThat(numberPubs,greaterThan(190));
+        assertThat(numberPubs, lessThan(300));
+
+    }
+
+    @Test
+    public void getPublicationList(){
+        assertEquals(12,publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size());
+        assertEquals(17,publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size());
+        assertEquals(0,publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
+        assertEquals(12,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"));
+        assertEquals(17,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1"));
+        assertEquals(0,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-SSLP-000315-3"));
+    }
+
+    @Test
+    public void getNumberDirectionPublications(){
+        int numDirectPubs = publicationRepository.getNumberDirectPublications("ZDB-ATB-081002-19");
+        assertThat(numDirectPubs,greaterThan(100));
+        assertThat(numDirectPubs,lessThan(200));
+    }
 }
 

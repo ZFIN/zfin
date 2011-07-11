@@ -5,6 +5,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
@@ -238,13 +239,15 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       marker = con.morpholino AND " +
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
-        if (isWildtype != null)
+        if(isWildtype != null){
             hql += " AND geno.wildtype = :isWildtype ";
+        }
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        if (isWildtype != null)
+        if (isWildtype != null){
             query.setBoolean("isWildtype", isWildtype);
+        }
 
         // no boundaries defined, all records
         if (bean == null) {
@@ -654,12 +657,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public FeatureDBLink getSpecificDBLink(Feature feature, String accessionNumber) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
-                " ftrDbLink.feature = :feature ";
+         Session session = HibernateUtil.currentSession();
+          String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
+                " ftrDbLink.feature = :feature " ;
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("feature", feature);
         return (FeatureDBLink) query.uniqueResult();
+
 
 
     }
@@ -1091,4 +1095,63 @@ public class HibernateMutantRepository implements MutantRepository {
         else
             histogram.put(termUsageHistogram, number);
     }
+
+    @Override
+    public String getMutantLinesDisplay(String zdbID) {
+        return HibernateUtil.currentSession()
+                .createSQLQuery("execute function get_mutants_html_link( :markerZdbId)")
+                .setString("markerZdbId",zdbID)
+                .uniqueResult().toString();
+    }
+
+    @Override
+    public List<FeaturePresentationBean> getAllelesForMarker(String zdbID) {
+        String sql = "select feature_abbrev,feature_zdb_id from feature, feature_marker_relationship, feature_marker_relationship_type " +
+                "              where fmrel_ftr_zdb_id=feature_zdb_id " +
+                "              and fmrel_mrkr_zdb_id=:markerZdbId " +
+                "              and fmrel_type=fmreltype_name " +
+                "              and  fmreltype_produces_affected_marker='t'	" +
+                "              order  by feature_abbrev	" +
+                " ";
+        List<FeaturePresentationBean> list = (List<FeaturePresentationBean>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId",zdbID)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        FeaturePresentationBean featurePresentationBean =new FeaturePresentationBean();
+                        featurePresentationBean.setAbbrevation(tuple[0].toString());
+                        featurePresentationBean.setFeatureZdbId(tuple[1].toString());
+                        return featurePresentationBean ;
+                    }
+                })
+                .list();
+        return list ;
+    }
+
+    @Override
+    public List<Marker> getKnockdownReagents(Marker gene) {
+        String hql = " select m from Marker m join m.firstMarkerRelationships mr " +
+                " where mr.secondMarker.zdbID = :markerZdbId  " +
+                " and mr.markerRelationshipType.name = :type " +
+                " order by m.abbreviationOrder " +
+                "" ;
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbId", gene.getZdbID())
+                .setString("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
+                .list();
+    }
+
+    @Override
+    public List<String> getTransgenicLines(Marker construct){
+        String sql = " " +
+                "select distinct get_geno_name_with_bg_html_link(genofeat_geno_zdb_id) " +
+                "   from genotype_feature, feature_marker_relationship " +
+                "   where fmrel_mrkr_zdb_id = :markerZdbID " +
+                "   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
+                "   and fmrel_type like 'contains%'";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID",construct.getZdbID())
+                .list();
+    }
+
 }

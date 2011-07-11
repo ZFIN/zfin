@@ -61,15 +61,14 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
  from marker, expression_experiment, expression_result, term as super,
-      outer term as sub, genotype_experiment, experiment, genotype
+      outer term as sub, genotype_experiment, genotype
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
    AND super.term_zdb_id = xpatres_superterm_zdb_id
    AND sub.term_zdb_id = xpatres_subterm_zdb_id
    AND xpatex_genox_zdb_id = genox_zdb_id
-   AND genox_exp_zdb_id = exp_zdb_id
-   AND (exp_name = '_Standard' OR exp_name = '_Generic-control')
+   AND genox_is_std_or_generic_control = 't'
    AND xpatres_expression_found = 't'
    AND geno_zdb_id = genox_geno_zdb_id
    AND geno_is_wildtype = 't'
@@ -1020,8 +1019,7 @@ and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
 and pubcount <= 20
 and jtype='Journal'
-and (exp_name ='_Standard' or exp_name like '%Generic%')
-and exp_zdb_id=genox_exp_zdb_id
+and genox_is_std_and_generic_control = 't'
 and phenos_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
@@ -1083,8 +1081,7 @@ and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
 and pubcount > 20
 and jtype='Journal'
-and (exp_name ='_Standard' or exp_name like '%Generic%')
-and exp_zdb_id=genox_exp_zdb_id
+and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 

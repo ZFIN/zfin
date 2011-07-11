@@ -1,11 +1,10 @@
 package org.zfin.sequence;
 
 //import org.apache.log4j.Logger;
+
 import org.zfin.feature.Feature;
 
-
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, Serializable {
 

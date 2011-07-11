@@ -8,10 +8,10 @@ and display genotype list when called from other pages, such as marker page, pub
 
 Variables THAT MIGHT BE Expected: 
  -- fsel_allele_id        -- from genotype detail JSP and jump_to.apg
- -- fsel_marker_id        -- from markerview.apg
+ -- fsel_marker_id        -- from /action/marker/view
  -- fsel_anatomy_item_id  -- from action/anatomy/term-detail
  -- fsel_inputname     -- from search form and markerview and markerselect page
- -- fsel_cnstrct_id    -- from markerview.apg
+ -- fsel_cnstrct_id    -- from /action/marker/view
  -- pubId              -- from pubview2.apg
  
 <?/MICOMMENT>

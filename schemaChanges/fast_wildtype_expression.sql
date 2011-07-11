@@ -1,0 +1,51 @@
+
+drop table wildtype_expression_experiment;
+drop sequence wildtype_expression_experiment_sequence;
+--create sequence wildtype_expression_experiment_sequence ;
+--create table wildtype_expression_experiment(
+--id serial primary key   ,
+--wee_ee_zdb_id varchar(50) not null ,
+--wee_marker_zdb_id varchar(50) not null  ,
+--wee_super_term_zdb_id varchar(50) not null,
+--wee_sub_term_zdb_id varchar(50) ,
+--wee_start_stage_zdb_id varchar(50) not null,
+--wee_end_stage_zdb_id varchar(50) not null
+--);
+--alter table wildtype_expression_experiment add constraint foreign key (wee_ee_zdb_id) references expression_experiment constraint xpatex_zdb_id ;
+--alter table wildtype_expression_experiment add constraint foreign key (wee_marker_zdb_id) references marker constraint mrkr_zdb_id ;
+--alter table wildtype_expression_experiment add constraint foreign key (wee_super_term_zdb_id) references term constraint super_term_zdb_id ;
+--alter table wildtype_expression_experiment add constraint foreign key (wee_sub_term_zdb_id) references term constraint sub_term_zdb_id ;
+--alter table wildtype_expression_experiment add constraint foreign key (wee_start_stage_zdb_id) references stage constraint start_stg_zdb_id ;
+--alter table wildtype_expression_experiment add constraint foreign key (wee_end_stage_zdb_id) references stage constraint end_stg_zdb_id ;
+
+--insert into wildtype_expression_experiment
+--select wildtype_expression_experiment_sequence.nextval , ee.xpatex_zdb_id,ee.xpatex_gene_zdb_id,er.xpatres_superterm_zdb_id,er.xpatres_subterm_zdb_id,er.xpatres_start_stg_zdb_id, er.xpatres_end_stg_zdb_id
+--from expression_experiment ee
+--join genotype_experiment ge on ee.xpatex_genox_zdb_id=ge.genox_zdb_id
+--join experiment e on ge.genox_exp_zdb_id=e.exp_zdb_id
+--join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
+--join expression_result er on er.xpatres_xpatex_zdb_id=ee.xpatex_zdb_id
+--where g.geno_is_wildtype='t'
+--and e.exp_name='_Standard'
+--and er.xpatres_expression_found='t'
+--and ee.xpatex_gene_zdb_id is not null
+-- AND not exists(
+--            select
+--                'x'
+--            from
+--                clone
+--            where
+--                clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+--                and clone_problem_type = 'Chimeric'
+--        )
+--        AND not exists (
+--            select
+--                'x'
+--            from
+--                marker
+--            where
+--                mrkr_zdb_id = xpatex_probe_feature_zdb_id
+--                and mrkr_abbrev[1,10] = 'WITHDRAWN:'
+--        )
+
+--;

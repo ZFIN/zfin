@@ -1,24 +1,24 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.sequence.MarkerDBLink;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.log4j.Logger;
 
 public class MarkerExpression {
 
     private MarkerExpressionInstance allMarkerExpressionInstance;
     private DirectlySubmittedExpression directlySubmittedExpression;
-    private List<String> wildTypeStageExpression = new ArrayList<String>();
-    private List<MarkerDBLink> microarrayLinks = new ArrayList<MarkerDBLink>();
+//    private List<MarkerDBLink> microarrayLinks = new ArrayList<MarkerDBLink>();
+    private WildTypeExpression wildTypeStageExpression;
+    private String geoLink;
+    private String geoGeneSymbol ;
+    private boolean geoLinkSearching = true ;
 
-//    private Logger logger = Logger.getLogger(MarkerExpression.class) ;
+    private Logger logger = Logger.getLogger(MarkerExpression.class) ;
 
     public int getTotalCountForStuff() {
-        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getExpressionSummaryInstances().size())
-                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getPublicationCount())
-                + (wildTypeStageExpression == null ? 0 : wildTypeStageExpression.size())
-                + (wildTypeStageExpression == null ? 0 : microarrayLinks.size())
+        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getMarkerExpressionInstances().size())
+                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getFigureCount())
+                + (wildTypeStageExpression == null ? 0 : wildTypeStageExpression.getExpressedStructures().size())
+                + (geoLink == null ? 0 : 1)
                 ;
     }
 
@@ -56,19 +56,43 @@ public class MarkerExpression {
         this.allMarkerExpressionInstance = allMarkerExpressionInstance;
     }
 
-    public List<String> getWildTypeStageExpression() {
+//    public List<MarkerDBLink> getMicroarrayLinks() {
+//        return microarrayLinks;
+//    }
+//
+//    public void setMicroarrayLinks(List<MarkerDBLink> microarrayLinks) {
+//        this.microarrayLinks = microarrayLinks;
+//    }
+
+    public WildTypeExpression getWildTypeStageExpression() {
         return wildTypeStageExpression;
     }
 
-    public void setWildTypeStageExpression(List<String> wildTypeStageExpression) {
+    public void setWildTypeStageExpression(WildTypeExpression wildTypeStageExpression) {
         this.wildTypeStageExpression = wildTypeStageExpression;
     }
 
-    public List<MarkerDBLink> getMicroarrayLinks() {
-        return microarrayLinks;
+    public String getGeoLink() {
+        return geoLink;
     }
 
-    public void setMicroarrayLinks(List<MarkerDBLink> microarrayLinks) {
-        this.microarrayLinks = microarrayLinks;
+    public void setGeoLink(String geoLink) {
+        this.geoLink = geoLink;
+    }
+
+    public String getGeoGeneSymbol() {
+        return geoGeneSymbol;
+    }
+
+    public void setGeoGeneSymbol(String geoGeneSymbol) {
+        this.geoGeneSymbol = geoGeneSymbol;
+    }
+
+    public boolean isGeoLinkSearching() {
+        return geoLinkSearching;
+    }
+
+    public void setGeoLinkSearching(boolean geoLinkSearching) {
+        this.geoLinkSearching = geoLinkSearching;
     }
 }

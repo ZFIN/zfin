@@ -859,149 +859,122 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return fillList;
     }
 
-    /**
-     * From citgeneric.apg, includes references for:
-     * 1 - direct attribution t omarker
-     * 2 - attributed second marker relations
-     * 3 - attributed first marker relations
-     * 4 - attributed second marker relations where first marker is a morpholino (redundant?)
-     * 5 - direct attribution to alias that links to marker
-     * 6 - direct attribution to dblink that links to marker
-     * 7 - direct attribution to orthologue evidence that links to marker
-     * 8 - direct attribution to GO evidence that links to marker
-     * 9 - direct attribution to feature evidence that links to marker
-     * 10 - direct attribution to genotype feature evidence that links to marker somehow through feature
-     * 11 - direct attribution to genotype feature evidence that links to marker directly
-     *
-     * @param marker
-     * @param maxPubs
-     * @return The number of markers and any publications.
-     */
-    public PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs) {
+    final String commonPubSQL  =
+            " select * from (select ra.recattrib_source_zdb_id   " +
+                    " from record_attribution ra   " +
+                    " where :markerZdbID = ra.recattrib_data_zdb_id " +
+                    // marker relationship 2_1
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , marker_relationship mr " +
+                    " where :markerZdbID = mr.mrel_mrkr_2_zdb_id " +
+                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id " +
+                    // marker relationship 1_2
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , marker_relationship mr " +
+                    " where :markerZdbID = mr.mrel_mrkr_1_zdb_id " +
+                    " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id " +
+                    // morhpolino marker type ? necessary
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , marker_relationship mr , marker m " +
+                    " where :markerZdbID = mr.mrel_mrkr_2_zdb_id " +
+                    " and  ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id " +
+                    " and  mr.mrel_mrkr_1_zdb_id = m.mrkr_zdb_id " +
+                    " and  m.mrkr_type = 'MRPHLNO' " +
+                    // data alias
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , data_alias da  " +
+                    " where da.dalias_zdb_id = ra.recattrib_data_zdb_id " +
+                    " and :markerZdbID = da.dalias_data_zdb_id " +
+                    // db link
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , db_link dbl  " +
+                    " where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = dbl.dblink_linked_recid " +
+                    // db link, marker_relationship
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra , db_link dbl , marker_relationship mr " +
+                    " where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id " +
+                    " and  :markerZdbID = mr.mrel_mrkr_1_zdb_id " +
+                    " and  mr.mrel_type = 'gene encodes small segment' " +
+                    // ortho
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  orthologue_evidence_display ev " +
+                    " where  ev.oevdisp_zdb_id = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = ev.oevdisp_gene_zdb_id " +
+                    // marker_go_term_Evidence
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  marker_go_term_evidence ev " +
+                    " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
+                    // feature_marker_realationship
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  feature_marker_relationship fmr " +
+                    " where  fmr.fmrel_ftr_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id " +
+                    // feature_marker_realationship, genotype_feature
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  feature_marker_relationship fmr, genotype_feature gf " +
+                    " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id "+
+                    " and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id " +
+                    // genotype_feature
+                    " union " +
+                    " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  genotype_feature gf " +
+                    " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = gf.genofeat_feature_zdb_id " +
+                    " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  " ;
 
-        PaginationResult<Publication> paginationResult = new PaginationResult<Publication>();
-        Set<Publication> pubList = new HashSet<Publication>();
-        Query query;
-        String hql;
-        List<Publication> resultList;
-        Session session = HibernateUtil.currentSession();
+    @Override
+    public List<Publication> getPubsForDisplay(String zdbID){
 
-        // short list:
-        hql = "select p.publication " +
-                " from PublicationAttribution p " +
-                " where p.dataZdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
+        List<String> publicationIDs = HibernateUtil.currentSession()
+                .createSQLQuery(commonPubSQL)
+                .setString("markerZdbID", zdbID)
+                .list();
 
-        hql = "select p.publication " +
-                " from PublicationAttribution p , MarkerRelationship mr " +
-                " where p.dataZdbID = mr.zdbID " +
-                " and mr.secondMarker.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , MarkerRelationship mr " +
-                " where p.dataZdbID = mr.zdbID " +
-                " and mr.firstMarker.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , MarkerRelationship mr " +
-                " where p.dataZdbID = mr.firstMarker.zdbID " +
-                " and mr.secondMarker.zdbID = :markerZdbID " +
-                " and mr.firstMarker.markerType = :markerType ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        query.setString("markerType", Marker.Type.MRPHLNO.name());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , DataAlias  da " +
-                "  where p.dataZdbID = da.zdbID " +
-                " and da.dataZdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , MarkerDBLink dbl " +
-                "  where dbl.zdbID = p.dataZdbID " +
-                "  and dbl.marker.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , OrthoEvidenceDisplay oed " +
-                "  where oed.zdbID = p.dataZdbID " +
-                "  and oed.gene.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , MarkerGoTermEvidence mgte " +
-                "  where mgte.zdbID = p.dataZdbID " +
-                "  and mgte.marker.zdbID  = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
-                " where fmr.feature.zdbID  = p.dataZdbID " +
-                "  and fmr.marker.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , GenotypeFeature gtf, FeatureMarkerRelationship fmr " +
-                "  where gtf.genotype.zdbID  = p.dataZdbID " +
-                "  and fmr.feature.zdbID = gtf.feature.zdbID" +
-                "  and fmr.marker.zdbID = :markerZdbID  ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        hql = "select p.publication " +
-                " from PublicationAttribution p , GenotypeFeature gtf " +
-                " where gtf.genotype.zdbID  = p.dataZdbID " +
-                "  and gtf.feature.zdbID = :markerZdbID ";
-        query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        String zdbIDs = "";
-        for (Publication pub : pubList) {
-            zdbIDs += pub.getZdbID() + "\n";
+        if(CollectionUtils.isEmpty(publicationIDs)){
+            return new ArrayList<Publication>() ;
         }
 
-        if (maxPubs >= 0) {
-            paginationResult.setPopulatedResults((new ArrayList(pubList)).subList(0, maxPubs));
-        } else {
-            paginationResult.setPopulatedResults(new ArrayList(pubList));
-        }
-        paginationResult.setTotalCount(pubList.size());
-        return paginationResult;
+        String hql = " select p from Publication p  " +
+                " where p.zdbID in (:zdbIDs) " +
+                " order by p.publicationDate desc " ;
+        List<Publication> publicationLinks = HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setParameterList("zdbIDs", publicationIDs)
+                .list();
+
+
+        // remove if not pubs
+        return publicationLinks ;
     }
+
+
+    @Override
+    public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
+        String sql  =  " select count(*) from ( " + commonPubSQL  +" )" ;
+
+        int count = Integer.valueOf(HibernateUtil.currentSession()
+                .createSQLQuery(sql)
+                .setString("markerZdbID",zdbID)
+                .uniqueResult().toString());
+
+        // remove if not pubs
+        return count ;
+    }
+
 
     /**
      * @param feature
@@ -1564,4 +1537,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
+    @Override
+    public int getNumberDirectPublications(String zdbID) {
+        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +
+                "from record_attribution ra " +
+                "where ra.recattrib_data_zdb_id=:zdbID ")
+                .setString("zdbID",zdbID)
+                .uniqueResult()
+                .toString()
+        );
+
+
+    }
 }

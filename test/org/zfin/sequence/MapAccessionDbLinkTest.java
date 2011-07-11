@@ -486,7 +486,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
         evidence1.setPublication(publication);
         Set<OrthoEvidence> evidences = new HashSet<OrthoEvidence>();
         evidences.add(evidence1);
-        orthology1.setEvidence(evidences);
+        orthology1.setEvidences(evidences);
         session.save(orthology1);
 
         Orthologue orthology2 = new Orthologue();
@@ -497,7 +497,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
         evidenceThree.setPublication(publication);
         Set<OrthoEvidence> evidences2 = new HashSet<OrthoEvidence>();
         evidences2.add(evidenceThree);
-        orthology2.setEvidence(evidences2);
+        orthology2.setEvidences(evidences2);
         session.save(orthology2);
 
         // should find the cdna marker for accession1

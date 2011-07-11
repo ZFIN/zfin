@@ -2,13 +2,10 @@ package org.zfin.gwt.root.util;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
-import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.ui.TermEntry;
-import org.zfin.gwt.root.ui.ZfinListBox;
 
 import java.util.Map;
 

@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;

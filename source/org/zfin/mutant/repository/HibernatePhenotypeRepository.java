@@ -3,22 +3,22 @@ package org.zfin.mutant.repository;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.MutantFigureStage;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
+import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -31,7 +31,6 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     private static Logger LOG = Logger.getLogger(HibernatePhenotypeRepository.class);
 
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
@@ -53,7 +52,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param structure Phenotype Structure
      */
     public void createPhenotypeStructure(PhenotypeStructure structure, String publicationID) {
-        Publication pub = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        Publication pub = publicationRepository.getPublication(publicationID);
         structure.setPublication(pub);
         structure.setDate(new Date());
         if (isPhenotypeStructureOnPile(structure))
@@ -324,7 +323,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         List<PhenotypeExperiment> phenotypes = getAllPhenotypes(publicationID);
         if (phenotypes == null || phenotypes.size() == 0)
             return;
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        Publication publication = publicationRepository.getPublication(publicationID);
         for (PhenotypeExperiment phenotypeExperiments : phenotypes) {
             for (PhenotypeStatement phenotype : phenotypeExperiments.getPhenotypeStatements()) {
                 PhenotypeStructure structure = instantiatePhenotypeStructureFromPheno(publication, phenotype);
@@ -457,4 +456,194 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         return structure;
     }
 
+    @Override
+    public int getNumPhenotypeFigures(Marker gene) {
+        String sql = " select count(*) from ( " +
+                "     select distinct phenox_fig_zdb_id  " +
+                "      from phenotype_experiment, mutant_fast_search  " +
+                "     where mfs_mrkr_zdb_id =  :markerZdbId " +
+                "       and phenox_genox_zdb_id = mfs_genox_zdb_id  " +
+                "       and exists (select NOTnormal.phenos_pk_id  " +
+                "                     from phenotype_statement NOTnormal  " +
+                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
+                "                      and NOTnormal.phenos_tag != \"normal\") " +
+                " ) " +
+                " ";
+        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", gene.getZdbID())
+                .uniqueResult().toString()) ;
+    }
+
+    @Override
+    public FigureLink getPhenotypeFirstFigure(Marker gene) {
+        String sql = "  " +
+                "     select " +
+                "phenox_fig_zdb_id, f.fig_label " +
+                "from phenotype_experiment, mutant_fast_search, figure f " +
+                "where mfs_mrkr_zdb_id = :markerZdbId " +
+                "and f.fig_zdb_id= phenox_fig_zdb_id " +
+                "and phenox_genox_zdb_id = mfs_genox_zdb_id " +
+                "and exists " +
+                "( " +
+                "   select " +
+                "   NOTnormal.phenos_pk_id " +
+                "   from phenotype_statement NOTnormal " +
+                "   where NOTnormal.phenos_phenox_pk_id = phenox_pk_id " +
+                "   and NOTnormal.phenos_tag != \"normal\" " +
+                ") " ;
+        return (FigureLink) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", gene.getZdbID())
+                .setMaxResults(1)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        FigureLink figureLink = new FigureLink();
+                        figureLink.setFigureZdbId(tuple[0].toString());
+                        if(tuple[1]==null){
+                            figureLink.setLinkContent("Text only");
+                        }
+                        else{
+                            figureLink.setLinkContent(tuple[1].toString());
+                        }
+                        figureLink.setLinkValue(
+                                EntityPresentation.getWebdriverLink(
+                                        "?MIval=aa-fxfigureview.apg&OID=",figureLink.getFigureZdbId()
+                                        ,figureLink.getLinkContent()
+                                )
+                        );
+
+                        return figureLink ;
+                    }
+                })
+                .uniqueResult();
+    }
+
+    /**
+     * Here we assume that there is only one.
+     * @param gene
+     * @return
+     */
+    @Override
+    public PublicationLink getPhenotypeFirstPublication(Marker gene) {
+        String sql = " " +
+                "   select p.zdb_id , p.pub_mini_ref " +
+                "        from phenotype_experiment, figure, publication p, mutant_fast_search  " +
+                "       where mfs_mrkr_zdb_id = :markerZdbId  " +
+                "         and mfs_genox_zdb_id = phenox_genox_zdb_id  " +
+                "         and phenox_fig_zdb_id = fig_zdb_id  " +
+                "         and fig_source_zdb_id = zdb_id  " +
+                "         and exists (select NOTnormal.phenos_pk_id  " +
+                "                     from phenotype_statement NOTnormal  " +
+                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
+                "                      and NOTnormal.phenos_tag != \"normal\")     " +
+                "  " +
+                " ";
+        return (PublicationLink) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", gene.getZdbID())
+                .setMaxResults(1)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        PublicationLink publicationLink = new PublicationLink();
+                        publicationLink. setPublicationZdbId(tuple[0].toString());
+                        publicationLink.setLinkContent(tuple[1].toString());
+                        return publicationLink ;
+                    }
+                })
+                .uniqueResult();
+    }
+
+    @Override
+    public int getNumPhenotypePublications(Marker gene) {
+        String sql = " select count(*) from ( " +
+                "   select distinct pub_mini_ref, zdb_id  " +
+                "        from phenotype_experiment, figure, publication, mutant_fast_search  " +
+                "       where mfs_mrkr_zdb_id = :markerZdbId  " +
+                "         and mfs_genox_zdb_id = phenox_genox_zdb_id  " +
+                "         and phenox_fig_zdb_id = fig_zdb_id  " +
+                "         and fig_source_zdb_id = zdb_id  " +
+                "         and exists (select NOTnormal.phenos_pk_id  " +
+                "                     from phenotype_statement NOTnormal  " +
+                "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
+                "                      and NOTnormal.phenos_tag != \"normal\")     " +
+                " ) " +
+                " ";
+        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", gene.getZdbID())
+                .uniqueResult().toString()) ;
+    }
+
+    private class PostComposedResultTransformer extends BasicTransformerAdapter{
+        @Override
+        public Object transformTuple(Object[] tuple, String[] aliases) {
+            PostComposedPresentationBean bean = new PostComposedPresentationBean();
+            bean.setSuperTermZdbId(tuple[0].toString());
+            bean.setSuperOntologyId(tuple[1].toString());
+            if(tuple[2]!=null){
+                bean.setSubTermZdbId(tuple[2].toString());
+                bean.setSubOntologyId(tuple[3].toString());
+                bean.setSubTermName(tuple[5].toString());
+            }
+            bean.setSuperTermName(tuple[4].toString());
+            return bean ;
+        }
+
+    }
+
+    @Override
+    public List<PostComposedPresentationBean> getPhenotypeAnatomy(Marker gene) {
+
+        PostComposedResultTransformer postComposedResultTransformer = new PostComposedResultTransformer();
+
+        Set<PostComposedPresentationBean> phenotypes = new TreeSet<PostComposedPresentationBean>();
+
+        // NOTE: need to use the "AS" notation, otherwise it assumes that both are the same
+        String sql1 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
+                " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
+                " super.term_name as super_name , sub.term_name as sub_name " +
+                "               from phenotype_statement ps  " +
+                " join term super on ps.phenos_entity_1_superterm_zdb_id = super.term_zdb_id   " +
+                " left OUTER join term sub on ps.phenos_entity_1_subterm_zdb_id = sub.term_zdb_id " +
+                "	  where ps.phenos_tag != 'normal' " +
+                "     and ps.phenos_phenox_pk_id in ( " +
+                "           select px.phenox_pk_id " +
+                "             from " +
+                "                mutant_fast_search mfs , " +
+                "                phenotype_experiment px               " +
+                "            where " +
+                "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
+                "                and mfs.mfs_genox_zdb_id = px.phenox_genox_zdb_id     " +
+                "     ) " +
+                " ";
+        phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql1)
+                .setString("markerZdbId",gene.getZdbID())
+                .setResultTransformer(postComposedResultTransformer)
+                .list());
+
+
+        String sql2 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
+                " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
+                " super.term_name as super_name , sub.term_name as sub_name " +
+                "               from  phenotype_statement ps  " +
+                "              join term super on ps.phenos_entity_2_superterm_zdb_id = super.term_zdb_id " +
+                "              left OUTER join term sub  on ps.phenos_entity_2_subterm_zdb_id = sub.term_zdb_id " +
+                "     where ps.phenos_tag != 'normal'   " +
+                "     and ps.phenos_phenox_pk_id in ( " +
+                "           select px.phenox_pk_id " +
+                "             from " +
+                "                mutant_fast_search mfs , " +
+                "                phenotype_experiment px               " +
+                "            where " +
+                "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
+                "                and mfs.mfs_genox_zdb_id = px.phenox_genox_zdb_id     " +
+                "     ) " +
+                " ";
+
+        phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql2)
+                .setString("markerZdbId",gene.getZdbID())
+                .setResultTransformer(postComposedResultTransformer)
+                .list());
+
+        return new ArrayList<PostComposedPresentationBean>(phenotypes);
+    }
 }

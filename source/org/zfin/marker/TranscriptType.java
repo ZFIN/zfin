@@ -95,7 +95,7 @@ public class TranscriptType {
                 if (t.toString().equals(type))
                     return t;
             }
-            throw new RuntimeException("No transcript type of string " + type + " found.");
+            return null ;
         }
 
         public static List<TranscriptStatus.Status> getStatusList(Type transcriptType) {

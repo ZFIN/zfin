@@ -93,7 +93,7 @@ display summarized orthology data on gene page.
 	
     <?MIBLOCK INDEX=$item FOREACH=$oevcode>
       <?MIVAR>
-	<TD align=center><b><a href="/zf_info/oev.html">$item</a></b></TD>
+	<TD align=center><b>$item<a class="popup-link info-popup-link" href="/zf_info/oev.html"></a></b></TD>
       <?/MIVAR>         
     <?/MIBLOCK>
   </TR>  

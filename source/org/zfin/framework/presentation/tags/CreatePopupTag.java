@@ -1,10 +1,8 @@
 package org.zfin.framework.presentation.tags;
 
-import org.apache.commons.lang.StringUtils;
 import org.zfin.mutant.PhenotypeStatement;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;

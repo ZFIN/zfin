@@ -28,12 +28,11 @@ import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
-import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
-import org.zfin.mutant.PhenotypeStructureTest;
 import org.zfin.mutant.PhenotypeStatementTest;
+import org.zfin.mutant.PhenotypeStructureTest;
 import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
@@ -85,7 +84,6 @@ import org.zfin.util.*;
         ListFormatterTest.class,
         MailTest.class,
         MarkerPresentationTest.class,
-        MarkerServiceTest.class,
         MatchingTermServiceTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,

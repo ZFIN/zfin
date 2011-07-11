@@ -227,11 +227,12 @@ DEBUGGING:
     <?MISQL SQL="
     	    insert into $xselqry_tmp_wt_genox
 	    	 select genox_zdb_id
-                   from genotype_experiment, genotype, experiment
+                   from genotype_experiment, genotype
                   where genox_geno_zdb_id = geno_zdb_id
                     and genox_exp_zdb_id = exp_zdb_id
                     and geno_is_wildtype = 't'
-                    and exp_name = '_Standard';"> 
+                    and genox_is_standard = 't'
+                    ;">
           
     <?/MISQL>
    <?MIVAR NAME=xpatselqry_join>$xpatselqry_join,  $xselqry_tmp_wt_genox <?/MIVAR>

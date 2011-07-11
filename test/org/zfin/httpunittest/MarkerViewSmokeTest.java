@@ -67,7 +67,7 @@ public class MarkerViewSmokeTest extends AbstractSmokeTest{
     public void markerViewPages() throws Exception {
         testUrl.append("/");
         testUrl.append(mutant);
-        testUrl.append("/webdriver?MIval=aa-markerview.apg&OID=");
+        testUrl.append("/action/marker/view/");
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
 
         List<String> successPages = new ArrayList<String>();

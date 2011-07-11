@@ -6,9 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.Set;
 
@@ -28,7 +26,7 @@ public class TermSearchController {
 
         if (termName == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termName);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         //Ontology ontology = Ontology.getOntology(ontologyName);

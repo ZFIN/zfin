@@ -1,14 +1,18 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
@@ -17,31 +21,32 @@ import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.service.TranscriptService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  */
-public class TranscriptViewController extends AbstractCommandController {
+@Controller
+public class TranscriptViewController {
 
+    private Logger logger = Logger.getLogger(TranscriptViewController.class);
 
-    public TranscriptViewController() {
-        setCommandClass(TranscriptBean.class);
-    }
-
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    @RequestMapping(value ="/transcript-view")
+    String getTranscriptView(Model model
+            ,@RequestParam("zdbID") String zdbID
+            ,@RequestHeader("User-Agent") String userAgent)
+            throws Exception {
 
         // set base bean
-        TranscriptBean transcriptBean = (TranscriptBean) command;
+        TranscriptBean transcriptBean = new TranscriptBean();
+        transcriptBean.setZdbID(zdbID);
         Transcript transcript;
 
-        if (transcriptBean.getZdbID() != null) {
-            logger.debug("zdbID: " + transcriptBean.getZdbID());
-            transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptBean.getZdbID()) ;
-        } else  {
+        logger.debug("zdbID: " + transcriptBean.getZdbID());
+        transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptBean.getZdbID()) ;
+
+        if(transcript==null){
             logger.debug("vegaID " + transcriptBean.getVegaID());
             transcript = RepositoryFactory.getMarkerRepository().getTranscriptByVegaID(transcriptBean.getVegaID()) ;
         }
@@ -58,13 +63,14 @@ public class TranscriptViewController extends AbstractCommandController {
         }
 
         if(transcript==null){
-            ModelAndView errorModelAndView = new ModelAndView("record-not-found.page") ;
-            errorModelAndView.addObject(LookupStrings.ZDB_ID,transcriptBean.getZdbID()) ;
-            return errorModelAndView ;
+            model.addAttribute(LookupStrings.ZDB_ID,transcriptBean.getZdbID()) ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE  ;
         }
 
         logger.debug("transcript: " + transcript);
         transcriptBean.setMarker(transcript);
+
+        MarkerService.createDefaultViewForMarker(transcriptBean);
 
 
         // setting transcript relationships
@@ -85,8 +91,6 @@ public class TranscriptViewController extends AbstractCommandController {
             transcriptBean.setMicroRNARelatedTranscripts(TranscriptService.getRelatedTranscriptsForTranscript(transcript));
         } else {
             //build the collection of relatedTranscripts for each gene
-
-            String userAgent = request.getHeader("User-Agent");
             boolean showGBrowse = true;
             logger.debug("User-Agent: " + userAgent);
             if (StringUtils.contains(userAgent,"Java") || StringUtils.contains(userAgent,"Indexer")) {
@@ -112,7 +116,8 @@ public class TranscriptViewController extends AbstractCommandController {
         transcriptBean.setSequenceInfo(sequenceInfo);
 
         //get the "other transcript.name pages" dblink set
-        transcriptBean.setSummaryDBLinkDisplay(TranscriptService.getSummaryPages(transcript));
+        // should be handled by default "other" in MarkerService.createDefaultView
+//        transcriptBean.setSummaryDBLinkDisplay(TranscriptService.getSummaryPages(transcript));
 
         //get the protein summary pages
         transcriptBean.setProteinProductDBLinkDisplay(TranscriptService.getProteinProductDBLinks(transcript));
@@ -125,9 +130,6 @@ public class TranscriptViewController extends AbstractCommandController {
         //transcript
         transcriptBean.setNonReferenceStrains(TranscriptService.getNonReferenceStrainsForTranscript(transcript));
 
-        // setting publications
-        transcriptBean.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForMarker(
-                transcript,0).getTotalCount());
 
         List<TranscriptDBLink> transcriptDBLinks = transcript.getTranscriptDBLinksForDisplayGroup(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE) ;
         List<Sequence> sequences = MountedWublastBlastService.getInstance().
@@ -157,10 +159,9 @@ public class TranscriptViewController extends AbstractCommandController {
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
         transcriptBean.setNucleotideSequences(sequences);
 
-        ModelAndView modelAndView = new ModelAndView("marker/transcript-view.page") ;
-        modelAndView.addObject(LookupStrings.FORM_BEAN,transcriptBean) ;
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getTitleString() +transcript.getAbbreviation()) ;
+        model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getTitleString() + transcript.getAbbreviation()) ;
 
-        return modelAndView ;
+        return "marker/transcript-view.page";
     }
 }

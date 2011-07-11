@@ -7,7 +7,9 @@ import org.zfin.antibody.repository.HibernateAntibodyRepository;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.repository.ExpressionSummaryRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;
+import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.gbrowse.repository.GBrowseRepository;
@@ -57,7 +59,7 @@ public class RepositoryFactory {
     private static ProfileRepository profileRep;
     private static MutantRepository mutRep;
     private static FeatureRepository featRep;
-    private static ExpressionRepository xpatsumRep;
+    private static ExpressionSummaryRepository xpatsumRep;
     private static MarkerRepository markerRep;
     private static MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository;
     private static InfrastructureRepository infraRep;
@@ -72,16 +74,12 @@ public class RepositoryFactory {
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
 
 
-    public static ExpressionRepository getExpressionSummaryRepository() {
+    public static ExpressionSummaryRepository getExpressionSummaryRepository() {
         if (xpatsumRep == null) {
-            xpatsumRep = new HibernateExpressionRepository();
+            xpatsumRep = new HibernateExpressionSummaryRepository();
         }
 
         return xpatsumRep;
-    }
-
-    public static void setExpressionSummaryRepository(ExpressionRepository xpr) {
-        xpatsumRep = xpr;
     }
 
     public static AnatomyRepository getAnatomyRepository() {

@@ -5,10 +5,7 @@
 
 <c:choose>
     <c:when test="${fn:length(dbLink.blastableDatabases)==1}">
-        <input type="button" value="Blast at ${dbLink.blastableDatabases[0].displayName}"
-               onclick="window.location=
-        '<zfin2:blastAccessionURL dbLink="${dbLink}" blastDB="${dbLink.blastableDatabases[0]}"/>'">
-
+        <zfin2:blastAccessionURL dbLink="${dbLink}" blastDB="${dbLink.blastableDatabases[0]}"/>
     </c:when>
     <c:when test="${fn:length(dbLink.blastableDatabases)>1}">
         <SELECT method="get" onChange="

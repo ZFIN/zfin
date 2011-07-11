@@ -3,9 +3,9 @@
 
 <jsp:useBean id="formBean" class="org.zfin.antibody.presentation.AntibodyBean" scope="request"/>
 
-<c:set var="abDetailLabeling" value="${formBean.antibodyStat.antibodyDetailedLabelings}" />
+<c:set var="antibodyDetailLabeling" value="${formBean.antibodyStat.antibodyDetailedLabelings}" />
 
-<c:if test="${fn:length(abDetailLabeling) ne null && fn:length(abDetailLabeling) > 0}">
+<c:if test="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}">
     <div id="short-version">
         <table class="summary groupstripes">
             <tr>
@@ -16,14 +16,15 @@
                 <th>Data</th>
             </tr>
 
-            <c:forEach var="detailedLabeling" items="${abDetailLabeling}"
+            <c:forEach var="detailedLabeling" items="${antibodyDetailLabeling}"
                        varStatus="loop" end="4">
                 <zfin:alternating-tr loopName="loop"
-                                     groupBeanCollection="${abDetailLabeling}"
+                                     groupBeanCollection="${antibodyDetailLabeling}"
                                      groupByBean="expressionStatement">
                     <td>
-                        <zfin:groupByDisplay loopName="loop"
-                                             groupBeanCollection="${abDetailLabeling}"
+                        <zfin:groupByDisplay
+                                loopName="loop"
+                                             groupBeanCollection="${antibodyDetailLabeling}"
                                              groupByBean="expressionStatement">
                             <zfin:link entity="${detailedLabeling.expressionStatement}"/>
                         </zfin:groupByDisplay>
@@ -77,7 +78,7 @@
             </c:forEach>
         </table>
         <div>
-            <c:if test="${fn:length(abDetailLabeling) > 5}">
+            <c:if test="${fn:length(antibodyDetailLabeling) > 5}">
                 &nbsp;&nbsp;
                 <a href="javascript:expand()">
                     <img src="/images/darrow.gif" alt="expand" border="0">
@@ -97,14 +98,14 @@
                 <th>Data</th>
             </tr>
 
-            <c:forEach var="detailedLabeling" items="${abDetailLabeling}"
+            <c:forEach var="detailedLabeling" items="${antibodyDetailLabeling}"
                        varStatus="loop">
                 <zfin:alternating-tr loopName="loop"
-                                     groupBeanCollection="${abDetailLabeling}"
+                                     groupBeanCollection="${antibodyDetailLabeling}"
                                      groupByBean="expressionStatement">
                     <td>
                         <zfin:groupByDisplay loopName="loop"
-                                             groupBeanCollection="${abDetailLabeling}"
+                                             groupBeanCollection="${antibodyDetailLabeling}"
                                              groupByBean="expressionStatement">
                             <zfin:link entity="${detailedLabeling.expressionStatement}"/>
                         </zfin:groupByDisplay>

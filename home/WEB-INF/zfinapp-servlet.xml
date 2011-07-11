@@ -12,6 +12,7 @@
     <context:component-scan base-package="org.zfin.people.repository"/>
     <context:component-scan base-package="org.zfin.wiki.service"/>
     <context:component-scan base-package="org.zfin.datatransfer.service"/>
+    <context:component-scan base-package="org.zfin.expression.service"/>
     <context:component-scan base-package="org.zfin.datatransfer.go.service"/>
 
     <!--the rest of this could get moved into its own webapp file-->

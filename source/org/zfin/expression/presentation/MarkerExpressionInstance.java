@@ -2,13 +2,15 @@ package org.zfin.expression.presentation;
 
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
 
 public class MarkerExpressionInstance {
-    Publication singlePublication;
-    Marker marker;
-    int figureCount;
-    int publicationCount;
-    int imageCount;
+    private Publication singlePublication;
+    private Marker marker;
+    private int figureCount;
+    private int publicationCount;
+    private int imageCount;
+    private FigureLink singleFigure;
 
     public Publication getSinglePublication() {
         return singlePublication;
@@ -53,5 +55,13 @@ public class MarkerExpressionInstance {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+    }
+
+    public FigureLink getSingleFigure() {
+        return singleFigure;
+    }
+
+    public void setSingleFigure(FigureLink singleFigure) {
+        this.singleFigure = singleFigure;
     }
 }

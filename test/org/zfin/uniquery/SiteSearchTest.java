@@ -22,8 +22,9 @@ import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Test class for site search.
@@ -83,7 +84,7 @@ public class SiteSearchTest {
         for (int i = 0; i < title.length; i++) {
             Document doc = new Document();
 
-            doc.add(new Field("url", "webdriver?MIVAL=markerview.apg", Field.Store.YES, Field.Index.TOKENIZED)); // store relative URLs
+            doc.add(new Field("url", "/action/marker/view", Field.Store.YES, Field.Index.TOKENIZED)); // store relative URLs
 
             doc.add(new Field("title", title[i], Field.Store.YES, Field.Index.TOKENIZED));
             doc.add(new Field("body", text[i], Field.Store.YES, Field.Index.TOKENIZED));
@@ -161,15 +162,25 @@ public class SiteSearchTest {
     }
 
     @Test
+    public void fancyExcludeDefinition(){
+//        Pattern  pattern = Pattern.compile("\\p{ASCII}*marker/view\\p{ASCII}*ZDB-(!GENE|!ATB|\\p{ASCII}*)-\\p{ASCII}*") ;
+        Pattern  pattern = Pattern.compile("marker/view/ZDB-(?!(GENE|ATB))") ;
+//        Pattern  pattern = Pattern.compile("marker/view") ;
+        assertFalse(pattern.matcher("http://localhost/action/marker/view/ZDB-GENE-040425-396").find());
+        assertFalse(pattern.matcher("http://localhost/action/marker/view/ZDB-ATB-040425-396").find());
+        assertTrue(pattern.matcher("http://localhost/action/marker/view/ZDB-CDNA-040425-396").find());
+    }
+
+    @Test
     public void testGetDocMethod() {
         File file = new File("home", "WEB-INF");
         File categoryFile = new File(file, "conf");
         SiteSearchCategories.init(categoryFile.getAbsolutePath(), "site-search-categories.xml");
-        String docType = SiteSearchCategories.getDocType("http://localhost/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-070117-46");
+        String docType = SiteSearchCategories.getDocType("http://localhost/action/marker/view/ZDB-GENE-070117-46");
         assertEquals("GeneView", docType);
-        docType = SiteSearchCategories.getDocType("http://localhost/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-CDNA-040425-396");
+        docType = SiteSearchCategories.getDocType("http://localhost/action/marker/view/ZDB-CDNA-040425-396");
         assertEquals("MarkerView", docType);
-        docType = SiteSearchCategories.getDocType("http://localhost/action/antibody/detail?antibody.zdbID=ZDB-ATB-081002-20");
+        docType = SiteSearchCategories.getDocType("http://localhost/action/marker/view/ZDB-ATB-081002-20");
         assertEquals("AntibodyView", docType);
     }
 

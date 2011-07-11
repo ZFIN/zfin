@@ -3,9 +3,10 @@ package org.zfin.ontology.service;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.RelationshipType;
-import org.zfin.gwt.root.dto.StageDTO;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.ontology.*;
+import org.zfin.ontology.RelationshipDisplayNames;
+import org.zfin.ontology.RelationshipPresentation;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 

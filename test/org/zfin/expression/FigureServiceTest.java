@@ -11,7 +11,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;

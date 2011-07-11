@@ -8,6 +8,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.ResultTransformer;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -24,17 +26,19 @@ import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
-import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
+import org.zfin.marker.presentation.*;
+import org.zfin.marker.service.MarkerRelationshipPresenationTransformer;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
+import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.service.SequenceService;
+import org.zfin.util.NumberAwareStringComparator;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -46,7 +50,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 
 public class HibernateMarkerRepository implements MarkerRepository {
 
-    private static Logger LOG = Logger.getLogger(HibernateMarkerRepository.class);
+    private static Logger logger = Logger.getLogger(HibernateMarkerRepository.class);
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private final SequenceService sequenceService = new SequenceService();
 
@@ -102,6 +106,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+    public Marker getMarkerByAbbreviationIgnoreCase(String abbreviation) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.sqlRestriction("lower({alias}.mrkr_abbrev) = lower(?) "
+                , abbreviation.toLowerCase()
+                , Hibernate.STRING
+        ));
+        return (Marker) criteria.uniqueResult();
+    }
 
     public Marker getMarkerByAbbreviation(String abbreviation) {
         Session session = currentSession();
@@ -161,7 +174,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         try {
             return (Marker) criteria1.uniqueResult();
         } catch (HibernateException e) {
-            LOG.debug("unable to return marker for abbrev [" + name + "]");
+            logger.debug("unable to return marker for abbrev [" + name + "]");
             return null;
         }
     }
@@ -336,7 +349,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
                 + " " + mrel.getSecondMarker().getAbbreviation()
                 + "\" with Attribution: " + sourceZdbID;
-        LOG.debug(updateComment);
+        logger.debug(updateComment);
         InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
         InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
 
@@ -399,14 +412,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
     public DataNote addMarkerDataNote(Marker marker, String note, Person curator) {
-        LOG.debug("enter addMarDataNote");
+        logger.debug("enter addMarDataNote");
         DataNote dnote = new DataNote();
         dnote.setDataZdbID(marker.getZdbID());
-        LOG.debug("markerZdbId for datanote: " + marker.getZdbID());
+        logger.debug("markerZdbId for datanote: " + marker.getZdbID());
         dnote.setCurator(curator);
         dnote.setDate(new Date());
         dnote.setNote(note);
-        LOG.debug("data note curator: " + curator);
+        logger.debug("data note curator: " + curator);
         Set<DataNote> dataNotes = marker.getDataNotes();
         if (dataNotes == null) {
             dataNotes = new HashSet<DataNote>();
@@ -416,12 +429,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
         HibernateUtil.currentSession().save(dnote);
-        LOG.debug("dnote zdb_id: " + dnote.getZdbID());
+        logger.debug("dnote zdb_id: " + dnote.getZdbID());
         return dnote;
     }
 
     public AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
-        LOG.debug("enter addExtDataNote");
+        logger.debug("enter addExtDataNote");
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         Person currentUser = Person.getCurrentSecurityUser();
         AntibodyExternalNote externalNote = new AntibodyExternalNote();
@@ -455,7 +468,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
-        LOG.debug("add orthology note");
+        logger.debug("add orthology note");
         Person currentUser = Person.getCurrentSecurityUser();
         if (currentUser == null)
             throw new RuntimeException("Cannot add an orthology note without an authenticated user");
@@ -487,7 +500,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public void editAntibodyExternalNote(String notezdbid, String note) {
-        LOG.debug("enter addExtDataNote");
+        logger.debug("enter addExtDataNote");
         ExternalNote extnote = RepositoryFactory.getInfrastructureRepository().getExternalNoteByID(notezdbid);
         extnote.setNote(note);
         HibernateUtil.currentSession().update(extnote);
@@ -834,16 +847,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
             String zdbID = marker.getZdbID();
             statement.setString(1, zdbID);
             statement.execute();
-            LOG.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
+            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
         } catch (SQLException e) {
-            LOG.error("Could not run: " + sql, e);
-            LOG.error(DbSystemUtil.getLockInfo());
+            logger.error("Could not run: " + sql, e);
+            logger.error(DbSystemUtil.getLockInfo());
         } finally {
             if (statement != null)
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    LOG.error(e);
+                    logger.error(e);
                 }
         }
     }
@@ -1454,14 +1467,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         mr.runMarkerNameFastSearchUpdate(marker);
 
         if (mhist.getMarkerAlias() == null) {
-            LOG.error("No Marker Alias created! ");
+            logger.error("No Marker Alias created! ");
             throw new RuntimeException("No Marker History record found! Trigger did not run.");
         }
         //add record attribution for previous name if the abbreviation was changed
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        LOG.info("marker history: " + mhist);
-        LOG.info("marker alias: " + mhist.getMarkerAlias());
-        LOG.info("publication: " + publication);
+        logger.info("marker history: " + mhist);
+        logger.info("marker alias: " + mhist.getMarkerAlias());
+        logger.info("publication: " + publication);
 
         ir.insertRecordAttribution(mhist.getMarkerAlias().getZdbID(), publication.getZdbID());
 
@@ -1572,6 +1585,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     /**
      * Retrieve all gene ids of genes that have a SwissProt external note.
+     *
      * @param firstNIds number of records to be returned
      * @return list of gene ids
      */
@@ -1602,4 +1616,428 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+
+    @Override
+    public boolean getHasMarkerHistory(String zdbId) {
+        return Integer.valueOf(HibernateUtil.currentSession()
+                .createSQLQuery(
+                        "select count(*) from marker_history where mhist_mrkr_zdb_id = :zdbID ")
+                .setString("zdbID", zdbId)
+                .uniqueResult().toString())
+                > 0;
+
+    }
+
+    @Override
+    public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
+        String sql = "  " +
+                " select da.dalias_alias, ra.recattrib_source_zdb_id " +
+                "    from data_alias da " +
+                "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
+                "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
+                "    where dalias_data_zdb_id = :markerZdbID " +
+                "    and aliasgrp_pk_id = dalias_group_id " +
+                "    and aliasgrp_name = 'alias' " +
+                " ";
+        return (List<PreviousNameLight>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", gene.getZdbID())
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
+                        previousNameLight.setAlias(tuple[0].toString());
+                        if (tuple[1] != null) {
+                            previousNameLight.setPublicationZdbID(tuple[1].toString());
+                        }
+
+                        return previousNameLight;
+                    }
+
+                    @Override
+                    public List transformList(List list) {
+
+                        Collections.sort(list);
+
+                        return super.transformList(list);    //To change body of overridden methods use File | Settings | File Templates.
+                    }
+                })
+                .list();
+    }
+
+    @Override
+    public String getVariantForSnp(String zdbID) {
+        String sql = "select mrkrseq_variation from marker_sequence where mrkrseq_mrkr_zdb_id=:markerZdbID";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", zdbID)
+                .uniqueResult().toString();
+    }
+
+    @Override
+    public List<MarkerSequence> getMarkerSequences(Marker marker) {
+        return HibernateUtil.currentSession().createCriteria(MarkerSequence.class)
+                .add(Restrictions.eq("marker", marker))
+                .list();
+    }
+
+    @Override
+    public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
+        String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_1_to_2_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "          src.srcurl_url, src.srcurl_display_text   " +
+                " 	  from marker_relationship  " +
+                "	       inner join marker_relationship_type " +
+                "                 on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                 on mrel_mrkr_2_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "                 on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_2_zdb_id " +
+                "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "	 where mrel_mrkr_1_zdb_id = :markerZdbId  ";
+        if (typesNotIn.length > 0) {
+            sql1To2 += "	   and mrel_type not in (:types) ";
+        }
+        sql1To2 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
+
+        String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_2_to_1_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "          src.srcurl_url, src.srcurl_display_text   " +
+                " 	  from marker_relationship " +
+                "	       inner join marker_relationship_type " +
+                "             	  on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                  on mrel_mrkr_1_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "            	  on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_1_zdb_id " +
+                "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "	 where mrel_mrkr_2_zdb_id = :markerZdbId  ";
+
+        if (typesNotIn.length > 0) {
+            sql2To1 += "	   and mrel_type not in (:types) ";
+        }
+        sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
+
+
+        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        String sql = (is1to2 ? sql1To2 : sql2To1);
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setResultTransformer(resultTransformer);
+        if (typesNotIn.length > 0) {
+            List<String> types = new ArrayList<String>();
+            for (MarkerRelationship.Type type : typesNotIn) {
+                types.add(type.toString());
+            }
+            query.setParameterList("types", types);
+        }
+
+        List<MarkerRelationshipPresentation> list = resultTransformer.transformList(query.list());
+        return list;
+    }
+
+    @Override
+    public List<Marker> getMarkersByAlias(String key) {
+        String hql = " select ma.marker from MarkerAlias ma where ma.aliasLowerCase = :alias ";
+
+        return (List<Marker>) HibernateUtil.currentSession().createQuery(hql)
+                .setString("alias", key.toLowerCase())
+                .list();
+    }
+
+    @Override
+    public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
+        String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_1_to_2_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "          src.srcurl_url, src.srcurl_display_text   " +
+                " 	  from marker_relationship  " +
+                "	       inner join marker_relationship_type " +
+                "                 on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                 on mrel_mrkr_2_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "                 on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_2_zdb_id " +
+                "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "	 where mrel_mrkr_1_zdb_id = :markerZdbId  ";
+        if (types.length > 0) {
+            sql1To2 += "	   and mrel_type in (:types) ";
+        }
+        sql1To2 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order";
+
+        String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_2_to_1_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "          src.srcurl_url, src.srcurl_display_text   " +
+                " 	  from marker_relationship " +
+                "	       inner join marker_relationship_type " +
+                "             	  on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                  on mrel_mrkr_1_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "            	  on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_1_zdb_id " +
+                "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "	 where mrel_mrkr_2_zdb_id = :markerZdbId  ";
+        if (types.length > 0) {
+            sql2To1 += "	   and mrel_type in (:types) ";
+        }
+        sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
+        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        String sql = (is1to2 ? sql1To2 : sql2To1);
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setResultTransformer(resultTransformer);
+        if (types.length > 0) {
+            Set<String> typeStrings = new HashSet<String>();
+            for (MarkerRelationship.Type type : types) {
+                typeStrings.add(type.toString());
+            }
+            query.setParameterList("types", typeStrings);
+        }
+
+        List<MarkerRelationshipPresentation> list = resultTransformer.transformList(query.list());
+        return list;
+    }
+
+    public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
+        ResultTransformer transformer = new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                LinkDisplay linkDisplay = new LinkDisplay();
+                linkDisplay.setMarkerZdbID(tuple[0].toString());
+                linkDisplay.setAccession(tuple[1].toString());
+                linkDisplay.setReferenceDatabaseName(tuple[2].toString());
+                linkDisplay.setUrlPrefix(tuple[3].toString());
+                if (tuple[4] != null) {
+                    linkDisplay.setUrlSuffix(tuple[4].toString());
+                }
+                if (tuple[5] != null) {
+                    linkDisplay.setPublicationZdbID(tuple[5].toString());
+                }
+                if (tuple[6] != null) {
+                    linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
+                }
+                return linkDisplay;
+            }
+        };
+        String sql = "select dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance " +
+                "from db_link dbl  " +
+                "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
+                "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
+                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
+                "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
+                "where g.fdbcdg_name= :displayGroup " +
+                "and " +
+                "dbl.dblink_linked_recid= :markerZdbId ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName.toString())
+                .setResultTransformer(transformer);
+
+        List<LinkDisplay> linkDisplay = transformer.transformList(query.list());
+        Collections.sort(linkDisplay, new Comparator<LinkDisplay>() {
+            @Override
+            public int compare(LinkDisplay linkA, LinkDisplay linkB) {
+                int compare;
+                compare = linkA.getLink().compareTo(linkB.getLink());
+                if (compare != 0) return compare;
+
+                compare = linkA.getReferenceDatabaseName().compareTo(linkB.getReferenceDatabaseName());
+                if (compare != 0) return compare;
+
+                NumberAwareStringComparator numberAwareStringComparator = new NumberAwareStringComparator();
+                return numberAwareStringComparator.compare(linkA.getDisplayName(), linkB.getDisplayName());
+            }
+        });
+
+
+        return linkDisplay;
+    }
+
+
+    @Override
+    public List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
+        String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_1_to_2_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id " +
+                " 	  from marker_relationship  " +
+                "	       inner join marker_relationship_type " +
+                "                 on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                 on mrel_mrkr_2_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "                 on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	 where mrel_mrkr_1_zdb_id = :markerZdbId  ";
+        if (types.length > 0) {
+            sql1To2 += "	   and mrel_type in (:types) ";
+        }
+        sql1To2 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order";
+
+        String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
+                "	       mreltype_2_to_1_comments, " +
+                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          ra.recattrib_source_zdb_id " +
+                " 	  from marker_relationship " +
+                "	       inner join marker_relationship_type " +
+                "             	  on mrel_type = mreltype_name " +
+                "               inner join marker " +
+                "                  on mrel_mrkr_1_zdb_id = mrkr_zdb_id  " +
+                "	       inner join marker_types " +
+                "            	  on mrkr_type = marker_type " +
+                "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
+                "	 where mrel_mrkr_2_zdb_id = :markerZdbId  ";
+        if (types.length > 0) {
+            sql2To1 += "	   and mrel_type in (:types) ";
+        }
+        sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
+        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        String sql = (is1to2 ? sql1To2 : sql2To1);
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setResultTransformer(resultTransformer);
+        if (types.length > 0) {
+            Set<String> typeStrings = new HashSet<String>();
+            for (MarkerRelationship.Type type : types) {
+                typeStrings.add(type.toString());
+            }
+            query.setParameterList("types", typeStrings);
+        }
+
+        List<MarkerRelationshipPresentation> list = resultTransformer.transformList(query.list());
+        return list;
+    }
+
+    @Override
+    public List<GeneProductsBean> getGeneProducts(String zdbID) {
+        String sql = " select dblink_acc_num, REPLACE(extnote_note,'CTRL','<br>') " +
+                " from external_note, db_link " +
+                " where extnote_data_zdb_id = dblink_zdb_id " +
+                " and dblink_linked_recid = :markerZdbID ";
+        List<GeneProductsBean> geneProducts = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        GeneProductsBean geneProductsBean = new GeneProductsBean();
+                        geneProductsBean.setAccession(tuple[0].toString());
+                        if (tuple[1] != null) {
+                            geneProductsBean.setComment(tuple[1].toString());
+                        }
+
+                        return geneProductsBean;
+                    }
+                })
+                .setString("markerZdbID", zdbID)
+                .list();
+        return geneProducts;
+    }
+
+    @Override
+    public boolean isFromChimericClone(String zdbID) {
+        String sql = "   select 't' " +
+                "    from marker_relationship " +
+                "    join clone on clone_mrkr_zdb_id = mrel_mrkr_2_zdb_id " +
+                "    where mrel_mrkr_1_zdb_id = :markerZdbID " +
+                "    and clone_problem_type = 'Chimeric'";
+        Object result = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", zdbID)
+                .setMaxResults(1)
+                .uniqueResult();
+        return result != null;
+    }
+
+    @Override
+    public boolean cloneHasSnp(Clone clone) {
+        String sql = "  select distinct snpdattr_pub_zdb_id " +
+                "  from snp_download_attribution, snp_download " +
+                "  where snpd_mrkr_zdb_id=:markerZdbID " +
+                "  and snpd_pk_id=snpdattr_snpd_pk_id " +
+                "  order by snpdattr_pub_zdb_id";
+        Object result = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", clone.getZdbID())
+                .setMaxResults(1)
+                .uniqueResult();
+        return result != null;
+    }
+
+    @Override
+    public List<MarkerSupplier> getSuppliersForMarker(String zdbID) {
+        return HibernateUtil.currentSession().createCriteria(MarkerSupplier.class)
+                .add((Restrictions.eq("dataZdbID", zdbID)))
+                .list();
+    }
+
+    @Override
+    public boolean markerExistsForZdbID(String zdbID) {
+        return null
+                !=
+                HibernateUtil.currentSession()
+                        .createSQLQuery("select m.mrkr_zdb_id from marker m where m.mrkr_zdb_id = :markerZdbID")
+                        .setString("markerZdbID", zdbID)
+                        .setMaxResults(1)
+                        .uniqueResult()
+                ;
+    }
+
+    @Override
+    public List<String> getMarkerZdbIdsForType(Marker.Type markerType) {
+        String hql = " " +
+                " select m.zdbID " +
+                " from Marker m " +
+                " where m.markerType.name = :type " +
+                " " ;
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type",markerType.name())
+                .list()
+                ;
+    }
+
+    // abbrev, zdbID
+    @Override
+    public Map<String, String> getGeoMarkerCandidates() {
+        List<String> types = new ArrayList<String>();
+        types.add(Marker.Type.CDNA.name());
+        types.add(Marker.Type.EST.name());
+        types.add(Marker.Type.GENE.name());
+        types.add(Marker.Type.GENEP.name());
+
+        String hql = " " +
+                " select m.abbreviation, m.zdbID " +
+                " from Marker m " +
+                " where m.markerType.name in (:types) " +
+                " " ;
+        List<Marker> markers = HibernateUtil.currentSession().createQuery(hql)
+                .setParameterList("types",types)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        Marker m = new Marker();
+                        m.setAbbreviation(tuple[0].toString());
+                        m.setZdbID(tuple[1].toString());
+                        return m ;
+                    }
+                })
+                .list()
+                ;
+        Map<String,String> markerCandidates = new HashMap<String,String>();
+        for(Marker m : markers){
+            markerCandidates.put(m.getAbbreviation(),m.getZdbID());
+        }
+        return markerCandidates;
+    }
 }

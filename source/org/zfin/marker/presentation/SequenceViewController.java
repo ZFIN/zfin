@@ -1,44 +1,47 @@
 package org.zfin.marker.presentation;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.audit.AuditLogItem;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  */
-public class SequenceViewController extends AbstractController {
+@Controller
+public class SequenceViewController {
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
+    private Logger logger = Logger.getLogger(SequenceViewController.class);
+
+    @RequestMapping(value ="/sequence/view/{zdbID}")
+    public String getSequenceView(
+            Model model
+            ,@PathVariable("zdbID") String zdbID)
+            throws Exception {
         // set base bean
-        MarkerBean markerBean = new MarkerBean();
 
-        String zdbID = httpServletRequest.getParameter(LookupStrings.ZDB_ID);
         logger.info("zdbID: " + zdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);
-        markerBean.setMarker(gene);
+
+//        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
 
         //setting supporting sequences
-        SequenceInfo sequenceInfo = MarkerService.getSequenceInfo(gene);
-        markerBean.setSequenceInfo(sequenceInfo);
+        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(gene);
+        sequenceInfo.setMarker(gene);
 
+        AuditLogItem lastUpdated = RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID);
 
-//        // setting clone relationshi8ps
-        RelatedMarkerDisplay cloneRelationships = MarkerService.getRelatedMarkerDisplay(gene);
-        markerBean.setMarkerRelationships(cloneRelationships);
+        model.addAttribute("lastUpdated", lastUpdated);
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceInfo);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + gene.getAbbreviation());
 
-
-        ModelAndView modelAndView = new ModelAndView("marker/sequence-view.page");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, markerBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + gene.getAbbreviation());
-
-        return modelAndView;
+        return "marker/sequence-view.page";
     }
+
 }

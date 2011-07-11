@@ -36,12 +36,12 @@ public class GenotypeExpressionSummaryController   {
         //I would prefer the record not found show both ids...maybe it would be best if we just used genox?
         if (genox == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         if (gene == null) {
             model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteria(genox, gene, imagesOnly);
@@ -68,12 +68,12 @@ public class GenotypeExpressionSummaryController   {
         
         if (geno == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         if (gene == null) {
             model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(geno, gene, imagesOnly);
@@ -97,12 +97,12 @@ public class GenotypeExpressionSummaryController   {
 
         if (geno == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         if (gene == null) {
                     model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(geno, gene, imagesOnly);

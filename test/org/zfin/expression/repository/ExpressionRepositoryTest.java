@@ -1,8 +1,8 @@
 package org.zfin.expression.repository;
 
-import junit.framework.Assert;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -12,17 +12,23 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
-import org.zfin.expression.presentation.MarkerExpressionInstance;
+import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.PublicationExpressionBean;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.gwt.root.dto.EnvironmentDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
@@ -41,6 +47,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
     private AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private PublicationRepository pubRep = RepositoryFactory.getPublicationRepository();
+
+    private ExpressionService expressionService = new ExpressionService();
 
     @Before
     public void setUp() {
@@ -204,7 +212,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
             term.setTermName(Term.UNSPECIFIED);
             term.setZdbID("ZDB-TERM-100331-1055");
 
-            result.setSuperterm(term);
+            result.setSuperTerm(term);
 
             Figure figure = pubRep.getFigureByID("ZDB-FIG-041119-3");
             result.addFigure(figure);
@@ -221,17 +229,17 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testDirectlySubmittedExpression() {
         Session session = HibernateUtil.currentSession();
-        Marker marker = (Marker) session.get(Marker.class, "ZDB-CDNA-040425-873");
+        Clone clone = (Clone) session.get(Clone.class, "ZDB-CDNA-040425-873");
 
-        DirectlySubmittedExpression directlySubmittedExpression = ExpressionService.getDirectlySubmittedExpressionSummaries(marker);
+        DirectlySubmittedExpression directlySubmittedExpression = expressionService.getDirectlySubmittedExpressionClone(clone);
 //        assertEquals(117, numFigs);
         assertNotNull(directlySubmittedExpression);
-        List<MarkerExpressionInstance> markerExpressionInstances = directlySubmittedExpression.getExpressionSummaryInstances();
+        List<PublicationExpressionBean> markerExpressionInstances = directlySubmittedExpression.getMarkerExpressionInstances();
         assertEquals(1, markerExpressionInstances.size());
-        MarkerExpressionInstance markerExpressionInstance = markerExpressionInstances.get(0);
-        assertEquals(6, markerExpressionInstance.getFigureCount());
-        assertEquals(10, markerExpressionInstance.getImageCount());
-        assertEquals("ZDB-PUB-040907-1", markerExpressionInstance.getSinglePublication().getZdbID());
+        PublicationExpressionBean markerExpressionInstance = markerExpressionInstances.get(0);
+        assertEquals(6, markerExpressionInstance.getNumFigures());
+        assertEquals(10, markerExpressionInstance.getNumImages());
+        assertEquals("ZDB-PUB-040907-1", markerExpressionInstance.getPublicationZdbID());
     }
 
     @Test
@@ -290,4 +298,79 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getExpressionPubCount(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int count = expRep.getExpressionPubCountForGene(m);
+        Assert.assertTrue(count < 40);
+        Assert.assertTrue(count > 10);
+    }
+
+    @Test
+    public void getExpressionFigureCount(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int count = expRep.getExpressionFigureCountForEfg(m);
+        Assert.assertTrue(count < 50);
+        Assert.assertTrue(count > 20);
+    }
+
+    @Test
+    public void getDirectlySubmittedExpression(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List pubList = expRep.getDirectlySubmittedExpressionForGene(m);
+        assertEquals(1, pubList.size());
+
+        // this may give duplicates
+        Marker m2 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-000210-25");
+        pubList = expRep.getDirectlySubmittedExpressionForGene(m2);
+        assertEquals(3, pubList.size());
+
+        Marker m3 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-031112-7");
+        pubList = expRep.getDirectlySubmittedExpressionForGene(m3);
+        assertEquals(3, pubList.size());
+    }
+
+    @Test
+    public void getImagesFromPubAndClone(){
+        PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-051025-1") ;
+        publicationExpressionBean.setProbeFeatureZdbId("ZDB-EST-060130-308");
+        int imageCount = expRep.getImagesFromPubAndClone(publicationExpressionBean);
+        assertTrue(imageCount>10);
+        assertTrue(imageCount<20);
+    }
+
+    @Test
+    public void getStageExpressionForMarker(){
+        StageExpressionPresentation stageExpressionPresentation = expRep.getStageExpressionForMarker("ZDB-GENE-010606-1");
+        assertNotNull(stageExpressionPresentation);
+        assertNotNull(stageExpressionPresentation.getStartStage());
+        assertNotNull(stageExpressionPresentation.getEndStage());
+    }
+
+    @Test
+    public void getWildTypeExpressionForMarker(){
+        List<ExpressionExperimentPresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
+        assertEquals(33, wees.size());
+    }
+
+    @Test
+    public void getExpressionSinglePub(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        assertNotNull(m);
+        Publication p = expRep.getExpressionSinglePub(m);
+        assertNotNull(p);
+        assertEquals("ZDB-PUB-051025-1",p.getZdbID());
+    }
+
+    @Test
+    public void getExpressionSingleFigure(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-040112-1");
+        assertNotNull(m);
+        FigureLink figureLink = expRep.getExpressionSingleFigure(m);
+        assertNotNull(figureLink);
+        assertEquals("ZDB-FIG-051013-9", figureLink.getFigureZdbId());
+        assertEquals("Fig. 4", figureLink.getLinkContent());
+        assertEquals("<a href=\"/"+ ZfinProperties.getWebDriver()+"?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-051013-9\">Fig. 4</a>",figureLink.getLink());
+    }
 }

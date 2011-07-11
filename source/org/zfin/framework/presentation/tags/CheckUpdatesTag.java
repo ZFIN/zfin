@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
 import org.zfin.framework.filter.UpdatesCheckFilter;
-import org.zfin.infrastructure.ZdbFlag;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -15,15 +14,15 @@ public class CheckUpdatesTag extends TagSupport {
     private boolean locked;
 
     public int doStartTag() throws JspException {
-        ZdbFlag updates = UpdatesCheckFilter.getSystemUpdatesFlag();
+        boolean disableSystemUpdates = UpdatesCheckFilter.getSystemUpdatesFlag();
 
         if (locked) {
-            if (updates.isSystemUpdateDisabled())
+            if (disableSystemUpdates)
                 return Tag.EVAL_BODY_INCLUDE;
             else
                 return Tag.SKIP_BODY;
         } else {
-            if (updates.isSystemUpdateDisabled())
+            if (disableSystemUpdates)
                 return Tag.SKIP_BODY;
             else
                 return Tag.EVAL_BODY_INCLUDE;
@@ -32,10 +31,6 @@ public class CheckUpdatesTag extends TagSupport {
 
     public int doEndTag() throws JspException {
         return Tag.EVAL_PAGE;
-    }
-
-    public void clear() {
-
     }
 
     public boolean isLocked() {

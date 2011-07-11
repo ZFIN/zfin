@@ -16,8 +16,15 @@ public class ZfinInformixDialect extends InformixDialect {
     public ZfinInformixDialect() {
         registerColumnType(Types.BOOLEAN, "boolean");
         registerHibernateType(Types.BOOLEAN, "boolean");
+
+        // may be necessary in cases where we have a char(2), as it maps that to char and
+        // truncates a valid 2-letter string
+        registerColumnType(Types.CHAR, "string");
+        registerHibernateType(Types.CHAR, "string");
+
         registerColumnType(Types.LONGVARCHAR, "string");
         registerHibernateType(Types.LONGVARCHAR, "string");
+
     }
 
     @Override

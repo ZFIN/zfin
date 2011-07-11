@@ -113,7 +113,7 @@
     </td>
     <td>
         <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
-            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-markerview.apg&OID=${mRel.marker.zdbID}">${mRel.marker.name}</a>
+            <a href="/action/marker/view/${mRel.marker.zdbID}">${mRel.marker.name}</a>
             <%--//<zfin:name entity="${mRel.marker}"/>--%>
 
             <c:if test="${mRel.publicationCount > 0}">
@@ -589,7 +589,7 @@
 
 
 <hr width="80%">
-<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
+<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
     function expand() {

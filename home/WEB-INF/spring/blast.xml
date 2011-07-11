@@ -12,7 +12,8 @@
                 <prop key="/blast/blast-select">blastSelect</prop>
                 <prop key="/blast/display-sequence">displayBlastSequence</prop>
                 <prop key="/blast/download-sequence">downloadBlastSequence</prop>
-                <prop key="/blast/external-blast">externalBlast</prop>
+                <prop key="/blast/external-blast">externalBlastAccession</prop>
+                <prop key="/blast/blast-with-sequence">externalBlastSequence</prop>
                 <prop key="/blast/include-external-blast">includeExternalBlast</prop>
                 <prop key="/blast/blast-files">downloadableBlastFiles</prop>
                 <prop key="/blast/blast">blastXML</prop>
@@ -46,7 +47,8 @@
     <bean name="blastSelect" class="org.zfin.sequence.blast.presentation.BlastDatabaseSelectController"/>
     <bean name="displayBlastSequence" class="org.zfin.sequence.blast.presentation.DisplayBlastSequenceController" />
     <bean name="downloadBlastSequence" class="org.zfin.sequence.blast.presentation.DownloadBlastSequenceController" />
-    <bean name="externalBlast" class="org.zfin.sequence.blast.presentation.ExternalBlastController" />
+    <bean name="externalBlastAccession" class="org.zfin.sequence.blast.presentation.ExternalBlastAccessionController" />
+    <bean name="externalBlastSequence" class="org.zfin.sequence.blast.presentation.ExternalBlastSequenceController" />
 
     <bean name="blastXML" class="org.zfin.sequence.blast.presentation.XMLBlastController">
         <property name="formView" value="blast-setup.page"/>

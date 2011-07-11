@@ -14,9 +14,11 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.ontology.Ontology;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.service.TranscriptService;
@@ -32,6 +34,8 @@ public class MarkerService {
     private static Logger logger = Logger.getLogger(MarkerService.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+
 
     /**
      * Looks for firstMarkers in Genedom and returns the entire relation.
@@ -54,6 +58,82 @@ public class MarkerService {
         return markerRelationships;
     }
 
+    /**
+     * Called on a a marker summary page.
+     */
+    public static SequenceInfo getSequenceInfoSummary(Marker marker){
+
+        SequenceInfo sequenceInfo = new SequenceInfo();
+        sequenceInfo.setNumberDBLinks(RepositoryFactory.getSequenceRepository().getNumberDBLinks(marker));
+
+        sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForMarkerAndDisplayGroup(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+        );
+
+        sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForFirstRelatedMarker(marker,
+                        DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                        MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                )
+        );
+        sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
+        );
+
+        List<DBLink> dbLinkSet = new ArrayList<DBLink>();
+        Set<String> types = new HashSet<String>();
+        for(DBLink dbLink : sequenceInfo.getDbLinks()){
+            String type = dbLink.getReferenceDatabase().getForeignDBDataType().getDataType().toString();
+            if(false==types.contains(type)){
+                types.add(type);
+                dbLinkSet.add(dbLink) ;
+            }
+            else
+            if(types.contains(type)){
+                sequenceInfo.setHasMoreLinks(true);
+            }
+        }
+
+        sequenceInfo.setDbLinks(dbLinkSet);
+
+
+        return sequenceInfo;
+    }
+
+    /**
+     * To be called to display full page as on sequence-view
+     * @param marker
+     * @return
+     */
+    public static SequencePageInfoBean getSequenceInfoFull(Marker marker){
+        SequencePageInfoBean sequenceInfo = new SequencePageInfoBean();
+        sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
+
+        sequenceInfo.setFirstRelatedMarkerDBLink(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForFirstRelatedMarker(marker,
+                        DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                        MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                )
+        );
+        sequenceInfo.setSecondRelatedMarkerDBLink(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
+        );
+
+
+        return sequenceInfo;
+    }
+
     public static SequenceInfo getSequenceInfo(Marker marker) {
         SequenceInfo sequenceInfo = new SequenceInfo();
 
@@ -66,17 +146,18 @@ public class MarkerService {
             }
         }
 
-        logger.debug(sequenceInfo.size() + " marker linked sequence dblinks");
+        logger.debug(sequenceInfo.getDbLinks().size() + " marker linked sequence dblinks");
 
         return sequenceInfo;
     }
 
 
-    public static SummaryDBLinkDisplay getSummaryPages(Marker marker) {
+    public static SummaryDBLinkDisplay getMarkerDBLinkDisplay(Marker marker, DisplayGroup.GroupName groupName) {
         SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
         for (DBLink dblink : marker.getDbLinks()) {
-            if (dblink.isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE))
+            if (dblink.isInDisplayGroup(groupName)){
                 sp.addDBLink(dblink);
+            }
         }
         return sp;
     }
@@ -98,7 +179,7 @@ public class MarkerService {
         if (types == null)
             return null;
 
-        Set<Marker> markers = new HashSet<Marker>();
+        Set<Marker> markers = new TreeSet<Marker>();
         if (CollectionUtils.isEmpty(types)) {
             Set<MarkerRelationship> relationOne = marker.getFirstMarkerRelationships();
             Set<MarkerRelationship> relationTwo = marker.getSecondMarkerRelationships();
@@ -132,6 +213,7 @@ public class MarkerService {
      * Retried a target marker that is related to the source marker via a single relationship type
      * (this is a convenience method for passing only a single type into getRelatedMarker(marker, types))
      *
+     * @param marker Marker to get relationships from.
      * @param type Type of marker relationship
      * @return Gets a set of related markers by type.
      */
@@ -170,6 +252,17 @@ public class MarkerService {
         return relatedMarkers;
     }
 
+    public static List<MarkerRelationshipPresentation> getRelatedMarkerDisplayExcludeType(Marker marker, final boolean is1to2) {
+        return markerRepository.getRelatedMarkerOrderDisplayExcludeTypes(marker, is1to2
+                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
+                , MarkerRelationship.Type.PROMOTER_OF
+                , MarkerRelationship.Type.CODING_SEQUENCE_OF
+                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY
+                , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                , MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE
+        );
+    }
 
     public static RelatedMarkerDisplay getRelatedMarkerDisplay(Marker marker) {
         RelatedMarkerDisplay rmd = new RelatedMarkerDisplay();
@@ -279,6 +372,29 @@ public class MarkerService {
     }
 
     /**
+     * From mapping details:
+     * select mrel_mrkr_1_zdb_id
+     from marker_relationship
+     where mrel_mrkr_2_zdb_id = '$oID'
+     and mrel_type = 'contains polymorphism'
+     and (mrel_mrkr_1_zdb_id[1,8] = 'ZDB-EST-'
+     or mrel_mrkr_1_zdb_id[1,8] = 'ZDB-GENE'); ">
+     * @param marker
+     * @return
+     */
+    public static MappedMarkerBean getSnpMappedMarkers(Marker marker) {
+        Set<Marker> relatedMarkers = getRelatedMarker(marker, MarkerRelationship.Type.CONTAINS_POLYMORPHISM);
+
+        if(CollectionUtils.isEmpty(relatedMarkers)){
+            return null;
+        }
+        else{
+            return getMappedMarkers(relatedMarkers.iterator().next());
+        }
+    }
+
+
+    /**
      * Cleans up dblink records that shouldn't exist.
      * <p/>
      * turns:
@@ -298,7 +414,7 @@ public class MarkerService {
      * @param accessions Set of accessions to check for redundancy in
      */
     public static void removeRedundantDBLinks(Marker gene, Set<Accession> accessions) {
-        Set<Marker> segments = MarkerService.getRelatedMarker(gene, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        Set<Marker> segments = getRelatedMarker(gene, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
 
         //scan through the markers associated with the accession
         for (Accession acc : accessions) {
@@ -486,16 +602,6 @@ public class MarkerService {
         return typeList;
     }
 
-    public static SummaryDBLinkDisplay getProteinProductDBLinks(Marker marker) {
-        SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
-        for (DBLink dblink : marker.getDbLinks()) {
-            if (dblink.isInDisplayGroup(DisplayGroup.GroupName.DISPLAYED_PROTEIN_SEQUENCE))
-                sp.addDBLink(dblink);
-        }
-
-        return sp;
-    }
-
 
     public static List<String> getSuppliers(Marker marker) {
         Set<MarkerSupplier> markerSuppliers = marker.getSuppliers();
@@ -517,4 +623,87 @@ public class MarkerService {
         }
         return attributions;
     }
+
+    public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {
+        MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
+        mutantOnMarkerBean.setMutantLineDisplay(RepositoryFactory.getMutantRepository().getMutantLinesDisplay(gene.getZdbID()));
+        mutantOnMarkerBean.setAlleles(RepositoryFactory.getMutantRepository().getAllelesForMarker(gene.getZdbID()));
+        mutantOnMarkerBean.setKnockdownReagents(RepositoryFactory.getMarkerRepository().getRelatedMarkerDisplayForTypes(gene,false,MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+
+        return mutantOnMarkerBean;
+    }
+
+
+    public static PhenotypeOnMarkerBean getPhenotypeOnGene(Marker gene) {
+        PhenotypeOnMarkerBean phenotypeOnMarkerBean = new PhenotypeOnMarkerBean();
+        phenotypeOnMarkerBean.setNumFigures(RepositoryFactory.getPhenotypeRepository().getNumPhenotypeFigures(gene));
+        phenotypeOnMarkerBean.setNumPublications(RepositoryFactory.getPhenotypeRepository().getNumPhenotypePublications(gene));
+        phenotypeOnMarkerBean.setAnatomy(RepositoryFactory.getPhenotypeRepository().getPhenotypeAnatomy(gene));
+        if(phenotypeOnMarkerBean.getNumPublications()==1){
+            phenotypeOnMarkerBean.setSinglePublicationLink(RepositoryFactory.getPhenotypeRepository().getPhenotypeFirstPublication(gene));
+        }
+        if(phenotypeOnMarkerBean.getNumFigures()==1){
+            phenotypeOnMarkerBean.setSingleFigureLink(RepositoryFactory.getPhenotypeRepository().getPhenotypeFirstFigure(gene));
+        }
+
+        return phenotypeOnMarkerBean;
+    }
+
+    public static GeneOntologyOnMarkerBean getGeneOntologyOnMarker(Marker gene) {
+        GeneOntologyOnMarkerBean geneOntologyOnMarkerBean = new GeneOntologyOnMarkerBean();
+        geneOntologyOnMarkerBean.setGoTermCount(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidenceForMarkerCount(gene));
+        geneOntologyOnMarkerBean.setBiologicalProcessEvidence(
+                RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_BP));
+        geneOntologyOnMarkerBean.setCellularComponentEvidence(
+                RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_CC));
+        geneOntologyOnMarkerBean.setMolecularFunctionEvidence(
+                RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_MF));
+
+        return geneOntologyOnMarkerBean;
+    }
+
+    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
+        OrthologyPresentationBean orthologyPresentationBean = new OrthologyPresentationBean();
+        orthologyPresentationBean.setEvidenceCodes(RepositoryFactory.getOrthologyRepository().getEvidenceCodes(gene));
+        orthologyPresentationBean.setOrthologues(RepositoryFactory.getOrthologyRepository().getOrthologyForGene(gene));
+        orthologyPresentationBean.setNotes(RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(gene.getZdbID()));
+
+        return orthologyPresentationBean;
+    }
+
+    public static String getMarkerTypeString(Marker marker){
+        return markerRepository.getMarkerTypeByName(marker.getType().name()).getDisplayName();
+    }
+
+    public static MarkerBean createDefaultViewForMarker(MarkerBean markerBean){
+
+        Marker marker = markerBean.getMarker();
+        String zdbID = marker.getZdbID();
+
+        markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
+
+        markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(marker));
+
+        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
+
+        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+
+        // OTHER GENE / MARKER PAGES:
+        markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+
+        // sequence info page
+        markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(marker));
+
+        // MARKER RELATIONSHIPS (same as clone relationships for gene)
+        List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<MarkerRelationshipPresentation>();
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
+        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
+        markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
+
+//      CITATIONS
+        markerBean.setNumPubs(publicationRepository.getNumberAssociatedPublicationsForZdbID(marker.getZdbID()));
+
+        return markerBean;
+    }
+
 }

@@ -12,9 +12,6 @@ import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -72,17 +72,6 @@
         <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
     </target>
 
-    <target name="blastHeuristics" depends="compile,build-tests"
-            description="Calculates all of the blast heuristics">
-        <runDBTest testclass="org.zfin.sequence.blast.BlastHeuristicsEvaluatorSuite" outfile="blast-heuristics-results" verbose="true"/>
-        <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
-    </target>
-
-    <target name="blastStressTest" depends="compile,build-tests"
-            description="Calculates all of the blast heuristics">
-        <runDBTest testclass="org.zfin.sequence.blast.BlastStressSuite" outfile="blast-stress-results" verbose="true"/>
-        <echo message=":BLAST STRESS EVALUATION SUCCESSFUL:"/>
-    </target>
 
     <target name="runBlasttests" depends="compile,build-tests"
             description="Tests that involve access to the informix and blast databases.">
@@ -266,21 +255,6 @@ test(s) need to be run before committing changes or pushing files to production 
             <arg value="Failed smoke tests.  See ${smokeTestFile}.txt."/>
             <arg value="${serviceFailureMessage}"/>
         </java>
-    </target>
-
-    <target name="orthologyPerformance" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
-        <junit fork="yes"
-               printsummary="yes"
-               haltonfailure="false"
-               haltonerror="false"
-               showoutput="true">
-            <jvmarg line="${junit.jvmargs}"/>
-            <classpath refid="extended.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
-                <formatter type="plain"/>
-            </test>
-        </junit>
     </target>
 
     <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->

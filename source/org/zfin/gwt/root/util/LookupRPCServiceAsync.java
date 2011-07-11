@@ -2,7 +2,6 @@ package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import org.zfin.gwt.curation.ui.PileConstructionZoneModule;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;

@@ -89,7 +89,7 @@ public class TranscriptService {
         for (RelatedMarker rm : relatedTranscripts) {
             Transcript transcript = convertMarkerToTranscript(rm.getMarker());
             rm.setMarker(transcript);
-            rm.setDisplayedSequenceDBLinks(TranscriptService.getDBLinksForDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
+            rm.setDisplayedSequenceDBLinks(RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
             rtd.add(rm);
         }
 
@@ -159,10 +159,10 @@ public class TranscriptService {
      */
     public static SequenceInfo getSupportingSequenceInfo(Transcript transcript) {
         SequenceInfo sequenceInfo = new SequenceInfo();
-        List<DBLink> dbLinks = getSupportingDBLinks(transcript);
+        Collection<DBLink> dbLinks = getSupportingDBLinks(transcript);
         sequenceInfo.addDBLinks(dbLinks);
 
-        logger.debug(sequenceInfo.size() + " marker linked sequence dblinks");
+        logger.debug( (sequenceInfo.getDbLinks() == null ? "none " : sequenceInfo.getDbLinks().size()) + " marker linked sequence dblinks");
 
         return sequenceInfo;
 
@@ -318,7 +318,7 @@ public class TranscriptService {
 
     public static Integer getTranscriptLength(Transcript transcript, DisplayGroup.GroupName displayGroup) {
         Integer length = 0;
-        for (TranscriptDBLink link : getDBLinksForDisplayGroup(transcript, displayGroup)) {
+        for (DBLink link : RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, displayGroup)) {
             if ((link.getLength() != null)
                     && (link.getLength() > length))
                 length = link.getLength();

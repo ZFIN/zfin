@@ -10,7 +10,6 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.presentation.OntologyLoadingEntity;
-import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
 

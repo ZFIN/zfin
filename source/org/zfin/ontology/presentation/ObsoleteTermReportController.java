@@ -1,15 +1,16 @@
 package org.zfin.ontology.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionService;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ import java.util.Set;
  */
 @Controller
 public class ObsoleteTermReportController {
+
+    @Autowired
+    private ExpressionService expressionService ;
 
     private static final Logger log = Logger.getLogger(ObsoleteTermReportController.class);
 
@@ -51,7 +55,7 @@ public class ObsoleteTermReportController {
             List<ExpressionObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<ExpressionObsoleteTermReport>(expressionsWithObsoletes.size());
             for (ExpressionResult phenotypeStatement : expressionsWithObsoletes) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
-                Set<GenericTerm> obsoletedTermSet = ExpressionService.getObsoleteTerm(phenotypeStatement);
+                Set<GenericTerm> obsoletedTermSet = expressionService.getObsoleteTerm(phenotypeStatement);
                 report.setObsoletedTermList(obsoletedTermSet);
                 if (obsoletedTermSet != null) {
                     for (GenericTerm obsoletedTerm : obsoletedTermSet) {

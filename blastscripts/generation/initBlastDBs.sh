@@ -1,6 +1,6 @@
 #!env bash
-export BLAST_PATH=/research/zusers/ndunn/yoyoblastfiles ;
-export BLAST_BINARY=/private/apps/wublast
+export BLAST_PATH=$WEBHOST_BLAST_DATABASE_PATH ;
+export BLAST_BINARY=$WEBHOST_BINARY_PATH ;
 
 # This script regenerates blast databases.
 # All blast dbs are loads unless otherwise noted.  

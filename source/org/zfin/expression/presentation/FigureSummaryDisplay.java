@@ -1,10 +1,7 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
-import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;

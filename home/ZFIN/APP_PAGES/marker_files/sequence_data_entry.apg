@@ -232,7 +232,12 @@ EFFECTS
                                onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_DisplaySequence.value = text;}"> 
             </td>
             <td> 
-              <select name=seqdata_action onChange="if ( validSequence(document.newdata.seqdata_ReportedSequence.value) ){actionSequence(this.selectedIndex);}">
+              <select name=seqdata_action onChange="
+              if ( validSequence(document.newdata.seqdata_ReportedSequence.value) ){
+                  actionSequence(this.selectedIndex);
+              }
+              
+              ">
                 <option>----------</option>
                 <option>Reverse</option>
                 <option>Complement</option>

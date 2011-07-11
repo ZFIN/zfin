@@ -2,9 +2,7 @@ package org.zfin.framework.presentation;
 
 import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;

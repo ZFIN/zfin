@@ -5,6 +5,7 @@ package org.zfin.sequence.repository;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
@@ -74,7 +75,7 @@ public interface SequenceRepository {
 
     MarkerDBLinkList getNonSequenceMarkerDBLinksForMarker(Marker marker);
 
-    MarkerDBLinkList getSummaryMarkerDBLinksForMarker(Marker marker);
+    List<DBLink> getSummaryMarkerDBLinksForMarker(Marker marker);
 
     DBLink getDBLink(String markerZdbID, String accession, String referenceDBName);
     DBLink getDBLink(String featureZDbID,String accession);
@@ -96,6 +97,23 @@ public interface SequenceRepository {
      */
     List<String> getAllNSequences(int firstNIds);
 
+    List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType protein);
+
+    int getNumberDBLinks(Marker marker);
+
+    List<DBLink> getDBLinksForMarkerAndDisplayGroup(Marker marker, DisplayGroup.GroupName groupName);
+
+    List<TranscriptDBLink> getTranscriptDBLinksForMarkerAndDisplayGroup(Transcript transcript, DisplayGroup.GroupName groupName);
+
+    List<MarkerDBLink> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes);
+
+    List<MarkerDBLink> getDBLinksForSecondRelatedMarker(Marker marker,  DisplayGroup.GroupName groupName, MarkerRelationship.Type...  markerRelationshipTypes);
+
+    Collection<String> getDBLinkAccessionsForMarker(Marker marker, ForeignDBDataType.DataType dataType);
+
+    Collection<String> getDBLinkAccessionsForEncodedMarkers(Marker marker, ForeignDBDataType.DataType dataType);
+
+    Map<String,String> getGeoAccessionCandidates();
 }
 
 

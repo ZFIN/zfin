@@ -1,6 +1,5 @@
 package org.zfin.ontology.quartz;
 
-import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -9,17 +8,11 @@ import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
-import org.zfin.ontology.datatransfer.DownloadOntology;
-import org.zfin.ontology.datatransfer.LoadOntology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
-import org.zfin.util.FileUtil;
-import org.zfin.util.LoggingUtil;
-
-import java.io.File;
 
 /**
  * Load obo file for ontology into the database.

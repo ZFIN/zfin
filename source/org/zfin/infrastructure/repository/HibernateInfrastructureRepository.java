@@ -183,6 +183,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     }
 
+    public List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(RecordAttribution.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("sourceType", sourceType.toString()));
+        return criteria.list();
+
+    }
+
 
     @SuppressWarnings("unchecked")
     public List<RecordAttribution> getRecordAttributions(ActiveData data) {
@@ -489,7 +498,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int deleteRecordAttributionForPub(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:zdbID");
+        Query query = session.createQuery("delete from RecordAttribution ra where ra.sourceZdbID=:zdbID");
         query.setParameter("zdbID", zdbID);
         return query.executeUpdate();
     }
@@ -535,11 +544,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return query.executeUpdate();
     }
 
-    public int removeRecordAttributionForData(String zdbID, String datazdbID) {
+    public int removeRecordAttributionForData(String dataZdbID, String pubZdbID) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID");
-        query.setParameter("zdbID", zdbID);
-        query.setParameter("datazdbID", datazdbID);
+        query.setParameter("zdbID", pubZdbID);
+        query.setParameter("datazdbID", dataZdbID);
         return query.executeUpdate();
     }
 
@@ -563,6 +572,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteria = session.createCriteria(ZdbFlag.class);
         criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
         return (ZdbFlag) criteria.uniqueResult();
+    }
+
+    public boolean getDisableUpdatesFlag() {
+        return Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
+                "        zflag_is_on  " +
+                "    from  zdb_flag " +
+                "    where zflag_name='disable updates'").uniqueResult().toString());
     }
 
 
@@ -1183,20 +1199,177 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @Override
     public List<String> getAllEntities(Class clazz, String idName, int firstNIds) {
-        if (firstNIds < 0)
-            return null;
-        Session session = HibernateUtil.currentSession();
-        // Todo: Check if entity is mapped in Hibernate
-        if (session.getSessionFactory().getClassMetadata(clazz) == null)
+        if (firstNIds < 0) return null;
+
+        if (HibernateUtil.currentSession().getSessionFactory().getClassMetadata(clazz) == null)
             throw new NullPointerException("No Entity of type " + clazz.getName() + " found in Hibernate mapping file.");
 
         String hql = "select distinct " + idName + " from " + clazz.getSimpleName() + " order by " + idName;
-        Query query = session.createQuery(hql);
-        if (firstNIds > 0)
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (firstNIds > 0) {
             query.setMaxResults(firstNIds);
+        }
         return query.list();
     }
 
+    @Override
+    public List<String> getExternalOrthologyNoteStrings(String zdbID) {
+        String sql = "   select en.extnote_note from external_note en  " +
+                "   join marker m on m.mrkr_zdb_id=en.extnote_data_zdb_id " +
+                "   where m.mrkr_zdb_id = :markerZdbID " +
+                "   and en.extnote_note_type='orthology' ";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", zdbID)
+                .list();
+    }
+
+    @Override
+    public List<ExternalNote> getExternalNotes(String zdbID) {
+        String hql = " select en from ExternalNote en join en.pubAttributions pa " +
+                " where en.externalDataZdbID = :externalDataZdbID " +
+                " order by pa.publication.publicationDate desc ";
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("externalDataZdbID", zdbID)
+                .list();
+    }
+
+    @Override
+    public List<String> getPublicationAttributionZdbIdsForType(String microarrayPubZdbID, Marker.Type markerType) {
+        String hql = " select distinct pa.dataZdbID from Marker m join m.publications pa " +
+                " where m.markerType.name = :type " +
+                " and pa.publication.zdbID = :pubZdbId  " +
+                " ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("type", markerType.name())
+                .setString("pubZdbId", microarrayPubZdbID)
+                .list();
+    }
+
+    /**
+     * select *
+     * from
+     * record_attribution ra
+     * join marker m on m.mrkr_zdb_id=ra.recattrib_data_zdb_id
+     * where
+     * ra.recattrib_source_zdb_id='ZDB-PUB-071218-1'
+     * and
+     * not exists (
+     * select * from geo_marker gm
+     * where gm.gm_zdb_id=ra.recattrib_data_zdb_id
+     * );
+     *
+     * @param deletedAttributions
+     * @param microarrayPub
+     * @return
+     */
+    @Override
+    public int removeAttributionsNotFound(Collection<String> deletedAttributions, String microarrayPub) {
+        int batchSize = 20;
+        int count = 0;
+
+        for (String attributionToRemove : deletedAttributions) {
+            count += removeRecordAttributionForData(attributionToRemove, microarrayPub);
+            if (count % batchSize == 0) {
+                HibernateUtil.currentSession().flush();
+            }
+        }
+
+
+        return count;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * select *
+     * from geo_marker gm
+     * where
+     * not exists (
+     * select 't' from record_attribution ra
+     * where ra.recattrib_data_zdb_id=gm.gm_zdb_id
+     * and
+     * ra.recattrib_source_zdb_id='ZDB-PUB-071218-1'
+     * );
+     *
+     * @param addAttributions
+     * @param microarrayPub
+     * @return
+     */
+    @Override
+    public int addAttributionsNotFound(Collection<String> addAttributions, String microarrayPub) {
+        int batchSize = 20;
+        int count = 0;
+
+        for (String attributionToRemove : addAttributions) {
+            insertPublicAttribution(attributionToRemove, microarrayPub);
+            ++count;
+            if (count % batchSize == 0) {
+                HibernateUtil.currentSession().flush();
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public List<String> getPublicationAttributionsForPub(String microarrayPub) {
+        String hql = " " +
+                "  select p.dataZdbID from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs " +
+                " ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("pubZdbIDs", microarrayPub)
+                .list();
+    }
+
+
+    @Override
+    public boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub) {
+        String sql = " " +
+                " select count(*) from record_attribution ra " +
+                "where ra.recattrib_data_zdb_id= :zdbID " +
+                "and ra.recattrib_source_zdb_id= :pubZdbID " +
+                "and ra.recattrib_source_type='standard' " +
+                " ";
+//        String hql = " " +
+//                "  select count(*) from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs and p.sourceType.value = :type " +
+//                " ";
+//        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createQuery(hql)
+        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", microarrayPub)
+                .uniqueResult().toString());
+
+        return numPubs > 0;
+    }
+
+    @Override
+    public boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub) {
+        String sql = " " +
+                " select count(*) from (" +
+                "select ra.recattrib_data_zdb_id " +
+                "from record_attribution ra " +
+                "where ra.recattrib_data_zdb_id= :zdbID " +
+                "and ra.recattrib_source_zdb_id= :pubZdbID " +
+                "and ra.recattrib_source_type='standard' " +
+                "union all " +
+                "select mr.mrel_mrkr_1_zdb_id " +
+                " from record_attribution ra  " +
+                " join marker_relationship mr on mr.mrel_mrkr_2_zdb_id=ra.recattrib_data_zdb_id " +
+                " where mr.mrel_mrkr_1_zdb_id=:zdbID " +
+                " and ra.recattrib_source_zdb_id=:pubZdbID " +
+                " and mr.mrel_type in ('gene encodes small segment','gene contains small segment')" +
+                " and ra.recattrib_source_type='standard' " +
+                ") " +
+                " ";
+//        String hql = " " +
+//                "  select count(*) from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs and p.sourceType.value = :type " +
+//                " ";
+//        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createQuery(hql)
+        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", microarrayPub)
+                .uniqueResult().toString());
+
+        return numPubs > 0;
+    }
 }
 
 

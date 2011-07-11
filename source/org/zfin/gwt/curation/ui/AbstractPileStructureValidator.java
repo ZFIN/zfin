@@ -1,6 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.dto.EntityPart;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
+import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;

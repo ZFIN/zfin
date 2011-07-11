@@ -100,5 +100,4 @@ public class MultipleBlastServerService {
         }
         return returnSequences;
     }
-
 }

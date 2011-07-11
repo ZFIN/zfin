@@ -49,6 +49,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         DBLINK_ADDING_ON_TRANSCRIPT_EDIT("dblink adding on transcript-edit"),
         DISPLAYED_NUCLEOTIDE_SEQUENCE("displayed nucleotide sequence"),
         DISPLAYED_PROTEIN_SEQUENCE("displayed protein sequence"),
+        OTHER_MARKER_PAGES("other marker pages"),
         MARKER_LINKED_SEQUENCE("marker linked sequence"),
         TRANSCRIPT_LINKED_SEQUENCE("transcript linked sequence"),
         GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE("gene edit addable protein sequence"),

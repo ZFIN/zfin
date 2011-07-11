@@ -26,7 +26,7 @@ public class AntibodyPresentation extends EntityPresentation {
 
     /**
      * Should be of the form.
-     * [atp6va0a1|http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     * [atp6va0a1|http://zfin.org/actio/marker/view/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
      *
      * @param antibody Antibody to render.
      * @return A rendered wiki link.

@@ -12,7 +12,7 @@
               description="Something like ${!empty formBean.collection} should go in here" %>
 
 <c:if test="${empty test || test == true}">
-    <c:if test="${((empty inlineTitle) || (inlineTitle == false)) && !empty title}"> <hr> </c:if>
+    <c:if test="${((empty inlineTitle) || (inlineTitle == false)) && !empty title}"> </c:if>
     <div class="summary">
         <c:if test="${!empty title}">
             <c:choose>

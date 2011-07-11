@@ -74,7 +74,7 @@ display detailed orthology data.
     <TD>
     <?MIVAR>
       <b>$marker_type_display Name: &nbsp;<i>$mrkr_name</i> </b><br>
-      <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID'>$mrkr_abbrev</A></i></b><br>
+      <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/action/marker/view/$OID'>$mrkr_abbrev</A></i></b><br>
     <?/MIVAR>
     </TD>
     <TD align="right">
@@ -234,7 +234,7 @@ display detailed orthology data.
     Orthology by Evidence Code:
   </CAPTION>
     <TR style="background: rgb(204,204,204);">
-      <TD><b>Evidence Code</b></TD>
+      <TD><b>Evidence Code</b><a class="popup-link info-popup-link" href="/zf_info/oev.html"></a></TD>
       <TD style="text-align: center;"><b>Zebrafish</b></TD>
       <?MIBLOCK INDEX=$item FOREACH=$organisms>
         <?MIVAR>
@@ -311,7 +311,7 @@ display detailed orthology data.
           <?MIVAR><TR style=$trColor><?/MIVAR>        
             <?MIBLOCK COND="$(AND,$(=,$indx2,1),$(=,$indx3,1))">
               <?MIVAR>
-              <TD><a href="/zf_info/oev.html"><b>$item</b></a></TD>
+              <TD><b>$item</b></TD>
               <?/MIVAR>
             <?MIELSE>
               <TD></TD>            
@@ -367,7 +367,7 @@ display detailed orthology data.
     </CAPTION>
     <TR style="background: rgb(204,204,204);">
       <TD><b>Publication</b></TD>
-      <TD><b>Evidence Code</b></TD>
+      <TD><b>Evidence Code</b><a class="popup-link info-popup-link" href="/zf_info/oev.html"></a></TD>
       <TD style="text-align: center;"><b>Zebrafish</b></TD>
       <?MIBLOCK INDEX=$item FOREACH=$organisms>
         <?MIVAR>
@@ -439,7 +439,7 @@ display detailed orthology data.
           
           <?MIVAR>
           <TD>
-            <a href="/zf_info/oev.html"><b>$item2</b></a>
+            <b>$item2</b>
           </TD>  
           <?/MIVAR>
 

@@ -16,12 +16,10 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerAliasBean;
 import org.zfin.marker.presentation.MarkerRelationshipBean;
-import org.zfin.marker.presentation.SNPBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
@@ -31,17 +29,13 @@ import org.zfin.repository.RepositoryFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class PublicationListController extends MultiActionController {
 
     public static final String ANTIBODY_PUBLICATION_LIST_PAGE = "antibody-publication-list.page";
     public static final String RELATIONSHIP_PUBLICATION_LIST_PAGE = "relationship-publication-list.page";
     public static final String ALIAS_PUBLICATION_LIST_PAGE = "alias-publication-list.page";
-    public static final String SNP_PUBLICATION_LIST_PAGE = "snp-publication-list.page";
     private static Logger LOG = Logger.getLogger(PublicationListController.class);
 
     private Map validatorMap;
@@ -79,25 +73,6 @@ public class PublicationListController extends MultiActionController {
         return new ModelAndView(RELATIONSHIP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
-    public ModelAndView snpPublicationListHandler(HttpServletRequest request, HttpServletResponse response, SNPBean bean)
-            throws ServletException {
-
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        // Marker marker = markerRepository.getMarkerByID(bean.getMarker().getZdbID());
-        Marker marker = markerRepository.getMarkerByID(bean.getMarkerID());
-        bean.setMarker(marker);
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-        List<String> pubIDs = publicationRepository.getSNPPublicationIDs(bean.getMarker());
-        Set<Publication> pubs = new HashSet<Publication>();
-        for (String id : pubIDs) {
-            pubs.add(publicationRepository.getPublication(id));
-        }
-
-        bean.setPublications(pubs);
-
-        return new ModelAndView(SNP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
-    }
-
     public ModelAndView disassociatePublicationListHandler(HttpServletRequest request, HttpServletResponse response, AntibodyBean bean)
             throws ServletException {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
@@ -108,7 +83,7 @@ public class PublicationListController extends MultiActionController {
         try {
             tx = session.beginTransaction();
             InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-            ir.removeRecordAttributionForData(bean.getDisassociatedPubId(), ab.getZdbID());
+            ir.removeRecordAttributionForData(ab.getZdbID(), bean.getDisassociatedPubId());
             Person currentUser = Person.getCurrentSecurityUser();
             ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
             tx.commit();

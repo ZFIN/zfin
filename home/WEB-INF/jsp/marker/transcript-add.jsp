@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<%--<authz:authorize ifAnyGranted="root">--%>
 <form:form commandName="formBean" >
     <table>
         <tr>
@@ -27,12 +26,6 @@
             </td>
             <td> <form:errors path="chosenStatus"  cssClass="error"/> </td>
         </tr>
-
-            <%--<tr>--%>
-            <%--<td>Status:</td>--%>
-            <%--<td><form:select path="status" items="${statuses}"/></td>--%>
-            <%--<td> <form:errors path="status"  cssClass="error"/> </td>--%>
-        <!--</tr>-->
     </table>
 
     <input type="submit" value="Create Transcript and Edit">
@@ -40,4 +33,3 @@
     <br><br>
     <form:errors cssClass="error"/>
 </form:form>
-<%--</authz:authorize>--%>

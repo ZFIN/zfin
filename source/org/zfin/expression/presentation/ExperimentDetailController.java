@@ -9,7 +9,10 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Show pages and popups for Experiments, primarily listing conditions with notes
@@ -24,7 +27,7 @@ public class ExperimentDetailController {
 
         if (experiment == null) {
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         model.addAttribute("experiment", experiment);

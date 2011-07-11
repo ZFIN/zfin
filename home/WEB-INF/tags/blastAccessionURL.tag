@@ -15,9 +15,13 @@
                 <c:set var="program" value="blastp"/>
             </c:otherwise>
         </c:choose>
-        /action/blast/blast?&program=${program}&sequenceType=${sequenceType}&queryType=SEQUENCE_ID&dataLibraryString=RNASequences&sequenceID=${dbLink.accessionNumber}
+        <c:set var="blastLink" value="/action/blast/blast?&program=${program}&sequenceType=${sequenceType}&queryType=SEQUENCE_ID&dataLibraryString=RNASequences&sequenceID=${dbLink.accessionNumber}"/>
     </c:when>
     <c:otherwise>
-        ${blastDB.location}${dbLink.accessionNumber}
+        <c:set var="blastLink" value="${blastDB.location}${dbLink.accessionNumber}"/>
     </c:otherwise>
 </c:choose>
+
+<input type="button" value="Blast at ${dbLink.blastableDatabases[0].displayName}"
+       onclick="window.open('${blastLink}');">
+

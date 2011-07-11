@@ -1,8 +1,6 @@
 package org.zfin.uniquery;
 
 import org.springframework.stereotype.Service;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.repository.RepositoryFactory;

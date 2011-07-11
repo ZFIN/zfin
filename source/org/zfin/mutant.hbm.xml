@@ -195,6 +195,9 @@
             </generator>
         </id>
 
+        <property name="standard" column="genox_is_standard" not-null="true" type="java.lang.Boolean"/>
+        <property name="standardOrGenericControl" column="genox_is_std_or_generic_control" not-null="true" type="java.lang.Boolean"/>
+
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
             <column name="genox_exp_zdb_id"/>
         </many-to-one>

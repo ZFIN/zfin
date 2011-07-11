@@ -8,6 +8,7 @@ import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
+import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
@@ -15,6 +16,7 @@ import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
+import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
@@ -61,6 +63,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         TranscriptServiceTest.class,
         OrthologyTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
+        MarkerServiceTest.class,
         MarkerSoapDbTest.class,
         MutantRepositoryTest.class,
         PaginationResultTest.class,
@@ -74,6 +77,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         EnumValidationTest.class,
         MultiRunTest.class,
         ExpressionRepositoryTest.class,
+        ExpressionServiceTest.class,
         OrthologyRepositoryTest.class,
         LinkageRepositoryTest.class,
         SingleCandidateRepositoryTest.class,

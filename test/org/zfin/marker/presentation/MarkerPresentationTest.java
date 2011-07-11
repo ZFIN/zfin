@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.marker.Marker;
@@ -8,12 +9,13 @@ import org.zfin.marker.MarkerType;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MarkerPresentationTest {
 
     private Marker marker;
+
+    private Logger logger = Logger.getLogger(MarkerPresentationTest.class) ;
 
     @Before
     public void setUp() {
@@ -36,8 +38,10 @@ public class MarkerPresentationTest {
     @Test
     public void markerLink() {
         String link = MarkerPresentation.getLink(marker);
-	    assertTrue(link.endsWith("MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\" id='ZDB-GENE-081507-1'>" +
-                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"));
+        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'>" +
+                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>" ,
+                link
+        );
 
     }
 
@@ -107,5 +111,95 @@ public class MarkerPresentationTest {
         assertEquals("abcd10",markers.get(0).getAbbreviation()) ;
         assertEquals("test3",markers.get(1).getAbbreviation()) ;
     }
+
+    private List<PreviousNameLight> createPreviousNames(String realName,String... names){
+        List<PreviousNameLight> list = new ArrayList<PreviousNameLight>();
+
+        for(String alias : names){
+            PreviousNameLight previousNameLight = new PreviousNameLight(realName);
+            previousNameLight.setAlias(alias);
+            list.add(previousNameLight);
+        }
+
+        return list ;
+    }
+
+    // From case 6959, sorty by citation, informative name (no colons), and finally alphabetical
+    @Test
+    public void testPreviousNameSort(){
+
+        assertTrue(createPreviousNames("myod1","wu:fb57a01").get(0).isUninformative());
+        assertTrue(createPreviousNames("myod1","zgc:136744").get(0).isUninformative());
+        assertFalse(createPreviousNames("pax6a", "pax[zf-a]").get(0).isUninformative());
+//        logger.info(StringUtils.getLevenshteinDistance("pax6a", "pax[zf-a]"));
+
+        List<PreviousNameLight> list2 = createPreviousNames(
+                "myod1", // real name
+                "MyoD",
+                "myod",
+                "MyoD1",
+                "etID309723.25",
+                "wu:fb57a01",
+                "zgc:136744"
+        );
+        Collections.sort(list2);
+
+        int i ;
+        i = 0 ;
+        assertEquals("MyoD",list2.get(i++).getAlias());
+        assertEquals("myod",list2.get(i++).getAlias());
+        assertEquals("MyoD1",list2.get(i++).getAlias());
+        assertEquals("etID309723.25",list2.get(i++).getAlias()); // TODO: should not be here
+        assertEquals("wu:fb57a01",list2.get(i++).getAlias());
+        assertEquals("zgc:136744",list2.get(i++).getAlias());
+
+        // for pax6a
+        // ceri's match: pax6, paxzfa, pax-a, Pax6.1, pax[zf-a](1),zfpax-6a, zfpax-6b, cb280(1), etID309716.25(1), fc20e07, wu:fc20e07(1),
+
+        // my match: pax6, paxzfa, pax-a, Pax6.1, pax[zf-a](1),zfpax-6a, zfpax-6b, cb280(1), etID309716.25(1), fc20e07, wu:fc20e07(1),
+
+        // test to make sure that the proper of these are informative
+
+//        assertEquals();
+
+        List<PreviousNameLight> list = createPreviousNames(
+                "pax6a", // real name
+                "pax6",
+                "paxzfa",
+                "pax-a",
+                "Pax6.1",
+                "pax[zf-a]",
+                "zfpax-6a",
+                "zfpax-6b",
+                "cb280",
+                "etID309716.25",
+                "fc20e07",
+                "wu:fc20e07"
+        );
+
+        Collections.sort(list);
+        i = 0 ;
+        assertEquals("pax-a",list.get(i++).getAlias());
+        assertEquals("pax6",list.get(i++).getAlias());
+        assertEquals("Pax6.1",list.get(i++).getAlias());
+        assertEquals("pax[zf-a]",list.get(i++).getAlias());
+        assertEquals("paxzfa",list.get(i++).getAlias());
+        assertEquals("zfpax-6a",list.get(i++).getAlias());
+        assertEquals("zfpax-6b",list.get(i++).getAlias());
+        assertEquals("cb280",list.get(i++).getAlias());
+        assertEquals("etID309716.25",list.get(i++).getAlias());
+        assertEquals("fc20e07",list.get(i++).getAlias());
+        assertEquals("wu:fc20e07",list.get(i++).getAlias());
+
+    }
+
+
+    @Test
+    public void getTypeFromZdbID(){
+        MarkerViewController markerViewController = new MarkerViewController();
+        assertEquals("GENE",markerViewController.getTypeForZdbID("ZDB-GENE-980526-403"));
+        assertEquals("BAC_END",markerViewController.getTypeForZdbID("ZDB-BAC_END-011115-15"));
+    }
+
 
 }

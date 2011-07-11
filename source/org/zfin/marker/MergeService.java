@@ -17,9 +17,9 @@ import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Person;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
-import org.zfin.properties.ZfinProperties;
 
 import java.util.HashSet;
 import java.util.Set;

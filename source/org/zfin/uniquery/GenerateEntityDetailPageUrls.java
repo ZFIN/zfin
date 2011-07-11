@@ -17,13 +17,17 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
+import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
+import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.workingDirectoryOption;
 import static org.zfin.uniquery.IndexerCommandLineOptions.log4jFileOption;
 import static org.zfin.uniquery.IndexerCommandLineOptions.numberOfDetailPagesOption;
 

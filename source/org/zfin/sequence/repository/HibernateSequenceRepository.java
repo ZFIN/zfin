@@ -11,9 +11,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
@@ -56,7 +58,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return getReferenceDatabase(foreignDBName, type, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
     }
 
-    public List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName name, ForeignDBDataType.DataType type){
+    public List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName name, ForeignDBDataType.DataType type) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
                 " where referenceDatabase.foreignDB.dbName = :dbName " +
@@ -71,7 +73,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("organism", Species.ZEBRAFISH.toString());
 
         return (List<ReferenceDatabase>) query.list();
-    };
+    }
+
+    ;
 
     public Accession getAccessionByAlternateKey(String number, ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
@@ -126,20 +130,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     /**
      * Get unique acccessions for a given set of databases.
+     *
      * @param referenceDatabases
      * @return
      */
     @SuppressWarnings("unchecked")
-    public Set<String> getAccessions(ReferenceDatabase... referenceDatabases){
-        Set<String> results = new HashSet<String>() ;
+    public Set<String> getAccessions(ReferenceDatabase... referenceDatabases) {
+        Set<String> results = new HashSet<String>();
 
         String hql = "" +
-                " select dbl.accessionNumber from DBLink dbl where dbl.referenceDatabase in (:referenceDatabases) " ;
+                " select dbl.accessionNumber from DBLink dbl where dbl.referenceDatabase in (:referenceDatabases) ";
         results.addAll(HibernateUtil.currentSession().createQuery(hql)
-                .setParameterList("referenceDatabases",referenceDatabases)
+                .setParameterList("referenceDatabases", referenceDatabases)
                 .list());
 
-        return results ;
+        return results;
     }
 
     public MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
@@ -206,7 +211,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
 
     @SuppressWarnings("unchecked")
-    public List<String> getGenbankCdnaDBLinks(){
+    public List<String> getGenbankCdnaDBLinks() {
         return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
                 "select  dbl.dblink_acc_num from db_link dbl , marker m, marker_type_group_member gm " +
                 "where dbl.dblink_fdbcont_zdb_id in  " +
@@ -231,16 +236,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     /**
      * from getZfinGbAcc.pl, sql_xpat
-     *
+     * <p/>
      * Select cDNA that is encoded by genes with expression (that are not microRNA).
-     *
+     * <p/>
      * 1 - select genes with expression that are not microRNA (~10K)
-     * 2 - select small segments encoded by those genes (??) 
+     * 2 - select small segments encoded by those genes (??)
      * 3 - return RNA for a small set of databases (GenBank, Vega_Trans, PREVEGA, RefSeq) (~ 41K) (of 131K)
+     *
      * @return List of DBLink accessions.
      */
     @SuppressWarnings("unchecked")
-    public Set<String> getGenbankXpatCdnaDBLinks(){
+    public Set<String> getGenbankXpatCdnaDBLinks() {
         // this currently takes 30 seconds, returns about 41K records
         Set<String> results = new HashSet<String>();
         results.addAll((List<String>) HibernateUtil.currentSession().createSQLQuery("" +
@@ -268,12 +274,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
                 "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
                 "     ) " +
-                "").list()) ;
-        return results ;
+                "").list());
+        return results;
     }
 
     @SuppressWarnings("unchecked")
-    public List<String> getGenbankSequenceDBLinks(){
+    public List<String> getGenbankSequenceDBLinks() {
         return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
                 " select dblink_acc_num " +
                 "from db_link " +
@@ -287,7 +293,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
                 "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
                 ")   " +
-                "").list() ;
+                "").list();
     }
 
     public List<DBLink> getDBLinks(String accessionString, ReferenceDatabase... referenceDatabases) {
@@ -343,8 +349,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (DBLink) criteria.uniqueResult();
     }
 
-      public FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID,
-                                          ReferenceDatabase referenceDatabases) {
+    public FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID,
+                                                        ReferenceDatabase referenceDatabases) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(FeatureDBLink.class);
         criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
@@ -601,7 +607,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return dbLinks;
     }
 
-    public MarkerDBLinkList getSummaryMarkerDBLinksForMarker(Marker marker) {
+    public List<DBLink> getSummaryMarkerDBLinksForMarker(Marker marker) {
         Session session = HibernateUtil.currentSession();
         String hql = "select dbl from MarkerDBLink dbl" +
                 " where dbl.marker.zdbID = :markerZdbID " +
@@ -619,9 +625,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         //in the database anymore, and it's commented out of the enum, so I'lll leave
         //it out.
 
-        MarkerDBLinkList dblinks = new MarkerDBLinkList();
-        dblinks.addAll(query.list());
-        return dblinks;
+        return query.list();
     }
 
     public DBLink getDBLink(String markerZdbID, String accession, String referenceDBName) {
@@ -638,9 +642,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @Override
     public DBLink getDBLink(String featureZDbID, String accession) {
-         Session session = HibernateUtil.currentSession();
+        Session session = HibernateUtil.currentSession();
         String hql = "from DBLink mdbl where mdbl.accessionNumber = :accession " +
-                " and mdbl.dataZdbID = :markerZdbID " ;
+                " and mdbl.dataZdbID = :markerZdbID ";
 
         Query query = session.createQuery(hql);
         query.setString("accession", accession);
@@ -691,15 +695,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     /**
      * Retrieves all marker ids with sequence information (accession numbers)
+     *
      * @param firstNIds number of sequences to be returned
      * @return list of markers
      */
-    public List<String> getAllNSequences(int firstNIds){
+    public List<String> getAllNSequences(int firstNIds) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct dataZdbID from DBLink " +
                 "where referenceDatabase.foreignDBDataType.superType = :superType " +
-                " and dataZdbID not like :transcript "+
-                " group by dataZdbID  "+
+                " and dataZdbID not like :transcript " +
+                " group by dataZdbID  " +
                 " having count(accessionNumber) > 1   ";
 
         Query query = session.createQuery(hql);
@@ -711,6 +716,275 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (List<String>) query.list();
     }
 
+
+    /**
+     * TODO:
+     * Find dblink where referenceDatabase belongs to "marker linked sequence"
+     * <p/>
+     * and
+     * <p/>
+     * dblink is on the second related marker of type 'gene contains small segment', ' clone contains small segment',
+     * , or 'gene encodes small segment' and the clone is not chimeric
+     * <p/>
+     * <p/>
+     * dblink is on the first related marker of type 'clone contains gene' and the clone is not chimeric
+     *
+     * @param zdbID
+     * @param superType
+     * @return
+     */
+    @Override
+    public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct dbl from DBLink dbl  " +
+                "where dbl.referenceDatabase.foreignDBDataType.superType = :superType " +
+                " and dbl.dataZdbID = :markerZdbId " +
+//                " order by dbl.referenceDatabase.foreignDB.significance, dbl.referenceDatabase.foreignDB.dbName , dbl.accessionNumberDisplay "+
+                " ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("superType", superType);
+        query.setString("markerZdbId", zdbID);
+        return query.list();
+    }
+
+    @Override
+    public int getNumberDBLinks(Marker marker) {
+        String sql = " select count(*) from ( " +
+                " select dblink_acc_num, fdb_db_name " +
+                "  from db_link, foreign_db_contains, foreign_db, " +
+                "               foreign_db_contains_display_group_member, foreign_db_contains_display_group " +
+                "  where dblink_linked_recid = :markerZdbId " +
+                "    and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                "    and dblink_fdbcont_zdb_id = fdbcont_zdb_id " +
+                "    and fdbcdg_name = 'marker linked sequence' " +
+                "    and fdbcdg_pk_id = fdbcdgm_group_id " +
+                "    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id " +
+//                "    -- and fdb_db_name != 'ZFIN_PROT' " +
+                "  UNION " +
+                "  select dblink_acc_num, fdb_db_name " +
+                "  from db_link, foreign_db_contains, marker_relationship, foreign_db, " +
+                "             foreign_db_contains_display_group_member, foreign_db_contains_display_group " +
+                "  where mrel_mrkr_1_zdb_id = :markerZdbId " +
+                "    and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                "    and dblink_linked_recid = mrel_mrkr_2_zdb_id " +
+                "    and dblink_fdbcont_zdb_id = fdbcont_zdb_id " +
+                "    and fdbcdg_name = 'marker linked sequence' " +
+                "    and fdbcdg_pk_id = fdbcdgm_group_id " +
+                "    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id " +
+//                "    -- and fdb_db_name != 'ZFIN_PROT' " +
+                "    and mrel_type in ('gene contains small segment', " +
+                "		      'clone contains small segment', " +
+                "		      'gene encodes small segment') " +
+                "    and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list') " +
+                "  UNION " +
+                "  select dblink_acc_num, fdb_db_name " +
+                "  from db_link, foreign_db_contains,foreign_db, marker_relationship, " +
+                "             foreign_db_contains_display_group_member, foreign_db_contains_display_group " +
+                "  where mrel_mrkr_2_zdb_id = :markerZdbId " +
+                "    and dblink_linked_recid = mrel_mrkr_1_zdb_id " +
+                "    and dblink_fdbcont_zdb_id = fdbcont_zdb_id " +
+                "    and fdbcdg_name = 'marker linked sequence' " +
+                "    and fdbcdg_pk_id = fdbcdgm_group_id " +
+                "    and fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id " +
+                "    and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                "    and mrel_type in ('clone contains gene') " +
+                "    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list') " +
+                "    ) ";
+        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", marker.getZdbID())
+                .uniqueResult().toString());
+    }
+
+    @Override
+    public List<DBLink> getDBLinksForMarkerAndDisplayGroup(Marker marker, DisplayGroup.GroupName groupName) {
+//        ResultTransformer transformer = new BasicTransformerAdapter() {
+//            @Override
+//            public Object transformTuple(Object[] tuple, String[] aliases) {
+//                DBLink linkDisplay = new MarkerDBLink();
+//                linkDisplay.setZdbID(tuple[0].toString());
+//                HibernateUtil.currentSession().refresh(linkDisplay);
+//                return linkDisplay;
+//            }
+//        };
+//        String sql = "select distinct dbl.dblink_zdb_id from db_link dbl  " +
+//                "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
+//                "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
+//                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+//                "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
+//                "where g.fdbcdg_name= :displayGroup " +
+//                "and " +
+//                "dbl.dblink_linked_recid= :markerZdbId ";
+//        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+//                .setParameter("markerZdbId", marker.getZdbID())
+//                .setParameter("displayGroup", groupName.toString())
+//                .setResultTransformer(transformer)
+//                ;
+
+        String hql = "select distinct dbl from DBLink dbl  " +
+                "join dbl.referenceDatabase.displayGroups dg " +
+                "where dg.groupName = :displayGroup " +
+                "and " +
+                "dbl.dataZdbID = :markerZdbId ";
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName.toString());
+        return query.list();
+    }
+
+    @Override
+    public List<TranscriptDBLink> getTranscriptDBLinksForMarkerAndDisplayGroup(Transcript transcript, DisplayGroup.GroupName groupName) {
+        String hql = "select distinct dbl from TranscriptDBLink dbl  " +
+                "join dbl.referenceDatabase.displayGroups dg " +
+                "where dg.groupName = :displayGroup " +
+                "and " +
+                "dbl.dataZdbID = :markerZdbId ";
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("markerZdbId", transcript.getZdbID())
+                .setParameter("displayGroup", groupName.toString());
+        return query.list();
+    }
+
+    @Override
+    public List<MarkerDBLink> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+
+        String hql = " select distinct dbl " +
+                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  " +
+                " MarkerRelationship  mr  " +
+                " where dg.groupName = :displayGroup " +
+                " and dbl.referenceDatabase=ref " +
+                " and dg in elements(ref.displayGroups) " +
+                " and mr.secondMarker.zdbID=dbl.dataZdbID " +
+                " and mr.markerRelationshipType.name in (:types) " +
+                " and mr.firstMarker.zdbID = :markerZdbId " +
+                " ";
+
+        Set<String> types = new HashSet<String>();
+        if (markerRelationshipTypes.length != 0) {
+            for (MarkerRelationship.Type type : markerRelationshipTypes) {
+                types.add(type.toString());
+            }
+        } else {
+            for (MarkerRelationship.Type type : MarkerRelationship.Type.values()) {
+                types.add(type.toString());
+            }
+
+        }
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName.toString())
+                .setParameterList("types", types);
+        return query.list();
+    }
+
+    @Override
+    public List<MarkerDBLink> getDBLinksForSecondRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+        String hql = " select distinct dbl " +
+                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  " +
+                " MarkerRelationship  mr  " +
+                " where dg.groupName = :displayGroup " +
+                " and dbl.referenceDatabase=ref " +
+                " and dg in elements(ref.displayGroups) " +
+                " and mr.firstMarker.zdbID=dbl.dataZdbID " +
+                " and mr.markerRelationshipType.name in (:types) " +
+                " and mr.secondMarker.zdbID = :markerZdbId " +
+                " ";
+
+        Set<String> types = new HashSet<String>();
+        if (markerRelationshipTypes.length != 0) {
+            for (MarkerRelationship.Type type : markerRelationshipTypes) {
+                types.add(type.toString());
+            }
+        } else {
+            for (MarkerRelationship.Type type : MarkerRelationship.Type.values()) {
+                types.add(type.toString());
+            }
+
+        }
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName.toString())
+                .setParameterList("types", types);
+        return query.list();
+    }
+
+    @Override
+    public Collection<String> getDBLinkAccessionsForMarker(Marker marker, ForeignDBDataType.DataType dataType) {
+        String hql = "  select dbl.accessionNumber from DBLink dbl " +
+                "  where dbl.dataZdbID = :markerZdbID   " +
+                "  and dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
+                " ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID", marker.getZdbID())
+                .setString("dataType", dataType.toString())
+                .list();
+    }
+
+    @Override
+    public Collection<String> getDBLinkAccessionsForEncodedMarkers(Marker marker, ForeignDBDataType.DataType dataType){
+        String hql = "  select dbl.accessionNumber from MarkerRelationship mr join mr.firstMarker m , MarkerDBLink dbl " +
+                "  where mr.firstMarker.zdbID = :markerZdbID   " +
+                "  and mr.secondMarker.zdbID = dbl.dataZdbID  " +
+                "  and mr.type = :markerType  " +
+                "  and dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
+                " ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID", marker.getZdbID())
+                .setString("dataType", dataType.toString())
+                .setString("markerType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString() )
+                .list();
+    }
+
+    /**
+     * select dbl.dblink_acc_num,m.mrkr_zdb_id
+from db_link dbl
+join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id
+join foreign_db_data_type dt on fdbc.fdbcont_fdbdt_id=dt.fdbdt_pk_id
+join marker m on dbl.dblink_linked_recid=m.mrkr_zdb_id
+where
+dt.fdbdt_data_type='RNA'
+and
+dt.fdbdt_super_type='sequence'
+--and  fdb.fdb_db_name='GenBank'
+and
+m.mrkr_type in ('GENE','GENEP','EST','CDNA')
+     * @return Map&lt;accession,ZdbID&gt;
+     */
+    @Override
+    public Map<String, String> getGeoAccessionCandidates() {
+        String hql = " " +
+                "  select dbl.accessionNumber,dbl.dataZdbID from MarkerDBLink dbl " +
+                "  where dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
+                "  and dbl.referenceDatabase.foreignDBDataType.superType = :superType " +
+                "  and dbl.marker.markerType.name in (:types) " +
+                "" ;
+        List<String> types = new ArrayList<String>();
+        types.add(Marker.Type.CDNA.name());
+        types.add(Marker.Type.EST.name());
+        types.add(Marker.Type.GENE.name());
+        types.add(Marker.Type.GENEP.name());
+        List<DBLink> dblinks = HibernateUtil.currentSession().createQuery(hql)
+                .setParameterList("types", types)
+                .setParameter("dataType", ForeignDBDataType.DataType.RNA )
+                .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                       MarkerDBLink dbLink = new MarkerDBLink();
+                        dbLink.setAccessionNumber(tuple[0].toString());
+                        dbLink.setDataZdbID(tuple[1].toString());
+                        return dbLink;
+                    }
+                })
+                .list();
+        Map<String,String>  accessionCandidates = new HashMap<String,String>();
+        for(DBLink dbLink : dblinks){
+            accessionCandidates.put(dbLink.getAccessionNumber(),dbLink.getDataZdbID());
+        }
+
+        return accessionCandidates;
+    }
 }
 
 

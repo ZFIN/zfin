@@ -5,13 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -46,7 +44,7 @@ public class GenotypeDetailController {
         }
         if (genotype == null){
             model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
@@ -72,7 +70,7 @@ public class GenotypeDetailController {
         Genotype genotype = mutantRepository.getGenotypeByID(genoID);
         if (genotype == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         GenotypeBean form = new GenotypeBean();
@@ -119,7 +117,7 @@ public class GenotypeDetailController {
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
         if (genotype == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         GenotypeBean form = new GenotypeBean();

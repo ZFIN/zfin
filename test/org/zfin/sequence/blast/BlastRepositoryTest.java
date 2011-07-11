@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.DatabasePresentationBean;
 import org.zfin.sequence.blast.repository.BlastRepository;
@@ -16,6 +18,8 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 /**
@@ -30,6 +34,8 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getSingleBlastRepository(){
         Database database= blastRepository.getDatabase(Database.AvailableAbbrev.RNASEQUENCES) ;
+        assertNotNull(database);
+        database= blastRepository.getDatabase(Database.AvailableAbbrev.VEGA_BLAST) ;
         assertNotNull(database);
     }
 
@@ -221,6 +227,27 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
+    @Test
+    public void blastDatabases(){
+        List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("CU651595");
+        assertThat(dbLinkList.size(),greaterThan(1));
+        assertThat(dbLinkList.size(), lessThan(3));
+        for(DBLink dbLink : dbLinkList){
+            if(dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.GENBANK)){
+                List<Database> blastDatabases =  dbLink.getBlastableDatabases();
+                assertEquals(2,blastDatabases.size());
+                for(Database database  : blastDatabases){
+                    assertTrue(
+                            database.getAbbrev()==Database.AvailableAbbrev.ENSEMBL
+                            ||
+                            database.getAbbrev()==Database.AvailableAbbrev.MEGA_BLAST
+                    );
+                }
+
+
+            }
+        }
+    }
 
 
 }

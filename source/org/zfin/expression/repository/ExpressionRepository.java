@@ -2,15 +2,17 @@ package org.zfin.expression.repository;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.*;
+import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
@@ -22,15 +24,30 @@ import java.util.Set;
 public interface ExpressionRepository {
     ExpressionStageAnatomyContainer getExpressionStages(Gene gene);
 
-    int getExpressionPubCount(Marker marker);
+    int getExpressionPubCountForGene(Marker marker);
 
-    int getExpressionFigureCount(Marker marker);
+    int getExpressionPubCountForEfg(Marker marker);
+
+    int getExpressionPubCountForClone(Clone marker);
+
+    Publication getExpressionSinglePub(Marker marker);
+
+    int getExpressionFigureCountForEfg(Marker marker);
+
+    int getExpressionFigureCountForGene(Marker marker);
+
+    FigureLink getExpressionSingleFigure(Marker marker);
+
+    int getExpressionFigureCountForClone(Clone clone);
 
     /**
+     *
      * @param marker
      * @return List of Object[int figureCount,String pubZdbID,String cloneZdbID)
      */
-    List getDirectlySubmittedExpressionSummaries(Marker marker);
+    List<PublicationExpressionBean> getDirectlySubmittedExpressionForGene(Marker marker);
+
+    List<PublicationExpressionBean> getDirectlySubmittedExpressionForClone(Clone clone) ;
 
     int getImagesFromPubAndClone(Publication publication, Clone clone);
 
@@ -289,4 +306,9 @@ public interface ExpressionRepository {
      * @return
      */
     List<ExpressionResult> getExpressionOnObsoletedTerms();
+    int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
+
+    StageExpressionPresentation getStageExpressionForMarker(String zdbID);
+
+    List<ExpressionExperimentPresentation> getWildTypeExpressionExperiments(String zdbID);
 }

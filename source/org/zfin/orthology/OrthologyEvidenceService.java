@@ -23,7 +23,7 @@ public class OrthologyEvidenceService {
         Set<OrthologyEvidenceFastSearch> fastSearchEvidences = new HashSet<OrthologyEvidenceFastSearch>();
         for (Orthologue ortho : orthologs) {
             Species organism = ortho.getOrganism();
-            for (OrthoEvidence evidence : ortho.getEvidence()) {
+            for (OrthoEvidence evidence : ortho.getEvidences()) {
                 OrthologyEvidenceFastSearch fastSearch = new OrthologyEvidenceFastSearch();
                 fastSearch.setCode(evidence.getOrthologueEvidenceCode());
                 fastSearch.setMarker(ortho.getGene());

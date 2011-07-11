@@ -17,9 +17,12 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.*;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
+import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -27,8 +30,8 @@ import java.util.List;
 
 import static junit.framework.Assert.*;
 import static org.junit.Assert.fail;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * Test class for PhenotypeRepository.
@@ -358,5 +361,51 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         ontologies[1] = Ontology.QUALITY;
         ontologies[2] = Ontology.STAGE;
         return ontologies;
+    }
+
+    @Test
+    public void getNumberPhenotypeFigures(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int numFigures = getPhenotypeRepository().getNumPhenotypeFigures(m);
+        assertTrue(numFigures>10);
+        assertTrue(numFigures<20);
+    }
+
+
+    @Test
+    public void getNumberPhenotypePublications(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int numPubs  = getPhenotypeRepository().getNumPhenotypePublications(m);
+        assertTrue(numPubs >5);
+        assertTrue(numPubs < 20);
+    }
+
+    @Test
+    public void getFirstPhenotypePublication(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-980526-333");
+        PublicationLink publicationLink = getPhenotypeRepository().getPhenotypeFirstPublication(m);
+        assertEquals("ZDB-PUB-080630-4", publicationLink.getPublicationZdbId());
+        assertEquals("Dee <i>et al.</i>, 2008", publicationLink.getLinkContent());
+    }
+
+    @Test
+    public void getFirstPhenotypeFigure(){
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-MRPHLNO-070305-1");
+        FigureLink figureLink = getPhenotypeRepository().getPhenotypeFirstFigure(m);
+        assertEquals("ZDB-FIG-070307-8", figureLink.getFigureZdbId());
+        assertEquals("Fig. 7", figureLink.getLinkContent());
+        assertEquals("<a href=\"/quark/webdriver?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-070307-8\">Fig. 7</a>", figureLink.getLink());
+    }
+
+    @Test
+    public void getPhenotypeAnatomy(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int numAnatomy = getPhenotypeRepository().getPhenotypeAnatomy(m).size();
+        assertTrue(numAnatomy >10);
+        assertTrue(numAnatomy < 40);
+
+        Marker m2 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-031112-7");
+        int numAnatomy2 = getPhenotypeRepository().getPhenotypeAnatomy(m2).size();
+        assertEquals(63,numAnatomy2 );
     }
 }

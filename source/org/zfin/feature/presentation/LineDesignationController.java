@@ -1,29 +1,18 @@
 package org.zfin.feature.presentation;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.portlet.ModelAndView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.people.LabFeaturePrefix;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.feature.presentation.LineDesignationBean;
-import org.apache.commons.lang.StringUtils;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.validation.Valid;
-import org.springframework.validation.Validator;
 
 
 
@@ -45,8 +34,7 @@ public class LineDesignationController {
         model.addAttribute(LookupStrings.FORM_BEAN,lineDesignationBean) ;
         model.addAttribute(LookupStrings.DYNAMIC_TITLE,"Line Designations") ;
 
-      return "feature/line-designation.page" ;
-      //   return "lineDesignationBean" ;
+        return "feature/line-designation.page" ;
     }
 
     @RequestMapping(value="/features-for-lab/{zdbID}")
@@ -55,34 +43,34 @@ public class LineDesignationController {
         return "feature/features-for-lab.insert" ;
     }
 
-           @InitBinder
+    @InitBinder
 
     @RequestMapping(value={"/line-designations"},method = RequestMethod.POST)
     public String saveLabPrefix(@ModelAttribute("lineDesignationBean")LineDesignationBean lineDesignationBean,BindingResult result, Model model) throws Exception {
 
         String labPrefix = lineDesignationBean.getLineDesig() ;
 
-       LineDesignationValidator validator=new LineDesignationValidator();
-       validator.validate(lineDesignationBean, result);
+        LineDesignationValidator validator=new LineDesignationValidator();
+        validator.validate(lineDesignationBean, result);
 
         if (result.hasErrors())    {
-          //model.addAttribute(LookupStrings.FORM_BEAN,lineDesignationBean) ;
-             result.reject(lineDesignationBean.getLineDesig());
+            //model.addAttribute(LookupStrings.FORM_BEAN,lineDesignationBean) ;
+            result.reject(lineDesignationBean.getLineDesig());
             return getFeaturePrefixes(model);
-            }
+        }
         else {
-        HibernateUtil.createTransaction();
-        String returnPrefix = RepositoryFactory.getFeatureRepository().setNewLabPrefix(labPrefix, lineDesignationBean.getLineLocation()).getPrefixString();
-        if(returnPrefix==null){
-            throw new RuntimeException("Failed to save prefix["+ labPrefix +"]");
-        }
-        else{
-            HibernateUtil.flushAndCommitCurrentSession();
-            return getFeaturePrefixes(model);
-        }
+            HibernateUtil.createTransaction();
+            String returnPrefix = RepositoryFactory.getFeatureRepository().setNewLabPrefix(labPrefix, lineDesignationBean.getLineLocation()).getPrefixString();
+            if(returnPrefix==null){
+                throw new RuntimeException("Failed to save prefix["+ labPrefix +"]");
+            }
+            else{
+                HibernateUtil.flushAndCommitCurrentSession();
+                return getFeaturePrefixes(model);
+            }
 
 
-    }
+        }
 
     }
 

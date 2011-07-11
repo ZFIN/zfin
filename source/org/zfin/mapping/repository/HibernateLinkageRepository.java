@@ -141,6 +141,13 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
+        /**
+         * From mapping details
+         07/28/03 we decided to show LG Unknown when LG is 0. If we have
+         other evidence of LG not 0, only the non 0 will be shown in mini mode,
+         but more in mapping detail page.
+         */
+
         return lgList;
     }
 

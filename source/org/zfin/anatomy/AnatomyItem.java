@@ -2,11 +2,11 @@ package org.zfin.anatomy;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.Image;
 import org.zfin.ontology.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * This business object defines an anatomical structure, aka anatomy item or anatomy term.

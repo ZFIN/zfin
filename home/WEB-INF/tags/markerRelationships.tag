@@ -22,7 +22,7 @@
     <table class="summary horizontal-solidblock">
         <c:forEach var="entry" items="${relationships}">
             <tr>
-                <th>${fn:replace(entry.key," ","&nbsp;")} <%-- relationship label --%></th>
+                <td class="data-label">${entry.key}:<%-- relationship label --%></td>
                 <td>
                     <c:forEach var="typeMap" items="${entry.value}" >
                         <div>

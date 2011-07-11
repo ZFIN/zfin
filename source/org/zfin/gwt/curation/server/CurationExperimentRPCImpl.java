@@ -600,7 +600,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
 
-        result.setSuperterm(unspecified);
+        result.setSuperTerm(unspecified);
         result.setExpressionFound(true);
         ExpressedTermDTO unspecifiedTerm = DTOConversionService.convertToExpressedTermDTO(unspecified);
         unspecifiedTerm.setExpressionFound(true);
@@ -992,9 +992,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                                                        boolean expressed) {
         boolean termBeingUsed = false;
         for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getSuperterm().equals(expressionStructure.getSuperterm())) {
+            if (result.getSuperTerm().equals(expressionStructure.getSuperterm())) {
                 String subtermID = null;
-                Term term = result.getSubterm();
+                Term term = result.getSubTerm();
                 if (term != null)
                     subtermID = term.getZdbID();
                 // check if subterms are equal or both null
@@ -1018,7 +1018,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         // create a new ExpressedTermDTO object that is passed back to the RPC caller
         ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(expressionStructure);
         ExpressionResult newExpression = new ExpressionResult();
-        newExpression.setSubterm(expressionStructure.getSubterm());
+        newExpression.setSubTerm(expressionStructure.getSubterm());
         setMainAttributes(experiment, expressionStructure, expressed, newExpression);
         expRepository.createExpressionResult(newExpression, experiment.getFigure());
         TermDTO subtermDto = new TermDTO();
@@ -1030,7 +1030,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     private void setMainAttributes(ExperimentFigureStage experiment, ExpressionStructure expressionStructure, boolean expressed, ExpressionResult newExpression) {
         newExpression.setExpressionExperiment(experiment.getExpressionExperiment());
-        newExpression.setSuperterm(expressionStructure.getSuperterm());
+        newExpression.setSuperTerm(expressionStructure.getSuperterm());
         newExpression.setExpressionFound(expressed);
         newExpression.setStartStage(experiment.getStart());
         newExpression.setEndStage(experiment.getEnd());
@@ -1039,26 +1039,26 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     private void removeExpressionToAnnotation(ExperimentFigureStage experiment, boolean expressed, ExpressionStructure expressionStructure) {
         for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getSuperterm().equals(expressionStructure.getSuperterm())) {
+            if (result.getSuperTerm().equals(expressionStructure.getSuperterm())) {
                 String subtermID = null;
-                Term term = result.getSubterm();
+                Term term = result.getSubTerm();
                 if (term != null)
                     subtermID = term.getZdbID();
                 // check if subterms are equal or both null
                 if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName());
+                    LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName());
                     break;
                 }
                 if (subtermID != null && expressionStructure.getSubterm().getZdbID() != null &&
                         subtermID.equals(expressionStructure.getSubterm().getZdbID()) &&
                         expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    Term subterm = result.getSubterm();
+                    Term subterm = result.getSubTerm();
                     if (subterm != null)
-                        LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName() + " : " + subterm.getTermName());
+                        LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName() + " : " + subterm.getTermName());
                     else
-                        LOG.info("Removed Expression_Result:  " + result.getSuperterm().getTermName());
+                        LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName());
                     break;
                 }
             }

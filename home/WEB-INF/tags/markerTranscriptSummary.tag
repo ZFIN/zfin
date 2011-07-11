@@ -12,100 +12,105 @@
 <%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String"
               description="optional title, overrides default" %>
 
+<div class="summary">
+    <c:choose>
+        <c:when test="${!empty relatedTranscriptDisplay.transcripts}">
+            <table class="summary largestripes relatedtranscripts">
 
-<c:if test="${!empty relatedTranscriptDisplay.transcripts}">
-    <div class="summary">
-        <table class="summary largestripes relatedtranscripts">
-
-            <c:set var="lastType" value=""/>
-            <c:set var="groupIndex" value="0"/>
-            <c:forEach var="relatedTranscript" items="${relatedTranscriptDisplay.transcripts}" varStatus="loop">
+                <c:set var="lastType" value=""/>
+                <c:set var="groupIndex" value="0"/>
+                <c:forEach var="relatedTranscript" items="${relatedTranscriptDisplay.transcripts}" varStatus="loop">
 
 
-        <c:if test="${ (showAllTranscripts) || (!showAllTranscripts && relatedTranscript.marker.transcriptType.display ne lastType) }">
-            <c:if test="${loop.first}">
-                <caption>
-                <c:choose>
-                    <c:when test="${!empty title}">
-                        ${title}
-                    </c:when>
-                    <c:otherwise>
-                        <zfin:link entity="${relatedTranscript.otherMarker}"/> TRANSCRIPTS
-                    </c:otherwise>
-                </c:choose>
-
-                </caption>
-                <tr>
-
-                    <th width="25%"><a href="/action/marker/transcript-definitions#type">Type</a></th>
-                    <th width="25%">Name</th>
-                    <th style="width: 15%;" class="length">Length (bp)</th>
-                    <th  style="width: 35%;" class="analysis">
-                        Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a>
-                    </th>
-
-                    <th width="30%">
-                </tr>
-
-                    </c:if>
-
-                    <zfin:alternating-tr loopName="loop"
-                                         groupBeanCollection="${relatedTranscriptDisplay.list}"
-                                         groupByBean="marker.transcriptType.display">
-                        <td> <%-- only show if different from the last row--%>
-                            <zfin:groupByDisplay loopName="loop" groupBeanCollection="${relatedTranscriptDisplay.list}" groupByBean="marker.transcriptType.display">
-                             <span title="${relatedTranscript.marker.transcriptType.definition}">
-                                ${relatedTranscript.marker.transcriptType.display}</span>                                
-                            </zfin:groupByDisplay>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${unlinkedTranscript ne null && unlinkedTranscript eq relatedTranscript.marker}">
-                                    <zfin:name entity="${relatedTranscript.marker}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <zfin:link entity="${relatedTranscript.marker}"/>
-                                    <zfin:attribution entity="${relatedTranscript}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td class="length">
-                                ${relatedTranscript.marker.length}
-                        </td>
-                        <td class="analysis">
-                            <c:if test="${empty relatedTranscript}">
-                                no sequence available
-                            </c:if>
-                            <c:if test="${empty relatedTranscript.displayedSequenceDBLinks}">
-                                relatedTranscript.displayedSequenceDBLinks is empty
-                            </c:if>
-                            <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne relatedTranscript.marker}">
-                                <c:choose>
-                                    <c:when test="${fn:length(relatedTranscript.displayedSequenceDBLinks) eq 1}">
-                                        <zfin2:externalBlastDropDown dbLink="${relatedTranscript.displayedSequenceDBLinks[0]}"/>
-                                    </c:when>
-                                    <c:when test="${ fn:length(relatedTranscript.displayedSequenceDBLinks) > 1}">
-                                        (${fn:length(relatedTranscript.displayedSequenceDBLinks)} sequences)
-                                    </c:when>
-                                </c:choose>
-                            </c:if>
-
-                        </td>
-
+                    <c:if test="${ (showAllTranscripts) || (!showAllTranscripts && relatedTranscript.marker.transcriptType.display ne lastType) }">
                         <c:if test="${loop.first}">
-                            <td class="gbrowseimage"
-                                rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
+                            <caption>
+                                <c:choose>
+                                    <c:when test="${!empty title}">
+                                        ${title}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <zfin:link entity="${relatedTranscript.otherMarker}"/> TRANSCRIPTS
+                                    </c:otherwise>
+                                </c:choose>
 
-                                <c:if test="${!empty relatedTranscriptDisplay.gbrowseImages}">
+                            </caption>
+                            <tr>
 
-                                    <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"/>                                   
-                                </c:if>
-                            </td>
+                                <th width="25%">Type<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
+                                <th width="25%">Name</th>
+                                <th style="width: 15%;" class="length">Length (bp)</th>
+                                <th  style="width: 35%;" class="analysis">
+                                    Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a>
+                                </th>
+
+                                <th width="30%">
+                            </tr>
+
                         </c:if>
-                    </zfin:alternating-tr>
-                </c:if>
-            </c:forEach>
 
-        </table>
-    </div>
-</c:if>
+                        <zfin:alternating-tr loopName="loop"
+                                             groupBeanCollection="${relatedTranscriptDisplay.list}"
+                                             groupByBean="marker.transcriptType.display">
+                            <td> <%-- only show if different from the last row--%>
+                                <zfin:groupByDisplay loopName="loop" groupBeanCollection="${relatedTranscriptDisplay.list}" groupByBean="marker.transcriptType.display">
+                             <span title="${relatedTranscript.marker.transcriptType.definition}">
+                                     ${relatedTranscript.marker.transcriptType.display}</span>
+                                </zfin:groupByDisplay>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${unlinkedTranscript ne null && unlinkedTranscript eq relatedTranscript.marker}">
+                                        <zfin:name entity="${relatedTranscript.marker}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <zfin:link entity="${relatedTranscript.marker}"/>
+                                        <zfin:attribution entity="${relatedTranscript}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td class="length">
+                                    ${relatedTranscript.marker.length}
+                            </td>
+                            <td class="analysis">
+                                <c:if test="${empty relatedTranscript}">
+                                    no sequence available
+                                </c:if>
+                                <c:if test="${empty relatedTranscript.displayedSequenceDBLinks}">
+                                    relatedTranscript.displayedSequenceDBLinks is empty
+                                </c:if>
+                                <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne relatedTranscript.marker}">
+                                    <c:choose>
+                                        <c:when test="${fn:length(relatedTranscript.displayedSequenceDBLinks) eq 1}">
+                                            <zfin2:externalBlastDropDown dbLink="${relatedTranscript.displayedSequenceDBLinks[0]}"/>
+                                        </c:when>
+                                        <c:when test="${ fn:length(relatedTranscript.displayedSequenceDBLinks) > 1}">
+                                            (${fn:length(relatedTranscript.displayedSequenceDBLinks)} sequences)
+                                        </c:when>
+                                    </c:choose>
+                                </c:if>
+
+                            </td>
+
+                            <c:if test="${loop.first}">
+                                <td class="gbrowseimage"
+                                    rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
+
+                                    <c:if test="${!empty relatedTranscriptDisplay.gbrowseImages}">
+
+                                        <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"/>
+                                    </c:if>
+                                </td>
+                            </c:if>
+                        </zfin:alternating-tr>
+                    </c:if>
+                </c:forEach>
+
+            </table>
+        </c:when>
+        <c:otherwise>
+            <b>${title}</b> <zfin2:noDataAvailable/>
+        </c:otherwise>
+    </c:choose>
+</div>
+

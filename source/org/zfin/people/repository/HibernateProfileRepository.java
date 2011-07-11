@@ -5,10 +5,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.people.*;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -323,4 +325,46 @@ public class HibernateProfileRepository implements ProfileRepository {
         return (Lab) HibernateUtil.currentSession().get(Lab.class,labZdbId);
     }
 
+    @Override
+    public List<OrganizationLink> getSupplierLinksForZdbId(String zdbID) {
+        String sql = "" +
+                "select id.idsup_supplier_zdb_id, su.srcurl_url, " +
+                "su.srcurl_display_text, id.idsup_acc_num, comp.name as cname, l.name as lname " +
+                "from int_data_supplier id, outer source_url su, outer company comp, outer lab l " +
+                "where id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id " +
+                "and id.idsup_data_zdb_id = :OID  " +
+                "and su.srcurl_purpose = 'order' " +
+                "and comp.zdb_id=id.idsup_supplier_zdb_id " +
+                "and l.zdb_id=id.idsup_supplier_zdb_id " +
+                " ";
+
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("OID", zdbID)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        OrganizationLink organinzationLink = new OrganizationLink();
+                        organinzationLink.setSupplierZdbId(tuple[0].toString());
+                        if (tuple[1] != null) {
+                            organinzationLink.setSourceUrl(tuple[1].toString());
+                        }
+                        if (tuple[2] != null) {
+                            organinzationLink.setUrlDisplayText(tuple[2].toString());
+                        }
+                        if (tuple[3] != null) {
+                            organinzationLink.setAccessionNumber(tuple[3].toString());
+                        }
+                        if (tuple[4] != null) {
+                            organinzationLink.setCompanyName(tuple[4].toString());
+                        }
+                        if (tuple[5] != null) {
+                            organinzationLink.setLabName(tuple[5].toString());
+                        }
+
+                        return organinzationLink;
+                    }
+                })
+                .list()
+                ;
+    }
 }

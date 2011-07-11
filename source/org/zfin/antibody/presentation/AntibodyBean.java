@@ -178,7 +178,7 @@ public class AntibodyBean extends PublicationListBean {
         if (antibodyData != null) {
 
             // add antigen-gene associated publications
-            SortedSet<MarkerRelationship> relationships = antibodyData.getSortedAntigenRelationships();
+            Set<MarkerRelationship> relationships = antibodyData.getSortedAntigenRelationships();
             if (relationships != null && !relationships.isEmpty()) {
                 for (MarkerRelationship mrkrRel : relationships) {
                     Set<PublicationAttribution> antigenPubs = mrkrRel.getPublications();

@@ -1,7 +1,6 @@
 package org.zfin.expression.presentation;
 
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.ontology.presentation.ExpressionResultPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 
 /**

@@ -96,6 +96,7 @@
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>
     <import file="${buildfiles.dir}/test.xml"/>
+    <import file="${buildfiles.dir}/performance.xml"/>
     <import file="${buildfiles.dir}/tomcat.xml"/>
     <import file="${buildfiles.dir}/usage.xml"/>
     <import file="${buildfiles.dir}/serialization.xml"/>
@@ -699,12 +700,12 @@
     </target>
 
 
-    <target name="validateDatabases" depends="compile,build-tests">
-        <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
-              classpathref="extended.classpath"
-                >
-        </java>
-    </target>
+    <!--<target name="validateDatabases" depends="compile,build-tests">-->
+        <!--<java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"-->
+              <!--classpathref="extended.classpath"-->
+                <!-->-->
+        <!--</java>-->
+    <!--</target>-->
 
     <target name="report" depends="compile">
         <java classname="org.zfin.expression.EQReport" fork="yes"

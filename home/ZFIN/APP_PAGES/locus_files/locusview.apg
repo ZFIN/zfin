@@ -35,7 +35,7 @@ redirect to the correct markerview page
 		       $(>,$(POSITION,$lcvw_repld_zdb_id,CONSTRCT),0))">
 
     <script>
-      <?MIVAR>location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1')
+      <?MIVAR>location.replace('/action/marker/view/$1')
       <?/MIVAR>
     </script>
 

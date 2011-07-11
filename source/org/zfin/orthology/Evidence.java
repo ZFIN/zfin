@@ -6,7 +6,9 @@ package org.zfin.orthology;
  */
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Business object used to hold a set of evidence codes for an orthologous gene.
@@ -20,5 +22,14 @@ public class Evidence implements Serializable {
 
     public Set<EvidenceCode> getCodes() {
         return codes;
+    }
+
+    public Collection<? extends String> getCodesAsStrings() {
+        Set<String> collection = new TreeSet<String>() ;
+        for(EvidenceCode evidenceCode : codes){
+            collection.add(evidenceCode.getCode());
+        }
+
+        return collection;
     }
 }

@@ -56,7 +56,7 @@ public class OrthologyTest extends AbstractDatabaseTest {
             evidence.setOrthologueEvidenceCode(OrthoEvidence.Code.AA);
             evidence.setPublication(publication);
             evidences.add(evidence);
-            ortho.setEvidence(evidences);
+            ortho.setEvidences(evidences);
 
             Entrez entrez = new Entrez() ;
             entrez.setEntrezAccNum("2253");

@@ -27,7 +27,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
     public static final String genesTitle = "geneTitle";
 
     // gui elements
-    private ViewClickLabel cloneViewClickLabel = new ViewClickLabel("[View Clone]", "/action/marker/clone-view?zdbID=", "Discard");
+    private ViewClickLabel cloneViewClickLabel = new ViewClickLabel("[View Clone]", "/action/marker/view/", "Discard");
     private HTML relatedGeneTitle = new HTML("Contains Gene:");
     private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit(headerDiv);
     private CloneBox cloneBox = new CloneBox(dataDiv);

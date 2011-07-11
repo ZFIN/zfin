@@ -31,10 +31,10 @@
 
 
 
-<zfin2:subsection title="${title}" test="${!empty sequenceInfo}">
+<zfin2:subsectionMarker title="${title}" test="${!empty sequenceInfo and !empty sequenceInfo.dbLinks }" showNoData="true">
     <table class="summary rowstripes">
             <tr>
-                <th width="25%"><a href="/action/marker/transcript-definitions#type">Type</a></th>
+                <th width="25%">Type<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
                 <th width="25%"> Accession # </th>
                 <th width="15%" style="text-align: right"> Length (bp/aa) </th>
                 <th width="35%" style="text-align: center">
@@ -44,16 +44,16 @@
 
             <c:set var="lastType" value=""/>
             <c:set var="groupIndex" value="0"/>
-            <c:forEach var="dblink" items="${sequenceInfo}" varStatus="loop">
+            <c:forEach var="dblink" items="${sequenceInfo.dbLinks}" varStatus="loop">
                 <c:if test="${dblink.referenceDatabase.foreignDBDataType.dataType ne lastType}">
                     <c:set var="groupIndex" value="${groupIndex + 1}"/>
                 </c:if>
                 <c:if test="${ (showAllSequences) || (!showAllSequences && dblink.referenceDatabase.foreignDBDataType.dataType ne lastType)  }">
                     <zfin:alternating-tr loopName="loop"
-                                         groupBeanCollection="${sequenceInfo.list}"
+                                         groupBeanCollection="${sequenceInfo.dbLinks}"
                                          groupByBean="referenceDatabase.foreignDBDataType.dataType">
                         <td>
-                            <zfin:groupByDisplay loopName="loop" groupBeanCollection="${sequenceInfo.list}"
+                            <zfin:groupByDisplay loopName="loop" groupBeanCollection="${sequenceInfo.dbLinks}"
                                                  groupByBean="referenceDatabase.foreignDBDataType.dataType">
                                 ${dblink.referenceDatabase.foreignDBDataType.dataType} 
                             </zfin:groupByDisplay>
@@ -73,5 +73,5 @@
                 <c:set var="lastType" value="${dblink.referenceDatabase.foreignDBDataType.dataType}"/>
             </c:forEach>
         </table>
-</zfin2:subsection>
+</zfin2:subsectionMarker>
 

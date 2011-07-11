@@ -1,57 +1,73 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  */
-public class CloneAddController extends SimpleFormController {
+@Controller
+public class CloneAddController {
 
     private static Logger logger = Logger.getLogger(CloneAddController.class);
-    //    protected Map referenceData(HttpServletRequest httpServletRequest,Object command, Error errors) throws Exception {
 
-    protected Map referenceData(HttpServletRequest httpServletRequest) throws Exception {
+    private CloneAddValidator validator = new CloneAddValidator();
 
-        Map refMap = new HashMap();
-        refMap.put("cloneMarkerTypes", MarkerService.getCloneMarkerTypes());
-        refMap.put("cloneLibraries", RepositoryFactory.getMarkerRepository().getProbeLibraries());
-        return refMap;
+    @RequestMapping( value = "/clone-add",method = RequestMethod.GET)
+    public String getView(
+            Model model
+            ,@ModelAttribute("formBean") CloneAddBean formBean
+            ,BindingResult result
+    ) throws Exception {
+        model.addAttribute("cloneMarkerTypes", MarkerService.getCloneMarkerTypes());
+        model.addAttribute("cloneLibraries", RepositoryFactory.getMarkerRepository().getProbeLibraries());
+        return "marker/clone-add.page";
     }
 
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
-        CloneAddBean cloneAddBean = (CloneAddBean) command;
+    @RequestMapping( value = "/clone-add",method = RequestMethod.POST)
+    public String addClone(Model model
+            ,@ModelAttribute("formBean") CloneAddBean formBean
+            ,BindingResult result ) throws Exception {
 
-        String name = cloneAddBean.getName();
+        validator.validate(formBean, result);
+        String name = formBean .getName();
+
+        if(result.hasErrors()){
+            return getView(model,formBean,result);
+        }
 
         // because it can come through on both the request and the command, will put both in with the same name
         // delimited by a comma.  This addresses that.
         String[] names = name.split(",");
         if (names.length == 2 && names[0].equals(names[1])) {
-            cloneAddBean.setName(names[0]);
+            formBean .setName(names[0]);
         }
 
-        cloneAddBean.setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
-        HibernateUtil.currentSession().beginTransaction();
-        Clone clone = MarkerService.createClone(cloneAddBean);
-        HibernateUtil.currentSession().flush();
-        HibernateUtil.currentSession().getTransaction().commit();
+        Clone clone = null;
+        try {
+            formBean .setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
+            HibernateUtil.createTransaction();
+            clone = MarkerService.createClone(formBean);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error(e);
+            HibernateUtil.rollbackTransaction();
+            result.reject("no lookup","Failed to add clone: "+e.getMessage());
+            return getView(model,formBean,result);
+        }
 
         String zdbID = clone.getZdbID();
-        return new ModelAndView("redirect:/action/marker/marker-edit?zdbID=" + zdbID);
+        return "redirect:/action/marker/marker-edit?zdbID=" + zdbID;
     }
 
 

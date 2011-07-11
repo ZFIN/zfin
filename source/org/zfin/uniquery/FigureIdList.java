@@ -2,7 +2,6 @@ package org.zfin.uniquery;
 
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
-import org.zfin.feature.Feature;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
 

@@ -1,8 +1,12 @@
 package org.zfin.mutant.repository;
 
+import org.zfin.marker.Marker;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.mutant.presentation.PostComposedPresentationBean;
+import org.zfin.publication.presentation.FigureLink;
+import org.zfin.publication.presentation.PublicationLink;
 
 import java.util.List;
 
@@ -164,4 +168,14 @@ public interface PhenotypeRepository {
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days);
+
+    int getNumPhenotypeFigures(Marker gene);
+
+    int getNumPhenotypePublications(Marker gene);
+
+    List<PostComposedPresentationBean> getPhenotypeAnatomy(Marker gene);
+
+    PublicationLink getPhenotypeFirstPublication(Marker gene);
+
+    FigureLink getPhenotypeFirstFigure(Marker gene);
 }

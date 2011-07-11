@@ -1,6 +1,8 @@
 package org.zfin.people;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -8,13 +10,14 @@ import java.io.Serializable;
 /**
  * Main domain object for lab and company info
  */
-public class MarkerSupplier extends ObjectSupplier implements Serializable, Comparable<MarkerSupplier> {
+public class MarkerSupplier extends ObjectSupplier implements Serializable, Comparable<MarkerSupplier>, ProvidesLink {
 
     private Marker marker;
 
     public String getOrderURL() {
-        if (organization.getOrganizationOrderURL() != null && organization.getOrganizationOrderURL().getUrlPrefix() != null && accNum != null)
-          return organization.getOrganizationOrderURL().getUrlPrefix() + accNum;
+        if (organization.getOrganizationOrderURL() != null && organization.getOrganizationOrderURL().getUrlPrefix() != null){
+          return organization.getOrganizationOrderURL().getUrlPrefix() + (accNum!=null ? accNum : "");
+        }
         return null;
     }
 
@@ -65,5 +68,20 @@ public class MarkerSupplier extends ObjectSupplier implements Serializable, Comp
     public void setMarker(Marker marker) {
         this.marker = marker;
         dataZdbID = marker.getZdbID();
+    }
+
+    @Override
+    public String getLink() {
+        return EntityPresentation.getGeneralHyperLink(getOrganization().getUrl(),getOrganization().getName());
+    }
+
+    @Override
+    public String getLinkWithAttribution() {
+        return getLink();
+    }
+
+    @Override
+    public String getLinkWithAttributionAndOrderThis() {
+        return getLink();
     }
 }

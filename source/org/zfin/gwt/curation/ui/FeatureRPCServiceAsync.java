@@ -2,7 +2,6 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.ui.FeatureEditCallBack;
 
 import java.util.List;
 

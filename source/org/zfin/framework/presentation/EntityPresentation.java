@@ -86,7 +86,7 @@ public abstract class EntityPresentation {
             sb.append(name);
             sb.append("\"");
         }
-        sb.append(" id='" + abbreviation + "'>");
+        sb.append(" id='" + zdbID+ "'>");
         sb.append(abbreviation);
         sb.append("</a>");
         return sb.toString();
@@ -150,7 +150,7 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
-    protected static String getWebdriverLink(String uri, String zdbID, String abbreviation) {
+    public static String getWebdriverLink(String uri, String zdbID, String abbreviation) {
         StringBuilder sb = getWebdriverHyperLinkStart();
         sb.append(uri);
         sb.append(zdbID);

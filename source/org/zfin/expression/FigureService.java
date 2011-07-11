@@ -1,14 +1,11 @@
 package org.zfin.expression;
 
-import org.apache.axis.encoding.ser.ArrayDeserializer;
 import org.apache.log4j.Logger;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 

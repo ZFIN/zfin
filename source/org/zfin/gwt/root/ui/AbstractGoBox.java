@@ -119,7 +119,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
     protected void revertGUI() {
 
         if (dto.getMarkerDTO() != null) {
-            geneHTML.setHTML("<a class='external' href='/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + dto.getMarkerDTO().getZdbID() + "'>" +
+            geneHTML.setHTML("<a class='external' href='/action/marker/view/" + dto.getMarkerDTO().getZdbID() + "'>" +
                     dto.getMarkerDTO().getName() + "</a>");
         }
         if (dto.getZdbID() == null || dto.getZdbID().equals("null")) {

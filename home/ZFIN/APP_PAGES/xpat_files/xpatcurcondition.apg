@@ -405,7 +405,7 @@ EFFECTS
     <td> $(SUBSTR,$xpcurcond_cdt,1,30)
     </td>
     <td>
-      <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
+      <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/action/marker/view/$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
       <?MISQL SQL="select get_mrkr_abbrev_html_link(mrkr_zdb_id)
                    from marker_relationship, marker
                    where mrel_mrkr_1_zdb_id = '$xpcurcond_morph_zdb_id'

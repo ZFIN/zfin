@@ -33,7 +33,7 @@
 
 
 <?MIVAR><param name="LG" value= "$lg"><?/MIVAR>
-<param name="marker_url" value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=">
+<param name="marker_url" value="/action/marker/view/">
 <param name="ApplicationClass" value="bioapps.MapViewer">
 </applet>
 

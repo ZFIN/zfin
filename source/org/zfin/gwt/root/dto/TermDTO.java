@@ -1,7 +1,6 @@
 package org.zfin.gwt.root.dto;
 
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.ontology.Subset;
 
 import java.io.Serializable;
 import java.util.*;

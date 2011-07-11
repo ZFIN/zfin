@@ -1,30 +1,47 @@
 package org.zfin.marker.presentation;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.sequence.service.TranscriptService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-public class TranscriptDefinitionsController extends AbstractController {
+@Controller
+public class TranscriptDefinitionsController {
 
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
+//    @RequestMapping(value = "/transcript-definitions")
+//    public String getTranscriptDefinitions(Model model) throws Exception {
+//
+//        TranscriptBean transcriptBean = new TranscriptBean();
+//
+//
+//        transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
+//        transcriptBean.setTranscriptTypeList(TranscriptService.getAllTranscriptTypes());
+//
+//        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Type and Status Definitions");
+//        model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
+//
+//        return "marker/transcript-definitions.page";
+//
+//    }
 
+    @RequestMapping(value = "/transcript-types")
+    public String getTranscriptTypes(Model model) throws Exception {
         TranscriptBean transcriptBean = new TranscriptBean();
-
-
-        transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
         transcriptBean.setTranscriptTypeList(TranscriptService.getAllTranscriptTypes());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Types");
+        model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
+        return "marker/transcript-types.insert";
+    }
 
-        ModelAndView modelAndView = new ModelAndView("marker/transcript-definitions.page");
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, "Transcript Type and Status Definitions");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, transcriptBean);
 
-        return modelAndView;
-
+    @RequestMapping(value = "/transcript-statuses")
+    public String getTranscriptStatuses(Model model) throws Exception {
+        TranscriptBean transcriptBean = new TranscriptBean();
+        transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Statuses");
+        model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
+        return "marker/transcript-statuses.insert";
     }
 }

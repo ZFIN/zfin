@@ -9,7 +9,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.WikiSynchronizationReport;
-import org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob;
 
 import java.util.HashMap;
 import java.util.List;

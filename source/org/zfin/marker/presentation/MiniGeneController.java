@@ -2,46 +2,48 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  */
-public class MiniGeneController extends AbstractController {
+@Controller
+public class MiniGeneController {
 
     private static Logger logger = Logger.getLogger(MiniGeneController.class);
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
-        String zdbID = httpServletRequest.getParameter(LookupStrings.ZDB_ID);
-        String abbreviation = httpServletRequest.getParameter("abbrev");
+    @RequestMapping(value ="/mini-gene")
+    public String getMiniGeneView(Model model
+            ,@RequestParam(value="zdbID",required = false) String zdbID
+            ,@RequestParam(value="abbrev",required = false) String abbreviation
+            ,@RequestParam(value="showClose",required = false) Boolean showClose
+            ,@RequestParam(value="external",required = false) Boolean external
+    )
+            throws Exception {
         logger.info("zdbID: " + zdbID);
         Marker marker;
 
-        if (!StringUtils.isEmpty(zdbID))
+        if (!StringUtils.isEmpty(zdbID)){
             marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        else
+        }
+        else{
             marker = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(abbreviation);
+        }
 
         logger.info("marker: " + marker);
         MarkerBean markerBean = new MarkerBean();
         markerBean.setMarker(marker);
 
-        ModelAndView modelAndView = new ModelAndView("marker/mini-gene.insert", LookupStrings.FORM_BEAN, markerBean);
+        model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
+        model.addAttribute("showClose", showClose);
+        model.addAttribute("external", external);
 
-        String showClose = httpServletRequest.getParameter("showClose");
-        modelAndView.addObject("showClose", Boolean.valueOf(showClose));
-        String external = httpServletRequest.getParameter("external");
-        modelAndView.addObject("external", Boolean.valueOf(external));
-
-
-        return modelAndView;
+        return "marker/mini-gene.insert";
 
     }
 }

@@ -459,7 +459,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             ExpressionResult era1 = new ExpressionResult();
 //            era1.setZdbID("era1");
             era1.setExpressionExperiment(eea2);
-            era1.setSuperterm(anatomy1);
+            era1.setSuperTerm(anatomy1);
             era1.setEndStage(stage1);
             era1.setStartStage(stage1);
             era1.setExpressionFound(false);
@@ -469,7 +469,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             ExpressionResult era2 = new ExpressionResult();
 //            era2.setZdbID("ermatchesZdbID");
             era2.setExpressionExperiment(eea2);
-            era2.setSuperterm(anatomy2);
+            era2.setSuperTerm(anatomy2);
             era2.setEndStage(stage2);
             era2.setStartStage(stage2);
             era2.setExpressionFound(true);
@@ -519,7 +519,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             ExpressionResult erb1 = new ExpressionResult();
 //            erb1.setZdbID("erb1");
             erb1.setExpressionExperiment(eeb2);
-            erb1.setSuperterm(anatomy1); // THIS IS NOW DIFFERENT
+            erb1.setSuperTerm(anatomy1); // THIS IS NOW DIFFERENT
             erb1.setEndStage(stage2);
             erb1.setStartStage(stage2);
             erb1.setExpressionFound(true);
@@ -529,7 +529,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             ExpressionResult erb2 = new ExpressionResult();
 //            erb2.setZdbID("ermatchesZdbID");
             erb2.setExpressionExperiment(eeb2);
-            erb2.setSuperterm(anatomy2);
+            erb2.setSuperTerm(anatomy2);
             erb2.setEndStage(stage2);
             erb2.setStartStage(stage2);
             erb2.setExpressionFound(true);

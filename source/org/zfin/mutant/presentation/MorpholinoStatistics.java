@@ -9,9 +9,8 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeService;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.*;

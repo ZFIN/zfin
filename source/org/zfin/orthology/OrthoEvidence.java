@@ -102,5 +102,9 @@ public class OrthoEvidence implements Serializable {
             return name();
         }
 
+        public String getString(){
+            return name() ;
+        }
+
     }
 }

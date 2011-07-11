@@ -119,6 +119,11 @@ public class HibernateUtil {
             localSession.set(s);
         }
         s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
+        try {
+            s.connection().setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+        } catch (SQLException e) {
+            log.error(e);
+        }
         return s;
     }
 

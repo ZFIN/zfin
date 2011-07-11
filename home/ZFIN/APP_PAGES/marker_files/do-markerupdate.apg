@@ -33,6 +33,15 @@ added constraint for mrkr_group ABBREV_EQ_NAME
 when name is modified for markers in this group, set abbrev = name.
 <?/MICOMMENTS>
 
+
+<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+<script type="text/javascript">
+
+//avoid prototype conflicts
+jQuery.noConflict();
+
+</script>
+
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <!-- If one of the values was an empty string, it won't get successfully
   -- passed to this page. 
@@ -129,6 +138,9 @@ marker.<?/MIVAR>
         set $attr='$new_value' 
         where mrkr_zdb_id='$OID';
     <?/MIVAR>
+
+                  
+
 
     <?MISQL SQL="
       SELECT * FROM marker, marker_types, marker_type_group_member
@@ -1214,12 +1226,24 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 
 <?MIBLOCK COND="$(NXST,$species_update)">
 
+    <?MIVAR COND="$(EC,$attr,mrkr_abbrev)">
+    <script>
+    jQuery.ajax({
+url: "/action/marker/geo/check/$OID",
+success: function(){ location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor");}
+    });
+    </script>
+    <?/MIVAR>
+
+    <?MIVAR COND="$(NE,$attr,mrkr_abbrev)">
    <SCRIPT><?MIVAR>
       location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
            <?/MIVAR>
    </SCRIPT> 
+   <?/MIVAR>
  
  <?MIELSE>
+
  
    <SCRIPT><?MIVAR>
       location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")

@@ -30,7 +30,6 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
-import org.zfin.sequence.FeatureDBLink;
 
 import java.util.*;
 

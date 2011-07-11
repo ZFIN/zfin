@@ -15,6 +15,6 @@ public class ExpressionResultTermComparator implements Comparator<ExpressionResu
         else if (xpRslt2 == null)
             return 1;
 
-        return xpRslt1.getSuperterm().compareTo(xpRslt2.getSuperterm());
+        return xpRslt1.getSuperTerm().compareTo(xpRslt2.getSuperTerm());
     }
 }

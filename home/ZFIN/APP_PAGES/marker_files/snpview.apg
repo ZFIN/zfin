@@ -68,7 +68,7 @@ function popUp(cloneID) {
         </TD>
       </TR>
     </TABLE>
-<?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$gene</i></a><?/MIVAR>
+<?MIVAR NAME=link_backto_OID><a href="/action/marker/view/$OID"><i>$gene</i></a><?/MIVAR>
 <!------------- Title display------------>
     <table border=0 width=100%>
       <tr>

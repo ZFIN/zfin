@@ -3,7 +3,6 @@ package org.zfin.wiki.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.biojava.stats.svm.tools.SVM_Light;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;

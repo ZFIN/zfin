@@ -50,7 +50,12 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
 
     public InferenceCategory[] getInferenceCategories(String pubZdbID) {
         GoDefaultPublication goDefaultPublication = GoDefaultPublication.getPubForZdbID(pubZdbID);
-        return (goDefaultPublication != null ? new InferenceCategory[]{goDefaultPublication.inferenceCategory()} : getInferenceCategories());
+        if (goDefaultPublication != null && goDefaultPublication.inferenceCategory() != null) {
+            return new InferenceCategory[]{goDefaultPublication.inferenceCategory()};
+        } else {
+            return getInferenceCategories();
+        }
+//        return (goDefaultPublication != null ? new InferenceCategory[]{goDefaultPublication.inferenceCategory()} : getInferenceCategories());
     }
 
 

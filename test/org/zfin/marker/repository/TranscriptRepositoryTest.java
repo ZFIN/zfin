@@ -16,6 +16,7 @@ import org.zfin.marker.presentation.TranscriptAddBean;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.List;
@@ -85,4 +86,14 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
             tx.rollback();
         }
     }
+
+    @Test
+    public void getTranscriptDBLinks(){
+        Transcript t = RepositoryFactory.getMarkerRepository().getTranscriptByName("pax6a-001");
+        assertNotNull(t);
+        List<TranscriptDBLink> dblinks = RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(t, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
+        assertEquals(1,dblinks.size());
+
+    }
+
 }

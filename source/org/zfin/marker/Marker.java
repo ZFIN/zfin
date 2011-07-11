@@ -323,10 +323,12 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     }
 
     public int compareTo(Object otherMarker) {
-		if (otherMarker == null)
+        if (otherMarker == null || ((Marker)otherMarker).getAbbreviationOrder() == null){
             return 1;
-        if (((Marker)otherMarker).getAbbreviationOrder() == null)
-            return 1;
+        }
+        if(getAbbreviationOrder()==null){
+            return -1;
+        }
         return getAbbreviationOrder().compareTo(((Marker) otherMarker).getAbbreviationOrder());
     }
 
@@ -398,6 +400,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         GENEFAMILY("GENEFAMILY"),
         GENEP("GENEP"),
         GTCONSTRCT("GTCONSTRCT"),
+        INDEL("INDEL"),
         MRPHLNO("MRPHLNO"),
         MUTANT("MUTANT"),
         PAC("PAC"),
@@ -410,7 +413,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         STS("STS"),
         TGCONSTRCT("TGCONSTRCT"),
         TSCRIPT("TSCRIPT"),
-        INDEL("INDEL");
+        ;
 
         private final String value;
 

@@ -4,14 +4,14 @@ import java.util.List;
 
 public class DirectlySubmittedExpression {
 
-	private List<MarkerExpressionInstance> markerExpressionInstances;
+	private List<PublicationExpressionBean> markerExpressionInstances;
 
 
 	public int getFigureCount(){
         if(markerExpressionInstances ==null) return 0 ;
         int figureCount = 0 ;
-        for(MarkerExpressionInstance markerExpressionInstance : markerExpressionInstances){
-            figureCount += markerExpressionInstance.getFigureCount() ;
+        for(PublicationExpressionBean markerExpressionInstance : markerExpressionInstances){
+            figureCount += markerExpressionInstance.getNumFigures() ;
         }
         return figureCount ;
     }
@@ -23,8 +23,8 @@ public class DirectlySubmittedExpression {
     public int getImageCount() {
         if(markerExpressionInstances ==null) return 0 ;
         int imageCount = 0 ;
-        for(MarkerExpressionInstance markerExpressionInstance : markerExpressionInstances){
-            imageCount += markerExpressionInstance.getImageCount() ;
+        for(PublicationExpressionBean markerExpressionInstance : markerExpressionInstances){
+            imageCount += markerExpressionInstance.getNumImages() ;
         }
         return imageCount ;
     }
@@ -33,11 +33,11 @@ public class DirectlySubmittedExpression {
         return getFigureCount() + getPublicationCount() + getImageCount() ;
     }
 
-    public List<MarkerExpressionInstance> getExpressionSummaryInstances() {
+    public List<PublicationExpressionBean> getMarkerExpressionInstances() {
         return markerExpressionInstances;
     }
 
-    public void setExpressionSummaryInstances(List<MarkerExpressionInstance> markerExpressionInstances) {
+    public void setMarkerExpressionInstances(List<PublicationExpressionBean> markerExpressionInstances) {
         this.markerExpressionInstances = markerExpressionInstances;
     }
 }

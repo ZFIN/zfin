@@ -3,6 +3,7 @@ package org.zfin.feature.presentation;
 import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.repository.FeaturePresentationBean;
 
 /**
  * Presentation Class to create output from a Feature object.
@@ -31,6 +32,16 @@ public class FeaturePresentation extends EntityPresentation {
      */
     public static String getLink(Feature feature) {
         return getTomcatLink(uri, feature.getZdbID(), feature.getName(), null);
+    }
+
+    /**
+     * Generates a Feature link using the Abbreviation
+     *
+     * @param feature Feature
+     * @return html for feature link
+     */
+    public static String getLink(FeaturePresentationBean feature) {
+        return getTomcatLink(uri, feature.getFeatureZdbId(), feature.getAbbrevation(), null);
     }
 
 }

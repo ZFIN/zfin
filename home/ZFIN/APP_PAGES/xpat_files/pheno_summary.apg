@@ -266,13 +266,13 @@ DEBUGGING:
       <?MIBLOCK COND="$(AND,$(XST,$moID),$(NE,$moID,))">
         and 
         <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moID';">
-          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moID">$1</a><?/MIVAR>
+          <?MIVAR><a href="/action/marker/view/$moID">$1</a><?/MIVAR>
         <?/MISQL>
       <?MIELSE>
         <?MIBLOCK COND="$(AND,$(XST,$moTargetGeneID),$(NE,$moTargetGeneID,))">
           and 
           <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$moTargetGeneID';">
-            <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$moTargetGeneID">$1</a><?/MIVAR>
+            <?MIVAR><a href="/action/marker/view/$moTargetGeneID">$1</a><?/MIVAR>
           <?/MISQL>
           targeting morpholinos
         <?MIELSE COND="$(NXST,$anatID)">
@@ -513,7 +513,7 @@ DEBUGGING:
       <?MIVAR NAME=phenosum_mo_counter>0<?/MIVAR>
       <?MIVAR NAME=phenosum_mo_short_list_cap>3<?/MIVAR>
       <?MISQL SQL="$phenosum_sql_MO">
-        <?MIVAR NAME=phenosum_mo_html><span><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3>$1</a></span><?/MIVAR>
+        <?MIVAR NAME=phenosum_mo_html><span><a href=/action/marker/view/$3>$1</a></span><?/MIVAR>
         $(SETVAR,$phenosum_mo_counter,$(+,$phenosum_mo_counter,1))
         
         <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">

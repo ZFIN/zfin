@@ -1,7 +1,6 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.ontology.presentation.TermPresentation;
 
 
 /**

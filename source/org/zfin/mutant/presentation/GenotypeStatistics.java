@@ -6,15 +6,16 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Convenient class to show statistics about phenotypes related to a given AO term..

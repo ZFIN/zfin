@@ -2,6 +2,9 @@ package org.zfin.marker.presentation;
 
 import org.zfin.marker.Marker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  */
 public class DeleteBean {
@@ -9,6 +12,7 @@ public class DeleteBean {
     private String zdbIDToDelete;
     private Marker markerToDelete;
     private String markerToDeleteViewString;
+    private List<String> errors ;
 
     public String getZdbIDToDelete() {
         return zdbIDToDelete;
@@ -34,6 +38,21 @@ public class DeleteBean {
 
     public void setMarkerToDeleteViewString(String markerToDeleteViewString) {
         this.markerToDeleteViewString = markerToDeleteViewString;
+    }
+
+    public void addError(String error){
+        if(errors==null){
+            errors = new ArrayList<String>();
+        }
+        errors.add(error);
+    }
+
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 
     @Override

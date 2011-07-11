@@ -31,7 +31,7 @@
 <zfin:link entity="${formBean.identifiedMarker}"/>
 <tagunit:assertEquals name="Create a Marker Link">
     <tagunit:expectedResult>
-        <a href="/webdriver?MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1"><span class="genedom" title="fibroblastgrowthfactor8a">fgf8</span></a>
+        <a href="/action/marker/view/ZDB-GENE-081507-1"><span class="genedom" title="fibroblastgrowthfactor8a">fgf8</span></a>
     </tagunit:expectedResult>
     <tagunit:actualResult>
         <zfin:link entity="${formBean.identifiedMarker}"/>

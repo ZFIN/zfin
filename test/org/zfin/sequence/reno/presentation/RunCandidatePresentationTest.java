@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  */
@@ -69,8 +68,10 @@ public class RunCandidatePresentationTest extends EntityPresentation {
     @Test
     public void candidateLink() {
         String link = RunCandidatePresentation.getLink(runCandidate);
-        assertTrue(link.endsWith("?MIval=aa-markerview.apg&OID=ZDB-GENE-081507-1\" id='ZDB-GENE-081507-1'>" +
-                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"));
+        assertEquals("<a href=\"/action/marker/view/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'>" +
+                "<span class=\"genedom\" title=\"fibroblast growth factor 8 a\">fgf8</span></a>"
+                ,link
+        );
     }
 
     /**

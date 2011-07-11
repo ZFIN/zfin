@@ -862,7 +862,7 @@ DEBUGGING:
        	     <TD align-left><b>Map</b></TD>
            <?/MIVAR>
 	   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EQ,$marker_type,TSCRIPT))">
-             <TD align-left><b><a href="/action/marker/transcript-definitions#type">Transcript Type</a></b></TD>
+             <TD align-left><b><a href="/action/marker/transcript-types">Transcript Type</a></b></TD>
            <?/MIBLOCK>
 
 
@@ -877,7 +877,7 @@ DEBUGGING:
 <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>
 
 <?MICOMMENT>when this page is called from pubview2.apg with parameter pub_mapped, mutant data could be retrieved and displayed. <?/MICOMMENT>
-$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/action/marker/view/"))
 
        
 <?MICOMMENT> == In case of MO search, list the gene symbol first,
@@ -891,7 +891,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
  <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
  <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$mrkrsel_mo_gene_zdb_id,$target_gene_zdb_id)))">
-     <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
+     <?MIVAR NAME=$display_target_gene><A HREF=/action/marker/view/$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A><?/MIVAR>
 	   
      <?MIBLOCK COND="$(NC,$rowNUM,1)">
 	 <?MIBLOCK COND="$(EC,$row_color,$highlight)">   

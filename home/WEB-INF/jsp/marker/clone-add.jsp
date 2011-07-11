@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%--<authz:authorize>--%>
 <form:form commandName="formBean"  >
     <form:hidden path="ownerZdbID"/>
     <table>
@@ -52,4 +51,3 @@
     <br><br>
     <form:errors cssClass="error"/>
 </form:form>
-<%--</authz:authorize>--%>

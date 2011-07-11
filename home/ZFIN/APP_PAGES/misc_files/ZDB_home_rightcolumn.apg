@@ -110,7 +110,8 @@
 
 
 
-  <h3><a href="/zirc/" title="Zebrafish International Resource Center (ZIRC) Home">Zebrafish International Resource Center</a></h3> 
+  <h3><a href="/zirc/" title="Zebrafish International Resource Center (ZIRC) Home">Zebrafish International Resource Center</a></h3>
+        <link rel="stylesheet" type="text/css" href="/css/header.css">
   <ul>
     <li>
         Request:         
@@ -172,7 +173,7 @@
   </ul>
  
  
-  <h3>Zebrafish Programs</strong></h3>
+  <h3><strong>Zebrafish Programs</strong></h3>
   <ul>
     <li>
       <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a>,<br>

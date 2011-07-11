@@ -14,6 +14,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.people.Person;
 import org.zfin.util.DatabaseJdbcStatement;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -35,7 +36,7 @@ public interface InfrastructureRepository {
     int deleteRecordAttributionsForData(String dataZdbID);
 
     int deleteRecordAttribution(String dataZdbID, String sourceZdbId);
-    
+
     void removeRecordAttributionForType(String zdbID, String datazdbID);
 
     int getGoRecordAttributions(String dataZdbID, String sourceZdbId);
@@ -45,6 +46,8 @@ public interface InfrastructureRepository {
                                            RecordAttribution.SourceType sourceType);
 
     List<RecordAttribution> getRecAttribforFtrType(String dataZdbID);
+
+    List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType);
 
 
     List<RecordAttribution> getRecordAttributions(ActiveData data);
@@ -91,7 +94,7 @@ public interface InfrastructureRepository {
 
 
     void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person);
-  
+
 
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 
@@ -103,7 +106,7 @@ public interface InfrastructureRepository {
 
     int deleteRecordAttributionForPub(String zdbID);
 
-    public int removeRecordAttributionForData(String zdbID, String datazdbID);
+    int removeRecordAttributionForData(String datazdbID, String pubZdbID);
 
     int deleteRecordAttributionByDataZdbIDs(List<String> dataZdbIDs);
 
@@ -115,6 +118,8 @@ public interface InfrastructureRepository {
      * @return zdbFlag
      */
     ZdbFlag getUpdatesFlag();
+
+    boolean getDisableUpdatesFlag();
 
     /**
      * retrive an external note by zdb ID (PK)
@@ -162,7 +167,7 @@ public interface InfrastructureRepository {
     /**
      * Retrieve all data aliases for a given zdbID.
      *
-     * @param aliasLowerName  Lower-case alias name.
+     * @param aliasLowerName Lower-case alias name.
      * @return List of data aliases
      */
     List<DataAlias> getDataAliases(String aliasLowerName);
@@ -244,6 +249,7 @@ public interface InfrastructureRepository {
      * @return Generic Term
      */
     public GenericTerm getTermByID(String termID);
+
     /**
      * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
      * Hopefully, there term is only found in a single ontology. Match has to be exact.
@@ -298,8 +304,9 @@ public interface InfrastructureRepository {
 
     /**
      * Number of phenotype experiments a genotype is being used.
-     * @param genotypeID  genotype
-     * @param publicationID  publication
+     *
+     * @param genotypeID    genotype
+     * @param publicationID publication
      * @return number of references
      */
     int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID);
@@ -318,17 +325,20 @@ public interface InfrastructureRepository {
      * Execute a sql statement through straight JDBC call and inserting given string data.
      *
      * @param statement query
-     * @param data string data
+     * @param data      string data
      */
     void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data);
 
     /**
      * Execute a query with a native JDBC call
+     *
      * @param query query string
      */
     void executeJdbcQuery(String query);
+
     /**
      * Return a set of data from a native SELECT statement.
+     *
      * @param statement jdbc query
      * @return list of strings
      */
@@ -339,14 +349,28 @@ public interface InfrastructureRepository {
      * If firstNIds > 0 return only the first N.
      * If firstNIds < 0 return null
      *
-     * @param clazz Entity to be retrieved
-     * @param idName unique id
+     * @param clazz     Entity to be retrieved
+     * @param idName    unique id
      * @param firstNIds number of records
      * @return list of ids
      */
-    public List<String> getAllEntities(Class clazz, String idName, int firstNIds);
+    List<String> getAllEntities(Class clazz, String idName, int firstNIds);
 
+    List<String> getExternalOrthologyNoteStrings(String zdbID);
 
+    List<ExternalNote> getExternalNotes(String zdbID);
+
+    List<String> getPublicationAttributionZdbIdsForType(String microarray_pub, Marker.Type markerType);
+
+    int removeAttributionsNotFound(Collection<String> attributionsToRemove, String microarrayPub);
+
+    int addAttributionsNotFound(Collection<String> attributionsToAdd, String microarrayPub);
+
+    List<String> getPublicationAttributionsForPub(String microarrayPub);
+
+   boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub);
+
+   boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub);
 }
 
 

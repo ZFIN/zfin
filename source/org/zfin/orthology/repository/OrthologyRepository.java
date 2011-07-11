@@ -3,6 +3,7 @@ package org.zfin.orthology.repository;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.CachedRepository;
 import org.zfin.infrastructure.Updates;
+import org.zfin.marker.Marker;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.SpeciesCriteria;
 import org.zfin.publication.Publication;
@@ -18,9 +19,9 @@ import java.util.Set;
 
 public interface OrthologyRepository extends CachedRepository {
 
-    public Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria);
+    Object[] getOrthologies(List<SpeciesCriteria> speciesCriteria, ZfinCriteria criteria);
 
-    public void saveOrthology(Orthologue orthologue, Publication publication, Updates up);
+    void saveOrthology(Orthologue orthologue, Publication publication, Updates up);
 
     /**
      * Update a fast-search table to hold info about evidence codes. In order
@@ -28,5 +29,9 @@ public interface OrthologyRepository extends CachedRepository {
      *
      * @param orthologue
      */
-    public void updateFastSearchEvidenceCodes(Set<Orthologue> orthologue);
+    void updateFastSearchEvidenceCodes(Set<Orthologue> orthologue);
+
+    List<OrthologyPresentationRow> getOrthologyForGene(Marker m) ;
+
+    List<String> getEvidenceCodes(Marker gene);
 }

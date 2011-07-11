@@ -23,8 +23,14 @@ public class MergeMarkerValidator implements Validator {
         Marker markerToMergeInto = mergeBean.getMarkerToMergeInto();
 
 
-        if (markerToDelete == null) errors.reject("", "Marker to delete undefined.");
-        if (markerToMergeInto == null) errors.reject("", "Marker to merge into undefined.");
+        if (markerToDelete == null) {
+            errors.reject("", "Marker to delete undefined.");
+            return ;
+        }
+        if (markerToMergeInto == null) {
+            errors.reject("", "Marker to merge into undefined.");
+            return;
+        }
 
         if (markerToDelete.isInTypeGroup(Marker.TypeGroup.ATB)
                 &&

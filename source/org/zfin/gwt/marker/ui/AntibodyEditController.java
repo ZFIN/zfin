@@ -23,7 +23,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
 
     // gui elements
-    private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]", "/action/antibody/detail?antibody.zdbID=", "Discard");
+    private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]", "/action/marker/view/", "Discard");
     private final AntibodyHeaderEdit antibodyHeaderEdit = new AntibodyHeaderEdit();
     private final AntibodyBox antibodyBox = new AntibodyBox();
     private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);

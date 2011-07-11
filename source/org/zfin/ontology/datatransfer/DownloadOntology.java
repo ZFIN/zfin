@@ -1,6 +1,8 @@
 package org.zfin.ontology.datatransfer;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.obo.dataadapter.OBOParseException;

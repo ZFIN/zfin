@@ -1,12 +1,10 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 
 import static junit.framework.Assert.*;
 

@@ -1,7 +1,5 @@
 package org.zfin.util;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinPropertiesEnum;

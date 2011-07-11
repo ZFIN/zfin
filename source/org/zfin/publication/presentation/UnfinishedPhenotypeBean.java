@@ -3,7 +3,9 @@ package org.zfin.publication.presentation;
 import org.zfin.expression.Figure;
 import org.zfin.mutant.PhenotypeExperiment;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * ToDo: ADD DOCUMENTATION!

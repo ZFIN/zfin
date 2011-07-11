@@ -4,13 +4,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.TestConfiguration;
-import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
@@ -24,23 +22,14 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.framework.HibernateUtil.getSessionFactory;
 
 /**
  * Tests the xdbget.c function in lib/DB_functions/C, and mapped in blast.hbm.xml
  * Calls the function with blastAbbrev, blastDBtype, and accession number as parameters.
  */
-public class BlastAccessTest {
+public class BlastAccessTest extends AbstractDatabaseTest{
 
     private Logger logger = Logger.getLogger(BlastAccessTest.class);
-
-    static {
-        TestConfiguration.configure();
-        SessionFactory sessionFactory = getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
 
     @Before
     public void setUp() {

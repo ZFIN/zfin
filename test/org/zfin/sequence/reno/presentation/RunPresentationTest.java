@@ -25,7 +25,7 @@ public class RunPresentationTest {
     @Test
     public void markerLink() {
         String link = RunPresentation.getLink(run);
-        assertEquals("Hyperlink", "<a href=\"/action/reno/candidate-inqueue?zdbID=ZDB-RUN-090227278-0\" id='Test Run'>Test Run</a>", link);
+        assertEquals("Hyperlink", "<a href=\"/action/reno/candidate-inqueue?zdbID=ZDB-RUN-090227278-0\" id='ZDB-RUN-090227278-0'>Test Run</a>", link);
     }
 
 }

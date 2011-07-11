@@ -23,8 +23,9 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/locus_files
 # an app page.
 
 GENERICS = do-locusupdate.apg  \
-	locusupdate.apg locusview.apg process_locus.apg
+	locusupdate.apg process_locus.apg
 
+STATICS = locusview.apg   
 
 # Use default rules for app page directories.
 

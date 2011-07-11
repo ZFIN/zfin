@@ -2,13 +2,16 @@ package org.zfin.infrastructure;
 
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
+import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -28,13 +31,11 @@ import org.zfin.util.DbScriptFileParser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.junit.Assert.*;
 
 /**
  * Class InfrastructureRepositoryTest.
@@ -42,6 +43,9 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
+    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+
+    private Logger logger = Logger.getLogger(InfrastructureRepositoryTest.class);
 
     //@Test
     public void persistActiveData() {
@@ -49,13 +53,13 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
 
             String testZdbID = "ZDB-GENE-123";
-            ActiveData testActiveData = getInfrastructureRepository().getActiveData(testZdbID);
+            ActiveData testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNull("ActiveData not found prior to insert", testActiveData);
-            getInfrastructureRepository().insertActiveData(testZdbID);
-            testActiveData = getInfrastructureRepository().getActiveData(testZdbID);
+            infrastructureRepository.insertActiveData(testZdbID);
+            testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNotNull("ActiveData found after insert", testActiveData);
-            getInfrastructureRepository().deleteActiveData(testActiveData);
-            testActiveData = getInfrastructureRepository().getActiveData(testZdbID);
+            infrastructureRepository.deleteActiveData(testActiveData);
+            testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNull("ActiveData found after delete", testActiveData);
         } catch (HibernateException e) {
             fail("failed");
@@ -73,12 +77,12 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
             String dataZdbID = "ZDB-DALIAS-uuiouy";
             String sourceZdbID = "ZDB-PUB-000104-1";
-            getInfrastructureRepository().insertActiveData(dataZdbID);
+            infrastructureRepository.insertActiveData(dataZdbID);
             // should already exist in active source as a valid pub, so no need to insert
-            RecordAttribution attribute = getInfrastructureRepository().getRecordAttribution(dataZdbID, sourceZdbID, null);
+            RecordAttribution attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNull("RecordAttribution not found prior to insert", attribute);
-            getInfrastructureRepository().insertRecordAttribution(dataZdbID, sourceZdbID);
-            attribute = getInfrastructureRepository().getRecordAttribution(dataZdbID, sourceZdbID, null);
+            infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
+            attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNotNull("RecordAttribution found after insert", attribute);
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,22 +96,22 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void allMapNames() {
         String string = "pdx";
-        List<AllNamesFastSearch> all = getInfrastructureRepository().getAllNameMarkerMatches(string);
+        List<AllNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string);
         assertNotNull(all);
     }
 
     @Test
     public void allMapNamesGenes() {
         String string = "pdx";
-        MarkerType type = getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
-        List<AllMarkerNamesFastSearch> all = getInfrastructureRepository().getAllNameMarkerMatches(string, type);
+        MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
+        List<AllMarkerNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string, type);
         assertNotNull(all);
     }
 
     @Test
     public void replacementZDB() {
         String replacedZdbID = "ZDB-ANAT-010921-497";
-        ReplacementZdbID replacementZdbID = getInfrastructureRepository().getReplacementZdbId(replacedZdbID);
+        ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(replacedZdbID);
         assertNotNull(replacementZdbID);
 
         assertEquals("ZDB-ANAT-011113-37", replacementZdbID.getReplacementZdbID());
@@ -116,7 +120,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void dataAliasAbbrev() {
         String name = "acerebellar";
-        List<String> list = getInfrastructureRepository().getDataAliasesWithAbbreviation(name);
+        List<String> list = infrastructureRepository.getDataAliasesWithAbbreviation(name);
         assertNotNull(list);
         assertTrue(list.size() == 1);
         assertEquals("fgf8a", list.get(0));
@@ -125,21 +129,21 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void anatomyTokens() {
         String name = "presumptive";
-        List<String> list = getInfrastructureRepository().getAnatomyTokens(name);
+        List<String> list = infrastructureRepository.getAnatomyTokens(name);
         assertNotNull(list);
         assertTrue(list.size() > 10);
     }
 
     @Test
     public void allAssays() {
-        List<ExpressionAssay> list = getInfrastructureRepository().getAllAssays();
+        List<ExpressionAssay> list = infrastructureRepository.getAllAssays();
         assertTrue(CollectionUtils.isNotEmpty(list));
     }
 
     @Test
     public void getDataAliasGroup() {
 
-        List<DataAliasGroup> groups = getInfrastructureRepository().getAllDataAliasGroups();
+        List<DataAliasGroup> groups = infrastructureRepository.getAllDataAliasGroups();
         assertNotNull(groups);
         assertTrue(groups.size() > 3);
     }
@@ -149,7 +153,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         String queryString = "mito";
         List<Ontology> ontologies = new ArrayList<Ontology>(1);
         ontologies.add(Ontology.GO_CC);
-        List<GenericTerm> groups = getInfrastructureRepository().getTermsByName(queryString, ontologies);
+        List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
         assertTrue(groups.size() > 10);
     }
@@ -159,7 +163,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         String queryString = "orga";
         List<Ontology> ontologies = new ArrayList<Ontology>(1);
         ontologies.add(Ontology.GO_CC);
-        List<GenericTerm> groups = getInfrastructureRepository().getTermsByName(queryString, ontologies);
+        List<GenericTerm> groups = infrastructureRepository.getTermsByName(queryString, ontologies);
         assertNotNull(groups);
         assertTrue(groups.size() > 0);
     }
@@ -167,7 +171,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTermSynonymsByQueryString() {
         String queryString = "mito";
-        List<GenericTerm> groups = getInfrastructureRepository().getTermsBySynonymName(queryString, Ontology.GO_CC);
+        List<GenericTerm> groups = infrastructureRepository.getTermsBySynonymName(queryString, Ontology.GO_CC);
         assertNotNull(groups);
         assertTrue(groups.size() > 1);
     }
@@ -175,7 +179,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoCcTerm() {
         String queryString = "mitochondrion";
-        GenericTerm term = getInfrastructureRepository().getTermByName(queryString, Ontology.GO_CC);
+        GenericTerm term = infrastructureRepository.getTermByName(queryString, Ontology.GO_CC);
         assertNotNull(term);
     }
 
@@ -184,7 +188,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getDataAliasGO() {
         //mitochondrial ATP synthesis coupled electron transport
         String alias = "organelle atp synthesis coupled electron transport";
-        List<DataAlias> groups = getInfrastructureRepository().getDataAliases(alias);
+        List<DataAlias> groups = infrastructureRepository.getDataAliases(alias);
         assertNotNull(groups);
         assertTrue(!groups.isEmpty());
     }
@@ -192,14 +196,14 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getSingleDataAliasGroup() {
         String name = DataAliasGroup.Group.ALIAS.toString();
-        DataAliasGroup group = getInfrastructureRepository().getDataAliasGroupByName(name);
+        DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(name);
         assertNotNull(group);
     }
 
 
     @Test
     public void getQualityRootTerm() {
-        GenericTerm rootTerm = getInfrastructureRepository().getRootTerm(Ontology.QUALITY.getOntologyName());
+        GenericTerm rootTerm = infrastructureRepository.getRootTerm(Ontology.QUALITY.getOntologyName());
         assertNotNull(rootTerm);
     }
 
@@ -214,7 +218,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         ActiveSource source = new ActiveSource();
         source.setZdbID(pubID);
 
-        RecordAttribution rec = getInfrastructureRepository().getRecordAttribution(data, source, RecordAttribution.SourceType.STANDARD);
+        RecordAttribution rec = infrastructureRepository.getRecordAttribution(data, source, RecordAttribution.SourceType.STANDARD);
         Assert.assertTrue(rec == null);
 
         PublicationAttribution record = new PublicationAttribution();
@@ -222,7 +226,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         Publication pub = new Publication();
         pub.setZdbID(pubID);
         record.setPublication(pub);
-        rec = getInfrastructureRepository().getPublicationAttribution(record);
+        rec = infrastructureRepository.getPublicationAttribution(record);
         Assert.assertTrue(rec == null);
 
     }
@@ -231,94 +235,94 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getExternalNote() {
         String externalNoteZdbID = "ZDB-EXTNOTE-080424-1";
 
-        getInfrastructureRepository().getExternalNoteByID(externalNoteZdbID);
+        infrastructureRepository.getExternalNoteByID(externalNoteZdbID);
 
     }
 
 
     @Test
     public void getDataAliasesAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getDataAliasesAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getDataAliasesAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getOrthologueRecordAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getOrthologueRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getOrthologueRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
 
     @Test
     public void getMarkerFeatureRelationshipAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getMarkerFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getMarkerFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
 
     @Test
     public void getMarkerGenotypeFeatureRelationshipAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getMarkerGenotypeFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getMarkerGenotypeFeatureRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getFeatureGenotypeAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getFeatureGenotypeAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getFeatureGenotypeAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getGoRecordAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getGoRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getGoRecordAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getDBLinkAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getDBLinkAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getDBLinkAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getDBLinkAssociatedToGeneAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getDBLinkAssociatedToGeneAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getDBLinkAssociatedToGeneAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getFirstMarkerRelationshipAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getFirstMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getFirstMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getSecondMarkerRelationshipAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getSecondMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getSecondMarkerRelationshipAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getMorpholinoRelatedMarkerAttributions() {
-        RepositoryFactory.getInfrastructureRepository().getMorpholinoRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+        infrastructureRepository.getMorpholinoRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForGene() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
-        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
+        infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForAntibody() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-ATB-081002-19");
-        RepositoryFactory.getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
+        infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getExpressionExperimentMarkerAttributionsForClone() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-CDNA-040425-3105");
-        getInfrastructureRepository().getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
+        infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getGenotypeExperimentRecordAttributions() {
-        getInfrastructureRepository().getGenotypeExperimentRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
+        infrastructureRepository.getGenotypeExperimentRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
     }
 
     @Test
     public void getGenotypePhenotypeRecordAttributions() {
-        getInfrastructureRepository().getGenotypePhenotypeRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
+        infrastructureRepository.getGenotypePhenotypeRecordAttributions("ZDB-GENO-000405-1", "ZDB-PUB-090324-13");
     }
 
     @Test
@@ -327,7 +331,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
                 "with no log;";
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
         statement.addQueryPart(query);
-        getInfrastructureRepository().executeJdbcStatement(statement);
+        infrastructureRepository.executeJdbcStatement(statement);
     }
 
     @Test
@@ -340,11 +344,10 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
 
-        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
         HibernateUtil.createTransaction();
         try {
             for (DatabaseJdbcStatement statement : queries) {
-                infrastructureRep.executeJdbcStatement(statement);
+                infrastructureRepository.executeJdbcStatement(statement);
             }
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
@@ -356,59 +359,175 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFirst10Genotypes() {
-        List<String> allGenotypes = getInfrastructureRepository().getAllEntities(Genotype.class, "zdbID", 10);
+        List<String> allGenotypes = infrastructureRepository.getAllEntities(Genotype.class, "zdbID", 10);
         assertNotNull(allGenotypes);
         assertEquals(10, allGenotypes.size());
     }
 
     @Test
     public void getFirst10Features() {
-        List<String> allFeatures = getInfrastructureRepository().getAllEntities(Feature.class, "zdbID", 10);
+        List<String> allFeatures = infrastructureRepository.getAllEntities(Feature.class, "zdbID", 10);
         assertNotNull(allFeatures);
         assertEquals(10, allFeatures.size());
     }
 
     @Test
     public void getFirst10Figures() {
-        List<String> allFeatures = getInfrastructureRepository().getAllEntities(Figure.class, "zdbID", 10);
+        List<String> allFeatures = infrastructureRepository.getAllEntities(Figure.class, "zdbID", 10);
         assertNotNull(allFeatures);
         assertEquals(10, allFeatures.size());
     }
 
     @Test
     public void getFirst10Labs() {
-        List<String> allCompanies = getInfrastructureRepository().getAllEntities(Lab.class, "zdbID", 10);
+        List<String> allCompanies = infrastructureRepository.getAllEntities(Lab.class, "zdbID", 10);
         assertNotNull(allCompanies);
         assertEquals(10, allCompanies.size());
     }
 
     @Test
     public void getFirst10Companies() {
-        List<String> allCompanies = getInfrastructureRepository().getAllEntities(Company.class, "zdbID", 10);
+        List<String> allCompanies = infrastructureRepository.getAllEntities(Company.class, "zdbID", 10);
         assertNotNull(allCompanies);
         assertEquals(10, allCompanies.size());
     }
 
     @Test
     public void getFirst10Persons() {
-        List<String> allPersons = getInfrastructureRepository().getAllEntities(Person.class, "zdbID", 10);
+        List<String> allPersons = infrastructureRepository.getAllEntities(Person.class, "zdbID", 10);
         assertNotNull(allPersons);
         assertEquals(10, allPersons.size());
     }
 
     @Test
     public void getFirst10Terms() {
-        List<String> allTerms = getInfrastructureRepository().getAllEntities(GenericTerm.class, "oboID", 10);
+        List<String> allTerms = infrastructureRepository.getAllEntities(GenericTerm.class, "oboID", 10);
         assertNotNull(allTerms);
         assertEquals(10, allTerms.size());
     }
 
     @Test
     public void getFirst10markerGoEvidenceCodes() {
-        List<String> allMarkerGoEvidences = getInfrastructureRepository().getAllEntities(MarkerGoTermEvidence.class, "marker.zdbID", 10);
+        List<String> allMarkerGoEvidences = infrastructureRepository.getAllEntities(MarkerGoTermEvidence.class, "marker.zdbID", 10);
         assertNotNull(allMarkerGoEvidences);
         assertEquals(10, allMarkerGoEvidences.size());
     }
+
+    //    @Test
+    public void getUpdatesFlagPerformance() {
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < 1000; i++) {
+//            ZdbFlag flag = infrastructureRepository.getUpdatesFlag();
+            boolean flag = infrastructureRepository.getDisableUpdatesFlag();
+        }
+
+        long endTime = System.currentTimeMillis();
+        logger.info("total time: " + (endTime - startTime) / 1000.0f);
+    }
+
+    @Test
+    public void getRecordAttributionsForType() {
+        List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForType("ZDB-MRKRSEQ-070118-1", RecordAttribution.SourceType.STANDARD);
+        assertEquals(1, recordAttributions.size());
+        assertEquals("ZDB-PUB-061010-9", recordAttributions.iterator().next().getSourceZdbID());
+    }
+
+    @Test
+    public void getExternalOrthologyNotes() {
+        List<String> notes = infrastructureRepository.getExternalOrthologyNoteStrings("ZDB-GENE-030131-2333");
+        assertEquals(1, notes.size());
+    }
+
+    @Test
+    public void getExternalNotes() {
+        List<ExternalNote> notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081002-19");
+        assertEquals(1, notes.size());
+
+        notes = infrastructureRepository.getExternalNotes("ZDB-ATB-081006-1");
+        assertEquals(2, notes.size());
+        assertTrue(notes.get(0).getNote().startsWith("Labels both fast and slow"));
+        assertTrue(notes.get(1).getNote().startsWith("labels slow and fast"));
+    }
+
+    @Test
+    public void getPublicationAttributionZdbIdsForType() {
+        List<String> markerTypes = infrastructureRepository.getPublicationAttributionZdbIdsForType(ExpressionService.MICROARRAY_PUB, Marker.Type.GENEP);
+        assertNotNull(markerTypes);
+
+    }
+
+    @Test
+    public void removeAttributionsNotFound() {
+        try {
+            HibernateUtil.createTransaction();
+            infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+            Set<String> datas = new HashSet<String>();
+            datas.add("ZDB-GENE-000607-47");
+            datas.add("ZDB-GENE-000607-71");
+            datas.add("ZDB-GENE-030131-10076");
+            for(String data : datas){
+                infrastructureRepository.insertRecordAttribution( data, MicroarrayWebserviceJob.MICROARRAY_PUB);
+            }
+            int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
+            assertEquals(3,removed);
+        } catch (Exception e) {
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+
+    @Test
+    public void addAttributionsNotFound() {
+        try {
+            HibernateUtil.createTransaction();
+            infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+            Set<String> datas = new HashSet<String>();
+            datas.add("ZDB-GENE-000607-47");
+            datas.add("ZDB-GENE-000607-71");
+            datas.add("ZDB-GENE-030131-10076");
+            int added = infrastructureRepository.addAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
+            assertEquals(datas.size(),added);
+            List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+            assertEquals(datas.size(),numMarkersAttributed.size());
+        } catch (Exception e) {
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+
+    @Test
+    public void getPublicationAttributionsForPub(){
+        List<String> markersForPub = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+        assertNotNull(markersForPub);
+    }
+
+    @Test
+    public void hasStandardPublicationAttribution(){
+        assertFalse(infrastructureRepository.hasStandardPublicationAttribution("ZDB-SSLP-000426-106",MicroarrayWebserviceJob.MICROARRAY_PUB));
+        assertTrue(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-030131-9286", MicroarrayWebserviceJob.MICROARRAY_PUB));
+        assertTrue(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-041008-244", MicroarrayWebserviceJob.MICROARRAY_PUB));
+
+        // on clone, but not the gene
+        assertFalse(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-031118-138", MicroarrayWebserviceJob.MICROARRAY_PUB));
+    }
+
+    @Test
+    public void hasStandardPublicationAttributionForRelatedMarkers(){
+        assertFalse(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-SSLP-000426-106",MicroarrayWebserviceJob.MICROARRAY_PUB));
+        assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-030131-9286", MicroarrayWebserviceJob.MICROARRAY_PUB));
+        assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-041008-244", MicroarrayWebserviceJob.MICROARRAY_PUB));
+
+        // on clone, but not the gene
+        assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-031118-138", MicroarrayWebserviceJob.MICROARRAY_PUB));
+    }
+
+
 }
 
 

@@ -10,6 +10,7 @@ import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
+import org.zfin.gwt.curation.PileConstructionSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
@@ -18,7 +19,6 @@ import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
 import org.zfin.webservice.MarkerSoapClientSmokeTest;
 import org.zfin.webservice.MarkerSoapSmokeTest;
-import org.zfin.gwt.curation.PileConstructionSmokeTest;
 
 /**
  * Smoke tests: Integration tests.

@@ -592,7 +592,7 @@ PREFIX: msegsel_
           <?/MISQL>
  
 
-      <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$viewer>/action/marker/view/<?/MIVAR>
      <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
 
@@ -631,11 +631,11 @@ PREFIX: msegsel_
 	      <TD>&nbsp;</TD>
 	  <?/MIBLOCK>
 
-	<TD> 
+	<TD valign="top"> 
 	 <?MIVAR>$clone_sequence_type<?/MIVAR>
         </TD> 
 
-	<TD> 
+	<TD valign="top"> 
 	 <?MIVAR>$vector_type_name<?/MIVAR>
         </TD> 
 

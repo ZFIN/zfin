@@ -318,10 +318,11 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Figure> getFiguresByGeneAndAnatomy(Marker gene, GenericTerm anatomyTerm);
 
+    List<Publication> getPubsForDisplay(String zdbID);
 
     Journal getJournalByTitle(String journalTitle);
 
-    PaginationResult<Publication> getAllAssociatedPublicationsForMarker(Marker marker, int maxPubs);
+    int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
 
     PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
@@ -494,4 +495,6 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
     List<Publication> getPublicationByPmid(String pubMedID);
+
+    int getNumberDirectPublications(String zdbID);
 }

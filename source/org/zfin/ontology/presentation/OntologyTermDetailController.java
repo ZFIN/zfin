@@ -5,13 +5,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Generic entry point for viewing a term detail page.
@@ -27,7 +29,7 @@ public class OntologyTermDetailController {
 
         if (termID == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
         //redirect to anatomy detail page for ANAT zdbIDs
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT))
@@ -77,7 +79,7 @@ public class OntologyTermDetailController {
         //after all of that, we really just don't have it.
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTerms(term);
@@ -114,11 +116,11 @@ public class OntologyTermDetailController {
 
         if (entity.getSuperterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, superTermID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
         if (entity.getSubterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, subTermID);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         model.addAttribute("entity", entity);

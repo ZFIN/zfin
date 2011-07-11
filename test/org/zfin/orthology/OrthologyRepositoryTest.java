@@ -3,20 +3,25 @@ package org.zfin.orthology;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.criteria.ZfinCriteria;
+import org.zfin.marker.Marker;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
+import org.zfin.orthology.repository.OrthologyPresentationRow;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for utiltity methods in the repository class.
  */
-public class OrthologyRepositoryTest {
+public class OrthologyRepositoryTest extends AbstractDatabaseTest {
 
     @Before
     public void setUp() {
@@ -280,5 +285,27 @@ public class OrthologyRepositoryTest {
         mouseGene.setType(FilterType.ENDS);
         fly.setSymbol(mouseGene);
         return fly;
+    }
+
+    @Test
+    public void getOrthologuesForGene(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List<OrthologyPresentationRow> orthologues = RepositoryFactory.getOrthologyRepository().getOrthologyForGene(m);
+        assertEquals(2,orthologues .size());
+        for(OrthologyPresentationRow orthologue : orthologues ){
+           assertTrue(orthologue.getEvidenceCodes().size() > 0);
+        }
+    }
+
+
+    @Test
+    public void getEvidenceCodesForMarker(){
+
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List<String> codes = RepositoryFactory.getOrthologyRepository().getEvidenceCodes(m);
+        assertEquals(2,codes.size());
+        assertEquals("AA", codes.get(0));
+        assertEquals("NT", codes.get(1));
+
     }
 }

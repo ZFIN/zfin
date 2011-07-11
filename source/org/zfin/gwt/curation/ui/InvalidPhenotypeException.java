@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 
 /**

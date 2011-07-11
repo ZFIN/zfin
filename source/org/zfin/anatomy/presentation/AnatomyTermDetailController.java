@@ -9,7 +9,6 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;

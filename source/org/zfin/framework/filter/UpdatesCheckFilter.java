@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
@@ -24,7 +23,7 @@ import java.util.List;
 public class UpdatesCheckFilter implements Filter{
 
     private static Logger logger = Logger.getLogger(UpdatesCheckFilter.class);
-    private static ZdbFlag systemUpdates;
+    private static boolean systemUpdatesDisabled =false;
     private static final String REDIRECT_URL = "/action/login";
     private List<LogoutHandler> logoutHandlers;
     private LogoutSuccessHandler logoutSuccessHandler;
@@ -51,12 +50,12 @@ public class UpdatesCheckFilter implements Filter{
         String url = request.getRequestURI();
         boolean readOnlyUrl = isReadOnlyUrl(url);
         if (!readOnlyUrl) {
-            systemUpdates = infrastructureRepository.getUpdatesFlag();
+            systemUpdatesDisabled = infrastructureRepository.getDisableUpdatesFlag();
         }
         Person person = Person.getCurrentSecurityUser();
 
         // redirect if user is logged in and database is locked
-        if (systemUpdates != null && systemUpdates.isSystemUpdateDisabled() && !url.equals(REDIRECT_URL) && person != null) {
+        if (systemUpdatesDisabled && !url.equals(REDIRECT_URL) && person != null) {
             logoutUser(request, response);
 //            response.sendRedirect(response.encodeRedirectURL(REDIRECT_URL));
             logger.info("System is currently being updated. No login session are allowed.");
@@ -97,8 +96,8 @@ public class UpdatesCheckFilter implements Filter{
         }
     }
 
-    public static ZdbFlag getSystemUpdatesFlag() {
-        return systemUpdates;
+    public static boolean getSystemUpdatesFlag() {
+        return systemUpdatesDisabled;
     }
 
     public void setLogoutSuccessHandler(LogoutSuccessHandler logoutSuccessHandler) {

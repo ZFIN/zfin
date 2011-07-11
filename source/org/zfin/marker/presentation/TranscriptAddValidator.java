@@ -31,6 +31,10 @@ public class TranscriptAddValidator implements Validator {
         }
 
         TranscriptType.Type transcriptType = TranscriptType.Type.getTranscriptType(transcriptAddBean.getChosenType());
+//        if(transcriptType==null){
+//            ValidationUtils.rejectIfEmpty(errors, "chosenType", "not using lookup", "Must choose a type.");
+//
+//        }
         TranscriptStatus.Status transcriptStatus = TranscriptStatus.Status.getStatus(transcriptAddBean.getChosenStatus());
         List<TranscriptStatus.Status> transcriptStatuses = transcriptType.getStatusList(transcriptType);
         if (false == transcriptStatuses.contains(transcriptStatus)) {

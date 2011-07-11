@@ -1,6 +1,7 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -72,6 +73,46 @@ public class TermPresentation extends EntityPresentation {
 
     }
 
+    public static String getLink(PostComposedPresentationBean entity,boolean suppressPopupLink){
+
+        if (entity == null) return null;
+
+        StringBuffer sb = new StringBuffer(50);
+
+        if (entity.getSubTermZdbId() == null){
+
+            sb.append(getTomcatLinkWithTitle(uri, entity.getSuperOntologyId(),entity.getSuperTermName(), entity.getSuperTermName(), null));
+
+            if (!suppressPopupLink){
+                sb.append(getTomcatPopupLink(popupUri, String.valueOf(entity.getSuperOntologyId()),
+                        "Term definition, synonyms and links"));
+            }
+            return sb.toString();
+        }
+
+        sb.append("<span class=\"post-composed-term-link\">");
+
+        StringBuilder uriSuffix = new StringBuilder(50);
+        uriSuffix.append("superTermID=");
+        uriSuffix.append(entity.getSuperOntologyId());
+        uriSuffix.append("&subTermID=");
+        uriSuffix.append(entity.getSubOntologyId());
+        sb.append(getTomcatLink(postComposedUri, uriSuffix.toString(), getName(entity)));
+        sb.append("</span>");
+
+        if (!suppressPopupLink) {
+            StringBuilder popupSb = new StringBuilder(50);
+            popupSb.append("superTermID=");
+            popupSb.append(entity.getSuperOntologyId());
+            popupSb.append("&subTermID=");
+            popupSb.append(entity.getSubOntologyId());
+
+            sb.append(getTomcatPopupLink(postComposedPopupUri, popupSb.toString(), "Term definition, synonyms and links"));
+        }
+
+        return sb.toString();
+
+    }
 
     public static String getLink(PostComposedEntity entity, boolean suppressPopupLink) {
         if (entity == null)
@@ -98,6 +139,22 @@ public class TermPresentation extends EntityPresentation {
         return sb.toString();
     }
 
+    public static String getName(PostComposedPresentationBean entity) {
+        if (entity == null)
+            return null;
+        if (entity.getSuperTermName() == null)
+            return null;
+        StringBuffer postComposedTermName = new StringBuffer(50);
+        postComposedTermName.append("<span class=\"post-composed-term-name\">");
+        postComposedTermName.append(entity.getSuperTermName());
+        if (entity.getSubTermZdbId() != null) {
+            postComposedTermName.append(POSTCOMPOSED_TERM_SEPARATOR);
+            postComposedTermName.append(entity.getSubTermName());
+        }
+        postComposedTermName.append("</span>");
+
+        return postComposedTermName.toString();
+    }
 
     public static String getName(PostComposedEntity entity) {
         if (entity == null)

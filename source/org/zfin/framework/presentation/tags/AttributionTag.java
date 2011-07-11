@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.zfin.infrastructure.presentation.DataAliasPresentation;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
@@ -33,6 +34,8 @@ public class AttributionTag extends TagSupport {
             linkBuffer.append(DataAliasPresentation.getAttributionLink((MarkerAlias) o));
         else if (o instanceof RelatedMarker)
             linkBuffer.append(MarkerPresentation.getAttributionLink((RelatedMarker) o));
+        else if (o instanceof Marker)
+            linkBuffer.append(MarkerPresentation.getAttributionLink((Marker) o));
         else throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
 
         try {

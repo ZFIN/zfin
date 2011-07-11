@@ -2,7 +2,10 @@ package org.zfin.feature.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.expression.*;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResultTermComparator;
+import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -12,7 +15,6 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -139,7 +141,7 @@ public class GenotypeBean {
                     key = key + exp.getZdbID();
 
                 Set<Figure> figs = xpResult.getFigures();
-                GenericTerm term = xpResult.getSuperterm();
+                GenericTerm term = xpResult.getSuperTerm();
                 Publication pub = xpResult.getExpressionExperiment().getPublication();
 
                 ExpressionDisplay xpDisplay;

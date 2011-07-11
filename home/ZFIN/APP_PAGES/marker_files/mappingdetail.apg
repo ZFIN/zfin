@@ -383,7 +383,7 @@ marker = '';
  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
       <?MIVAR>
         <b>$marker_type_display Name: &nbsp;<i>$mrkr_name</i> </b><br>
-        <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID'>$mrkr_abbrev</A></i></b><br>
+        <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/action/marker/view/$OID'>$mrkr_abbrev</A></i></b><br>
       <?/MIVAR>
 
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
@@ -409,7 +409,7 @@ marker = '';
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
 	<?MIVAR NAME=$allele_name>$2<?/MIVAR>
         <?MIVAR NAME=$allele_abbrev>$3<?/MIVAR>
-	<TR><TD><b>Genomic Feature <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
+	<TR><TD><b>Genomic Feature <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/action/marker/view/$OID">$mrkr_abbrev</A></i> </b>
         </TD></TR>
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
@@ -440,7 +440,7 @@ marker = '';
   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,ALT),0),$(=,$(POSITION,$OID,GENE),0))">
 
       <?MIVAR>
-      <TR><TD><b>$marker_type_display: &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</A> </b></TD></TR><br>
+      <TR><TD><b>$marker_type_display: &nbsp; <A HREF="/action/marker/view/$OID">$mrkr_name</A> </b></TD></TR><br>
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
       <?/MIVAR>
   <?/MIBLOCK>
@@ -591,11 +591,11 @@ marker = '';
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
-<?MIVAR>	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+<?MIVAR>	  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
-<?MIVAR>	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+<?MIVAR>	  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
@@ -636,11 +636,11 @@ marker = '';
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
-	<?MIVAR>  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+	<?MIVAR>  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
-	  <?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+	  <?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
@@ -683,11 +683,11 @@ marker = '';
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
-<?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+<?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
-<?MIVAR><A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?/MIVAR>
+<?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
@@ -861,7 +861,7 @@ marker = '';
         <?MIVAR NAME=subtable>y<?/MIVAR>
     <?/MIBLOCK> 
 
-    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/action/feature/feature-detail?zdbID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/action/feature/feature-detail?zdbID="), $(SETVAR,$curviewer,"/action/marker/view/"))
 
     <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
       where lpmem_member_zdb_id = '$member_zdb_id' 
@@ -964,7 +964,7 @@ marker = '';
     <?/MIBLOCK>
 
      <tr><td>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A>
+        <A HREF="/action/marker/view/$insideq_OID"><b>$insideq_abbrev</b></A>
          </td>
     <?MISQL SQL="
       select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
@@ -1015,7 +1015,7 @@ marker = '';
       from webPages 
       where ID = 'aa-mappingdetail.apg';">
     <tr><td>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A>
+        <A HREF="/action/marker/view/$insideq_OID"><b>$insideq_abbrev</b></A>
        </td>
        <td> $1 </td>
      </tr>
@@ -1063,7 +1063,7 @@ marker = '';
       where ID = 'aa-mappingdetail.apg';">
     <tr>
       <td>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$clone_OID"><b>$clone_abbrev</b></A>
+        <A HREF="/action/marker/view/$clone_OID"><b>$clone_abbrev</b></A>
       </td>
       <td> $1 </td>
      </tr>
@@ -1105,7 +1105,7 @@ marker = '';
       where ID = 'aa-mappingdetail.apg';">
     <tr>
       <td>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_OID"><b>$mrkr_abbrev</b></A>
+        <A HREF="/action/marker/view/$mrkr_OID"><b>$mrkr_abbrev</b></A>
       </td>
       <td> $1 </td>
      </tr>
@@ -1137,7 +1137,7 @@ marker = '';
        where ID = 'aa-mappingdetail.apg';">
      <tr>
        <td>
-         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_OID"><b>$mrkr_abbrev</b></A>
+         <A HREF="/action/marker/view/$mrkr_OID"><b>$mrkr_abbrev</b></A>
        </td>
        <td> $1 </td>
       </tr>

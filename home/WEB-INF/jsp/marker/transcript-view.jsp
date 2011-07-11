@@ -4,7 +4,7 @@
 
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   editURL="${formBean.editURL}"
+                   editURL="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 
@@ -16,12 +16,11 @@
 </div>
 
 
-<zfin2:transcriptHead transcript="${formBean.marker}"/>
+<zfin2:transcriptHead transcript="${formBean.marker}" previousNames="${formBean.previousNames}" relatedGenes="${formBean.relatedGenes}"/>
+
 
 <script type="text/javascript" src="/javascript/sequenceview.js">
 </script>
-
-
 <c:choose>
     <c:when test="${formBean.marker.withdrawn}">
         <authz:authorize ifAllGranted="root">
@@ -45,41 +44,28 @@
 </c:if>
 
 
-<zfin2:subsection title="Associated with Genes"
+<zfin2:subsectionMarker title="Non-Reference Strains"
                   inlineTitle="true"
-                  test="${!empty formBean.relatedGenes}">
-    <zfin2:toggledHyperlinkList collection="${formBean.relatedGenes}"
-                                id="relatedGenes"
-                                maxNumber="6"
-                                showAttributionLinks="true"/>
-</zfin2:subsection>
-
-<zfin2:subsection title="Non-Reference Strains"
-                  inlineTitle="true"
-                  test="${!empty formBean.nonReferenceStrains}">
+                  test="${!empty formBean.nonReferenceStrains}" showNoData="true">
     <zfin2:toggledHyperlinkList collection="${formBean.nonReferenceStrains}"
                                 id="nonRefererenceStrains"
                                 maxNumber="6"/>
-</zfin2:subsection>
+</zfin2:subsectionMarker>
 
-
-<zfin2:markerRelationships relationships="${formBean.markerRelationships}" marker="${formBean.marker}"
-                           title="${fn:toUpperCase('Segment (Clone and Probe) Relationships')}" />
 <%-- This section shows a flat list of related transcripts--%>
-
-<zfin2:subsection title="Related Transcripts" test="${!empty formBean.microRNARelatedTranscripts}"
-                  inlineTitle="true" >
+<c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
+<zfin2:subsectionMarker title="Related Transcripts" test="${!empty formBean.microRNARelatedTranscripts}"
+                  inlineTitle="true"  showNoData="true">
     <zfin2:toggledHyperlinkList collection="${formBean.microRNARelatedTranscripts}"
                                 id="microRNARelatedTranscripts"
                                 maxNumber="6"/>
-</zfin2:subsection>
-
+</zfin2:subsectionMarker>
+</c:if>
 
 <%-- This section shows boxes per gene.  One data structure or the other should get populated,
      but not both.  --%>
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}">
-
     <c:if test="${fn:length(relatedTranscriptDisplay.transcripts) > 1}">
         <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${relatedTranscriptDisplay}"
                                        unlinkedTranscript="${formBean.marker}"
@@ -93,7 +79,7 @@
         <div class="summary">
             <table class="summary solidblock">
                 <caption>GBrowse:</caption>
-                <tr><td style="text-align: center"> 
+                <tr><td style="text-align: center">
                   <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"
                           width="600"/>
                 </td></tr>
@@ -102,18 +88,22 @@
 
 
     </c:if>
-
-
 </c:forEach>
+
+
+<zfin2:markerRelationships relationships="${formBean.markerRelationships}" marker="${formBean.marker}"
+                           title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS" />
+
 
 <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
 
-<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.summaryDBLinkDisplay}"/>
+<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
+<%--older link--%>
+<%--<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.summaryDBLinkDisplay}"/>--%>
 
-<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}" title="${fn:toUpperCase('Protein Products')}" />
+<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}" title="PROTEIN PRODUCTS" />
 
-<zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Zebrafish Supporting Sequences')}" showAllSequences="true"/>
-
+<zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="SEQUENCE INFORMATION" showAllSequences="true"/>
 
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 

@@ -7,8 +7,6 @@ import org.zfin.people.LabFeaturePrefix;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.Size;
-
 
 /**
  * Bean contains info for the LineDesignationController.

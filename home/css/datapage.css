@@ -35,7 +35,6 @@ table.primary-entity-attributes {
     border-collapse: collapse;
     clear:both;
     margin-top: .3em;
-
 }
 
 
@@ -45,6 +44,7 @@ table.primary-entity-attributes th {
     padding-right: 1em;
     padding-top: .1em;
     padding-bottom: .1em;
+    white-space: nowrap;
 }
 
 table.primary-entity-attributes th.genotype-name-label,
@@ -96,3 +96,24 @@ table.ontology-term-mini-summary td.name {
     display: none;
 }
 
+.no-data-tag{
+    background-color: white;
+    border: none;
+    border-spacing: 0 ;
+    border-width: 0 ;
+    color: gray;
+    font-weight: lighter;
+}
+
+.no-data-tag-inline{
+    background-color: white;
+    border: none;
+    border-spacing: 0 ;
+    border-width: 0 ;
+    color: gray;
+    font-weight: lighter;
+}
+
+.data-note{
+    font-size: small;
+}

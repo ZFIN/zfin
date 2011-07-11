@@ -48,6 +48,12 @@ table.summary th.gbrowseimage {
     min-width:20%;
 }
 
+table.summary td.data-label ,
+table.summary th.data-label  {
+    white-space: nowrap;
+    width: 5%;
+}
+
 table.summary td {
   /* background: #eee; */
   padding: .2em;
@@ -83,7 +89,7 @@ ul.summary li {
 
 /* small stripes (w/top border dividers) summary table styling */
 
-table.summary.rowstripes tr.newgroup { border-top: 1px solid #ccc; } 
+table.summary.rowstripes tr.newgroup { border-top: 1px solid #ccc; }
 table.rowstripes tr.odd { background-color: #eee; }
 table.rowstripes tr.even { background-color: #fff; }
 table.summary.rowstripes { border: 1px solid #ccc; }

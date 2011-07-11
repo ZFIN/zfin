@@ -1,7 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import java.util.Map;
-
 /**
  * ToDo: ADD DOCUMENTATION!
  */

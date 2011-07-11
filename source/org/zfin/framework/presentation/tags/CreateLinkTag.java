@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
@@ -12,19 +11,22 @@ import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
+import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.presentation.GenotypePresentation;
+import org.zfin.mutant.presentation.PostComposedPresentationBean;
+import org.zfin.mutant.repository.FeaturePresentationBean;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.ExpressionResultPresentation;
-import org.zfin.ontology.presentation.TermDTOPresentation;
 import org.zfin.ontology.presentation.PhenotypePresentation;
+import org.zfin.ontology.presentation.TermDTOPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
@@ -73,8 +75,12 @@ public class CreateLinkTag extends BodyTagSupport {
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
 
-        String link;        
-        if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
+        String link;
+        if (o instanceof String) // assumes that the link is being passed in
+            link = (String) o;
+        if (o instanceof ProvidesLink) // provides a generic link interface
+            link = ((ProvidesLink) o).getLink();
+        else if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RelatedMarker)
             link = MarkerPresentation.getLink(((RelatedMarker) o).getMarker());
@@ -88,8 +94,10 @@ public class CreateLinkTag extends BodyTagSupport {
             link = DBLinkPresentation.getLink((DBLink) o);
         else if (o instanceof Accession)
             link = AccessionPresentation.getLink((Accession) o);
+        else if (o instanceof PostComposedPresentationBean)
+            link = TermPresentation.getLink((PostComposedPresentationBean) o,suppressPopupLink);
         else if (o instanceof AnatomyItem)
-            link = AnatomyItemPresentation.getLink((AnatomyItem) o, name);
+            link = AnatomyItemPresentation.getLink((AnatomyItem) o, name,suppressPopupLink);
         else if (o instanceof Publication)
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
@@ -102,6 +110,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = GenotypePresentation.getLink((Genotype) o);
         else if (o instanceof Feature)
             link = FeaturePresentation.getLink((Feature) o);
+        else if (o instanceof FeaturePresentationBean)
+            link = FeaturePresentation.getLink((FeaturePresentationBean) o);
         else if (o instanceof Experiment)
             link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink);
         else if (o instanceof ExperimentCondition)

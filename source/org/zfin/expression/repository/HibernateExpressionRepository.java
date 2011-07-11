@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -8,10 +9,15 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.ResultTransformer;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
+import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -21,14 +27,13 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.FigureLink;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -78,36 +83,166 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     }
 
-    // todo: I think that these are wrong
+    @Override
+    public Publication getExpressionSinglePub(Marker marker) {
+        String sql = "  select p from Publication p join p.expressionExperiments ee where ee.gene = :gene " ;
+        Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setString("gene", marker.getZdbID());
+        List<Publication> pubs =  query.list() ;
 
-    public int getExpressionPubCount(Marker marker) {
-        Session session = currentSession();
-        String hql = "" +
-                "select count(ee.publication) " +
-                " from ExpressionResult er join er.expressionExperiment as ee " +
-                "where ee.probe=:markerZdbID " +
-                " ";
-        Query query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        Number number = (Number) query.uniqueResult();
-        logger.fatal("do not use this method getExpressionPubCount until fixed");
-        return number.intValue();
+        if(CollectionUtils.isEmpty(pubs)){
+            logger.error("a single pub not returned for marker expression: " + marker);
+            return null;
+        }
+        else
+        if(pubs.size()>1){
+            logger.error("multiple pubs ["+pubs.size()+"] returned for marker expression: " + marker);
+        }
+
+        return pubs.get(0);
     }
 
-    // todo: I think that these are wrong
-
-    public int getExpressionFigureCount(Marker marker) {
-        Session session = currentSession();
-        String hql = "" +
-                "select count(f) " +
-                " from Figure f join f.expressionResults er " +
-                "where er.expressionExperiment.probe=:markerZdbID " +
-                "";
-        Query query = session.createQuery(hql);
+    public int getExpressionPubCountForGene(Marker marker) {
+        String sql = "  select count(distinct xpatex_source_zdb_id) " +
+                "      from expression_experiment join " +
+                "           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "     where xpatex_gene_zdb_id = :markerZdbID " +
+                "    and not exists( " +
+                "         select 'x' from clone " +
+                "         where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "         and clone_problem_type = 'Chimeric' " +
+                "     ) " +
+                "     and not exists ( " +
+                "         select 'x' from marker " +
+                "         where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "         and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "     ) " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("markerZdbID", marker.getZdbID());
-        Number number = (Number) query.uniqueResult();
-        logger.fatal("do not use this method getExpressionFigureCount until fixed");
-        return number.intValue();
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
+    }
+
+
+    public int getExpressionPubCountForEfg(Marker marker) {
+        String sql = "  select count(distinct xpatex_source_zdb_id) " +
+                "      from expression_experiment join " +
+                "           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "     where xpatex_gene_zdb_id = :markerZdbID ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
+    }
+
+    public int getExpressionPubCountForClone(Clone clone) {
+        String sql = "  select count(distinct xpatex_source_zdb_id) " +
+                "      from expression_experiment join " +
+                "           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "     where xpatex_probe_feature_zdb_id = :markerZdbID ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", clone.getZdbID());
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
+    }
+
+
+    public int getExpressionFigureCountForEfg(Marker marker){
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "          where xpatex_gene_zdb_id = :markerZdbID " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
+    }
+
+    public int getExpressionFigureCountForClone(Clone clone){
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "          where xpatex_probe_feature_zdb_id = :markerZdbID " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", clone.getZdbID());
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
+    }
+
+    @Override
+    public FigureLink getExpressionSingleFigure(Marker marker){
+        String sql = "select distinct xpatfig_fig_zdb_id , f.fig_label " +
+                "     from expression_pattern_figure " +
+                "     join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "     join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "     join figure f on xpatfig_fig_zdb_id=f.fig_zdb_id " +
+                "     where xpatex_gene_zdb_id = :markerZdbID " +
+                "     and not exists " +
+                "     ( " +
+                "     select 'x' from marker " +
+                "     where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "     and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "     ) " +
+                "     and not exists " +
+                "     ( " +
+                "     select 'x' from clone " +
+                "     where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "     and clone_problem_type = 'Chimeric' " +
+                "     ) " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        query.setMaxResults(1);
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                FigureLink figureLink = new FigureLink() ;
+                figureLink.setFigureZdbId(tuple[0].toString());
+                figureLink.setLinkContent(tuple[1].toString());
+                figureLink.setLinkValue(
+                        EntityPresentation.getWebdriverLink("?MIval=aa-fxfigureview.apg&OID="
+                                , figureLink.getFigureZdbId()
+                                , figureLink.getLinkContent()
+                        )
+                );
+                return figureLink;
+            }
+        });
+        return (FigureLink) query.uniqueResult();
+    }
+
+    public int getExpressionFigureCountForGene(Marker marker) {
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "          where xpatex_gene_zdb_id = :markerZdbID " +
+                "         and not exists " +
+                "         ( " +
+                "           select 'x' from marker " +
+                "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "         ) " +
+                "         and not exists " +
+                "         ( " +
+                "          select 'x' from clone " +
+                "             where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and clone_problem_type = 'Chimeric' " +
+                "         ) " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult() ;
+        return Integer.parseInt(result.toString());
     }
 
     public int getImagesFromPubAndClone(Publication publication, Clone clone) {
@@ -124,24 +259,101 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return ((Number) query1.uniqueResult()).intValue();
     }
 
-    public List getDirectlySubmittedExpressionSummaries(Marker marker) {
+    public List<PublicationExpressionBean> getDirectlySubmittedExpressionForClone(Clone clone) {
 
-        String hql1 = "" +
-                "	 select count(distinct figure )," +
-                "		publication.zdbID , clone.zdbID " +
-                "           from Figure figure join figure.expressionResults  er " +
-                "                join er.expressionExperiment ee " +
-                "                join ee.publication publication " +
-                "                join ee.probe clone " +
-                "           where clone.zdbID = :markerZdbID " +
-                "           and publication.type  = :unpublished " +
-                "            group by clone.zdbID , publication.zdbID  ";
+        String sql = "  select count(distinct xpatfig_fig_zdb_id), " +
+                "       pub.zdb_id, pub.pub_mini_ref,m.mrkr_abbrev, m.mrkr_Zdb_id" +
+                "           from expression_pattern_figure " +
+                "                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join publication pub on pub.zdb_id = xpatex_source_zdb_id " +
+                "                join marker m on m.mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "           where xpatex_probe_feature_zdb_id = :markerZdbID " +
+                "           and pub.jtype = 'Unpublished' " +
+                "           group by m.mrkr_zdb_id,m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref; " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", clone.getZdbID());
 
-        Session session = currentSession();
-        Query query1 = session.createQuery(hql1);
-        query1.setString("markerZdbID", marker.getZdbID());
-        query1.setString("unpublished", "Unpublished");
-        List pubList = query1.list();
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+                publicationExpressionBean.setNumFigures(Integer.parseInt(tuple[0].toString()));
+                publicationExpressionBean.setPublicationZdbID(tuple[1].toString());
+                publicationExpressionBean.setMiniAuth(tuple[2].toString());
+                if (tuple[3] != null) {
+                    publicationExpressionBean.setProbeFeatureAbbrev(tuple[3].toString());
+                }
+                if (tuple[4] != null) {
+                    publicationExpressionBean.setProbeFeatureZdbId(tuple[4].toString());
+                }
+                return publicationExpressionBean;
+            }
+
+            @Override
+            public List transformList(List collection) {
+                List<PublicationExpressionBean> list = new ArrayList<PublicationExpressionBean>();
+                for (Object o : collection) {
+                    list.add((PublicationExpressionBean) o);
+                }
+                return list;
+            }
+        });
+        List<PublicationExpressionBean> pubList = query.list();
+        return pubList;
+    }
+
+    public List<PublicationExpressionBean> getDirectlySubmittedExpressionForGene(Marker marker) {
+
+        String sql = "  select count(distinct xpatfig_fig_zdb_id), " +
+                "		pub.zdb_id, pub.pub_mini_ref,m.mrkr_abbrev, m.mrkr_zdb_id " +
+                "           from expression_pattern_figure " +
+                "                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join publication pub on pub.zdb_id = xpatex_source_zdb_id " +
+                "                join marker m on m.mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "          where xpatex_gene_zdb_id = :markerZdbID " +
+                "          and pub.jtype = 'Unpublished' " +
+                "          and not exists( " +
+                "             select 'x' from clone " +
+                "             where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "             and clone_problem_type = 'Chimeric' " +
+                "          ) " +
+                "          and not exists ( " +
+                "             select 'x' from marker " +
+                "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "         ) " +
+                "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+                publicationExpressionBean.setNumFigures(Integer.parseInt(tuple[0].toString()));
+                publicationExpressionBean.setPublicationZdbID(tuple[1].toString());
+                publicationExpressionBean.setMiniAuth(tuple[2].toString());
+                if (tuple[3] != null) {
+                    publicationExpressionBean.setProbeFeatureAbbrev(tuple[3].toString());
+                }
+                if (tuple[4] != null) {
+                    publicationExpressionBean.setProbeFeatureZdbId(tuple[4].toString());
+                }
+                return publicationExpressionBean;
+            }
+
+            @Override
+            public List transformList(List collection) {
+                List<PublicationExpressionBean> list = new ArrayList<PublicationExpressionBean>();
+                for (Object o : collection) {
+                    list.add((PublicationExpressionBean) o);
+                }
+                return list;
+            }
+        });
+        List<PublicationExpressionBean> pubList = query.list();
         return pubList;
     }
 
@@ -373,7 +585,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         ExpressionResult unspecifiedResult = getUnspecifiedExpressResult(result);
 
         // ignore unspecified addition if not the first creation.
-        if (result.getSuperterm().getTermName().equals(Term.UNSPECIFIED))
+        if (result.getSuperTerm().getTermName().equals(Term.UNSPECIFIED))
             if (result.getZdbID() != null)
                 return;
             else {
@@ -459,15 +671,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
         criteria = session.createCriteria(ExpressionResult.class);
-        Term subterm = result.getSubterm();
+        Term subterm = result.getSubTerm();
         if (subterm == null)
             criteria.add(Restrictions.isNull("entity.subterm"));
         else
-            criteria.add(Restrictions.eq("entity.subterm", result.getSubterm()));
+            criteria.add(Restrictions.eq("entity.subterm", result.getSubTerm()));
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
-        criteria.add(Restrictions.eq("entity.superterm", result.getSuperterm()));
+        criteria.add(Restrictions.eq("entity.superterm", result.getSuperTerm()));
         criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
         return (List<ExpressionResult>) criteria.list();
     }
@@ -682,7 +894,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         ExpressionResult unspecifiedResult = new ExpressionResult();
         unspecifiedResult.setExpressionExperiment(result.getExpressionExperiment());
-        unspecifiedResult.setSuperterm(unspecifiedTerm);
+        unspecifiedResult.setSuperTerm(unspecifiedTerm);
         unspecifiedResult.setStartStage(result.getStartStage());
         unspecifiedResult.setEndStage(result.getEndStage());
         unspecifiedResult.setExpressionFound(true);
@@ -773,8 +985,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         structure.setDate(new Date());
         structure.setPerson(Person.getCurrentSecurityUser());
         structure.setPublication(publication);
-        structure.setSuperterm(expressionResult.getSuperterm());
-        GenericTerm subTerm = expressionResult.getSubterm();
+        structure.setSuperterm(expressionResult.getSuperTerm());
+        GenericTerm subTerm = expressionResult.getSubTerm();
         if (subTerm != null) {
             structure.setSubterm(subTerm);
         }
@@ -900,6 +1112,56 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult>) query.list();
     }
 
+    public List<ExpressionExperimentPresentation> getWildTypeExpressionExperiments(String zdbID){
+//        String sql = " select distinct  " +
+//                "super_term.term_name as super_name,  super_term.term_ont_id as super_id,  " +
+//                "sub_term.term_name as sub_name,sub_term.term_ont_id as sub_id  " +
+////                "ai.anatitem_name_order  " +
+//                "from wildtype_expression_experiment wee " +
+//                "join term super_term on wee.wee_super_term_zdb_id=super_term.term_zdb_id " +
+//                "left outer join term sub_term on wee.wee_sub_term_zdb_id = sub_term.term_zdb_id " +
+////                "join anatomy_item ai on ai.anatitem_obo_id=super_term.term_ont_id " +
+//                "where  " +
+//                "wee.wee_marker_zdb_id= :markerZdbID " +
+////                "order by  " +
+////                "ai.anatitem_name_order";
+//                " ";
+
+        String sql2 = "select " +
+                "distinct super_term.term_name as super_name " +
+                ", super_term.term_ont_id as super_id " +
+                ", sub_term.term_name as sub_name " +
+                ", sub_term.term_ont_id as sub_id " +
+                "from expression_result er " +
+                "join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id " +
+                "join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id " +
+                "join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id " +
+                "join term super_term on er.xpatres_superterm_zdb_id=super_term.term_zdb_id " +
+                "left outer join term sub_term on er.xpatres_subterm_zdb_id = sub_term.term_zdb_id " +
+                "where ee.xpatex_gene_zdb_id= :markerZdbID " +
+                "and ge.genox_is_standard='t' " +
+                "and er.xpatres_expression_found='t' " +
+                "and g.geno_is_wildtype='t'";
+
+        return (List<ExpressionExperimentPresentation>) HibernateUtil.currentSession().createSQLQuery(sql2)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        ExpressionExperimentPresentation eePresentation = new ExpressionExperimentPresentation();
+                        eePresentation.setSuperTermName(tuple[0].toString());
+                        eePresentation.setSuperTermOntId(tuple[1].toString());
+
+                        if(tuple[2]!=null){
+                            eePresentation.setSubTermName(tuple[2].toString());
+                            eePresentation.setSubTermOntId(tuple[3].toString());
+                        }
+                        return eePresentation;
+                    }
+                })
+                .setParameter("markerZdbID", zdbID)
+                .list();
+    }
+
     @SuppressWarnings("unchecked")
     public List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID){
 //       String sql = "SELECT distinct term_zdb_id" +
@@ -916,25 +1178,42 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 //               "AND geno_zdb_id  = genox_geno_zdb_id " +
 //               "AND geno_is_wildtype = 't' " +
 //               "ORDER BY anatitem_name_order asc;"  ;
+//        String hql = "SELECT distinct ai " +
+//                "FROM " +
+//                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+//                " WHERE " +
+//                "ee.gene.zdbID = :zdbID " +
+//                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
+//                "AND er.expressionFound = :expressionFound " +
+//                "AND er.entity.superterm.zdbID = t.zdbID " +
+//                "AND t.oboID = ai.oboID " +
+//                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
+//                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
+//                "AND g.zdbID = ge.genotype.zdbID " +
+//                "AND g.wildtype = :wildType  " +
+//                "ORDER BY ai.nameOrder asc"  ;
+//        String hql = "SELECT distinct ai " +
+//                "FROM " +
+//                "WildtypeExpressionExperiment  wee , AnatomyItem ai " +
+//                " WHERE " +
+//                "wee.gene.zdbID = :zdbID " +
+//                "AND wee.superTerm.oboID = ai.oboID " +
+//                "ORDER BY ai.nameOrder asc"  ;
         String hql = "SELECT distinct ai " +
                 "FROM " +
-                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+                "ExpressionResult er, AnatomyItem ai " +
+                " join er.expressionExperiment ee " +
+                " join ee.genotypeExperiment ge " +
+                " join ge.genotype g " +
                 " WHERE " +
                 "ee.gene.zdbID = :zdbID " +
-                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
-                "AND er.expressionFound = :expressionFound " +
-                "AND er.entity.superterm.zdbID = t.zdbID " +
-                "AND t.oboID = ai.oboID " +
-                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
-                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
-                "AND g.zdbID = ge.genotype.zdbID " +
-                "AND g.wildtype = :wildType  " +
+                "AND er.entity.superterm.oboID = ai.oboID " +
+                "AND er.expressionFound = 't' " +
+                "AND ge.standard = 't' " +
+                "AND g.wildtype= 't' " +
                 "ORDER BY ai.nameOrder asc"  ;
         return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("zdbID",zdbID)
-                .setParameter("experiment","_Standard")
-                .setBoolean("expressionFound",true)
-                .setBoolean("wildType",true)
+                .setParameter("zdbID", zdbID)
                 .list();
     }
 
@@ -956,7 +1235,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 //               "ORDER BY anatitem_name_order asc;"  ;
         String hql = "SELECT distinct ai " +
                 "FROM " +
-                "ExpressionResult er, ExpressionExperiment ee, Term t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
+                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
                 " WHERE " +
                 "ee.gene.zdbID = :zdbID " +
                 "AND  er.expressionExperiment.zdbID = ee.zdbID " +
@@ -969,15 +1248,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND g.wildtype = :wildType  " +
                 "ORDER BY ai.nameOrder asc"  ;
         return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("zdbID",zdbID)
-                .setParameter("experiment","_Standard")
-                .setBoolean("expressionFound",true)
-                .setBoolean("wildType",true)
+                .setParameter("zdbID", zdbID)
                 .list();
     }
 
 
-    
+
 
     public List<Figure> getFigures(ExpressionSummaryCriteria expressionCriteria) {
         List<Figure> figures = new ArrayList<Figure>();
@@ -1033,7 +1309,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             if (expressionCriteria.getEntity().getSuperterm() != null
                     && expressionCriteria.getEntity().getSubterm() == null) {
                 aliasMap.put("expressionResults", "xpatres");
-                criteria.add(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getEntity().getSuperterm()));                
+                criteria.add(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getEntity().getSuperterm()));
                 criteria.add(Restrictions.isNull("xpatres.entity.subterm"));
                 logger.debug("subterm:" + expressionCriteria.getEntity().getSuperterm().getZdbID());
             }
@@ -1044,19 +1320,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.getSingleTermEitherPosition() != null) {
             aliasMap.put("expressionResults", "xpatres");
             criteria.add(Restrictions.or(Restrictions.eq("xpatres.entity.superterm", expressionCriteria.getSingleTermEitherPosition()),
-                Restrictions.eq("xpatres.entity.subterm", expressionCriteria.getSingleTermEitherPosition())));
+                    Restrictions.eq("xpatres.entity.subterm", expressionCriteria.getSingleTermEitherPosition())));
             logger.debug("single term, either position: " + expressionCriteria.getSingleTermEitherPosition().getZdbID());
         }
 
         if (expressionCriteria.getStart() != null) {
             aliasMap.put("expressionResults", "xpatres");
-            criteria.add(Restrictions.eq("xpatres.startStage", expressionCriteria.getStart()));            
+            criteria.add(Restrictions.eq("xpatres.startStage", expressionCriteria.getStart()));
             logger.debug("start stage: " + expressionCriteria.getStart().getZdbID());
         }
 
         if (expressionCriteria.getEnd() != null) {
             aliasMap.put("expressionResults", "xpatres");
-            criteria.add(Restrictions.eq("xpatres.endStage", expressionCriteria.getEnd()));                        
+            criteria.add(Restrictions.eq("xpatres.endStage", expressionCriteria.getEnd()));
             logger.debug("end stage: " + expressionCriteria.getEnd().getZdbID());
         }
 
@@ -1074,26 +1350,26 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             logger.debug("wildtype only");
         }
 
-       if (expressionCriteria.isStandardEnvironment()) {
-           aliasMap.put("expressionResults", "xpatres");
-           aliasMap.put("xpatres.expressionExperiment","xpatex");
-           aliasMap.put("xpatex.genotypeExperiment", "genox");
-           aliasMap.put("genox.experiment", "exp");
-           criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
-           logger.debug("standard or generic-control only");
-       }
+        if (expressionCriteria.isStandardEnvironment()) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.experiment", "exp");
+            criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
+                    Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+            logger.debug("standard or generic-control only");
+        }
 
-       if (expressionCriteria.isChemicalEnvironment()) {
-           aliasMap.put("expressionResults", "xpatres");
-           aliasMap.put("xpatres.expressionExperiment","xpatex");
-           aliasMap.put("xpatex.genotypeExperiment", "genox");
-           aliasMap.put("genox.experiment", "exp");
-           aliasMap.put("exp.experimentConditions", "cond");
-           aliasMap.put("cond.conditionDataType","cdt");
-           criteria.add(Restrictions.eq("cdt.group","chemical"));
-           logger.debug("chemical environments only");
-       }
+        if (expressionCriteria.isChemicalEnvironment()) {
+            aliasMap.put("expressionResults", "xpatres");
+            aliasMap.put("xpatres.expressionExperiment","xpatex");
+            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("genox.experiment", "exp");
+            aliasMap.put("exp.experimentConditions", "cond");
+            aliasMap.put("cond.conditionDataType","cdt");
+            criteria.add(Restrictions.eq("cdt.group","chemical"));
+            logger.debug("chemical environments only");
+        }
 
         //now add all of the aliases that were marked as necessary above
         for (Map.Entry<String,String> entry : aliasMap.entrySet()) {
@@ -1211,7 +1487,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             statement.setExpressionFound(result.isExpressionFound());
             expressionStatements.add(statement);
         }
-        
+
         return expressionStatements;
     }
 
@@ -1259,5 +1535,99 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         return allExpressions;
     }
+
+    @Override
+    public int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean) {
+        String sql = "select count(distinct img_zdb_id) " +
+                "             from image, expression_pattern_figure, " +
+                "                expression_result, expression_experiment , clone " +
+                "	     where " +
+                "		img_fig_zdb_id=xpatfig_fig_zdb_id " +
+                "             and  xpatfig_xpatres_zdb_id=xpatres_zdb_id " +
+                "             and  xpatex_zdb_id=xpatres_xpatex_zdb_id " +
+                "             and  clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "             and  xpatex_source_zdb_id= :pubZdbId " +
+                "             and  xpatex_probe_feature_zdb_id=:probeZdbId";
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(sql)
+                        .setParameter("pubZdbId",publicationExpressionBean.getPublicationZdbID())
+                        .setParameter("probeZdbId",publicationExpressionBean.getProbeFeatureZdbId())
+                        .uniqueResult().toString()
+        );
+    }
+
+
+    @Override
+    public StageExpressionPresentation getStageExpressionForMarker(String zdbID) {
+
+//        StageResultTransformer srt = new StageResultTransformer();
+
+        StageExpressionPresentation stageExpressionPresentation = new StageExpressionPresentation();
+//        String sql = " select first 1 ss.stg_zdb_id, ss.stg_name, ss.stg_name_ext " +
+//                "from wildtype_expression_experiment wee " +
+//                "join stage ss on wee.wee_start_stage_zdb_id=ss.stg_zdb_id " +
+//                "where wee.wee_marker_zdb_id=:markerZdbId " +
+//                "order by ss.stg_hours_start asc " +
+//                " ";
+//        String hql = " select ss " +
+//                "from WildtypeExpressionExperiment wee join wee.startStage ss " +
+//                "where wee.gene.zdbID=:markerZdbId " +
+//                "order by ss.hoursStart asc " +
+//                " ";
+        String hql = " select er.startStage " +
+                "FROM " +
+                "ExpressionResult er " +
+                " join er.expressionExperiment ee " +
+                " join ee.genotypeExperiment ge " +
+                " join ge.genotype g " +
+                " WHERE " +
+                "ee.gene.zdbID = :zdbID " +
+                "AND er.expressionFound = 't' " +
+                "AND ge.standard = 't' " +
+                "AND g.wildtype= 't' " +
+                "order by er.startStage.hoursStart asc "
+                ;
+        DevelopmentStage startStage = (DevelopmentStage) HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setString("zdbID", zdbID)
+                .setMaxResults(1)
+                .uniqueResult();
+
+//        String hql2 = " select es " +
+//                "from WildtypeExpressionExperiment wee join wee.endStage es " +
+//                "where wee.gene.zdbID=:markerZdbId " +
+//                "order by es.hoursEnd desc " +
+//                " ";
+        String hql2 = " select er.endStage  " +
+                "FROM " +
+                "ExpressionResult er " +
+                " join er.expressionExperiment ee " +
+                " join ee.genotypeExperiment ge " +
+                " join ge.genotype g " +
+                " WHERE " +
+                "ee.gene.zdbID = :zdbID " +
+                "AND er.expressionFound = 't' " +
+                "AND ge.standard = 't' " +
+                "AND g.wildtype= 't' " +
+                "order by er.endStage.hoursEnd desc  "
+                ;
+//        String sql2 = "select first 1 se.stg_zdb_id,ss.stg_name, ss.stg_name_ext  " +
+//                "from wildtype_expression_experiment wee " +
+//                "join stage se on wee.wee_end_stage_zdb_id=se.stg_zdb_id " +
+//                "where wee.wee_marker_zdb_id=:markerZdbId " +
+//                "order by se.stg_hours_end desc" +
+//                " ";
+        DevelopmentStage endStage = (DevelopmentStage) HibernateUtil.currentSession()
+                .createQuery(hql2)
+                .setString("zdbID", zdbID)
+                .setMaxResults(1)
+                .uniqueResult();
+
+        stageExpressionPresentation.setStartStage(startStage);
+        stageExpressionPresentation.setEndStage(endStage);
+
+        return stageExpressionPresentation;
+    }
+
 
 }

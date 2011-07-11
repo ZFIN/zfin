@@ -63,7 +63,8 @@
                 root directory.  Deploys it into an app server root directory specified by the 
                 environment variable TAGUNIT_HOME
             blastHeuristics:  Runs full blast heuristics to determine the optimal blast setting.
-	    runBlasttests: Runs all blast tests; have to have ssh keys to genomix set up in order to run these from ant deploy.
+	        runBlasttests: Runs all blast tests; have to have ssh keys to genomix set up in order to run these from ant deploy.
+            performancetests-quiet: Runs performance tests sweet and dumps to file
         </echo>
     </target>
 

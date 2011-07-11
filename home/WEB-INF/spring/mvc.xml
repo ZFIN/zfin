@@ -9,14 +9,16 @@
     <import resource="antibody.xml"/>
     <import resource="reno.xml"/>
     <import resource="developer-tools.xml"/>
-    <import resource="framework.xml"/>
-    <import resource="marker.xml"/>
     <import resource="blast.xml"/>
     <import resource="orthology.xml"/>
     <import resource="profile.xml"/>
-    <import resource="quicksearch.xml"/>
     <import resource="publication.xml"/>
+
+
+    <!--have to wait until the end to do these as they all will be mapped to their context / -->
     <import resource="webdriver.xml"/>
+    <import resource="framework.xml"/>
+    <import resource="quicksearch.xml"/>
     <import resource="mapper.xml"/>
 
 

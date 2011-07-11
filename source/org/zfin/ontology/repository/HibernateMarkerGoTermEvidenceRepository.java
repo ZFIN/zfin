@@ -6,10 +6,12 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.GafOrganization;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.ontology.Ontology;
 
 import java.util.List;
 
@@ -175,5 +177,42 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 .executeUpdate();
 
         return deleted;
+    }
+    @Override
+    public int getEvidenceForMarkerCount(Marker m) {
+        String sql = " select count(distinct mrkrgoev_term_zdb_id) " +
+                "          from marker_go_term_evidence " +
+                "         where mrkrgoev_mrkr_zdb_id = :markerZdbId   ";
+        return Integer.parseInt(HibernateUtil.currentSession()
+                .createSQLQuery(sql)
+                .setString("markerZdbId", m.getZdbID())
+                .uniqueResult().toString());
+    }
+
+    /**
+     *   select first 1 mrkrgoev_zdb_id, term_name, mrkrgoev_gflag_name
+        from term,go_evidence_code, marker_go_term_evidence
+        where mrkrgoev_mrkr_zdb_id = '$OID'
+          and mrkrgoev_term_zdb_id = term_zdb_id
+          and mrkrgoev_evidence_code = goev_code
+          and term_ontology = '$ontology'
+        order by goev_display_order, term_name
+     * @param m
+     * @return
+     */
+    @Override
+    public MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m,Ontology ontology) {
+        String hql = " select ev from MarkerGoTermEvidence ev " +
+                " where ev.marker = :marker " +
+                " and ev.goTerm.ontology = :ontology" +
+                " order by ev.evidenceCode.order, ev.goTerm.termName " +
+                " ";
+
+        return (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery(hql)
+        .setParameter("marker",m)
+        .setParameter("ontology",ontology)
+        .setMaxResults(1)
+        .uniqueResult();
+
     }
 }

@@ -3,23 +3,17 @@ package org.zfin.mutant.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 
 @Controller
 public class PhenotypeStatementDetailController  {

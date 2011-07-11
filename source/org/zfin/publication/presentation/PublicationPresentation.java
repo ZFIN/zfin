@@ -22,7 +22,11 @@ public class PublicationPresentation extends EntityPresentation {
     }
 
     public static String getLink(Publication publication, String linkContent) {
-        return getWebdriverLink(uri, publication.getZdbID(), linkContent);
+        return getLink(publication.getZdbID(), linkContent);
+    }
+
+    public static String getLink(String publicationZdbID, String linkContent) {
+        return getWebdriverLink(uri, publicationZdbID, linkContent);
     }
 
     public static String getWikiLink(Publication publication) {

@@ -1,8 +1,8 @@
 package org.zfin.ontology.repository;
 
-import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.ExpressionResult;
@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static junit.framework.Assert.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.*;
+
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -164,15 +162,15 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // choose a term that has both children and parents
         // size
         Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
-        assertThat(t.getChildTermRelationships().size(), greaterThan(4));
-        assertThat(t.getChildTermRelationships().size(), lessThan(10));
-        assertThat(t.getChildTerms().size(), greaterThan(4));
-        assertThat(t.getChildTerms().size(), lessThan(10));
-        assertEquals(t.getChildTermRelationships().size(), t.getChildTerms().size());
+        assertThat(t.getChildTermRelationships().size(),greaterThan(4));
+        assertThat(t.getChildTermRelationships().size(),lessThan(10));
+        assertThat(t.getChildTerms().size(),greaterThan(4));
+        assertThat(t.getChildTerms().size(),lessThan(10));
+        assertEquals(t.getChildTermRelationships().size(),t.getChildTerms().size());
         assertEquals(1, t.getParentTerms().size());
         assertEquals(1, t.getParentTermRelationships().size());
-        assertThat(t.getAllDirectlyRelatedTerms().size(), greaterThan(6));
-        assertThat(t.getAllDirectlyRelatedTerms().size(), lessThan(10));
+        assertThat(t.getAllDirectlyRelatedTerms().size(),greaterThan(6));
+        assertThat(t.getAllDirectlyRelatedTerms().size(),lessThan(10));
 
         for (TermRelationship tr : t.getChildTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermOne().getZdbID());

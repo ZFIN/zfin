@@ -251,7 +251,7 @@
                     </td>
                     <td>
                          <c:forEach var="construct" items="${genoFeat.feature.constructs}" varStatus="constructsloop">
-                            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-markerview.apg&OID=${construct.marker.zdbID}">${construct.marker.name}</a>
+                            <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
                             <c:if test="${!constructsloop.last}">
                                ,&nbsp;
                             </c:if>

@@ -5,8 +5,6 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.TreeSet;
 
 public class ExperimentPresentation extends EntityPresentation {

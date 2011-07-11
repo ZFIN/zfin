@@ -46,7 +46,7 @@ public class FeatureDetailController {
         }
         else{
             model.addAttribute(LookupStrings.ZDB_ID, featureZdbID) ;
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
     }
 
@@ -62,7 +62,7 @@ public class FeatureDetailController {
         Feature feature = featureRepository.getFeatureByID(zdbID);
         if (feature == null){
             model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
         FeatureBean form = new FeatureBean();
@@ -95,7 +95,7 @@ public class FeatureDetailController {
 
 
     private void retrievePubData(Feature fr, FeatureBean form) {
-        form.setNumPubs(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForFeature(fr, 0).getTotalCount());
+        form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
     }
 
     private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {

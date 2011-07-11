@@ -291,7 +291,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1;">
 	<tr>
 	<td>
-	  <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A></font>
+	  <font size=-1><A HREF="/action/marker/view/$2">$2</A></font>
 	</td>
 	<td>
 	  <font size=+1><b><i>$1</i></b></font> 
@@ -321,7 +321,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1 desc;">
 	
 	<b><i>$1</i></b> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/action/marker/view/$2">$2</A>
  	<br>
   <?/MISQL>
 
@@ -347,7 +347,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  order by 1 desc;">
 	
 	<b><i>$1</i></b> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/action/marker/view/$2">$2</A>
  	<br>
   <?/MISQL>
 
@@ -387,7 +387,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	<?MIVAR NAME=curorthosel_mrkr_zdb_id>$2<?/MIVAR>
 	
 	<b><i>$1</i></b> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
+	<A HREF="/action/marker/view/$2">$2</A>
  	<br><ul>
 	
 	<?MISQL SQL="

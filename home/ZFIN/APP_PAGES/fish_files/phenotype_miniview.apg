@@ -2,7 +2,7 @@
  file: phenotype_miniview.apg
  prefix: phmview_
  
- This page is webexploded from markerview.apg and genotypeview.apg (no longer used, since replaced by genotype detail JSP).
+ This page is webexploded from /action/marker/view and genotypeview.apg (no longer used, since replaced by genotype detail JSP).
  If called from gene or MO page, displays the mini format of Phenotype section. 
  If called from genotype page, output the figure and pub counts, link, and sql for affected entities.
 

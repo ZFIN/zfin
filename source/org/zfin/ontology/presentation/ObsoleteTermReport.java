@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.ConsiderTerm;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.ReplacementTerm;
@@ -12,7 +11,7 @@ import java.util.Set;
 /**
  * Basic report for entities that use obsoleted terms.
  */
-abstract public class ObsoleteTermReport {
+public abstract class ObsoleteTermReport {
 
     private List<ReplacementTerm> replacementTermList;
     private List<ConsiderTerm> considerTermList;

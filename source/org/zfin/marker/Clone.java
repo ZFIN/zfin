@@ -11,7 +11,7 @@ public class Clone extends Marker{
     private Integer rating;
     private ProblemType problem;
     private Set<ExpressionExperiment> expressionExperiments;
-    
+
     private Vector vector;
     private ProbeLibrary probeLibrary ;
     private String digest ;
@@ -20,6 +20,14 @@ public class Clone extends Marker{
     private String pcrAmplification ;
     private String cloneComments;
     private String cloningSite ;
+
+    public boolean isRnaClone(){
+        return
+                getMarkerType().getType().equals(Marker.Type.CDNA)
+                        ||
+                        getMarkerType().getType().equals(Marker.Type.EST)
+                ;
+    }
 
 
     public enum ProblemType{

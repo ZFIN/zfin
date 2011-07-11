@@ -121,7 +121,7 @@
     <?MIVAR>
       <TR>
         <TD colspan=4></TD>
-        <TD bgcolor=#cccccc colspan=$codeNum align=left><b>Evidence</b></TD>
+        <TD bgcolor=#cccccc colspan=$codeNum align=left><b>Evidence</b><a class="popup-link info-popup-link" href="/zf_info/oev.html"></a></TD>
       </TR>
     <?/MIVAR>
   
@@ -151,7 +151,7 @@
 	
       <?MIBLOCK INDEX=$item FOREACH=$oevcode>
         <?MIVAR>
-	<TD align=center><b><a href="/zf_info/oev.html">$item</a></b></TD>
+	<TD align=center><b>$item</b></TD>
         <?/MIVAR>         
       <?/MIBLOCK>
     </TR>  

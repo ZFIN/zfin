@@ -59,7 +59,7 @@ http://<!--|DOMAIN_NAME|-->/images/darrow.gif
       <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-figview.apg&OID=OID#$2"><?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=$fxfigge_down_arrow><?/MIVAR>
-      <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
+      <?MIVAR NAME=fxfigge_gene_href><a href="/action/marker/view/$2"><?/MIVAR>
     <?/MIBLOCK>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>

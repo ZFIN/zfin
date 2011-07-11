@@ -275,68 +275,94 @@ public final class MicroarrayProcessor {
         // compugen section
         SoftParser defaultSoftParser = new DefaultGeoSoftParser();
 
-        // from fogbugz 5003 excel spreadsheet
-        // MWG Biotech
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL530", 7, null,
-                new String[]{"DRFRAMEFINDER", "empty", "control"}));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL531", 7, null,
-                new String[]{"DRFRAMEFINDER", "empty", "control"}));
 
         // affy
         newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL1319", 2,
                 new String[]{"Danio rerio"}, new String[]{"Control"}));
-
-        // agilent
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL6457", 8, null, new String[]{"ENSDART", "XM_", "XR_"}));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL6563", 4, null, new String[]{"ENSDART", "XM_", "XR_"}));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7244", 5));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7302", 5));
-
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4375", 11));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4481", 2, null, new String[]{"XM_"}));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3548", 5));
         newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5692", 2));
 
+        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3721", 2));
+        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL2715", 2));
+
+        // from fogbugz 5003 excel spreadsheet
+        // MWG Biotech
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL530", 7, null,
+//                new String[]{"DRFRAMEFINDER", "empty", "control"}));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL531", 7, null,
+//                new String[]{"DRFRAMEFINDER", "empty", "control"}));
+
+        // agilent
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL6457", 8, null, new String[]{"ENSDART", "XM_", "XR_"}));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL6563", 4, null, new String[]{"ENSDART", "XM_", "XR_"}));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7244", 5));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7302", 5));
+
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4375", 11));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4481", 2, null, new String[]{"XM_"}));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3548", 5));
+
         // Chou, academia sinica
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5182", 2));
+        // not in geo profiles
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5182", 2));
 
         // medical college of wisonsin
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7194", 7));
+//        not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7194", 7));
 
         // cincinnati children's hospital
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7338", 2));
+//        not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7338", 2));
 
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4518", 2));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL1743", 2));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4518", 2));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL1743", 2));
 
         // Webb, Hemholtz Zentrem Muenchen
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7801", 3));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7801", 3));
 
         // Bannister CSIRO
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7472", 3, new String[]{"dre|"}));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7472", 3, new String[]{"dre|"}));
 
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5675", 5));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3365", 5));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4603", 9));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4609", 4));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5675", 5));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3365", 5));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4603", 9));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4609", 4));
 
         // Garnett, Berkeley
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7343", 4));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7343", 4));
 
         // Zakrewiski, U of Leiden
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7735", 3));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7735", 3));
 
         // no data yet
 //            newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5724",3) );
 
         // Miller, U of O
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7556", 2));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL7556", 2));
 
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5720", 2));
+        // not in GEO
+//        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL5720", 2));
         // no data yet
 //            newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL4014",2) );
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL3721", 2));
-        newGEOAccessions.addAll(defaultSoftParser.parseUniqueNumbers("GPL2715", 2));
         logger.info("finished parsing microarray downloads: " + newGEOAccessions.size());
         return newGEOAccessions;
     }

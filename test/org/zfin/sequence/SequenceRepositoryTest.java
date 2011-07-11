@@ -7,13 +7,15 @@ import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -173,6 +175,104 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertTrue(markerTypes.size() == 10);
     }
 
+    @Test
+    public void getDBLinksForMarker(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List<DBLink> dblinks = sequenceRepository.getDBLinksForMarker(m.getZdbID(),ForeignDBDataType.SuperType.PROTEIN);
+        assertTrue(dblinks.size()>8);
+        assertTrue(dblinks.size()<20);
+    }
+
+    @Test
+    public void getNumberDBLinksForMarker(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int count = sequenceRepository.getNumberDBLinks(m);
+        assertTrue(count > 7);
+        assertTrue(count < 20);
+
+    }
+
+    @Test
+    public void getSummaryMarkerDBLinksForMarker(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List<DBLink> dbLinkList = sequenceRepository.getSummaryMarkerDBLinksForMarker(m);
+        assertThat(dbLinkList.size(),greaterThan(1));
+        assertThat(dbLinkList.size(),lessThan(5));
+
+    }
+
+    @Test
+    public void getDBLinksForMarkerAndDisplayGroup(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarkerAndDisplayGroup(m
+                ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE);
+        assertThat(dbLinkList.size(), greaterThan(5));
+        assertThat(dbLinkList.size(), lessThan(15));
+    }
+
+
+    @Test
+    public void getDBLinksForFirstRelatedMarker(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Collection<MarkerDBLink> dbLinkList = sequenceRepository.getDBLinksForFirstRelatedMarker(m
+                ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                ,MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT
+                ,MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT
+                ,MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+        );
+//        assertEquals(1, dbLinkList.size());
+//        assertEquals("ZDB-DBLINK-060130-74944",dbLinkList.iterator().next().getZdbID());
+        assertThat(dbLinkList.size(), greaterThan(0));
+        assertThat(dbLinkList.size(), lessThan(3));
+    }
+
+    @Test
+    public void getDBLinksForSecondRelatedMarker(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Collection<MarkerDBLink> dbLinkList = sequenceRepository.getDBLinksForSecondRelatedMarker(m
+                ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                ,MarkerRelationship.Type.CLONE_CONTAINS_GENE
+        );
+//        assertEquals(1, dbLinkList.size());
+//        assertEquals("ZDB-DBLINK-050218-1177",dbLinkList.iterator().next().getZdbID());
+        assertThat(dbLinkList.size(), greaterThan(0));
+        assertThat(dbLinkList.size(), lessThan(3));
+    }
+
+    @Test
+    public void getDBLinkAccessionsForMarkerOnly(){
+        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Set<String> accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+        assertThat(accessionNumbers.size(),greaterThan(2));
+        assertThat(accessionNumbers.size(),lessThan(7));
+
+        marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-1815");
+        accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+        assertThat(accessionNumbers.size(),equalTo(0));
+    }
+
+    @Test
+    public void getDBLinkAccessionsForMarkerAndEncoding(){
+        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-1815");
+        Set<String> accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
+        assertThat(accessionNumbers.size(),greaterThan(1));
+        assertThat(accessionNumbers.size(),lessThan(3));
+
+        marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
+        accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
+        accessionNumbers.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+        assertThat(accessionNumbers.size(),greaterThan(15));
+        assertThat(accessionNumbers.size(),lessThan(17));
+    }
+
+    @Test
+    public void getGeoCandidatesLight(){
+        Map<String,String> geoMap = sequenceRepository.getGeoAccessionCandidates();
+        assertNotNull(geoMap);
+        logger.info(geoMap.size());
+        assertThat(geoMap.size(), greaterThan(50000));
+        assertThat(geoMap.size(),  lessThan(500000));
+    }
 }
 
 

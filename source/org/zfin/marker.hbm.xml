@@ -258,7 +258,7 @@
         <!--<many-to-one name="species" column="probelib_species" class="org.zfin.Species"/>-->
         <many-to-one name="strain" column="probelib_strain_zdb_id" class="org.zfin.mutant.Genotype"/>
         <property name="species" column="probelib_species"/>
-        <many-to-one name="tissue" column="probelib_tissue_zdb_id" class="org.zfin.ontology.GenericTerm"/>
+        <many-to-one name="tissue" column="probelib_tissue_zdb_id" class="org.zfin.anatomy.AnatomyItem"/>
         <property name="url" column="probelib_url"/>
 
     </class>

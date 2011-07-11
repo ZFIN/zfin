@@ -1,6 +1,5 @@
 package org.zfin.expression;
 
-import org.bbop.swing.autocomplete.StringAlgorithmAutocompleteModel;
 import org.zfin.ontology.PostComposedEntity;
 
 /**

@@ -6,14 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
-
-import java.util.*;
 
 /**
  * Controller that serves meta information about the ontologies.

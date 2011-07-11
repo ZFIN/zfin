@@ -107,6 +107,11 @@
         <url-pattern>/action/ontology/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/marker/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>zfin</servlet-name>
         <servlet-class>org.zfin.framework.ZfinActionServlet</servlet-class>

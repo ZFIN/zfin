@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
@@ -234,10 +233,10 @@ public class EQReport {
             buffer.append("\t");
             buffer.append(phenotype.getExpressionExperiment().getAssay().getAbbreviation());
             buffer.append("\t");
-            buffer.append(phenotype.getSuperterm().getTermName());
-            if (phenotype.getSubterm() != null) {
+            buffer.append(phenotype.getSuperTerm().getTermName());
+            if (phenotype.getSubTerm() != null) {
                 buffer.append(" : ");
-                buffer.append(phenotype.getSubterm().getTermName());
+                buffer.append(phenotype.getSubTerm().getTermName());
             }
             buffer.append("\t");
             buffer.append(phenotype.getStartStage().getName());

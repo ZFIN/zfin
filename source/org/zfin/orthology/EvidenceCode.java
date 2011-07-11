@@ -8,6 +8,15 @@ import java.io.Serializable;
 public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
     private String code;
+    private Integer order;
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 
     public void setCode(String code) {
         this.code = code;

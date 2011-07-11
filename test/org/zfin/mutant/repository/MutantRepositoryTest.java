@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
@@ -319,6 +321,27 @@ public class MutantRepositoryTest {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnSecondaryTerms();
         assertNotNull(phenotypes);
         assertEquals(0, phenotypes.size());
+    }
+
+    @Test
+    public void getLineForMarker(){
+        String display = mutantRepository.getMutantLinesDisplay("ZDB-GENE-010606-1");
+        assertNotNull(display);
+    }
+
+    @Test
+    public void getAllelesForMarker(){
+        List<FeaturePresentationBean> featurePresentationBeans = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1");
+        assertTrue(featurePresentationBeans.size()>4);
+        assertTrue(featurePresentationBeans.size()<20);
+    }
+
+    @Test
+    public void getTransgenicLines(){
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-94");
+        List<String> links = mutantRepository.getTransgenicLines(m);
+        assertThat(links.size() , greaterThan(65));
+        assertThat(links.size() , lessThan(100));
     }
 
 }

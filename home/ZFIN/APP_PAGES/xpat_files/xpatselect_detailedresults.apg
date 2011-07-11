@@ -108,7 +108,7 @@ $xpdetres_imagesOnlyConstraint
 <table class="searchresults" style=" "> <!-- open detailed results table -->
   <caption class="searchresults"> 
     <?MIVAR> Expression Pattern Search Results for 
-       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_geneZdbId">$xpdetres_geneAbbrev</a> 
+       <a href="/action/marker/view/$xpdetres_geneZdbId">$xpdetres_geneAbbrev</a>
        <br> <small>($xpdetres_figCount $(IF,$(>,$xpdetres_figCount,1),figures,figure) with expression from $xpdetres_pubCount $(IF,$(>,$xpdetres_pubCount,1),publications, publication))</small>
        <?MIBLOCK COND="$(NXST,$xpdetres_imagesOnly)">        
         <?MIVAR>
@@ -198,7 +198,7 @@ order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_fu
           <?MIBLOCK COND="$(EC,$xpdetres_isDirectSubmission,t)">
            <?MIBLOCK COND="$(NE,NULL,$xpdetres_probeZdbId)">
             <?MIVAR>
-              [<a HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpdetres_probeZdbId">$xpdetres_probeAbbrev</a>]
+              [<a HREF="/action/marker/view/$xpdetres_probeZdbId">$xpdetres_probeAbbrev</a>]
             <?/MIVAR>
            <?/MIBLOCK>
           <?/MIBLOCK>

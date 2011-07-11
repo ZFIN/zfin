@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public class GenotypeExperiment {
     private String zdbID;
+    private boolean standard;
+    private boolean standardOrGenericControl;
     private Experiment experiment;
     private Genotype genotype;
     private Set<PhenotypeExperiment> phenotypeExperiments;
@@ -21,6 +23,22 @@ public class GenotypeExperiment {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public boolean isStandard() {
+        return standard;
+    }
+
+    public void setStandard(boolean standard) {
+        this.standard = standard;
+    }
+
+    public boolean isStandardOrGenericControl() {
+        return standardOrGenericControl;
+    }
+
+    public void setStandardOrGenericControl(boolean standardOrGenericControl) {
+        this.standardOrGenericControl = standardOrGenericControl;
     }
 
     public Experiment getExperiment() {

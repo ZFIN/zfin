@@ -1,7 +1,6 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.expression.spel.ExpressionState;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionResult;
@@ -9,7 +8,6 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 

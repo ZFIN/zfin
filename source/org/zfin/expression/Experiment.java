@@ -1,6 +1,5 @@
 package org.zfin.expression;
 
-import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;

@@ -24,8 +24,8 @@ create function get_mrkr_abbrev_html_link( mrkrZdbId varchar(50) )
   --  o get_marker_abbrev_html will return NULL if the ZDB ID does not exist.
   --    That will cause the entire return string to be converted to NULL,
   --    which is what we want.
-  --  o Currently (2005/04) all marker types are displayed using 
-  --    aa-markerview.apg, and therefore we hardcode that below.  If thes
+  --  o Currently (2011/05) all marker types are displayed using
+  --    /action/marker/view, and therefore we hardcode that below.  If thes
   --    ever changes and different marker types have different display pages
   --    then change this code to get the view app page from the zdb_object_type
   --    table.

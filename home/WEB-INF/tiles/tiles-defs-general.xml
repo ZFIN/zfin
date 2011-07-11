@@ -13,6 +13,10 @@
         <put-attribute name="body" value="/WEB-INF/jsp/wiki/{1}.jsp"/>
     </definition>
 
+    <definition name="*.jsp" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp"/>
+    </definition>
+
     <!--marker definitions-->
     <definition name="marker/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>

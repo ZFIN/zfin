@@ -26,7 +26,7 @@ public interface AntibodyRepository {
      * @param zdbID primary key
      * @return antibody
      */
-    public Antibody getAntibodyByID(String zdbID);
+    Antibody getAntibodyByID(String zdbID);
 
     /**
      * Retrieve an antibody by ID for displaying on the detail page.
@@ -35,7 +35,7 @@ public interface AntibodyRepository {
      * @param zdbID primary key
      * @return antibody
      */
-    public Antibody getAntibodyByZdbID(String zdbID);
+    Antibody getAntibodyByZdbID(String zdbID);
 
     /**
      * Search for antibodies with given ab parameters and given labeling.
@@ -43,7 +43,7 @@ public interface AntibodyRepository {
      * @param antibody Antibody with search parameters.
      * @return list of antibodies
      */
-    public List<Antibody> getAntibodies(AntibodySearchCriteria antibody);
+    List<Antibody> getAntibodies(AntibodySearchCriteria antibody);
 
     /**
      * Retrieve the total number of records.
@@ -51,7 +51,7 @@ public interface AntibodyRepository {
      * @param antibodySearchCriteria antibody criteria
      * @return integer
      */
-    public int getNumberOfAntibodies(AntibodySearchCriteria antibodySearchCriteria);
+    int getNumberOfAntibodies(AntibodySearchCriteria antibodySearchCriteria);
 
     /**
      * Retrieves all possible species for antibodies.
@@ -59,7 +59,7 @@ public interface AntibodyRepository {
      *
      * @return List of species
      */
-    public List<Species> getHostSpeciesList();
+    List<Species> getHostSpeciesList();
 
     /**
      * Retrieves all species that are actually used by at least one antibody.
@@ -67,7 +67,7 @@ public interface AntibodyRepository {
      *
      * @return List of species
      */
-    public List<Species> getUsedHostSpeciesList();
+    List<Species> getUsedHostSpeciesList();
 
     /**
      * Retrieves all species used as an immunogen for antibodies.
@@ -75,7 +75,7 @@ public interface AntibodyRepository {
      *
      * @return List of species
      */
-    public List<Species> getImmunogenSpeciesList();
+    List<Species> getImmunogenSpeciesList();
 
     /**
      * Retrieve the number of antibodies found for a given ao term.
@@ -118,7 +118,7 @@ public interface AntibodyRepository {
      * @param aoTerm   ao term
      * @return list of figures
      */
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm);
+    List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm);
 
     /**
      * Retrieve distinct publications for given antibody and ao term that have

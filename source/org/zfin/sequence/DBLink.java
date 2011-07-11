@@ -10,6 +10,7 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.Origination;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -55,40 +56,48 @@ public abstract class DBLink implements EntityAttribution {
     public List<Database> getBlastableDatabases() {
 
         List<Database> blastableDatabases = referenceDatabase.getOrderedRelatedBlastDB();
-        for (int i = 0; i < blastableDatabases.size(); i++) {
-            Database database = blastableDatabases.get(i);
+
+        for (Iterator<Database> iterator = blastableDatabases.iterator() ;
+             iterator.hasNext() ;
+                ) {
+            Database database = iterator.next();
             if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.RNA) {
                 // only ensembl and megablast allowed for large values
                 if (length != null && length > 25000
                         &&
                         (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                                ||
+                                &&
                                 database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
                         )
                         ) {
-                    blastableDatabases.remove(i);
+                    iterator.remove();
+//                    blastableDatabases.remove(i);
                 } else
                     // don't have megablast for small values
                     if (length != null && length <= 25000 && database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST) {
-                        blastableDatabases.remove(i);
+                        iterator.remove();
+//                        blastableDatabases.remove(i);
                     }
             } else if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.GENOMIC) {
                 // only megablast for very large
                 if (length != null && length > 200000 && database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST) {
-                    blastableDatabases.remove(i);
+                    iterator.remove();
+//                    blastableDatabases.remove(i);
                 }
                 // only megablast and ensembl for medium
                 else if (length != null && length <= 200000 && length > 25000 &&
                         (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                                ||
+                                &&
                                 database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
                         )
                         ) {
-                    blastableDatabases.remove(i);
+                    iterator.remove();
+//                    blastableDatabases.remove(i);
                 } else
                     // don't have megablast for small values
                     if (length != null && length <= 25000 && database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST) {
-                        blastableDatabases.remove(i);
+                        iterator.remove();
+//                        blastableDatabases.remove(i);
                     }
             }
             // do we need to handle other types?

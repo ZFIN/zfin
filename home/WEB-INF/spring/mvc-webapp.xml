@@ -15,6 +15,8 @@
     <context:component-scan base-package="org.zfin.mutant.presentation"/>
     <context:component-scan base-package="org.zfin.ontology.presentation"/>
     <context:component-scan base-package="org.zfin.wiki.presentation"/>
+    <context:component-scan base-package="org.zfin.marker.presentation"/>
+    <context:component-scan base-package="org.zfin.webdriver.presentation"/>
     <mvc:annotation-driven/>
 
 </beans>
