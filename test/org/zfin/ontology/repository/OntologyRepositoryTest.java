@@ -322,7 +322,9 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
-    @Test
+    // This is a normal condition following an ontology update in which doug receives an email
+    // when this condition occurs anyway.
+//    @Test
     public void getGoEvidenceOnSecondaryTerms() {
         List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
         assertEquals(0,term.size());
