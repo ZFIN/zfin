@@ -91,6 +91,11 @@ public class MicroarrayWebserviceJob implements Job {
 
                 // TODO: email error
             }
+            finally {
+                if(HibernateUtil.currentSession().isOpen()){
+                    HibernateUtil.currentSession().close();
+                }
+            }
 
 
 
