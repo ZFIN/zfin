@@ -119,6 +119,7 @@ a new or updated existing pub
     <?MIVAR NAME=$editpub_jrnl_abbrev><?/MIVAR>
     <?MIVAR NAME=$editpub_pub_volume><?/MIVAR>
     <?MIVAR NAME=$editpub_pub_pages><?/MIVAR>
+    <?MIVAR NAME=$pub_jtype><?/MIVAR>
 
     <big>The following nine pieces of information are <B>REQUIRED</B> to create the a new PUBLICATION record:</big>
   <?/MIBLOCK>
