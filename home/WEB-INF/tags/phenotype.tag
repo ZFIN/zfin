@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%-- Display of marker relationships in a table --%>
@@ -16,7 +15,7 @@
     <c:set var="title" value="PHENOTYPE <a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a>"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty bean and bean.numPublications>0}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
@@ -50,10 +49,6 @@
         <tr>
             <td class="data-label"><b>Observed&nbsp;in:</b></td>
             <td>
-                    <%--<c:forEach var="entry" items="${bean.anatomy}">--%>
-                    <%--${entry.link}--%>
-                    <%--&lt;%&ndash;${entry.display}&ndash;%&gt;--%>
-                    <%--</c:forEach>--%>
                 <zfin2:toggledPostcomposedList expressionResults="${bean.anatomy}"
                                                maxNumber="4"
                         />
@@ -61,5 +56,5 @@
         </tr>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

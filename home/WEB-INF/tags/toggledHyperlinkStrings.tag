@@ -1,17 +1,6 @@
 <%--
- This tag creates a list of hyperlink for a list of entities.
- At a minimum, they must be supported by CreateLinkTag.java,
- to do attribution as well, they need to be supported by AttributionTag.java.
-
- If the list is bigger than a given maximum number we only display
- the max number of terms, add the total number and offer a link to expand to
- see the total list.
-
- Parameters:
-   collection: the object that holds all link terms
-   maxNumber:  the max number of terms to display for the short version
-   id:   A unique span ID, should be the zdbID of the entity being listed.
-
+Similar to toggledHypelinkList, but the collection is a collection of strings that are displayed directly.
+Also, we provide a suffix so that we can change the display easily.
 --%>
 
 <%@ tag body-content="scriptless" %>

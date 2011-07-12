@@ -6,11 +6,6 @@
 
 <tiles-definitions>
 
-    <definition name="antibody-detail.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Antibody: "/>
-        <put-attribute name="body" value="/WEB-INF/jsp/antibody/antibody_detail.jsp"/>
-    </definition>
-
     <definition name="antibody-labeling-detail.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Antibody labeling detail: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/antibody/antibody_labeling_detail.jsp"/>

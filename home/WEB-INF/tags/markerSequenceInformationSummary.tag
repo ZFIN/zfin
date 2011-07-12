@@ -32,7 +32,7 @@
 
 
 
-<zfin2:subsectionMarker title="${title}" test="${!empty sequenceInfo && !empty sequenceInfo.dbLinks}" showNoData="true">
+<zfin2:subsection title="${title}" test="${!empty sequenceInfo && !empty sequenceInfo.dbLinks}" showNoData="true">
     <table class="summary rowstripes">
         <tr>
             <th width="25%">Type</th>
@@ -69,5 +69,5 @@
     <c:if test="${sequenceInfo.hasMoreLinks}">
         <a href="/action/marker/sequence/view/${marker.zdbID}">Sequence Information (all ${sequenceInfo.numberDBLinks})</a>
     </c:if>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

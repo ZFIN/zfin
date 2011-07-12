@@ -14,8 +14,9 @@ import org.hibernate.transform.ResultTransformer;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
+import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
@@ -1112,7 +1113,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult>) query.list();
     }
 
-    public List<ExpressionExperimentPresentation> getWildTypeExpressionExperiments(String zdbID){
+    public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID){
 //        String sql = " select distinct  " +
 //                "super_term.term_name as super_name,  super_term.term_ont_id as super_id,  " +
 //                "sub_term.term_name as sub_name,sub_term.term_ont_id as sub_id  " +
@@ -1143,11 +1144,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "and er.xpatres_expression_found='t' " +
                 "and g.geno_is_wildtype='t'";
 
-        return (List<ExpressionExperimentPresentation>) HibernateUtil.currentSession().createSQLQuery(sql2)
+        return (List<ExpressedStructurePresentation>) HibernateUtil.currentSession().createSQLQuery(sql2)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
-                        ExpressionExperimentPresentation eePresentation = new ExpressionExperimentPresentation();
+                        ExpressedStructurePresentation eePresentation = new ExpressedStructurePresentation();
                         eePresentation.setSuperTermName(tuple[0].toString());
                         eePresentation.setSuperTermOntId(tuple[1].toString());
 
@@ -1560,20 +1561,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public StageExpressionPresentation getStageExpressionForMarker(String zdbID) {
 
-//        StageResultTransformer srt = new StageResultTransformer();
-
         StageExpressionPresentation stageExpressionPresentation = new StageExpressionPresentation();
-//        String sql = " select first 1 ss.stg_zdb_id, ss.stg_name, ss.stg_name_ext " +
-//                "from wildtype_expression_experiment wee " +
-//                "join stage ss on wee.wee_start_stage_zdb_id=ss.stg_zdb_id " +
-//                "where wee.wee_marker_zdb_id=:markerZdbId " +
-//                "order by ss.stg_hours_start asc " +
-//                " ";
-//        String hql = " select ss " +
-//                "from WildtypeExpressionExperiment wee join wee.startStage ss " +
-//                "where wee.gene.zdbID=:markerZdbId " +
-//                "order by ss.hoursStart asc " +
-//                " ";
         String hql = " select er.startStage " +
                 "FROM " +
                 "ExpressionResult er " +
@@ -1593,11 +1581,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 .setMaxResults(1)
                 .uniqueResult();
 
-//        String hql2 = " select es " +
-//                "from WildtypeExpressionExperiment wee join wee.endStage es " +
-//                "where wee.gene.zdbID=:markerZdbId " +
-//                "order by es.hoursEnd desc " +
-//                " ";
         String hql2 = " select er.endStage  " +
                 "FROM " +
                 "ExpressionResult er " +
@@ -1611,12 +1594,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND g.wildtype= 't' " +
                 "order by er.endStage.hoursEnd desc  "
                 ;
-//        String sql2 = "select first 1 se.stg_zdb_id,ss.stg_name, ss.stg_name_ext  " +
-//                "from wildtype_expression_experiment wee " +
-//                "join stage se on wee.wee_end_stage_zdb_id=se.stg_zdb_id " +
-//                "where wee.wee_marker_zdb_id=:markerZdbId " +
-//                "order by se.stg_hours_end desc" +
-//                " ";
         DevelopmentStage endStage = (DevelopmentStage) HibernateUtil.currentSession()
                 .createQuery(hql2)
                 .setString("zdbID", zdbID)

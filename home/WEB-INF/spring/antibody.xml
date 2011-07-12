@@ -10,6 +10,7 @@
                                 <prop key="/antibody/create">createAntibody</prop>
                                 <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
                 -->
+                <!--note that this is being redirected-->
                 <prop key="/antibody/detail">detailAntibody</prop>
                 <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
                 <prop key="/antibody/figure-summary">figureSummaryAntibody</prop>

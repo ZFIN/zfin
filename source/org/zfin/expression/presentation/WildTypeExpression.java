@@ -1,21 +1,19 @@
 package org.zfin.expression.presentation;
 
-import org.zfin.expression.repository.StageExpressionPresentation;
-
 import java.util.List;
 
 /**
  */
 public class WildTypeExpression {
 
-    private List<ExpressionExperimentPresentation> expressedStructures;
+    private List<ExpressedStructurePresentation> expressedStructures;
     private StageExpressionPresentation expressionPresentation;
 
-    public List<ExpressionExperimentPresentation> getExpressedStructures() {
+    public List<ExpressedStructurePresentation> getExpressedStructures() {
         return expressedStructures;
     }
 
-    public void setExpressedStructures(List<ExpressionExperimentPresentation> expressedStructures) {
+    public void setExpressedStructures(List<ExpressedStructurePresentation> expressedStructures) {
         this.expressedStructures = expressedStructures;
     }
 

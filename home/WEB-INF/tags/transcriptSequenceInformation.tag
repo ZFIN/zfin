@@ -31,7 +31,7 @@
 
 
 
-<zfin2:subsectionMarker title="${title}" test="${!empty sequenceInfo and !empty sequenceInfo.dbLinks }" showNoData="true">
+<zfin2:subsection title="${title}" test="${!empty sequenceInfo and !empty sequenceInfo.dbLinks }" showNoData="true">
     <table class="summary rowstripes">
             <tr>
                 <th width="25%">Type<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
@@ -73,5 +73,5 @@
                 <c:set var="lastType" value="${dblink.referenceDatabase.foreignDBDataType.dataType}"/>
             </c:forEach>
         </table>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

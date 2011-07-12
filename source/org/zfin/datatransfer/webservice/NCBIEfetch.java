@@ -20,10 +20,8 @@ public class NCBIEfetch {
 
     private final static Logger logger = Logger.getLogger(NCBIEfetch.class);
 
-    //    private final static String NUCLEOTIDE_DB = "nuccore" ;
-//    private final static String NUCLEOTIDE_DB = "nucleotide";
     private final static String POLYPEPTIDE_DB = "protein";
-    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
+//    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
 
 
     /**
@@ -209,14 +207,7 @@ public class NCBIEfetch {
             EUtilsServiceStub.DocSumType[] docTypes = summaryResult.getDocSum();
             for(EUtilsServiceStub.DocSumType docType : docTypes){
                 // get outer ioccurenct
-//                EUtilsServiceStub.ItemType localItemType = docType.getItem()[0];
                 for(EUtilsServiceStub.ItemType itemType   : docType.getItem()){
-//                    if(itemType.getName().equals("geneName")){
-//
-//                    }
-//                    if(itemType.getName().equals("GBACC")){
-//
-//                    }
                     if(itemType.getName().equals("GPL")){
                         platforms.add(itemType.getItemContent());
                     }

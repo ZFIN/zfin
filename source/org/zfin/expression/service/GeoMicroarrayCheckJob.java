@@ -17,18 +17,6 @@ public class GeoMicroarrayCheckJob implements Runnable {
 //    @Autowired
     private ExpressionService expressionService;
 
-//    public static Set<String> convertDBLinks(Collection<DBLink> dbLinks) {
-//        // since it is a gene, we have to construct this with the abbreviation AND the RNA dblinks
-//        Set<String> accession = new HashSet<String>();
-//        for (DBLink dbLink : dbLinks) {
-//            if (dbLink.getReferenceDatabase().getForeignDBDataType().getDataType()
-//                    == ForeignDBDataType.DataType.RNA) {
-//                accession.add(dbLink.getAccessionNumber());
-//            }
-//        }
-//        return accession;
-//    }
-
     public GeoMicroarrayCheckJob(){ }
 
     @Override

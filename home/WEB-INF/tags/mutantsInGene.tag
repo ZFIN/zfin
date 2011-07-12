@@ -14,7 +14,7 @@
     <c:set var="title" value="MUTANTS AND TARGETED KNOCKDOWNS"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty bean and (!empty bean.alleles or !empty bean.knockdownReagents)}" showNoData="true">
     <table class="summary horizontal-solidblock">
 
@@ -47,5 +47,5 @@
         </c:if>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

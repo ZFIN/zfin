@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * Controller class that serves the antibody labeling details page.
  */
 public class AntibodyLabelingDetailController extends AbstractCommandController {
-    private static final Logger LOG = Logger.getLogger(AntibodyDetailController.class);
+    private static final Logger LOG = Logger.getLogger(AntibodyLabelingDetailController.class);
 
     private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 

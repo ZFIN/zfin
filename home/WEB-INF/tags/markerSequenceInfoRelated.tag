@@ -6,10 +6,6 @@
 <%@ attribute name="dbLinks" type="java.util.List" rtexprvalue="true" required="true" %>
 
 
-
-
-
-<%--<span class="summaryTitle"><zfin:link entity="${marker}"/> Does something:</span>--%>
 <c:set var="title"><zfin:link entity="${marker}"/> ${title}</c:set>
 
 <c:if test="${!empty dbLinks}">

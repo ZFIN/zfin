@@ -15,7 +15,7 @@
     <c:set var="title" value="MARKER RELATIONSHIPS"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
@@ -31,9 +31,9 @@
         </c:if>
         <tr>
             <td class="data-label">
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"<i>" : ""}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"<span class=genedom>" : ""}
                     ${marker.abbreviation}
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"</i>" : ""}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"</span>" : ""}
                     ${entry.relationshipType}:</td>
             <td>
                 </c:if>
@@ -63,5 +63,5 @@ entry.relationshipType ne relationshipType
                 </c:forEach>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

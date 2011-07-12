@@ -15,16 +15,16 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller class that serves the antibody details page.
+ * @deprecated Please use AntibodyViewController instead.  This will be deleted.
  */
 public class AntibodyDetailController extends AbstractCommandController {
 
     public static final String ACCESS_URL = "/action/antibody/detail?antibody.zdbID=";
+    public static final String NEW_URL = "/action/marker/view/";
     public static final String ANTIBODY_DETAIL_PAGE_TILES = "antibody-detail.page";
     public static final String REDIRECT = "redirect:";
 
     private static final Logger LOG = Logger.getLogger(AntibodyDetailController.class);
-
-    private AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 
     public AntibodyDetailController() {
         setCommandClass(AntibodyBean.class);
@@ -33,36 +33,6 @@ public class AntibodyDetailController extends AbstractCommandController {
     protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         LOG.info("Start Antibody Detail Controller");
         AntibodyBean form = (AntibodyBean) command;
-        Antibody ab = antibodyRepository.getAntibodyByZdbID(form.getAntibody().getZdbID());
-        if (ab == null){
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(form.getAntibody().getZdbID());
-            logger.debug("trying to find a replaced zdbID for: " + form.getAntibody().getZdbID());
-            if(replacedZdbID!=null){
-                logger.debug("found a replaced zdbID for: " + form.getAntibody().getZdbID() + "->" + replacedZdbID);
-                form.getAntibody().setZdbID(replacedZdbID);
-                ab = antibodyRepository.getAntibodyByZdbID(form.getAntibody().getZdbID());
-            }
-        }
-        if(ab==null){
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, form.getAntibody().getZdbID());
-        }
-
-        return getModelAndViewForSingleAntibody(ab, false);
-    }
-
-    public static ModelAndView getModelAndViewForSingleAntibody(Antibody ab, boolean redirect) {
-        AntibodyBean form = new AntibodyBean();
-        AntibodyService abStat = new AntibodyService(ab);
-        form.setAntibodyStat(abStat);
-        form.setAntibody(ab);
-
-        ModelAndView modelAndView;
-        if (redirect) {
-            modelAndView = new ModelAndView(REDIRECT + ACCESS_URL + ab.getZdbID());
-        } else {
-            modelAndView = new ModelAndView(ANTIBODY_DETAIL_PAGE_TILES, LookupStrings.FORM_BEAN, form);
-            modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, ab.getName());
-        }
-        return modelAndView;
+        return new ModelAndView(REDIRECT+NEW_URL+form.getAntibody().getZdbID());
     }
 }

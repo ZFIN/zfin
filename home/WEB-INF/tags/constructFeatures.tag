@@ -14,7 +14,7 @@
     <c:set var="title" value="CONSTRUCT FEATURES"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
@@ -60,5 +60,5 @@ entry.relationshipType ne relationshipType
                 </c:forEach>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

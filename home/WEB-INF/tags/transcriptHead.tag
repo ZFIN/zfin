@@ -29,9 +29,6 @@
             </td>
         </tr>
     </c:if>
-    <%--<zfin2:subsectionMarker title="Associated with Genes"--%>
-    <%--inlineTitle="true"--%>
-    <%--test="${!empty formBean.relatedGenes}"  showNoData="true">--%>
     <tr><th>Associated with Genes:</th>
         <td>
         <zfin2:toggledHyperlinkList collection="${relatedGenes}"
@@ -41,7 +38,6 @@
         </td></tr>
 
     <zfin2:notesInDiv hasNotes="${transcript}"/>
-    <%--</zfin2:subsectionMarker>--%>
 </table>
 
 

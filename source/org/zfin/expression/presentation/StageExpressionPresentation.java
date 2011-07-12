@@ -1,4 +1,4 @@
-package org.zfin.expression.repository;
+package org.zfin.expression.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
 

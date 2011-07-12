@@ -5,7 +5,7 @@ import org.zfin.util.NumberAwareStringComparator;
 
 /**
  */
-public class ExpressionExperimentPresentation implements ProvidesLink, Comparable<ExpressionExperimentPresentation> {
+public class ExpressedStructurePresentation implements ProvidesLink, Comparable<ExpressedStructurePresentation> {
 
     private String superTermOntId ;
     private String superTermName ;
@@ -46,7 +46,7 @@ public class ExpressionExperimentPresentation implements ProvidesLink, Comparabl
     }
 
     @Override
-    public int compareTo(ExpressionExperimentPresentation eep) {
+    public int compareTo(ExpressedStructurePresentation eep) {
         if (eep == null) return -1 ;
         return comparator.compare(getSuperTermName(), eep.getSuperTermName());
     }

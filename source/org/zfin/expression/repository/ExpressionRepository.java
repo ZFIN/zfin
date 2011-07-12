@@ -2,8 +2,9 @@ package org.zfin.expression.repository;
 
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
+import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
@@ -310,5 +311,5 @@ public interface ExpressionRepository {
 
     StageExpressionPresentation getStageExpressionForMarker(String zdbID);
 
-    List<ExpressionExperimentPresentation> getWildTypeExpressionExperiments(String zdbID);
+    List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID);
 }

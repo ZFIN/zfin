@@ -20,7 +20,7 @@
     <c:set var="title" value="MARKER RELATIONSHIPS"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
@@ -33,5 +33,5 @@
         </tr>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

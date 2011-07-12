@@ -14,7 +14,7 @@
     </c:set>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                   test="${!empty links}" noDataText="No links to external site">
     <table class="summary">
         <tr>
@@ -32,4 +32,4 @@
             </c:forEach>
         </tr>
     </table>
-</zfin2:subsectionMarker>
+</zfin2:subsection>

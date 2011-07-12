@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
@@ -76,8 +77,10 @@ public class AntibodySearchController extends SimpleFormController {
             ModelAndView view = new ModelAndView(getSuccessView());
             view.addAllObjects(referenceData(request, command, errors));
             return view;
-        } else {
-            return AntibodyDetailController.getModelAndViewForSingleAntibody(antibodies.get(0), true);
+        } else { // equals 1
+            ModelAndView view = new ModelAndView("/action/marker/view/"+antibodies.get(0).getZdbID());
+            return  view ;
+//            return AntibodyDetailController.getModelAndViewForSingleAntibody(antibodies.get(0), true);
         }
     }
 

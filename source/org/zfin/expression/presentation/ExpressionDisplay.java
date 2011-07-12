@@ -10,6 +10,9 @@ import org.zfin.publication.Publication;
 import java.util.List;
 import java.util.Set;
 
+/**
+ *  TODO: add comments
+ */
 public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Marker expressedGene;
     private Set<Publication> publications;

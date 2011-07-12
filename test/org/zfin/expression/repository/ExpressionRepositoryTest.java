@@ -12,8 +12,9 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
-import org.zfin.expression.presentation.ExpressionExperimentPresentation;
+import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
+import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
@@ -350,7 +351,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getWildTypeExpressionForMarker(){
-        List<ExpressionExperimentPresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
+        List<ExpressedStructurePresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
         assertEquals(33, wees.size());
     }
 

@@ -17,7 +17,7 @@
 </c:if>
 
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty links}" showNoData="true" noDataText="No links to external sites">
     <table class="summary">
         <tr>
@@ -40,5 +40,5 @@
                 <%--${(!loop.first && loop.index%3==0 ? "</td>" : "")}--%>
         </tr>
     </table>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

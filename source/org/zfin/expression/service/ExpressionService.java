@@ -8,7 +8,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.expression.repository.StageExpressionPresentation;
+import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -201,9 +201,9 @@ public class ExpressionService {
         // wildtype stages
         // todo: when we handle genes, we need to get this
         WildTypeExpression wildTypeExpression = new WildTypeExpression();
-        List<ExpressionExperimentPresentation> expressionExperiments = expressionRepository.getWildTypeExpressionExperiments(marker.getZdbID());
-        Collections.sort(expressionExperiments);
-        wildTypeExpression.setExpressedStructures(expressionExperiments);
+        List<ExpressedStructurePresentation> expressedStructures = expressionRepository.getWildTypeExpressionExperiments(marker.getZdbID());
+        Collections.sort(expressedStructures);
+        wildTypeExpression.setExpressedStructures(expressedStructures);
 
         StageExpressionPresentation expressionPresentation = expressionRepository.getStageExpressionForMarker(marker.getZdbID());
         wildTypeExpression.setExpressionPresentation(expressionPresentation);

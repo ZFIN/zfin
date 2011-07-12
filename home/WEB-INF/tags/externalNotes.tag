@@ -4,7 +4,7 @@
 
 
 
-<zfin2:subsectionMarker noDataText="None Submitted" title="NOTES"
+<zfin2:subsection noDataText="None Submitted" title="NOTES"
                         test="${!empty notes and fn:length(notes)>0}">
     <table width=100% border=0 cellspacing=0>
         <tr bgcolor="#cccccc">
@@ -22,5 +22,5 @@
             </zfin:alternating-tr>
         </c:forEach>
     </table>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

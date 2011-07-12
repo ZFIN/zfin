@@ -44,22 +44,22 @@
 </c:if>
 
 
-<zfin2:subsectionMarker title="Non-Reference Strains"
+<zfin2:subsection title="Non-Reference Strains"
                   inlineTitle="true"
                   test="${!empty formBean.nonReferenceStrains}" showNoData="true">
     <zfin2:toggledHyperlinkList collection="${formBean.nonReferenceStrains}"
                                 id="nonRefererenceStrains"
                                 maxNumber="6"/>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 
 <%-- This section shows a flat list of related transcripts--%>
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
-<zfin2:subsectionMarker title="Related Transcripts" test="${!empty formBean.microRNARelatedTranscripts}"
+<zfin2:subsection title="Related Transcripts" test="${!empty formBean.microRNARelatedTranscripts}"
                   inlineTitle="true"  showNoData="true">
     <zfin2:toggledHyperlinkList collection="${formBean.microRNARelatedTranscripts}"
                                 id="microRNARelatedTranscripts"
                                 maxNumber="6"/>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 </c:if>
 
 <%-- This section shows boxes per gene.  One data structure or the other should get populated,

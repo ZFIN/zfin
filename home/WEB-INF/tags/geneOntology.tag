@@ -2,7 +2,7 @@
 
 <%-- Display of marker relationships in a table --%>
 
-<%@ attribute name="data" required="true" rtexprvalue="true" type="org.zfin.marker.presentation.GeneOntologyOnMarkerBean" %>
+<%@ attribute name="geneOntologyOnMarker" required="true" rtexprvalue="true" type="org.zfin.marker.presentation.GeneOntologyOnMarkerBean" %>
 
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
 <%@ attribute name="webdriverRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
@@ -13,8 +13,8 @@
     <c:set var="title" value="GENE ONTOLOGY"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
-                        test="${data.goTermCount>0}" showNoData="true">
+<zfin2:subsection title="${title}"
+                        test="${geneOntologyOnMarker.goTermCount>0}" showNoData="true">
 
     <table class="summary">
         <tr>
@@ -23,42 +23,42 @@
             <th>GO Term</th>
         </tr>
 
-        <c:if test="${!empty data.biologicalProcessEvidence}">
+        <c:if test="${!empty geneOntologyOnMarker.biologicalProcessEvidence}">
             <tr>
                 <td width="25%" nowrap="true">
-                        ${fn:split(data.biologicalProcessEvidence.goTerm.ontology.commonName, ':')[1]}
+                        ${fn:split(geneOntologyOnMarker.biologicalProcessEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${data.biologicalProcessEvidence.flag}
-                    <zfin:link entity="${data.biologicalProcessEvidence.goTerm}"/>
+                        ${geneOntologyOnMarker.biologicalProcessEvidence.flag}
+                    <zfin:link entity="${geneOntologyOnMarker.biologicalProcessEvidence.goTerm}"/>
 
                     (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
                             >more</a>)
                 </td>
             </tr>
         </c:if>
-        <c:if test="${!empty data.cellularComponentEvidence}">
+        <c:if test="${!empty geneOntologyOnMarker.cellularComponentEvidence}">
             <tr>
                 <td nowrap="true">
-                        ${fn:split(data.cellularComponentEvidence.goTerm.ontology.commonName, ':')[1]}
+                        ${fn:split(geneOntologyOnMarker.cellularComponentEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${data.cellularComponentEvidence.flag}
-                    <zfin:link entity="${data.cellularComponentEvidence.goTerm}"/>
+                        ${geneOntologyOnMarker.cellularComponentEvidence.flag}
+                    <zfin:link entity="${geneOntologyOnMarker.cellularComponentEvidence.goTerm}"/>
 
                     (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
                             >more</a>)
                 </td>
             </tr>
         </c:if>
-        <c:if test="${!empty data.molecularFunctionEvidence}">
+        <c:if test="${!empty geneOntologyOnMarker.molecularFunctionEvidence}">
             <tr>
                 <td nowrap="true">
-                        ${fn:split(data.molecularFunctionEvidence.goTerm.ontology.commonName, ':')[1]}
+                        ${fn:split(geneOntologyOnMarker.molecularFunctionEvidence.goTerm.ontology.commonName, ':')[1]}
                 </td>
                 <td>
-                        ${data.molecularFunctionEvidence.flag}
-                    <zfin:link entity="${data.molecularFunctionEvidence.goTerm}"/>
+                        ${geneOntologyOnMarker.molecularFunctionEvidence.flag}
+                    <zfin:link entity="${geneOntologyOnMarker.molecularFunctionEvidence.goTerm}"/>
                     (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
                             >more</a>)
                 </td>
@@ -67,10 +67,10 @@
 
     </table>
 
-    <c:if test="${data.goTermCount>0}">
+    <c:if test="${geneOntologyOnMarker.goTermCount>0}">
         <a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}
-    ">GO Terms (all ${data.goTermCount})</a>
+    ">GO Terms (all ${geneOntologyOnMarker.goTermCount})</a>
     </c:if>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

@@ -15,7 +15,7 @@
     <c:set var="title" value="ORTHOLOGY"/>
 </c:if>
 
-<zfin2:subsectionMarker title="${title}"
+<zfin2:subsection title="${title}"
                         test="${!empty data.evidenceCodes}" showNoData="true">
 
     <%--<table class="summary horizontal-solidblock" >--%>
@@ -110,5 +110,5 @@
         </c:if>
     </table>
 
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 

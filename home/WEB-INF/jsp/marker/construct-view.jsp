@@ -34,7 +34,7 @@
         title="CONSTRUCT FEATURES" />
 
 
-<zfin2:subsectionMarker title="TRANSGENIC LINES"
+<zfin2:subsection title="TRANSGENIC LINES"
                         test="${!empty formBean.transgenicLineLinks}" showNoData="true">
     <table class="summary horizontal-solidblock">
         <tr>
@@ -43,7 +43,7 @@
             </td>
         </tr>
     </table>
-</zfin2:subsectionMarker>
+</zfin2:subsection>
 
 
 <%--CITATIONS--%>

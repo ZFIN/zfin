@@ -12,6 +12,8 @@
     maxNumber:  the max number of terms to display for the short version
     id:   A unique span ID, should be the zdbID of the entity being listed.
 
+
+
  --%>
 
 <%@ tag body-content="scriptless" %>
