@@ -325,18 +325,18 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getGoEvidenceOnSecondaryTerms() {
         List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
-        assertTrue(term == null || term.size() == 0);
+        assertEquals(0,term.size());
     }
 
     @Test
     public void getExpressionsOnSecondaryTerms() {
         List<ExpressionResult> term = ontologyRepository.getExpressionsOnSecondaryTerms();
-        assertTrue(term == null || term.size() == 0);
+        assertEquals(0,term.size());
     }
 
     @Test
     public void getPhenotypesOnSecondaryTerms() {
         List<PhenotypeStatement> term = ontologyRepository.getPhenotypesOnSecondaryTerms();
-        assertTrue(term == null || term.size() == 0);
+        assertEquals(0,term.size());
     }
 }
