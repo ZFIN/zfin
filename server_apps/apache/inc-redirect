@@ -22,11 +22,11 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=30
 RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
 
-RewriteCond %{QUERY_STRING}     ^detail?antibody.zdbID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]
+RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/antibody/detail /action/marker/view/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^transcript-view?zdbID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]
+RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
 
 
 #aliases for ZFIN_jump
