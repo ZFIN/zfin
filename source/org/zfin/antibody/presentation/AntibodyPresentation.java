@@ -8,7 +8,7 @@ import org.zfin.framework.presentation.EntityPresentation;
  */
 public class AntibodyPresentation extends EntityPresentation {
 
-    private static final String uri = "antibody/detail?antibody.zdbID=";
+    private static final String uri = "marker/view/";
 
     /**
      * Generates a link to the antibody detail page.

@@ -11,7 +11,6 @@
                                 <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
                 -->
                 <!--note that this is being redirected-->
-                <prop key="/antibody/detail">detailAntibody</prop>
                 <prop key="/antibody/labeling-detail">labelingDetailAntibody</prop>
                 <prop key="/antibody/figure-summary">figureSummaryAntibody</prop>
                 <prop key="/antibody/search">searchAntibody</prop>
@@ -51,8 +50,6 @@
 
 
     </bean>
-
-    <bean name="detailAntibody" class="org.zfin.antibody.presentation.AntibodyDetailController"/>
 
 
     <bean name="labelingDetailAntibody" class="org.zfin.antibody.presentation.AntibodyLabelingDetailController"/>

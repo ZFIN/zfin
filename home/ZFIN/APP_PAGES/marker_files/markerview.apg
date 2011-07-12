@@ -37,38 +37,6 @@ for antibody: added meta redirect at the beginning and the end of the file.
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
-<?MICOMMENT>
-     If the $OID is an antibody zdbID, redirect to antibody details JSP.
-        ditto for transcript
-<?/MICOMMENT>
-<?MIBLOCK COND="$(>,$(POSITION,$OID,ATB),0)">
-   <html>
-      <head>
-   	    <?MIVAR>
-   	      <meta http-equiv="Refresh" content="0; url=/action/antibody/detail?antibody.zdbID=$OID">
-   	    <?/MIVAR>
-      </head>
-
-      <body>
-         <p/>
-         <h3>Redirecting to antibody details page: <?MIVAR><a href="/action/antibody/detail?antibody.zdbID=$OID">&nbsp;link</a><?/MIVAR></h3>
-      </body>
-    </html>
-<?MIELSE COND="$(>,$(POSITION,$OID,TSCRIPT),0)">
-       <html>
-      <head>
-   	    <?MIVAR>
-   	      <meta http-equiv="Refresh" content="0; url=/action/marker/transcript-view?zdbID=$OID">
-   	    <?/MIVAR>
-      </head>
-
-      <body>
-
-         <h3>Redirecting to transcript details page: <?MIVAR><a href="/action/marker/transcript-view?zdbID=$OID">&nbsp;link</a><?/MIVAR></h3>
-      </body>
-    </html>
-
-<?MIELSE>
 
 <HTML>
 <head>
@@ -2375,7 +2343,7 @@ union
 	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/action/antibody/publication-list?antibody.zdbID=$mrkrvw_antibody_id&orderBy=author>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
            <?/MIBLOCK>
 
-           <?MIVAR NAME=mrkrvw_antibody_display><A HREF=/action/antibody/detail?antibody.zdbID=$mrkrvw_antibody_id>$mrkrvw_antibody_name</A> $mrkrvw_antibody_pub<?/MIVAR>
+           <?MIVAR NAME=mrkrvw_antibody_display><A HREF=/action/marker/view/$mrkrvw_antibody_id>$mrkrvw_antibody_name</A> $mrkrvw_antibody_pub<?/MIVAR>
            <?MIBLOCK COND=$(EQ,$mrkrvw_antibody_list_firstItem,t)>
 	        <?MIVAR NAME=mrkrvw_antibody_display_list>$mrkrvw_antibody_display<?/MIVAR>
 	   <?MIELSE>
@@ -3206,5 +3174,4 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
 </HTML>
 
-<?/MIBLOCK>
 

@@ -148,10 +148,10 @@ We only want to display marker_rlation if there are multiple relations,
      ORDER BY mrkr_name_order;">
     <?MIBLOCK COND=$(EC,$fxfigab_display_option,anchor)>
       <?MIVAR NAME=$fxfigab_down_arrow>&nbsp;<a href="#$1"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border=0 title="Jump to Antibody data."></a><?/MIVAR>
-      <?MIVAR NAME=fxfigab_gene_href><a href="/action/antibody/detail?antibody.zdbID=$1"><?/MIVAR>
+      <?MIVAR NAME=fxfigab_gene_href><a href="/action/marker/view/$1"><?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=$fxfigab_down_arrow><?/MIVAR>
-      <?MIVAR NAME=fxfigab_gene_href><a href="/action/antibody/detail?antibody.zdbID=$1"><?/MIVAR>
+      <?MIVAR NAME=fxfigab_gene_href><a href="/action/marker/view/$1"><?/MIVAR>
     <?/MIBLOCK>
 
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>

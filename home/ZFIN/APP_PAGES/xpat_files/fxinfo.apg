@@ -157,7 +157,7 @@ EFFECTS
                    <?/MIBLOCK>
 <?MIBLOCK COND="$(NE,$fxinfo_atb,)">
                   <?MISQL SQL="select mrkr_name from marker where mrkr_zdb_id='$fxinfo_atb'">
-                   <td><?MIVAR><a href="/action/antibody/detail?antibody.zdbID=$fxinfo_atb">$1</a><?/MIVAR>  
+                   <td><?MIVAR><a href="/action/marker/view/$fxinfo_atb">$1</a><?/MIVAR>
                   <?/MISQL>                 
 <?MIELSE>
 <td></td>

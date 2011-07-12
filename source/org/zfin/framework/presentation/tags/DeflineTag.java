@@ -56,7 +56,7 @@ public class DeflineTag extends TagSupport {
 
     public String replaceMarkerWithLink(String defline) {
         String patternString = "(ZDB-[^\\s]+)";
-        String replacementString = "<a href=/action/marker/transcript-view?zdbID=$1>$1</a>";
+        String replacementString = "<a href=/action/marker/view/$1>$1</a>";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(defline);
         String output = matcher.replaceFirst(replacementString);

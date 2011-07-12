@@ -21,7 +21,6 @@
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
         <div id="<%=StandardDivNames.viewDiv%>"></div>
-        <%--<a href="/action/antibody/detail?antibody.zdbID=${formBean.marker.zdbID}">[View Antibody]</a>--%>
     </td></tr>
     <tr>
         <td>

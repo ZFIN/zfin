@@ -183,7 +183,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         antibodyNameString.append("[");
         antibodyNameString.append(antibody.getName());
         antibodyNameString.append("|");
-        antibodyNameString.append("http://zfin.org/action/antibody/detail?antibody.zdbID=");
+        antibodyNameString.append("http://zfin.org/action/marker/view/");
         antibodyNameString.append(antibody.getZdbID());
         antibodyNameString.append("]");
         antibodyNameString.append(" from the [ZFIN antibody database|http://zfin.org/action/antibody/search].");
@@ -342,7 +342,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             assaysTestedStringBuilder.append(" | ");
             assaysTestedStringBuilder.append(" from ");
             assaysTestedStringBuilder.append("[ZFIN curation|");
-            assaysTestedStringBuilder.append("http://zfin.org/action/antibody/detail?antibody.zdbID=");
+            assaysTestedStringBuilder.append("http://zfin.org/action/marker/view/");
             assaysTestedStringBuilder.append(antibody.getZdbID());
             assaysTestedStringBuilder.append("]");
             assaysTestedStringBuilder.append(" | ");

@@ -24,7 +24,7 @@ public class SequenceTest {
 
         int index2 =
                 outputDefline.indexOf(
-                        "<a href=/action/marker/transcript-view?zdbID=ZDB-TSCRIPT-081112-10003>ZDB-TSCRIPT-081112-10003</a>") ;
+                        "<a href=/action/marker/view/ZDB-TSCRIPT-081112-10003>ZDB-TSCRIPT-081112-10003</a>") ;
         assertEquals("indexes should be equal",index1,index2) ;
     }
 

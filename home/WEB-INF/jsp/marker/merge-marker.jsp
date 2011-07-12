@@ -32,7 +32,7 @@
         <tr>
             <td valign="top">
                 Merge <a target="_blank" class="external"
-                         href="/action/antibody/detail?antibody.zdbID=${formBean.zdbIDToDelete}">
+                         href="/action/marker/view/${formBean.zdbIDToDelete}">
                     ${formBean.markerToDeleteViewString}</a>
                     <%--<a target="_blank"  class="external"--%>
                     <%--href="/action/marker/marker-edit?zdbID=${formBean.zdbIDToDelete}">--%>

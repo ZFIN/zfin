@@ -472,10 +472,8 @@ public class SearchBean extends PaginationBean {
                viewPageUrl = "/action/genotype/genotype-detail?zdbID=" + theMatchId;
             } else if (theMatchId.startsWith("ZDB-ANAT")|| theMatchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
-            } else if (theMatchId.startsWith("ZDB-ATB")) {
-                viewPageUrl = "/action/antibody/detail?antibody.zdbID=" + theMatchId;
             } else {
-                viewPageUrl = "/" + webdriverLocation + "/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
+                viewPageUrl = "/action/marker/view/" + theMatchId;
             }
             returnResults += "<br><span class='best_match'>Exact Match: ";
             returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";

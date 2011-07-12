@@ -1,3 +1,5 @@
+RewriteEngine On
+
 #zirc "order this" redirects, I'm not sure if there are CDNAs or just ESTs...
 RedirectMatch /zirc-order/ZDB-EST-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-EST-$1
 RedirectMatch /zirc-order/ZDB-CDNA-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-CDNA-$1
@@ -12,3 +14,22 @@ Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.a
 #lab designation page
 Redirect  /zf_info/zfbook/lab_desig.html http://<!--|DOMAIN_NAME|-->/action/feature/line-designations
 
+
+# retired apg urls
+RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^detail?antibody.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^transcript-view?zdbID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]
+
+
+#aliases for ZFIN_jump
+RewriteRule ^/jump/(.*) /cgi-bin/ZFIN_jump?record=$1 [NC,PT]
+RewriteRule ^/id/(.*) /cgi-bin/ZFIN_jump?record=$1 [NC,PT]
+RewriteRule ^/cgi-bin/zfin_jump(.*) /cgi-bin/ZFIN_jump$1 [NC,PT]

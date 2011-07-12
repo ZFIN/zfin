@@ -144,7 +144,7 @@ EFFECTS
                        <?MIVAR NAME=$row_color>$row_color<?/MIVAR>
                    <?/MIBLOCK>
 
-                   <?MIVAR NAME=$fxinfo_mrkr_link><a name=<?MIVAR>$OID<?/MIVAR>></a><a href="/action/antibody/detail?antibody.zdbID=$OID">$fxinfo_absymbol</a><?/MIVAR>
+                   <?MIVAR NAME=$fxinfo_mrkr_link><a name=<?MIVAR>$OID<?/MIVAR>></a><a href="/action/marker/view/$OID">$fxinfo_absymbol</a><?/MIVAR>
 
                    <?MIBLOCK COND="$(NE,$fxinfo_lastmrkr,$fxinfo_mrkr_abbrev)">                        
                         <tr class="newgroup" 
