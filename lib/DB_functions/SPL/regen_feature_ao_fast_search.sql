@@ -384,11 +384,9 @@ Create dba function regen_feature_ao_fast_search()
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		
 		and fig_zdb_id = xpatfig_fig_zdb_id
 		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		   and genox_is_std_or_generic_control = 't'
-	
 		and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
@@ -415,5 +413,5 @@ Create dba function regen_feature_ao_fast_search()
 
 return 0;
 
-end function
+end function 
 
