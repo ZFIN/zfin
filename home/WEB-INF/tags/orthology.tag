@@ -70,7 +70,7 @@
                 <td>
                         ${orthologue.chromosome}
 
-                    <c:if test="${orthologue.position !=null}">
+                    <c:if test="${orthologue.positionValid}">
                         (${orthologue.position})
                     </c:if>
                 </td>
