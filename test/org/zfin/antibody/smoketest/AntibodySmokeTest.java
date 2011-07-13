@@ -131,7 +131,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
 
                 // check alias
                 HtmlSpan span = (HtmlSpan) page.getElementById("zn5");
-                assertEquals("zn5", span.getTextContent());
+                assertTrue(span.getTextContent().startsWith("zn5("));
 
                 // check host organism
                 span = (HtmlSpan) page.getElementById("host organism");
