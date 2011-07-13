@@ -15,7 +15,7 @@
         </th>
         <td>
             <c:forEach  var="markerAlias" items="${previousNames}" varStatus="loop">
-                <span id="${markerAlias}">${markerAlias.linkWithAttribution}</span>${(!loop.last ?", " : "")}
+                <span id="${markerAlias.alias}">${markerAlias.linkWithAttribution}</span>${(!loop.last ?", " : "")}
             </c:forEach>
         </td>
     </tr>

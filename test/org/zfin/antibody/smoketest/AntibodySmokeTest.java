@@ -122,7 +122,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
 
 
                 // Source: check ZIRC is one of them
-                HtmlAnchor sourceHyperlink = (HtmlAnchor) page.getElementById("ZDB-LAB-991005-53");
+                HtmlAnchor sourceHyperlink = page.getAnchorByHref("http://zebrafish.org/");
                 assertEquals("Zebrafish International Resource Center (ZIRC)", sourceHyperlink.getTextContent());
 
                 // check source link to lab detail
