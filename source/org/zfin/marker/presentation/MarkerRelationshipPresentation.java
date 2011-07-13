@@ -170,7 +170,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
     @Override
     public String getLink() {
-        if (markerType != null && markerType.equals("Gene")) {
+        if (markerType != null && markerType.toLowerCase().contains("gene")) {
             return "<i>" + link + "</i>";
         } else {
             return link;

@@ -15,7 +15,7 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
-                        test="${!empty relationships}" showNoData="true">
+                  test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
         <c:set var="relationshipType" value="notthesame"/>
@@ -30,7 +30,7 @@
         </c:if>
         <tr>
             <td class="data-label">
-                ${entry.mappedMarkerRelationshipType}
+                    ${entry.mappedMarkerRelationshipType}
             </td>
             <td>
                 </c:if>

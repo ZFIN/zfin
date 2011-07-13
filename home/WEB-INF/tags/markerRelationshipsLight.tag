@@ -31,9 +31,9 @@
         </c:if>
         <tr>
             <td class="data-label">
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"<span class=genedom>" : ""}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ||fn:startsWith(marker.zdbID,'ZDB-EFG')  ?"<span class=genedom>" : ""}
                     ${marker.abbreviation}
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ?"</span>" : ""}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') || fn:startsWith(marker.zdbID,'ZDB-EFG') ?"</span>" : ""}
                     ${entry.relationshipType}:</td>
             <td>
                 </c:if>
