@@ -4,6 +4,8 @@
 
  document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
  document.write('<LINK rel=stylesheet type="text/css" href="/css/header.css">'); 
+ document.write('<LINK rel=stylesheet type="text/css" href="/css/footer.css">'); 
+ document.write('<LINK rel=stylesheet type="text/css" href="/css/spiffycorners.css">'); 
 
 
  function randomUniqueID(prefix) {
