@@ -78,7 +78,7 @@ public class AntibodySearchController extends SimpleFormController {
             view.addAllObjects(referenceData(request, command, errors));
             return view;
         } else { // equals 1
-            ModelAndView view = new ModelAndView("/action/marker/view/"+antibodies.get(0).getZdbID());
+            ModelAndView view = new ModelAndView("redirect:/action/marker/view/"+antibodies.get(0).getZdbID());
             return  view ;
 //            return AntibodyDetailController.getModelAndViewForSingleAntibody(antibodies.get(0), true);
         }

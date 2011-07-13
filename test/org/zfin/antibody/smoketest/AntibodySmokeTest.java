@@ -62,7 +62,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//table[@class='data_manager']//td").get(0);
                 assertTrue(cell.getTextContent().contains(zdbID));
                 assertNotNull("find the ID on the page", page.getByXPath("//table[@class='data_manager']//td").get(0));
-                assertNotNull("renders the end of the page sources ", page.getByXPath("//a[@id='ZDB-LAB-991005-53']").get(0));
+                assertNotNull("renders the end of the page sources ", page.getByXPath("//a[@href='http://zebrafish.org/']").get(0));
                 assertNotNull("renders the end of the page citations ", page.getByXPath("//a[. ='CITATIONS']").get(0));
 
             }
@@ -102,7 +102,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
             try {
                 String uri = "/action/antibody/search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25&action=SEARCH";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
-                assertEquals("Antibody detail page", "Antibody: zn-5", page.getTitleText());
+                assertEquals("Antibody detail page", "ZFIN Antibody: zn-5", page.getTitleText());
                 // Fashena et al. publication: check that this reference is used
                 HtmlAnchor hyperlink = (HtmlAnchor) page.getElementById("ZDB-PUB-990507-16");
                 HtmlPage publicationPage = hyperlink.click();

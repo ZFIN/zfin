@@ -32,7 +32,7 @@ public class QuartzController {
         // TODO: should load via spring bean (once we are spring 3)
         // TODO: can allow asynchronous version with status updates (ie, processing)
         // TODO: change context to /quartz
-        if (jobString != null && false==jobString.equals("org.zfin.datatransfer.microarray.MicroarrayWebserviceJob")) {
+        if (jobString != null && jobString.equals("org.zfin.datatransfer.microarray.MicroarrayWebserviceJob")) {
             try {
                 logger.info("Attempting to run job ["+jobString+"]");
                 Job job = (Job) Class.forName(jobString).newInstance();
@@ -52,7 +52,7 @@ public class QuartzController {
             }
         }
         else{
-            logger.error("no job string");
+            logger.error("no job string or bad job string["+jobString+"]");
             return HttpStatus.SC_EXPECTATION_FAILED;
         }
 
