@@ -21,8 +21,8 @@
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
-<!--|GO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
-<!--|GO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
+<!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu ndunn\@uoregon.edu xshao\@cs.uoregon.edu
+<!--|GO_EMAIL_ERR|-->	ndunn\@uoregon.edu dhowe\@cs.uoregon.edu informix\@cs.uroegon.edu
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
@@ -66,7 +66,7 @@
 <!--|VALIDATION_EMAIL_XPAT|-->	informix\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	test/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	informix\@cs.uoregon.edu
-<!--|WIKI_HOST|-->	azraelwiki.zfin.org
+<!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	informix\@cs.uoregon.edu
 <!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
