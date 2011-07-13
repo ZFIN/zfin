@@ -20,7 +20,8 @@
 
 <?MISQL SQL="select WebExplode(object,'&hdr_showmotto=1&hdr_nomargins=1') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-<link rel="stylesheet" type="text/css" href="/css/zdbhome.css"> 
+<link rel="stylesheet" type="text/css" href="/css/zdbhome.css">
+<link rel="stylesheet" type="text/css" href="/css/spiffycorners.css">
 
  <div id="zdbhome-container">
 
