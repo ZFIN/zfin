@@ -2,6 +2,9 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Ontology-related namings.
  */
@@ -14,7 +17,7 @@ public enum OntologyDTO implements IsSerializable {
         }
     },
     // full GO ontology
-    GO(1, "GO", "cellular_component,molecular_function,biological_process", false) {
+    GO(1, "GO", "cellular_component,molecular_function,biological_process", true) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY;
@@ -163,6 +166,25 @@ public enum OntologyDTO implements IsSerializable {
         return null;
     }
 
+    public static OntologyDTO getOntologyByName(String name) {
+        for (OntologyDTO ontology : values()) {
+            if (ontology.getOntologyName().equals(name))
+                return ontology;
+        }
+        return null;
+    }
+
+    public List<OntologyDTO> getComposedOntologies(){
+        if(!composedOntologies)
+            return null;
+
+        String[] individualOntologies = ontologyName.split(",");
+        List<OntologyDTO> composedOntologies = new ArrayList<OntologyDTO>(individualOntologies.length);
+        for(String individualOntology: individualOntologies)
+            composedOntologies.add(getOntologyByName(individualOntology));
+        return composedOntologies;
+    }
+
     public static OntologyDTO getOntologyByDescriptor(String descriptorName) {
         for (OntologyDTO ontology : values()) {
             if (ontology.getOntologyName().equals(descriptorName))
@@ -197,5 +219,8 @@ public enum OntologyDTO implements IsSerializable {
         return (subtreeOntology != null && subtreeOntology.equals(ontology.getOntologyName()));
     }
 
+    public boolean isComposed() {
+        return composedOntologies;
+    }
 }
 

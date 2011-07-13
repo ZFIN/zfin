@@ -161,23 +161,22 @@ public class OntologyManager {
         logger.info("Finished loading all ontologies: took " + DateUtil.getTimeDuration(startTime));
     }
 
-    public static Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap){
+    public static Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap) {
 
         // pass two fills in the rest of the child / parent type info
-        for(TermDTO termDTO : termDTOMap.values()){
+        for (TermDTO termDTO : termDTOMap.values()) {
 
             // populate child
-            if(termDTO.getChildrenTerms()!=null){
-                for(TermDTO childTerm : termDTO.getChildrenTerms()){
-                    TermDTO cachedTerm = termDTOMap.get(childTerm.getZdbID()) ;
-                    if(cachedTerm == null){
+            if (termDTO.getChildrenTerms() != null) {
+                for (TermDTO childTerm : termDTO.getChildrenTerms()) {
+                    TermDTO cachedTerm = termDTOMap.get(childTerm.getZdbID());
+                    if (cachedTerm == null) {
                         cachedTerm = ontologyManager.getTermByID(childTerm.getZdbID());
                     }
 
-                    if(cachedTerm==null){
-                        logger.error("Term is not cached, will create bad cache: "+childTerm);
-                    }
-                    else{
+                    if (cachedTerm == null) {
+                        logger.error("Term is not cached, will create bad cache: " + childTerm);
+                    } else {
                         childTerm.shallowCopyFrom(cachedTerm);
                     }
                 }
@@ -185,30 +184,27 @@ public class OntologyManager {
 
 
             // populate parent term
-            if(termDTO.getParentTerms()!=null){
-                for(TermDTO parentTerm : termDTO.getParentTerms()){
+            if (termDTO.getParentTerms() != null) {
+                for (TermDTO parentTerm : termDTO.getParentTerms()) {
                     // for the purpose of working with anatomy, the stage parent is not always in the ontology
-                    TermDTO cachedTerm = termDTOMap.get(parentTerm.getZdbID()) ;
-                    if(cachedTerm == null){
+                    TermDTO cachedTerm = termDTOMap.get(parentTerm.getZdbID());
+                    if (cachedTerm == null) {
                         cachedTerm = ontologyManager.getTermByID(parentTerm.getZdbID());
                     }
 
-                    if(cachedTerm==null){
-                        logger.error("Term is not cached, will create bad cache: "+parentTerm);
-                    }
-                    else{
+                    if (cachedTerm == null) {
+                        logger.error("Term is not cached, will create bad cache: " + parentTerm);
+                    } else {
                         parentTerm.shallowCopyFrom(cachedTerm);
 
                         // handle anatomy here
-                        if(parentTerm.getRelationshipType().equals(RelationshipType.START_STAGE.getDbMappedName())){
+                        if (parentTerm.getRelationshipType().equals(RelationshipType.START_STAGE.getDbMappedName())) {
                             StageDTO stageDTO = new StageDTO();
                             stageDTO.setZdbID(parentTerm.getZdbID());
                             stageDTO.setOboID(parentTerm.getOboID());
                             stageDTO.setName(parentTerm.getName());
                             termDTO.setStartStage(stageDTO);
-                        }
-                        else
-                        if(parentTerm.getRelationshipType().equals(RelationshipType.END_STAGE.getDbMappedName())){
+                        } else if (parentTerm.getRelationshipType().equals(RelationshipType.END_STAGE.getDbMappedName())) {
                             StageDTO stageDTO = new StageDTO();
                             stageDTO.setZdbID(parentTerm.getZdbID());
                             stageDTO.setOboID(parentTerm.getOboID());
@@ -522,7 +518,19 @@ public class OntologyManager {
      * @return term
      */
     public TermDTO getTermByID(String id, OntologyDTO ontology) {
-        Set<TermDTO> terms = ontologyTermDTOMap.get(ontology).get(id);
+        if (ontology == null)
+            return null;
+
+        Set<TermDTO> terms = null;
+        if (ontology.isComposed()) {
+            for (OntologyDTO ontologyDTO : ontology.getComposedOntologies()) {
+                terms = ontologyTermDTOMap.get(ontologyDTO).get(id);
+                if (terms != null)
+                    break;
+            }
+        } else
+            terms = ontologyTermDTOMap.get(ontology).get(id);
+
         if (terms != null && terms.size() > 0) {
             if (terms.size() != 1) {
                 logger.warn("multiple terms [" + terms.size() + "] returned for termID: " + id);
@@ -861,8 +869,8 @@ public class OntologyManager {
             serializeOntology(Ontology.QUALITY_QUALITIES);
         }
         if (ontology.equals(Ontology.MPATH)) {
-          initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
-          serializeOntology(Ontology.MPATH_NEOPLASM);
+            initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
+            serializeOntology(Ontology.MPATH_NEOPLASM);
         }
     }
 
