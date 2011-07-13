@@ -93,4 +93,11 @@ public class OrthologyPresentationRow {
             }
         }
     }
+
+    public boolean isPositionValid() {
+        if (position == null || position.equals("") || position.equals("-")) {
+            return false;
+        }
+        return true;
+    }
 }
