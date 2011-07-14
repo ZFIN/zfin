@@ -25,7 +25,7 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail
 RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/antibody/detail /action/marker/view/%1? [NC,R=301]
 
-RewriteCond %{QUERY_STRING}     ^transcript-view?zdbID=([\w-]+)$    [NC]
+RewriteCond %{QUERY_STRING}     ^zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
 
 
