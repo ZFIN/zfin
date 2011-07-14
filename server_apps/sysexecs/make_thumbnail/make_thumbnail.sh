@@ -1,4 +1,4 @@
-#!/local/bin/perl -wT
+#!/private/bin/perl -wT
 $ENV{PATH} = "/local/apps/netpbm/bin:/bin";
 $ARGV[0] =~  m/([A-Za-z\d\-\_\$\+\=\~\.\,\ \/]+)/;
 my $fullImageFile = $1;
