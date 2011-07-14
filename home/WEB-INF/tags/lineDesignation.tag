@@ -14,11 +14,17 @@
         alleleRowDiv.style.display = 'table-row' ;
         alleleDiv = document.getElementById('alleleDesignation'+num);
         alleleDiv.style.display = 'inline' ;
-         new Ajax.Updater('alleleDesignation'+num, '/action/feature/alleles/'+prefix, {Method: 'get'});
         alleleShowButton = document.getElementById('showAlleleLink'+num);
         alleleShowButton.style.display = 'none' ;
         alleleHideButton = document.getElementById('hideAlleleLink'+num);
         alleleHideButton.style.display = 'inline' ;
+
+        alleleDesignation = document.getElementById('alleleDesignation'+num);
+        alleleDesignation.style.display = 'inline' ;
+
+        jQuery.get( '/action/feature/alleles/'+prefix , {}, function(data){
+            document.getElementById('alleleDesignation'+num).innerHTML = data ;
+        });
     }
 
     function hideAlleles(num) {

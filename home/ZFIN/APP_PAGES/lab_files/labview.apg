@@ -248,7 +248,7 @@ select  fp.fp_institute_display
 <script src="/javascript/prototype.js" type="text/javascript"></script>
 <script type="text/javascript">
 function editPrefix(OID){
-   new Ajax.Updater('editPrefix', '/action/people/editLabPrefix?zdbID='+OID, {Method: 'get' });
+   jQuery('editPrefix').load('/action/people/editLabPrefix?zdbID='+OID);
 }
 </script>
 <?MICOMMENT>
@@ -398,7 +398,7 @@ select  fp.fp_prefix
     function showAlleles(labZdbID){
         alleleDiv = document.getElementById('alleleDesignation');
         alleleDiv.style.display = 'inline' ;
-        new Ajax.Updater('alleleDesignation', '/action/feature/features-for-lab/'+labZdbID, {Method: 'get'});
+        jQuery('#alleleDesignation').load('/action/feature/features-for-lab/'+labZdbID);
         alleleShowButton = document.getElementById('showAlleleLink');
         alleleShowButton.style.display = 'none' ;
         alleleHideButton = document.getElementById('hideAlleleLink');

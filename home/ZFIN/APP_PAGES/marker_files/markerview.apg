@@ -852,7 +852,8 @@ Only need to update clones, etc., which should be the only things that will have
           <?MIVAR>
           <?MICOMMENT>
           <script type="text/javascript">
-                    new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');
+                    <!--new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');-->
+            jQuery('#blastDropDown').load('/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');
            </script>
            <div id="blastDropDown"></div>
           <?/MICOMMENT>

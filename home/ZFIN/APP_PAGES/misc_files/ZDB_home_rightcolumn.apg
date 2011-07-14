@@ -215,7 +215,9 @@
      -->
 
        <script type="text/javascript">
-           new Ajax.Updater('news','/webapp/wiki/summary/news?length=2',{Method: 'get' });
+        jQuery.get( '/webapp/wiki/summary/news?length=2', {}, function(data){
+            document.getElementById('news').innerHTML = data ;
+        });
        </script>
 
        <div id="news"></div>

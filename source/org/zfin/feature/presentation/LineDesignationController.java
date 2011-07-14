@@ -104,7 +104,7 @@ public class LineDesignationController {
 
         model.addAttribute(LookupStrings.FORM_BEAN,allelesForPrefixBean) ;
 
-        return "feature/alleles-for-feature-prefix.page";
+        return "feature/alleles-for-feature-prefix.insert";
     }
 
     private void processCurrentLabs(List<FeatureLabEntry> featureLabEntries, Map<String,LabEntry> labEntries) {
