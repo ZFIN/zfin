@@ -1,4 +1,4 @@
-package org.zfin.marker.service;
+package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
