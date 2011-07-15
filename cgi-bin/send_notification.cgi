@@ -22,9 +22,9 @@ EOA
 
 read(STDIN, $raw_data, $ENV{CONTENT_LENGTH});
 
-$items = split('&', $raw_data);
-for ($i = 0; $i < $items; $i++) {
-  ($key,$value) = split('=', $_[$i]);
+@items = split(/&/, $raw_data);
+foreach $item (@items) {
+  ($key,$value) = split(/=/, $item);
   $value =~ tr/+/ /;
   $value =~ s/%(..)/pack("C", hex($1))/eg;
   $data{"$key"} = $value;
