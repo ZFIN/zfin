@@ -45,19 +45,21 @@ public class MatchingTermService {
                         ) {
                     matchingTermSet.add(new MatchingTerm(term, query));
                 } else if (term.isAliasesExist()) {
-                    // only add the first matching hit
+                    // add the best matching alias (levenshtein distance)
                     //
                     // if no hits are found?!?? , then just add the last one I guess.
 
 
                     String aliasToView = null;
-                    for (Iterator<String> termAliasIterator = term.getAliases().iterator();
-                         termAliasIterator.hasNext() && aliasToView == null;) {
-                        String alias = termAliasIterator.next();
+                    int levenshteinDistance = 10000;
+                    for (String alias : term.getAliases()) {
                         if (containsAllTokens(alias.toLowerCase(), termsToMatch)) {
-                            aliasToView = alias;
+                            int distance = StringUtils.getLevenshteinDistance(alias.toLowerCase(), query.toLowerCase());
+                            if (distance < levenshteinDistance) {
+                                aliasToView = alias;
+                                levenshteinDistance = distance;
+                            }
                         }
-
                     }
                     // if no hit found
                     if (aliasToView == null && term.getAliases() != null) {
@@ -90,7 +92,7 @@ public class MatchingTermService {
         Set<String> matchTokens = tokenizer.tokenize(matchTerm.toLowerCase().trim());
         for (String hit : hits) {
             boolean matches = false;
-            for (Iterator<String> iter = matchTokens.iterator(); iter.hasNext() && false == matches;) {
+            for (Iterator<String> iter = matchTokens.iterator(); iter.hasNext() && false == matches; ) {
                 if (iter.next().toLowerCase().startsWith(hit.toLowerCase())) {
                     matches = true;
                 }
@@ -138,20 +140,20 @@ public class MatchingTermService {
             matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO)));
         }
 
-        if(maximumNumberOfMatches>0 && matchingTermsForSet.size()>maximumNumberOfMatches){
-            Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query)) ;
-            int i = 0 ;
-            for(Iterator<MatchingTerm> iterator = matchingTermsForSet.iterator()   ;
-                iterator.hasNext() && i < maximumNumberOfMatches ; ){
-                matchingTerms.add(iterator.next()) ;
-                ++i ;
+        if (maximumNumberOfMatches > 0 && matchingTermsForSet.size() > maximumNumberOfMatches) {
+            Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
+            int i = 0;
+            for (Iterator<MatchingTerm> iterator = matchingTermsForSet.iterator();
+                 iterator.hasNext() && i < maximumNumberOfMatches; ) {
+                matchingTerms.add(iterator.next());
+                ++i;
             }
-            return matchingTerms ;
-        }
-        else{
-            return matchingTermsForSet ;
+            return matchingTerms;
+        } else {
+            return matchingTermsForSet;
         }
     }
+
     /**
      * Removes a given Term ID from set.
      * Needed to suppress 'normal' and 'abnormal' from the collection.
@@ -167,7 +169,7 @@ public class MatchingTermService {
             if (term.getTerm().getZdbID().equals(termID)) {
                 matchingTermsForSet.remove(term);
                 break;
-    }
+            }
         }
     }
 
