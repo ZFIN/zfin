@@ -148,7 +148,7 @@
         </and>
     </condition>
 
-    <condition property="iszfinonhelix">
+    <condition property="iszfinonkinetix">
         <and>
             <equals arg1="${DBNAME}" arg2="zfindb"/>
             <equals arg1="${INFORMIX_SERVER}" arg2="wildtype"/>
@@ -159,7 +159,7 @@
     <condition property="isalmostorproduction">
         <or>
             <equals arg1="${isalmost}" arg2="true"/>
-            <equals arg1="${iszfinonhelix}" arg2="true"/>
+            <equals arg1="${iszfinonkinetix}" arg2="true"/>
         </or>
     </condition>
 
@@ -198,7 +198,7 @@
         <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
         <echo message="isinformix:           ${isinformix}"/>
         <echo message="isalmost:             ${isalmost}"/>
-        <echo message="iszfinonhelix:        ${iszfinonhelix}"/>
+        <echo message="iszfinonkinetix:        ${iszfinonkinetix}"/>
         <echo message="isalmostorproduction: ${isalmostorproduction}"/>
         <echo message="isproduction:         ${isproduction}"/>
         <echo message="notproduction:        ${notproduction}"/>
