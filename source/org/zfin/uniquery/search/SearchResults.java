@@ -2,6 +2,7 @@ package org.zfin.uniquery.search;
 
 import org.apache.lucene.document.Document;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniquery.Indexer;
 import org.zfin.uniquery.presentation.SearchBean;
 
 import java.util.Iterator;
@@ -63,11 +64,11 @@ public class SearchResults {
                 String toBeReplaced = searchResultURL.substring(1, webdriver - 1);
                 searchResultURL = searchResultURL.replaceFirst(toBeReplaced, envWebdriverLoc);
             }
-
+            searchResultURL = Indexer.makeUrlSpecific(searchResultURL);
             htmlOutputBuffer.append("<p>\n");
             htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
             htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
-            htmlOutputBuffer.append("<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n");
+            htmlOutputBuffer.append("<font color='green' size='-2'>" + searchResultURL + "</font>\n");
             htmlOutputBuffer.append("<p>\n");
 
         }

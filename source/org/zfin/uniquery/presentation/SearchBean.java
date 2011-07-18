@@ -11,6 +11,7 @@ import org.apache.lucene.search.Searcher;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniquery.Indexer;
 import org.zfin.uniquery.SearchCategory;
 import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
@@ -386,7 +387,12 @@ public class SearchBean extends PaginationBean {
                     }
                 }
                 String envWebdriverLoc = WEBDRIVER_LOCATION;
+                // todo: next 2 lines are only for back-wards compatibility;
+                // will be removed after code is deployed to production.
                 searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
+                searchResultURL = searchResultURL.replaceFirst("eselsohr", envWebdriverLoc);
+                searchResultURL = Indexer.makeUrlSpecific(searchResultURL);
+
                 categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDisplayName() + "</b></a>";
 
             } else {

@@ -579,6 +579,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private void addToIndexer(WebPageSummary summary) {
         String url = summary.getUrl().toString();
         String uriName = summary.getUrlName();
+        uriName = makeUrlGeneric(uriName);
 
         Document doc = new Document();
         if (uriName != null) {
@@ -616,6 +617,16 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         }
     }
 
+    public static String makeUrlGeneric(String uriName) {
+        uriName = uriName.replace(ZfinPropertiesEnum.WEBDRIVER_LOC.value(), "WEBDRIVER_LOCATION");
+        return uriName;
+    }
+
+    public static String makeUrlSpecific(String uriName) {
+        uriName = uriName.replace("WEBDRIVER_LOCATION", ZfinPropertiesEnum.WEBDRIVER_LOC.value());
+        return uriName;
+    }
+
     /**
      * This procedure does two things:
      * (1) returns a list of all URLs in a webpage summary
@@ -630,7 +641,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         List<String> tmp_urls = new ArrayList<String>();
         summary.setBody(EntityPresentation.replaceSupTags(summary.getBody()));
         HTMLTokenizer ht = new HTMLTokenizer(new StringReader(summary.getBody()));
-        for (Enumeration e = ht.getTokens(); e.hasMoreElements();) {
+        for (Enumeration e = ht.getTokens(); e.hasMoreElements(); ) {
             Object obj = e.nextElement();
             if (obj instanceof TagToken) {
                 TagToken tag = (TagToken) obj;
@@ -658,7 +669,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                                 summary.setTitle(titleString.toString());
                                 break;
                             }
-                            if (internalTag.getName().equals("sup")&& !internalTag.isEndTag()) {
+                            if (internalTag.getName().equals("sup") && !internalTag.isEndTag()) {
                                 titleString.append(" [");
                                 obj = e.nextElement();
                                 if (obj instanceof TextToken)
@@ -722,8 +733,8 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         tmp_urls.toArray(summary.getUrls());
     }
 
-    public String stripSpecialCharacters(String text){
-        text = text.replaceAll("&nbsp;","");
+    public String stripSpecialCharacters(String text) {
+        text = text.replaceAll("&nbsp;", "");
         return text;
     }
 
