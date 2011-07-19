@@ -24,7 +24,7 @@
 #
 #
 # SMTWTFS  11:22pm   CURATOR SUPPORT: Nightly check for new publications.
-22 23 * * * /research/zcentral/www_homes/mirror/cgi-bin/publications_today.cgi
+#22 23 * * * /research/zcentral/www_homes/mirror/cgi-bin/publications_today.cgi
 #
 # 
 # SMTWT    after     Validate data
