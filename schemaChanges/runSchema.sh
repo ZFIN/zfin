@@ -1,2 +1,2 @@
 #!/bin/sh
-dbaccess -a $DBNAME schema.sql
+#dbaccess -a $DBNAME schema.sql

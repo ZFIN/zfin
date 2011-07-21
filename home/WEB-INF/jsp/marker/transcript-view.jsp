@@ -98,10 +98,8 @@
 <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
 
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
-<%--older link--%>
-<%--<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.summaryDBLinkDisplay}"/>--%>
 
-<zfin2:markerSummaryPages marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}" title="PROTEIN PRODUCTS" />
+<zfin2:markerSummaryDBLinkDisplay marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}" title="PROTEIN PRODUCTS" />
 
 <zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="SEQUENCE INFORMATION" showAllSequences="true"/>
 

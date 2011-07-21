@@ -2,11 +2,9 @@
 
 <%-- Display of marker relationships in a table --%>
 
-<%@ attribute name="webdriverPathFromRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
-<%@ attribute name="data" required="true" rtexprvalue="true" type="org.zfin.marker.presentation.OrthologyPresentationBean" %>
-
+<%@ attribute name="orthologyPresentationBean" required="true" rtexprvalue="true" type="org.zfin.marker.presentation.OrthologyPresentationBean" %>
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-
+<%@ attribute name="webdriverPathFromRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="title" required="false"%>
 
 
@@ -16,7 +14,7 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
-                        test="${!empty data.evidenceCodes}" showNoData="true">
+                        test="${!empty orthologyPresentationBean.evidenceCodes}" showNoData="true">
 
     <%--<table class="summary horizontal-solidblock" >--%>
     <table class="summary rowstripes" >
@@ -29,7 +27,7 @@
             <th>Symbol</th>
             <th>Chromosome (Position)</th>
             <th>Accession #</th>
-            <c:forEach var="evidenceCode" items="${data.evidenceCodes}">
+            <c:forEach var="evidenceCode" items="${orthologyPresentationBean.evidenceCodes}">
                 <th>
                         ${evidenceCode}
                 </th>
@@ -51,7 +49,7 @@
                     <%--no accession--%>
                 &nbsp;
             </td>
-            <c:forEach var="evidence" items="${data.evidenceCodes}">
+            <c:forEach var="evidence" items="${orthologyPresentationBean.evidenceCodes}">
                 <td style="vertical-align: middle;">
                     <img valign='center' src='/images/fill_green_ball.gif' border=0 height=10>
                 </td>
@@ -59,7 +57,7 @@
         </tr>
 
             <%--Human / Mouse / Fly Data--%>
-        <c:forEach var="orthologue" items="${data.orthologues}" varStatus="loop">
+        <c:forEach var="orthologue" items="${orthologyPresentationBean.orthologues}" varStatus="loop">
             <tr class=${loop.index%2==0 ? "even": "odd"}>
                 <td>
                     <b>${orthologue.species}</b>
@@ -81,7 +79,7 @@
                         </li>
                     </c:forEach>
                 </td>
-                <c:forEach var="evidenceCode" items="${data.evidenceCodes}">
+                <c:forEach var="evidenceCode" items="${orthologyPresentationBean.evidenceCodes}">
                     <td style="vertical-align: middle;">
                         <c:forEach var="evidence" items="${orthologue.evidenceCodes}">
                             ${ (evidence eq evidenceCode ?
@@ -99,8 +97,8 @@
                 <a href="/${webdriverPathFromRoot}?MIval=aa-orthoviewdetailed.apg&OID=${marker.zdbID}&abbrev=${marker.abbreviation}">
                     <b>Orthology Details</b>
                 </a>
-                <c:if test="${!empty data.notes and !empty data.notes[0]}">
-                <c:forEach var="note" items="${data.notes}">
+                <c:if test="${!empty orthologyPresentationBean.notes and !empty orthologyPresentationBean.notes[0]}">
+                <c:forEach var="note" items="${orthologyPresentationBean.notes}">
                     <a class="popup-link data-popup-link"
                        href="/action/marker/note/external/${marker.zdbID}"></a>
                     <%--${note}--%>

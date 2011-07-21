@@ -64,7 +64,6 @@
 
 <%--OTHER GENE/Marker Pages--%>
 <%--old page--%>
-<%--<zfin2:markerSummaryPages  marker="${formBean.marker}" links="${formBean.summaryDBLinkDisplay}"/>--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 
 <zfin2:mappingInformation mappedMarker="${formBean.mappedMarkerBean}"/>

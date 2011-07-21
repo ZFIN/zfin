@@ -27,7 +27,7 @@
 <zfin2:morpholinoHead marker="${formBean.marker}" markerBean="${formBean}" typeName="Morpholino" previousNames="${formBean.previousNames}"/>
 
 <%--// PHENOTYPE --%>
-<zfin2:phenotype bean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>

@@ -37,6 +37,3 @@
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
-
-
-<%--<zfin2:markerSummaryPages links="${formBean.otherLinks}" marker="${formBean.marker}"/>--%>
