@@ -151,7 +151,7 @@
     <condition property="iszfinonkinetix">
         <and>
             <equals arg1="${DBNAME}" arg2="zfindb"/>
-            <equals arg1="${INFORMIX_SERVER}" arg2="wildtype"/>
+            <equals arg1="${INFORMIX_SERVER}" arg2="whitebread"/>
             <equals arg1="${USER}" arg2="informix"/>
         </and>
     </condition>
