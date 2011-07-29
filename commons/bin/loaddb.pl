@@ -29,7 +29,7 @@
 #  >0  Errors were encountered.  Check error messages.
 #
 #
-# Note also, that this script will only run on helix if running as user
+# Note also, that this script will only run on kinetix if running as user
 #      informix.
 #
 # After running this script you must also make the postloaddb target.
@@ -518,7 +518,7 @@ sub checkDropExclude($) {
  
 
 #------------------------------------------------------------------------
-# Restarts apache.  This is not called on helix.
+# Restarts apache.  This is not called on kinetix.
 #
 # Params
 #  none
@@ -1006,7 +1006,7 @@ my $postLoadSqlFile = "$globalTmpDir/postLoad.sql";
 
 # Accept if on test, or if running on production as informix.
 
-if ($ENV{HOST} =~ /helix/ && $ENV{USER} ne "informix") {
+if ($ENV{HOST} =~ /kinetix/ && $ENV{USER} ne "informix") {
     die("Running on $ENV{HOST} not allowed unless logged in as informix.  " .
 	"This script has the potential to obliterate existing databases " .
 	"and this script will not risk it.");
@@ -1039,7 +1039,7 @@ mkdir($globalTmpDir, $dirPerms);
 $ENV{PDQPRIORITY} = "HIGH";    # Take as much as you can.
 
 
-if ($ENV{HOST} =~ /helix/) {
+if ($ENV{HOST} =~ /kinetix/) {
     $ENV{PSORT_NPROCS} = 4;    # 4 CPUs, suck it all up
 }
 else {
@@ -1049,7 +1049,7 @@ else {
     logMsg("stopping tomcat...");
     system("/private/ZfinLinks/Commons/bin/tomcat.sh stop");
 
-    if  ($ENV{HOST} =~ /embryonix/) {
+    if  ($ENV{HOST} =~ /zygotix/) {
 	$ENV{PSORT_NPROCS} = 3;    # 3 CPUs, leave a little for non-loaders
     }
     else {
@@ -1081,7 +1081,7 @@ if (! createDb($dbName, $schemaFile)) {
 		    logMsg("Enabling indexes, constraints, and triggers...");
 		    if (! postLoad($dbName, $postLoadSqlFile)) {
 		
-		      if ($ENV{HOST} !~ /helix/) {
+		      if ($ENV{HOST} !~ /kinetix/) {
 			  # restart apache here because sometimes between
 			  # the start of the load and here, people accidentally
 			  # access thier web pages
@@ -1092,7 +1092,7 @@ if (! createDb($dbName, $schemaFile)) {
 		      if (system("$globalBinDir/enableLogging.pl $dbName")) {
 			  logError("Failed to enable logging.");
 		      }
-		      if ($opt_b && $ENV{HOST} !~ /helix/) {
+		      if ($opt_b && $ENV{HOST} !~ /kinetix/) {
 			  print "creating developer blastdb copy";
 			  system("$ENV{TARGETROOT}/server_apps/DB_maintenance/makeDeveloperBlastDbs.sh");
 		      }
