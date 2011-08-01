@@ -44,7 +44,7 @@
                                 ${markerExpression.allExpressionData.singleFigure.link}
                             </c:when>
                             <c:otherwise>
-                            <a href="/${webdriverRoot}?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.abbreviation}&xpatsel_geneZdbId=${marker.zdbID}"
+                            <a href="/${webdriverRoot}?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.abbreviation}&searchtype=equals"
                                     >${markerExpression.allExpressionData.figureCount}
                                 figures
                                 </c:otherwise>
@@ -85,7 +85,9 @@
                                 </a>
                                 from <a
                                     href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${directlySubmittedExpression.publicationZdbID}">${directlySubmittedExpression.miniAuth}</a>
-                                [${directlySubmittedExpression.probeFeatureAbbrev}]
+                                <c:if test="${marker.markerType.type != 'EFG'  }">
+                                    [${directlySubmittedExpression.probeFeatureAbbrev}]
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>

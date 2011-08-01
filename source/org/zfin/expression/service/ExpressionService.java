@@ -39,6 +39,8 @@ public class ExpressionService {
 //    private static ReferenceDatabase geoDatabase ;
 //    private static ReferenceDatabase zfEspressoDatabase ;
 
+    private Set<String> thissePubs ;
+
     public ExpressionService() {
 //    static{
 //        geoDatabase = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GEO,
@@ -48,11 +50,15 @@ public class ExpressionService {
     }
 
     public Set<String> getThissePublicationZdbIDs() {
-        Set<String> pubZdbIDS = new HashSet<String>(5);
-        pubZdbIDS.add("ZDB-PUB-051025-1");
-        pubZdbIDS.add("ZDB-PUB-040907-1");
-        pubZdbIDS.add("ZDB-PUB-010810-1");
-        return pubZdbIDS;
+        if(thissePubs==null){
+            thissePubs = new HashSet<String>();
+            thissePubs.add("ZDB-PUB-051025-1");
+            thissePubs.add("ZDB-PUB-040907-1");
+            thissePubs.add("ZDB-PUB-010810-1");
+            thissePubs.add("ZDB-PUB-080227-22");
+            thissePubs.add("ZDB-PUB-080220-1");
+        }
+        return thissePubs;
     }
 
     public boolean isThisseProbe(Clone clone) {
@@ -72,6 +78,21 @@ public class ExpressionService {
             }
         }
         return false;
+    }
+
+    public DirectlySubmittedExpression getDirectlySubmittedExpressionEfg(Marker marker) {
+        // this is almost always 1
+        List<PublicationExpressionBean> pubList = expressionRepository.getDirectlySubmittedExpressionForEfg(marker);
+
+        // this is almost always 1, so not too expensive
+        for (PublicationExpressionBean publicationExpressionBean : pubList) {
+            publicationExpressionBean.setNumImages(expressionRepository.getImagesForEfg(publicationExpressionBean));
+        }
+
+        DirectlySubmittedExpression directlySubmittedExpression = new DirectlySubmittedExpression();
+        directlySubmittedExpression.setMarkerExpressionInstances(pubList);
+
+        return directlySubmittedExpression;
     }
 
     public DirectlySubmittedExpression getDirectlySubmittedExpressionGene(Marker marker) {
@@ -230,10 +251,13 @@ public class ExpressionService {
             allMarkerExpressionInstance.setSinglePublication(expressionRepository.getExpressionSinglePub(marker));
         }
         allMarkerExpressionInstance.setFigureCount(
-                expressionRepository.getExpressionFigureCountForEfg(
-                        marker));
+                expressionRepository.getExpressionFigureCountForEfg( marker));
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
 
+        // directly submitted
+        logger.info("setting directly submitted expression");
+        markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionEfg(marker));
+        logger.info("got directly submitted expression");
 
         return markerExpression;
     }

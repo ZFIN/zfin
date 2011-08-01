@@ -38,7 +38,10 @@ import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test the ExpressionRepository class.
@@ -339,6 +342,20 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         int imageCount = expRep.getImagesFromPubAndClone(publicationExpressionBean);
         assertTrue(imageCount>10);
         assertTrue(imageCount<20);
+    }
+
+    @Test
+    public void getImagesForEFG(){
+        PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+        // specifies Kaed
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-2") ;
+        int imageCount = expRep.getImagesForEfg(publicationExpressionBean);
+        assertThat(imageCount,greaterThan(1000));
+        assertThat(imageCount,lessThan(1500));
+
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-1") ;
+        imageCount = expRep.getImagesForEfg(publicationExpressionBean);
+        assertEquals(imageCount,0);
     }
 
     @Test

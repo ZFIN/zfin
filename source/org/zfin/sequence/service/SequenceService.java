@@ -38,7 +38,7 @@ public class SequenceService {
     public ReferenceDatabase getEntrezGeneHumanRefDB() {
         if (entrezGeneHumarnRefDB == null) {
             entrezGeneHumarnRefDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.ENTREZ_GENE,
+                    ForeignDB.AvailableName.GENE,
                     ForeignDBDataType.DataType.ORTHOLOGUE,
                     ForeignDBDataType.SuperType.ORTHOLOGUE,
                     Species.HUMAN);
@@ -50,7 +50,7 @@ public class SequenceService {
     public ReferenceDatabase getEntrezGeneMouseRefDB() {
         if (entrezGeneMouseRefDB == null) {
             entrezGeneMouseRefDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.ENTREZ_GENE,
+                    ForeignDB.AvailableName.GENE,
                     ForeignDBDataType.DataType.ORTHOLOGUE,
                     ForeignDBDataType.SuperType.ORTHOLOGUE,
                     Species.MOUSE);

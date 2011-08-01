@@ -54,12 +54,12 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         //populate fields as necessary..
         candidateBean.setHumanReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.HUMAN));
         candidateBean.setMouseReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.MOUSE));

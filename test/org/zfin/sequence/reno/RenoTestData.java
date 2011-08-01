@@ -233,7 +233,7 @@ public class RenoTestData {
         accessionNomenRelHuman.setDefline("this is the related entrez id");
         accessionNomenRelHuman.setLength(12);
         ReferenceDatabase refDbNomenRelHuman = sequenceRepository.getReferenceDatabase(
-                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.HUMAN);
@@ -248,7 +248,7 @@ public class RenoTestData {
         accessionNomenRelMouse.setDefline("this is the related entrez id for mouserel");
         accessionNomenRelMouse.setLength(12);
         ReferenceDatabase refDbNomenRelM = sequenceRepository.getReferenceDatabase(
-                ForeignDB.AvailableName.ENTREZ_GENE,
+                ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.MOUSE);

@@ -16,7 +16,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String relationshipType;
     private String abbreviation;
     private String abbreviationOrder;
-    private String zdbId;
+    private String zdbId; // id of the thing you are on
+    private String markerRelationshipZdbId ; // primary key
     private String markerType;
     private String markerRelationshipAttributionPubZdbId;
     private int numAttributions;
@@ -65,7 +66,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             String count = String.valueOf(attributionZdbIDs.size());
 
             sb.append(" (");
-            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), zdbId, count));
+//            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), zdbId, count));
+            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), markerRelationshipZdbId, count));
             sb.append(")");
         }
 
@@ -134,6 +136,14 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
     public void setZdbId(String zdbId) {
         this.zdbId = zdbId;
+    }
+
+    public String getMarkerRelationshipZdbId() {
+        return markerRelationshipZdbId;
+    }
+
+    public void setMarkerRelationshipZdbId(String markerRelationshipZdbId) {
+        this.markerRelationshipZdbId = markerRelationshipZdbId;
     }
 
     public String getMarkerType() {
@@ -244,6 +254,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
         sb.append("{relationshipType='").append(relationshipType).append('\'');
         sb.append(", abbreviation='").append(abbreviation).append('\'');
         sb.append(", zdbId='").append(zdbId).append('\'');
+        sb.append(", markerRelationshipZdbId='").append(markerRelationshipZdbId).append('\'');
         sb.append(", markerType='").append(markerType).append('\'');
         sb.append(", is1To2=").append(is1To2);
         sb.append(", mappedMarkerRelationshipType='").append(mappedMarkerRelationshipType).append('\'');

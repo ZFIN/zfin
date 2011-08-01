@@ -23,8 +23,6 @@
 
 <zfin2:cloneHead cloneBean="${formBean}"/>
 
-<zfin2:uninformativeName name="${formBean.marker.abbreviation}"/>
-
 <div class="summary">
     <div id="clone_gbrowse_thumbnail_box" style="display: none;">
         <table class="summary solidblock" id="clone_gbrowse_thumbnail_box">

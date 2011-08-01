@@ -27,7 +27,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
-import org.zfin.marker.service.MarkerRelationshipPresenationTransformer;
+import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -1685,7 +1685,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       mreltype_1_to_2_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text   " +
+                "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
                 "	       inner join marker_relationship_type " +
                 "                 on mrel_type = mreltype_name " +
@@ -1706,7 +1706,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       mreltype_2_to_1_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text   " +
+                "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship " +
                 "	       inner join marker_relationship_type " +
                 "             	  on mrel_type = mreltype_name " +
@@ -1725,7 +1725,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
 
 
-        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        ResultTransformer resultTransformer = new MarkerRelationshipPresentationTransformer(is1to2);
         String sql = (is1to2 ? sql1To2 : sql2To1);
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
@@ -1757,7 +1757,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       mreltype_1_to_2_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text   " +
+                "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
                 "	       inner join marker_relationship_type " +
                 "                 on mrel_type = mreltype_name " +
@@ -1778,7 +1778,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       mreltype_2_to_1_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text   " +
+                "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id   " +
                 " 	  from marker_relationship " +
                 "	       inner join marker_relationship_type " +
                 "             	  on mrel_type = mreltype_name " +
@@ -1794,7 +1794,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             sql2To1 += "	   and mrel_type in (:types) ";
         }
         sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
-        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        ResultTransformer resultTransformer = new MarkerRelationshipPresentationTransformer(is1to2);
         String sql = (is1to2 ? sql1To2 : sql2To1);
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
@@ -1874,7 +1874,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_1_to_2_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
-                "          ra.recattrib_source_zdb_id " +
+                "          ra.recattrib_source_zdb_id , mrel_zdb_id " +
                 " 	  from marker_relationship  " +
                 "	       inner join marker_relationship_type " +
                 "                 on mrel_type = mreltype_name " +
@@ -1892,7 +1892,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_2_to_1_comments, " +
                 "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
-                "          ra.recattrib_source_zdb_id " +
+                "          ra.recattrib_source_zdb_id , mrel_zdb_id " +
                 " 	  from marker_relationship " +
                 "	       inner join marker_relationship_type " +
                 "             	  on mrel_type = mreltype_name " +
@@ -1906,7 +1906,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             sql2To1 += "	   and mrel_type in (:types) ";
         }
         sql2To1 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order ";
-        ResultTransformer resultTransformer = new MarkerRelationshipPresenationTransformer(is1to2);
+        ResultTransformer resultTransformer = new MarkerRelationshipPresentationTransformer(is1to2);
         String sql = (is1to2 ? sql1To2 : sql2To1);
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())

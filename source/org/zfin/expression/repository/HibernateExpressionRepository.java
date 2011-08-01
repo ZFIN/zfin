@@ -358,8 +358,51 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return pubList;
     }
 
+    @Override
+    public List<PublicationExpressionBean> getDirectlySubmittedExpressionForEfg(Marker marker) {
 
-    private static Logger LOG = Logger.getLogger(HibernateExpressionRepository.class);
+        String sql = "  select count(distinct xpatfig_fig_zdb_id), " +
+                "           pub.zdb_id, pub.pub_mini_ref ,m.mrkr_abbrev, m.mrkr_zdb_id  " +
+                "           from expression_pattern_figure " +
+                "                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join publication pub on pub.zdb_id = xpatex_source_zdb_id " +
+                "                join marker m on m.mrkr_zdb_id=xpatex_gene_zdb_id" +
+                "           where xpatex_gene_zdb_id = :markerZdbID " +
+                "           and pub.jtype = 'Unpublished' " +
+                "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref " ;
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+                publicationExpressionBean.setNumFigures(Integer.parseInt(tuple[0].toString()));
+                publicationExpressionBean.setPublicationZdbID(tuple[1].toString());
+                publicationExpressionBean.setMiniAuth(tuple[2].toString());
+                if (tuple[3] != null) {
+                    publicationExpressionBean.setProbeFeatureAbbrev(tuple[3].toString());
+                }
+                if (tuple[4] != null) {
+                    publicationExpressionBean.setProbeFeatureZdbId(tuple[4].toString());
+                }
+                return publicationExpressionBean;
+            }
+
+            @Override
+            public List transformList(List collection) {
+                List<PublicationExpressionBean> list = new ArrayList<PublicationExpressionBean>();
+                for (Object o : collection) {
+                    list.add((PublicationExpressionBean) o);
+                }
+                return list;
+            }
+        });
+        List<PublicationExpressionBean> pubList = query.list();
+        return pubList;
+    }
+
 
     @SuppressWarnings("unchecked")
     public ExpressionExperiment getExpressionExperiment(String experimentID) {
@@ -697,15 +740,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             String zdbID = result.getZdbID();
             statement.setString(1, zdbID);
             statement.execute();
-            LOG.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
+            logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
         } catch (SQLException e) {
-            LOG.error("Could not run: " + sql, e);
+            logger.error("Could not run: " + sql, e);
         } finally {
             if (statement != null)
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    LOG.error(e);
+                    logger.error(e);
                 }
         }
     }
@@ -1556,6 +1599,23 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                         .uniqueResult().toString()
         );
     }
+
+    @Override
+    public int getImagesForEfg(PublicationExpressionBean publicationExpressionBean){
+        String sql = "select count(distinct img_zdb_id) " +
+                "             from image, expression_pattern_figure, " +
+                "                expression_result, expression_experiment  " +
+                "	     where img_fig_zdb_id=xpatfig_fig_zdb_id " +
+                "             and  xpatfig_xpatres_zdb_id=xpatres_zdb_id " +
+                "             and  xpatex_zdb_id=xpatres_xpatex_zdb_id " +
+                "             and  xpatex_source_zdb_id= :pubZdbId " ;
+        return Integer.parseInt(
+                HibernateUtil.currentSession().createSQLQuery(sql)
+                        .setParameter("pubZdbId",publicationExpressionBean.getPublicationZdbID())
+                        .uniqueResult().toString()
+        );
+    }
+
 
 
     @Override

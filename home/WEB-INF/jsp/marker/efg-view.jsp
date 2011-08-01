@@ -12,7 +12,6 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${deleteURL}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 

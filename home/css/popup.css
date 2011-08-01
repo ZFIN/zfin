@@ -137,8 +137,9 @@
    browsers that don't support the popup code won't
    see a popup icon */
 .data-popup-link { display: none;}
+/*.info-popup-link { display: none;}*/
 
-a.popup-link img { text-decoration: none; }
+/*a.popup-link img { text-decoration: none; }*/
 
 .data-popup-link:after {
     content: url(/images/popup-link-icon.png);
@@ -161,22 +162,30 @@ a.popup-link img { text-decoration: none; }
 
 }
 
+.info-popup-link:after {
+    content: url(/images/info.gif);
+    padding-top: 2px;
+    margin-left: 3px;
+    margin-right: 5px;
+
+    /*text-decoration: none;*/
+    /*for some stupid reason opacity has to be set and < 1.0*/
+    /*see case 7376*/
+    opacity: 0.99 ;
+    /*white-space: nowrap;*/
+}
+
 
 .help-popup-link:after {
     content: url(/images/help.gif);
     padding-top: 2px;    
     margin-left: 2px;
     margin-right: 5px;
+
+    /*for some stupid reason opacity has to be set and < 1.0*/
+    /*see case 7376*/
+    opacity: 0.99 ;
 }
-
-
-.info-popup-link:after {
-    content: url(/images/info.gif);
-    padding-top: 2px;        
-    margin-left: 3px;
-    margin-right: 5px;
-}
-
 
 
 a.gbrowse_hover{

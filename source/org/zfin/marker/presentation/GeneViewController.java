@@ -86,7 +86,8 @@ public class GeneViewController {
         geneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
+//        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, gene.getMarkerType().getDisplayName() + gene.getAbbreviation());
 
         return "marker/gene-view.page";
     }

@@ -21,6 +21,8 @@ public class NCBIEfetch {
     private final static Logger logger = Logger.getLogger(NCBIEfetch.class);
 
     private final static String POLYPEPTIDE_DB = "protein";
+    private final static String DOT = ".";
+    private final static String UNDERSCORE = "_";
 //    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
 
 
@@ -244,15 +246,15 @@ public class NCBIEfetch {
 
         logger.info("Total geo accessions: " + totalGeoAccessions);
         int batchSize = 10000 ; // max
-//        int testMaxToProcess = 1000000 ; // max should be 250K
-        int testMaxToProcess = 30000 ; // max should be 250K
+        int testMaxToProcess = 1000000 ; // max should be 250K
+//        int testMaxToProcess = 30000 ; // max should be 250K
 
         EUtilsServiceStub.ESummaryRequest summaryRequest = new EUtilsServiceStub.ESummaryRequest();
         request.setRetMax(String.valueOf(batchSize));
 
         long totalTime = 0 ;
 
-        for(int i = 0 ; i < totalGeoAccessions ; i+=batchSize){
+        for(int i = 1 ; i < totalGeoAccessions ; i+=batchSize){
             long startTime = System.currentTimeMillis();
             summaryRequest.setRetstart(String.valueOf(i));
             summaryRequest.setRetmax(String.valueOf(batchSize));
@@ -269,7 +271,9 @@ public class NCBIEfetch {
                         bean.addGeneSymbol(itemType.getItemContent());
                     }
                     if(itemType.getName().equals("GBACC")){
-                        bean.addAccession(itemType.getItemContent());
+                        if(itemType.getItemContent()!=null){
+                            bean.addAccession(cleanDot(itemType.getItemContent()));
+                        }
                     }
                 }
             }
@@ -288,5 +292,35 @@ public class NCBIEfetch {
         logger.info("est time: "+ avgTime*totalGeoAccessions);
 
         return bean ;
+    }
+
+    /**
+     * Destructive method.
+     *
+     * @param accession Accession to fix.
+     * @return Accession without a . or _ in the wrong spot.
+     */
+    public static String fixAccession(String accession) {
+        accession = cleanDot(accession);
+        accession = cleanUnderscore(accession);
+        return accession;
+    }
+
+    private static String cleanUnderscore(String accession) {
+        int dotIndex = accession.lastIndexOf(UNDERSCORE);
+        if (dotIndex > 2) {
+            return accession.substring(0, dotIndex);
+        } else {
+            return accession;
+        }
+    }
+
+    private static String cleanDot(String accession) {
+        int dotIndex = accession.lastIndexOf(DOT);
+        if (dotIndex > 3) {
+            return accession.substring(0, dotIndex);
+        } else {
+            return accession;
+        }
     }
 }

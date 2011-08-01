@@ -272,6 +272,10 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         logger.info(geoMap.size());
         assertThat(geoMap.size(), greaterThan(50000));
         assertThat(geoMap.size(),  lessThan(500000));
+        assertTrue(geoMap.containsKey("AF086761"));
+        assertTrue(geoMap.containsValue("ZDB-EST-010427-5"));
+        assertTrue(geoMap.containsKey("BI878777"));
+        assertTrue(geoMap.containsValue("ZDB-GENE-110207-1"));
     }
 }
 

@@ -48,6 +48,8 @@ public interface ExpressionRepository {
      */
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForGene(Marker marker);
 
+    List<PublicationExpressionBean> getDirectlySubmittedExpressionForEfg(Marker marker);
+
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForClone(Clone clone) ;
 
     int getImagesFromPubAndClone(Publication publication, Clone clone);
@@ -308,6 +310,7 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionOnObsoletedTerms();
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
+    int getImagesForEfg(PublicationExpressionBean publicationExpressionBean);
 
     StageExpressionPresentation getStageExpressionForMarker(String zdbID);
 

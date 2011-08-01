@@ -12,34 +12,8 @@
         <td>
             ${markerBean.sequence.startToOffset}
         </td>
-    </tr>
-    <tr >
-        <td>
-                       <span style="color: green;">
-                           ${markerBean.sequence.ambiguity}
-                       </span>
-        </td>
-    </tr>
-    <tr >
-        <td>
-            ${markerBean.sequence.offsetToEnd}
-        </td>
-    </tr>
-    <tr >
-        <td>
-                        <span style="font-size:small; font-style:oblique;">
-                        &nbsp;(SNP highlighted)
-                        </span>
-        </td>
-    </tr>
-    <tr >
         <td>
             <form>
-
-                ${markerBean.sequence.ambiguity}
-                =
-                ${markerBean.variant}
-
                 <SELECT NAME="select_tool" onChange="
                         if(0!= this.selectedIndex){
                             var url = this.options[this.selectedIndex].value;
@@ -53,6 +27,38 @@
                 </SELECT>
             </form>
         </td>
+    </tr>
+    <tr >
+        <td>
+                       <span style="color: green;">
+                           ${markerBean.sequence.ambiguity}
+                       </span>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            ${markerBean.sequence.offsetToEnd}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr >
+        <td>
+                        <span style="font-size:small; font-style:oblique;">
+                        &nbsp;(SNP highlighted)
+                        </span>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr >
+        <td>
+
+                ${markerBean.sequence.ambiguity}
+                =
+                ${markerBean.variant}
+
+        </td>
+        <td>&nbsp;</td>
     </tr>
 </table>
 

@@ -9,11 +9,11 @@
 
 <table class="primary-entity-attributes">
     <tr>
-        <th><span class="name-label">Gene Name:</span></th>
+        <th><span class="name-label">${gene.markerType.displayName} Name:</span></th>
         <td><span class="name-value"><zfin:name entity="${gene}"/></span></td>
     </tr>
     <tr>
-        <th><span class="name-label">Gene Symbol:</span></th>
+        <th><span class="name-label">${gene.markerType.displayName} Symbol:</span></th>
         <td><span class="name-value"><zfin:abbrev entity="${gene}"/></span></td>
     </tr>
 

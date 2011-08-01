@@ -13,11 +13,11 @@
 
         <table class="summary rowstripes">
             <tr>
-                <th width=20%>Marker</th>
-                <th width=10%>Type</th>
-                <th width=40%>Accession #</th>
-                <th class="length">Length (bp/aa)</th>
-                <th class="analysis">Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
+                <th width="20%">Marker</th>
+                <th width="10%">Type</th>
+                <th width="10%">Accession #</th>
+                <th width="15%" style="text-align: right;" class="length">Length (bp/aa)</th>
+                <th width="35%" class="analysis">Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
             </tr>
 
             <c:set var="markerAbbrev"/>
@@ -59,7 +59,7 @@
                     <td>
                         <zfin:link entity="${dblink}"/>
                     </td>
-                    <td>
+                    <td  style="text-align: right;">
                             ${dblink.length}
                     </td>
                     <td  style="text-align: center">
