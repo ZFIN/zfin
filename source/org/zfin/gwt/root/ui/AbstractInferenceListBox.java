@@ -193,7 +193,9 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
         inferenceCategoryList.clear();
         if (dto.getEvidenceCode() != null) {
             for (InferenceCategory inferenceCategory : dto.getEvidenceCode().getInferenceCategories(dto.getPublicationZdbID())) {
-                inferenceCategoryList.addItem(inferenceCategory.toString(), inferenceCategory.name());
+                if(inferenceCategory.curatable()){
+                    inferenceCategoryList.addItem(inferenceCategory.toString(), inferenceCategory.name());
+                }
             }
         }
         if (inferenceCategoryList.getItemCount() > 0) {

@@ -7,24 +7,21 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  */
-public class GafParser {
+public class FpInferenceGafParser {
 
-    private Logger logger = Logger.getLogger(GafParser.class);
+    private Logger logger = Logger.getLogger(FpInferenceGafParser.class);
 
     public static final String GOREF_PREFIX = "GO_REF:";
-    private static final String ZFIN_CREATED_BY = "ZFIN";
-    private static final String GOC_CREATED_BY = "GOC";
-    private static final String ZEBRAFISH_TAXID = "taxon:7955";
-    private static Set<String> goRefExcludePubMap = new HashSet<String>();
+    protected static final String ZFIN_CREATED_BY = "ZFIN";
+    protected static final String GOC_CREATED_BY = "GOC";
+    protected static final String ZEBRAFISH_TAXID = "taxon:7955";
+    protected static Set<String> goRefExcludePubMap = new HashSet<String>();
 
-    public GafParser() {
+    public FpInferenceGafParser() {
         goRefExcludePubMap.add(GOREF_PREFIX + "0000002");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000003");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000004");
@@ -78,10 +75,6 @@ public class GafParser {
             logger.debug("created by is zfin[" + gafEntry.getCreatedBy() + " throwing out: " + gafEntry);
             return false; // just ignore
         }
-        if (gafEntry.getCreatedBy().equals(GOC_CREATED_BY)) {
-            logger.debug("created by is the gene ontology consortium (ChrisFP) [" + gafEntry.getCreatedBy() + " throwing out and bringing in in other load: " + gafEntry);
-            return false; // just ignore
-        }
         if (false == gafEntry.getTaxonId().equals(ZEBRAFISH_TAXID)) {
             logger.debug("taxon id is not zebrafish [" + gafEntry.getTaxonId() + " throwing out: " + gafEntry);
             return false; // just ignore
@@ -95,7 +88,7 @@ public class GafParser {
 
     private boolean isValidEvidenceCode(String evidenceCode) {
         GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(evidenceCode);
-        if (goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
+        if (    goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
                 || goEvidenceCodeEnum == GoEvidenceCodeEnum.NAS
                 || goEvidenceCodeEnum == GoEvidenceCodeEnum.TAS
                 ) {
@@ -108,12 +101,18 @@ public class GafParser {
     protected GafEntry parseGafEntry(String line) {
         GafEntry gafEntry = new GafEntry();
         String[] entries = line.split("\t");
-        gafEntry.setUniprotId(entries[1]);
+        gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
         gafEntry.setQualifier(entries[3]);
         gafEntry.setGoTermId(entries[4]);
         gafEntry.setPubmedId(entries[5]);
+        if(entries[6]==null){
+            logger.error("bad gaf file: "+line);
+        }
         gafEntry.setEvidenceCode(entries[6]);
-        gafEntry.setInferences(entries[7]);
+        gafEntry.setInferences(entries[7]
+                .replaceAll("EMBL:", "GenBank:")
+                .replaceAll("protein_id:", "GenPept:")
+        );
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
         gafEntry.setCreatedBy(entries[14]);

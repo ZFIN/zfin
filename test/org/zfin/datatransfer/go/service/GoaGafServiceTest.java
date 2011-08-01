@@ -7,7 +7,7 @@ import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.mutant.GafOrganization;
+import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -24,22 +24,18 @@ import static org.junit.Assert.*;
 /**
  * Tests GafService methods
  */
-public class GafServiceTest extends AbstractDatabaseTest {
+public class GoaGafServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(GafServiceTest.class);
-    private GafService gafService = new GafService();
-    private GafParser gafParser = new GafParser();
+    private Logger logger = Logger.getLogger(GoaGafServiceTest.class);
+    private GafService gafService = new GafService(GafOrganization.OrganizationEnum.GOA);
+    private FpInferenceGafParser gafParser = new GoaGafParser();
 
-    // this ia pub with no go evidence annotations and is closed, so none will be added
+    // this is a pub with no go evidence annotations and is closed, so none will be added
     private final String DEFAULT_TEST_ACCESSION = "PMID:10630700"; // "ZDB-PUB-000118-16"
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
+    private final String GOA_DIRECTORY = "test/gaf/goa/" ;
 
-    @Test
-    public void loadSmallOntologyTest() {
-        Term t = ontologyRepository.getTermByName("cilium", Ontology.GO_CC);
-        assertNotNull(t);
-    }
 
     /**
      * All annotations should have this pub so subsequent loads to break the code.
@@ -54,14 +50,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void gafServiceTestInferences() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_inferencetest");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_inferencetest");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(1, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafJobData = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafJobData);
+        gafService.processEntries(gafEntries, gafJobData);
         logger.debug("summary: " + gafJobData.toString());
         logger.debug("entries: " + gafJobData.getNewEntries().size());
         logger.debug("existing: " + gafJobData.getExistingEntries().size());
@@ -79,14 +75,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void gafServiceBadAdd() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_badadd");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_badadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(3, gafEntries.size());
         makeTestPub(gafEntries);
 
 
         GafJobData gafJobData = new GafJobData();
-        gafService.processGoaGafEntries(gafEntries, gafJobData);
+        gafService.processEntries(gafEntries, gafJobData);
         logger.debug("summary: " + gafJobData.toString());
         logger.debug("entries: " + gafJobData.getNewEntries());
         logger.debug("errors: " + gafJobData.getErrors());
@@ -104,14 +100,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void badGafEntry() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_badentry");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_badentry");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(13, gafEntries.size()); // 17 - 4 = 13
         makeTestPub(gafEntries);
 
 
         GafJobData gafJobData = new GafJobData();
-        gafService.processGoaGafEntries(gafEntries, gafJobData);
+        gafService.processEntries(gafEntries, gafJobData);
         logger.debug("summary: " + gafJobData.toString());
         logger.debug("entries: " + gafJobData.getNewEntries().size());
         logger.debug("errors: " + gafJobData.getErrors().size());
@@ -125,14 +121,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void alreadyRanOnce() throws Exception {
 //        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_inferencetest");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_inferencetest");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(1, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
@@ -143,7 +139,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafReport2 = new GafJobData();
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
         } catch (GafValidationError gafValidationError) {
             fail(gafValidationError.toString());
         } finally {
@@ -166,14 +162,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void alreadyRanOnce_2() throws Exception {
 //        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_badadd");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_badadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(3, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
@@ -183,7 +179,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
             gafService.addAnnotations(gafReport1);
 
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
         } catch (GafValidationError gafValidationError) {
             fail(gafValidationError.toString());
         } finally {
@@ -206,14 +202,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void findDupeInferences() throws Exception {
 //        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_dupeinference");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_dupeinference");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(3, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -225,7 +221,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafReport2 = new GafJobData();
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
 
             logger.debug("summary: " + gafReport2.toString());
             logger.debug("entries: " + gafReport2.getNewEntries());
@@ -252,14 +248,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     // valid additions, but duplicate within the gaf file
     @Test
     public void knowDupesWithAnAdd() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_duplicateentries");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_duplicateentries");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(15, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -280,7 +276,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
         assertEquals(6, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(9, gafReport1.getErrors().size());
+        assertEquals(6, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
 
     }
@@ -289,14 +285,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     // tests null inferences and redundant entries
     @Test
     public void dontAddDupes() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_redundantadd");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_redundantadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(3, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -308,7 +304,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafReport2 = new GafJobData();
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
 
             logger.debug("summary: " + gafReport2.toString());
             logger.debug("entries: " + gafReport2.getNewEntries());
@@ -335,14 +331,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void mapQualifiers() throws Exception {
 //        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_qualifiers");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_qualifiers");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(4, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
@@ -356,13 +352,13 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void colocalizeOnGoCC() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_gocc_colocalize");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_gocc_colocalize");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(2, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
@@ -375,13 +371,13 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void igiRemap() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_igi_remap");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_igi_remap");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(2, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
@@ -400,14 +396,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void multipleAddExists() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_otherexists");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_otherexists");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(8, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -419,7 +415,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafReport2 = new GafJobData();
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
 
             logger.debug("summary: " + gafReport2.toString());
             logger.debug("entries: " + gafReport2.getNewEntries());
@@ -496,14 +492,14 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void doNotDeleteAdded() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_deleteadded");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_deleteadded");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(1, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -520,7 +516,8 @@ public class GafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafReport2 = new GafJobData();
-            gafService.processGoaGafEntries(gafEntries, gafReport2);
+            gafService.processEntries(gafEntries, gafReport2);
+            HibernateUtil.currentSession().flush();
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
             Set<String> existingZfinZdbIDs = new TreeSet<String>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
 
@@ -557,13 +554,13 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void alreadyExistsComparesInference() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_betterinference");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_betterinference");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(2, gafEntries.size());
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -579,7 +576,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
     @Test
     public void evaluateNewIeaGoRefs() throws Exception {
 
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_new_iea");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_new_iea");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(4, gafEntries.size());
         // they need to be IEA pubs, so we don't want them to be a test pub
@@ -587,7 +584,7 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("existing: " + gafReport1.getExistingEntries());
@@ -636,19 +633,19 @@ public class GafServiceTest extends AbstractDatabaseTest {
         assertTrue(existingEvidence.equals(newEvidence));
 
         parentTerms = ontologyRepository.getParentDirectTerms(existingEvidence.getGoTerm());
-        newEvidence.setGoTerm((GenericTerm) parentTerms.iterator().next());
+        newEvidence.setGoTerm( parentTerms.iterator().next());
 
         assertFalse(existingEvidence.equals(newEvidence));
         assertTrue(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
         parentTerms = ontologyRepository.getParentDirectTerms(existingEvidence.getGoTerm());
 
-        newEvidence.setGoTerm((GenericTerm) parentTerms.iterator().next());
+        newEvidence.setGoTerm( parentTerms.iterator().next());
 
         assertFalse(existingEvidence.equals(newEvidence));
         assertTrue(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
 
         List<GenericTerm> childTerms = ontologyRepository.getChildDirectTerms(existingEvidence.getGoTerm());
-        newEvidence.setGoTerm((GenericTerm) childTerms.iterator().next());
+        newEvidence.setGoTerm( childTerms.iterator().next());
 
         assertFalse(existingEvidence.equals(newEvidence));
         assertFalse(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
@@ -657,24 +654,26 @@ public class GafServiceTest extends AbstractDatabaseTest {
 
 
     // just makes sure that the service is still there, not something we want to run all of the time.
-//    //@Test
-    public void testDownload() throws Exception {
+//    @Test
+    public void testDownloadGoaGzip() throws Exception {
         DownloadService downloadService = new DownloadService();
-        File downloadedFile = downloadService.downloadGzipFile(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")
+        File downloadedFile = downloadService.downloadFile(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")
                 , new URL("ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz")
                 , true);
+        assertTrue(downloadedFile.exists());
+        assertTrue(downloadedFile.delete());
     }
 
 
     @Test
     public void dontAddIfMoreSpecificExists() throws Exception {
-        File file = new File("test/goa_go/gene_association.goa_zebrafish_morespecific");
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_morespecific");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(4, gafEntries.size());
 
         GafJobData gafReport1 = new GafJobData();
 
-        gafService.processGoaGafEntries(gafEntries, gafReport1);
+        gafService.processEntries(gafEntries, gafReport1);
 
         logger.debug("summary: " + gafReport1.toString());
         logger.debug("entries: " + gafReport1.getNewEntries());
@@ -699,19 +698,22 @@ public class GafServiceTest extends AbstractDatabaseTest {
         GenericTerm cellularComponentMovement = ontologyRepository.getTermByName("cellular component movement", Ontology.GO_BP);
         assertNotNull(cellularComponentMovement);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, cellularComponentMovement));
-        assertTrue(ontologyRepository.isParentChildRelationshipExist(cellularComponentMovement, regulationCiliumMovement));
+        // regulates relationships no longer mapped
+        assertFalse(ontologyRepository.isParentChildRelationshipExist(cellularComponentMovement, regulationCiliumMovement));
 
         GenericTerm localization = ontologyRepository.getTermByName("localization", Ontology.GO_BP);
         assertNotNull(localization);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, localization));
-        assertTrue(ontologyRepository.isParentChildRelationshipExist(localization, regulationCiliumMovement));
+        // regulates relationships no longer mapped
+        assertFalse(ontologyRepository.isParentChildRelationshipExist(localization, regulationCiliumMovement));
 
         GenericTerm ciliumMovement = ontologyRepository.getTermByName("cilium movement", Ontology.GO_BP);
         assertNotNull(ciliumMovement);
         assertFalse(ontologyRepository.isParentChildRelationshipExist(localization, ciliumMovement));
         assertFalse(ontologyRepository.isParentChildRelationshipExist(ciliumMovement, localization));
         assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, ciliumMovement));
-        assertTrue(ontologyRepository.isParentChildRelationshipExist(ciliumMovement, regulationCiliumMovement));
+        // regulates relationships no longer mapped
+        assertFalse(ontologyRepository.isParentChildRelationshipExist(ciliumMovement, regulationCiliumMovement));
 
     }
 
@@ -720,9 +722,42 @@ public class GafServiceTest extends AbstractDatabaseTest {
     public void getParentTerms() {
 //        Term ciliumMovement = getOntologyRepository().getTermByName("cilium movement", Ontology.GO_BP);
         GenericTerm regulationOfCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
-        assertEquals(3, ontologyRepository.getParentDirectTerms(regulationOfCiliumMovement).size());
+        assertEquals(2, ontologyRepository.getParentDirectTerms(regulationOfCiliumMovement).size());
         assertEquals(1, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 0).size());
-        assertEquals(3, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size());
+        assertEquals(2, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size());
+    }
+
+    @Test
+    public void getZdbPub(){
+        assertEquals("ZDB-PUB-000111-5",gafService.getZfinPubId("ZFIN:ZDB-PUB-000111-5|PMID:10611375"));
+        assertEquals("ZDB-PUB-000111-5",gafService.getZfinPubId("ZFIN:ZDB-PUB-000111-5"));
+    }
+
+    /**
+     * Should report an error if it can't find an entry.
+     * @throws Exception
+     */
+    @Test
+    public void createErrorForValues() throws Exception{
+        File file = new File(GOA_DIRECTORY+"gene_association.goa_zebrafish_noerror");
+        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
+        assertEquals(12, gafEntries.size());
+//        makeTestPub(gafEntries);
+
+        GafJobData gafJobData = new GafJobData();
+
+        gafService.processEntries(gafEntries, gafJobData);
+        logger.debug("summary: " + gafJobData.toString());
+        logger.debug("entries: " + gafJobData.getNewEntries().size());
+        logger.debug("existing: " + gafJobData.getExistingEntries().size());
+        logger.debug("errors: " + gafJobData.getErrors().size());
+
+
+        assertEquals(12, gafJobData.getErrors().size());
+        assertEquals(0, gafJobData.getExistingEntries().size());
+        assertEquals(0, gafJobData.getNewEntries().size());
+        assertEquals(0, gafJobData.getRemovedEntries().size());
+
     }
 
 }

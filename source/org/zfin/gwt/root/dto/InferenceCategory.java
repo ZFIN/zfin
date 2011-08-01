@@ -25,29 +25,42 @@ public enum InferenceCategory {
     EC("EC"),
     HAMAP("HAMAP"),
     SP_SL("SP_SL"),
-    ENSEMBL("Ensembl"),;
+    ENSEMBL("Ensembl"),
+    PANTHER("PANTHER",false),
+    ;
 
     private final String prefix;
     private final String match;
     private final String extraDisplay;
     private final String SEPARATOR = ":";
+    private final Boolean curatable ;
 
     private InferenceCategory(String prefix) {
         this.prefix = prefix;
         this.match = prefix + SEPARATOR + ".*";
         this.extraDisplay = "";
+        curatable = true ;
+    }
+
+    private InferenceCategory(String prefix,Boolean curatable) {
+        this.prefix = prefix;
+        this.match = prefix + SEPARATOR + ".*";
+        this.extraDisplay = "";
+        this.curatable = curatable ;
     }
 
     private InferenceCategory(String category, String match) {
         this.prefix = category;
         this.match = match;
         this.extraDisplay = "";
+        this.curatable = true ;
     }
 
     private InferenceCategory(String category, String match, String extraDisplay) {
         this.prefix = category;
         this.match = match;
         this.extraDisplay = extraDisplay;
+        this.curatable = true ;
     }
 
     public String prefix() {
@@ -56,6 +69,10 @@ public enum InferenceCategory {
 
     public String match() {
         return match;
+    }
+
+    public boolean curatable(){
+        return curatable;
     }
 
     @Override
@@ -68,11 +85,12 @@ public enum InferenceCategory {
     }
 
     public boolean isType(String value) {
-        return this == getInferenceCategoryByValue(value);
-    }
-
-    public static boolean isType(InferenceCategory inferenceCategory, String value) {
-        return inferenceCategory == getInferenceCategoryByValue(value);
+        try{
+            return this == getInferenceCategoryByValue(value);
+        }
+        catch(Throwable t){
+            return false ;
+        }
     }
 
     public static InferenceCategory getInferenceCategoryByValue(String value) {

@@ -5,10 +5,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GafOrganization;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource;
@@ -182,7 +182,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         evidence.setInferredFrom(inferenceGroupMemberSet);
         try {
             HibernateUtil.createTransaction();
-            evidence = markerGoTermEvidenceRepository.addEvidence(evidence);
+            markerGoTermEvidenceRepository.addEvidence(evidence);
 
             assertNotNull(HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class)
                     .add(Restrictions.eq("zdbID", evidence.getZdbID()))

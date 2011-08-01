@@ -10,7 +10,7 @@ import java.util.List;
  * Note: TAS is only for filtering out imported evidence (case 6447).
  */
 public enum GoEvidenceCodeEnum implements IsSerializable {
-    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS;
+    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS, IBA, IBD, IKR, IMR, IRD;
 
     public static final int CARDINALITY_ANY = -1;
     public static final int CARDINALITY_ONE_OR_MORE = -2;
@@ -40,8 +40,10 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case ND:
                 return new InferenceCategory[]{};
             case ISS:
-                return new InferenceCategory[]{InferenceCategory.ZFIN_GENE, InferenceCategory.REFSEQ, InferenceCategory.GENBANK,
-                        InferenceCategory.UNIPROTKB, InferenceCategory.GENPEPT, InferenceCategory.INTERPRO
+                return new InferenceCategory[]{InferenceCategory.ZFIN_GENE, InferenceCategory.REFSEQ,
+                        InferenceCategory.GENBANK, InferenceCategory.UNIPROTKB,
+                        InferenceCategory.GENPEPT,  InferenceCategory.INTERPRO,
+                        InferenceCategory.PANTHER
                 };
             default:
                 return InferenceCategory.values();
@@ -107,6 +109,11 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
                     case ND:
                     case TAS:
                     case NAS:
+                    case IBA:
+                    case IBD:
+                    case IKR:
+                    case IMR:
+                    case IRD:
                         break;
                     // add all remaining
                     default:

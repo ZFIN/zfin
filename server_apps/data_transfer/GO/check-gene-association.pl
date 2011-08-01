@@ -106,7 +106,7 @@ $column[GENE_PRODUCT_FORM_ID] = ["Gene_Product_Form_ID", 0, 0];
 #
 my %evicodes = ( IC => 1,  IDA => 1, IEA => 1, IEP => 1, IGI => 1,
 		 IMP => 1, IPI => 1, ISS => 1, NAS => 1, ND => 1,
-		 TAS => 1, NR => 1, RCA =>1 );
+		 TAS => 1, NR => 1, RCA =>1, IBA=>1, IBD=>1, IKR=>1,IMR=>1,IRD=>1 );
 
 #
 # Object Types

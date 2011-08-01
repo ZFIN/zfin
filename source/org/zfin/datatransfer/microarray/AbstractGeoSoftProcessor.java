@@ -67,7 +67,7 @@ public abstract class AbstractGeoSoftProcessor implements SoftParser {
 //        File file = downloadFile() ;
         File file = null;
         try {
-            file = downloadService.downloadGzipFile(
+            file = downloadService.downloadFile(
                     new File(System.getProperty("java.io.tmpdir") + "/" + getFileName() + fileNameSuffix)
                     , new URL("ftp://" + urlString + "/pub/geo/DATA/SOFT/by_platform/" + this.fileName + "/" + getFileName() + fileNameSuffix + gzipSuffix)
                     , false);

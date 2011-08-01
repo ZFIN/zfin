@@ -6,7 +6,9 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
-import org.zfin.datatransfer.go.service.GafServiceTest;
+import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
+import org.zfin.datatransfer.go.service.GoaGafServiceTest;
+import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.gwt.GwtConversionTest;
@@ -53,19 +55,32 @@ import org.zfin.webservice.MarkerSoapDbTest;
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         AntibodyServiceTest.class,
+        BlastRepositoryTest.class,
         DTOConversionServiceTest.class,
         CurationRPCTest.class,
+        DisplayGroupRepositoryTest.class,
+        ExpressionRepositoryTest.class,
+        ExpressionServiceTest.class,
+        FpInferenceGafServiceTest.class,
+        GoaGafServiceTest.class,
+        GoEvidenceTest.class,
         GwtConversionTest.class,
-        GafServiceTest.class,
         InfrastructureRepositoryTest.class,
+        LinkageRepositoryTest.class,
         MarkerRepositoryTest.class,
         MergeMarkerDBTest.class,
-        TranscriptServiceTest.class,
-        OrthologyTest.class,
+        MapAccessionDbLinkTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
+        MultiRunTest.class,
         MutantRepositoryTest.class,
+        OntologyManagerTest.class,
+        OntologyRepositoryTest.class,
+        OntologySerializationTest.class,
+        OrthologyTest.class,
+        OrthologyRepositoryTest.class,
+        PaintGafServiceTest.class,
         PaginationResultTest.class,
         ProfileRepositoryTest.class,
         PublicationRepositoryTest.class,
@@ -73,21 +88,10 @@ import org.zfin.webservice.MarkerSoapDbTest;
 //        NomenclatureCandidateControllerTest.class, // no tests
         RenoRepositoryTest.class,
         SequenceRepositoryTest.class,
-        MapAccessionDbLinkTest.class,
+        TranscriptServiceTest.class,
         EnumValidationTest.class,
-        MultiRunTest.class,
-        ExpressionRepositoryTest.class,
-        ExpressionServiceTest.class,
-        OrthologyRepositoryTest.class,
-        LinkageRepositoryTest.class,
         SingleCandidateRepositoryTest.class,
-        OntologyRepositoryTest.class,
-        TranscriptRepositoryTest.class,
-        DisplayGroupRepositoryTest.class,
-        GoEvidenceTest.class,
-        BlastRepositoryTest.class,
-        OntologyManagerTest.class,
-        OntologySerializationTest.class
+        TranscriptRepositoryTest.class
 //        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })

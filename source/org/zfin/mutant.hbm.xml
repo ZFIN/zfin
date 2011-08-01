@@ -141,7 +141,7 @@
 
     </class>
 
-    <class name="GafOrganization" table="marker_go_term_evidence_annotation_organization">
+    <class name="org.zfin.datatransfer.go.GafOrganization" table="marker_go_term_evidence_annotation_organization">
         <id name="id" column="mrkrgoevas_pk_id"/>
         <property name="organization" column="mrkrgoevas_annotation_organization" not-null="true"/>
         <property name="definition" column="mrkrgoevas_definition" not-null="true"/>

@@ -1,14 +1,16 @@
 package org.zfin.datatransfer.go.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.mutant.GafOrganization;
+import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -49,54 +51,62 @@ import java.util.*;
  * - Messages are created and emailed out.
  */
 //@Component
-public class GoaGafLoadJob implements Job {
+public class GafLoadJob implements Job {
 
-    private Logger logger = Logger.getLogger(GoaGafLoadJob.class);
+    private Logger logger = Logger.getLogger(GafLoadJob.class);
 
     // these should be autowired, but everything needs to be in the same context, first
 //    @Autowired
-    private DownloadService downloadService = new DownloadService();
+    protected DownloadService downloadService = new DownloadService();
     //    @Autowired
-    private GafService gafService = new GafService();
+    protected GafService gafService ;
     //    @Autowired
-    private GafParser gafParser = new GafParser();
+    protected FpInferenceGafParser gafParser ;
     private final int BATCH_SIZE = 20;
 
-    public GoaGafLoadJob() {
-    }
-
-    private final String GOA_DOWNLOAD_URL = "ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz";
-    private final String LOCAL_DOWNLOAD_FILE = System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish";
+    protected String downloadUrl ;
+    protected String localDownloadFile ;
+    protected GafOrganization.OrganizationEnum organizationEnum ;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
-        StringBuilder message = new StringBuilder();
 
+        StringBuilder message = new StringBuilder();
         try {
+            setFields(jobExecutionContext.getJobDetail().getJobDataMap());
 // 1. download gzipped GAF file
 //        ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz
-            File downloadedFile = downloadService.downloadGzipFile(new File(LOCAL_DOWNLOAD_FILE)
-                    , new URL(GOA_DOWNLOAD_URL)
+            File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+                    , new URL(downloadUrl)
                     , false);
 
             // 2. parse file
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
 
-            GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
+            if(CollectionUtils.isEmpty(gafEntries)){
+                throw new GafValidationError("No gaf entries found in file: "+downloadedFile);
+            }
+
+            GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
+                    .getGafOrganization(organizationEnum);
             // 3. create new GAF entries based on rules
             GafJobData gafJobData = new GafJobData();
             gafJobData.setGafEntryCount(gafEntries.size());
 
-            gafService.processGoaGafEntries(gafEntries, gafJobData);
+            gafService.processEntries(gafEntries, gafJobData);
 
             addAnnotations(gafJobData);
-
-            // I have to add the annotations in order to calculate the ones to remove
+//            HibernateUtil.createTransaction();
+//            gafService.addAnnotations(gafJobData);
+//            HibernateUtil.flushAndCommitCurrentSession();
 
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
             removeAnnotations(gafJobData);
+//            HibernateUtil.createTransaction();
+//            gafService.removeEntries(gafJobData);
+//            HibernateUtil.flushAndCommitCurrentSession();
 
             String summary = gafJobData.toString();
             message.append(summary).append("\n\n");
@@ -125,27 +135,37 @@ public class GoaGafLoadJob implements Job {
             }
             message.append("\n\n");
 
-            (new IntegratedJavaMailSender()).sendMail("Summary of GOA load: " + (new Date()).toString()
+            (new IntegratedJavaMailSender()).sendMail("Summary of "+organizationEnum + " load: " + (new Date()).toString()
                     , message.toString() + " from file: " + downloadedFile,
                     ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_CURATOR));
 
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
-
-            // if transaction exists, then roll back
             if(HibernateUtil.currentSession().getTransaction()!=null){
                 HibernateUtil.rollbackTransaction();
             }
-
-            (new IntegratedJavaMailSender()).sendMail("Errors in GOA load: " + (new Date()).toString()
-                    , "Error in GOA load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString()
-                    + " Summary of GOA Load: " + message.toString(),
+            (new IntegratedJavaMailSender()).sendMail("Errors in " + organizationEnum + " load: " + (new Date()).toString()
+                    , "Error in " + organizationEnum + " load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString(),
                     ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_ERR));
         } finally {
             downloadService = null;
             gafService = null;
+            HibernateUtil.closeSession();
         }
 
+    }
+
+    private void setFields(JobDataMap jobDataMap) {
+        downloadService = (DownloadService) jobDataMap.get("downloadService");
+        String enumString = jobDataMap.get("organization").toString();
+
+        // this sets the localDownloadFile, as well and gafService
+        organizationEnum = GafOrganization.OrganizationEnum.getType(enumString);
+        localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association."+organizationEnum.name();
+        gafService = new GafService(organizationEnum);
+
+        downloadUrl = jobDataMap.get("downloadUrl").toString();
+        gafParser = (FpInferenceGafParser) jobDataMap.get("gafParser");
     }
 
     private void addAnnotations(GafJobData gafJobData) {
@@ -208,6 +228,5 @@ public class GoaGafLoadJob implements Job {
             }
         }
     }
-
 
 }

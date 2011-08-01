@@ -1,0 +1,15 @@
+UniProtKB	Q58EN8	vps33b		GO:0016192	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0006944	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0005765	GO_REF:0000023	IEA	SP_SL:SL-0157	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	UniProtKB		
+UniProtKB	Q58EN8	vps33b		GO:0005737	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0016020	GO_REF:0000004	IEA	SP_KW:KW-0472	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	UniProtKB		
+UniProtKB	Q58EN8	vps33b		GO:0015031	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0007275	GO_REF:0000004	IEA	SP_KW:KW-0217	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	UniProtKB		
+UniProtKB	Q58EN8	vps33b		GO:0006904	GO_REF:0000002	IEA	InterPro:IPR001619	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	InterPro		
+UniProtKB	Q58EN8	vps33b		GO:0070889	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0048471	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0032418	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0032400	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	P	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0030897	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0031091	GO_REF:0000019	IEA	Ensembl:ENSP00000327650	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	ENSEMBL		
+UniProtKB	Q58EN8	vps33b		GO:0031902	GO_REF:0000023	IEA	SP_SL:SL-0151	C	Vacuolar protein sorting-associated protein 33B	VP33B_DANRE|vps33b|IPI00570041	protein	taxon:7955	20110625	UniProtKB		

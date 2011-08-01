@@ -2,7 +2,7 @@ package org.zfin.datatransfer.go;
 
 /**
  */
-public class GafValidationError extends Exception {
+public class GafValidationError extends Exception implements Comparable<GafValidationError>{
 
 
     public GafValidationError(String s) {
@@ -18,6 +18,11 @@ public class GafValidationError extends Exception {
     }
 
     public GafValidationError(String s, Exception e) {
-        super(s, e.fillInStackTrace());
+        super(s, e);
+    }
+
+    @Override
+    public int compareTo(GafValidationError gafValidationError) {
+        return getMessage().compareTo(gafValidationError.getMessage());
     }
 }

@@ -1,7 +1,7 @@
 package org.zfin.ontology.repository;
 
+import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GafOrganization;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.Ontology;
@@ -33,7 +33,7 @@ public interface MarkerGoTermEvidenceRepository {
      *
      * @param markerGoTermEvidenceToAdd
      */
-    MarkerGoTermEvidence addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
+    void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
     void removeEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 

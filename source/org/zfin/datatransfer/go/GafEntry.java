@@ -7,7 +7,7 @@ package org.zfin.datatransfer.go;
  */
 public class GafEntry {
 
-    private String uniprotId; // 2
+    private String entryId; // 2
     private String qualifier; // 4
     private String goTermId;  // 5
     private String pubmedId;  // 6
@@ -20,12 +20,12 @@ public class GafEntry {
     // etc. etc.,
 
 
-    public String getUniprotId() {
-        return uniprotId;
+    public String getEntryId() {
+        return entryId;
     }
 
-    public void setUniprotId(String uniprotId) {
-        this.uniprotId = uniprotId;
+    public void setEntryId(String uniprotId) {
+        this.entryId = uniprotId;
     }
 
     public String getQualifier() {
@@ -96,7 +96,7 @@ public class GafEntry {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("GafEntry");
-        sb.append("{uniprotID='").append(uniprotId).append('\'');
+        sb.append("{entryId='").append(entryId).append('\'');
         sb.append(", qualifier='").append(qualifier).append('\'');
         sb.append(", goid='").append(goTermId).append('\'');
         sb.append(", pmid='").append(pubmedId).append('\'');

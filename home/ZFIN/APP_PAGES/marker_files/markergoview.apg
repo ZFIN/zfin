@@ -292,14 +292,8 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
            <?/MIBLOCK>
            <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a><?/MIVAR>
     	<?MIELSE COND="$(EC,$dbase,GO)">
-         	<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name ='QuickGO'"><?/MISQL>
-          	<?MIVAR NAME=query>$1<?/MIVAR>
-          
-              <?MIVAR NAME=GO_Prefix>GO:<?/MIVAR>
-              <?MIVAR NAME=$link>$query$GO_Prefix$accID<?/MIVAR>
-              <?MISQL SQL="select t.term_name from term t where t.term_ont_id = '$GO_Prefix$accID';"><?/MISQL>
-              <?MIVAR NAME=linkDisplay>$1<?/MIVAR>
-              <?MIVAR NAME=$currinflink><a href=$link>$linkDisplay</a><?/MIVAR>
+              <?MISQL SQL="select get_entity_name_html(t.term_zdb_id) from term t where t.term_ont_id = 'GO:$accID';"><?/MISQL>
+              <?MIVAR NAME=$currinflink>$1<?/MIVAR>
         <?MIELSE>
           <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$dbase'"><?/MISQL>
           <?MIVAR NAME=query>$1<?/MIVAR>
@@ -403,14 +397,16 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
        <?MIVAR>
          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=goview&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&goterm=$gozdbid&evidence=$evidence&goflag=$flag&infer=$has_inf&total_count=$pubcount&inf=$infername"><?MIVAR>$pubcount<?/MIVAR></a><?/MIVAR>
 <?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(NE,$organization_url,),$(NE,$organization,ZFIN))">
-<?MIVAR>
-<a style="font-size: small;" href="$organization_url">$organization_name</a>
-<?/MIVAR>
-<?MIELSE COND="$(AND,$(EQ,$organization_url,),$(NE,$organization,ZFIN))">
-<?MIVAR>
-<span  style="font-size: small;">$organization</span>
-<?/MIVAR>
+<?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(NE,$organization,ZFIN))">
+    <?MIBLOCK COND="$(AND,$(NE,$organization_url,),$(NE,$organization,ZFIN))">
+    <?MIVAR>
+    <a style="font-size: small;" href="$organization_url">$organization_name</a>
+    <?/MIVAR>
+    <?MIELSE COND="$(AND,$(EQ,$organization_url,),$(NE,$organization,ZFIN))">
+    <?MIVAR>
+    <span  style="font-size: small;">$organization</span>
+    <?/MIVAR>
+    <?/MIBLOCK>
 <?/MIBLOCK>
 </td>
 

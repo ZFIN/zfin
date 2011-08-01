@@ -11,7 +11,8 @@ import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.ui.GoEvidenceValidator;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GafOrganization;
+import org.zfin.datatransfer.go.GafOrganization;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -34,6 +35,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Gene Association File Service
@@ -41,18 +43,24 @@ import java.util.*;
 //@Service
 public class GafService {
 
-    private Logger logger = Logger.getLogger(GafService.class);
-    private static final String PUBMED_PREFIX = "PMID:";
+    protected Logger logger = Logger.getLogger(GafService.class);
+    protected static final String PUBMED_PREFIX = "PMID:";
 
-    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    protected PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    protected MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
+    protected OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    protected MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository() ;
+    protected ReferenceDatabase uniprot ;
+    protected GafOrganization.OrganizationEnum organizationEnum ;
 
-    private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    private Map<String, Publication> goRefPubMap = new HashMap<String, Publication>();
 
-    public GafService() {
+    protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    protected Map<String, Publication> goRefPubMap = new HashMap<String, Publication>();
+    protected Pattern patternPipe = Pattern.compile("ZFIN:(.*)\\|.*");
+
+    public GafService(GafOrganization.OrganizationEnum organizationEnum) {
+        this.organizationEnum = organizationEnum;
         for (GoDefaultPublication goDefaultPublication : GoDefaultPublication.getGoRefPubs()) {
             goRefPubMap.put(goDefaultPublication.title(), publicationRepository.getPublication(goDefaultPublication.zdbID()));
         }
@@ -69,31 +77,34 @@ public class GafService {
     public void processGoaGafEntries(List<GafEntry> gafEntries, GafJobData gafJobData) {
 
         // get uniprot ReferenceDatabase
-        ReferenceDatabase uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
+        uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
                 ForeignDB.AvailableName.UNIPROTKB
                 , ForeignDBDataType.DataType.POLYPEPTIDE
         );
+    }
 
-        // get GOA organization
-        GafOrganization gafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.GOA);
+    public void processEntries(List<GafEntry> gafEntries, GafJobData gafJobData){
+
+        GafOrganization gafOrganization =
+                markerGoTermEvidenceRepository.getGafOrganization(organizationEnum);
 
         logger.info("processing " + gafEntries.size() + " entries");
+        if(gafEntries.size()==0){
+            logger.error("no entries to process!");
+            return ;
+        }
         gafJobData.markStartTime();
 
         int count = 0;
         for (GafEntry gafEntry : gafEntries) {
 
             // find genes based on uniprot ID via marker relations
-            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(gafEntry.getUniprotId(), uniprot);
-            if (markerDBLinks.size() == 0) {
-                GafValidationError gafValidationError = new GafValidationError("No marker dblinks found for uniprot Kb: " + gafEntry.getUniprotId(), gafEntry);
-                gafJobData.addError(gafValidationError);
-            } else {
-                for (MarkerDBLink markerDBLink : markerDBLinks) {
-                    Marker gene = markerDBLink.getMarker();
-                    // for each gene, create an entry
-                    // if no gene is then report error
-                    try {
+            try {
+                Collection<Marker> genes = getGenes(gafEntry.getEntryId()) ;
+                // for each gene, create an entry
+                // if no gene is then report error
+                if(CollectionUtils.isNotEmpty(genes)){
+                    for(Marker gene : genes){
                         MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
                         if (annotationToAdd != null) {
                             if (gafJobData.getNewEntries().contains(annotationToAdd)) {
@@ -103,16 +114,19 @@ public class GafService {
                             }
                             gafJobData.addNewEntry(annotationToAdd);
                         } else {
-                            throw new GafValidationError("Annotation to add is null for some reason for dblink " + markerDBLink, gafEntry);
+                            throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                         }
-                    } catch (GafAnnotationExistsError gafAnnotationExistsError) {
-                        logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
-                        gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
-                    } catch (GafValidationError gafValidationError) {
-                        logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
-                        gafJobData.addError(gafValidationError);
-                    }
-                } // end of dblinks for loop
+                    } // end of gene loop
+                }
+                else{
+                    throw new GafValidationError("Unable to find genes associated with ID[" +gafEntry.getEntryId()+"]", gafEntry);
+                }
+            } catch (GafAnnotationExistsError gafAnnotationExistsError) {
+                logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
+                gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
+            } catch (GafValidationError gafValidationError) {
+                logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
+                gafJobData.addError(gafValidationError);
             }
 
             ++count;
@@ -126,6 +140,32 @@ public class GafService {
         gafJobData.markStopTime();
     }
 
+    protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
+        Set<Marker> returnGenes = new HashSet<Marker>() ;
+        if(entryId.startsWith("ZDB-GENE-")){
+            Marker gene = markerRepository.getGeneByID(entryId);
+            if(gene==null){
+                throw new GafValidationError("No gene found for ID: "+entryId);
+            }
+            returnGenes.add(gene);
+        }
+        else{
+            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, uniprot);
+            for(MarkerDBLink markerDBLink : markerDBLinks){
+                Marker gene = markerDBLink.getMarker();
+                if(gene.getZdbID().startsWith("ZDB-GENE-")){
+                    returnGenes.add(gene);
+                }
+                else{
+                    logger.debug("no gene associated with dblink: "+markerDBLink);
+                }
+            }
+        }
+
+        return returnGenes;
+    }
+
+
     public void generateRemovedEntriesReport(GafJobData gafJobData, Collection<String> zdbIdsToDrop) {
         if (CollectionUtils.isNotEmpty(zdbIdsToDrop)) {
             for (String zdbIdToDrop : zdbIdsToDrop) {
@@ -135,6 +175,12 @@ public class GafService {
         }
     }
 
+    /**
+     * Find entries in the database that are not in the incoming file for a particular organization.
+     * @param gafJobData
+     * @param gafOrganization
+     * @return Collection of zdbids to be removed.
+     */
     public Collection<String> findOutdatedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
         Set<String> existingZfinZdbIDs = new TreeSet<String>(markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization));
         Set<String> newGafEntryZdbIds = new TreeSet<String>();
@@ -162,7 +208,7 @@ public class GafService {
     }
 
     public MarkerGoTermEvidence generateAnnotation(GafEntry gafEntry, Marker gene, GafOrganization gafOrganization)
-            throws GafAnnotationExistsError, GafValidationError {
+            throws GafValidationError {
         // lookup GO annotation
         GenericTerm goTerm = getGoTerm(gafEntry);
 
@@ -181,7 +227,10 @@ public class GafService {
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
         // validate evidence code
         GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(gafEntry.getEvidenceCode());
-        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(goEvidenceCode.getCode());
+        if(goEvidenceCode==null){
+            throw new GafValidationError("invalid evidence code: "+gafEntry.getEvidenceCode(),gafEntry);
+        }
+//        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(goEvidenceCode.getCode());
         markerGoTermEvidenceToAdd.setEvidenceCode(goEvidenceCode);
 
         // validate created date
@@ -214,7 +263,7 @@ public class GafService {
         return markerGoTermEvidenceToAdd;
     }
 
-    private void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
+    protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
         if (StringUtils.isNotEmpty(inferenceEntry)) {
@@ -231,7 +280,6 @@ public class GafService {
             for (String inference : inferenceSet) {
                 if (goEvidenceCodeEnum == GoEvidenceCodeEnum.IGI) {
                     if (InferenceCategory.UNIPROTKB.isType(inference)) {
-                        // get uniprot ReferenceDatabase
                         List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(
                                 inference.substring(InferenceCategory.UNIPROTKB.prefix().length()), SequenceService.getUniprotRefDB());
                         // if it is one gene, then set that as the prefix
@@ -240,6 +288,13 @@ public class GafService {
                         }
                     }
                 }
+                if(inference==null){
+                    throw new GafValidationError("inference is null " +
+                            " for code " + goEvidenceCodeEnum.name() +
+                            " and pub " + publicationZdbId + " "
+                            , gafEntry);
+                }
+
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
                     throw new GafValidationError("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
@@ -265,7 +320,7 @@ public class GafService {
         }
     }
 
-    private GoEvidenceQualifier getQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
+    protected GoEvidenceQualifier getQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
         if (!gafEntry.getQualifier().isEmpty()) {
             // they use "contributes_to" and "NOT"
             if (gafEntry.getQualifier().equals("NOT")) {
@@ -286,12 +341,19 @@ public class GafService {
         }
     }
 
-    private Publication getPublication(GafEntry gafEntry) throws GafValidationError {
+    protected Publication getPublication(GafEntry gafEntry) throws GafValidationError {
         String pubMedID = gafEntry.getPubmedId();
         Publication publication = null;
         if (StringUtils.isEmpty(pubMedID)) {
             throw new GafValidationError("Must have a Pubmed ID", gafEntry);
         }
+        if (pubMedID.startsWith("ZFIN:") && getZfinPubId(pubMedID)!=null) {
+            publication = RepositoryFactory.getPublicationRepository().getPublication(getZfinPubId(pubMedID));
+            if (publication == null ) {
+                throw new GafValidationError("No pub found for zdbID : " + getZfinPubId(pubMedID) , gafEntry);
+            }
+        }
+        else
         if (getPubMedId(pubMedID) != null) {
             List<Publication> publications = RepositoryFactory.getPublicationRepository().getPublicationByPmid(getPubMedId(pubMedID));
             if (publications == null || publications.size() == 0) {
@@ -303,7 +365,8 @@ public class GafService {
             }
         }
         // if special go_ref, than use the alternate pubmed id
-        else if (pubMedID.startsWith(GafParser.GOREF_PREFIX)) {
+        else
+        if (pubMedID.startsWith(FpInferenceGafParser.GOREF_PREFIX)) {
             if (goRefPubMap.containsKey(pubMedID)) {
                 publication = goRefPubMap.get(pubMedID);
             } else {
@@ -321,7 +384,20 @@ public class GafService {
 
     }
 
-    private GenericTerm getGoTerm(GafEntry gafEntry) throws GafValidationError {
+    /**
+     * @param pubMedID String of form: ZFIN:ZDB-PUB-000111-5|PMID:10611375
+     * @return Return pub zdbID.
+     */
+    protected String getZfinPubId(String pubMedID) {
+        if(pubMedID.contains("|")){
+            return patternPipe.matcher(pubMedID).replaceAll("$1");
+        }
+        else{
+            return pubMedID.split(":")[1];
+        }
+    }
+
+    protected GenericTerm getGoTerm(GafEntry gafEntry) throws GafValidationError {
         GenericTerm goTerm = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
         if (goTerm == null) {
             throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + gafEntry.getGoTermId(),
@@ -336,7 +412,7 @@ public class GafService {
         return goTerm;
     }
 
-    private String getPubMedId(String pubMedId) {
+    protected String getPubMedId(String pubMedId) {
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
             return pubMedId.substring(PUBMED_PREFIX.length());
         }
@@ -366,7 +442,7 @@ public class GafService {
 
             logger.debug("adding " + markerGoTermEvidenceToAdd);
 
-            markerGoTermEvidenceToAdd = markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
+            markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerGoTermEvidenceToAdd.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidenceToAdd.toString(), "Created new MarkerGoTermEvidence record from GafService load");
 
             logger.debug("added " + markerGoTermEvidenceToAdd);

@@ -185,8 +185,13 @@ public class GoEvidenceValidator {
 
         boolean validInference = false;
         for (InferenceCategory inferenceCategory : inferenceCategories) {
-            if (inference.matches(inferenceCategory.match())) {
-                return true;
+            try{
+                if (inference.matches(inferenceCategory.match())) {
+                    return true;
+                }
+            }
+            catch(NullPointerException npe){
+                throw new RuntimeException("null pointer on: " + inference +" and inferenceCAtegory: " + inferenceCategory + " "+ (inferenceCategory != null ? inferenceCategory.match() : " was null " ) );
             }
         }
         return validInference;

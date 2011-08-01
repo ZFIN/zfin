@@ -3,10 +3,7 @@ package org.zfin.datatransfer.go;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.util.FileUtil;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Data associated with a GafJob.
@@ -42,6 +39,7 @@ public class GafJobData {
     }
 
     public List<GafValidationError> getErrors() {
+        Collections.sort(errors);
         return errors;
     }
 

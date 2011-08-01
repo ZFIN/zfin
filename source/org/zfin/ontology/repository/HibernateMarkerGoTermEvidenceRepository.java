@@ -4,10 +4,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GafOrganization;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -95,7 +95,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
-    public MarkerGoTermEvidence addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+    public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
         HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
 
         // have to do this after we add inferences
@@ -105,13 +105,6 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 HibernateUtil.currentSession().save(inference);
             }
         }
-
-        return markerGoTermEvidenceToAdd;
-//        for(InferenceGroupMember inferenceGroupMember: markerGoTermEvidenceToAdd.getInferredFrom()){
-//            inferenceGroupMember.setMarkerGoTermEvidenceZdbID(markerGoTermEvidenceToAdd.getZdbID());
-//            HibernateUtil.currentSession().save(inferenceGroupMember) ;
-//        }
-//            HibernateUtil.currentSession().update(markerGoTermEvidenceToAdd);
     }
 
     @Override

@@ -98,6 +98,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         NCBO_CARO("NCBO-CARO"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
+        PANTHER("PANTHER"),
         PREVEGA("PREVEGA"),
         PROSITE("PROSITE"),
         PFAM("Pfam"),

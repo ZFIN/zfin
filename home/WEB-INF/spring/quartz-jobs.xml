@@ -26,7 +26,9 @@
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
-                <ref bean="uniprotGafLoadTrigger"/>
+                <ref bean="goaGafLoadTrigger"/>
+                <ref bean="fpInferenceGafLoadTrigger"/>
+                <ref bean="paintGafLoadTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -182,7 +184,6 @@
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Microarray Update"/>
                 <property name="group" value="Microarray"/>
-                <!--<property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayDbLinkJob"/>-->
                 <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob"/>
             </bean>
         </property>
@@ -363,19 +364,76 @@
         <!--<property name="fanged" value="false"/>-->
     <!--</bean>-->
 
-    <bean id="uniprotGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <!--This is defined in a separate context-->
+    <bean id="downloadService" class="org.zfin.datatransfer.service.DownloadService"/>
+    <bean id="goaGafParser" class="org.zfin.datatransfer.go.GoaGafParser"/>
+    <bean id="fpGafParser" class="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+    <bean id="paintGafParser" class="org.zfin.datatransfer.go.PaintGafParser"/>
+
+    <bean id="goaGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="name" value="GOA GAF Load"/>
         <property name="group" value="GO"/>
-        <property name="jobClass" value="org.zfin.datatransfer.go.service.GoaGafLoadJob"/>
+        <property name="jobClass" value="org.zfin.datatransfer.go.service.GafLoadJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="downloadService" value-ref="downloadService"/>
+                <entry key="downloadUrl" value="ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz"/>
+                <entry key="organization" value="GOA"/>
+                <entry key="gafParser" value-ref="goaGafParser"/>
+            </map>
+        </property>
     </bean>
 
+    <bean id="fpInferenceGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="name" value="FP Inference GAF Load"/>
+        <property name="group" value="GO"/>
+        <property name="jobClass" value="org.zfin.datatransfer.go.service.GafLoadJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="downloadService" value-ref="downloadService"/>
+                <entry key="downloadUrl" value="ftp://ftp.geneontology.org/pub/go/scratch/gaf-inference/gene_association.zfin.inf.gaf"/>
+                <entry key="organization" value="FP Inferences"/>
+                <entry key="gafParser" value-ref="fpGafParser"/>
+            </map>
+        </property>
+    </bean>
 
-    <bean id="uniprotGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="uniprotGafLoadJobBean">
+    <bean id="paintGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="name" value="Paint GAF Load"/>
+        <property name="group" value="GO"/>
+        <property name="jobClass" value="org.zfin.datatransfer.go.service.GafLoadJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="downloadService" value-ref="downloadService"/>
+                <entry key="downloadUrl" value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
+                <entry key="organization" value="PAINT"/>
+                <entry key="gafParser" value-ref="paintGafParser"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="goaGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="goaGafLoadJobBean">
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off the 22nd of each month-->
         <property name="cronExpression" value="0 50 03 22 * ?"/>
+    </bean>
+
+    <bean id="fpInferenceGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="fpInferenceGafLoadJobBean">
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--goes off the 22nd of each month-->
+        <property name="cronExpression" value="0 50 02 22 * ?"/>
+    </bean>
+
+    <bean id="paintGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="paintGafLoadJobBean">
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--goes off the 22nd of each month-->
+        <property name="cronExpression" value="0 30 02 22 * ?"/>
     </bean>
 
 </beans>

@@ -1,4 +1,4 @@
-package org.zfin.mutant;
+package org.zfin.datatransfer.go;
 
 /**
  *
@@ -20,6 +20,14 @@ public class GafOrganization {
         @Override
         public String toString() {
             return value;
+        }
+
+        public static OrganizationEnum getType(String type) {
+            for (OrganizationEnum t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No OrganizationEnum named " + type + " found.");
         }
     }
 
