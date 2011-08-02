@@ -36,7 +36,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         assertNull(markerExpression.getGeoLink());
         assertThat(markerExpression.getAllExpressionData().getFigureCount(), greaterThan(35));
         assertThat(markerExpression.getAllExpressionData().getFigureCount(), lessThan(100));
-        assertNull(markerExpression.getDirectlySubmittedExpression());
+        assertNotNull(markerExpression.getDirectlySubmittedExpression());
         assertNull(markerExpression.getWildTypeStageExpression());
     }
 
@@ -68,7 +68,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
 //        MicroarrayWebServiceBean microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENEP,5);
         int numberMarkers = RepositoryFactory.getMarkerRepository().getMarkerZdbIdsForType(Marker.Type.GENE).size();
         long startTime = System.currentTimeMillis();
-        MicroarrayWebServiceBean microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENE, 200);
+        MicroarrayWebServiceBean microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENE, 20);
         HibernateUtil.createTransaction();
         try {
             expressionService.writeMicroarrayWebServiceBean(microarrayWebServiceBean);
