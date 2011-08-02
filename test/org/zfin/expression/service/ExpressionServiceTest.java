@@ -87,10 +87,18 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
     // TODO: re-enable after the GEO job has been run once
     @Test
     public void getGeoLinkForMarker() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-041008-244");
+        Marker m ;
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-041008-244");
         assertNotNull(m);
-        String linkString = expressionService.getGeoLinkForMarker(m);
-        assertNotNull(linkString);
+        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
+
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2");
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+//        linkString = expressionService.getGeoLinkForMarker(m); // will still grab this until rerun
+
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SSLP-000426-106");
         assertNotNull(m);
         assertNull(expressionService.getGeoLinkForMarker(m));
