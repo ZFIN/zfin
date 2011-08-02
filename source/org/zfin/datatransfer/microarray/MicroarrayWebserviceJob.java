@@ -89,7 +89,10 @@ public class MicroarrayWebserviceJob implements Job {
                 logger.error(e);
                 HibernateUtil.rollbackTransaction();
 
-                // TODO: email error
+                // TODO: email and stuff
+                (new IntegratedJavaMailSender()).sendMail("ERROR in microarray update for: "+(new Date()).toString()
+                        , "ERROR: " + e.fillInStackTrace().toString() +"\n"+message.toString(),
+                        ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
             }
             finally {
                 if(HibernateUtil.currentSession().isOpen()){
