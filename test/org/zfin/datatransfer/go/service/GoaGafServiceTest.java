@@ -276,7 +276,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
         assertEquals(6, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(6, gafReport1.getErrors().size());
+        assertEquals(9, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
 
     }
