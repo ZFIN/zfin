@@ -51,7 +51,7 @@ create function populate_all_term_contains()
 	   termrel_term_2_zdb_id, 
 	   dist
     from term_relationship
-    where termrel_type in ('is_a','part_of','part of','regulates','positively_regulates','negatively_regulates');
+    where termrel_type in ('is_a','part_of','part of');
 
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
@@ -223,8 +223,7 @@ create dba function "informix".regen_term()
       -- this table stores every term term with every ancestor 
       -- that has a contains relationship and the shortest distance 
       -- between each pair.  In this case, a contains relationship
-      -- is being defined as dagedit_id's "is_a", "part_of", "regulates", 
-      -- "positively_regulates", and "negatively_regulates", which
+      -- is being defined as dagedit_id's "is_a", "part_of", which
       -- leaves out "develops_from".  Unfortunately, the only place
       -- where that is defined is in this file, when we have a generic
       -- DAG, we will probably need relationship type groups so that
