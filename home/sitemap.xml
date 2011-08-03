@@ -44,7 +44,7 @@
 		<loc>
 		http://zfin.org/zf_info/anatomy.html
 		</loc>
-		<changefreq>weekly</changefreq>
+		<changefreq>monthly</changefreq>
 		<priority>0.3</priority>
 	</url>
 	<url>
@@ -67,33 +67,5 @@
 		</loc>
 		<changefreq>yearly</changefreq>
 		<priority>0.4</priority>
-	</url>
-	<url>
-		<loc>
-		http://zfin.org/action/marker/list-markers
-		</loc>
-		<changefreq>weekly</changefreq>
-		<priority>0.8</priority>
-	</url>
-    <url>
-        <loc>
-            http://zfin.org/action/marker/view
-        </loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-	<url>
-		<loc>
-		http://zfin.org/action/anatomy/term-detail
-		</loc>
-		<changefreq>monthly</changefreq>
-		<priority>0.4</priority>
-	</url>
-	<url>
-		<loc>
-		http://zfin.org/cgi-bin/ZFIN_jump
-		</loc>
-		<changefreq>weekly</changefreq>
-		<priority>0.7</priority>
 	</url>
 </urlset>
