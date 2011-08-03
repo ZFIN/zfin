@@ -237,7 +237,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(m);
         // should be 6 here! other 2 are related . .
-        assertEquals(7,sequenceInfo.getDbLinks().size());
+        assertEquals(6,sequenceInfo.getDbLinks().size());
         Iterator<DBLink> iter = sequenceInfo.getDbLinks().iterator() ;
         DBLink dbLink ;
         dbLink = iter.next();
@@ -258,9 +258,9 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
         assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
         assertEquals(ForeignDB.AvailableName.REFSEQ,dbLink.getReferenceDatabase().getForeignDB().getDbName());
 
-        dbLink = iter.next();
-        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
-        assertEquals(ForeignDB.AvailableName.GENPEPT,dbLink.getReferenceDatabase().getForeignDB().getDbName());
+//        dbLink = iter.next();
+//        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
+//        assertEquals(ForeignDB.AvailableName.GENPEPT,dbLink.getReferenceDatabase().getForeignDB().getDbName());
 
         dbLink = iter.next();
         assertEquals(ForeignDBDataType.DataType.SEQUENCE_CLUSTERS,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
