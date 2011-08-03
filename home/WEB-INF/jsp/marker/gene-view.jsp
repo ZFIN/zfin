@@ -27,7 +27,7 @@
 <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"/>
 
 
-<zfin2:uninformativeName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
+<zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}" fromChimericClone="${formBean.hasChimericClone}"/>
 
 <%--// EXPRESSION SECTION--%>
 <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
