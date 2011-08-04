@@ -4,11 +4,13 @@ import gov.nih.nlm.ncbi.www.soap.eutils.EFetchSequenceServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.zfin.datatransfer.ServiceConnectionException;
 import org.zfin.datatransfer.microarray.GeoMicorarrayEntriesBean;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.EFetchDefline;
 import org.zfin.sequence.Sequence;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 
@@ -92,18 +94,18 @@ public class NCBIEfetch {
         sb.append("txid7955[organism] AND (");
         if (symbol != null) {
             sb.append(symbol + "[gene symbol]");
-            if(CollectionUtils.isNotEmpty(accessions)){
+            if (CollectionUtils.isNotEmpty(accessions)) {
                 sb.append(" OR ");
             }
         }
-        if(CollectionUtils.isNotEmpty(accessions)){
-           sb.append("(");
-           boolean isFirst = true ;
-           for(String accession : accessions) {
-               sb.append( (!isFirst ? " OR " : "")).append( accession+" OR "+accession+".*" );
-               isFirst = false;
-           }
-           sb.append(")");
+        if (CollectionUtils.isNotEmpty(accessions)) {
+            sb.append("(");
+            boolean isFirst = true;
+            for (String accession : accessions) {
+                sb.append((!isFirst ? " OR " : "")).append(accession + " OR " + accession + ".*");
+                isFirst = false;
+            }
+            sb.append(")");
         }
 
 
@@ -114,7 +116,7 @@ public class NCBIEfetch {
     }
 
     public static boolean hasMicroarrayData(Collection<String> accessions) {
-        return hasMicroarrayData(accessions, null) ;
+        return hasMicroarrayData(accessions, null);
     }
 
     /**
@@ -127,7 +129,7 @@ public class NCBIEfetch {
             EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
             request.setDb("geoprofiles");
             request.setTool("geo");
-            request.setTerm(createMicroarrayQuery(accessions,symbol));
+            request.setTerm(createMicroarrayQuery(accessions, symbol));
             request.setRetMax("0");
             EUtilsServiceStub.ESearchResult result = service.run_eSearch(request);
 
@@ -158,15 +160,15 @@ public class NCBIEfetch {
         }
         try {
 //            if (NCBIEfetch.hasMicroarrayData(accessions, abbreviation)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("<a href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
-                sb.append(createMicroarrayQuery(accessions,abbreviation));
-                sb.append("\">GEO</a> ");
-                sb.append("(<a href=\"/")
-                        .append(ZfinProperties.getWebDriver())
-                        .append("?MIval=aa-pubview2.apg&OID=ZDB-PUB-071218-1\">1</a>)")
-                ;
-                return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            sb.append("<a href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
+            sb.append(createMicroarrayQuery(accessions, abbreviation));
+            sb.append("\">GEO</a> ");
+            sb.append("(<a href=\"/")
+                    .append(ZfinProperties.getWebDriver())
+                    .append("?MIval=aa-pubview2.apg&OID=ZDB-PUB-071218-1\">1</a>)")
+            ;
+            return sb.toString();
 //            }
         } catch (Exception e) {
             logger.error(e);
@@ -174,7 +176,7 @@ public class NCBIEfetch {
         return null;
     }
 
-    public static Set<String> getPlatformsForZebrafishMicroarrays() throws Exception{
+    public static Set<String> getPlatformsForZebrafishMicroarrays() throws Exception {
 
         EUtilsServiceStub service = new EUtilsServiceStub();
         EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
@@ -189,16 +191,16 @@ public class NCBIEfetch {
         int totalGeoAccessions = Integer.parseInt(result.getCount());
 
         logger.info("Total geo accessions: " + totalGeoAccessions);
-        int batchSize = 10000 ; // max
-        int testMaxToProcess = 1000000 ; // max should be 250K
+        int batchSize = 10000; // max
+        int testMaxToProcess = 1000000; // max should be 250K
 
         Set<String> platforms = new HashSet<String>();
         EUtilsServiceStub.ESummaryRequest summaryRequest = new EUtilsServiceStub.ESummaryRequest();
         request.setRetMax(String.valueOf(batchSize));
 
-        long totalTime = 0 ;
+        long totalTime = 0;
 
-        for(int i = 0 ; i < totalGeoAccessions ; i+=batchSize){
+        for (int i = 0; i < totalGeoAccessions; i += batchSize) {
             long startTime = System.currentTimeMillis();
             summaryRequest.setRetstart(String.valueOf(i));
             summaryRequest.setRetmax(String.valueOf(batchSize));
@@ -207,21 +209,21 @@ public class NCBIEfetch {
             summaryRequest.setQuery_key("1");
             EUtilsServiceStub.ESummaryResult summaryResult = service.run_eSummary(summaryRequest);
             EUtilsServiceStub.DocSumType[] docTypes = summaryResult.getDocSum();
-            for(EUtilsServiceStub.DocSumType docType : docTypes){
+            for (EUtilsServiceStub.DocSumType docType : docTypes) {
                 // get outer ioccurenct
-                for(EUtilsServiceStub.ItemType itemType   : docType.getItem()){
-                    if(itemType.getName().equals("GPL")){
+                for (EUtilsServiceStub.ItemType itemType : docType.getItem()) {
+                    if (itemType.getName().equals("GPL")) {
                         platforms.add(itemType.getItemContent());
                     }
                 }
             }
             long endTime = System.currentTimeMillis();
-            totalTime += (endTime - startTime) ;
-            logger.info("time per : "+ ((endTime - startTime) / (1000f*batchSize ) ) + " i["+i+"]");
-            if(i >= testMaxToProcess){
-                double avgTime = (totalTime) / (1000f*testMaxToProcess) ;
-                logger.info("total time avg: "+  avgTime );
-                logger.info("est time: "+ avgTime*totalGeoAccessions);
+            totalTime += (endTime - startTime);
+            logger.info("time per : " + ((endTime - startTime) / (1000f * batchSize)) + " i[" + i + "]");
+            if (i >= testMaxToProcess) {
+                double avgTime = (totalTime) / (1000f * testMaxToProcess);
+                logger.info("total time avg: " + avgTime);
+                logger.info("est time: " + avgTime * totalGeoAccessions);
                 return platforms;
             }
         }
@@ -229,7 +231,7 @@ public class NCBIEfetch {
         return platforms;
     }
 
-    public static GeoMicorarrayEntriesBean getMicroarraySequences() throws Exception{
+    public static GeoMicorarrayEntriesBean getMicroarraySequences() throws Exception {
         GeoMicorarrayEntriesBean bean = new GeoMicorarrayEntriesBean();
 
         EUtilsServiceStub service = new EUtilsServiceStub();
@@ -245,53 +247,85 @@ public class NCBIEfetch {
         int totalGeoAccessions = Integer.parseInt(result.getCount());
 
         logger.info("Total geo accessions: " + totalGeoAccessions);
-        int batchSize = 10000 ; // max
-        int testMaxToProcess = 1000000 ; // max should be 250K
-//        int testMaxToProcess = 30000 ; // max should be 250K
+        int batchSize = 10000; // max
 
         EUtilsServiceStub.ESummaryRequest summaryRequest = new EUtilsServiceStub.ESummaryRequest();
+        summaryRequest.setWebEnv(webEnvKey);
         request.setRetMax(String.valueOf(batchSize));
 
-        long totalTime = 0 ;
+        long totalTime = 0;
+        int numAttempts = 5;
 
-        for(int i = 1 ; i < totalGeoAccessions ; i+=batchSize){
+        for (int i = 1; i < totalGeoAccessions; i += batchSize) {
             long startTime = System.currentTimeMillis();
-            summaryRequest.setRetstart(String.valueOf(i));
-            summaryRequest.setRetmax(String.valueOf(batchSize));
-            summaryRequest.setDb("geo");
-            summaryRequest.setWebEnv(webEnvKey);
-            summaryRequest.setQuery_key("1");
-            EUtilsServiceStub.ESummaryResult summaryResult = service.run_eSummary(summaryRequest);
+
+
+            EUtilsServiceStub.ESummaryResult summaryResult;
+
+            try {
+                summaryResult = retrieveBatch(service, summaryRequest, i, batchSize, numAttempts);
+            } catch (ServiceConnectionException e) {
+                logger.error("Failed to retrieve a batch at [" + i + "] after [" + numAttempts + "]");
+                throw e;
+            }
+
             EUtilsServiceStub.DocSumType[] docTypes = summaryResult.getDocSum();
-            for(EUtilsServiceStub.DocSumType docType : docTypes){
+
+            for (EUtilsServiceStub.DocSumType docType : docTypes) {
                 // get outer ioccurenct
 //                EUtilsServiceStub.ItemType localItemType = docType.getItem()[0];
-                for(EUtilsServiceStub.ItemType itemType   : docType.getItem()){
-                    if(itemType.getName().equals("geneName")){
+                for (EUtilsServiceStub.ItemType itemType : docType.getItem()) {
+                    if (itemType.getName().equals("geneName")) {
                         bean.addGeneSymbol(itemType.getItemContent());
                     }
-                    if(itemType.getName().equals("GBACC")){
-                        if(itemType.getItemContent()!=null){
+                    if (itemType.getName().equals("GBACC")) {
+                        if (itemType.getItemContent() != null) {
                             bean.addAccession(cleanDot(itemType.getItemContent()));
                         }
                     }
                 }
             }
             long endTime = System.currentTimeMillis();
-            totalTime += (endTime - startTime) ;
-            logger.info("time per : "+ ((endTime - startTime) / (1000f*batchSize ) ) + " i["+i+"]");
-            if(i >= testMaxToProcess){
-                double avgTime = (totalTime) / (1000f*testMaxToProcess) ;
-                logger.info("total time avg: "+  avgTime );
-                logger.info("est time: "+ avgTime*totalGeoAccessions);
-                return bean ;
+            totalTime += (endTime - startTime);
+
+            logMessage(i,batchSize,totalTime,totalGeoAccessions);
+        }
+        logMessage(totalGeoAccessions,batchSize,totalTime,totalGeoAccessions);
+
+        return bean;
+    }
+
+    private static void logMessage(int i,int batchSize,long totalTime,int totalGeoAccessions) {
+        int processed = i+batchSize;
+        float avgTime = (float) (totalTime / 1000) / (float) processed ;
+        float estTotal = totalGeoAccessions * avgTime ;
+        float estRemaining = estTotal  - (totalTime / 1000) ;
+        // processed N / M (X s) est Remaining (M s) estTotalTime (Q s) totalTimeSpent (P s) avg Time (R s)
+        String message = "GEO retrieved\n " ;
+        message += " Processed : "+ (processed) + "/"+ (totalGeoAccessions) ;
+        message += " est Remaining ("+estRemaining+" s)";
+        message += " est Total time ("+estTotal+" s)";
+        message += " time spent ("+(totalTime / 1000)+" s)";
+        message += " avgTime per entry ("+avgTime+" s)";
+        logger.info(message);
+    }
+
+    private static EUtilsServiceStub.ESummaryResult retrieveBatch(EUtilsServiceStub service
+            , EUtilsServiceStub.ESummaryRequest summaryRequest
+            , int i, int batchSize, int numAttempts) throws Exception {
+        summaryRequest.setRetstart(String.valueOf(i));
+        summaryRequest.setRetmax(String.valueOf(batchSize));
+        summaryRequest.setDb("geo");
+        summaryRequest.setQuery_key("1");
+
+        for (int attempt = 0; attempt < numAttempts; ++attempt) {
+            try {
+                return service.run_eSummary(summaryRequest);
+            } catch (Exception e) {
+                logger.warn("problem connecting to service attempt "+ (attempt+1) +"/"+numAttempts,e);
             }
         }
-        double avgTime = (totalTime) / (1000f*testMaxToProcess) ;
-        logger.info("total time avg: "+  avgTime );
-        logger.info("est time: "+ avgTime*totalGeoAccessions);
-
-        return bean ;
+        throw new ServiceConnectionException("Failed to retrieve batch after "+ numAttempts+ " attempts at batch "+i+"");
     }
 
     /**
