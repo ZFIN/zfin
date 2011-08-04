@@ -19,9 +19,9 @@
         <th><span class="name-label">${gene.markerType.displayName}&nbsp;Name:</span></th>
         <td><span class="name-value"><zfin:name entity="${gene}"/>  </span></td>
     </tr>
-    <c:if test="${gene.markerType.name eq 'GENE'}">
+    <c:if test="${fn:startsWith(gene.markerType.name,'GENE')}">
         <tr>
-            <th><span class="name-label">Gene Symbol:</span></th>
+            <th><span class="name-label">${gene.markerType.displayName}&nbsp;Symbol:</span></th>
             <td><span class="name-value"><zfin:link entity="${gene}"/></span></td>
         </tr>
     </c:if>

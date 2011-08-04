@@ -6,7 +6,7 @@
 <div class="summary">
     <c:choose>
         <c:when test="${numPubs > 0}">
-            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${marker.zdbID}&rtype=marker&title=${marker.markerType.displayName}&name=${marker.name}&abbrev=${marker.abbreviation}&total_count=${numPubs}">CITATIONS</a> (${numPubs})
+            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${marker.zdbID}&rtype=marker&title=${marker.markerType.displayName}+Name&name=${marker.name}&abbrev=${marker.abbreviation}&total_count=${numPubs}">CITATIONS</a> (${numPubs})
         </c:when>
         <c:otherwise>
             <b>CITATIONS</b> (0)
