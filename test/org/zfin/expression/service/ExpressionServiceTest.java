@@ -84,7 +84,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         assertNotNull(microarrayWebServiceBean);
     }
 
-    // TODO: re-enable after the GEO job has been run once
     @Test
     public void getGeoLinkForMarker() {
         Marker m ;
