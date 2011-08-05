@@ -68,6 +68,9 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
         // retrieve
         MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goEvidenceDTO.getZdbID());
+
+        if(markerGoTermEvidence == null)
+            throw new RuntimeException("Could not find go evidence for id: "+goEvidenceDTO.getZdbID());
         String oldValueString = markerGoTermEvidence.toString();
 
         HibernateUtil.createTransaction();
