@@ -1,5 +1,4 @@
 #!/bin/sh
-dbaccess -a $DBNAME /research/zunloads/projects/genePage/schema.sql ;
-
-dbaccess -a $DBNAME /research/zunloads/projects/GAF/schema.sql ;
+cd /research/zunloads/projects/genePage ; dbaccess -a $DBNAME schema.sql ;
+cd /research/zunloads/projects/GAF ; dbaccess -a $DBNAME schema.sql ;
 
