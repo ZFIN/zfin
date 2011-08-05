@@ -11,9 +11,9 @@
 --
 -- Orthology - separate files for: D
 --   zebrafish - human
---	zfin id , zebrafish symbol, human symbol, OMIM id, Entrez Gene id
+--	zfin id , zebrafish symbol, human symbol, OMIM id, Gene id
 --   zebrafish - mouse
---	zfin id , zebrafish symbol, mouse symbol, MGI id, Entrez Gene id
+--	zfin id , zebrafish symbol, mouse symbol, MGI id, Gene id
 --   zebrafish - fly
 --	zfin id,  zebrafish symbol, fly symbol,  Flybase id
 --   zebrafish - yeast [5 stale records]
@@ -30,7 +30,7 @@
 -- Mapping data
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
--- Sequence data - separate files for GenBank, RefSeq, Entrez Gene, Unigene,
+-- Sequence data - separate files for GenBank, RefSeq, Gene, Unigene,
 -- UniProt, Interpro, GenPept and Vega (genes and transcripts) 1:1 Ensembl ID
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
@@ -157,7 +157,7 @@ update tmp_ortho_exp set Entrez = (
 	select dblink_acc_num
 	 from db_link, orthologue o, foreign_db_contains, foreign_db
 	 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	   and fdb_db_name = 'Entrez Gene'
+	   and fdb_db_name = 'Gene'
 	   and fdbcont_fdb_db_id = fdb_db_pk_id
 	   and fdbcont_organism_common_name = o.organism
 	   and o.zdb_id = dblink_linked_recid
@@ -475,15 +475,15 @@ select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
    and dblink_acc_num[3] = "_"
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/entrezgene.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/entrezgene.txt'
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db
  where mrkr_zdb_id = dblink_linked_recid
    and fdbcont_fdb_db_id = fdb_db_pk_id
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdb_db_name = 'Entrez Gene'
+   and fdb_db_name = 'Gene'
  order by 1;
 
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'"
