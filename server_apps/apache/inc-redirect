@@ -10,6 +10,8 @@ Redirect  /zf_info/news/jobs.rss https://wiki.zfin.org/spaces/createrssfeed.acti
 Redirect /zf_info/news/mtgs.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=meeting&title=Zebrafish+Meetings&publicFeed=true&maxResults=-1&sort=created
 Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=siteNews&title=Zebrafish+News&publicFeed=true&maxResults=-1&sort=created
 
+#version independent gbrowse link
+RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
 
 #lab designation page
 Redirect  /zf_info/zfbook/lab_desig.html http://<!--|DOMAIN_NAME|-->/action/feature/line-designations
