@@ -135,3 +135,11 @@ table.gridlines td { background-color: #eee; }
 /* sequenceView.tag is a strange beast, and requires some exceptions */
 div.sequence-view-table-wrapper { border: 1px solid #ccc; min-width: 800px; }
 table.summary.sequence-view { border: none; margin: 0px;}
+
+div.analysis_tools_box { border: 1px solid #666666; width: 40%; min-width: 100px; margin: 0 auto; padding: 3px; border-radius: 8px; -moz-border-radius: 8px; background: #DDDDDD; }
+div.analysis_tools_box_header { color: blue;font-size: small;cursor: pointer; white-space: nowrap; text-align: center;}
+div.analysis_tools_box_popup_box { display: none;background-color: #DDDDDD; border-top: 1px solid #CCCCCC; }
+div.analysis_tools_box_popup_box a{ font-size: small; white-space: nowrap;}
+div.analysis_tools_box_popup_entry { margin-left: 20px; margin-right: 5px; text-align: left; }
+a.analysis_tools_single_link { font-size: small;  white-space: nowrap;}
+

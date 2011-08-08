@@ -33,7 +33,7 @@
                 <td style="text-align: center">
                     <div style="margin: .5em; border: 1px solid black; background: white">
 
-                        <a href="/<%=ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.value()%>?name=${formBean.marker.abbreviation}">
+                        <a href="/<%=ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value()%>?name=${formBean.marker.abbreviation}">
                             <img
                                     onload="document.getElementById('clone_gbrowse_thumbnail_box').style.display = 'block';"
                                     style="padding-bottom:10px; border: 0 "

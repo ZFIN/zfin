@@ -8,6 +8,7 @@ public enum Area {
     ANTIBODY("Antibody")     ,
     CLONE("Clone")     ,
     GENE("Gene")     ,
+    PSEUDOGENE("Pseudogene")     ,
     MARKER("Marker")     ,
     USER("User")     ,
     PUBLICATION("Publication")     ,

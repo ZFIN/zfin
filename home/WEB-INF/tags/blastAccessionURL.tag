@@ -22,6 +22,5 @@
     </c:otherwise>
 </c:choose>
 
-<input type="button" value="Blast at ${dbLink.blastableDatabases[0].displayName}"
-       onclick="window.open('${blastLink}');">
+<a class="analysis_tools_single_link" href="${blastLink}">Blast at ${dbLink.blastableDatabases[0].displayName}</a>
 

@@ -8,17 +8,6 @@
 <%@ attribute name="title" type="java.lang.String" required="false"%>
 <%@ attribute name="showAllSequences" type="java.lang.Boolean" required="true"%>
 
-<script type="text/javascript" language="JavaScript">
-    function jump(form_select){
-        if (0 != form_select.selectedIndex){
-            window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
-        }
-        return true;
-    }
-
-</script>
-
-
 <%-- set the tag to a default value if nothing is passed in --%>
 <c:if test="${empty title}">
     <c:set var="title" value="Sequence Information"/>
@@ -57,7 +46,7 @@
                 <td style="text-align: right">
                     <c:if test="${!empty dblink.length}"> ${dblink.length} ${dblink.units} </c:if>
                 </td>
-                <td  style="text-align: center">
+                <td style="text-align: center; margin-left: 100px;">
                     <zfin2:externalAccessionBlastDropDown dbLink="${dblink}"/>
                 </td>
                     <%--</zfin:alternating-tr>--%>

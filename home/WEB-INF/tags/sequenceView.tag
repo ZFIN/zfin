@@ -86,11 +86,12 @@
 
                         <!--todo: this link needs to be written for a generic CGI and to come out of the databse-->
                         <a href="/action/blast/download-sequence?<%=LookupStrings.ACCESSION%>=${sequence.dbLink.accessionNumber}"
-                           style="text-decoration: none;">[Download]</a>
+                           style="text-decoration: none; ">[Download]</a>
+                           </td>
 
-                        &nbsp;&nbsp;&nbsp;
+                           <td>
 
-                        <zfin2:externalBlastDropDown dbLink="${sequence.dbLink}" instructions="Select Analysis Tool"/>
+                        <zfin2:externalBlastDropDown dbLink="${sequence.dbLink}" instructions="Select Analysis Tool" minWidth="150px"/>
                         </td></tr> </table>
                         <div id="sequence${index.index}"
                              style=" background: white; width: 99%; display: none; border: 1px solid #ccc;

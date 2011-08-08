@@ -27,12 +27,12 @@ public class GeneViewController {
     private Logger logger = Logger.getLogger(GeneViewController.class);
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService;
 
-    @RequestMapping(value ="/gene/view/{zdbID}")
+    @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(
             Model model
-            ,@PathVariable("zdbID") String zdbID
+            , @PathVariable("zdbID") String zdbID
     ) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
@@ -86,8 +86,8 @@ public class GeneViewController {
         geneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
-//        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, gene.getMarkerType().getDisplayName() + gene.getAbbreviation());
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
 
         return "marker/gene-view.page";
     }

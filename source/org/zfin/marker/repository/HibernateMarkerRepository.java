@@ -1853,8 +1853,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             @Override
             public int compare(LinkDisplay linkA, LinkDisplay linkB) {
                 int compare;
-                compare = linkA.getLink().compareTo(linkB.getLink());
-                if (compare != 0) return compare;
+                if (linkA.getSignificance() != null & linkB.getSignificance() != null) {
+                    compare = linkA.getSignificance().compareTo(linkB.getSignificance());
+                    if (compare != 0) return compare;
+                }
 
                 compare = linkA.getReferenceDatabaseName().compareTo(linkB.getReferenceDatabaseName());
                 if (compare != 0) return compare;
@@ -2000,9 +2002,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " select m.zdbID " +
                 " from Marker m " +
                 " where m.markerType.name = :type " +
-                " " ;
+                " ";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("type",markerType.name())
+                .setParameter("type", markerType.name())
                 .list()
                 ;
     }
@@ -2020,23 +2022,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " select m.abbreviation, m.zdbID " +
                 " from Marker m " +
                 " where m.markerType.name in (:types) " +
-                " " ;
+                " ";
         List<Marker> markers = HibernateUtil.currentSession().createQuery(hql)
-                .setParameterList("types",types)
+                .setParameterList("types", types)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         Marker m = new Marker();
                         m.setAbbreviation(tuple[0].toString());
                         m.setZdbID(tuple[1].toString());
-                        return m ;
+                        return m;
                     }
                 })
-                .list()
-                ;
-        Map<String,String> markerCandidates = new HashMap<String,String>();
-        for(Marker m : markers){
-            markerCandidates.put(m.getAbbreviation(),m.getZdbID());
+                .list();
+        Map<String, String> markerCandidates = new HashMap<String, String>();
+        for (Marker m : markers) {
+            markerCandidates.put(m.getAbbreviation(), m.getZdbID());
         }
         return markerCandidates;
     }

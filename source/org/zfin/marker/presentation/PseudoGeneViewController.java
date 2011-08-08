@@ -52,7 +52,7 @@ public class PseudoGeneViewController {
         geneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PSEUDOGENE.getTitleString() + gene.getAbbreviation());
 
         return "marker/pseudogene-view.page";
     }

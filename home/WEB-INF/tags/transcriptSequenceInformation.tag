@@ -7,16 +7,6 @@
 <%@ attribute name="title" type="java.lang.String" required="false"%>
 <%@ attribute name="showAllSequences" type="java.lang.Boolean" required="true"%>
 
-<script type="text/javascript" language="JavaScript">
-    function jump(form_select){
-        if (0 != form_select.selectedIndex){
-            window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
-        }
-        return true;
-    }
-
-</script>
-
 
 <%-- set the tag to a default value if nothing is passed in --%>
 <c:if test="${empty title}">
