@@ -410,7 +410,8 @@ select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
       and gbacc_pept != "-"
       and fdbcont_fdbdt_id = fdbdt_pk_id
       and fdbcont_fdb_db_id = fdb_db_pk_id
-      and dblink_linked_recid not like "ZDB-GENE%";
+      and dblink_linked_recid not like "ZDB-GENE%"
+      and dblink_linked_recid not like "ZDB-TSC%";
 
 
 insert into tmp_non_unique_pept_acc
@@ -447,6 +448,8 @@ INSERT INTO tmp_db_link
     AND gbacc_pept != '-'
     AND gbacc_pept = pla_prot
 ;
+
+
 
 update tmp_db_link
 set tmp_linked_recid = (select seg_zdb from tmp_put_genpept_on_segment where pept_acc = tmp_acc_num)
@@ -494,7 +497,7 @@ CREATE TEMP TABLE automated_dblink
     link_id 	varchar(80)
   )
 with no log;
-
+{
 !echo 'remove automated link'
 INSERT INTO automated_dblink
 SELECT dblink_zdb_id
@@ -515,9 +518,9 @@ SELECT dblink_zdb_id
 ;
 
 CREATE INDEX link_id_index ON automated_dblink 
-    (link_id) using btree in tempdbs1 ;
-
-
+    (link_id) using btree in tempdbs2 ;
+}
+{
         --------------------------
         --|  Expression Links  |--
         --------------------------
@@ -568,7 +571,7 @@ WHERE EXISTS (SELECT *
 Unload to "xpat_dblink.unl" 
   Select tmpfx_dblink_zdb_id 
     from tmp_xpat_dblink;
-
+}
 {
 DELETE FROM zdb_active_data 
   WHERE exists (
@@ -604,7 +607,26 @@ DELETE FROM zdb_active_data
 
 --Redundant links. A record with Marker/Acc_num/DB exists in ZFIN. Delete the matching record in tmp_db_link.
 
-    SELECT dblink_linked_recid, fdb_db_name as db_name, dblink_acc_num
+CREATE TEMP TABLE tmp_redundant_db_link
+  (
+    dblink_linked_recid varchar(50),
+    db_name 		varchar(50),
+    dblink_acc_num 	varchar(50)
+  )
+with no log;
+
+
+CREATE INDEX reddblink_linked_recid_index ON tmp_redundant_db_link 
+    (dblink_linked_recid) using btree in tempdbs2 ;
+
+CREATE INDEX reddb_name_index ON tmp_redundant_db_link 
+    (db_name) using btree in tempdbs2 ;
+
+CREATE INDEX reddblink_acc_num_index ON tmp_redundant_db_link 
+    (dblink_acc_num) using btree in tempdbs2 ;
+
+    INSERT into tmp_redundant_db_link(dblink_linked_recid, db_name, dblink_acc_num)
+    SELECT dblink_linked_recid, fdb_db_name , dblink_acc_num
     FROM db_link, tmp_db_link, foreign_db_contains, foreign_db, 
     	 	  foreign_db_data_type
     WHERE dblink_linked_recid = tmp_linked_recid
@@ -612,9 +634,9 @@ DELETE FROM zdb_active_data
       AND fdbcont_fdbdt_id = fdbdt_pk_id
       AND fdbcont_fdb_db_id = fdb_db_pk_id
       AND fdb_db_name = tmp_db_name
-      AND dblink_acc_num = tmp_acc_num
-    into temp tmp_redundant_db_link;
-    
+      AND dblink_acc_num = tmp_acc_num;
+ 
+  
 
     DELETE FROM tmp_db_link
     WHERE exists 
@@ -625,6 +647,8 @@ DELETE FROM zdb_active_data
           AND dblink_acc_num = tmp_acc_num
           AND dblink_linked_recid = tmp_linked_recid
       );
+
+
 
 
 --Remove links that would be assigned to a gene and currently have a 'Contained In' relationship
@@ -692,6 +716,7 @@ with no log;
           and dblink_acc_num = tmp_acc_num
           and dblink_linked_recid = mrel_mrkr_2_zdb_id
           and tmp_linked_recid = mrel_mrkr_1_zdb_id
+          and mrel_type = "clone contains gene"
       );
 
 
@@ -728,8 +753,8 @@ with no log;
       AND fdbcont_fdbdt_id = fdbdt_pk_id
       AND fdbcont_zdb_id = tmp_fdbcont_zdb_id
       AND fdbdt_data_type != 'Genomic'
-      AND dblink_acc_num = tmp_acc_num;
-        
+      AND dblink_acc_num = tmp_acc_num
+      AND dblink_linked_recid not like "%TSC%"; 
 
     UNLOAD to conflict_dblink.unl
     select * from tmp_conflict_db_link;
