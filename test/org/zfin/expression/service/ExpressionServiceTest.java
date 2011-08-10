@@ -118,11 +118,11 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         HibernateUtil.currentSession().flush();
         assertNotNull(expressionService.getGeoLinkForMarker(m));
 
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-010502-3"); // bing3y
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-4918"); // myl12.1
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
         HibernateUtil.currentSession().flush();
-        assertNull(expressionService.getGeoLinkForMarker(m));
+        assertNotNull(expressionService.getGeoLinkForMarker(m));
 
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
         assertNotNull(m);
