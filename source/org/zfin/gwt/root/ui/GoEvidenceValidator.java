@@ -90,10 +90,6 @@ public class GoEvidenceValidator {
             throw new ValidationException("Evidence code must be selected.");
         }
 
-        if (dto.getZdbID() == null) {
-            throw new ValidationException("No existing ZDB ID available");
-        }
-
         validateInferenceCardinality(dto);
         validateInferences(dto);
         validateEvidenceVsPub(dto.getEvidenceCode(), dto.getPublicationZdbID(), dto.getFirstInference());
