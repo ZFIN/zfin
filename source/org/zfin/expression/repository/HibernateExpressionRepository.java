@@ -97,7 +97,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
         else
         if(pubs.size()>1){
-            logger.error("multiple pubs ["+pubs.size()+"] returned for marker expression: " + marker);
+            logger.debug("multiple pubs ["+pubs.size()+"] returned for marker expression: " + marker);
         }
 
         return pubs.get(0);
