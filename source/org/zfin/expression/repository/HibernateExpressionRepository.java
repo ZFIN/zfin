@@ -92,7 +92,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         List<Publication> pubs =  query.list() ;
 
         if(CollectionUtils.isEmpty(pubs)){
-            logger.error("a single pub not returned for marker expression: " + marker);
+            logger.debug("a single pub not returned for marker expression: " + marker);
             return null;
         }
         else
