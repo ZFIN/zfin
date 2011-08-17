@@ -34,6 +34,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.people.repository.ProfileRepository;
 
 import java.util.*;
 
@@ -49,6 +50,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
+ private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private List<Lab> labsOfOrigin = null;
 
 
@@ -142,7 +144,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Lab existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
             if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
-                featureRepository.setLabOfOriginForFeature(existingLabOfOrigin, feature);
+Lab newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
+                featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
         } else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
             featureRepository.deleteLabOfOriginForFeature(feature);
