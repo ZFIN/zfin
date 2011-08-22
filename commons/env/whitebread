@@ -1,0 +1,53 @@
+#!/local/bin/tcsh
+#
+# This script should be sourced to set Informix environment variables to
+# the values needed for the PRODUCTION Informix server on Helix.
+#
+# This script ASSUMES the following:
+#
+# o If a shell variable called $PREINFORMIXPATH already exists then it 
+#   contains the value of $PATH before any Informix information was 
+#   added to it.  If the $PREINFORMIXPATH variable does not already 
+#   exist then this script defines it.
+#
+# o If a shell variable called $PREINFORMIX_LD_PATH is set then
+#   this script will use it to set the $LD_LIBRARY_PATH variable.  If it 
+#   is not set then this script will override the incoming setting, if any,
+#   of the $LD_LIBRARY_PATH variable.
+#
+
+if ("`/local/bin/hostname`" != "kinetix") then
+  echo "WARNING: Not currently logged in to kinetix."
+endif
+# Set standard Informix variables
+setenv INFORMIXDIR /private/apps/Informix/informix
+setenv INFORMIXSERVER whitebread
+setenv ONCONFIG onconfig
+setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/sqlhosts
+
+# Define SVNROOT
+setenv SVNROOT file:///research/zcentral/Vault/SVNROOT
+
+# Set PATH variables and prompt using the standard variables
+# First check if PREINFORMIXPATH IS SET
+if (! $?PREINFORMIXPATH) then
+    setenv PREINFORMIXPATH ${PATH}
+endif
+
+# now that commons exists on helix, include it as well.
+setenv PATH ${INFORMIXDIR}/bin:/private/ZfinLinks/Commons/bin:${PREINFORMIXPATH}
+if ($?PREINFORMIX_LD_PATH) then
+    setenv LD_LIBRARY_PATH ${PREINFORMIX_LD_PATH}:${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
+else
+    setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
+endif
+
+
+# Set prompt
+if ($?prompt) then
+    if ($user != `/usr/ucb/whoami`) then
+	set prompt = "$INFORMIXSERVER $user `/usr/ucb/whoami` %c1$Prompt"
+    else
+	set prompt = "$INFORMIXSERVER $user %c1$Prompt"
+    endif
+endif
