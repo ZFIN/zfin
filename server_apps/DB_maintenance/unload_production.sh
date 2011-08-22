@@ -24,7 +24,7 @@ end
 # Therefore, to speed up the process from over 4 hours to well under
 # an hour, do the unload to production disk and then copy it.
 
-if ($HOST != "embryonix") then
+if ($HOST != "zygotix") then
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
   #  $? is the return value of the last-executed command.  
   #  When it works correctly, unloaddb.pl returns 0. 
