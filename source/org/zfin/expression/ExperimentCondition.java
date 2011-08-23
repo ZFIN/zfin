@@ -1,6 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.marker.Marker;
+import org.apache.log4j.Logger;
 
 /**
  * ToDo: Please add documentation for this class.
@@ -14,6 +15,8 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
     private ExperimentUnit unit;
     private ConditionDataType conditionDataType;
     private String comments;
+
+    private static Logger logger = Logger.getLogger(ExperimentCondition.class);
 
     public String getZdbID() {
         return zdbID;
@@ -72,7 +75,14 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
     }
 
     public boolean isMoCondition() {
-        return (conditionDataType.getGroup().equalsIgnoreCase("morpholino"));
+        boolean moCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino");
+        if (morpholino == null) {
+            String message = "No Morpholino found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
+            message += "Publication: " + experiment.getPublication().getZdbID();
+            logger.error(message);
+            return false;
+        }
+        return moCondition;
     }
 
     public boolean isChemicalCondition() {
