@@ -1,4 +1,4 @@
 <?xml version="1.0" ?>
 <redirect>
-<newlocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=news&amp;title=Zebrafish+News&amp;publicFeed=true&amp;os_authType=basic&amp;maxResults=-1&amp;sort=created</newlocation>
+<newlocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=news&amp;title=Zebrafish+News&amp;publicFeed=true&amp;maxResults=-1&amp;sort=created&amp;timeSpan=120</newlocation>
 </redirect>

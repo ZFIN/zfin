@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
 <redirect>
-<newlocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=meetings&amp;title=Zebrafish+Meetings&amp;publicFeed=true&amp;os_authType=basic&amp;maxResults=-1&amp;sort=created</newlocation>
+<newlocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=meetings&amp;title=Zebrafish+Meetings&amp;publicFeed=true&amp;maxResults=-1&amp;sort=created&amp;timeSpan=-1</newlocation>
 </redirect>
 
