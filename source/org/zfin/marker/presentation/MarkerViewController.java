@@ -157,7 +157,7 @@ public class MarkerViewController {
             }
             // includes GENEFAMILY and INDEL!
             else {
-                logger.error("unable to display type " + type + " for marker " + zdbID);
+                logger.error("Should not display marker of type " + type + " for ID " + zdbID);
                 return genericMarkerViewController.getGenericMarkerView(model,zdbID);
             }
 
