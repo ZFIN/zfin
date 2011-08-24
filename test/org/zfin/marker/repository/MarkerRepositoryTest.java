@@ -880,6 +880,27 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertTrue(knockdowns.size()<20);
     }
 
+
+    @Test
+    public void getKnockdownReagentsWithMultiplePubs(){
+        Marker m = markerRepository.getGeneByID("ZDB-GENE-000626-1");
+        List<MarkerRelationshipPresentation> knockdowns = markerRepository
+                .getRelatedMarkerDisplayForTypes(m, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        assertThat(knockdowns.size(),greaterThan(2));
+        assertThat(knockdowns.size(),lessThan(8));
+
+        MarkerRelationshipPresentation mrp = knockdowns.get(0);
+        assertEquals("MO1-tnnt2a",mrp.getAbbreviation());
+        assertThat(mrp.getNumAttributions(),greaterThan(1));
+        assertThat(mrp.getNumAttributions(),lessThan(4));
+
+        String linkWithAttribution = mrp.getLinkWithAttribution();
+        logger.debug(linkWithAttribution);
+
+        assertTrue(linkWithAttribution.startsWith("<a href=\"/action/marker/view/ZDB-MRPHLNO-060317-4\">"));
+        assertTrue(linkWithAttribution.contains("/webdriver?MIval=aa-showpubs.apg&orgOID=ZDB-MRPHLNO-060317-4&rtype=marker&recattrsrctype=standard&OID=ZDB-MREL-060317-4\">2</a>)"));
+    }
+
     @Test
     public void isFromChimericClone(){
         assertFalse(markerRepository.isFromChimericClone("ZDB-GENE-980526-403"));

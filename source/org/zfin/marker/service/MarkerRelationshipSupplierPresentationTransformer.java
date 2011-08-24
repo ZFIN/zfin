@@ -8,11 +8,11 @@ import java.util.*;
 
 /**
  */
-public class MarkerRelationshipPresentationTransformer implements ResultTransformer {
+public class MarkerRelationshipSupplierPresentationTransformer implements ResultTransformer {
 
     private boolean is1to2 = false;
 
-    public MarkerRelationshipPresentationTransformer(boolean is1to2) {
+    public MarkerRelationshipSupplierPresentationTransformer(boolean is1to2) {
         this.is1to2 = is1to2;
     }
 
@@ -30,8 +30,25 @@ public class MarkerRelationshipPresentationTransformer implements ResultTransfor
         if (tuple[6] != null) {
             returnObject.setAttributionZdbID(tuple[6].toString());
         }
-        if(tuple.length>7 && tuple[7]!=null){
-            returnObject.setMarkerRelationshipZdbId(tuple[7].toString());
+        if (tuple.length>7 && tuple[7] !=null) {
+            OrganizationLink organizationLink = new OrganizationLink();
+
+            if (tuple[7] != null) {
+                organizationLink.setSupplierZdbId(tuple[7].toString());
+            }
+            if (tuple.length>8 && tuple[8] != null) {
+                organizationLink.setAccessionNumber(tuple[8].toString());
+            }
+            if (tuple.length>9 && tuple[9] != null) {
+                organizationLink.setSourceUrl(tuple[9].toString());
+            }
+            if (tuple.length>10 && tuple[10] != null) {
+                organizationLink.setUrlDisplayText(tuple[10].toString());
+            }
+            returnObject.addOrganizationLink(organizationLink);
+        }
+        if(tuple.length>11 && tuple[11]!=null){
+            returnObject.setMarkerRelationshipZdbId(tuple[11].toString());
         }
 
         return returnObject;
@@ -47,7 +64,9 @@ public class MarkerRelationshipPresentationTransformer implements ResultTransfor
             MarkerRelationshipPresentation mrpStored = map.get(mrp.getZdbId());
             if (mrpStored!=null) {
                 mrpStored.addAttributionLink(mrp.getAttributionZdbID());
+                mrpStored.addOrganizationLinks(mrp.getOrganizationLinks());
                 map.put(mrpStored.getZdbId(), mrpStored);
+
             } else {
                 map.put(mrp.getZdbId(), mrp);
             }

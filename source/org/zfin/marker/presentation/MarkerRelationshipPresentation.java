@@ -163,11 +163,15 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     }
 
     public int getNumAttributions() {
-        return numAttributions;
-    }
+        if(attributionZdbIDs!=null){
+            return attributionZdbIDs.size();
+        }
 
-    public void setNumAttributions(int numAttributions) {
-        this.numAttributions = numAttributions;
+        if(attributionZdbID != null){
+            return 1 ;
+        }
+
+        return  0 ;
     }
 
     public String getSupplierZdbId() {
