@@ -69,4 +69,15 @@ abstract public class AbstractEntityIdList implements EntityIdList {
             url += "/";
         return ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME + url + id;
     }
+
+    protected String getIndividualViewUrl(String id, String typeName) {
+        String url = entityUrlMapping.getString(typeName);
+        if (url == null) {
+            LOG.warn("No url mapping found for id " + id);
+            return null;
+        }
+        if (!url.startsWith("/"))
+            url += "/";
+        return ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME + url + id;
+    }
 }

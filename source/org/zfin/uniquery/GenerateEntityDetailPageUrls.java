@@ -46,11 +46,11 @@ public class GenerateEntityDetailPageUrls extends AbstractScriptWrapper {
     }
 
     private List<String> allUrls = new ArrayList<String>(100);
-    private static final String entityMappingFileName = "entity-mapping.properties";
+    public static final String entityMappingFileName = "entity-mapping.properties";
     private static final String outputFileName = "allDetailPages.txt";
     private CompositeConfiguration entityUrlMapping;
     private int numberOfRecordsPerEntities = 0;
-    private static final String pageClassMappingFile = "entities-to-be-indexed.txt";
+    public static final String pageClassMappingFile = "entities-to-be-indexed.txt";
 
     public GenerateEntityDetailPageUrls() {
     }

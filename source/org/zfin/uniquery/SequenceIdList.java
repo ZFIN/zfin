@@ -21,7 +21,7 @@ public class SequenceIdList extends AbstractEntityIdList {
     public List<String> convertIdsIntoUrls(List<String> allMarkerGos) {
         List<String> urlList = new ArrayList<String>(allMarkerGos.size());
         for (String id : allMarkerGos) {
-            String individualUrl = getIndividualUrl(id, "SEQUENCE");
+            String individualUrl = getIndividualViewUrl(id, "SEQUENCE");
             if (individualUrl != null)
                 urlList.add(individualUrl);
         }
