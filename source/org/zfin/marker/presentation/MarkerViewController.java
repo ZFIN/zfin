@@ -151,6 +151,7 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.SSLP.name())
                     || type.equals(Marker.Type.BAC_END.name())
                     || type.equals(Marker.Type.PAC_END.name())
+                    || type.equals(Marker.Type.REGION.name())
                     ) {
                 return genericMarkerViewController.getGenericMarkerView(model,zdbID);
             }
