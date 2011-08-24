@@ -1,0 +1,78 @@
+README_AGP
+
+Zv9_scaffold.agp
+- tab-delimited file containing golden path information
+- describes how scaffolds are assembled from contigs
+- see
+
+http://www.ncbi.nlm.nih.gov/projects/genome/assembly/agp/AGP_Specification.shtml
+
+ for format details
+
+Zv9_chr.agp
+- as above, but describes how chromosomes are assembled from contigs
+
+
+sounds promising
+
+On 06/17/2011 11:16 PM, Kevin Schaper wrote:
+> This might work:
+>
+> ftp://ftp.ensembl.org/pub/assembly/zebrafish/Zv9release/Zv9_chr.agp.gz
+>
+> Kevin
+
+
+#####################################################################
+
+can convert AGP to gff3 without trouble with a short awk script
+
+
+agp_to_gff3.awk Zv9_chr.agp | sort -k 3  -t '=' >!  E_full_clone.gff3
+
+agp_to_gff3_trim.awk Zv9_chr.agp | sort -k 3  -t '=' >!  E_trim_clone.gff3
+
+
+still want to add in clone names and zdbids as alias where possible
+
+We do not have a DNA clones download file which would be my first choice
+so create an eqilivent file.
+
+
+% dbaccess -a $DBNAME unload_zfin_DNA_clone.sql
+
+->  produces 'zfin_DNA_clone.txt'
+------------------------------------------------------------------
+# which can be merged with the gff3 file
+#
+#sed 's/Name=/Name= /g' E_trim_clone.gff3 | join -1 10 -2 1 - zfin_DNA_clone.txt | head
+#
+# join also allows rearangement of the  output with -o
+# and output seperator with -t
+#
+#sed 's/Name=/Name= /g' E_trim_clone.gff3 | join -1 10 -2 1  -t '       ' -o 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.2 
+# 2.3 0 - zfin_DNA_clone.txt | sed 's/\(.*;Name=\).\([^   ]*\).\([^ ]*\).\(.*\)/\1\2;Alias=\3/g' | head
+#
+#this is ok if we *only* want rows that have accessions in zfin... but we want them all,
+-------------------------------------------------------------------------------------
+... so, instead make a short awk script "clone_gff3_w_alias.awk' to match and format
+the unloaded zfin rows into the gff3.
+
+
+clone_gff3_w_alias.awk E_full_clone.gff3 > ! E_full_zfin_clone.gff3
+clone_gff3_w_alias.awk E_trim_clone.gff3 > ! E_trim_zfin_clone.gff3
+
+#################################################################################
+grep '  clone   ' E_full_zfin_clone.gff3 | grep -v zdb_id | cut -f 3 -d '=' > novel_encembl_clone.list
+
+just the one I know about ... BX640547
+
+
+
+------------------------------------------------------------------
+
+--- just checking what accessions are associated with DNA clones
+select dblink_fdbcont_zdb_id, count(*)
+ from marker join db_link on mrkr_zdb_id == dblink_linked_recid
+ where mrkr_type in ("BAC","PAC","FOZMID")
+ group by 1

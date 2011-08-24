@@ -1,4 +1,10 @@
--- generate full length clone and vega trimmed clone GFF3 tracks
+-- unload_assembly_clone_gff.sql
+
+--drop table assembly;
+--drop table clonelist;
+
+--! echo `pwd`
+! echo "generate full length clone and vega trimmed clone GFF3 tracks"
 create table assembly (
         asmb_lg varchar(3),
         asmb_five integer,
@@ -10,6 +16,7 @@ create table assembly (
         asmb_int_end integer,
         asmb_strand integer
 ) fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 625001 next size 625001
 ;
 
 ! echo "load file 'assembly_for_tom.tab' into a table"
@@ -52,9 +59,9 @@ select * -- count(*) missing_dblink
 
 ! echo "assembly_for_tom.tab -> unload_assembly_clone_gff.sql -> full_length_clones.gff3"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/full_length_clones.gff3' DELIMITER "	"
-select asmb_lg id,
-    'vega.fulllength' source,
-    'clone' feature,
+select asmb_lg gff_ID,
+    'vega.fulllength' gff_source,
+    'clone' gff_feature,
     case when asmb_strand == 1 then
     	(asmb_five - (asmb_int_start - 1))::integer
     	else
@@ -65,9 +72,9 @@ select asmb_lg id,
     	else
     	(asmb_three + (asmb_int_start - 1))::integer
     	end full_end,
-    '.' score,
+    '.' gff_score,
     case when  asmb_strand == 1 then '+' else '-' end,
-    '.' frame_phase,
+    '.' gff_frame_phase,
     'ID=' || dblink_acc_num ||';Name='|| asmb_name ||
     ';Alias='|| dblink_linked_recid ||
     ';status='|| case when cl_status is null then "unannotated" else cl_status end attribute
@@ -81,14 +88,14 @@ select asmb_lg id,
 
 ! echo "assembly_for_tom.tab -> unload_assembly_clone_gff.sql -> vega_clone.gff3"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_clone.gff3' DELIMITER "	"
-select asmb_lg id,
-    'vega.trimmed' source,
-    'clone' feature,
+select asmb_lg gff_ID,
+    'vega.trimmed' gff_source,
+    'clone' gff_feature,
     asmb_five trim_start,
     asmb_three trim_end,
     '.' score,
     case when asmb_strand == 1 then '+' else '-' end,
-    '.' frame_phase,
+    '.' gff_frame_phase,
     'ID=' || dblink_acc_num ||';Name=' || asmb_name ||
     ';Alias='|| dblink_linked_recid ||
     ';status='|| case when cl_status is null then "unannotated" else cl_status end attribute

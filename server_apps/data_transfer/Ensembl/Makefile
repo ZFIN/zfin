@@ -16,10 +16,12 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensdarg.sh fetch_ensdarT_dbacc.sh
+GENERICS = fetch_ensdarg.sh fetch_ensdarT_dbacc.sh fetch_ensembl_agp.sh
 
 STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql readme.ensembl_mysql\
-	rollback.sql commit.sql load_ensdarT_dbacc.sql fetch_ensdarT_dbacc.mysql
+	rollback.sql commit.sql load_ensdarT_dbacc.sql fetch_ensdarT_dbacc.mysql \
+	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
+	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk 
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -58,3 +60,15 @@ run_transcript : fetch_ensdarT_dbacc.sh
 run_transcript_commit : fetch_ensdarT_dbacc.sh
 	- touch $(TARGETDIR)/fetch_ensembl.log
 	cd $(TARGETDIR) && fetch_ensdarT_dbacc.sh commit
+
+# 		fetch and convert Ensembl GTF to gff3
+run_gff: fetch_ensembl_gff.sh
+	cd $(TARGETDIR) && fetch_ensembl_gff.sh
+
+# pre delete any versions of the file to be downloaded
+run_gff_force: fetch_ensembl_gff.sh
+	cd $(TARGETDIR) && fetch_ensembl_gff.sh -f
+
+# 		fetch and convert Ensembl AGP to gff3
+run_agp: fetch_ensembl_agp.sh agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk
+	cd $(TARGETDIR) && fetch_ensembl_agp.sh

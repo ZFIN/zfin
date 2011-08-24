@@ -27,7 +27,7 @@ echo " fetch_ensdarg.sql vs ensembldb.ensembl.org"
 
 if ($1 == "commit") then
 	echo "*** COMMITING load_ensdarg.sql into <!--|DB_NAME|--> ***"
-	cat load_ensdarg.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|-->
+	cat load_ensdarg.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
 	# Log what is being used as the most current release
 	if (! -f fetch_ensembl.log) then
 		touch fetch_ensembl.log

@@ -1,0 +1,111 @@
+
+
+
+
+the below and more is now done by fetch_ensembl_gff.sh
+Summer 2011.
+
+see the README_BOWTIE for building the index
+
+#######################################################################
+to fetch the GTF file
+
+wget -q "ftp://ftp.ensembl.org/pub/current_gtf/danio_rerio/Danio_rerio.Zv*.gtf.gz"
+
+# get the current version number
+set ver="Zv9.62"
+
+# replacing gtf_to_gff3.pl from SeqAnswers
+# to gtf2gff3.pl and tf2gff3.cfg from Sequence Ontology
+# http://song.cvs.sourceforge.net/viewvc/song/software/scripts/gtf2gff3/
+
+zcat Danio_rerio.${ver}.gtf.gz | gtf_to_gff3.pl >! Danio_rerio.${ver}.gff3
+
+lots of dots ...?
+
+nawk -v OFS='|' '{$2=sprintf("%s%s","Ensembl_",$2); att=substr($9,4);\
+for(i=0;i<4;i++){if(match(att,/;[^=]*=/)){sub(/;[^=]*=/,"|",att)}else{att=sprintf("%s%s",att,"|")} }\
+$9=att;print $0}' Danio_rerio.${ver}.gff3 >!  Danio_rerio.${ver}.unl
+
+the Danio_rerio.${ver}.unl file should be shared from
+/research/zprodmore/gff3/
+
+
+
+########################################################################
+initial prototype run
+
+
+with ensdarTs attached to ZFIN transcripts based on ottdarTs
+creating a zfin gene track on Ensembl yeilds
+
+unload zfin_gene_gff -> zfin_gene.gff3  15467 row(s) unloaded.
+
+the zfin gene track on vega yeilds
+unload zfin_gene_gff -> zfin_gene.gff3  16176 row(s) unloaded.
+
+a loss of ~750 gene mapping
+
+
+{
+-- want  ottdarts not related to ensdarts
+select  count(*)
+from  db_link vega
+ where vega.dblink_fdbcont_zdb_id == "ZDB-FDBCONT-060417-1"   -- vega_trans
+  and not exists (
+	select 't' from db_link ensembl
+	 where ensembl.dblink_fdbcont_zdb_id == "ZDB-FDBCONT-110301-1"  -- ensembl_trans
+	   and vega.dblink_linked_recid == ensembl.dblink_linked_recid
+   )
+;
+-->>>  1,042 vega transcripts not represented in Ensembl according to zfin
+
+
+select  mrel_mrkr_1_zdb_id, count(*)
+from  db_link vega, marker_relationship
+ where vega.dblink_fdbcont_zdb_id == "ZDB-FDBCONT-060417-1"   -- vega_trans
+  and mrel_type = "gene produces transcript"
+  and vega.dblink_linked_recid ==  mrel_mrkr_2_zdb_id
+  and not exists (
+	select 't' from db_link ensembl
+	 where ensembl.dblink_fdbcont_zdb_id == "ZDB-FDBCONT-110301-1"  -- ensembl_trans
+	   and vega.dblink_linked_recid == ensembl.dblink_linked_recid
+   )
+ group by 1
+;
+
+-->>> 789 genes
+}
+
+
+
+maybe they are on AB. (375 are flagged as on AB)
+
+begin work;
+create table tmp_vega_sans (ottdart varchar(20));
+load from miss_V.unl insert into tmp_vega_sans;
+create unique index tmp_vega_sans_ottdart_idx on tmp_vega_sans (ottdart);
+
+select tscripts_status[1,20], tscriptt_type[1,25], count(*) howmany
+ from transcript join tmp_vega_sans on ottdart == tscript_load_id
+  ,transcript_status, transcript_type
+ where  tscript_status_id ==  tscripts_pk_id
+   and tscript_status_id is not NULL
+   and tscript_type_id == tscriptt_pk_id
+ group by 1,2 order by 3
+;
+
+select tscripts_status[1,20], tscriptt_type[1,25], count(*) howmany
+ from transcript , transcript_status, transcript_type
+ where tscript_status_id == tscripts_pk_id
+  and  tscript_status_id is not NULL
+  and  tscript_type_id ==  tscriptt_pk_id
+  and not exists (select 't' from  tmp_vega_sans where ottdart == tscript_load_id)
+ group by 1,2 order by 3
+;
+
+drop table tmp_vega_sans;
+rollback work;
+
+aberrant processed transcript
+

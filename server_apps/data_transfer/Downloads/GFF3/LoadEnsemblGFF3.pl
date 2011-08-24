@@ -29,32 +29,34 @@ print "starting here: \n". `pwd`. "\n";
 my $data_cache = "/research/zprodmore/gff3";
 
 # opportunity to change data_cache for testing enviroment i.e.:
-# $data_cache = "/research/zusers/tomc/data_transfer/VEGA/Assembly/2010-Oct";
+# $data_cache = "/research/zusers/tomc/data_transfer/
+
+# note there is doc on creating 'drerio_ensembl.unl'
+# in ZFIN_WWW/server_apps/data_transfer/Ensembl/ 
 
 print "Fetching data files from $data_cache\n";
 
 my @infiles = qw(
-    drerio_vega_id.unl vega_chromosome.gff3 zfin_morpholino.gff3
-    assembly_for_tom.tab clone_acc_status.unl
+    drerio_ensembl.unl ensembl_contig.gff3
 );
+#ensembl_chromosome.gff3
+
 foreach $target (@infiles){
     print "$data_cache/$target\n";
     system ("cp -p $data_cache/$target .");
 }
-print "generating tracks\n";
+
+#foreach $argnum (0 .. $#ARGV) {print "$argnum \t $ARGV[$argnum]\n";}
+
+my $cmd = "cat load_drerio_ensembl.sql"; 
+if ( $ARGV[0] && "commit" =~ $ARGV[0] ) {
+	$cmd .= " commit.sql";
+	print "\n\t\tLoading Ensembl GFF3\n";
+}else{
+    $cmd .= " rollback.sql" ;
+    print "\n\t\tTest Loading Ensembl GFF3\n";
+}
+
+system( $cmd . " | $ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|-->");
 
 
-my $cmd = "cat unload_assembly_clone_gff.sql " .
-    "load_drerio_vega_id.sql " .
-    "unload_zfin_genes_gff.sql " .
-    "unload_alias_scattered.sql " .
-    "unload_xpat_gff.sql " .
-    "unload_pheno_gff.sql " .
-    "unload_antibody_gff.sql " .
-    "unload_zfin_morpholino.sql " . # should not need as much updating.
-    "unload_vega_chromosome_gff.sql " .
-#   "unload_mutant_gff.sql " .
-#   "unload_zfin_transcript.sql ".
-    "drop_table_gff3.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess  <!--|DB_NAME|-->";
-
-system($cmd);

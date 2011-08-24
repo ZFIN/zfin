@@ -1,5 +1,5 @@
 #! /usr/bin/nawk -f
-
+# to place all the aliases for a range in a single comma sep row
 #read a fresh row and store it
 BEGIN {
 	print "##gff-version 3";

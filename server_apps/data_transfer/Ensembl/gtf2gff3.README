@@ -1,0 +1,248 @@
+NAME
+2
+3 	gtf2gff3
+4
+5 	VERSION
+6
+7 	This document describes version 0.1
+8
+9 	SYNOPSIS
+10
+11 	gtf2gff3 --cfg gtf2gff3_MY_CONFIG.cfg gtf_file > gff3_file
+12
+13 	DESCRIPTION
+14
+15 	This script will convert GTF formatted files to valid GFF3 formatted
+16 	files. It will map the value in column 3 (\"type\" column) to valid
+17 	SO, however because many non standard terms may appear in that column
+18 	in GTF files, you may edit the config file to provide your own GTF
+19 	feature to SO mapping. The script will also build gene models from
+20 	exons, CDSs and other features given in the GTF file. It is currently
+21 	tested on Ensemble and Twinscan GTF, and it should work on any other
+22 	files that follow those same specifications. It does not work on GTF
+23 	from the UCSC table browser because those files use the same ID for
+24 	gene and transcript, so it is impossible to group multiple transcripts
+25 	to a gene.
+26
+27 	OPTIONS:
+28
+29 	--cfg Provide the filename for a config file. See the configuration file
+30 	provided with this script for format details. Use this configuration
+31 	file to modify the behavior of the script. If no config file is given
+32 	it looks for ./gtf2gff3.cfg, ~/gtf2gff3.cfg or /etc/gtf2gff3.cfg in
+33 	that order.
+34
+35
+36 	--help Provide a detailed man page style help message and then exit.
+37
+38
+39 	INSTALLATION
+40
+41 	This script requires the following perl packages that are available
+42 	from CPAN (www.cpan.org): Getopt::Long, use Config::Std. If these are not
+43 	already installed try:
+44
+45 	perl -MCPAN -e shell
+46 	install Getopt::Long
+47 	install Config::Std
+48 	quit
+49
+50 	After that the script is ready to run.
+51
+52 	DESCRIPTION OF THE ALGORITHM
+53
+54 	This script was designed to convert GTF formatted files to GFF3
+55 	format. It reads input from a GTF file and prints it's GFF3 output to
+56 	STDOUT. It was written based on and has been tested on GTF files from
+57 	Ensembl and Twinscan. It should work on similarly formatted GTF
+58 	files. It was also written to the extent possible to be robust about
+59 	missing features and will try to infer those features where
+60 	appropriate.
+61
+62 	The first step is of course to parse the incoming GTF file. The
+63 	script requires the standard 9-column format, but two configuration
+64 	variables ATTRB_DELIMITER and ATTRB_REGEX allow flexibility in the 9th
+65 	(attributes) column. ATTRB_DELIMETER will determine the delimiter
+66 	between attributes, and ATTRB_REGEX will determine the regular
+67 	expression that will split the key value pairs. Both variables take
+68 	any valid perl regular expression.
+69
+70 	The features present in a GTF file can vary quite a bit. Some have
+71 	exons, start codons, CDSs, stop codons and UTRs. Others have some
+72 	subset of those. This script will take those features and try to
+73 	build a valid gene model infering any missing features where
+74 	appropriate. You must have as a minimum at least exons or CDSs for
+75 	the script to infer a gene model. For example the script would throw
+76 	an error if it encountered an orphaned stop codon for instance. Gene
+77 	features in a GTF file have a gene_id and a transcript_id in the
+78 	attributes. The key terms that identify those IDs can be set in the
+79 	configuration file. However, if those IDs are not present then that
+80 	feature can not be associated with any gene or transcript. The script
+81 	does not try to do any unflattening of gene features based on
+82 	coordinates. For example if you have features that have transcript
+83 	IDs but no gene IDs, then no attempt will be made to cluster those
+84 	transcripts into genes and in fact no gene models would be built.
+85
+86 	With regards to gene models the script limits itself to the features,
+87 	exon, CDS, start codon, stop codon, 5' UTR and 3' UTR. Those feature
+88 	may be named anything you want in your input GTF file as long as the
+89 	appropriate mappings are set up in the config file.
+90
+91 	As a first step in constructing gene models the script checks for
+92 	start and stop codons. If they don't exist it tries to infer them
+93 	from the exons, CDSs and/or UTRs. It currently will assume a start or
+94 	stop codon from the appropriate end of a terminal CDS if an exon or
+95 	UTR is periferal to that CDS. It does not check coordinates to see if
+96 	those features are contiguous.
+97
+98 	GFF3 requires start and stop codons to be part of the CDS. Many GTF
+99 	files do not include one or both (often the stop is excluded) within
+100 	the CDS. Two configuration variables can be used to direct the script
+101 	about whether or not terminal codons are included in the CDS within
+102 	your GTF file. These variables are START_IN_CDS and STOP_IN_CDS
+103 	respectively. A value of 1 indicates that your GTF file includes the
+104 	codon within the coordinates of the annotated CDSs. A value of 0
+105 	indicates that is does not. Defaults assume that start codons are
+106 	part of the CDS and stop codons are not within your GTF file.
+107
+108 	The next step is to infer CDSs and UTRs from any appropriate
+109 	combination of exons, start codon, stop codon, CDSs and/or UTRs. If
+110 	exons are unavailable the script will try to infer them from any
+111 	combination of CDSs, start codon, stop codon and/or UTRs. In both
+112 	cases coordinates are consulted to be sure we're "doing the right
+113 	thing".
+114
+115 	If CDS phase is annotated it is not validated, however if CDSs are
+116 	infered and a start codon is annoated or infered then CDSs phase is
+117 	set.
+118
+119 	As a final step in building a gene model, the script checks all
+120 	features within each transcript and feature to be sure that each feild
+121 	is filled and is consistent with other features associated with the
+122 	same transcript and gene. Since genes and transcripts are not
+123 	annotated in GTF these features are constructed for the GFF3 output.
+124 	Gene and transcript boundaries are simply assumed to be the minimum
+125 	and maximum coordiantes of all contained features.
+126
+127
+128 	EXAMPLE USAGE
+129
+130 	Consider the following GTF
+131
+132 	chr1 protein_coding exon 28163331 28164986 . + . gene="gene_2" | mRNA="trnsc_5"
+133 	chr1 protein_coding CDS 28163331 28164986 . + 0 gene="gene_2" | mRNA="trnsc_5"
+134 	chr1 protein_coding exon 28165075 28165231 . + . gene="gene_2" | mRNA="trnsc_5"
+135 	chr1 protein_coding CDS 28165075 28165231 . + 0 gene="gene_2" | mRNA="trnsc_5"
+136 	chr1 protein_coding exon 28173088 28173224 . + . gene="gene_2" | mRNA="trnsc_5"
+137 	chr1 protein_coding CDS 28173088 28173224 . + 2 gene="gene_2" | mRNA="trnsc_5"
+138 	chr1 protein_coding exon 28176514 28176665 . + . gene="gene_2" | mRNA="trnsc_5"
+139 	chr1 protein_coding CDS 28176514 28176665 . + 0 gene="gene_2" | mRNA="trnsc_5"
+140 	chr1 protein_coding exon 28176847 28176950 . + . gene="gene_2" | mRNA="trnsc_5"
+141 	chr1 protein_coding CDS 28176847 28176950 . + 1 gene="gene_2" | mRNA="trnsc_5"
+142 	chr1 protein_coding exon 28181630 28181713 . + . gene="gene_2" | mRNA="trnsc_5"
+143 	chr1 protein_coding CDS 28181630 28181713 . + 2 gene="gene_2" | mRNA="trnsc_5"
+144 	chr1 protein_coding exon 28187071 28187711 . + . gene="gene_2" | mRNA="trnsc_5"
+145 	chr1 protein_coding CDS 28187071 28187381 . + 2 gene="gene_2" | mRNA="trnsc_5"
+146
+147 	Let's assume that the start codon coordinates are included within the
+148 	CDS, but that the stop codon is not. We make the following settings
+149 	in the configuration file to account for that:
+150
+151 	START_IN_CDS = 1
+152 	STOP_IN_CDS = 0
+153
+154 	We see that the gene ID is annotated as gene="gene_2" and the
+155 	transcript ID is annotated as mRNA="trnsc_5" and that attributes are
+156 	seperated by a vertical bar "|". We adjust the configuration file as follows:
+157
+158 	ATTRB_DELIMITER = \s*|\s*
+159 	ATTRB_REGEX = ^\s*(\S+)=(\"[^\"]+\")\s*$
+160
+161 	[GTF_ATTRB_MAP]
+162 	#Code Tag #GTF Tag
+163 	gene_id = gene
+164 	trnsc_id = mRNA
+165
+166 	The above input would provide the following GFF3 output:
+167
+168 	chr1 protein_coding gene 28163331 28187711 . + . ID=gene_2;
+169 	chr1 protein_coding mRNA 28163331 28187711 . + . ID=trnsc_5; PARENT=gene_2;
+170 	chr1 protein_coding exon 28163331 28164986 . + . ID=exon:trnsc_5:1; PARENT=trnsc_5;
+171 	chr1 protein_coding exon 28165075 28165231 . + . ID=exon:trnsc_5:2; PARENT=trnsc_5;
+172 	chr1 protein_coding exon 28173088 28173224 . + . ID=exon:trnsc_5:3; PARENT=trnsc_5;
+173 	chr1 protein_coding exon 28176514 28176665 . + . ID=exon:trnsc_5:4; PARENT=trnsc_5;
+174 	chr1 protein_coding exon 28176847 28176950 . + . ID=exon:trnsc_5:5; PARENT=trnsc_5;
+175 	chr1 protein_coding exon 28181630 28181713 . + . ID=exon:trnsc_5:6; PARENT=trnsc_5;
+176 	chr1 protein_coding exon 28187071 28187711 . + . ID=exon:trnsc_5:7; PARENT=trnsc_5;
+177 	chr1 protein_coding CDS 28163331 28164986 . + 0 ID=CDS:trnsc_5:1; PARENT=trnsc_5;
+178 	chr1 protein_coding CDS 28165075 28165231 . + 0 ID=CDS:trnsc_5:2; PARENT=trnsc_5;
+179 	chr1 protein_coding CDS 28173088 28173224 . + 2 ID=CDS:trnsc_5:3; PARENT=trnsc_5;
+180 	chr1 protein_coding CDS 28176514 28176665 . + 0 ID=CDS:trnsc_5:4; PARENT=trnsc_5;
+181 	chr1 protein_coding CDS 28176847 28176950 . + 1 ID=CDS:trnsc_5:5; PARENT=trnsc_5;
+182 	chr1 protein_coding CDS 28181630 28181713 . + 2 ID=CDS:trnsc_5:6; PARENT=trnsc_5;
+183 	chr1 protein_coding CDS 28187071 28187381 . + 2 ID=CDS:trnsc_5:7; PARENT=trnsc_5;
+184
+185 	CONFIGURATION AND ENVIRONMENT
+186
+187 	A configuration file is provided with this script. The script will
+188 	look for that configuration file in ./gtf2gff3.cfg, ~/gtf2gff3.cfg
+189 	or /etc/gtf2gff3.cfg in that order. If the configuration file is not
+190 	found in one of those locations and one is not provided via the --cfg
+191 	flag it will try to choose some sane defaults, but you really should
+192 	provide the configuration file. See the supplied configuration file
+193 	itself as well as the README that came with this package for format
+194 	and details about the configuration file.
+195
+196 	DEPENDENCIES
+197
+198 	This script requires the following perl packages that are available
+199 	from CPAN (www.cpan.org).
+200
+201 	Getopt::Long
+202 	use Config::Std
+203
+204 	INCOMPATIBILITIES
+205
+206 	None reported.
+207
+208 	BUGS AND LIMITATIONS
+209
+210 	No bugs have been reported.
+211
+212 	Please report any bugs or feature requests to:
+213 	barry dot moore at genetics dot utah dot edu
+214
+215 	AUTHOR
+216
+217 	Barry Moore
+218 	barry dot moore at genetics dot utah dot edu
+219
+220 	LICENCE AND COPYRIGHT
+221
+222 	Copyright (c) 2007, University of Utah
+223
+224 	This module is free software; you can redistribute it and/or
+225 	modify it under the same terms as Perl itself.
+226
+227 	DISCLAIMER OF WARRANTY
+228
+229 	BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+230 	FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+231 	OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+232 	PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+233 	EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+234 	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+235 	ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+236 	YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+237 	NECESSARY SERVICING, REPAIR, OR CORRECTION.
+238
+239 	IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+240 	WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+241 	REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
+242 	LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
+243 	OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+244 	THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+245 	RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+246 	FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+247 	SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+248 	SUCH DAMAGES.
