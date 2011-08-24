@@ -1036,7 +1036,7 @@ mkdir($globalTmpDir, $dirPerms);
 # Set PDQPRIORITY to HIGH.  This doesn't speed up the loading of the data, 
 # but it really speeds up the enabling of the indexes and constraints.
 
-$ENV{PDQPRIORITY} = "HIGH";    # Take as much as you can.
+$ENV{PDQPRIORITY} = "60";    # Take as much as you can.
 
 
 if ($ENV{HOST} =~ /kinetix/) {
