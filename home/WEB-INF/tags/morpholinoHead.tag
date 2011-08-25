@@ -46,29 +46,38 @@
             <b>Sequence:</b>
         </td>
         <td align="left" nowrap="true">
-            <div style="display: inline-block; vertical-align: top;">
-                5' - ${markerBean.sequence.sequence} - 3'
-                <c:if test="${!empty markerBean.sequenceAttribution}">
-                    (${markerBean.sequenceAttribution})
-                </c:if>
-            </div>
-            &nbsp;
-            &nbsp;
-            <zfin2:markerSequenceBlastDropDown
-                    sequence="${markerBean.sequence.sequence}"
-                    databases="${markerBean.databases}"
-                    instructions="Select Sequence Analysis Tool"
-                    />
-            <br>
+            <c:choose>
+                <c:when test="${!empty markerBean.sequence}">
+                    <div style="display: inline-block; vertical-align: top;">
+                        5' - ${markerBean.sequence.sequence} - 3'
+                        <c:if test="${!empty markerBean.sequenceAttribution}">
+                            (${markerBean.sequenceAttribution})
+                        </c:if>
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                    <zfin2:markerSequenceBlastDropDown
+                            sequence="${markerBean.sequence.sequence}"
+                            databases="${markerBean.databases}"
+                            instructions="Select Sequence Analysis Tool"
+                            />
+                    <br>
+                </c:when>
+                <c:otherwise>
+                    <zfin2:noDataAvailable/>
+                </c:otherwise>
+            </c:choose>
         </td>
     </tr>
     <tr>
         <td>&nbsp;</td>
         <td>
-            <small>
-                (Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence
-                analysis before ordering any reagent.)
-            </small>
+            <c:if test="${!empty markerBean.sequence}">
+                <small>
+                    (Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence
+                    analysis before ordering any reagent.)
+                </small>
+            </c:if>
         </td>
     </tr>
 

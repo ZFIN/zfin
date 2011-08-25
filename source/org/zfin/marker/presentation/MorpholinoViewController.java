@@ -27,19 +27,19 @@ public class MorpholinoViewController {
 
     private Logger logger = Logger.getLogger(MorpholinoViewController.class);
 
-//    private String ncbiBlastUrl ;
-    private List<Database> databases ;
+    //    private String ncbiBlastUrl ;
+    private List<Database> databases;
 
-    public MorpholinoViewController(){
+    public MorpholinoViewController() {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository()
                 .getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName.PUBRNA, ForeignDBDataType.DataType.RNA);
         databases = referenceDatabase.getRelatedBlastDbs();
     }
 
-    @RequestMapping(value ="/morpholino/view/{zdbID}")
+    @RequestMapping(value = "/morpholino/view/{zdbID}")
     public String getGeneView(
             Model model
-            ,@RequestParam("zdbID") String zdbID
+            , @RequestParam("zdbID") String zdbID
     ) throws Exception {
         // set base bean
         MorpholinoBean markerBean = new MorpholinoBean();
@@ -54,7 +54,7 @@ public class MorpholinoViewController {
         // set targetGenes
 //        Set<Marker> targetGenes = MarkerService.getRelatedMarker(morpholino, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
 //        markerBean.setTargetGenes(targetGenes);
-        List<MarkerRelationshipPresentation> knockdownRelationships  = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<MarkerRelationshipPresentation>();
         knockdownRelationships.addAll(RepositoryFactory.getMarkerRepository().getRelatedMarkerOrderDisplayForTypes(
                 morpholino, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
@@ -68,10 +68,16 @@ public class MorpholinoViewController {
         markerBean.setSequences(RepositoryFactory.getMarkerRepository().getMarkerSequences(morpholino));
 
         // get sequence attribution
-        List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributionsForType(markerBean.getSequence().getZdbID(), RecordAttribution.SourceType.STANDARD);
-        // for this particular set, we only ever want the first one
-        if(attributions.size()>=1){
-          markerBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(),"1"));
+        if (markerBean.getSequence() != null) {
+            List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository()
+                    .getRecordAttributionsForType(markerBean.getSequence().getZdbID(), RecordAttribution.SourceType.STANDARD);
+            // for this particular set, we only ever want the first one
+            if (attributions.size() >= 1) {
+                markerBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
+            }
+        }
+        else{
+            logger.warn("No sequence available for morpholino: "+markerBean.getZdbID());
         }
 
         markerBean.setDatabases(databases);
