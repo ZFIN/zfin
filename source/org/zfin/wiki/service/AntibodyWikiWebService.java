@@ -37,7 +37,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     // from the "antibody" template in the antibody space
     // todo: move to a file
     private final static File ANTIBODY_TEMPLATE_FILE =
-            FileUtil.createFileFromStrings(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(),"WEB-INF","conf","antibody.template");
+            FileUtil.createFileFromStrings(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF", "conf", "antibody.template");
     private String antibodyTemplateData = null;
 
 
@@ -108,7 +108,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     protected String getWikiTitleFromAntibody(Antibody antibody) {
-        return getWikiTitleFromAntibodyName(antibody.getName()) ;
+        return getWikiTitleFromAntibodyName(antibody.getName());
     }
 
 
@@ -312,7 +312,9 @@ public class AntibodyWikiWebService extends WikiWebService {
                 publicCommentsStringBuilder.append(" * ");
                 publicCommentsStringBuilder.append(externalNote.getNote());
                 publicCommentsStringBuilder.append(" (");
-                publicCommentsStringBuilder.append(PublicationPresentation.getWikiLink(externalNote.getSinglePubAttribution().getPublication()));
+                if (externalNote.getSinglePubAttribution() != null) {
+                    publicCommentsStringBuilder.append(PublicationPresentation.getWikiLink(externalNote.getSinglePubAttribution().getPublication()));
+                }
                 publicCommentsStringBuilder.append(")");
                 publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
             }
@@ -377,11 +379,9 @@ public class AntibodyWikiWebService extends WikiWebService {
                     return ReturnStatus.UPDATE;
                 }
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Couldnot synchronoize the Antibody with the wiki for antibody: " + antibody, e);
             return ReturnStatus.ERROR;
         }
@@ -502,12 +502,12 @@ public class AntibodyWikiWebService extends WikiWebService {
         RemotePage newPage = updatePageForAntibody(antibodyToMergeInto, pageToMergeInto.getTitle());
 
         // move comments overgetTitle() to new antibody
-        moveComments(pageToDelete,pageToMergeInto) ;
+        moveComments(pageToDelete, pageToMergeInto);
 
-        return newPage ;
+        return newPage;
     }
 
-    public void moveComments(Antibody antibodyToDelete,Antibody antibodyToMergeInto) throws Exception{
+    public void moveComments(Antibody antibodyToDelete, Antibody antibodyToMergeInto) throws Exception {
         // get page to merge into
         String titleToMergeInto = getWikiTitleFromAntibody(antibodyToMergeInto);
         RemotePage pageToMergeInto = getPageForAntibodyName(titleToMergeInto);
@@ -516,20 +516,21 @@ public class AntibodyWikiWebService extends WikiWebService {
         String titleToDelete = getWikiTitleFromAntibody(antibodyToDelete);
         RemotePage pageToDelete = getPageForAntibodyName(titleToDelete);
 
-        moveComments(pageToDelete,pageToMergeInto);
+        moveComments(pageToDelete, pageToMergeInto);
     }
 
     /**
      * change ownership of comment from page to delete to page to merge into
+     *
      * @param pageToDelete
      * @param pageToMergeInto
      * @throws Exception
      */
-    private void moveComments(RemotePage pageToDelete, RemotePage pageToMergeInto) throws Exception{
-        for(RemoteComment comment: service.getComments(token,pageToDelete.getId())){
-            service.removeComment(token,comment.getId())  ;
+    private void moveComments(RemotePage pageToDelete, RemotePage pageToMergeInto) throws Exception {
+        for (RemoteComment comment : service.getComments(token, pageToDelete.getId())) {
+            service.removeComment(token, comment.getId());
             comment.setPageId(pageToMergeInto.getId());
-            service.addComment(token,comment)  ;
+            service.addComment(token, comment);
         }
     }
 
@@ -610,7 +611,7 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         int numAntibodies = zfinAntibodyHashMap.values().size();
         // get all pages for the zfin_antibody label
-        RemoteSearchResult[] remoteSearchResults ;
+        RemoteSearchResult[] remoteSearchResults;
         try {
             remoteSearchResults = service.getLabelContentByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue());
         } catch (Exception e) {
@@ -626,14 +627,13 @@ public class AntibodyWikiWebService extends WikiWebService {
             for (RemoteSearchResult remoteSearchResult : remoteSearchResults) {
                 if (false == zfinAntibodyHashMap.containsKey(remoteSearchResult.getTitle())) {
                     try {
-                        if(remoteSearchResult.getExcerpt().contains("{live-template:antibody}")){
-                            String errorString = "Trying to remove a user-generated page for some reason, fixing label: "+remoteSearchResult.getTitle() + " " + remoteSearchResult.getUrl();
+                        if (remoteSearchResult.getExcerpt().contains("{live-template:antibody}")) {
+                            String errorString = "Trying to remove a user-generated page for some reason, fixing label: " + remoteSearchResult.getTitle() + " " + remoteSearchResult.getUrl();
                             wikiSynchronizationReport.addErrorPage(errorString);
                             logger.error(errorString);
-                            service.removeLabelByName(token,Label.ZFIN_ANTIBODY_LABEL.getValue(),remoteSearchResult.getId());
-                            service.addLabelByName(token,Label.COMMUNITY_ANTIBODY.getValue(),remoteSearchResult.getId());
-                        }
-                        else{
+                            service.removeLabelByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue(), remoteSearchResult.getId());
+                            service.addLabelByName(token, Label.COMMUNITY_ANTIBODY.getValue(), remoteSearchResult.getId());
+                        } else {
                             logger.info("trying to drop!: " + remoteSearchResult.getTitle());
                             wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
                         }
@@ -719,8 +719,7 @@ public class AntibodyWikiWebService extends WikiWebService {
                     return null;
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.warn("Problem getting wiki link for [" + name + "]", e);
             return null;
         }

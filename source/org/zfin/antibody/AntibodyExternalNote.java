@@ -42,10 +42,10 @@ public class AntibodyExternalNote extends ExternalNote implements Comparable<Ant
      * @return Publication Attribution
      */
     public PublicationAttribution getSinglePubAttribution() {
-        if (pubAttributions == null || pubAttributions.size() == 0)
-            return null;
-        if (pubAttributions.size() > 1)
-            throw new RuntimeException("More than one publication attribution found!");
+        if (pubAttributions == null || pubAttributions.size() == 0) return null;
+
+        if (pubAttributions.size() > 1) throw new RuntimeException("More than one publication attribution found!");
+
         return pubAttributions.iterator().next();
     }
 }
