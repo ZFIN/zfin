@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
 <redirect>
-<newLocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost&amp;spaces=jobs&amp;title=Zebrafish+Jobs&amp;publicFeed=true&amp;maxResults=-1&amp;sort=created&amp;timeSpan=120</newLocation>
+<newLocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost\&spaces=jobs\&title=Zebrafish+Jobs\&publicFeed=true\&maxResults=-1\&sort=created\&timeSpan=121</newLocation>
 </redirect>
 
