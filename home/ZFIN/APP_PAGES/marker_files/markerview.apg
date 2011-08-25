@@ -511,16 +511,6 @@ function jump(form_select){
 
 <?MIVAR COND="$(XST,$UPDATE)">
 
-   <form>
-     <center>
-       <a
-       style="font-size: large;"
-       href="javascript:"
-        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"
-       >[OLD View Marker]</a>
-     </center>
-   </form>
-
         <form>
         <center>
         <a
