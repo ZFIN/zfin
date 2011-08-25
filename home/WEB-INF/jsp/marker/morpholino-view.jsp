@@ -29,6 +29,9 @@
 <%--// PHENOTYPE --%>
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
+<%--OTHER GENE/Marker Pages--%>
+<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
+
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 

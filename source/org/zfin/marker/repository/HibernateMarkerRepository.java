@@ -1812,29 +1812,51 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return list;
     }
 
-    public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
-        ResultTransformer transformer = new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                LinkDisplay linkDisplay = new LinkDisplay();
-                linkDisplay.setMarkerZdbID(tuple[0].toString());
-                linkDisplay.setAccession(tuple[1].toString());
-                linkDisplay.setReferenceDatabaseName(tuple[2].toString());
-                linkDisplay.setUrlPrefix(tuple[3].toString());
-                if (tuple[4] != null) {
-                    linkDisplay.setUrlSuffix(tuple[4].toString());
-                }
-                if (tuple[5] != null) {
-                    linkDisplay.setPublicationZdbID(tuple[5].toString());
-                }
-                if (tuple[6] != null) {
-                    linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
-                }
-                return linkDisplay;
+    private class MarkerDBLinksTransformer implements ResultTransformer{
+        @Override
+        public Object transformTuple(Object[] tuple, String[] aliases) {
+            LinkDisplay linkDisplay = new LinkDisplay();
+            linkDisplay.setMarkerZdbID(tuple[0].toString());
+            linkDisplay.setAccession(tuple[1].toString());
+            linkDisplay.setReferenceDatabaseName(tuple[2].toString());
+            linkDisplay.setUrlPrefix(tuple[3].toString());
+            if (tuple[4] != null) {
+                linkDisplay.setUrlSuffix(tuple[4].toString());
             }
-        };
+            if (tuple[5] != null) {
+                linkDisplay.addAttributionZdbID(tuple[5].toString());
+            }
+            if (tuple[6] != null) {
+                linkDisplay.setSignificance(Integer.valueOf(tuple[6].toString()));
+            }
+            linkDisplay.setDblinkZdbID(tuple[7].toString());
+            return linkDisplay;
+        }
+
+        @Override
+        public List transformList(List list) {
+            Map<String,LinkDisplay> linkMap = new HashMap<String,LinkDisplay>();
+            for(Object o : list){
+                LinkDisplay display = (LinkDisplay) o ;
+                LinkDisplay displayStored = linkMap.get(display.getAccession());
+                if(displayStored!=null){
+                    displayStored.addAttributionZdbIDs(display.getAttributionZdbIDs());
+                    linkMap.put(displayStored.getAccession(),displayStored);
+                }
+                else{
+                    linkMap.put(display.getAccession(),display);
+                }
+
+            }
+
+            return new ArrayList<LinkDisplay>(linkMap.values());
+        }
+    }
+
+    public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
+        ResultTransformer transformer = new MarkerDBLinksTransformer() ;
         String sql = "select dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +

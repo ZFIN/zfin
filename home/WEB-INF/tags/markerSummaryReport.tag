@@ -18,26 +18,26 @@
 
 
 <zfin2:subsection title="${title}"
-                        test="${!empty links}" showNoData="true" noDataText="No links to external sites">
+                  test="${!empty links}" showNoData="true" noDataText="No links to external sites">
     <table class="summary">
         <tr>
                 <%--<c:forEach var="link" items="${links}" varStatus="loop">--%>
                 <%--${(!loop.first && loop.index%3==0 ? "<td>" : "")}--%>
-                <td>
-            <c:set var="lastRefDB" value=""/>
-            <c:forEach var="link" items="${links}" varStatus="loop">
-                <c:set var="refDB" value="${link.referenceDatabaseName}"/>
-                ${(!loop.first and (refDB ne lastRefDB) ? "<td>" : "")}
-                <%-- entry.value is the MarkerDBLink --%>
+            <td>
+                    <c:set var="lastRefDB" value=""/>
+                <c:forEach var="link" items="${links}" varStatus="loop">
+                    <c:set var="refDB" value="${link.referenceDatabaseName}"/>
+                    ${(!loop.first and (refDB ne lastRefDB) ? "</td>" : "")}
+                    ${(!loop.first and (refDB ne lastRefDB) ? "<td>" : "")}
+                    <%-- entry.value is the MarkerDBLink --%>
                 <li style="list-style-type:none;">
                     <a href="${link.link}">${link.displayName}</a>
                         ${link.attributionLink}
                 </li>
-                ${(!loop.first and (refDB ne lastRefDB) ? "</td>" : "")}
-                <c:set var="lastRefDB" value="${refDB}"/>
-            </c:forEach>
-                <%--</td>--%>
-                <%--${(!loop.first && loop.index%3==0 ? "</td>" : "")}--%>
+                    <c:set var="lastRefDB" value="${refDB}"/>
+                </c:forEach>
+                    <%--</td>--%>
+                    <%--${(!loop.first && loop.index%3==0 ? "</td>" : "")}--%>
         </tr>
     </table>
 </zfin2:subsection>

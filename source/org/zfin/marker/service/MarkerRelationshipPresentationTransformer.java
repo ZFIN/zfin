@@ -2,7 +2,6 @@ package org.zfin.marker.service;
 
 import org.hibernate.transform.ResultTransformer;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
-import org.zfin.marker.presentation.OrganizationLink;
 
 import java.util.*;
 
@@ -28,7 +27,7 @@ public class MarkerRelationshipPresentationTransformer implements ResultTransfor
         returnObject.setRelationshipType(tuple[4].toString());
         returnObject.setLink(tuple[5].toString());
         if (tuple[6] != null) {
-            returnObject.setAttributionZdbID(tuple[6].toString());
+            returnObject.addAttributionZdbID(tuple[6].toString());
         }
         if(tuple.length>7 && tuple[7]!=null){
             returnObject.setMarkerRelationshipZdbId(tuple[7].toString());
@@ -46,7 +45,7 @@ public class MarkerRelationshipPresentationTransformer implements ResultTransfor
             MarkerRelationshipPresentation mrp = (MarkerRelationshipPresentation) o;
             MarkerRelationshipPresentation mrpStored = map.get(mrp.getZdbId());
             if (mrpStored!=null) {
-                mrpStored.addAttributionLink(mrp.getAttributionZdbID());
+                mrpStored.addAttributionZdbID(mrp.getAttributionZdbID());
                 map.put(mrpStored.getZdbId(), mrpStored);
             } else {
                 map.put(mrp.getZdbId(), mrp);

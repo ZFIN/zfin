@@ -20,10 +20,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String markerRelationshipZdbId ; // primary key
     private String markerType;
     private String markerRelationshipAttributionPubZdbId;
-    private int numAttributions;
     private String supplierZdbId;
     private String link;
-    private String attributionZdbID;
     private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
     private String arbitraryOrder;
     private String mappedMarkerRelationshipType;
@@ -54,7 +52,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
         if (attributionZdbIDs.size() == 1) {
             sb.append(" (");
-            sb.append(PublicationPresentation.getLink(attributionZdbID, "1"));
+            sb.append(PublicationPresentation.getLink(attributionZdbIDs.iterator().next(), "1"));
             sb.append(")");
         } else if (attributionZdbIDs.size() > 1) {
             /* todo: there should be some more infrastructure for the showpubs links */
@@ -166,11 +164,6 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
         if(attributionZdbIDs!=null){
             return attributionZdbIDs.size();
         }
-
-        if(attributionZdbID != null){
-            return 1 ;
-        }
-
         return  0 ;
     }
 
@@ -196,12 +189,10 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     }
 
     public String getAttributionZdbID() {
-        return attributionZdbID;
-    }
-
-    public void setAttributionZdbID(String attributionZdbID) {
-        this.attributionZdbID = attributionZdbID;
-        this.attributionZdbIDs.add(attributionZdbID);
+        if(attributionZdbIDs==null || attributionZdbIDs.size()==0){
+            return null ;
+        }
+        return attributionZdbIDs.iterator().next();
     }
 
     public Set<String> getAttributionZdbIDs() {
@@ -212,7 +203,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
         this.attributionZdbIDs = attributionZdbIDs;
     }
 
-    public void addAttributionLink(String attributionZdbID) {
+    public void addAttributionZdbID(String attributionZdbID) {
         this.attributionZdbIDs.add(attributionZdbID);
     }
 

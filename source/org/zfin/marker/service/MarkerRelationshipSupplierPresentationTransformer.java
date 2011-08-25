@@ -28,7 +28,7 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         returnObject.setRelationshipType(tuple[4].toString());
         returnObject.setLink(tuple[5].toString());
         if (tuple[6] != null) {
-            returnObject.setAttributionZdbID(tuple[6].toString());
+            returnObject.addAttributionZdbID(tuple[6].toString());
         }
         if (tuple.length>7 && tuple[7] !=null) {
             OrganizationLink organizationLink = new OrganizationLink();
@@ -63,7 +63,7 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
             MarkerRelationshipPresentation mrp = (MarkerRelationshipPresentation) o;
             MarkerRelationshipPresentation mrpStored = map.get(mrp.getZdbId());
             if (mrpStored!=null) {
-                mrpStored.addAttributionLink(mrp.getAttributionZdbID());
+                mrpStored.addAttributionZdbID(mrp.getAttributionZdbID());
                 mrpStored.addOrganizationLinks(mrp.getOrganizationLinks());
                 map.put(mrpStored.getZdbId(), mrpStored);
 
