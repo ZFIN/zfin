@@ -40,7 +40,7 @@ public class PseudoGeneViewController {
         MarkerService.createDefaultViewForMarker(geneBean);
 
         // EXPRESSION SECTION
-        geneBean.setMarkerExpression(expressionService.getExpressionForEfg(gene));
+        geneBean.setMarkerExpression(expressionService.getExpressionForGene(gene));
 
         // (Transcripts)
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
