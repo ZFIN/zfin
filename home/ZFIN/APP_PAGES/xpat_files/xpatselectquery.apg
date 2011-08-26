@@ -229,7 +229,6 @@ DEBUGGING:
 	    	 select genox_zdb_id
                    from genotype_experiment, genotype
                   where genox_geno_zdb_id = geno_zdb_id
-                    and genox_exp_zdb_id = exp_zdb_id
                     and geno_is_wildtype = 't'
                     and genox_is_standard = 't'
                     ;">
