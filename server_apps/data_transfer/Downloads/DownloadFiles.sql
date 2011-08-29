@@ -1019,7 +1019,7 @@ and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
 and pubcount <= 20
 and jtype='Journal'
-and genox_is_std_and_generic_control = 't'
+and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
 union
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 

@@ -2,9 +2,11 @@ package org.zfin.antibody.presentation;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.marker.presentation.AntibodyMarkerBean;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -33,13 +35,8 @@ public class AntibodiesPerPublicationController implements Controller {
 
         // if there is only one antibody forward to the ab detail page.
         if (antibodies.size() == 1) {
-            ModelAndView modelAndView;
-            AntibodyBean form = new AntibodyBean();
             Antibody antibody = antibodies.get(0);
-            form.setAntibody(antibody);
-            modelAndView = new ModelAndView("antibody-detail.page", LookupStrings.FORM_BEAN, form);
-            modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, antibody.getName());
-            return modelAndView;
+            return new ModelAndView(new RedirectView("/action/marker/view/" + antibody.getZdbID()));
         }
 
         ModelAndView modelAndView = new ModelAndView("antibodies-per-publication.page", LookupStrings.FORM_BEAN, antibodies);
