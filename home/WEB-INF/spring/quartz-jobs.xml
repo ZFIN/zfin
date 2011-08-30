@@ -18,11 +18,11 @@
                 <ref bean="microarrayTrigger"/>
                 <ref bean="reloadOntologyTrigger"/>
                 <ref bean="loadQualityOntology"/>
-                <!--<ref bean="loadAnatomyOntology"/>-->
+                <ref bean="loadAnatomyOntology"/>
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
                 <ref bean="loadMPATHOntology"/>
-                <ref bean="loadBehaviorOntology"/>
+                <!--<ref bean="loadBehaviorOntology"/>-->
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>

@@ -55,7 +55,7 @@ import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 public class LoadOntology extends AbstractScriptWrapper {
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService = new ExpressionService();
 
     private static Logger LOG;
 
@@ -262,6 +262,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.setRows(rows);
             cronReport.appendToSubject(" - " + rows.size() + " expression annotations with obsolete terms");
             cronReport.warning("Found expressions with obsolete terms.");
+            cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
         }
         // check if any secondary IDs are used in any annotation:
