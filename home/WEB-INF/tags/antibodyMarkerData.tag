@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="antibodyBean" type="org.zfin.marker.presentation.AntibodyMarkerBean"
@@ -69,7 +68,7 @@
         Source:
     </th>
     <td>
-        <zfin2:toggledHyperlinkList collection="${antibodyBean.suppliers}"/>
+        <zfin2:orderThis markerSuppliers="${antibodyBean.suppliers}" accessionNumber="${antibody.zdbID}"/>
     </td>
 </tr>
 

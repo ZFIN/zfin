@@ -147,11 +147,7 @@
             <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
 	      ${supplier.organization.name}</a>          
 	    <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
-            <c:if test="${supplier.zirc}">(<a href="http://zebrafish.org/zirc/fish/lineAll.php?OID=${formBean.genotype.zdbID}"><font size="-1">order this</font></a>)
-            </c:if>
-            <c:if test="${supplier.riken}">(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.genotype.zdbID}"><font size="-1">order this</font></a>)
-            </c:if>
-            <c:if test="${!status.last}"><br/></c:if>
+              <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}" organization="${supplier.organization}" />
           </c:otherwise>
          </c:choose>
       </c:forEach>
