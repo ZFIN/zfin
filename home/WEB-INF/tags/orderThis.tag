@@ -17,7 +17,7 @@
     </c:when>
     <c:otherwise>
         <c:forEach var="markerSupplier" items="${markerSuppliers}">
-            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${markerSupplier.organization.zdbID}"
+            <a href="${markerSupplier.organization.url}"
                id="${markerSupplier.organization.zdbID}"> ${markerSupplier.organization.name}</a>
             <c:forEach var="url" items="${markerSupplier.organization.organizationUrls}">
                 <c:if test="${url.businessPurpose eq 'order'}">
