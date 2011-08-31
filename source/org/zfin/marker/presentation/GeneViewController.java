@@ -72,7 +72,9 @@ public class GeneViewController {
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
         types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
-        geneBean.setConstructs(MarkerService.getRelatedMarker(gene, types));
+        Set<Marker> constructs = MarkerService.getRelatedMarker(gene, types) ;
+        constructs.addAll(RepositoryFactory.getMarkerRepository().getConstructsForGene(gene)) ;
+        geneBean.setConstructs(constructs);
 
         // (Antibodies)
         geneBean.setRelatedAntibodies(RepositoryFactory.getMarkerRepository()
