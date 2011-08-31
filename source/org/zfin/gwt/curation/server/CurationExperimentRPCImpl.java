@@ -107,7 +107,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @return list of experiments
      */
     public List<ExperimentDTO> readExperiments(String publicationID) {
-        List<ExpressionExperiment> experiments = pubRepository.getExperiments(publicationID);
+        List<ExpressionExperiment> experiments = expRepository.getExperiments(publicationID);
         if (experiments == null)
             return null;
 
@@ -143,7 +143,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     public List<ExperimentDTO> getExperimentsByFilter(ExperimentDTO experimentFilter) {
         List<ExpressionExperiment> experiments =
-                pubRepository.getExperimentsByGeneAndFish(experimentFilter.getPublicationID(),
+                expRepository.getExperimentsByGeneAndFish2(experimentFilter.getPublicationID(),
                         experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
                         experimentFilter.getFishID());
         if (experiments == null)
@@ -414,7 +414,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         Publication publication = getPublicationRepository().getPublication(publicationID);
         if (publication.getCloseDate() != null)
             return false;
-        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(publicationID, null, null, null);
+        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish2(publicationID, null, null, null);
         Collection<ExpressionStructure> structures = expRepository.retrieveExpressionStructures(publicationID);
         return CollectionUtils.isNotEmpty(experiments) && CollectionUtils.isEmpty(structures);
     }
@@ -502,7 +502,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @return expression figure stage records
      */
     public List<ExpressionFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
-        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(experimentFilter.getPublicationID(),
+        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish2(experimentFilter.getPublicationID(),
                 experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
                 experimentFilter.getFishID(),
                 figureID);

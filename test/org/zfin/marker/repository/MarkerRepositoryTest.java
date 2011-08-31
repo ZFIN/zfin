@@ -937,4 +937,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertThat(candidates.keySet().size(),   lessThan(300000));
     }
 
+    @Test
+    public void getConstructsForGene(){
+        Marker m = markerRepository.getMarkerByID("ZDB-GENE-030710-1") ;
+        List<Marker> constructs = markerRepository.getConstructsForGene(m);
+        assertThat(constructs.size(),greaterThan(2));
+        assertThat(constructs.size(),lessThan(4));
+    }
+
 }

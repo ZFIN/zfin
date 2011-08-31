@@ -158,15 +158,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getNumberOfImagesPerAnatomyStructure() {
-        String termName = "neural rod";
-        GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
-        int number = publicationRepository.getTotalNumberOfImagesPerAnatomyItem(term);
-//        assertEquals("518 images", 518, number);
-        assertTrue(number > 0);
-    }
-
-    @Test
     public void getAllExpressedMutants() {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
@@ -449,23 +440,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<String> experiments = publicationRepository.getDistinctFigureLabels(zdbID);
-        assertTrue(experiments != null);
-    }
-
-    @Test
-    public void getExpressionExperiments() {
-        String zdbID = "ZDB-PUB-990507-16";
-
-        List<ExpressionExperiment> experiments = publicationRepository.getExperiments(zdbID);
-        assertTrue(experiments != null);
-        // alcam
-        String geneID = "ZDB-GENE-990415-30";
-        experiments = publicationRepository.getExperimentsByGeneAndFish(zdbID, geneID, null);
-        assertTrue(experiments != null);
-
-        // alcam and WT
-        String fishName = "WT";
-        experiments = publicationRepository.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
         assertTrue(experiments != null);
     }
 

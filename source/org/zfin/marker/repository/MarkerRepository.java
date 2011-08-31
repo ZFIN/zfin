@@ -15,6 +15,7 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -333,4 +334,6 @@ public interface MarkerRepository {
     List<String> getMarkerZdbIdsForType(Marker.Type gene);
 
    Map<String,String> getGeoMarkerCandidates();
+
+   List<Marker> getConstructsForGene(Marker gene);
 }

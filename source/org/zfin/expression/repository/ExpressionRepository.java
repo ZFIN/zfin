@@ -147,6 +147,8 @@ public interface ExpressionRepository {
      * gene
      * fish
      *
+     * @deprecated Use getExperimentsByGeneAndFish2
+     *
      * @param publicationID publication
      * @param geneZdbID     gene ID
      * @param fishID        genotype ID
@@ -155,7 +157,42 @@ public interface ExpressionRepository {
     List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
+     * Retrieves experiment that pertain to a given
+     * publication
+     * gene
+     * fish
+     *
+     * @param publicationID publication
+     * @param geneZdbID     gene ID
+     * @param fishID        genotype ID
+     * @return list of expression experiment
+     */
+    List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
+
+    /**
      * Retrieve an experiment figure stage for given pub, gene and fish.
+     *
+     * @param publicationID Publication
+     * @param geneZdbID     gene
+     * @param fishID        fish
+     * @param figureID      figure ID
+     * @return list of experiment figure stages.
+     */
+    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish2(String publicationID, String geneZdbID, String fishID, String figureID);
+
+
+    /**
+     * Retrieve all experiments for a given publication.
+     *
+     * @param publicationID pub id
+     * @return list of experiments
+     */
+    List<ExpressionExperiment> getExperiments(String publicationID);
+
+    /**
+     * Retrieve an experiment figure stage for given pub, gene and fish.
+     *
+     * @deprecated Use getExperimentFigureStagesByGeneAndFish2
      *
      * @param publicationID Publication
      * @param geneZdbID     gene

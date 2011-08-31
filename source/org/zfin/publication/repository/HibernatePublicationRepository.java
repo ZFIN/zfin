@@ -356,25 +356,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return ((Number) query.uniqueResult()).intValue();
     }
 
-    /**
-     * Count the number of images from all publications that have a gene
-     * expression in a given anatomy structure.
-     *
-     * @param anatomyTerm ao term
-     * @return number
-     */
-    public int getTotalNumberOfImagesPerAnatomyItem(GenericTerm anatomyTerm) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select count(image) from Image image, ExpressionResult res where " +
-                "res.entity.superterm = :aoTerm AND " +
-                "image.figure member of res.figures AND " +
-                "res.expressionFound = :expressionFound ";
-        Query query = session.createQuery(hql);
-        query.setBoolean("expressionFound", true);
-        query.setParameter("aoTerm", anatomyTerm);
-        return ((Number) query.uniqueResult()).intValue();
-    }
-
     private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
         if (list == null)
             return null;
@@ -1081,23 +1062,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<Publication> getPublicationsWithFiguresbygenotype(Genotype genotype) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ExpressionExperiment> getExperiments(String publicationID) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select experiment from ExpressionExperiment experiment" +
-                "       left join experiment.gene as gene " +
-                "     where experiment.publication.zdbID = :pubID " +
-                "    order by gene.abbreviationOrder, " +
-                "             experiment.genotypeExperiment.genotype.nickname, " +
-                "             experiment.assay.displayOrder ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
-
-        return (List<ExpressionExperiment>) query.list();
-
     }
 
     @SuppressWarnings("unchecked")

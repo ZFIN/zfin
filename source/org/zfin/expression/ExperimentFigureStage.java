@@ -3,10 +3,7 @@ package org.zfin.expression;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.ComposedFxTerm;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Domain object that does not map to a database table directly.
@@ -107,9 +104,16 @@ public class ExperimentFigureStage {
         return result;
     }
 
+    public void addExpressionResults(Collection<ExpressionResult> result) {
+        for(ExpressionResult er : result){
+            addExpressionResult(er);
+        }
+    }
+
     public void addExpressionResult(ExpressionResult result) {
-        if (expressionResults == null)
+        if (expressionResults == null){
             expressionResults = new HashSet<ExpressionResult>();
+        }
         expressionResults.add(result);
         start = result.getStartStage();
         end = result.getEndStage();

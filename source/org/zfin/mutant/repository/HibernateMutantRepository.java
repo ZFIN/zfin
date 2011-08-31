@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.transform.Transformers;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
@@ -54,7 +55,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct genox.genotype from GenotypeExperiment genox, " +
+                "select distinct genox.genotype , genox.genotype.nameOrder from GenotypeExperiment genox, " +
                         "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.genotypeExperiment = genox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -77,6 +78,13 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
         query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
+        // have to add extra select because of ordering, but we only want to return the first
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0] ;
+            }
+        });
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(numberOfRecords, query.scroll());
     }

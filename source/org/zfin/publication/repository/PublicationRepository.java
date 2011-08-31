@@ -142,15 +142,6 @@ public interface PublicationRepository extends PaginationParameter {
     int getTotalNumberOfFiguresPerAnatomyItem(GenericTerm anatomyTerm);
 
     /**
-     * Count the number of images from all publications that have a gene
-     * expression in a given anatomy structure.
-     *
-     * @param anatomyTerm Anatomy Term
-     * @return number
-     */
-    int getTotalNumberOfImagesPerAnatomyItem(GenericTerm anatomyTerm);
-
-    /**
      * Retrieve a publication by its primary key.
      *
      * @param zdbID
@@ -347,14 +338,6 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm);
 
     /**
-     * Retrieve all experiments for a given publication.
-     *
-     * @param publicationID pub id
-     * @return list of experiments
-     */
-    List<ExpressionExperiment> getExperiments(String publicationID);
-
-    /**
      * Retrieve a list of distinct figures, labels not IDs
      *
      * @param publicationID pub id
@@ -379,20 +362,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of markers
      */
     List<Marker> getGenesByExperiment(String pubID);
-
-
-    /**
-     * Retrieves experiment that pertain to a given
-     * publication
-     * gene
-     * fish
-     *
-     * @param publicationID publication
-     * @param geneZdbID     gene ID
-     * @param fishID        genotype ID
-     * @return list of expression experiment
-     */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieve list of Genotypes being used in experiments for a given publication

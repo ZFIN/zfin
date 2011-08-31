@@ -184,7 +184,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         DetachedCriteria antibodies = DetachedCriteria.forClass(Antibody.class, "ab");
         antibodies.add(Restrictions.eqProperty("ab.hostSpecies", "species.commonName"));
         antibodies.setProjection(Property.forName("ab.zdbID").count());
-        criteria.add(Subqueries.lt(0, antibodies));
+        criteria.add(Subqueries.lt((long) 0, antibodies));
         return criteria.list();
     }
 
@@ -219,7 +219,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 
-        return (Integer) results.list().get(0);
+        return ((Long) results.list().get(0)).intValue();
     }
 
     @SuppressWarnings("unchecked")
@@ -278,7 +278,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria experiment = genotypeExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD}));
-        return (Integer) criteria.list().get(0);
+        return ((Long) criteria.list().get(0)).intValue();
     }
 
     @SuppressWarnings("unchecked")

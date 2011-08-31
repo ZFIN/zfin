@@ -142,7 +142,7 @@
             <many-to-many class="org.zfin.infrastructure.ActiveSource" column="recattrib_source_zdb_id"/>
         </set>
 
-        <set name="publications" lazy="true" order-by="">
+        <set name="publications" lazy="true">
             <key column="recattrib_data_zdb_id"/>
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>

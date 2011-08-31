@@ -2066,4 +2066,41 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         return markerCandidates;
     }
+
+    /**
+     * From case 6582.
+     * Pull the transgenic construct though the transcript onto the gene
+select m.* from marker_relationship mr1
+join marker_relationship mr2 on mr1.mrel_mrkr_2_zdb_id=mr2.mrel_mrkr_2_zdb_id
+join marker m on m.mrkr_zdb_id=mr2.mrel_mrkr_1_zdb_id
+where mr1.mrel_mrkr_1_zdb_id='ZDB-GENE-030710-1'
+and mr1.mrel_type='gene produces transcript'
+and mr2.mrel_type in ('promoter of','coding sequence of','contains engineered region')
+;
+     * @param gene
+     * @return
+     */
+    @Override
+    public List<Marker> getConstructsForGene(Marker gene) {
+
+        List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>() ;
+        markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
+        markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+
+        String hql = " select m from MarkerRelationship mr1 , MarkerRelationship  mr2, Marker m " +
+                " where mr1.secondMarker.zdbID=mr2.secondMarker.zdbID " +
+                " and m.zdbID=mr2.firstMarker.zdbID " +
+                " and mr1.firstMarker.zdbID = :markerZdbID " +
+                " and mr1.type = :markerRelationshipType1 " +
+                " and mr2.type in (:markerRelationshipType2) " +
+        "  " ;
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID",gene.getZdbID())
+                .setParameter("markerRelationshipType1",MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)
+                .setParameterList("markerRelationshipType2",markerRelationshipList)
+                .list()
+                ;
+    }
 }

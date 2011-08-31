@@ -46,6 +46,7 @@ import org.zfin.util.FilterType;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -607,8 +608,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(count > 0);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
-        assertTrue(abs != null);
-        assertTrue(abs.getTotalCount() == count);
+        assertNotNull(abs);
+        assertEquals(count, abs.getTotalCount() );
     }
 
     @Test
@@ -624,7 +625,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
         int count = getAntibodyRepository().getAntibodiesByAOTermCount(term);
-        assertTrue(count > -1);
+        assertThat(count ,greaterThan(-1));
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
     }
@@ -640,10 +641,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
         assertTrue(numOfFigures > 0);
+        assertThat(numOfFigures ,greaterThan(0) );
 
         List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
-        assertTrue(figures != null);
-        assertEquals(true, figures.size() > 0);
+        assertNotNull(figures);
+        assertThat(figures.size() ,greaterThan(0));
     }
 
     @Test
