@@ -8,7 +8,9 @@ dblink or some relatedMarkers to show --%>
 
 <zfin2:subsection title="${fn:toUpperCase('Target Genes')}" test="${!empty transcriptTargets
               && (!empty transcriptTargets.predictedTarget
-                  || !empty transcriptTargets.publishedTargets)}">
+                  || !empty transcriptTargets.publishedTargets)}"
+        noDataText="No data available"
+        >
 
     <table class="summary solidblock transcripttargets">
 
