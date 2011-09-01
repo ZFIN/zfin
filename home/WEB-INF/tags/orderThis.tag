@@ -18,7 +18,7 @@
     <c:otherwise>
         <c:forEach var="markerSupplier" items="${markerSuppliers}">
             <a href="${markerSupplier.organization.url}"
-               id="${markerSupplier.organization.zdbID}"> ${markerSupplier.organization.name}</a>
+               id="${markerSupplier.organization.zdbID}">${markerSupplier.organization.name}</a>
             <c:forEach var="url" items="${markerSupplier.organization.organizationUrls}">
                 <c:if test="${url.businessPurpose eq 'order'}">
                     &nbsp;(<span style="font-size: smaller;"><a href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</a></span>)
