@@ -27,7 +27,7 @@ BEGIN {FS="\t";OFS="\t";split($9,ATT,";");
 	split($9,ATT,";");
 	if(ID == ATT[1]){
 		C+=1;
-		$9 = sprintf("%s-%03i;%s%s;",ATT[1],C,ATT[2],ATT[3] );
+		$9 = sprintf("%s-%03i;%s;%s;",ATT[1],C,ATT[2],ATT[3] );
 	}else{C=1;}
 	ID=ATT[1];
 	print $0;
