@@ -348,23 +348,22 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_img_zdb_id,
 		       fstat_type) 
-		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, 
-		       fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
+		select xpatex_probe_feature_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, 
+		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
 		  from clone, genotype_experiment, expression_experiment, expression_result, image, 
-			 experiment, figure, expression_pattern_figure, genotype, all_term_contains
+			  expression_pattern_figure, genotype, all_term_contains
 		   where  xpatres_expression_found = 't'
 	           and genox_zdb_id = xpatex_genox_zdb_id
 		   and  xpatres_xpatex_zdb_id = xpatex_zdb_id
 		   and genox_is_std_or_generic_control = 't'
-		   and fig_zdb_id = xpatfig_fig_zdb_id
+		   and img_fig_zdb_id = xpatfig_fig_zdb_id
 		   and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		   and geno_zdb_id = genox_geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-		and clone_rating = '4' 
-		and img_fig_zdb_id = fig_zdb_id;
+		and clone_rating = '4' ;
 
 	let errorHint = "High-Quality-Probes: insert records for xpatres_subterm_zdb_id";
 	-- High-Quality-Probes: insert records for xpatres_subterm_zdb_id
@@ -378,13 +377,13 @@ Create dba function regen_feature_ao_fast_search()
 		       fstat_img_zdb_id,
 		       fstat_type)	
 		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, 
-		       fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
+		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
 		from clone, genotype_experiment, expression_experiment, expression_result, image,
-			  figure, expression_pattern_figure, genotype, all_term_contains
+			   expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatres_xpatex_zdb_id = xpatex_zdb_id
-		and fig_zdb_id = xpatfig_fig_zdb_id
+		and img_fig_zdb_id = xpatfig_fig_zdb_id
 		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		   and genox_is_std_or_generic_control = 't'
 		and geno_zdb_id = genox_geno_zdb_id
@@ -392,9 +391,9 @@ Create dba function regen_feature_ao_fast_search()
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-		and clone_rating = '4' 
-		and img_fig_zdb_id = fig_zdb_id
-                and xpatres_subterm_zdb_id is not null;
+		and clone_rating = '4'
+                and xpatres_subterm_zdb_id is not null
+		and xpatex_probe_feature_zdb_id is not null;
 
          let errorHint = "rename table feature_stats_new";
 
