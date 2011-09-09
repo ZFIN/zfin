@@ -48,8 +48,7 @@ display detailed orthology data.
             from marker, marker_types
             where mrkr_zdb_id = '$OID'
 	      and mrkr_type = marker_type
-	  ; "
->
+	  ; ">
   <?MIVAR NAME=$mrkr_name>$1<?/MIVAR>
   <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
   <?MIVAR NAME=$marker_type>$3<?/MIVAR>
@@ -103,8 +102,7 @@ display detailed orthology data.
               and organism_common_name = organism
             group by organism, organism_display_order
             order by organism_display_order
-           ;"
->
+           ;">
   <?MIVAR>$(SETVAR,$organisms[$MI_CURRENTROW],$1)<?/MIVAR>
 <?/MISQL>
 <?MIVAR NAME=$orthoNum>$MI_ROWCOUNT<?/MIVAR>
@@ -129,8 +127,7 @@ display detailed orthology data.
               SQL="
                 select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') 
                   from webPages where ID='aa-mappingdetail.apg'
-                 ;"
-      >
+                 ;">
         $1
       <?/MISQL>
     
@@ -163,8 +160,7 @@ display detailed orthology data.
                   and organism = organism_common_name
                 group by zdb_id, ortho_abbrev, organism, ortho_chromosome, ortho_position, organism_display_order
                 order by organism_display_order
-               ;"
-    >
+               ;">
       <?MIVAR NAME=$zdbID>$1<?/MIVAR>
       <?MIVAR NAME=$symbol>$2<?/MIVAR>
       <?MIVAR NAME=$organism>$3<?/MIVAR>
@@ -187,7 +183,7 @@ display detailed orthology data.
           <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">
             <?MIVAR><TD>&nbsp;Unknown</TD><?/MIVAR>
           <?MIELSE>
-            <?MIVAR><TD>&nbsp;$chromosome ($position)</TD><?/MIVAR>
+            <TD>&nbsp;<?MIVAR>$chromosome<?/MIVAR>&nbsp;<?MIVAR COND="$(AND,$(NE,$position,-),$(NE,$position,))">($position)<?/MIVAR></TD>
           <?/MIBLOCK> 
         <?MIELSE>
           <?MIBLOCK COND="$(OR,$(EC,$MI_NOVALUE,$chromosome),$(EC,$MI_NULL,$chromosome),$(EC,$unknown,$chromosome))">
@@ -208,8 +204,7 @@ display detailed orthology data.
                       and fdb_db_significance < 10
                       and fdbcont_organism_common_name = '$organism'	
                     order by fdb_db_significance
-                   ;"
-        >	
+                   ;">	
           <?MIVAR NAME=$DB_name>$1<?/MIVAR>
           <?MIVAR NAME=$hyperlink>$2<?/MIVAR>
           <?MIVAR NAME=$dblink_acc_num_display>$3<?/MIVAR>
@@ -253,8 +248,7 @@ display detailed orthology data.
                   and oevdisp_evidence_code = oevcode_code
                 group by oevdisp_evidence_code, oevcode_order
                 order by oevcode_order
-               ;"
-    >
+               ;">
       <?MIVAR>$(SETVAR,$evicodes[$indx],$1)<?/MIVAR>
       <?MIVAR>$(SETVAR,$indx,$(+,$indx,1))<?/MIVAR>   
     <?/MISQL>
@@ -269,8 +263,7 @@ display detailed orthology data.
                   from orthologue_evidence_display
                   where oevdisp_gene_zdb_id = '$OID'
                     and oevdisp_evidence_code='$item'
-                 ;"
-      >
+                 ;">
         <?MIVAR>$(SETVAR,$organismsets[$indx2],$1)<?/MIVAR>
         <?MIVAR>$(SETVAR,$indx2,$(+,$indx2,1))<?/MIVAR> 
       <?/MISQL>   
@@ -291,8 +284,7 @@ display detailed orthology data.
                       and oevdisp_evidence_code='$item'
                     group by zdb_id, pub_mini_ref
                     order by pub_mini_ref
-                   ;"
-        >
+                   ;">
           <?MIVAR>$(SETVAR,$pubs[$indx3],$1)<?/MIVAR>
           <?MIVAR>$(SETVAR,$pubIDs[$indx3],$2)<?/MIVAR>
           <?MIVAR>$(SETVAR,$indx3,$(+,$indx3,1))<?/MIVAR>
@@ -387,8 +379,7 @@ display detailed orthology data.
                   and zdb_id = recattrib_source_zdb_id
                 group by zdb_id, pub_mini_ref, title
                 order by pub_mini_ref
-               ;"
-    >
+               ;">
       <?MIVAR>$(SETVAR,$allPubs[$indx],$1)<?/MIVAR>
       <?MIVAR>$(SETVAR,$allPubIDs[$indx],$2)<?/MIVAR>
       <?MIVAR>$(SETVAR,$indx,$(+,$indx,1))<?/MIVAR>
@@ -409,8 +400,7 @@ display detailed orthology data.
                     and oevdisp_evidence_code = oevcode_code
                   group by oevdisp_evidence_code, oevcode_order, oevdisp_organism_list
                   order by oevcode_order, oevdisp_organism_list                   
-                 ;"
-      >
+                 ;">
         <?MIVAR>$(SETVAR,$evicodesPerPub[$indx2],$1)<?/MIVAR>
         <?MIVAR>$(SETVAR,$organismsetPerPub[$indx2],$3)<?/MIVAR>
         <?MIVAR>$(SETVAR,$indx2,$(+,$indx2,1))<?/MIVAR> 
