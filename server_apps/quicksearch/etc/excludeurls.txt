@@ -43,6 +43,7 @@ action/ontology
 action/blast
 action/feature/detail
 action/genotype/
+action/marker/view
 marker/transcript-view
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg
