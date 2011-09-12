@@ -26,6 +26,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String arbitraryOrder;
     private String mappedMarkerRelationshipType;
     private Set<OrganizationLink> organizationLinks = new HashSet<OrganizationLink>();
+    private String name;
 
     @Override
     public String getLinkWithAttribution() {
@@ -177,11 +178,18 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
     @Override
     public String getLink() {
-        if (markerType != null && markerType.toLowerCase().contains("gene")) {
-            return "<i>" + link + "</i>";
-        } else {
-            return link;
+
+        if(link == null){
+            if (markerType != null && markerType.toLowerCase().contains("gene")) {
+                return "<i><a href=\"/action/marker/view/"+zdbId+"\">"+ abbreviation+"</a></i>";
+            } else {
+                return "<a href=\"/action/marker/view/"+zdbId+"\">"+ name+"</a>";
+            }
         }
+        else {
+            return link ;
+        }
+
     }
 
     public void setLink(String link) {
@@ -224,6 +232,14 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             return relationshipType;
         }
         return mappedMarkerRelationshipType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setMappedMarkerRelationshipType(String mappedMarkerRelationshipType) {

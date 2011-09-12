@@ -1897,8 +1897,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
-                "	       mreltype_1_to_2_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' as link, " +
+                "	       mreltype_1_to_2_comments, mrkr_name, " +
                 "          ra.recattrib_source_zdb_id , mrel_zdb_id " +
                 " 	  from marker_relationship  " +
                 "	       inner join marker_relationship_type " +
@@ -1915,8 +1914,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         sql1To2 += "      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order";
 
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
-                "	       mreltype_2_to_1_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' as link, " +
+                "	       mreltype_2_to_1_comments, mrkr_name, " +
                 "          ra.recattrib_source_zdb_id , mrel_zdb_id " +
                 " 	  from marker_relationship " +
                 "	       inner join marker_relationship_type " +
