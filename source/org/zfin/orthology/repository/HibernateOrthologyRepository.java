@@ -665,10 +665,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                 "from orthologue o  " +
                 "join orthologue_evidence oe on o.zdb_id=oe.oev_ortho_zdb_id " +
                 "left outer join db_link dbl on o.zdb_id=dbl.dblink_linked_recid " +
-                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-                "join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id " +
-                "where o.c_gene_id=:markerZdbId " +
-                "and fdb.fdb_db_significance<10 ";
+                "left join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                "left join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id " +
+                "where o.c_gene_id=:markerZdbId ";
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", m.getZdbID())
                 .setResultTransformer(new ResultTransformer() {
