@@ -3085,48 +3085,10 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>
  <?/MIBLOCK>
 
- <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoviewbrief.apg';">$1<?/MISQL>
+ <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoviewbrief.apg';" COND="$(XST,$UPDATE)">$1<?/MISQL>
 
 <?/MIBLOCK>
 
-<?MISQL SQL="select extnote_note from external_note where extnote_data_zdb_id='$OID'">
-   <?MIVAR NAME="$note">$1<?/MIVAR>
-<?/MISQL>
-<?MIBLOCK COND="$(AND,$(XST,$note),$(NXST,$UPDATE))">
-<?MIBLOCK COND="$(NE,$note,$MI_NULL)">
-	  <a href="#popOrthologyNote" id="show-note">Orthology Note</a>
-
-<script type="text/javascript" src="/javascript/control.modal.js"></script>
-
-<div id="popOrthologyNote">
-
-    <style>
-        a.close_link {
-            color: #333333;
-            float: right;
-            font-family: sans-serif;
-            font-size: Large;
-            font-weight: bold;
-            text-decoration: none;
-        }
-    </style>
-
-    <a class="close_link" href="javascript:;" onclick="parent.Control.Modal.close();" target="_top">x</a>
-    <br>
-    <?MIVAR>
-    <h2 style="text-align:center;">Orthology Note for <span class="genedom">$abbrev</span></h2>
-    	  <p/>
-	  $note
-    <?/MIVAR>
-</div>
-
-<script type="text/javascript">
-    // used as part of control.modal.js.
-    // Needs to be out here because functions weird if within MIVAR apg calls.
-    new Control.Modal('show-note', {opacity: 0.3, width: 400, height: 600, iframe: true});
-</script>
-<?/MIBLOCK>
-<?/MIBLOCK>
 <!-------------- ends ORTHOLOGY ------------------------------------>
 
 

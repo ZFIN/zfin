@@ -14,9 +14,10 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
-                        test="${!empty orthologyPresentationBean.evidenceCodes}" showNoData="true">
+                        test="${!empty orthologyPresentationBean.evidenceCodes || !empty orthologyPresentationBean.notes}" showNoData="true">
 
     <%--<table class="summary horizontal-solidblock" >--%>
+    <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
     <table class="summary rowstripes" >
         <tr >
             <th style="background: #cccccc" colspan="4">&nbsp;</th>
@@ -90,23 +91,22 @@
                 </c:forEach>
             </tr>
         </c:forEach>
-
-
-        <tr>
-            <td colspan="7">
-                <a href="/${webdriverPathFromRoot}?MIval=aa-orthoviewdetailed.apg&OID=${marker.zdbID}&abbrev=${marker.abbreviation}">
-                    <b>Orthology Details</b>
-                </a>
-                <c:if test="${!empty orthologyPresentationBean.notes and !empty orthologyPresentationBean.notes[0]}">
-                <c:forEach var="note" items="${orthologyPresentationBean.notes}">
-                    <a class="popup-link data-popup-link"
-                       href="/action/marker/note/external/${marker.zdbID}"></a>
-                    <%--${note}--%>
-                </c:forEach>
-            </td>
-        </tr>
-        </c:if>
     </table>
+    </c:if>
+
+    <c:if test="${!empty orthologyPresentationBean.notes and !empty orthologyPresentationBean.notes[0]}">
+    <div class="summary">
+        <b>Orthology Note</b><a class="popup-link data-popup-link" href="/action/marker/note/external/${marker.zdbID}"></a>
+    </div>
+    </c:if>      
+
+    <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
+    <div class="summary">
+        <a href="/${webdriverPathFromRoot}?MIval=aa-orthoviewdetailed.apg&OID=${marker.zdbID}&abbrev=${marker.abbreviation}">
+              <b>Orthology Details</b>
+        </a>              
+    </div>
+    </c:if>
 
 </zfin2:subsection>
 

@@ -8,7 +8,7 @@
 </style>
 
 <div class="popup-header">
-    Notes for <zfin:link entity="${marker}"/>
+    Orthology Note for <zfin:link entity="${marker}"/>
 </div>
 
 <div class="popup-body">

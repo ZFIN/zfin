@@ -27,10 +27,6 @@ display summarized orthology data on gene page.
 ***
 <?/MICOMMENT>
 
-<?MIVAR>
-  <TABLE class="summary">
-<?/MIVAR>
-
 <?MIVAR NAME=$countEvForEvcode><?/MIVAR>
 <?MIVAR NAME=$unknown>UN<?/MIVAR>
 <?MIVAR NAME=$CURROW>0<?/MIVAR>
@@ -42,26 +38,30 @@ display summarized orthology data on gene page.
 <?MIVAR NAME=$oevcount><?/MIVAR>
 <?MIVAR NAME=$oevcode><?/MIVAR>
 <?MIVAR NAME=$refcount><?/MIVAR>
+<?MIVAR NAME=$comma>,<?/MIVAR>
+<?MIVAR NAME=$emptySpace><?/MIVAR>
 <?MIVAR NAME=$ball_img><img src="/images/fill_green_ball.gif" border=0 height=10><?/MIVAR>
 
 <?MICOMMENT> *** Get the number of orthologue organisms in order to know the number of rows to display 
 <?/MICOMMENT>
-<?MISQL SQL="
-          select count(distinct organism)
-            from orthologue
-            where c_gene_id = '$OID'
-           ;"
->
+
+<?MIVAR NAME=$orthoNum>0<?/MIVAR>
+<?MISQL SQL="select count(distinct organism) from orthologue where c_gene_id = '$OID';">
+    <?MIVAR NAME=$orthoNum>$1<?/MIVAR>        
 <?/MISQL>
-<?MIVAR NAME=$orthoNum>$1<?/MIVAR>
+
+<?MIVAR NAME=$orthoNoteNum>0<?/MIVAR>
+<?MISQL SQL="select count(extnote_note) from external_note where extnote_data_zdb_id='$OID' and extnote_note_type='orthology';">
+  <?MIVAR NAME=$orthoNoteNum>$1<?/MIVAR>
+<?/MISQL>
 
 <?MIBLOCK COND="$(>,$orthoNum,0)">
+  <TABLE class="summary">
+
   <?MICOMMENT> ***  Get the number of evidence and number of distinct codes<?/MICOMMENT>
   <?MISQL SQL="select count(*), count(distinct oevdisp_evidence_code)
           	 from orthologue_evidence_display
-		 where oevdisp_gene_zdb_id = '$OID'
-             ;"
-  >
+		 where oevdisp_gene_zdb_id = '$OID';">
   <?/MISQL>
   <?MIVAR NAME=$evNum>$1<?/MIVAR>
   <?MIVAR NAME=$codeNum>$2<?/MIVAR>
@@ -83,9 +83,7 @@ display summarized orthology data on gene page.
 		   where oevdisp_gene_zdb_id = '$OID'
 	 	     and oevdisp_evidence_code = oevcode_code
 		   group by oevdisp_evidence_code, oevcode_order
-		   order by oevcode_order
-	       ;"
-    >
+		   order by oevcode_order;">
       $(SETVAR,$oevcount[$MI_CURRENTROW],$1)
       $(SETVAR,$oevcode[$MI_CURRENTROW],$2)
       $(SETVAR,$refcount[$MI_CURRENTROW],0)
@@ -106,9 +104,7 @@ display summarized orthology data on gene page.
     <?MISQL NAME=$longChrString 
             SQL="
               select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') 
-                from webPages where ID='aa-mappingdetail.apg'
-               ;"
-    >
+                from webPages where ID='aa-mappingdetail.apg';">
       $1
     <?/MISQL>
     
@@ -117,9 +113,9 @@ display summarized orthology data on gene page.
     <?MIVAR NAME=$shortChrString>$(SUBSTR,$noLGChrString,1,$posOfSpace)<?/MIVAR>
     <?MIVAR NAME=$restChrString>$(SUBSTR,$noLGChrString,$(+,$posOfSpace,1))<?/MIVAR>
     
-    <?MIVAR NAME=$posOfCommer>$(POSITION,$restChrString,",")<?/MIVAR>
+    <?MIVAR NAME=$posOfCommer>$(POSITION,$restChrString,$comma)<?/MIVAR>
     <?MIBLOCK COND="$(>,$posOfCommer,0)">
-      <?MIVAR NAME=$noCommerString>$(TRIM,$(REPLACE,$restChrString,",",""))<?/MIVAR>
+      <?MIVAR NAME=$noCommerString>$(TRIM,$(REPLACE,$restChrString,$comma,$emptySpace))<?/MIVAR>
       <?MIVAR NAME=$posOfSpace>$(POSITION,$noCommerString," ")<?/MIVAR>
       <?MIVAR NAME=$secondChrString>$(SUBSTR,$noCommerString,1,$posOfSpace)<?/MIVAR>
       <?MIVAR NAME=$shortChrString>$shortChrString, $secondChrString<?/MIVAR>
@@ -143,9 +139,7 @@ display summarized orthology data on gene page.
               where c_gene_id = '$OID' 
                 and organism = organism_common_name
               group by zdb_id, ortho_abbrev, organism, ortho_chromosome, ortho_position, organism_display_order
-              order by organism_display_order
-             ;"
-  >
+              order by organism_display_order;">
     <?MIVAR NAME=$zdbID>$1<?/MIVAR>
     <?MIVAR NAME=$symbol>$2<?/MIVAR>
     <?MIVAR NAME=$organism>$3<?/MIVAR>
@@ -180,9 +174,7 @@ display summarized orthology data on gene page.
                       and fdbcont_fdb_db_id = fdb_db_pk_id 
                       and fdb_db_significance < 10
                       and fdbcont_organism_common_name = '$organism'	
-                    order by fdb_db_significance
-                   ;"
-        >	
+                    order by fdb_db_significance;">	
           <?MIVAR NAME=$DB_name>$1<?/MIVAR>
           <?MIVAR NAME=$hyperlink>$2<?/MIVAR>
           <?MIVAR NAME=$dblink_acc_num_display>$3<?/MIVAR>
@@ -202,9 +194,7 @@ display summarized orthology data on gene page.
 		       where oevdisp_gene_zdb_id = '$OID'
 	 	         and oevdisp_evidence_code = '$item'
 	 	         group by oevdisp_organism_list, oevdisp_evidence_code, oevcode_order
-		       order by oevcode_order,oevdisp_organism_list
-	           ;"
-          >
+		       order by oevcode_order,oevdisp_organism_list;">
             <?MIVAR>
             $(IF,$(>,$(POSITION,$1,$organism),0),$(SETVAR,$hasEv,1),)
             <?/MIVAR>          
@@ -216,29 +206,62 @@ display summarized orthology data on gene page.
        
     </TR>
   <?/MISQL>  
-  
-  <?MIBLOCK COND="$(>,$codeNum,0)">
-  <?MICOMMENT> *** link to detailed display for orthologue data <?/MICOMMENT>   
-  <TR>
-    <?MIVAR>
-    <TD colspan=$codeNum align="left">
-      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoviewdetailed.apg&OID=$OID&abbrev=$abbrev&userid=$userid">
-        <b>Orthology Details</b>
-      </A>
-    </TD>
-    <?/MIVAR>  
-    <TD colspan=4></TD> 
-  </TR>
-  <?/MIBLOCK>
 
   <?MIVAR>
     $(UNSETVAR,$oevcount)
     $(UNSETVAR,$oevcode)
     $(UNSETVAR,$refcount)
-  <?/MIVAR>	  
-    
+  <?/MIVAR>	
+  </TABLE>
+
+
+<?MIBLOCK COND="$(>,$orthoNoteNum,0)">
+  <TABLE>
+   <TR><TD><br/><b>Orthology Note:</b></TD></TR> 
+  <?MISQL SQL="select distinct extnote_note from external_note where extnote_data_zdb_id='$OID' and extnote_note_type='orthology'">
+   <TR>
+     <TD>
+       <?MIVAR>$1 <BR/>
+	  <a href="/action/orthology/update-note?geneID=$OID">Edit Orthology Note</a>
+       <?/MIVAR>
+     </TD>
+   </TR>
+  <?/MISQL>	
+  </TABLE>
+<?MIELSE>
+    <TABLE><TR><TD>
+	  <?MIVAR>
+	  <a href="/action/orthology/update-note?geneID=$OID">Create Orthology Note</a>
+	  <?/MIVAR>	
+    </TD></TR></TABLE>
+<?/MIBLOCK>
+
+  <?MIBLOCK COND="$(>,$codeNum,0)">
+  <?MICOMMENT> *** link to detailed display for orthologue data <?/MICOMMENT>   
+  <TABLE><TR><TD><?MIVAR>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoviewdetailed.apg&OID=$OID&abbrev=$abbrev&userid=$userid">
+        <b>Orthology Details</b>
+      </A><?/MIVAR>
+     </TD></TR>
+  </TABLE>
+  <?/MIBLOCK>
+
+<?MICOMMENT> *** in rare case, if there is only orthologue note but no orthologue data *** <?/MICOMMENT>
+<?MIELSE COND="$(AND,$(=,$orthoNum,0),$(>,$orthoNoteNum,0))">
+  <TABLE>
+   <TR><TD><b>Orthology Note:</b></TD></TR> 
+  <?MISQL SQL="select distinct extnote_note from external_note where extnote_data_zdb_id='$OID' and extnote_note_type='orthology'">
+   <TR>
+     <TD>
+       <?MIVAR>$1 <BR/>
+	  <a href="/action/orthology/update-note?geneID=$OID">Edit Orthology Note</a>
+       <?/MIVAR>
+     </TD>
+   </TR>
+  <?/MISQL>	
+  </TABLE>
 <?MIELSE> <?MICOMMENT> *** if no orthologue data *** <?/MICOMMENT>
-  <TR><TD>&nbsp None submitted.</TD></TR>
+  <TABLE><TR><TD>&nbsp None submitted.</TD></TR></TABLE>
 <?/MIBLOCK>
   
-</TABLE>
+

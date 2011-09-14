@@ -461,20 +461,28 @@ display detailed orthology data.
       <?/MIVAR>      
       <?MIVAR>$(SETVAR,$indx,$(+,$indx,1))<?/MIVAR>
     <?/MIBLOCK> 
-  </TABLE><br/>
+  </TABLE>
   <!-- ========  end of publication table =========  -->    
   
 <?MIELSE> <?MICOMMENT>
   &nbsp None submitted.
 <?/MIBLOCK>
 
-<?MISQL SQL="select extnote_note from external_note where extnote_data_zdb_id='$OID'">
-   <?MIVAR NAME="$note">$1<?/MIVAR>
+<?MIVAR NAME=$orthoNoteNumber>0<?/MIVAR>
+<?MISQL SQL="select count(extnote_note) from external_note where extnote_data_zdb_id='$OID' and extnote_note_type='orthology';">
+  <?MIVAR NAME=$orthoNoteNumber>$1<?/MIVAR>
 <?/MISQL>
-<?MIBLOCK cond="$(XST,$note)">
-<?MIBLOCK cond="$(NE,$note,$MI_NULL)">
-<span style="text-align: left; font-size: large; font-weight: bold;">Orthology Note: </span><?MIVAR>$1<?/MIVAR>
-<?/MIBLOCK>
+<?MIBLOCK COND="$(>,$orthoNoteNumber,0)">
+  <TABLE>
+   <TR><TD><br/><b>Orthology Note:</b></TD></TR> 
+  <?MISQL SQL="select distinct extnote_note from external_note where extnote_data_zdb_id='$OID' and extnote_note_type='orthology'">
+   <TR>
+     <TD>
+       <?MIVAR>$1<?/MIVAR>
+     </TD>
+   </TR>
+  <?/MISQL>	
+  </TABLE>
 <?/MIBLOCK>
 
 <!--  ZFIN footer -->     
