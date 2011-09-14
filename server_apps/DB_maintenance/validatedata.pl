@@ -1441,8 +1441,7 @@ sub orthologueHasDblink ($) {
   my $sql = '
              select zdb_id,
                     c_gene_id,
-                    ortho_name,
-                    entry_time
+                    ortho_name
                from orthologue
               where zdb_id not in (
                                 select dblink_linked_recid 
@@ -1451,8 +1450,7 @@ sub orthologueHasDblink ($) {
  
   my @colDesc = ("Ortho ZDB ID",
 		 "Gene ID     ",
-		 "Ortho name  ",
-		 "Entry time  " );
+		 "Ortho name  ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
@@ -1586,7 +1584,7 @@ sub mouseAndHumanOrthologyHasEntrezAccession ($) {
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name in ('Mouse', 'Human')
                        and    fdbcont_fdb_db_id = fdb_db_pk_id
-                       and    fdb_db_name = 'Entrez Gene'
+                       and    fdb_db_name = 'Gene'
                        and    zdb_id = dblink_linked_recid
                     )";
 
