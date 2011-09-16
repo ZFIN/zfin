@@ -266,7 +266,7 @@ public class ExecuteBlastTest {
 
 
             hitViewBean = blastResultBean.getHits().get(0) ;
-            assertEquals("OTTDART00000023087",hitViewBean.getAccessionNumber());
+            assertEquals("OTTDART00000050917",hitViewBean.getAccessionNumber());
             alignmentLine =  hitViewBean.getHighScoringPairs().get(0).getView().get(0) ;
             assertEquals(AlignmentLine.PADDING,alignmentLine.getStartHitString().length());
             alignmentLine = alignmentLines.get(2) ;
