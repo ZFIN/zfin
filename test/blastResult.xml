@@ -26,9 +26,9 @@
             <!-- renderBlastOutput test -->
             <!--test view-->
           <Hit_num>1</Hit_num>
-          <Hit_id>tpe|OTTDART00000023087|OTTDARG00000018854|ZDB-GENE-990415-200</Hit_id>
+          <Hit_id>tpe|OTTDART00000050917|OTTDARG00000018854|ZDB-GENE-990415-200</Hit_id>
           <Hit_def>pax6a|pax6a LG_25 AL929172.6 Danio rerio protein_coding KNOWN, 865 bp</Hit_def>
-          <Hit_accession>OTTDART00000023087</Hit_accession>
+          <Hit_accession>OTTDART00000050917</Hit_accession>
           <Hit_len>865</Hit_len>
           <Hit_hsps>
             <Hsp>

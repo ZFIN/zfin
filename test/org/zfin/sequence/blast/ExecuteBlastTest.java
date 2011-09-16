@@ -154,8 +154,8 @@ public class ExecuteBlastTest {
             // look at first hit, an ottdart
             HitViewBean hitViewBean = blastResultBean.getHits().get(0) ;
             assertEquals(1,hitViewBean.getHitNumber());
-            assertEquals("OTTDART00000023087",hitViewBean.getAccessionNumber());
-            assertEquals("pax6a-004",hitViewBean.getHitMarker().getName());
+            assertEquals("OTTDART00000050917",hitViewBean.getAccessionNumber());
+            assertEquals("pax6a-001",hitViewBean.getHitMarker().getName());
             assertEquals("pax6a",hitViewBean.getGenes().iterator().next().getAbbreviation());
             assertTrue(hitViewBean.isHasExpression());
             assertTrue(hitViewBean.isHasExpressionImages());
