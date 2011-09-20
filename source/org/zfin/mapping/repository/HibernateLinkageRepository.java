@@ -141,6 +141,50 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         lgList.addAll(query.list());
 
+
+        // i) case 7518 Add to clones
+        /**
+         * select lnkg_or_lg
+         from marker_relationship gt
+         join marker_relationship ct on gt.mrel_mrkr_2_zdb_id = ct.mrel_mrkr_2_zdb_id
+         join linkage_member lm on lm.lnkgmem_member_zdb_id = ct.mrel_mrkr_1_zdb_id
+         join linkage l on lm.lnkgmem_linkage_zdb_id = l.lnkg_zdb_id
+         where gt.mrel_type = 'gene produces transcript'
+         and ct.mrel_type = 'clone contains transcript'
+         and gt.mrel_mrkr_1_zdb_id='ZDB-GENE-030131-5474'
+         ;
+
+         select lnkg_or_lg
+         from marker_relationship gt, marker_relationship ct,
+         linkage_member lm, linkage l
+         where gt.mrel_type = 'gene produces transcript'
+         and ct.mrel_type = 'clone contains transcript'
+         and gt.mrel_mrkr_2_zdb_id = ct.mrel_mrkr_2_zdb_id
+         and ct.mrel_mrkr_1_zdb_id = lm.lnkgmem_member_zdb_id
+         and lm.lnkgmem_linkage_zdb_id = l.lnkg_zdb_id
+         and gt.mrel_mrkr_1_zdb_id='ZDB-GENE-030131-5474'
+
+         ;
+
+         */
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            query = session.createQuery(
+                    "select l.lg " +
+                            "from MarkerRelationship gt , MarkerRelationship ct, Linkage l join l.linkageMemberMarkers lm " +
+                            " where gt.type = :firstRelationship " +
+                            " and ct.type = :secondRelationship" +
+                            " and gt.secondMarker.zdbID = ct.secondMarker.zdbID  " +
+                            " and ct.firstMarker.zdbID = lm.zdbID  " +
+                            " and gt.firstMarker.zdbID = :zdbID  " +
+                            " ");
+
+            query.setParameter("zdbID", marker.getZdbID());
+            query.setParameter("firstRelationship", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+            query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+
+            lgList.addAll(query.list());
+        }
+
         /**
          * From mapping details
          07/28/03 we decided to show LG Unknown when LG is 0. If we have

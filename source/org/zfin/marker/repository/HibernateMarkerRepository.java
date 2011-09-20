@@ -29,6 +29,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -2100,5 +2101,24 @@ and mr2.mrel_type in ('promoter of','coding sequence of','contains engineered re
                 .setParameterList("markerRelationshipType2",markerRelationshipList)
                 .list()
                 ;
+    }
+
+
+
+    @Override
+    public Genotype getStrainForTranscript(String zdbID){
+
+        // TODO: just use where clauses
+        String hql  = " select g from Genotype g, ProbeLibrary pl , MarkerRelationship mr, Clone c   " +
+                "where pl=c.probeLibrary " +
+                "and g=pl.strain " +
+                "and mr.firstMarker=c " +
+                "and mr.secondMarker.zdbID = :zdbID " +
+                "and mr.type = :mrType  " ;
+
+        return (Genotype) HibernateUtil.currentSession().createQuery(hql)
+                .setString("zdbID",zdbID )
+                .setParameter("mrType",MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT )
+                .uniqueResult();
     }
 }

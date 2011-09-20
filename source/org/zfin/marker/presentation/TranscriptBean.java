@@ -33,6 +33,7 @@ public class TranscriptBean extends MarkerBean {
     private List<TranscriptType> transcriptTypeList;
     private String vegaID;
     private List<DBLink> unableToFindDBLinks;
+    private Genotype strain; // genotype strain pulled from the clone library
 
 
     public Set<RelatedMarker> getRelatedGenes() {
@@ -147,6 +148,14 @@ public class TranscriptBean extends MarkerBean {
         this.unableToFindDBLinks = unableToFindDBLinks;
     }
 
+    public Genotype getStrain() {
+        return strain;
+    }
+
+    public void setStrain(Genotype strain) {
+        this.strain = strain;
+    }
+
     public String toString() {
         String returnString = "";
 
@@ -156,7 +165,6 @@ public class TranscriptBean extends MarkerBean {
 
         return returnString;
     }
-
 
     public String getDeleteURL() {
         String zdbID = getTranscript().getZdbID();

@@ -13,6 +13,7 @@
 
     <c:otherwise>
 
+
         <h3>Candidates In Queue</h3>
         <table width=100%>
             <tr>
@@ -29,7 +30,7 @@
                 <td>Number Pending:
                     <c:choose>
                         <c:when test="${formBean.run.pendingCandidateCount > 0}">
-                            <a href="/action/reno/candidate-pending?zdbID=${formBean.run.zdbID}">
+                            <a href="/action/reno/candidate/pending/${formBean.run.zdbID}">
                                     ${formBean.run.pendingCandidateCount}
                             </a>
                         </c:when>
@@ -42,6 +43,9 @@
             </tr>
             <form:form commandName="formBean">
 
+                <%--<zfin2:errors path="*" cssClass="errors"/>--%>
+                <%--<zfin2:errors errorResult="${errors}" cssClass="error"/>--%>
+
                 <tr>
                     <td>
                             <%--<label for="nomenclaturePublicationZdbID" class="indented-label" />--%>
@@ -53,7 +57,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <form:errors path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>" cssClass="error"/>
+                        <zfin2:errors path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>"/>
                     </td>
                 </tr>
 
@@ -73,7 +77,7 @@
                                         Orthology publication required to save changes!
                                     </div>
                                 </c:if>
-                                <form:errors path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>" cssClass="error"/>
+                                <zfin2:errors errorResult="${errors}" path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>"/>
                             </td>
                         </tr>
                     </c:when>
@@ -95,7 +99,7 @@
                                 <c:if test="${formBean.relationPublicationZdbID eq null}">
                                     <div class="Error">Relation publication required to save changes!</div>
                                 </c:if>
-                                <form:errors path="<%= RunBean.RELATION_PUBLICATION_ZDB_ID%>" cssClass="error"/>
+                                <zfin2:errors errorResult="${errors}" path="<%= RunBean.RELATION_PUBLICATION_ZDB_ID%>"/>
                             </td>
                         </tr>
                     </c:otherwise>
@@ -105,18 +109,18 @@
 
                     <td>
                         <c:if test="${formBean.run.type eq 'Redundancy'}">
-                        <a onclick="setRemainderToNovel = function () {
-                     var really = confirm('Really set remainder to novel?');
-                     if(really){
-                       window.location = '/action/reno/candidate-inqueue?zdbID=${formBean.run.zdbID}&action=<%=RunBean.FINISH_REMAINDER%>' ;
-                     }
-                     else{
-                       alert('too chicken?') ;
-                     }
-                };
-                setRemainderToNovel()" style="font-size:smaller;color:red;" href="javascript:">
-                            Set remainder to <b>Novel</b>
-                        </a>
+                            <a onclick="setRemainderToNovel = function () {
+                                    var really = confirm('Really set remainder to novel?');
+                                    if(really){
+                                    window.location = '/action/reno/candidate/inqueue/${formBean.run.zdbID}?action=<%=RunBean.FINISH_REMAINDER%>' ;
+                                    }
+                                    else{
+                                    alert('too chicken?') ;
+                                    }
+                                    };
+                                    setRemainderToNovel()" style="font-size:smaller;color:red;" href="javascript:">
+                                Set remainder to <b>Novel</b>
+                            </a>
                         </c:if>
                     </td>
                 </tr>
@@ -128,11 +132,12 @@
             <tr style="background: #ccc">
                 <th>Look</th>
                 <th>Lock</th>
-                <th>Symbol</th>
+                <th>Candidate Gene</th>
                 <th align="right">Score</th>
-                <th><a href="candidate-inqueue?zdbID=${formBean.run.zdbID}&comparator=expectValue">Expect</a></th>
+                <th><a href="/action/reno/candidate/inqueue/${formBean.run.zdbID}?comparator=expectValue">Expect</a>
+                </th>
                 <th align="right">
-                    <a href="candidate-inqueue?zdbID=${formBean.run.zdbID}&comparator=${formBean.comparator == "occurrenceDsc" ? "occurrenceAsc" : "occurrenceDsc"}">
+                    <a href="/action/reno/candidate/inqueue/${formBean.run.zdbID}?comparator=${formBean.comparator == "occurrenceDsc" ? "occurrenceAsc" : "occurrenceDsc"}">
                         Occurrence
                         <c:choose>
                             <c:when test='${formBean.comparator == "occurrenceAsc"}'>
@@ -140,14 +145,15 @@
                             </c:when>
                             <c:otherwise>
                                 <c:if test='${formBean.comparator == "occurrenceDsc"}'>
-                                    <img src="/images/ARROWS/arrow.plain.down.gif" height="15" border="0" alt="ascending">
+                                    <img src="/images/ARROWS/arrow.plain.down.gif" height="15" border="0"
+                                         alt="ascending">
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
                     </a>
                 </th>
                 <th>
-                    <a href="candidate-inqueue?zdbID=${formBean.run.zdbID}&comparator=${formBean.comparator == "lastDoneAsc" ? "lastDoneDsc" : "lastDoneAsc"}">
+                    <a href="/action/reno/candidate/inqueue/${formBean.run.zdbID}?comparator=${formBean.comparator == "lastDoneAsc" ? "lastDoneDsc" : "lastDoneAsc"}">
                         Last done
                         <c:choose>
                             <c:when test='${formBean.comparator == "lastDoneAsc"}'>
@@ -155,7 +161,8 @@
                             </c:when>
                             <c:otherwise>
                                 <c:if test='${formBean.comparator == "lastDoneDsc"}'>
-                                    <img src="/images/ARROWS/arrow.plain.down.gif" height="15" border="0" als="descending">
+                                    <img src="/images/ARROWS/arrow.plain.down.gif" height="15" border="0"
+                                         als="descending">
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
@@ -164,11 +171,11 @@
             </tr>
             <c:forEach var="rc" items="${formBean.runCandidates}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
-                    <td><a href="/action/reno/candidate-view?runCandidate.zdbID=${rc.zdbID}">
+                    <td><a href="/action/reno/candidate-view/${rc.zdbID}">
                         <img src=/images/glasses.jpg height=25 border=0 alt="look"></a></td>
                     <td>
                         <c:if test="${formBean.relationPublicationZdbID ne null || formBean.orthologyPublicationZdbID ne null}">
-                        <a href="/action/reno/candidate-view?runCandidate.zdbID=${rc.zdbID}&action=<%=CandidateBean.LOCK_RECORD%>">
+                        <a href="/action/reno/candidate-view/${rc.zdbID}?action=<%=CandidateBean.LOCK_RECORD%>">
                             <img src=/images/lock_yellow.jpg height=25 border=0 alt="lock"></a>
                         </c:if>
                     <td>

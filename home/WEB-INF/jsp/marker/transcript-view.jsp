@@ -15,9 +15,8 @@
     </tiles:insertTemplate>
 </div>
 
-
 <zfin2:transcriptHead transcript="${formBean.marker}" previousNames="${formBean.previousNames}"
-                      relatedGenes="${formBean.relatedGenes}"/>
+                      relatedGenes="${formBean.relatedGenes}" strain="${formBean.strain}"/>
 
 
 <script type="text/javascript" src="/javascript/sequenceview.js">

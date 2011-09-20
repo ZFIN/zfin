@@ -21,7 +21,10 @@ public class RunBeanValidator implements Validator {
     public void validate(Object command, Errors errors) {
 
         RunBean runBean = (RunBean) command;
-        Run run = rr.getRunByID(runBean.getZdbID());
+        Run run = runBean.getRun() ;
+        if(run==null){
+            run = rr.getRunByID(runBean.getZdbID());
+        }
         LOG.info("start validating");
 
         // validate the nomenclature publication zdb id

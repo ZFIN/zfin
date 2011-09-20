@@ -2,6 +2,14 @@ package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.orthology.Species;
@@ -21,9 +29,25 @@ import java.util.Set;
 /**
  * Class CandidateController.
  */
+@Controller
 public class NomenclatureCandidateController extends AbstractCandidateController {
 
-    private static final Logger LOG = Logger.getLogger(NomenclatureCandidateController.class);
+    private static final Logger logger = Logger.getLogger(NomenclatureCandidateController.class);
+    private Validator validator = new NomenclatureCandidateValidator();
+
+    @RequestMapping(value=  "/nomenclature-candidate-view/{zdbID}",method = RequestMethod.GET)
+    public String referenceData(@PathVariable String zdbID,CandidateBean candidateBean,Model model) {
+        candidateBean.createRunCandidateForZdbID(zdbID) ;
+        return handleGet(candidateBean, model);
+    }
+
+    @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}",method = RequestMethod.POST)
+    public ModelAndView onSubmit(@PathVariable String zdbID,CandidateBean candidateBean,BindingResult errors) throws Exception {
+        candidateBean.createRunCandidateForZdbID(zdbID) ;
+        ModelAndView modelAndView = handleSubmit(candidateBean,errors);
+        modelAndView.addObject("errors",errors) ;
+        return modelAndView;
+    }
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -40,7 +64,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             //the id was bad, return now, the jsp will handle the error
             String errorMessage = "Could not find a RunCandidate object with id " + runCandidateID;
             NullPointerException exception = new NullPointerException(errorMessage);
-            LOG.error(errorMessage, exception);
+            logger.error(errorMessage, exception);
             throw exception;
         }
         RenoService.populateLinkageGroups(rc);
@@ -76,9 +100,9 @@ public class NomenclatureCandidateController extends AbstractCandidateController
         Person currentUser = Person.getCurrentSecurityUser();
 
         if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson()))
-            LOG.debug(" Person records are not equal.. ");
+            logger.debug(" Person records are not equal.. ");
 
-        LOG.debug("action: " + candidateBean.getAction());
+        logger.debug("action: " + candidateBean.getAction());
 
         // check that this candidate is not already related to any of the
         // associated markers
@@ -90,9 +114,9 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         //handle problem toggling
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {
-            LOG.debug("acqui, senior?");
+            logger.debug("acqui, senior?");
             rc.getCandidate().setProblem(candidateBean.isCandidateProblem());
-            LOG.info(currentUser.getZdbID()
+            logger.info(currentUser.getZdbID()
                     + " set " + rc.getCandidate().getZdbID()
                     + " problem status to " + rc.getCandidate().isProblem());
 
@@ -102,8 +126,9 @@ public class NomenclatureCandidateController extends AbstractCandidateController
     }
 
 
-    public void handleRunCandidate(CandidateBean candidateBean) {
-        LOG.info("handleRunCandidate - entry");
+    public void handleRunCandidate(CandidateBean candidateBean,BindingResult errors) {
+        logger.info("handleRunCandidate - entry");
+        validator.validate(candidateBean,errors);
 
         RunCandidate rc = candidateBean.getRunCandidate();
 
@@ -133,7 +158,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
         handleOrthology(candidateBean, geneToRename);
         RenoService.moveNoteToGene(rc, geneToRename);
 
-        LOG.info("handleRunCandidate - exit");
+        logger.info("handleRunCandidate - exit");
     }
 
 }

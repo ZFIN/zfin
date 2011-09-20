@@ -1,7 +1,11 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
@@ -15,24 +19,32 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Class CandidateController.
  */
-public class RedirectCandidateViewController extends AbstractCommandController {
+@Controller
+public class RedirectCandidateViewController {
 
-    private static Logger LOG = Logger.getLogger(NomenclatureCandidateController.class);
+    private static Logger logger = Logger.getLogger(NomenclatureCandidateController.class);
 
 
-    protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-                                  Object command, BindException e) throws Exception {
-        CandidateBean candidateBean = (CandidateBean) command;
-        RunCandidate rc = RepositoryFactory.getRenoRepository().getRunCandidateByID(candidateBean.getRunCandidate().getZdbID());
+    @RequestMapping(value = "/candidate-view/{zdbID}",method = RequestMethod.GET)
+    protected String handle( @PathVariable String zdbID) throws Exception {
+        RunCandidate rc = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(LookupStrings.FORM_BEAN, candidateBean);
         if (rc.getRun().isNomenclature()) {
-            modelAndView.setViewName("forward:/action/reno/nomenclature-candidate-view");
+            return "forward:/action/reno/nomenclature-candidate-view/"+zdbID ;
         } else {
-            modelAndView.setViewName("forward:/action/reno/redundancy-candidate-view");
+            return "forward:/action/reno/redundancy-candidate-view/"+zdbID ;
         }
-        return modelAndView;
+    }
+
+    @RequestMapping(value = "/candidate-view/{zdbID}",method = RequestMethod.POST)
+    protected String handlePost( @PathVariable String zdbID) throws Exception {
+        RunCandidate rc = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
+
+        if (rc.getRun().isNomenclature()) {
+            return "forward:/action/reno/nomenclature-candidate-view/"+zdbID ;
+        } else {
+            return "forward:/action/reno/redundancy-candidate-view/"+zdbID ;
+        }
     }
 
 }

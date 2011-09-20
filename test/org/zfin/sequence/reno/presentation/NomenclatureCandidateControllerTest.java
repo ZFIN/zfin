@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.springframework.validation.BindException;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -75,7 +76,7 @@ public class NomenclatureCandidateControllerTest {
             NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController();
 
             //tell the candidateController to hadle the done nomenBean
-            nomenclatureCandidateController.handleDone(candidateBeanNomen);
+            nomenclatureCandidateController.handleDone(candidateBeanNomen,new BindException(candidateBeanNomen,"targetName"));
 
 
         }

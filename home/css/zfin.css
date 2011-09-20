@@ -512,3 +512,23 @@ table.gwt-stack-composite gwt-delete-button {
     border-top: thin dotted
 }
 
+.reno-reversed-strand{
+    background-color: #deb887;
+    display: inline-block;
+}
+
+.reno-same-strand{
+    background-color: white;
+    display: inline-block;
+}
+
+td.reno-reversed-strand{
+    background-color: #deb887;
+    display: table-cell; 
+}
+
+td.reno-same-strand{
+    background-color: white;
+    display: table-cell; 
+}
+

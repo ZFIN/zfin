@@ -15,13 +15,17 @@
     }
 </style>
 
-<div id="redundancy-edit" style="border: 1px solid #ccc; background: lightyellow; width: 20em; padding:.25em;">
+<zfin2:errors errorResult="${errors}" />
 
-    <div>
+<div id="redundancy-edit" style="border: 1px solid #ccc; background: lightyellow; width: 25em; padding:.25em;">
+
+    <div style="white-space: nowrap;">
         <form:label path="associatedGeneField" cssClass="indented-label">Associate with:</form:label>
         <form:select path="associatedGeneField">
-            <form:option value="<%=CandidateBean.NOVEL%>"
-                         label="${formBean.runCandidate.candidate.suggestedName} (novel)"></form:option>
+            <c:if test="${!formBean.suggestedNameExists}">
+                <form:option value="<%=CandidateBean.NOVEL%>"
+                             label="${formBean.runCandidate.candidate.suggestedName} (novel)"></form:option>
+            </c:if>
             <c:if test="${!formBean.alreadyAssociatedGenes}">
                 <form:options items="${formBean.allSingleAssociatedGenesFromQueries}"
                               itemLabel="abbreviation" itemValue="zdbID"/>
@@ -29,6 +33,10 @@
             <form:option value="IGNORE">IGNORE</form:option>
         </form:select>
         <form:errors path="associatedGeneField" cssClass="error indented-error"/>
+        <zfin2:errors path="associatedGeneField" cssClass="error indented-error"/>
+        <c:if test="${formBean.geneAlias}">
+            <div class="error">Gene exists with alias '${formBean.runCandidate.candidate.suggestedName}'</div>
+        </c:if>
     </div>
 
     <div>
@@ -50,7 +58,7 @@
 
 
     <input type="submit" value="done" style="margin-left: 12em; margin-top:.5em; margin-bottom:.25em;"
-           onclick="document.forms.candidateform.action.value = 'done';">
+           onclick=" document.forms.candidateform.action.value = 'done'; ">
     <form:errors path="action" cssClass="error"/>
 
 </div>

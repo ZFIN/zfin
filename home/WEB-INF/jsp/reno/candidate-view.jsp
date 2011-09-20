@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <form:form name="candidateform" commandName="formBean" method="post"
-           action="/action/reno/candidate-view?runCandidate.zdbID=${formBean.runCandidate.zdbID}"
+           action="/action/reno/candidate-view/${formBean.runCandidate.zdbID}"
            cssStyle="display: inline;">
 
 Run name:
@@ -62,10 +62,10 @@ Candidate:
                 <td valign="top">
                     <c:choose>
                         <c:when test="${formBean.runCandidate.run.nomenclature}">
-                            <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen_edit.jsp" flush="false"/>
+                            <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen-edit.jsp" flush="false"/>
                         </c:when>
                         <c:when test="${formBean.runCandidate.run.redundancy}">
-                            <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy_edit.jsp" flush="false"/>
+                            <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy-edit.jsp" flush="false"/>
                         </c:when>
                     </c:choose>
                 </td>
@@ -87,11 +87,11 @@ Candidate:
 
 <c:choose>
     <c:when test="${formBean.runCandidate.run.nomenclature}">
-        <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen_hit_list.jsp" flush="false"/>
+        <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen-hit-list.jsp" flush="false"/>
         <!-- include jsp for nomenclature table -->
     </c:when>
     <c:when test="${formBean.runCandidate.run.redundancy}">
-        <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy_hit_list.jsp" flush="false"/>
+        <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy-hit-list.jsp" flush="false"/>
         <!-- include jsp for redundancy table -->
     </c:when>
 </c:choose>

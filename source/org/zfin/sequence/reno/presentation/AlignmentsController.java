@@ -1,7 +1,13 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.presentation.LookupStrings;
@@ -14,23 +20,23 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Class AlignmentsController.
  */
-public class AlignmentsController extends AbstractCommandController {
+@Controller
+public class AlignmentsController {
 
-    public static String RUNCANDIDATE_ZDBID = "runCandidate.zdbID";
     private static Logger logger = Logger.getLogger(AlignmentsController.class);
-    private String successView; // set in spring configuration bean
 
     public AlignmentsController() {
         // set here because test-classes choke without it
         // also has to be set in order to provide errors
-        setCommandClass(Object.class);
-        setCommandName("formBean");
+//        setCommandClass(Object.class);
+//        setCommandName("formBean");
     }
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        String runCandidateZdbID = request.getParameter(RUNCANDIDATE_ZDBID);
+    // TODO: Fix this so that we have the appropriate model and error.
+    @RequestMapping("/alignment-list/{runCandidateZdbID}")
+    public String handle(@PathVariable String runCandidateZdbID
+            ,CandidateBean candidateBean, BindingResult errors,Model model) throws Exception {
         RunCandidate runCandidate = RepositoryFactory.getRenoRepository().getRunCandidateByID(runCandidateZdbID);
-        CandidateBean candidateBean = new CandidateBean();
         logger.debug("ZdbID[" + runCandidateZdbID + "] runCandidate[" + runCandidate + "]");
 
         if (runCandidate != null) {
@@ -41,32 +47,12 @@ public class AlignmentsController extends AbstractCommandController {
             candidateBean.setRunCandidate(new RunCandidate());
             errors.reject("no message key", "Invalidate RunCandidate zdbID[" + runCandidateZdbID + "]");
         }
+        model.addAttribute(LookupStrings.FORM_BEAN, candidateBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, " Redundancy Candidate: "+runCandidateZdbID);
 
-        ModelAndView modelAndView = new ModelAndView(successView, errors.getModel());
-        modelAndView.addObject(LookupStrings.FORM_BEAN, candidateBean);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, runCandidateZdbID);
-        return modelAndView;
+        return "reno/alignments-list.page";
 
     }
-
-    /**
-     * Get successView.
-     *
-     * @return successView as String.
-     */
-    public String getSuccessView() {
-        return successView;
-    }
-
-    /**
-     * Set successView.
-     *
-     * @param successView the value to set.
-     */
-    public void setSuccessView(String successView) {
-        this.successView = successView;
-    }
-
 
 }
 

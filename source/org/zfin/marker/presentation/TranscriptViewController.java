@@ -74,6 +74,7 @@ public class TranscriptViewController {
 
 
         // setting transcript relationships
+        transcriptBean.setStrain(RepositoryFactory.getMarkerRepository().getStrainForTranscript(transcript.getZdbID()));
 
         RelatedMarkerDisplay transcriptRelationships = TranscriptService.getRelatedMarkerDisplay(transcript);
         transcriptBean.setMarkerRelationships(transcriptRelationships);
@@ -105,8 +106,6 @@ public class TranscriptViewController {
                 relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript, showGBrowse));
             }
             transcriptBean.setRelatedTranscriptDisplayList(relatedTranscriptDisplayList);
-
-
         }
 
 

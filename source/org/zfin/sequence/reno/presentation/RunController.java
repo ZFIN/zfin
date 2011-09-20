@@ -1,8 +1,11 @@
 package org.zfin.sequence.reno.presentation;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.repository.RenoRepository;
@@ -14,33 +17,22 @@ import java.util.List;
 /**
  * Class RunController.
  */
+@Controller
+public class RunController {
 
-public class RunController extends AbstractController {
+    private RenoRepository renoRepository = RepositoryFactory.getRenoRepository() ;
 
-    private RenoRepository renoRepository; //set in spring configuration
-    private String successView; // set in spring configuration bean
-
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping("/run-list")
+    protected ModelAndView handleRequestInternal() throws Exception {
         RunBean form = new RunBean();
         List<RedundancyRun> redundancyRuns = renoRepository.getRedundancyRuns();
         List<NomenclatureRun> nomenclatureRuns = renoRepository.getNomenclatureRuns();
         form.setRedundancyRuns(redundancyRuns);
         form.setNomenclatureRuns(nomenclatureRuns);
 
-        return new ModelAndView(successView, LookupStrings.FORM_BEAN, form);
+        return new ModelAndView("reno/run-list.page", LookupStrings.FORM_BEAN, form);
     }
 
-    public void setSuccessView(String successView) {
-        this.successView = successView;
-    }
-
-    public RenoRepository getRenoRepository() {
-        return renoRepository;
-    }
-
-    public void setRenoRepository(RenoRepository renoRepository) {
-        this.renoRepository = renoRepository;
-    }
 }
 
 

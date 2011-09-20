@@ -27,7 +27,7 @@
     </tr>
     <tr>
         <td>Number in Queue:
-            <a href="/action/reno/candidate-inqueue?zdbID=${formBean.run.zdbID}">
+            <a href="/action/reno/candidate/inqueue/${formBean.run.zdbID}">
                 ${formBean.run.queueCandidateCount}
             </a></td>
     </tr>
@@ -37,7 +37,7 @@
     <tr style="background: #ccc">
 
         <th></th>
-        <th>Symbol</th>
+        <th>Candidate Gene</th>
         <th>Curator</th>
     </tr>
     <c:forEach var="rc" items="${formBean.runCandidates}" varStatus="loop">

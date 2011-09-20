@@ -11,7 +11,7 @@
 
 <c:forEach var="query" items="${formBean.runCandidate.candidateQueryList}" varStatus="queryloop">
 
-    <b>GENE:</b>
+    <b>CANDIDATE:</b>
     <zfin:geneRelationLink accession="${query.accession}">
         <font color="red">
             No zfin gene associated with this accession ${query.accession.number}.
@@ -39,11 +39,11 @@
 
             <zfin:alternating-tr loopName="loop">
 
-                <td>
-                    <a href="alignment-list?runCandidate.zdbID=${formBean.runCandidate.zdbID}#hit${hit.hitNumber}-${queryloop.index}">Hit:${hit.hitNumber}</a>
+                <td class="${hit.reversed ? 'reno-reversed-strand' : ''}">
+                        <a href="/action/reno/alignment-list/${formBean.runCandidate.zdbID}#hit${hit.hitNumber}-${queryloop.index}">Hit:${hit.hitNumber}</a>
                 </td>
 
-                <td>
+                <td class="${hit.reversed ? 'reno-reversed-strand' : ''}">
                     <a href="<c:out value='${hit.targetAccession.referenceDatabase.foreignDB.dbUrlPrefix}'/><c:out value='${hit.targetAccession.number}'/><c:out value='${hit.targetAccession.referenceDatabase.foreignDB.dbUrlSuffix}'/>">
                         <c:out value='${hit.targetAccession.number}'/>
                     </a>

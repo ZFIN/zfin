@@ -15,7 +15,7 @@
 
         <zfin:alternating-tr loopName="loop">
             <td width="25%">
-                <a href="/action/reno/candidate-inqueue?zdbID=<c:out value="${run.zdbID}"/>">${run.name}</a>
+                <a href="/action/reno/candidate/inqueue/<c:out value="${run.zdbID}"/>">${run.name}</a>
             </td>
 
             <td width="15%">${run.queueCandidateCount}</td>
@@ -45,7 +45,7 @@
         </c:choose>
 
         <td width="25%">
-            <a href="/action/reno/candidate-inqueue?zdbID=<c:out value="${run.zdbID}"/>">${run.name}</a>
+            <a href="/action/reno/candidate/inqueue/<c:out value="${run.zdbID}"/>">${run.name}</a>
         </td>
 
         <td width="15%">${run.queueCandidateCount}</td>

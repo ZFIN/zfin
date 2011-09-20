@@ -8,6 +8,7 @@ import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.MarkerSupplier;
@@ -336,4 +337,6 @@ public interface MarkerRepository {
    Map<String,String> getGeoMarkerCandidates();
 
    List<Marker> getConstructsForGene(Marker gene);
+
+   Genotype getStrainForTranscript(String zdbID);
 }

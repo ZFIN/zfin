@@ -306,6 +306,22 @@ public class RunCandidate {
 
         return lockPerson != null && user.equals(lockPerson);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("RunCandidate");
+        sb.append("{zdbID='").append(zdbID).append('\'');
+        sb.append(", run=").append(run);
+        sb.append(", candidate=").append(candidate);
+        sb.append(", lockPerson=").append(lockPerson);
+        sb.append(", done=").append(done);
+        sb.append(", bestHit=").append(bestHit);
+        sb.append(", occurrenceOrder=").append(occurrenceOrder);
+        sb.append(", candidateQueries=").append(candidateQueries);
+        sb.append('}');
+        return sb.toString();
+    }
 }
 
 

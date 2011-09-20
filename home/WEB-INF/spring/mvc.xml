@@ -7,7 +7,7 @@
 
     <import resource="anatomy.xml"/>
     <import resource="antibody.xml"/>
-    <import resource="reno.xml"/>
+    <!--<import resource="reno.xml"/>-->
     <import resource="developer-tools.xml"/>
     <import resource="blast.xml"/>
     <import resource="orthology.xml"/>

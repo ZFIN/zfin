@@ -3,6 +3,7 @@ package org.zfin.sequence.reno.presentation;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.BindException;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateUtil;
@@ -68,7 +69,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
 //            Marker geneFromSelectList = null ;
             
-            redundancyCandidateController.handleDone(candidateBeanRedun);
+            redundancyCandidateController.handleDone(candidateBeanRedun,new BindException(candidateBeanRedun,"targetName"));
 
             //I want to only test the handlNote method here, but the handleNote method
             //is private; so I need to call public method like handleDone() to get handleNote()
@@ -139,7 +140,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             candidateBean.setAssociatedGeneField(geneFromSelectList.getZdbID());
             logger.info("associatedGEneField abbrev: " + geneFromSelectList.getAbbreviation());
             logger.info("tell the candidateController to handleDone");
-            candidateController.handleDone(candidateBean);
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
             ///Here is the start of the test that should be true
             //test gene should get a mrel to test cdna and mrel should get an attribution
             //also a marker_history record should have been created and the reason changed.
@@ -221,7 +222,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             //tell the controller to execute handle done with the bean that was created here.
             logger.info("tell the candidateController to handleDone");
-            candidateController.handleDone(candidateBean);
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
             currentSession().flush();
 
             ///Here is the start of the test that should be true
@@ -317,7 +318,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             logger.info("tell the candidateController to handleDone");
 
-            candidateController.handleDone(candidateBean);
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
 
             ///Here is the start of the test that should be true
             //gene should be created
@@ -394,7 +395,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleDone(candidateBean);
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
             currentSession().flush();
             ///Here is the start of the test that should be true
             //gene should be created
@@ -523,7 +524,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleDone(candidateBean);
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
 
             ///Here is the start of the test that should be true
             //done flag in candidate is set, and that is it.
@@ -566,7 +567,7 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
 
-            redundancyCandidateController.handleDone(candidateBean);
+            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetBean"));
             currentSession().flush();
 
             assertTrue(runCandidate.isDone());

@@ -1,112 +1,121 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.reno.service.RenoService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Class SingleRunController.
  */
 
-public class SingleRunController extends SimpleFormController {
+@Controller
+public class SingleRunController {
 
-    private RenoRepository renoRepository;  // set in spring configuration
-    private PublicationRepository publicationRepository; // set in spring configuration
-    private String candidateType; // set in spring configuration bean, either "inqueue" or "pending"
-    private final Logger LOG = Logger.getLogger(SingleRunController.class);
+    private final Logger logger = Logger.getLogger(SingleRunController.class);
 
-    private final static String INQUEUE_CANDIDATES = "inqueue";
-    private final static String PENDING_CANDIDATES = "pending";
+    private RenoRepository renoRepository = RepositoryFactory.getRenoRepository();  // set in spring configuration
+    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository(); // set in spring configuration
+    private Validator validator = new RunBeanValidator();
 
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
 
-        RunBean form = (RunBean) command;
+    @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.GET)
+    public String referenceData(@PathVariable String runZdbID, @PathVariable String candidateType
+            , RunBean form, Model model
+            , @RequestParam(required = false, defaultValue = "expectValue") String comparator
+            , @RequestParam(required = false) String action
+    ) {
+        Run run = renoRepository.getRunByID(runZdbID);
+        RunPresentation.CandidateType candidateTypeEnum = RunPresentation.CandidateType.getType(candidateType);
+        form.setAction(action);
+        form.setComparator(comparator);
+        form.setZdbID(runZdbID);
 
-        String runZdbId = form.getZdbID();
-        Run run = renoRepository.getRunByID(runZdbId);
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
 
         if (run != null) {
-            setFormData(request, form, run);
-            map.put(LookupStrings.DYNAMIC_TITLE, run.getName());
+            setFormData(form, run, candidateTypeEnum);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, run.getName());
         } else {
-            map.put(LookupStrings.DYNAMIC_TITLE, runZdbId);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, runZdbID);
         }
 
-
-        return map;
-
+        return "reno/candidate-" + candidateType + ".page";
     }
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
+    @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.POST)
+    public String onSubmit(@PathVariable String runZdbID, @PathVariable String candidateType
+            , RunBean form
+            , BindingResult errors
+            , Model model
+            , @RequestParam(required = false, defaultValue = "expectValue") String comparator
+            , @RequestParam(required = false) String action
 
-        RunBean form = (RunBean) command;
+    ) throws Exception {
 
-        String runZdbId = form.getZdbID();
-        Run run = renoRepository.getRunByID(runZdbId);
+        RunPresentation.CandidateType candidateTypeEnum = RunPresentation.CandidateType.getType(candidateType);
+        Run run = renoRepository.getRunByID(runZdbID);
+        form.setAction(action);
+        form.setComparator(comparator);
+        form.setRun(run);
 
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, run.getName());
 
-        try {
+        validator.validate(form, errors);
 
+        if (errors.hasErrors()) {
+            logger.error("Has Errors: " + errors.toString());
+            model.addAttribute("errors", errors);
+        } else {
 
-            tx = session.beginTransaction();
+            try {
+                HibernateUtil.createTransaction();
 
-            handleNomenclatureAttributionUpdate(form, run);
+                handleNomenclatureAttributionUpdate(form, run);
 
-            if (run.isNomenclature()) {
-                handleOrthologyAttributionUpdate(form, (NomenclatureRun) run);
-            } else if (run.isRedundancy()) {
-                handleRelationUpdate(form, (RedundancyRun) run);
+                if (run.isNomenclature()) {
+                    handleOrthologyAttributionUpdate(form, (NomenclatureRun) run);
+                } else if (run.isRedundancy()) {
+                    handleRelationUpdate(form, (RedundancyRun) run);
+                }
+
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (RuntimeException e) {
+                HibernateUtil.rollbackTransaction();
+                logger.error("Error in onSubmit method ", e);
+                throw e;
             }
-
-
-            tx.commit();
-        }
-        catch (RuntimeException e) {
-            tx.rollback();
-            LOG.error("Error in onSubmit method ", e);
-            throw e;
         }
 
-        setFormData(request, form, run);
+        setFormData(form, run, candidateTypeEnum);
 
-        ModelAndView modelAndView = new ModelAndView(getSuccessView(), LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, run.getName());
-        return modelAndView;
+        return "reno/candidate-" + candidateType + ".page";
     }
 
     /**
      * Use the parameter in the http request to sort the run candidates and
      * save the ordered list to the form bean.
      *
-     * @param request HttpRequest
      * @param runBean RunBean
      * @param run     Actual Run
      */
-    private void setFormData(HttpServletRequest request, RunBean runBean, Run run) {
+    private void setFormData(RunBean runBean, Run run, RunPresentation.CandidateType candidateType) {
 
         runBean.setRun(run);
         runBean.setNomenclaturePublicationZdbID(run.getNomenclaturePublication().getZdbID());
@@ -132,7 +141,7 @@ public class SingleRunController extends SimpleFormController {
         }
 
 
-        if (candidateType.equals(INQUEUE_CANDIDATES)) {
+        if (candidateType == RunPresentation.CandidateType.INQUEUE_CANDIDATES) {
             if (runBean.getAction() != null && runBean.getAction().equals(RunBean.FINISH_REMAINDER) && run.isRedundancy()) {
                 HibernateUtil.createTransaction();
                 try {
@@ -144,18 +153,12 @@ public class SingleRunController extends SimpleFormController {
                 }
             }
 
-            if (request.getParameter("comparator") != null) {
-                runBean.setComparator(request.getParameter("comparator"));
-            } else {
-                runBean.setComparator("expectValue");
-            }
-
             if (run.isRedundancy()) {
                 runBean.setRunCandidates(renoRepository.getSortedRunCandidates(run, runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             } else if (run.isNomenclature()) {
                 runBean.setRunCandidates(renoRepository.getSortedNonZFRunCandidates(run, runBean.getComparator(), RunBean.MAX_NUM_OF_RECORDS));
             }
-        } else if (candidateType.equals(PENDING_CANDIDATES)) {
+        } else if (candidateType == RunPresentation.CandidateType.PENDING_CANDIDATES) {
             runBean.setComparator("name");
             runBean.setRunCandidates(renoRepository.getPendingCandidates(run));
         }
@@ -187,8 +190,8 @@ public class SingleRunController extends SimpleFormController {
      * @param redundancyRun Run to manipuluate
      */
     private void handleRelationUpdate(RunBean form, RedundancyRun redundancyRun) {
-        LOG.info("form: " + form);
-        LOG.info("form.getRelationPublicationZdbID: " + form.getRelationPublicationZdbID());
+        logger.info("form: " + form);
+        logger.info("form.getRelationPublicationZdbID: " + form.getRelationPublicationZdbID());
         if (
                 redundancyRun.getRelationPublication() == null
                         ||
@@ -199,17 +202,6 @@ public class SingleRunController extends SimpleFormController {
         }
     }
 
-    public void setCandidateType(String candidateType) {
-        this.candidateType = candidateType;
-    }
-
-    public void setRenoRepository(RenoRepository renoRepository) {
-        this.renoRepository = renoRepository;
-    }
-
-    public void setPublicationRepository(PublicationRepository publicationRepository) {
-        this.publicationRepository = publicationRepository;
-    }
 }
 
 

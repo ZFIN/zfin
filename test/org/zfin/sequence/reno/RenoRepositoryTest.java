@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno;
 
 import org.hibernate.Criteria;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -712,6 +713,25 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
         RenoService.populateLinkageGroups(rc);
     }
 
+//    @Test
+    public void findReversedStrand(){
+
+        ScrollableResults results = HibernateUtil.currentSession().createCriteria(Hit.class).scroll();
+
+        int numHits = 10 ;
+        int hits = 0 ;
+
+        while(results.next() && hits < numHits ){
+            Hit hit = (Hit) results.get(0) ;
+
+            if(hit.isReversed()){
+                System.out.println(hit.getQuery().getRunCandidate().getZdbID());
+                ++hits ;
+            }
+
+        }
+
+    }
 } 
 
 

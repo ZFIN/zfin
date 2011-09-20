@@ -18,11 +18,12 @@
               <b>Positives:</b> <c:out value="${hit.positivesNumerator}"/> / <c:out value="${hit.positivesDenominator}"/>
               <b>Expect:</b> <c:out value="${hit.expectValue}"/> 
               <br/>
-              <pre>
-              <c:forEach var="alignment" items="${hit.formattedAlignments}">
-                  <c:out value="${alignment}"/> 
-              </c:forEach>
-              </pre>
+              <%--<pre>--%>
+               ${hit.formattedAlignment}
+              <%--<c:forEach var="alignment" items="${hit.formattedAlignment}">--%>
+                  <%--<c:out value="${alignment}"/> --%>
+              <%--</c:forEach>--%>
+              <%--</pre>--%>
               <br/>
               <br/>
             </c:forEach>

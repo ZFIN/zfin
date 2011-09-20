@@ -8,7 +8,7 @@ import org.zfin.sequence.reno.Run;
  */
 public class RunPresentation extends EntityPresentation {
 
-    private static final String uri = "reno/candidate-inqueue?zdbID=";
+    private static final String uri = "reno/candidate/"+ CandidateType.INQUEUE_CANDIDATES.toString()+"/";
 
     /**
      * Generates a Marker link using the Abbreviation
@@ -20,4 +20,27 @@ public class RunPresentation extends EntityPresentation {
         return getTomcatLink(uri, run.getZdbID(), run.getName(), null);
     }
 
+    public static enum CandidateType {
+        INQUEUE_CANDIDATES("inqueue"),
+        PENDING_CANDIDATES("pending"),;
+
+        private String value;
+
+        private CandidateType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+
+        public static CandidateType getType(String type) {
+            for (CandidateType t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No CandidateType named " + type + " found.");
+        }
+    }
 }

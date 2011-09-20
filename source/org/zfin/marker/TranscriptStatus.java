@@ -45,7 +45,6 @@ public class TranscriptStatus {
 
     public enum Status{
         NONE(null),
-        AB_STRAIN("AB strain"),
         AMBIGUOUS_ORF("ambiguous orf"),
         ARTIFACT("artifact"),
         FRAGMENTED("fragmented"),

@@ -47,5 +47,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/people/{1}.jsp" />
     </definition>
 
+    <!-- reno defintions -->
+    <definition name="reno/*.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN ReNo" />
+        <put-attribute name="body" value="/WEB-INF/jsp/reno/{1}.jsp"/>
+    </definition>
+
 </tiles-definitions>
 

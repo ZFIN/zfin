@@ -12,11 +12,12 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class CandidateBean {
-    private static Logger LOG = Logger.getLogger(CandidateBean.class);
+    private static Logger logger = Logger.getLogger(CandidateBean.class);
 
     public static final String IGNORE = "IGNORE";
     public static final String NOVEL = "NOVEL";
@@ -61,6 +62,7 @@ public class CandidateBean {
     private EntrezProtRelation humanOrthologueAbbrev;
     private ReferenceDatabase humanReferenceDatabase ;
     private ReferenceDatabase mouseReferenceDatabase ;
+    private boolean geneAlias;
 
     public String getRelationPublicationZdbID() {
         return relationPublicationZdbID;
@@ -169,9 +171,6 @@ public class CandidateBean {
     }
 
     public RunCandidate getRunCandidate() {
-        if (runCandidate == null) {
-            runCandidate = new RunCandidate();
-        }
         return runCandidate;
     }
 
@@ -256,6 +255,20 @@ public class CandidateBean {
         return DONE;
     }
 
+    public boolean getSuggestedNameExists(){
+        if(allSingleAssociatedGenesFromQueries==null){
+            return false ;
+        }
+        else{
+           Set<String> geneSymbols = new HashSet<String>();
+            for(Marker m : allSingleAssociatedGenesFromQueries){
+                geneSymbols.add(m.getAbbreviation()) ;
+            }
+
+            return geneSymbols.contains(getRunCandidate().getCandidate().getSuggestedName());
+        }
+    }
+
     public Collection<Marker> getAllSingleAssociatedGenesFromQueries() {
         return allSingleAssociatedGenesFromQueries;
     }
@@ -311,11 +324,11 @@ public class CandidateBean {
 
 
     public EntrezProtRelation getTargetAccessionHuman(RunCandidate rc, String accName) {
-        LOG.debug("enter getTargetAccessionHuman");
+        logger.debug("enter getTargetAccessionHuman");
         Set<EntrezProtRelation> humanAccOrthologs = rc.getHumanOrthologuesFromQueries();
-        LOG.debug("returned humanAccOrthologues: ");
+        logger.debug("returned humanAccOrthologues: ");
         for (EntrezProtRelation humanAccOrtholog : humanAccOrthologs) {
-            LOG.debug("for each humanAccOrtholog");
+            logger.debug("for each humanAccOrtholog");
             if (humanAccOrtholog.getEntrezAccession().getEntrezAccNum().equals(accName)) {
                 return humanAccOrtholog;
 
@@ -344,6 +357,24 @@ public class CandidateBean {
         return getRunCandidate().getLockPerson() != null
                 && getCurrentUser().equals(getRunCandidate().getLockPerson());
 
+    }
+
+    public void createRunCandidateForZdbID(String zdbID) {
+        if(runCandidate!=null){
+            logger.error("run candidate was not null, but still overwriting it: "+runCandidate);
+            // releasing from memory
+            runCandidate = null ;
+        }
+        runCandidate = new RunCandidate() ;
+        runCandidate.setZdbID(zdbID);
+    }
+
+    public boolean isGeneAlias() {
+        return geneAlias;
+    }
+
+    public void setGeneAlias(boolean geneAlias) {
+        this.geneAlias = geneAlias;
     }
 }
        

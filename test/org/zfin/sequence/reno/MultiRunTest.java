@@ -5,6 +5,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
+import org.springframework.validation.BindException;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
@@ -244,7 +245,7 @@ public class MultiRunTest extends AbstractDatabaseTest {
 
 
             NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController() ;
-            nomenclatureCandidateController.handleDone(candidateBean);
+            nomenclatureCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetBean"));
             session.flush() ;
 
             assertNotSame("run candidate is NOT shared across both runs",runCandidate1.getZdbID(),runCandidate2.getZdbID());

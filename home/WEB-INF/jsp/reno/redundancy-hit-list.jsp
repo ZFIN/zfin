@@ -5,7 +5,7 @@
 
 
 <c:forEach var="query" items="${formBean.runCandidate.candidateQueryList}" varStatus="queryloop">
-    <b>GENE:</b>
+    <b>CANDIDATE:</b>
     <zfin:name entity="${query.runCandidate}"/>
     <br>
     <b>Sequence:</b>
@@ -36,13 +36,12 @@
                 </tr>
                 <c:forEach var="hit" items="${query.blastHits}" varStatus="loop">
                     <zfin:alternating-tr loopName="loop">
-                        <td>
-                            <a href="alignment-list?runCandidate.zdbID=${formBean.runCandidate.zdbID}#hit${hit.hitNumber}-${queryloop.index}">Hit:${hit.hitNumber}</a>
+                        <td class="${hit.reversed ? 'reno-reversed-strand' : ''}">
+                            <a href="/action/reno/alignment-list/${formBean.runCandidate.zdbID}#hit${hit.hitNumber}-${queryloop.index}">Hit:${hit.hitNumber}</a>
                         </td>
 
-                        <td>
+                        <td class="${hit.reversed ? 'reno-reversed-strand' : ''}">
                             <zfin:link entity="${hit.targetAccession}"/>
-                                <%--<zfin:accessionLink beanName="hit" propertyName="targetAccession"/>--%>
                         </td>
 
                         <td>

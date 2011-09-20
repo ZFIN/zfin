@@ -3,12 +3,9 @@ package org.zfin.sequence.reno.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
@@ -30,14 +27,15 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.reno.service.RenoService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * Class CandidateController.
  */
-public abstract class AbstractCandidateController extends SimpleFormController {
+public abstract class AbstractCandidateController {
 
     private static Logger LOG = Logger.getLogger(AbstractCandidateController.class);
     protected static RenoRepository rr = RepositoryFactory.getRenoRepository();
@@ -53,7 +51,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
      */
     public abstract void handleView(CandidateBean candidateBean);
 
-    public abstract void handleRunCandidate(CandidateBean candidateBean);
+    public abstract void handleRunCandidate(CandidateBean candidateBean, BindingResult errors);
 
     //override POST vs GET distinction and make it explicitly all about the "done" boolean
 
@@ -66,31 +64,20 @@ public abstract class AbstractCandidateController extends SimpleFormController {
     /*
     * Populate candidateBean, handle note saving and locking
     */
-
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
-        CandidateBean candidateBean = (CandidateBean) command;
-
+    public String handleGet(CandidateBean candidateBean, Model model) {
         //we will eventually return this map, basically just as a holder for the bean
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(LookupStrings.FORM_BEAN, candidateBean);
-        map.put(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
+        model.addAttribute(LookupStrings.FORM_BEAN, candidateBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
 
         // transaction is necessary to handle locks placed from within the view
         HibernateUtil.createTransaction();
         handleView(candidateBean);
         HibernateUtil.flushAndCommitCurrentSession();
-
-        return map;
+        return "reno/candidate-view.page";
     }
 
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
-
-        CandidateBean candidateBean = (CandidateBean) command;
-
-
-        Session session = HibernateUtil.currentSession();
+    protected ModelAndView handleSubmit(CandidateBean candidateBean, BindingResult errors) throws Exception {
 
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
         RunCandidate rc = rr.getRunCandidateByID(runCandidateID);
@@ -98,7 +85,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
 
         // don't try to process it, just send it to the end.
         if (candidateBean.isCandidateProblem()) {
-            return new ModelAndView(new RedirectView("candidate-inqueue?zdbID=" + rc.getRun().getZdbID()));
+            return new ModelAndView(new RedirectView("/action/reno/candidate/inqueue/" + rc.getRun().getZdbID()));
         }
 
         if (rc == null) {
@@ -106,14 +93,21 @@ public abstract class AbstractCandidateController extends SimpleFormController {
             throw new RuntimeException(message);
         }
 
-        Transaction tx = null;
         try {
-            tx = session.beginTransaction();
-            handleDone(candidateBean);
-            tx.commit();
+            HibernateUtil.createTransaction();
+            handleDone(candidateBean, errors);
+            if (errors.hasErrors()) {
+                HibernateUtil.rollbackTransaction();
+                ModelAndView modelAndView = new ModelAndView("reno/candidate-view.page");
+                modelAndView.addObject(LookupStrings.FORM_BEAN, candidateBean);
+                modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
+                return modelAndView;
+            } else {
+                HibernateUtil.flushAndCommitCurrentSession();
+            }
         } catch (Exception e) {
             try {
-                tx.rollback();
+                HibernateUtil.rollbackTransaction();
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
@@ -122,7 +116,7 @@ public abstract class AbstractCandidateController extends SimpleFormController {
         }
 
         //redirect to candidate-inqueue
-        String url = "/action/reno/candidate-inqueue?zdbID=" + rc.getRun().getZdbID();
+        String url = "/action/reno/candidate/inqueue/" + rc.getRun().getZdbID();
         return new ModelAndView(new RedirectView(url), LookupStrings.DYNAMIC_TITLE, rc.getZdbID());
     }
 
@@ -245,11 +239,11 @@ public abstract class AbstractCandidateController extends SimpleFormController {
     }
 
 
-    public void handleDone(CandidateBean candidateBean) {
+    public void handleDone(CandidateBean candidateBean, BindingResult errors) {
         //this method will save the note if necessary.
         handleNote(candidateBean);
 
-        handleRunCandidate(candidateBean);
+        handleRunCandidate(candidateBean, errors);
 
         candidateBean.getRunCandidate().setDone(true);
         candidateBean.getRunCandidate().getCandidate().setLastFinishedDate(new Date());

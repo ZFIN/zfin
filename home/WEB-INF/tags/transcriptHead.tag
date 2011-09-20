@@ -5,6 +5,7 @@
               rtexprvalue="true" required="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="relatedGenes" type="java.util.Set" rtexprvalue="true" required="true" %>
+<%@ attribute name="strain" type="org.zfin.mutant.Genotype" rtexprvalue="true" required="true" %>
 
 <table class="primary-entity-attributes">
     <tr>
@@ -26,6 +27,14 @@
                 <c:if test="${transcript.withdrawn}">
                     <%=EntityPresentation.WITHDRAWN%>
                 </c:if>
+            </td>
+        </tr>
+    </c:if>
+    <c:if test="${!empty strain}">
+        <tr>
+            <th>Strain:</th>
+            <td>
+                    <zfin:link entity="${strain}"/>
             </td>
         </tr>
     </c:if>

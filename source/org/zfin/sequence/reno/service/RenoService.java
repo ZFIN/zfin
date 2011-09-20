@@ -101,14 +101,16 @@ public class RenoService {
      * @return set of OrthoEvidence codes
      */
     public static Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
-        HashSet<OrthoEvidence> OrthoEvidences = new HashSet<OrthoEvidence>();
-        for (OrthoEvidence.Code orthoevidence : formEvidenceCodes) {
-            OrthoEvidence oe = new OrthoEvidence();
-            oe.setOrthologueEvidenceCode(orthoevidence);
-            oe.setPublication(orthologyPub);
-            OrthoEvidences.add(oe);
+        HashSet<OrthoEvidence> orthoEvidences = new HashSet<OrthoEvidence>();
+        if (formEvidenceCodes != null) {
+            for (OrthoEvidence.Code orthoevidence : formEvidenceCodes) {
+                OrthoEvidence oe = new OrthoEvidence();
+                oe.setOrthologueEvidenceCode(orthoevidence);
+                oe.setPublication(orthologyPub);
+                orthoEvidences.add(oe);
+            }
         }
-        return OrthoEvidences;
+        return orthoEvidences;
 
     }
 
@@ -309,8 +311,8 @@ public class RenoService {
      * @param gene the gene chosen by the curators (could be newly created)
      */
     public static void createRedundancyRelationships(RunCandidate rc, Marker gene) {
-        logger.info("createRelationsips gene: " + gene);
-        logger.info("createRelationsips runCanZdbID: " + rc.getZdbID());
+        logger.info("createRelationships gene: " + gene);
+        logger.info("createRelationships runCanZdbID: " + rc.getZdbID());
 
         if (!rc.getRun().isRedundancy()) {
             logger.info("run should be redundancy");
