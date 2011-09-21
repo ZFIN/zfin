@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -630,8 +631,7 @@ public class BlastAccessTest extends AbstractDatabaseTest{
 
     @Test
     public void getProperDefline() {
-        Marker marker = new Marker();
-        marker.setZdbID("ZDB-GENE-990415-200");
+        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-200") ;
         MarkerDBLink markerDBLink = new MarkerDBLink();
         markerDBLink.setMarker(marker);
         String accession = "abc123";
