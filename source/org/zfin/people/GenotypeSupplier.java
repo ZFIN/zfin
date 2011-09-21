@@ -80,4 +80,11 @@ public class GenotypeSupplier extends ObjectSupplier implements Serializable, Co
 		else
 		  return false;
 	}
+        public boolean isMoensLab() {
+		if (this.getOrganization().getZdbID().equals("ZDB-LAB-990225-6"))
+		  return true;
+		else
+		  return false;
+	}
+
 }
