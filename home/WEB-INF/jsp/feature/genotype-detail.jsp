@@ -265,7 +265,7 @@
 </c:choose>
 </div>
 <div class="summary">
-<b>GENE EXPRESSION</b>&nbsp;<font size=-1>(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
+<b>GENE EXPRESSION</b>&nbsp;<small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
 <br/>
 <b>Gene expression in <zfin:name entity="${formBean.genotype}"/><c:if test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
         <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
@@ -363,7 +363,7 @@
  </div>
 
 <div class="summary">
-<b>PHENOTYPE</b>&nbsp;<font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
+<b>PHENOTYPE</b>&nbsp;<small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
 <br/>
 <b>Phenotype in <zfin:name entity="${formBean.genotype}"/><c:if test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
         <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
