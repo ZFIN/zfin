@@ -458,7 +458,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getWildTypeExpressionForMarker(){
         List<ExpressedStructurePresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
-        assertEquals(33, wees.size());
+        assertThat(wees.size(),greaterThan(30));
+        assertThat(wees.size(),lessThan(50));
     }
 
     @Test

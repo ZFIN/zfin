@@ -297,13 +297,33 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void associateNovelGeneWithIdentifiedMarker() {
-
-
-
+    public void associateNonSINovelGeneWithIdentifiedMarker() {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
+            logger.info("load up the candidateBean with associatedWithNovelGene fake data");
+            candidateBean.setAssociatedGeneField(CandidateBean.NOVEL);
+            candidateBean.setRename(false);
+            logger.info("tell the candidateController to handleDone");
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
+            assertNull(renoGene);
+        }
+        catch (Exception e) {
+            fail(e.toString());
+        }
+        finally {
+            // rollback on success or exception
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void associateSiNovelGeneWithIdentifiedMarker() {
+        try {
+            HibernateUtil.createTransaction();
+            CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission("si:somedata");
             RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
@@ -327,47 +347,31 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             //mhist should be created
             //mhist reason should be changed
 
-            Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
+            Marker renoGene = markerRepository.getMarkerByAbbreviation("si:somedata");
             Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
 
-            logger.info("novelgene zdb_id: " + renoGene.getZdbID());
             assertNotNull("renoGene", renoGene);
+            logger.info("novelgene zdb_id: " + renoGene.getZdbID());
 
             MarkerRelationship renoMrel = markerRepository.getMarkerRelationship(
                     renoGene,
                     renoCdna,
                     MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-            logger.info("renoMrel: " + renoMrel) ; 
+            logger.info("renoMrel: " + renoMrel) ;
             //the gene has a relationship to the cdna
             assertNotNull("renoMrel not null",renoMrel);
 
             logger.debug("mrel zdb_id: " + renoMrel.getZdbID());
-
-/*
-
-RecordAttribution renoMrelAttribution = infrastructureRepository.getRecordAttribution(
-    renoMrel.getZdbID(),
-    run.getEntity().getZdbID(),
-    RecordAttribution.SourceType.STANDARD);
-
-//the mrel has an attribution
-assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
 
             MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
 
             //the renoGene has a marker_history record, this basically tests the trigger is working.
             assertNotNull("renoGene has marker_history record", mhist);
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.NOT_SPECIFIED));
-
         }
 
         catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
+            fail(e.toString());
         }
         finally {
             // rollback on success or exception
@@ -376,8 +380,59 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
     }
 
     @Test
-    public void associateWithNovelGeneNoIdentifiedMarker() {
+    public void associateSiWithNovelGeneNoIdentifiedMarker() {
+        try {
+            HibernateUtil.createTransaction();
+            CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission("si:test");
+            RedundancyCandidateController candidateController = new RedundancyCandidateController();
+            //set the the runCandidate to be the one made from the createRenoData method
+            //this is fake data.
 
+            //assume the curator picks NOVEL.
+            //no associated marker has been identified.
+
+            logger.info("load up the candidateBean");
+            candidateBean.setAssociatedGeneField(CandidateBean.NOVEL);
+//            runCandidate.getCandidate().setIdentifiedMarker(null);
+            candidateBean.setRename(false);
+
+            logger.info("tell the candidateController to handleDone");
+            //tell the controller to execute handle done with the bean that was created here.
+            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            currentSession().flush();
+            ///Here is the start of the test that should be true
+            //gene should be created
+            //dblinks should be added to novel gene
+            //mhist should be created
+            //mhist reason should be changed
+
+            Marker renoGene = markerRepository.getMarkerByAbbreviation("si:test");
+            logger.info("novelgene zdb_id: " + renoGene.getZdbID());
+            assertNotNull(renoGene);
+
+            //Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
+
+            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
+
+            logger.info("mhist " + mhist.toString());
+            //the renoGene has a marker_history record
+            assertNotNull(mhist);
+
+            //the mhist record has a reno reason
+            // assertTrue(mhist.getReason().equals(MarkerHistory.RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE));
+            assertEquals("Marker history has same reason", mhist.getReason(), (MarkerHistory.Reason.NOT_SPECIFIED));
+        }
+
+        catch (Exception e) {
+            fail(e.toString());
+        }
+        finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void associateWithNovelGeneNoIdentifiedMarker() {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
@@ -404,59 +459,13 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
             //mhist reason should be changed
 
             Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
-            logger.info("novelgene zdb_id: " + renoGene.getZdbID());
-            assertNotNull(renoGene);
-
-            //Marker renoCdna = markerRepository.getMarkerByAbbreviation("MGC:test");
-
-            MarkerHistory mhist = markerRepository.getLastMarkerHistory(renoGene, null);
-
-            logger.info("mhist " + mhist.toString());
-            //the renoGene has a marker_history record
-            assertNotNull(mhist);
-
-            //the mhist record has a reno reason
-            // assertTrue(mhist.getReason().equals(MarkerHistory.RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE));
-            assertEquals("Marker history has same reason", mhist.getReason(), (MarkerHistory.Reason.NOT_SPECIFIED));
-
-            //the dblinks have been created; at least there is the same number.
-            //
-            //Note:  this is ture, but I would check this with a query.  
-            //The way that marker.getDbLinks is setup it won't be hydrated automatically this way.
-            //To fix this would have to setup an inverse relationship.  
-            //It is only used in HibernateMarkerRepository, but it is used in a safe way there.
-//
-//            Set<MarkerDBLink> dbLinks = renoGene.getDbLinks();
-//            logger.debug("dblinks is : " + dbLinks);
-//            //Set<MarkerDBLink> relatedDbLinks ;
-//
-//            int numberOfDbLinks = 0;
-//
-//            for (MarkerDBLink link : dbLinks) {
-//                for (Query query : runCandidate.getCandidateQueries()) {
-//                    //only get the accessions that have been added for this candidate
-//                    if ((query.getAccession().getNumber().equals(link.getAccessionNumber())) &&
-//                            (query.getAccession().getReferenceDatabase().equals(link.getReferenceDatabase()))) {
-//                        numberOfDbLinks++;
-//                    }
-//                }
-//
-//            }
-//            int numberOfQueries = runCandidate.getCandidateQueries().size();
-//            assertTrue(numberOfQueries == numberOfDbLinks);
-
+            assertNull(renoGene);
         }
 
         catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
+            fail(e.toString());
         }
         finally {
-            // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
     }
@@ -645,8 +654,17 @@ assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
      * @return candidate bean
      */
     private CandidateBean setUpBasicBeanRedunDoneSubmission() {
+        return setUpBasicBeanRedunDoneSubmission(null);
+    }
+    private CandidateBean setUpBasicBeanRedunDoneSubmission(String candidateName) {
         renoTestData.setUpSharedRedundancyAndNomenclatureData();
-        String redundancyRunCandidateZdbID = renoTestData.createRedundancyData();
+        String redundancyRunCandidateZdbID ;
+        if(candidateName ==null){
+            redundancyRunCandidateZdbID = renoTestData.createRedundancyData();
+        }
+        else {
+            redundancyRunCandidateZdbID = renoTestData.createRedundancyData(candidateName);
+        }
         CandidateBean candidateBean = new CandidateBean();
          
         RunCandidate runCandidate = renoRepository.getRunCandidateByID(redundancyRunCandidateZdbID);

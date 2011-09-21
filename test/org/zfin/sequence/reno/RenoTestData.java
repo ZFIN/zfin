@@ -52,11 +52,14 @@ public class RenoTestData {
 
     }
 
+    public String createRedundancyData(){
+       return createRedundancyData("zgc:test") ;
+    }
     /**
      * Returns run candidate ZDB ID for Redundancy.
      * @return zdb ID
      */
-    public String createRedundancyData(){
+    public String createRedundancyData(String candidateSuggestedName){
         Session session = currentSession();
 
         Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
@@ -79,7 +82,7 @@ public class RenoTestData {
         candidate.setRunCount(1);
         candidate.setLastFinishedDate(new Date());
         //candidate.setIdentifiedMarker(cDNA);
-        candidate.setSuggestedName("zgc:test");
+        candidate.setSuggestedName(candidateSuggestedName);
         candidate.setMarkerType(Marker.Type.GENE.toString());
 //        candidate.setIdentifiedMarker(markerRepository.getMarkerByAbbreviation("MGC:test"));
 //        logger.debug("the candidate bean identified marker is:" + candidate.getIdentifiedMarker().getAbbreviation());
