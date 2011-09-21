@@ -28,7 +28,7 @@
     </td>
 </tr>
 
-<c:if test="${fn:startsWith(formBean.feature.abbreviation, 'unrec')==true}">
+<c:if test="${fn:contains(formBean.feature.abbreviation, 'unrecovered')==true}">
 
     <br style="font-size:small;">  Note: This record has been created to support data for unrecovered alleles reported by a TILLING project.   </br>
 

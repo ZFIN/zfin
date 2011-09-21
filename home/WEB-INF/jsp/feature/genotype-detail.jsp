@@ -146,10 +146,24 @@
           <c:otherwise>
             <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
 	      ${supplier.organization.name}</a>          
-	    <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
+	      <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
+               <c:choose>
+              <c:when test="${supplier.moensLab}">&nbsp;
+                  <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}" varStatus="loop">
+          (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
+           <c:if test="${!loop.last}">,&nbsp;</c:if>
+        </c:forEach>
+
+
+
+              </c:when>
+              <c:otherwise>
               <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}" organization="${supplier.organization}" />
+              </c:otherwise>
+              </c:choose>
           </c:otherwise>
-         </c:choose>
+            </c:choose>
+
       </c:forEach>
     </c:when>
     <c:otherwise>
