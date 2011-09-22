@@ -76,7 +76,7 @@
 # Nights   When      Comments
 #
 # SMTWTFS  11:22pm   CURATOR SUPPORT: Nightly check for new publications.
-22 23 * * * /research/zcentral/www_homes/mirror/cgi-bin/publications_today.cgi
+22 23 * * * <!--|ROOT_PATH|-->/cgi-bin/publications_today.cgi
 #
 #
 # SMTWTFS        10:00pm   Generate standard set of download files for web site, including gff3 files.
