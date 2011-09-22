@@ -73,6 +73,7 @@
 
     <!--Define property file.-->
     <property name="property.file" value="${commons.dir}/${INSTANCE}.properties"/>
+    <property name="log4j.file" value="${commons.dir}/${INSTANCE}.log4j.xml"/>
 
     <!--If the property file is not defined then fail.-->
     <echo message="property file=${property.file}"/>
@@ -101,6 +102,7 @@
     <import file="${buildfiles.dir}/usage.xml"/>
     <import file="${buildfiles.dir}/serialization.xml"/>
 
+    <echo message="property file=${LOG4J_FILE}"/>
 
     <!-- ====================================================================== -->
     <!-- COMPILE TASKS                                                          -->
@@ -113,6 +115,11 @@
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-sysmaster.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/ehcache.xml" todir="${classbin.dir}"/>
+        <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j.xml"  failonerror="false">
+            <filterset>
+                <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
+            </filterset>
+        </copy>
         <copy todir="${classbin.dir}/org/zfin">
             <fileset dir="${hibernate.conf.dir}">
                 <include name="*.hbm.xml"/>
@@ -461,7 +468,6 @@
         </if>
         <moveWebApp to="${post-home.target}" from="${home.target}" overwrite="true" failonerror="false"/>
         <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
-        <copy file="${conf.dir}/log4j.xml" todir="${home.target}/WEB-INF/classes/" failonerror="false"/>
 
         <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
     </target>

@@ -20,6 +20,10 @@
         </param-value>
     </context-param>
 
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>clickstream</filter-name>
         <filter-class>com.opensymphony.clickstream.ClickstreamFilter</filter-class>
@@ -385,7 +389,6 @@
         <error-code>404</error-code>
         <location>/WEB-INF/jsp/page-not-found.jsp</location>
     </error-page>
-
 
 
 </web-app>
