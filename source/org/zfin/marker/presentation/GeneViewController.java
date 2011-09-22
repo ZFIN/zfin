@@ -13,10 +13,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +28,7 @@ import java.util.Set;
 public class GeneViewController {
 
     private Logger logger = Logger.getLogger(GeneViewController.class);
+    private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
 
     @Autowired
     private ExpressionService expressionService;
@@ -43,6 +47,17 @@ public class GeneViewController {
         geneBean.setMarker(gene);
 
         MarkerService.createDefaultViewForMarker(geneBean);
+
+        // OTHER GENE / MARKER PAGES:
+        // pull vega genes from transcript onto gene page
+        // case 7586
+//        geneBean.setOtherMarkerPages(RepositoryFactory.getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
+        otherMarkerDBLinksLinks.addAll(RepositoryFactory.getMarkerRepository()
+                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE)) ;
+        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator) ;
+        geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
+
 
         geneBean.setHasChimericClone(RepositoryFactory.getMarkerRepository().isFromChimericClone(gene.getZdbID()));
 

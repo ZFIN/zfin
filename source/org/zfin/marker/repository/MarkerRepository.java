@@ -339,4 +339,6 @@ public interface MarkerRepository {
    List<Marker> getConstructsForGene(Marker gene);
 
    Genotype getStrainForTranscript(String zdbID);
+
+   List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage);
 }

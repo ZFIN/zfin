@@ -952,4 +952,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Tuebingen", g.getName());
     }
 
+//    @Test
+    public void getVegaGeneDBLinksTranscript() {
+        Marker m = markerRepository.getMarkerByID("ZDB-GENE-980528-2060");
+        List<LinkDisplay> links = markerRepository.getVegaGeneDBLinksTranscript(m,DisplayGroup.GroupName.SUMMARY_PAGE);
+        assertNotNull(links);
+        assertEquals(1,links.size());
+        assertTrue(links.get(0).getAccession().startsWith("OTTDARG0000"));
+    }
 }
