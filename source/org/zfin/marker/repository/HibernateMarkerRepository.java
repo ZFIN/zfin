@@ -1868,6 +1868,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "where g.fdbcdg_name= :displayGroup " +
                 "and " +
                 "dbl.dblink_linked_recid= :markerZdbId ";
+        // case 7586 suppress OTTDARG's and ENSDARGG's on transcript pages
+        if(marker.getZdbID().startsWith("ZDB-TSCRIPT")){
+            sql += " and fdb.fdb_db_name != 'VEGA' " ;
+        }
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
                 .setParameter("displayGroup", groupName.toString())

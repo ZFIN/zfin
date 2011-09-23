@@ -842,6 +842,15 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         List<LinkDisplay> linkDisplayList = markerRepository.getMarkerDBLinksFast(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(linkDisplayList);
+
+
+        m = markerRepository.getTranscriptByName("gsc-002");
+        summaryDBLinkDisplay = MarkerService.getMarkerDBLinkDisplay(m, DisplayGroup.GroupName.SUMMARY_PAGE);
+        assertNotNull(summaryDBLinkDisplay);
+
+        linkDisplayList = markerRepository.getMarkerDBLinksFast(m, DisplayGroup.GroupName.SUMMARY_PAGE);
+        assertNotNull(linkDisplayList);
+        assertEquals(2,linkDisplayList.size());
     }
 
     @Test
