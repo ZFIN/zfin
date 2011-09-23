@@ -732,10 +732,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
         Marker morpholino = markerRep.getMarkerByAbbreviation("MO1-adam8a");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
-        assertEquals("adam8a", targetGenes.get(0).getAbbreviation());
+        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
 
     }
 
@@ -744,11 +744,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
         Marker morpholino = markerRep.getMarkerByAbbreviation("MO4-rbpja+rbpjb");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
-        assertEquals("rbpja", targetGenes.get(0).getAbbreviation());
-        assertEquals("rbpjb", targetGenes.get(1).getAbbreviation());
+        Iterator<Marker> iter = targetGenes.iterator() ;
+        assertEquals("rbpja", iter.next().getAbbreviation());
+        assertEquals("rbpjb", iter.next().getAbbreviation());
 
     }
 

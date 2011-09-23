@@ -1508,7 +1508,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param morpholino valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    public List<Marker> getTargetGenesForMorpholino(Marker morpholino) {
+    public Set<Marker> getTargetGenesForMorpholino(Marker morpholino) {
         if (morpholino == null)
             return null;
 
@@ -1520,7 +1520,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (markerRelations == null)
             return null;
 
-        List<Marker> targetGenes = new ArrayList<Marker>(markerRelations.size());
+        Set<Marker> targetGenes = new TreeSet<Marker>();
         for (MarkerRelationship relationship : markerRelations) {
             targetGenes.add(relationship.getSecondMarker());
         }

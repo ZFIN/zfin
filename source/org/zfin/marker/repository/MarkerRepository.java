@@ -16,10 +16,7 @@ import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 public interface MarkerRepository {
     Marker getMarker(Marker marker);
@@ -268,7 +265,7 @@ public interface MarkerRepository {
      * @param morpholino      valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    List<Marker> getTargetGenesForMorpholino(Marker morpholino);
+    Set<Marker> getTargetGenesForMorpholino(Marker morpholino);
 
     /**
      * Checks to see if a marker with the abbreviation given is already in the database.
