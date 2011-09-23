@@ -76,7 +76,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
 
     public boolean isMoCondition() {
         boolean moCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino");
-        if (morpholino == null) {
+        if (moCondition && morpholino == null) {
             String message = "No Morpholino found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
             message += "Publication: " + experiment.getPublication().getZdbID();
             logger.error(message);
