@@ -20,6 +20,8 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.*;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
@@ -88,7 +90,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         PhenotypeStructure structureE1a = DTOConversionService.getPhenotypeStructure(phenotypeDTOE1a);
         structureE1a.setPublication(pub);
         PhenotypeStructure structureE1aE1b = DTOConversionService.getPhenotypeStructure(phenotypeDTOE1aE1b);
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
+        HibernateUtil.createTransaction();
         try {
             getPhenotypeRepository().createPhenotypeStructure(structureE1aE1b, publicationID);
             boolean isOnPile = getPhenotypeRepository().isPhenotypeStructureOnPile(structureE1aE1b);
@@ -98,7 +100,8 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
             assertFalse(isOnPile);
 
         } finally {
-            tx.rollback();
+            HibernateUtil.rollbackTransaction();
+            HibernateUtil.currentSession().clear(); // clear because rolled back ActiveData, but still in session
         }
     }
 
@@ -394,7 +397,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         FigureLink figureLink = getPhenotypeRepository().getPhenotypeFirstFigure(m);
         assertEquals("ZDB-FIG-070307-8", figureLink.getFigureZdbId());
         assertEquals("Fig. 7", figureLink.getLinkContent());
-        assertEquals("<a href=\"/quark/webdriver?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-070307-8\">Fig. 7</a>", figureLink.getLink());
+        assertEquals("<a href=\"/"+ZfinProperties.getWebDriver()+"?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-070307-8\">Fig. 7</a>", figureLink.getLink());
     }
 
     @Test

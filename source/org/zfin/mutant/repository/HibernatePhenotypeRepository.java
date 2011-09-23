@@ -196,10 +196,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (featureID != null) {
             hql += ", GenotypeFeature genoFeature ";
         }
-        hql += "       left join fetch phenox.startStage ";
-        hql += "       left join fetch phenox.endStage ";
-        hql += "       left join fetch phenox.genotypeExperiment";
-        hql += "       left join fetch phenox.genotypeExperiment.genotype ";
+        hql += "       left join phenox.genotypeExperiment genox ";
         if (fishID != null) {
             hql += "       join phenox.genotypeExperiment.genotype geno";
         }
@@ -209,11 +206,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (figureID != null)
             hql += "           and phenox.figure.zdbID = :figureID ";
         if (featureID != null) {
-            hql += "           and phenox.genotypeExperiment.genotype = genoFeature.genotype ";
+            hql += "           and genox.genotype = genoFeature.genotype ";
             hql += "           and genoFeature.feature.zdbID = :featureID ";
         }
         hql += "    order by phenox.figure.orderingLabel, " +
-                "             phenox.genotypeExperiment.genotype.nickname, " +
+                "             genox.genotype.nickname, " +
                 "             phenox.startStage.abbreviation ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
