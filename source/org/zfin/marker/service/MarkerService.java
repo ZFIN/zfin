@@ -386,7 +386,7 @@ public class MarkerService {
         Set<Marker> relatedMarkers = getRelatedMarker(marker, MarkerRelationship.Type.CONTAINS_POLYMORPHISM);
 
         if(CollectionUtils.isEmpty(relatedMarkers)){
-            return null;
+            return new MappedMarkerBean();
         }
         else{
             return getMappedMarkers(relatedMarkers.iterator().next());

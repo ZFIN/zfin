@@ -36,9 +36,9 @@ public class SnpViewController {
     ) throws Exception {
         // set base bean
 
-        logger.info("zdbID: " + zdbID);
+        logger.debug("zdbID: " + zdbID);
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        logger.info("snp marker: " + marker);
+        logger.debug("snp marker: " + marker);
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
         snpMarkerBean.setMarker(marker);
