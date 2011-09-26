@@ -273,11 +273,21 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
 
     @Test
     public void getSnpMappedMarkers(){
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SNP-060626-1008");
-        MappedMarkerBean mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
+        Marker marker ;
+        MappedMarkerBean mappedMarkerBean ;
+
+        marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SNP-060626-1008");
+        assertNotNull(marker);
+        mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
         assertNotNull(mappedMarkerBean);
         List<String> unmappedMarkers = mappedMarkerBean.getUnMappedMarkers();
         assertEquals(1,unmappedMarkers.size());
         assertEquals("25",unmappedMarkers.iterator().next());
+
+        // case 7593, should not be null even if null related markers
+        marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SNP-060626-97");
+        assertNotNull(marker);
+        mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
+        assertNotNull(mappedMarkerBean);
     }
 }
