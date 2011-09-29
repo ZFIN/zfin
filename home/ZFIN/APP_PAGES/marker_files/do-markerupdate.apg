@@ -301,7 +301,7 @@ marker.<?/MIVAR>
   <?/MICOMMENT>
   
   <?MIBLOCK COND="$(EC,$attr,clone_problem_type)">
-    <?MIBLOCK COND="$(NE,$new_value,NONE)">
+    <?MIBLOCK COND="$(AND,$(NE,$new_value,NONE),$(NE,$new_value,))">
       <?MISQL SQL="
           UPDATE clone
           SET clone_problem_type = '$new_value'
