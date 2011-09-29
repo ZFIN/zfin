@@ -110,29 +110,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void findGeoLinkForNCBI(){
-        Marker m ;
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761
-        assertNotNull(m);
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
-
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-4918"); // myl12.1
-        assertNotNull(m);
-        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
-        HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
-
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
-        assertNotNull(m);
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
-    }
-
-
-    @Test
     public void isThisseProbe(){
         Clone c = RepositoryFactory.getMarkerRepository().getCloneById("ZDB-CDNA-080114-24");
         assertTrue(expressionService.isThisseProbe(c));

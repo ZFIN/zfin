@@ -7,7 +7,11 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -41,4 +45,28 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
             HibernateUtil.rollbackTransaction();
         }
     }
+
+
+    @Test
+    public void findGeoLinkForNCBI(){
+        Marker m ;
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761
+        assertNotNull(m);
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+        HibernateUtil.currentSession().flush();
+        assertNotNull(expressionService.getGeoLinkForMarker(m));
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-4918"); // myl12.1
+        assertNotNull(m);
+        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
+        HibernateUtil.currentSession().flush();
+        assertNotNull(expressionService.getGeoLinkForMarker(m));
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
+        assertNotNull(m);
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+        HibernateUtil.currentSession().flush();
+        assertNotNull(expressionService.getGeoLinkForMarker(m));
+    }
+
 }
