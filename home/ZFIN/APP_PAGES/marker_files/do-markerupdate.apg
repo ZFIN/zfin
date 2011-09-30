@@ -310,6 +310,7 @@ marker.<?/MIVAR>
 
       <?MICOMMENT>
       Set marker_relation to "artifact of" where this OID is the second marker relation.  The reverse, which is much rarer, must be set manually.
+      9/29/2011.  FB case 7393: fixed this; so curators do not have to do any work-around with this
       <?/MICOMMENT>
 
       <?MISQL SQL="
@@ -322,10 +323,19 @@ marker.<?/MIVAR>
 
     <?MIELSE>
       <?MISQL SQL="
+        UPDATE  marker_relationship 
+        SET mrel_type='gene encodes small segment'
+        WHERE mrel_mrkr_2_zdb_id='$OID'
+        AND EXISTS(select * from clone where clone_mrkr_zdb_id = '$OID' and clone_problem_type = 'Chimeric') 
+      ;">
+      <?/MISQL> 
+
+      <?MISQL SQL="
           UPDATE clone
           SET clone_problem_type = null
           WHERE clone_mrkr_zdb_id = '$OID';">
-      <?/MISQL>  
+      <?/MISQL>       
+      
     <?/MIBLOCK>
   <?/MIBLOCK>
 
