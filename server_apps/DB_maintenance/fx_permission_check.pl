@@ -102,7 +102,7 @@ while ($cur->fetch) {
     print REPORT "These figures are from publications with expression or phenotype data where\n";
     print REPORT "permission to use images was originally denied, but is now granted.\n\n";
     print REPORT "For more information, including how to get figures to be ignored by this check,\n";
-    print REPORT "see https://wiki.zfin.org/display/doc/Phenotype+and+expression+figure+permission+check\n\n";
+    print REPORT "see https://wiki.zfin.org/display/doc/FX+Permisssion+Check\n\n";
     
 
     # prepare the query to get the lite figures that should
@@ -116,7 +116,7 @@ while ($cur->fetch) {
     # if a curator explicitly asks us to.  Otherwise, we'll
     # send them the report until they fix it.
 
-    $get_figs_query = "select cur_pub_zdb_id,
+    $get_figs_query = "select distinct cur_pub_zdb_id,
                   fig_label
                 from curation, 
                      publication, 
@@ -136,7 +136,7 @@ while ($cur->fetch) {
                 and person.zdb_id = cur_curator_zdb_id 
                 and cur_curator_zdb_id = '$cur_curator_zdb_id'
                 and fig_label like 'Fig.%' 
-                order by cur_curator_zdb_id, cur_pub_zdb_id";
+                order by cur_pub_zdb_id, fig_label";
 
     # execute the sub-query
 
