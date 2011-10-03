@@ -54,19 +54,19 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
         HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
+        assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
 
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-4918"); // myl12.1
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
         HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
+        assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
 
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-110207-1"); // agbl1
         assertNotNull(m);
         assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
         HibernateUtil.currentSession().flush();
-        assertNotNull(expressionService.getGeoLinkForMarker(m));
+        assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
     }
 
 }

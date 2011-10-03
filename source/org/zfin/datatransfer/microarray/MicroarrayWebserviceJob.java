@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.expression.service.MicroarrayWebServiceBean;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
@@ -22,6 +24,9 @@ public class MicroarrayWebserviceJob implements Job {
 
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
     private Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
+
+//    @Autowired
+    private ExpressionService expressionService = new ExpressionService();
 
 
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -60,12 +65,12 @@ public class MicroarrayWebserviceJob implements Job {
 
             message.append("Markers added to Geo (" + markersToAdd.size() + "):\n\n");
             for(String markerZdbID: markersToAdd){
-                message.append(markerZdbID).append("\n");
+                message.append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID)).append("\n");
             }
 
             message.append("Markers removed from Geo (" + markersToRemove.size() + "):\n\n");
             for(String markerZdbID: markersToRemove){
-                message.append(markerZdbID).append("\n");
+                message.append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID)).append("\n");
             }
 
             logger.info("adding: " + markersToAdd.size());

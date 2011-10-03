@@ -105,7 +105,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         HibernateUtil.currentSession().flush();
         assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
         assertNotNull(m);
-        assertNull(expressionService.getGeoLinkForMarker(m));
+        assertNull(expressionService.getGeoLinkForMarkerIfExists(m));
 
     }
 

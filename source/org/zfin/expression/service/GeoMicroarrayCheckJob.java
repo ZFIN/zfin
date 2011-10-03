@@ -23,7 +23,7 @@ public class GeoMicroarrayCheckJob implements Runnable {
     public void run() {
         markerExpression.setGeoLinkSearching(true);
         markerExpression.setGeoGeneSymbol(marker.getAbbreviation());
-        markerExpression.setGeoLink(expressionService.getGeoLinkForMarker(marker));
+        markerExpression.setGeoLink(expressionService.getGeoLinkForMarkerIfExists(marker));
         markerExpression.setGeoLinkSearching(false);
     }
 

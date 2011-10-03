@@ -162,25 +162,38 @@ public class ExpressionService {
         return 0;
     }
 
+
+    public String getGeoLinkForMarkerZdbId(String markerZdbID) {
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
+        if(m==null) return null;
+        return getGeoLinkForMarker(m);
+    }
+
     public String getGeoLinkForMarker(Marker marker) {
         Collection<String> accessions;
+        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+            accessions = sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA);
+            accessions.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+            return NCBIEfetch.getMicroarrayLink(accessions, marker.getAbbreviation());
+        } else {
+            accessions = sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA);
+            return NCBIEfetch.getMicroarrayLink(accessions);
+        }
+    }
 
+    public String getGeoLinkForMarkerIfExists(Marker marker) {
         if (marker.getZdbID().startsWith("ZDB-GENE")) {
             if (false == infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB
             )) {
                 return null;
             }
-            accessions = sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA);
-            accessions.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
-            return NCBIEfetch.getMicroarrayLink(accessions, marker.getAbbreviation());
         } else {
             if (false == infrastructureRepository.hasStandardPublicationAttribution(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB
             )) {
                 return null;
             }
-            accessions = sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA);
-            return NCBIEfetch.getMicroarrayLink(accessions);
         }
+        return getGeoLinkForMarker(marker);
     }
 
     public MarkerExpression getExpressionForGene(Marker marker) {
@@ -194,7 +207,7 @@ public class ExpressionService {
             return markerExpression;
         }
 
-        markerExpression.setGeoLink(getGeoLinkForMarker(marker));
+        markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
 
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
@@ -271,7 +284,7 @@ public class ExpressionService {
             return markerExpression;
         }
 
-        markerExpression.setGeoLink(getGeoLinkForMarker(clone));
+        markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(clone));
 
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
@@ -319,7 +332,7 @@ public class ExpressionService {
 
         for (String zdbID : allMarkerZdbIds) {
             marker = markerRepository.getMarkerByID(zdbID);
-            if (getGeoLinkForMarker(marker) != null) {
+            if (getGeoLinkForMarkerIfExists(marker) != null) {
                 // if it is not there add
                 if (false == existingMarkerPubs.contains(zdbID)) {
                     addSet.add(zdbID);
