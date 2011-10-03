@@ -44,7 +44,7 @@
 
         <zfin:alternating-tr loopName="loop">
             <td>
-              <a href="/action/reno/candidate-view?runCandidate.zdbID=${rc.zdbID}">
+              <a href="/action/reno/candidate-view/${rc.zdbID}">
 		        <c:if test="${rc.owner}">
 		           <img src=/images/continue.gif height=47 border=0>
 		        </c:if>

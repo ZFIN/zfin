@@ -29,10 +29,11 @@ public class Hit {
     public static final double noHitExpectValue = 1000;
     public static final int noHitScore = 0;
 
-    private final Pattern endPattern = Pattern.compile("\\p{Space}([0-9]+?)\\n");
+    // second group matches end of line or end of string.  Does not like [], but would be more correct.
+    private final Pattern endPattern = Pattern.compile("\\p{Space}([0-9]+?)(\n|$)");
     private final Pattern startPattern = Pattern.compile("([0-9]+?)\\p{Space}");
 
-    final Pattern descriptionPattern = Pattern.compile("(Score.*\n.*Strand.*\n)");
+    final Pattern descriptionPattern = Pattern.compile("(Score.*\n.*Identities.*(\n|$))");
 
     private final Logger logger = Logger.getLogger(Hit.class);
 
@@ -208,7 +209,7 @@ public class Hit {
             }
             String formattedAlignment = "";
             int alignmentNumber = 0;
-            for (String alignment : alignments) {
+            for (String alignmentRow : alignments) {
                 String alignmentClass ;
 
                 if (alignmentNumber > 0) {
@@ -217,13 +218,13 @@ public class Hit {
                     formattedAlignment += "\n</pre>\n";
                 }
 
-                if (isReversed(alignment)) {
+                if (isReversed(alignmentRow)) {
                     alignmentClass  = "reno-reversed-strand";
                 } else {
                     alignmentClass  = "reno-same-strand";
                 }
                 formattedAlignment += "\n<pre class='" + alignmentClass  + "'>\n";
-                formattedAlignment += alignment;
+                formattedAlignment += alignmentRow;
                 formattedAlignment += "\n</pre>\n";
 
                 ++alignmentNumber;

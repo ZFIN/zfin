@@ -6,6 +6,8 @@ import org.zfin.framework.presentation.tags.DeflineTag;
 import org.zfin.gwt.marker.ui.SequenceValidator;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -74,12 +76,26 @@ public class SequenceTest {
         Hit hit = new Hit();
         String alignment = "Query:  1826 TCTTAATGTAATTTATTAGGTACGTTTTCATAAGAGAAAAATATTTATGTGTCCCACAAA 1767\n" +
                 "             |||||||||||||||| |||||||||||||||||| ||||||||||||||||||||||||\n" +
-                "Sbjct:     1 TCTTAATGTAATTTATAAGGTACGTTTTCATAAGAAAAAAATATTTATGTGTCCCACAAA 60\n" ;
+                "Sbjct:     1 TCTTAATGTAATTTATAAGGTACGTTTTCATAAGAAAAAAATATTTATGTGTCCCACAAA 60\n";
         assertEquals(1826, hit.getQueryStart(alignment));
         assertEquals(1767, hit.getQueryEnd(alignment));
         assertEquals(1, hit.getSubjectStart(alignment));
         assertEquals(60, hit.getSubjectEnd(alignment));
 
+    }
+
+    @Test
+    public void alignmentParse2() {
+
+        Hit hit = new Hit();
+        String alignment = "Query: 270 RGLKSPGGSSTSTHLNCTPESIAML 294\n" +
+                                       "R KS G SSTSTHLNC PESIAM+\n" +
+                           "Sbjct: 247 RACKSSGSSSTSTHLNCAPESIAMI 271";
+        assertEquals(270, hit.getQueryStart(alignment));
+        assertEquals(294, hit.getQueryEnd(alignment));
+        assertEquals(247, hit.getSubjectStart(alignment));
+        assertEquals(271, hit.getSubjectEnd(alignment));
+        assertFalse(hit.isReversed(alignment));
     }
 
     @Test
@@ -115,18 +131,18 @@ public class SequenceTest {
         hit.setAlignment(alignment);
 
         String[] hsps = hit.getHsps(alignment);
-        assertEquals(2,hsps.length);
-        assertFalse(hit.isReversed(hsps[0])) ;
-        assertTrue(hit.isReversed(hsps[1])) ;
+        assertEquals(2, hsps.length);
+        assertFalse(hit.isReversed(hsps[0]));
+        assertTrue(hit.isReversed(hsps[1]));
         String formattedAlignment = hit.getFormattedAlignment();
 
         String[] alignments = formattedAlignment.split("<pre");
-        assertEquals(4,alignments.length);
+        assertEquals(4, alignments.length);
 
-        List<String> descriptions = hit.getDescriptions(alignment) ;
-        assertEquals(1,descriptions.size());
+        List<String> descriptions = hit.getDescriptions(alignment);
+        assertEquals(1, descriptions.size());
         assertEquals("Score = 820 (129.1 bits), Expect = 2.9e-62, Sum P(2) = 2.9e-62\n" +
-                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Plus\n",descriptions.get(0));
+                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Plus\n", descriptions.get(0));
 
     }
 
@@ -154,24 +170,44 @@ public class SequenceTest {
         Hit hit = new Hit();
         hit.setAlignment(alignment);
 
-        List<String> descriptions = hit.getDescriptions(alignment) ;
-        assertEquals(2,descriptions.size());
+        List<String> descriptions = hit.getDescriptions(alignment);
+        assertEquals(2, descriptions.size());
 
         String[] hsps = hit.getHsps(alignment);
-        assertEquals(3,hsps.length);
-        assertFalse(hit.isReversed(hsps[0])) ;
-        assertTrue(hit.isReversed(hsps[1])) ;
+        assertEquals(3, hsps.length);
+        assertFalse(hit.isReversed(hsps[0]));
+        assertTrue(hit.isReversed(hsps[1]));
         String formattedAlignment = hit.getFormattedAlignment();
 
 
         String[] alignments = formattedAlignment.split("<pre");
-        assertEquals(6,alignments.length);
+        assertEquals(6, alignments.length);
 
         assertEquals("Score = 820 (129.1 bits), Expect = 2.9e-62, Sum P(2) = 2.9e-62\n" +
-                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Plus\n",descriptions.get(0));
+                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Plus\n", descriptions.get(0));
 
         assertEquals("Score = 811 (129.1 bits), Expect = 2.9e-62, Sum P(2) = 2.9e-62\n" +
-                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Minus\n",descriptions.get(1));
+                " Identities = 438/698 (62%), Positives = 438/698 (62%), Strand = Plus / Minus\n", descriptions.get(1));
 
     }
+
+    @Test
+    public void hsps2(){
+        String alignment = "Query:   241 LMKRSQHHHPGSAVIMGGISK-GVAMGCGARGL 272\n" +
+                "             L        PG A    G S     + C    +\n" +
+                "Sbjct:   241 LQPT-----PGRACKSSGSSSTSTHLNCAPESI 268\n" +
+                "\n" +
+                " Score = 98 (39.6 bits), Expect = 6.2e-105, Sum P(2) = 6.2e-105\n" +
+                " Identities = 19/25 (76%), Positives = 20/25 (80%)\n" +
+                "\n" +
+                "Query:   270 RGLKSPGGSSTSTHLNCTPESIAML 294\n" +
+                "             R  KS G SSTSTHLNC PESIAM+\n" +
+                "Sbjct:   247 RACKSSGSSSTSTHLNCAPESIAMI 271" ;
+
+        Hit hit = new Hit();
+        hit.setAlignment(alignment);
+        List<String> descriptions = hit.getDescriptions(alignment);
+        assertEquals(1,descriptions.size());
+    }
+
 }
