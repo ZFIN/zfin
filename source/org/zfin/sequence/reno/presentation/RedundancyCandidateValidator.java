@@ -113,7 +113,7 @@ public class RedundancyCandidateValidator extends AbstractRunCandidateValidator 
         Marker existingGene = null;
 
         //check that the entered zdb_id maps to a marker and that the marker is a gene
-        if (!StringUtils.isEmpty(candidateBean.getGeneZdbID().trim())) {
+        if (!StringUtils.isEmpty(StringUtils.trimToEmpty(candidateBean.getGeneZdbID()))) {
             Marker m = mr.getMarkerByID(candidateBean.getGeneZdbID().trim().toUpperCase());
             if (m == null) {
                 errors.rejectValue("geneZdbID", "code", candidateBean.getGeneZdbID() + " is not a valid marker id in ZFIN.");
