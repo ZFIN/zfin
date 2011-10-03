@@ -47,7 +47,7 @@ my $dbh = DBI->connect("DBI:Informix:$dbname", $user, $passwd)
 my $sth = $dbh->prepare($sql) or die "SQL prepare failed. $sql";
 $sth->execute() or die "SQL execute failed.+ $sql ";
 
-my $fileWithHTMLtags = '<!--|ROOT_PATH|-->/home/markers.html';
+my $fileWithHTMLtags = '<!--|ROOT_PATH|-->/home/zf_info/markers.html';
 print "dumping to $fileWithHTMLtags\n" ;
 open RESULT,  ">$fileWithHTMLtags" or die "Can't open: $fileWithHTMLtags $!\n";
 

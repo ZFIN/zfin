@@ -42,6 +42,13 @@
 	</url>
 	<url>
 		<loc>
+		http://zfin.org/zf_info/markers.html
+		</loc>
+		<changefreq>weekly</changefreq>
+		<priority>0.8</priority>
+	</url>
+	<url>
+		<loc>
 		http://zfin.org/zf_info/anatomy.html
 		</loc>
 		<changefreq>monthly</changefreq>
