@@ -117,7 +117,7 @@ while ($cur->fetch) {
     # send them the report until they fix it.
 
     $get_figs_query = "select distinct cur_pub_zdb_id,
-                  fig_label
+                  fig_label, fig_full_label
                 from curation, 
                      publication, 
                      figure, 
@@ -136,7 +136,7 @@ while ($cur->fetch) {
                 and person.zdb_id = cur_curator_zdb_id 
                 and cur_curator_zdb_id = '$cur_curator_zdb_id'
                 and fig_label like 'Fig.%' 
-                order by cur_pub_zdb_id, fig_label";
+                order by cur_pub_zdb_id, fig_full_label";
 
     # execute the sub-query
 
@@ -145,7 +145,8 @@ while ($cur->fetch) {
     $sub_cur->execute;
     my($cur_pub_zdb_id, $fig_label);
     $sub_cur->bind_columns(\$cur_pub_zdb_id, 
-			   \$fig_label) ;
+			   \$fig_label,
+			   \$fig_full_label) ;
     
     # count the number of rows returned per curator
 
@@ -155,7 +156,7 @@ while ($cur->fetch) {
 
     while ($sub_cur->fetch)
     {
-	print REPORT "$cur_pub_zdb_id : $fig_label" ;
+	print REPORT "$cur_pub_zdb_id : $fig_label" if ($fig_full_label ne '');
 	print REPORT "\n";
 	
 	# increment the counter
