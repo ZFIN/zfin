@@ -572,7 +572,7 @@ sub access_error () { # throws up an error message and sends email
               You must be the owner of an image file to update it,
               and you must have permission to upload new files. <br><br>
               Please contact ZFIN for further information: 
-              staylor@cs.uoregon.edu !!<br><br>";
+              staylor\@cs.uoregon.edu !!<br><br>";
 
     &emailError ("login confirmation failed: $vHint $ENV{'HTTP_COOKIE'} $person_id $filename <!--|DB_NAME|-->");
     print "</body>";
