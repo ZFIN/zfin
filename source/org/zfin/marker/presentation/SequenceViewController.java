@@ -16,7 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 @Controller
 public class SequenceViewController {
 
-    private Logger logger = Logger.getLogger(SequenceViewController.class);
+    private static final Logger LOG = Logger.getLogger(SequenceViewController.class);
 
     @RequestMapping(value ="/sequence/view/{zdbID}")
     public String getSequenceView(
@@ -25,9 +25,23 @@ public class SequenceViewController {
             throws Exception {
         // set base bean
 
-        logger.info("zdbID: " + zdbID);
+        LOG.debug("Start SequenceView Controller");
+
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        logger.info("gene: " + gene);
+
+        if (gene == null){
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if(replacedZdbID !=null){
+                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                gene = RepositoryFactory.getMarkerRepository().getMarkerByID(replacedZdbID);
+            }
+        }
+
+        if (gene == null){
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        }
+
 
 //        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
 
