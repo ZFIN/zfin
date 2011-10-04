@@ -59,7 +59,7 @@ post="`ls -lt ${GTF} | head -1`"
 
 #echo "wget error return code is: $geterr"
 
-if [ -f ${GTF} -a ${geterr} -eq 0 ]; then
+if [[ -f ${GTF} && ${geterr} -eq 0  ]] ; then
 	# -a "$prior" != "$post" ] ; then
 	echo "delete all but the most recent downloaded ${GTF}"
 	find . -name ${GTF} ! -name `ls -1t ${GTF}|head -1` -exec rm -f {} \;
