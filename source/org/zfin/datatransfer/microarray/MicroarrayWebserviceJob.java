@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.expression.service.MicroarrayWebServiceBean;
@@ -25,7 +24,7 @@ public class MicroarrayWebserviceJob implements Job {
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
     private Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
 
-//    @Autowired
+    //    @Autowired
     private ExpressionService expressionService = new ExpressionService();
 
 
@@ -61,16 +60,22 @@ public class MicroarrayWebserviceJob implements Job {
 
             StringBuilder message = new StringBuilder();
             message.append("Markers added to Geo (" + markersToAdd.size() + "):\n");
-            message.append("Markers removed from Geo ("+markersToRemove.size()+"):\n\n");
+            message.append("Markers removed from Geo (" + markersToRemove.size() + "):\n\n");
 
             message.append("Markers added to Geo (" + markersToAdd.size() + "):\n\n");
-            for(String markerZdbID: markersToAdd){
-                message.append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID)).append("\n");
+            for (String markerZdbID : markersToAdd) {
+                message
+                        .append(markerZdbID)
+                        .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
+                        .append("\n");
             }
 
             message.append("Markers removed from Geo (" + markersToRemove.size() + "):\n\n");
-            for(String markerZdbID: markersToRemove){
-                message.append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID)).append("\n");
+            for (String markerZdbID : markersToRemove) {
+                message
+                        .append(markerZdbID)
+                        .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
+                        .append("\n");
             }
 
             logger.info("adding: " + markersToAdd.size());
@@ -86,7 +91,7 @@ public class MicroarrayWebserviceJob implements Job {
                 HibernateUtil.flushAndCommitCurrentSession();
 
                 // TODO: email and stuff
-                (new IntegratedJavaMailSender()).sendMail("microarray updates for: "+(new Date()).toString()
+                (new IntegratedJavaMailSender()).sendHtmlMail("microarray updates for: " + (new Date()).toString()
                         , message.toString(),
                         ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
 
@@ -95,17 +100,14 @@ public class MicroarrayWebserviceJob implements Job {
                 HibernateUtil.rollbackTransaction();
 
                 // TODO: email and stuff
-                (new IntegratedJavaMailSender()).sendMail("ERROR in microarray update for: "+(new Date()).toString()
-                        , "ERROR: " + e.fillInStackTrace().toString() +"\n"+message.toString(),
+                (new IntegratedJavaMailSender()).sendHtmlMail("ERROR in microarray update for: " + (new Date()).toString()
+                        , "ERROR: " + e.fillInStackTrace().toString() + "\n" + message.toString(),
                         ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
-            }
-            finally {
-                if(HibernateUtil.currentSession().isOpen()){
+            } finally {
+                if (HibernateUtil.currentSession().isOpen()) {
                     HibernateUtil.currentSession().close();
                 }
             }
-
-
 
 
 //            // get all genes

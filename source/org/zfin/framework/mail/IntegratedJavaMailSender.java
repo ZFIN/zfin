@@ -169,4 +169,5 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         MailSender sender = new IntegratedJavaMailSender();
         sender.sendMail(subjectText, messageText, emailAddresses);
     }
+
 }
