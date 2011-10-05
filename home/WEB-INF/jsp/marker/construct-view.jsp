@@ -43,6 +43,9 @@
         </tr>
     </table>
 </zfin2:subsection>
+<%--SEQUENCE INFORMATION--%>
+<zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
+
 
 
 <%--CITATIONS--%>
