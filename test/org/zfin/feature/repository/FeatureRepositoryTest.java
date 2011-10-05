@@ -127,7 +127,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         boolean containsEd = false;
         boolean containsEr = false;
         boolean containsSb = false;
-        boolean containsUt = false;
+        boolean containsZy = false;
         for (FeaturePrefixLight featurePrefixLight : featurePrefixLights) {
             if (featurePrefixLight.getPrefix().equals("ba")) {
                 assertTrue(featurePrefixLight.getLabList().size() > 0);
@@ -156,10 +156,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
                 assertNull(featurePrefixLight.getLabList());
                 containsSb = true;
             }
-            if (featurePrefixLight.getPrefix().equals("ut")) {
-                assertNull(featurePrefixLight.getLabList());
-                containsUt = true;
-            }
         }
         assertNotNull(featurePrefixLights);
         assertTrue(featurePrefixLights.size() > 100);
@@ -167,7 +163,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         assertTrue(containsEd);
         assertTrue(containsEr);
         assertTrue(containsSb);
-        assertTrue(containsUt);
     }
 
 
