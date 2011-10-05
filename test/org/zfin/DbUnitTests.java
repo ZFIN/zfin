@@ -11,12 +11,14 @@ import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
+import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
+import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
@@ -68,6 +70,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
         GoEvidenceTest.class,
         GwtConversionTest.class,
         InfrastructureRepositoryTest.class,
+        FeatureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MarkerRepositoryTest.class,
         MergeMarkerDBTest.class,
