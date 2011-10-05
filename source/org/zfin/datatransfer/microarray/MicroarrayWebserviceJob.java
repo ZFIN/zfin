@@ -92,7 +92,7 @@ public class MicroarrayWebserviceJob implements Job {
 
                 // TODO: email and stuff
                 (new IntegratedJavaMailSender()).sendHtmlMail("microarray updates for: " + (new Date()).toString()
-                        , message.toString(),
+                        , message.toString().replaceAll("\n","<br>\n"),
                         ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
 
             } catch (Exception e) {
