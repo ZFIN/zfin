@@ -59,13 +59,14 @@ public class MicroarrayWebserviceJob implements Job {
             Collection<String> markersToRemove = CollectionUtils.subtract(currentMarkerZdbIds, validZdbIDs);
 
             StringBuilder message = new StringBuilder();
-            message.append("Markers added to Geo (" + markersToAdd.size() + "):\n");
-            message.append("Markers removed from Geo (" + markersToRemove.size() + "):\n\n");
+            message.append("Markers added to Geo (" + markersToAdd.size() + ")\n");
+            message.append("Markers removed from Geo (" + markersToRemove.size() + ")\n\n");
 
             message.append("Markers added to Geo (" + markersToAdd.size() + "):\n\n");
             for (String markerZdbID : markersToAdd) {
                 message
                         .append(markerZdbID)
+                        .append(" ")
                         .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
                         .append("\n");
             }
@@ -74,6 +75,7 @@ public class MicroarrayWebserviceJob implements Job {
             for (String markerZdbID : markersToRemove) {
                 message
                         .append(markerZdbID)
+                        .append(" ")
                         .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
                         .append("\n");
             }
