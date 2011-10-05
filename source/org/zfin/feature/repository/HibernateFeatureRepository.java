@@ -8,6 +8,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
@@ -23,6 +25,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.people.FeatureSource;
 import org.zfin.people.Lab;
 import org.zfin.people.LabFeaturePrefix;
@@ -198,7 +201,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
             // if result is not equal, or we are at the start or end, add the current and open a new one
             else
-            if(i==results.size()-1
+            if(i==results.size()
                     || currentPrefix==null
                     || !result[0].toString().equals(currentPrefix)){
                 // add the current one
@@ -220,7 +223,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
             ++i ;
         }
-
+         featurePrefixLightList.add(featurePrefixLight);
         return featurePrefixLightList;
     }
 
@@ -239,7 +242,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix){
-        String hql = " select distinct f , s  from Feature f "
+        String hql = " select distinct f, s  from Feature f "
                 + " join f.featurePrefix fp   "
                 + " left join f.sources s "
                 + " where f.featurePrefix = fp "
@@ -321,13 +324,31 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hqlLab = " select distinct lfp.lab from LabFeaturePrefix lfp  "  +
                 " where lfp.featurePrefix is not null " +
                 " and lfp.lab.name is not null  " +
-                " and lfp.currentDesignation = :true" +
-                " order by lfp.lab.name ";
-        return HibernateUtil.currentSession()
-                .createQuery(hqlLab)
-                .setBoolean("true",true)
-                .list();
+                " and lfp.currentDesignation = :true";
+
+               Query query = HibernateUtil.currentSession().createQuery(hqlLab);
+        query.setBoolean("true", true);
+        /*List<FeatureMarkerRelationship> featureMarkerRelationships = (List<FeatureMarkerRelationship>) query.list();
+              HibernateUtil.currentSession().createQuery(hqlLab)
+                .setBoolean("true", true)*/
+                /*setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        return tuple[0];
+                    }
+                })*/
+                     List<Lab> labs = (List<Lab>) query.list();
+                      Collections.sort(labs, new Comparator<Lab>(){
+            @Override
+            public int compare(Lab o1, Lab o2) {
+                return o1.getName().compareTo(o2.getName()) ;
+            }
+        });
+      return labs;
     }
+
+
+
 
     public List<FeaturePrefix> getLabPrefixes(String labName) {
         String hqlLab1 = " select lfp from LabFeaturePrefix lfp  " +
