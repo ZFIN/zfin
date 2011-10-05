@@ -140,10 +140,10 @@ public class HibernateSessionCreator implements FactoryBean {
 
         // should use the default isolation
 //        config.setProperty("hibernate.connection.isolation", "1");
-        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
+//        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
         config.setProperty("hibernate.show_sql", Boolean.toString(showSql));
         config.setProperty("hibernate.format_sql", "true");
-        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
+//        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
         config.setProperty("hibernate.cache.provider_class", "net.sf.ehcache.hibernate.EhCacheProvider");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
         config.setProperty("hibernate.cache.use_second_level_cache", "true");
