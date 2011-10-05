@@ -6,6 +6,7 @@ import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateSessionCreator;
@@ -20,25 +21,9 @@ import static org.junit.Assert.*;
 
 /**
  */
-public class DOITest {
+public class DOITest extends AbstractDatabaseTest{
 
-    static {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
-    }
-
-
-    @After
-    public void closeSession() {
-        HibernateUtil.closeSession();
-    }
+    private Citexplore citexplore = new Citexplore();
 
 
     /**
@@ -47,7 +32,6 @@ public class DOITest {
     @Test
     public void testDOIConnectivity(){
         HibernateUtil.createTransaction();
-        Citexplore citexplore = new Citexplore();
         List<Publication> pubs = new ArrayList<Publication>();
         Criteria crit = HibernateUtil.currentSession().createCriteria(Publication.class) ;
         crit.setMaxResults(2);
@@ -67,6 +51,15 @@ public class DOITest {
         assertNotNull(pub2.getDoi()) ;
         HibernateUtil.rollbackTransaction();
 
+    }
+
+    @Test
+    public void testValidPub(){
+        List<Publication> pubs = new ArrayList<Publication>();
+        Publication p = (Publication) HibernateUtil.currentSession().get(Publication.class,"ZDB-PUB-101122-23") ;
+        pubs.add(p);
+        pubs = citexplore.getDoisForPubmedID(pubs) ;
+        assertEquals("10.1095/biolreprod.110.086363",pubs.get(0).getDoi());
     }
 
 
