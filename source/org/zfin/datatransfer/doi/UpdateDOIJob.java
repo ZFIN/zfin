@@ -27,8 +27,8 @@ public class UpdateDOIJob extends QuartzJobBean {
             driver.findAndUpdateDOIs();
 
             if (reportAll == true || driver.isDoisUpdated()) {
-                (new IntegratedJavaMailSender()).sendMail("doi updates for: " + (new Date()).toString()
-                        , driver.getMessage().toString(), ZfinProperties.splitValues(ZfinPropertiesEnum.DOI_EMAIL_REPORT));
+                (new IntegratedJavaMailSender()).sendHtmlMail("doi updates for: " + (new Date()).toString()
+                        , driver.getMessage().toString().replaceAll("\n","<br>\n"), ZfinProperties.splitValues(ZfinPropertiesEnum.DOI_EMAIL_REPORT));
             }
         }
         catch (Exception e) {

@@ -20,7 +20,7 @@ public class DOIProcessor {
 
     private int maxToProcess = ALL ;
     private int maxAttempts = 50 ;
-    private PublicationRepository publicationRepository = null ;
+    private PublicationRepository publicationRepository = new HibernatePublicationRepository() ; ;
     private Logger logger = Logger.getLogger(DOIProcessor.class);
 
     private boolean reportAll = false ;
@@ -41,7 +41,7 @@ public class DOIProcessor {
             this.maxAttempts = maxAttempts ;
         }
         message = new StringBuilder() ;
-        publicationRepository = new HibernatePublicationRepository() ;
+
     }
 
     public DOIProcessor(boolean reportAll,int maxAttempts,int maxToProcess) {
