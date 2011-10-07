@@ -18,7 +18,7 @@
     <appender name="email" class="org.zfin.util.ZfinSMTPAppender">
         <param name="From" value="zfishweb@cs.uoregon.edu"/>
         <param name="To" 
-value="cmpich@zfin.org,kschaper@cs.uoregon.edu,ndunn@cs.uoregon.edu,staylor@cs.uoregon.edu,bsprunge@cs.uoregon.edu,ryanm@cs.uoregon.edu"/>
+value="cmpich@zfin.org,kschaper@cs.uoregon.edu,ndunn@cs.uoregon.edu,staylor@cs.uoregon.edu,pm@zfin.org,xshao@zfin.org,ryanm@cs.uoregon.edu"/>
         <param name="Subject" value="[Tomcat Error] "/>
         <param name="threshold" value="error"/>
         <layout class="org.zfin.util.log4j.ZfinHtmlLayout"/>
