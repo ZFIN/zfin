@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
@@ -16,7 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 @Controller
 public class SequenceViewController {
 
-    private static final Logger LOG = Logger.getLogger(SequenceViewController.class);
+    private Logger logger = Logger.getLogger(SequenceViewController.class);
 
     @RequestMapping(value ="/sequence/view/{zdbID}")
     public String getSequenceView(
@@ -25,19 +26,20 @@ public class SequenceViewController {
             throws Exception {
         // set base bean
 
-        LOG.debug("Start SequenceView Controller");
+        logger.debug("Start SequenceView Controller");
 
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        Marker marker = markerRepository.getMarkerByID(zdbID);
 
-        if (gene == null){
+        if (marker == null){
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
             if(replacedZdbID !=null){
-                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
-                gene = RepositoryFactory.getMarkerRepository().getMarkerByID(replacedZdbID);
+                logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                marker = markerRepository.getMarkerByID(replacedZdbID);
             }
         }
 
-        if (gene == null){
+        if (marker == null){
             model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
@@ -46,14 +48,14 @@ public class SequenceViewController {
 //        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
 
         //setting supporting sequences
-        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(gene);
-        sequenceInfo.setMarker(gene);
+        SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
+        sequenceInfo.setMarker(marker);
 
         AuditLogItem lastUpdated = RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID);
 
         model.addAttribute("lastUpdated", lastUpdated);
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceInfo);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + gene.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + marker.getAbbreviation());
 
         return "marker/sequence-view.page";
     }
