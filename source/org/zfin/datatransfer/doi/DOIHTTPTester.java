@@ -59,7 +59,7 @@ public class DOIHTTPTester {
             String line = reader.readLine();
             while (line != null) {
                 if (line.indexOf("<title>") >= 0 || line.indexOf("<TITLE>") >= 0) {
-                    if (line.indexOf("DOI Not Found") > 0) {
+                    if (line.indexOf("Not Found") > 0) {
                         logger.info("bad DOI connection: " + publication.getDoi());
                         return false;
                     } else {

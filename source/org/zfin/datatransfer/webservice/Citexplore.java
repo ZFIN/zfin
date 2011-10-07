@@ -57,7 +57,8 @@ public class Citexplore {
                     hasDOI = false;
                     for (Doc2LocResultBean doc2LocResultBean : doc2LocResultBeanCollection) {
                         urlString = doc2LocResultBean.getUrl();
-                        if (urlString.contains(DOI_URL)) {
+                        // Valid DOI's do not end with "/"
+                        if (urlString.contains(DOI_URL) && false==urlString.endsWith("/")) {
                             doiValue = urlString.substring(DOI_URL.length() + 1);
                             logger.info("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
                             publication.setDoi(doiValue);
