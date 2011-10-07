@@ -46,7 +46,7 @@ create function get_mutants_html_link
             and fmrel_ftr_zdb_id = genofeat_feature_zdb_id;
 
 	if ( genoCount == 1 ) then 
-		select genofeat_geno_zdb_id
+		select distinct genofeat_geno_zdb_id
 		  into genoZdbId
            	  from feature_marker_relationship, genotype_feature
           	 where fmrel_mrkr_zdb_id = geneZdbId
