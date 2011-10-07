@@ -76,6 +76,26 @@ public class WebServiceSoapClientTest {
     }
 
     @Test
+    public void useEfetchForNewSequence() {
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("JF828767");
+        assertTrue(CollectionUtils.isNotEmpty(sequences));
+        assertEquals(1, sequences.size());
+        Sequence sequence = sequences.get(0);
+        Defline defline = sequence.getDefLine();
+        assertTrue(defline.getAccession().equals("JF828767"));
+        assertTrue(sequence.getFormattedData().length() > 100);
+        assertTrue(sequence.getFormattedSequence().length() > 100);
+        assertTrue(defline.toString().length() > 20);
+    }
+
+    @Test
+    public void useEfetchForBadSequence() {
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("notasequencethatIknowof");
+        assertTrue(CollectionUtils.isEmpty(sequences));
+        assertEquals(0, sequences.size());
+    }
+
+    @Test
     public void useEfetchForNucleotide2() {
         List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("FN428721");
         assertTrue(CollectionUtils.isNotEmpty(sequences));
