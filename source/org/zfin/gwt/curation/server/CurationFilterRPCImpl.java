@@ -1,6 +1,6 @@
 package org.zfin.gwt.curation.server;
 
-import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.zfin.expression.Figure;
@@ -12,6 +12,7 @@ import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -66,10 +67,15 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         if (attribute != null) {
             if (StringUtils.isNotEmpty(attribute.getValue())) {
                 Figure figure = pubRepository.getFigureByID(attribute.getValue());
+                if (figure==null){
+                 profileRep.deleteCuratorSession(attribute);
+            }
+                else{
                 FigureDTO figureDTO = new FigureDTO();
                 figureDTO.setLabel(figure.getLabel());
                 figureDTO.setZdbID(figure.getZdbID());
                 values.setFigure(figureDTO);
+                }
             }
         }
         return values;
