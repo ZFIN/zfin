@@ -1,4 +1,4 @@
-<!-- FILE: jump_to.  This file is an alternate START_ZFIN page that is used when people want to link directly into ZFIN record via an outside URL. 
+<!-- FILE: jump_to.  This file is an alternate START_ZFIN page that is used when people want to link directly into ZFIN record via an outside URL.
 Note that when they hit the ZFIN HOME button, they will jump to the standard page!
 -->
 
@@ -7,7 +7,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 
 <head>
 
-  
+
 <TITLE>ZFIN</TITLE>
 </HEAD>
 
@@ -22,7 +22,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PERS-),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PUB-),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENE-),0)">/action/marker/view/$record<?/MIVAR>
-<?MICOMMENT>locus gets merged into gene, markerview page checks the zdb_replaced_data 
+<?MICOMMENT>locus gets merged into gene, markerview page checks the zdb_replaced_data
             and displays the merge info <?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENEP-),0)">/action/marker/view/$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-MRPHLNO-),0)">/action/marker/view/$record<?/MIVAR>
@@ -39,16 +39,21 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PAC_END-),0)">/action/marker/view/$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-RAPD-),0)">/action/marker/view/$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ATB-),0)">/action/marker/view/$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-TGCONSTRCT-),0)">/action/marker/view/$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ETCONSTRCT-),0)">/action/marker/view/$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GTCONSTRCT-),0)">/action/marker/view/$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-PGCONSTRCT-),0)">/action/marker/view/$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EFG-),0)">/action/marker/view/$record<?/MIVAR>
 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-SNP-),0)">/action/marker/view/$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REFCROSS-),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-IMAGE-),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FIG-),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR> 
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-IMAGE-),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FIG-),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-COMPANY-),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ANAT-),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ZFA:),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-GENO-),0)">/action/genotype/genotype-detail?zdbID=$record<?/MIVAR>
-<?MICOMMENT>fish gets replaced by genotype page checks zdb_replaced_data 
+<?MICOMMENT>fish gets replaced by genotype page checks zdb_replaced_data
             and displays history info <?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FISH-),0)">/action/genotype/genotype-detail?zdbID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-CONSTRCT-),0)">/action/marker/view/$record<?/MIVAR>
@@ -60,13 +65,12 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MICOMMENT>not sure whether ZDB-ALT- ids would participate in jump_to.apg, just in case.<?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">/action/feature/feature-detail?zdbID=$record<?/MIVAR>
 
-
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EXP-),0)">/action/expression/experiment?id=$record<?/MIVAR>
 
-<?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
-      the best place to go right now. For direct submission pub, like Thisse, there isn't 
-      a truely all figures page, but all figures page per probe. 
+<?MICOMMENT> there is no longer an expression page, a publication's all figure page is
+      the best place to go right now. For direct submission pub, like Thisse, there isn't
+      a truely all figures page, but all figures page per probe.
 <?/MICOMMENT>
 <?MIBLOCK COND="$(>,$(POSITION,$record,-XPAT-),0)">
     <?MISQL SQL="
