@@ -734,7 +734,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     }
 
     /**
-     * Should report an error if it can't find an entry.
+     * Should report an error if it can't find a uniprot entry.
      * @throws Exception
      */
     @Test
