@@ -27,7 +27,7 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
 
     @Test
     public void updateGeoLink(){
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-041008-244");
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030131-9286");
         HibernateUtil.createTransaction();
         try{
             assertEquals(0, expressionService.updateGeoLinkForMarker(m));
