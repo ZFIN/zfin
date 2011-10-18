@@ -18,6 +18,7 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.presentation.NomenclatureCandidateController;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.Date;
 import java.util.List;
@@ -25,9 +26,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 
-public class MultiRunTest extends AbstractDatabaseTest {
+public class RenoMultiRunTest extends AbstractDatabaseTest {
 
-    private final Logger logger = Logger.getLogger(MultiRunTest.class) ;
+    private final Logger logger = Logger.getLogger(RenoMultiRunTest.class) ;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
 
@@ -245,6 +246,7 @@ public class MultiRunTest extends AbstractDatabaseTest {
 
 
             NomenclatureCandidateController nomenclatureCandidateController = new NomenclatureCandidateController() ;
+            nomenclatureCandidateController.setRenoService(new RenoService());
             nomenclatureCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetBean"));
             session.flush() ;
 

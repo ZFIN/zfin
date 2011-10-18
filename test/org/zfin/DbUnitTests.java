@@ -18,7 +18,6 @@ import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
-import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
@@ -39,10 +38,10 @@ import org.zfin.sequence.SequenceRepositoryTest;
 import org.zfin.sequence.TranscriptServiceTest;
 import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
-import org.zfin.sequence.reno.MultiRunTest;
+import org.zfin.sequence.reno.RenoMultiRunTest;
 import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
-import org.zfin.sequence.reno.presentation.RedundancyCandidateControllerTest;
+import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.uniquery.SequenceIdListTest;
 import org.zfin.webservice.MarkerSoapDbTest;
@@ -78,7 +77,6 @@ import org.zfin.webservice.MarkerSoapDbTest;
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
-        MultiRunTest.class,
         MutantRepositoryTest.class,
         OntologyManagerTest.class,
         OntologyRepositoryTest.class,
@@ -90,7 +88,8 @@ import org.zfin.webservice.MarkerSoapDbTest;
         PhenotypeRepositoryTest.class,
         ProfileRepositoryTest.class,
         PublicationRepositoryTest.class,
-        RedundancyCandidateControllerTest.class,
+        RenoRedundancyCandidateControllerTest.class,
+        RenoMultiRunTest.class,
 //        NomenclatureCandidateControllerTest.class, // no tests
         RenoRepositoryTest.class,
         SequenceRepositoryTest.class,

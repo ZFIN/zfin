@@ -10,9 +10,7 @@ import org.zfin.repository.RepositoryFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -69,4 +67,28 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
         assertNotNull(expressionService.getGeoLinkForMarkerIfExists(m));
     }
 
+    @Test
+    public void getGeoLinkForMarker() {
+        Marker m ;
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-041008-244");
+        assertNotNull(m);
+        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
+        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
+
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2");
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+        HibernateUtil.currentSession().flush();
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+//        linkString = expressionService.getGeoLinkForMarker(m); // will still grab this until rerun
+
+        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SSLP-000426-106");
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+        HibernateUtil.currentSession().flush();
+        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
+        assertNotNull(m);
+        assertNull(expressionService.getGeoLinkForMarkerIfExists(m));
+
+    }
 }

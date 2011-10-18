@@ -84,30 +84,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         assertNotNull(microarrayWebServiceBean);
     }
 
-    @Test
-    public void getGeoLinkForMarker() {
-        Marker m ;
-
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-041008-244");
-        assertNotNull(m);
-        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
-        assertThat(expressionService.updateGeoLinkForMarker(m),lessThan(1));
-
-
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-001103-2");
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-//        linkString = expressionService.getGeoLinkForMarker(m); // will still grab this until rerun
-
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SSLP-000426-106");
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        HibernateUtil.currentSession().flush();
-        assertThat(expressionService.updateGeoLinkForMarker(m),greaterThan(-1));
-        assertNotNull(m);
-        assertNull(expressionService.getGeoLinkForMarkerIfExists(m));
-
-    }
 
     @Test
     public void isThisseProbe(){

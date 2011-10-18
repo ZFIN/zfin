@@ -19,6 +19,7 @@ import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.RenoTestData;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.Set;
 
@@ -29,11 +30,11 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 /**
  * Tests the RedundancyCandidateController methods for redundancy runs.
  */
-public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
+public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
     private final RenoTestData renoTestData = new RenoTestData() ;
 
-    private static Logger logger = Logger.getLogger(RedundancyCandidateControllerTest.class);
+    private static Logger logger = Logger.getLogger(RenoRedundancyCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
@@ -43,6 +44,13 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
     private final static String BASIC_NOTE = "This is a basic note";
     private final static String RENAME = "stest";
 
+    private RenoService renoService = new RenoService();
+    private RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
+
+    public RenoRedundancyCandidateControllerTest(){
+        redundancyCandidateController.setRenoService(renoService);
+        redundancyCandidateController.setRenoRepository(renoRepository);
+    }
 
 
     @Before
@@ -59,11 +67,9 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
    @Test
     public void moveNoteToGeneForRedundancy() {
 
-
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBeanRedun = setUpBasicBeanRedunDoneSubmission();
-            RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
             RunCandidate runCandidate = candidateBeanRedun.getRunCandidate();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
@@ -130,7 +136,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();        
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
             Marker geneFromSelectList = markerRepository.getMarkerByAbbreviation("reno");
@@ -140,7 +145,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             candidateBean.setAssociatedGeneField(geneFromSelectList.getZdbID());
             logger.info("associatedGEneField abbrev: " + geneFromSelectList.getAbbreviation());
             logger.info("tell the candidateController to handleDone");
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             ///Here is the start of the test that should be true
             //test gene should get a mrel to test cdna and mrel should get an attribution
             //also a marker_history record should have been created and the reason changed.
@@ -198,7 +203,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
 
             //assume the curator picks the best hit (aka the first existing gene from the pulldown that is not novel).
             Marker geneFromSelectList = markerRepository.getMarkerByAbbreviation("reno");
@@ -222,7 +226,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             //tell the controller to execute handle done with the bean that was created here.
             logger.info("tell the candidateController to handleDone");
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             currentSession().flush();
 
             ///Here is the start of the test that should be true
@@ -301,12 +305,11 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             logger.info("load up the candidateBean with associatedWithNovelGene fake data");
             candidateBean.setAssociatedGeneField(CandidateBean.NOVEL);
             candidateBean.setRename(false);
             logger.info("tell the candidateController to handleDone");
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
             assertNull(renoGene);
         }
@@ -324,7 +327,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission("si:somedata");
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -338,7 +340,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             logger.info("tell the candidateController to handleDone");
 
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
 
             ///Here is the start of the test that should be true
             //gene should be created
@@ -384,7 +386,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission("si:test");
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -398,7 +399,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             currentSession().flush();
             ///Here is the start of the test that should be true
             //gene should be created
@@ -436,7 +437,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -450,7 +450,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             currentSession().flush();
             ///Here is the start of the test that should be true
             //gene should be created
@@ -478,7 +478,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
             //assume the curator picks PROBLEM.
@@ -488,13 +487,13 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             candidateBean.setAction(CandidateBean.SET_PROBLEM);
             logger.info("tell the candidateController to handleView");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleView(candidateBean);
+            redundancyCandidateController.handleView(candidateBean);
             currentSession().flush();
 
             ///Here is the start of the test that should be true
             //problem and done flags in candidate are set, and that is it.
 
-            assertFalse("Not a rename",candidateBean.isRename());
+            assertFalse("Not a rename", candidateBean.isRename());
             logger.info("the.isProblem flag is:" + runCandidate.getCandidate().isProblem());
 
             assertTrue(runCandidate.getCandidate().isProblem());
@@ -523,7 +522,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            RedundancyCandidateController candidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 
@@ -533,7 +531,7 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
 
             logger.info("tell the candidateController to handleDone");
             //tell the controller to execute handle done with the bean that was created here.
-            candidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
+            redundancyCandidateController.handleDone(candidateBean,new BindException(candidateBean,"targetName"));
 
             ///Here is the start of the test that should be true
             //done flag in candidate is set, and that is it.
@@ -562,7 +560,6 @@ public class RedundancyCandidateControllerTest extends AbstractDatabaseTest {
             HibernateUtil.createTransaction();
             CandidateBean candidateBean = setUpBasicBeanRedunDoneSubmission();
             RunCandidate runCandidate = candidateBean.getRunCandidate();
-            RedundancyCandidateController redundancyCandidateController = new RedundancyCandidateController();
             //set the the runCandidate to be the one made from the createRenoData method
             //this is fake data.
 

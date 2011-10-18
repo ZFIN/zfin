@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 public class RenoRepositoryTest extends AbstractDatabaseTest {
 
-    private static RenoRepository repository= RepositoryFactory.getRenoRepository();;
+    private static RenoRepository repository= RepositoryFactory.getRenoRepository();
 
     private RenoService renoService = new RenoService() ;
 

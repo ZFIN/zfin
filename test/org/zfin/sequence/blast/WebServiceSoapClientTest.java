@@ -155,14 +155,13 @@ public class WebServiceSoapClientTest {
 
     // just to see what platforms are there, not worth running otherwise
 //    @Test
-    public void getMicroArrayLink() throws Exception{
+    public void getMicroArrayLink() throws Exception {
         Set<String> platforms = NCBIEfetch.getPlatformsForZebrafishMicroarrays();
         assertThat(platforms.size(), greaterThan(0));
-        for(String platform : platforms){
-            logger.info("platform: "+platform);
+        for (String platform : platforms) {
+            logger.info("platform: " + platform);
         }
     }
-
 
 
 }

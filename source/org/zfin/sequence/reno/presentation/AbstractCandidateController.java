@@ -281,6 +281,14 @@ public abstract class AbstractCandidateController {
         }
         return false;
     }
+
+    public void setRenoService(RenoService renoService) {
+        this.renoService = renoService;
+    }
+
+    public void setRenoRepository(RenoRepository renoRepository) {
+        this.renoRepository = renoRepository;
+    }
 }
 
 
