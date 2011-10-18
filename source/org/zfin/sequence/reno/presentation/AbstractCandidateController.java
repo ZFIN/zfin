@@ -241,7 +241,14 @@ public abstract class AbstractCandidateController {
 
     public void handleDone(CandidateBean candidateBean, BindingResult errors) {
         //this method will save the note if necessary.
+
+        if (candidateBean.getAction().equals(CandidateBean.UNLOCK_RECORD.toString())) {
+            RenoService.handleLock(candidateBean);
+            return ;
+        }
+
         handleNote(candidateBean);
+
 
         handleRunCandidate(candidateBean, errors);
 

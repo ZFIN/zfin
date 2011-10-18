@@ -3,8 +3,9 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<c:set var="isnomen" value="${formBean.runCandidate.run.nomenclature ? true : false }"/>
 <form:form name="candidateform" commandName="formBean" method="post"
-           action="/action/reno/candidate-view/${formBean.runCandidate.zdbID}"
+           action="/action/reno/${isnomen ? 'nomenclature' : 'redundancy'}-candidate-view/${formBean.runCandidate.zdbID}"
            cssStyle="display: inline;">
 
 Run name:

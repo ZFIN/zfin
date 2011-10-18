@@ -35,16 +35,16 @@ public class RedirectCandidateViewController {
             return "forward:/action/reno/redundancy-candidate-view/"+zdbID ;
         }
     }
-
-    @RequestMapping(value = "/candidate-view/{zdbID}",method = RequestMethod.POST)
-    protected String handlePost( @PathVariable String zdbID) throws Exception {
-        RunCandidate rc = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
-
-        if (rc.getRun().isNomenclature()) {
-            return "forward:/action/reno/nomenclature-candidate-view/"+zdbID ;
-        } else {
-            return "forward:/action/reno/redundancy-candidate-view/"+zdbID ;
-        }
-    }
+//
+//    @RequestMapping(value = "/candidate-view/{zdbID}",method = RequestMethod.POST)
+//    protected String handlePost( @PathVariable String zdbID) throws Exception {
+//        RunCandidate rc = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
+//
+//        if (rc.getRun().isNomenclature()) {
+//            return "forward:/action/reno/nomenclature-candidate-view/"+zdbID ;
+//        } else {
+//            return "forward:/action/reno/redundancy-candidate-view/"+zdbID ;
+//        }
+//    }
 
 }
