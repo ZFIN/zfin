@@ -31,6 +31,8 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
     private static RenoRepository repository= RepositoryFactory.getRenoRepository();;
 
+    private RenoService renoService = new RenoService() ;
+
 
     @Test
     // Test that there are Redundancy runs in the database
@@ -710,7 +712,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
         RunCandidate rc = (RunCandidate) criteria.list().get(0);
         assertNotNull(rc);
-        RenoService.populateLinkageGroups(rc);
+        renoService.populateLinkageGroups(rc);
     }
 
 //    @Test

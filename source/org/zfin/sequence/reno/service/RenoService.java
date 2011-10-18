@@ -3,6 +3,7 @@ package org.zfin.sequence.reno.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
@@ -29,13 +30,14 @@ import java.util.*;
 /**
  * Common reno services.
  */
+@Service
 public class RenoService {
 
-    private static final Logger logger = Logger.getLogger(RenoService.class);
+    private final Logger logger = Logger.getLogger(RenoService.class);
 
-    private static Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
+    private Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
 
-    public static List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
+    public  List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
         List<Marker> smallSegments = getRelatedMarkers(identifiedMarkers);
@@ -56,7 +58,7 @@ public class RenoService {
         return associatedMarkers;
     }
 
-    public static List<Marker> getRelatedMarkers(List<Marker> identifiedMarkers) {
+    public  List<Marker> getRelatedMarkers(List<Marker> identifiedMarkers) {
         List<Marker> segments = getSmallSegementClones(identifiedMarkers);
         if (CollectionUtils.isEmpty(segments)) {
             segments = getTranscriptProducts(identifiedMarkers);
@@ -64,7 +66,7 @@ public class RenoService {
         return segments;
     }
 
-    public static List<Marker> getSmallSegementClones(List<Marker> markers) {
+    public  List<Marker> getSmallSegementClones(List<Marker> markers) {
         List<Marker> segments = new ArrayList<Marker>();
 
         //pull the ESTs from the candidate
@@ -79,7 +81,7 @@ public class RenoService {
     }
 
 
-    public static List<Marker> getTranscriptProducts(List<Marker> markers) {
+    public  List<Marker> getTranscriptProducts(List<Marker> markers) {
         List<Marker> segments = new ArrayList<Marker>();
 
         //pull the ESTs from the candidate
@@ -100,7 +102,7 @@ public class RenoService {
      * @param orthologyPub      publication
      * @return set of OrthoEvidence codes
      */
-    public static Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
+    public  Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
         HashSet<OrthoEvidence> orthoEvidences = new HashSet<OrthoEvidence>();
         if (formEvidenceCodes != null) {
             for (OrthoEvidence.Code orthoevidence : formEvidenceCodes) {
@@ -122,7 +124,7 @@ public class RenoService {
      *
      * @param rc Runcandidate
      */
-    public static void populateLinkageGroups(RunCandidate rc) {
+    public  void populateLinkageGroups(RunCandidate rc) {
         if (rc == null)
             return;
 
@@ -153,7 +155,7 @@ public class RenoService {
         }
     }
 
-    public static void renameGene(Marker gene, String attributionZdbID) {
+    public  void renameGene(Marker gene, String attributionZdbID) {
         Person currentUser = Person.getCurrentSecurityUser();
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
@@ -169,7 +171,7 @@ public class RenoService {
      * @param rc   a RunCandidate that will lose it's note
      * @param gene a Marker that will gain a note.
      */
-    public static void moveNoteToGene(RunCandidate rc, Marker gene) {
+    public void moveNoteToGene(RunCandidate rc, Marker gene) {
 
         logger.info("enter moveNoteToGene");
         logger.info("existingGene abbrev: " + gene.getAbbreviation() + " " + gene.getZdbID() + " rc:" + rc.getZdbID());
@@ -190,7 +192,7 @@ public class RenoService {
      *
      * @param candidateBean Candidate Bean
      */
-    public static void handleLock(CandidateBean candidateBean) {
+    public  void handleLock(CandidateBean candidateBean) {
 
         RenoRepository rr = RepositoryFactory.getRenoRepository();
         Person currentUser = Person.getCurrentSecurityUser();
@@ -214,7 +216,7 @@ public class RenoService {
      *
      * @param run Run to finish.
      */
-    public static void finishRemainderRedundancy(Run run) {
+    public  void finishRemainderRedundancy(Run run) {
         List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getSangerRunCandidatesInQueue(run);
         RenoRepository rr = RepositoryFactory.getRenoRepository();
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
@@ -242,7 +244,7 @@ public class RenoService {
     }
 
 
-    public static void handleRedundancyNovelGene(RunCandidate runCandidate) {
+    public  void handleRedundancyNovelGene(RunCandidate runCandidate) {
         logger.info("enter handleNovelGene");
 
         if (!runCandidate.getRun().isRedundancy()) {
@@ -310,7 +312,7 @@ public class RenoService {
      * @param rc   the RunCandidate
      * @param gene the gene chosen by the curators (could be newly created)
      */
-    public static void createRedundancyRelationships(RunCandidate rc, Marker gene) {
+    public  void createRedundancyRelationships(RunCandidate rc, Marker gene) {
         logger.info("createRelationships gene: " + gene);
         logger.info("createRelationships runCanZdbID: " + rc.getZdbID());
 
@@ -323,7 +325,7 @@ public class RenoService {
         // thing to associate with
         List<Marker> markers = rc.getIdentifiedMarkers();
         logger.debug("createRelationships markers.size(): " + markers.size());
-        List<Marker> relatedMarkers = RenoService.getRelatedMarkers(markers);
+        List<Marker> relatedMarkers = getRelatedMarkers(markers);
 
         //pull the single gene from the collection, if there is one.
         Marker candidateMarker = null;
@@ -396,7 +398,7 @@ public class RenoService {
      * @param rc   Runcandidate
      * @param gene Gene object
      */
-    private static void createRedundancyDBLinks(RunCandidate rc, Marker gene) {
+    private void createRedundancyDBLinks(RunCandidate rc, Marker gene) {
         logger.info("creating DBLinks");
 
         if (!rc.getRun().isRedundancy()) {

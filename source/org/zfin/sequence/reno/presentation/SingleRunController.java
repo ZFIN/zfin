@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,10 +30,14 @@ public class SingleRunController {
 
     private final Logger logger = Logger.getLogger(SingleRunController.class);
 
-    private RenoRepository renoRepository = RepositoryFactory.getRenoRepository();  // set in spring configuration
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository(); // set in spring configuration
     private Validator validator = new RunBeanValidator();
 
+    @Autowired
+    private RenoService renoService ;
+
+    @Autowired
+    private RenoRepository renoRepository ;
 
     @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String runZdbID, @PathVariable String candidateType
@@ -145,7 +150,7 @@ public class SingleRunController {
             if (runBean.getAction() != null && runBean.getAction().equals(RunBean.FINISH_REMAINDER) && run.isRedundancy()) {
                 HibernateUtil.createTransaction();
                 try {
-                    RenoService.finishRemainderRedundancy(runBean.getRun());
+                    renoService.finishRemainderRedundancy(runBean.getRun());
                     HibernateUtil.flushAndCommitCurrentSession();
                 } catch (Exception e) {
                     logger.error("Problem finishing remainder of the reno jobs", e);

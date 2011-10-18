@@ -13,9 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.people.Person;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.List;
 
@@ -30,17 +28,20 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
     private Validator validator = new RedundancyCandidateValidator();
 
-    @RequestMapping(value=  "/redundancy-candidate-view/{zdbID}",method = RequestMethod.GET)
-    public String referenceData(@PathVariable String zdbID,CandidateBean candidateBean,Model model) {
-        candidateBean.createRunCandidateForZdbID(zdbID) ;
+    @RequestMapping(value = "/redundancy-candidate-view/{zdbID}", method = RequestMethod.GET)
+    public String referenceData(@PathVariable String zdbID, CandidateBean candidateBean, Model model) {
+        candidateBean.createRunCandidateForZdbID(zdbID);
         return handleGet(candidateBean, model);
     }
 
-    @RequestMapping(value = "/redundancy-candidate-view/{zdbID}",method = RequestMethod.POST)
-    protected ModelAndView onSubmit(@PathVariable String zdbID,CandidateBean candidateBean,BindingResult errors) throws Exception {
-        candidateBean.createRunCandidateForZdbID(zdbID) ;
-        ModelAndView modelAndView = handleSubmit(candidateBean,errors);
-        modelAndView.addObject("errors",errors) ;
+    @RequestMapping(value = "/redundancy-candidate-view/{zdbID}", method = RequestMethod.POST)
+    protected ModelAndView onSubmit(@PathVariable String zdbID, CandidateBean candidateBean, BindingResult errors) throws Exception {
+        if(doLock(zdbID, candidateBean)){
+            return new ModelAndView("redirect:/action/reno/redundancy-candidate-view/" + zdbID);
+        }
+        candidateBean.createRunCandidateForZdbID(zdbID);
+        ModelAndView modelAndView = handleSubmit(candidateBean, errors);
+        modelAndView.addObject("errors", errors);
         return modelAndView;
     }
 
@@ -55,7 +56,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
         //get the runcandidate from the bean and use the repository to populate it
 
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
-        RunCandidate rc = rr.getRunCandidateByID(runCandidateID);
+        RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);
 
 
         if (rc == null) {
@@ -66,20 +67,20 @@ public class RedundancyCandidateController extends AbstractCandidateController {
             throw exception;
         }
 
-        RenoService.populateLinkageGroups(rc);
+        renoService.populateLinkageGroups(rc);
 
         candidateBean.setRunCandidate(rc);
 
         candidateBean.setGeneAbbreviation(rc.getCandidate().getSuggestedName());
 
-        List<DataAlias> aliases = RepositoryFactory.getInfrastructureRepository().getDataAliases(candidateBean.getGeneAbbreviation());
-        boolean isGeneAlias = false ;
-        for(DataAlias alias : aliases){
-            if(alias.getDataZdbID().startsWith("ZDB-GENE")){
-                isGeneAlias = true ;
+        List<DataAlias> aliases = ir.getDataAliases(candidateBean.getGeneAbbreviation());
+        boolean isGeneAlias = false;
+        for (DataAlias alias : aliases) {
+            if (alias.getDataZdbID().startsWith("ZDB-GENE")) {
+                isGeneAlias = true;
             }
         }
-        candidateBean.setGeneAlias(isGeneAlias) ;
+        candidateBean.setGeneAlias(isGeneAlias);
 
 
         handleNote(candidateBean);
@@ -94,11 +95,11 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
         // check that this candidate is not already related to any of the
         // associated markers
-        List<Marker> associatedMarkers = RenoService.checkForExistingRelationships(candidateBean, rc);
+        List<Marker> associatedMarkers = renoService.checkForExistingRelationships(candidateBean, rc);
         candidateBean.setAllSingleAssociatedGenesFromQueries(associatedMarkers);
 
         //handle locking & unlocking
-        RenoService.handleLock(candidateBean);
+        renoService.handleLock(candidateBean);
 
         //handle problem toggling
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {
@@ -113,11 +114,11 @@ public class RedundancyCandidateController extends AbstractCandidateController {
         candidateBean.setCandidateProblem(rc.getCandidate().isProblem());
     }
 
-    public void handleRunCandidate(CandidateBean candidateBean,BindingResult errors) {
+    public void handleRunCandidate(CandidateBean candidateBean, BindingResult errors) {
         logger.info("enter handleRedundancy");
         Marker existingGene = null;
 
-        validator.validate(candidateBean,errors);
+        validator.validate(candidateBean, errors);
 
         //first, check the text input box, if there's anything there, we
         //ignore the value in the pulldown
@@ -135,13 +136,13 @@ public class RedundancyCandidateController extends AbstractCandidateController {
             //setDone happens at the end of handleDone - so there's nothing to do here
         } else if (candidateBean.getAssociatedGeneField().equals(CandidateBean.NOVEL)
                 && (existingGene == null)) {
-            String suggestedName = candidateBean.getRunCandidate().getCandidate().getSuggestedName() ;
-            if(false==suggestedName.startsWith("si:")){
-                errors.rejectValue("geneAbbreviation","","Only si: genes may be novel.  You need to create the gene '" + suggestedName + "'.");
+            String suggestedName = candidateBean.getRunCandidate().getCandidate().getSuggestedName();
+            if (false == suggestedName.startsWith("si:")) {
+                errors.rejectValue("geneAbbreviation", "", "Only si: genes may be novel.  You need to create the gene '" + suggestedName + "'.");
                 return;
             }
             //if the input box is filled, assume existing gene
-            RenoService.handleRedundancyNovelGene(candidateBean.getRunCandidate());
+            renoService.handleRedundancyNovelGene(candidateBean.getRunCandidate());
         } else {
             handleRedundancyExistingGene(candidateBean, existingGene);
         }
@@ -161,17 +162,17 @@ public class RedundancyCandidateController extends AbstractCandidateController {
         }
 
 
-        RenoService.createRedundancyRelationships(rc, existingGene);
+        renoService.createRedundancyRelationships(rc, existingGene);
 
         if (candidateBean.isRename()) {
             String abbreviation = candidateBean.getGeneAbbreviation();
             existingGene.setAbbreviation(abbreviation);
             existingGene.setName(abbreviation);
-            RenoService.renameGene(existingGene, rc.getRun().getNomenclaturePublication().getZdbID());
+            renoService.renameGene(existingGene, rc.getRun().getNomenclaturePublication().getZdbID());
         }
 
         //create data note, copy curator note to data note, set curator note to nu
-        RenoService.moveNoteToGene(rc, existingGene);
+        renoService.moveNoteToGene(rc, existingGene);
         logger.info("handling an existing gene - exit");
     }
 

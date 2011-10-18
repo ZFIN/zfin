@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.orthology.Species;
 import org.zfin.people.Person;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RunCandidate;
-import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,19 +34,33 @@ public class NomenclatureCandidateController extends AbstractCandidateController
     private static final Logger logger = Logger.getLogger(NomenclatureCandidateController.class);
     private Validator validator = new NomenclatureCandidateValidator();
 
-    @RequestMapping(value=  "/nomenclature-candidate-view/{zdbID}",method = RequestMethod.GET)
-    public String referenceData(@PathVariable String zdbID,CandidateBean candidateBean,Model model) {
-        candidateBean.createRunCandidateForZdbID(zdbID) ;
+    @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.GET)
+    public String referenceData(@PathVariable String zdbID, CandidateBean candidateBean, Model model) {
+        candidateBean.createRunCandidateForZdbID(zdbID);
         return handleGet(candidateBean, model);
     }
 
-    @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}",method = RequestMethod.POST)
-    public ModelAndView onSubmit(@PathVariable String zdbID,CandidateBean candidateBean,BindingResult errors) throws Exception {
-        candidateBean.createRunCandidateForZdbID(zdbID) ;
-        ModelAndView modelAndView = handleSubmit(candidateBean,errors);
-        modelAndView.addObject("errors",errors) ;
+    @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.POST)
+    public ModelAndView onSubmit(@PathVariable String zdbID, CandidateBean candidateBean, BindingResult errors) throws Exception {
+        if (doLock(zdbID, candidateBean)) {
+            return new ModelAndView("redirect:/action/reno/nomenclature-candidate-view/" + zdbID);
+        }
+        if (candidateBean.getAction().equals(CandidateBean.LOCK_RECORD.toString())) {
+            if (candidateBean.getRunCandidate() == null) {
+                RunCandidate runCandidate = renoRepository.getRunCandidateByID(zdbID);
+                candidateBean.setRunCandidate(runCandidate);
+            }
+            HibernateUtil.createTransaction();
+            renoService.handleLock(candidateBean);
+            HibernateUtil.flushAndCommitCurrentSession();
+        }
+
+        candidateBean.createRunCandidateForZdbID(zdbID);
+        ModelAndView modelAndView = handleSubmit(candidateBean, errors);
+        modelAndView.addObject("errors", errors);
         return modelAndView;
     }
+
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -58,7 +71,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
     public void handleView(CandidateBean candidateBean) {
         //get the runcandidate from the bean and use the repository to populate it
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
-        RunCandidate rc = rr.getRunCandidateByID(runCandidateID);
+        RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);
 
         if (rc == null) {
             //the id was bad, return now, the jsp will handle the error
@@ -67,7 +80,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             logger.error(errorMessage, exception);
             throw exception;
         }
-        RenoService.populateLinkageGroups(rc);
+        renoService.populateLinkageGroups(rc);
 
         candidateBean.setRunCandidate(rc);
 
@@ -77,12 +90,12 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 //        LOG.debug("Run.isNomenclature: " + nomenclatureRun.isNomenclature());
 
         //populate fields as necessary..
-        candidateBean.setHumanReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+        candidateBean.setHumanReferenceDatabase(sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
                 Species.HUMAN));
-        candidateBean.setMouseReferenceDatabase(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+        candidateBean.setMouseReferenceDatabase(sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.GENE,
                 ForeignDBDataType.DataType.ORTHOLOGUE,
                 ForeignDBDataType.SuperType.ORTHOLOGUE,
@@ -106,11 +119,11 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         // check that this candidate is not already related to any of the
         // associated markers
-        List<Marker> associatedMarkers = RenoService.checkForExistingRelationships(candidateBean, rc);
+        List<Marker> associatedMarkers = renoService.checkForExistingRelationships(candidateBean, rc);
         candidateBean.setAllSingleAssociatedGenesFromQueries(associatedMarkers);
 
         //handle locking & unlocking
-        RenoService.handleLock(candidateBean);
+        renoService.handleLock(candidateBean);
 
         //handle problem toggling
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.SET_PROBLEM)) {
@@ -126,9 +139,9 @@ public class NomenclatureCandidateController extends AbstractCandidateController
     }
 
 
-    public void handleRunCandidate(CandidateBean candidateBean,BindingResult errors) {
+    public void handleRunCandidate(CandidateBean candidateBean, BindingResult errors) {
         logger.info("handleRunCandidate - entry");
-        validator.validate(candidateBean,errors);
+        validator.validate(candidateBean, errors);
 
         RunCandidate rc = candidateBean.getRunCandidate();
 
@@ -143,7 +156,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             geneToRename.setAbbreviation(newAbbreviation);
             geneToRename.setName(newGeneName);
 //            renameGene(geneToRename, candidateBean.getOrthologyPublicationZdbID());
-            RenoService.renameGene(geneToRename, candidateBean.getNomenclaturePublicationZdbID());
+            renoService.renameGene(geneToRename, candidateBean.getNomenclaturePublicationZdbID());
         }
 
         //handle gene families
@@ -156,7 +169,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             gene.setFamilyName(families);
         }
         handleOrthology(candidateBean, geneToRename);
-        RenoService.moveNoteToGene(rc, geneToRename);
+        renoService.moveNoteToGene(rc, geneToRename);
 
         logger.info("handleRunCandidate - exit");
     }

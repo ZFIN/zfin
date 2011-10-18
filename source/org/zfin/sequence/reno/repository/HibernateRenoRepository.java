@@ -11,6 +11,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.people.Person;
 import org.zfin.sequence.blast.Hit;
@@ -23,6 +24,7 @@ import org.zfin.sequence.reno.presentation.RunBean;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class HibernateRenoRepository implements RenoRepository {
 
     private static final Logger LOG = Logger.getLogger(HibernateRenoRepository.class);

@@ -3,6 +3,7 @@ package org.zfin.sequence.reno.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,6 +26,7 @@ import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.reno.service.RenoService;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -38,10 +40,17 @@ import java.util.Set;
 public abstract class AbstractCandidateController {
 
     private static Logger LOG = Logger.getLogger(AbstractCandidateController.class);
-    protected static RenoRepository rr = RepositoryFactory.getRenoRepository();
-    protected static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    protected static OrthologyRepository or = RepositoryFactory.getOrthologyRepository();
-    protected static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    protected MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+    protected OrthologyRepository or = RepositoryFactory.getOrthologyRepository();
+    protected InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+
+
+    @Autowired
+    protected RenoService renoService;
+
+    @Autowired
+    protected RenoRepository renoRepository;
 
     /**
      * Does all the work for referenceData method, handles loading up the runCandidate for viewing,
@@ -80,7 +89,7 @@ public abstract class AbstractCandidateController {
     protected ModelAndView handleSubmit(CandidateBean candidateBean, BindingResult errors) throws Exception {
 
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
-        RunCandidate rc = rr.getRunCandidateByID(runCandidateID);
+        RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);
         candidateBean.setRunCandidate(rc);
 
         // don't try to process it, just send it to the end.
@@ -154,7 +163,7 @@ public abstract class AbstractCandidateController {
             humanOrtholog.setAccession(targetHumanAccession);
             humanOrtholog.setOrganism(Species.HUMAN);
 
-            Set<OrthoEvidence> orthoEvidences = RenoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
+            Set<OrthoEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getHumanOrthologyEvidence(), orthologyPub);
             humanOrtholog.setEvidences(orthoEvidences);
             LOG.info("Orthology: " + humanOrtholog);
             Updates up = new Updates();
@@ -183,7 +192,7 @@ public abstract class AbstractCandidateController {
             mouseOrtholog.setName(targetMouseAccession.getEntrezAccession().getName());
             mouseOrtholog.setAccession(targetMouseAccession);
             mouseOrtholog.setOrganism(Species.MOUSE);
-            Set<OrthoEvidence> orthoEvidences = RenoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
+            Set<OrthoEvidence> orthoEvidences = renoService.createEvidenceCollection(candidateBean.getMouseOrthologyEvidence(), orthologyPub);
             mouseOrtholog.setEvidences(orthoEvidences);
             Updates up = new Updates();
             Date date = new Date();
@@ -243,8 +252,8 @@ public abstract class AbstractCandidateController {
         //this method will save the note if necessary.
 
         if (candidateBean.getAction().equals(CandidateBean.UNLOCK_RECORD.toString())) {
-            RenoService.handleLock(candidateBean);
-            return ;
+            renoService.handleLock(candidateBean);
+            return;
         }
 
         handleNote(candidateBean);
@@ -257,6 +266,20 @@ public abstract class AbstractCandidateController {
 
         LOG.info("handleDone exit");
 
+    }
+
+    protected boolean doLock(String zdbID, CandidateBean candidateBean) {
+        if (candidateBean.getAction().equals(CandidateBean.LOCK_RECORD.toString())) {
+            if (candidateBean.getRunCandidate() == null) {
+                RunCandidate runCandidate = RepositoryFactory.getRenoRepository().getRunCandidateByID(zdbID);
+                candidateBean.setRunCandidate(runCandidate);
+            }
+            HibernateUtil.createTransaction();
+            renoService.handleLock(candidateBean);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return true;
+        }
+        return false;
     }
 }
 
