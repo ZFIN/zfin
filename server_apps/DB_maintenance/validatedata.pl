@@ -1438,13 +1438,12 @@ sub orthologueHasDblink ($) {
 
   my $routineName = "orthologueHasDblink";
 
-  my $sql = '
-             select zdb_id,
+  my $sql = 'select zdb_id,
                     c_gene_id,
                     ortho_name
                from orthologue
               where zdb_id not in (
-                                select dblink_linked_recid 
+                                select dblink_linked_recid
                                   from db_link) 
              ';
  
@@ -1482,9 +1481,9 @@ sub orthologyHasEvidence ($) {
   my $routineName = "orthologyHasEvidence";
 
   my $sql = "select zdb_id, c_gene_id, organism
-             from   orthologue
+             from  orthologue
              where  not exists (
-                       select oev_ortho_zdb_id
+                       select 'x'
                        from   orthologue_evidence
                        where  zdb_id = oev_ortho_zdb_id
                     )";
@@ -1528,16 +1527,15 @@ sub mouseOrthologyHasValidMGIAccession ($) {
   my $routineName = "mouseOrthologyHasMGIAccession";
 
   my $sql = "select zdb_id, c_gene_id, organism
-             from   orthologue
-             where  organism = 'Mouse'
-             and    exists (
+             from orthologue
+             where organism = 'Mouse'
+             and zdb_id in  (
                        select dblink_linked_recid
                        from   db_link, foreign_db_contains,foreign_db
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Mouse'
                        and    fdbcont_fdb_db_id = fdb_db_pk_id
                        and    fdb_db_name = 'MGI'
-                       and    zdb_id = dblink_linked_recid
                        and    dblink_acc_num like 'MGI:%'
                     )";
 
