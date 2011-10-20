@@ -533,6 +533,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "                     from phenotype_statement NOTnormal  " +
                 "                    where NOTnormal.phenos_phenox_pk_id = phenox_pk_id  " +
                 "                      and NOTnormal.phenos_tag != \"normal\")     " +
+                "        order by p.pub_date asc " +
                 "  " +
                 " ";
         return (PublicationLink) HibernateUtil.currentSession().createSQLQuery(sql)
