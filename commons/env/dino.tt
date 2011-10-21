@@ -36,6 +36,7 @@
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	judys\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
+<!--|MUTANT_NAME|-->	dino
 <!--|NOMEN_COORDINATOR|-->	judys\@cs.uoregon.edu
 <!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig

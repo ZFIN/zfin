@@ -13,9 +13,14 @@ Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.a
 #version independent gbrowse link
 RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
 
+#Allow use of same cgi-bin/webdriver path on all dev sites
+RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+
+#Remove extra stuff for home page url
+RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
+
 #lab designation page
 Redirect  /zf_info/zfbook/lab_desig.html http://<!--|DOMAIN_NAME|-->/action/feature/line-designations
-
 
 # retired apg urls
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]

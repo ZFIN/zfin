@@ -36,6 +36,7 @@
 <!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
 <!--|MACHINE_NAME|-->	helix
+<!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig

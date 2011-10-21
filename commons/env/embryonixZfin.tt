@@ -33,6 +33,7 @@
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	embryonix
+<!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu

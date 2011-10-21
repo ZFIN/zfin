@@ -36,6 +36,7 @@
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	staylor\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
+<!--|MUTANT_NAME|-->	albino
 <!--|NOMEN_COORDINATOR|-->	staylor\@cs.uoregon.edu
 <!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
