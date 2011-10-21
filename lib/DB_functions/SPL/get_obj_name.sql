@@ -88,7 +88,46 @@ get_obj_name(zdbId varchar(50))
       into objName
       from image
      where img_zdb_id = zdbId;
-
+  elif (objType = "BHIT") then
+    select bhit_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from blast_hit
+     where bhit_zdb_id = zdbId;
+  elif (objType = "BLASTDB") then
+    select blastdb_name		-- don't have names, return ZDB ID
+      into objName
+      from blast_database
+     where blastdb_zdb_id = zdbId;
+  elif (objType = "BQRY") then
+    select bqry_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from blast_query
+     where bqry_zdb_id = zdbId;
+  elif (objType = "BRPT") then
+    select brpt_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from blast_report
+     where brpt_zdb_id = zdbId;
+  elif (objType = "CND") then
+    select cnd_suggested_name		-- don't have names, return ZDB ID
+      into objName
+      from candidate
+     where cnd_zdb_id = zdbId;
+  elif (objType = "RUN") then
+    select run_name		-- don't have names, return ZDB ID
+      into objName
+      from run
+     where run_zdb_id = zdbId;
+  elif (objType = "RUNCAN") then
+    select runcan_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from run_Candidate
+     where runcan_zdb_id = zdbId;
+  elif (objType = "TERMDEF") then
+    select termdef_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from term_definition
+     where termdef_zdb_id = zdbId;
   -- Now, list the less frequently hit types in alphabetical order
 
   elif (objType = "ANAT") then
