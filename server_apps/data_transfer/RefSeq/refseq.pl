@@ -179,7 +179,7 @@ sub dblinksReport()
                              from db_link, foreign_db_contains, foreign_db
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                               and fdbcont_fdb_db_id = fdb_db_pk_id
-                               and fdb_db_name in ("RefSeq","Entrez Gene","UniGene","Genbank","GenPept")
+                               and fdb_db_name in ("RefSeq","Gene","UniGene","Genbank","GenPept")
                              group by fdb_db_name;'
 			   );
     $cur->execute;

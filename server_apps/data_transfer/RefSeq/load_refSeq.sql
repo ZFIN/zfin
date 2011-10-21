@@ -46,7 +46,7 @@ WHERE llhs_ll_id = dblink_acc_num
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdbcont_organism_common_name = "Human"
   and fdbdt_data_type = "orthologue"
-  and fdb_db_name = "Entrez Gene"
+  and fdb_db_name = "Gene"
   and fdbcont_fdb_db_id = fdb_db_pk_id
   and fdbcont_fdbdt_id = fdbdt_pk_id
   and dblink_linked_recid = zdb_id
@@ -80,7 +80,7 @@ WHERE llmm_ll_id = dblink_acc_num
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdbcont_organism_common_name = "Mouse"
   and fdbdt_data_type = "orthologue"
-  and fdb_db_name = "Entrez Gene"
+  and fdb_db_name = "Gene"
   and dblink_linked_recid = zdb_id
   and c_gene_id = mrkr_zdb_id
   and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -466,7 +466,7 @@ where exists
 INSERT INTO tmp_db_link
   SELECT
     mrkr_zdb_id,
-    'Entrez Gene',
+    'Gene',
     llzdb_ll_id,
     'uncurated ' || TODAY || ' Entrez load',
     'x',
@@ -849,7 +849,7 @@ WHERE exists
 !echo 'add active data'
 {
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Entrez Gene";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Gene";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenBank";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenPept";
 
@@ -890,7 +890,7 @@ INSERT INTO db_link
         tmp_acc_num,
         tmp_length
   FROM tmp_db_link, foreign_db_contains, foreign_db_data_type,foreign_db 
-  WHERE tmp_db_name = "Entrez Gene"
+  WHERE tmp_db_name = "Gene"
     AND tmp_db_name = fdb_db_name
     AND fdbcont_fdbdt_id = fdbdt_pk_id
     AND fdbcont_fdb_db_id = fdb_db_pk_id
