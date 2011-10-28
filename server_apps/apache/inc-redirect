@@ -17,6 +17,11 @@ RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
 
+#Do not allow https on the home page(fixes bug in logout)
+RewriteCond %{HTTPS} =on
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^/$ http://%{SERVER_NAME}/ [R=301,L]
+
 #Remove extra stuff for home page url
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
