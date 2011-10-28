@@ -55,6 +55,16 @@ EFFECTS
 
 <?/MIERROR> 
 
+<?MICOMMENT>for FB case 7692, a meta redirect is implemented<?/MICOMMENT>
+<?MISQL SQL="select * from publication where zdb_id ='$OID' and jtype = 'Curation';"><?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <head>
+   	    <?MIVAR>
+   	      <meta http-equiv="Refresh" content="0; url=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">
+   	    <?/MIVAR>
+      </head>
+<?/MIBLOCK>
+
 <?MIVAR NAME=debugg>false<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$OID)">
