@@ -970,4 +970,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals(1,links.size());
         assertTrue(links.get(0).getAccession().startsWith("OTTDARG0000"));
     }
+
+    @Test
+    public void getAllEngineeredRegions(){
+        List<Marker> engineeredRegions = markerRepository.getAllEngineeredRegions();
+        assertNotNull(engineeredRegions);
+        assertThat(engineeredRegions.size(), greaterThan(10));
+    }
+
+
 }

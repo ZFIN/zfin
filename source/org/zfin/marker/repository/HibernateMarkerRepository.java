@@ -2174,4 +2174,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(query.list());
         return linkDisplay;
     }
+
+    /**
+     * Retrieve all engineered region markers.
+     * @return
+     */
+    public List<Marker> getAllEngineeredRegions() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.eq("markerType.name", Marker.Type.REGION.toString()));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        return (List<Marker>) criteria.list();
+    }
 }

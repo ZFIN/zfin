@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+
 /**
  */
 @Controller
@@ -49,9 +51,7 @@ public class MarkerViewController {
     @Autowired
     private TranscriptViewController transcriptViewController;
     @Autowired
-    private GenericMarkerViewController genericMarkerViewController ;
-
-
+    private GenericMarkerViewController genericMarkerViewController;
 
 
     @RequestMapping("/view/{key}")
@@ -90,28 +90,27 @@ public class MarkerViewController {
                 }
             }
 
-            if(marker!=null){
+            if (marker != null) {
                 key = marker.getZdbID();
             }
         }
 
-        if (key == null || key.isEmpty() || false==markerRepository.markerExistsForZdbID(key)){
+        if (key == null || key.isEmpty() || false == markerRepository.markerExistsForZdbID(key)) {
             model.addAttribute(LookupStrings.ZDB_ID, key);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-        else {
+        } else {
             return getViewForMarkerZdbID(model, key, userAgent);
         }
     }
 
-    public String getTypeForZdbID(String zdbID){
-        Matcher matcher = typePattern.matcher(zdbID) ;
-        if(matcher.matches()){
+    public String getTypeForZdbID(String zdbID) {
+        Matcher matcher = typePattern.matcher(zdbID);
+        if (matcher.matches()) {
             int numGroups = matcher.groupCount();
-            assert(numGroups==1);
+            assert (numGroups == 1);
             return matcher.group(1);
         }
-        return null ;
+        return null;
     }
 
     private String getViewForMarkerZdbID(Model model, String zdbID, String userAgent) {
@@ -153,12 +152,12 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.PAC_END.name())
                     || type.equals(Marker.Type.REGION.name())
                     ) {
-                return genericMarkerViewController.getGenericMarkerView(model,zdbID);
+                return genericMarkerViewController.getGenericMarkerView(model, zdbID);
             }
             // includes GENEFAMILY and INDEL!
             else {
                 logger.error("Should not display marker of type " + type + " for ID " + zdbID);
-                return genericMarkerViewController.getGenericMarkerView(model,zdbID);
+                return genericMarkerViewController.getGenericMarkerView(model, zdbID);
             }
 
         } catch (Exception e) {
@@ -166,6 +165,14 @@ public class MarkerViewController {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
+    }
+
+    @RequestMapping("/view-all-engineered-regions/")
+    public String viewAllEngineeredRegions(Model model) {
+
+        List<Marker> engineeredRegions = getMarkerRepository().getAllEngineeredRegions();
+        model.addAttribute("engineeredRegions",engineeredRegions);
+        return "marker/view-all-engineered-regions.page";
     }
 
 }

@@ -338,4 +338,10 @@ public interface MarkerRepository {
    Genotype getStrainForTranscript(String zdbID);
 
    List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage);
+
+    /**
+     * Retrieves all engineered region markers.
+     * @return
+     */
+    List<Marker> getAllEngineeredRegions();
 }
