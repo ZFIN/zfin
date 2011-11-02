@@ -186,14 +186,14 @@
 
     </class>
 
-    <class name="org.zfin.people.LabFeaturePrefix" table="lab_feature_prefix">
+    <class name="org.zfin.people.LabFeaturePrefix" table="source_feature_prefix">
         <!-- Do not create a new record on its own but use
 
              the Person class. Only used to delete an account info record -->
         <composite-id>
-            <key-property name="currentDesignation" column="lfp_current_designation"/>
-            <key-many-to-one name="featurePrefix" column="lfp_prefix_id"/>
-            <key-many-to-one name="lab" column="lfp_lab_zdb_id" class="Lab"/>
+            <key-property name="currentDesignation" column="sfp_current_designation"/>
+            <key-many-to-one name="featurePrefix" column="sfp_prefix_id"/>
+            <key-many-to-one name="organization" column="sfp_source_zdb_id" class="Organization"/>
         </composite-id>
     </class>
 
