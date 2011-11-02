@@ -28,6 +28,7 @@ import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.Species;
 import org.zfin.people.CuratorSession;
 import org.zfin.people.Lab;
+import org.zfin.people.Organization;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -466,7 +467,7 @@ public class DTOConversionService {
         if (featurePrefix != null) {
             featureDTO.setLabPrefix(featurePrefix.getPrefixString());
         }
-        Lab labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
+        Organization labByFeature = RepositoryFactory.getFeatureRepository().getLabByFeature(feature);
         if (labByFeature != null) {
             featureDTO.setLabOfOrigin(labByFeature.getZdbID());
             logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
@@ -1051,6 +1052,23 @@ public class DTOConversionService {
             }
         }
         return labDTO;
+    }
+
+     public static OrganizationDTO convertToOrganizationDTO(Organization lab) {
+        OrganizationDTO organizationDTO = new OrganizationDTO();
+        organizationDTO.setZdbID(lab.getZdbID());
+        organizationDTO.setName(lab.getName());
+        return organizationDTO;
+    }
+
+    public static List<OrganizationDTO> convertToOrganizationDTO(List<Organization> labsOfOrigin) {
+        List<OrganizationDTO> organizationDTO = new ArrayList<OrganizationDTO>();
+        if (CollectionUtils.isNotEmpty(labsOfOrigin)) {
+            for (Organization lab : labsOfOrigin) {
+                organizationDTO.add(DTOConversionService.convertToOrganizationDTO(lab));
+            }
+        }
+        return organizationDTO;
     }
 
     public static FeaturePrefixDTO convertToFeaturePrefixDTO(FeaturePrefix featurePrefix) {
