@@ -18,6 +18,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.ValidationException;
+
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -28,6 +29,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
 import org.zfin.people.FeatureSource;
 import org.zfin.people.Lab;
+import org.zfin.people.Organization;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -51,7 +53,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
  private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
-    private List<Lab> labsOfOrigin = null;
+    private List<Organization> labsOfOrigin = null;
 
 
     private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation.";
@@ -141,7 +143,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         // get labs of origin for feature
-        Lab existingLabOfOrigin = featureRepository.getLabByFeature(feature);
+        Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
             if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
 Lab newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
@@ -158,19 +160,19 @@ Lab newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
 
 
     /**
-     * Returns the current list of labs, always recaching the in the background.
+     * Returns the current list of labs, always reaching the in the background.
      *
      * @return A string of available labs.
      */
-    public List<LabDTO> getLabsOfOriginWithPrefix() {
+    public List<OrganizationDTO> getLabsOfOriginWithPrefix() {
         if (labsOfOrigin == null) {
             labsOfOrigin = featureRepository.getLabsOfOriginWithPrefix();
-            return DTOConversionService.convertToLabDTO(labsOfOrigin);
+            return DTOConversionService.convertToOrganizationDTO(labsOfOrigin);
         } else {
-            List<Lab> returnList = Arrays.asList(new Lab[labsOfOrigin.size()]);
+            List<Organization> returnList = Arrays.asList(new Organization[labsOfOrigin.size()]);
             java.util.Collections.copy(returnList, labsOfOrigin);
             new SupplierCacheThread().start();
-            return DTOConversionService.convertToLabDTO(returnList);
+            return DTOConversionService.convertToOrganizationDTO(returnList);
         }
     }
 
@@ -430,7 +432,7 @@ Lab newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
         }
 
         if (featureDTO.getLabOfOrigin() != null) {
-            Lab lab = (Lab) HibernateUtil.currentSession().get(Lab.class, featureDTO.getLabOfOrigin());
+            Organization lab = (Organization) HibernateUtil.currentSession().get(Organization.class, featureDTO.getLabOfOrigin());
             if (lab == null) {
                 throw new RuntimeException("lab not found: " + featureDTO.getLabOfOrigin());
             }
