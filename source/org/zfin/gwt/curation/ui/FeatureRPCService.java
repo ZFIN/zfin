@@ -30,7 +30,7 @@ public interface FeatureRPCService extends RemoteService {
 
 
     List<FeatureDTO> getFeaturesForPub(String pubZdbId);
-    List<LabDTO> getLabsOfOriginWithPrefix();
+    List<OrganizationDTO> getLabsOfOriginWithPrefix();
     List<FeaturePrefixDTO> getPrefix(String name);
     FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
     FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;

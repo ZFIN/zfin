@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.people.Organization;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface FeatureRPCServiceAsync {
 
-    void getLabsOfOriginWithPrefix(AsyncCallback<List<LabDTO>> async);
+    void getLabsOfOriginWithPrefix(AsyncCallback<List<OrganizationDTO>> async);
     void getPrefix(String name, AsyncCallback<List<FeaturePrefixDTO>> async);
     void createFeature(FeatureDTO featureDTO, AsyncCallback<FeatureDTO> async);
     void editFeatureDTO(FeatureDTO featureDTO, AsyncCallback<FeatureDTO> async);
