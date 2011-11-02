@@ -1,27 +1,30 @@
 package org.zfin.feature.presentation;
 
 import org.zfin.people.Lab;
+import org.zfin.people.Organization;
 
 /**
  * A wrapper around a lab that gets displayed in line designation.
  */
 public class LabEntry implements Comparable<LabEntry> {
 
-    private Lab lab ;
+    private Organization organization ;
     private boolean currentLineDesignation ;
 
-    public LabEntry(Lab lab,boolean currentLineDesignation){
-        this.lab = lab;
+    public LabEntry(Organization organization,boolean currentLineDesignation){
+        this.organization = organization;
         this.currentLineDesignation = currentLineDesignation ;
     }
 
-    public Lab getLab() {
-        return lab;
+    public Organization getOrganization() {
+        return organization;
     }
 
-    public void setLab(Lab lab) {
-        this.lab = lab;
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
+
+
 
     public boolean isCurrentLineDesignation() {
         return currentLineDesignation;
@@ -37,7 +40,7 @@ public class LabEntry implements Comparable<LabEntry> {
             return (isCurrentLineDesignation() ? -1 : 1) ;
         }
         else{
-            return getLab().getName().compareToIgnoreCase(labEntry.getLab().getName()) ;
+            return getOrganization().getName().compareToIgnoreCase(labEntry.getOrganization().getName()) ;
         }
     }
 
@@ -46,7 +49,7 @@ public class LabEntry implements Comparable<LabEntry> {
         if(o==null) return false ;
         if(o instanceof LabEntry){
             LabEntry otherLab = (LabEntry) o ;
-            return lab.equals(otherLab.getLab());
+            return organization.equals(otherLab.getOrganization());
         }
         return false ;
     }
