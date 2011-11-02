@@ -408,11 +408,11 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         mutageeBox.addEnumValues(Mutagee.values());
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
 
-        FeatureRPCService.App.getInstance().getLabsOfOriginWithPrefix(new FeatureEditCallBack<List<LabDTO>>("Failed to load labs",this) {
-            public void onSuccess(List<LabDTO> list) {
+        FeatureRPCService.App.getInstance().getLabsOfOriginWithPrefix(new FeatureEditCallBack<List<OrganizationDTO>>("Failed to load labs",this) {
+            public void onSuccess(List<OrganizationDTO> list) {
                 labOfOriginBox.clear();
                 labOfOriginBox.addNull();
-                for(LabDTO labDTO : list){
+                for(OrganizationDTO labDTO : list){
                     labOfOriginBox.addItem(labDTO.getName(),labDTO.getZdbID());
                 }
             }
