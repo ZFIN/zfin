@@ -15,7 +15,14 @@ This file just does some important setup that needs to happen each time we enter
 <!-- OK, NOW GET CURRENT VALUES FROM THE temporary COMPANY ENTRY, PUTTING THEM
       INTO THE FORM. For certain variables, we want them to be able to be passed in on the call commandline call to this new form; for those variables, we avoid replacing the passed in value (dont reset it!) -->
 
-<?MISQL SQL="select name, address,phone,fax,email,url,contact_person from company where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL SQL="
+ select name, address, phone, fax, email, url, contact_person,fp.fp_prefix
+    from company l
+    join source_feature_prefix lfp on lfp.lfp_source_zdb_id = l.zdb_id
+    join feature_prefix fp on fp.fp_pk_id=lfp.lfp_prefix_id
+    where zdb_id = '$temp_oid';
+    ">
+<?/MISQL>
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$address>$2<?/MIVAR>
 <?MIVAR NAME=$phone>$3<?/MIVAR>
@@ -23,6 +30,7 @@ This file just does some important setup that needs to happen each time we enter
 <?MIVAR NAME=$email>$5<?/MIVAR>
 <?MIVAR NAME=$url>$6<?/MIVAR>
 <?MIVAR NAME=$contact_person>$7<?/MIVAR>
+<?MIVAR NAME=$allele_prefix>$8<?/MIVAR>
 
 <!-- Now just returns back to new-company, which uses these values to display form.
 -->

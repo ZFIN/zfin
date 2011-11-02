@@ -234,9 +234,9 @@ $1</A>
 <?MISQL sql="
 select  fp.fp_institute_display
     from lab l
-     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
-     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
-    where zdb_id='$OID' and lfp_current_designation='t' 
+     join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
+    where zdb_id='$OID' and sfp_current_designation='t' 
     ;">
 <?MIVAR NAME=$lab_inst>$1<?/MIVAR>
     <?/MISQL>
@@ -259,10 +259,10 @@ function editPrefix(OID){
 <?MISQL sql="
 select  fp.fp_prefix
     from lab l
-     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
-     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+     join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
     where zdb_id='$OID' 
-    and lfp.lfp_current_designation='t'
+    and lfp.sfp_current_designation='t'
     ;">
 <?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
     <?/MISQL>
@@ -282,10 +282,10 @@ select  fp.fp_prefix
 <?MISQL sql="
 select  fp.fp_prefix
     from lab l
-     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
-     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+     join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
     where zdb_id='$OID' 
-    and lfp.lfp_current_designation='t'
+    and lfp.sfp_current_designation='t'
     ;">
 <?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
     <?/MISQL>
@@ -353,8 +353,8 @@ select  fp.fp_prefix
   </TD>
 <?MIELSE>  <!-- we want to divide the lab members list into two columns to save screen real estate -->
   <?MISQL SQL="select count(*)::integer from int_person_lab where target_id='$OID';">
-    <?MIVAR NAME=$num_lab_members>$1<?/MIVAR>
-    <?MIVAR NAME=$column_length>$(/,$num_lab_members,2)<?/MIVAR>
+    <?MIVAR NAME=$num_source_members>$1<?/MIVAR>
+    <?MIVAR NAME=$column_length>$(/,$num_source_members,2)<?/MIVAR>
   <?/MISQL>
   <?MISQL SQL="select b.full_name, b.zdb_id, a.position, c.labpos_order from int_person_lab a, person b, lab_position c where source_id=b.zdb_id and target_id='$OID' and a.position = c.labpos_position order by c.labpos_order,b.full_name;">
     <?MIVAR NAME=$labpos>$3<?/MIVAR>  

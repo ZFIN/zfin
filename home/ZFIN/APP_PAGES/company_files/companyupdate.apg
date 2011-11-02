@@ -23,9 +23,24 @@ print_name -- The human-understandable name (vs. the database column name) of
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
-    <?MISQL SQL="select $attr,name from company where zdb_id='$OID';"><?/MISQL>
-    <?MIVAR NAME=$current_value>$1<?/MIVAR>
-    <?MIVAR NAME=$update_target>$2<?/MIVAR>
+                                              <?MIBLOCK COND="$(NE,$attr,location)">
+                                                <?MISQL SQL="select $attr,name from company where zdb_id='$OID';"><?/MISQL>
+                                                  <?MIVAR NAME=$current_value>$1<?/MIVAR>
+                                                  <?MIVAR NAME=$update_target>$2<?/MIVAR>
+                                              <?MIELSE>
+
+                                              <?MISQL SQL="select  fp.fp_institute_display, name
+                                                  from company l
+                                                   join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+                                                   join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
+                                                  where zdb_id='$OID' and sfp_current_designation='t'
+                                                  ;">
+                                              <?/MISQL>
+
+                                                  <?MIVAR NAME=$current_value>$1<?/MIVAR>
+                                                  <?MIVAR NAME=$update_target>$2<?/MIVAR>
+                                              <?/MIBLOCK>
+
 
     <HTML>
     <?MIVAR>

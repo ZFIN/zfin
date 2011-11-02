@@ -46,6 +46,12 @@ ahead and look for it -- convert to OID if necessary -->
       function doDelete(pers_id) {
       window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Company_representative&new_value=NON_representative&pers_id='+pers_id)
       }
+      function changePrefix(new_prefix,old_prefix) {
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr_type=text&old_value='+old_prefix+'&new_value='+new_prefix)
+      }
+      function addPrefix(new_prefix,location,old_prefix) {
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr_type=text&old_value='+old_prefix+'&newloc='+location+'&new_value='+new_prefix)
+      }
     </SCRIPT>
   <?/MIVAR>
 
@@ -76,6 +82,7 @@ ahead and look for it -- convert to OID if necessary -->
   <?MIVAR NAME=$snapshot>$7<?/MIVAR>
   <?MIVAR NAME=$contact_person>$8<?/MIVAR>
   <?MIVAR NAME=$company_bio>$9<?/MIVAR>
+  <?MIVAR NAME=$allele_prefix><?/MIVAR>
 
   <?MIVAR NAME=$rec_title>COMPANY:$name<?/MIVAR>
 
@@ -219,6 +226,96 @@ ahead and look for it -- convert to OID if necessary -->
 
     </TD>
 
+    <br>
+    <?MIVAR COND="$(XST,$UPDATE)">
+      <INPUT TYPE=button value=Update onClick="doit('location','text','Institution')">
+    <?/MIVAR>
+    <?MIVAR NAME=comp_inst><?/MIVAR>
+    <b>Company: </b>
+    <?MISQL sql="
+    select  fp.fp_institute_display
+        from company l
+         join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+         join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
+        where zdb_id='$OID' and sfp_current_designation='t'
+        ;">
+    <?MIVAR NAME=$comp_inst>$1<?/MIVAR>
+        <?/MISQL>
+    <?MIVAR COND=$(NE,$comp_inst,)>
+      $comp_inst <?/MIVAR>
+    <br>
+
+    <?MIVAR COND="$(XST,$UPDATE)">
+    <script src="/javascript/prototype.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    function editPrefix(OID){
+       jQuery('editPrefix').load('/action/people/editLabPrefix?zdbID='+OID);
+    }
+    </script>
+    <?MICOMMENT>
+      <INPUT TYPE=button value="Edit" onClick="editPrefix('$OID')">
+      <div id="editPrefix"></div>
+    <?/MICOMMENT>
+    <?/MIVAR>
+    <?MISQL sql="
+    select  fp.fp_prefix
+        from company l
+         join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+         join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
+        where zdb_id='$OID'
+        and lfp.sfp_current_designation='t'
+        ;">
+    <?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
+        <?/MISQL>
+      <b>Line Designation: </b>
+    <?MIBLOCK COND="$(XST,$allele_prefix)">
+    <?MIBLOCK COND="$(NE,$allele_prefix,)">
+      <?MIVAR>
+      $allele_prefix
+      <?/MIVAR>
+    <?MIELSE>
+
+      none assigned
+    <?/MIBLOCK>
+    <?MIELSE>
+      none assigned
+    <?/MIBLOCK>
+    <?MISQL sql="
+    select  fp.fp_prefix
+        from company l
+         join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+         join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
+        where zdb_id='$OID'
+        and lfp.sfp_current_designation='t'
+        ;">
+    <?MIVAR NAME=$allele_prefix>$1<?/MIVAR>
+        <?/MISQL>
+    <br>
+    <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+      <SELECT NAME=companyprefix onChange="changePrefix(this.options[this.selectedIndex].value,'$allele_prefix')">
+      <!--  <option value=''></option>-->
+    <option $(IF,$(EC,$allele_prefix,NULL),SELECTED) value=NULL>
+    <?/MIVAR>
+    <?MISQL sql="
+    select  fp.fp_prefix
+         from feature_prefix fp
+         order by fp_prefix asc
+        ;">
+        <option $(IF,$(EC,$allele_prefix,$1),SELECTED) value=$1>$1
+      <?/MISQL>
+      </SELECT>
+
+    <?/MIBLOCK>
+
+
+
+    </TD>
+
+
+
+
+
     <?MIVAR COND="$(XST,$UPDATE)"> </TR><TR><TD> <HR width=80%> </TD></TR> <TR> <?/MIVAR>
 
     <A NAME="representative-info">
@@ -280,7 +377,44 @@ ahead and look for it -- convert to OID if necessary -->
     <br><FONT COLOR="#ff0000"> UPDATING Pubs:</FONT> You cannot directly update publications associated with a COMPANY. <A HREF="mailto:zfinadmn@zfin.org">Contact Administrator</A> if a publication you think should appear below is missing.<p>
     <?/MIVAR>
     <br>
+<script type="text/javascript">
+    function showAlleles(labZdbID){
+        alleleDiv = document.getElementById('alleleDesignation');
+        alleleDiv.style.display = 'inline' ;
+        jQuery('#alleleDesignation').load('/action/feature/features-for-lab/'+labZdbID);
+        alleleShowButton = document.getElementById('showAlleleLink');
+        alleleShowButton.style.display = 'none' ;
+        alleleHideButton = document.getElementById('hideAlleleLink');
+        alleleHideButton.style.display = 'inline' ;
+    }
 
+    function hideAlleles() {
+        alleleDiv = document.getElementById('alleleDesignation');
+        alleleDiv.style.display = 'none' ;
+        alleleShowButton = document.getElementById('showAlleleLink');
+        alleleShowButton.style.display = 'inline' ;
+        alleleHideButton = document.getElementById('hideAlleleLink');
+        alleleHideButton.style.display = 'none' ;
+    }
+</script>
+
+
+<HR width=80%>
+
+<?MISQL SQL="select count(*) from int_data_source where ids_source_zdb_id='$OID' and ids_data_zdb_id like '%ALT%'">
+<?MIVAR NAME=$ftrCount>$1<?/MIVAR>
+<?/MISQL>
+<?MIBLOCK COND="$(!=,0,$ftrCount)">
+<?MIVAR>
+&nbsp;
+<a id="showAlleleLink" href="javascript:;" onclick="showAlleles('$OID');"><img src="/images/plus-13.png" style="border:none;"></a>
+<?/MIVAR>
+<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()
+"><img src="/images/minus-13.png"  style="border:none;"></a>
+</b>
+Genomic Features originating from this company
+<div style="display: none;" id="alleleDesignation"></div>
+<?/MIBLOCK>
     <TABLE>
     <?MISQL SQL="select distinct a.title, 
 				year(pub_date) as pyear, 

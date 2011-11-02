@@ -17,9 +17,14 @@
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
           <a href="/action/antibody/create"><em>antibody</em></a>,
+
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/action/marker/transcript-add"><em>transcript</em></a>
+          <a href="/action/marker/transcript-add"><em>transcript</em></a>,
+           <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
+
+
+
 
         </li>
         <li>

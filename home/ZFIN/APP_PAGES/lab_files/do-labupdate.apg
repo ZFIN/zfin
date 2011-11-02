@@ -74,30 +74,30 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MISQL SQL="select fp_pk_id from feature_prefix where fp_prefix='$new_value'">
    <?MIVAR NAME=new_labprefix_id>$1<?/MIVAR>
 <?/MISQL>
-  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_current_designation='t'"><?/MISQL>
+  <?MISQL SQL="select count(*) from source_feature_prefix where sfp_source_zdb_id='$OID' and sfp_current_designation='t'"><?/MISQL>
     <?MIVAR NAME=$lab_prefix_ct>$1<?/MIVAR>
     <?MIBLOCK COND="$(=,1,$lab_prefix_ct)">
-      <?MISQL SQL="update lab_feature_prefix set lfp_current_designation='f' where lfp_lab_zdb_id='$OID'"><?/MISQL>
-  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_prefix_id='$new_labprefix_id'"><?/MISQL>
+      <?MISQL SQL="update source_feature_prefix set sfp_current_designation='f' where sfp_source_zdb_id='$OID'"><?/MISQL>
+  <?MISQL SQL="select count(*) from source_feature_prefix where sfp_source_zdb_id='$OID' and sfp_prefix_id='$new_labprefix_id'"><?/MISQL>
     <?MIVAR NAME=$newlab_prefix_ct>$1<?/MIVAR>
 
     <?MIBLOCK COND="$(=,1,$newlab_prefix_ct)">
-      <?MISQL SQL="update lab_feature_prefix set lfp_current_designation='t' where lfp_lab_zdb_id='$OID' and lfp_prefix_id='$new_labprefix_id'"><?/MISQL>
+      <?MISQL SQL="update source_feature_prefix set sfp_current_designation='t' where sfp_source_zdb_id='$OID' and sfp_prefix_id='$new_labprefix_id'"><?/MISQL>
      <?MIELSE>
-      <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
+      <?MISQL SQL="insert into source_feature_prefix(sfp_source_zdb_id,sfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
 <?/MIBLOCK>
     <?MIELSE>
-      <?MISQL SQL="insert into lab_feature_prefix(lfp_lab_zdb_id,lfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
+      <?MISQL SQL="insert into source_feature_prefix(sfp_source_zdb_id,sfp_prefix_id) select '$OID',fp_pk_id from feature_prefix where fp_prefix='$new_value';"><?/MISQL>
 
     <?/MIBLOCK>  
 <?MIELSE>
 
-  <?MISQL SQL="select count(*) from lab_feature_prefix where lfp_lab_zdb_id='$OID' and lfp_current_designation='t'"><?/MISQL>
+  <?MISQL SQL="select count(*) from source_feature_prefix where sfp_source_zdb_id='$OID' and sfp_current_designation='t'"><?/MISQL>
     <?MIVAR NAME=$lab_prefix_ct>$1<?/MIVAR>
 
     <?MIBLOCK COND="$(=,1,$lab_prefix_ct)">
 
-      <?MISQL SQL="delete from  lab_feature_prefix where lfp_lab_zdb_id='$OID'"><?/MISQL>
+      <?MISQL SQL="delete from  source_feature_prefix where sfp_source_zdb_id='$OID'"><?/MISQL>
      <?/MIBLOCK>
 <?/MIBLOCK>
 <?/MIBLOCK>
@@ -108,8 +108,8 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 
 <?MISQL SQL="select  fp.fp_prefix
     from lab l
-     join lab_feature_prefix lfp on lfp.lfp_lab_zdb_id=l.zdb_id
-     join feature_prefix fp on lfp.lfp_prefix_id=fp.fp_pk_id
+     join source_feature_prefix lfp on lfp.sfp_source_zdb_id=l.zdb_id
+     join feature_prefix fp on lfp.sfp_prefix_id=fp.fp_pk_id
     where zdb_id='$OID'
     ;">
 <?MIVAR NAME=$lab_prefix>$1<?/MIVAR>
