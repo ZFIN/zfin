@@ -26,10 +26,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrganizationLink;
-import org.zfin.people.FeatureSource;
-import org.zfin.people.Lab;
-import org.zfin.people.LabFeaturePrefix;
-import org.zfin.people.Person;
+import org.zfin.people.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -179,12 +176,17 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
      */
     public List<FeaturePrefixLight> getFeaturePrefixWithLabs(){
-        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
+        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
                 "from feature_prefix fp " +
-                "join lab_feature_prefix lfp on fp.fp_pk_id=lfp.lfp_prefix_id " +
-                "join lab l on lfp.lfp_lab_zdb_id=l.zdb_id " +
-                "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, lfp.lfp_current_designation " +
-                "order by fp.fp_prefix, l.name   " ;
+                "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
+                "join lab l on sfp.sfp_source_zdb_id=l.zdb_id " +
+                "union " +
+                  "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
+                "from feature_prefix fp " +
+                "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
+                "join company l on sfp.sfp_source_zdb_id=l.zdb_id " +
+                "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
+                "order by fp.fp_prefix, l.name " ;
         List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql).list() ;
         List<FeaturePrefixLight> featurePrefixLightList = new ArrayList<FeaturePrefixLight>() ;
         FeaturePrefixLight featurePrefixLight = null ;
@@ -276,8 +278,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @Override
-    public List<Lab> getLabsWithFeaturesForPrefix(String prefix){
-        String hql = " select distinct lfp.lab from LabFeaturePrefix lfp , Feature f, FeaturePrefix fp "
+    public List<Organization> getLabsWithFeaturesForPrefix(String prefix){
+        String hql = " select distinct lfp.organization from LabFeaturePrefix lfp , Feature f, FeaturePrefix fp "
                 + " where f.featurePrefix = fp "
                 + " and fp.prefixString = :featurePrefix "
                 + " and lfp.featurePrefix = fp "
@@ -285,16 +287,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return currentSession().createQuery(hql).setParameter("featurePrefix",prefix).list();
     }
 
-    public Lab getLabByFeature(Feature ftr) {
+    public Organization getLabByFeature(Feature ftr) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct l  from  FeatureSource fs, Lab l" +
+        String hql = "select distinct l  from  FeatureSource fs, Organization l" +
                 "     where fs.feature = :ftr " +
                 "    and fs.organization = l" ;
 
 
         Query query = session.createQuery(hql);
         query.setParameter("ftr", ftr);
-        return ((Lab) query.uniqueResult());
+        return ((Organization) query.uniqueResult());
 
     }
 
@@ -308,7 +310,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public String getCurrentPrefixForLab(String labZdbID) {
         Session session = HibernateUtil.currentSession();
-        String hqlLab1 = " select fp.prefixString from  LabFeaturePrefix  lfp join lfp.lab l " +
+        String hqlLab1 = " select fp.prefixString from  LabFeaturePrefix  lfp join lfp.organization l " +
                 " join lfp.featurePrefix fp " +
                 " where l.zdbID =:labZdbID" +
                 " and lfp.currentDesignation =:currentDesignation ";
@@ -320,10 +322,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public List<Lab> getLabsOfOriginWithPrefix(){
-        String hqlLab = " select distinct lfp.lab from LabFeaturePrefix lfp  "  +
+    public List<Organization> getLabsOfOriginWithPrefix(){
+        String hqlLab = " select distinct lfp.organization from LabFeaturePrefix lfp  "  +
                 " where lfp.featurePrefix is not null " +
-                " and lfp.lab.name is not null  " +
+                " and lfp.organization.name is not null  " +
                 " and lfp.currentDesignation = :true";
 
                Query query = HibernateUtil.currentSession().createQuery(hqlLab);
@@ -337,14 +339,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
                         return tuple[0];
                     }
                 })*/
-                     List<Lab> labs = (List<Lab>) query.list();
-                      Collections.sort(labs, new Comparator<Lab>(){
+                     List<Organization> organizations = (List<Organization>) query.list();
+                      Collections.sort(organizations, new Comparator<Organization>(){
             @Override
-            public int compare(Lab o1, Lab o2) {
+            public int compare(Organization o1, Organization o2) {
                 return o1.getName().compareTo(o2.getName()) ;
             }
         });
-      return labs;
+      return organizations;
     }
 
 
@@ -352,7 +354,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public List<FeaturePrefix> getLabPrefixes(String labName) {
         String hqlLab1 = " select lfp from LabFeaturePrefix lfp  " +
-                " join lfp.lab lb " +
+                " join lfp.organization lb " +
                 " where lb.name=:labName " +
                 " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
         List<LabFeaturePrefix> labFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1)
@@ -598,6 +600,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @param publicationZdbID Attributed publication zdbID.
      * @return List of feature objects attributed to this pub.
      */
+    public String getPrefix(String prefixString) {
+       Session session = HibernateUtil.currentSession();
+        String hqlLab1 = " select fp.prefixString from  FeaturePrefix fp where fp.prefixString =:prefixString ";
+        Query queryLab = session.createQuery(hqlLab1);
+        queryLab.setParameter("prefixString", prefixString);
+        return (String) queryLab.uniqueResult();
+    }
+
     public List<Feature> getFeatureForAttribution(String publicationZdbID) {
 
         String hql = "" +
@@ -671,10 +681,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         List<LabFeaturePrefix> labFeaturePrefixes = HibernateUtil.currentSession().createCriteria(LabFeaturePrefix.class)
                 .add(Restrictions.eq("lab.zdbID",labZdbId))
                 .list();
-        String hql = " update lab_feature_prefix  " +
-                " set lfp_current_designation = :currentDesignation " +
-                " where lfp_lab_zdb_id = :labZdbID " +
-                " and lfp_prefix_id = :prefix " ;
+        String hql = " update source_feature_prefix  " +
+                " set sfp_current_designation = :currentDesignation " +
+                " where sfp_source_zdb_id = :labZdbID " +
+                " and afp_prefix_id = :prefix " ;
         Query query = HibernateUtil.currentSession().createSQLQuery(hql) ;
         query.setString("labZdbID",labZdbId);
         for(LabFeaturePrefix labFeaturePrefix : labFeaturePrefixes){
@@ -713,7 +723,7 @@ HibernateUtil.currentSession().save(fpPrefix);
     }
 
     @Override
-    public int setLabOfOriginForFeature(Lab lab , Feature feature) {
+    public int setLabOfOriginForFeature(Organization lab , Feature feature) {
         String sql = " update int_data_source " +
                 " set ids_source_zdb_id = :newLabZdbId " +
                 " where ids_data_zdb_id  = :featureZdbId  " ;
@@ -723,7 +733,7 @@ HibernateUtil.currentSession().save(fpPrefix);
                 ;
         int recordsUpdated = query.executeUpdate();
         if(recordsUpdated!=1){
-            logger.error("A feature must of had multiple labs: "+ feature.getZdbID()
+            logger.error("A feature must have had multiple labs: "+ feature.getZdbID()
                     + " records updated: "+ recordsUpdated);
         }
         return recordsUpdated;

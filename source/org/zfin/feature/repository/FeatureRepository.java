@@ -11,6 +11,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
 import org.zfin.people.Lab;
 import org.zfin.people.LabFeaturePrefix;
+import org.zfin.people.Organization;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
@@ -44,18 +45,18 @@ public interface FeatureRepository {
 
     List<LabFeaturePrefix> getLabFeaturePrefixForPrefix(String prefix);
 
-    List<Lab> getLabsWithFeaturesForPrefix(String prefix);
+    List<Organization> getLabsWithFeaturesForPrefix(String prefix);
 
     /**
      * Save a new Lab object. If it exists a runtime exception is thrown.
      */
-    Lab getLabByFeature(Feature ftr);
+    Organization getLabByFeature(Feature ftr);
 
     String getPrefix(int labPrefixID);
 
     List<FeaturePrefix> getLabPrefixes(String labName);
 
-    List<Lab> getLabsOfOriginWithPrefix();
+    List<Organization> getLabsOfOriginWithPrefix();
 
     List<FeaturePrefixLight> getFeaturePrefixWithLabs();
 
@@ -108,9 +109,10 @@ public interface FeatureRepository {
     List<Feature> getFeaturesForLab(String labZdbId);
 
     FeaturePrefix setNewLabPrefix(String prefix, String location);
+    String getPrefix(String prefix);
 
 
-    int setLabOfOriginForFeature(Lab existingLabOfOrigin, Feature feature);
+    int setLabOfOriginForFeature(Organization existingLabOfOrigin, Feature feature);
 
     void deleteLabOfOriginForFeature(Feature feature);
 
