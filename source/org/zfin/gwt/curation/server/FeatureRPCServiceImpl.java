@@ -146,7 +146,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
             if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
-Lab newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
+                Organization newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
         } else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
