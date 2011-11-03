@@ -43,36 +43,7 @@ public class LineDesignationController {
         return "feature/features-for-lab.insert" ;
     }
 
-    @InitBinder
 
-    @RequestMapping(value={"/line-designations"},method = RequestMethod.POST)
-    public String saveLabPrefix(@ModelAttribute("lineDesignationBean")LineDesignationBean lineDesignationBean,BindingResult result, Model model) throws Exception {
-
-        String labPrefix = lineDesignationBean.getLineDesig() ;
-
-        LineDesignationValidator validator=new LineDesignationValidator();
-        validator.validate(lineDesignationBean, result);
-
-        if (result.hasErrors())    {
-            //model.addAttribute(LookupStrings.FORM_BEAN,lineDesignationBean) ;
-            result.reject(lineDesignationBean.getLineDesig());
-            return getFeaturePrefixes(model);
-        }
-        else {
-            HibernateUtil.createTransaction();
-            String returnPrefix = RepositoryFactory.getFeatureRepository().setNewLabPrefix(labPrefix, lineDesignationBean.getLineLocation()).getPrefixString();
-            if(returnPrefix==null){
-                throw new RuntimeException("Failed to save prefix["+ labPrefix +"]");
-            }
-            else{
-                HibernateUtil.flushAndCommitCurrentSession();
-                return getFeaturePrefixes(model);
-            }
-
-
-        }
-
-    }
 
 
     private String parsePrefix(String prefix) {
@@ -88,7 +59,7 @@ public class LineDesignationController {
         // either all entries are current or not
         for(LabFeaturePrefix labFeaturePrefix: labFeaturePrefixes){
             if(Person.isCurrentSecurityUserRoot() || labFeaturePrefix.getCurrentDesignation()){
-                labEntries.put(labFeaturePrefix.getLab().getZdbID(),new LabEntry(labFeaturePrefix.getLab(),labFeaturePrefix.getCurrentDesignation())) ;
+                labEntries.put(labFeaturePrefix.getOrganization().getZdbID(),new LabEntry(labFeaturePrefix.getOrganization(),labFeaturePrefix.getCurrentDesignation())) ;
             }
             if(false==allelesForPrefixBean.isHasNonCurrentLabs() && false==labFeaturePrefix.getCurrentDesignation()){
                 allelesForPrefixBean.setHasNonCurrentLabs(true);

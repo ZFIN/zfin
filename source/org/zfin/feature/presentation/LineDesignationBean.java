@@ -18,10 +18,6 @@ public class LineDesignationBean {
     private List<LabFeaturePrefixRow> labFeaturePrefixRows = null ;
     private List<FeaturePrefixLight> featurePrefixLightList = null ;
 
-    @NotEmpty(message="Lab Prefix cannot be blank")
-    private String lineDesig;
-    @NotEmpty(message="Lab Location cannot be blank")
-    private String lineLocation;
 
     public List<FeaturePrefixLight> getFeaturePrefixLightList() {
         return featurePrefixLightList;
@@ -42,7 +38,7 @@ public class LineDesignationBean {
 
             // if they are the same then, just add the lab
             if(labFeaturePrefix.getFeaturePrefix().getPrefixString().equals(lastPrefix)){
-                labFeaturePrefixRow.addLab(new LabEntry(labFeaturePrefix.getLab(),labFeaturePrefix.getCurrentDesignation()));
+                labFeaturePrefixRow.addLab(new LabEntry(labFeaturePrefix.getOrganization(),labFeaturePrefix.getCurrentDesignation()));
             }
             // if they are different, then create a new record
             else{
@@ -54,26 +50,27 @@ public class LineDesignationBean {
                 labFeaturePrefixRow.setPrefix(labFeaturePrefix.getFeaturePrefix().getPrefixString());
                 if(labFeaturePrefix.getLab().isActive()){
                     labFeaturePrefixRow.addLab(
-                            new LabEntry(labFeaturePrefix.getLab(),labFeaturePrefix.getCurrentDesignation()));
+                            new LabEntry(labFeaturePrefix.getOrganization(),labFeaturePrefix.getCurrentDesignation()));
                 }
             }
             if(labFeaturePrefixRow.getLocations()!=null
                     && labFeaturePrefixRow.getLocations().size()>0
                     && labFeaturePrefix.getCurrentDesignation()
-                    && labFeaturePrefix.getLab().getAddress()!=null
-                    && labFeaturePrefixRow.getLocations().contains(labFeaturePrefix.getLab().getAddress())){
+                    && labFeaturePrefix.getOrganization().getAddress()!=null
+                    && labFeaturePrefixRow.getLocations().contains(labFeaturePrefix.getOrganization().getAddress())){
                 logger.error("multiple locations for line designation: "
                         + labFeaturePrefix.getFeaturePrefix().getPrefixString()
-                        + " and lab: " + labFeaturePrefix.getLab().getName()
+                        + " and lab: " + labFeaturePrefix.getOrganization().getName()
                 );
             }
-            if(labFeaturePrefix.getCurrentDesignation() && labFeaturePrefix.getLab().isActive()){
+            if(labFeaturePrefix.getCurrentDesignation() && labFeaturePrefix.getOrganization().isActive()){
                 if(labFeaturePrefix.getFeaturePrefix().getInstitute()==null){
                     logger.error("Lab has null address: "
-                            + labFeaturePrefix.getLab());
+                            + labFeaturePrefix.getOrganization());
                 }
                 else{
                     labFeaturePrefixRow.addLocation(labFeaturePrefix.getFeaturePrefix().getInstitute());
+
                 }
             }
             lastPrefix = labFeaturePrefix.getFeaturePrefix().getPrefixString();
@@ -85,21 +82,7 @@ public class LineDesignationBean {
         return labFeaturePrefixRows;
     }
 
-    public String getLineDesig() {
-          return lineDesig;
-      }
 
-      public void setLineDesig(String lineDesig) {
-          this.lineDesig = lineDesig;
-      }
-
-      public String getLineLocation() {
-          return lineLocation;
-      }
-
-      public void setLineLocation(String lineLocation) {
-          this.lineLocation = lineLocation;
-      }
 
 
 }
