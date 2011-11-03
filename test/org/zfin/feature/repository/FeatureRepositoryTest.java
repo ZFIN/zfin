@@ -16,6 +16,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.people.Lab;
+import org.zfin.people.Organization;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -208,7 +209,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getLabsWithFeaturesForPrefix() {
-        List<Lab> labs = featureRepository.getLabsWithFeaturesForPrefix("b");
+        List<Organization> labs = featureRepository.getLabsWithFeaturesForPrefix("b");
         assertTrue(labs.size() > 5);
         assertTrue(labs.size() < 20);
     }
@@ -216,7 +217,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getLabsOfOriginWithPrefix() {
-        List<Lab> labs = featureRepository.getLabsOfOriginWithPrefix();
+        List<Organization> labs = featureRepository.getLabsOfOriginWithPrefix();
         assertNotNull(labs);
         logger.error("number of lab: " + labs.size());
         assertTrue(labs.size() > 200); // should be around 283, otherwise closer to 300
