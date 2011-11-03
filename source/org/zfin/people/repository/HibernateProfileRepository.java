@@ -321,8 +321,8 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     @Override
-    public Lab getLabById(String labZdbId) {
-        return (Lab) HibernateUtil.currentSession().get(Lab.class,labZdbId);
+    public Organization getLabById(String labZdbId) {
+        return (Organization) HibernateUtil.currentSession().get(Organization.class,labZdbId);
     }
 
     @Override

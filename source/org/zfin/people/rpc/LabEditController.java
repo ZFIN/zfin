@@ -9,6 +9,7 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.people.Lab;
+import org.zfin.people.Organization;
 import org.zfin.people.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -32,7 +33,7 @@ public class LabEditController {
 
     @RequestMapping(value={"/dev-tools/test-ajax/{id}"},method = RequestMethod.GET)
     public ModelAndView labTestEditPage(@PathVariable("id") String labZdbId){
-        Lab lab = profileRepository.getLabById(labZdbId) ;
+        Organization lab = profileRepository.getLabById(labZdbId) ;
         ModelAndView modelAndView = new ModelAndView("profile/lab-edit-test.page");
         modelAndView.addObject("lab",lab);
         List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;
@@ -50,7 +51,7 @@ public class LabEditController {
      */
     @RequestMapping(value={"/profile/editLabPrefix/{id}"},method = RequestMethod.GET)
     public ModelAndView editLabPrefix(@PathVariable("id") String labZdbId){
-        Lab lab = profileRepository.getLabById(labZdbId) ;
+        Organization lab = profileRepository.getLabById(labZdbId) ;
         ModelAndView modelAndView = new ModelAndView("profile/lab-edit-popup.page");
         modelAndView.addObject("lab",lab);
         List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;

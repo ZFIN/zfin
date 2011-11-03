@@ -152,7 +152,7 @@ public interface ProfileRepository {
      */
     CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
 
-    Lab getLabById(String labZdbId);
+    Organization getLabById(String labZdbId);
 
     List<OrganizationLink> getSupplierLinksForZdbId(String zdbID);
 }
