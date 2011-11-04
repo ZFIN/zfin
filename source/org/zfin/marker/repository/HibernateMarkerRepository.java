@@ -10,6 +10,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -50,6 +51,7 @@ import java.util.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 
+@Repository
 public class HibernateMarkerRepository implements MarkerRepository {
 
     private static Logger logger = Logger.getLogger(HibernateMarkerRepository.class);
@@ -1869,8 +1871,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "and " +
                 "dbl.dblink_linked_recid= :markerZdbId ";
         // case 7586 suppress OTTDARG's and ENSDARGG's on transcript pages
-        if(marker.getZdbID().startsWith("ZDB-TSCRIPT")){
-            sql += " and fdb.fdb_db_name != 'VEGA' " ;
+        if (marker.getZdbID().startsWith("ZDB-TSCRIPT")) {
+            sql += " and fdb.fdb_db_name != 'VEGA' ";
         }
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", marker.getZdbID())
@@ -2131,9 +2133,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage) {
 
-        if(false==gene.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
-            logger.error("method only to be used with GENEDOM: "+gene.toString());
-            return new ArrayList<LinkDisplay>() ;
+        if (false == gene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            logger.error("method only to be used with GENEDOM: " + gene.toString());
+            return new ArrayList<LinkDisplay>();
         }
 
         String sql = "    select distinct" +
@@ -2165,7 +2167,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "        mr.mrel_type='gene produces transcript'" +
                 "        and " +
                 "        fdb.fdb_db_name='VEGA'" + // Ensembl
-                " " ;
+                " ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerZdbId", gene.getZdbID())
@@ -2185,5 +2187,80 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria.add(Restrictions.eq("markerType.name", Marker.Type.REGION.toString()));
         criteria.addOrder(Order.asc("abbreviationOrder"));
         return (List<Marker>) criteria.list();
+    }
+
+    @Override
+    public List<MarkerRelationshipPresentation> getClonesForGeneTranscripts(String zdbID) {
+
+        String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
+                "mrt.mreltype_2_to_1_comments, " +
+                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
+                "from marker_relationship mrgt " +
+                "join marker_relationship mrct on mrct.mrel_mrkr_2_zdb_id=mrgt.mrel_mrkr_2_zdb_id " +
+                "join marker_relationship_type mrt on mrt.mreltype_name=mrct.mrel_type " +
+                "join marker m on mrct.mrel_mrkr_1_zdb_id=m.mrkr_zdb_id " +
+                "join marker_types mt on m.mrkr_type = mt.marker_type " +
+                "left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrct.mrel_zdb_id " +
+                "left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrct.mrel_mrkr_1_zdb_id " +
+                "left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "where mrgt.mrel_mrkr_1_zdb_id = :markerZdbId " +
+                "and mrct.mrel_type='clone contains transcript' " +
+                "and mrgt.mrel_type='gene produces transcript' " +
+                "order by m.mrkr_type asc , m.mrkr_abbrev_order asc ";
+
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", zdbID)
+                .setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true))
+                .list();
+    }
+
+    @Override
+    public List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2) {
+        return getWeakReferenceMarker(zdbID,type1,type2,null) ;
+    }
+
+    @Override
+    public List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID
+            , MarkerRelationship.Type type1
+            , MarkerRelationship.Type type2
+            , String resultType) {
+
+        String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
+                "mrt.mreltype_2_to_1_comments, " +
+                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
+                "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
+                "from marker_relationship mrgt " +
+                "join marker_relationship mrct on mrct.mrel_mrkr_2_zdb_id=mrgt.mrel_mrkr_2_zdb_id " +
+                "join marker_relationship_type mrt on mrt.mreltype_name=mrct.mrel_type " +
+                "join marker m on mrct.mrel_mrkr_1_zdb_id=m.mrkr_zdb_id " +
+                "join marker_types mt on m.mrkr_type = mt.marker_type " +
+                "left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrct.mrel_zdb_id " +
+                "left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrct.mrel_mrkr_1_zdb_id " +
+                "left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
+                "where mrgt.mrel_mrkr_1_zdb_id = :markerZdbId " +
+//                "and mrct.mrel_type='clone contains transcript' " +
+//                "and mrgt.mrel_type='gene produces transcript' "  +
+                "and mrct.mrel_type=:markerRelationshipType1 " +
+                "and mrgt.mrel_type=:markerRelationshipType2  " +
+                "order by m.mrkr_type asc , m.mrkr_abbrev_order asc ";
+
+        List<MarkerRelationshipPresentation> markers = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", zdbID)
+                .setString("markerRelationshipType1", type1.toString())
+                .setString("markerRelationshipType2", type2.toString())
+                .setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true))
+                .list();
+
+        if (resultType != null) {
+            for (MarkerRelationshipPresentation markerRelationshipPresentation : markers) {
+                markerRelationshipPresentation.setRelationshipType(resultType);
+            }
+        }
+
+
+        return markers;
     }
 }

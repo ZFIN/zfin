@@ -11,6 +11,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
@@ -27,6 +28,9 @@ public class EfgViewController {
     @Autowired
     private ExpressionService expressionService ;
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     @RequestMapping(value ="/efg/view/{zdbID}")
     public String getView(
             Model model
@@ -36,7 +40,7 @@ public class EfgViewController {
         MarkerBean markerBean = new MarkerBean();
 
         logger.info("zdbID: " + zdbID);
-        Marker efg = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker efg = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + efg);
         markerBean.setMarker(efg);
 
@@ -45,11 +49,11 @@ public class EfgViewController {
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(efg));
 
-        markerBean.setPreviousNames(RepositoryFactory.getMarkerRepository().getPreviousNamesLight(efg));
+        markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(efg));
 
         markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
 
-        markerBean.setHasMarkerHistory(RepositoryFactory.getMarkerRepository().getHasMarkerHistory(zdbID)) ;
+        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
 
         // EXPRESSION SECTION
         markerBean.setMarkerExpression(expressionService.getExpressionForEfg(efg));
@@ -62,7 +66,7 @@ public class EfgViewController {
         markerBean.setConstructs(MarkerService.getRelatedMarker(efg, types));
 
         // (Antibodies)
-        markerBean.setRelatedAntibodies(RepositoryFactory.getMarkerRepository()
+        markerBean.setRelatedAntibodies(markerRepository
                 .getRelatedMarkerDisplayForTypes(efg, true
                         , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
 

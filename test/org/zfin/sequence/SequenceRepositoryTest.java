@@ -228,15 +228,25 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getDBLinksForSecondRelatedMarker(){
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030616-338");
         Collection<MarkerDBLink> dbLinkList = sequenceRepository.getDBLinksForSecondRelatedMarker(m
-                ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                ,MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
         );
 //        assertEquals(1, dbLinkList.size());
 //        assertEquals("ZDB-DBLINK-050218-1177",dbLinkList.iterator().next().getZdbID());
-        assertThat(dbLinkList.size(), greaterThan(0));
+        assertThat(dbLinkList.size(), greaterThan(1));
         assertThat(dbLinkList.size(), lessThan(3));
+    }
+
+    @Test
+    public void getCloneDBLinksForGeneFromTranscript(){
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Collection<MarkerDBLink> dbLinkList = sequenceRepository.getWeakReferenceDBLinks(m
+                ,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                ,MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+        );
+        assertThat(dbLinkList.size(), equalTo(3));
     }
 
     @Test

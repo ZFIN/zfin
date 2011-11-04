@@ -283,4 +283,31 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             addOrganizationLink(organizationLink);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MarkerRelationshipPresentation that = (MarkerRelationshipPresentation) o;
+
+        if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
+        if (markerType != null ? !markerType.equals(that.markerType) : that.markerType != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (relationshipType != null ? !relationshipType.equals(that.relationshipType) : that.relationshipType != null)
+            return false;
+        if (zdbId != null ? !zdbId.equals(that.zdbId) : that.zdbId != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = relationshipType != null ? relationshipType.hashCode() : 0;
+        result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
+        result = 31 * result + (zdbId != null ? zdbId.hashCode() : 0);
+        result = 31 * result + (markerType != null ? markerType.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

@@ -114,6 +114,9 @@ public interface SequenceRepository {
     Collection<String> getDBLinkAccessionsForEncodedMarkers(Marker marker, ForeignDBDataType.DataType dataType);
 
     Map<String,String> getGeoAccessionCandidates();
+
+    List<MarkerDBLink> getWeakReferenceDBLinks(Marker m,MarkerRelationship.Type type1, MarkerRelationship.Type type2);
+
 }
 
 

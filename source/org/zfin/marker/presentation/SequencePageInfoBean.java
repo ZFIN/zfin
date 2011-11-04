@@ -47,11 +47,11 @@ public class SequencePageInfoBean {
         this.dbLinks = dbLinks;
     }
 
-    public Collection<MarkerDBLink> getFirstRelatedMarkerDBLink() {
-        return firstRelatedMarkerDBLink;
-    }
+//    public Collection<MarkerDBLink> getFirstRelatedMarkerDBLink() {
+//        return firstRelatedMarkerDBLink;
+//    }
 
-    public List<MarkerDBLink> getFirstRelatedMarkerDBLinkList() {
+    public List<MarkerDBLink> getFirstRelatedMarkerDBLink() {
         List<MarkerDBLink> dblinks = new ArrayList<MarkerDBLink>(firstRelatedMarkerDBLink);
         Collections.sort(dblinks,new DbLinkMarkerSortComparator());
         return dblinks ;
@@ -61,11 +61,7 @@ public class SequencePageInfoBean {
         this.firstRelatedMarkerDBLink = firstRelatedMarkerDBLink;
     }
 
-    public Collection<MarkerDBLink> getSecondRelatedMarkerDBLink() {
-        return secondRelatedMarkerDBLink;
-    }
-
-    public List<MarkerDBLink> getSecondRelatedMarkerDBLinkList() {
+    public List<MarkerDBLink> getSecondRelatedMarkerDBLink() {
         List<MarkerDBLink> dbLinks = new ArrayList<MarkerDBLink>(secondRelatedMarkerDBLink);
         Collections.sort(dbLinks,new DbLinkMarkerSortComparator());
         return dbLinks;

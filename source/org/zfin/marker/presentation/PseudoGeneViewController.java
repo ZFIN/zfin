@@ -10,6 +10,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.service.TranscriptService;
@@ -24,6 +25,9 @@ public class PseudoGeneViewController {
     @Autowired
     private ExpressionService expressionService ;
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     @RequestMapping(value ="/pseudogene/view")
     public String getGeneView(
             Model model
@@ -33,7 +37,7 @@ public class PseudoGeneViewController {
         GeneBean geneBean = new GeneBean();
 
         logger.info("zdbID: " + zdbID);
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker gene = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + gene);
         geneBean.setMarker(gene);
 

@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
@@ -26,6 +28,9 @@ import java.util.List;
 public class MorpholinoViewController {
 
     private Logger logger = Logger.getLogger(MorpholinoViewController.class);
+
+    @Autowired
+    private MarkerRepository markerRepository ;
 
     //    private String ncbiBlastUrl ;
     private List<Database> databases;
@@ -45,7 +50,7 @@ public class MorpholinoViewController {
         MorpholinoBean markerBean = new MorpholinoBean();
 
         logger.info("zdbID: " + zdbID);
-        Marker morpholino = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker morpholino = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + morpholino);
 
         markerBean.setMarker(morpholino);
@@ -55,7 +60,7 @@ public class MorpholinoViewController {
 //        Set<Marker> targetGenes = MarkerService.getRelatedMarker(morpholino, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
 //        markerBean.setTargetGenes(targetGenes);
         List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<MarkerRelationshipPresentation>();
-        knockdownRelationships.addAll(RepositoryFactory.getMarkerRepository().getRelatedMarkerOrderDisplayForTypes(
+        knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 morpholino, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
         ));
@@ -65,7 +70,7 @@ public class MorpholinoViewController {
         markerBean.setPhenotypeOnMarkerBeans(MarkerService.getPhenotypeOnGene(morpholino));
 
         // add sequence
-        markerBean.setSequences(RepositoryFactory.getMarkerRepository().getMarkerSequences(morpholino));
+        markerBean.setSequences(markerRepository.getMarkerSequences(morpholino));
 
         // get sequence attribution
         if (markerBean.getSequence() != null) {

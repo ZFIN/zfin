@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
@@ -23,6 +25,9 @@ public class ConstructViewController {
 
     private Logger logger = Logger.getLogger(ConstructViewController.class);
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     @RequestMapping(value = "/construct/view/{zdbID}")
     public String getGeneView(
             Model model
@@ -32,7 +37,7 @@ public class ConstructViewController {
         ConstructBean markerBean = new ConstructBean();
 
         logger.info("zdbID: " + zdbID);
-        Marker construct = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker construct = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + construct);
         markerBean.setMarker(construct);
 
@@ -40,7 +45,7 @@ public class ConstructViewController {
 
 
         List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<MarkerRelationshipPresentation>();
-        cloneRelationships.addAll(RepositoryFactory.getMarkerRepository().getRelatedMarkerOrderDisplayForTypes(
+        cloneRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 construct, true
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF

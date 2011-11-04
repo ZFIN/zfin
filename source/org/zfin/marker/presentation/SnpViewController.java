@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
@@ -24,6 +26,9 @@ public class SnpViewController {
     private String snpBlastUrl ;
     private String ncbiBlastUrl ;
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     public SnpViewController(){
         snpBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.SNPBLAST).getLocation();
         ncbiBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.BLAST).getLocation();
@@ -37,7 +42,7 @@ public class SnpViewController {
         // set base bean
 
         logger.debug("zdbID: " + zdbID);
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.debug("snp marker: " + marker);
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
@@ -48,10 +53,10 @@ public class SnpViewController {
         snpMarkerBean.setNcbiBlastUrl(ncbiBlastUrl);
 
         // add variant
-        snpMarkerBean.setVariant(RepositoryFactory.getMarkerRepository().getVariantForSnp(zdbID));
+        snpMarkerBean.setVariant(markerRepository.getVariantForSnp(zdbID));
 
         // add sequence
-        snpMarkerBean.setSequences(RepositoryFactory.getMarkerRepository().getMarkerSequences(marker));
+        snpMarkerBean.setSequences(markerRepository.getMarkerSequences(marker));
 
         // snp marker relationships (is only secondary)
         List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<MarkerRelationshipPresentation>();

@@ -985,6 +985,31 @@ m.mrkr_type in ('GENE','GENEP','EST','CDNA')
 
         return accessionCandidates;
     }
+
+    @Override
+    public List<MarkerDBLink> getWeakReferenceDBLinks(Marker gene,MarkerRelationship.Type type1,MarkerRelationship.Type type2) {
+        String hql = " select distinct dbl " +
+                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  MarkerRelationship  ctmr, MarkerRelationship gtmr   " +
+                " where ctmr.firstMarker.zdbID=dbl.dataZdbID " +
+                " and dg.groupName = :displayGroup " +
+                " and gtmr.firstMarker.zdbID= :markerZdbId " +
+                " and dbl.referenceDatabase=ref " +
+                " and dg in elements(ref.displayGroups) " +
+                " and gtmr.secondMarker.zdbID = ctmr.secondMarker.zdbID " +
+                " and gtmr.type = :type1 " +
+                " and ctmr.type = :type2 " +
+                " ";
+
+        //     " and gtmr.type = 'gene produces transcript' " +
+//                " and ctmr.type = 'clone contains transcript' " +
+
+        Query query = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("markerZdbId", gene.getZdbID())
+                .setParameter("type1", type1.toString())
+                .setParameter("type2", type2.toString())
+                .setParameter("displayGroup", DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE.toString()) ;
+        return query.list();
+    }
 }
 
 

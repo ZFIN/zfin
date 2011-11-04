@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,9 @@ public class SequenceViewController {
 
     private Logger logger = Logger.getLogger(SequenceViewController.class);
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     @RequestMapping(value ="/sequence/view/{zdbID}")
     public String getSequenceView(
             Model model
@@ -28,7 +32,6 @@ public class SequenceViewController {
 
         logger.debug("Start SequenceView Controller");
 
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         Marker marker = markerRepository.getMarkerByID(zdbID);
 
         if (marker == null){

@@ -344,4 +344,11 @@ public interface MarkerRepository {
      * @return
      */
     List<Marker> getAllEngineeredRegions();
+
+    List<MarkerRelationshipPresentation> getClonesForGeneTranscripts(String zdbID);
+
+    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID,MarkerRelationship.Type type1,MarkerRelationship.Type type2);
+
+    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID,MarkerRelationship.Type type1,MarkerRelationship.Type type2,String resultType);
+
 }

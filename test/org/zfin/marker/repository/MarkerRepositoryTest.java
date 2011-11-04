@@ -769,20 +769,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         deleteMarkerController.deleteMarker("ZDB-SNP-060626-88", deleteBean);
     }
 
-
-    @Test
-    public void geneViewJava() throws Exception {
-        GeneViewController geneViewController = new GeneViewController();
-        geneViewController.setExpressionService(new ExpressionService());
-        Model model = new ExtendedModelMap();
-        geneViewController.getGeneView(model, "ZDB-GENE-990603-12");
-    }
-
     @Test
     public void markerHistoryView() {
         assertTrue(markerRepository.getHasMarkerHistory("ZDB-GENE-990603-12"));
     }
-
 
     @Test
     public void getPreviousNamesLight() {
@@ -979,4 +969,20 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
 
+
+    @Test
+    public void getWeakReferenceMarker(){
+        List<MarkerRelationshipPresentation> markerRelationshipPresentationList = markerRepository.getWeakReferenceMarker("ZDB-GENE-010606-1"
+                ,MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+                ,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+        );
+        Collections.sort(markerRelationshipPresentationList, new MarkerRelationshipSupplierComparator());
+        assertEquals(3,markerRelationshipPresentationList.size());
+        assertEquals("BAC",markerRelationshipPresentationList.get(0).getMarkerType());
+        assertEquals("BAC",markerRelationshipPresentationList.get(1).getMarkerType());
+        assertEquals("Fosmid",markerRelationshipPresentationList.get(2).getMarkerType());
+//        for(MarkerRelationshipPresentation mrp : markerRelationshipPresentationList){
+//            System.out.println(mrp.getLinkWithAttributionAndOrderThis());
+//        }
+    }
 }

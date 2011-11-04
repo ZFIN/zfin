@@ -16,7 +16,6 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         this.is1to2 = is1to2;
     }
 
-
     @Override
     public Object transformTuple(Object[] tuple, String[] aliases) {
         MarkerRelationshipPresentation returnObject = new MarkerRelationshipPresentation();

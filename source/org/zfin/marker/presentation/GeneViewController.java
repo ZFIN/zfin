@@ -11,16 +11,14 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  */
@@ -32,6 +30,9 @@ public class GeneViewController {
 
     @Autowired
     private ExpressionService expressionService;
+
+    @Autowired
+    private MarkerRepository markerRepository ;
 
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(
@@ -48,6 +49,10 @@ public class GeneViewController {
 
         MarkerService.createDefaultViewForMarker(geneBean);
 
+        // if it is a gene, also add any clones if related via a transcript
+        MarkerService.pullClonesOntoGeneFromTranscript(geneBean);
+
+
         // OTHER GENE / MARKER PAGES:
         // pull vega genes from transcript onto gene page
         // case 7586
@@ -59,7 +64,7 @@ public class GeneViewController {
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
 
-        geneBean.setHasChimericClone(RepositoryFactory.getMarkerRepository().isFromChimericClone(gene.getZdbID()));
+        geneBean.setHasChimericClone(markerRepository.isFromChimericClone(gene.getZdbID()));
 
         // EXPRESSION SECTION
         geneBean.setMarkerExpression(expressionService.getExpressionForGene(gene));
@@ -111,5 +116,9 @@ public class GeneViewController {
 
     public void setExpressionService(ExpressionService expressionService) {
         this.expressionService = expressionService;
+    }
+
+    public void setMarkerRepository(MarkerRepository markerRepository) {
+        this.markerRepository = markerRepository;
     }
 }

@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,6 +13,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -32,6 +34,9 @@ public class TranscriptViewController {
 
     private Logger logger = Logger.getLogger(TranscriptViewController.class);
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     @RequestMapping(value = "/transcript-view")
     String getTranscriptView(Model model
             , @RequestParam("zdbID") String zdbID
@@ -44,11 +49,11 @@ public class TranscriptViewController {
         Transcript transcript;
 
         logger.debug("zdbID: " + transcriptBean.getZdbID());
-        transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptBean.getZdbID());
+        transcript = markerRepository.getTranscriptByZdbID(transcriptBean.getZdbID());
 
         if (transcript == null) {
             logger.debug("vegaID " + transcriptBean.getVegaID());
-            transcript = RepositoryFactory.getMarkerRepository().getTranscriptByVegaID(transcriptBean.getVegaID());
+            transcript = markerRepository.getTranscriptByVegaID(transcriptBean.getVegaID());
         }
 
         // search in replaced data?
@@ -58,7 +63,7 @@ public class TranscriptViewController {
             if (replacedTranscriptZdbID != null) {
                 logger.debug("found a replaced zdbID for: " + transcriptBean.getZdbID() + "->" + replacedTranscriptZdbID);
                 transcriptBean.setZdbID(replacedTranscriptZdbID);
-                transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptBean.getZdbID());
+                transcript = markerRepository.getTranscriptByZdbID(transcriptBean.getZdbID());
             }
         }
 
@@ -74,7 +79,7 @@ public class TranscriptViewController {
 
 
         // setting transcript relationships
-        transcriptBean.setStrain(RepositoryFactory.getMarkerRepository().getStrainForTranscript(transcript.getZdbID()));
+        transcriptBean.setStrain(markerRepository.getStrainForTranscript(transcript.getZdbID()));
 
         RelatedMarkerDisplay transcriptRelationships = TranscriptService.getRelatedMarkerDisplay(transcript);
         transcriptBean.setMarkerRelationships(transcriptRelationships);

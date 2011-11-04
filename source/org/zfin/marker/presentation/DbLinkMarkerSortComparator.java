@@ -10,7 +10,15 @@ public class DbLinkMarkerSortComparator implements Comparator<MarkerDBLink>{
 
     @Override
     public int compare(MarkerDBLink dbLink1, MarkerDBLink dbLink2) {
+
         int comparator ;
+
+        // compare type first, then abbreviation
+        comparator = dbLink1.getMarker().getMarkerType().getName().compareTo(dbLink2.getMarker().getMarkerType().getName());
+        if (comparator != 0)  return comparator ;
+
+//        comparator = dbLink1.getMarker().getAbbreviation().compareTo(dbLink2.getMarker().getAbbreviation());
+//        if (comparator != 0)  return comparator ;
 
         comparator = dbLink1.getMarker().getAbbreviationOrder().compareTo(dbLink2.getMarker().getAbbreviationOrder());
         if (comparator != 0)  return comparator ;

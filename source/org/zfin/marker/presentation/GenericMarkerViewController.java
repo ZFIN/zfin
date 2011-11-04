@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,10 @@ import org.zfin.repository.RepositoryFactory;
 @Controller
 public class GenericMarkerViewController {
 
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private Logger logger = Logger.getLogger(GenericMarkerViewController.class);
+
+    @Autowired
+    private MarkerRepository markerRepository ;
 
     @RequestMapping("/marker/view/{zdbID}")
     public String getGenericMarkerView(

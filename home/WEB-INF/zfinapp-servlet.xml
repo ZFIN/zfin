@@ -15,6 +15,7 @@
     <context:component-scan base-package="org.zfin.expression.service"/>
     <context:component-scan base-package="org.zfin.datatransfer.go.service"/>
     <context:component-scan base-package="org.zfin.sequence.reno"/>
+    <context:component-scan base-package="org.zfin.marker"/>
 
     <!--the rest of this could get moved into its own webapp file-->
 

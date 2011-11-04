@@ -25,7 +25,9 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 @Controller
 public class MarkerViewController {
 
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private Logger logger = Logger.getLogger(MarkerViewController.class);
 

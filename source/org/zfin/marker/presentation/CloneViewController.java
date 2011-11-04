@@ -10,6 +10,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
@@ -31,6 +32,9 @@ public class CloneViewController {
     @Autowired
     private ExpressionService expressionService ;
 
+    @Autowired
+    private MarkerRepository markerRepository ;
+
     public CloneViewController(){
         ensemblDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                 ForeignDB.AvailableName.ENSEMBL_CLONE
@@ -48,11 +52,14 @@ public class CloneViewController {
         CloneBean cloneBean = new CloneBean();
 
         logger.info("zdbID: " + zdbID);
-        Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(zdbID);
+        Clone clone = markerRepository.getCloneById(zdbID);
         logger.info("clone: " + clone);
         cloneBean.setMarker(clone);
 
         MarkerService.createDefaultViewForMarker(cloneBean);
+
+        // if it is a gene, also add any clones if related via a transcript
+        MarkerService.pullGeneOntoCloneFromTranscript(cloneBean);
 
         List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(clone.getZdbID());
         cloneBean.setSuppliers(suppliers);
