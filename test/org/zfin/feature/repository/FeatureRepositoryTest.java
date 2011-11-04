@@ -300,7 +300,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             assertTrue(totalSize > 0);
 
 
-            Lab lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID);
+            Organization lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID);
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             for (Feature feature : features) {
                 featureRepository.setLabOfOriginForFeature(lab2, feature);
