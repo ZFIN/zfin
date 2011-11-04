@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.zfin.feature.presentation.AlleleLineDesignationValidator;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -24,16 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
-public class AlleleDesigCreateController {
+public class AlleleDesignationCreateController {
 
-    private static Logger LOG = Logger.getLogger(AlleleDesigCreateController.class);
+    private static Logger logger = Logger.getLogger(AlleleDesignationCreateController.class);
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    private static FeatureRepository fr = RepositoryFactory.getFeatureRepository();
 
     @ModelAttribute("formBean")
-    private CreateAlleleDesigFormBean getDefaultSearchForm() {
-        return new CreateAlleleDesigFormBean();
+    private CreateAlleleDesignationFormBean getDefaultSearchForm() {
+        return new CreateAlleleDesignationFormBean();
     }
 
     @RequestMapping("/alleleDesig-add-form")
@@ -42,7 +43,8 @@ public class AlleleDesigCreateController {
         return "feature/alleleDesig-add-form.page";
     }
 
-    private @Autowired
+    private
+    @Autowired
     HttpServletRequest request;
 
     @InitBinder
@@ -52,32 +54,29 @@ public class AlleleDesigCreateController {
 
     @RequestMapping(value = "/alleleDesig-add-form", method = RequestMethod.POST)
     public String saveLabPrefix(Model model,
-                              @Valid @ModelAttribute("formBean") CreateAlleleDesigFormBean formBean,
-                              BindingResult result) throws Exception {
+                                @Valid @ModelAttribute("formBean") CreateAlleleDesignationFormBean formBean,
+                                BindingResult result) throws Exception {
 
-        if(result.hasErrors())
+        if (result.hasErrors())
             return "feature/alleleDesig-add-form.page";
         String labPrefix = formBean.getLineDesig();
 
-try{
+        try {
             HibernateUtil.createTransaction();
-             RepositoryFactory.getFeatureRepository().setNewLabPrefix(labPrefix, formBean.getLineLocation()).getPrefixString();
-             HibernateUtil.flushAndCommitCurrentSession();
+            fr.setNewLabPrefix(labPrefix, formBean.getLineLocation()).getPrefixString();
+            HibernateUtil.flushAndCommitCurrentSession();
 
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();
             } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
+                logger.error("Error during roll back of transaction", he);
             }
-            LOG.error("Error in Transaction", e);
+            logger.error("Error in Transaction", e);
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
         return "redirect:/action/feature/line-designations";
-        }
-
-
-
+    }
 
 
 }

@@ -10,12 +10,12 @@ import org.zfin.repository.RepositoryFactory;
 public class AlleleLineDesignationValidator implements Validator  {
 
        public boolean supports(Class clazz) {
-          return CreateAlleleDesigFormBean.class.equals(clazz);
+          return CreateAlleleDesignationFormBean.class.equals(clazz);
        }
 
 
        public void validate(Object command, Errors errors) {
-           CreateAlleleDesigFormBean formBean = (CreateAlleleDesigFormBean) command;
+           CreateAlleleDesignationFormBean formBean = (CreateAlleleDesignationFormBean) command;
            String lineDesig=formBean.getLineDesig();
            String lineLocation=formBean.getLineLocation();
            if (StringUtils.isEmpty(lineDesig)) {
