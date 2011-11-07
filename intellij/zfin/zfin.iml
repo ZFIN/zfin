@@ -35,7 +35,6 @@
         <sourceRoots>
           <root url="file://Y:/source" />
         </sourceRoots>
-        <context-artifact name="zfin:Web exploded" />
       </configuration>
     </facet>
   </component>
@@ -48,9 +47,9 @@
       <sourceFolder url="file://Y:/server_apps/mapimage" isTestSource="false" />
       <sourceFolder url="file://Y:/source" isTestSource="false" />
       <sourceFolder url="file://Y:/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.." />
       <excludeFolder url="file://Y:/client_apps" />
       <excludeFolder url="file://Y:/home/WEB-INF/jsp/quicksearch" />
-      <excludeFolder url="file://$MODULE_DIR$/.." />
       <excludeFolder url="file://Y:/j2ee/uniquery" />
       <excludeFolder url="file://Y:/lib/Java/Acme" />
       <excludeFolder url="file://Y:/server_apps" />

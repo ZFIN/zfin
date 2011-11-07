@@ -14,6 +14,9 @@
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
   </component>
+  <component name="ClearCaseSharedConfig">
+    <option name="myUseUcmModel" value="true" />
+  </component>
   <component name="CodeStyleProjectProfileManger">
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
@@ -40,7 +43,6 @@
   <component name="CopyrightManager" default="">
     <module2copyright />
   </component>
-  <component name="DataSourceManagerImpl" compressed="false" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
@@ -67,6 +69,15 @@
   </component>
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>
+      <facet-type id="hibernate">
+        <modules>
+          <module name="zfin">
+            <files>
+              <file url="file://Y:/conf/hibernate.cfg.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
       <facet-type id="web">
         <modules>
           <module name="zfin">
@@ -77,15 +88,6 @@
               <file url="file://Y:/j2ee/phenote/phenote/WEB-INF/web.xml" />
               <file url="file://Y:/j2ee/uniquery/SearchApp/WEB-INF/web.xml" />
               <file url="file://Y:/lib/Java/tomcat/conf/web.xml" />
-            </files>
-          </module>
-        </modules>
-      </facet-type>
-      <facet-type id="hibernate">
-        <modules>
-          <module name="zfin">
-            <files>
-              <file url="file://Y:/conf/hibernate.cfg.xml" />
             </files>
           </module>
         </modules>

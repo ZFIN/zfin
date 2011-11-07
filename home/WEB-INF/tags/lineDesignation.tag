@@ -56,6 +56,8 @@
                 <a id="hideAlleleLink${index.index}" style="display: none;" href="javascript:;hideAlleles(${index.index})" onclick="hideAlleles(${index.index})
                 "><img src="/images/minus-13.png"  style="border:none;"></a>
                 &nbsp;
+
+
                 <strong>${labFeaturePrefixRow.prefix}</strong>
             </td>
             <td>
