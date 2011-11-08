@@ -65,28 +65,26 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Note: explanation per request from SM.
 # As with all make targets, items following the colon after the target
 # (on the same logical line) are the targets depencencies.
-# commands follow the set of depencencies on new lines with a mandatory 
+# commands follow the set of depencencies on new lines with a mandatory
 #	tab as their first character.
 # the effect is, if any dependicies are false (i.e. do not exist)
 # evoking "gmake <target>" will not result in the comands being run
-# note that empty dependicies are vacously true. 
+# note that empty dependicies are vacously true.
 # but being empty is not the only path to truth. HTH
 
-# $(TARGETDIR)/unload_zfin_morpholino.sql 
-# $(TARGETDIR)/unload_assembly_clone_gff.sql
 
-load_vega:  $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/rollback.sql        # $(TARGETDIR)/drerio_vega_id.unl 
-	cd $(TARGETDIR) && LoadVegaGFF3.pl rollback 
-       
+load_vega:  $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/rollback.sql        # $(TARGETDIR)/drerio_vega_id.unl
+	cd $(TARGETDIR) && LoadVegaGFF3.pl rollback
+
 load_vega_commit: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/commit.sql    # $(TARGETDIR)/drerio_vega_id.unl
 	cd $(TARGETDIR) && LoadVegaGFF3.pl commit
-       
+
 load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql      # $(TARGETDIR)/drerio_ensembl.unl
-	cd $(TARGETDIR) && LoadEnsemblGFF3.pl rollback 
-       
+	cd $(TARGETDIR) && LoadEnsemblGFF3.pl rollback
+
 load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql # $(TARGETDIR)/drerio_ensembl.unl
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
-       
+
 run : $(TARGETDIR)/GenerateZFINGFF3.pl 	  $(TARGETDIR)/rollback.sql \
 $(TARGETDIR)/unload_zfin_genes_gff.sql \
 $(TARGETDIR)/unload_alias_scattered.sql   $(TARGETDIR)/E_unload_alias_scattered.sql \
@@ -113,6 +111,26 @@ run_morpholino_E : get_mo_seq.sql
 
 run_morpholino : get_mo_seq.sql
 	cd $(TARGETDIR) && dbaccess -a $(DBNAME) get_mo_seq.sql && \
-	/private/bin/bowtie --best -strata --sam -f /research/zprodmore/gff3/VEGA43_LG_DNA mo_seq.fa > mo_seq.sam && \
+	/private/bin/bowtie --best -strata --sam -f /research/zprodmore/gff3/VEGA45_LG_DNA mo_seq.fa > mo_seq.sam && \
 	nawk -f sam2gff3.awk < mo_seq.sam > mo_seq.gff3 && \
 	sort -k9,9 -k 1,1n -k 4,4n  mo_seq.gff3 | ./increment_id.awk > zfin_morpholino.gff3
+
+# not sure about enforcing the existence of the input files
+# but want _some_ record of the end of an infrequent process
+# so at least provide a reminder of their existence
+# these two files are created as part of the vega load and
+# should be found there and brought here.
+
+assembly_for_tom: assembly_for_tom.tab
+	cp assembly_for_tom.tab $(TARGETDIR)/assembly_for_tom.tab
+clone_acc_status: clone_acc_status.unl
+	cp clone_acc_status.unl $(TARGETDIR)/clone_acc_status.unl
+
+# price of avoiding transactions is that if the script fails you
+# need to uncomment the drop table statments at the top of the sql
+# for the next attempt (and recomment when done).
+load_vega_assembly: assembly_for_tom clone_acc_status
+	cd $(TARGETDIR) && dbaccess -a $(DBNAME) unload_assembly_clone_gff.sql
+
+# a similar treatment may need to be devised for
+# $(TARGETDIR)/unload_zfin_morpholino.sql

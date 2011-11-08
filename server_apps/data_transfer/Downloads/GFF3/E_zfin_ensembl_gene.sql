@@ -15,6 +15,22 @@ begin work;
 
 ! echo "Isolate ZFIN genes on Ensembl assembly"
 
+
+create temp table tmp_vega_zeg(
+	gff_seqname varchar(25),
+	source varchar(45),
+	feature varchar(45),
+	gstart integer,
+	gend integer,
+	score varchar(5),
+	strand char(1),
+	frame char(1),
+	id_name varchar(90),
+	alias varchar(55)
+) with no log
+;
+
+insert into tmp_vega_zeg
 select distinct ----------------------- ottdarT <--> ensdarT ----------------------
 	et.gff_seqname,
 	"ZFIN" source,
@@ -24,7 +40,7 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
 	et.gff_start gstart,
 	et.gff_end   gend,
 	"1" score ,
-	et.gff_strand,
+	et.gff_strand strand,
 	"." frame,
 	'gene_id=' || gene.mrkr_zdb_id ||';Name=' || gene.mrkr_abbrev id_name,
 	gene.mrkr_zdb_id alias
@@ -40,25 +56,26 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
    and eTdbl.dblink_acc_num == et.gff_id
    and et.gff_source[1,8] == 'Ensembl_'
    and et.gff_feature in ('mRNA','transcript')
- --group by 1,3,7,9,10
   group by 1,3,4,5,7,9,10
-
-into temp tmp_vega_zeg with no log
+--into temp tmp_vega_zeg with no log { <--broken }
 ;
 
-create index tmp_vega_zeg_alias_idx on tmp_vega_zeg(alias) in idxdbs3;
+-- index creation on temp tables within a transaction ids broken on waldo 2011/Oct/6
+-- aparently may work if temp table is created first...
+
+create index tmp_vega_zeg_alias_idx on  tmp_vega_zeg(alias) in idxdbs3;
 create index tmp_vega_zeg_gstart_idx on tmp_vega_zeg(gstart) in idxdbs2;
-create index tmp_vega_zeg_gend_idx on tmp_vega_zeg(gend) in idxdbs1;
+create index tmp_vega_zeg_gend_idx on   tmp_vega_zeg(gend) in idxdbs1;
 
 update statistics high for table tmp_vega_zeg(alias,gstart,gend);
 
 ! echo "any ott based genes on multiple LG?"   -- 6, 5 w/2 tscripts 1 w/4
-select a.alias dup_lg ,count(*) howmany 
- from tmp_vega_zeg a, tmp_vega_zeg b 
- where a.alias == b.alias 
+select a.alias dup_lg ,count(*) howmany
+ from tmp_vega_zeg a, tmp_vega_zeg b
+ where a.alias == b.alias
    and  a.gff_seqname != b.gff_seqname
   group by 1  into temp tmp_dup_vega_zeg with no log
-; 
+;
 
 delete from tmp_vega_zeg where exists (
 	select 't' from tmp_dup_vega_zeg where dup_lg == alias
@@ -76,9 +93,9 @@ drop table  tmp_dup_vega_zeg;
 select a.Alias
 from  tmp_vega_zeg a, tmp_vega_zeg b
 	 where b.gff_seqname ==  a.gff_seqname
-	   --and b.gstart      ==  a.gstart
-	   --and b.gend        ==  a.gend
-	   and b.gff_strand  !=  a.gff_strand
+	   --and b.gstart    ==  a.gstart
+	   --and b.gend      ==  a.gend
+	   and b.strand      !=  a.strand
 	   and b.Alias       ==  a.Alias
  into temp tmp_strand with no log
 ;
@@ -87,7 +104,7 @@ from  tmp_vega_zeg a, tmp_vega_zeg b
 select distinct * from  tmp_strand order by 1;
 
 
-update tmp_vega_zeg set gff_strand = '.' where exists (
+update tmp_vega_zeg set strand = '.' where exists (
 	select 't' from tmp_strand
 	 where  tmp_strand.alias ==  tmp_vega_zeg.alias
 );
@@ -95,8 +112,8 @@ update tmp_vega_zeg set gff_strand = '.' where exists (
 drop table tmp_strand;
 
 {
-  We want to avoid including poorly localized genes since 3rd parties 
-  will be using these extents of a gene to attach location based 
+  We want to avoid including poorly localized genes since 3rd parties
+  will be using these extents of a gene to attach location based
   attributes and a gene that spans half a chromosome will be a liability
 }
 
@@ -110,11 +127,11 @@ update tmp_vega_zeg set gend = (
 	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
 	   and tmp_vz.gend        >   tmp_vega_zeg.gend
 	   and tmp_vega_zeg.gend between tmp_vz.gstart and tmp_vz.gend
-	   
+
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias 
+	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
 	   and tmp_vz.gend        >   tmp_vega_zeg.gend
 	   and tmp_vega_zeg.gend between tmp_vz.gstart and tmp_vz.gend
 );
@@ -172,7 +189,7 @@ update tmp_vega_zeg set gend = (
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias 
+	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -215,7 +232,7 @@ update tmp_vega_zeg set gend = (
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias 
+	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -255,17 +272,17 @@ drop table tmp_distinct_vega_zeg;
 
 
 ! echo "what are the distances between the gene extents on the same chr?"
-select   
+select
 	a.Alias[1,25] zdb,
 	b.gstart - a.gend gap,
-	(case when a.gend - a.gstart  >  b.gend - b.gstart 
-	 then a.gend - a.gstart 
+	(case when a.gend - a.gstart  >  b.gend - b.gstart
+	 then a.gend - a.gstart
 	 else b.gend - b.gstart end) len,
-	 
-	 case 
+
+	 case
 		when a.gend - a.gstart  >=  (b.gstart - a.gend) then "true"
 	 	when b.gend - b.gstart  >=  (b.gstart - a.gend) then "true"
-	 	else "false" 
+	 	else "false"
 	 end  collapse,
 	 count(*) howmany
  from tmp_vega_zeg a,tmp_vega_zeg b
@@ -277,8 +294,8 @@ select
 ;
 ------------------------------------------------------------------------
 { have made an effort to grow clusters of ott based transcript clusters
-into single gene extents, genes that still have disjoint fragments are 
-dropped and we hopr they have an 2nsdarG1:1 relationship and will use 
+into single gene extents, genes that still have disjoint fragments are
+dropped and we hopr they have an 2nsdarG1:1 relationship and will use
 ensembls transcript set to determine gene extent if any
 }
 
@@ -320,12 +337,12 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
 
 
 ! echo "any ens based genes on multiple LG? (should be zero)"   -- 0
-select a.alias[1,25] zdb ,count(*) bezero 
- from tmp_ensembl_zeg a, tmp_ensembl_zeg b 
- where a.alias == b.alias 
+select a.alias[1,25] zdb ,count(*) bezero
+ from tmp_ensembl_zeg a, tmp_ensembl_zeg b
+ where a.alias == b.alias
    and  a.gff_seqname != b.gff_seqname
-  group by 1 
-; 
+  group by 1
+;
 
 ------------------------------------------------------------------------
 
@@ -355,7 +372,7 @@ select
     min(gstart) gstart,
     max(gend) gend,
     score,
-    gff_strand,
+    strand,
     frame,
     ID_Name,
     Alias
@@ -365,7 +382,7 @@ select
     source,
     feature,
     score,
-    gff_strand,
+    strand,
     frame,
     ID_Name,
     Alias

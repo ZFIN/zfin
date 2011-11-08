@@ -1,7 +1,7 @@
 #!/private/bin/perl -w
 #-----------------------------------------------------------------------
 # can be run via:
-#	gmake load_vega 
+#	gmake load_vega
 # 	gmake load_vega_commit
 #
 # Runs script to create GFF3 files for public download.
@@ -33,16 +33,16 @@ print "starting here: \n". `pwd`. "\n";
 my $data_cache = "/research/zprodmore/gff3";
 
 # opportunity to change data_cache for testing enviroment i.e.:
-# $data_cache = "/research/zusers/tomc/data_transfer/VEGA/Assembly/2010-Oct";
+# $data_cache = "/research/zusers/tomc/data_transfer/VEGA/2011-Aug/PostLoad";
 
 # note there is doc on creating 'drerio_vega_id.unl'
-# in /research/zusers/tomc/data_transfer/VEGA/Assembly/ -- TODO check where
+# in test enviroment cache directory readme
 
 print "Fetching data files from $data_cache\n";
 
 my @infiles = qw(
     drerio_vega_id.unl  vega_chromosome.gff3
-    assembly_for_tom.tab  clone_acc_status.unl  
+    assembly_for_tom.tab  clone_acc_status.unl
 );
 
 foreach $target (@infiles){
@@ -50,8 +50,8 @@ foreach $target (@infiles){
     system ("cp -p $data_cache/$target .");
 }
 
-#foreach $argnum (0 .. $#ARGV) {print "$argnum \t $ARGV[$argnum]\n";}
-# may be worth checking the assembly & morpholino data files exist 
+# foreach $argnum (0 .. $#ARGV) {print "$argnum \t $ARGV[$argnum]\n";}
+# may be worth checking the assembly & morpholino data files exist
 # before adding them to the command.
 
 my $cmd = "cat load_drerio_vega_id.sql unload_assembly_clone_gff.sql unload_zfin_morpholino.sql " ;

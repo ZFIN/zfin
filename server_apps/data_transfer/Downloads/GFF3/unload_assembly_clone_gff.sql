@@ -1,5 +1,7 @@
--- unload_assembly_clone_gff.sql
+-- unload_assembly_clone_gff.sql -> vega_clone.gff3
+-- required 'assembly_for_tom.tab' &  'clone_acc_status.unl'
 
+-- cleanup in aisle 5
 --drop table assembly;
 --drop table clonelist;
 
@@ -38,8 +40,8 @@ create table clonelist(
 -- -- delimiter '	'
 load from 'clone_acc_status.unl' insert into clonelist;
 
-update statistics medium for table assembly;
-update statistics medium for table clonelist;
+update statistics high for table assembly;
+update statistics high for table clonelist;
 
 ! echo "Vega_Clone not matching incomming"
 select *--  count(*) extra_dblink
@@ -55,6 +57,55 @@ select * -- count(*) missing_dblink
  where not exists(
 	select 't' from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040826-2'
 	 and asmb_accession == dblink_acc_num
+);
+
+! echo "assembly_for_tom.tab -> unload_assembly_clone_gff.sql -> vega_clone.gff3"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_clone.gff3' DELIMITER "	"
+select asmb_lg gff_ID,
+    'vega.trimmed' gff_source,
+    'clone' gff_feature,
+    asmb_five trim_start,
+    asmb_three trim_end,
+    '.' score,
+    case when asmb_strand == 1 then '+' else '-' end,
+    '.' gff_frame_phase,
+    'ID=' || dblink_acc_num ||';Name=' || asmb_name ||
+    ';Alias='|| dblink_linked_recid ||
+    ';status='|| case when cl_status is null then "unannotated" else cl_status end attribute
+ from db_link, assembly, outer clonelist
+ where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040826-2'
+   and asmb_accession == dblink_acc_num
+   and asmb_accession == cl_acc
+;
+
+-- to be valid the gff3 requires a header
+! /usr/bin/awk '{a[NR]=$0}END{a[0]=h;for(i=0;i<=NR;i++)print a[i]>FILENAME}' h="##gff-version 3" <!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_clone.gff3
+
+
+! echo "it is critically important that clones have NOT NULL dblink.length"
+! echo "as NUMBER +/- NULL == NULL"
+
+select dblink_acc_num need_length
+ from db_link  join assembly on asmb_accession == dblink_acc_num
+ where dblink_length IS NULL
+;
+
+update db_link set dblink_length = (
+	select accbk_length from accession_bank
+	 where accbk_acc_num == dblink_acc_num
+	  and accbk_length is not NULL
+)
+ where dblink_length is NULL
+   and exists (
+	select 't' from accession_bank
+	 where accbk_acc_num == dblink_acc_num
+	  and accbk_length is not NULL
+);
+
+delete from assembly where exists(
+	select 't' from  db_link
+	 where asmb_accession == dblink_acc_num
+	   and dblink_length IS NULL
 );
 
 ! echo "assembly_for_tom.tab -> unload_assembly_clone_gff.sql -> full_length_clones.gff3"
@@ -86,27 +137,8 @@ select asmb_lg gff_ID,
 -- to be valid the gff3 requires a header
 ! /usr/bin/awk '{a[NR]=$0}END{a[0]=h;for(i=0;i<=NR;i++)print a[i]>FILENAME}' h="##gff-version 3" <!--|ROOT_PATH|-->/home/data_transfer/Downloads/full_length_clones.gff3
 
-! echo "assembly_for_tom.tab -> unload_assembly_clone_gff.sql -> vega_clone.gff3"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_clone.gff3' DELIMITER "	"
-select asmb_lg gff_ID,
-    'vega.trimmed' gff_source,
-    'clone' gff_feature,
-    asmb_five trim_start,
-    asmb_three trim_end,
-    '.' score,
-    case when asmb_strand == 1 then '+' else '-' end,
-    '.' gff_frame_phase,
-    'ID=' || dblink_acc_num ||';Name=' || asmb_name ||
-    ';Alias='|| dblink_linked_recid ||
-    ';status='|| case when cl_status is null then "unannotated" else cl_status end attribute
- from db_link, assembly, outer clonelist
- where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040826-2'
-   and asmb_accession == dblink_acc_num
-   and asmb_accession == cl_acc
-;
-
--- to be valid the gff3 requires a header
-! /usr/bin/awk '{a[NR]=$0}END{a[0]=h;for(i=0;i<=NR;i++)print a[i]>FILENAME}' h="##gff-version 3" <!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_clone.gff3
 
 drop table assembly;
 drop table clonelist;
+! echo "files deposited in"
+! echo "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/"
