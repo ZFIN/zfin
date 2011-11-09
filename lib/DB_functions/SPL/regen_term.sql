@@ -77,7 +77,7 @@ create function populate_all_term_contains()
 	      -- checking for duplicates here is where the time gets absurd  
 	      -- (2:30 vs 0:06), so 
 	      --   "kill em all and let god sort them out later"
-	  and a.termrel_type in ('is_a', 'part_of')
+	  and a.termrel_type in ('is_a', 'part_of', 'part of')
 	      -- all_term_contains doesn't want develops_from relationships,
 	      -- and it's better to explicitly include rather than exclude,
 	      -- since we want the behavior to stay the same the next time
