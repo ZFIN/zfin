@@ -98,7 +98,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         GenericTerm term = ontologyRepository.getTermByOboID(anatomyRootID);
         List<TransitiveClosure> transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
         assertThat(transitiveClosures.size() , greaterThan(30));
-        assertThat(transitiveClosures.size() , lessThan(60));
     }
 
     @Test
