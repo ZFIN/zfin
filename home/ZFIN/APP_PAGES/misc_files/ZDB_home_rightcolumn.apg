@@ -20,8 +20,7 @@
 
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/action/marker/transcript-add"><em>transcript</em></a>,
-           <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
+          <a href="/action/marker/transcript-add"><em>transcript</em></a>
 
 
 
@@ -95,7 +94,8 @@
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><em>pub</em></a>,
-	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>
+	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>,
+           <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
         </li>
         <li> 
           Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
