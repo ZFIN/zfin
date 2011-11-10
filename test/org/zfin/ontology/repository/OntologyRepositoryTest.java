@@ -92,12 +92,52 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(phenotypesWithSecondaryTerms);
     }
 
+
+	/**
+	 * Not that the child terms include themselves.
+	 */
     @Test
-    public void getChildrenTransitiveClosures() {
-        String anatomyRootID = "ZFA:0000108"; // fin
-        GenericTerm term = ontologyRepository.getTermByOboID(anatomyRootID);
-        List<TransitiveClosure> transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
-        assertThat(transitiveClosures.size() , greaterThan(30));
+    public void getChildrenTransitiveClosuresLineage() {
+        GenericTerm term ; 
+        List<TransitiveClosure> transitiveClosures ; 
+
+	 // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0000108?  // fin
+		//  should be 200
+        term = ontologyRepository.getTermByOboID("ZFA:0000108");
+        transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+
+        assertThat(transitiveClosures.size() , greaterThan(180));
+//        assertThat(transitiveClosures.size() , lessThan(201)); // was 200
+        assertThat(transitiveClosures.size() , lessThan(400)); 
+
+	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005299? // fin blood vessel . .. parent of perctoral fin blood vessel
+		// should be 8
+		term = ontologyRepository.getTermByOboID("ZFA:0005299");
+		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+
+        assertThat(transitiveClosures.size() , greaterThan(8));
+//        assertThat(transitiveClosures.size() , lessThan(10)); // was 9, which I agree with 
+		assertThat(transitiveClosures.size() , lessThan(20));
+
+	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005096? // perctoral fin vaculature
+		// should be 4
+		term = ontologyRepository.getTermByOboID("ZFA:0005096");
+		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+
+        assertThat(transitiveClosures.size() , greaterThan(2));
+//        assertThat(transitiveClosures.size() , lessThan(4)); // was 5
+        assertThat(transitiveClosures.size() , lessThan(7));
+
+	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005301? // pectoral fin blood vessel 
+		// should be 2 
+		term = ontologyRepository.getTermByOboID("ZFA:0005301");
+		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+
+        assertThat(transitiveClosures.size() , greaterThan(2));
+//        assertThat(transitiveClosures.size() , lessThan(4)); // was 3, which is correct
+        assertThat(transitiveClosures.size() , lessThan(7));
+
+
     }
 
     @Test
