@@ -6,7 +6,7 @@
         Labs that have features using this designation but have an alternate designation:
         <c:forEach var="lab" items="${formBean.nonCurrentLabs}" varStatus="status">
             <%--<c:if test="${lab.lab.active}">--%>
-            <zfin:link entity="${lab.lab}"/>
+            <zfin:link entity="${lab.organization}"/>
             <%--${lab.currentLineDesignation ? "": "<span style='font-size:small;'>*</span>"}--%>
             ${!status.last ? "," : ""}
             <%--</c:if>--%>
