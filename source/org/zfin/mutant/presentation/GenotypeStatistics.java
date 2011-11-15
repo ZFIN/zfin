@@ -85,11 +85,13 @@ public class GenotypeStatistics extends EntityStatistics {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
             for (FeatureMarkerRelationship rel : rels) {
-                Marker marker = rel.getMarker();
-                // Only add true genes
-                if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                    markers.add(marker);
-                }
+               if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag())  {
+                  Marker marker = rel.getMarker();
+                  // Only add true genes
+                  if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                      markers.add(marker);
+                  }
+               }
             }
 
 
