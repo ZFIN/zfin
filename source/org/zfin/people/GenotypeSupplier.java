@@ -86,5 +86,11 @@ public class GenotypeSupplier extends ObjectSupplier implements Serializable, Co
 		else
 		  return false;
 	}
+        public boolean isSolnicaLab() {
+		if (this.getOrganization().getZdbID().equals("ZDB-LAB-981208-2"))
+		  return true;
+		else
+		  return false;
+	}
 
 }

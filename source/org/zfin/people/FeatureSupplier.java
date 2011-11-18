@@ -81,6 +81,13 @@ public class FeatureSupplier extends ObjectSupplier implements Serializable, Com
 		  return false;
 	}
 
+	public boolean isSolnicaLab() {
+		if (this.getOrganization().getZdbID().equals("ZDB-LAB-981208-2"))
+		  return true;
+		else
+		  return false;
+}
+
 	public boolean isRiken() {
 		if (this.getOrganization().getZdbID().equals("ZDB-LAB-070718-1"))
 		  return true;
