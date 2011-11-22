@@ -121,7 +121,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             }
 
+        String existingFeatureAbbrev = feature.getAbbreviation();
+        if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
         feature.setAbbreviation(featureDTO.getAbbreviation());
+        }
         feature.setName(featureDTO.getName());
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
