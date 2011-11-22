@@ -317,7 +317,8 @@
             <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
                 <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
                         ${supplier.organization.name}</a>
-                <c:if test="${supplier.zirc}">&nbsp;(<a href="http://zebrafish.org/zirc/fish/lineAll.php?Allele=${formBean.feature.name}"><font size="-1">order this</font></a>)
+                <c:if test="${supplier.zirc}">&nbsp;
+                    <zfin2:orderThis organization="${supplier.organization}" accessionNumber="${formBean.feature.zdbID}"/>
                 </c:if>
                 <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
                 </c:if>
