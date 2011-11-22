@@ -119,16 +119,16 @@
   <ul>
     <li>
         Request:         
-        <a href="/zirc/fish/lineAll.php">Fish Lines</a>,
-        <a href="/zirc/est/estAll.php">ESTs/cDNAs</a>,
-        <a href="/zirc/abs/absAll.php">Monoclonal Antibodies</a>,
-        <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style:italic;">The Zebrafish Book</span></a>,
-        <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>
+        <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish Lines</a>,
+        <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
+        <a href="http://zebrafish.org/zirc/abs/absAll.php">Monoclonal Antibodies</a>,
+        <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">The Zebrafish Book</span></a>,
+        <a href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture">Paramecia</a>
       </li>
       <li class="divider-above">
-        <a href="/zirc/submissions/submitTerms.php">Submit Fish Lines</a>
+        <a href="http://zebrafish.org/zirc/submissions/submitTerms2.php">Submit Fish Lines</a>
       <li class="divider-above">
-        <a href="/zirc/health/index.php" class="novisited">Health Services</a>
+        <a href="http://zebrafish.org/zirc/health/index.php" class="novisited">Health Services</a>
       </li>
  </ul>
 
