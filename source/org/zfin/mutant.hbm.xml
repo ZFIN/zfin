@@ -259,7 +259,7 @@
         <property name="tag" column="phenos_tag"/>
     </class>
 
-    <class name="org.zfin.feature.Feature" table="feature">
+    <class name="org.zfin.feature.Feature" table="feature" dynamic-update="true">
        <id name="zdbID" type="string">
             <column name="feature_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">

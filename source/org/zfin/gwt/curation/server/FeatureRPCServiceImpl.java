@@ -120,11 +120,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             }
-
+        Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
         String existingFeatureAbbrev = feature.getAbbreviation();
-        if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
+       /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
         feature.setAbbreviation(featureDTO.getAbbreviation());
+        }*/
+        if (existingFeature == null){
+            feature.setAbbreviation(featureDTO.getAbbreviation());
         }
+
         feature.setName(featureDTO.getName());
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
@@ -137,7 +141,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (StringUtils.isNotEmpty(featureDTO.getLabPrefix())) {
             feature.setFeaturePrefix(featureRepository.getFeatureLabPrefixID(featureDTO.getLabPrefix()));
         }
-        FeatureAssay featureAssay = featureRepository.getFeatureAssay(featureDTO.getZdbID());
+      FeatureAssay featureAssay = featureRepository.getFeatureAssay(featureDTO.getZdbID());
         if (featureDTO.getMutagen() != null) {
             featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
         }
@@ -157,6 +161,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         }
+        HibernateUtil.currentSession().update(feature);
+       //currentSession().flush();
+        //currentSession().refresh(feature);
         HibernateUtil.flushAndCommitCurrentSession();
         return getFeature(featureDTO.getZdbID());
     }
