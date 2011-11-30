@@ -36,6 +36,9 @@
 --
 ----------------------------------------------------------------
 
+begin work;
+
+
 !echo '====================================================='
 !echo '===== Load data into temp table and Prepare       ==='
 !echo '====================================================='
@@ -162,6 +165,19 @@ update merged_anatomy_item
 					  from new_anatomy_item);
 
 
+delete from merged_anatomy_item where not exists (select * from anatomy_item where anatitem_zdb_id = m_anatitem_old_zdb_id);
+
+select * from merged_anatomy_item;
+
+select n.anatitem_name, o.anatitem_name
+from anatomy_item n, anatomy_item o, merged_anatomy_item
+where m_anatitem_new_zdb_id = n.anatitem_zdb_id
+  and m_anatitem_old_zdb_id = o.anatitem_zdb_id;
+
+select * from merged_anatomy_item where not exists (select * from anatomy_item where m_anatitem_old_zdb_id = anatitem_zdb_id);
+  
+
+
 -------------------------------------------------------------------
 -- Obsolete anatomy items
 --
@@ -178,25 +194,36 @@ load from "anatitem_obsolete.unl" insert into obsolete_anatomy_item;
 
 -- please add p_anatitem_obo_id to the temp table to identify the matching term records
 unload to "obsolete_anat_with_xpat.err" 
-   select o_anatitem_zdb_id
-     from obsolete_anatomy_item, term, anatomy_item
-    where exists (select * 
-                    from expression_result
-                   where xpatres_superterm_zdb_id = term_zdb_id)
-                   and o_anatitem_zdb_id = anatitem_zdb_id
-		   and term_ont_id = anatitem_obo_id;
+   select distinct o_anatitem_zdb_id
+     from obsolete_anatomy_item, term, anatomy_item, expression_result
+    where xpatres_superterm_zdb_id = term_zdb_id
+      and term_ont_id = anatitem_obo_id
+      and o_anatitem_zdb_id = anatitem_zdb_id;
 
-unload to "obsolete_anat_with_pato.err" 
+
+unload to "obsolete_anat_with_pato_entity1.err" 
    select o_anatitem_zdb_id
      from obsolete_anatomy_item
-    where exists (select * 
-                    from phenotype_statement, term
-                   where ((phenos_entity_1_subterm_zdb_id = term_zdb_id
-                      or phenos_entity_1_superterm_zdb_id = o_anatitem_zdb_id) OR
-                      (phenos_entity_2_subterm_zdb_id = term_zdb_id
-                      or phenos_entity_2_superterm_zdb_id = o_anatitem_zdb_id))
-                      ) ;
+    where exists (select 'x' 
+                    from phenotype_statement, term, anatomy_item
+                   where o_anatitem_zdb_id = anatitem_zdb_id 
+                   and anatitem_obo_id = term_ont_id
+                   and (phenos_entity_1_subterm_zdb_id = term_zdb_id
+                      or phenos_entity_1_superterm_zdb_id = term_zdb_id) 
+                  );
 
+
+unload to "obsolete_anat_with_pato_entity2.err" 
+   select o_anatitem_zdb_id
+     from obsolete_anatomy_item
+    where exists (select 'x' 
+                    from phenotype_statement, term, anatomy_item
+                   where o_anatitem_zdb_id = anatitem_zdb_id 
+                   and anatitem_obo_id = term_ont_id
+                   and (phenos_entity_2_subterm_zdb_id = term_zdb_id
+                      or phenos_entity_2_superterm_zdb_id = term_zdb_id) 
+                  );
+                      
 -------------------------------------------------------------------
 -- Anatomy term synonyms/alias 
 --
@@ -231,9 +258,7 @@ update input_data_alias set i_dalias_data_zdb_id =
 	where  i_dalias_data_zdb_id in 
 			(select n_anatitem_obo_id
 			   from new_anatomy_item);
-
-
-
+ 
 
  
 !echo '=== alias_attribution_temp ==='
@@ -355,7 +380,6 @@ insert into anatomy_relationship_list_before
 !echo "====   Load in /Delete from real tables                 ===="
 !echo "============================================================"
 
-begin work;
 
 -----------------------------------------------------
 -- Wipe off anatomy_relationship 
@@ -406,6 +430,9 @@ insert into tmp_ao_updates(t_rec_id,t_field_name,t_new_value,t_old_value,t_when)
 
 --set constraints anatitem_name_unique disabled;
 --set indexes anatitem_name_index, anatitem_name_lower_index disabled;
+
+select u_anatitem_name, u_anatitem_zdb_id from updated_anatomy_item where  exists 
+( select * from anatomy_item where u_anatitem_name = anatitem_name and anatitem_zdb_id != u_anatitem_zdb_id);
 
 update anatomy_item
    set anatitem_name = (select u_anatitem_name
@@ -563,17 +590,217 @@ insert into anatomy_item (anatitem_zdb_id, anatitem_obo_id, anatitem_name,
 
 
 ---------------------------------------------------------
--- Update expression data on merged terms not needed any more
--- since expression and phenotype data are all done on
--- the TERM table
+-- Update expression data on merged terms
 ---------------------------------------------------------
 
----------------------------------------------------------
--- Update PATO annotation on merged terms:
--- Not needed any more. This is done during the 
--- regular ontology loader process. No phenotype
--- annotation uses the anatomy_item table any more.
----------------------------------------------------------
+!echo '=== update expression_result on merged terms ==='
+
+-- expression_pattern_figure is an extension of expression_result records
+-- We have to take it into careful consideration. When later, more info
+-- becomes more extensions, we have to take them all into consideration!
+
+-- create four temp tables: xresPre, xfigPre, xresMerge, xfigMerge
+-- Pre tables keep track of records that exists before the load for
+-- terms that will be merged into other terms. 
+-- Merge tables have updated ZDB-IDs of the pre tables. 
+-- xres tables are expression_result tables and xfig tables are 
+-- expression_pattern_figure tables.
+
+create temp table xresPre (
+	p_xpatres_zdb_id 	varchar(50),
+	p_xpatex_zdb_id		varchar(50),
+	p_start_stg_zdb_id	varchar(50),
+	p_end_stg_zdb_id	varchar(50),
+	p_superterm_zdb_id	varchar(50),
+	p_subterm_zdb_id	varchar(50),
+	p_anatitem_zdb_id	varchar(50),
+	p_expression_found	boolean,
+	p_comments		varchar(255)
+)with no log;
+
+create temp table xresMerge (
+	m_xpatres_zdb_id 	varchar(50),
+	m_update_xpatres_zdb_id	varchar(50),
+	m_xpatex_zdb_id		varchar(50),
+	m_start_stg_zdb_id	varchar(50),
+	m_end_stg_zdb_id	varchar(50),
+	m_superterm_zdb_id	varchar(50),
+	m_subterm_zdb_id	varchar(50),
+	m_anatitem_zdb_id	varchar(50),
+	m_expression_found	boolean,
+	m_is_new 		boolean default 't',
+	m_comments		varchar(255)
+)with no log;
+
+create temp table xfigPre (
+	p_xpatfig_xpatres_zdb_id	varchar(50),
+	p_xpatfig_fig_zdb_id		varchar(50)
+)with no log;
+
+create temp table xfigMerge (
+	m_xpatfig_xpatres_zdb_id	varchar(50),
+	m_xpatfig_fig_zdb_id		varchar(50)
+)with no log;
+
+-- PRE Step 1
+-- find the current records for terms that will be merged and 
+-- create records in the pre tables.
+
+insert into xresPre (
+	p_xpatres_zdb_id 	,
+	p_xpatex_zdb_id		,
+	p_start_stg_zdb_id	,
+	p_end_stg_zdb_id	,
+	p_superterm_zdb_id	,
+	p_subterm_zdb_id	,
+	p_expression_found	,
+	p_comments		,
+	p_anatitem_zdb_id	)
+select 
+	xpatres_zdb_id 	,
+	xpatres_xpatex_zdb_id		,
+	xpatres_start_stg_zdb_id	,
+	xpatres_end_stg_zdb_id	,
+	xpatres_superterm_zdb_id	,
+	xpatres_subterm_zdb_id	,
+	xpatres_expression_found		,
+	xpatres_comments		,
+	anatitem_zdb_id	
+from merged_anatomy_item, expression_result, anatomy_item, term
+where m_anatitem_old_zdb_id = anatitem_zdb_id
+  and anatitem_obo_id = term_ont_id
+  and term_zdb_id = xpatres_superterm_zdb_id;
+	
+
+
+insert into xfigPre (
+	p_xpatfig_xpatres_zdb_id ,
+	p_xpatfig_fig_zdb_id	)
+select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id
+  from xresPre, expression_pattern_figure
+ where p_xpatres_zdb_id = xpatfig_xpatres_zdb_id;
+
+
+-- Merge Step 1
+-- put the Pre records into the merge table. 
+
+
+insert into xresMerge (
+	m_xpatres_zdb_id 	,
+	m_xpatex_zdb_id		,
+	m_start_stg_zdb_id	,
+	m_end_stg_zdb_id	,
+	m_superterm_zdb_id	,
+	m_subterm_zdb_id	,
+	m_expression_found	,
+	m_comments		,
+	m_anatitem_zdb_id	)
+select 
+	p_xpatres_zdb_id 	,
+	p_xpatex_zdb_id		,
+	p_start_stg_zdb_id	,
+	p_end_stg_zdb_id	,
+	p_superterm_zdb_id	,
+	p_subterm_zdb_id	,
+	p_expression_found	,
+	p_comments		,
+	p_anatitem_zdb_id	
+from xresPre;
+
+insert into xfigMerge (
+	m_xpatfig_xpatres_zdb_id ,
+	m_xpatfig_fig_zdb_id	)
+select p_xpatfig_xpatres_zdb_id, p_xpatfig_fig_zdb_id
+  from xfigPre;
+
+
+
+-- update the TERM ids in the xresMerge table
+
+update xresMerge set m_superterm_zdb_id = 
+(select term_zdb_id from term, anatomy_item, merged_anatomy_item
+where m_anatitem_zdb_id = m_anatitem_old_zdb_id
+  and anatitem_zdb_id = m_anatitem_new_zdb_id
+  and anatitem_obo_id = term_ont_id);
+
+-- if any of the xresMerge records already exist in xpatres, then 
+-- update the xresMerge new_xpatres_zdb_id value, and 
+-- update the xfigMerge xpatres_zdb_id value
+
+update xresMerge set m_update_xpatres_zdb_id = 
+(select xpatres_zdb_id from expression_result
+ where 	m_xpatex_zdb_id     = xpatres_xpatex_zdb_id
+   and  m_start_stg_zdb_id  = xpatres_start_stg_zdb_id
+   and  m_end_stg_zdb_id    = xpatres_end_stg_zdb_id
+   and  m_superterm_zdb_id  = xpatres_superterm_zdb_id
+   and  m_subterm_zdb_id    = xpatres_subterm_zdb_id
+   and  m_expression_found  = xpatres_expression_found)
+where exists 
+(select * from expression_result
+ where 	m_xpatex_zdb_id     = xpatres_xpatex_zdb_id
+   and  m_start_stg_zdb_id  = xpatres_start_stg_zdb_id
+   and  m_end_stg_zdb_id    = xpatres_end_stg_zdb_id
+   and  m_superterm_zdb_id  = xpatres_superterm_zdb_id
+   and  m_subterm_zdb_id    = xpatres_subterm_zdb_id
+   and  m_expression_found  = xpatres_expression_found)
+;
+
+
+update xresMerge set m_is_new = 'f'
+where m_update_xpatres_zdb_id is not null;
+
+update xresMerge set m_update_xpatres_zdb_id = get_id('XPATRES')
+where m_is_new = 't';
+
+update xfigMerge set m_xpatfig_xpatres_zdb_id = 
+(select m_update_xpatres_zdb_id from xresMerge
+  where m_xpatfig_xpatres_zdb_id = m_xpatres_zdb_id);
+
+
+-- delete duplicate records from xfigMerge
+
+delete from xfigMerge
+where exists (
+	select * from expression_pattern_figure
+	where m_xpatfig_xpatres_zdb_id = xpatfig_xpatres_zdb_id
+	  and m_xpatfig_fig_zdb_id = xpatfig_fig_zdb_id);
+
+-- delete the old records from expression_result and expression_pattern_figure
+
+delete from zdb_active_data where zactvd_zdb_id in (select p_xpatres_zdb_id from xresPre);
+
+-- insert the newly merged records from xresMerge and xfigMerge
+
+insert into zdb_active_data (zactvd_zdb_id) 
+select m_update_xpatres_zdb_id
+from xresMerge
+where m_is_new = 't';
+
+insert into expression_result(
+	xpatres_zdb_id 	,
+	xpatres_xpatex_zdb_id		,
+	xpatres_start_stg_zdb_id	,
+	xpatres_end_stg_zdb_id	,
+	xpatres_superterm_zdb_id	,
+	xpatres_subterm_zdb_id	,
+	xpatres_expression_found		,
+	xpatres_comments )
+select
+	m_update_xpatres_zdb_id 	,
+	m_xpatex_zdb_id		,
+	m_start_stg_zdb_id	,
+	m_end_stg_zdb_id	,
+	m_superterm_zdb_id	,
+	m_subterm_zdb_id	,
+	m_expression_found	,
+	m_comments		
+from xresMerge
+where m_is_new = 't';
+
+
+insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
+select m_xpatfig_xpatres_zdb_id, m_xpatfig_fig_zdb_id
+from xfigMerge;
 
 
 
@@ -585,6 +812,11 @@ insert into anatomy_item (anatitem_zdb_id, anatitem_obo_id, anatitem_name,
 -- transferred to the new terms already by Dagedit. There is(should be)  
 -- no on-delete-cascade to annotations, while that should have been taken
 -- care of by now.
+
+delete from merged_anatomy_item
+where exists( select * from zdb_replaced_data
+              where zrepld_old_zdb_id = m_anatitem_old_zdb_id
+                and zrepld_new_zdb_id = m_anatitem_new_zdb_id);
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
 	select m_anatitem_old_zdb_id, m_anatitem_new_zdb_id
@@ -601,28 +833,52 @@ delete from zdb_active_data
 		      from merged_anatomy_item
 		     where zactvd_zdb_id = m_anatitem_old_zdb_id);
 
+
+	     
 				
 -----------------------------------------------------------------
 -- Delete dead Alias/Synonym, Keep zdb id on unchanged alias
 -- Load in new ones. 
 -----------------------------------------------------------------
-select count(*) from input_data_alias where i_dalias_group is null;
+
+
+delete from data_alias
+where exists (select * from anatomy_item
+              where dalias_data_zdb_id=anatitem_zdb_id
+                and anatitem_is_obsolete = 't');
+
+
+update input_data_alias set i_dalias_group = "alias" where lower(i_dalias_group) in ("exact alias","exact plural","related alias","related plural");
+
+
+update input_data_alias
+set i_dalias_group = (select aliasgrp_pk_id from alias_group where i_dalias_group = aliasgrp_name)
+;
+
+unload to "dalias_update.err" select i_dalias_data_zdb_id, i_dalias_alias, count(*)
+from input_data_alias group by 1,2 having count(*) >1;
+
 !echo '== data alias group second try =='
-update data_alias set dalias_group_id= (select aliasgrp_pk_id 
-       		      		       	       from input_data_alias, alias_group 
-					       where dalias_data_zdb_id=i_dalias_data_zdb_id
-       					       and i_dalias_group = aliasgrp_name 
-					       and i_dalias_alias=dalias_alias 
-					       and i_dalias_group not like 'secon%') 
+
+
+select * from data_alias where not exists (select i_dalias_group from input_data_alias
+                                        where dalias_data_zdb_id=i_dalias_data_zdb_id
+                                          and i_dalias_alias=dalias_alias)
+ and dalias_data_zdb_id like "ZDB-ANAT-%"
+   and dalias_group_id != 7
+   and not exists (select * from anatomy_item where anatitem_zdb_id = dalias_data_zdb_id
+                   and anatitem_is_obsolete = 't');
+
+
+update data_alias set dalias_group_id = (select i_dalias_group from input_data_alias
+                                        where dalias_data_zdb_id=i_dalias_data_zdb_id
+                                          and i_dalias_alias=dalias_alias)
  where dalias_data_zdb_id like "ZDB-ANAT-%"
-   and exists 
-	(select 't'
-	   from input_data_alias
-	  where dalias_data_zdb_id = i_dalias_data_zdb_id
-	    and dalias_alias = i_dalias_alias
-            and dalias_group_id not in (select aliasgrp_pk_id 
-	    			       	       from alias_group 
-					       where aliasgrp_name like 'seconda%');
+   and dalias_group_id != 7
+   and not exists (select * from anatomy_item where anatitem_zdb_id = dalias_data_zdb_id
+                   and anatitem_is_obsolete = 't');
+
+
 
 
 !echo '== delete dead synonym from zdb_active_data =='
@@ -693,14 +949,23 @@ insert into zdb_active_data(zactvd_zdb_id)
 	select i_dalias_zdb_id
 	  from input_data_alias;
 
+select * from input_data_alias;
+
+select * from input_data_alias where not exists (select * from anatomy_item where anatitem_zdb_id = i_dalias_data_zdb_id);
+
+
 insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
-	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias, (select aliasgrp_pk_id from alias_group where aliasgrp_name =i_dalias_group)
+	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias, i_dalias_group
 	  from input_data_alias;
 
 insert into tmp_ao_updates(t_rec_id, t_field_name, t_new_value, t_when, t_comments)
       select i_dalias_data_zdb_id, "synonym "||i_dalias_zdb_id, i_dalias_alias, 
 	     CURRENT, "New."
 	from input_data_alias;
+
+select * from input_data_alias where i_dalias_attribution is not null and not exists (select * from publication where zdb_id = i_dalias_attribution); 
+delete from input_data_alias where i_dalias_attribution is not null and not exists (select * from publication where zdb_id = i_dalias_attribution); 
+
 
 !echo '== put in attribution on new synonym =='
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -784,7 +1049,6 @@ update anatomy_item set anatitem_is_obsolete = 't'
 		      from obsolete_anatomy_item
 		     where anatitem_zdb_id = o_anatitem_zdb_id);
 
-
 -----------------------------------------------------------------
 -- Load anatomy_relationship
 -----------------------------------------------------------------
@@ -826,12 +1090,54 @@ select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_name, c.s
    and n_anatrel_dagedit_id <> "develops_from"
    and c.stg_name <> "Unknown";
 
+select n_anatrel_anatitem_1_zdb_id from new_anatomy_relationship 
+where not exists (select * from anatomy_item where anatitem_zdb_id = n_anatrel_anatitem_1_zdb_id);
 
+select n_anatrel_anatitem_2_zdb_id from new_anatomy_relationship 
+where not exists (select * from anatomy_item where anatitem_zdb_id = n_anatrel_anatitem_2_zdb_id);
+
+
+--*************************************
+
+-- When three terms are merged into one, duplicate records for anatomy_relationships are created. 
+-- This finds that case and deletes one of the duplicates.
+
+select distinct n_anatrel_anatitem_1_zdb_id tar1, n_anatrel_anatitem_2_zdb_id tar2, count(*) as tar3
+from new_anatomy_relationship 
+group by 1,2
+having count(*) > 1
+into temp tanatrel_duplicate;
+
+insert into tanatrel_duplicate (tar1, tar2, tar3)
+select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id, 'x'
+from anatomy_relationship, new_anatomy_relationship
+where anatrel_anatitem_1_zdb_id = n_anatrel_anatitem_1_zdb_id
+  and anatrel_anatitem_2_zdb_id = n_anatrel_anatitem_2_zdb_id;
+
+
+unload to 'duplicate_anatomy_relationship.unl'
+select * from tanatrel_duplicate;
+
+delete from new_anatomy_relationship
+where exists (
+    select * 
+    from tanatrel_duplicate 
+    where tar1 = n_anatrel_anatitem_1_zdb_id
+      and tar2 = n_anatrel_anatitem_2_zdb_id);
+
+select * from new_anatomy_relationship
+where not exists ( select * from anatomy_item where anatitem_zdb_id = n_anatrel_anatitem_1_zdb_id);
+
+select * from new_anatomy_relationship
+where not exists ( select * from anatomy_item where anatitem_zdb_id = n_anatrel_anatitem_2_zdb_id);  
+  
+  
 !echo '== load in anatomy_relationship =='
 insert into anatomy_relationship (anatrel_anatitem_1_zdb_id, 
 				  anatrel_anatitem_2_zdb_id,
 				  anatrel_dagedit_id)
-     select * from new_anatomy_relationship ;
+     select distinct n_anatrel_anatitem_1_zdb_id, n_anatrel_anatitem_2_zdb_id, n_anatrel_dagedit_id
+     from new_anatomy_relationship ;
 
 !echo '== generate anatomy relationship list  =='
 execute procedure create_anatomy_relationship_list();
@@ -1000,7 +1306,9 @@ unload to "annotationViolates.err"
                                      ) = "f";
 
 }
-rollback work;
+
+
+--rollback work;
 
 --if no error from the screen, numbers looks right, and except 
 --annotationViolates.err the other three .err files are with zero length,
@@ -1008,5 +1316,5 @@ rollback work;
 --ask for a file AO_translation.unl from one of them with file format
 -- ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
 
---commit work;
+commit work;
  
