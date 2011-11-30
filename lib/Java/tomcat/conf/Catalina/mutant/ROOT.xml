@@ -7,6 +7,8 @@
 <Context path="/" docBase="@TARGETROOT@/home"
          antiResourceLocking="false" antiJARLocking="false" swallowOutput="true" privileged="true">
 
+<!-- check every 20 min (=1200sec) if the connection is healthy by running the 
+preferredTestQuery. If unhealthy, a new connection will be created.-->
  <Resource name="jdbc/zfin" auth="Container" factory="org.apache.naming.factory.BeanFactory"
            description="Database Connections" 
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
@@ -14,7 +16,9 @@
            driverClass="com.informix.jdbc.IfxDriver" 
            
 jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high;IFX_ISOLATION_LEVEL=DR"
-           maxPoolSize="8" minPoolSize="6" />
+           maxPoolSize="8" minPoolSize="6"  
+           idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
+/>
 
   <Resource name="jdbc/gbrowse" auth="Container"
             type="javax.sql.DataSource" username="nobody"
