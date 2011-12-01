@@ -170,7 +170,12 @@ c.clone_mrkr_zdb_id='$OID';
   <?MIVAR NAME=$pub_indexed_date>$3<?/MIVAR>
   
   <TD>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
+    <?MISQL SQL="select * from publication where zdb_id ='$OID' and jtype = 'Curation';"><?/MISQL>
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">  
+        &nbsp;
+    <?MIELSE>
+        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
+    <?/MIBLOCK>
   </TD>
   <TD>
     Status: <?MIVAR>$(IF,$(EC,$pub_completion_date,),Open,Closed $pub_completion_date)<?/MIVAR><?MIVAR>$(IF,$(EQ,$pub_is_indexed,t),$comma&nbsp;Indexed&nbsp;$pub_indexed_date)<?/MIVAR>
