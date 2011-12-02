@@ -361,7 +361,7 @@ insert into tmp_papers_with_phenotype_ds
     from phenotype_experiment, publication, figure
     where fig_source_zdb_id = zdb_id
         and fig_zdb_id = phenox_fig_zdb_id
-        and jtype = 'Curation';
+        and jtype in ('Curation', 'Active_Curation', 'Unpublished');
 
 select count(*) from tmp_papers_with_phenotype_ds;
 
@@ -376,7 +376,7 @@ select distinct phenos_pk_id
     where fig_source_zdb_id = zdb_id
         and fig_zdb_id = phenox_fig_zdb_id
         and phenox_pk_id = phenos_phenox_pk_id
-        and jtype = 'Curation';
+        and jtype in ('Curation', 'Active_Curation', 'Unpublished');
 
 select count(*) from tmp_papers_with_phenotype_ds_r;
 
