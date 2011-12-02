@@ -167,12 +167,13 @@ create dba function regen_anatomy_counts()
 	    	 genotype_experiment, genotype, term   	 
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
-              and xpatres_superterm_zdb_id = term_zdb_id
+              and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
               and genox_geno_zdb_id = geno_zdb_id
               and geno_is_wildtype = 't'
+	      and genox_is_std_or_generic_control = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
               and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
           and not exists(
@@ -205,13 +206,15 @@ create dba function regen_anatomy_counts()
 		 genotype_experiment, genotype, term		
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
-              and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
+              and (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id OR 
+	              alltermcon_contained_zdb_id = xpatres_subterm_zdb_id)
 	      and alltermcon_container_zdb_id = term_Zdb_id
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
               and genox_geno_zdb_id = geno_zdb_id
               and geno_is_wildtype = 't'
+	      and genox_is_std_or_generic_control = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
               and probe.mrkr_abbrev[1,10] <> "WITHDRAWN:"
          and not exists(select 'x' from clone

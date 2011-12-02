@@ -267,13 +267,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
                 "FROM  Expression_Experiment exp, outer marker probe, Term item_, Marker gene, Figure fig," +
-                "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result," +
-                "      Experiment experiment " +
+                "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result " +
                 "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
                 "       item_.term_zdb_id = :termID AND " +
                 "       result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id AND " +
-                "       result.xpatres_superterm_zdb_id = item_.term_zdb_id AND " +
+                "       (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) AND " +
                 "       result.xpatres_expression_found = :expressionFound AND " +
                 "       fig.fig_zdb_id=results.xpatfig_fig_zdb_id AND " +
                 "       results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id AND " +
@@ -281,8 +280,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       genox.genox_geno_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
-                "       experiment.exp_zdb_id = genox.genox_exp_zdb_id AND " +
-                "       experiment.exp_name = :condition AND " +
+                "       genox.genox_is_std_or_generic_control = :condition AND " +
                 "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
                 "       not exists( " +
                 "           select 'x' from clone " +
@@ -304,7 +302,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
-        query.setString("condition", Experiment.STANDARD);
+        query.setBoolean("condition", true);
         query.setString("withdrawn", Marker.WITHDRAWN);
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll();

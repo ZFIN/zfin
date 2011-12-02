@@ -230,7 +230,7 @@ DEBUGGING:
                    from genotype_experiment, genotype
                   where genox_geno_zdb_id = geno_zdb_id
                     and geno_is_wildtype = 't'
-                    and genox_is_standard = 't'
+                    and genox_is_std_or_generic_control = 't'
                     ;">
           
     <?/MISQL>
