@@ -52,17 +52,20 @@ cd -
 
 echo "fetch the Ensembl GTF file iff it is newer than the one we have"
 echo ""
-prior="`ls -lt ${GTF} | head -1`"
+# get a fix on the oldest file that matches the pattern
+prior="`ls -ltr ${GTF} | head -1`"
 wget -q --timestamping  "ftp://ftp.ensembl.org/pub/current_gtf/danio_rerio/${GTF}"
 geterr=$?
+# get a fix on the newest file that matches the pattern
 post="`ls -lt ${GTF} | head -1`"
 
-#echo "wget error return code is: $geterr"
+#if the oldest matches the newest, then  they are the same
 
-if [[ -f ${GTF} && ${geterr} -eq 0  ]] ; then
-	# -a "$prior" != "$post" ] ; then
+#echo "Is ${post} newer than ${prior}"
+
+if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 	echo "delete all but the most recent downloaded ${GTF}"
-	find . -name ${GTF} ! -name `ls -1t ${GTF}|head -1` -exec rm -f {} \;
+	find . -name "${GTF}" ! -name `ls -1t ${GTF}|head -1` -exec rm -f {} \;
 
 	# get the current version number
 	ver=`ls ${GTF}`
