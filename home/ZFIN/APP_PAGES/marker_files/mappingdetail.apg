@@ -387,8 +387,40 @@ marker = '';
       <?/MIVAR>
 
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+       <?MISQL SQL="
+      	select zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2),
+                     comments,strain_id,geno_display_name
+      	 from primer_set, genotype
+      	where marker_id='$OID'
+                and strain_id = geno_zdb_id;">
 
+          <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 
+            <TR>
+             <TD><b>Primer Sets:</b></TD>
+            </TR>
+          <?/MIBLOCK>
+            <TR bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
+            <TD colspan=3>
+            <TABLE>
+             <TR>
+               <TD><b>Strain:</b> <A HREF="/action/genotype/genotype-detail?zdbID=$8">$9</A>  </TD>
+               <TD align=left><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
+               <TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
+               <TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
+             </TR>
+             <TR>
+      	 <TD>&nbsp;&nbsp;</TD>
+               <TD align=left colspan=3><font size=2><b>F-PRIMER:</b> $(IF,$(EQ,$4,NULL),Unknown,$4)</font></TD>
+                <TD align=left colspan=3><font size=2><B>R-PRIMER: </b>$(IF,$(EC,$marker_type,RAPD),N/A,$(IF,$(EQ,$5,NULL),Unknown,$5))</font></TD>
+             </TR>
+            </TABLE>
+            </TD></TR>
+       <?/MISQL>
+
+       </TABLE>
+
+ <p>
       <?MISQL SQL="
 	       select feature_zdb_id, feature_name, feature_abbrev
                  from feature
@@ -409,7 +441,7 @@ marker = '';
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
 	<?MIVAR NAME=$allele_name>$2<?/MIVAR>
         <?MIVAR NAME=$allele_abbrev>$3<?/MIVAR>
-	<TR><TD><b>Genomic Feature <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/action/marker/view/$OID">$mrkr_abbrev</A></i> </b>
+	<TR><TD><b>Genomic Feature <i><A HREF="/action/feature/feature-detail?zdbID=$allele_id">$allele_abbrev</i></A> is an allele of <i><A HREF="/action/marker/view/$OID">$mrkr_abbrev</A></i> </b>
         </TD></TR>
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
@@ -448,41 +480,6 @@ marker = '';
   <?MICOMMENT>-----------end of mapping info ---------------------<?/MICOMMENT>
 
 
-  <?MICOMMENT>--------- Primer set -------------------------------
-  <?/MICOMMENT>
-
- <?MISQL SQL="
-	select zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), 
-               comments,strain_id,geno_display_name 
-	 from primer_set, genotype
-	where marker_id='$OID' 
-          and strain_id = geno_zdb_id;">
-
-    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-      <TR><TD><br></TD></TR>
-      <TR>
-       <TD><b>Primer Sets:</b></TD>
-      </TR>
-    <?/MIBLOCK>
-      <TR bgcolor=<?MIVAR>"$highlight"<?/MIVAR>> 
-      <TD colspan=3>
-      <TABLE>
-       <TR>
-         <TD><b>Strain:</b> <A HREF="/action/genotype/genotype-detail?zdbID=$8">$9</A>  </TD>
-         <TD align=left><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
-         <TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
-         <TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
-       </TR>
-       <TR>
-	 <TD>&nbsp;&nbsp;</TD>
-         <TD align=left colspan=3><font size=2><b>F-PRIMER:</b> $(IF,$(EQ,$4,NULL),Unknown,$4)</font></TD>
-          <TD align=left colspan=3><font size=2><B>R-PRIMER: </b>$(IF,$(EC,$marker_type,RAPD),N/A,$(IF,$(EQ,$5,NULL),Unknown,$5))</font></TD>
-       </TR>
-      </TABLE>
-      </TD></TR>
- <?/MISQL>
-
- </TABLE>
 
  <?MIVAR NAME=$mapdetails_mode>standalone<?/MIVAR>
  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
@@ -1152,7 +1149,7 @@ marker = '';
  <?MICOMMENT>-------------- end EST and/or Gene containing SNP -----------------<?/MICOMMENT>
 
  </TABLE></TD></TR>
-<?MIBLOCK COND="$(EC,$mapped,t)"> <p><TR><TD> <hr width=80%></TD></TR> 
+<?MIBLOCK COND="$(EC,$mapped,t)"> <br><TR><TD> <hr width=80%></TD></TR>
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
 <?/MIBLOCK>
 <?/MIBLOCK>
