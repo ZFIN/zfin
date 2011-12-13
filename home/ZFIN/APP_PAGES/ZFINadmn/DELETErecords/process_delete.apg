@@ -284,6 +284,7 @@
    
         
          <?MICOMMENT> ========  Common Action (cont) ========= <?/MICOMMENT>
+	 <?MIVAR NAME="old_name">$(REPLACE,$old_name,','')<?/MIVAR>
 	 <?MISQL SQL="
                    update zdb_replaced_data 
 	              set zrepld_new_zdb_id = '$merge_oid',
