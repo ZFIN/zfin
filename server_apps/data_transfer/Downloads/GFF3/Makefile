@@ -28,7 +28,7 @@ unload_assembly_clone_gff.sql E_unload_alias_scattered.sql \
 E_unload_antibody_gff.sql E_unload_pheno_gff.sql E_unload_xpat_gff.sql \
 LoadVegaGFF3.pl LoadEnsemblGFF3.pl E_unload_zfin_morpholino.sql \
 E_unload_transcript_gff.sql  E_unload_ensembl_contig.sql \
-load_drerio_ensembl.sql  unload_vega_transcripts.sql
+load_drerio_ensembl.sql  unload_vega_transcripts.sql E_load_unload_BL_gff.sql
 
 STATICS = gather_alias.awk rollback.sql commit.sql load_drerio_vega_id.sql \
 	 update_vega_nomenclature.sql get_mo_seq.sql sam2gff3.awk increment_id.awk \
@@ -85,7 +85,22 @@ load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql    
 load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql # $(TARGETDIR)/drerio_ensembl.unl
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
 
-run : $(TARGETDIR)/GenerateZFINGFF3.pl 	  $(TARGETDIR)/rollback.sql \
+### Burgess Lin track: global bed file exists
+/research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab :
+	echo "Bed file may need to be updated with a gmake in "
+	echo "... ZFIN_WWW/server_apps/data_transfer/Burgess_Lin/"
+
+### local copy of bed file not older than global copy
+$(TARGETDIR)/BL_chr_beg_end_la_strnd.tab: /research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab
+	cp /research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab $(TARGETDIR)/BL_chr_beg_end_la_strnd.tab
+
+### produces <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_BL.gff3
+load_BL:	 $(TARGETDIR)/E_load_unload_BL_gff.sql  $(TARGETDIR)/BL_chr_beg_end_la_strnd.tab
+	 cd $(TARGETDIR) && dbaccess -a $(DBNAME) E_load_unload_BL_gff.sql
+
+### daily tracks
+
+run : load_BL $(TARGETDIR)/GenerateZFINGFF3.pl 	  $(TARGETDIR)/rollback.sql \
 $(TARGETDIR)/unload_zfin_genes_gff.sql \
 $(TARGETDIR)/unload_alias_scattered.sql   $(TARGETDIR)/E_unload_alias_scattered.sql \
 $(TARGETDIR)/unload_pheno_gff.sql  		  $(TARGETDIR)/E_unload_pheno_gff.sql \

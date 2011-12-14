@@ -34,7 +34,7 @@ my $cmd = "cat ".
     "unload_alias_scattered.sql " .
     "unload_xpat_gff.sql " .
     "unload_pheno_gff.sql " .
-    "unload_antibody_gff.sql " . 
+    "unload_antibody_gff.sql " .
     "unload_vega_chromosome_gff.sql " .
     "unload_vega_transcripts.sql ".
 	"unload_zfin_morpholino.sql " .
@@ -42,14 +42,15 @@ my $cmd = "cat ".
 ###############################################
 ###  Ensembl
 #my $cmd = "cat ".
+	"E_load_unload_BL_gff.sql " .                # full transaction
     "E_unload_transcript_gff.sql " .
     "E_unload_ensembl_contig.sql " .
- 	"E_unload_zfin_morpholino.sql " . 	
+ 	"E_unload_zfin_morpholino.sql " .
     "E_zfin_ensembl_gene.sql " .                  # begin gene transaction
     "E_unload_alias_scattered.sql " .
     "E_unload_xpat_gff.sql " .
     "E_unload_pheno_gff.sql " .
-    "E_unload_antibody_gff.sql " .  
+    "E_unload_antibody_gff.sql " .
     "rollback.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|-->";
 
 system($cmd);
