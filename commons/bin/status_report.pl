@@ -8,9 +8,9 @@ my $zcs = "technical\@zfin.org";
 
 open MAIL, "|/usr/lib/sendmail -t";
 
-print MAIL "To: judys\n";
+print MAIL "To: dhowe\@zfin.org\n";
 print MAIL "Cc: $zcs \n";
-print MAIL "Subject: Status report to Judy\n";
-print MAIL 
-    "Please send your weekly status report to Judy\n";
+print MAIL "Subject: Status report to Doug\n";
+print MAIL
+    "Please send your weekly status report to Doug\n";
 close MAIL;
