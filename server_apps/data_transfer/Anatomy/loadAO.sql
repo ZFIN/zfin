@@ -869,6 +869,22 @@ select * from data_alias where not exists (select i_dalias_group from input_data
    and not exists (select * from anatomy_item where anatitem_zdb_id = dalias_data_zdb_id
                    and anatitem_is_obsolete = 't');
 
+unload to "data-alias-delete.warning"
+select * from data_alias where not exists (select i_dalias_group from input_data_alias
+                                        where dalias_data_zdb_id=i_dalias_data_zdb_id
+                                          and i_dalias_alias=dalias_alias)
+ and dalias_data_zdb_id like "ZDB-ANAT-%"
+   and dalias_group_id != 7
+   and not exists (select * from anatomy_item where anatitem_zdb_id = dalias_data_zdb_id
+                   and anatitem_is_obsolete = 't');
+
+delete from data_alias where  not exists (select i_dalias_group from input_data_alias
+                                        where dalias_data_zdb_id=i_dalias_data_zdb_id
+                                          and i_dalias_alias=dalias_alias)
+ and dalias_data_zdb_id like "ZDB-ANAT-%"
+   and dalias_group_id != 7
+   and not exists (select * from anatomy_item where anatitem_zdb_id = dalias_data_zdb_id
+                   and anatitem_is_obsolete = 't');
 
 update data_alias set dalias_group_id = (select i_dalias_group from input_data_alias
                                         where dalias_data_zdb_id=i_dalias_data_zdb_id
