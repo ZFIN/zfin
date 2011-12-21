@@ -1,4 +1,5 @@
 -- E_load_unload_BL_gff.sql
+! echo "E_load_unload_BL_gff.sql -> zfin_BL.gff3"
 
 begin work;
 
