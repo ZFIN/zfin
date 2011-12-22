@@ -6,10 +6,13 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataAliasGroup;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collection;
@@ -25,11 +28,15 @@ import static org.junit.Assert.*;
 public class GwtConversionTest extends AbstractDatabaseTest{
 
     private static Logger logger = Logger.getLogger(GwtConversionTest.class);
+      private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
+    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
     // This is the correct character if it looks like a N with a tilde on top of it.
     // Off of solaris, it is rendered correctly (a long mdash).  
     private final String unescapedName = "(\u2014Tg:123)" ;
     private final String escapedName = "(&mdash;Tg:123)";
+     private final String unescapedNote = "(\u0392Tg:123)" ;
+    private final String escapedNote = "(&Beta;Tg:123)";
 
     @Test
     public void testConverter(){
@@ -87,6 +94,43 @@ public class GwtConversionTest extends AbstractDatabaseTest{
             assertNotNull(dataAliasList);
             assertEquals(1,dataAliasList.size());
             assertEquals(DTOConversionService.escapeString(unescapedName), dataAliasList.get(0).getAlias());
+        } catch (HibernateException e) {
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void testMarkerPublicNote(){
+
+        HibernateUtil.createTransaction();
+        try {
+             Marker marker = markerRepository.getMarkerByID("ZDB-ATB-090831-1");
+
+            String newNote = DTOConversionService.escapeString(unescapedNote);
+            marker.setPublicComments(newNote);
+            HibernateUtil.currentSession().save(marker);
+            assertEquals(DTOConversionService.escapeString(unescapedNote), marker.getPublicComments());
+        } catch (HibernateException e) {
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+    @Test
+    public void testFeaturePublicNote(){
+
+        HibernateUtil.createTransaction();
+        try {
+             Feature ftr = featureRepository.getFeatureByID("ZDB-ALT-070628-4");
+            assertEquals(DTOConversionService.escapeString(unescapedNote), escapedNote);
+
+            String newNote = DTOConversionService.escapeString(unescapedNote);
+            ftr.setPublicComments(newNote);
+            HibernateUtil.currentSession().save(ftr);
+            assertEquals(DTOConversionService.escapeString(unescapedNote), ftr.getPublicComments());
         } catch (HibernateException e) {
             fail(e.toString());
         } finally {
