@@ -1,7 +1,9 @@
 package org.zfin;
 
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.gwt.root.server.DTOConversionService;
 
 import java.util.Set;
 

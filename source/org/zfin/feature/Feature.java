@@ -2,6 +2,7 @@ package org.zfin.feature;
 
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.PublicationAttribution;

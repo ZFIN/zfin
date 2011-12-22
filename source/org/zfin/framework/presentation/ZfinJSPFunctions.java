@@ -1,9 +1,11 @@
 package org.zfin.framework.presentation;
 
 import com.opensymphony.clickstream.ClickstreamRequest;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+//import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -37,7 +39,7 @@ public class ZfinJSPFunctions {
         if (string.indexOf("\n") > -1)
             string = string.replaceAll("\n", "<br/>");
 
-        return StringEscapeUtils.escapeJavaScript(string);
+        return StringEscapeUtils.escapeEcmaScript(string);
     }
 
     /**
@@ -50,7 +52,13 @@ public class ZfinJSPFunctions {
      */
     public static String escapeHtml(String string, boolean escapeAll) {
         if (escapeAll)
-            string = StringEscapeUtils.escapeHtml(string);
+
+        string = DTOConversionService.unescapeString(string);
+       string = StringEscapeUtils.unescapeHtml4(string);
+        string = StringEscapeUtils.unescapeJava(string);
+         string = StringEscapeUtils.unescapeXml(string);
+
+
         if (string.indexOf("\r\n") > -1)
             string = string.replaceAll("\r\n", "<br/>");
         if (string.indexOf("\n") > -1)
