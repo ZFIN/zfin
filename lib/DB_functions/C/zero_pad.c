@@ -1,23 +1,23 @@
 /*
  * Defines zero_pad(unpadded) function.
  *
- * This routine exists to allow us to sort strings with embedded numbers 
+ * This routine exists to allow us to sort strings with embedded numbers
  * in them.  This pads any embedded number string with leading zeros, out
  * to a predefined width.  It also converts the string to lower case.  Thus
- * 
+ *
  *   hox2a45, and
  *   Hox5a2a
  *   hox10a123
- * 
+ *
  * become
- * 
+ *
  *   hox0000000002a0000000045
  *   hox0000000005a0000000002a
  *   hox0000000010a0000000123
- * 
- * The first set will not sort in the order you want them to, while the second 
+ *
+ * The first set will not sort in the order you want them to, while the second
  * pair will.
- * 
+ *
  * Note that this routine will stumble on negative and floating point numbers.
  */
 
@@ -32,11 +32,11 @@
                                 "UGEN2", "FUNCTION%s", #fun, NULL)
 #define         EXCEPTION(msg)  mi_db_error_raise (NULL, MI_EXCEPTION, msg)
 #define         DEFAULT_PADDING 10
-#define		MAXLEN		255
+#define		MAXLEN		955
 
 
 mi_lvarchar *
-zero_pad(mi_lvarchar *unpaddedLvar) 
+zero_pad(mi_lvarchar *unpaddedLvar)
 {
   char *unpaddedStr, *unpaddedPtr, *paddedPtr, *digitPtr;
   char paddedStr[MAXLEN], errorText[MAXLEN];
@@ -65,11 +65,11 @@ zero_pad(mi_lvarchar *unpaddedLvar)
       /* At this point we could check if the number is wider than
        * DEFAULT_PADDING, and then throw an exception.  However, this code
        * ignores that case and just copies the full number from the unpadded
-       * to the padded string.  
+       * to the padded string.
        */
       paddingWidth = DEFAULT_PADDING - numberWidth;
-      for (paddingIdx = 0; 
-	   paddingIdx < paddingWidth; 
+      for (paddingIdx = 0;
+	   paddingIdx < paddingWidth;
 	   paddingIdx++ ) {
 	*paddedPtr = '0';
 	paddedPtr++;
@@ -85,7 +85,7 @@ zero_pad(mi_lvarchar *unpaddedLvar)
 
       /* special case to ignore the '*' character
          if the current char is '*', move up in the
-         unpaddedPtr string without changing the 
+         unpaddedPtr string without changing the
          paddedPtr at all */
       if (*unpaddedPtr != '*') {
 	*paddedPtr = tolower(*unpaddedPtr);
