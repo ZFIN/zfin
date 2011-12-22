@@ -104,7 +104,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
         if (featureDTO.getPublicNote() != null) {
-            feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
+            feature.setPublicComments(DTOConversionService.escapeString(featureDTO.getPublicNote().getNoteData()));
         }
         if (oldFeatureType == featureDTO.getFeatureType()) {
             List<RecordAttribution> recordAttributions = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
@@ -121,13 +121,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             }
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
-        String existingFeatureAbbrev = feature.getAbbreviation();
-       /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
-        feature.setAbbreviation(featureDTO.getAbbreviation());
-        }*/
+
         if (existingFeature == null){
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
+
+
 
         feature.setName(featureDTO.getName());
         feature.setDominantFeature(featureDTO.getDominant());
@@ -359,8 +358,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             String groupName = DataAliasGroup.Group.ALIAS.toString();
             DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
             featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
-            featureAlias.setAlias(featureDTO.getAlias());
-            featureAlias.setAliasLowerCase(featureDTO.getAlias().toLowerCase());
+            featureAlias.setAlias(DTOConversionService.escapeString(featureDTO.getAlias()));
+            featureAlias.setAliasLowerCase(DTOConversionService.escapeString(featureDTO.getAlias().toLowerCase()));
 //            featureAlias.setAliasLowerCase("tests");
             if (feature.getAliases() == null) {
                 Set<FeatureAlias> featureAliases = new HashSet<FeatureAlias>();
@@ -425,7 +424,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
                 dnote.setCurator(person);
                 dnote.setDate(new Date());
-                dnote.setNote(noteDTO.getNoteData());
+                dnote.setNote(DTOConversionService.escapeString(noteDTO.getNoteData()));
 
                 Set<DataNote> dataNotes = feature.getDataNotes();
                 if (dataNotes == null) {
@@ -560,17 +559,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     @Override
     public void editPublicNote(NoteDTO noteDTO) {
-        HibernateUtil.createTransaction();
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.beginTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
         String oldNote = feature.getPublicComments();
-        String newNote = noteDTO.getNoteData();
-        if (!StringUtils.equals(newNote, oldNote)) {
-            feature.setPublicComments(noteDTO.getNoteData());
-            infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
-            HibernateUtil.currentSession().update(feature);
-            HibernateUtil.flushAndCommitCurrentSession();
-        }
-    }
+         String newNote = DTOConversionService.escapeString(noteDTO.getNoteData());
+         feature.setPublicComments(newNote);
+
+         HibernateUtil.currentSession().save(feature);
+        HibernateUtil.flushAndCommitCurrentSession();
+   }
 
     @Override
     public NoteDTO addCuratorNote(NoteDTO noteDTO) {
@@ -584,8 +582,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 //        if(person==null){
 //            person = (Person) HibernateUtil.currentSession().createCriteria(Person.class).setMaxResults(1).uniqueResult();
 //        }
-        DataNote dataNote = featureRepository.addFeatureDataNote(feature, noteDTO.getNoteData(), person);
-        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "curator note", dataNote.getNote(), "added note");
+        DataNote dataNote = featureRepository.addFeatureDataNote(feature, DTOConversionService.escapeString(noteDTO.getNoteData()), person);
+        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "curator note", DTOConversionService.escapeString(dataNote.getNote()), "added note");
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
@@ -601,8 +599,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Set<DataNote> dataNotes = feature.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
-                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "updated note", dataNote.getNote(), noteDTO.getNoteData());
-                dataNote.setNote(noteDTO.getNoteData());
+               // infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "updated note", dataNote.getNote(), noteDTO.getNoteData());
+                dataNote.setNote(DTOConversionService.escapeString(noteDTO.getNoteData()));
                 HibernateUtil.currentSession().update(dataNote);
                 HibernateUtil.currentSession().flush();
                 return;

@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.gwt.root.server.DTOConversionService;
 
 /**
  * For use with the Note objects.

@@ -2,7 +2,8 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+//import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
@@ -45,12 +46,26 @@ public class DTOConversionService {
 
     public static String escapeString(String uncleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
-        return StringEscapeUtils.escapeHtml(uncleansedCharacter);
+    //    uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
+      //  uncleansedCharacter=StringEscapeUtils.escapeHtml4(uncleansedCharacter);
+        uncleansedCharacter=StringEscapeUtils.escapeXml(uncleansedCharacter);
+        uncleansedCharacter=StringEscapeUtils.escapeHtml4(uncleansedCharacter);
+        uncleansedCharacter=StringEscapeUtils.escapeJava(uncleansedCharacter);
+       // uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
+        //uncleansedCharacter=StringEscapeUtils.escapeXml(uncleansedCharacter);
+        //uncleansedCharacter=StringEscapeUtils.escapeEcmaScript(uncleansedCharacter);
+
+        return uncleansedCharacter;
     }
 
     public static String unescapeString(String cleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
-        return StringEscapeUtils.unescapeHtml(cleansedCharacter);
+  //      cleansedCharacter= StringEscapeUtils.unescapeJava(cleansedCharacter);
+        cleansedCharacter=StringEscapeUtils.unescapeXml(cleansedCharacter);
+         cleansedCharacter=StringEscapeUtils.unescapeHtml4(cleansedCharacter);
+        cleansedCharacter=StringEscapeUtils.unescapeJava(cleansedCharacter);
+    //     cleansedCharacter=StringEscapeUtils.unescapeHtml3(cleansedCharacter);
+        return cleansedCharacter;
     }
 
     @SuppressWarnings("unchecked")
@@ -416,7 +431,7 @@ public class DTOConversionService {
         }
 
         if (featureDTO.getPublicNote() != null) {
-            feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
+            feature.setPublicComments(escapeString(featureDTO.getPublicNote().getNoteData()));
         }
 
         return feature;
@@ -446,7 +461,7 @@ public class DTOConversionService {
         }
 
         if (feature.getPublicComments() != null) {
-            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(), feature.getPublicComments());
+            PublicNoteDTO noteDTO = new PublicNoteDTO(feature.getZdbID(), DTOConversionService.unescapeString(feature.getPublicComments()));
             featureDTO.setPublicNote(noteDTO);
         }
 
@@ -454,7 +469,7 @@ public class DTOConversionService {
         if (CollectionUtils.isNotEmpty(curatorNotes)) {
             List<NoteDTO> curatorNoteDTOs = new ArrayList<NoteDTO>();
             for (DataNote dataNote : curatorNotes) {
-                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), dataNote.getNote());
+                NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
                 curatorNoteDTOs.add(noteDTO);
             }
             featureDTO.setCuratorNotes(curatorNoteDTOs);
@@ -1094,6 +1109,7 @@ public class DTOConversionService {
         featureDTO.setAlias(escapeString(featureDTO.getAlias()));
        featureDTO.setFeatureSequence(escapeString(featureDTO.getFeatureSequence()));
         featureDTO.setOptionalName(escapeString(featureDTO.getOptionalName()));
+
     }
 
     public static void unescapeFeatureDTO(FeatureDTO featureDTO) {

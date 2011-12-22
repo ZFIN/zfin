@@ -58,7 +58,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         Person person = Person.getCurrentSecurityUser();
         DataNote dataNote = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData(), person);
-        InfrastructureService.insertUpdate(marker, "added curator note: " + noteDTO);
+        infrastructureRepository.insertUpdatesTable(marker, "curator notes", "", Person.getCurrentSecurityUser());
+       // InfrastructureService.insertUpdate(marker, "added curator note: " + noteDTO);
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
@@ -73,8 +74,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
-                dataNote.setNote(noteDTO.getNoteData());
-                InfrastructureService.insertUpdate(marker, "updated note: " + noteDTO);
+                dataNote.setNote(DTOConversionService.escapeString(noteDTO.getNoteData()));
+              //  InfrastructureService.insertUpdate(marker, "updated note: " + noteDTO);
                 HibernateUtil.currentSession().update(dataNote);
                 HibernateUtil.currentSession().flush();
                 return;
@@ -106,11 +107,11 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     public void editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
-        String oldNote = marker.getPublicComments();
-        String newNote = noteDTO.getNoteData();
+        String oldNote = DTOConversionService.unescapeString(marker.getPublicComments());
+        String newNote = DTOConversionService.escapeString(noteDTO.getNoteData());
         if (!StringUtils.equals(newNote, oldNote)) {
-            marker.setPublicComments(noteDTO.getNoteData());
-            InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
+            marker.setPublicComments(DTOConversionService.escapeString(noteDTO.getNoteData()));
+           // InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
             HibernateUtil.currentSession().update(marker);
             HibernateUtil.flushAndCommitCurrentSession();
         }
@@ -308,7 +309,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         //no need to handle the updates table here, since the repository method takes care of it
 
         HibernateUtil.flushAndCommitCurrentSession();
-        relatedEntityDTO.setName(DTOConversionService.unescapeString(dataAlias.getAlias()));
+        relatedEntityDTO.setName(dataAlias.getAlias());
         relatedEntityDTO.setDataZdbID(marker.getZdbID());
         return relatedEntityDTO;
     }

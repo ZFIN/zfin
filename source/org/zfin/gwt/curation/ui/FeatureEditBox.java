@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.StringListBox;

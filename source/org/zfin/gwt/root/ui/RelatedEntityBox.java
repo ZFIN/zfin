@@ -1,7 +1,10 @@
 package org.zfin.gwt.root.ui;
 
+
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
+import org.zfin.gwt.root.server.DTOConversionService;
+
 
 /**
  * This is a composite for related entities.
@@ -30,4 +33,6 @@ public class RelatedEntityBox extends AbstractRelatedEntityBox<RelatedEntityDTO>
     public boolean isEditable(RelatedEntityDTO relatedEntityDTO) {
         return true;
     }
+
+
 }

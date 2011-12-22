@@ -46,7 +46,7 @@ public class DTOMarkerService {
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             NoteDTO noteDTO = new NoteDTO();
-            noteDTO.setNoteData(dataNote.getNote());
+            noteDTO.setNoteData(DTOConversionService.unescapeString(dataNote.getNote()));
             noteDTO.setZdbID(dataNote.getZdbID());
 //            noteDTO.setDataZdbID(dataNote.getDataZdbID());
             noteDTO.setDataZdbID(marker.getZdbID());
@@ -58,7 +58,7 @@ public class DTOMarkerService {
 
     public static NoteDTO getPublicNoteDTO(Marker marker) {
         NoteDTO publicNoteDTO = new NoteDTO();
-        publicNoteDTO.setNoteData(marker.getPublicComments());
+        publicNoteDTO.setNoteData(DTOConversionService.unescapeString(marker.getPublicComments()));
         publicNoteDTO.setZdbID(marker.getZdbID());
         publicNoteDTO.setDataZdbID(marker.getZdbID());
         publicNoteDTO.setNoteEditMode(NoteEditMode.PUBLIC);
@@ -72,7 +72,7 @@ public class DTOMarkerService {
         if (aliases != null) {
             for (MarkerAlias alias : aliases) {
                 Set<PublicationAttribution> publicationAttributions = alias.getPublications();
-                aliasRelatedEntities.addAll(DTOConversionService.convertPublicationAttributionsToDTOs(marker.getZdbID(), alias.getAlias(), publicationAttributions));
+                aliasRelatedEntities.addAll(DTOConversionService.convertPublicationAttributionsToDTOs(marker.getZdbID(), DTOConversionService.unescapeString(alias.getAlias()), publicationAttributions));
             }
         }
         return aliasRelatedEntities;
@@ -146,7 +146,7 @@ public class DTOMarkerService {
             if (antibodyExternalNote.getSinglePubAttribution() != null) {
                 antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getSinglePubAttribution().getPublication().getZdbID());
             }
-            antibodyExternalNoteDTO.setNoteData(antibodyExternalNote.getNote());
+            antibodyExternalNoteDTO.setNoteData(DTOConversionService.unescapeString(antibodyExternalNote.getNote()));
             externalNotes.add(antibodyExternalNoteDTO);
         }
         return externalNotes;

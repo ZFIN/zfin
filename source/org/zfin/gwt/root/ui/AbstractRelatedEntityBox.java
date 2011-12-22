@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 
 import java.util.ArrayList;
 import java.util.List;
