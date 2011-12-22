@@ -224,7 +224,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
        if (featCount > 2) then
           let genoDisplayHtml = genoDisplayHtml ||'... '||  tgLastFeat;
        else
-          let genoDisplayHtml = genoDisplayHtml ||'; '|| tgFirstFeatHtml ||'; '|| featAbbrevHtml;
+          let genoDisplayHtml = genoDisplayHtml ||'; '|| featAbbrevHtml;
        end if
     end if
     
