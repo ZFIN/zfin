@@ -24,7 +24,8 @@
 <c:if test="${!(empty hasNotes.publicComments)}">
     ${inTable ? "" : "<table>"}
     <tr><td><b>Note:</b></td></tr>
-    <tr><td>${zfn:escapeHtml(hasNotes.publicComments, false)}</td></tr>
+   <%--// <tr><td>${zfn:escapeHtml(hasNotes.publicComments, true)}</td></tr>--%>
+     <tr><td>${hasNotes.publicComments}</td></tr>
     ${inTable ? "" : "</table>"}
 </c:if>
 

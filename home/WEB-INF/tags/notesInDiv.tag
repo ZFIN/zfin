@@ -21,7 +21,8 @@
 <c:if test="${!(empty hasNotes.publicComments)}">
     <tr>
         <th>Note:</th>
-        <td>${zfn:escapeHtml(hasNotes.publicComments, false)}</td>
+        <%--//<td>${zfn:escapeHtml(hasNotes.publicComments, false)}</td>--%>
+        <td>${hasNotes.publicComments}</td>
     </tr>
 </c:if>
 
