@@ -35,7 +35,7 @@ select bed_chr,
        'ID=' || feature_zdb_id    --- FEATURE
        ||';Name=' || feature_abbrev
        ||';Alias='|| feature_zdb_id  ||';'  attribute
- from  bed join feature on feature_abbrev == bed_acc
+ from  bed join feature on feature_abbrev[1,8] == bed_acc
  order by 1,4,5,9
  ;
 
