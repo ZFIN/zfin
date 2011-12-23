@@ -19,6 +19,10 @@
 </style>
 
 
+
+
+
+
 </head>
 
 <script language="JavaScript" src="/javascript/header.js" type="text/javascript"></script>
@@ -137,10 +141,26 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/zfin_gene.gff3">Download</a>
+</tr></table><p>
+<!--
+if a download is getting up over 10M adding the class & span to the a href
+will add the file size as a warning
 
-<p><b> Vega Transcripts and Genes  </b>
+not wanting to add an addtional 70 requests to the page so limiting to large files
+... that do not end in .txt.
+we think mod_deflate is messing with the content_length header of ".txt" files it gzips
+<a class="download-size-link" HREF=URL>TAG<span></span></a>
+-->
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_zfin_gene_alias.gff3">
+    Ensembl
+</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/zfin_gene.gff3">Vega</a>
+
+<p><b> Transcripts and Genes  </b>
 <table BORDER CELLPADDING=2><tr>
 <td>Chromosome</td>
 <td>Source</td>
@@ -151,8 +171,11 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/drerio_vega_transcript.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_drerio_vega_transcript.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="download-size-link" HREF="/data_transfer/Downloads/drerio_vega_transcript.gff3">Vega<span></span></a>
 
 <p><b> ZFIN Genes with Expression</b>
 <table BORDER CELLPADDING=2><tr>
@@ -165,8 +188,11 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/expression.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_expression.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/expression.gff3">Vega</a>
 
 <p><b> ZFIN Genes with Phenotype</b>
 <table BORDER CELLPADDING=2><tr>
@@ -179,8 +205,11 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_phenotype.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/phenotype.gff3">Vega</a>
 
 <p><b> ZFIN Genes with Antibodies</b>
 <table BORDER CELLPADDING=2><tr>
@@ -193,8 +222,11 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/antibody.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_antibody.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/antibody.gff3">Vega</a>
 
 
 <p><b> ZFIN Morpholinos</b>
@@ -208,10 +240,13 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/zfin_morpholino.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_zfin_morpholino.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/zfin_morpholino.gff3">Vega</a>
 
-<p><b>Vega Assembly</b>
+<p><b>Assembly</b>
 <table BORDER CELLPADDING=2><tr>
 <td>Chromosome</td>
 <td>Source</td>
@@ -222,8 +257,12 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/vega_clone.gff3">Download</a>
+</tr></table><p>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="download-size-link" HREF="/data_transfer/Downloads/E_drerio_backbone.gff3">Ensembl<span></span></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/vega_clone.gff3">Vega</a>
 
 <p><b>Complete Assembly Clones</b>
 <table BORDER CELLPADDING=2><tr>
@@ -236,17 +275,22 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Strand</td>
 <td>Phase</td>
 <td>Attributes</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/full_length_clones.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/E_full_zfin_clone.gff3">Ensembl</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/full_length_clones.gff3">Vega</a>
 
-<p><b>Vega chromosome sequence-region definitions (useful for <a href="http://gmod.org/wiki/Gbrowse">GBrowse</a>)</b>
+<p><b>Chromosome sequence-region definitions (useful for <a href="http://gmod.org/wiki/Gbrowse">GBrowse</a>)</b>
 <table BORDER CELLPADDING=2><tr>
-<td>Sequence-region pragma</td>
+<td>Sequence-region</td>
 <td>Chromosome</td>
 <td>Start</td>
 <td>End</td>
-</tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/vega_chromosome.gff3">Download</a>
+</tr></table><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/vega_chromosome.gff3">Vega</a>
 
 
 <br><br>
@@ -401,18 +445,25 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <p><b> Expression Experiment-Figure </b>
 <table BORDER CELLPADDING=2><tr><td>Expression ID</td><td>Expression Result ID</td><td>Figure ID</table>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpatfig.txt">Download</a>
+<!-- size -->
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/xpatfig.txt">Download</a>
 
 
 <p><b> Expression data for wildtype fish </b>
 <table BORDER CELLPADDING=2><tr><td>Gene ID</td><td>Gene abbreviation</td><td>Genotype</td><td>Super Structure ID</td><td>Super Structure Name</td><td>Sub Structure ID</td><td>Sub Structure Name</td><td>Start Stage</td><td>End Stage</td><td>Assay</td></table>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/wildtype-expression.txt">Download</a>
+<!-- size -->
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/wildtype-expression.txt">Download</a>
 
 <p><b> Zebrafish Gene Expression by Stage and Anatomy Term </b>
 <table BORDER CELLPADDING=2><tr> <td>Expression Result ID </td><td>Expression ID</td><td>Begin Stage ID</td><td>End Stage ID</td><td>Anatomy Super Term ID</td><td>Anatomy Sub Term ID</td><td>Expression Found</td></tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a>
-<!-- -->
+
+<!-- size -->
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a>
+
 <a NAME="genotype"></a><br><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Genotype Data</th></tr></table>
 
@@ -486,7 +537,10 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <td>Environment ID</td>
 </tr>
 </table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/phenotype.txt">Download</a>
+
+<!-- size -->
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a HREF="/data_transfer/Downloads/phenotype.txt">Download</a>
 
 <p><b> Genotypes with Phenotypes (obo format)</b>
 <table BORDER CELLPADDING=2><tr>
@@ -569,4 +623,28 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 
 
 <script language="JavaScript" src="/javascript/footer.js"></script>
+
+<script type="text/javascript" language="JavaScript" >
+jQuery('.download-size-link').each( function() {
+	sizeSpan= jQuery(this);
+    fileUrl = sizeSpan.attr('href');
+    jQuery.ajax({
+        type: "HEAD",
+        url: fileUrl,
+        async: false, // necessary to keep size on intended file
+        //acceptEncoding: "identity",	// not helping
+        //TE: "trailers",				// not helping
+        //cache: false,					// not helping
+        //context: sizeSpan,			// not helping
+        //statusCode: {404: function(){sizeSpan.append(' (NA)');}}// (added 1.5)
+        success: function(data,textStatus,XMLHttpRequest){
+            fileSize = XMLHttpRequest.getResponseHeader('Content-Length');
+            fileSize = Math.ceil(fileSize/1024000);
+            if(fileSize > 0) sizeSpan.append(' (' + fileSize + 'M)');
+            //else sizeSpan.append(XMLHttpRequest.getAllResponseHeaders() ); // debugging
+        }
+    });
+});
+
+</script>
 </HTML>
