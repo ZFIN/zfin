@@ -22,8 +22,8 @@ load from 'BL_chr_beg_end_la_strnd.tab' delimiter "	"
 
 update statistics high for table bed;
 
---
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_BL.gff3' DELIMITER "	"
+! echo "E_load_unload_BL_gff.sql -> zfin_tginsertion.gff3"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_tginsertion.gff3' DELIMITER "	"
 select bed_chr,
            "ZFIN" gff_source,
            "Transgenic_insertion" feature,
@@ -33,8 +33,10 @@ select bed_chr,
            bed_strand,
            "." gff_frame,
        'ID=' || feature_zdb_id    --- FEATURE
-       ||';Name=' || feature_abbrev
-       ||';Alias='|| feature_zdb_id  ||';'  attribute
+       ||';Name=' || feature_abbrev[1,8]
+       ||';Alias='|| feature_zdb_id || ','
+                  || feature_abbrev || ','
+                  || feature_name || ';'  attribute
  from  bed join feature on feature_abbrev[1,8] == bed_acc
  order by 1,4,5,9
  ;
