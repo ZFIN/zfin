@@ -17,8 +17,16 @@
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${gene.markerType.displayName}&nbsp;Name:</span></th>
-        <td><span class="name-value"><zfin:name entity="${gene}"/>  </span></td>
+        <c:choose>
+          <c:when test="${fn:startsWith(gene.markerType.name,'GENE')}">
+            <td><span class="name-value"><zfin:name entity="${gene}"/>  </span></td>
+          </c:when>
+          <c:otherwise>
+            <td><span class="name-value"><zfin:link entity="${gene}"/></span></td>
+          </c:otherwise>
+        </c:choose>
     </tr>
+    
     <c:if test="${fn:startsWith(gene.markerType.name,'GENE')}">
         <tr>
             <th><span class="name-label">${gene.markerType.displayName}&nbsp;Symbol:</span></th>
