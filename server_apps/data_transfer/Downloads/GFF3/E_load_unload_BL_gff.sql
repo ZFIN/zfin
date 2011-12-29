@@ -1,5 +1,5 @@
 -- E_load_unload_BL_gff.sql
-! echo "E_load_unload_BL_gff.sql -> zfin_BL.gff3"
+! echo "E_load_unload_BL_gff.sql -> zfin_tginsertion.gff3"
 
 begin work;
 
@@ -14,15 +14,13 @@ fragment by round robin in tbldbs1,tbldbs2,tbldbs3
 ;
 
 -- BL_chr_beg_end_la_strnd.tab should be pulled from
--- /research/zprodmore/gff3/
-
+-- global store by Makefile
 
 load from 'BL_chr_beg_end_la_strnd.tab' delimiter "	"
 	insert into bed;
 
 update statistics high for table bed;
 
-! echo "E_load_unload_BL_gff.sql -> zfin_tginsertion.gff3"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_tginsertion.gff3' DELIMITER "	"
 select bed_chr,
            "ZFIN" gff_source,
