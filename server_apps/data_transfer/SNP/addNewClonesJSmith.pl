@@ -113,7 +113,7 @@ close(OUTPUT2);
 print "ct1: $ct1\tct2: $ct2\tctNew: $ctNew\n";
 
 if ($ctNew > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} loadClonesJSmith.sql" );
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadClonesJSmith.sql" );
 }
   
 exit;

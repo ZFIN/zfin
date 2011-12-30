@@ -305,7 +305,7 @@ print "\n ctElse: $ctElse\n\n";
 print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $ctOutTalbot\n\n";
 
 if ($ctNew > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("Failed to load snp_download table");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("Failed to load snp_download table");
   &emailSuccess("$ctNew new records inserted into snp_download table");
 }
 
@@ -429,12 +429,12 @@ print "\n ctNew2: $ctNew2 \t   ctRedn2: $ctRedn2 \t ctNew3: $ctNew3 \t   ctRedn3
 print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n";
 
 if ($ctNew2 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("Failed to load snp_download_attribution table");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("Failed to load snp_download_attribution table");
   &emailSuccess("$ctNew2 new records inserted into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("Failed to insert record_attribution table");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("Failed to insert record_attribution table");
   &emailSuccess("$ctNew3 new records inserted into record_attribution table for Talbot SNPs");
 } 
 
