@@ -66,16 +66,16 @@ public class FeatureFilterModule extends AbstractComposite<FeatureDTO>{
 
     @Override
     protected void revertGUI() {
-        FeatureRPCService.App.getInstance().getFeaturesMarkerRelationshipsForPub(dto.getPublicationZdbID(),
-                new FeatureEditCallBack<List<FeatureMarkerRelationshipDTO>>("Problem finding features for pub: " + dto.getPublicationZdbID()+ " ",this) {
+       FeatureRPCService.App.getInstance().getFeaturesForPub(dto.getPublicationZdbID(),
+                new FeatureEditCallBack<List<FeatureDTO>>("Problem finding features for pub: " + dto.getPublicationZdbID()+ " ",this) {
                     @Override
-                    public void onSuccess(List<FeatureMarkerRelationshipDTO> featureMarkerRelationshipList) {
+                    public void onSuccess(List<FeatureDTO> featureMarkerRelationshipList) {
                         if(featureMarkerRelationshipList!=null){
                             Map<String, FeatureTypeEnum> featureTypes = new TreeMap<String,FeatureTypeEnum>() ;
                             featureNameList.clear();
                             featureNameList.addItem(ALL,null);
-                            for(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO : featureMarkerRelationshipList){
-                                FeatureDTO featureDTO = featureMarkerRelationshipDTO.getFeatureDTO();
+                            for(FeatureDTO featureDTO : featureMarkerRelationshipList){
+
                                 featureNameList.addItem(featureDTO.getName(),featureDTO.getZdbID());
                                 featureTypes.put(featureDTO.getFeatureType().getDisplay(),featureDTO.getFeatureType()) ;
                             }
@@ -90,6 +90,7 @@ public class FeatureFilterModule extends AbstractComposite<FeatureDTO>{
                         }
                     }
                 });
+
     }
 
     private FilterChangeEvent getFilterChangeEventFromGui(){
