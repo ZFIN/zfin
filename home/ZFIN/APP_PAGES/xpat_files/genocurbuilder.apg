@@ -95,13 +95,13 @@ the genotype is finalized and committed, the staging area is reset.
     <select name=genocurbld_feat_zdb_id>
 
       <?MISQL SQL="
-        select feature_zdb_id, feature_name
+        select distinct feature_zdb_id, feature_name, feature_abbrev_order
         from feature, record_attribution, feature_marker_relationship
         where recattrib_source_zdb_id = '$OID'
 	  and recattrib_source_type = 'standard'
           and feature_zdb_id = recattrib_data_zdb_id
           and feature_zdb_id=fmrel_ftr_zdb_id
-        order by feature_abbrev_order
+        order by feature_abbrev_order, feature_name,feature_zdb_id
         ;">
       <option value="$1">$2</option>     
       <?/MISQL>
