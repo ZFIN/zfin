@@ -1,13 +1,13 @@
 <?MICOMMENT>
 FILE: mappingdetail.apg
  Prefix: mpdl_
-  
+
  This file implements mapping details for marker and feature records.
 
  INPUTVAR:
 	mapdetails_mode:   mini, mini_slim, standalone, detail
         split :    space or break, that separate output string
- 
+
 
 
 <?/MICOMMENT>
@@ -29,7 +29,7 @@ FILE: mappingdetail.apg
 <?MICOMMENT>------- start mini mode ----------------------
    mini mode use $oID instead of $OID to avoid changing the value of
   $OID unexpectedly when doing webexplode of mini mode within the same page.
-<?/MICOMMENT>  
+<?/MICOMMENT>
 
 <?MIBLOCK COND="$(OR,$(EC,$mapdetails_mode,mini),$(EC,$mapdetails_mode,mini_slim),$(EC,$mapdetails_mode,nodetail))">
 
@@ -66,8 +66,8 @@ FILE: mappingdetail.apg
 
 <?MICOMMENT>when lg information is not yet known<?/MICOMMENT>
 <?MIBLOCK COND="$(NXST,$lg_list)">
- <?MIVAR NAME=$GNID>$oID<?/MIVAR> 
- <?MIVAR NAME=$FID>$oID<?/MIVAR> 
+ <?MIVAR NAME=$GNID>$oID<?/MIVAR>
+ <?MIVAR NAME=$FID>$oID<?/MIVAR>
    <?MISQL COND="$(>,$(POSITION,$oID,GENE),0)" SQL="
 	select fmrel_ftr_zdb_id
 	  from feature_marker_relationship
@@ -90,8 +90,8 @@ FILE: mappingdetail.apg
 	FROM mapped_marker
 	WHERE marker_id = '$FID'
            OR marker_id = '$GNID'
-                  
-      UNION 
+
+      UNION
 	SELECT or_lg
 	FROM mapped_marker, marker_relationship
 	WHERE marker_id = mrel_mrkr_2_zdb_id
@@ -99,23 +99,23 @@ FILE: mappingdetail.apg
           and mrel_type in ('clone contains gene',
 			    'clone contains small segment',
 			    'gene encodes small segment')
-          
-      UNION 
+
+      UNION
 	SELECT or_lg
 	FROM mapped_marker, marker_relationship
 	WHERE marker_id = mrel_mrkr_1_zdb_id
 	  and mrel_mrkr_2_zdb_id = '$GNID'
           and mrel_type in ('clone contains gene',
 			    'clone contains small segment')
-	  
+
       UNION
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member
 	WHERE (lnkgmem_member_zdb_id = '$GNID'
            or lnkgmem_member_zdb_id = '$FID')
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
-	  	 
-      UNION 
+
+      UNION
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member, marker_relationship
 	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
@@ -125,21 +125,31 @@ FILE: mappingdetail.apg
 			    'clone contains small segment')
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 
-      UNION 
+      UNION
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member, marker_relationship
 	WHERE lnkgmem_member_zdb_id = mrel_mrkr_1_zdb_id
 	  and mrel_mrkr_2_zdb_id = '$GNID'
 	  and mrel_type in ('clone contains gene',
 			    'clone contains small segment')
-	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+
+    UNION
+	SELECT lnkg_or_lg
+	from marker_relationship gt
+	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
+	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
+	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
+	 where gt.mrel_type == 'gene produces transcript'
+	   and ct.mrel_type == 'clone contains transcript'
+	   and gt.mrel_mrkr_1_zdb_id = '$GNID'
 
 
 	order by 1
       ;">
      <?MICOMMENT>
-       07/28/03 we decided to show LG Unknown when LG is 0. If we have 
-       other evidence of LG not 0, only the non 0 will be shown in mini mode, 
+       07/28/03 we decided to show LG Unknown when LG is 0. If we have
+       other evidence of LG not 0, only the non 0 will be shown in mini mode,
        but more in mapping detail page.
      <?/MICOMMENT>
 
@@ -160,7 +170,7 @@ FILE: mappingdetail.apg
 
   <?MIBLOCK COND="$(AND,$(>,$map_count,0),$(NC,$the_lg,MT),$(NC,$the_lg,0))">
     <?MIVAR COND="$(<,$the_lg,10)">&nbsp;<?/MIVAR>
-  <?/MIBLOCK>	
+  <?/MIBLOCK>
   <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$map_count,0))">
     None submitted
     <?MIVAR COND="$(AND,$(XST,$UPDATE),$(>,$(POSITION,$oID,ALT),0))">
@@ -192,22 +202,22 @@ FILE: mappingdetail.apg
 	$(SETVAR,$viewmap,f)
 <?/MIVAR>
 <?MICOMMENT>
-  mini mode section is exploded from both mapping details page and 
-  geneselect page, the column open and close need to be handled 
-  differently, use the $split functionality to determine which was 
-  the calling routine and add appropriate td's 
+  mini mode section is exploded from both mapping details page and
+  geneselect page, the column open and close need to be handled
+  differently, use the $split functionality to determine which was
+  the calling routine and add appropriate td's
 <?/MICOMMENT>
     <?MIVAR COND="$(AND,$(EC,$viewmap,t),$(NXST,$snpID))">
 	$(IF,$(EC,$split,&nbsp;),</td><td>)
 	   $split View Map:
-  	   
+
 	   	<?MIVAR NAME=$vmpanels><?/MIVAR>
 		<?MISQL SQL="select abbrev, disp_order from panels order by disp_order;">
 		 <?MIVAR NAME=$vmpanels>$vmpanels&$1=1<?/MIVAR>
 		<?/MISQL>
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Individual Panels</A>
-	  
+
   <?/MIVAR>
 
 <?/MIBLOCK>
@@ -247,7 +257,7 @@ function info() {
  	 window.alert('ANONYMOUS LINKAGE:\n This linkage has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
 }
 
-//  initialize view_mapplet parameters   
+//  initialize view_mapplet parameters
 
 
 marker = '';
@@ -296,13 +306,13 @@ marker = '';
  <?MIVAR COND="$(XST,$UPDATE)">
    <form>
    <center>
-       <a 
+       <a
        style="font-size: large;"
-       href="javascript:" 
+       href="javascript:"
        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID')"
        >[View Mapping Details]</a>
     </center>
-   </form> 
+   </form>
  <?/MIVAR>
 
 
@@ -313,7 +323,7 @@ marker = '';
 	select fmrel_mrkr_zdb_id
 	  from feature_marker_relationship
 	 where fmrel_type = 'is allele of'
-           and fmrel_ftr_zdb_id = '$OID'        
+           and fmrel_ftr_zdb_id = '$OID'
 	; ">
      <?MIVAR COND="$(NC,$1,)">$(SETVAR,$OID,$1)<?/MIVAR>
   <?/MISQL>
@@ -348,15 +358,15 @@ marker = '';
         <?MIVAR>
      		<TITLE>Update Mapping Detail: $mrkr_abbrev  </TITLE>
        	<?/MIVAR>
-   <?MIELSE>    
-    	<?MIVAR>		
+   <?MIELSE>
+    	<?MIVAR>
  		<TITLE>Mapping Detail: $mrkr_abbrev </TITLE>
     	<?/MIVAR>
    <?/MIBLOCK>
 
   <?MIVAR>
-       <form method=post 
-              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+       <form method=post
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
               target=comments>
            <input type=hidden name=subject value="$mrkr_abbrev">
            <input type=hidden name=marker_id value="$MID">
@@ -368,13 +378,13 @@ marker = '';
     <FONT SIZE=+2>    <b>Mapping Details</b>      </FONT>
   </TD>
 
-  <TD align=right>     <input type=submit value="Your Input Welcome"></TD>         
+  <TD align=right>     <input type=submit value="Your Input Welcome"></TD>
   </TR>
       </form>
-  <?MICOMMENT> 
+  <?MICOMMENT>
     wrap Mapping table in mapper form
-    form tag brings in extra space line. For display sake, 
-    it is put a bit in advance. 
+    form tag brings in extra space line. For display sake,
+    it is put a bit in advance.
   <?/MICOMMENT>
 
   <?MIVAR COND="$(XST,$reserved_mrkr_abbrev)">$(SETVAR,$mrkr_abbrev,$reserved_mrkr_abbrev)<?/MIVAR>
@@ -425,16 +435,16 @@ marker = '';
 	       select feature_zdb_id, feature_name, feature_abbrev
                  from feature
 		where feature_zdb_id = '$MID'
-            union 
+            union
                select feature_zdb_id, feature_name, feature_abbrev
-                 from feature, feature_marker_relationship 
+                 from feature, feature_marker_relationship
                 where fmrel_mrkr_zdb_id = '$OID'
 	          and fmrel_type = 'is allele of'
 		  and fmrel_ftr_zdb_id = feature_zdb_id
-                  and (fmrel_ftr_zdb_id in 
+                  and (fmrel_ftr_zdb_id in
 			  (select marker_id from mapped_marker)
-                    or fmrel_ftr_zdb_id in 
-			  (select lnkgmem_member_zdb_id 
+                    or fmrel_ftr_zdb_id in
+			  (select lnkgmem_member_zdb_id
 			     from linkage_member, linkage
 			    where lnkg_zdb_id = lnkgmem_linkage_zdb_id)
                        ) ;">
@@ -446,7 +456,7 @@ marker = '';
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 
-      <?/MISQL> 
+      <?/MISQL>
 
   <?/MIBLOCK>
 
@@ -462,11 +472,11 @@ marker = '';
 
 	<?MIVAR>
 	  <b> Genomic Feature Name: &nbsp; <i><a href=/action/feature/feature-detail?zdbID=$OID>$allele_name </b><i></a><br>
-          
+
 	<?/MIVAR>
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-   <?/MIBLOCK>	
+   <?/MIBLOCK>
 
 
   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,ALT),0),$(=,$(POSITION,$OID,GENE),0))">
@@ -504,7 +514,7 @@ marker = '';
   		}
 	}
 
-        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$detOID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table') 
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$detOID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table')
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 
@@ -515,37 +525,37 @@ marker = '';
 	}
 
 	function Delete_marker(mapdel_zdbid) {
-	  
+
  	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&attr=recattrib&attr_type=marker-deletion&old_value='+mapdel_zdbid);
-	  
+
 	}
 </script>
 <?/MIVAR>
 
   <?MIBLOCK COND="$(NXST,$detOID)">
   Eek! No detOID passed into details mode
-  <?/MIBLOCK>  
+  <?/MIBLOCK>
   <?MIVAR NAME=$mapped>f<?/MIVAR>
 
   <?MICOMMENT> Now if it's a mutant deletion, also show present/missing markers <?/MICOMMENT>
   <?MIBLOCK COND="$(>,$(POSITION,$detOID,ALT),0)">
 	<?MISQL SQL="
 		select feature_type
-		  from feature 
+		  from feature
                  where feature_zdb_id='$detOID';"><?/MISQL>
 	 <?MIVAR NAME=mpdl_ftr_type>$1<?/MIVAR>
 <?MISQL SQL="select a.mrkr_abbrev
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type in ('markers present', 'markers missing', 'markers moved')
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name'"> 
+		and c.feature_name='$name'">
 <?/MISQL>
 <?MIVAR NAME=delcount>$MI_ROWCOUNT<?/MIVAR>
 	 <?MIBLOCK COND="$(OR,$(EC,$mpdl_ftr_type,DEFICIENCY),$(EC,$mpdl_ftr_type,TRANSLOC),$(EC,$mpdl_ftr_type,SEQUENCE_VARIANT))">
 <?MIBLOCK COND="$(!=,0,$delcount)">
 	   <A NAME="markers-missing"></a>
-	
+
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
 	   <?MIVAR name=marker_missing>0<?/MIVAR>
@@ -554,18 +564,18 @@ marker = '';
 	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
                                  <?/MIVAR>
 <?MIBLOCK COND="$(EC,$mpdl_ftr_type,TRANSLOC)">
-	      <TR><TD><b> Markers: 
+	      <TR><TD><b> Markers:
 <?MIELSE>
-	      <TR><TD><b>Deletion Markers: 
+	      <TR><TD><b>Deletion Markers:
 <?/MIBLOCK>
 
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers present'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
            <?/MISQL>
 <?MIBLOCK COND="$(!=,0,$MI_ROWCOUNT)">
@@ -577,17 +587,17 @@ marker = '';
              <td align=left>
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers present'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
-		
+
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 
-<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 <?MIVAR>	  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
@@ -597,9 +607,9 @@ marker = '';
 <?/MIBLOCK>
 
           <?MICOMMENT>
-            we need to save the OID, and set it to the detOID when calling 
+            we need to save the OID, and set it to the detOID when calling
             the miniref_display.apg which calls showpubs.apg
-          <?/MICOMMENT> 
+          <?/MICOMMENT>
           <?MIVAR NAME=savedOID>$OID<?/MIVAR>
 	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
@@ -608,11 +618,11 @@ marker = '';
 <tr>
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers missing'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
             <?/MISQL>
 <?MIBLOCK COND="$(!=,0,$MI_ROWCOUNT)">
@@ -623,16 +633,16 @@ marker = '';
              <td align=left>
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers missing'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
-		
+
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
-<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 	<?MIVAR>  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
@@ -641,9 +651,9 @@ marker = '';
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
-            we need to save the OID, and set it to the detOID when calling 
+            we need to save the OID, and set it to the detOID when calling
             the miniref_display.apg which calls showpubs.apg
-          <?/MICOMMENT> 
+          <?/MICOMMENT>
           <?MIVAR NAME=savedOID>$OID<?/MIVAR>
 	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
@@ -652,11 +662,11 @@ marker = '';
 <tr>
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers moved'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
 <?/MISQL>
 <?MIVAR name=rowcount>$MI_ROWCOUNT<?/MIVAR>
@@ -670,16 +680,16 @@ marker = '';
              <td align=left>
 	   <?MISQL SQL="
 		select a.mrkr_abbrev,a.mrkr_zdb_id,a.mrkr_type, b.fmrel_Zdb_id
-		from  marker a, feature_marker_relationship b, feature c 
+		from  marker a, feature_marker_relationship b, feature c
 		where a.mrkr_zdb_id=b.fmrel_mrkr_zdb_id
                 and b.fmrel_type = 'markers moved'
                 and b.fmrel_ftr_zdb_id=c.feature_zdb_id
-		and c.feature_name='$name' 
+		and c.feature_name='$name'
 		order by 2,3 ;">
-		
+
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
-<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">	  
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 <?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
@@ -688,9 +698,9 @@ marker = '';
 &nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
-            we need to save the OID, and set it to the detOID when calling 
+            we need to save the OID, and set it to the detOID when calling
             the miniref_display.apg which calls showpubs.apg
-          <?/MICOMMENT> 
+          <?/MICOMMENT>
           <?MIVAR NAME=savedOID>$OID<?/MIVAR>
 	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$fmrelID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
@@ -703,7 +713,7 @@ marker = '';
  	   </TD></TR></TABLE>
 	<?/MIBLOCK> <?MICOMMENT> ends deficiency <?/MICOMMENT>
 <?/MIBLOCK>
-     <?/MIBLOCK>   
+     <?/MIBLOCK>
   <?MICOMMENT>-------------------------------------------------<?/MICOMMENT>
 
 
@@ -713,12 +723,12 @@ marker = '';
   <?MICOMMENT>----------Reference Panel Mapping ----------------<?/MICOMMENT>
 
    <?MISQL SQL="
-	select a.owner, lg_location, refcross_id as panel_id, or_lg, c.abbrev as panel_abbrev, b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
-	from mapped_marker a, outer person b, panels c  
-	where a.marker_id='$detOID' 
-	and or_lg is not null 
-	and a.owner=b.zdb_id 
-	and a.refcross_id = c.zdb_id 
+	select a.owner, lg_location, refcross_id as panel_id, or_lg, c.abbrev as panel_abbrev, b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order
+	from mapped_marker a, outer person b, panels c
+	where a.marker_id='$detOID'
+	and or_lg is not null
+	and a.owner=b.zdb_id
+	and a.refcross_id = c.zdb_id
 	order by c.disp_order;">
 
     <?MIVAR NAME=$upd_date>$10<?/MIVAR>
@@ -727,20 +737,20 @@ marker = '';
     <?/MIBLOCK>
 
     <font size=-1>
-    <TR><TD>      
-        LG&nbsp;<b>$4</b><b>&nbsp;$2</b>&nbsp;$7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>) 
+    <TR><TD>
+        LG&nbsp;<b>$4</b><b>&nbsp;$2</b>&nbsp;$7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>)
           $(IF,$(ISNULL,$11),,<br>&nbsp;&nbsp;Mapped as $11)
     </TD>
 
      <TD> <font size=-1>mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$6</A></font> </TD> <TD><font size=-1><A HREF="javascript:view_scores('$3','$4','$detOID','$abbrev');">Scoring Data</A>
      </TD> </TR>
      </font>
-     <?MIVAR NAME=$mapped>t<?/MIVAR>	
+     <?MIVAR NAME=$mapped>t<?/MIVAR>
     <?/MISQL>
 
    <?MICOMMENT>----- ************************************** ------<?/MICOMMENT>
    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-     <TR><TD></TD> 
+     <TR><TD></TD>
 	      <TD colspan=2><b>View Map: &nbsp;</b>
               <?MIVAR NAME=$vmpanels><?/MIVAR>
 		<?MISQL SQL="select abbrev, disp_order from panels order by disp_order;">
@@ -751,20 +761,20 @@ marker = '';
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$detOID&view_map=view_map$vmpanels">Individual Panels</A>
               <?/MIVAR>
              </TD>
-     </TR>	
+     </TR>
     <?/MIBLOCK>
   <?MICOMMENT>------- OID is the only member in a linkage --------<?/MICOMMENT>
 
    <?MISQL SQL="
-	select lnkg_comments, recattrib_source_zdb_id, lnkg_or_lg, lnkg_zdb_id 
+	select lnkg_comments, recattrib_source_zdb_id, lnkg_or_lg, lnkg_zdb_id
 	  from linkage_member, linkage, record_attribution
 	 where lnkgmem_member_zdb_id = '$detOID'
            and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	   and lnkgmem_linkage_zdb_id = recattrib_data_zdb_id
            and lnkgmem_linkage_zdb_id in (
-		 select lnkgmem_linkage_zdb_id 
+		 select lnkgmem_linkage_zdb_id
 		   from linkage_member
-		group by lnkgmem_linkage_zdb_id 
+		group by lnkgmem_linkage_zdb_id
 		  having count(*) = 1 )
            ;">
 
@@ -776,7 +786,7 @@ marker = '';
     <?MIVAR NAME=$map_comments>$1<?/MIVAR>
     <?MIVAR NAME=$link_id>$4<?/MIVAR>
     <?MICOMMENT>
-      *** 07/28/03 we decided to show LG Unknown when LG is 0, instead of 
+      *** 07/28/03 we decided to show LG Unknown when LG is 0, instead of
       hiding it.
     <?/MICOMMENT>
     <?MIVAR COND="$(EC,$lg,0)">$(SETVAR,$lg,<font size=-1>Unknown</font>)<?/MIVAR>
@@ -789,7 +799,7 @@ marker = '';
 	<?MIVAR NAME=$source_name>$1<?/MIVAR>
        <?/MISQL>
     <?MIELSE>
-	<?MIVAR NAME=$source_name><?/MIVAR>				 	
+	<?MIVAR NAME=$source_name><?/MIVAR>
  	<?MISQL SQL="select pub_mini_ref
 		    from publication
 		   where zdb_id = '$2';">
@@ -797,7 +807,7 @@ marker = '';
         <?/MISQL>
     <?/MIBLOCK>
 
-     $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")	
+     $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")
      <TD width=30%>LG $lg</TD>
      <TD><A href="$sourceviewer$2">$source_name</a></TD><TD><A HREF=javascript:show_detail('$link_id','$detOID','$(IF,$(XST,$abbrev),$abbrev)','$(IF,$(XST,$abbrev),$abbrev)');>Details</A></TD></TR>
       <?MIVAR NAME=$mapped>t<?/MIVAR>
@@ -810,8 +820,8 @@ marker = '';
   <?MIVAR NAME=$curviewer><?/MIVAR>
 
    <?MICOMMENT>
-     get independent linkage info for other members of linkage or for 
-     marker itself if it is the only linkage member 
+     get independent linkage info for other members of linkage or for
+     marker itself if it is the only linkage member
    <?/MICOMMENT>
 
    <?MISQL SQL="
@@ -826,7 +836,7 @@ marker = '';
 	  and lmother.lnkgmem_member_zdb_id = mrkr_zdb_id
 	  and mrkr_type = marker_type
       UNION
-      select feature_zdb_id, feature_abbrev, 'MUTANT', 'Mutant', 
+      select feature_zdb_id, feature_abbrev, 'MUTANT', 'Mutant',
 	     lnkg_comments, lnkg_zdb_id, lnkg_or_lg
 	from linkage_member lmthis, linkage_member lmother, linkage, feature
 	where lmthis.lnkgmem_member_zdb_id = '$detOID' and
@@ -852,18 +862,18 @@ marker = '';
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
       <TR><TD colspan=3><p><b>Markers Linked To <?MIVAR>$abbrev<?/MIVAR>:</b>
       </TD></TR>
-      <TR>    
+      <TR>
         <TD colspan=3>
         <TABLE width=100%>
         <?MIVAR NAME=subtable>y<?/MIVAR>
-    <?/MIBLOCK> 
+    <?/MIBLOCK>
 
     $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/action/feature/feature-detail?zdbID="), $(SETVAR,$curviewer,"/action/marker/view/"))
 
     <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
-      where lpmem_member_zdb_id = '$member_zdb_id' 
+      where lpmem_member_zdb_id = '$member_zdb_id'
        and lpmem_linkage_zdb_id = '$link_id'
-       and exists (select 'x' from linkage_pair_member b 
+       and exists (select 'x' from linkage_pair_member b
           where a.lpmem_linkage_zdb_id = '$link_id'
             and a.lpmem_linkage_pair_zdb_id = b.lpmem_linkage_pair_zdb_id
             and b.lpmem_member_zdb_id = '$detOID');">
@@ -873,9 +883,9 @@ marker = '';
     <?MIBLOCK COND="$(NC,$pair_id,null)">
       <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
 	where lnkgpair_zdb_id = '$pair_id';">
-	<?MIVAR NAME=$distance>$1<?/MIVAR>	
-	<?MIVAR NAME=$lod>$2<?/MIVAR>	
-	<?MIVAR NAME=$metric>$3<?/MIVAR>	
+	<?MIVAR NAME=$distance>$1<?/MIVAR>
+	<?MIVAR NAME=$lod>$2<?/MIVAR>
+	<?MIVAR NAME=$metric>$3<?/MIVAR>
        <?/MISQL>
     <?/MIBLOCK>
 
@@ -884,12 +894,12 @@ marker = '';
 
 
     <?MIVAR NAME=$source_display><?/MIVAR>
-    <?MISQL SQL=" select recattrib_source_zdb_id, full_name, recattrib_source_significance 
+    <?MISQL SQL=" select recattrib_source_zdb_id, full_name, recattrib_source_significance
                     from record_attribution, person
 	           where recattrib_data_zdb_id ='$link_id'
 		     and recattrib_source_zdb_id = zdb_id
-		UNION 
-		  select recattrib_source_zdb_id, pub_mini_ref, recattrib_source_significance 
+		UNION
+		  select recattrib_source_zdb_id, pub_mini_ref, recattrib_source_significance
                     from record_attribution, publication
 	           where recattrib_data_zdb_id ='$link_id'
 		     and recattrib_source_zdb_id = zdb_id
@@ -904,7 +914,7 @@ marker = '';
 
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
-      <?MIBLOCK COND="$(=,$(POSITION,$member_zdb_id,ALT),0)")> 
+      <?MIBLOCK COND="$(=,$(POSITION,$member_zdb_id,ALT),0)")>
 <?MIVAR>
         <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD><?/MIVAR>
       <?MIELSE>
@@ -920,31 +930,31 @@ marker = '';
         <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD></TD>
 	<?/MIVAR>
-    <?/MIBLOCK>    
+    <?/MIBLOCK>
 
   </TR>
-  <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?MIVAR NAME=$mapped>t<?/MIVAR>
  <?/MISQL>
 
  <?MIBLOCK COND="$(AND,$(XST,$subtable),$(EC,$subtable,y))">
   </TABLE>
   </TD></TR>
   <?MIVAR> $(SETVAR,$subtable,n)<?/MIVAR>
- <?/MIBLOCK> 
+ <?/MIBLOCK>
 
   <?MICOMMENT>--------------- Markers encoded by -------------<?/MICOMMENT>
 
   <?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
              FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_1_zdb_id = '$detOID'
-	       and mrel_type = 'gene encodes small segment' 
+	       and mrel_type = 'gene encodes small segment'
 	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	       and (   exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM mapped_marker
 		           WHERE mrel_mrkr_2_zdb_id = marker_id )
 		    or exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM linkage_member
 		           WHERE mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id ) )
       ;">
@@ -965,16 +975,16 @@ marker = '';
          </td>
     <?MISQL SQL="
       select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
-      from webPages 
+      from webPages
       where ID = 'aa-mappingdetail.apg';">
 	<td> $1 </td>
     </tr>
     <?/MISQL>
-    <?MIVAR NAME=$mapped>t<?/MIVAR>	
+    <?MIVAR NAME=$mapped>t<?/MIVAR>
   <?/MISQL>
   <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
    <?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
-   </table> 
+   </table>
    </TD></TR>
   <?/MIBLOCK>
  <?MICOMMENT>----------------- end Marker encoded in ---------<?/MICOMMENT>
@@ -985,14 +995,14 @@ marker = '';
              FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_1_zdb_id = '$detOID'
 	       and mrel_type in ('clone contains small segment',
-				 'clone contains gene') 
+				 'clone contains gene','clone contains transcript')
 	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	       and (   exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM mapped_marker
 		           WHERE mrel_mrkr_2_zdb_id = marker_id )
 		    or exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM linkage_member
 		           WHERE mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id ) )
   ;">
@@ -1003,13 +1013,13 @@ marker = '';
     <TR><?MIVAR>
       <TD colspan=3><p><b>Markers Contained in $abbrev:</b></TD>
     </TR><?/MIVAR>
-    <TR><TD><table cols=2> 
-    <?MIVAR NAME=$table>y<?/MIVAR>	
+    <TR><TD><table cols=2>
+    <?MIVAR NAME=$table>y<?/MIVAR>
   <?/MIBLOCK>
 
   <?MISQL SQL="
     select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
-      from webPages 
+      from webPages
       where ID = 'aa-mappingdetail.apg';">
     <tr><td>
         <A HREF="/action/marker/view/$insideq_OID"><b>$insideq_abbrev</b></A>
@@ -1018,7 +1028,7 @@ marker = '';
      </tr>
    <?/MISQL>
 
-  <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?MIVAR NAME=$mapped>t<?/MIVAR>
   <?/MISQL>
   <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
   </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
@@ -1029,24 +1039,36 @@ marker = '';
 
 
    <?MICOMMENT>-------------- Clone containing -------------------<?/MICOMMENT>
-   <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
+   <?MISQL SQL="
+		SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
              FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
-	       and mrel_type in ('clone contains small segment',
-				 'clone contains gene') 
+	       and mrel_type in (
+				'clone contains small segment',
+				'clone contains gene',
+				'clone contains transcript'
+			)
 	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
 	       and (   exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM mapped_marker
 		           WHERE mrel_mrkr_1_zdb_id = marker_id )
 		    or exists
-		       ( SELECT 'x' 
+		       ( SELECT 'x'
 		           FROM linkage_member
 		           WHERE mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id ) )
+		UNION
+		SELECT ct.mrel_mrkr_1_zdb_id, mrkr_abbrev
+		 FROM marker_relationship gt
+		  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
+		  join marker on ct.mrel_mrkr_1_zdb_id == mrkr_zdb_id
+		 where gt.mrel_type == 'gene produces transcript'
+		   and ct.mrel_type == 'clone contains transcript'
+		   and gt.mrel_mrkr_1_zdb_id = '$detOID'
   ;">
   <?MIVAR NAME=$clone_abbrev>$2<?/MIVAR>
   <?MIVAR NAME=$clone_OID>$1<?/MIVAR>
-  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
     <TR><?MIVAR>
       <TD colspan=3><p><b>Mapped Clones Containing $abbrev:</b></TD>
     </TR><?/MIVAR>
@@ -1056,7 +1078,7 @@ marker = '';
 
   <?MISQL SQL="
     select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$clone_OID')
-      from webPages 
+      from webPages
       where ID = 'aa-mappingdetail.apg';">
     <tr>
       <td>
@@ -1065,7 +1087,7 @@ marker = '';
       <td> $1 </td>
      </tr>
    <?/MISQL>
-   <?MIVAR NAME=$mapped>t<?/MIVAR>	
+   <?MIVAR NAME=$mapped>t<?/MIVAR>
   <?/MISQL>
   <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
   </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
@@ -1074,21 +1096,21 @@ marker = '';
  <?MICOMMENT>-------------- end Clone containing -----------------<?/MICOMMENT>
 
    <?MICOMMENT>-------------- EST and/or Gene containing SNP -------------------<?/MICOMMENT>
-   
+
    <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
              FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
- 	       and mrkr_type = 'EST'	     
-	       and mrel_type = 'contains polymorphism' 
+ 	       and mrkr_type = 'EST'
+	       and mrel_type = 'contains polymorphism'
 	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
 	       and exists
-	       		 ( SELECT 'x' 
+	       		 ( SELECT 'x'
 	       		           FROM mapped_marker
 		           WHERE mrel_mrkr_1_zdb_id = marker_id )
   ;">
   <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
   <?MIVAR NAME=$mrkr_OID>$1<?/MIVAR>
-  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
     <TR><?MIVAR>
       <TD colspan=3><p><b>EST Containing $abbrev:</b></TD>
     </TR><?/MIVAR>
@@ -1098,7 +1120,7 @@ marker = '';
 
   <?MISQL SQL="
     select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$mrkr_OID')
-      from webPages 
+      from webPages
       where ID = 'aa-mappingdetail.apg';">
     <tr>
       <td>
@@ -1107,19 +1129,19 @@ marker = '';
       <td> $1 </td>
      </tr>
    <?/MISQL>
-   <?MIVAR NAME=$mapped>t<?/MIVAR>	
+   <?MIVAR NAME=$mapped>t<?/MIVAR>
   <?/MISQL>
- 
+
     <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
               FROM marker_relationship,  marker
  	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
  	       and mrkr_type = 'GENE'
- 	       and mrel_type = 'contains polymorphism' 
+ 	       and mrel_type = 'contains polymorphism'
  	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
    ;">
    <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
    <?MIVAR NAME=$mrkr_OID>$1<?/MIVAR>
-   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
      <TR><?MIVAR>
        <TD colspan=3><p><b>Gene Containing $abbrev:</b></TD>
      </TR><?/MIVAR>
@@ -1127,10 +1149,10 @@ marker = '';
      <TR><TD><?MIVAR>$(IF,$(EC,$table,y),,<table cols=2>)<?/MIVAR>
      <?MIVAR>$(SETVAR,$table,y)<?/MIVAR>
    <?/MIBLOCK>
- 
+
    <?MISQL SQL="
      select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$mrkr_OID')
-       from webPages 
+       from webPages
        where ID = 'aa-mappingdetail.apg';">
      <tr>
        <td>
@@ -1139,9 +1161,9 @@ marker = '';
        <td> $1 </td>
       </tr>
     <?/MISQL>
-    <?MIVAR NAME=$mapped>t<?/MIVAR>	
+    <?MIVAR NAME=$mapped>t<?/MIVAR>
   <?/MISQL>
- 
+
   <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
   </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
   </TD></TR>

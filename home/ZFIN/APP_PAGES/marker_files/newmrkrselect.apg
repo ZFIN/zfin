@@ -3,16 +3,16 @@
 FILE:   newmrkrselect.apg
 PREFIX: newmrkrsel_
 
- added onChange to each variable to reset START for walking windows - this 
-is needed if users alter query after using the navtile button and without 
-using the reset button. if the new query result has fewer than the first 
-query and they had been on a page that would not exist with this new query 
+ added onChange to each variable to reset START for walking windows - this
+is needed if users alter query after using the navtile button and without
+using the reset button. if the new query result has fewer than the first
+query and they had been on a page that would not exist with this new query
 the ww code breaks
 
 NOTE:
 Because this page drops temporary tables it cannot be webexploded from
-inside a select statement.  This page must first be retrieved with a 
-select statement and then passed to webexplode from an execute function 
+inside a select statement.  This page must first be retrieved with a
+select statement and then passed to webexplode from an execute function
 statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
 
@@ -62,23 +62,23 @@ DEBUGGING:
    </SCRIPT>
 
    <?MISQL SQL="
-      select object 
-        from webPages 
+      select object
+        from webPages
        where ID = 'aa-chromoscripts.apg';">
        $1
    <?/MISQL>
 
 </HEAD>
- 
+
 <BODY> <!-------------------------------------------------------------------------->
 
 <?MIVAR NAME=$OID COND="$(NXST,$OID)"><?/MIVAR>
- 
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
-    select WebExplode(object,'') 
-      from webPages 
+    select WebExplode(object,'')
+      from webPages
       where ID = 'aa-identify.apg';">
     $1
 <?/MISQL>
@@ -95,7 +95,7 @@ DEBUGGING:
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
-        <br>$1 Page Start  
+        <br>$1 Page Start
 <?/MISQL>
 
 <!---------------this part is executed after a search is submitted ---------------->
@@ -107,22 +107,22 @@ DEBUGGING:
      <script>
        window.alert("Please search for either Name OR Accession Number.");
      </script>
-   
+
   <?MIELSE>
    <?MIVAR COND="$(XST,$input_name)">$(SETVAR,$input_name,$(TRIM,$input_name))<?/MIVAR>
-   <?MIVAR COND="$(XST,$input_acc)">$(SETVAR,$input_acc,$(TRIM,$input_acc))<?/MIVAR>		
+   <?MIVAR COND="$(XST,$input_acc)">$(SETVAR,$input_acc,$(TRIM,$input_acc))<?/MIVAR>
    <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
    <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
-   <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting -->    
+   <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting -->
    <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$(URLENCODE,$input_name))$(IF,$(XST,$input_acc),&input_acc=$(URLENCODE,$input_acc))$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
     <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
-   
+
    <?MIVAR COND="$(XST,$return_rec)" NAME=$update_mode>yes<?/MIVAR>
   <?MIVAR COND="$(NC,$marker_type,all)" NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(XST,$mlist),$(EC,$marker_type,$mlist),$(NXST,$getTop))">
-        
+
 	<?MISQL SQL=" select mtgrpmem_mrkr_type
 			from marker_type_group_member
 		       where mtgrpmem_mrkr_type_group = 'SEARCH_SEG'
@@ -130,7 +130,7 @@ DEBUGGING:
 	<?/MISQL>
  	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 		<SCRIPT><?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&marker_type=$marker_type$mseg_param_list")<?/MIVAR></SCRIPT>
-	<?MIELSE>		
+	<?MIELSE>
 		<SCRIPT><?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=$marker_type$mrkr_param_list")<?/MIVAR> </SCRIPT>
         <?/MIBLOCK>
 
@@ -138,7 +138,7 @@ DEBUGGING:
 
     <?MIVAR NAME=$constraint><?/MIVAR>
     <?MIVAR NAME=$has_constraint>f<?/MIVAR>
-    
+
     <?MIVAR NAME=$name_sig_cols><?/MIVAR>
     <?MIVAR NAME=$opt_tables><?/MIVAR>
     <?MIVAR NAME=$opt_constraint><?/MIVAR>
@@ -157,7 +157,7 @@ DEBUGGING:
 		mrkrmch_zdb_id	varchar(50),
 		mrkrmch_name	varchar(120),
 		mrkrmch_significance	integer ); ">
-      <?/MISQL> 	 
+      <?/MISQL>
       <?MIBLOCK COND="$(EC,$compare,starts)">
         <?MIVAR NAME=$newmrkrsel_nameTable><?/MIVAR>
         <?MIVAR NAME=$newmrkrsel_nameTest>
@@ -167,69 +167,69 @@ DEBUGGING:
         <?MIVAR NAME=$newmrkrsel_nameTable>, all_name_ends<?/MIVAR>
         <?MIVAR NAME=$newmrkrsel_nameTest>
           and allmapnm_serial_id = allnmend_allmapnm_serial_id
-          and allnmend_name_end_lower like '$(LOWER,$input_name)%' 
+          and allnmend_name_end_lower like '$(LOWER,$input_name)%'
         <?/MIVAR>
       <?/MIBLOCK>
 
       <?MICOMMENT> get significance for clone contains gene names <?/MICOMMENT>
       <?MISQL SQL="
-        select nmprec_significance 
+        select nmprec_significance
           from name_precedence
           where nmprec_precedence = 'Clone contains gene'">
 	<?MIVAR NAME=$newmrkrsel_cloneContainsGeneSig>$1<?/MIVAR>
       <?/MISQL>
 
-      <?MIVAR NAME=mchIdLast><?/MIVAR>	
+      <?MIVAR NAME=mchIdLast><?/MIVAR>
       <?MISQL SQL="
 	 select allmapnm_zdb_id, allmapnm_name, allmapnm_significance
            from all_map_names $newmrkrsel_nameTable
 	  where allmapnm_precedence <> 'Accession number'
             $newmrkrsel_nameTest
 	UNION
-	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name,
                 $newmrkrsel_cloneContainsGeneSig as allmapnm_significance
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
-	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id
  	   and mrel_type = 'clone contains gene'
            and allmapnm_precedence <> 'Accession number'
-           $newmrkrsel_nameTest           
+           $newmrkrsel_nameTest
 	UNION
-	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name,
                 allmapnm_significance
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
-	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id
  	   and mrel_type in ('promoter of','coding sequence of')
  	   and mrel_mrkr_1_zdb_id like 'ZDB-TG%'
            and allmapnm_precedence <> 'Accession number'
-           $newmrkrsel_nameTest 
+           $newmrkrsel_nameTest
 	UNION
-	 select mrel_mrkr_2_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+	 select mrel_mrkr_2_zdb_id as allmapnm_zdb_id, allmapnm_name,
                 allmapnm_significance
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
-	 where mrel_mrkr_1_zdb_id = allmapnm_zdb_id 
+	 where mrel_mrkr_1_zdb_id = allmapnm_zdb_id
  	   and mrel_type in ('promoter of','coding sequence of')
  	   and mrel_mrkr_2_zdb_id like 'ZDB-TG%'
            and allmapnm_precedence <> 'Accession number'
-           $newmrkrsel_nameTest       
+           $newmrkrsel_nameTest
 	UNION
-	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name,
                 allmapnm_significance
 	  from marker_relationship, all_map_names $newmrkrsel_nameTable
-	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id
  	   and mrel_type = 'knockdown reagent targets gene'
            and allmapnm_precedence <> 'Accession number'
-           $newmrkrsel_nameTest                  
+           $newmrkrsel_nameTest
          order by 1, 3, 2;">
 
 	<?MIVAR NAME=mchId>$1<?/MIVAR>
         <?MISQL COND="$(NC,$mchId,$mchIdLast)" SQL="
-            insert into bigselect_name_match 
-		values('$1', '$(URLENCODE,$2)', '$3'); "> <!-- the URLENCODE encodes "'" which is problematic--> 
- 		$(SETVAR,$mchIdLast,$mchId)          	
+            insert into bigselect_name_match
+		values('$1', '$(URLENCODE,$2)', '$3'); "> <!-- the URLENCODE encodes "'" which is problematic-->
+ 		$(SETVAR,$mchIdLast,$mchId)
         <?/MISQL>
       <?/MISQL>
       <?MIVAR>
-        $(SETVAR,$name_sig_cols,", mrkrmch_name, mrkrmch_significance") 
+        $(SETVAR,$name_sig_cols,", mrkrmch_name, mrkrmch_significance")
 	$(SETVAR,$sig_order," mrkrmch_significance, ")
 	$(SETVAR,$opt_tables,",bigselect_name_match")
 	$(SETVAR,$opt_constraint, " mrkr_zdb_id = mrkrmch_zdb_id ")
@@ -280,7 +280,7 @@ DEBUGGING:
       <?/MIVAR>
     <?/MIBLOCK><!-----------------end input access number ------------>
 
-  
+
     <!------------------ if LG is selected ---------->
     <?MIBLOCK COND="$(NC,$lg,0)">
       <?MISQL COND=$(XST,$debug_timing) SQL="
@@ -289,17 +289,17 @@ DEBUGGING:
       <?/MISQL>
       <?MICOMMENT>we do mapping info pullover between clones and genes/small segs. <?/MICOMMENT>
       <?MISQL  SQL="
-	select marker_id 
+	select marker_id
           from mapped_marker
 	 where or_lg = '$lg'
-      UNION 
+      UNION
 	select mrel_mrkr_2_zdb_id as marker_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_1_zdb_id = marker_id
 	   and or_lg = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment')
-       UNION 
+       UNION
 	select mrel_mrkr_1_zdb_id as marker_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_2_zdb_id = marker_id
@@ -311,33 +311,49 @@ DEBUGGING:
         select lnkgmem_member_zdb_id as marker_id
 	  from linkage, linkage_member
 	 where lnkg_or_lg = '$lg'
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-       UNION	
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+       UNION
 	select mrel_mrkr_2_zdb_id as marker_id
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	   and lnkg_or_lg = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment')
-       UNION 
+       UNION
 	select mrel_mrkr_1_zdb_id as marker_id
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	   and lnkg_or_lg = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment',
 			     'gene encodes small segment')
+	UNION
+	select gt.mrel_mrkr_1_zdb_id
+	 from  marker_relationship gt
+	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
+	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
+	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
+	 where gt.mrel_type == 'gene produces transcript'
+	   and ct.mrel_type == 'clone contains transcript'
+	   and lnkg_or_lg = '$lg'
+      UNION
+	select  ct.mrel_mrkr_2_zdb_id
+	 from  marker_relationship ct
+	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
+	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
+	 where ct.mrel_type == 'clone contains transcript'
+	   and lnkg_or_lg = '$lg'
 
 	  into temp bigselect_on_lg with no log; ">
-       <?/MISQL> 
-    
+       <?/MISQL>
+
        <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select marker_id from bigselect_on_lg)<?/MIVAR>
        <?MIVAR>
-          $(VECAPPEND, $constraint, $lgConstraint )	
+          $(VECAPPEND, $constraint, $lgConstraint )
 	  $(SETVAR,$has_constraint,t)
-       <?/MIVAR>	
+       <?/MIVAR>
     <?/MIBLOCK>
     <!-------------------- end LG ----------------->
 
@@ -348,7 +364,7 @@ DEBUGGING:
 	$(VECAPPEND,$constraint," mrkr_type in ("'$mlist'")" )
         $(SETVAR,$has_constraint,t)
       <?/MIVAR>
-    <?/MIBLOCK>	
+    <?/MIBLOCK>
 
     <!-- split the constraints -->
     <?MIVAR COND="$(EC,$has_constraint,t)" NAME=$constraint>
@@ -362,13 +378,13 @@ DEBUGGING:
 
     <!----------  Populate temp table based on user constraints. ---------->
 
-     <?MISQL SQL="	
+     <?MISQL SQL="
 	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, mrkr_abbrev_order $name_sig_cols
 	  from marker $opt_tables
 	 $constraint
 	into temp bigselect_temp_markers with no log; ">
      <?/MISQL>
-   
+
      <?MISQL COND="$(NC,$lg,0)" SQL="
 	drop table bigselect_on_lg; ">
     <?/MISQL>
@@ -378,10 +394,10 @@ DEBUGGING:
     <?MISQL COND="$(XST,$input_acc)" SQL="
 	drop table bigselect_acc_match; ">
     <?/MISQL>
-    
+
    <!------------------  Retreive and Display the data -------------------->
 
-     <?MIVAR NAME="critList"><?/MIVAR> 
+     <?MIVAR NAME="critList"><?/MIVAR>
      <?MIVAR>
  	  $(IF,$(XST,$input_name),$(VECAPPEND,$critList,name $compare '$input_name'))
 	  $(IF,$(XST,$input_acc),$(VECAPPEND,$critList,accession number '$input_acc'))
@@ -391,14 +407,14 @@ DEBUGGING:
      <?/MIVAR>
 
 
-    <?MICOMMENT>for best match, search exact mrkr_abbrev match first, 
+    <?MICOMMENT>for best match, search exact mrkr_abbrev match first,
 	        then get the first of the temp table based on the order
     <?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$getTop)">
        <!--for best match, search exact mrkr_abbrev match first, then get the first of the temp table based on the order-->
        <?MIVAR NAME=$input><?/MIVAR>
        <?MIVAR NAME=$input>$(IF,$(XST,$input_name),$input_name, $input_acc)<?/MIVAR>
- 
+
        <?MISQL SQL="
 	 select mrkr_zdb_id
 	   from bigselect_temp_markers
@@ -412,7 +428,7 @@ DEBUGGING:
     	     from bigselect_temp_markers, marker_types
 	    where mrkr_type = marker_type
    	   order by $sig_order mrkrtype_significance, mrkr_abbrev_order;  ">
-	
+
 	  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=OID>$1<?/MIVAR>
          <?/MISQL>
        <?/MIBLOCK>
@@ -435,8 +451,8 @@ DEBUGGING:
    <?MIELSE> <?MICOMMENT> if not $getTop <?/MICOMMENT>
   	<?MISQL SQL="
   		select mrkr_abbrev
-    	 	from bigselect_temp_markers;">	
-        <?/MISQL>   
+    	 	from bigselect_temp_markers;">
+        <?/MISQL>
 
      <?MISQL SQL="
   	select  mrkr_type, count(distinct mrkr_zdb_id)::integer
@@ -445,90 +461,90 @@ DEBUGGING:
      <?/MISQL>
      <?MIVAR NAME=num_of_type>$MI_ROWCOUNT<?/MIVAR>
      <?MIVAR NAME=$type_count>$2<?/MIVAR>
-     <?MIVAR COND="$(=,$num_of_type,0)">$(SETVAR, $type_count,0)<?/MIVAR> 
-  
+     <?MIVAR COND="$(=,$num_of_type,0)">$(SETVAR, $type_count,0)<?/MIVAR>
+
     <?MIBLOCK COND="$(AND,$(=,$num_of_type,1),$(=,$type_count,1),$(NC,$update_mode,yes))">
 	<?MISQL SQL="
   		select get_mrkr_url(mrkr_zdb_id)
     	 	from bigselect_temp_markers;">
-        <?/MISQL>
-	<?MIVAR NAME=$the_link>$1<?/MIVAR>
-        <?MIVAR>   <SCRIPT>location.replace("$the_link")</SCRIPT>
-        <?/MIVAR>
-   <?MIELSE>
+		<?/MISQL>
+		<?MIVAR NAME=$the_link>$1<?/MIVAR>
+		<?MIVAR> <SCRIPT>location.replace("$the_link")</SCRIPT>
+		<?/MIVAR>
+	<?MIELSE>
      <TABLE>  
      <TR><TD width=80% align=center><p>
-	<?MIVAR> <font size=+1>
-	  $(IF,$(=,$type_count,0),No Matching,Search) Results for: 
+		<?MIVAR> <font size=+1>
+			$(IF,$(=,$type_count,0),No Matching,Search) Results for:
 	  $(SUBSTR,$(SEPARATE,$critList,; ),3)
                  </font>
 	<?/MIVAR>
        </TD>
 
        <TD width=10% align=right>
-         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-       </TD>
-     </TR>
-     <TR><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
-     <TR><TD width=80% align=center>
-        <?MIBLOCK COND="$(!=,$type_count,0)"> 
-        <table align=center>
-        <ul>
-        <?MISQL SQL="
-	  select marker_type, count(distinct mrkr_zdb_id)::integer, mrkrtype_type_display, mrkrtype_significance
-    	    from bigselect_temp_markers, marker_types
-	   where mrkr_type = marker_type
-	   group by marker_type, mrkrtype_significance, mrkrtype_type_display
+	<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+	</TD>
+	</TR>
+	<TR><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
+	<TR><TD width=80% align=center>
+	<?MIBLOCK COND="$(!=,$type_count,0)">
+		<table align=center>
+		<ul>
+		<?MISQL SQL="
+			select marker_type,count(distinct mrkr_zdb_id)::integer, mrkrtype_type_display,mrkrtype_significance
+			 from bigselect_temp_markers, marker_types
+			 where mrkr_type = marker_type
+			group by marker_type, mrkrtype_significance, mrkrtype_type_display
            order by mrkrtype_significance ;
            ">
-	 <?MIVAR NAME=$mtype_in_db>$1<?/MIVAR>  
+	 <?MIVAR NAME=$mtype_in_db>$1<?/MIVAR>
 	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
 	 <?MIVAR NAME=$mtype_display>$3<?/MIVAR>
-	 <?MIBLOCK COND="$(!=,$search_count,0)">  
+	 <?MIBLOCK COND="$(!=,$search_count,0)">
 	   <?MISQL SQL="
 		select mtgrpmem_mrkr_type
 		 from  marker_type_group_member
-		where  mtgrpmem_mrkr_type = '$mtype_in_db'
-		  and  mtgrpmem_mrkr_type_group = 'SEARCH_SEG' ;
-	     ">
-           <?/MISQL> 
-	   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+		 where  mtgrpmem_mrkr_type = '$mtype_in_db'
+		   and  mtgrpmem_mrkr_type_group = 'SEARCH_SEG';
+		">
+           <?/MISQL>
+	<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 		<?MIVAR NAME=$linkto>msegselect.apg<?/MIVAR>
 		<?MIVAR NAME=$linkparam>$mseg_param_list<?/MIVAR>
-	   <?MIELSE>
+	<?MIELSE>
 		<?MIVAR NAME=$linkto>markerselect.apg<?/MIVAR>
-		<?MIVAR NAME=$linkparam>$mrkr_param_list<?/MIVAR> 
-	   <?/MIBLOCK>
+		<?MIVAR NAME=$linkparam>$mrkr_param_list<?/MIVAR>
+	<?/MIBLOCK>
 
-	   <?MIVAR COND="$(=,$num_of_type,1)"> 
- 		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
-	   <?/MIVAR>
-      
+	<?MIVAR COND="$(=,$num_of_type,1)">
+		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
+	<?/MIVAR>
+
            <?MICOMMENT> genes in feature_marker_relationship table has 
                         known mutants.
            <?/MICOMMENT> 
 	   <?MISQL COND="$(>,$(POSITION,$mtype_in_db,GENE),0)" SQL="
 		select count(distinct mrkr_zdb_id)::integer
-		  from bigselect_temp_markers
+		 from bigselect_temp_markers
 		 where mrkr_type = '$mtype_in_db'
  		   and mrkr_zdb_id in ( select fmrel_mrkr_zdb_id from feature_marker_relationship ) ;">
 		<?MIVAR NAME=knownmutant_count>$1<?/MIVAR>
 		<?MIVAR COND="$(!=,$knownmutant_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownmutant=t">$1 with mutants</A>)<?/MIVAR>
-	   <?/MISQL>
-		
+	<?/MISQL>
+
 	<?MIVAR>
-	     <TR><TD><b><li>
-               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count 
-	       <?MIBLOCK COND="$(EC,$mtype_display,Antibody)">
-	       	  <?MIVAR>
-			$(IF,$(!=,$search_count,1),Antibodies)$(IF,$(=,$search_count,1),Antibody) 
+		<TR><TD><b><li>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count
+		<?MIBLOCK COND="$(EC,$mtype_display,Antibody)">
+			<?MIVAR>
+			$(IF,$(!=,$search_count,1),Antibodies)$(IF,$(=,$search_count,1),Antibody)
 		  <?/MIVAR>
 	       <?MIELSE>
 		  <?MIVAR>
 			$mtype_display$(IF,$(!=,$search_count,1),s)
 		  <?/MIVAR>
 	       <?/MIBLOCK>
-</A> 
+</A>
                $(IF,$(AND,$(>,$(POSITION,$mtype_in_db,GENE),0),$(>,$knownmutant_count,0)),&nbsp;$gene_extra)
 	     </li></b></TD></TR>
            <?/MIVAR>
@@ -547,17 +563,17 @@ DEBUGGING:
        <?/MISQL>
 
        </ul></table>
-       <?/MIBLOCK>   
+       <?/MIBLOCK>
        </TD><TD></TD></TR>
-       </TABLE><p>   
-     <?/MIBLOCK> <!-- end whether it is only one record returned --> 
-  
+       </TABLE><p>
+     <?/MIBLOCK> <!-- end whether it is only one record returned -->
+
     <?/MIBLOCK> <!--------- end get top one -------->
-     
+
     <?MISQL SQL="
 	 drop table bigselect_temp_markers; ">
     <?/MISQL>
-  
+
 
    <?/MIBLOCK><!----------- end type specific ------->
   <?/MIBLOCK> <!----------- end xst $input_name and $input_acc ------->
@@ -571,8 +587,8 @@ DEBUGGING:
 <?MISQL SQL="select WebExplode(object,'page=newmrkrselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
-        execute function get_time()">
-        <br>$1 Page End  
+        execute function get_time() ">
+        <br>$1 Page End
 <?/MISQL>
 
 
