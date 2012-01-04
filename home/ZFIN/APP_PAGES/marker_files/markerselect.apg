@@ -1226,3 +1226,4 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?/MIBLOCK>
+

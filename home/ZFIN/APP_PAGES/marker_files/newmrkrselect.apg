@@ -472,7 +472,7 @@ DEBUGGING:
 		<?MIVAR> <SCRIPT>location.replace("$the_link")</SCRIPT>
 		<?/MIVAR>
 	<?MIELSE>
-     <TABLE>  
+     <TABLE>
      <TR><TD width=80% align=center><p>
 		<?MIVAR> <font size=+1>
 			$(IF,$(=,$type_count,0),No Matching,Search) Results for:
@@ -520,9 +520,9 @@ DEBUGGING:
 		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
 	<?/MIVAR>
 
-           <?MICOMMENT> genes in feature_marker_relationship table has 
+           <?MICOMMENT> genes in feature_marker_relationship table has
                         known mutants.
-           <?/MICOMMENT> 
+           <?/MICOMMENT>
 	   <?MISQL COND="$(>,$(POSITION,$mtype_in_db,GENE),0)" SQL="
 		select count(distinct mrkr_zdb_id)::integer
 		 from bigselect_temp_markers
@@ -595,4 +595,3 @@ DEBUGGING:
  <?MIBLOCK>
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
  <?/MIBLOCK>
-
