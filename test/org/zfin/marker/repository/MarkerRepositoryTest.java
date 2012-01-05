@@ -59,7 +59,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testMarkerTypeAndGroup() {
-        Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
+//        Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
+        Marker pax2a = markerRepository.getGeneByID("ZDB-GENE-990415-8");
         assertTrue("pax2a has type GENE", pax2a.getMarkerType().getType() == Marker.Type.GENE);
         assertFalse("pax2a doesn't have type BAC", pax2a.getMarkerType().getType() == Marker.Type.BAC);
         assertTrue("pax2a is in the type group GENEDOM", pax2a.isInTypeGroup(Marker.TypeGroup.GENEDOM));
@@ -170,7 +171,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            Marker marker = markerRepository.getMarkerByAbbreviation("pax2a");
+            Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8"); // pax2a
             markerRepository.runMarkerNameFastSearchUpdate(marker);
         } catch (Exception e) {
             success = false;
@@ -731,11 +732,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
-        Marker morpholino = markerRep.getMarkerByAbbreviation("MO1-adam8a");
+        Marker morpholino = markerRep.getMarkerByID("ZDB-MRPHLNO-100729-2");
         Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
-        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
+//        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
+        assertEquals("ZDB-GENE-030616-622", targetGenes.iterator().next().getZdbID());
 
     }
 
@@ -743,13 +745,15 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
-        Marker morpholino = markerRep.getMarkerByAbbreviation("MO4-rbpja+rbpjb");
+        Marker morpholino = markerRep.getMarkerByID("ZDB-MRPHLNO-060626-6");
         Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
         Iterator<Marker> iter = targetGenes.iterator() ;
-        assertEquals("rbpja", iter.next().getAbbreviation());
-        assertEquals("rbpjb", iter.next().getAbbreviation());
+//        assertEquals("rbpja", iter.next().getAbbreviation());
+//        assertEquals("rbpjb", iter.next().getAbbreviation());
+        assertEquals("ZDB-GENE-031117-1", iter.next().getZdbID());
+        assertEquals("ZDB-GENE-070319-1", iter.next().getZdbID());
 
     }
 
@@ -827,7 +831,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void markerDBLinkDisplay() {
-        Marker m = markerRepository.getGeneByAbbreviation("pax6a");
+        Marker m = markerRepository.getGeneByID("ZDB-GENE-990415-200"); // pax6a
         SummaryDBLinkDisplay summaryDBLinkDisplay = MarkerService.getMarkerDBLinkDisplay(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(summaryDBLinkDisplay);
 
@@ -835,7 +839,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(linkDisplayList);
 
 
-        m = markerRepository.getTranscriptByName("gsc-002");
+//        m = markerRepository.getTranscriptByName("gsc-002");
+        m = markerRepository.getTranscriptByZdbID("ZDB-TSCRIPT-090929-193");
         summaryDBLinkDisplay = MarkerService.getMarkerDBLinkDisplay(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(summaryDBLinkDisplay);
 
@@ -864,7 +869,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getRelatedMarkerDisplayForTypes() {
-        Marker m = markerRepository.getGeneByAbbreviation("alcama");
+//        Marker m = markerRepository.getGeneByAbbreviation("alcama");
+        Marker m = markerRepository.getGeneByID("ZDB-GENE-990415-30");
         List<MarkerRelationshipPresentation> relationshipPresentations =
                 markerRepository.getRelatedMarkerDisplayForTypes(m, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
         assertEquals(5, relationshipPresentations.size());
