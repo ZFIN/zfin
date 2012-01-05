@@ -21,5 +21,6 @@ create trigger feature_insert_trigger insert on feature
     		) into feature.feature_abbrev_order,
         execute procedure fhist_event(newf.feature_zdb_id,
        		'assigned', newf.feature_name,newf.feature_abbrev),
-    execute procedure checkDupFeaturePrefixLineDesignation (newf.feature_lab_prefix_id, newf.feature_line_number) 
+    execute procedure checkDupFeaturePrefixLineDesignation (newf.feature_lab_prefix_id, newf.feature_line_number) ,
+execute procedure populate_feature_Tracking(newf.feature_abbrev, newf.feature_name, newf.feature_zdb_id)
 );
