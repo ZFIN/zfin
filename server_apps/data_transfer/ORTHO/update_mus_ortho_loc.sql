@@ -314,7 +314,8 @@ select count(*) mus_loc_not_null
 ;
 
 ! echo "what zfin mouse symbols are not in the current MGI set?"
-select c_gene_id gene, ortho_abbrev tsym from orthologue
+select c_gene_id[1,25] gene, ortho_abbrev tsym
+ from orthologue
  where organism == 'Mouse'
  and not exists (
 	select 't' from chr_loc_sym
@@ -327,7 +328,8 @@ select * from tmp_sym order by 1;
 ! echo "which are not in the withdrawn set either?"
 ! echo "symbols ending in '-ps' are pseudo genes not in this update"
 ! echo "but someone might want to check one them once and a while"
-select * from tmp_sym where not exists (
+select gene,tsym
+ from tmp_sym where not exists (
 	select 1 from chr_loc_symw
 	 where tsym == clsw_sym
 )order by 1;

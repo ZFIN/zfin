@@ -76,7 +76,7 @@ echo ""
 ###
 ### note: leave in tab separated format as 'location' uses pipes sometimes.
 ###
-### omim had gene and disease and other records all mixed together with integer keys
+###
 ###
 
 prior="`ls -l ./$human`"
@@ -84,11 +84,17 @@ echo "Begin Human update `date +'%Y-%m-%d %H:%M:%S'`"
 wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/$human"
 geterr=$?
 post="`ls -l ./$human`"
-if [ ! -r $human -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
+
+# use to distinguish gene omim from phenotype omin
+# wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/mim2gene_partial"
+wget -q --timestamping "ftp://anonymous:tomc%40cs%2Euoregon%2Eedu@grcf.jhmi.edu/OMIM/mim2gene.txt"
+
+if [ ! -f $human -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
 	echo "Human has a new datafile"
 	echo $prior
 	echo $post
 	echo ""
+	grep gene mim2gene.txt | cut -f1,3 | grep -v "-"> mim2gene.tab
 	zcat ${human} | cut -f 2,3,6,7,8 | \
 	nawk '{n=split($3,dbid,"[:|]"); i=1; omim=""; \
 		while(i < n && "MIM" != dbid[i]){i+=2} omim=dbid[1+i]; \
@@ -124,7 +130,7 @@ wget -q --timestamping ftp://ftp.flybase.net/genomes/dmel/current/fasta/${fly}
 geterr=$?
 post="`ls -lt ${fly} | head -1`"
 
-if [ ! -r ${fly} -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
+if [ ! -f ${fly} -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
 #if [ 1 ] ; then
 	echo "Fly has a new datafile"
 	echo "$prior"
