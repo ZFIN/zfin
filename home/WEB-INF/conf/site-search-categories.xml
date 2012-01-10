@@ -44,9 +44,9 @@
         </UrlMapping>
     </Category>
     <Category ID="ANATOMY"  order="50">
-        <DisplayName>Anatomy</DisplayName>
+        <DisplayName>Anatomy / Other Ontology Terms</DisplayName>
         <UrlMapping>
-            <urlPattern type="AnatomyView" boostValue="256">anatomy/term-detail</urlPattern>
+            <urlPattern type="AnatomyView" boostValue="256">ontology/term-detail</urlPattern>
             <urlPattern type="AnatomyImages" boostValue="8">zf_info/anatomy</urlPattern>
         </UrlMapping>
     </Category>
@@ -64,7 +64,7 @@
         </UrlMapping>
     </Category>
     <Category ID="ONTOLOGY"  order="80">
-        <DisplayName>Gene Ontology</DisplayName>
+        <DisplayName>Gene / GO Annotation</DisplayName>
         <UrlMapping>
             <urlPattern type="GeneOntology">markergoview.apg</urlPattern>
         </UrlMapping>
