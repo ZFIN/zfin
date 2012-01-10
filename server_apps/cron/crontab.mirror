@@ -27,10 +27,8 @@
 #22 23 * * * /research/zcentral/www_homes/mirror/cgi-bin/publications_today.cgi
 #
 # 
-# SMTWT    after     Validate data
-45 23 * * 0-4 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;validatedata.pl -d  mirrordb
-# TWTFS   9pm reload of mirrordb 
-00 21 * * 1-5 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env
+# SMTWT 9pm reload of mirrordb & daily validatedata.pl
+00 21 * * 0-4 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env ; cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;validatedata.pl -d mirrordb
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
