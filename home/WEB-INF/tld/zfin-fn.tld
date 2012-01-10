@@ -206,7 +206,7 @@
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>java.lang.String generateRandomDomID()</function-signature>
         <example>
-            ${fn:generateRandomDomID()}
+            ${zfn:generateRandomDomID()}
         </example>
     </function>
 

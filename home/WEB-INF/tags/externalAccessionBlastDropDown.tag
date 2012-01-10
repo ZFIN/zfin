@@ -7,8 +7,8 @@
         <zfin2:blastAccessionURL dbLink="${dbLink}" blastDB="${dbLink.blastableDatabases[0]}"/>
     </c:when>
     <c:when test="${fn:length(dbLink.blastableDatabases)>1}">
-        <c:set var="blastLink" value="blast-popup${dbLink.accessionNumber}"/>
-        <c:set var="blastLinkPopup" value="blast-links${dbLink.accessionNumber}"/>
+        <c:set var="blastLink" value="blast-popup${zfn:generateRandomDomID()}"/>
+        <c:set var="blastLinkPopup" value="blast-links${zfn:generateRandomDomID()}"/>
         <div class="analysis_tools_box">
             <div id="${blastLink}" class="analysis_tools_box_header">
                 Select Tool
