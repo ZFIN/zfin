@@ -782,7 +782,23 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getPreviousNamesLight() {
         Marker m = markerRepository.getGeneByID("ZDB-GENE-010606-1");
         List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
-        assertEquals(3, previousNames.size());
+        assertTrue(previousNames.size() >= 3);
+    }
+
+    @Test public void getPreviousNamesLightMultipleAttributionTest() {
+        Marker m = markerRepository.getGeneByID("ZDB-GENE-010504-1");
+        List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
+        int name1Count = 0;
+        int name2Count = 0;
+        for (PreviousNameLight name: previousNames) {
+            if (name.getAlias().equals("ff1b"))
+                name1Count++;
+            if (name.getAlias().equals("nr5a4"))
+                name2Count++;
+        }
+        assertEquals("ff1b should only show up as a previous name once for nr5a1a", 1, name1Count);
+        assertEquals("nr5a4 should only show up as a previous name once for nr5a1a", 1, name2Count);
+
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Iterator;
@@ -183,27 +184,12 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getAttributionLink(Marker marker) {
 
-        StringBuilder sb = new StringBuilder("");
+        if (marker == null)
+            return null;
 
-        if (marker.getPublications().size() == 1) {
-            sb.append(" (");
-            sb.append(PublicationPresentation.getLink(marker.getPublications().iterator().next().getSourceZdbID(), "1"));
-            sb.append(")");
-        } else if (marker.getPublications().size() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(marker.getZdbID());
-            uri.append("&rtype=marker&recattrsrctype=standard");
-            uri.append("&OID=");
-            String count = String.valueOf(marker.getPublications().size());
+        return getAttributionLink(marker.getZdbID(), marker.getZdbID(),
+                marker.getPublications().iterator().next().getSourceZdbID(), marker.getPublications().size());
 
-            sb.append(" (");
-            sb.append(getWebdriverLink(uri.toString(), marker.getZdbID(), count));
-            sb.append(")");
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -216,28 +202,37 @@ public class MarkerPresentation extends EntityPresentation {
 
         MarkerRelationship mrel = relatedMarker.getMarkerRelationship();
 
-        StringBuilder sb = new StringBuilder("");
 
-        if (mrel.getPublicationCount() == 1) {
-            sb.append(" (");
-            sb.append(PublicationPresentation.getLink(mrel.getSinglePublication(), "1"));
-            sb.append(")");
-        } else if (mrel.getPublicationCount() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(relatedMarker.getMarker().getZdbID());
-            uri.append("&rtype=marker&recattrsrctype=standard");
-            uri.append("&OID=");
-            String count = String.valueOf(mrel.getPublicationCount());
+        return getAttributionLink(relatedMarker.getMarker().getZdbID(),
+                                  mrel.getZdbID(),
+                mrel.getSinglePublication().getZdbID(),
+                mrel.getPublicationCount());
 
-            sb.append(" (");
-            sb.append(getWebdriverLink(uri.toString(), mrel.getZdbID(), count));
-            sb.append(")");
-        }
-
-        return sb.toString();
     }
 
+
+    public static String getAttributionLink(PreviousNameLight previousName) {
+        if (previousName == null)
+            return null;
+
+        return getAttributionLink(previousName.getMarkerZdbID(),
+                previousName.getAliasZdbID(),
+                previousName.getPublicationZdbID(),
+                previousName.getPublicationCount());
+
+    }
+
+
+    public static String getAttributionLink(String markerZdbID, String additionalZdbID,
+                                            String publicationZdbID, int publicationCount) {
+        if (publicationCount == 0)
+            return null;
+        if (publicationCount == 1) {
+            return PublicationPresentation.getSingleAttributionLink(publicationZdbID, publicationCount);
+        } else {
+            return PublicationPresentation.getMultipleAttributionLink(markerZdbID, additionalZdbID,
+                    "marker", "standard", publicationCount);
+        }
+    }
 
 }

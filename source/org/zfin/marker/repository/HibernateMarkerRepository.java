@@ -1639,7 +1639,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
         String sql = "  " +
-                " select da.dalias_alias, ra.recattrib_source_zdb_id " +
+                " select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
                 "    from data_alias da " +
                 "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
                 "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
@@ -1653,9 +1653,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
+                        previousNameLight.setMarkerZdbID(gene.getZdbID());
                         previousNameLight.setAlias(tuple[0].toString());
+                        previousNameLight.setAliasZdbID(tuple[2].toString());
                         if (tuple[1] != null) {
                             previousNameLight.setPublicationZdbID(tuple[1].toString());
+                            previousNameLight.setPublicationCount(1);
                         }
 
                         return previousNameLight;
@@ -1663,10 +1666,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
                     @Override
                     public List transformList(List list) {
+                        Map<String, PreviousNameLight> map = new HashMap<String, PreviousNameLight>();
+                        for (Object o : list) {
+                            PreviousNameLight previousName = (PreviousNameLight)o;
+                            PreviousNameLight previousNameStored = map.get(previousName.getAlias());
+
+                            //if it hasn't been stored, it's the first occurrence of this alias text, store it
+                            if (previousNameStored == null) {
+                                map.put(previousName.getAlias(), previousName);
+                            } else {  //if it's already been stored, just increment the pub count
+                                previousNameStored.setPublicationCount(previousNameStored.getPublicationCount() + previousName.getPublicationCount());
+                                map.put(previousNameStored.getAlias(), previousNameStored);
+                            }
+                        }
+
+                        list = new ArrayList(map.values());
 
                         Collections.sort(list);
 
-                        return super.transformList(list);    //To change body of overridden methods use File | Settings | File Templates.
+                        return list;   
                     }
                 })
                 .list();
