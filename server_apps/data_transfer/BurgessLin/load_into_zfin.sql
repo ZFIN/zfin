@@ -153,7 +153,12 @@ from tmp_feature;
 insert into tmp_dalias (tmp_da_f_id, tmp_da_alias)
 select tmp_feat_id, tmp_name[1,8] 
 from tmp_feature
-where tmp_name like "%Tg";
+where tmp_name like "la%";
+
+insert into tmp_dalias (tmp_da_f_id, tmp_da_alias)
+select tmp_feat_id, tmp_abbrev 
+from tmp_feature
+where tmp_name like "Tg%";
 
 update tmp_dalias
 set tmp_da_id = get_id("DALIAS");
@@ -303,10 +308,6 @@ insert into db_link
 select tmp_dbl_id, tmp_acc, tmp_dbl_feat, tmp_fdbcont
 from tmp_dblink;
 
-insert into one_to_one_accession (ooa_feature_zdb_id, ooa_dblink_zdb_id)
-select tmp_dbl_feat, tmp_dbl_id
-from tmp_dblink
-where tmp_dbl_feat like "ZDB-ALT%";
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select tmp_dbl_id, "ZDB-PUB-110915-1"
