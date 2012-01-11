@@ -30,7 +30,9 @@ SUBDIRS =
 
 GENERICS =
 
-STATICS = stow_bed.sh
+STATICS = stow_bed.sh Makefile load_Burgess_Lin.sql plate_la_split.awk\
+README.txt load_into_zfin.sql stow_bed.sh
+
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
