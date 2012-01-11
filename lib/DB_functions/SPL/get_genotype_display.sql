@@ -157,7 +157,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	    else
 	    end if
         
-            if (featType == 'TRANSGENIC_INSERTION') then
+            if (featType == 'TRANSGENIC_INSERTION' and zygOrder != '2') then
                             
               if (featMrkrAbbrev == tgLastMrkr and featAbbrevHtml like "Tg%") then
                   let tgRepeat = 't';
