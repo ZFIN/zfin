@@ -32,8 +32,6 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define zygAllele       lvarchar;
   define tgRepeat        boolean;
   define tgLastFeat      lvarchar;
-  define tgFirstFeatHtml lvarchar;
-  define featCount       integer;
   define tgLastMrkr      lvarchar;
   define featOrder       varchar(2);
   define fmrelType       like feature_marker_relationship.fmrel_type;
@@ -55,7 +53,6 @@ create function get_genotype_display( genoZdbId varchar(50) )
   let tgLastMrkr = '';
   let tgLastFeat = '';
   let fmrelType = '';
-  let featCount = 0;
 
   if ( wildtype != 't') then  
   
@@ -127,14 +124,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	  and fmrel_type = gcs_fmrel_type
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
-	  and fmrel_type != ('is allele of')
-	  and not exists (
-	          select *
-	          from feature_marker_relationship as fm2
-	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
-	            and fm1.fmrel_type = "contains innocuous sequence feature"
-	            and fm2.fmrel_type = "is allele of"
-	       )
+	  and fmrel_type not in ('is allele of')
 
        order by gcs_significance asc, mrkr_abbrev asc , zyg_abbrev , fad2, fad asc
        
@@ -157,9 +147,11 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	    else
 	    end if
         
-            if (featType == 'TRANSGENIC_INSERTION' and zygOrder != '2') then
-                            
-              if (featMrkrAbbrev == tgLastMrkr and featAbbrevHtml like "Tg%") then
+            if (featType == 'TRANSGENIC_INSERTION') then
+              
+
+              
+              if (featMrkrAbbrev == tgLastMrkr) then
                   let tgRepeat = 't';
               
               end if       
@@ -174,8 +166,8 @@ create function get_genotype_display( genoZdbId varchar(50) )
                let genoDisplayHtml =  featAbbrevHtml ;
           
 	    else
-	       if (tgRepeat == 't' and featCount > 2 and featMrkrAbbrev != tgLastMrkr) then
-		   let genoDisplayHtml = genoDisplayHtml ||'... '||  tgLastFeat; 
+	       if (tgRepeat == 't' and featMrkrAbbrev != tgLastMrkr) then
+		   let genoDisplayHtml = genoDisplayHtml ||'... '||  tgLastFeat;
 		   let tgRepeat = 'f';
 	       
 	       end if
@@ -198,22 +190,9 @@ create function get_genotype_display( genoZdbId varchar(50) )
 
            end if
 
-           if (featType == 'TRANSGENIC_INSERTION' and featAbbrevHtml like "Tg%") then 
-             if (featCount == 0) then
-                let tgFirstFeatHtml = featAbbrevHtml;
-             end if
-             let tgLastFeat = featAbbrev;
-             let tgLastMrkr = featMrkrAbbrev;
-             let featCount = featCount + 1;
-           
-           else
-           
-             let tgRepeat = 'f';
-             let tgLastFeat = '';
-             let tgLastMrkr = '';
-             let featCount = 0;
-             
-           end if ;
+              
+           let tgLastFeat = featAbbrev;
+           let tgLastMrkr = featMrkrAbbrev;
               
 	   let fad2 = featAbbrevHtml ;
 	   end if ;
@@ -221,11 +200,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
    end foreach
 
     if (tgRepeat == 't') then
-       if (featCount > 2) then
-          let genoDisplayHtml = genoDisplayHtml ||'... '||  tgLastFeat;
-       else
-          let genoDisplayHtml = genoDisplayHtml ||'; '|| featAbbrevHtml;
-       end if
+       let genoDisplayHtml = genoDisplayHtml ||'... '||  tgLastFeat;
     end if
     
     let genoDisplayHTML = replace(genoDisplayHTML,'</sup><sup>',''); 
