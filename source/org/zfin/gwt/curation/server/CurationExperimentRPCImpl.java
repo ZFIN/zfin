@@ -933,11 +933,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         for (TermRelationship rel : terms) {
             Term relatedTerm = rel.getRelatedTerm(term);
             // some terms may be stage terms and should be ignored.
-            if (relatedTerm == null){
+            if (relatedTerm == null) {
                 throw new RuntimeException("No related term found for term: " + term.getZdbID());
             }
 
-            if (!relatedTerm.getOntology().equals(Ontology.ANATOMY)){
+            if (!relatedTerm.getOntology().equals(Ontology.ANATOMY)) {
                 continue;
             }
 
@@ -1039,26 +1039,29 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     private void removeExpressionToAnnotation(ExperimentFigureStage experiment, boolean expressed, ExpressionStructure expressionStructure) {
         for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getSuperTerm().equals(expressionStructure.getSuperterm())) {
+            if (result.getEntity() == null || result.getEntity().getSuperterm() == null)
+                LOG.error("No entity or super term found for " + result.getZdbID());
+            Term superTerm = result.getEntity().getSuperterm();
+            if (superTerm.equals(expressionStructure.getSuperterm())) {
                 String subtermID = null;
-                Term term = result.getSubTerm();
+                Term term = result.getEntity().getSubterm();
                 if (term != null)
                     subtermID = term.getZdbID();
                 // check if subterms are equal or both null
                 if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
-                    LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName());
+                    LOG.info("Removed Expression_Result:  " + superTerm.getTermName());
                     break;
                 }
-                if (subtermID != null && expressionStructure.getSubterm().getZdbID() != null &&
+                if (subtermID != null && expressionStructure.getSubterm() != null && expressionStructure.getSubterm().getZdbID() != null &&
                         subtermID.equals(expressionStructure.getSubterm().getZdbID()) &&
                         expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
                     Term subterm = result.getSubTerm();
                     if (subterm != null)
-                        LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName() + " : " + subterm.getTermName());
+                        LOG.info("Removed Expression_Result:  " + superTerm.getTermName() + " : " + subterm.getTermName());
                     else
-                        LOG.info("Removed Expression_Result:  " + result.getSuperTerm().getTermName());
+                        LOG.info("Removed Expression_Result:  " + superTerm.getTermName());
                     break;
                 }
             }

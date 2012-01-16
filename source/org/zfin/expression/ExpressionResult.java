@@ -15,7 +15,6 @@ import java.util.Set;
 public class ExpressionResult implements Comparable<ExpressionResult> {
 
     private String zdbID;
-    private GenericTerm superTerm;
     private boolean expressionFound;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
