@@ -135,7 +135,7 @@ print "Number of rows in snp_download_attribution: $ct\n\n";
 $dbh->disconnect();  
     
 ### the datafile sent from J. Smith, which contains SNP name, clone name, etc.
-open (JSMITH, "JSmithSNPCloneInfo.txt") || die "Cannot open JSmithSNPCloneInfo.txt : $!\n";
+open (JSMITH, "/research/zprod/data/JSmithSNPCloneInfo.txt") || die "Cannot open /research/zprod/data/JSmithSNPCloneInfo.txt : $!\n";
 @lines=<JSMITH>;
 close(JSMITH);
 %cloneNames = (); 
