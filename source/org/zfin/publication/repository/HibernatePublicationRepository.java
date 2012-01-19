@@ -791,7 +791,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   marker = :marker AND " +
                 "   exp.gene = marker AND " +
                 "   res.expressionExperiment = exp AND " +
-                "   res.entity.superterm = :aoTerm AND " +
+                "   (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm)AND " +
                 "   fig member of res.figures AND " +
                 "   res.expressionFound = :expressionFound AND " +
                 "   exp.genotypeExperiment = genox AND " +
@@ -1046,7 +1046,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         expresssion.add(Restrictions.eq("gene", marker));
         Criteria result = expresssion.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
-        result.add(Restrictions.eq("entity.superterm", anatomyTerm));
+        result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm),Restrictions.eq("entity.subterm", anatomyTerm)));
         result.add(Restrictions.eq("expressionFound", true));
         Criteria genox = expresssion.createCriteria("genotypeExperiment");
         Criteria genotype = genox.createCriteria("genotype");
