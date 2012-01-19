@@ -83,7 +83,7 @@ public class MarkerStatistic extends EntityStatistics {
         PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
         List<Figure> figs = publicationRep.getFiguresByGeneAndAnatomy(gene, anatomyTerm);
         if (figs == null || figs.size() != 1)
-            throw new RuntimeException("Can call this method only when there is exactly one figure");
+            throw new RuntimeException("Can call this method only when there is exactly one figure: " + gene);
         return figs.get(0);
     }
 

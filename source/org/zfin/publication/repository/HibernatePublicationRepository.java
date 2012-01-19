@@ -786,17 +786,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
-                "     Genotype geno, GenotypeExperiment genox, Experiment experiment " +
+                "     Genotype geno, GenotypeExperiment genox " +
                 "where " +
                 "   marker = :marker AND " +
                 "   exp.gene = marker AND " +
                 "   res.expressionExperiment = exp AND " +
-                "   (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm)AND " +
+                "   (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) AND " +
                 "   fig member of res.figures AND " +
                 "   res.expressionFound = :expressionFound AND " +
                 "   exp.genotypeExperiment = genox AND " +
-                "   genox.experiment = experiment AND " +
-                "   experiment.name = :condition AND " +
+                "   genox.genotype = geno AND " +
+                "   genox.standardOrGenericControl = :condition AND " +
                 "   genox.genotype = geno AND " +
                 "   geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
@@ -804,7 +804,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setBoolean("isWildtype", true);
         query.setParameter("aoTerm", anatomyTerm);
         query.setParameter("marker", marker);
-        query.setParameter("condition", Experiment.STANDARD);
+        query.setBoolean("condition", true);
         return (List<Figure>) query.list();
     }
 
@@ -1049,10 +1049,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm),Restrictions.eq("entity.subterm", anatomyTerm)));
         result.add(Restrictions.eq("expressionFound", true));
         Criteria genox = expresssion.createCriteria("genotypeExperiment");
+        genox.add(Restrictions.eq("standardOrGenericControl", true));
         Criteria genotype = genox.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = genox.createCriteria("experiment");
-        experiment.add(Restrictions.eq("name", Experiment.STANDARD));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         return new PaginationResult<Publication>((List<Publication>) pubs.list());
