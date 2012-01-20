@@ -334,6 +334,19 @@
 
     </class>
 
+    <class name="org.zfin.feature.FeatureTracking" table="feature_tracking">
+        <id name="pkid" type="int">
+            <column name="ft_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="featTrackingFeatZdbID">
+            <column name="ft_feature_zdb_id"/>
+        </property>
+        <property name="featTrackingFeatAbbrev">
+            <column name="ft_feature_abbrev"/>
+        </property>
+
+    </class>
 
     <class name="org.zfin.feature.FeatureMarkerRelationship" table="feature_marker_relationship">
         <!--<id name="zdbID" column="fmrel_zdb_id"/>-->
