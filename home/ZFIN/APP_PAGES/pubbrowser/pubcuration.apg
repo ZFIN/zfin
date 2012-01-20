@@ -432,15 +432,16 @@ OPTIONAL VARS:
 
 
 <?MICOMMENT> 
+Commenting out survey as a part of FB case 7820
 ======================================
 = link to googleforms curator survey =
 ======================================
-<?/MICOMMENT> 
 
    <?MIVAR>
      $(IF,$(EC,$ZDB_access,root),"<A HREF="http://spreadsheets.google.com/viewform?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA&entry_0=$OID" target="blank">Do Curation Questionnaire</A>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="http://spreadsheets.google.com/viewanalytics?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA">(View Results)</A>")
    <?/MIVAR>
   
+<?/MICOMMENT> 
 
 
   
@@ -710,7 +711,8 @@ OPTIONAL VARS:
         <?/MIVAR>
   <br>
   <INPUT type=submit value="Edit Notification">
-
+<?MICOMMENT>
+Commenting out survey as a part of FB case 7820
   <br>
   <br>
   <br>
@@ -718,6 +720,7 @@ OPTIONAL VARS:
     $(IF,$(EC,$ZDB_access,root),"<iframe src="http://spreadsheets.google.com/embeddedform?key=tZ4m4n9PD8-OkO6OuFuaXbA" width="900" height="1200" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>")
   <?/MIVAR>
 
+<?/MICOMMENT>
 </form> 
 
 
