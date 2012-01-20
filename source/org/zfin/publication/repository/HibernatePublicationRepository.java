@@ -294,7 +294,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
                 "       ) " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
-                "ORDER BY numOfFig DESC";
+                "ORDER BY numOfFig DESC, geneSymbol ";
         SQLQuery query = session.createSQLQuery(hql);
         query.addScalar("geneID", Hibernate.STRING);
         query.addScalar("geneSymbol", Hibernate.STRING);
@@ -335,10 +335,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         Session session = HibernateUtil.currentSession();
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
-                "WHERE res.entity.superterm = :aoTerm " +
+                "WHERE (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoterm) " +
                 "AND fig member of res.figures " +
                 "AND res.expressionFound = :expressionFound " +
-                "AND res.expressionExperiment.genotypeExperiment.experiment.name = :condition " +
+                "AND res.expressionExperiment.genotypeExperiment.standardOrGenericControl = :condition " +
                 "AND res.expressionExperiment.gene.abbreviation not like :withdrawn " +
                 "AND not exists ( " +
                 "select 1 from Clone clone where " +
@@ -348,7 +348,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("aoTerm", anatomyTerm);
-        query.setString("condition", Experiment.STANDARD);
+        query.setBoolean("condition", true);
         query.setString("withdrawn", Marker.WITHDRAWN + "%");
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
         return ((Number) query.uniqueResult()).intValue();
