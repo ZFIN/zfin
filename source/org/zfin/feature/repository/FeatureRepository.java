@@ -94,6 +94,8 @@ public interface FeatureRepository {
     List<Feature> getFeaturesForAttribution(String publicationZdbID);
 
     Feature getFeatureByAbbreviation(String featureAbbrev);
+    String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
+     String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID);
 
     void deleteFeatureAlias(Feature feature, FeatureAlias alias);
     void deleteFeatureDBLink(Feature feature, DBLink sequence);

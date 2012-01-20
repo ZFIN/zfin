@@ -8,8 +8,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
@@ -25,7 +23,6 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.people.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -533,6 +530,23 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 .add(Restrictions.eq("abbreviation", name))
                 .uniqueResult()
                 ;
+    }
+
+    @Override
+    public String getFeatureByAbbreviationInTrackingTable(String featTrackingFeatAbbrev) {
+        Session session = HibernateUtil.currentSession();
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatAbbrev =:featTrackingFeatAbbrev ";
+        Query queryTracker = session.createQuery(hqlFtrTrack);
+        queryTracker.setParameter("featTrackingFeatAbbrev", featTrackingFeatAbbrev);
+        return (String) queryTracker.uniqueResult();
+    }
+
+     public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatZdbID =:featTrackingFeatZdbID ";
+        Query queryTracker = session.createQuery(hqlFtrTrack);
+        queryTracker.setParameter("featTrackingFeatZdbID", featTrackingFeatZdbID);
+        return (String) queryTracker.uniqueResult();
     }
 
     public TreeSet<String> getFeatureLG(Feature feat) {
