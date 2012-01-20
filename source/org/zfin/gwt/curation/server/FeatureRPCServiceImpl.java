@@ -72,7 +72,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             throw new DuplicateEntryException("Feature exists for this abbreviation: " + featureDTO.getAbbreviation());
         }
 
-        if (featureDTO.getLabPrefix() != null && featureDTO.getLineNumber() != null) {
+
+              if (featureDTO.getLabPrefix() != null && featureDTO.getLineNumber() != null) {
             existingFeature = featureRepository.getFeatureByPrefixAndLineNumber(featureDTO.getLabPrefix(), featureDTO.getLineNumber());
         }
 
@@ -87,6 +88,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
+    private void checkDupesinTrackingTable(FeatureDTO featureDTO) throws DuplicateEntryException {
+        String featureInTrackingTable=featureRepository.getFeatureByAbbreviationInTrackingTable(featureDTO.getAbbreviation());
+
+
+         if (featureInTrackingTable != null) {
+                    throw new DuplicateEntryException("Feature exists in the tracking table for this abbreviation: " + featureDTO.getAbbreviation());
+                }
+
+    }
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
@@ -117,8 +127,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         else {
+                List<RecordAttribution> recordAttributions = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
+                  if (recordAttributions.size() != 0) {
+                      if (recordAttributions.get(0).getSourceZdbID().equals(featureDTO.getPublicationZdbID())) {
+                        feature.setType(featureDTO.getFeatureType());
+                      }
+                  else{
+                      feature.setType(featureDTO.getFeatureType());
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+                      }
+                  }
             }
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
         String existingFeatureAbbrev = feature.getAbbreviation();
@@ -317,6 +336,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         DTOConversionService.escapeFeatureDTO(featureDTO);
         checkDupes(featureDTO);
+        checkDupesinTrackingTable(featureDTO);
         validateUnspecified(featureDTO);
 
         HibernateUtil.createTransaction();
