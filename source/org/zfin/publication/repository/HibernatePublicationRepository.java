@@ -335,7 +335,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         Session session = HibernateUtil.currentSession();
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
-                "WHERE (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoterm) " +
+                "WHERE (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) " +
                 "AND fig member of res.figures " +
                 "AND res.expressionFound = :expressionFound " +
                 "AND res.expressionExperiment.genotypeExperiment.standardOrGenericControl = :condition " +
