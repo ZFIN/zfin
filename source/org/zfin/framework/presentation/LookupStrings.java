@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation;
 
+import org.springframework.ui.Model;
+
 /**
  * *  Class LookupStrings.
  */
@@ -21,5 +23,9 @@ public class LookupStrings {
     public final static String PAGE_SUFFIX = ".page";
     public final static String INSERT_SUFFIX = ".insert";
 
+    public static String idNotFound(Model model, String fishID) {
+        model.addAttribute(LookupStrings.ZDB_ID, fishID);
+        return LookupStrings.RECORD_NOT_FOUND_PAGE;
+    }
 }
 

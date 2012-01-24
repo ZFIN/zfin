@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  */
 public class WebPageSummary {
 
+    private UrlLink urlLink;
     private URL url;
     private String body;
     private String text;
@@ -29,6 +30,14 @@ public class WebPageSummary {
 
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    public UrlLink getUrlLink() {
+        return urlLink;
+    }
+
+    public void setUrlLink(UrlLink urlLink) {
+        this.urlLink = urlLink;
     }
 
     public String getBody() {

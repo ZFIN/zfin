@@ -25,7 +25,7 @@ public class GenotypeExperiment {
         this.zdbID = zdbID;
     }
 
-    public boolean isStandard() {
+   public boolean isStandard() {
         return standard;
     }
 

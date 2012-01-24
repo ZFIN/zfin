@@ -306,7 +306,7 @@ ORDER BY 3,1
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
 
               <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>phenotypes in <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> lines <?/MIVAR>
+                <?MIVAR>phenotypes in <A HREF="/action/fish/search" target="_parent"><B>($xpanatv_totalcount)</B></A> lines <?/MIVAR>
               <?MIELSE>                  
 	        <label class="error">no mutant/transgenic data</label>
               <?/MIBLOCK>
@@ -337,9 +337,9 @@ ORDER BY 3,1
           <FONT size=-1 style="font-family:arial;"> 
             <?MIVAR>
               <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
-              <A HREF="/action/anatomy/search?action=term-by-stage-search">by stage</a> 
+              <A HREF="/action/anatomy/anatomy-search">by stage</a>
               or see the 
-              <A HREF="/action/anatomy/search?action=complete-search">complete list</a>.
+              <A HREF="/action/anatomy/show-all-anatomy-terms">complete list</a>.
             <?/MIVAR>
           </FONT>
         </td>

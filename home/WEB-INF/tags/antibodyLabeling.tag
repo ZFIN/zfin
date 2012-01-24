@@ -1,11 +1,11 @@
-<%@ attribute name="formBean" type="org.zfin.marker.presentation.AntibodyMarkerBean"  %>
-<%@ attribute name="webdriverPath" type="java.lang.String"  %>
+<%@ attribute name="formBean" type="org.zfin.marker.presentation.AntibodyMarkerBean" %>
+<%@ attribute name="webdriverPath" type="java.lang.String" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="antibodyDetailLabeling" value="${formBean.antibodyDetailedLabelings}" />
+<c:set var="antibodyDetailLabeling" value="${formBean.antibodyDetailedLabelings}"/>
 
 <zfin2:subsection title="ANATOMICAL LABELING"
-        test="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}"
+                  test="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}"
         >
     <div id="short-version">
         <table class="summary groupstripes">
@@ -48,31 +48,25 @@
                     </td>
                     <td>
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
-                            <c:choose>
-                                <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/${webdriverPath}?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}" id="${detailedLabeling.singleFigure.zdbID}">
-                                        <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
-                                                                    integerEntity="${detailedLabeling.numberOfFigures}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="/action/antibody/figure-summary?antibody.zdbID=${formBean.marker.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
-                                        ${detailedLabeling.numberOfFiguresDisplay}
+                        <c:choose>
+                        <c:when test="${detailedLabeling.numberOfFigures == 1}">
+                        <a href="/${webdriverPath}?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
+                           id="${detailedLabeling.singleFigure.zdbID}">
+                                <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
+                                                            integerEntity="${detailedLabeling.numberOfFigures}"/>
+                            </c:when>
+                            <c:otherwise>
+                            <a href="/action/antibody/antibody-figure-summary?antibodyID=${formBean.marker.zdbID}&superTermID=${detailedLabeling.superterm.zdbID}&subTermID=${detailedLabeling.subterm.zdbID}&startStageID=${detailedLabeling.startStage.zdbID}&endStageID=${detailedLabeling.endStage.zdbID}&figuresWithImg=false">
+                                    ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${detailedLabeling.figureWithImage}">
-                                    <img src="/images/camera_icon.gif" alt="with image" image="" border="0"></a>
-                                </c:when>
-                                <c:otherwise>
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
+                                </c:choose>
+                                <zfin2:showCameraIcon hasImage="${detailedLabeling.figureWithImage}"/></a>
                             &nbsp;from&nbsp;
-                            <c:if test="${detailedLabeling.numberOfPublications > 1}">${detailedLabeling.numberOfPublicationsDisplay}</c:if>
+                                <c:if test="${detailedLabeling.numberOfPublications > 1}">${detailedLabeling.numberOfPublicationsDisplay}</c:if>
                             <c:if test="${detailedLabeling.numberOfPublications == 1}">
                                 <zfin:link entity="${detailedLabeling.singlePublication}"/>
                             </c:if>
-                        </c:if>
+                            </c:if>
                     </td>
                 </zfin:alternating-tr>
             </c:forEach>
@@ -132,12 +126,12 @@
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
                                     <a href="/${webdriverPath}?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
-                                        <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
-                                                                    integerEntity="${detailedLabeling.numberOfFigures}"/>
+                                    <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
+                                                                integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="/action/antibody/figure-summary?antibody.zdbID=${formBean.marker.zdbID}&superTerm.zdbID=${detailedLabeling.superterm.zdbID}&subTerm.ID=${detailedLabeling.subterm.zdbID}&startStage.zdbID=${detailedLabeling.startStage.zdbID}&endStage.zdbID=${detailedLabeling.endStage.zdbID}&onlyFiguresWithImg=false">
-                                        ${detailedLabeling.numberOfFiguresDisplay}
+                                    <a href="/action/antibody/antibody-figure-summary?antibodyID=${formBean.marker.zdbID}&superTermID=${detailedLabeling.superterm.zdbID}&subTermID=${detailedLabeling.subterm.zdbID}&startStageID=${detailedLabeling.startStage.zdbID}&endStageID=${detailedLabeling.endStage.zdbID}&figuresWithImg=false">
+                                    ${detailedLabeling.numberOfFiguresDisplay}
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
@@ -172,16 +166,16 @@
     </div>
 
 
-<script type="text/javascript">
-    function expand() {
-        document.getElementById('short-version').style.display = 'none';
-        document.getElementById('long-version').style.display = 'inline';
-    }
+    <script type="text/javascript">
+        function expand() {
+            document.getElementById('short-version').style.display = 'none';
+            document.getElementById('long-version').style.display = 'inline';
+        }
 
-    function collapse() {
-        document.getElementById('short-version').style.display = 'inline';
-        document.getElementById('long-version').style.display = 'none';
-    }
-</script>
+        function collapse() {
+            document.getElementById('short-version').style.display = 'inline';
+            document.getElementById('long-version').style.display = 'none';
+        }
+    </script>
 </zfin2:subsection>
 

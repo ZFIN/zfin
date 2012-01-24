@@ -54,7 +54,6 @@
         <DisplayName>Antibody</DisplayName>
         <UrlMapping>
             <urlPattern type="AntibodyView" boostValue="256">\p{ASCII}*marker/view\p{ASCII}*ZDB-ATB-\p{ASCII}*</urlPattern>
-            <urlPattern type="AntibodyLabelingView" boostValue="8">antibody/labeling-detail</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="PRODUCT"  order="70">

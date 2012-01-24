@@ -9,7 +9,7 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyService;
+import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;

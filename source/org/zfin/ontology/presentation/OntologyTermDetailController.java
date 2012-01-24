@@ -28,12 +28,12 @@ public class OntologyTermDetailController {
                                     Model model) throws Exception {
 
         if (termID == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, termID);
+            model.addAttribute(LookupStrings.ZDB_ID, "No term ID provided");
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
         //redirect to anatomy detail page for ANAT zdbIDs
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT))
-            return "redirect:/action/anatomy/term-detail?anatomyItem.zdbID=" + termID;
+            return "redirect:/action/anatomy/anatomy-view/" + termID;
 
         OntologyBean form = new OntologyBean();
         GenericTerm term = null;
@@ -47,7 +47,7 @@ public class OntologyTermDetailController {
         //if an anatomy term was linked by obo id, we still want to view it as an anatomy page
         //  (for now)
         if (term != null && term.getOntology().equals(Ontology.ANATOMY)) {
-            return "redirect:/action/anatomy/term-detail?anatomyItem.zdbID=" + termID;
+            return "redirect:/action/anatomy/anatomy-view/" + termID;
         }
 
         // check if the term name contains an asterisk at the end of the string, indicating that

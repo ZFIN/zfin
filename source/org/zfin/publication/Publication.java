@@ -228,15 +228,11 @@ public class Publication implements Comparable<Publication>, Serializable {
 
         // in case the 2 publications have the same publication dates,
         // compare the authors
-        return authors.compareToIgnoreCase(anotherPublication.getAuthors());
-
-        /*
-        if (shortAuthorList == null)
-            return -1;
-        if (anotherPublication.getShortAuthorList() == null)
-            return +1;
-        return shortAuthorList.compareToIgnoreCase(anotherPublication.getShortAuthorList());
-        */
+        int authorComparison = authors.compareToIgnoreCase(anotherPublication.getAuthors());
+        if (authorComparison != 0)
+            return authorComparison;
+        // sort by zdbID at last criteria
+        return zdbID.compareTo(anotherPublication.getZdbID());
     }
 
     public boolean isUnpublished() {
@@ -271,21 +267,21 @@ public class Publication implements Comparable<Publication>, Serializable {
         return zdbID.hashCode();
     }
 
-    public boolean isNoFigure () {
-        if (figures == null || figures.isEmpty() ) {
+    public boolean isNoFigure() {
+        if (figures == null || figures.isEmpty()) {
             return true;
         }
         return false;
     }
 
-    public boolean isForMutantDataFromOldLiterature () {
-		if (zdbID.equalsIgnoreCase("ZDB-PUB-060503-2")) {
+    public boolean isForMutantDataFromOldLiterature() {
+        if (zdbID.equalsIgnoreCase("ZDB-PUB-060503-2")) {
             return true;
         }
         return false;
-	}
+    }
 
-    public boolean isOpen () {
+    public boolean isOpen() {
         if (closeDate == null) {
             return true;
         }

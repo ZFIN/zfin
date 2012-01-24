@@ -623,6 +623,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         figureAnnotation.setStart(DTOConversionService.convertToStageDTO(expressionExperiment.getStart()));
         figureAnnotation.setEnd(DTOConversionService.convertToStageDTO(expressionExperiment.getEnd()));
         figureAnnotation.setFigure(DTOConversionService.convertToFigureDTO(expressionExperiment.getFigure()));
+        if (expressionExperiment.getExpressionExperiment() == null)
+            LOG.error("Could not find an expression experiment for " + expressionExperiment);
         figureAnnotation.setExperiment(DTOConversionService.convertToExperimentDTO(expressionExperiment.getExpressionExperiment()));
     }
 

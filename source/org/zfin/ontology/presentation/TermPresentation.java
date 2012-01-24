@@ -1,7 +1,9 @@
 package org.zfin.ontology.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -73,17 +75,17 @@ public class TermPresentation extends EntityPresentation {
 
     }
 
-    public static String getLink(PostComposedPresentationBean entity,boolean suppressPopupLink){
+    public static String getLink(PostComposedPresentationBean entity, boolean suppressPopupLink) {
 
         if (entity == null) return null;
 
         StringBuffer sb = new StringBuffer(50);
 
-        if (entity.getSubTermZdbId() == null){
+        if (entity.getSubTermZdbId() == null) {
 
-            sb.append(getTomcatLinkWithTitle(uri, entity.getSuperOntologyId(),entity.getSuperTermName(), entity.getSuperTermName(), null));
+            sb.append(getTomcatLinkWithTitle(uri, entity.getSuperOntologyId(), entity.getSuperTermName(), entity.getSuperTermName(), null));
 
-            if (!suppressPopupLink){
+            if (!suppressPopupLink) {
                 sb.append(getTomcatPopupLink(popupUri, String.valueOf(entity.getSuperOntologyId()),
                         "Term definition, synonyms and links"));
             }
@@ -188,4 +190,10 @@ public class TermPresentation extends EntityPresentation {
         return getTomcatPopupLink(postComposedPopupUri, uriSuffix.toString(), "Term definition, synonyms and links");
     }
 
+    public static String getLinkByZfinEntity(ZfinEntity entity) {
+        Term term = new GenericTerm();
+        term.setZdbID(entity.getID());
+        term.setTermName(entity.getName());
+        return getLink(term, entity.getName());
+    }
 }

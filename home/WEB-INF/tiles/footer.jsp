@@ -4,7 +4,7 @@
 </div>
 <div id="footer">
     <div id="footerlinks">
-        <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-ZDB_home.apg">Home</a><img src="/images/research-dot.png"
+        <a href="/">Home</a><img src="/images/research-dot.png"
                                                                                          class="hdr-linkbar-divider">
         <a href="/ZFIN/misc_html/tips.html" title="Frequently asked questions">Help and Tips</A><img
             src="/images/research-dot.png" class="hdr-linkbar-divider">

@@ -22,8 +22,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodySearchPageOk() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/search");
-                assertEquals("Antibody search", "Antibody Search", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-search");
+                assertEquals("ZFIN Antibody search", "ZFIN Antibody Search", page.getTitleText());
 
             } catch (IOException e) {
                 fail(e.toString());
@@ -38,7 +38,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchZn1() {
         for (WebClient webClient : publicWebClients) {
             try {
-                String uri = "/action/antibody/search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn1&maxDisplayRecords=25&action=SEARCH";
+                String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn1&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
                 List<?> relatedTerms = page.getByXPath("//a[@id='zn-1']");
                 assertEquals(1, relatedTerms.size());
@@ -80,7 +80,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchAb_2() {
         for (WebClient webClient : publicWebClients) {
             try {
-                String uri = "/action/antibody/search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=ab-2&maxDisplayRecords=25&action=SEARCH";
+                String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=ab-2&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
                 List<?> relatedTerms = page.getByXPath("//a[@id='ab-2f11']");
                 assertEquals(1, relatedTerms.size());
@@ -100,7 +100,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchZn5() {
         for (WebClient webClient : publicWebClients) {
             try {
-                String uri = "/action/antibody/search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25&action=SEARCH";
+                String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
                 assertEquals("Antibody detail page", "ZFIN Antibody: zn-5", page.getTitleText());
                 // Fashena et al. publication: check that this reference is used
@@ -157,8 +157,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermAllFigures() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that Pub Zhou et al is present.
                 assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
 
@@ -175,8 +175,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=true");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
 
             } catch (IOException e) {
                 fail(e.toString());
@@ -191,8 +191,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=ZDB-TERM-091209-4086&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that pub Liu et al is present.
                 assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
 

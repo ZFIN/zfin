@@ -43,6 +43,10 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test the ExpressionRepository class.
@@ -164,48 +168,48 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void retrieveExperimentFigureStages2() {
         String pubID = "ZDB-PUB-060105-3";
 
-        List<ExperimentFigureStage> experiments= expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, null);
+        List<ExperimentFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, null);
         // this represents 5 unique experiments
         assertThat(experiments.size(), greaterThan(14));
-        assertThat(experiments.size(),lessThan(16));
+        assertThat(experiments.size(), lessThan(16));
 
         // Fig. 1
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, "ZDB-FIG-070109-23");
         assertThat(experiments.size(), greaterThan(2));
-        assertThat(experiments.size(),lessThan(4));
+        assertThat(experiments.size(), lessThan(4));
 
         // Fig. S3
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, "ZDB-FIG-070109-26");
         assertThat(experiments.size(), greaterThan(1));
-        assertThat(experiments.size(),lessThan(3));
+        assertThat(experiments.size(), lessThan(3));
 
         // mir206-1
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-28", null, null);
         assertThat(experiments.size(), greaterThan(4));
-        assertThat(experiments.size(),lessThan(6));
+        assertThat(experiments.size(), lessThan(6));
 
         // mir122
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-27", null, null);
         assertThat(experiments.size(), greaterThan(3));
-        assertThat(experiments.size(),lessThan(5));
+        assertThat(experiments.size(), lessThan(5));
 
         // genotype . .  .all the same
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, "ZDB-GENO-050209-5", null);
         assertThat(experiments.size(), greaterThan(14));
-        assertThat(experiments.size(),lessThan(16));
+        assertThat(experiments.size(), lessThan(16));
 
         // genotype . .  .all the same
         experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, "ZDB-GENO-050209-3", null);
         assertThat(experiments.size(), equalTo(0));
 
         // genotype . .  .all the same
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5","ZDB-FIG-070109-23");
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
         assertThat(experiments.size(), greaterThan(0));
-        assertThat(experiments.size(),lessThan(2));
+        assertThat(experiments.size(), lessThan(2));
 
     }
 
-//    @Test
+    //    @Test
     public void getExpressionExperiments() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -230,20 +234,20 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
-        assertThat(experiments.size(),greaterThan(3));
-        assertThat(experiments.size(),lessThan(5));
+        assertThat(experiments.size(), greaterThan(3));
+        assertThat(experiments.size(), lessThan(5));
 
         // alcam
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
-        assertThat(experiments.size(),greaterThan(2));
-        assertThat(experiments.size(),lessThan(4));
+        assertThat(experiments.size(), greaterThan(2));
+        assertThat(experiments.size(), lessThan(4));
 
         // alcam and WT
         String fishZdbID = "ZDB-GENO-030619-2";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
-        assertThat(experiments.size(),greaterThan(2));
-        assertThat(experiments.size(),lessThan(4));
+        assertThat(experiments.size(), greaterThan(2));
+        assertThat(experiments.size(), lessThan(4));
     }
 
 
@@ -392,7 +396,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getExpressionPubCount(){
+    public void getExpressionPubCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = expRep.getExpressionPubCountForGene(m);
         Assert.assertTrue(count < 40);
@@ -400,7 +404,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getExpressionFigureCount(){
+    public void getExpressionFigureCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = expRep.getExpressionFigureCountForEfg(m);
         Assert.assertTrue(count < 50);
@@ -408,7 +412,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getDirectlySubmittedExpression(){
+    public void getDirectlySubmittedExpression() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         List pubList = expRep.getDirectlySubmittedExpressionForGene(m);
         assertEquals(1, pubList.size());
@@ -424,31 +428,31 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getImagesFromPubAndClone(){
+    public void getImagesFromPubAndClone() {
         PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
-        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-051025-1") ;
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-051025-1");
         publicationExpressionBean.setProbeFeatureZdbId("ZDB-EST-060130-308");
         int imageCount = expRep.getImagesFromPubAndClone(publicationExpressionBean);
-        assertTrue(imageCount>10);
-        assertTrue(imageCount<20);
+        assertTrue(imageCount > 10);
+        assertTrue(imageCount < 20);
     }
 
     @Test
-    public void getImagesForEFG(){
+    public void getImagesForEFG() {
         PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
         // specifies Kaed
-        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-2") ;
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-2");
         int imageCount = expRep.getImagesForEfg(publicationExpressionBean);
-        assertThat(imageCount,greaterThan(1000));
-        assertThat(imageCount,lessThan(1500));
+        assertThat(imageCount, greaterThan(1000));
+        assertThat(imageCount, lessThan(1500));
 
-        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-1") ;
+        publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-1");
         imageCount = expRep.getImagesForEfg(publicationExpressionBean);
-        assertEquals(imageCount,0);
+        assertEquals(imageCount, 0);
     }
 
     @Test
-    public void getStageExpressionForMarker(){
+    public void getStageExpressionForMarker() {
         StageExpressionPresentation stageExpressionPresentation = expRep.getStageExpressionForMarker("ZDB-GENE-010606-1");
         assertNotNull(stageExpressionPresentation);
         assertNotNull(stageExpressionPresentation.getStartStage());
@@ -456,29 +460,29 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getWildTypeExpressionForMarker(){
+    public void getWildTypeExpressionForMarker() {
         List<ExpressedStructurePresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
         assertThat(wees.size(),greaterThan(30));
         assertThat(wees.size(),lessThan(50));
     }
 
     @Test
-    public void getExpressionSinglePub(){
+    public void getExpressionSinglePub() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
         assertNotNull(m);
         Publication p = expRep.getExpressionSinglePub(m);
         assertNotNull(p);
-        assertEquals("ZDB-PUB-051025-1",p.getZdbID());
+        assertEquals("ZDB-PUB-051025-1", p.getZdbID());
     }
 
     @Test
-    public void getExpressionSingleFigure(){
+    public void getExpressionSingleFigure() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-040112-1");
         assertNotNull(m);
         FigureLink figureLink = expRep.getExpressionSingleFigure(m);
         assertNotNull(figureLink);
         assertEquals("ZDB-FIG-051013-9", figureLink.getFigureZdbId());
         assertEquals("Fig. 4", figureLink.getLinkContent());
-        assertEquals("<a href=\"/"+ ZfinProperties.getWebDriver()+"?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-051013-9\">Fig. 4</a>",figureLink.getLink());
+        assertEquals("<a href=\"/" + ZfinProperties.getWebDriver() + "?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-051013-9\">Fig. 4</a>", figureLink.getLink());
     }
 }

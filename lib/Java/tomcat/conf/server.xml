@@ -12,14 +12,14 @@
 
     <!-- Define a non-SSL HTTP/1.1 Connector -->
     <Connector port="@Non-SECUREPORT@" maxHttpHeaderSize="8192" 
-	       proxyPort="80" proxyName="@DOMAIN-NAME@"
+	       proxyPort="80"
                maxThreads="150" minSpareThreads="5" maxSpareThreads="75"
                enableLookups="false" redirectPort="8843" acceptCount="100"
                connectionTimeout="20000" disableUploadTimeout="true" compression="on"/>
 
     <!-- Define a SSL HTTP/1.1 Connector  -->
     <Connector port="@SECUREPORT@" maxHttpHeaderSize="8192"
-	       proxyPort="443" proxyName="@DOMAIN-NAME@"
+	       proxyPort="443"
                maxThreads="100" minSpareThreads="5" maxSpareThreads="50"
                enableLookups="false" disableUploadTimeout="true"
                acceptCount="100" scheme="https" secure="true"

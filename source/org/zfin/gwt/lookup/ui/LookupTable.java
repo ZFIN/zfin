@@ -1,7 +1,10 @@
 package org.zfin.gwt.lookup.ui;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -30,12 +33,15 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     public static final String JSREF_PREVIOUS_TABLE_VALUES = "previousTableValues";
     public static final String JSREF_IMAGE_URL = "imageURL";
     public static final String JSREF_USE_TERM_TABLE = "useTermTable";
+    public static final String JSREF_INPUT_DIV = "inputDiv";
+    public static final String JSREF_TERM_LIST_DIV = "termListDiv";
 
     // GUI elements
     private FlexTable table = new FlexTable();
-    private Label testLabel = new Label();
+    private Label label = new Label();
     private Element hiddenNameList = null;
     private Element hiddenIDList = null;
+    private Hidden hiddenIDListAsHidden = null;
     private LookupPopup lookupPopup = null;
     private List<TermStatus> termsList = new ArrayList<TermStatus>();
 
@@ -45,6 +51,8 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     private TermStatus termStatus = new TermStatus();
     private String noTerms = "Enter search terms";
     private String divName;
+    private String inputDiv;
+    private String termListDiv;
     private boolean useTermTable;
 
     private LookupComposite lookup;
@@ -62,17 +70,23 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         lookup.initGui();
         hiddenNameList = DOM.getElementById(hiddenNames);
         hiddenIDList = DOM.getElementById(hiddenIds);
-
+        hiddenIDListAsHidden = Hidden.wrap(DOM.getElementById(hiddenIds));
         initTable();
 
 //        table.setBorderWidth(1);
-        RootPanel.get(divName).add(table);
+        //If the individual divs are defined, don't use the full gwt layout
+        if (termListDiv != null && inputDiv != null) {
+            RootPanel.get(inputDiv).add(lookup);
+            RootPanel.get(termListDiv).add(table);
+            //table.setStyleName("purpletable");
+        } else {
+            RootPanel.get(divName).add(table);
+            HorizontalPanel horizontalPanel = new HorizontalPanel();
+            horizontalPanel.add(lookup);
+            RootPanel.get(divName).add(horizontalPanel);
 
-        HorizontalPanel horizontalPanel = new HorizontalPanel();
-        horizontalPanel.add(lookup);
-        horizontalPanel.add(testLabel);
-//        horizPanel.add(hiddenList) ;
-        RootPanel.get(divName).add(horizontalPanel);
+        }
+
 
         exposeMethodToJavascript(this);
     }
@@ -81,6 +95,12 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         Set keySet = lookupProperties.keySet();
         if (keySet.contains(JSREF_INPUT_NAME)) {
             lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
+        }
+        if (keySet.contains(JSREF_INPUT_DIV)) {
+            inputDiv = lookupProperties.get(JSREF_INPUT_DIV);
+        }
+        if (keySet.contains(JSREF_TERM_LIST_DIV)) {
+            termListDiv = lookupProperties.get(JSREF_TERM_LIST_DIV);
         }
         if (keySet.contains(JSREF_TYPE)) {
             lookup.setType(lookupProperties.get(JSREF_TYPE));
@@ -127,14 +147,14 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     private void initTable() {
         table.setStyleName("gwt-table-empty");
-        table.insertRow(0);
-        table.setText(0, 0, noTerms);
+//        table.insertRow(0);
+//        table.setText(0, 0, noTerms);
     }
 
     public void addTermToTable(final TermStatus term) {
         if (false == termsList.contains(term)) {
             if (termsList.size() == 0 && table.getRowCount() > 0) {
-                table.removeRow(0);
+//                table.removeRow(0);
                 table.setStyleName("gwt-table-full");
             }
             termsList.add(term);
@@ -159,6 +179,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
             lookup.getTextBox().setText("");
             lookup.clearError();
             lookup.clearNote();
+
         }
         // if contained, need to mention
         else {
@@ -207,6 +228,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
                     // checking length catching any asynchronous updates
                     if (termStatus.isExactMatch() && textBoxTerm.length() > 0) {
                         addTermToTable(termStatus);
+                        fireChangeEvent(hiddenIds);
                     } else if (termStatus.isFoundMany()) {
                         termStatus.setStatus(TermStatus.Status.FOUND_MANY);
                         lookup.setErrorString("Multiple terms match '" + textBoxTerm + "'" +
@@ -250,6 +272,8 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         if (termsList.isEmpty()) {
             initTable();
         }
+        fireChangeEvent(hiddenIds);
+        
     }
 
     private int getRowIndexForTerm(String term) {
@@ -288,6 +312,10 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         return returnList.toString();
     }
 
+    public static native void fireChangeEvent(String id) /*-{
+        $wnd.jQuery('#' + id).change();
+    }-*/;
+
 
     private native void exposeMethodToJavascript(LookupTable lookupTable)/*-{
         $wnd.clearTable = function(){
@@ -309,7 +337,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         $wnd.hideTerm = function(term){
             return lookupTable.@org.zfin.gwt.lookup.ui.LookupTable::hideTerm()();
         };
-    
+        
     }-*/;
 
 
@@ -434,4 +462,6 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     public void setUseTermTable(boolean useTermTable) {
         this.useTermTable = useTermTable;
     }
+
+
 }

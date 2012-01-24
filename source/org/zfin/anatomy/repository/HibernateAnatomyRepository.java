@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.*;
 import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
@@ -21,6 +22,7 @@ import java.util.List;
  * Methods that allow to retrieve, save and update objects that pertain
  * to the Anatomy domain.
  */
+@Repository
 public class HibernateAnatomyRepository implements AnatomyRepository {
 
     private static Logger LOG = Logger.getLogger(HibernateAnatomyRepository.class);
@@ -295,6 +297,8 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     }
 
     public DevelopmentStage getStageByID(String stageID) {
+        if(stageID == null)
+            return null;
         Session session = HibernateUtil.currentSession();
         return (DevelopmentStage) session.get(DevelopmentStage.class, stageID);
     }

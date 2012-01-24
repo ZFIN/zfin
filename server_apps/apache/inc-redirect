@@ -44,6 +44,9 @@ RewriteRule ^/action/antibody/detail /action/marker/view/%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}     ^zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
+
 
 #aliases for ZFIN_jump
 RewriteRule ^/jump/(.*) /cgi-bin/ZFIN_jump?record=$1 [NC,PT]

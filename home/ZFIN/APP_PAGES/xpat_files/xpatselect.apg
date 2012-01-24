@@ -790,20 +790,7 @@ function openChild(childWinUrl,childWinName) {
 
     <?MICOMMENT> *** temp - to be moved to stylesheet *** <?/MICOMMENT>
     <style type="text/css">
-    form label { font-size: .85em;  }
-    form input {  }
 
-    form fieldset { border-width: 0; }
-
-    .namesearchLabel { font-weight: bold;   }    
-    .multisearchLabel { font-weight: bold; }
-    .selectLabel { font-weight: bold; }
-    .filterLabel { ; }
-    .accessoryLabel { font-size: .75em; }
-    .termLabel {  font-size: .75em; 
-                  float: right;
-                  vertical-align: middle;
-    }
 
     #xpatselJtypeBox { margin-top: .3em; margin-bottom: .3em; }
 
@@ -1134,7 +1121,7 @@ return false ; "
       </TR>
 
       <tr>
-	<td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> align=right> 
+	<td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> class="submitbar"> 
 
           <input name="xpatsel_calledBySelf" type="hidden" value="true">
 	

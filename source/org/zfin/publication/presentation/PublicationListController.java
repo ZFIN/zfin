@@ -33,27 +33,11 @@ import java.util.Map;
 
 public class PublicationListController extends MultiActionController {
 
-    public static final String ANTIBODY_PUBLICATION_LIST_PAGE = "antibody-publication-list.page";
     public static final String RELATIONSHIP_PUBLICATION_LIST_PAGE = "relationship-publication-list.page";
     public static final String ALIAS_PUBLICATION_LIST_PAGE = "alias-publication-list.page";
     private static Logger LOG = Logger.getLogger(PublicationListController.class);
 
     private Map validatorMap;
-
-    public ModelAndView antibodyPublicationListHandler(HttpServletRequest request, HttpServletResponse response, AntibodyBean bean)
-            throws ServletException {
-
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        String antibodyID = bean.getAntibody().getZdbID();
-        if (antibodyID == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "EMPTY");
-        Antibody ab = antibodyRepository.getAntibodyByID(antibodyID);
-        if (ab == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, bean.getAntibody().getZdbID());
-
-        bean.setAntibody(ab);
-        return new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
-    }
 
     public ModelAndView aliasPublicationListHandler(HttpServletRequest request, HttpServletResponse response, MarkerAliasBean bean)
             throws ServletException {
@@ -73,73 +57,6 @@ public class PublicationListController extends MultiActionController {
         return new ModelAndView(RELATIONSHIP_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
     }
 
-    public ModelAndView disassociatePublicationListHandler(HttpServletRequest request, HttpServletResponse response, AntibodyBean bean)
-            throws ServletException {
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-            ir.removeRecordAttributionForData(ab.getZdbID(), bean.getDisassociatedPubId());
-            Person currentUser = Person.getCurrentSecurityUser();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
-            tx.commit();
-        } catch (Exception exception) {
-            try {
-                tx.rollback();
-            } catch (HibernateException hibernateException) {
-                LOG.error("Error during roll back of transaction", hibernateException);
-            }
-            LOG.error("Error in Transaction", exception);
-            throw new RuntimeException("Error during transaction. Rolled back.", exception);
-        }
-
-        bean.setAntibody(ab);
-
-        return new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
-    }
-
-    public ModelAndView associatePublicationHandler(HttpServletRequest request, HttpServletResponse response, AntibodyBean bean)
-            throws ServletException {
-        ModelAndView errorView = validate(request, bean);
-        if (errorView != null)
-            return errorView;
-
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-
-        String pubID = bean.getAntibodyNewPubZdbID();
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        Publication publication = pr.getPublication(pubID);
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
-
-        try {
-            tx = session.beginTransaction();
-            RepositoryFactory.getMarkerRepository().addMarkerPub(ab, publication);
-            Person currentUser = Person.getCurrentSecurityUser();
-            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
-            tx.commit();
-        } catch (Exception e) {
-            try {
-                tx.rollback();
-            } catch (HibernateException he) {
-                LOG.error("Error during roll back of transaction", he);
-            }
-            LOG.error("Error in Transaction", e);
-            throw new RuntimeException("Error during transaction. Rolled back.", e);
-        }
-
-        bean.setAntibody(ab);
-        bean.setAntibodyNewPubZdbID("");
-
-        return new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
-    }
-
     public Map getValidatorMap() {
         return validatorMap;
     }
@@ -148,37 +65,4 @@ public class PublicationListController extends MultiActionController {
         this.validatorMap = validatorMap;
     }
 
-    private ModelAndView validate(HttpServletRequest request, AntibodyBean bean) {
-        BindException errors = new BindException(bean, LookupStrings.FORM_BEAN);
-        String requestURI = request.getRequestURI();
-        int lastSlash = requestURI.lastIndexOf("/");
-        requestURI = requestURI.substring(lastSlash + 1);
-
-        if (getValidatorMap() != null) {
-            Validator validator = (Validator) getValidatorMap().get(requestURI);
-            ValidationUtils.invokeValidator(validator, bean, errors);
-        }
-
-        // if pub zdb ID is short version, complete the zdb ID
-        String pubZdbID = bean.getAntibodyNewPubZdbID().trim();
-        if (PublicationValidator.isShortVersion(pubZdbID))
-            bean.setAntibodyNewPubZdbID(PublicationValidator.completeZdbID(pubZdbID));
-        else
-            bean.setAntibodyNewPubZdbID(pubZdbID);
-
-        BindingResult result = errors.getBindingResult();
-        if (!result.hasErrors())
-            return null;
-        Map model = result.getModel();
-
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        Antibody ab = antibodyRepository.getAntibodyByID(bean.getAntibody().getZdbID());
-        bean.setAntibody(ab);
-
-        ModelAndView view = new ModelAndView(ANTIBODY_PUBLICATION_LIST_PAGE, LookupStrings.FORM_BEAN, bean);
-
-        view.addAllObjects(model);
-
-        return view;
-    }
 }

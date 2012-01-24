@@ -113,6 +113,16 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/antibody/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/anatomy/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/marker/*</url-pattern>
     </servlet-mapping>
 
@@ -329,6 +339,21 @@
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/genotype/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/fish/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/database/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/mutant/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

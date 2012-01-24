@@ -329,7 +329,7 @@ and clone_problem_type is not null
 <br>
 You have reached this page because of an incorrect link to directly-submitted ZFIN figure data. <br>
 <br>
-Please use the the <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants/Transgenics</a> search page or <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
+Please use the the <A href="/action/fish/search">Mutants/Transgenics</a> search page or <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Gene Expression</a> search page.
 <br>
 <?/MIBLOCK>
 <?/MIBLOCK>

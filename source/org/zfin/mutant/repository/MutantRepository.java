@@ -5,6 +5,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -15,6 +16,7 @@ import org.zfin.sequence.MorpholinoSequence;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -28,15 +30,18 @@ public interface MutantRepository {
      * This returns a list genotypes (mutants) that are annotated
      * to a given anatomy item.
      *
-     * @param item            Anatomy Item
-     * @param wildtype        return wildtype genotypes
-     * @param numberOfRecords @return A list of Genotype objects.
+     * @param item     Anatomy Item
+     * @param wildtype return wildtype genotypes
+     * @param bean     Pagination bean info
      * @return list of genotypes
      */
-    PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, int numberOfRecords);
+    PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean);
 
     List<Genotype> getGenotypesByFeature(Feature feature);
+
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
+
+    List<GenotypeFeature> getGenotypeFeaturesByGenotype(String genotypeID);
 
     /**
      * Retrieve the number of images associated to a mutant marker and a given
@@ -49,8 +54,6 @@ public interface MutantRepository {
     int getNumberOfImagesPerAnatomyAndMutant(GenericTerm item, Genotype genotype);
 
     int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype);
-
-
 
 
     /**
@@ -152,7 +155,6 @@ public interface MutantRepository {
     List<GenericTerm> getQualityTermsByName(String name);
 
 
-
     /**
      * Retrieve all distinct wild-type genotypes.
      *
@@ -163,12 +165,11 @@ public interface MutantRepository {
     /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
-     *
      * @param genotypeExperimentID expression experiment
      * @param figureID             figure
      * @param startID              start   stage
      * @param endID                end     stage
-     * @param publicationID      publication
+     * @param publicationID        publication
      * @return boolean
      */
     boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID, String publicationID);
@@ -192,7 +193,7 @@ public interface MutantRepository {
     /**
      * Retrieve a genotype experiment by the natural key, geno & exp zdb_ids
      *
-     * @param genotypeZdbID ak
+     * @param genotypeZdbID   ak
      * @param experimentZdbID ak
      * @return genox
      */
@@ -220,9 +221,9 @@ public interface MutantRepository {
 
     List<Genotype> getGenotypesForAttribution(String publicationZdbID);
 
-    FeatureAlias getSpecificDataAlias(Feature feature, String alias) ;
+    FeatureAlias getSpecificDataAlias(Feature feature, String alias);
 
-    FeatureDBLink getSpecificDBLink(Feature feature, String sequence) ;
+    FeatureDBLink getSpecificDBLink(Feature feature, String sequence);
 
     int getZFINInferences(String zdbID, String zdbID1);
 
@@ -257,6 +258,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve the phenotypes that are annotated with obsoleted terms.
+     *
      * @return list of phenotypes
      */
     List<PhenotypeStatement> getPhenotypesOnObsoletedTerms();
@@ -265,7 +267,7 @@ public interface MutantRepository {
      * Returns a list phenotype statements that are related to
      * a given genotype.
      *
-     * @param genotype   Genotype
+     * @param genotype Genotype
      * @return list of phenotype statement objects
      */
     List<PhenotypeStatement> getPhenotypeStatementsByGenotype(Genotype genotype);
@@ -288,7 +290,8 @@ public interface MutantRepository {
 
     /**
      * Retrieve a histogram of phenotype terms usage.
-     * @return  list of histograms
+     *
+     * @return list of histograms
      */
     Map<TermHistogramBean, Long> getTermPhenotypeUsage();
 
@@ -300,5 +303,33 @@ public interface MutantRepository {
 
     List<String> getTransgenicLines(Marker construct);
 
+    /**
+     * Retrieve phenotype statements by genotype experiment ids
+     *
+     * @param genotypeExperimentIDs genox ids
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
+
+    /**
+     * Retrieve citation list of pub ids
+     * @param genotypeExperimentIDs
+     * @return
+     */
+    Set<String> getGenoxAttributions(List<String> genotypeExperimentIDs);
+
+    /**
+     * Retrieve citation list of pubs for fish annotations.
+     * @param genotypeExperimentIDs
+     * @return
+     */
+    List<Publication> getFishAttributionList(List<String> genotypeExperimentIDs);
+
+    /**
+     * Retrieve Morpholinos by mo Ids
+     * @param moIds MO ids
+     * @return            list of MOs
+     */
+    Morpholino getMorpholinosById(String moIds);
 }
 

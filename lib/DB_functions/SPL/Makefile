@@ -108,15 +108,16 @@ MULTIPLE_PROCS_STATIC = insert_clone.sql clone_2_sanger.sql \
 
 MULTIPLE_PROCS_GENERIC = regen_anatomy.sql regen_term.sql 
 GENERIC_AGGR = $(ZDB_AGGR) 
-GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) \
-		get_mutants_html_link.sql 	         	
+GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) 
+		 	         	
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(XPAT_STATS) \
 		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql \
 		get_mrkr_name_html_link.sql get_mrkr_abbrev_html_link.sql \
 		get_geno_name_html_link.sql get_geno_name_with_bg_html_link.sql \
-		get_genotype_backgrounds_html_link.sql  get_genofeat_mp_zyg_html_display.sql
+		get_genotype_backgrounds_html_link.sql  get_genofeat_mp_zyg_html_display.sql \
+		get_mutants_html_link.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))

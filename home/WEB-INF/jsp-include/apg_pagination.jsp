@@ -8,19 +8,17 @@ This include expects the Pagination bean in request scope with the name <formBea
 
 <center><c:if test="${formBean.paginationNeeded}">
     <div class="pagination">
-        <table width="=430">
+        <table>
             <tr>
-                <td width="100" align="right" valign="top">
+                <td align="center" valign="top">
                     <c:choose>
                         <c:when test="${!formBean.firstPage}">
-                            <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnPreviousPage}">&laquo; Previous</a>
+                            <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnPreviousPage}">&laquo; previous</a>
                         </c:when>
                         <c:otherwise>
-                            <span class="disabled">&laquo; Previous</span>
+                            <span class="disabled">&laquo; previous</span>
                         </c:otherwise>
                     </c:choose>
-                </td>
-                <td align="center" valign="top" nowrap="true">
                     <c:if test="${formBean.showFirstPage}">
                         <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnFirstPage}">1</a>
                     </c:if>
@@ -29,13 +27,12 @@ This include expects the Pagination bean in request scope with the name <formBea
                     </c:if>
                     <c:forEach var="currentPage" items="${formBean.firstRecordOnPageList}">
                         <c:if test="${currentPage.key != formBean.page}">
-                            &nbsp;
                             <a href="webdriver?${formBean.actionUrl}&START=${currentPage.value}">
                                     ${currentPage.key}
                             </a>
                         </c:if>
                         <c:if test="${currentPage.key == formBean.page}">
-                            &nbsp; <span style="color:black; font-weight:bold;">${currentPage.key}</span>
+                            <span class="current">${currentPage.key}</span>
                         </c:if>
                     </c:forEach>
                     <c:if test="${formBean.elisionForHigherPages}">
@@ -44,15 +41,13 @@ This include expects the Pagination bean in request scope with the name <formBea
                     <c:if test="${formBean.showLastPage}">
                         <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnLastPage}">${formBean.totalNumPages}</a>
                     </c:if>
-                </td>
-                <td width="100" valign="top" align="left">
                     <c:choose>
                         <c:when test="${!formBean.lastPage}">
-                            <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnNextPage}">Next &raquo;</a>
+                            <a href="webdriver?${formBean.actionUrl}&START=${formBean.firstRecordOnNextPage}">next &raquo;</a>
                         </c:when>
                         <c:otherwise>
                     <span class="disabled">
-                    Next &raquo;
+                    next &raquo;
                         </span>
                         </c:otherwise>
                     </c:choose>

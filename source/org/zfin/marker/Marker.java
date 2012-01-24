@@ -40,7 +40,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
     private Set<Orthologue> orthologues;
-    private Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
+    protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
     private MarkerType markerType;
     private Set<MarkerHistory> markerHistory;
@@ -431,6 +431,15 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
                     return t;
             }
             throw new RuntimeException("No run type of string " + type + " found.");
+        }
+
+        public static boolean isMarkerType(String type){
+            if(type == null)
+                return false;
+            for(Type markerType: values())
+                if(markerType.value.equals(type))
+                    return true;
+            return false;
         }
 
     }

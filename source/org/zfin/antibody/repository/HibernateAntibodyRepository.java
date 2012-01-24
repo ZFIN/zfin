@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
+import org.springframework.stereotype.Repository;
 import org.zfin.Species;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
@@ -41,13 +42,14 @@ import static org.hibernate.criterion.Restrictions.isNotEmpty;
 /**
  * Hibernate implementation of the Antibody Repository.
  */
+@Repository
 public class HibernateAntibodyRepository implements AntibodyRepository {
 
     private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
     // These attributes are cashed for performance reasons
     // They are static, i.e. they do not change all that often.
-    // To update the list you need to retstart Tomcat or we can have an
+    // To update the list you need to restart Tomcat or we can have an
     // update at runtime.
     private List<Species> immunogenSpeciesList;
     private List<Species> hostSpeciesList;
@@ -389,10 +391,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         if (searchCriteria.isZircOnly())
             hql.append(", MarkerSupplier markerSupplier ");
-        if (searchCriteria.isStageDefined() || searchCriteria.isAnatomyDefined() || searchCriteria.isAssaySearch())
-            hql.append(", ExpressionExperiment experiment ");
+        if (searchCriteria.isAssaySearch())
+            hql.append(", ExpressionExperiment expressionExperiment ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
-            hql.append(",  MarkerRelationship rel   ");
+            hql.append(",  AbstractMarkerRelationshipInterface rel   ");
         if (!StringUtils.isEmpty(searchCriteria.getName()))
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
@@ -415,7 +417,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (searchCriteria.isAssaySearch()) {
             if (hasOneWhereClause)
                 hql.append(" AND ");
-            hql.append(" experiment.assay.name = :assay AND experiment.antibody = antibody ");
+            hql.append(" expressionExperiment.assay.name = :assay AND expressionExperiment.antibody = antibody ");
             hasOneWhereClause = true;
         }
         if (!AntibodyType.isTypeAny(searchCriteria.getClonalType())) {
@@ -440,35 +442,34 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             if (hasOneWhereClause)
                 hql.append(" AND ");
             hasOneWhereClause = true;
-            hql.append(" experiment.antibody = antibody " +
-                    " AND ( exists ( select result from ExpressionResult result " +
+            hql.append(" ( exists ( select result from ExpressionResult result " +
                     "                  where result.startStage.hoursStart >= :hoursStart " +
                     "                    AND result.endStage.hoursEnd <= :hoursEnd " +
-                    "                    AND result.expressionExperiment = experiment )) ");
+                    "                    AND result.expressionExperiment.antibody = antibody)) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             if (hasOneWhereClause)
                 hql.append(" AND ");
-            hql.append(" experiment.antibody = antibody AND ( ");
+            hql.append(" (");
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
-                hql.append("    ( exists ( select result from ExpressionResult result " +
-                        "                  where (   (result.entity.superterm.zdbID = :aoTermID_" + i + ")" +
-                        "                         OR result.entity.subterm.zdbID = :aoTermID_" + i + ")" +
-                        "                     AND result.expressionExperiment = experiment" +
-                        "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
-                        "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
-                        "                     AND result.expressionFound = 't' ) ");
-                if (searchCriteria.isIncludeSubstructures())
-                    hql.append("     OR exists ( select result from ExpressionResult result, TransitiveClosure child " +
-                            "                  where (result.entity.superterm = child.child OR " +
-                            "                         result.entity.subterm = child.child) " +
-                            "                       AND child.root = :aoTermID_" + i +
-                            "                     AND result.expressionExperiment = experiment" +
+                if (!searchCriteria.isIncludeSubstructures())
+                    hql.append("    ( exists ( select result from ExpressionResult result " +
+                            "                  where (   (result.entity.superterm.zdbID = :aoTermID_" + i + ")" +
+                            "                         OR result.entity.subterm.zdbID = :aoTermID_" + i + ")" +
                             "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
                             "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
-                            "                     AND result.expressionFound = 't' ) ");
-                hql.append(" ) ");
+                            "                     AND result.expressionFound = 't'  " +
+                            "                     AND result.expressionExperiment.antibody = antibody ))");
+                if (searchCriteria.isIncludeSubstructures())
+                    hql.append("     exists ( select result from ExpressionResult result, TransitiveClosure child " +
+                            "                  where (result.entity.superterm = child.child OR " +
+                            "                         result.entity.subterm = child.child) " +
+                            "                       AND child.root.zdbID = :aoTermID_" + i +
+                            "                     AND result.expressionExperiment.genotypeExperiment.genotype.wildtype = 't'" +
+                            "                     AND result.expressionExperiment.genotypeExperiment.experiment.name in (:standard , :generic )" +
+                            "                     AND result.expressionFound = 't'  " +
+                            "                     AND result.expressionExperiment.antibody = antibody ))");
                 if (i < numberOfTerms - 1) {
                     if (searchCriteria.isAnatomyEveryTerm())
                         hql.append(" AND ");
@@ -703,7 +704,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     public Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
-                                                   DevelopmentStage start, DevelopmentStage end) {
+                                                          DevelopmentStage start, DevelopmentStage end) {
         Set<GenericTerm> terms = new TreeSet<GenericTerm>();
 
         String hql = "select xpatres from ExpressionResult xpatres " +

@@ -10,7 +10,7 @@
     <%-- display order this link only --%>
     <c:when test="${organization != null}">
         <c:forEach var="url" items="${organization.organizationUrls}">
-            <c:if test="${url.businessPurpose eq 'order'}">
+            <c:if test="${(url.businessPurpose != null) && (url.businessPurpose eq 'order')}">
                 &nbsp;(<span style="font-size: smaller;"><a href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</a></span>)
             </c:if>
         </c:forEach>

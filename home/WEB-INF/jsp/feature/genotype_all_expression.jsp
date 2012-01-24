@@ -62,7 +62,7 @@
                              <zfin2:figureOrTextOnlyLink figure="${xp.singleFigure}" integerEntity="${xp.numberOfFigures}"/></a>                         
                          </c:otherwise>
                        </c:choose>
-                       <c:if test="${xp.imgInFigure}"><img src="/images/camera_icon.gif" border="0" alt="with image">&nbsp;</c:if>from
+                        <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
                        <c:choose>
                             <c:when test="${xp.numberOfPublications > 1 }">
                                 ${xp.numberOfPublications} publications

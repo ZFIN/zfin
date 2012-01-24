@@ -86,7 +86,7 @@ Before proposing and reserving a name, review the current guidelines and search 
   <li>Guides to Nomenclature for <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-1.3">Mutants</a> and <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-4.3">Transgenes</a></li>
 
   <li><a href="/action/feature/line-designations">Laboratory Allele Designations</a></li>
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Search
+  <li><a href="/action/fish/search">Search
       Existing Lines in ZFIN</a></li>
 </ul>
 <hr>

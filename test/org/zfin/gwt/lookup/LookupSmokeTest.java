@@ -17,9 +17,7 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                assertNotNull(page.getByXPath("//button[. = 'search']").get(0));
-                assertNotNull(page.getByXPath("//td[. = 'Enter search terms']").get(0));
-                assertEquals("Enter search terms", ((HtmlTableDataCell) page.getByXPath("//td[. = 'Enter search terms']").get(0)).getTextContent());
+//                assertNotNull(page.getByXPath("//button[. = 'search']").get(0));
                 assertNotNull(page.getByXPath("//div[@class='gwt-Label']").get(0));
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
                 assertEquals("Should be an empty input term", "", htmlInput.getValueAttribute());

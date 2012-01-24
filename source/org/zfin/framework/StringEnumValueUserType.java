@@ -2,6 +2,7 @@ package org.zfin.framework;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.ReflectHelper;
@@ -44,7 +45,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
      * @return int[]
      */
     public int[] sqlTypes() {
-        return new int[]{Hibernate.STRING.sqlType()};
+        return new int[]{StandardBasicTypes.STRING.sqlType()};
     }
 
     public Class returnedClass() {

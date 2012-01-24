@@ -8,6 +8,7 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.Morpholino;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,14 +34,14 @@ public class MorpholinoStatisticsTest {
         experimentOne.setName("One");
         genoxOne.setExperiment(experimentOne);
         ExperimentCondition conditionTwo = new ExperimentCondition();
-        Marker morpholinoTwo = new Marker();
+        Morpholino morpholinoTwo = new Morpholino();
         morpholinoTwo.setAbbreviation("MO-slit1b");
         morpholinoTwo.setZdbID("ZDB-MRPHlNO-090311-1");
 
         conditionTwo.setMorpholino(morpholinoTwo);
 
         ExperimentCondition conditionOne = new ExperimentCondition();
-        Marker morpholinoOne = new Marker();
+        Morpholino morpholinoOne = new Morpholino();
         morpholinoOne.setAbbreviation("MO-slit1a");
         morpholinoOne.setZdbID("ZDB-MRPHlNO-090311-2");
         conditionOne.setMorpholino(morpholinoOne);

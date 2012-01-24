@@ -27,12 +27,12 @@
                    title="Search by gene, developmental stage, anatomy and other attributes">
          <strong>Gene Expression</strong></a></li>
 
-      <li><a href="/action/antibody/search" 
+      <li><a href="/action/antibody/antibody-search"
                     title="Search for antibodies by gene, labeled anatomy and other attributes"><strong>Antibodies</strong></a></li>
     </ul>
               
     <ul>
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
+     <li><a href="/action/fish/search"
                    title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
          <strong>Mutants / Morphants / Transgenics</strong></a></li>
      <ul>
@@ -45,7 +45,7 @@
   </ul>
                            
   <ul>
-      <li><a href="/action/anatomy/search" 
+      <li><a href="/action/anatomy/anatomy-search"
                     title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
       <ul>
         <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Atlases and Resources</a></li>

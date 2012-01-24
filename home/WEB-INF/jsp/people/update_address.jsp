@@ -22,7 +22,7 @@
 
 	   <DIV class="header">
 	    <A HREF="/action/blast/blast"><font color="#006666">BLAST</font></a>&nbsp;&nbsp;
-            <A HREF="/action/anatomy/search"><font color="#006666">Anatomy</font></a>&nbsp;&nbsp;
+            <A HREF="/action/anatomy/anatomy-search"><font color="#006666">Anatomy</font></a>&nbsp;&nbsp;
 
             <A HREF="/@cgi-bin_frost@/webdriver?MIval=aa-pubselect2.apg"><font color="#006666">Publications</font></a>&nbsp;&nbsp;
             <A HREF="/@cgi-bin_frost@/webdriver?MIval=aa-quickfindpers.apg"><font color="#006666">People</font></a> &nbsp;&nbsp;

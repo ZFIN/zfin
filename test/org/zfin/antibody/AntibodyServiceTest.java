@@ -18,6 +18,7 @@ import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
+import org.zfin.util.MatchingService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,7 +79,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -127,7 +128,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(2, aoTerms.size());
     }
@@ -167,7 +168,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
         AntibodyService as = new AntibodyService(ab);
 
-        Set<GenericTerm> aoTerms = as.getDistinctAoTerms();
+        Set<Term> aoTerms = as.getDistinctAoTerms();
         assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
@@ -378,9 +379,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService service = new AntibodyService(antibody);
         service.setAntibodySearchCriteria(searchCriteria);
 
-        List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
-        service.addMatchingAntibodyName(matchingTexts);
-        assertTrue(matchingTexts.size() > 0);
+        assertTrue(service.getMatchingText().size() > 0);
     }
 
     /**
@@ -407,9 +406,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService service = new AntibodyService(antibody);
         service.setAntibodySearchCriteria(searchCriteria);
 
-        List<MatchingText> matchingTexts = new ArrayList<MatchingText>();
-        service.addMatchingAntibodyName(matchingTexts);
-        assertTrue(matchingTexts.size() > 0);
+        assertTrue(service.getMatchingText().size() > 0);
     }
 
 

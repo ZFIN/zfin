@@ -1,16 +1,16 @@
 package org.zfin.expression;
 
-import org.zfin.marker.Marker;
 import org.apache.log4j.Logger;
+import org.zfin.mutant.Morpholino;
 
 /**
- * ToDo: Please add documentation for this class.
+ * Entity class that maps to experiment table.
  */
 public class ExperimentCondition implements Comparable<ExperimentCondition> {
 
     private String zdbID;
     private Experiment experiment;
-    private Marker morpholino;
+    private Morpholino morpholino;
     private String value;
     private ExperimentUnit unit;
     private ConditionDataType conditionDataType;
@@ -34,11 +34,11 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
         this.experiment = experiment;
     }
 
-    public Marker getMorpholino() {
+    public Morpholino getMorpholino() {
         return morpholino;
     }
 
-    public void setMorpholino(Marker morpholino) {
+    public void setMorpholino(Morpholino morpholino) {
         this.morpholino = morpholino;
     }
 

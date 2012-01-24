@@ -29,6 +29,7 @@
                 <ref bean="goaGafLoadTrigger"/>
                 <ref bean="fpInferenceGafLoadTrigger"/>
                 <ref bean="paintGafLoadTrigger"/>
+                <ref bean="checkMaxGenoxIdsLengthTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -412,6 +413,17 @@
         </property>
     </bean>
 
+    <bean id="checkMaxGenoxIdsLengthBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="name" value="Check Maximum Fish Id Length"/>
+        <property name="group" value="Validation"/>
+        <property name="jobClass" value="org.zfin.fish.quartz.CheckGenoxMaxIdsLengthJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="jobName" value="Check Maximum Fish Id Length"/>
+            </map>
+        </property>
+    </bean>
+
     <bean id="goaGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="goaGafLoadJobBean">
         </property>
@@ -434,6 +446,14 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off the 22nd of each month-->
         <property name="cronExpression" value="0 30 02 22 * ?"/>
+    </bean>
+
+    <bean id="checkMaxGenoxIdsLengthTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="checkMaxGenoxIdsLengthBean">
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
+        <!--goes off the 22nd of each month-->
+        <property name="cronExpression" value="0 0 8 ? * MON"/>
     </bean>
 
 </beans>

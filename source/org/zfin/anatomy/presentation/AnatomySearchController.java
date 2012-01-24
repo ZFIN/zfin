@@ -2,9 +2,12 @@ package org.zfin.anatomy.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.AnatomySynonym;
@@ -15,8 +18,6 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.ontology.OntologyManager;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,46 +28,50 @@ import java.util.List;
  * 2) Search by developmental stage
  * 3) List all anatomy items.
  */
-public class AnatomySearchController extends AbstractCommandController {
+@Controller
+public class AnatomySearchController {
 
     private static final Logger LOG = Logger.getLogger(AnatomySearchController.class);
-    // These two variables are injected by Spring
+
+    @Autowired
     private AnatomyRepository anatomyRepository;
-    private String redirectUrlIfSingleResult;
 
-    public AnatomySearchController() {
-        setCommandClass(AnatomySearchBean.class);
+    @RequestMapping("/anatomy-search")
+    protected String showSearchForm(Model model) throws Exception {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Anatomy Search");
+        return "anatomy/search-form.page";
     }
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    @RequestMapping(value = "/show-all-anatomy-terms", method = RequestMethod.GET)
+    public String showAllAnatomyTerms(@ModelAttribute("formBean") AnatomySearchBean anatomyForm) throws Exception {
+        LOG.debug("Start Action Class");
+        List<AnatomyStatistics> anatomyStatistics = anatomyRepository.getAllAnatomyItemStatistics();
+        Collections.sort(anatomyStatistics);
+        anatomyForm.setStatisticItems(anatomyStatistics);
+        return "anatomy/show-all-terms.page";
+    }
 
-        AnatomySearchBean anatomyForm = (AnatomySearchBean) command;
-        AnatomySearchController.LOG.debug("Start Action Class");
-        if (anatomyForm.isCompleteSearch()) {
-            prepareCompleteSearch(anatomyForm);
-        } else if (anatomyForm.isStageSearch()) {
-            doTermSearchByStage(anatomyForm);
-        }
+    @RequestMapping(value = "/show-terms-by-stage", method = RequestMethod.GET)
+    public String showAnatomyTermsByStage(@ModelAttribute("formBean") AnatomySearchBean anatomyForm) throws Exception {
+        LOG.debug("Start Action Class");
+        doTermSearchByStage(anatomyForm);
+        return "anatomy/show-terms-by-stage.page";
+    }
+
+    @RequestMapping(value = "/anatomy-do-search", method = RequestMethod.GET)
+    public String doSearch(@ModelAttribute("formBean") AnatomySearchBean anatomyForm
+    ) throws Exception {
+        LOG.debug("Start Action Class");
         // search term is the default mode.
-        else if (anatomyForm.isTermSearch()) {
-            runTermSearch(anatomyForm);
-            // If only one term was found or an exact match redirect directly to the details page
-            if (anatomyForm.getStatisticItems().size() == 1) {
-                AnatomyStatistics stats = anatomyForm.getStatisticItems().get(0);
-                return new ModelAndView(redirectUrlIfSingleResult + "?anatomyItem.zdbID=" + stats.getAnatomyItem().getZdbID());
-            }
+        runTermSearch(anatomyForm);
+        // If only one term was found or an exact match redirect directly to the details page
+        if (anatomyForm.getStatisticItems().size() == 1) {
+            AnatomyStatistics stats = anatomyForm.getStatisticItems().get(0);
+            //return new ModelAndView(redirectUrlIfSingleResult + "?anatomyItem.zdbID=" + stats.getAnatomyItem().getZdbID());
+            return "redirect:/action/anatomy/anatomy-view/" + stats.getAnatomyItem().getZdbID();
         }
-        populateDevelopmentStages(anatomyForm);
-
         LOG.debug(anatomyForm);
-        return new ModelAndView("anatomy-search.page", LookupStrings.FORM_BEAN, anatomyForm);
-    }
-
-    private void populateDevelopmentStages(AnatomySearchBean anatomyForm) {
-        // Always populate the developmental stage fields.
-        List stages = anatomyRepository.getAllStagesWithoutUnknown();
-
-        anatomyForm.setStages(stages);
+        return "anatomy/search-form.page";
     }
 
     private void doTermSearchByStage(AnatomySearchBean anatomyForm) {
@@ -126,11 +131,4 @@ public class AnatomySearchController extends AbstractCommandController {
         anatomyForm.setStatisticItems(anatomyStatistics);
     }
 
-    public void setAnatomyRepository(AnatomyRepository anatomyRepository) {
-        this.anatomyRepository = anatomyRepository;
-    }
-
-    public void setRedirectUrlIfSingleResult(String redirectUrlIfSingleResult) {
-        this.redirectUrlIfSingleResult = redirectUrlIfSingleResult;
-    }
 }

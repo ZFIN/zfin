@@ -96,11 +96,12 @@ public class Log4JConfigurationFormBean  {
 
     public Map<String,String> getLoggerValues() {
         Map<String,String> entries = new LinkedHashMap<String, String>();
-        entries.put("FATAL", "FATAL");
-        entries.put("ERROR", "ERROR");
-        entries.put("WARN", "WARN");
-        entries.put("INFO", "INFO");
         entries.put("DEBUG", "DEBUG");
+        entries.put("INFO", "INFO");
+        entries.put("WARN", "WARN");
+        entries.put("ERROR", "ERROR");
+        entries.put("FATAL", "FATAL");
+        entries.put("TRACE", "TRACE");
         entries.put("DEFAULT", "DEFAULT");
         return entries;
     }

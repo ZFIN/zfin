@@ -4,7 +4,6 @@ import cvu.html.HTMLTokenizer;
 import cvu.html.TagToken;
 import cvu.html.TextToken;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -30,6 +29,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
+import static org.apache.commons.cli.OptionBuilder.withArgName;
 
 
 /**
@@ -69,8 +70,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
 
     private String indexDir;
     private String indexRootDir;
-    private List<String> URLsToIndex = new ArrayList<String>();
-    private List<String> staticIndex = new ArrayList<String>();
+    private List<UrlLink> urlsToIndex = new ArrayList<UrlLink>();
     private List<String> include = new ArrayList<String>();
     private List<String> exclude = new ArrayList<String>();
     private List<String> crawlOnly = new ArrayList<String>();
@@ -110,16 +110,16 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private CronJobReport cronJobReport;
 
     static {
-        options.addOption(OptionBuilder.withArgName("indexerDir").hasArg().withDescription("site search directory").create("indexerDir"));
-        options.addOption(OptionBuilder.withArgName("u").hasArg().withDescription("search urls").create("u"));
-        options.addOption(OptionBuilder.withArgName("e").hasArg().withDescription("exclude urls").create("e"));
-        options.addOption(OptionBuilder.withArgName("c").hasArg().withDescription("crawl urls").create("c"));
-        options.addOption(OptionBuilder.withArgName("q").hasArg().withDescription("all view pages").create("t"));
-        options.addOption(OptionBuilder.withArgName("t").hasArg().withDescription("number of threads").create("t"));
-        options.addOption(OptionBuilder.withArgName("numberOfDetailPages").hasArg().withDescription("number of pages per entity").create("numberOfDetailPages"));
-        options.addOption(OptionBuilder.withArgName("categoryDir").hasArg().withDescription("search urls").create("categoryDir"));
-        options.addOption(OptionBuilder.withArgName("zfinPropertiesDir").hasArg().withDescription("zfin.properties path").create("zfinPropertiesDir"));
-        options.addOption(OptionBuilder.withArgName("createDetailPageList").hasArg().withDescription("Create the list of view pages").create("createDetailPageList"));
+        options.addOption(withArgName("indexerDir").hasArg().withDescription("site search directory").create("indexerDir"));
+        options.addOption(withArgName("u").hasArg().withDescription("search urls").create("u"));
+        options.addOption(withArgName("e").hasArg().withDescription("exclude urls").create("e"));
+        options.addOption(withArgName("c").hasArg().withDescription("crawl urls").create("c"));
+        options.addOption(withArgName("q").hasArg().withDescription("all view pages").create("t"));
+        options.addOption(withArgName("t").hasArg().withDescription("number of threads").create("t"));
+        options.addOption(withArgName("numberOfDetailPages").hasArg().withDescription("number of pages per entity").create("numberOfDetailPages"));
+        options.addOption(withArgName("categoryDir").hasArg().withDescription("search urls").create("categoryDir"));
+        options.addOption(withArgName("zfinPropertiesDir").hasArg().withDescription("zfin.properties path").create("zfinPropertiesDir"));
+        options.addOption(withArgName("createDetailPageList").hasArg().withDescription("Create the list of view pages").create("createDetailPageList"));
     }
 
 
@@ -157,8 +157,12 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             generateUrls.setNumberOfRecordsPerEntities(numberOfDetailPages);
             if (createDetailPageList)
                 generateUrls.generateAllUrls();
+            List<String> staticIndex = new ArrayList<String>();
             loadFromFile(generateUrls.getDetailPageFilePath(), staticIndex);
-            URLsToIndex.addAll(staticIndex);
+            for (String viewPageLink : staticIndex) {
+                UrlLink link = new UrlLink(viewPageLink, "viewPage");
+                urlsToIndex.add(link);
+            }
             go();
             // generate detail page url list
             CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.INDEXER_REPORT_EMAIL));
@@ -193,9 +197,12 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         indexDir = FileUtil.createAbsolutePath(indexRootDir, "new_indexes");
         String createDetailPagesStr = commandLine.getOptionValue("createDetailPageList");
         if (createDetailPagesStr != null) {
-            createDetailPageList = Boolean.getBoolean(createDetailPagesStr);
+            createDetailPageList = Boolean.valueOf(createDetailPagesStr);
         }
-        loadFromFile(commandLine.getOptionValue("u"), URLsToIndex);
+        for (String url : loadFromFile(commandLine.getOptionValue("u"), null)) {
+            UrlLink link = new UrlLink(url, "given URL");
+            urlsToIndex.add(link);
+        }
         loadFromFile(commandLine.getOptionValue("e"), exclude);
         threads = Integer.parseInt(commandLine.getOptionValue("t"));
         try {
@@ -208,17 +215,6 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         initAll(propertiesFileName);
         logDirectory = FileUtil.createAbsolutePath(indexRootDir, "logs");
     }
-
-    private int getNumberOfIndexedUrls() {
-        int numberOfUrls = 0;
-        try {
-            numberOfUrls = FileUtil.countLines(logDirectory + INDEXED_URLS_LOG);
-        } catch (IOException e) {
-            logger.error("Could not read indexedUrls file!", e);
-        }
-        return numberOfUrls;
-    }
-
 
     /**
      * This method handles the threading.
@@ -341,7 +337,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      */
     private void indexWiki() {
         WikiIndexer wikiIndexer = new WikiIndexer();
-        List<WebPageSummary> urlSummaryList = null;
+        List<WebPageSummary> urlSummaryList;
         try {
             urlSummaryList = wikiIndexer.getUrlSummary();
         } catch (WikiLoginException e) {
@@ -370,14 +366,11 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * Method executed as part of the Runnable interface.
      */
     public void run() {
-        String url;
         try {
-
             // get the next URL in our list
-            while ((url = dequeueURL()) != null) {
-                // Test Indexer on https for hoover security testing
-                //url = StringUtils.replaceOnce(url,"http://quark.zfin.org","https://hoover.zfin.org");
-                indexURL(url);
+            UrlLink link;
+            while ((link = dequeueURL()) != null) {
+                indexURL(link);
             }
         } catch (Exception e) {
             log.println(Thread.currentThread().getName() + ": aborting with error");
@@ -395,15 +388,15 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * dynamically grows and shrinks.  To avoid infinite loops, this means
      * we must also keep a list of "where we've been" to avoid retracing steps (discoveredURLs).
      * <p/>
-     * This function retrieves and removes the next URL from our list left to index (URLsToIndex).
+     * This function retrieves and removes the next URL from our list left to index (urlsToIndex).
      *
      * @return URL
      * @throws InterruptedException exception from thread.wait()
      */
-    public synchronized String dequeueURL() throws InterruptedException {
+    public synchronized UrlLink dequeueURL() throws InterruptedException {
         while (true) {
-            if (URLsToIndex.size() > 0) {
-                return URLsToIndex.remove(0);
+            if (urlsToIndex.size() > 0) {
+                return urlsToIndex.remove(0);
             } else {
                 threads--;
                 if (threads > 0) {
@@ -427,12 +420,13 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * Also, once we add the new url, we must keep track of the fact that
      * we have done so so that we don't do it again.
      *
-     * @param url url to put into the queue
+     * @param url      url to put into the queue
+     * @param referrer referrer URL
      */
-    public synchronized void enqueueURL(String url) {
+    public synchronized void enqueueURL(String url, String referrer) {
         if (!discoveredURLs.contains(url))  // careful not to add something we already saw
         {
-            URLsToIndex.add(url);  // adds the new url
+            urlsToIndex.add(new UrlLink(url, referrer));  // adds the new url
             discoveredURLs.add(url);  // keeps track that we have now "seen" it so we don't do it again next time
             notifyAll();
         }
@@ -448,26 +442,26 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * to create some kind of ranking and proprietary database entry in the index files which
      * can later be searched using some Lucene APIs.
      *
-     * @param url url
+     * @param link url
      */
-    private void indexURL(String url) {
+    private void indexURL(UrlLink link) {
         // Note that we store various performance times for analysis.        
         long loadingStartTime = System.currentTimeMillis();
         WebPageSummary summary = null;
 
         try {
             // download and parse the HTML page from the given url
-            summary = loadURL(url);
+            summary = loadURL(link);
         } catch (MalformedURLException e) {
             errorCount++;
-            log.println(Thread.currentThread().getName() + ": encountered error in malformed URL: " + url);
+            log.println(Thread.currentThread().getName() + ": encountered error in malformed URL: " + link.getLinkUrl());
             e.printStackTrace(log);
             e.printStackTrace();
             log.flush();
             cronJobReport.error(e);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             errorCount++;
-            log.println(Thread.currentThread().getName() + ": encountered error while loading URL: " + url);
+            log.println(Thread.currentThread().getName() + ": encountered error while loading URL: " + link.getLinkUrl());
             e.printStackTrace(log);
             e.printStackTrace();
             log.flush();
@@ -481,10 +475,10 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         if (summary != null && summary.getBody() != null) {
             if (summary.getBody().startsWith("Dynamic Page Generation Error")) {
                 try {
-                    throw new Exception("Encountered dynamic page generation error for url: " + url);
+                    throw new Exception("Encountered dynamic page generation error for url: " + link.getLinkUrl());
                 } catch (Exception e) {
                     errorCount++;
-                    log.println(Thread.currentThread().getName() + ": encountered dynamic page generation error: " + url);
+                    log.println(Thread.currentThread().getName() + ": encountered dynamic page generation error: " + link.getLinkUrl());
                     e.printStackTrace(log);
                     e.printStackTrace();
                     log.flush();
@@ -503,7 +497,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 updateSummary(summary);
             } catch (IOException e) {
                 errorCount++;
-                log.println(Thread.currentThread().getName() + ": encountered error while updating summary: " + url);
+                log.println(Thread.currentThread().getName() + ": encountered error while updating summary: " + link.getLinkUrl());
                 e.printStackTrace(log);
                 e.printStackTrace();
                 log.flush();
@@ -521,7 +515,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             boolean indexThisPage = true;
             for (int x = 0; indexThisPage && x < crawlOnly.size(); x++) {
                 String str = crawlOnly.get(x);
-                indexThisPage = (url.indexOf(str) == -1);
+                indexThisPage = (!link.getLinkUrl().contains(str));
             }
 
             //Prepare the Lucene document for indexing.
@@ -530,12 +524,12 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 addToIndexer(summary);
 
                 if (verbose) {
-                    indexedUrlLog.println(url);
+                    indexedUrlLog.println(link.getLinkUrl());
                     indexedUrlLog.flush();
                 }
             } else {
                 if (verbose) {
-                    crawledUrlLog.println(url);
+                    crawledUrlLog.println(link);
                     crawledUrlLog.flush();
                 }
             }
@@ -556,15 +550,15 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 boolean add = true;
                 for (int x = 0; add && x < include.size(); x++) {
                     String inc = include.get(x);
-                    add = (summary.getUrls()[i].indexOf(inc) != -1);
+                    add = (summary.getUrls()[i].contains(inc));
                 }
                 for (int x = 0; add && x < exclude.size(); x++) {
                     String ex = exclude.get(x);
-                    add = (summary.getUrls()[i].indexOf(ex) == -1);
+                    add = (!summary.getUrls()[i].contains(ex));
                 }
 
                 if (add) {
-                    enqueueURL(summary.getUrls()[i]);
+                    enqueueURL(summary.getUrls()[i], link.getLinkUrl());
                 } else {
                     if (verbose) {
                         ignoredUrlLog.println(summary.getUrls()[i]);
@@ -589,8 +583,8 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 doc.add(new Field(SearchBean.BODY, summary.getText(), Field.Store.YES, Field.Index.TOKENIZED));
             } else {
                 doc.add(new Field(SearchBean.BODY, "", Field.Store.YES, Field.Index.TOKENIZED));
-                log.println(Thread.currentThread().getName() + ": no body text for URL: " + url);
-                cronJobReport.warning(Thread.currentThread().getName() + ": no body text for URL: " + url);
+                log.println(Thread.currentThread().getName() + ": no body text for URL: " + summary.getUrlLink());
+                cronJobReport.warning(Thread.currentThread().getName() + ": no body text for URL: " + summary.getUrlLink());
             }
 
             String title = summary.getAdjustedTitle();
@@ -608,7 +602,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 filesIndexed++;
             } catch (IOException e) {
                 errorCount++;
-                log.println(Thread.currentThread().getName() + ": encountered error while indexing URL: " + url);
+                log.println(Thread.currentThread().getName() + ": encountered error while indexing URL: " + summary.getUrlLink());
                 e.printStackTrace(log);
                 e.printStackTrace();
                 log.flush();
@@ -629,7 +623,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
 
     /**
      * This procedure does two things:
-     * (1) returns a list of all URLs in a webpage summary
+     * (1) returns a list of all URLs in a web page summary
      * (2) updates the summary text (by removing markup tags) and title
      *
      * @param summary URL Summary
@@ -637,7 +631,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      */
     private void updateSummary(WebPageSummary summary) throws IOException {
         boolean inScriptTag = false;
-        StringBuffer strippedText = new StringBuffer();
+        StringBuilder strippedText = new StringBuilder();
         List<String> tmp_urls = new ArrayList<String>();
         summary.setBody(EntityPresentation.replaceSupTags(summary.getBody()));
         HTMLTokenizer ht = new HTMLTokenizer(new StringReader(summary.getBody()));
@@ -657,7 +651,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                     new_url = tag.getAttributes().get("src");
                 } else if ("title".equals(tagName) && e.hasMoreElements() && !tag.isEndTag()) {
                     // need to check all tokens until we hit a </title> tag
-                    StringBuffer titleString = new StringBuffer();
+                    StringBuilder titleString = new StringBuilder();
                     while (e.hasMoreElements()) {
                         obj = e.nextElement();
                         if (obj instanceof TextToken) {
@@ -696,7 +690,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                     new_url = StringUtils.replace(new_url, "&amp;", "&");
 
                     // remove the hostname (e.g., _quark) from cgi-bin_quark
-                    if (new_url.indexOf("cgi-bin_") != -1) {
+                    if (new_url.contains("cgi-bin_")) {
                         String hostName = StringUtils.substringBetween(new_url, "cgi-bin_", "/");
                         int index = new_url.indexOf("cgi-bin_" + hostName);
                         // should assert that index != -1
@@ -712,11 +706,14 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                             new_url = chopOffNamedAnchor(new_url);
                             tmp_urls.add(new_url);
                         }
-                    } else if (new_url.indexOf("://") == -1 && !new_url.startsWith("mailto:") && !new_url.startsWith("#") && !new_url.startsWith("javascript:")) {
+                    } else if (!new_url.contains("://") && !new_url.startsWith("mailto:") && !new_url.startsWith("#") && !new_url.startsWith("javascript:")) {
                         // parse relative new_url
-                        new_url = formURL(summary.getUrl(), new_url);
-                        new_url = chopOffNamedAnchor(new_url);
-                        tmp_urls.add(new_url);
+                        if (StringUtils.isNotEmpty(new_url)) {
+                            new_url = formURL(summary.getUrl(), new_url);
+                            new_url = chopOffNamedAnchor(new_url);
+                            if (!tmp_urls.contains(new_url))
+                                tmp_urls.add(new_url);
+                        }
                     }
                 }
             } else if ((obj instanceof TextToken) && !inScriptTag) {
@@ -751,7 +748,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     // converts relative URL to absolute URL
 
     private String formURL(URL origURL, String newURL) {
-        StringBuffer base = new StringBuffer(origURL.getProtocol());
+        StringBuilder base = new StringBuilder(origURL.getProtocol());
         base.append("://").append(origURL.getHost());
         if (origURL.getPort() != -1) {
             base.append(":").append(origURL.getPort());
@@ -793,16 +790,16 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * Given a URL, open the HTML page using an HTTP Get Request.  Then parse the
      * results and store various parts of the HTML page in a URLSummary object.
      *
-     * @param url url
+     * @param link url
      * @return URLSummary
      * @throws java.io.IOException exception from opening a URL connection.
      */
-    private WebPageSummary loadURL(String url) throws IOException {
+    private WebPageSummary loadURL(UrlLink link) throws IOException {
         long loadFileStartTime = System.currentTimeMillis();
-        URL u = new URL(url);
+        URL u = new URL(link.getLinkUrl());
         WebPageSummary summary = null;
         HttpURLConnection uc;
-        String ct = "";
+        String ct;
         try {
             uc = (HttpURLConnection) u.openConnection();
             uc.setAllowUserInteraction(false);
@@ -813,10 +810,11 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 if (mimeTypes.get(ct) != null) {
                     summary = new WebPageSummary();
                     summary.setUrl(u);
+                    summary.setUrlLink(link);
 
                     BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream(), "ISO-8859-1"));
 
-                    StringBuffer body = new StringBuffer(2048);
+                    StringBuilder body = new StringBuilder(2048);
                     String line;
 
                     while ((line = in.readLine()) != null) {
@@ -828,22 +826,22 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                     summary.setBody(body.toString());
                 } else {
                     errorCount++;
-                    log.println("Unsupported MIME type (" + ct + ") type so ignoring: " + url);
+                    log.println("Unsupported MIME type (" + ct + ") type so ignoring: " + link);
                 }
             } else {
                 errorCount++;
-                final String message = "Unexpected response code: " + uc.getResponseCode() + " for URL: " + url;
+                String message = "Unexpected response code: " + uc.getResponseCode() + " for URL: " + link;
                 log.println(message);
                 cronJobReport.warning(message);
             }
         } catch (FileNotFoundException e) {
             // 404
             errorCount++;
-            log.println("No content found for URL: " + url);
+            log.println("No content found for URL: " + link);
         }
 
         long timeSpentLoading = (System.currentTimeMillis() - loadFileStartTime);
-        loadFileLog.println(url + "\t" + timeSpentLoading + " milliseconds");
+        loadFileLog.println(link.getLinkUrl() + "\t" + timeSpentLoading + " milliseconds");
         loadFileLog.flush();
 
         return summary;
@@ -870,10 +868,18 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      *
      * @param filename file name
      * @param list     list into which all lines of the file are added into.
+     * @return list of strings
      * @throws java.io.IOException exception
      */
-    private void loadFromFile(String filename, List<String> list) throws IOException {
+    private List<String> loadFromFile(String filename, List<String> list) throws IOException {
+        if (filename == null)
+            return null;
+        File file = new File(filename);
+        if (!file.exists())
+            file.createNewFile();
         BufferedReader in = new BufferedReader(new FileReader(filename));
+        if (list == null)
+            list = new ArrayList<String>();
         String currentLine;
         while ((currentLine = in.readLine()) != null) {
             if (currentLine.startsWith("#")) {
@@ -882,6 +888,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 list.add(currentLine);
             }
         }
+        return list;
     }
 
 }

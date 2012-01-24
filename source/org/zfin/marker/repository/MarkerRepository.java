@@ -9,6 +9,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.people.MarkerSupplier;
@@ -35,9 +36,11 @@ public interface MarkerRepository {
 
     List<String> getTranscriptTypes();
 
-    Marker getMarkerByAbbreviationIgnoreCase(String abbreviation) ;
+    Marker getMarkerByAbbreviationIgnoreCase(String abbreviation);
 
     Marker getMarkerByAbbreviation(String abbreviation);
+
+    Morpholino getMorpholinoByAbbreviation(String abbreviation);
 
     Marker getMarkerByName(String name);
 
@@ -125,7 +128,7 @@ public interface MarkerRepository {
 
     MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event);
 
-    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason,MarkerAlias markerAlias);
+    MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason, MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
 
@@ -178,7 +181,7 @@ public interface MarkerRepository {
      * @param pubZdbId
      * @return list of marker objects
      */
-    List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType,String pubZdbId);
+    List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId);
 
     // clone methods
 
@@ -262,14 +265,15 @@ public interface MarkerRepository {
     /**
      * Create a gene for a given Morpholino which is targeting it.
      *
-     * @param morpholino      valid Morpholino of Marker object.
+     * @param morpholino valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    Set<Marker> getTargetGenesForMorpholino(Marker morpholino);
+    List<Marker> getTargetGenesForMorpholino(Morpholino morpholino);
 
     /**
      * Checks to see if a marker with the abbreviation given is already in the database.
      * The check is case insensitive.
+     *
      * @param abbreviation string
      * @return true/false
      */
@@ -277,6 +281,7 @@ public interface MarkerRepository {
 
     /**
      * Retrieves all marker IDs if no number is given or the first N markers for firstN = 0;
+     *
      * @param firstN number of markers to be returned
      * @return list of markers
      */
@@ -284,18 +289,21 @@ public interface MarkerRepository {
 
     /**
      * Retrieves all marker IDs.
+     *
      * @return list of markers
      */
     List<String> getAllMarkers();
 
     /**
      * Retrieve all distinct marker types used in the marker table
+     *
      * @return list of marker types
      */
     List<MarkerType> getAllMarkerTypes();
 
     /**
      * Retrieve all gene ids of genes that have a SwissProt external note.
+     *
      * @param firstNIds number of records to be returned
      * @return list of gene ids
      */
@@ -315,9 +323,9 @@ public interface MarkerRepository {
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
 
-    List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) ;
+    List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
-    List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) ;
+    List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
 
@@ -331,24 +339,33 @@ public interface MarkerRepository {
 
     List<String> getMarkerZdbIdsForType(Marker.Type gene);
 
-   Map<String,String> getGeoMarkerCandidates();
+    Map<String, String> getGeoMarkerCandidates();
 
-   List<Marker> getConstructsForGene(Marker gene);
+    /**
+     * Retrieve list of mutants and transgenics being associated with a gene
+     *
+     * @param geneID gene ID
+     * @return list of genotype (non-wt)
+     */
+    List<Genotype> getMutantsAndTgsByGene(String geneID);
 
-   Genotype getStrainForTranscript(String zdbID);
+    List<Marker> getConstructsForGene(Marker gene);
 
-   List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage);
+    Genotype getStrainForTranscript(String zdbID);
+
+    List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage);
 
     /**
      * Retrieves all engineered region markers.
+     *
      * @return
      */
     List<Marker> getAllEngineeredRegions();
 
     List<MarkerRelationshipPresentation> getClonesForGeneTranscripts(String zdbID);
 
-    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID,MarkerRelationship.Type type1,MarkerRelationship.Type type2);
+    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2);
 
-    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID,MarkerRelationship.Type type1,MarkerRelationship.Type type2,String resultType);
+    List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2, String resultType);
 
 }

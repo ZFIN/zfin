@@ -30,7 +30,23 @@ public class GenotypePresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Genotype genotype) {
+        if (getBackground(genotype) != null) {
+            return getTomcatLink(uri, genotype.getZdbID(), getName(genotype)+"("+getBackground(genotype)+")", null);
+        }
         return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
+    }
+
+    public static String getBackground(Genotype genotype) {
+        if (!genotype.getAssociatedGenotypes().isEmpty()) {
+            String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
+            String backgroundNames = new String("");
+            for (Genotype bkgrd : genotype.getAssociatedGenotypes()) {
+                 backgroundNames = backgroundNames + bkgrd.getName();
+            }
+            return getSpanTag(cssClassName, backgroundNames, backgroundNames);
+        }
+
+        return null;
     }
 
 }

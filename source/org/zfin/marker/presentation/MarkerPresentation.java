@@ -2,15 +2,21 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.zfin.feature.Feature;
+import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -83,6 +89,72 @@ public class MarkerPresentation extends EntityPresentation {
 
     public static String getMarkerLink(Marker marker) {
         return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getName());
+    }
+
+    public static String getMarkerLinkByZfinEntity(ZfinEntity entity) {
+        String ID = entity.getID();
+        ActiveData.Type dataType = ActiveData.validateID(ID);
+        switch (dataType) {
+            case GENE:
+                Marker marker = getMarkerFromEntity(entity, Marker.Type.GENE, Marker.TypeGroup.GENEDOM);
+                return MarkerPresentation.getMarkerLink(marker);
+            case ALT:
+                Feature feature = new Feature();
+                feature.setAbbreviation(entity.getName());
+                feature.setName(entity.getName());
+                feature.setZdbID(entity.getID());
+                return FeaturePresentation.getLink(feature);
+            case MRPHLNO:
+                marker = getMarkerFromEntity(entity, Marker.Type.MRPHLNO, Marker.TypeGroup.MRPHLNO);
+                return MarkerPresentation.getMarkerLink(marker);
+            case TGCONSTRCT:
+                marker = getMarkerFromEntity(entity, Marker.Type.TGCONSTRCT, Marker.TypeGroup.CONSTRUCT);
+                return MarkerPresentation.getMarkerLink(marker);
+            case ETCONSTRCT:
+                marker = getMarkerFromEntity(entity, Marker.Type.ETCONSTRCT, Marker.TypeGroup.CONSTRUCT);
+                return MarkerPresentation.getMarkerLink(marker);
+            case GTCONSTRCT:
+                marker = getMarkerFromEntity(entity, Marker.Type.GTCONSTRCT, Marker.TypeGroup.CONSTRUCT);
+                return MarkerPresentation.getMarkerLink(marker);
+            case EFG:
+                marker = getMarkerFromEntity(entity, Marker.Type.EFG, Marker.TypeGroup.EFG);
+                return MarkerPresentation.getMarkerLink(marker);
+            case PTCONSTRCT:
+                marker = getMarkerFromEntity(entity, Marker.Type.PTCONSTRCT, Marker.TypeGroup.CONSTRUCT);
+                return MarkerPresentation.getMarkerLink(marker);
+            case SSLP:
+                marker = getMarkerFromEntity(entity, Marker.Type.SSLP, Marker.TypeGroup.SSLP);
+                return MarkerPresentation.getMarkerLink(marker);
+            case EST:
+                marker = getMarkerFromEntity(entity, Marker.Type.EST, Marker.TypeGroup.EST);
+                return MarkerPresentation.getMarkerLink(marker);
+            case PAC:
+                marker = getMarkerFromEntity(entity, Marker.Type.EST, Marker.TypeGroup.PAC);
+                return MarkerPresentation.getMarkerLink(marker);
+            case STS:
+                marker = getMarkerFromEntity(entity, Marker.Type.EST, Marker.TypeGroup.STS);
+                return MarkerPresentation.getMarkerLink(marker);
+            case RAPD:
+                marker = getMarkerFromEntity(entity, Marker.Type.EST, Marker.TypeGroup.RAPD);
+                return MarkerPresentation.getMarkerLink(marker);
+            default:
+                marker = getMarkerFromEntity(entity, Marker.Type.GENE, Marker.TypeGroup.GENEDOM);
+        }
+        return null;
+    }
+
+    private static Marker getMarkerFromEntity(ZfinEntity entity, Marker.Type type, Marker.TypeGroup groupType ) {
+        Marker marker = new Marker();
+        marker.setAbbreviation(entity.getName());
+        marker.setName(entity.getName());
+        marker.setZdbID(entity.getID());
+        MarkerType markerType = new MarkerType();
+        markerType.setType(type);
+        Set<Marker.TypeGroup> groups = new HashSet<Marker.TypeGroup>(1);
+        groups.add(groupType);
+        markerType.setTypeGroups(groups);
+        marker.setMarkerType(markerType);
+        return marker;
     }
 
     public static String getTranscriptLink(Transcript transcript) {

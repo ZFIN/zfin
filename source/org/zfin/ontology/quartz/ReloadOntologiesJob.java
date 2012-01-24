@@ -5,6 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
@@ -15,12 +16,12 @@ import org.zfin.util.DateUtil;
 /**
  * Re-load the ontologies into memory.
  */
-public class ReloadOntologiesJob extends QuartzJobBean implements StatefulJob {
+public class ReloadOntologiesJob extends ZfinBasicQuartzJob implements StatefulJob {
 
     private static final Logger LOG = Logger.getLogger(ReloadOntologiesJob.class);
     private String jobName;
 
-    public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         CronJobReport report = new CronJobReport(jobName);
         report.start();
         long startTime = System.currentTimeMillis();

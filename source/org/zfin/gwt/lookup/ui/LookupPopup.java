@@ -8,7 +8,7 @@ import org.zfin.gwt.root.ui.LookupComposite;
  */
 public class LookupPopup extends PopupPanel {
 
-    private final String ANATOMY_BASE_URL = "/action/anatomy/term-info?anatomyItem.zdbID=";
+    private final String ANATOMY_BASE_URL = "/action/anatomy/anatomy-preview/";
     private final String MARKER_BASE_URL = "/action/marker/mini-gene?zdbID=";
     private Frame frame;
     private String type;

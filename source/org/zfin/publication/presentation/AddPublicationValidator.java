@@ -17,15 +17,12 @@ public class AddPublicationValidator implements Validator {
 
     public void validate(Object command, Errors errors) {
         AntibodyBean formBean = (AntibodyBean) command;
-        PublicationValidator.validatePublicationID(formBean.getAntibodyNewPubZdbID(), formBean.AB_NEWPUB_ZDB_ID, errors);
+        PublicationValidator.validatePublicationID(formBean.getAntibodyNewPubZdbID(), AntibodyBean.AB_NEWPUB_ZDB_ID, errors);
 
-        if (StringUtils.isEmpty(formBean.getAntibody().getZdbID())) {
-            errors.rejectValue("antibody", "code", " Antibody is null..cannot be attributed.");
-        }
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        RecordAttribution ra = ir.getRecordAttribution(formBean.getAntibody().getZdbID(), formBean.getAntibodyNewPubZdbID(), RecordAttribution.SourceType.STANDARD);
+        RecordAttribution ra = ir.getRecordAttribution(formBean.getEntityID(), formBean.getAntibodyNewPubZdbID(), RecordAttribution.SourceType.STANDARD);
         if (ra != null) {
-            errors.rejectValue("antibody", "code", " This antibody is already associated with this pub.");
+            errors.rejectValue("antibody", "code", " This antibody is already associated with pub: " + formBean.getAntibodyNewPubZdbID());
         }
     }
 }

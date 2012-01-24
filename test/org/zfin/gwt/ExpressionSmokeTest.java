@@ -20,8 +20,6 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
                 // find gui components
                 HtmlLabel htmlLabel = (HtmlLabel) page.getByXPath("//label[@class = 'multisearchLabel']").get(0);
                 assertNotNull(htmlLabel);
-                final HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//td[. = 'Enter search terms']").get(0);
-                assertNotNull(cell);
 
                 // find input
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
@@ -68,8 +66,6 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
                 // find gui components
                 HtmlLabel htmlLabel = (HtmlLabel) page.getByXPath("//label[@class = 'multisearchLabel']").get(0);
                 assertNotNull(htmlLabel);
-                final HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//td[. = 'Enter search terms']").get(0);
-                assertNotNull(cell);
 
                 // find input
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);

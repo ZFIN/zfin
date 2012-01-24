@@ -25,7 +25,7 @@ public class TermSearchController {
                                     Model model) throws Exception {
 
         if (termName == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, termName);
+            model.addAttribute(LookupStrings.ZDB_ID, "No term name provided");
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 

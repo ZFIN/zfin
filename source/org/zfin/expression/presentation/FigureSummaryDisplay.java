@@ -2,6 +2,7 @@ package org.zfin.expression.presentation;
 
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private int imgCount;
     private String thumbnail;
     private List<ExpressionStatement> expressionStatementList;
+    private List<PhenotypeStatement> phenotypeStatementList;
 
     private boolean publicationDisplayed;
 
@@ -55,6 +57,14 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.expressionStatementList = expressionStatementList;
     }
 
+    public List<PhenotypeStatement> getPhenotypeStatementList() {
+        return phenotypeStatementList;
+    }
+
+    public void setPhenotypeStatementList(List<PhenotypeStatement> phenotypeStatementList) {
+        this.phenotypeStatementList = phenotypeStatementList;
+    }
+
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {
         if (anotherFigureSummary == null)
             return 1;
@@ -75,4 +85,5 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     public void setImgCount(int imgCount) {
         this.imgCount = imgCount;
     }
+
 }

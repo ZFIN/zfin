@@ -2,14 +2,18 @@ package org.zfin.anatomy.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -19,35 +23,60 @@ import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * Controller class that serves the anatomy term detail page.
  */
-public class AnatomyTermDetailController extends AbstractCommandController {
+@Controller
+public class AnatomyTermDetailController {
 
     private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
 
-    private static AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-    private static AnatomyRepository anatomyRepository;
-    private static MutantRepository mutantRepository;
+    @Autowired
+    private AntibodyRepository antibodyRepository;
+    @Autowired
+    private AnatomyRepository anatomyRepository;
+    @Autowired
+    private MutantRepository mutantRepository;
+    @Autowired
+    private OntologyRepository ontologyRepository;
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
-    public AnatomyTermDetailController() {
-        setCommandClass(AnatomySearchBean.class);
+    @RequestMapping(value = "/anatomy-preview/{zdbID}")
+    public String getAnatomyPreview(Model model,
+                                    @PathVariable("zdbID") String zdbID,
+                                    AnatomySearchBean defaultFormBean
+    ) throws Exception {
+        LOG.info("Start Anatomy Term Detail Controller");
+
+        AnatomyItem term = retrieveAnatomyTermData(defaultFormBean, zdbID);
+        if (term == null) {
+            return LookupStrings.idNotFound(model, zdbID);
+        }
+
+        model.addAttribute(LookupStrings.FORM_BEAN, defaultFormBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANATOMY.getTitleString() + term.getTermName());
+
+        return "anatomy/anatomy-preview.ajax";
     }
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    @RequestMapping(value = "/anatomy-view/{zdbID}")
+    public String getAnatomyView(Model model
+            , @ModelAttribute("formBean") AnatomySearchBean form
+            , @PathVariable("zdbID") String zdbID
+    ) throws Exception {
         LOG.info("Start Anatomy Term Detail Controller");
-        AnatomySearchBean form = (AnatomySearchBean) command;
-        AnatomyItem term = retrieveAnatomyTermData(form);
+
+        AnatomyItem term = retrieveAnatomyTermData(form, zdbID);
         if (term == null) {
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
+            return LookupStrings.idNotFound(model, zdbID);
         }
 
         if (form.getSectionVisibility().isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION)) {
@@ -63,11 +92,10 @@ public class AnatomyTermDetailController extends AbstractCommandController {
             boolean hasData = hasPhenotypeData(term);
             form.getSectionVisibility().setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, hasData);
         }
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANATOMY.getTitleString() + term.getTermName());
 
-        ModelAndView modelAndView = new ModelAndView("anatomy-item.page", LookupStrings.FORM_BEAN, form);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, term.getTermName());
-
-        return modelAndView;
+        return "anatomy/anatomy-view.page";
     }
 
     private boolean hasExpressionData(GenericTerm anatomyTerm) {
@@ -90,7 +118,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
     }
 
     private boolean hasPhenotypeData(AnatomyItem anatomyTerm) {
-        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
+        GenericTerm term = ontologyRepository.getTermByOboID(anatomyTerm.getOboID());
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(term.getZdbID());
         if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
             return true;
@@ -101,10 +129,9 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         return morphs != null && morphs.size() > 0;
     }
 
-    protected AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form) {
+    protected AnatomyItem retrieveAnatomyTermData(AnatomySearchBean form, String aoTermID) {
         AnatomyItem ai = null;
         try {
-            String aoTermID = form.getAnatomyItem().getZdbID();
             GenericTerm term = null;
             if (aoTermID != null && aoTermID.startsWith("ZFA") && form.getId() == null) {
                 form.setId(aoTermID);
@@ -112,7 +139,7 @@ public class AnatomyTermDetailController extends AbstractCommandController {
             }
             if (aoTermID != null) {
                 if (aoTermID.contains(ActiveData.Type.TERM.name())) {
-                    term = RepositoryFactory.getOntologyRepository().getTermByZdbID(aoTermID);
+                    term = ontologyRepository.getTermByZdbID(aoTermID);
                     if (term == null) {
                         LOG.error("Failed to find term for Term ID: " + aoTermID);
                         return null;
@@ -128,13 +155,13 @@ public class AnatomyTermDetailController extends AbstractCommandController {
                     return null;
                 }
                 form.setAnatomyItem(ai);
-                term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
+                term = ontologyRepository.getTermByOboID(ai.getOboID());
             } else {
                 String id = form.getId();
                 if (StringUtils.isEmpty(id)) {
                     return null;
                 } else if (id.startsWith("ZFA")) {
-                    term = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
+                    term = ontologyRepository.getTermByOboID(id);
                 }
                 if (term != null) {
                     ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
@@ -152,18 +179,10 @@ public class AnatomyTermDetailController extends AbstractCommandController {
         List<AnatomyRelationship> relationships = anatomyRepository.getAnatomyRelationships(ai);
         ai.setRelatedItems(relationships);
         form.setAnatomyItem(ai);
-        Term term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
+        Term term = ontologyRepository.getTermByOboID(ai.getOboID());
         ai.setImages(term.getImages());
 
         return ai;
-    }
-
-    public void setAnatomyRepository(AnatomyRepository anatomyRepository) {
-        this.anatomyRepository = anatomyRepository;
-    }
-
-    public void setMutantRepository(MutantRepository mutantRepository) {
-        this.mutantRepository = mutantRepository;
     }
 
 }

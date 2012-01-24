@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.fish">
+
+    <class name="FishAnnotation" table="fish_annotation_search">
+
+        <id name="ID">
+            <column name="fas_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+
+        <property name="name" column="fas_geno_name"/>
+        <property name="featureGroupName" column="fas_feature_group"/>
+        <property name="genotypeExperimentIds" column="fas_genox_group"/>
+        <property name="genotypeID" column="fas_genotype_group"/>
+        <property name="morpholinoGroupName" column="fas_morpholino_group"/>
+    </class>
+
+    <class name="FeatureGene" table="gene_feature_result_View">
+        <cache usage="read-only"/>
+        <id name="ID" >
+            <column name="gfrv_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+
+        <many-to-one name="fishAnnotation" column="gfrv_fas_id"/>
+        <property name="typeDisplay" column="gfrv_affector_type_display"/>
+        <component name="gene">
+            <property name="ID" column="gfrv_gene_zdb_id"/>
+            <property name="name" column="gfrv_gene_abbrev"/>
+            <property name="nameOrder" column="gfrv_gene_abbrev_order"/>
+        </component>
+        <component name="feature">
+            <property name="ID" column="gfrv_affector_id"/>
+            <property name="name" column="gfrv_affector_abbrev"/>
+            <property name="nameOrder" column="gfrv_affector_abbrev_order"/>
+        </component>
+        <component name="construct">
+            <property name="ID" column="gfrv_construct_zdb_id" />
+            <property name="name" column="gfrv_construct_name"/>
+            <property name="nameOrder" column="gfrv_construct_abbrev_order"/>
+        </component>
+    </class>
+
+</hibernate-mapping>

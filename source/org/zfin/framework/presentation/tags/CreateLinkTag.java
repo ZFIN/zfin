@@ -11,9 +11,11 @@ import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
+import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
@@ -68,6 +70,7 @@ public class CreateLinkTag extends BodyTagSupport {
     private boolean longVersion;
     private boolean suppressPopupLink;
     private boolean curationLink;
+    private boolean suppressMoDetails;
 
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -113,7 +116,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof FeaturePresentationBean)
             link = FeaturePresentation.getLink((FeaturePresentationBean) o);
         else if (o instanceof Experiment)
-            link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink);
+            link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink, suppressMoDetails);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o, suppressPopupLink);
         else if (o instanceof DevelopmentStage)
@@ -132,6 +135,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = ExpressionStatementPresentation.getLink((ExpressionStatement) o, suppressPopupLink);
         else if (o instanceof PhenotypeStatement)
             link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink, curationLink);
+        else if (o instanceof ZfinEntity)
+            link = ZfinEntityPresentation.getLink((ZfinEntity) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;
@@ -238,5 +243,13 @@ public class CreateLinkTag extends BodyTagSupport {
 
     public void setCurationLink(boolean curationLink) {
         this.curationLink = curationLink;
+    }
+
+    public boolean isSuppressMoDetails() {
+        return suppressMoDetails;
+    }
+
+    public void setSuppressMoDetails(boolean suppressMoDetails) {
+        this.suppressMoDetails = suppressMoDetails;
     }
 }

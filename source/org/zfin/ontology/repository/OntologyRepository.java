@@ -158,7 +158,7 @@ public interface OntologyRepository {
      * @param childTerm
      * @return
      */
-    boolean isParentChildRelationshipExist(GenericTerm parentTerm, GenericTerm childTerm);
+    boolean isParentChildRelationshipExist(Term parentTerm, Term childTerm);
 
     List<GenericTerm> getParentDirectTerms(GenericTerm goTerm);
 

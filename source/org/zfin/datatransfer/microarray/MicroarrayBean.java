@@ -46,9 +46,6 @@ public class MicroarrayBean {
             writer = null ;
         }
         try {
-            if(writer!=null){
-                writer.close();
-            }
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file)) ;
             String buffer ;
             StringBuffer stringBuffer = new StringBuffer() ;
@@ -61,6 +58,11 @@ public class MicroarrayBean {
         } catch (IOException e) {
             logger.error(e.fillInStackTrace());
             return "Failed to read string from file:" + e.fillInStackTrace();
+        }
+        finally {
+            if(writer!=null){
+                writer.close();
+            }
         }
     }
 

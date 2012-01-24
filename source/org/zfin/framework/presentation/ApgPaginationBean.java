@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Pagination logic for apg serach pages.
+ * Pagination logic for apg search pages.
  */
 public class ApgPaginationBean extends PaginationBean {
 
@@ -25,7 +25,7 @@ public class ApgPaginationBean extends PaginationBean {
 
         for (int i = 1; i <= MAXPAGELINKS / 2; i++) {
             if (page + i <= totalPages)
-                pageList.put(page + 1, getFirstRecordOnGivenPage(page + i));
+                pageList.put(page + i, getFirstRecordOnGivenPage(page + i));
         }
 
         return pageList;

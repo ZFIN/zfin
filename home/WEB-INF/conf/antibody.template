@@ -13,7 +13,7 @@
 || Antibody isotype | {text-data:AntibodyIsotype}{text-data} ||
 || Antibody type | {text-data:AntibodyType}{text-data} ||
 || Anatomical structures recognized \\
-(use terms from the [ZFIN Anatomical Ontology|http://zfin.org/action/anatomy/search]) | {text-data:AnatomicalStructuresRecognized}{text-data} ||
+(use terms from the [ZFIN Anatomical Ontology|http://zfin.org/action/anatomy/anatomy-search]) | {text-data:AnatomicalStructuresRecognized}{text-data} ||
 || Recognized target molecules (gene names, domains, epitopes ...)  | {text-data:RecognizedTargetMolecules}{text-data} ||
 || Recognized ZFIN genes \\
 current ZFIN-gene symbols only [ZFIN Gene Search|http://zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg] | {text-data:ZFINGenes}{text-data} ||

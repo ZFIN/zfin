@@ -11,6 +11,8 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
+import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
@@ -66,6 +68,8 @@ public class CreateNameTag extends TagSupport {
             link = TermPresentation.getName((Term) o);
         else if (o instanceof PostComposedEntity)
             link = TermPresentation.getName((PostComposedEntity) o);
+        else if (o instanceof Fish)
+            link = FishPresentation.getName((Fish) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
 

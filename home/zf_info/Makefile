@@ -31,14 +31,14 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info
 
-SUBDIRS = anatomy catch dbase images monitor movies news \
+SUBDIRS = anatomy catch dbase images movies news \
 	zfbook sequence 2006_tutorial 
 
 GENERICS = defs.html  zfprbs.html downloads.html \
 	nomen_tutorial.html stars.html \
 	syntax_help.html
 
-STATICS = 227.gif fish.gif logo.jpeg genome.html updates.html  citation.html \
+STATICS = 227.gif fish.gif logo.jpeg genome.html citation.html \
 	translocation.jpeg zfin.gif anatomy.html submissions.html zebrafish2009.pdf contact_us.html \
 	glossary.html GO.html oev.html nomen_comm.html blast_info.html \
 	ontology_relationship_info.html author_guidelines.html author_guide_checklist.html \

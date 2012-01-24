@@ -13,10 +13,15 @@ public interface SqlQueryKeywords {
     public static final String WHERE = "WHERE";
     public static final String ORDER_BY = "ORDER BY";
     public static final String GROUP_BY = "GROUP BY";
+    public static final String COUNT = "COUNT";
+    public static final String STAR = "*";
+    public static final String EQUALS = "=";
     public static final String DELETE = "DELETE";
     public static final String EXISTS = "EXISTS";
     public static final String CREATE = "CREATE";
     public static final String INTO = "INTO";
     public static final String TABLE = "TABLE";
+    public static final String FROM = "FROM";
+    public static final String COUNT_START = "COUNT(*)";
 
 }

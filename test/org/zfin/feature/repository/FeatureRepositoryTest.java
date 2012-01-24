@@ -219,7 +219,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getLabsOfOriginWithPrefix() {
         List<Organization> labs = featureRepository.getLabsOfOriginWithPrefix();
         assertNotNull(labs);
-        logger.error("number of lab: " + labs.size());
+        logger.info("number of lab: " + labs.size());
         assertTrue(labs.size() > 200); // should be around 283, otherwise closer to 300
         // just choose the first 5
         for (int i = 0; i < 5; i++) {

@@ -1,9 +1,13 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.log4j.Logger;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.zfin.anatomy.AnatomyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.repository.AntibodyRepository;
@@ -27,9 +31,7 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,103 +39,143 @@ import java.util.List;
  * This class is used to serve ajax calls for expression and phenotype data
  * for a given anatomy term.
  */
-public class AnatomyAjaxController extends MultiActionController {
+@Controller
+public class AnatomyAjaxController {
 
-    private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    @Autowired
+    private AnatomyService anatomyService;
+    @Autowired
+    private AnatomyRepository anatomyRepository;
+    @Autowired
+    private MutantRepository mutantRepository;
+    @Autowired
+    private OntologyRepository ontologyRepository;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+
     private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
 
-    public ModelAndView showExpressionGenes(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @ModelAttribute("formBean")
+    public AnatomySearchBean getDefaultFormBean() {
+        return new AnatomySearchBean();
+    }
 
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
+
+    @RequestMapping(value = "/show-expressed-genes/{zdbID}")
+    public String showExpressedGenes(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
+        LOG.info("Start Anatomy Term Detail Controller");
+
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveExpressedGenesData(term, form);
-        return new ModelAndView("anatomy-show-expression-genes.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-expressed-genes.ajax";
     }
 
-    public ModelAndView showExpressionInsituProbes(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping(value = "/show-expressed-insitu-probes/{zdbID}")
+    public String showExpressedInSituProbes(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
 
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveHighQualityProbeData(term, form);
-        return new ModelAndView("anatomy-show-expression-insitu-probes.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-expressed-insitu-probes.ajax";
     }
 
-    public ModelAndView showExpressionAntibodies(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping(value = "/show-labeled-antibodies/{zdbID}")
+    public String showExpressedAntibodies(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
 
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveAntibodyData(term, form);
-        return new ModelAndView("anatomy-show-expression-antibodies.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-labeled-antibodies.ajax";
     }
 
-    public ModelAndView showPhenotypeMutants(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping(value = "/show-phenotype-mutants/{zdbID}")
+    public String showPhenotypeMutants(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
 
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
+        form.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         form.setAoTerm(term);
         retrieveMutantData(term, form);
-        return new ModelAndView("anatomy-show-phenotype-mutant.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-phenotype-mutants.ajax";
     }
 
-    public ModelAndView showPhenotypeMorpholinos(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping(value = "/show-all-phenotype-mutants/{zdbID}")
+    public String showAllPhenotypeMutants(Model model
+            , @ModelAttribute("formBean") AnatomySearchBean form
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
 
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
+
+        form.setAoTerm(term);
+        retrieveMutantData(term, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-all-phenotype-mutants.page";
+    }
+
+    @RequestMapping(value = "/show-phenotype-wildtype-morpholinos/{zdbID}")
+    public String showWildtypePhenotypeMorpholinos(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveMorpholinoData(term, form, true);
-        return new ModelAndView("anatomy-show-phenotype-morpholinos.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-phenotype-wildtype-morpholinos.ajax";
     }
 
-    public ModelAndView showPhenotypeNonwildtypeMorpholinos(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-
-        String termID = request.getParameter(LookupStrings.ZDB_ID);
+    @RequestMapping(value = "/show-phenotype-non-wildtype-morpholinos/{zdbID}")
+    public String showNonWildtypePhenotypeMorpholinos(Model model
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
+            return "";
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveMorpholinoData(term, form, false);
-        return new ModelAndView("anatomy-show-phenotype-non-wildtype-morpholinos.ajax", LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-phenotype-non-wildtype-morpholinos.ajax";
     }
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         PaginationResult<AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
@@ -191,10 +233,15 @@ public class AnatomyAjaxController extends MultiActionController {
         form.setAnatomyStatistics(statistics);
     }
 
+    private @Autowired
+    HttpServletRequest request;
+
     private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form) {
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false,
-                AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false, form);
         form.setGenotypeCount(genotypeResult.getTotalCount());
+        form.setTotalRecords(genotypeResult.getTotalCount());
+        form.setQueryString(request.getQueryString());
+        form.setRequestUrl(request.getRequestURL());
 
         List<Genotype> genotypes = genotypeResult.getPopulatedResults();
         form.setGenotypes(genotypes);

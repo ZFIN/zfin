@@ -6,12 +6,15 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
+import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
+import org.zfin.fish.repository.FishRepositoryTest;
+import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
@@ -38,8 +41,8 @@ import org.zfin.sequence.SequenceRepositoryTest;
 import org.zfin.sequence.TranscriptServiceTest;
 import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
-import org.zfin.sequence.reno.RenoMultiRunTest;
 import org.zfin.sequence.reno.OrthologyTest;
+import org.zfin.sequence.reno.RenoMultiRunTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
@@ -54,6 +57,7 @@ import org.zfin.webservice.MarkerSoapDbTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
@@ -61,15 +65,21 @@ import org.zfin.webservice.MarkerSoapDbTest;
         BlastRepositoryTest.class,
         DTOConversionServiceTest.class,
         CurationRPCTest.class,
+        DatabaseServiceDbTest.class,
         DisplayGroupRepositoryTest.class,
+        DTOConversionServiceTest.class,
+        EnumValidationTest.class,
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
+        FeatureRepositoryTest.class,
+        FishRepositoryTest.class,
+        FishServiceTest.class,
         FpInferenceGafServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
+        GoEvidenceTest.class,
         GwtConversionTest.class,
         InfrastructureRepositoryTest.class,
-        FeatureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MarkerRepositoryTest.class,
         MergeMarkerDBTest.class,

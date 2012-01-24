@@ -6,14 +6,13 @@ import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExperimentCondition;
+import org.zfin.expression.Figure;
+import org.zfin.fish.repository.FishService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.PhenotypeExperiment;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.people.Person;
 import org.zfin.publication.Publication;
@@ -284,9 +283,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Set<ExperimentCondition> conditions = phenotypeExperiment.getGenotypeExperiment().getExperiment().getMorpholinoConditions();
         if (conditions != null) {
             for (ExperimentCondition condition : conditions) {
-                Marker morpholino = condition.getMorpholino();
+                Morpholino morpholino = condition.getMorpholino();
                 InformixUtil.runInformixProcedure("regen_genox_marker", morpholino.getZdbID());
-                Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+                List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
                 for (Marker targetGene : targetGenes)
                     InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbID());
             }
@@ -468,7 +467,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
-                .uniqueResult().toString()) ;
+                .uniqueResult().toString());
     }
 
     @Override
@@ -487,7 +486,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "   from phenotype_statement NOTnormal " +
                 "   where NOTnormal.phenos_phenox_pk_id = phenox_pk_id " +
                 "   and NOTnormal.phenos_tag != \"normal\" " +
-                ") " ;
+                ") ";
         return (FigureLink) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
                 .setMaxResults(1)
@@ -496,27 +495,66 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         FigureLink figureLink = new FigureLink();
                         figureLink.setFigureZdbId(tuple[0].toString());
-                        if(tuple[1]==null){
+                        if (tuple[1] == null) {
                             figureLink.setLinkContent("Text only");
-                        }
-                        else{
+                        } else {
                             figureLink.setLinkContent(tuple[1].toString());
                         }
                         figureLink.setLinkValue(
                                 EntityPresentation.getWebdriverLink(
-                                        "?MIval=aa-fxfigureview.apg&OID=",figureLink.getFigureZdbId()
-                                        ,figureLink.getLinkContent()
+                                        "?MIval=aa-fxfigureview.apg&OID=", figureLink.getFigureZdbId()
+                                        , figureLink.getLinkContent()
                                 )
                         );
 
-                        return figureLink ;
+                        return figureLink;
                     }
                 })
                 .uniqueResult();
     }
 
     /**
+     * Retrieve all phenotype statements for a given figure.
+     *
+     * @param figure figure
+     * @return list of phenotype statements
+     */
+    public List<PhenotypeStatement> getPhenotypeStatements(Figure figure) {
+        if (figure == null || figure.getZdbID() == null)
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+        String sql = "from PhenotypeStatement where " +
+                " phenotypeExperiment.figure = :figure";
+
+        Query query = session.createQuery(sql);
+        query.setParameter("figure", figure);
+        return query.list();
+    }
+
+    /**
+     * Retrieve all phenotypes for a given genotype experiment.
+     *
+     * @param genoxID genotype experiment id
+     * @return list of phenotypes
+     */
+    public List<PhenotypeStatement> getPhenotypeStatements(String genoxID) {
+        if (genoxID == null)
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+        String sql = "from PhenotypeStatement where " +
+                " phenotypeExperiment.genotypeExperiment.zdbID = :genoxID";
+
+        Query query = session.createQuery(sql);
+        query.setParameter("genoxID", genoxID);
+        return query.list();
+    }
+
+
+    /**
      * Here we assume that there is only one.
+     *
      * @param gene
      * @return
      */
@@ -543,9 +581,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         PublicationLink publicationLink = new PublicationLink();
-                        publicationLink. setPublicationZdbId(tuple[0].toString());
+                        publicationLink.setPublicationZdbId(tuple[0].toString());
                         publicationLink.setLinkContent(tuple[1].toString());
-                        return publicationLink ;
+                        return publicationLink;
                     }
                 })
                 .uniqueResult();
@@ -568,22 +606,22 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
-                .uniqueResult().toString()) ;
+                .uniqueResult().toString());
     }
 
-    private class PostComposedResultTransformer extends BasicTransformerAdapter{
+    private class PostComposedResultTransformer extends BasicTransformerAdapter {
         @Override
         public Object transformTuple(Object[] tuple, String[] aliases) {
             PostComposedPresentationBean bean = new PostComposedPresentationBean();
             bean.setSuperTermZdbId(tuple[0].toString());
             bean.setSuperOntologyId(tuple[1].toString());
-            if(tuple[2]!=null){
+            if (tuple[2] != null) {
                 bean.setSubTermZdbId(tuple[2].toString());
                 bean.setSubOntologyId(tuple[3].toString());
                 bean.setSubTermName(tuple[5].toString());
             }
             bean.setSuperTermName(tuple[4].toString());
-            return bean ;
+            return bean;
         }
 
     }
@@ -614,7 +652,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "     ) " +
                 " ";
         phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql1)
-                .setString("markerZdbId",gene.getZdbID())
+                .setString("markerZdbId", gene.getZdbID())
                 .setResultTransformer(postComposedResultTransformer)
                 .list());
 
@@ -638,10 +676,43 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 " ";
 
         phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql2)
-                .setString("markerZdbId",gene.getZdbID())
+                .setString("markerZdbId", gene.getZdbID())
                 .setResultTransformer(postComposedResultTransformer)
                 .list());
 
         return new ArrayList<PostComposedPresentationBean>(phenotypes);
+    }
+
+
+    @Override
+    public List<Figure> getPhenoFiguresByGenotype(String genotypeID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct fig from Figure fig, GenotypeFigure genoFig " +
+                "      where genoFig.genotype.zdbID = :genoID " +
+                "        and genoFig.figure = fig";
+
+        Query query = session.createQuery(hql);
+        query.setString("genoID", genotypeID);
+        return (List<Figure>) query.list();
+    }
+
+    /**
+     * Retrieve phenotype statement for a given figure and fish.
+     * @param figure figure
+     * @param fishID fish ID
+     * @return list of phenotype statements
+     */
+    public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct pheno from PhenotypeStatement pheno  " +
+                "      where pheno.phenotypeExperiment.figure = :figure " +
+                "        and pheno.phenotypeExperiment.genotypeExperiment.zdbID in (:genoxIDs)";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("figure", figure);
+        query.setParameterList("genoxIDs", FishService.getGenoxIds(fishID));
+        return (List<PhenotypeStatement>) query.list();
     }
 }

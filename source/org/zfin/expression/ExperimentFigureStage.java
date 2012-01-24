@@ -118,4 +118,17 @@ public class ExperimentFigureStage {
         start = result.getStartStage();
         end = result.getEndStage();
     }
+
+
+    @Override
+    public String toString() {
+        return "ExperimentFigureStage{" +
+                "expressionExperiment=" + expressionExperiment +
+                ", figure=" + figure +
+                ", start=" + start +
+                ", end=" + end +
+                ", expressionResults=" + expressionResults +
+                ", terms=" + terms +
+                '}';
+    }
 }

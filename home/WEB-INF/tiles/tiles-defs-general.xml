@@ -22,6 +22,22 @@
         <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
     </definition>
 
+    <definition name="antibody/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/antibody/{1}.jsp"/>
+    </definition>
+
+    <definition name="anatomy/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/{1}.jsp"/>
+    </definition>
+
+    <definition name="database/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/{1}.jsp"/>
+    </definition>
+
+    <definition name="database/*.popup" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/{1}.jsp"/>
+    </definition>
+
     <definition name="marker/*.insert" template="/WEB-INF/jsp/marker/{1}.jsp"/>
 
     <!--feature definitions-->
@@ -31,12 +47,20 @@
     </definition>
 
     <definition name="feature/*.insert" template="/WEB-INF/jsp/feature/{1}.jsp"/>
+    <definition name="anatomy/*.ajax" template="/WEB-INF/jsp/anatomy/{1}.jsp"/>
 
     <!--genotype definitions-->
     <definition name="genotype/*.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Genotype: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
     </definition>
+
+    <!--fish definitions-->
+    <definition name="fish/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/fish/{1}.jsp"/>
+    </definition>
+
+    <definition name="fish/*.insert" template="/WEB-INF/jsp/fish/{1}.jsp"/>
 
     <!-- webdriver definitions -->
     <definition name="webdriver.page" template="/WEB-INF/jsp/webdriver/webdriver.jsp">
@@ -51,6 +75,10 @@
     <definition name="reno/*.page" extends="main_layout">
         <put-attribute name="staticTitle" value="ZFIN ReNo" />
         <put-attribute name="body" value="/WEB-INF/jsp/reno/{1}.jsp"/>
+    </definition>
+
+    <definition name="mutant/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/mutant/{1}.jsp" />
     </definition>
 
 </tiles-definitions>

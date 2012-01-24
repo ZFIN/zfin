@@ -63,25 +63,18 @@ public class GenotypeFeature {
     }
 
     public String getParentalZygosityDisplay() {
-        StringBuffer sb = new StringBuffer("");
-        StringBuffer sbMsign = new StringBuffer("&#9792;");
-        StringBuffer sbMZ = new StringBuffer(momZygosity.getZygositySymbol());
-        if (sbMZ.length() > 0) {
-           sb.append(sbMsign);
-           sb.append(sbMZ);
+        StringBuilder displayString = new StringBuilder("");
+        if (momZygosity.getZygositySymbol().length() > 0) {
+            displayString.append("&#9792;");
+            displayString.append(momZygosity.getZygositySymbol());
         }
 
-        StringBuffer sbDsign = new StringBuffer("&#9794;");
-        StringBuffer sbDZ = new StringBuffer(dadZygosity.getZygositySymbol());
-        if (sbDZ.length() > 0) {
-           sb.append("&nbsp;");
-           sb.append(sbDsign);
-           sb.append(sbDZ);
+        if (dadZygosity.getZygositySymbol().length() > 0) {
+            displayString.append("&nbsp;");
+            displayString.append("&#9794;");
+            displayString.append(dadZygosity.getZygositySymbol());
         }
-
-        if (sb.length() == 0)
-            return "";
-        else
-            return feature.getName() + "&nbsp;&nbsp;" + sb.toString();
+        return displayString.toString();
     }
+
 }

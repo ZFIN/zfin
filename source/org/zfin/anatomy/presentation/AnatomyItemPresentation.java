@@ -13,7 +13,7 @@ public class AnatomyItemPresentation extends EntityPresentation {
 
     private final static Logger logger = Logger.getLogger(AnatomyItemPresentation.class);
 
-    private static final String uri = "anatomy/term-detail?anatomyItem.zdbID=";
+    private static final String uri = "anatomy/anatomy-view/";
     public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
     private static final String popupUri = "ontology/term-detail-popup?termID=";
 

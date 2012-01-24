@@ -9,7 +9,7 @@ import java.util.TreeSet;
 
 public class ExperimentPresentation extends EntityPresentation {
 
-    public static String getLink(Experiment experiment, boolean suppressPopupLink) {
+    public static String getLink(Experiment experiment, boolean suppressPopupLink, boolean suppressMoDetails) {
         if (experiment == null)
             return null;
         if (experiment.isStandard())
@@ -22,10 +22,20 @@ public class ExperimentPresentation extends EntityPresentation {
 
         StringBuilder sb = new StringBuilder(50);
         int i = 0;
+        boolean hasMoDefined = false;
         for (ExperimentCondition experimentCondition : conditions) {
             if (i > 0)
-              sb.append(", ");
-            sb.append(ExperimentConditionPresentation.getLink(experimentCondition, suppressPopupLink));
+                sb.append(", ");
+            if (experimentCondition.isMoCondition() && suppressMoDetails) {
+                if (!hasMoDefined) {
+                    sb.append("Morpholino");
+                    hasMoDefined = true;
+                } else { // remove comma and white space.
+                    if (i > 0)
+                        sb.delete(sb.length() - 2, sb.length() - 1);
+                }
+            } else
+                sb.append(ExperimentConditionPresentation.getLink(experimentCondition, suppressPopupLink));
             i++;
         }
         return sb.toString();
@@ -48,7 +58,7 @@ public class ExperimentPresentation extends EntityPresentation {
         int i = 0;
         for (ExperimentCondition experimentCondition : conditions) {
             if (i > 0)
-              sb.append(", ");
+                sb.append(", ");
             sb.append(ExperimentConditionPresentation.getName(experimentCondition));
             i++;
         }

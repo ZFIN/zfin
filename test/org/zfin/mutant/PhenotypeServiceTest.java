@@ -3,14 +3,14 @@ package org.zfin.mutant;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -35,16 +35,18 @@ public class PhenotypeServiceTest {
         anatomyTerm = new GenericTerm();
         anatomyTerm.setZdbID(aoTermZdbID);
         anatomyTerm.setTermName("pronephros");
+        anatomyTerm.setOntology(Ontology.ANATOMY);
         ////TODO
         //anatomyTerm.setCellTerm(false);
 
         cellAnatomyTerm = new GenericTerm();
         cellAnatomyTerm.setZdbID(cellAOZdbID);
         cellAnatomyTerm.setTermName("muscle cell");
-
+        cellAnatomyTerm.setOntology(Ontology.ANATOMY);
         goTerm = new GenericTerm();
         goTerm.setZdbID(GOZdbID);
         goTerm.setTermName(CILIUM);
+        goTerm.setOntology(Ontology.GO_CC);
         //goTerm.setCellTerm(true);
     }
 
@@ -213,6 +215,20 @@ public class PhenotypeServiceTest {
         assertEquals(paleYellow, iterator.next());
     }
 
+    @Test
+    public void retrieveAoTermListForPhenotypes() {
+        String diastatic = "diastatic";
+        PhenotypeStatement statement = createPhenotypeStatement(anatomyTerm, cellAnatomyTerm, null, null, diastatic);
+        Set<Term> termList = PhenotypeService.getAllAnatomyTerms(statement);
+        assertNotNull(termList);
+        assertEquals(2, termList.size());
+
+        statement = createPhenotypeStatement(anatomyTerm, goTerm, null, null, diastatic);
+        termList = PhenotypeService.getAllAnatomyTerms(statement);
+        assertNotNull(termList);
+        assertEquals(1, termList.size());
+    }
+
     private PhenotypeStatement createPhenotypeStatement(GenericTerm superTerm, GenericTerm subterm, GenericTerm relatedSuperterm, GenericTerm relatedSubterm, String qualityName) {
         PostComposedEntity entity = new PostComposedEntity();
         entity.setSuperterm(superTerm);
@@ -223,6 +239,7 @@ public class PhenotypeServiceTest {
         GenericTerm quality = new GenericTerm();
         quality.setTermName(qualityName);
         statement.setQuality(quality);
+        statement.setTag(PhenotypeStatement.Tag.ABNORMAL.toString());
         return statement;
     }
 

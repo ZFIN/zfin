@@ -9,6 +9,7 @@
             <props>
                 <prop key="/dev-tools/home">devToolsHomePage</prop>
                 <prop key="/dev-tools/database-info">devToolsDatabaseInfo</prop>
+                <prop key="/dev-tools/bts-index-info">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/jdbc-driver-info">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/java-properties">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/thread-info">devToolsDatabaseInfo</prop>
@@ -219,6 +220,7 @@
         <property name="mappings">
             <props>
                 <prop key="/dev-tools/database-info">databaseInfoHandler</prop>
+                <prop key="/dev-tools/bts-index-info">btsInfoHandler</prop>
                 <prop key="/dev-tools/jdbc-driver-info">jdbcDriverHandler</prop>
                 <prop key="/dev-tools/java-properties">javaPropertiesHandler</prop>
                 <prop key="/dev-tools/thread-info">threadInfoHandler</prop>

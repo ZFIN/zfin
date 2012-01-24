@@ -12,6 +12,8 @@ import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
+import org.zfin.fish.repository.FishRepository;
+import org.zfin.fish.repository.HibernateFishRepository;
 import org.zfin.gbrowse.repository.GBrowseRepository;
 import org.zfin.gbrowse.repository.HibernateGBrowseRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
@@ -72,6 +74,7 @@ public class RepositoryFactory {
     private static GBrowseRepository gbrowseRepository;
     private static PhenotypeRepository phenotypeRep = new HibernatePhenotypeRepository();
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
+    private static FishRepository fishRepository = new HibernateFishRepository();
 
 
     public static ExpressionSummaryRepository getExpressionSummaryRepository() {
@@ -284,5 +287,16 @@ public class RepositoryFactory {
 
     public static void setOntologyRepository(OntologyRepository repository) {
         ontologyRepository = repository;
+    }
+
+    public static FishRepository getFishRepository() {
+        if(fishRepository==null){
+            fishRepository = new HibernateFishRepository();
+        }
+        return fishRepository;
+    }
+
+    public static void setFishRepository(FishRepository repository) {
+        fishRepository = repository;
     }
 }

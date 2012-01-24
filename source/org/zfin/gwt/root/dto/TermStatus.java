@@ -84,4 +84,24 @@ public class TermStatus implements IsSerializable {
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TermStatus that = (TermStatus) o;
+
+        if (term != null ? !term.equals(that.term) : that.term != null) return false;
+        if (zdbID != null ? !zdbID.equals(that.zdbID) : that.zdbID != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = term != null ? term.hashCode() : 0;
+        result = 31 * result + (zdbID != null ? zdbID.hashCode() : 0);
+        return result;
+    }
 }

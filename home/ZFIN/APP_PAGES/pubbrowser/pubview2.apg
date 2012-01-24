@@ -529,8 +529,7 @@ and mrkr_type = 'MRPHLNO'
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Mutants / Transgenic Lines</a> &nbsp; ($MI_ROWCOUNT)
-
+    <li><a href="/action//mutant/mutant-list?zdbID=$OID">Mutants / Transgenic Lines</a> &nbsp; ($MI_ROWCOUNT)
   <?/MIVAR>
 
   <?MICOMMENT> ======== Orthology  ============ <?/MICOMMENT>

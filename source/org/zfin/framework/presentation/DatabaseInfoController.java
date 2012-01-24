@@ -5,10 +5,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.zfin.database.presentation.Table;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.InformixLuceneIndexInspection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,12 @@ public class DatabaseInfoController extends MultiActionController {
         ModelAndView mv = new ModelAndView("metadata");
         mv.addObject("metadata", meta);
         return mv;
+    }
+
+    public ModelAndView btsInfoHandler(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+        InformixLuceneIndexInspection inspection = new InformixLuceneIndexInspection(Table.WH_FISH, "fas_all");
+        return new ModelAndView("bts-index-statistics", "statistics", inspection);
     }
 
     public ModelAndView jdbcDriverHandler(HttpServletRequest request, HttpServletResponse response)

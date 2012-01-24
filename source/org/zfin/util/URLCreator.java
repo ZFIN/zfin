@@ -17,6 +17,8 @@ import java.util.StringTokenizer;
  */
 public class URLCreator {
 
+    public static final String AMPERSAND = "&";
+    public static final String QUESTION_MARK = "?";
     private StringBuilder url = new StringBuilder();
     // linked map to retain the order the parameters were originally in.
     private LinkedHashMap<String, String> nameValuePairs = new LinkedHashMap<String, String>();
@@ -51,6 +53,20 @@ public class URLCreator {
      * otherwise return query string only.
      * The string is URL-encoded.
      *
+     * @return full url or query string
+     */
+    public String getFullURLPlusSeparator() {
+        if (nameValuePairs != null && nameValuePairs.size() >= 1)
+            return getURL(true) + AMPERSAND;
+        else
+            return getURL(true) + QUESTION_MARK;
+    }
+
+    /**
+     * Retrieve the full URL if fullURL=true
+     * otherwise return query string only.
+     * The string is URL-encoded.
+     *
      * @param completeURL boolean
      * @return full url or query string
      */
@@ -66,10 +82,10 @@ public class URLCreator {
             String value = nameValuePairs.get(name);
             if (start) {
                 if (completeURL)
-                    fullUrl.append("?");
+                    fullUrl.append(QUESTION_MARK);
                 start = false;
             } else {
-                fullUrl.append("&");
+                fullUrl.append(AMPERSAND);
             }
             fullUrl.append(name);
             fullUrl.append("=");
@@ -105,8 +121,8 @@ public class URLCreator {
     private void createMapFromUrl() {
 
         // Split off the given URL from its query string
-        StringTokenizer tokenizerQueryString = new StringTokenizer(url.toString(), "?");
-        if (!tokenizerQueryString.hasMoreElements()){
+        StringTokenizer tokenizerQueryString = new StringTokenizer(url.toString(), QUESTION_MARK);
+        if (!tokenizerQueryString.hasMoreElements()) {
             urlWithoutParameters = url.toString();
             return;
         }
@@ -117,7 +133,7 @@ public class URLCreator {
         if (tokenizerQueryString.hasMoreTokens()) {
             String strQueryString = tokenizerQueryString.nextToken();
             if (strQueryString != null) {
-                StringTokenizer tokenizerNameValuePair = new StringTokenizer(strQueryString, "&");
+                StringTokenizer tokenizerNameValuePair = new StringTokenizer(strQueryString, AMPERSAND);
                 while (tokenizerNameValuePair.hasMoreTokens()) {
                     try {
                         String strNameValuePair = tokenizerNameValuePair.nextToken();
@@ -127,8 +143,7 @@ public class URLCreator {
                         String strValue = tokenizerValue.nextToken();
 
                         nameValuePairs.put(strName, strValue);
-                    }
-                    catch (Throwable t) {
+                    } catch (Throwable t) {
                         // If we cannot parse a parameter, ignore it
                     }
                 }

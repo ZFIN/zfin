@@ -58,7 +58,7 @@ public class AbstractScriptWrapper {
         SUCCESS, ERROR, WARNING, INFO, FATAL
     }
 
-    protected static CommandLine parseArguments(String[] args, String usageHelpMessage) {
+    public static CommandLine parseArguments(String[] args, String usageHelpMessage) {
         CommandLine commandLine = null;
         try {
             // parse the command line arguments
@@ -77,7 +77,7 @@ public class AbstractScriptWrapper {
         return commandLine;
     }
 
-    protected static void initializeLogger(String log4jFilename) {
+    public static void initializeLogger(String log4jFilename) {
         DOMConfigurator.configure(log4jFilename);
     }
 

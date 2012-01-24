@@ -42,6 +42,7 @@
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/embryonix
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
+<!--|SOURCEROOT|-->	
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu

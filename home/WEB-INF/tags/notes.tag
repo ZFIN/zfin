@@ -7,7 +7,7 @@
     <c:if test="${!empty hasNotes.dataNotes}">
         ${inTable ? "" : "<table>"}
         <%--<tr><td width="100%">Curator Note:</td></tr>--%>
-        <tr><td width="100%"><b>Curator Note:</b></td></tr>
+        <tr><td width="100%"><b>Curator Notes:</b></td></tr>
         <c:if test="${fn:length(hasNotes.dataNotes) > 1}">
         </c:if>
         <c:forEach var="curatorNote" items="${hasNotes.dataNotes}" varStatus="loopCurNote">
@@ -23,7 +23,7 @@
 
 <c:if test="${!(empty hasNotes.publicComments)}">
     ${inTable ? "" : "<table>"}
-    <tr><td><b>Note:</b></td></tr>
+    <tr><td><b>Notes:</b></td></tr>
    <%--// <tr><td>${zfn:escapeHtml(hasNotes.publicComments, true)}</td></tr>--%>
      <tr><td>${hasNotes.publicComments}</td></tr>
     ${inTable ? "" : "</table>"}

@@ -4,17 +4,18 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.wiki.service.WikiWebService;
 
 /**
  * Cleans sandbox.
  */
-public class SandboxCleanerJob extends QuartzJobBean {
+public class SandboxCleanerJob extends ZfinBasicQuartzJob {
 
     private final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
 
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    public void run(JobExecutionContext context) throws JobExecutionException {
         try {
             WikiWebService.getInstance().cleanSandbox() ;
         } catch (Exception e) {

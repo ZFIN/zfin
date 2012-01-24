@@ -32,6 +32,7 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -131,6 +132,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) criteria.uniqueResult();
     }
 
+    public Morpholino getMorpholinoByAbbreviation(String abbreviation) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Morpholino.class);
+        criteria.add(Restrictions.eq("abbreviation", abbreviation));
+        return (Morpholino) criteria.uniqueResult();
+    }
+
     public Marker getMarkerByName(String name) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(Marker.class);
@@ -228,7 +236,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // b) add related(second) marker panel mapping
         Query query = session.createQuery(
                 "select mm.lg " +
-                        "from MappedMarker mm, MarkerRelationship mr join mr.firstMarker as fm" +
+                        "from MappedMarker mm, AbstractMarkerRelationshipInterface mr join mr.firstMarker as fm" +
                         "     join mr.secondMarker as sm        " +
                         " where fm.zdbID = :zdbId " +
                         "   and sm.zdbID = mm.marker.zdbID " +
@@ -1507,26 +1515,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     /**
      * Retrieve gene for a given Morpholino which is targeting it.
+     * Target genes are ordered by gene abbreviation
      *
      * @param morpholino valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    public Set<Marker> getTargetGenesForMorpholino(Marker morpholino) {
+    public List<Marker> getTargetGenesForMorpholino(Morpholino morpholino) {
         if (morpholino == null)
             return null;
 
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(MarkerRelationship.class);
-        criteria.add(Restrictions.eq("firstMarker", morpholino));
-        criteria.add(Restrictions.eq("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
-        List<MarkerRelationship> markerRelations = criteria.list();
-        if (markerRelations == null)
-            return null;
-
-        Set<Marker> targetGenes = new TreeSet<Marker>();
-        for (MarkerRelationship relationship : markerRelations) {
-            targetGenes.add(relationship.getSecondMarker());
-        }
+        String hql = "select rel.secondMarker from MorpholinoMarkerRelationship as rel  " +
+                "where rel.firstMarker = :morpholino and rel.type = :type " +
+                "order by rel.secondMarker.abbreviationOrder";
+        Query query = session.createQuery(hql);
+        query.setParameter("morpholino", morpholino);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        List<Marker> targetGenes = (List<Marker>) query.list();
         return targetGenes;
     }
 
@@ -2281,5 +2286,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
         return markers;
+    }
+
+    /**
+     * Retrieve list of mutants and transgenics being associated with a gene
+     *
+     * @param geneID gene ID
+     * @return list of genotype (non-wt)
+     */
+    public List<Genotype> getMutantsAndTgsByGene(String geneID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct mutant from Genotype mutant, GenotypeFeature genoFtr, FeatureMarkerRelationship fmRel " +
+                "      where fmRel.marker.zdbID = :geneID " +
+                "        and fmRel.feature = genoFtr.feature" +
+                "        and genoFtr.genotype = mutant" +
+                "        and mutant.wildtype = 'f'" +
+                "   order by mutant.nameOrder ";
+
+        Query query = session.createQuery(hql);
+        query.setString("geneID", geneID);
+
+        return (List<Genotype>) query.list();
     }
 }

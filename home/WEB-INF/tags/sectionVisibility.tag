@@ -115,12 +115,12 @@
             addParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
             addParameter += '=' + sectionID;
             if (link.indexOf(addParameter) == -1) {
-                link += "&" + addParameter;
+                link += "?" + addParameter;
             }
         } else {
             removeParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
             removeParameter += '=' + sectionID;
-            link = link.replace("&" + removeParameter, "");
+            link = link.replace("?" + removeParameter, "");
         }
         return link;
     }

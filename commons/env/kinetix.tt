@@ -47,6 +47,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
+<!--|SOURCEROOT|-->	/research/zprod/users/zfin.org/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	kinetix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu

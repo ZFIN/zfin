@@ -29,8 +29,12 @@
     <link rel=stylesheet type="text/css" href="/css/Lookup.css">
     <link rel=stylesheet type="text/css" href="/css/datapage.css">
     <link rel=stylesheet type="text/css" href="/css/popup.css">
-    <script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+    <link rel=stylesheet type="text/css" href="/css/tipsy.css">
+
+    <script src="/javascript/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <%--<script src="/javascript/header.js" type="text/javascript"></script>--%>
     <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
 
 
     <!-- Start GOOGLE Analytics -->

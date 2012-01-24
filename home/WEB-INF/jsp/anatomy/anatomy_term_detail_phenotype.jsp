@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); } );
-            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos?zdbID=${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); } );
+            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-wildtype-morpholinos/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
             showSection('${phenotypeSection}', true);
         }
     </script>

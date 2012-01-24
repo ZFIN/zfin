@@ -79,6 +79,7 @@
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
 <filter token="LOAD_ONTOLOGIES_AT_STARTUP" value="${LOAD_ONTOLOGIES_AT_STARTUP}"/>
 <filter token="LOCUS_REGISTRATION_EMAIL" value="${LOCUS_REGISTRATION_EMAIL}"/>
+<filter token="LOG4J_FILE" value="${LOG4J_FILE}"/>
 <filter token="LOG_FILE_MAX" value="${LOG_FILE_MAX}"/>
 <filter token="LOG_FILE_PATTERN" value="${LOG_FILE_PATTERN}"/>
 <filter token="LOG_FILE_SESSION" value="${LOG_FILE_SESSION}"/>
@@ -106,6 +107,7 @@
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
 <filter token="SIDEBAR_COLOR" value="${SIDEBAR_COLOR}"/>
 <filter token="SITE_BACKGROUND" value="${SITE_BACKGROUND}"/>
+<filter token="SOURCEROOT" value="${SOURCEROOT}"/>
 <filter token="SQLHOSTS_FILE" value="${SQLHOSTS_FILE}"/>
 <filter token="SQLHOSTS_HOST" value="${SQLHOSTS_HOST}"/>
 <filter token="SSH" value="${SSH}"/>

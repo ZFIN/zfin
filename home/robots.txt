@@ -12,9 +12,9 @@ Disallow: /action/blast/blast-view*
 Disallow: /action/blast/external-blast*
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-fishselect.apg*
+Disallow: /action/fish/search*
 # this is okay if there is a pub, but without the pubid, it is open search
 # Need to set explicitly on the page
-#Allow: /cgi-bin/webdriver?MIval=aa-fishselect.apg&pubId=ZDB-PUB-*
 Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg*
 Disallow: /cgi-bin/webdriver?MIval=aa-newmrkrselect.apg*
 # disallow search form, simply gives results

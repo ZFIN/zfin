@@ -149,14 +149,13 @@
                                         ${supplier.organization.name}</a>
                                 <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
                                 <c:choose>
-                                    <c:when test="${supplier.moensLab}">&nbsp;
-                                    <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}"
-                                               varStatus="loop">
-                                        (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
-                                        <c:if test="${!loop.last}">,&nbsp;</c:if>
-
-                                    </c:forEach>
-                                    </c:when>
+                                <c:when test="${supplier.moensLab}">&nbsp;
+                                <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}"
+                                           varStatus="loop">
+                                    (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
+                                    <c:if test="${!loop.last}">,&nbsp;</c:if>
+                                </c:forEach>
+                                </c:when>
                                     <c:when test="${supplier.solnicaLab}">&nbsp;
                                         <c:forEach var="affectedGene"
                                                    items="${formBean.genotypeStatistics.affectedMarkers}"
@@ -165,14 +164,14 @@
                                             <c:if test="${!loop.last}">,&nbsp;</c:if>
                                         </c:forEach>
                                     </c:when>
-                                    <c:otherwise>
-                                        <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}"
-                                                         organization="${supplier.organization}"/>
-                                    </c:otherwise>
-                                </c:choose>
+                                <c:otherwise>
+
+                                <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}"
+                                                 organization="${supplier.organization}"/>
+              </c:otherwise>
+              </c:choose>
                             </c:otherwise>
                         </c:choose>
-
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
@@ -233,7 +232,7 @@
                 <tbody>
                 <tr>
                     <th width="20%">
-                        Feature
+                        Genomic Feature
                     </th>
                     <th width="20%">
                         Zygosity
@@ -252,16 +251,7 @@
                 <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
                     <zfin:alternating-tr loopName="loop">
                         <td>
-                            <c:choose>
-                                <c:when test="${genoFeat.feature.numberOfRelatedGenotypes > 1}">
-                                    <zfin:link entity="${genoFeat.feature}"/> &nbsp; <i><a
-                                        href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fishselect.apg&query_results=exists&compareAllele=starts&fsel_allele_id=${genoFeat.feature.zdbID}">(in ${genoFeat.feature.numberOfRelatedGenotypes}
-                                    genotypes)</a></i>
-                                </c:when>
-                                <c:otherwise>
-                                    <zfin:link entity="${genoFeat.feature}"/> &nbsp; <i>(in 1 genotype)</i>
-                                </c:otherwise>
-                            </c:choose>
+                            <zfin:link entity="${genoFeat.feature}"/>
                         </td>
                         <td>
                                 ${genoFeat.zygosity.name}
@@ -364,8 +354,7 @@
                                                                     integerEntity="${xp.numberOfFigures}"/></a>
                                 </c:otherwise>
                             </c:choose>
-                            <c:if test="${xp.imgInFigure}"><img src="/images/camera_icon.gif" border="0"
-                                                                alt="with image">&nbsp;</c:if>from
+                            <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
                             <c:choose>
                                 <c:when test="${xp.numberOfPublications > 1 }">
                                     ${xp.numberOfPublications} publications
@@ -415,59 +404,21 @@
     </c:if></b>
     <c:choose>
         <c:when test="${formBean.numberOfPhenoDisplays > 0 }">
-            <table class="summary rowstripes">
-                <tbody>
-                <tr>
-                <th width="48%">
-                    Phenotype
-                </th>
-                <th width="17%">
-                    Conditions
-                </th>
-                <th width="35%">
-                    Figures
-                </th>
-                </th>
-                <c:forEach var="pheno" items="${formBean.phenoDisplays}" varStatus="loop" end="4">
-                    <zfin:alternating-tr loopName="loop">
-                        <td valign="top">
-                            <zfin:link entity="${pheno.phenoStatement}"/>
-                        </td>
-                        <td valign="top">
-                            <zfin:link entity="${pheno.experiment}"/>
-                        </td>
-                        <td valign="top">
-                            <c:forEach var="figsPub" items="${pheno.figuresPerPub}">
-                                <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
-                                    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${fig.zdbID}'><zfin2:figureOrTextOnlyLink
-                                            figure="${fig}" integerEntity="1"/></a>
-                                    <c:if test="${!fig.imgless}"><img src="/images/camera_icon.gif" border="0"
-                                                                      alt="with image"></c:if>
-                                    <c:if test="${!figloop.last}">,&nbsp;</c:if>
-                                </c:forEach>
-                                from <zfin:link entity="${figsPub.key}"/><br/>
-                            </c:forEach>
-                        </td>
-                    </zfin:alternating-tr>
-                </c:forEach>
-
-                </tbody>
-            </table>
-
+            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"/>
             <c:if test="${formBean.numberOfPhenoDisplays > 5}">
                 <table width="100%">
                     <tbody>
                     <tr align="left">
                         <td>
                             Show all <a
-                                href="show_all_phenotype?zdbID=${formBean.genotype.zdbID}">${formBean.numberOfPhenoDisplays}&nbsp;experiments</a>
+                                href="/action/genotype/show_all_phenotype?zdbID=${formBean.genotype.zdbID}">${formBean.numberOfPhenoDisplays}&nbsp;phenotype
+                            statements</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </c:if>
         </c:when>
-
         <c:otherwise>
             <br>No data available</br>
         </c:otherwise>

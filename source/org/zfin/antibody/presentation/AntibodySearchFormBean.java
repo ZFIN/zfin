@@ -27,21 +27,6 @@ public class AntibodySearchFormBean extends BasicAnatomyFormBean {
     private AntibodySearchCriteria antibodySearchCriteria;
     private String clonalType;
 
-    public static final String ACTION = "action";
-    private String action;
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public boolean isSearchResults() {
-        return StringUtils.equals(action, Type.SEARCH.toString());
-    }
-
     public String getClonalType() {
         return clonalType;
     }
@@ -130,8 +115,8 @@ public class AntibodySearchFormBean extends BasicAnatomyFormBean {
     }
 
     /**
-     * Accessor that returns true if any of the mathing text fields are used in the search form.
-     * //ToDo: Formalize this so it is more reusalbe on other search forms.
+     * Accessor that returns true if any of the matching text fields are used in the search form.
+     * //ToDo: Formalize this so it is more reusable on other search forms.
      * @return boolean
      */
     public boolean isMatchingTextSearch() {
@@ -140,7 +125,4 @@ public class AntibodySearchFormBean extends BasicAnatomyFormBean {
                 antibodySearchCriteria.isAnatomyDefined();
     }
 
-    public enum Type {
-        SEARCH
-    }
 }

@@ -2,15 +2,14 @@ package org.zfin.datatransfer.go.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -51,7 +50,7 @@ import java.util.*;
  * - Messages are created and emailed out.
  */
 //@Component
-public class GafLoadJob implements Job {
+public class GafLoadJob extends ZfinBasicQuartzJob {
 
     private Logger logger = Logger.getLogger(GafLoadJob.class);
 
@@ -69,7 +68,7 @@ public class GafLoadJob implements Job {
     protected GafOrganization.OrganizationEnum organizationEnum ;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
 
         StringBuilder message = new StringBuilder();

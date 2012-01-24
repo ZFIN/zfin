@@ -71,7 +71,7 @@ public class ExpressionPhenotypeReportBean extends PaginationBean {
     }
 
     public boolean isSearchResults() {
-        return StringUtils.equals(action, AntibodySearchFormBean.Type.SEARCH.toString());
+        return StringUtils.equals(action, "SEARCH");
     }
 
     /**

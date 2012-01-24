@@ -22,24 +22,16 @@ import java.util.*;
 public class AntibodyBean extends PublicationListBean {
 
     protected Antibody antibody;
-
     protected ExpressionSummaryCriteria expressionSummaryCriteria;
-
     protected Term superTerm;
     protected Term subTerm;
     protected DevelopmentStage startStage;
-
     protected DevelopmentStage endStage;
-
     protected AntibodyService antibodyStat;
-
     private boolean onlyFiguresWithImg;
-
     private boolean update = false;
     private boolean addPublication = false;
-
     private String antibodyNewPubZdbID;
-
     public static final String AB_NEWPUB_ZDB_ID = "antibodyNewPubZdbID";
 
     public Antibody getAntibody() {

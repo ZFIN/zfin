@@ -380,4 +380,15 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         List<PhenotypeStatement> term = ontologyRepository.getPhenotypesOnSecondaryTerms();
         assertEquals(0,term.size());
     }
+
+    /**
+     * 'brain nucleus' is a parent term of 'dorsolateral motor nucleus of vagal nerve'
+     */
+    @Test
+    public void parentChildRelationship() {
+        GenericTerm brainNucleus = ontologyRepository.getTermByName("brain nucleus", Ontology.ANATOMY);
+        GenericTerm subTerm = ontologyRepository.getTermByName("dorsolateral motor nucleus of vagal nerve", Ontology.ANATOMY);
+        boolean isParentChildRelation = ontologyRepository.isParentChildRelationshipExist(brainNucleus, subTerm);
+        assertTrue(isParentChildRelation);
+    }
 }

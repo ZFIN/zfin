@@ -110,8 +110,8 @@ public class ExecProcessTest {
     @Test
     public void javaVersion(){
         DefaultExecutor defaultExecutor = new DefaultExecutor();
-        CommandLine commandLine = new CommandLine("which") ;
-        commandLine.addArgument("java") ;
+        CommandLine commandLine = new CommandLine("java") ;
+        commandLine.addArgument("-version") ;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream() ;
         ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream() ;
         try {

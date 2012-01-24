@@ -2,13 +2,13 @@ package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.expression.service.MicroarrayWebServiceBean;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -18,7 +18,7 @@ import java.util.*;
 
 /**
  */
-public class MicroarrayWebserviceJob implements Job {
+public class MicroarrayWebserviceJob extends ZfinBasicQuartzJob {
 
 
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
@@ -27,8 +27,7 @@ public class MicroarrayWebserviceJob implements Job {
     //    @Autowired
     private ExpressionService expressionService = new ExpressionService();
 
-
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             GeoMicorarrayEntriesBean microEntriesBeans = NCBIEfetch.getMicroarraySequences();
 

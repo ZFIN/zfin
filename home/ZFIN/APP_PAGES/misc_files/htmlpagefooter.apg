@@ -60,7 +60,7 @@ jQuery(document).ready(processPopupLinks);
 <div id="footer">
 
   <div id="footerlinks">
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">Home</a>
+    <a href="/">Home</a>
      <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
 
    <a href="/ZFIN/misc_html/tips.html" title="Frequently asked questions">Help and Tips</A>

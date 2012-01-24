@@ -11,12 +11,11 @@ import java.util.Set;
 public abstract class PublicationListBean {
 
     private List<Publication> sortedPublications;
-
     private String orderBy;
-
     private String disassociatedPubId;
-
+    private String entityID;
     public static final String ORDER_BY_AUTHOR = "author";
+
 
     abstract public Set<Publication> getPublications();
 
@@ -101,5 +100,13 @@ public abstract class PublicationListBean {
 
     public void setDisassociatedPubId(String disassociatedPubId) {
         this.disassociatedPubId = disassociatedPubId;
+    }
+
+    public String getEntityID() {
+        return entityID;
+    }
+
+    public void setEntityID(String entityID) {
+        this.entityID = entityID;
     }
 }

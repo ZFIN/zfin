@@ -14,13 +14,19 @@
         divName: "anatomyTermTable",
         inputName: "searchTerm",
         showError: true,
-        buttonText: "search",
-        ontologyName: "zebrafish_anatomy",
+
+        hiddenNames: "antibodyCriteria.anatomyTermNames",
+        hiddenIds: "antibodyCriteria.anatomyTermIDs",
         type: "GDAG_TERM_LOOKUP",
-        useTermTable: true,
-        wildcard: false
-    };
+        ontologyName: "zebrafish_anatomy",
+        width: 40,
+        wildcard: false,
+        useTermTable: true
+    }
 </script>
+
+<input id="antibodyCriteria.anatomyTermIDs" name="antibodyCriteria.anatomyTermIDs" type="hidden">
+<input id="antibodyCriteria.anatomyTermNames" name="antibodyCriteria.anatomyTermNames" type="hidden">
 
 <h1>Lookup Table Application</h1>
 

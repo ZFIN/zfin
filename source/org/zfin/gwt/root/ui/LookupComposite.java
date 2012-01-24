@@ -101,6 +101,7 @@ public class LookupComposite extends Composite implements Revertible {
         types.add(GENEDOM_AND_EFG);
         types.add(FEATURE_LOOKUP);
         types.add(GDAG_TERM_LOOKUP);
+
     }
 
     public void initGui() {

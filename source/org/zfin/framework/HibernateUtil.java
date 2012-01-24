@@ -113,11 +113,9 @@ public class HibernateUtil {
         Session s = localSession.get();
         if (s != null)
             return s;
-        // Open a new ZfinSession, if this Thread has none yet
-        if (s == null) {
-            s = sessionFactory.openSession();
-            localSession.set(s);
-        }
+        // create a new session
+        s = sessionFactory.openSession();
+        localSession.set(s);
         s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
         return s;
     }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.PhenotypeStatement;
@@ -16,6 +18,8 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 @Controller
@@ -27,24 +31,24 @@ public class GenotypeDetailController {
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
 
-    @RequestMapping( value={
+    @RequestMapping(value = {
 //            "/detail/{zdbID}", // TODO: go to a newer style once context is switched?
             "/genotype-detail" // this is the current style, have not changed
     }
     )
-    protected String getGenotypeDetail(@RequestParam String zdbID, Model model) {
+    public String getGenotypeDetail(@RequestParam String zdbID, Model model) {
         LOG.debug("Start Genotype Detail Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
-        if (genotype == null){
+        if (genotype == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
-            if(replacedZdbID!=null){
+            if (replacedZdbID != null) {
                 LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
                 genotype = mutantRepository.getGenotypeByID(replacedZdbID);
             }
         }
-        if (genotype == null){
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
@@ -53,12 +57,12 @@ public class GenotypeDetailController {
             retrieveExpressionData(form, genotype);
             retrievePhenotypeData(form, genotype);
             retrievePublicationData(form, genotype);
-	    }
+        }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         String genotypeName = genotype.getName();
-        genotypeName = genotypeName.replaceAll("<sup>","^");
-        genotypeName = genotypeName.replaceAll("</sup>","");
+        genotypeName = genotypeName.replaceAll("<sup>", "^");
+        genotypeName = genotypeName.replaceAll("</sup>", "");
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
         return "genotype/genotype-detail.page";
@@ -70,7 +74,7 @@ public class GenotypeDetailController {
         Genotype genotype = mutantRepository.getGenotypeByID(genoID);
         if (genotype == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         GenotypeBean form = new GenotypeBean();
@@ -97,7 +101,7 @@ public class GenotypeDetailController {
         form.setExpressionResults(xpRslts);
     }
 
-    private void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
+    public void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
         List<PhenotypeStatement> phenoStatements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
 
         form.setPhenoStatements(phenoStatements);
@@ -112,17 +116,17 @@ public class GenotypeDetailController {
             "/show_all_phenotype" // this is the current style, have not changed
     }
     )
-    protected String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
+    public String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
         LOG.debug("Start All Phenotype Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
         if (genotype == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
-                
+
         retrievePhenotypeData(form, genotype);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);

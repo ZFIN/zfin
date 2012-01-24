@@ -7,6 +7,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -20,14 +21,14 @@ import java.util.List;
 /**
  * Converted from cron job in validatedata.pl removeGOTermsFromWithdrawnMarkers vai fogbugz 6109.
  */
-public class RemoveGoTermsFromWithdrawnMarkersJob implements Job {
+public class RemoveGoTermsFromWithdrawnMarkersJob extends ZfinBasicQuartzJob {
 
     private Logger logger = Logger.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class);
     private final static String TAB = "\t";
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
         List<MarkerGoTermEvidence> markerGoTermEvidenceRepositoryList =
                 RepositoryFactory.getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerAbbreviation("WITHDRAWN%");

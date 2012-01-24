@@ -47,6 +47,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
+<!--|SOURCEROOT|-->	/research/zusers/trunk/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu

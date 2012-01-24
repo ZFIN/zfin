@@ -81,7 +81,7 @@
 </script>
 
 <body id="body" onload="hdrSetTabs();">
-<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-ZDB_home.apg">
+<a href="/">
     <img id="logo-img" src="/images/zfinlogo.png">
     <img id="logo-text" src="/images/zfintxt.png">
 </a>
@@ -152,15 +152,15 @@
     </div>
     <div id="hdr-navlinks">
         <div id="hdr-zirclinks" style="display: none;" class="hdr-linkbar">
-            <a href="/zirc/">ZIRC Home</a>
+            <a href="http://zebrafish.org">ZIRC Home</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <strong> Request: </strong> &nbsp; <a href="/zirc/fish/lineAll.php">Fish</a>,
-            &nbsp; <a href="/zirc/est/estAll.php">ESTs/cDNAs</a>,
-            &nbsp; <a href="/zirc/abs/absAll.php">Antibodies</a>,
-            &nbsp; <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span
+            <strong> Request: </strong> &nbsp; <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish</a>,
+            &nbsp; <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
+            &nbsp; <a href="http://zebrafish.org/zirc/abs/absAll.php">Antibodies</a>,
+            &nbsp; <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book"><span
                 style="font-style:italic;">ZF Book</span></a>,
             &nbsp; <a
-                href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>&nbsp;
+                href="http://zebrafish.org/zirc/orders/buyParaQ.php?item=Paramecia&id=para&detail=Paramecia%20Starter%20Culture">Paramecia</a>&nbsp;
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/zirc/documents/fees.php">Prices</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
@@ -182,14 +182,13 @@
             <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg"
                title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/action/antibody/search"
+            <a href="/action/antibody/antibody-search"
                title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
 
-            <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-fishselect.apg&line_type=mutant">Mutants / Morphants /
-                Tg</a>
+            <a href="/action/fish/search">Mutants / Morphants / Tg</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/action/anatomy/search" title="Search the zebrafish anatomical ontology">Anatomy</a>
+            <a href="/action/anatomy/anatomy-search" title="Search the zebrafish anatomical ontology">Anatomy</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&select_from=PUBLICATION"
                title="Search for zebrafish research publications by author, title or citation">Publications</a>

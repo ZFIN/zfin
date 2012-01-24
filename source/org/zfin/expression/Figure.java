@@ -59,6 +59,9 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     }
 
     public String getLabel() {
+        if (label != null && label.contains("Table")) {
+            return label.substring(label.indexOf("Table"));
+        }
         return label;
     }
 
@@ -122,5 +125,38 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
             return true;
         else
             return false;
+    }
+
+    public String getMediumSizedImg() {
+        if (isImgless())
+          return "";
+
+        return "http://trunk.zfin.org/imageLoadUp/250/" + getImages().iterator().next().getZdbID() + ".jpg";
+    }
+
+    public Image getImg() {
+        if (isImgless())
+          return null;
+
+        return getImages().iterator().next();
+    }
+
+    public int getCaptionWordCount() {
+        if (caption == null)
+            return 0;
+        return caption.length();
+    }
+
+    public String getConciseCaption() {
+        if (getCaptionWordCount() > 780) {
+           return caption.substring(0,780);
+        }
+        return caption;
+    }
+
+    public int getConciseCaptionWordCount() {
+        if (getConciseCaption() == null)
+            return 0;
+        return getConciseCaption().length();
     }
 }

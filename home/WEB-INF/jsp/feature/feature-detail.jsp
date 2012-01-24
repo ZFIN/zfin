@@ -30,14 +30,14 @@
 
 <c:if test="${fn:contains(formBean.feature.abbreviation, 'unrecovered')==true}">
 
-    <br style="font-size:small;">  Note: This record has been created to support data for unrecovered alleles reported by a TILLING project.   </br>
+    <br style="font-size:small;"> Note: This record has been created to support data for unrecovered alleles reported by a TILLING project. </br>
 
 </c:if>
 
 <c:if test="${formBean.feature.type.unspecified}">
 
 
-    <br style="font-size:small;">  Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature.   </br>
+    <br style="font-size:small;"> Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature. </br>
 
 </c:if>
 <hr>
@@ -158,27 +158,27 @@
     </td>
     <td>
         <c:choose>
-            <c:when test="${formBean.feature.featureAssay.mutagen eq null}" >
+            <c:when test="${formBean.feature.featureAssay.mutagen eq null}">
                 Not Specified
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagen=='not specified'}" >
+            <c:when test="${formBean.feature.featureAssay.mutagen=='not specified'}">
                 Not Specified
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagee=='not Specified'}" >
+            <c:when test="${formBean.feature.featureAssay.mutagee=='not Specified'}">
 
-                <c:if test ="${formBean.feature.featureAssay.mutagen =='not Specified'}">
+                <c:if test="${formBean.feature.featureAssay.mutagen =='not Specified'}">
                     Not Specified
                 </c:if>
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagee=='Not Specified'}" >
-                <c:if test ="${formBean.feature.featureAssay.mutagen ne 'spontaneous'}">
+            <c:when test="${formBean.feature.featureAssay.mutagee=='Not Specified'}">
+                <c:if test="${formBean.feature.featureAssay.mutagen ne 'spontaneous'}">
                     treated with     ${formBean.feature.featureAssay.mutagen}
                 </c:if>
-                <c:if test ="${formBean.feature.featureAssay.mutagen == 'spontaneous'}">
+                <c:if test="${formBean.feature.featureAssay.mutagen == 'spontaneous'}">
                     ${formBean.feature.featureAssay.mutagen}
                 </c:if>
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagen=='spontaneous'}" >
+            <c:when test="${formBean.feature.featureAssay.mutagen=='spontaneous'}">
                 ${formBean.feature.featureAssay.mutagen}
             </c:when>
 
@@ -189,7 +189,6 @@
 
     </td>
 </tr>
-
 
 
 <tr>
@@ -218,7 +217,6 @@
     </td>
 
 
-
     <c:choose>
 
         <c:when test="${!empty formBean.featureMap}">
@@ -236,13 +234,13 @@
                         </c:if>
                     </c:if>
                 </c:forEach>
-                &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+                &nbsp;<a
+                    href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
             </td>
 
 
         </c:when>
-
 
 
         <c:when test="${!empty formBean.featureLocations}">
@@ -257,14 +255,13 @@
                         ,&nbsp;
                     </c:if>
                 </c:forEach>
-                &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
+                &nbsp;<a
+                    href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
 
             </td>
 
 
         </c:when>
-
-
 
 
         <c:otherwise>
@@ -303,12 +300,28 @@
 
 <tr>
     <td width="150" valign="top">
+        <b>Current Sources:</b>
+    </td>
+    <td valign="top">
         <c:choose>
-            <c:when test="${fn:length(formBean.feature.suppliers) ne null && fn:length(formBean.feature.suppliers) > 1}">
-                <b>Current Sources:</b>
+            <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
+                <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
+                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                       id="${supplier.organization.zdbID}">
+                            ${supplier.organization.name}</a>
+                    <c:if test="${supplier.zirc}">&nbsp;
+                        <zfin2:orderThis organization="${supplier.organization}"
+                                         accessionNumber="${formBean.feature.zdbID}"/>
+                    </c:if>
+                    <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
+                    </c:if>
+                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
+                    </c:if>
+                    <c:if test="${!status.last}"><br/></c:if>
+                </c:forEach>
             </c:when>
             <c:otherwise>
-                <b>Current Source:</b>
+                No data available
             </c:otherwise>
         </c:choose>
     </td><td valign="top">
@@ -364,16 +377,10 @@
                     <zfin:alternating-tr loopName="loop">
                         <td>
                             <zfin:link entity="${featgenoStat.genotype}"/>
-
-                            <c:if test="${fn:length(featgenoStat.genotype.associatedGenotypes)>0}">
-                                (<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>)
-
-                            </c:if>
                         </td>
                         <td>
                             <zfin:link entity="${featgenoStat.affectedMarkers}"/>
                         </td>
-
 
 
                         <td>
@@ -381,7 +388,8 @@
                                 <c:if test="${featgenoStat.numberOfFigures > 1}">
                                     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
                                         <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                                     integerEntity="${featgenoStat.numberOfFigures}" includeNumber="true"/></a>
+                                                     integerEntity="${featgenoStat.numberOfFigures}"
+                                                     includeNumber="true"/></a>
                                 </c:if>
                                 <c:if test="${featgenoStat.numberOfFigures == 1 }">
                                     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.figure.zdbID}'>
@@ -404,9 +412,7 @@
                                              integerEntity="${featgenoStat.numberOfPublications}"
                                              includeNumber="true"/>
                             </c:if>
-                            <c:if test="${featgenoStat.isImage}">
-                                <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
-                            </c:if>
+                            <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
                             <c:if test="${featgenoStat.isMorpholino}">
                                 <img src="/images/MO_icon.gif" alt="MO">
                             </c:if>
@@ -418,7 +424,8 @@
                                 <c:if test="${featgenoStat.numberOfExpFigures > 1}">
                                     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
                                         <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                                     integerEntity="${featgenoStat.numberOfExpFigures}" includeNumber="true"/></a>
+                                                     integerEntity="${featgenoStat.numberOfExpFigures}"
+                                                     includeNumber="true"/></a>
                                 </c:if>
                                 <c:if test="${featgenoStat.numberOfExpFigures == 1 }">
                                     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
@@ -442,9 +449,7 @@
                                              integerEntity="${featgenoStat.numberOfExpPublications}"
                                              includeNumber="true"/>
                             </c:if>
-                            <c:if test="${featgenoStat.isImageExp}">
-                                <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
-                            </c:if>
+                            <zfin2:showCameraIcon hasImage="${featgenoStat.isImageExp}"/>
                         </td>
                     </zfin:alternating-tr>
                 </c:forEach>
@@ -502,7 +507,6 @@
                 </td>
 
 
-
                 <td>
                     <c:if test="${featgenoStat.numberOfFigures > 0}">
                         <c:if test="${featgenoStat.numberOfFigures > 1}">
@@ -518,7 +522,7 @@
                         </c:if>
                     </c:if>
                     <c:if test="${featgenoStat.numberOfFigures == 0}">
-                       &nbsp;
+                        &nbsp;
                     </c:if>
 
                     <c:if test="${featgenoStat.numberOfPublications ==1}">
@@ -534,10 +538,7 @@
                     <c:if test="${featgenoStat.isMorpholino}">
                         <img src="/images/MO_icon.gif" alt="MO">
                     </c:if>
-                    <c:if test="${featgenoStat.isImage}">
-                        <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
-                    </c:if>
-
+                    <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
                 </td>
 
                 <td>
@@ -545,7 +546,8 @@
                         <c:if test="${featgenoStat.numberOfExpFigures > 1}">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                             integerEntity="${featgenoStat.numberOfExpFigures}" includeNumber="true"/></a>
+                                             integerEntity="${featgenoStat.numberOfExpFigures}"
+                                             includeNumber="true"/></a>
                         </c:if>
                         <c:if test="${featgenoStat.numberOfExpFigures == 1 }">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${featgenoStat.expFigure.zdbID}'>
@@ -568,17 +570,10 @@
                                      integerEntity="${featgenoStat.numberOfExpPublications}"
                                      includeNumber="true"/>
                     </c:if>
-
-                    <c:if test="${featgenoStat.isImageExp}">
-                        <img src="/images/camera_icon.gif" alt="with image" image="" border="0">
-                    </c:if>
-
+                    <zfin2:showCameraIcon hasImage="${featgenoStat.isImageExp}"/>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>
-
-
-
 
 
         </tbody>

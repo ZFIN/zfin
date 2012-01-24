@@ -2,6 +2,7 @@ package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -203,5 +204,35 @@ public class PhenotypeService {
     }
 */
 
+    /**
+     * retrieve all distinct Anatomy terms that are referenced in the entity or related entity for a given
+     * phenotype statement.
+     *
+     * @param phenotypeStatement phenotype statement
+     * @return list of terms
+     */
+    public static Set<Term> getAllAnatomyTerms(PhenotypeStatement phenotypeStatement) {
+        if (phenotypeStatement == null)
+            return null;
+        // at most 4 entries
+        Set<Term> termList = new HashSet<Term>(2);
+        PostComposedEntity entity = phenotypeStatement.getEntity();
+        if (entity != null) {
+            addIfAnatomyTerm(termList, entity.getSuperterm());
+            addIfAnatomyTerm(termList, entity.getSubterm());
+        }
+        PostComposedEntity relatedEntity = phenotypeStatement.getRelatedEntity();
+        if (relatedEntity != null) {
+            addIfAnatomyTerm(termList, relatedEntity.getSuperterm());
+            addIfAnatomyTerm(termList, relatedEntity.getSubterm());
+        }
+        return termList;
+    }
+
+    private static void addIfAnatomyTerm(Set<Term> termList, GenericTerm superterm) {
+        if (superterm != null)
+            if (superterm.getOntology().equals(Ontology.ANATOMY))
+                termList.add(superterm);
+    }
 
 }

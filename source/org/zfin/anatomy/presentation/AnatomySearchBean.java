@@ -1,10 +1,8 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
-import org.zfin.anatomy.AnatomyStatistics;
-import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.*;
+import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.framework.presentation.PaginationBean;
@@ -33,7 +31,6 @@ public class AnatomySearchBean extends PaginationBean {
     public static final int MAX_NUMBER_EPRESSED_GENES = 5;
     public static final int MAX_NUMBER_PROBES = 5;
 
-    private List stages;
     private List<AnatomyItem> anatomyItems;
     private AnatomyItem anatomyItem;
     private String id;
@@ -69,25 +66,16 @@ public class AnatomySearchBean extends PaginationBean {
     private List<MorpholinoStatistics> allMorpholinos;
     private List<AntibodyStatistics> antibodyStatistics;
     private List<MorpholinoStatistics> nonWildtypeMorpholinos;
-    private boolean wildtype;
     private GenericTerm aoTerm;
 
-    public List getStages() {
-        return stages;
-    }
-
-    public void setStages(List stages) {
-        this.stages = stages;
-    }
+    private Map<String, String> stageListDisplay;
 
     public Map<String, String> getDisplayStages() {
-        Map<String, String> entries = new LinkedHashMap<String, String>();
-        for (Object stage1 : stages) {
-            DevelopmentStage stage = (DevelopmentStage) stage1;
-            String labelString = StagePresentation.createDisplayEntry(stage);
-            entries.put(stage.getZdbID(), labelString);
-        }
-        return entries;
+        if (stageListDisplay != null)
+            return stageListDisplay;
+
+        stageListDisplay = AnatomyService.getDisplayStages();
+        return stageListDisplay;
     }
 
     public DevelopmentStage getStage() {
@@ -207,7 +195,7 @@ public class AnatomySearchBean extends PaginationBean {
 
     /**
      * Sort the result list according to: first the items that begin with the search term and
-     * then the terms that contain the serach term. If no term is specified do not sort at all.
+     * then the terms that contain the search term. If no term is specified do not sort at all.
      *
      * @return list of anatomy statistics
      */
@@ -472,37 +460,6 @@ public class AnatomySearchBean extends PaginationBean {
         return url.getURL(true);
     }
 
-    public String getMutantSearchLink(boolean includeSubstructures) {
-        URLCreator url = new URLCreator(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        url.addNamevaluePair("MIval", "aa-fishselect.apg");
-        url.addNamevaluePair("query_results", "exist");
-        url.addNamevaluePair("START", "1");
-        url.addNamevaluePair("TA_selected_structures", getAoTerm().getZdbID());
-        url.addNamevaluePair("fsel_processed_selected_structures", getAoTerm().getZdbID());
-        url.addNamevaluePair("fsel_processed_selected_structures_names", getAoTerm().getTermName());
-        if (includeSubstructures)
-            url.addNamevaluePair("include_substructures", "checked");
-        url.addNamevaluePair("structure_bool", "and");
-        url.addNamevaluePair("mutagen", "any");
-        url.addNamevaluePair("lg", "0");
-        url.addNamevaluePair("WINSIZE", "20");
-        url.addNamevaluePair("fishsel_calledBySelf", "true");
-        url.addNamevaluePair("fselFilterValue", "moExcluded");
-        url.addNamevaluePair("chrom_change", "any");
-        url.addNamevaluePair("search", "SEARCH");
-        url.addNamevaluePair("fsel_inputname", "");
-        url.addNamevaluePair("compare", "contains");
-        return url.getURL(true);
-    }
-
-    public boolean isWildtype() {
-        return wildtype;
-    }
-
-    public void setWildtype(boolean wildtype) {
-        this.wildtype = wildtype;
-    }
-
     public String getExpressionSearchLink() {
         return getExpressionSearchLink(false);
     }
@@ -510,11 +467,6 @@ public class AnatomySearchBean extends PaginationBean {
     public String getExpressionSearchLinkSubstructures() {
         return getExpressionSearchLink(true);
     }
-
-    public String getMutantSearchLinkSubstructures() {
-        return getMutantSearchLink(true);
-    }
-
 
     public AnatomyStatistics getAnatomyStatisticsMutant() {
         return anatomyStatisticsMutant;

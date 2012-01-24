@@ -41,6 +41,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/view_database_driver_info.jsp"/>
     </definition>
 
+    <definition name="bts-index-statistics" extends="dev_layout">
+        <put-attribute name="staticTitle" value="BTS Index Info"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/bts_index_statistics.jsp"/>
+    </definition>
+
     <definition name="thread-info" extends="dev_layout">
         <put-attribute name="staticTitle" value="Thread Info"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/thread_info.jsp"/>

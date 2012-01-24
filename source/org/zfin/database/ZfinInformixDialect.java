@@ -24,7 +24,8 @@ public class ZfinInformixDialect extends InformixDialect {
 
         registerColumnType(Types.LONGVARCHAR, "string");
         registerHibernateType(Types.LONGVARCHAR, "string");
-
+        registerColumnType(Types.JAVA_OBJECT, "string");
+        registerHibernateType(Types.JAVA_OBJECT, "string");
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.wiki.*;
@@ -15,12 +16,12 @@ import java.util.List;
 /**
  * This class makes sure that every page with the label "zebrafish_book" can be edited by "zfin-users".
  */
-public class ValidatePermissionsForZebrafishBookJob extends QuartzJobBean {
+public class ValidatePermissionsForZebrafishBookJob extends ZfinBasicQuartzJob {
 
     private final Logger logger = Logger.getLogger(ValidatePermissionsForZebrafishBookJob.class);
 
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    public void run(JobExecutionContext context) throws JobExecutionException {
 
         try{
             List<String> pagesWithBadPermissions = new ArrayList<String>() ;

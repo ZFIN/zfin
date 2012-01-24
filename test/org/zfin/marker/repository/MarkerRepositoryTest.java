@@ -20,6 +20,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Species;
@@ -732,8 +733,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
-        Marker morpholino = markerRep.getMarkerByID("ZDB-MRPHLNO-100729-2");
-        Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+	Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
 //        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
@@ -745,8 +746,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
-        Marker morpholino = markerRep.getMarkerByID("ZDB-MRPHLNO-060626-6");
-        Set<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+	Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
         Iterator<Marker> iter = targetGenes.iterator() ;

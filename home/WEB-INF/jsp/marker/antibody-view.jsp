@@ -27,7 +27,7 @@
 <zfin2:antibodyLabeling formBean="${formBean}" webdriverPath="<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>"/>
 
 <div class="summary">
-    <a href="/action/antibody/publication-list?antibody.zdbID=${formBean.marker.zdbID}&orderBy=author">CITATIONS</a>  (${formBean.numPubs})
+    <a href="/action/antibody/antibody-publication-list?antibodyID=${formBean.marker.zdbID}&orderBy=author">CITATIONS</a>  (${formBean.numPubs})
 </div>
 
 

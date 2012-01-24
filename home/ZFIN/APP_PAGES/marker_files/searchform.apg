@@ -129,7 +129,7 @@ Input:
        </TD>
      </TR>
      <TR>
-       <TD class=submitbar colspan=2 align="right">
+       <TD class=submitbar colspan=2>
        <?MIVAR>
         <input type=hidden name=query_results value="exist">
 	<input type=hidden NAME="START" value=1>

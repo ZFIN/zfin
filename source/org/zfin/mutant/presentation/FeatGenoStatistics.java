@@ -14,7 +14,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-public class FeatGenoStatistics {
+public class FeatGenoStatistics implements Comparable {
 
     private Genotype genotype;
     private Feature feature;
@@ -286,5 +286,9 @@ public class FeatGenoStatistics {
         return genes;
     }
 
+    public int compareTo(Object o) {
+        FeatGenoStatistics otherFtrGenoStat = (FeatGenoStatistics)o;
 
+        return getGenotype().compareTo(otherFtrGenoStat.getGenotype());
+    }
 }

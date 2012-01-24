@@ -1,10 +1,6 @@
-<%@ page import="org.zfin.antibody.AntibodyType" %>
-<%@ page import="org.zfin.antibody.presentation.AntibodySearchFormBean" %>
-<%@ page import="org.zfin.util.FilterType" %>
 <%@ page import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
-<%@ page import="org.zfin.gwt.lookup.ui.Lookup" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.ExpressionPhenotypeReportBean" scope="request"/>
@@ -161,7 +157,7 @@
             <td align="right" bgcolor="#cccccc">
                 <input value="Search" onclick="submitForm(1)" type="button">
                 <input value="Reset" type="button" onclick="call_reset()">
-                <input type="hidden" name="<%= AntibodySearchFormBean.ACTION%>"/>
+                <input type="hidden" name="ACTION"/>
             </td>
         </tr>
     </table>
@@ -189,7 +185,7 @@
         var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
         if (pageField != null)
             pageField.value = page;
-        form.action.value = "<%= AntibodySearchFormBean.Type.SEARCH.toString()%>";
+        form.action.value = "SEARCH";
         try {
             termStatus = getValidationStatus();
             currentTime = new Date();  // wait up to 4 seconds

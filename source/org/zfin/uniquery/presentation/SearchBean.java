@@ -387,14 +387,8 @@ public class SearchBean extends PaginationBean {
                     }
                 }
                 String envWebdriverLoc = WEBDRIVER_LOCATION;
-                // todo: next 2 lines are only for back-wards compatibility;
-                // will be removed after code is deployed to production.
-                searchResultURL = searchResultURL.replaceFirst("almost", envWebdriverLoc);
-                searchResultURL = searchResultURL.replaceFirst("eselsohr", envWebdriverLoc);
                 searchResultURL = Indexer.makeUrlSpecific(searchResultURL);
-
                 categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDisplayName() + "</b></a>";
-
             } else {
                 categoryHtml = category.getDisplayName();
             }
@@ -512,7 +506,7 @@ public class SearchBean extends PaginationBean {
         Map<String, List<String>> anatomyHits = terms.getAllAnatomyHits(queryTerm);
 
         if (categoryDisplayName.toLowerCase().equals("mutants/transgenics")) {
-            specificSearchURL = "aa-fishselect.apg&allele_name=" + queryTerm;
+            specificSearchURL = "/action/fish/do-search?geneOrFeatureName=" + queryTerm;
         } else if (categoryDisplayName.toLowerCase().equals("genes/markers/clones")) {
             specificSearchURL = "aa-newmrkrselect.apg&input_name=" + queryTerm;
         } else if (categoryDisplayName.toLowerCase().equals("expression/phenotype")) {
@@ -531,7 +525,7 @@ public class SearchBean extends PaginationBean {
                 specificSearchURL += "&gene_name=" + queryTerm;
             }
         } else if (categoryDisplayName.toLowerCase().equals("anatomy")) {
-            specificSearchURL = "anatomy/search";
+            specificSearchURL = "anatomy/anatomy-search";
             if (anatomyHits.size() > 0) {
                 specificSearchURL += "?action=term-search&searchTerm=";
                 Vector<String> anatkeys = new Vector<String>(anatomyHits.keySet());

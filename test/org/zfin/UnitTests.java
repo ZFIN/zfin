@@ -6,13 +6,18 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.database.BtsContainsServiceTest;
+import org.zfin.database.DatabaseServiceTest;
+import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
+import org.zfin.fish.repository.FishServiceNoDBTest;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
+import org.zfin.framework.search.SearchCriterionTest;
 import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
 import org.zfin.gwt.curation.ui.FeatureMarkerRelationshipTest;
@@ -64,9 +69,12 @@ import org.zfin.util.*;
         AnatomyItemTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
+        ApgPaginationBeanTest.class,
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
+        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
+	    DatabaseServiceTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
@@ -75,6 +83,7 @@ import org.zfin.util.*;
         FeatureMarkerRelationshipTest.class,
         FeatureValidationTest.class,
         FileUtilTest.class,
+        FishServiceNoDBTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
         GafParserUnitTest.class,
@@ -85,7 +94,9 @@ import org.zfin.util.*;
         ListFormatterTest.class,
         MailTest.class,
         MarkerPresentationTest.class,
+        MatchingServiceTest.class,
         MatchingTermServiceTest.class,
+        MatchTypeTest.class,
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
@@ -105,6 +116,7 @@ import org.zfin.util.*;
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,
+        SearchCriterionTest.class,
         SequenceTest.class,
         SerializationTests.class,
         SingleAssociatedGenesFromQueryTest.class,
@@ -113,12 +125,13 @@ import org.zfin.util.*;
         StagePresentationTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
-        ZfinStringUtilsTest.class,
+        TableTest.class,
         TrieMapTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,
         WidgetUtilTest.class,
         ZfinPropertiesTest.class,
+        ZfinStringUtilsTest.class,
 
         // this test should be last (or near last)
         // because we need to make sure that it waits

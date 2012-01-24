@@ -86,10 +86,8 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
         this.dateCreated = dateCreated;
     }
 
-    public String getDisplayName() {
+    public String getDisplayNameWithoutTag() {
         StringBuilder builder = new StringBuilder();
-        if (tag.equals(Tag.NORMAL.toString()))
-            builder.append("(normal or recovered)");
         builder.append(entity.getDisplayName());
         builder.append(" - ");
         builder.append(quality.getTermName());
@@ -97,6 +95,15 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
             builder.append(" - ");
             builder.append(relatedEntity.getDisplayName());
         }
+        return builder.toString();
+
+    }
+
+    public String getDisplayName() {
+        StringBuilder builder = new StringBuilder();
+        if (tag.equals(Tag.NORMAL.toString()))
+            builder.append("(normal or recovered)");
+        builder.append(getDisplayNameWithoutTag());
         return builder.toString();
     }
 
@@ -128,12 +135,28 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
     }
 
     @Override
-    public int compareTo(PhenotypeStatement o) {
-        String o1GenotypeName = getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getName();
-        final String o2GenotypeName = o.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getName();
-        if (!o1GenotypeName.equals(o2GenotypeName))
-            return o1GenotypeName.compareTo(o2GenotypeName);
-        return 0;
+    public int compareTo(PhenotypeStatement statement) {
+            return getDisplayNameWithoutTag().compareTo(statement.getDisplayNameWithoutTag());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PhenotypeStatement that = (PhenotypeStatement) o;
+
+        String displayName = getDisplayName();
+        String thatDisplayName = that.getDisplayName();
+        if (displayName != null ? !displayName.equals(thatDisplayName) : thatDisplayName != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        String displayName = getDisplayName();
+        return displayName != null ? displayName.hashCode() : 0;
     }
 
     /**

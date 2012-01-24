@@ -31,6 +31,16 @@ public class HighlightTag extends TagSupport {
 
     public int doStartTag() throws JspException {
 
+        String val = getHighlightedString();
+        try {
+            pageContext.getOut().print(val);
+        } catch (IOException ioe) {
+            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
+        }
+        return EVAL_PAGE;
+    }
+
+    public String getHighlightedString() {
         StringBuilder val = new StringBuilder();
         if (!StringUtils.isEmpty(highlightEntity)) {
             if (caseSensitive) {
@@ -45,11 +55,11 @@ public class HighlightTag extends TagSupport {
                 }
             } else {
                 if (highlightString != null)
-                    val.append(HighlightUtil.highlightMatchHTML(highlightEntity, highlightString, false));
+                    val.append(HighlightUtil.highlightMatchHTML(highlightEntity, highlightString, caseSensitive));
                 else if (highlightStrings != null && highlightStrings.size() > 0) {
                     String tempString = highlightEntity;
                     for (String highlightTerm : highlightStrings) {
-                        tempString = HighlightUtil.highlightMatchHTML(tempString, highlightTerm, false);
+                        tempString = HighlightUtil.highlightMatchHTML(tempString, highlightTerm, caseSensitive);
                     }
                     val.append(tempString);
                 }
@@ -63,17 +73,12 @@ public class HighlightTag extends TagSupport {
                         val.append(StringUtils.replace(highlightEntities[i], highlightString,
                                 "<B>" + highlightString + "</B>", -1));
                     else {
-                        val.append(HighlightUtil.highlightMatchHTML(highlightEntities[i], highlightString, false));
+                        val.append(HighlightUtil.highlightMatchHTML(highlightEntities[i], highlightString, caseSensitive));
                     }
                 }
             }
         }
-        try {
-            pageContext.getOut().print(val);
-        } catch (IOException ioe) {
-            throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
-        }
-        return EVAL_PAGE;
+        return val.toString();
     }
 
     public void release() {

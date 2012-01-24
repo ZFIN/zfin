@@ -16,6 +16,7 @@ gbrowse
 mapper_select.cgi
 action/login
 mailto
+your_input_welcome
 CurrentDataModel/db.html
 
 # We do not want to crawl select pages.
@@ -37,11 +38,15 @@ view.apg
 view2.apg
 aa-orthoviewdetailed.apg
 action/anatomy/term-detail
-action/anatomy/search
+action/anatomy/anatomy-search
 action/antibody
 action/ontology
 action/blast
 action/feature/detail
+action/fish
+/phenotype-statement
+mutant/mutant-list
+/zirc/
 action/genotype/
 action/marker/view
 marker/transcript-view
@@ -63,3 +68,4 @@ aa-externallink.apg
 aa-pubmedredirect.apg
 aa-pubmedlink.apg
 aa-markergoview.apg
+aa-pheno_summary.apg

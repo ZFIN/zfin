@@ -4,8 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  */
-public class ValidateBlastDatabases extends QuartzJobBean {
+public class ValidateBlastDatabases extends ZfinBasicQuartzJob {
 
     private Logger logger = Logger.getLogger(ValidateBlastDatabases.class);
 
@@ -35,7 +35,7 @@ public class ValidateBlastDatabases extends QuartzJobBean {
 
     }
 
-    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         validateDatabase();
     }
 

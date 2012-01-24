@@ -871,7 +871,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Morpholino</a> 
    &nbsp;
-  <a class="small-new-link" href="javascript:;" onClick=open("/action/antibody/create?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a> 
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/antibody-add-form?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a> 
  <?/MIVAR>

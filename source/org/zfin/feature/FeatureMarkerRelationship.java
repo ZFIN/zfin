@@ -105,5 +105,13 @@ public class FeatureMarkerRelationship implements Comparable {
     public int compareTo(Object anotherMarkerRelationship) {
         return marker.compareTo(((FeatureMarkerRelationship) anotherMarkerRelationship).getMarker());
     }
+
+    public boolean isMarkerIsGene() {
+        if(marker.getZdbID().startsWith("ZDB-GENE-")) {
+            return true;
+        }  else {
+            return false;
+        }
+    }
 }
 

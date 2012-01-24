@@ -1164,7 +1164,7 @@ function doValidateAndSubmit(currentTime ){
         <?MIVAR><th  width=$widthPheno><b>Phenotype</b></th><?/MIVAR>   
            
         <?MIVAR><th  width=$widthInnerTable><?/MIVAR>
-          <table class="searchresults"><tr>
+          <table><tr>
             <?MIVAR><th  width=$widthAllele><b>Genomic Feature</b></th><?/MIVAR>
             <?MICOMMENT><?MIVAR><th  width=$widthPZ><b>Parental Zygosity</b></th><?/MIVAR><?/MICOMMENT>             
             <?MIVAR><th  width=$widthType><b>Type</b></th><?/MIVAR> 
@@ -1172,7 +1172,7 @@ function doValidateAndSubmit(currentTime ){
             <?MIVAR><th  width=$widthGene><b>Affected Gene(s)</b></th><?/MIVAR>
             <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>     
             <?MIVAR><th  width=$widthLG><b>&nbsp;LG</b></th><?/MIVAR>
-          </tr></table>          
+          </tr></table>
         </th>
 
         <?MIBLOCK COND="$(XST,$fsel_inputname)">
@@ -1204,7 +1204,7 @@ function doValidateAndSubmit(currentTime ){
            
       <?MIVAR><TD align=left width=$widthGeno>$fsel_geno_html</TD><?/MIVAR>  
 
-      <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>
+      <?MIVAR><td width=$widthSpace%>&nbsp;</td><?/MIVAR>
 
       <?MICOMMENT> ================ Phenotype ========== <?/MICOMMENT>
       <?MIVAR><TD align=left width=$widthPheno nowrap><?/MIVAR>  

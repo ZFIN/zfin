@@ -1,34 +1,48 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.validation.BindException;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Controller for requesting a new anatomical structure.
  * It sends out an email and acknowledges the users input.
  */
-public class RequestNewAnatomyTermController extends SimpleFormController {
+@Controller
+public class RequestNewAnatomyTermController {
 
-    private MailSender mailSender;
+    private static final Logger LOG = Logger.getLogger(RequestNewAnatomyTermController.class);
+
     private static final String NEWLINE = "\r";
 
-    public RequestNewAnatomyTermController() {
-        setCommandClass(RequestNewAnatomyTermBean.class);
+    @ModelAttribute("formBean")
+    public RequestNewAnatomyTermBean getDefaultFormBean() {
+        return new RequestNewAnatomyTermBean();
     }
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
+    @RequestMapping("/request-new-anatomy-term")
+    protected String showSearchForm(Model model) throws Exception {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Request new anatomy term");
+        return "anatomy/request-new-anatomy-term.page";
+    }
 
-        RequestNewAnatomyTermBean formBean = (RequestNewAnatomyTermBean) command;
+    @RequestMapping(value = "/request-new-anatomy-term-submit", method = RequestMethod.POST)
+    public String doSearch(Model model,
+                           @ModelAttribute("formBean") RequestNewAnatomyTermBean formBean,
+                           BindingResult result
+    ) throws Exception {
+
         StringBuffer emailContents = new StringBuffer();
         emailContents.append(formBean.getTermDetail());
         emailContents.append(NEWLINE);
@@ -54,16 +68,27 @@ public class RequestNewAnatomyTermController extends SimpleFormController {
             emailContents.append(formBean.getEmail());
             emailContents.append(NEWLINE);
         }
-        mailSender.sendMail("Request for new Anatomical Structure", emailContents.toString(),
+        getMailSender().sendMail("Request for new Anatomical Structure", emailContents.toString(),
                 ZfinProperties.splitValues(ZfinPropertiesEnum.REQUEST_NEW_ANATOMY_EMAIL));
-        return new ModelAndView("request-term-feedback.page", LookupStrings.FORM_BEAN, formBean);
+        return "anatomy/request-term-feedback.page";
     }
 
     public MailSender getMailSender() {
+        MailSender mailSender = null;
+        if (ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value() != null) {
+            String className = ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value();
+            try {
+                Class clazz = Class.forName(className);
+                mailSender = (AbstractZfinMailSender) clazz.newInstance();
+                return mailSender;
+            } catch (ClassNotFoundException e) {
+                LOG.error(e);
+            } catch (InstantiationException e) {
+                LOG.error(e);
+            } catch (IllegalAccessException e) {
+                LOG.error(e);
+            }
+        }
         return mailSender;
-    }
-
-    public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
     }
 }

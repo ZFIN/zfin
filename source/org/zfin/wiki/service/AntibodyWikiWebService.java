@@ -186,7 +186,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         antibodyNameString.append("http://zfin.org/action/marker/view/");
         antibodyNameString.append(antibody.getZdbID());
         antibodyNameString.append("]");
-        antibodyNameString.append(" from the [ZFIN antibody database|http://zfin.org/action/antibody/search].");
+        antibodyNameString.append(" from the [ZFIN antibody database|http://zfin.org/action/antibody/antibody-search].");
         content = content.replace("{text-data:AntibodyName}{page-info:title}{text-data}", antibodyNameString.toString());
 
         // aliases

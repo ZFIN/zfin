@@ -34,7 +34,7 @@
     </typedef>
 
 
-    <class name="org.zfin.marker.MarkerRelationship" table="marker_relationship">
+    <class name="org.zfin.marker.AbstractMarkerRelationshipInterface" abstract="true" table="marker_relationship">
         <id name="zdbID" type="string">
             <column name="mrel_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -43,32 +43,41 @@
             </generator>
         </id>
 
-        <property name="type" column="mrel_type" type="markerRelationshipType" />
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(mrel_mrkr_1_zdb_id)
+                                    WHEN 'MRPHLNO' THEN       'MORPH'
+                                    ELSE                      'other'
+                                 END)"/>
+
+        <property name="type" column="mrel_type" type="markerRelationshipType"/>
 
         <many-to-one name="markerRelationshipType" column="mrel_type" insert="false" update="false"
                      foreign-key="mrel_type" class="MarkerRelationshipType"/>
-        <many-to-one name="firstMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_1_zdb_id" lazy="no-proxy"/>
         <many-to-one name="secondMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_2_zdb_id" lazy="no-proxy"/>
 
         <set name="publications" lazy="true" cascade="all">
-            <key column="recattrib_data_zdb_id" />
-            <one-to-many class="org.zfin.infrastructure.PublicationAttribution" />
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
+        <subclass name="org.zfin.mutant.MorpholinoMarkerRelationship" extends="org.zfin.marker.MarkerRelationship" discriminator-value="MORPH" >
+            <many-to-one name="firstMarker" class="org.zfin.mutant.Morpholino" column="mrel_mrkr_1_zdb_id" lazy="no-proxy" insert="false" update="false"/>
+        </subclass>
+        <subclass name="org.zfin.marker.MarkerRelationship" discriminator-value="other" >
+            <many-to-one name="firstMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_1_zdb_id" lazy="no-proxy"/>
+        </subclass>
     </class>
 
-    <class name="org.zfin.marker.MarkerRelationshipType" table="marker_relationship_type" >
+    <class name="org.zfin.marker.MarkerRelationshipType" table="marker_relationship_type">
         <id name="name">
             <column name="mreltype_name"/>
         </id>
         <property name="firstToSecondLabel" column="mreltype_1_to_2_comments"/>
         <property name="secondToFirstLabel" column="mreltype_2_to_1_comments"/>
         <many-to-one name="firstMarkerTypeGroup" column="mreltype_mrkr_type_group_1"
-            foreign-key="mreltype_mrkr_type_group_1" class="org.zfin.marker.MarkerTypeGroup"/>
+                     foreign-key="mreltype_mrkr_type_group_1" class="org.zfin.marker.MarkerTypeGroup"/>
         <many-to-one name="secondMarkerTypeGroup" column="mreltype_mrkr_type_group_2"
-            foreign-key="mreltype_mrkr_type_group_2" class="org.zfin.marker.MarkerTypeGroup"/>
+                     foreign-key="mreltype_mrkr_type_group_2" class="org.zfin.marker.MarkerTypeGroup"/>
     </class>
-
-
 
 
     <class name="org.zfin.marker.Marker" table="marker">
@@ -79,6 +88,12 @@
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(mrkr_zdb_id)
+                                    WHEN 'MRPHLNO' THEN       'MO'
+                                    ELSE                      'ot'
+                                 END)"/>
 
         <property name="name">
             <column name="mrkr_name" not-null="true"/>
@@ -123,7 +138,7 @@
             <key column="mrel_mrkr_2_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerRelationship"/>
         </set>
-       
+
 
         <set name="dataNotes" lazy="true">
             <key column="dnote_data_zdb_id"/>
@@ -148,17 +163,17 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.MarkerSupplier" />
+            <one-to-many class="org.zfin.people.MarkerSupplier"/>
         </set>
 
-        <set name="aliases" lazy="true" table="data_alias"  order-by="dalias_alias_lower" inverse="false">
-            <key column="dalias_data_zdb_id" />
-            <one-to-many class="org.zfin.marker.MarkerAlias" />
+        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
+            <key column="dalias_data_zdb_id"/>
+            <one-to-many class="org.zfin.marker.MarkerAlias"/>
         </set>
 
         <set name="publications" lazy="true">
-            <key column="recattrib_data_zdb_id" />
-            <one-to-many class="org.zfin.infrastructure.PublicationAttribution" />
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
 
         <set name="dbLinks" lazy="true">
@@ -167,49 +182,50 @@
         </set>
 
         <set name="orthologyNotes" lazy="true">
-            <key column="extnote_data_zdb_id" />
-            <one-to-many class="org.zfin.marker.OrthologyNote" />
+            <key column="extnote_data_zdb_id"/>
+            <one-to-many class="org.zfin.marker.OrthologyNote"/>
         </set>
 
         <joined-subclass name="org.zfin.antibody.Antibody" table="antibody">
-            <key column="atb_zdb_id" />
+            <key column="atb_zdb_id"/>
 
             <property name="clonalType" column="atb_type"/>
 
-            <property name="immunogenSpecies" column="atb_immun_organism" />
+            <property name="immunogenSpecies" column="atb_immun_organism"/>
 
-            <property name="hostSpecies" column="atb_host_organism" />
+            <property name="hostSpecies" column="atb_host_organism"/>
 
-            <property name="heavyChainIsotype" column="atb_hviso_name" />
+            <property name="heavyChainIsotype" column="atb_hviso_name"/>
 
-            <property name="lightChainIsotype" column="atb_ltiso_name" />
+            <property name="lightChainIsotype" column="atb_ltiso_name"/>
 
             <set name="antibodyLabelings" lazy="true">
-                <key column="xpatex_atb_zdb_id" />
-                <one-to-many class="org.zfin.expression.ExpressionExperiment" />
+                <key column="xpatex_atb_zdb_id"/>
+                <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
             </set>
 
             <set name="externalNotes" lazy="true">
-                <key column="extnote_data_zdb_id" />
-                <one-to-many class="org.zfin.antibody.AntibodyExternalNote" />
+                <key column="extnote_data_zdb_id"/>
+                <one-to-many class="org.zfin.antibody.AntibodyExternalNote"/>
             </set>
 
         </joined-subclass>
 
         <joined-subclass name="org.zfin.marker.Clone" table="clone">
             <key column="clone_mrkr_zdb_id"/>
-            
-            <property name="rating" column="clone_rating" not-null="false"/>
-            <property name="problem" column="clone_problem_type" not-null="false" type="cloneProblemType" />
-            <property name="digest" column="clone_digest" not-null="false" />
-            <property name="insertSize" column="clone_insert_size" not-null="false"  />
-            <property name="polymeraseName" column="clone_polymerase_name" not-null="false"  />
-            <property name="pcrAmplification" column="clone_pcr_amplification" not-null="false"  />
-            <property name="cloneComments" column="clone_comments" not-null="false"  />
-            <property name="cloningSite" column="clone_cloning_site" not-null="false"  />
 
-            <many-to-one name="vector" column="clone_vector_name" not-null="false" class="org.zfin.marker.Vector" />
-            <many-to-one name="probeLibrary" column="clone_probelib_zdb_id" not-null="false" class="org.zfin.marker.ProbeLibrary"  />
+            <property name="rating" column="clone_rating" not-null="false"/>
+            <property name="problem" column="clone_problem_type" not-null="false" type="cloneProblemType"/>
+            <property name="digest" column="clone_digest" not-null="false"/>
+            <property name="insertSize" column="clone_insert_size" not-null="false"/>
+            <property name="polymeraseName" column="clone_polymerase_name" not-null="false"/>
+            <property name="pcrAmplification" column="clone_pcr_amplification" not-null="false"/>
+            <property name="cloneComments" column="clone_comments" not-null="false"/>
+            <property name="cloningSite" column="clone_cloning_site" not-null="false"/>
+
+            <many-to-one name="vector" column="clone_vector_name" not-null="false" class="org.zfin.marker.Vector"/>
+            <many-to-one name="probeLibrary" column="clone_probelib_zdb_id" not-null="false"
+                         class="org.zfin.marker.ProbeLibrary"/>
 
             <set name="expressionExperiments" lazy="true">
                 <key column="xpatex_probe_feature_zdb_id"/>
@@ -218,7 +234,7 @@
         </joined-subclass>
 
         <joined-subclass name="org.zfin.marker.Transcript" table="transcript">
-            <key column="tscript_mrkr_zdb_id" />
+            <key column="tscript_mrkr_zdb_id"/>
             <many-to-one name="transcriptType" column="tscript_type_id" class="TranscriptType" not-null="true"/>
             <many-to-one name="status" column="tscript_status_id" class="TranscriptStatus" not-null="false"/>
 
@@ -229,7 +245,7 @@
         </joined-subclass>
 
         <joined-subclass name="org.zfin.marker.MarkerSequenceMarker" table="marker_sequence">
-            <key column="mrkrseq_mrkr_zdb_id" />
+            <key column="mrkrseq_mrkr_zdb_id"/>
             <set name="sequences" lazy="true">
                 <key column="mrkrseq_mrkr_zdb_id"/>
                 <one-to-many class="org.zfin.sequence.MarkerSequence"/>
@@ -283,7 +299,7 @@
     </class>
 
     <class name="org.zfin.marker.TranscriptType" table="transcript_type">
-        <id name = "id">
+        <id name="id">
             <column name="tscriptt_pk_id"/>
         </id>
         <property name="type" column="tscriptt_type" type="transcriptType" not-null="true"/>
@@ -294,10 +310,10 @@
     </class>
 
     <class name="org.zfin.marker.TranscriptStatus" table="transcript_status">
-        <id name = "id">
+        <id name="id">
             <column name="tscripts_pk_id"/>
         </id>
-        <property name="status" column="tscripts_status"  type="transcriptStatus" not-null="true"/>
+        <property name="status" column="tscripts_status" type="transcriptStatus" not-null="true"/>
         <property name="display" column="tscripts_display" not-null="true"/>
         <property name="order" column="tscripts_order" not-null="true"/>
     </class>

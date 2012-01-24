@@ -7,11 +7,8 @@
         <property name="mappings">
             <props>
                 <prop key="/publication/publication-list">showPublicationList</prop>
-                <prop key="/antibody/publication-list">showPublicationList</prop>
                 <prop key="/antibody/alias-publication-list">showPublicationList</prop>
                 <prop key="/antibody/relationship-publication-list">showPublicationList</prop>
-                <prop key="/antibody/disassociate-publication">showPublicationList</prop>
-                <prop key="/antibody/add-publication">showPublicationList</prop>
                 <prop key="/publication/image-popup">imageViewPopup</prop>
 <!--
                 <prop key="/publication/view-publication-detail">publicationViewDetail</prop>
@@ -25,11 +22,8 @@
     <bean id="publicationActionResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
         <property name="mappings">
             <props>
-                <prop key="/antibody/publication-list">antibodyPublicationListHandler</prop>
                 <prop key="/antibody/alias-publication-list">aliasPublicationListHandler</prop>
                 <prop key="/antibody/relationship-publication-list">relationshipPublicationListHandler</prop>
-                <prop key="/antibody/disassociate-publication">disassociatePublicationListHandler</prop>
-                <prop key="/antibody/add-publication">associatePublicationHandler</prop>
             </props>
 
         </property>

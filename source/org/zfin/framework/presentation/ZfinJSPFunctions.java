@@ -3,9 +3,11 @@ package org.zfin.framework.presentation;
 import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang3.StringEscapeUtils;
 //import org.apache.commons.lang.StringEscapeUtils;
+import org.hibernate.mapping.ForeignKey;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.database.presentation.Table;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
@@ -215,15 +217,14 @@ public class ZfinJSPFunctions {
     }
 
     public static Set<String> getDistinctRelationshipTypes(Ontology ontology) {
-        List<GenericTermRelationship> termRelationships ;
-        if(ontology!=null){
-            termRelationships=  RepositoryFactory.getOntologyRepository().getAllRelationships(ontology);
-        }
-        else{
-            termRelationships=  RepositoryFactory.getOntologyRepository().getAllRelationships();
+        List<GenericTermRelationship> termRelationships;
+        if (ontology != null) {
+            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships(ontology);
+        } else {
+            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships();
         }
         Set<String> relationships = new TreeSet<String>();
-        for(GenericTermRelationship genericTermRelationship : termRelationships){
+        for (GenericTermRelationship genericTermRelationship : termRelationships) {
             relationships.add(genericTermRelationship.getType());
         }
 
@@ -306,4 +307,16 @@ public class ZfinJSPFunctions {
         }
         return null;
     }
+
+    /**
+     * Return the foreign key column
+     *
+     * @return column name or column names (comma delimited)
+     */
+    public static String getForeignKeyColumn(org.zfin.database.presentation.ForeignKey foreignKey) {
+        if (foreignKey.isManyToManyRelationship())
+            return foreignKey.getManyToManyTable().getPkName();
+        return foreignKey.getForeignKey();
+    }
+
 }

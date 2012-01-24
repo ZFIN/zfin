@@ -26,10 +26,11 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 GENERICS = data_mgr.apg doc_title.apg \
 	 jump_to.apg \
 	start_select.apg htmlpageheader.apg \
-	htmlpagefooter.apg your_input_welcome.apg input_button_generic.apg \
+	your_input_welcome.apg input_button_generic.apg \
 	input_welcome_generic.apg zdb_history.apg new_gene.apg new_line.apg \
 	ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg 
-STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html spiffy_corners.apg blast.apg
+
+STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html spiffy_corners.apg blast.apg htmlpagefooter.apg 
 
 # --------------------------  Rules  ------------------------------------
 

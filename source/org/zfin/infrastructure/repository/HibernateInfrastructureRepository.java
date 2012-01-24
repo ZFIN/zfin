@@ -15,6 +15,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.database.presentation.Column;
+import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
@@ -29,6 +31,7 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -1176,7 +1179,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 }
                 data.add(singleRow);
             }
-        } else if (objects.get(0) instanceof String) {
+        } else if (objects.get(0) instanceof BigDecimal) {
+            List<BigDecimal> entities = (List<BigDecimal>) objects;
+            for (BigDecimal row : entities) {
+                List<String> singleRow = new ArrayList<String>(1);
+                singleRow.add(row.toString());
+                data.add(singleRow);
+            }
+        } else {
             List<String> entities = (List<String>) objects;
             for (String row : entities) {
                 List<String> singleRow = new ArrayList<String>(1);
@@ -1369,6 +1379,79 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 .uniqueResult().toString());
 
         return numPubs > 0;
+    }
+
+    public List<String> retrieveMetaData(String table) {
+        Session session = currentSession();
+        Connection connection = session.connection();
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        List<String> columnNames = null;
+        try {
+            Statement st = connection.createStatement();
+            rs = st.executeQuery("select * from " + table);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            int columnCount = rsMetaData.getColumnCount();
+            columnNames = new ArrayList<String>(columnCount);
+            int index = 1;
+            while (index <= columnCount) {
+                columnNames.add(rsMetaData.getColumnName(index++));
+            }
+        } catch (SQLException exception) {
+            logger.error(DbSystemUtil.getLockInfo());
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                logger.error("could not close statement", e);
+            }
+        }
+        return columnNames;
+    }
+
+    /**
+     * Retrieve the meta data for all columns of a given table.
+     *
+     * @param table table
+     * @return list of column objects
+     */
+    public List<Column> retrieveColumnMetaData(Table table) {
+        String tableName = table.getTableName();
+        Session session = currentSession();
+        Connection connection = session.connection();
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        List<Column> columns = new ArrayList<Column>(5);
+        try {
+            Statement st = connection.createStatement();
+            rs = st.executeQuery("select * from " + tableName);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            int columnCount = rsMetaData.getColumnCount();
+            int index = 1;
+            while (index <= columnCount) {
+                Column column = new Column(rsMetaData.getColumnName(index), table);
+                column.setColumnType(rsMetaData.getColumnTypeName(index));
+                column.setColumnLength(rsMetaData.getColumnDisplaySize(index));
+                column.setIsNullable(rsMetaData.isNullable(index));
+                columns.add(column);
+                index++;
+            }
+        } catch (SQLException exception) {
+            logger.error(DbSystemUtil.getLockInfo());
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                logger.error("could not close statement", e);
+            }
+        }
+        return columns;
     }
 }
 

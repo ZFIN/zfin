@@ -13,6 +13,11 @@
     <context:component-scan base-package="org.zfin.wiki.service"/>
     <context:component-scan base-package="org.zfin.datatransfer.service"/>
     <context:component-scan base-package="org.zfin.expression.service"/>
+    <context:component-scan base-package="org.zfin.ontology.repository"/>
+    <context:component-scan base-package="org.zfin.antibody.repository"/>
+    <context:component-scan base-package="org.zfin.anatomy.repository"/>
+    <context:component-scan base-package="org.zfin.anatomy.service"/>
+    <context:component-scan base-package="org.zfin.mutant.repository"/>
     <context:component-scan base-package="org.zfin.datatransfer.go.service"/>
     <context:component-scan base-package="org.zfin.sequence.reno"/>
     <context:component-scan base-package="org.zfin.marker"/>

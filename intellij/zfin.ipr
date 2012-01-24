@@ -170,7 +170,40 @@
     <option name="OPEN_IN_BROWSER" value="false" />
     <option name="OUTPUT_DIRECTORY" />
   </component>
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="web">
+        <modules>
+          <module name="zfin">
+            <files>
+              <file url="file://$PROJECT_DIR$/../home/WEB-INF/web.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
   <component name="IdProvider" IDEtalkID="AE68C7955FF022D1A96C893A8F21F124" />
+  <component name="InspectionProjectProfileManager">
+    <profiles>
+      <profile version="1.0" is_locked="false">
+        <option name="myName" value="Project Default" />
+        <option name="myLocal" value="false" />
+        <inspection_tool class="GWTStyleCheck" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="GwtInconsistentSerializableClass" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="HibernateMappingDatasourceDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="HibernateMappingDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="NonJREEmulationClassesInClientCode" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
+          <option name="myAdditionalRequiredHtmlAttributes" value="type" />
+        </inspection_tool>
+        <inspection_tool class="TrivialIf" enabled="false" level="WARNING" enabled_by_default="false" />
+      </profile>
+    </profiles>
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
     <option name="OPTION_SCOPE" value="protected" />
@@ -329,7 +362,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6 (1)" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/../home/WEB-INF/conf" />
   </component>
   <component name="ResourceManagerContainer">
@@ -399,58 +432,29 @@
     </option>
   </component>
   <component name="libraryTable">
+    <library name="build-time">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../lib/Java/tomcat" />
+        <root url="file://$PROJECT_DIR$/../lib/Java" />
+        <root url="file://$PROJECT_DIR$/../lib/Java/ifc111" />
+        <root url="file://$PROJECT_DIR$/../lib/Java/jwebunit" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/ifc111" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/jwebunit" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/tomcat" recursive="false" />
+    </library>
     <library name="gwt-user">
       <CLASSES>
-        <root url="jar://$USER_HOME$/Desktop/gwt-user.jar!/" />
+        <root url="file://$PROJECT_DIR$/../lib/Java/gwt" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/Desktop/gwt-user.jar!/" />
       </SOURCES>
-    </library>
-    <library name="hibernate3">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../home/WEB-INF/lib" />
-        <root url="file://$PROJECT_DIR$/../lib/Java" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/hibernate-validator-4.2.0.Final.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/hibernate-jpa-2.0-api-1.0.1.Final.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/hibernate-3.6.7.Final.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/commons-collections-3.2.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/log4j-1.2.15.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-asm-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-aspects-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-beans-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-context-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-context.support-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-core-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-expression-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-instrument-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-aop-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-web-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-transaction-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-web.servlet-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-web.portlet-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-ws-core-2.0.0.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-web.struts-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-ws-support-2.0.0.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-ws-security-2.0.0.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-jdbc-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-instrument.tomcat-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-oxm-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-orm-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-security-core-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-security-config-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-security-web-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-security-taglibs-3.0.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-xml-2.0.0-RC2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/spring-ws-test-2.0.0.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/commons-lang-2.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/validation-api-1.0.0.GA.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../home/WEB-INF/lib/geronimo-validation_1.0_spec-1.0-CR5.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/gwt" recursive="false" />
     </library>
     <library name="hibernate3 (2)">
       <CLASSES />
@@ -463,6 +467,16 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+    </library>
+    <library name="runtime">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../lib/Java" />
+        <root url="file://$PROJECT_DIR$/../home/WEB-INF/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/../home/WEB-INF/lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java" recursive="false" />
     </library>
   </component>
 </project>

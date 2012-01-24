@@ -5,16 +5,17 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 
 /**
  */
-public class RegenerateWebHostCuratedDatabasesJob extends QuartzJobBean {
+public class RegenerateWebHostCuratedDatabasesJob extends ZfinBasicQuartzJob {
 
     private Logger logger = Logger.getLogger(RegenerateWebHostCuratedDatabasesJob.class);
 
-    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    protected void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         logger.info("validating curated webhost database");
         try {
             if (MountedWublastBlastService.getInstance().validateCuratedDatabases()) {

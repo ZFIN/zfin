@@ -6,49 +6,6 @@
 
 <tiles-definitions>
 
-    <definition name="anatomy-search.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Anatomical Ontology Browser" />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/anatomy_search.jsp"/>
-    </definition>
-
-    <definition name="anatomy-item.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: Anatomical Structure: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/anatomy_term_detail.jsp"/>
-    </definition>
-
-    <definition name="anatomy-terminfo.page" template="/WEB-INF/jsp/anatomy/anatomy_term_info.jsp">
-    </definition>
-
-    <definition name="all-morpholino-experiments.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: All Morpholino Experiments: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/all_morpholino_experiments.jsp"/>
-    </definition>
-
-    <definition name="high-quality-probes.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: High Quality Probes: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/high_quality_probes.jsp"/>
-    </definition>
-
-    <definition name="all-expressed-genes.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: All Expressed Genes: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/all_expressed_genes.jsp"/>
-    </definition>
-
-    <definition name="request-term-feedback.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: Request new Anatomical Term: Thank you." />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/request_term_feedback.jsp"/>
-    </definition>
-
-    <definition name="request-new-anatomy-term.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: Request new Anatomical Term: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/request_term.jsp"/>
-    </definition>
-
-    <definition name="antibody-summary.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: All Antibodies labeling: " />
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/antibody_summary.jsp"/>
-    </definition>
-
     <!-- Needs to go into a more generic file -->
     <definition name="audit-log-details" extends="main_layout">
         <put-attribute name="staticTitle" value="Audit Log: " />
@@ -69,14 +26,6 @@
         <put-attribute name="staticTitle" value="Go Evidence Report"/>
         <put-attribute name="body" value="/WEB-INF/jsp/anatomy/go_evidence_report.jsp"/>
     </definition>
-
-    <definition name="anatomy-show-expression-genes.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expressed_genes.jsp"/>
-    <definition name="anatomy-show-expression-insitu-probes.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_insitu_probes.jsp"/>
-    <definition name="anatomy-show-expression-antibodies.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_antibodies.jsp"/>
-
-    <definition name="anatomy-show-phenotype-mutant.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_mutants.jsp"/>
-    <definition name="anatomy-show-phenotype-morpholinos.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_morpholinos.jsp"/>
-    <definition name="anatomy-show-phenotype-non-wildtype-morpholinos.ajax" template="/WEB-INF/jsp/anatomy/anatomy_term_detail_non_wildtype_morpholinos.jsp"/>
 
 </tiles-definitions>
 

@@ -10,6 +10,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
@@ -163,7 +164,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String aoZdbID = "ZDB-TERM-100331-1214";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 4);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
         assertEquals(genotypeResult.getPopulatedResults().size(), 4);
@@ -258,7 +261,10 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String aoZdbID = "ZDB-TERM-100331-121";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, 5);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(5);
+
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
 
         assertNotNull(genotypeResult);
         assertNotNull(genotypeResult.getPopulatedResults());
@@ -279,8 +285,31 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(aoZdbID);
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item.createGenericTerm());
         assertTrue(figs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
 
+/*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
+        // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
+        genoZdbID = "ZDB-GENO-091207-3";
+        geno.setZdbID(genoZdbID);
+        // midbrain hindbrain boundary
+        aoZdbID = "ZDB-TERM-100331-40";
+        item.setZdbID(aoZdbID);
+        figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item.createGenericTerm());
+        assertTrue(figs.getPopulatedResults() != null);
+*/
+    }
+
+    @Test
+    public void getPublicationsForGenoAndAo() {
+        // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
+        String genoZdbID = "ZDB-GENO-091207-3";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // midbrain hindbrain boundary
+        GenericTerm item = new GenericTerm();
+        String aoZdbID = "ZDB-TERM-100331-40";
+        item.setZdbID(aoZdbID);
+        PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item);
+        assertTrue(publications.getPopulatedResults() != null);
     }
 
     @Test
@@ -623,39 +652,39 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getNumberAssociatedPublicationsForMarker(){
+    public void getNumberAssociatedPublicationsForMarker() {
 
-        Marker m ;
-        int numberPubs ;
+        Marker m;
+        int numberPubs;
 
 
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
         numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
-        assertThat(numberPubs,greaterThan(15));
+        assertThat(numberPubs, greaterThan(15));
         assertThat(numberPubs, lessThan(35));
 
         m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax6a");
         numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
-        assertThat(numberPubs,greaterThan(190));
+        assertThat(numberPubs, greaterThan(190));
         assertThat(numberPubs, lessThan(300));
 
     }
 
     @Test
-    public void getPublicationList(){
-        assertEquals(12,publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size());
-        assertEquals(17,publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size());
-        assertEquals(0,publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
-        assertEquals(12,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"));
-        assertEquals(17,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1"));
-        assertEquals(0,publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-SSLP-000315-3"));
+    public void getPublicationList() {
+        assertEquals(12, publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size());
+        assertEquals(17, publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size());
+        assertEquals(0, publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
+        assertEquals(12, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"));
+        assertEquals(17, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1"));
+        assertEquals(0, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-SSLP-000315-3"));
     }
 
     @Test
-    public void getNumberDirectionPublications(){
+    public void getNumberDirectionPublications() {
         int numDirectPubs = publicationRepository.getNumberDirectPublications("ZDB-ATB-081002-19");
-        assertThat(numDirectPubs,greaterThan(100));
-        assertThat(numDirectPubs,lessThan(200));
+        assertThat(numDirectPubs, greaterThan(100));
+        assertThat(numDirectPubs, lessThan(200));
     }
 }
 

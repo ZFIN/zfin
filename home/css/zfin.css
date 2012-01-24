@@ -85,7 +85,7 @@ td.titlebar {
 
 td.submitbar {
     vertical-align: top;
-    text-align: right;
+    text-align: left;
     background-color: #CCCCCC;
 
 }
@@ -414,6 +414,10 @@ img.clickable {
     color: red;
 }
 
+.secretly-clickable {
+    cursor: pointer;
+}
+
 .table-header {
     background-color: #cccccc;
 }
@@ -532,3 +536,18 @@ td.reno-same-strand{
     display: table-cell; 
 }
 
+
+    form fieldset { border-width: 0; }
+
+    .namesearchLabel { font-weight: bold;   }
+    .multisearchLabel { font-weight: bold; }
+    .selectLabel { font-weight: bold; }
+    .filterLabel { ; }
+    .accessoryLabel { font-size: .75em; }
+    .termLabel {  font-size: .75em;
+                  float: right;
+                  vertical-align: middle;
+    }
+
+table.searchform td, table.searchform th { vertical-align: top}
+table.searchform th { text-align: left ; width: 5%; white-space: nowrap}

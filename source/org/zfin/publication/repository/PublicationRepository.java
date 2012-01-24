@@ -259,6 +259,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
+     * for mutant genotypes excluding morpholinos.
      *
      * @param geno genotype
      * @param term anatomy term
@@ -278,6 +279,7 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     /**
+     * Retrieve publications that have phenotype data for a given term and genotype
      * @param genotype Genotype
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
@@ -466,4 +468,12 @@ public interface PublicationRepository extends PaginationParameter {
     List<Publication> getPublicationByPmid(String pubMedID);
 
     int getNumberDirectPublications(String zdbID);
+
+    /**
+     * Retrieve list of mutants and transgenics being used in a publication
+     *
+     * @param publicationID publication ID
+     * @return list of genotype (non-wt)
+     */
+    List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 }

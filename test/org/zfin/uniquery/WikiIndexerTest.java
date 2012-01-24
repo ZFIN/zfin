@@ -17,8 +17,8 @@ public class WikiIndexerTest {
                 "-categoryDir", file.getAbsolutePath(),
                 "-e", "server_apps/quicksearch/etc/excludeurls.txt",
                 "-indexerDir", "server_apps/quicksearch/",
-                "-numberOfDetailPages", "1",
-                "-createDetailPageList", "false",
+                "-numberOfDetailPages", "3",
+                "-createDetailPageList", "true",
                 "-zfinPropertiesDir", "home/WEB-INF/zfin.properties"};
         try {
             Indexer.main(args);

@@ -7,6 +7,7 @@ import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
+import org.zfin.fish.smoketest.FishSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
@@ -30,6 +31,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
         ExpressionSmokeTest.class,
         FigureSummarySmokeTest.class,
+        FishSmokeTest.class,
         GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
         LookupSmokeTest.class,

@@ -7,6 +7,7 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResultTermComparator;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.fish.presentation.AbstractFishViewBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -20,7 +21,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-public class GenotypeBean {
+public class GenotypeBean  extends AbstractFishViewBean{
     private Genotype genotype;
     private GenotypeStatistics genotypeStatistics;
     private List<GenotypeFeature> genotypeFeatures;
@@ -31,6 +32,7 @@ public class GenotypeBean {
     private List<ExpressionResult> expressionResults;
 
     private int totalNumberOfPublications;
+    private int totalNumberOfPhenotypes;
 
     public GenotypeBean() {
     }
@@ -335,4 +337,11 @@ public class GenotypeBean {
         this.totalNumberOfPublications = totalNumberOfPublications;
     }
 
+    public int getTotalNumberOfPhenotypes() {
+        return totalNumberOfPhenotypes;
+    }
+
+    public void setTotalNumberOfPhenotypes(int totalNumberOfPhenotypes) {
+        this.totalNumberOfPhenotypes = totalNumberOfPhenotypes;
+    }
 }

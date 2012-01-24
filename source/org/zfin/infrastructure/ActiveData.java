@@ -47,8 +47,9 @@ public class ActiveData implements ZdbID {
             throw new InvalidZdbID(id);
 
         Type type = null;
+        String[] components = id.split("-");
         for (Type zdbType : Type.values()) {
-            if (id.contains(zdbType.name())) {
+            if (components[1].equals(zdbType.name())) {
                 type = zdbType;
             }
         }
@@ -90,7 +91,7 @@ public class ActiveData implements ZdbID {
         CND,
         CUR,
         DALIAS,
-        DBLLINK,
+        DBLINK,
         DNOTE,
         EFG,
         EST,
@@ -105,6 +106,7 @@ public class ActiveData implements ZdbID {
         FMREL,
         FOSMID,
         GENE,
+        GENEP,
         GENOX,
         GENO,
         GENOFE,
@@ -116,13 +118,14 @@ public class ActiveData implements ZdbID {
         LINK,
         MAPDEL,
         MREL,
-        MRKRGOE,
+        MRKRGOEV,
         MRKRSEQ,
         MRPHLNO,
         NOMEN,
         OEVDISP,
         ORTHO,
         PAC,
+        PAC_END,
         PNOTE,
         PROBELI,
         PTCONSTRCT,

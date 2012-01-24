@@ -31,7 +31,7 @@
         <property name="userDetailsService" ref="cachingUserDetailService"/>
         <property name="cookieName" value="ZFIN_REMEMBER_ME"/>
         <property name="tokenValiditySeconds" value="${VALID_SESSION_TIMEOUT_SECONDS}"/>
-        <!--want a key that is rated strong to reduce likelihood of reverse engineering-->
+        <!--want a parentColumn that is rated strong to reduce likelihood of reverse engineering-->
         <property name="key" value="ZFIN_KEY"/>
         <property name="useSecureCookie" value="false"/>
     </bean>
@@ -91,7 +91,7 @@
             <security:concurrency-control max-sessions="1" expired-url="/action/login" session-registry-ref="sessionRegistry"/>
         </security:session-management>
 
-        <!--for some reason you have to establish the key here again, or it uses the default springSecurity -->
+        <!--for some reason you have to establish the parentColumn here again, or it uses the default springSecurity -->
         <security:remember-me services-ref="ipRememberMeService" key="ZFIN_KEY"/>
 
         <security:custom-filter after="LAST"  ref="checkUpdates"/>
@@ -106,12 +106,13 @@
         <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/webdriver/secure/*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/antibody/create" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/marker/antibody-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/view-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
         <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/database/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
         <security:intercept-url pattern="/action/login-redirect" requires-channel="https"/>
         <security:intercept-url pattern="/action/login-redirect?error=true" requires-channel="https"/>

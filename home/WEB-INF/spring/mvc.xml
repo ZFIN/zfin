@@ -5,8 +5,6 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        ">
 
-    <import resource="anatomy.xml"/>
-    <import resource="antibody.xml"/>
     <!--<import resource="reno.xml"/>-->
     <import resource="developer-tools.xml"/>
     <import resource="blast.xml"/>

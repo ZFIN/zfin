@@ -4,6 +4,8 @@
 package org.zfin.infrastructure.repository;
 
 import org.zfin.ExternalNote;
+import org.zfin.database.presentation.Column;
+import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
@@ -371,6 +373,15 @@ public interface InfrastructureRepository {
    boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub);
 
    boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub);
+
+    List<String> retrieveMetaData(String table);
+
+    /**
+     * Retrieve the meta data for all columns of a given table.
+     * @param table table
+     * @return list of column objects
+     */
+    List<Column> retrieveColumnMetaData(Table table);
 }
 
 

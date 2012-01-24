@@ -50,11 +50,8 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
-    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EclipseEmbeddedCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -95,6 +92,26 @@
     </autodetection-disabled>
   </component>
   <component name="IdProvider" IDEtalkID="BB23CFE3BFF54F0FF44A22E600D362F8" />
+  <component name="InspectionProjectProfileManager">
+    <profiles>
+      <profile version="1.0" is_locked="false">
+        <option name="myName" value="Project Default" />
+        <option name="myLocal" value="false" />
+        <inspection_tool class="GWTStyleCheck" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="GwtInconsistentSerializableClass" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="HibernateMappingDatasourceDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="HibernateMappingDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="NonJREEmulationClassesInClientCode" enabled="false" level="ERROR" enabled_by_default="false" />
+        <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
+          <option name="myAdditionalRequiredHtmlAttributes" value="type" />
+        </inspection_tool>
+        <inspection_tool class="TrivialIf" enabled="false" level="WARNING" enabled_by_default="false" />
+      </profile>
+    </profiles>
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
+  </component>
   <component name="JavacSettings">
     <option name="DEPRECATION" value="false" />
   </component>
@@ -114,14 +131,6 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
-  </component>
-  <component name="JikesSettings">
-    <option name="JIKES_PATH" value="" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -247,6 +256,13 @@
   <component name="ProjectDetails">
     <option name="projectName" value="zfin" />
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="Christian Pich">
+      <words>
+        <w>accessor</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectKey">
     <option name="state" value="project:///Users/sierramoxon/Desktop/ZFIN/hoover/ZFIN_WWW_tscripts2/intellij/zfin/zfin.ipr" />
   </component>
@@ -255,8 +271,11 @@
       <module fileurl="file://$PROJECT_DIR$/zfin.iml" filepath="$PROJECT_DIR$/zfin.iml" />
     </modules>
   </component>
+  <component name="ProjectResources">
+    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
-    <output url="file://Y:/home/WEB-INF/classes" />
+    <output url="file://$PROJECT_DIR$/../../home/WEB-INF/classes" />
   </component>
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
@@ -264,13 +283,6 @@
         <list size="0" />
       </value>
     </option>
-  </component>
-  <component name="RmicSettings">
-    <option name="IS_EANABLED" value="false" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_IIOP_STUBS" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
@@ -292,16 +304,21 @@
   <component name="libraryTable">
     <library name="build-time">
       <CLASSES>
-        <root url="file://Y:/lib/Java/jwebunit" />
-        <root url="file://Y:/lib/Java" />
-        <root url="file://Y:/home/WEB-INF/lib" />
-        <root url="jar://Y:/lib/Java/gwt/gwt-user-1.7.1-patch.jar!/" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java/gwt" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java/netscape" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java/jwebunit" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java/ifc111" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java/tomcat" />
+        <root url="file://$PROJECT_DIR$/../../lib/Java" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
-      <jarDirectory url="file://Y:/home/WEB-INF/lib" recursive="false" />
-      <jarDirectory url="file://Y:/lib/Java" recursive="false" />
-      <jarDirectory url="file://Y:/lib/Java/jwebunit" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/gwt" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/ifc111" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/jwebunit" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/netscape" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/tomcat" recursive="false" />
     </library>
     <library name="gwt-user">
       <CLASSES>
@@ -309,6 +326,21 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+    </library>
+    <library name="runtime">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.core-sources-3.0.5.RELEASE.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web.servlet-sources-3.0.5.RELEASE.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web-sources-3.0.5.RELEASE.jar!/" />
+        <root url="file://E:/projects/tiles-2.2.2/src/tiles-core/src/main/java" />
+        <root url="file://E:/projects/tiles-2.2.2/src/tiles-api/src/main/java" />
+        <root url="file://E:/projects/tiles-2.2.2/src/tiles-servlet/src/main/java" />
+      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" recursive="false" />
     </library>
   </component>
 </project>

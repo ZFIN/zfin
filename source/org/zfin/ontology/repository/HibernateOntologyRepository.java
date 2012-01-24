@@ -5,6 +5,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.HibernateUtil;
@@ -20,6 +21,7 @@ import java.util.*;
 /**
  * Repository for Ontology-related actions: mostly lookup.
  */
+@Repository
 public class HibernateOntologyRepository implements OntologyRepository {
 
 
@@ -475,7 +477,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     @Override
-    public boolean isParentChildRelationshipExist(GenericTerm parentTerm, GenericTerm childTerm) {
+    public boolean isParentChildRelationshipExist(Term parentTerm, Term childTerm) {
         return null != HibernateUtil.currentSession().createCriteria(TransitiveClosure.class)
                 .add(Restrictions.eq("root", parentTerm))
                 .add(Restrictions.eq("child", childTerm))

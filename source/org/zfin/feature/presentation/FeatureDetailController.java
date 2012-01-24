@@ -16,6 +16,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -88,6 +89,7 @@ public class FeatureDetailController {
         List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(fr);
         form.setGenotypes(genotypes);
         List<FeatGenoStatistics> featgenoStats = createGenotypeStats(genotypes, fr);
+        Collections.sort(featgenoStats);
         form.setFeatgenoStats(featgenoStats);
         List<GenoExpStatistics> genoexpStats = createGenotypeExpStats(genotypes, fr);
         form.setGenoexpStats(genoexpStats);

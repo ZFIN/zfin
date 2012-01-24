@@ -1,6 +1,8 @@
 package org.zfin.mutant.repository;
 
+import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
@@ -164,7 +166,7 @@ public interface PhenotypeRepository {
      * Retrieve all phenotype statements that have been created in the last n days.
      *
      * @param experimentID phenotype Experiment ID
-     * @param days in the last days
+     * @param days         in the last days
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days);
@@ -178,4 +180,36 @@ public interface PhenotypeRepository {
     PublicationLink getPhenotypeFirstPublication(Marker gene);
 
     FigureLink getPhenotypeFirstFigure(Marker gene);
+
+    /**
+     * Retrieve all phenotype statements for a given figure.
+     *
+     * @param figure figure
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getPhenotypeStatements(Figure figure);
+
+    /**
+     * Retrieve all phenotypes for a given genotype experiment.
+     *
+     * @param genoxID genotype experiment id
+     * @return list of phenotypes
+     */
+    List<PhenotypeStatement> getPhenotypeStatements(String genoxID);
+
+    /**
+     * Retrieve list of phenotype figures associated with a genotype
+     *
+     * @param genotypeID genotype zdbID
+     * @return list of figures
+     */
+    List<Figure> getPhenoFiguresByGenotype(String genotypeID);
+
+    /**
+     * Retrieve phenotype statement for a given figure and fish.
+     * @param figure figure
+     * @param fishID fish ID
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID);
 }

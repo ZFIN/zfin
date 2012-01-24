@@ -16,7 +16,7 @@ import java.util.List;
 public class PaginationBean {
 
     public static final String PAGE = "page";
-    public static final int MAXPAGELINKS = 3;
+    public static final int MAXPAGELINKS = 9;
     public static final int MAX_DISPLAY_RECORDS_DEFAULT = 25;
 
     /* MAXPAGELINKS must be an odd integer that denotes the total number of
@@ -162,7 +162,7 @@ public class PaginationBean {
     }
 
     /**
-     * This return the full url with all query parameters inlcuded
+     * This return the full url with all query parameters included
      * but the page parameter which is set on the JSP page dynamically.
      *
      * @return full URL string
@@ -170,12 +170,10 @@ public class PaginationBean {
     public String getActionUrl() {
         if (!StringUtils.isEmpty(actionUrl))
             return actionUrl;
-        if (StringUtils.isEmpty(queryString))
-            return "";
         // remove the page=xxx parameter
         URLCreator urlCreator = new URLCreator(requestUrl + "?" + queryString);
         urlCreator.removeNamevaluePair(PAGE);
-        return urlCreator.getURL(true);
+        return urlCreator.getFullURLPlusSeparator();
 
     }
 
@@ -200,6 +198,8 @@ public class PaginationBean {
     }
 
     public void setQueryString(String queryString) {
+        if(queryString == null)
+            return;
         this.queryString = URLDecoder.decode(queryString);
     }
 

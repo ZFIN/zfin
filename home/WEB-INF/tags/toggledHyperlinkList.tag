@@ -1,3 +1,4 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%--
   This tag creates a list of hyperlink for a list of entities.
   At a minimum, they must be supported by CreateLinkTag.java,
@@ -21,7 +22,7 @@
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="showAttributionLinks" type="java.lang.Boolean" required="false" %>
-<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@attribute name="commaDelimited" type="java.lang.Boolean" required="false" %>
 
 
 <c:if test="${showAttributionLinks == null}">
@@ -33,7 +34,9 @@
             <c:when test="${fn:length(collection) > maxNumber }">
             <span style="display:inline;" id="${id}-short">
             <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if><c:if test="${!loop.last}">, </c:if>
+                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+                <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
+                <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
             </c:forEach>
                 <nobr>
                     (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(collection)}</a>)
@@ -43,7 +46,9 @@
                 </span>
             <span style="display:none;" id="${id}-long">
             <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if><c:if test="${!loop.last}">, </c:if>
+                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+                <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
+                <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
             </c:forEach>&nbsp;
                 <img onclick="showEntityList('${id}', false)"  class="clickable"
                      src="/images/left_arrow.gif" alt="collapse" title="Show only first ${maxNumber+1} terms">
@@ -51,7 +56,9 @@
             </c:when>
             <c:otherwise>
                 <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                    <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if><c:if test="${!loop.last}">, </c:if>
+                    <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+                    <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
+                    <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
                 </c:forEach>
             </c:otherwise>
         </c:choose>

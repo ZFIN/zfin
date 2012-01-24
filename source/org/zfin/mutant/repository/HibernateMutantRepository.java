@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
-import org.hibernate.transform.Transformers;
+import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
@@ -44,14 +44,23 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 /**
 
  */
-
+@Repository
 public class HibernateMutantRepository implements MutantRepository {
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     private Logger logger = Logger.getLogger(HibernateMutantRepository.class);
 
 
-    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, int numberOfRecords) {
+    /**
+     * This returns a list genotypes (mutants) that are annotated
+     * to a given anatomy item. Do not include MO conditions.
+     *
+     * @param item     Anatomy Item
+     * @param wildtype return wildtype genotypes
+     * @param bean     Pagination bean info
+     * @return list of genotypes
+     */
+    public PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
 
         String hql =
@@ -86,7 +95,7 @@ public class HibernateMutantRepository implements MutantRepository {
             }
         });
 
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(numberOfRecords, query.scroll());
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -124,6 +133,12 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("zdbID", genotype.getZdbID());
         List<GenotypeFeature> genotypeFeatures = query.list();
         return genotypeFeatures;
+    }
+
+    public List<GenotypeFeature> getGenotypeFeaturesByGenotype(String genotypeID) {
+        Genotype genotype = new Genotype();
+        genotype.setZdbID(genotypeID);
+        return getGenotypeFeaturesByGenotype(genotype);
     }
 
     public int getNumberOfImagesPerAnatomyAndMutant(GenericTerm term, Genotype genotype) {
@@ -247,13 +262,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       marker = con.morpholino AND " +
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
                 "                             expCon.morpholino is null ) ";
-        if(isWildtype != null){
+        if (isWildtype != null) {
             hql += " AND geno.wildtype = :isWildtype ";
         }
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        if (isWildtype != null){
+        if (isWildtype != null) {
             query.setBoolean("isWildtype", isWildtype);
         }
 
@@ -318,11 +333,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 morph.setZdbID(marker.getZdbID());
 
                 Set<MarkerRelationship> rels = marker.getFirstMarkerRelationships();
+                List<Marker> targetGenes = new ArrayList<Marker>();
                 if (rels != null) {
                     for (MarkerRelationship rel : rels) {
                         if (rel.getType() == MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
-                            morph.setTargetGene(rel.getSecondMarker());
+                            targetGenes.add(rel.getSecondMarker());
                     }
+                    morph.setTargetGenes(targetGenes);
                 }
                 morphs.add(morph);
             }
@@ -626,7 +643,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference) {
-        for (Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext();) {
+        for (Iterator<InferenceGroupMember> iterator = markerGoTermEvidence.getInferredFrom().iterator(); iterator.hasNext(); ) {
             if (iterator.next().getInferredFrom().equals(inference)) {
                 iterator.remove();
                 Criteria criteria2 = HibernateUtil.currentSession().createCriteria(InferenceGroupMember.class);
@@ -665,13 +682,12 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public FeatureDBLink getSpecificDBLink(Feature feature, String accessionNumber) {
-         Session session = HibernateUtil.currentSession();
-          String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
-                " ftrDbLink.feature = :feature " ;
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
+                " ftrDbLink.feature = :feature ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("feature", feature);
         return (FeatureDBLink) query.uniqueResult();
-
 
 
     }
@@ -752,7 +768,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from MarkerSequenceMarker m  " +
+        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from Morpholino m  " +
                 "inner join m.sequences s " +
                 "inner join m.firstMarkerRelationships  " +
                 "where m.markerType =  :markerType ";
@@ -1108,7 +1124,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public String getMutantLinesDisplay(String zdbID) {
         return HibernateUtil.currentSession()
                 .createSQLQuery("execute function get_mutants_html_link( :markerZdbId)")
-                .setString("markerZdbId",zdbID)
+                .setString("markerZdbId", zdbID)
                 .uniqueResult().toString();
     }
 
@@ -1122,18 +1138,18 @@ public class HibernateMutantRepository implements MutantRepository {
                 "              order  by feature_abbrev	" +
                 " ";
         List<FeaturePresentationBean> list = (List<FeaturePresentationBean>) HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbId",zdbID)
+                .setString("markerZdbId", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
-                        FeaturePresentationBean featurePresentationBean =new FeaturePresentationBean();
+                        FeaturePresentationBean featurePresentationBean = new FeaturePresentationBean();
                         featurePresentationBean.setAbbrevation(tuple[0].toString());
                         featurePresentationBean.setFeatureZdbId(tuple[1].toString());
-                        return featurePresentationBean ;
+                        return featurePresentationBean;
                     }
                 })
                 .list();
-        return list ;
+        return list;
     }
 
     @Override
@@ -1142,7 +1158,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 " where mr.secondMarker.zdbID = :markerZdbId  " +
                 " and mr.markerRelationshipType.name = :type " +
                 " order by m.abbreviationOrder " +
-                "" ;
+                "";
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("markerZdbId", gene.getZdbID())
                 .setString("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
@@ -1150,7 +1166,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<String> getTransgenicLines(Marker construct){
+    public List<String> getTransgenicLines(Marker construct) {
         String sql = " " +
                 "select distinct get_geno_name_with_bg_html_link(genofeat_geno_zdb_id) " +
                 "   from genotype_feature, feature_marker_relationship " +
@@ -1158,8 +1174,108 @@ public class HibernateMutantRepository implements MutantRepository {
                 "   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
                 "   and fmrel_type like 'contains%'";
         return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbID",construct.getZdbID())
+                .setString("markerZdbID", construct.getZdbID())
                 .list();
     }
 
+    /**
+     * Retrieve phenotype statements by genotype experiment ids
+     *
+     * @param genotypeExperimentIDs genox ids
+     * @return list of phenotype statements
+     */
+    public List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs) {
+        String hql = " from PhenotypeStatement where " +
+                "phenotypeExperiment.genotypeExperiment.zdbID in (:genoxIds)";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        return query.list();
+    }
+
+
+    public Set<String> getGenoxAttributions(List<String> genotypeExperimentIDs) {
+        String hql = "select distinct publication.zdbID from ExpressionExperiment where " +
+                " genotypeExperiment.zdbID in (:genoxIds)";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        List<String> pubIds = (List<String>) query.list();
+        Set<String> distinctPubs = new HashSet<String>(pubIds.size());
+        distinctPubs.addAll(pubIds);
+
+        // phenotype experiments
+        hql = "select distinct figure.publication.zdbID from PhenotypeExperiment where " +
+                " genotypeExperiment.zdbID in (:genoxIds)";
+        query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        pubIds = (List<String>) query.list();
+        distinctPubs.addAll(pubIds);
+
+        // experiments
+        hql = "select distinct experiment.publication.zdbID from GenotypeExperiment where " +
+                " zdbID in (:genoxIds)";
+        query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        pubIds = (List<String>) query.list();
+        distinctPubs.addAll(pubIds);
+
+        return distinctPubs;
+    }
+
+    /**
+     * Retrieve citation list of pubs for fish annotations.
+     * @param genotypeExperimentIDs
+     * @return
+     */
+    public List<Publication> getFishAttributionList(List<String> genotypeExperimentIDs) {
+        String hql = "select distinct experiment.publication from ExpressionExperiment experiment where " +
+                " experiment.genotypeExperiment.zdbID in (:genoxIds)";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        List<Publication> publications = (List<Publication>) query.list();
+        List<Publication> distinctPublications = new ArrayList<Publication>(publications.size());
+        distinctPublications.addAll(publications);
+
+        // phenotype experiments
+        hql = "select distinct experiment.figure.publication from PhenotypeExperiment experiment where " +
+                " experiment.genotypeExperiment.zdbID in (:genoxIds)";
+        query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        publications = (List<Publication>) query.list();
+        distinctPublications.addAll(publications);
+
+        // experiments
+        hql = "select distinct experiment.experiment.publication from GenotypeExperiment experiment where " +
+                " experiment.zdbID in (:genoxIds)";
+        query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        publications = (List<Publication>) query.list();
+        distinctPublications.addAll(publications);
+
+        return distinctPublications;
+    }
+
+    /**
+     * Retrieve Morpholinos by mo Ids
+     *
+     * @param moId MO id
+     * @return MO
+     */
+    public Morpholino getMorpholinosById(String moId) {
+        return (Morpholino) HibernateUtil.currentSession().get(Morpholino.class, moId);
+    }
+
+    public List<Marker> getMorpholinos(List<String> genotypeExperimentIDs) {
+        String hql = "select expCond.morpholino from ExperimentCondition expCond, GenotypeExperiment genoExp, Experiment exp " +
+                "where genoExp.zdbID in (:genoxIDs)" +
+                "and genoExp.experiment=exp " +
+                "and exp.experimentConditions=expCond ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIDs", genotypeExperimentIDs);
+        return query.list();
+
+
+    }
 }

@@ -5,6 +5,7 @@ package org.zfin.framework.presentation;
 */
 public enum Area {
     TRANSCRIPT("Transcript"),
+    ANATOMY("Anatomy")     ,
     ANTIBODY("Antibody")     ,
     CLONE("Clone")     ,
     GENE("Gene")     ,

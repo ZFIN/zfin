@@ -19,6 +19,10 @@
     <context:component-scan base-package="org.zfin.marker.presentation"/>
     <context:component-scan base-package="org.zfin.webdriver.presentation"/>
     <context:component-scan base-package="org.zfin.sequence.reno.presentation"/>
+    <context:component-scan base-package="org.zfin.fish.presentation"/>
+    <context:component-scan base-package="org.zfin.antibody.presentation"/>
+    <context:component-scan base-package="org.zfin.anatomy.presentation"/>
+    <context:component-scan base-package="org.zfin.database.presentation"/>
     <mvc:annotation-driven/>
 
 </beans>

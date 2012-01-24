@@ -7,6 +7,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.ontology.datatransfer.DownloadOntology;
@@ -22,7 +23,7 @@ import java.io.File;
 /**
  * Load obo file for ontology into the database.
  */
-public class LoadOntologiesJob extends QuartzJobBean implements StatefulJob {
+public class LoadOntologiesJob extends ZfinBasicQuartzJob implements StatefulJob {
 
     private Logger log = Logger.getLogger("org.zfin.ontology");
     private static final String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir");
@@ -34,7 +35,7 @@ public class LoadOntologiesJob extends QuartzJobBean implements StatefulJob {
     private boolean useExistingFile;
     private String jobName;
 
-    public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         Appender appender = LoggingUtil.addFileAppender(log, "load-ontology-" + oboFileName);
         long startTime = System.currentTimeMillis();
         String duration = null;

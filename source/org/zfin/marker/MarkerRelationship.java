@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Class MarkerRelationship.
  */
-public class MarkerRelationship implements Comparable, EntityAttribution {
+public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
 
     public enum Type {
 

@@ -74,7 +74,7 @@ create function get_mutants_html_link
 		return '<A HREF="/action/genotype/genotype-detail?zdbID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
 
         else
-		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exist&fsel_marker_id=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || '</A>';
+		return '<A HREF="/action/mutant/mutant-list?zdbID=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || '</A>';
 
 	end if ;
 

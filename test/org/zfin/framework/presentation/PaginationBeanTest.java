@@ -18,7 +18,7 @@ public class PaginationBeanTest {
         bean.setQueryString("pageSize=25&query=nkx2.2&category=GENES");
         bean.setRequestUrl(new StringBuffer("http://zfin.org/action/quicksearch/search_category.jsp"));
         String actionUrl = bean.getActionUrl();
-        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES", actionUrl);
+        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES&", actionUrl);
     }
 
     /**
@@ -31,7 +31,7 @@ public class PaginationBeanTest {
         bean.setQueryString("page=2&pageSize=25&query=nkx2.2&category=GENES");
         bean.setRequestUrl(new StringBuffer("http://zfin.org/action/quicksearch/search_category.jsp"));
         String actionUrl = bean.getActionUrl();
-        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES", actionUrl);
+        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES&", actionUrl);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class PaginationBeanTest {
         bean.setQueryString("pageSize=25&query=nkx2.2&category=GENES&page=24436");
         bean.setRequestUrl(new StringBuffer("http://zfin.org/action/quicksearch/search_category.jsp"));
         String actionUrl = bean.getActionUrl();
-        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES", actionUrl);
+        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES&", actionUrl);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class PaginationBeanTest {
         bean.setQueryString("pageSize=25&page=24436&query=nkx2.2&category=GENES");
         bean.setRequestUrl(new StringBuffer("http://zfin.org/action/quicksearch/search_category.jsp"));
         String actionUrl = bean.getActionUrl();
-        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES", actionUrl);
+        assertEquals("http://zfin.org/action/quicksearch/search_category.jsp?pageSize=25&query=nkx2.2&category=GENES&", actionUrl);
     }
 
 }

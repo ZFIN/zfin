@@ -17,8 +17,8 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermAllFigures() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that Zhou et al. paper is present.
                 assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
             } catch (IOException e) {
@@ -34,8 +34,8 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=true");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
 
             } catch (IOException e) {
                 fail(e.toString());
@@ -50,8 +50,8 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/figure-summary?antibody.zdbID=ZDB-ATB-081017-1&superTerm.zdbID=ZDB-TERM-100331-1053&subTerm.zdbID=ZDB-TERM-091209-4086&startStage.zdbID=ZDB-STAGE-010723-10&endStage.zdbID=ZDB-STAGE-010723-10&onlyFiguresWithImg=false");
-                assertEquals("Antibody search", "Antibody figure summary: Ab-eng", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that publication Liu et al is present.
                 assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
 
@@ -77,8 +77,6 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
             }
         }
     }
-
-    //http://iguana.zfin.org/action/expression/genotype-figure-summary?genoZdbID=ZDB-GENO-070912-1&expZdbID=ZDB-EXP-080331-13&geneZdbID=ZDB-GENE-000210-8&imagesOnly=false
 
     /**
      * Test isStandard (or GC) genotype expression figure summary page

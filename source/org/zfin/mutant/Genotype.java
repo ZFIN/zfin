@@ -1,12 +1,11 @@
 package org.zfin.mutant;
 
+import org.springframework.util.CollectionUtils;
+import org.zfin.expression.Figure;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.people.GenotypeSupplier;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This class defines a genotype, typically provided if at least one allele
@@ -37,6 +36,9 @@ public class Genotype implements Comparable {
     private Set<DataNote> dataNotes;
     private Set<GenotypeSupplier> suppliers;
     private Set<GenotypeAlias> aliases;
+    private Set<Figure> phenotypeFigures;
+    private Figure phenotypeSingleFigure;
+    private String complexity;
 
     public String getZdbID() {
         return zdbID;
@@ -106,23 +108,23 @@ public class Genotype implements Comparable {
     public void setAssociatedGenotypes(Set<Genotype> associatedGenotypes) {
         this.associatedGenotypes = associatedGenotypes;
     }
-    /*public Genotype getBackground() {
+    public Genotype getBackground() {
       if (CollectionUtils.isEmpty(associatedGenotypes))
           return null;
 
-    *//*  if (associatedGenotypes.size() > 1)
-            throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);*//*
+      if (associatedGenotypes.size() > 1)
+            throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);
         Iterator<Genotype> iterator = associatedGenotypes.iterator();
         return iterator.next();
     }
 
-    *
+
     public void setBackground(Genotype background) {
-       *//*if (!CollectionUtils.isEmpty(associatedGenotypes))
-            throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);*//*
+       if (!CollectionUtils.isEmpty(associatedGenotypes))
+            throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);
         associatedGenotypes = new HashSet<Genotype>();
         associatedGenotypes.add(background);
-    }*/
+    }
 
     public Set<GenotypeFeature> getGenotypeFeatures() {
         return genotypeFeatures;
@@ -146,6 +148,11 @@ public class Genotype implements Comparable {
 
     public int compareTo(Object o) {
         Genotype otherGenotype = (Genotype)o;
+
+        if (getComplexity().compareTo(otherGenotype.getComplexity()) != 0) {
+            return getComplexity().compareTo(otherGenotype.getComplexity());
+        }
+
         return getNameOrder().compareTo(otherGenotype.getNameOrder());
     }
 
@@ -186,6 +193,44 @@ public class Genotype implements Comparable {
 
     public void setAliases(Set<GenotypeAlias> aliases) {
         this.aliases = aliases;
+    }
+
+    public Set<Figure> getPhenotypeFigures() {
+        return phenotypeFigures;
+    }
+
+    public void setPhenotypeFigures(Set<Figure> phenotypeFigures) {
+        this.phenotypeFigures = phenotypeFigures;
+    }
+
+    public Figure getPhenotypeSingleFigure() {
+        return phenotypeSingleFigure;
+    }
+
+    public boolean isPhenoFiguresHaveImg() {
+        if (phenotypeFigures == null || phenotypeFigures.isEmpty())  {
+            return false;
+        }
+        boolean img = false;
+        for (Figure phenoFig : phenotypeFigures) {
+            if (!phenoFig.isImgless()) {
+                img = true;
+                break;
+            }
+        }
+        return img;
+    }
+
+    public void setPhenotypeSingleFigure(Figure phenotypeSingleFigure) {
+        this.phenotypeSingleFigure = phenotypeSingleFigure;
+    }
+
+    public String getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(String complexity) {
+        this.complexity = complexity;
     }
 
 

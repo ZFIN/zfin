@@ -223,5 +223,18 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Retrieve the foreign key column name for a given ForeignKey or
+            the two column names for a many-to-many relationship
+        </description>
+        <name>getForeignKeyColumn</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getForeignKeyColumn(org.zfin.database.presentation.ForeignKey)</function-signature>
+        <example>
+            ${fn:getForeignKeyColumn( TERM_SUBSET_ASSOC )}
+        </example>
+    </function>
+
 
 </taglib>

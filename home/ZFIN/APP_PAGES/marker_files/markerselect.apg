@@ -1187,7 +1187,6 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
 	</script>
  	<?/MIVAR>
-	<div id="pagination"></div>
        <p/>
 
   <?/MIBLOCK> <?MICOMMENT> if not redirect to markerview <?/MICOMMENT>

@@ -194,10 +194,8 @@
     <td>
         <a href="/action/dev-tools/file-content?fileName=/WEB-INF/web.xml">Web Deployment descriptor: web.xml</a>
     </td>
-</tr>
-<tr>
     <td>
-        &nbsp;
+        <a href="/action/database/browse-database">Browse Database tables</a>
     </td>
 </tr>
 
@@ -213,6 +211,9 @@
 <tr>
     <td>
         <a href="/action/dev-tools/database-info">Database Info</a><br/>
+    </td>
+    <td>
+        <a href="/action/dev-tools/bts-index-info">BTS Index Info</a><br/>
     </td>
 </tr>
 <tr>

@@ -14,6 +14,10 @@ TO_ALMOST_DIRECTORY=/research/zblastfiles/zmore/almdb/Current/
 # one copy for default developers that don't want their own
 TO_DEFAULT_DIRECTORY=/research/zblastfiles/zmore/dev_blastdb/Current/
 
+TO_TEST_DIRECTORY=/research/zblastfiles/zmore/test/Current/
+
+TO_TRUNK_DIRECTORY=/research/zblastfiles/zmore/trunk/Current/
+
 # on copy as a base to restore today from, in case either of the 
 # two above are corrupted through testing, or a developer needs to
 # make a new copy.
@@ -36,6 +40,12 @@ echo rsync the default directory
 echo rsync the pristine directory
 /local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_PRISTINE_DIRECTORY
 
+echo rsync the pristine directory
+/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TEST_DIRECTORY
+
+echo rsync the pristine directory
+/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TRUNK_DIRECTORY
+
 # if there are changes, then commit them as informix, most likely.
 if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
 
@@ -57,3 +67,8 @@ fi
 /bin/chgrp -R zfishweb $TO_PRISTINE_DIRECTORY
 /bin/chmod -R g+w $TO_PRISTINE_DIRECTORY
 
+/bin/chgrp -R zfishweb $TO_TEST_DIRECTORY
+/bin/chmod -R g+w $TO_TEST_DIRECTORY
+
+/bin/chgrp -R zfishweb $TO_TRUNK_DIRECTORY
+/bin/chmod -R g+w $TO_TRUNK_DIRECTORY

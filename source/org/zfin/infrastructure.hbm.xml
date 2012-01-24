@@ -225,9 +225,10 @@
 
         <discriminator type="string"
                        formula="(CASE get_obj_type(allmapnm_zdb_id)
-                                    WHEN 'ALT'  THEN 'Alt---'
-                                    WHEN 'GENO' THEN 'Geno--'
-                                    ELSE             'Marker'
+                                    WHEN 'ALT'  THEN     'Alt---'
+                                    WHEN 'GENO' THEN     'Geno--'
+                                    WHEN 'MRPHLNO' THEN  'Morpho'
+                                    ELSE                 'Marker'
                                  END)"/>
 
         <property name="name" column="allmapnm_name" type="string"/>

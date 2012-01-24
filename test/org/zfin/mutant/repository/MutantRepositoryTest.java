@@ -25,10 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MorpholinoSequence;
 import org.zfin.util.DateUtil;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
@@ -324,24 +321,74 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getLineForMarker(){
+    public void getLineForMarker() {
         String display = mutantRepository.getMutantLinesDisplay("ZDB-GENE-010606-1");
         assertNotNull(display);
     }
 
     @Test
-    public void getAllelesForMarker(){
+    public void getAllelesForMarker() {
         List<FeaturePresentationBean> featurePresentationBeans = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1");
-        assertTrue(featurePresentationBeans.size()>4);
-        assertTrue(featurePresentationBeans.size()<20);
+        assertTrue(featurePresentationBeans.size() > 4);
+        assertTrue(featurePresentationBeans.size() < 20);
     }
 
     @Test
-    public void getTransgenicLines(){
+    public void getTransgenicLines() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-94");
         List<String> links = mutantRepository.getTransgenicLines(m);
-        assertThat(links.size() , greaterThan(65));
-        assertThat(links.size() , lessThan(100));
+        assertThat(links.size(), greaterThan(65));
+        assertThat(links.size(), lessThan(100));
     }
+
+    @Test
+    public void getPhenotypeStatementsByGenotype() {
+        //String genotypeID = "ZDB-GENO-030619-2";
+        String genotypeID = "ZDB-GENO-070215-11";
+        Genotype genotype = mutantRepository.getGenotypeByID(genotypeID);
+        List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+        assertNotNull(statements);
+    }
+
+    @Test
+    public void getPhenotypeStatementsByGenotypeExperiment() {
+        //String genotypeID = "ZDB-GENO-030619-2";
+        String genoxID = "ZDB-GENOX-091027-5";
+        List<String> genoxIds = new ArrayList<String>(1);
+        genoxIds.add(genoxID);
+        List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotypeExperiments(genoxIds);
+        assertNotNull(statements);
+    }
+
+    @Test
+    public void getMorpholinosById() {
+        //String genotypeID = "ZDB-GENO-030619-2";
+        String moID = "ZDB-MRPHLNO-101014-10";
+        Morpholino morpholino = mutantRepository.getMorpholinosById(moID);
+        assertNotNull(morpholino);
+        assertNotNull(morpholino.getTargetGenes());
+        assertEquals(2, morpholino.getTargetGenes().size());
+    }
+
+    @Test
+    public void getGenoxAttributions() {
+        String genoxID = "ZDB-GENOX-091027-5";
+        List<String> genoxIds = new ArrayList<String>(1);
+        genoxIds.add(genoxID);
+        Set<String> attributions = mutantRepository.getGenoxAttributions(genoxIds);
+        assertNotNull(attributions);
+        assertTrue(attributions.size() > 1);
+    }
+
+    @Test
+    public void getFishCitations() {
+        List<String> genoxIds = new ArrayList<String>(1);
+        genoxIds.add("ZDB-GENO-070406-1");
+        genoxIds.add("ZDB-GENOX-100402-4");
+        List<Publication> attributions = mutantRepository.getFishAttributionList(genoxIds);
+        assertNotNull(attributions);
+        assertTrue(attributions.size() > 1);
+    }
+
 
 }

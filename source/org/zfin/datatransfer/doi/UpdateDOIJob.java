@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 /**
  */
-public class UpdateDOIJob extends QuartzJobBean {
+public class UpdateDOIJob extends ZfinBasicQuartzJob {
 
     private Logger logger = Logger.getLogger(UpdateDOIJob.class) ;
 
@@ -21,7 +22,7 @@ public class UpdateDOIJob extends QuartzJobBean {
     private int maxToProcess = DOIProcessor.ALL ;
     private int maxAttempts = DOIProcessor.ALL ;
 
-    public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             DOIProcessor driver = new DOIProcessor(reportAll,maxAttempts,maxToProcess);
             driver.findAndUpdateDOIs();

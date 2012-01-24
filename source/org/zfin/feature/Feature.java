@@ -326,4 +326,14 @@ public class Feature implements EntityNotes{
         sb.append('}');
         return sb.toString();
     }
+
+    public SortedSet<Marker> getAffectedGenes() {
+        SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
+        for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
+            if (ftrmarkrel.isMarkerIsGene() && ftrmarkrel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                  affectedGenes.add(ftrmarkrel.getMarker());
+            }
+        }
+        return affectedGenes;
+    }
 }

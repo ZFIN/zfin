@@ -14,6 +14,7 @@
 # a database query.
 
 #aa-fishselect.apg
+#fish/search
 #aa-newmrkrselect.apg
 #aa-markerselect.apg
 #aa-msegselect.apg
