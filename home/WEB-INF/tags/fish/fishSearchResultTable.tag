@@ -173,29 +173,6 @@
     <script>
         jQuery('#affected-gene-column-header, #feature-column-header').tipsy({gravity:'s', opacity:1, delayIn:650, delayOut:200});
         jQuery('#fish-column-header').tipsy({gravity:'sw', opacity:1, delayIn:750, delayOut:200});
-        jQuery('#fish-column-header').bind('click', function () {
-            setSortingOption('<%= SortBy.BEST_MATCH %>');
-        });
-        jQuery('#affected-gene-column-header').bind('click', function () {
-            <c:choose>
-            <c:when test="${formBean.geneSortAscending}">
-            setSortingOption('<%= SortBy.GENES_REVERSE %>');
-            </c:when>
-            <c:otherwise>
-            setSortingOption('<%= SortBy.GENES %>');
-            </c:otherwise>
-            </c:choose>
-        });
-        jQuery('#feature-column-header').bind('click', function () {
-            <c:choose>
-            <c:when test="${formBean.featureSortAscending}">
-            setSortingOption('<%= SortBy.FEATURES_REVERSE %>');
-            </c:when>
-            <c:otherwise>
-            setSortingOption('<%= SortBy.FEATURES %>');
-            </c:otherwise>
-            </c:choose>
-        });
     </script>
 
     <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
