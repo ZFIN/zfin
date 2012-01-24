@@ -315,6 +315,8 @@
                     </c:if>
                     <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
                     </c:if>
+                    <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
+                    </c:if>
                     <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
                     </c:if>
                     <c:if test="${!status.last}"><br/></c:if>
@@ -324,29 +326,8 @@
                 No data available
             </c:otherwise>
         </c:choose>
-    </td><td valign="top">
-    <c:choose>
-        <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
-            <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
-                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}" id="${supplier.organization.zdbID}">
-                        ${supplier.organization.name}</a>
-                <c:if test="${supplier.zirc}">&nbsp;
-                    <zfin2:orderThis organization="${supplier.organization}" accessionNumber="${formBean.feature.zdbID}"/>
-                </c:if>
-                <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
-                </c:if>
-                <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
-                </c:if>
-                <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
-                </c:if>
-                <c:if test="${!status.last}"><br/></c:if>
-            </c:forEach>
-        </c:when>
-        <c:otherwise>
-            No data available
-        </c:otherwise>
-    </c:choose>
-</td></tr>
+    </td>
+</tr>
 
 <zfin2:notes hasNotes="${formBean.feature}" inTable="false"/>
 
@@ -495,12 +476,6 @@
             <zfin:alternating-tr loopName="loop">
                 <td>
                     <zfin:link entity="${featgenoStat.genotype}"/>
-
-                    <c:if test="${fn:length(featgenoStat.genotype.associatedGenotypes)>0}">
-                        (<zfin:link entity="${featgenoStat.genotype.associatedGenotypes}"/>)
-
-                    </c:if>
-
                 </td>
                 <td>
                     <zfin:link entity="${featgenoStat.affectedMarkers}"/>
