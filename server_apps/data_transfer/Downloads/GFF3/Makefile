@@ -28,11 +28,12 @@ unload_assembly_clone_gff.sql E_unload_alias_scattered.sql \
 E_unload_antibody_gff.sql E_unload_pheno_gff.sql E_unload_xpat_gff.sql \
 LoadVegaGFF3.pl LoadEnsemblGFF3.pl E_unload_zfin_morpholino.sql \
 E_unload_transcript_gff.sql  E_unload_ensembl_contig.sql \
-load_drerio_ensembl.sql  unload_vega_transcripts.sql E_load_unload_BL_gff.sql
+load_drerio_ensembl.sql  unload_vega_transcripts.sql \
+E_unload_zfin_tginsertion_gff.sql 
 
 STATICS = gather_alias.awk rollback.sql commit.sql load_drerio_vega_id.sql \
 	 update_vega_nomenclature.sql get_mo_seq.sql sam2gff3.awk increment_id.awk \
-	 E_zfin_ensembl_gene.sql
+	 E_zfin_ensembl_gene.sql load_BL_gff.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -42,8 +43,9 @@ HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
 # (production) data source is /research/zprodmore/gff3/
-# can be re-set in GFF3Files.pl for development
+# can be re-set in GFF3Files.pl for development for Ensembl & Vega
 
+GLOBALSTORE= /research/zprodmore/gff3
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -85,30 +87,31 @@ load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql    
 load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql # $(TARGETDIR)/drerio_ensembl.unl
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
 
-### Burgess Lin track: global bed file exists
-/research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab :
-	echo "Bed file may need to be updated with a gmake in "
-	echo "... ZFIN_WWW/server_apps/data_transfer/Burgess_Lin/"
+### BurgessLin bed file converted to a informix loadable gff3 track
+bl_datafile: $(TARGETDIR)/Burgess_Lin.unl 
+	cp $(GLOBALSTORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
 
-### local copy of bed file not older than global copy
-$(TARGETDIR)/BL_chr_beg_end_la_strnd.tab: /research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab
-	cp /research/zprodmore/gff3/BL_chr_beg_end_la_strnd.tab $(TARGETDIR)/BL_chr_beg_end_la_strnd.tab
+$(TARGETDIR)/Burgess_Lin.unl:  $(GLOBALSTORE)/Burgess_Lin.unl
+	cp $(GLOBALSTORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
 
-### produces <!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_BL.gff3
-load_BL:	 $(TARGETDIR)/E_load_unload_BL_gff.sql  $(TARGETDIR)/BL_chr_beg_end_la_strnd.tab
-	 cd $(TARGETDIR) && dbaccess -a $(DBNAME) E_load_unload_BL_gff.sql
+load_bl:  $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/rollback.sql bl_datafile
+	cd $(TARGETDIR) && cat load_BL_gff.sql rollback.sql | dbaccess -a $(DBNAME)
+
+load_bl_commit: $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/commit.sql bl_datafile
+	cd $(TARGETDIR) && cat load_BL_gff.sql commit.sql | dbaccess -a $(DBNAME)
 
 ### daily tracks
 
-run : load_BL $(TARGETDIR)/GenerateZFINGFF3.pl 	  $(TARGETDIR)/rollback.sql \
-$(TARGETDIR)/unload_zfin_genes_gff.sql \
+run: $(TARGETDIR)/GenerateZFINGFF3.pl     $(TARGETDIR)/rollback.sql \
+$(TARGETDIR)/unload_zfin_genes_gff.sql    $(TARGETDIR)/E_unload_zfin_tginsertion_gff.sql \
 $(TARGETDIR)/unload_alias_scattered.sql   $(TARGETDIR)/E_unload_alias_scattered.sql \
-$(TARGETDIR)/unload_pheno_gff.sql  		  $(TARGETDIR)/E_unload_pheno_gff.sql \
-$(TARGETDIR)/unload_xpat_gff.sql 		  $(TARGETDIR)/E_unload_xpat_gff.sql  \
-$(TARGETDIR)/unload_antibody_gff.sql	  $(TARGETDIR)/E_unload_antibody_gff.sql \
+$(TARGETDIR)/unload_pheno_gff.sql         $(TARGETDIR)/E_unload_pheno_gff.sql \
+$(TARGETDIR)/unload_xpat_gff.sql          $(TARGETDIR)/E_unload_xpat_gff.sql  \
+$(TARGETDIR)/unload_antibody_gff.sql      $(TARGETDIR)/E_unload_antibody_gff.sql \
 $(TARGETDIR)/unload_vega_transcripts.sql  $(TARGETDIR)/E_unload_transcript_gff.sql \
 $(TARGETDIR)/unload_zfin_morpholino.sql   $(TARGETDIR)/E_unload_zfin_morpholino.sql \
 $(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/gather_alias.awk
+
 	cd $(TARGETDIR) && GenerateZFINGFF3.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
 
