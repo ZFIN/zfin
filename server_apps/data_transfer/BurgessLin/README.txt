@@ -1,3 +1,88 @@
+README
+recieve email with excel file, 
+I am storing the incoming files in /research/zprod/data/BurgessLin/YYYY-MMM
+
+export as csv (tab separated values actually)
+	may need to turn off formating numbers with commas before exporting as cvs.
+	tabs with no string quotes
+
+make a consistant names for the files.
+either like this or symlinks or however you would like
+
+ln -s  /research/zprod/data/BurgessLin/2011-Oct/Plate7-12FinalSubmit_sheet1.csv sheet1
+ln -s  /research/zprod/data/BurgessLin/2011-Oct/Plate7-12FinalSubmit_sheet2.csv sheet2
+OR 
+copy then cleanup
+
+optional? I think I have it covered downstream but
+convert to unix line endings is always a good idea.
+you should use whatever method you normaly use
+(I use ~tomc/bin/reline)
+
+reline sheet1
+reline sheet2
+
+note: 
+(first time) size drops so it can have windows line endings
+
+# this handled by makefile but still ok to be vaguley cognizant of
+./convert_sheet1.sh
+./convert_sheet2.awk $sheet2 | sort -u > la_fish_parent.tab
+
+########################################################
+# load into zfin scripts happen here
+
+Potential Problems with the Data:
+
+* Duplicate Accession numbers
+  -- cause the load to fail
+
+* Repeated Accession numbers
+  -- cause the load to fail
+
+* Features in the genotype sheet that are not on the Consensus sheet
+  -- removed by the load
+
+* Features in the Consensus sheet that are not in the genotype sheet
+  -- removed by the load
+
+* Duplicate genotype
+  -- removed by the load
+  
+
+Commands to run the load script:
+
+gmake load_bl
+
+gmake load_bl_commit
+
+ is converting & running load_Burgess_Lin.sql
+then cleaning up if commited
+########################################################
+
+# make the bed file available this happens sometime after the
+# the data load is in and checked.
+# 	o if you care about sanity store it in /zprod/data/BurgessLin/YYYY-MMM  
+#	o whatever they named it, symlink it as  "BL.bed"
+#	o push a copy to the "Global Store" /research/zprod/gff3/
+
+gmake push_gff3
+
+# this only make the datafile available for any instance to pull
+# the actual pulling is done in data_transfer/Downloads/GFF3/
+
+# we do not know how updates will happen so it is pointless
+# make decisions about what we will do before we know what 
+# our options are.
+
+################################################################################
+################################################################################
+
+
+
+
+load notes from first trial dataset
+
 
 
 
@@ -89,7 +174,7 @@ note 1: the Strain given in the GenBank report is "TAB-5"
 note 2: there is a wildtype line 	AB/Tuebingen  AB/TU
 	which mentions both TAB-5 and TAB-14, may be inclusive.
 
-the DBA script to update the schema for the new fields does not run to compleation.
 
-fixed.
+
+
 
