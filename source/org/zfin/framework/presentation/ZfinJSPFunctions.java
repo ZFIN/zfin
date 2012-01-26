@@ -53,13 +53,12 @@ public class ZfinJSPFunctions {
      * @return String
      */
     public static String escapeHtml(String string, boolean escapeAll) {
-        if (escapeAll)
-
-        string = DTOConversionService.unescapeString(string);
-       string = StringEscapeUtils.unescapeHtml4(string);
-        string = StringEscapeUtils.unescapeJava(string);
-         string = StringEscapeUtils.unescapeXml(string);
-
+        if (escapeAll) {
+            string = DTOConversionService.unescapeString(string);
+            string = StringEscapeUtils.unescapeHtml4(string);
+            string = StringEscapeUtils.unescapeJava(string);
+            string = StringEscapeUtils.unescapeXml(string);
+        }
 
         if (string.indexOf("\r\n") > -1)
             string = string.replaceAll("\r\n", "<br/>");
