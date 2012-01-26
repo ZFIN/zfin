@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SNP
 
 GENERICS = dbSNP.pl addNewClonesJSmith.pl                                      
            
-STATICS = addTalbotSNPAttr.sql downloadListSNPncbi.txt JSmithSNPCloneInfo.txt loadClonesJSmith.sql  \
+STATICS = addTalbotSNPAttr.sql downloadListSNPncbi.txt loadClonesJSmith.sql  \
           loadNewSNPAttrs.sql  loadNewSNPs.sql  newClonesJSmith.txt  README
 
 # Define targets that require special handling.

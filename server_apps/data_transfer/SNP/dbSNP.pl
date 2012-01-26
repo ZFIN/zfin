@@ -213,7 +213,7 @@ open (OUTPUT5,  ">nonZFIN.unl") || die "Can't open: nonZFIN.unl $!\n";
 $ctNew = $nonNCBIct = $ctNoZFINmrkr = $ctOutSmith = $ctOutJohson = $ctOutTalbot = $ctSS = $ctRedn1 = $ctElse = 0;
 %outZFINacc = ();
 foreach $p (@parseListXML) {
-  open (INP, "$p") || die "Can't open $p : $!\n";
+  open (INP, "$p") || next;
   @lines=<INP>;
   close(INP);
   foreach $line (@lines) {  
@@ -305,8 +305,8 @@ print "\n ctElse: $ctElse\n\n";
 print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $ctOutTalbot\n\n";
 
 if ($ctNew > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("Failed to load snp_download table");
-  &emailSuccess("$ctNew new records inserted into snp_download table");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("failed to load snp_download table");
+  &emailSuccess("has added $ctNew new records into snp_download table");
 }
 
 ### open a handle on the db
@@ -357,7 +357,7 @@ $ctNew2 = $ctNew3 = 0;
 $ctJohson = $ctSmith = $ctTalbot = $ctRedn2 = $ctRedn3 = $ctSS = 0;
 %outZFINacc = ();
 foreach $p (@parseListXML) {
-  open (INP, "$p") || die "Can't open $p : $!\n";
+  open (INP, "$p") || next;
   @lines=<INP>;
   close(INP);
   foreach $line (@lines) {  
@@ -429,20 +429,15 @@ print "\n ctNew2: $ctNew2 \t   ctRedn2: $ctRedn2 \t ctNew3: $ctNew3 \t   ctRedn3
 print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n";
 
 if ($ctNew2 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("Failed to load snp_download_attribution table");
-  &emailSuccess("$ctNew2 new records inserted into snp_download_attribution table");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("failed to load snp_download_attribution table");
+  &emailSuccess("has added $ctNew2 new records into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("Failed to insert record_attribution table");
-  &emailSuccess("$ctNew3 new records inserted into record_attribution table for Talbot SNPs");
+  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("failed to insert record_attribution table");
+  &emailSuccess("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
 } 
 
-### remove the datafiles files after loading the tables
-system("/bin/rm -f *.xml") and die "can not rm xml data file";
-system("/bin/rm -f *.gz") and die "can not rm .gz files";
-system("/bin/rm -f *.bcp") and die "can not rm .bcp files";
-system("/bin/rm -f *.unl") and die "can not rm .unl files";
 
 print "Done\n";
 
@@ -463,7 +458,7 @@ sub emailError($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
     print MAIL "To: xshao\@cs.uoregon.edu\n";
-    print MAIL "Subject: loadSNPdata.pl $_[0]\n";
+    print MAIL "Subject: dbSNP.pl $_[0]\n";
     print MAIL "Error:\n";
     print MAIL "$_[0]";
     close MAIL;
@@ -475,7 +470,7 @@ sub emailSuccess($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
     print MAIL "To: xshao\@cs.uoregon.edu\n";
-    print MAIL "Subject: loadSNPdata.pl $_[0]\n";
+    print MAIL "Subject: dbSNP.pl $_[0]\n";
     print MAIL "Error:\n";
     print MAIL "$_[0]";
     close MAIL;
