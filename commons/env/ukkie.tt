@@ -47,7 +47,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FF6633
-<!--|SOURCEROOT|-->	
+<!--|SOURCEROOT|-->	/tmp
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	tomc\@cs.uoregon.edu

@@ -47,6 +47,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
+<!--|SOURCEROOT|-->	/tmp
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	kinetix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
