@@ -69,6 +69,10 @@
 # moved to quartz in fogbugz 4910 - running Sa 12:30am
 # 30 0 * * 1 <!--|ROOT_PATH|-->/server_apps/data_transfer/Microarray/microarray.sh
 #
+#  Every day at 1.55 am clean out accession files older than 3 days.
+55 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-accessions-error.txt
+#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
+05 02 * * 4 /bin/find /private/etc/tomcat/zfin.org/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-microarray-error.txt
 # ------------------------------------------------------------------------
 # ---- 10 PM - 11 PM : DATA TRANSFER OUT                              ----
 # ------------------------------------------------------------------------

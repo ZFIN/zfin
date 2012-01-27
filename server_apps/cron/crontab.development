@@ -63,6 +63,10 @@
 #  Clean out fasta files older than seven days.
 30 01 * * * /bin/find /research/zblastfiles/zmore/almdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/fasta-blast-clean-error.txt ;/bin/find /research/zcentral/catalina_bases/almost/temp/ -name "blast*.xml" -mtime +7 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/blast-clean-error.txt ;  /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "*.fa" -mtime +7 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/fasta-clean-error.txt
 50 01 * * * /bin/find /research/zblastfiles/zmore/dev_blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zblastfiles/zmore/dev_blastdb/fasta-blast-clean-error.txt ;
+#  Every day at 1.55 am clean out accession files older than 3 days.
+55 01 * * * /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /research/zcentral/catalina_bases/almost/temp/clean-accessions-error.txt
+#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
+05 02 * * 4 /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /research/zcentral/catalina_bases/almost/temp/clean-microarray-error.txt
 #
 #
 # -------------------------------------------------------------------------------------------------------
