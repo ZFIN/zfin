@@ -101,7 +101,7 @@ create function p_zgc_load() returning int;
       (
         zEST_zdb_id 	varchar(50),
         zEST_name		varchar(255),
-        zEST_abbrev		varchar(40),
+        zEST_abbrev		varchar(150),
         zEST_description	lvarchar,
         zEST_owner		varchar(50)
       )
@@ -116,7 +116,7 @@ create function p_zgc_load() returning int;
       (
         zGENE_zdb_id 	varchar(50),
         zGENE_name		varchar(255),
-        zGENE_abbrev	varchar(40),
+        zGENE_abbrev	varchar(150),
         zGENE_description	lvarchar,
         zGENE_owner		varchar(50)
       )

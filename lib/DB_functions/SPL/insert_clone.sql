@@ -4,7 +4,7 @@
  
 drop function insrt_cln;
 
-create function insrt_cln( est_id varchar(50),est_abbrev varchar(60) ) returning integer
+create function insrt_cln( est_id varchar(50),est_abbrev varchar(150) ) returning integer
     insert into clone (   
         clone_mrkr_zdb_id,
         clone_comments,
@@ -45,7 +45,7 @@ drop function insert_clone;
 create function insert_clone() returning integer;
     define cnt, rtn integer;
     define id varchar(50);
-    define abbrev varchar(60);
+    define abbrev varchar(150);
     let cnt = 0;
     foreach  
     select mrkr_zdb_id,mrkr_abbrev into id,abbrev

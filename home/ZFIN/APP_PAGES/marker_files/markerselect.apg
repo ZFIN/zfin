@@ -502,7 +502,7 @@ DEBUGGING:
 	mstmrkr_zdb_id varchar(50),
 	mstmrkr_name varchar(255),
 	mstmrkr_abbrev varchar(255),
-	mstmrkr_abbrev_order varchar(80),
+	mstmrkr_abbrev_order varchar(255),
 	mstmrkr_type varchar(10),
 	mstmrkr_match_name varchar(255),
 	mstmrkr_significance integer,

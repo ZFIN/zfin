@@ -424,12 +424,12 @@ PREFIX: msegsel_
   execute function table_exists('$msegselect_temp_marker')">
   <?MISQL COND=$(EC,$1,f) SQL="
     create temp table $msegselect_temp_marker (
-      msegtmrkr_abbrev varchar(40),
+      msegtmrkr_abbrev varchar(150),
       msegtmrkr_type varchar(10),
       msegtmrkr_zdb_id varchar(50),
       msegtmrkr_clone_sequence_type varchar(20),
       msegtmrkr_vector_type_name varchar(20),
-      msegtmrkr_abbrev_order varchar(80),
+      msegtmrkr_abbrev_order varchar(255),
       msegtmrkr_match_name varchar(255),
       msegtmrkr_significance integer,
       msegtmrkr_precedence varchar(80)

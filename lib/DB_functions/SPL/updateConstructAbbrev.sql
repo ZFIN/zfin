@@ -1,4 +1,4 @@
-create procedure updateConstructAbbrev (vMrkrZdbId varchar(50), vMrkrName varchar(60), vMrkrType varchar(10))
+create procedure updateConstructAbbrev (vMrkrZdbId varchar(50), vMrkrName varchar(255), vMrkrType varchar(10))
 
 if vMrkrType in ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
    then
