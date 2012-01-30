@@ -127,7 +127,7 @@ EFFECTS
     }
   </script>
 
-  <?MIBLOCK COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,)) >
+  <?MIBLOCK COND="$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,))">
     <?MISQL SQL="
         select cs_field_name_value 
         from curator_session 
@@ -147,7 +147,7 @@ EFFECTS
   <table width=100% border=0 cellspacing=0 cellpadding=3>
     <tr bgcolor=#CCCCCC>
 
-  <?MIBLOCK COND=$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,))>
+  <?MIBLOCK COND="$(OR,$(NXST,$FIGURE_ID),$(EC,$FIGURE_ID,))">
       <td></td>
       <td>Label</td>
       <td>Caption</td>
@@ -207,7 +207,20 @@ EFFECTS
       <?/MISQL>
     </td>
     <td valign=top>
-      <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurfig_fig_zdb_id','figure')"><?/MIVAR>
+      <?MISQL SQL="
+            select count(*)
+            from expression_pattern_figure
+            where xpatfig_fig_zdb_id = '$xpcurfig_fig_zdb_id';">
+	     <?MIVAR NAME=fx_count>$1<?/MIVAR>
+            <?MISQL SQL="select count(*) from phenotype_experiment where phenox_fig_zdb_id = '$xpcurfig_fig_zdb_id';">
+          <?MIVAR COND="$(=,$(+,$1,$fx_count),0)">
+	  	  <input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurfig_fig_zdb_id','figure')">
+          <?/MIVAR>
+          <?MIVAR COND="$(>=,$(+,$1,$fx_count),1)">
+            $(+,$1,$fx_count)
+          <?/MIVAR>
+	  <?/MISQL>
+      <?/MISQL>
     </td> 
   </tr>  
   <?/MIVAR>
