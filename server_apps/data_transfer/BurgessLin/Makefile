@@ -76,7 +76,7 @@ load_bl_commit: convert load_Burgess_Lin.sql  la_gb_chr_loc.tab la_fish_parent.t
 	cat load_Burgess_Lin.sql commit.sql | dbaccess -a $(DBNAME)
 	unlink sheet1
 	unlink sheet2
-	rm -f la_gb_chr_loc.tab commit.sql la_fish_parent.tab 
+	rm -f la_gb_chr_loc.tab la_fish_parent.tab 
 
 ####################### PUSH B/L BED  FILE ##########################################
 ###
