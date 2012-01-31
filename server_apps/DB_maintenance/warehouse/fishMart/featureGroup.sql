@@ -1,4 +1,3 @@
-begin work ;
 
 !echo "feature_group";
 
@@ -97,7 +96,3 @@ select max(octet_length(fg_group_name))
 update feature_group_member
  set fgm_significance = 0 
 where fgm_significance is null;
-
-commit work ;
-
---rollback work ;

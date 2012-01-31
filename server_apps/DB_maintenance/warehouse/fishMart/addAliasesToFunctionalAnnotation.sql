@@ -1,4 +1,3 @@
-begin work ;
 
 --update statistics high;
 
@@ -440,8 +439,3 @@ update functional_Annotation
 
 --
 
-commit work ;
-
---update statistics high;
-
---rollback work ;

@@ -1,4 +1,3 @@
-begin work;
 
 update statistics high for table gene_feature_result_view;
 update statistics high for table fish_Annotation_Search;
@@ -39,5 +38,3 @@ update fish_annotation_search
 update fish_annotation_search
   set fas_affector_type_group = replace(fas_affector_type_group,"_","");
   
-
-commit work;

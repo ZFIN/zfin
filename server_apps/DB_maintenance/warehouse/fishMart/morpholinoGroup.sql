@@ -1,4 +1,3 @@
-begin work ;
 
 !echo "begin morpholino group";
 
@@ -56,8 +55,3 @@ select max(octet_length(morphg_group_name))
  from morpholino_group;
 
 
-
-
---rollback work ;
-
-commit work ;

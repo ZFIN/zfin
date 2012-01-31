@@ -713,6 +713,3 @@ alter table gene_feature_Result_view
   constraint gfrv_fas_id_foreign_key);
 
 
-
---rollback work ;
-commit work ;

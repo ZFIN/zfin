@@ -1,4 +1,3 @@
-begin work ;
 
 !echo "begin environment group";
 
@@ -37,6 +36,3 @@ insert into environment_group_member(egm_group_id, egm_member_name, egm_member_i
 
 select max(octet_length(eg_group_name))
  from environment_group;
-
-commit work;
---rollback work ;

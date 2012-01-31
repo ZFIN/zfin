@@ -1,4 +1,3 @@
-begin work;
 
 !echo "term group" ;
 
@@ -264,8 +263,3 @@ set pdqpriority 0;
 
 !echo "check lvarchars for term group name"
 select max(octet_length(tg_group_name)) from term_group;
-
-
---rollback work ;
-
-commit work ;

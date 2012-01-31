@@ -1,4 +1,4 @@
-begin work ;
+
 !echo "begin construct group";
 --set pdqpriority high;
 
@@ -207,6 +207,3 @@ insert into construct_group_member (cgm_group_id, cgm_member_name, cgm_member_id
 
 select max(octet_length(cg_group_name))
  from construct_group ;
-
-commit work;
---rollback work;

@@ -1,4 +1,4 @@
-begin work ;
+
 
 update statistics high for table functional_annotation;
 update statistics high for table feature_group;
@@ -148,6 +148,3 @@ update statistics high for table term_group;
 update functional_annotation
    set fa_affector_type_group = 'zzzzzzzzzzzzzzzzzzzzzz'
    where fa_affector_type_group is null;
-
---rollback work ;
-commit work ;

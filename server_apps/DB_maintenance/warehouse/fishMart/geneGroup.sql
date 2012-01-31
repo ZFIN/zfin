@@ -1,4 +1,4 @@
-begin work ;
+
 !echo "begin geneGroup.sql";
 --set pdqpriority high;
 
@@ -267,5 +267,3 @@ insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_me
 select max(octet_length(afg_group_name))
  from affected_gene_group ;
 
-commit work;
---rollback work;

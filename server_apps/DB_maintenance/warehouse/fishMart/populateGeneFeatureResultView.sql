@@ -1,4 +1,4 @@
-begin work ;
+
 
 delete from gene_feature_result_view;
 
@@ -390,6 +390,3 @@ and fas_geno_handle like '%[%[%[%['
 and (Select count(*) from gene_feature_result_view a
                 where a.gfrv_fas_id = fas_pk_id) < 4;
 
-
---rollback work ;
-commit work ;

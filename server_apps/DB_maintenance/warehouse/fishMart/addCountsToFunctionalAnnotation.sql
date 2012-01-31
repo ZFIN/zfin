@@ -1,4 +1,3 @@
-begin work ;
 
 update statistics high for table functional_annotation;
 update statistics high for table feature_group;
@@ -152,7 +151,3 @@ update functional_annotation
 
 update functional_annotation
  set fa_fish_parts_count = fa_feature_count + fa_morph_member_count ;
-
-commit work ;
-
----rollback work;

@@ -1,4 +1,4 @@
-begin work ;
+
 
 !echo "begin functionalAnnotation";
 
@@ -252,6 +252,3 @@ insert into feature_group_member (fgm_group_id, fgm_member_name, fgm_member_id, 
  and fa_morpholino_group is not null;
 
 
-
-commit work ;
---rollback work ;

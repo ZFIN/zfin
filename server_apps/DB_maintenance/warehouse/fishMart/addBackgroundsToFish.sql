@@ -1,5 +1,3 @@
-begin work ;
-
 
 --drop function get_genotype_backgrounds_warehouse;
 
@@ -25,6 +23,3 @@ update fish_annotation_search
  where exists (Select 'x' from tmp_fas where tmp_fas.fas_pk_id = fish_annotation_Search.fas_pk_id)
   and fas_genotype_group is not null;
 
-
-commit work ;
---rollback work ;

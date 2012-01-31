@@ -1,4 +1,4 @@
-begin work ;
+
 !echo "PHENO FIGURE";
 
 update statistics high for table phenotype_figure_group;
@@ -29,7 +29,3 @@ update functional_annotation
       			      	      from phenotype_figure_group 
 				      where fa_genox_zdb_id = pfigg_genox_zdb_id);
 
-
---rollback work ;
-
-commit work ;

@@ -1,4 +1,4 @@
-begin work ;
+
 
 delete from figure_term_fish_Search;
 
@@ -74,7 +74,3 @@ update figure_term_fish_search set ftfs_term_group = replace(ftfs_term_group,","
 
 update figure_term_fish_search
  set ftfs_term_group = lower(ftfs_term_group);
-
-commit work ;
-
---rollback work ;

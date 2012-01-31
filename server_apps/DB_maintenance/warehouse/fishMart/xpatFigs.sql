@@ -1,4 +1,4 @@
-begin work ;
+
 !echo "XPAT FIGURE";
 
 update statistics high for table functional_annotation;
@@ -68,7 +68,3 @@ update functional_annotation
       			      	      from xpat_figure_group 
 				      where fa_genox_zdb_id = xfigg_genox_zdb_id);
 
-
---rollback work ;
-
-commit work ;

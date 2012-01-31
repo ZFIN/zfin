@@ -1,4 +1,3 @@
-begin work ;
 
 delete from fish_annotation_search;
 
@@ -360,7 +359,3 @@ update fish_annotation_search
 update fish_annotation_search
   set fas_affector_type_group = lower(fas_affector_type_group);
 
-
---rollback work ;
-
-commit work ;
