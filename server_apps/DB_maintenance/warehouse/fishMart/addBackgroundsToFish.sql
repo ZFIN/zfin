@@ -3,6 +3,8 @@ begin work ;
 
 --drop function get_genotype_backgrounds_warehouse;
 
+alter table fish_annotation_Search
+  modify (fas_geno_name lvarchar(400));
 
 
 select fas_pk_id, fas_geno_name 
