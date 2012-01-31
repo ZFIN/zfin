@@ -2914,15 +2914,15 @@ select distinct fa_genox_zdb_id, fa_geno_handle
 from functional_annotation
 where fa_genox_zdb_id is not null
  order by fa_genox_zdb_id
-into temp tmp_genox;
+into temp tmp_genox2;
 
 create index fa_geno_handle_tmp_index
- on tmp_genox (fa_geno_handle)
+ on tmp_genox2 (fa_geno_handle)
   using btree in idxdbs3;
 
 update fish_annotation_search
   set fas_genox_group = replace(replace(replace(substr(multiset (select distinct item fa_genox_zdb_id
-      		      						   from tmp_genox
+      		      						   from tmp_genox2
 								   where fa_geno_handle = fas_geno_handle
 								   order by fa_genox_zdb_id
 							  )::lvarchar(1000),11),""),"'}",""),"'","");
