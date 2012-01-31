@@ -43,7 +43,7 @@ create table fish_annotation_search (
        fas_pk_id serial8 not null constraint fas_pk_id_not_null,
        fas_all lvarchar(2000),
        fas_all_with_spaces lvarchar(2000),
-       fas_geno_name lvarchar(400),
+       fas_geno_name varchar(255),
        fas_geno_handle varchar(255),
        fas_genox_group lvarchar(380),
        fas_genotype_group varchar(250),
@@ -91,7 +91,7 @@ create table gene_feature_result_view (
        gfrv_pk_id serial8 not null constraint gfrv_pk_id_not_null,
        gfrv_fa_id int8,
        gfrv_fas_id int8 not null constraint gfrv_fas_id_not_null,
-       gfrv_geno_name lvarchar(400),
+       gfrv_geno_name varchar(255),
        gfrv_geno_handle varchar(255) not null constraint gfrv_geno_handle_not_null,
        gfrv_affector_id varchar(50),
        gfrv_affector_abbrev varchar(50),
@@ -124,7 +124,7 @@ create table functional_annotation(
        fa_geno_alias lvarchar(1000),
        fa_morph_alias lvarchar(1000),
        fa_construct_alias lvarchar(4000),
-       fa_geno_name lvarchar(400),
+       fa_geno_name varchar(255),
        fa_geno_handle varchar(150) not null constraint fa_geno_handle_not_null,
        fa_genox_zdb_id varchar(50),
        fa_feature_group lvarchar(1000),
@@ -236,7 +236,7 @@ create table construct_group (cg_group_name lvarchar(4000),
 					    cg_genox_Zdb_id varchar(50), 
 					    cg_group_pk_id serial8 not null constraint cg_group_pk_id_not_null, 
 					    cg_group_order lvarchar(4000),
-					    cg_geno_name lvarchar(400))
+					    cg_geno_name varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
@@ -265,7 +265,7 @@ create table affected_gene_group (afg_group_name lvarchar(3000),
 						 afg_genox_Zdb_id varchar(50), 
 						 afg_group_pk_id serial8 not null constraint afg_group_pk_id_not_null, 
 						 afg_group_order lvarchar(3000), 
-						 afg_geno_name lvarchar(400))
+						 afg_geno_name varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
@@ -333,7 +333,7 @@ create table feature_group (fg_group_name lvarchar(1000),
 					  fg_geno_zdb_id varchar(50), 
 					  fg_group_pk_id serial8 not null constraint fg_group_pk_id_not_null, 
 					  fg_type_group varchar(255), 
-					  fg_geno_name lvarchar(400))
+					  fg_geno_name varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
@@ -357,7 +357,7 @@ create table morpholino_group (morphg_group_pk_id serial8 not null constraint mo
        	     		      			  morphg_group_name lvarchar(380), 
 						  morphg_genox_Zdb_id varchar(50),
 						  morphg_group_order lvarchar(500), 
-						  morphg_geno_name lvarchar(400))
+						  morphg_geno_name varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
@@ -449,7 +449,7 @@ alter table genotype_group_member
 
 
 create table genotype_group (gg_group_name lvarchar(500), 
-       	     		    		   gg_geno_name lvarchar(400), 
+       	     		    		   gg_geno_name varchar(255), 
 					   gg_geno_handle varchar(255), 
 					   gg_group_pk_id serial8 not null constraint genog_Group_pk_id_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
@@ -470,7 +470,7 @@ alter table genotype_group
 create table term_group (tg_group_name lvarchar(5000), 
        	     			       tg_genox_group varchar(50), 
 				       tg_group_pk_id serial8 not null constraint tg_group_pk_id_not_null, 
-				       tg_geno_name lvarchar(400),
+				       tg_geno_name varchar(255),
 				       tg_geno_handle varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
@@ -511,7 +511,7 @@ alter table term_group_member
 create table phenotype_figure_group (pfigg_group_name lvarchar(380), 
        	     			    		      pfigg_genox_Zdb_id varchar(50), 
 						      pfigg_group_pk_id serial8 not null constraint pfigg_group_pk_id_not_null, 
-						      pfigg_geno_name lvarchar(400),
+						      pfigg_geno_name varchar(255),
 						      pfigg_geno_handle varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
