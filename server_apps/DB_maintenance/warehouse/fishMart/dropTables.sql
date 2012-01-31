@@ -33,7 +33,6 @@ drop table figure_term_fish_search;
 drop table xpat_figure_group;
 drop table xpat_figure_group_member;
 
-drop table feature_type_ordering;
 
 
 commit work ;
