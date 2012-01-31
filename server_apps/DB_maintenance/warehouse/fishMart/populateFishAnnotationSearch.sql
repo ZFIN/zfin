@@ -106,16 +106,16 @@ select count(*) as counter, fas_geno_handle as geno_handle
  from fish_annotation_search
  group by fas_geno_handle
  having count(*) > 1
-into temp tmp_dups;
+into temp tmp_dups2;
 
 
 select first 6 *
-from fish_annotation_search, tmp_dups
+from fish_annotation_search, tmp_dups2
  where fas_geno_handle = geno_handle
  order by fas_geno_handle;
 
 delete from fish_Annotation_search
- where fas_geno_handle in (Select geno_handle from tmp_dups);
+ where fas_geno_handle in (Select geno_handle from tmp_dups2);
 
 update statistics high for table fish_annotation_search;
 update statistics high for table phenotype_figure_group;
