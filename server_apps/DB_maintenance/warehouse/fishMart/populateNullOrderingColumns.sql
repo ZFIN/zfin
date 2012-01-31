@@ -1,4 +1,4 @@
-begin work;
+
 
 update fish_annotation_Search
 set fas_gene_order = 'zzzzzzzzzzzzzzzzzz'
@@ -29,8 +29,5 @@ delete from fish_annotation_Search
 and fas_morpholino_group is null
     and fas_construct_group is null
     ;
-
-
-commit work ;
 
 

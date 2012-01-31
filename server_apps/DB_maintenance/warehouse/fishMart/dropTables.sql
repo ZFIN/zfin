@@ -1,5 +1,3 @@
-begin work ;
-
 
 drop table functional_annotation;
 drop table fish_annotation_search;
@@ -34,5 +32,3 @@ drop table xpat_figure_group;
 drop table xpat_figure_group_member;
 
 
-
-commit work ;
