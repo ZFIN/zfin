@@ -614,44 +614,6 @@ delete from genotype_Experiment
  where genox_zdb_id not in (select xpatex_genox_zdb_id from expression_experiment)
  and genox_zdb_id not in (select phenox_genox_zdb_id from phenotype_Experiment);
 
-create table feature_type_ordering (
-	fto_pk_id serial8 not null constraint fto_pk_id_not_null,
-	fto_name varchar(60) not null constraint fto_name_not_null,
-	fto_priority int default 0 not null constraint fto_priority_not_null
-);
-
-update feature_type
- set ftrtype_type_display = 'Unknown'
- where ftrtype_type_display = 'unknown';
-
-update feature_type
- set ftrtype_type_display = 'Unspecified'
- where ftrtype_type_display = 'unspecified';
-
-update feature_type
- set ftrtype_type_display = 'Unspecified Transgenic Insertion'
- where ftrtype_type_display = 'unspecified transgenic insertion';
-
-insert into feature_type_ordering (fto_name, fto_priority) values ('Point Mutation', 100001);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Small Deletion', 100004);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Transgenic Insertion', 100011);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Unknown', 100020);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Morpholino', 100047);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Deficiency', 100088);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Transgenic Insertion, non-allelic', 100152);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Insertion', 100228);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Inversion', 100354);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Translocation', 100534);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Complex', 100853);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Unspecified', 101059);
-insert into feature_type_ordering (fto_name, fto_priority) values ('Unspecified Transgenic Insertion', 101777);
-
-
-create index feature_type_ordering_name
-    on feature_type_Ordering (fto_name) using btree in idxdbs3;
-    
-create unique index feature_type_ordering_pk_id on
-    feature_type_ordering (fto_pk_id) using btree in idxdbs1;
 
 create  index gene_feature_result_view_affector_display 
     on gene_feature_result_view (gfrv_affector_type_display) using 
