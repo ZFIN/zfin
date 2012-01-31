@@ -3,7 +3,7 @@ create table figure_term_fish_search (ftfs_pk_id serial8 not null constraint ftf
        	     			        ftfs_fas_id int8 not null constraint ftfs_fas_id_not_null,
 					ftfs_fa_id int8,
 					ftfs_genox_zdb_id varchar(50),
-					ftfs_geno_name lvarchar(400),
+					ftfs_geno_name varchar(255),
 					ftfs_geno_handle varchar(255),
        	     			     	ftfs_fig_zdb_id varchar(50),
 					ftfs_term_group lvarchar(3000)
