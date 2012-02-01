@@ -12,9 +12,9 @@ open MAIL, "|/usr/lib/sendmail -t";
 
 print MAIL "To: dhowe\@zfin.org\n";
 print MAIL "Cc: $zcs $zcur $zadmin\n";
-print MAIL "Subject: Monthly leave to Eva\n";
+print MAIL "Subject: Monthly leave to Barbara Oppliger and Manager\n";
 print MAIL
     "Please send your vacation and sick leave hour totals for last month\n" .
-    "to Eva Quinby <eva\@uoneuro.uoregon.edu>.  You need to\n" .
-    "notify her even if you took 0 hours.\n";
+    "to your manager and to Barbara Oppliger <pubbarb\@uoregon.edu>.  You need to\n" .
+    "send notification even if you took 0 hours.\n";
 close MAIL;
