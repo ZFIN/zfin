@@ -5,20 +5,20 @@ import org.apache.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Presentation Class to create output from a marker object.
@@ -259,8 +259,15 @@ public class MarkerPresentation extends EntityPresentation {
         if (marker == null)
             return null;
 
+        String sourceZdbID = null;
+
+        if (marker.getPublications() != null && marker.getPublications().size() > 0) {
+            PublicationAttribution pub = marker.getPublications().iterator().next();
+            if (pub != null)
+                sourceZdbID = pub.getSourceZdbID();
+        }
         return getAttributionLink(marker.getZdbID(), marker.getZdbID(),
-                marker.getPublications().iterator().next().getSourceZdbID(), marker.getPublications().size());
+                sourceZdbID, marker.getPublications().size());
 
     }
 
@@ -274,10 +281,21 @@ public class MarkerPresentation extends EntityPresentation {
 
         MarkerRelationship mrel = relatedMarker.getMarkerRelationship();
 
+        if (mrel == null)
+            return null;
+
+        String sourceZdbID = null;
+
+        if (mrel.getPublications() != null && mrel.getPublications().size() > 0) {
+            PublicationAttribution pub = mrel.getPublications().iterator().next();
+            if (pub != null)
+                sourceZdbID = pub.getSourceZdbID();
+        }
+
 
         return getAttributionLink(relatedMarker.getMarker().getZdbID(),
                                   mrel.getZdbID(),
-                mrel.getSinglePublication().getZdbID(),
+                sourceZdbID,
                 mrel.getPublicationCount());
 
     }
@@ -297,8 +315,10 @@ public class MarkerPresentation extends EntityPresentation {
 
     public static String getAttributionLink(String markerZdbID, String additionalZdbID,
                                             String publicationZdbID, int publicationCount) {
+        if (publicationZdbID == null)
+            return "";
         if (publicationCount == 0)
-            return null;
+            return "";
         if (publicationCount == 1) {
             return PublicationPresentation.getSingleAttributionLink(publicationZdbID, publicationCount);
         } else {
