@@ -109,10 +109,12 @@ sub loadDb() {
 }
 
 sub runWarehouse() {
+    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
        system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb");
     if ($? ne 0){
 	die "runFishMart.sh died";
     }
+    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
 }
 
 sub execSql {
