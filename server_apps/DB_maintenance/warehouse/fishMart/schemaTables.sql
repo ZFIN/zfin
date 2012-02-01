@@ -43,6 +43,7 @@ create table fish_annotation_search (
        fas_all_with_spaces lvarchar(2000),
        fas_geno_name varchar(255),
        fas_geno_handle varchar(255),
+       fas_geno_long_name lvarchar(400),
        fas_genox_group lvarchar(380),
        fas_genotype_group varchar(250),
        fas_feature_group lvarchar(1000),
