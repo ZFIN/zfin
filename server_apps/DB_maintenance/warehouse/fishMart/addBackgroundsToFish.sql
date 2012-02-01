@@ -1,6 +1,8 @@
 
 --drop function get_genotype_backgrounds_warehouse;
 
+drop index fas_geno_name_index ;
+
 alter table fish_annotation_Search
   modify (fas_geno_name lvarchar(400));
 
