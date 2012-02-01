@@ -35,6 +35,7 @@ DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       setTscriptLoadId.sql
 FISH_STATS   = get_image_stats.sql \
 	       p_update_related_genotype_names.sql \
+	       p_update_related_feature_names.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
 	       p_update_unspecified_alleles.sql \
@@ -75,7 +76,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql 
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql create_all_terms_contains.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql

@@ -32,7 +32,7 @@
                                 "UGEN2", "FUNCTION%s", #fun, NULL)
 #define         EXCEPTION(msg)  mi_db_error_raise (NULL, MI_EXCEPTION, msg)
 #define         DEFAULT_PADDING 10
-#define		MAXLEN		955
+#define		MAXLEN		1000
 
 
 mi_lvarchar *
