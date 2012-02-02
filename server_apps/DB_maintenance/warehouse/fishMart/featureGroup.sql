@@ -11,15 +11,17 @@ insert into feature_group (fg_Geno_zdb_id, fg_genox_zdb_id)
     from genotype_Experiment;
 
 
+create temp table tmp_ordered_markers (name lvarchar(1000), geno_id varchar(50))
+ with no log;
+
+insert into tmp_ordered_markers (name, geno_id)
 select distinct feature.feature_name||"|"||feature.feature_abbrev||"|"||fp_prefix as name, 
 							   genofeat_geno_Zdb_id as geno_id
 							  from feature, genotype_feature, feature_group, feature_prefix
   	 	   	   				  where feature_zdb_id = genofeat_feature_zdb_id
 							  
 			   				  and genofeat_geno_zdb_id = fg_geno_Zdb_id
-							  and fp_pk_id = feature_lab_prefix_id
-							  
-into temp tmp_ordered_markers;
+							  and fp_pk_id = feature_lab_prefix_id;
 
 insert into tmp_ordered_markers (name, geno_id)
   select distinct feature.feature_name||"|"||feature.feature_abbrev, 
@@ -29,6 +31,9 @@ insert into tmp_ordered_markers (name, geno_id)
 			   				  and genofeat_geno_zdb_id = fg_geno_Zdb_id
 							  and feature_lab_prefix_id is null
 ;
+
+select * from tmp_ordered_markers
+  where geno_id = 'ZDB-GENO-120130-345';
 
 create index tmp_geno_idx on tmp_ordered_markers (geno_id)
   using btree in idxdbs2;
@@ -96,3 +101,8 @@ select max(octet_length(fg_group_name))
 update feature_group_member
  set fgm_significance = 0 
 where fgm_significance is null;
+
+select * from feature_group
+ where fg_geno_zdb_id = 'ZDB-GENO-120130-345';
+
+
