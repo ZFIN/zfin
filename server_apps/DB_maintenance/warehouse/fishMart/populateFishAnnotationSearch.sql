@@ -147,7 +147,7 @@ update fish_annotation_Search
 								   and pfigg_geno_handle = fas_geno_handle
 							  )::lvarchar(1000),11),""),"'}",""),"'","");
 
-set explain on avoid_execute;
+{set explain on avoid_execute;
 update fish_annotation_Search
   set fas_xpat_figure_group = replace(replace(replace(substr(multiset (select distinct item xfiggm_member_id
       		      						   from xpat_figure_group,
@@ -156,7 +156,7 @@ update fish_annotation_Search
 								   and xfigg_geno_handle = fas_geno_handle
 							  )::lvarchar(4000),11),""),"'}",""),"'","")
 ;
-set explain off;
+set explain off;}
 
 update fish_annotation_search
   set fas_pheno_figure_count = (Select count(distinct pfiggm_member_id)
