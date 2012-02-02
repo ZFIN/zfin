@@ -1,3 +1,5 @@
+begin work ;
+
 
 create table figure_term_fish_search (ftfs_pk_id serial8 not null constraint ftfs_pk_not_null,
        	     			        ftfs_fas_id int8 not null constraint ftfs_fas_id_not_null,
@@ -42,19 +44,19 @@ create table fish_annotation_search (
        fas_all lvarchar(2000),
        fas_all_with_spaces lvarchar(2000),
        fas_geno_name varchar(255),
-       fas_geno_handle varchar(255),
        fas_geno_long_name lvarchar(400),
-       fas_genox_group lvarchar(380),
-       fas_genotype_group varchar(250),
+       fas_geno_handle varchar(255),
+       fas_genox_group lvarchar(500),
+       fas_genotype_group varchar(150),
        fas_feature_group lvarchar(1000),
-       fas_gene_group lvarchar(1000),
-       fas_construct_group lvarchar(1000),
+       fas_gene_group lvarchar(1500),
+       fas_construct_group lvarchar(500),
        fas_morpholino_group lvarchar(380),
        fas_pheno_term_group lvarchar(4000),
        fas_pheno_figure_group lvarchar(380),
        fas_xpat_figure_group lvarchar(380),
        fas_xpat_figure_count int,
-       fas_feature_order lvarchar(1000),
+       fas_feature_order lvarchar(2000),
        fas_feature_type_group lvarchar(500),
        fas_gene_order lvarchar(1000),
        fas_affector_group lvarchar(1000),
@@ -117,18 +119,18 @@ create table functional_annotation(
        fa_affector_Type_group lvarchar(1000),
        fa_gene_order lvarchar(1000),
        fa_geno_zdb_id varchar(50),
-       fa_feature_alias lvarchar(1000),
-       fa_gene_alias lvarchar(3000),
+       fa_feature_alias lvarchar(380),
+       fa_gene_alias lvarchar(1500),
        fa_gene_alt_alias lvarchar(1000),
        fa_geno_alias lvarchar(1000),
        fa_morph_alias lvarchar(1000),
-       fa_construct_alias lvarchar(4000),
+       fa_construct_alias lvarchar(2000),
        fa_geno_name varchar(255),
        fa_geno_handle varchar(150) not null constraint fa_geno_handle_not_null,
        fa_genox_zdb_id varchar(50),
        fa_feature_group lvarchar(1000),
-       fa_gene_group lvarchar(1000),
-       fa_construct_group lvarchar(1000),
+       fa_gene_group lvarchar(1500),
+       fa_construct_group lvarchar(500),
        fa_morpholino_group lvarchar(380),
        fa_feature_group_id int8,
        fa_environment_group lvarchar(380),
@@ -230,11 +232,11 @@ create unique index ggm_group_primary_key_index
   on genox_group_member (ggm_pk_id)
   using btree in idxdbs3;
 
-create table construct_group (cg_group_name lvarchar(4000), 
+create table construct_group (cg_group_name lvarchar(500), 
        	     		     		    cg_geno_zdb_id varchar(50),
 					    cg_genox_Zdb_id varchar(50), 
 					    cg_group_pk_id serial8 not null constraint cg_group_pk_id_not_null, 
-					    cg_group_order lvarchar(4000),
+					    cg_group_order lvarchar(2000),
 					    cg_geno_name varchar(255))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
@@ -259,7 +261,7 @@ create index cg_geno_name_index on construct_group (cg_geno_name)
 create index cg_geno_zdb_index on construct_group (cg_geno_zdb_id)
   using btree in idxdbs2;
 
-create table affected_gene_group (afg_group_name lvarchar(3000), 
+create table affected_gene_group (afg_group_name lvarchar(1500), 
        	     			 		 afg_geno_zdb_id varchar(50),
 						 afg_genox_Zdb_id varchar(50), 
 						 afg_group_pk_id serial8 not null constraint afg_group_pk_id_not_null, 
@@ -327,7 +329,7 @@ alter table construct_Group_member
   add constraint primary key (cgm_pk_id) constraint construct_group_member_primary_key;
 
 create table feature_group (fg_group_name lvarchar(1000), 
-       	     		   		  fg_group_order lvarchar(1000),
+       	     		   		  fg_group_order lvarchar(2000),
 					  fg_genox_Zdb_id varchar(50), 
 					  fg_geno_zdb_id varchar(50), 
 					  fg_group_pk_id serial8 not null constraint fg_group_pk_id_not_null, 
@@ -616,16 +618,6 @@ delete from genotype_Experiment
  and genox_zdb_id not in (select phenox_genox_zdb_id from phenotype_Experiment);
 
 
-create  index gene_feature_result_view_affector_display 
-    on gene_feature_result_view (gfrv_affector_type_display) using 
-    btree in idxdbs1;
-
-create  index gene_feature_result_view_fas_id
-    on gene_feature_result_view (gfrv_fas_id) using 
-    btree in idxdbs3;
-
-
-
 alter table fish_annotation_search 
 add constraint primary key (fas_pk_id)
   constraint fish_Annotation_Search_primary_key;
@@ -637,7 +629,7 @@ alter table figure_term_fish_search
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fas_id)
   references fish_annotation_search
-   on delete cascade constraint ftfs_fas_foreign_key);
+   constraint ftfs_fas_foreign_key);
 
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fa_id)
@@ -656,7 +648,13 @@ alter table figure_term_Fish_search
    constraint ftfs_fig_Zdb_id_foreign_key);
 
 
+create  index gene_feature_result_view_affector_display 
+    on gene_feature_result_view (gfrv_affector_type_display) using 
+    btree in idxdbs1;
 
+create  index gene_feature_result_view_fas_id
+    on gene_feature_result_view (gfrv_fas_id) using 
+    btree in idxdbs3;
 
 alter table gene_feature_result_view
   add constraint primary key (gfrv_pk_id)
@@ -671,6 +669,9 @@ alter table gene_feature_Result_view
 alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fas_id)
   references fish_annotation_search
-  on delete cascade constraint gfrv_fas_id_foreign_key);
+  constraint gfrv_fas_id_foreign_key);
 
 
+
+--rollback work ;
+commit work ;
