@@ -1,4 +1,3 @@
-begin work ;
 
 
 create table figure_term_fish_search (ftfs_pk_id serial8 not null constraint ftfs_pk_not_null,
@@ -670,8 +669,3 @@ alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fas_id)
   references fish_annotation_search
   constraint gfrv_fas_id_foreign_key);
-
-
-
---rollback work ;
-commit work ;
