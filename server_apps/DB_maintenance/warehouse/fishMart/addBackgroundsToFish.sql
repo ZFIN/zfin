@@ -1,7 +1,8 @@
 
 
 --drop function get_genotype_backgrounds_warehouse;
-
+update fish_annotation_Search
+ set fas_geno_long_name = fas_geno_name;
 
 select fas_pk_id, fas_geno_name 
   from fish_annotation_search
