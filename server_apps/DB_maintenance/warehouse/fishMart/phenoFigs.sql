@@ -24,8 +24,3 @@ insert into phenotype_figure_group_member (pfiggm_group_id, pfiggm_member_name, 
     where phenox_genox_zdb_id = pfigg_genox_zdb_id
     and fig_zdb_id = phenox_fig_zdb_id;
 
-update functional_annotation
-  set fa_pheno_figure_group = (select pfigg_group_name 
-      			      	      from phenotype_figure_group 
-				      where fa_genox_zdb_id = pfigg_genox_zdb_id);
-

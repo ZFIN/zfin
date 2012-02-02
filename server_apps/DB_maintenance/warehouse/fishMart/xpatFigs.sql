@@ -25,27 +25,6 @@ create index xfig_genox_index
   on tmp_xpat (xfigg_genox_zdb_id)
   using btree in idxdbs1;
 
-select count(*) as counter, xfigg_genox_zdb_id
-  from tmp_xpat
-  group by xfigg_genox_Zdb_id
-   into temp tmp_count;
-
-select count (distinct xpatfig_fig_zdb_id)
-  from expression_pattern_figure, expression_Result, expression_experiment
-  where xpatex_zdb_id = xpatres_xpatex_zdb_id
-  and xpatres_zdb_id = xpatfig_xpatres_zdb_id
- and xpatex_genox_Zdb_id = 'ZDB-GENOX-041102-1429';
-
-select * 
-  from tmp_count
- where counter=29425;
-
-
-select * from experiment, genotype_Experiment, genotype
- where genox_exp_zdb_id = exp_zdb_id
- and geno_zdb_id = genox_geno_zdb_id
-and genox_zdb_id = 'ZDB-GENOX-041102-1429';
-
 --set explain on avoid_Execute;
 update xpat_figure_group
   set xfigg_group_name = replace(replace(replace(substr(multiset  (select item xpatfig_Fig_Zdb_id from tmp_xpat
