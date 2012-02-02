@@ -626,12 +626,12 @@ alter table figure_term_fish_search
 
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fas_id)
-  references fish_annotation_search
+  references fish_annotation_search on delete cascade
    constraint ftfs_fas_foreign_key);
 
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fa_id)
-  references functional_annotation
+  references functional_annotation 
    constraint ftfs_fa_id_foreign_key);
 
 alter table figure_term_Fish_search
@@ -667,5 +667,5 @@ alter table gene_feature_Result_view
 alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fas_id)
   references fish_annotation_search
-  constraint gfrv_fas_id_foreign_key);
+  on delete cascade constraint  gfrv_fas_id_foreign_key);
 
