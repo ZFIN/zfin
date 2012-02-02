@@ -1,3 +1,4 @@
+begin work ;
 
 
 create table figure_term_fish_search (ftfs_pk_id serial8 not null constraint ftfs_pk_not_null,
@@ -123,7 +124,7 @@ create table functional_annotation(
        fa_gene_alt_alias lvarchar(1000),
        fa_geno_alias lvarchar(1000),
        fa_morph_alias lvarchar(1000),
-       fa_construct_alias lvarchar(2000),
+       fa_construct_alias lvarchar(3000),
        fa_geno_name varchar(255),
        fa_geno_handle varchar(150) not null constraint fa_geno_handle_not_null,
        fa_genox_zdb_id varchar(50),
@@ -669,3 +670,8 @@ alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fas_id)
   references fish_annotation_search
   constraint gfrv_fas_id_foreign_key);
+
+
+
+--rollback work ;
+commit work ;
