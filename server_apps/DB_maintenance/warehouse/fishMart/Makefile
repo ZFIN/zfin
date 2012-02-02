@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/fishMart
 GENERICS = runFishMart.sh
-STATICS = begin.sql constructGroup.sql addAliasesToFunctionalAnnotation.sql addBackgroundsToFish.sql addCountsToFunctionalAnnotation.sql addGroupsToFunctionalAnnotation.sql createBtsIndexes.sql dropBtsIndexes.sql dropTables.sql environmentGroup.sql featureGroup.sql geneGroup.sql morpholinoGroup.sql phenoFigs.sql phenoTermGroup.sql populateFigureTermFishSearch.sql populateFishAnnotationSearch.sql populateFunctionalAnnotation.sql populateGeneFeatureResultView.sql populateNullOrderingColumns.sql schemaTables.sql translateFeatureTypeForTGs.sql xpatFigs.sql commit.sql
+STATICS = begin.sql dropTables.sql schemaTables.sql geneGroup.sql environmentGroup.sql featureGroup.sql morpholinoGroup.sql constructGroup.sql populateFunctionalAnnotation.sql phenoFigs.sql xpatFigs.sql phenoTermGroup.sql addGroupsToFunctionalAnnotation.sql addAliasesToFunctionalAnnotation.sql addCountsToFunctionalAnnotation.sql populateFishAnnotationSearch.sql populateGeneFeatureResultView.sql populateFigureTermFishSearch.sql translateFeatureTypeForTGs.sql addBackgroundsToFish.sql populateNullOrderingColumns.sql createBtsIndexes.sql commit.sql automatedFishMart.sql
 
 
 # ---------------  Production Rules  ------------------------------------
