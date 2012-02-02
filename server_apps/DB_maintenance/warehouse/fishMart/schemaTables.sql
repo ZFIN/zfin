@@ -124,7 +124,7 @@ create table functional_annotation(
        fa_morph_alias lvarchar(1000),
        fa_construct_alias lvarchar(3000),
        fa_geno_name varchar(255),
-       fa_geno_handle varchar(150) not null constraint fa_geno_handle_not_null,
+       fa_geno_handle varchar(255) not null constraint fa_geno_handle_not_null,
        fa_genox_zdb_id varchar(50),
        fa_feature_group lvarchar(1000),
        fa_gene_group lvarchar(1500),

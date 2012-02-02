@@ -50,7 +50,7 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name,
     	    	   	   and genotype_Experiment.genox_geno_Zdb_id = geno_Zdb_id) 
     and genox_geno_zdb_id = geno_Zdb_id;
 
---all genos regaurdless
+--all genos reguardless
 insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name)
   select geno_zdb_id, geno_handle,geno_display_name
    from genotype
