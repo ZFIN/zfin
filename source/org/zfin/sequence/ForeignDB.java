@@ -52,7 +52,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         this.dbName = dbName;
     }
 
-    public String isDisplayName() {
+    public String getDisplayName () {
         return displayName;
     }
 
@@ -123,7 +123,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         WASHU("WashU"),
         WASHUZ("WashUZ"),
         ZF_ESPRESSO("ZF-Espresso"),
-        ZFIN_PROT("ZFIN_PROT"),;
+        ZFIN_PROT("ZFIN_PROT"),
+        ZFISHBOOK("zfishbook");
 
 
         private final String value;
@@ -144,5 +145,12 @@ public class ForeignDB implements Comparable<ForeignDB> {
             }
             throw new RuntimeException("No ForeignDB named " + type + " found.");
         }
+    }
+
+    public boolean isZfishbook () {
+        if (displayName != null && displayName.equals("zfishbook"))
+			   return true;
+
+	    return false;
     }
 }
