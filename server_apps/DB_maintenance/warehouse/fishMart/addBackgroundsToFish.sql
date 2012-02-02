@@ -1,3 +1,5 @@
+begin work ;
+
 
 --drop function get_genotype_backgrounds_warehouse;
 
@@ -21,4 +23,5 @@ update fish_annotation_search
   and fas_genotype_group is not null;
 
 
-
+commit work ;
+--rollback work ;
