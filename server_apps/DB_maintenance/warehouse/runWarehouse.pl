@@ -93,7 +93,7 @@ sub loadDb() {
         s/^\s+//;
         s/\s+$//;
     }
-    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb /research/zunloads/databases/$whoIsZfinDb/$dirname/");
+    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb /research/zunloads/databases/$whoIsZfinDb/$dirName/");
     $dbhNotZfin->disconnect;
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb /research/zunloads/databases/$whoIsZfinDb/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
     if ($? ne 0){
