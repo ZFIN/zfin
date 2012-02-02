@@ -1,28 +1,5 @@
 
 !echo "begin construct group";
---set pdqpriority high;
-
-
---ZDB-GENO-110722-21
-
-
---insert into genox_group (gg_genotype_Zdb_id)
---  select geno_zdb_id from genotype
--- where exists (Select 'x' from genotype_experiment, phenotype_Experiment
---       	      	      where genox_zdb_id = phenox_genox_zdb_id
---		      and geno_Zdb_id = genox_geno_zdb_id);
-
---update genox_group 
---  set gg_group_name = replace(replace(replace(substr(multiset (select distinct item genox_zdb_id
---							      	      from genotype_Experiment,phenotype_experiment
---							 	      where phenox_genox_zdb_id = genox_zdb_id
---							 	      and genox_geno_Zdb_id = gg_genotype_Zdb_id
---				)::lvarchar(380),11),""),"'}",""),"'","");
-
---insert into genox_group_member (ggm_group_id, ggm_member_id)
---  select gg_group_pk_id, genox_zdb_id
---    from genotype_experiment, genox_group
---    where genox_geno_zdb_id = gg_genotype_Zdb_id;
 
 
 insert into construct_group (cg_genox_zdb_id, cg_geno_zdb_id)

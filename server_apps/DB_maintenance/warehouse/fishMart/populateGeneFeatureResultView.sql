@@ -20,7 +20,7 @@ delete from functional_annotation
  and fa_feature_group is null
  and fa_construct_group is null;
 
-set pdqpriority 30;
+set pdqpriority 60;
 
 update statistics high for table morpholino_group_member;
 update statistics high for table affected_gene_group_member;
@@ -390,3 +390,4 @@ and fas_geno_handle like '%[%[%[%['
 and (Select count(*) from gene_feature_result_view a
                 where a.gfrv_fas_id = fas_pk_id) < 4;
 
+set pdqpriority 80;

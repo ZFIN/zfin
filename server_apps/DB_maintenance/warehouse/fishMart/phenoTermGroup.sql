@@ -42,7 +42,6 @@ insert into term_group_member (tgm_group_id, tgm_member_name, tgm_member_id)
      and phenos_tag != 'normal';
 
 update statistics high for table term_group;
-set pdqpriority 80;
 
 
 create temp table tmp_term (phenox_genox_zdb_id varchar(50), term varchar(50), category char(2))
@@ -259,7 +258,6 @@ update term_group
 drop table tmp_term;
 drop table tmp_tg;
 
-set pdqpriority 0;
 
 !echo "check lvarchars for term group name"
 select max(octet_length(tg_group_name)) from term_group;

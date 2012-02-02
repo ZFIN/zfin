@@ -3,8 +3,6 @@
 
 update statistics high for table functional_annotation;
 
-set pdqpriority 80;
-
 insert into xpat_figure_group (xfigg_genox_zdb_id, xfigg_geno_handle)
   select distinct xpatex_genox_zdb_id, geno_handle from expression_Experiment, experiment, genotype, genotype_Experiment
   where exp_name != '_Standard'
