@@ -273,13 +273,14 @@
 
 
 </tr>
-<c:if test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">
+
     <tr>
         <td>
             <b> Sequence: </b>
         </td>
         <td>
             <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
+              <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
                 <%--${featureGenbank.accessionNumber}--%>
                 <zfin:link entity="${featureGenbank}"/>
                 <c:if test="${featureGenbank.publicationCount > 0}">
@@ -293,10 +294,34 @@
                     </c:choose>
                 </c:if>
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
+              </c:if>
             </c:forEach>
         </td>
     </tr>
-</c:if>
+
+    <tr>
+        <td>
+            <b> Other Pages: </b>
+        </td>
+        <td>
+            <c:forEach var="featureZfishbook" items="${formBean.feature.dbLinks}" varStatus="loop">
+              <c:if test="${featureZfishbook.referenceDatabase.foreignDB.zfishbook}">
+                <zfin:link entity="${featureZfishbook}"/>
+                <c:if test="${featureZfishbook.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${featureZfishbook.publicationCount == 1}">
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureZfishbook.singlePublication.zdbID}">${featureZfishbook.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureZfishbook.zdbID}">${featureZfishbook.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+              </c:if>
+            </c:forEach>
+        </td>
+    </tr>
 
 <tr>
     <td width="150" valign="top">
