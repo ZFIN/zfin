@@ -336,4 +336,34 @@ public class Feature implements EntityNotes{
         }
         return affectedGenes;
     }
+    public boolean isAllZfishbook () {
+		if (dbLinks == null || dbLinks.isEmpty())
+           return false;
+
+        int countZfishbook = 0;
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
+                  countZfishbook++;
+            }
+        }
+
+        if (countZfishbook == dbLinks.size())
+	         return true;
+
+        return false;
+    }
+
+    public boolean isNoZfishbook () {
+		if (dbLinks == null || dbLinks.isEmpty())
+           return true;
+
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
+                  return false;
+            }
+        }
+
+        return true;
+    }
+
 }
