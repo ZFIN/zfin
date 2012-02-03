@@ -624,6 +624,23 @@ alter table figure_term_fish_search
   add constraint primary key (ftfs_pk_id)
  constraint figure_term_fish_search_primary_key;
 
+
+
+
+
+create  index gene_feature_result_view_affector_display 
+    on gene_feature_result_view (gfrv_affector_type_display) using 
+    btree in idxdbs1;
+
+create  index gene_feature_result_view_fas_id
+    on gene_feature_result_view (gfrv_fas_id) using 
+    btree in idxdbs3;
+
+alter table gene_feature_result_view
+  add constraint primary key (gfrv_pk_id)
+  constraint gene_feature_result_view_primary_key;
+
+
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fas_id)
   references fish_annotation_search on delete cascade
@@ -639,25 +656,10 @@ alter table figure_term_Fish_search
   references genotype_experiment
    constraint ftfs_genox_Zdb_id_foreign_key);
 
-
 alter table figure_term_Fish_search
   add constraint (Foreign key (ftfs_fig_Zdb_id)
   references figure
    constraint ftfs_fig_Zdb_id_foreign_key);
-
-
-create  index gene_feature_result_view_affector_display 
-    on gene_feature_result_view (gfrv_affector_type_display) using 
-    btree in idxdbs1;
-
-create  index gene_feature_result_view_fas_id
-    on gene_feature_result_view (gfrv_fas_id) using 
-    btree in idxdbs3;
-
-alter table gene_feature_result_view
-  add constraint primary key (gfrv_pk_id)
-  constraint gene_feature_result_view_primary_key;
-
 
 alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fa_id)
