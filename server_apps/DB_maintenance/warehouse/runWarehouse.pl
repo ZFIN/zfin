@@ -10,10 +10,10 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $jobTitle = "Cron Job: runWarehouse: ";
 $globalResultFile = "/tmp/warehouse_regeneration"."<!--|DB_NAME|-->";
 $martName = "fish mart";
-@whoIsZfin = `who_is_zfin.sh`;
+@whoIsZfin = `who_is_test.sh`;
 $whoIsZfinDb = $whoIsZfin[0];
 print "zfin is: $whoIsZfinDb";
-@whoIsNotZfin = `who_is_not_zfin.sh`;
+@whoIsNotZfin = `who_is_not_test.sh`;
 $whoIsNotZfinDb=$whoIsNotZfin[0];
 print "zfin is not: $whoIsNotZfinDb";
 
@@ -70,7 +70,7 @@ sub getEnvFileName {
 
 sub swapZfin(){
 
-    system("switch_zfin_swirl_and_hoover.sh") && die "switch zfin to new warehouse failed.";
+    system("switch_test.sh") && die "switch zfin to new warehouse failed.";
     
 }
 sub disableUpdates() {
