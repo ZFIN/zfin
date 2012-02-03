@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/' debug="false">
+
+    <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/catalina.out"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="1MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <param name="DatePattern" value="'.'yyyy-MM"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="email" class="org.zfin.util.ZfinSMTPAppender">
+        <param name="From" value="zfishweb@cs.uoregon.edu"/>
+        <param name="To" value="@DEFAULT_EMAIL@"/>
+        <param name="Subject" value="[Tomcat Error] "/>
+        <param name="threshold" value="error"/>
+        <layout class="org.zfin.util.log4j.ZfinHtmlLayout"/>
+    </appender>
+
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+
+        <category name="org.zfin" additivity="true">
+            <priority value="debug"/>
+        </category>
+
+
+    <category name="org.hibernate.SQL" additivity="true">
+        <priority value="warn"/>
+    </category>
+
+    <category name="org.hibernate.type" additivity="true">
+        <priority value="warn"/>
+    </category>
+
+    <category name="org.zfin.ontology" additivity="true">
+        <priority value="info"/>
+    </category>
+          
+    <root>
+        <priority value="warn"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="email"/>
+        <appender-ref ref="fileAppender"/>
+    </root>
+</log4j:configuration>
