@@ -255,7 +255,7 @@ sub sendMail($) {
    my $SUBJECT=$_[0] . ": " . $jobTitle .": " .$_[2];
     my $MAILTO=$_[1];
     my $TXTFILE=$_[3];
-   print $TXTFILE;
+ 
     
     # Create a new multipart message:
     $msg1 = new MIME::Lite 
