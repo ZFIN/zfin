@@ -80,6 +80,7 @@ insert into pre_feature (
      and fp_prefix = "mn"
      and ekker_featureId is null
      and ekker_geneId is null;
+     
 ! echo "         into pre_feature table."
      
 
@@ -135,6 +136,7 @@ insert into feature (
     feature_name,
     feature_abbrev,
     feature_type,
+    feature_lab_prefix_id,
     feature_line_number,
     feature_tg_suffix,
     feature_known_insertion_site
@@ -143,6 +145,7 @@ select  preftr_feature_zdb_id,
         preftr_feature_name,
         preftr_feature_abbrev,
         'TRANSGENIC_INSERTION',
+        preftr_lab_prefix_id,
         preftr_line_number,
         preftr_tg_suffix,
         preftr_known_insertion_site
