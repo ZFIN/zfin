@@ -749,8 +749,7 @@ select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id
 ;
 
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
- DELIMITER "	"
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'DELIMITER "   "
 select stg_zdb_id, stg_obo_id, stg_name, stg_hours_start, stg_hours_end
   from stage
   order by stg_hours_start, stg_hours_end desc

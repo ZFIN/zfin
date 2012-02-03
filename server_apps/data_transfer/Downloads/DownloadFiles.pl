@@ -60,6 +60,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
 
 system("./generateStagedAnatomy.pl");
 

@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
 SUBDIRS = GFF3
 
-GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql
+GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
