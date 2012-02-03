@@ -1,12 +1,13 @@
 #! /private/bin/perl -w
 
 use DBI;
+use MIME::Lite;
 
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
+$jobTitle = "Cron Job: runWarehouse: ";
 $globalResultFile = "/tmp/warehouse_regeneration"."<!--|DB_NAME|-->";
 $martName = "fish mart";
 @whoIsZfin = `who_is_zfin.sh`;
@@ -24,6 +25,8 @@ for ($whoIsZfinDb) {
     s/^\s+//;
     s/\s+$//;
 }
+
+system("/bin/rm -f *.txt") and die "can not rm txt" ;
 
 $dbhZfin = DBI->connect("DBI:Informix:$whoIsZfinDb",
 		       '',
@@ -110,7 +113,7 @@ sub loadDb() {
 
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
-       system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb");
+       system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
     if ($? ne 0){
 	die "runFishMart.sh died";
     }
@@ -146,7 +149,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "fish_annotation_search table does not have enough records.< 16000";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "fish_annotation_search table does not have enough records.< 16000";	
     }
@@ -158,7 +161,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
     }
@@ -170,7 +173,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$checkFasAllNotNull records have null fas_all values";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$checkFasAllNotNull records have null fas_all values";
     }
@@ -182,7 +185,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
     }
@@ -194,7 +197,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "only $fishSignificanceCount records have significance < 999999";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "only $fishSignificanceCount records have significance < 999999";
     }
@@ -206,7 +209,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "gene_feature_result_view table does not have enough records. < 20312";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "gene_feature_result_view table does not have enough records. < 20312";
     }
@@ -218,7 +221,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "figure_term_fish_search table does not have enough records.< 13997";
 	close(RESULT);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "figure_term_fish_search table does not have enough records.< 13997";
     }
@@ -231,7 +234,7 @@ sub integrityChecks($){
 	print RESULT "bts index on fish_annotation_search is inacurate: shha < 81";
 	close(RESULT);
 	updateWarehouseReleaseTracking($wrt_fail, undef);
-	&sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL','');
+	&sendMail('ERROR','<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: FAIL',"$globalResultFile");
 	die "bts index on fish_annotation_search is inacurate: shha < 81";
     }
    print "fas_all bts_index ok.\n";
@@ -244,31 +247,36 @@ sub updateWarehouseTracking($){
     print RESULT "$martName updated successfully.";
     close(RESULT);
     updateWarehouseReleaseTracking($sqlUpdate, undef);
-    &sendMail('<!--|VALIDATION_EMAIL_DBA|-->','warehouse generation on NotZfinDb: SUCCESS','');
+    &sendMail('SUCCESS','<!--|VALIDATION_EMAIL_DBA|-->','warehouse has been regenerated and zfin has switched',"$globalResultFile");
 }
 
-sub sendMail(@) {
+sub sendMail($) {
 
-     my $sendToAddress = shift;
-     my $subject = shift;
-     my $msg = shift;
+   my $SUBJECT=$_[0] . ": " . $jobTitle .": " .$_[2];
+    my $MAILTO=$_[1];
+    my $TXTFILE=$_[3];
+   print $TXTFILE;
+    
+    # Create a new multipart message:
+    $msg1 = new MIME::Lite 
+	From    => "$ENV{LOGNAME}",
+	To      => "$MAILTO",
+	Subject => "$SUBJECT",
+	Type    => 'multipart/mixed';
 
-     open MAIL, "|/usr/lib/sendmail -t";
+    attach $msg1 
+	Type     => 'text/plain',   
+	Path     => "$TXTFILE";
 
-     print MAIL "To: $sendToAddress\n";
-     print MAIL "Subject: warehouse generation: $subject\n";
+#    attach $msg1
+#	Type     => 'text/html',
+#        Path     => "cron-job-info.html";
 
-     print MAIL "$msg\n";
-     print MAIL "\n\n";
+    # Output the message to sendmail
+    
+    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+    $msg1->print(\*SENDMAIL);
+    close (SENDMAIL);
+    
+}
 
-     # paste all the result records
-     open RESULT, "<$globalResultFile" or die "Cannot open the result file for read.\n";
-     while (<RESULT>) {
-       print MAIL;
-     }
-     close RESULT;
- 
-     close MAIL;
-     
-     return();
-   }
