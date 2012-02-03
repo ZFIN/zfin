@@ -1,3 +1,3 @@
 begin work ;
 
-set PDQPRIORITY 80;
+set PDQPRIORITY 40;
