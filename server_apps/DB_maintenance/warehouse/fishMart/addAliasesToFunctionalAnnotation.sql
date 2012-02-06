@@ -366,9 +366,6 @@ drop table tmp_alias;
 --							  )::lvarchar(10000),11),""),"'}",""),"'",""));
 
 
-alter table functional_annotation
- modify (fa_geno_name varchar(150) not null constraint fa_geno_name_not_null);
-
 update functional_annotation
   set fa_all = "sierra"
  where (fa_all is null
