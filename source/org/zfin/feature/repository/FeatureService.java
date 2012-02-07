@@ -120,7 +120,9 @@ public class FeatureService {
         Set<FeatureDBLink> featureSequences = feature.getDbLinks();
         List<String> featureDBLinkList = new ArrayList<String>();
         for (FeatureDBLink featureDBLink : featureSequences) {
+            if (!featureDBLink.getReferenceDatabase().getForeignDB().isZfishbook()){
             featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+            }
         }
         return featureDBLinkList;
     }
