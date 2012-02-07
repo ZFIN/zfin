@@ -1,0 +1,22 @@
+##################################################
+#
+#    README for zfishbook dir
+#
+##################################################
+
+------------------------
+OBJECTIVE
+-------------------------
+
+  Load zfishbook (Ekker Lab) data into ZFIN.
+  Make attributions to these data.
+
+-------------------------
+EXECUTION
+--------------------------
+
+   Run:	gmake run  (zfishbook.pl)
+
+   This will be run manualy. 
+
+

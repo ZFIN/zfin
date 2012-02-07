@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/zfishbook
 
 GENERICS = zfishbook.pl                                    
            
-STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql zfishbookData.txt
+STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql zfishbookData.txt README
 
 # Define targets that require special handling.
 
