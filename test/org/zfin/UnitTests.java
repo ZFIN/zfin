@@ -55,6 +55,7 @@ import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.uniquery.SiteSearchTest;
+import org.zfin.uniquery.IndexerUtilTest;
 import org.zfin.util.*;
 
 
@@ -86,6 +87,7 @@ import org.zfin.util.*;
         FishServiceNoDBTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
+	IndexerUtilTest.class,
         GafParserUnitTest.class,
         GenericTermTest.class,
         GwtStringUtilsTest.class,

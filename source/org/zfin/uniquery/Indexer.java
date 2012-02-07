@@ -1,10 +1,6 @@
 package org.zfin.uniquery;
 
-import cvu.html.HTMLTokenizer;
-import cvu.html.TagToken;
-import cvu.html.TextToken;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.lucene.document.Document;
@@ -12,7 +8,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
@@ -494,7 +489,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
                 *
                 */
             try {
-                updateSummary(summary);
+                IndexerUtil.updateSummary(summary);
             } catch (IOException e) {
                 errorCount++;
                 log.println(Thread.currentThread().getName() + ": encountered error while updating summary: " + link.getLinkUrl());
@@ -619,170 +614,6 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     public static String makeUrlSpecific(String uriName) {
         uriName = uriName.replace("WEBDRIVER_LOCATION", ZfinPropertiesEnum.WEBDRIVER_LOC.value());
         return uriName;
-    }
-
-    /**
-     * This procedure does two things:
-     * (1) returns a list of all URLs in a web page summary
-     * (2) updates the summary text (by removing markup tags) and title
-     *
-     * @param summary URL Summary
-     * @throws IOException exception form HTMLTokenizer
-     */
-    private void updateSummary(WebPageSummary summary) throws IOException {
-        boolean inScriptTag = false;
-        StringBuilder strippedText = new StringBuilder();
-        List<String> tmp_urls = new ArrayList<String>();
-        summary.setBody(EntityPresentation.replaceSupTags(summary.getBody()));
-        HTMLTokenizer ht = new HTMLTokenizer(new StringReader(summary.getBody()));
-        for (Enumeration e = ht.getTokens(); e.hasMoreElements(); ) {
-            Object obj = e.nextElement();
-            if (obj instanceof TagToken) {
-                TagToken tag = (TagToken) obj;
-                String tagName = tag.getName();
-                if (tagName != null) {
-                    tagName = tagName.toLowerCase();
-                }
-
-                String new_url = null;
-                if (("a").equals(tagName)) {
-                    new_url = tag.getAttributes().get("href");
-                } else if ("frame".equals(tagName)) {
-                    new_url = tag.getAttributes().get("src");
-                } else if ("title".equals(tagName) && e.hasMoreElements() && !tag.isEndTag()) {
-                    // need to check all tokens until we hit a </title> tag
-                    StringBuilder titleString = new StringBuilder();
-                    while (e.hasMoreElements()) {
-                        obj = e.nextElement();
-                        if (obj instanceof TextToken) {
-                            titleString.append(obj);
-                        }
-                        if (obj instanceof TagToken) {
-                            TagToken internalTag = (TagToken) obj;
-                            if (internalTag.getName().equals("title") && internalTag.isEndTag()) {
-                                summary.setTitle(titleString.toString());
-                                break;
-                            }
-                            if (internalTag.getName().equals("sup") && !internalTag.isEndTag()) {
-                                titleString.append(" [");
-                                obj = e.nextElement();
-                                if (obj instanceof TextToken)
-                                    titleString.append(((TextToken) obj).getText());
-                            }
-                            if (internalTag.getName().equals("sup") && internalTag.isEndTag()) {
-                                titleString.append("]");
-                            }
-                        }
-                    }
-
-                } else if ("script".equals(tagName) && !tag.isEndTag()) {
-                    inScriptTag = true;
-                } else if ("script".equals(tagName) && tag.isEndTag()) {
-                    inScriptTag = false;
-                }
-
-
-                if (new_url != null) {
-                    // clean up special characters
-                    new_url = StringUtils.replace(new_url, "\t", "");
-                    new_url = StringUtils.replace(new_url, "\n", "");
-                    new_url = StringUtils.replace(new_url, "\r", "");
-                    new_url = StringUtils.replace(new_url, "&amp;", "&");
-
-                    // remove the hostname (e.g., _quark) from cgi-bin_quark
-                    if (new_url.contains("cgi-bin_")) {
-                        String hostName = StringUtils.substringBetween(new_url, "cgi-bin_", "/");
-                        int index = new_url.indexOf("cgi-bin_" + hostName);
-                        // should assert that index != -1
-                        String firstPart = new_url.substring(0, index + 7);
-                        String secondPart = new_url.substring(index + 8 + hostName.length());
-                        new_url = firstPart + secondPart;
-                    }
-
-                    if (new_url.startsWith("http://")) {
-                        // verify we're on the same host and port
-                        URL u = new URL(new_url);
-                        if (u.getHost().equals(summary.getUrl().getHost()) && u.getPort() == summary.getUrl().getPort()) {
-                            new_url = chopOffNamedAnchor(new_url);
-                            tmp_urls.add(new_url);
-                        }
-                    } else if (!new_url.contains("://") && !new_url.startsWith("mailto:") && !new_url.startsWith("#") && !new_url.startsWith("javascript:")) {
-                        // parse relative new_url
-                        if (StringUtils.isNotEmpty(new_url)) {
-                            new_url = formURL(summary.getUrl(), new_url);
-                            new_url = chopOffNamedAnchor(new_url);
-                            if (!tmp_urls.contains(new_url))
-                                tmp_urls.add(new_url);
-                        }
-                    }
-                }
-            } else if ((obj instanceof TextToken) && !inScriptTag) {
-                TextToken t = (TextToken) obj;
-                String tokenText = t.getText();
-                if (tokenText != null && tokenText.trim().length() > 0) {
-                    strippedText.append(tokenText.trim()).append(" ");
-                }
-            }
-        }
-
-        summary.setText(stripSpecialCharacters(strippedText.toString()));
-        summary.setUrls(new String[tmp_urls.size()]);
-        tmp_urls.toArray(summary.getUrls());
-    }
-
-    public String stripSpecialCharacters(String text) {
-        text = text.replaceAll("&nbsp;", "");
-        return text;
-    }
-
-
-    private String chopOffNamedAnchor(String url) {
-        int pos = url.indexOf("#");
-        if (pos == -1)
-            return url;
-        else
-            return url.substring(0, pos);
-    }
-
-
-    // converts relative URL to absolute URL
-
-    private String formURL(URL origURL, String newURL) {
-        StringBuilder base = new StringBuilder(origURL.getProtocol());
-        base.append("://").append(origURL.getHost());
-        if (origURL.getPort() != -1) {
-            base.append(":").append(origURL.getPort());
-        }
-
-
-        // strip off single quotes because parser seems to leave them on
-        if (newURL.startsWith("'")) {
-            newURL = newURL.substring(1);
-        }
-        if (newURL.endsWith("'")) {
-            newURL = newURL.substring(0, newURL.length() - 1);
-        }
-
-        if (newURL.startsWith("/")) {
-            base.append(newURL);
-        } else if (newURL.startsWith("..")) {
-            origURL.getFile();
-        } else {
-            String file = origURL.getFile();
-            int pos = file.lastIndexOf("/");
-            if (pos != -1)
-                file = file.substring(0, pos);
-
-            while (newURL.startsWith("../")) {
-                pos = file.lastIndexOf("/");
-                file = file.substring(0, pos);
-                newURL = newURL.substring(3);
-            }
-
-            base.append(file).append("/").append(newURL);
-        }
-
-        return base.toString();
     }
 
 

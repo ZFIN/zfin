@@ -730,6 +730,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
         // currently 6 different ontologies used.
         List<String> allTerms = new ArrayList<String>(6 * firstNIds);
         for (Ontology ontology : ontologies) {
+            if (ontology.shouldNotBeIndexed())
+                continue;
             String hql = "select oboID from GenericTerm where ontology = :ontology " +
                     " AND secondary = :secondary " +
                     "order by oboID";
@@ -763,6 +765,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve all terms that can be considered for a given obsoleted term.
+     *
      * @param obsoletedTerm obsoleted Term
      * @return list of terms
      */
@@ -780,6 +783,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve phenotypes with secondary terms annotated.
+     *
      * @return phenotypes
      */
     @Override
@@ -823,6 +827,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve expressions with secondary terms annotated.
+     *
      * @return expressions
      */
     @Override
@@ -848,6 +853,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     /**
      * Retrieve go evidences with secondary terms annotated.
+     *
      * @return expressions
      */
     @Override
@@ -863,8 +869,10 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     private List<Ontology> getDistinctOntologies() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct ontology from GenericTerm order by ontology";
+        String hql = "select distinct ontology from GenericTerm " +
+                " where termName != :partOf order by ontology";
         Query query = session.createQuery(hql);
+        query.setParameter("partOf", "part_of");
         return query.list();
     }
 }

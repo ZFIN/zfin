@@ -42,7 +42,7 @@ public enum Ontology implements Serializable {
     SPATIAL("spatial", "Spatial Ontology", false),
     BEHAVIOR("behavior_ontology", "Behavior Ontology", false),
     MPATH("mouse_pathology.ontology", "MPATH", false),
-    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology","Mouse Cancer Pathology Ontology-Neoplasm Branch", false);
+    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false);
 
     private String ontologyName;
     private String commonName;
@@ -195,9 +195,28 @@ public enum Ontology implements Serializable {
      */
     public Ontology getRootOntology() {
         Ontology rootOntology = getOntology(dbOntologyName);
-        if(rootOntology == null)
+        if (rootOntology == null)
             return this;
         else
             return rootOntology;
+    }
+
+    static Set<Ontology> doNotIndexOntologyList = new HashSet<Ontology>(5);
+
+    static {
+        doNotIndexOntologyList.add(Ontology.STAGE);
+        doNotIndexOntologyList.add(Ontology.GO);
+        doNotIndexOntologyList.add(Ontology.GO_BP_MF);
+        doNotIndexOntologyList.add(Ontology.QUALITY_OBJECT_RELATIONAL);
+        doNotIndexOntologyList.add(Ontology.QUALITY_PROCESSES);
+        doNotIndexOntologyList.add(Ontology.QUALITY_PROCESSES_RELATIONAL);
+        doNotIndexOntologyList.add(Ontology.QUALITY_QUALITATIVE);
+        doNotIndexOntologyList.add(Ontology.QUALITY_QUALITIES);
+        doNotIndexOntologyList.add(Ontology.ANATOMY_FULL);
+        doNotIndexOntologyList.add(Ontology.QUALITY_QUALITIES);
+    }
+
+    public boolean shouldNotBeIndexed() {
+        return doNotIndexOntologyList.contains(this);
     }
 }
