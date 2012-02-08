@@ -260,7 +260,7 @@ sub sendMail($) {
     # Create a new multipart message:
     $msg1 = new MIME::Lite 
 	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
+	To      => '$MAILTO',
 	Subject => "$SUBJECT",
 	Type    => 'multipart/mixed';
 
