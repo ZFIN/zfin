@@ -611,9 +611,6 @@ alter table functional_annotation
   add constraint primary key (fa_pk_id)
   constraint functioanl_annotation_primary_key;
 
-delete from genotype_Experiment
- where genox_zdb_id not in (select xpatex_genox_zdb_id from expression_experiment)
- and genox_zdb_id not in (select phenox_genox_zdb_id from phenotype_Experiment);
 
 
 alter table fish_annotation_search 
@@ -671,3 +668,6 @@ alter table gene_feature_Result_view
   references fish_annotation_search
   on delete cascade constraint  gfrv_fas_id_foreign_key);
 
+delete from genotype_Experiment
+ where genox_zdb_id not in (select xpatex_genox_zdb_id from expression_experiment)
+ and genox_zdb_id not in (select phenox_genox_zdb_id from phenotype_Experiment);
