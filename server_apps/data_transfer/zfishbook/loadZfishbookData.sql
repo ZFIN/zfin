@@ -31,6 +31,18 @@ load from pre_load_input.txt
 unload to 'ekkerLabData.unl' select * from ekkerLabData;
 ! echo "         to ekkerLabData.unl"
    
+-- load record_attribution table
+insert into record_attribution (
+    recattrib_data_zdb_id,
+    recattrib_source_zdb_id
+)
+select  ekker_geneId,
+        'ZDB-PUB-120111-1'
+ from ekkerLabData
+where ekker_geneId is not null
+  and ekker_geneId <> "";
+ 
+! echo "         into record_attribution table."
 
 create table pre_feature (
         preftr_indx int not null,
