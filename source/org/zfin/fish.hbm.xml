@@ -12,7 +12,7 @@
             <generator class="increment"/>
         </id>
 
-        <property name="name" column="fas_geno_name"/>
+        <property name="name" column="fas_geno_long_name"/>
         <property name="featureGroupName" column="fas_feature_group"/>
         <property name="genotypeExperimentIds" column="fas_genox_group"/>
         <property name="genotypeID" column="fas_genotype_group"/>
