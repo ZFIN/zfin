@@ -62,6 +62,7 @@
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	informix\@cs.uoregon.edu
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
+<!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	zfin.org/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	wiki.zfin.org

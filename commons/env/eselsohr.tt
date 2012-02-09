@@ -67,6 +67,7 @@
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	cmpich\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	cmpich\@cs.uoregon.edu
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
+<!--|WAREHOUSE_REGN_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	eselsohr/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org

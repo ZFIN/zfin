@@ -67,6 +67,7 @@
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	pm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	pm\@cs.uoregon.edu
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
+<!--|WAREHOUSE_REGN_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	fishy/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org
