@@ -82,7 +82,10 @@ sub disableUpdates() {
 sub enableUpdates() {
     my $flag = $dbhNotZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
     $flag->execute;
-
+    print "updates enabled";
+    print "restarting tomcat";
+    chdir("<!--|SOURCEROOT|-->") && die "can't chdir to <!--|SOURCEROOT|-->";
+    system("/private/bin/ant restart") && die "tomcat restart failed.";
 }
 
 sub loadDb() {
@@ -260,7 +263,7 @@ sub sendMail($) {
     # Create a new multipart message:
     $msg1 = new MIME::Lite 
 	From    => "$ENV{LOGNAME}",
-	To      => "<!--|VALIDATION_EMAIL_DBA|-->",
+	To      => "<!--|VALIDATION_EMAIL_DBA|-->,cmpich\@zfin.org",
 	Subject => "$SUBJECT",
 	Type    => 'multipart/mixed';
 
