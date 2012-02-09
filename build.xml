@@ -101,7 +101,8 @@
     <import file="${buildfiles.dir}/tomcat.xml"/>
     <import file="${buildfiles.dir}/usage.xml"/>
     <import file="${buildfiles.dir}/serialization.xml"/>
-
+    <import file="${buildfiles.dir}/warehouse.xml"/>
+   
     <echo message="property file=${LOG4J_FILE}"/>
 
     <!-- ====================================================================== -->

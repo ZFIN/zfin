@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="test" basedir=".">
+
+    <target name="recreate-bts-indexes" description="drop and re-create the BTS indexes on the warehouse tables.">
+        <echo message="Re-create BTS indexes on '${env.DBNAME}'"/>
+        <echo message="Drop existing indexes ..."/>
+        <exec executable="dbaccess" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+            <arg value="/research/zunloads/projects/search/testLoad/dropBtsIndexes.sql"/>
+        </exec>
+        <echo message="Create BTS indexes ..."/>
+        <exec executable="dbaccess" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+            <arg value="/research/zunloads/projects/search/testLoad/createBtsIndexes.sql"/>
+        </exec>
+    </target>
+
+</project>
+
