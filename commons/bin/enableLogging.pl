@@ -79,7 +79,7 @@ $EFFECTIVE_USER_ID = $userData[2];
 $REAL_GROUP_ID = $userData[3];
 $EFFECTIVE_GROUP_ID = $userData[3];
 
-if ($dbName eq "hapdb") {
+if ($dbName eq "watsondb" || $dbName eq "crickdb") {
     if (system("ontape", "-s", "-B", $dbName, "-L", "0")) {
 	logError("Unable to turn on logging for $dbName",
 		"  Try running ontape -s -B $dbName as user informix.");
