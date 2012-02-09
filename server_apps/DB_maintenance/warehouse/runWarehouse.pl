@@ -69,8 +69,8 @@ sub getEnvFileName {
 }
 
 sub swapZfin(){
-
-    system("switch_test.sh") && die "switch zfin to new warehouse failed.";
+    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or die "can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/";
+    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch_test.sh") && die "switch zfin to new warehouse failed.";
     
 }
 sub disableUpdates() {
@@ -82,10 +82,10 @@ sub disableUpdates() {
 sub enableUpdates() {
     my $flag = $dbhNotZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
     $flag->execute;
-    print "updates enabled";
+    print "updates enabled\n";
     print "restarting tomcat";
-    chdir("<!--|SOURCEROOT|-->") && die "can't chdir to <!--|SOURCEROOT|-->";
-    system("/private/bin/ant restart") && die "tomcat restart failed.";
+    chdir("<!--|SOURCEROOT|-->") or die "can't chdir to <!--|SOURCEROOT|-->";
+    system("/private/bin/ant restart");
 }
 
 sub loadDb() {
@@ -99,9 +99,9 @@ sub loadDb() {
         s/^\s+//;
         s/\s+$//;
     }
-    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/") && die "can't unloaddb";
+    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/ >out 2> warehouseSqlReport.txt" ) && die "can't unloaddb";
     $dbhNotZfin->disconnect;
-    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
+    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName >out 2> warehouseSqlReport.txt") ;
     if ($? ne 0){
 	die "loadDb.sh failed";
     }
@@ -113,7 +113,7 @@ sub loadDb() {
           or die ("Failed while connecting to $whoIsNotZfin\n");
     #cp unload to zfindb location.
 }
-
+##NEED A GMAKE TO REDIRECT LOADDB OUTPUT TO FILE##
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
        system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
