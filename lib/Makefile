@@ -18,8 +18,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib
 
-SUBDIRS = DB_functions DB_triggers  Perl #DB_bts_indexes
-POSTLOADDB_SUBDIRS = DB_functions DB_triggers #DB_bts_indexes
+SUBDIRS = DB_functions DB_triggers  Perl DB_bts_indexes
+POSTLOADDB_SUBDIRS = DB_functions DB_triggers DB_bts_indexes
 
 # ---------------  Production Rules  ------------------------------------
 
