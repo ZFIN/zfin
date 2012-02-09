@@ -66,6 +66,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	kschaper\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	kschaper\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	kschaper\@cs.uoregon.edu
+<!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	dicer/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org

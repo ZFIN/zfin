@@ -66,6 +66,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	ndunn\@uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	ndunn\@uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	ndunn\@uoregon.edu
+<!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	quark/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	ndunn\@uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org

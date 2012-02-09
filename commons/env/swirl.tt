@@ -66,6 +66,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	staylor\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	staylor\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	staylor\@cs.uoregon.edu
+<!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	swirl/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	staylor\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org

@@ -66,6 +66,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	xshao\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	xshao\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	xshao\@cs.uoregon.edu
+<!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	whirly/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	xshao\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org
