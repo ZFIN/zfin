@@ -110,7 +110,7 @@ public class HibernateFishRepository implements FishRepository {
 
         String baseSelectColumns = " fas_pk_id, fas_geno_name, \n" +
                 " fas_morpholino_group, fas_feature_group, fas_pheno_figure_count, fas_pheno_figure_group, \n" +
-                " fas_all, fas_geno_name, fas_genox_group, fas_genotype_group ";
+                " fas_all, fas_geno_long_name, fas_genox_group, fas_genotype_group ";
 
         String sortColumns = " fas_fish_significance  as complexity, \n";
 
