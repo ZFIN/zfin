@@ -57,14 +57,14 @@ public class ZfinSimpleTokenizer implements Iterator<String> {
     private String[] getWhiteSpaceTokens(String text) {
 
         //on the back end, commas are replaced by spaces because of the multiset stuff
-        text = text.replace(","," ");
+        text = text.replace(",", " ");
 
         String[] tokens = text.split(" ");
         List<String> nonEmptyTokens = new ArrayList<String>(tokens.length);
         for (String token : tokens)
             if (StringUtils.isNotEmpty(token))
                 nonEmptyTokens.add(token);
-        return  nonEmptyTokens.toArray(new String[0]);
+        return nonEmptyTokens.toArray(new String[nonEmptyTokens.size()]);
     }
 
     /**
@@ -76,10 +76,10 @@ public class ZfinSimpleTokenizer implements Iterator<String> {
     public static String getSpecialCharacterReplacement(String token) {
         //a special replacement because escaping a colon makes JDBC think that
         //it's a query parameter
-        token = token.replace(":","$");
+        token = token.replace(":", "$");
 
         //the informix escape for single quotes is necessary here
-        token = token.replace("'","''");
+        token = token.replace("'", "''");
 
         String escaped = LUCENE_PATTERN.matcher(token).replaceAll(REPLACEMENT_STRING);
         return escaped;

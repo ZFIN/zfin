@@ -44,6 +44,13 @@ public class MatchingServiceTest {
     }
 
     @Test
+    public void testPartialMatchOnSomeWords() {
+        String matchingText = "ompb";
+        String queryString = "EGFP,ompb";
+        assertTrue(MatchType.EXACT_MATCH_ON_SOME_WORDS.isMatch(matchingText, queryString));
+    }
+
+    @Test
     public void testColonMatch() {
         String matchingText = "Tg(-2.7shha:GFP) ";
         String queryString = "shha:GFP";

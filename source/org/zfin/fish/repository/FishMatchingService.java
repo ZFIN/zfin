@@ -51,7 +51,7 @@ public class FishMatchingService {
         if (criteria == null)
             return null;
         // no contains.
-        MatchType[] honoredMatchTypes = {MatchType.EXACT, MatchType.EXACT_WORD, MatchType.STARTS_WITH_WORDS, MatchType.STARTS_WITH};
+        MatchType[] honoredMatchTypes = {MatchType.EXACT, MatchType.EXACT_WORD, MatchType.STARTS_WITH_WORDS, MatchType.STARTS_WITH, MatchType.EXACT_MATCH_ON_SOME_WORDS};
         service = new MatchingService(honoredMatchTypes);
         if (criteria.getGeneOrFeatureNameCriteria().hasValues()) {
             checkGeneFeatureMatches(criteria);
@@ -177,7 +177,7 @@ public class FishMatchingService {
         if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
-        if(addMatchingGeneSingleWord(geneNameField))
+        if (addMatchingGeneSingleWord(geneNameField))
             return;
         if (geneNameField.contains(" ")) {
             String[] tokens = geneNameField.split(" ");
