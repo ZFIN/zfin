@@ -113,7 +113,7 @@ sub loadDb() {
           or die ("Failed while connecting to $whoIsNotZfin\n");
     #cp unload to zfindb location.
 }
-##NEED A GMAKE TO REDIRECT LOADDB OUTPUT TO FILE##
+
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
        system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
