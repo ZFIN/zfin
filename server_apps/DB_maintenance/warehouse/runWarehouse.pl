@@ -59,10 +59,12 @@ sub getEnvFileName {
     my $sth = $dbhNotZfin->prepare("select denm_env_file_name from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
     $sth->execute() or die "could not execute";
     $sth->bind_columns(\$env);
+    $sth->dump_results();
     for ($env) {
         s/^\s+//;
         s/\s+$//;
     }
+    #print $env."\n";
     return $env;
 }
 
@@ -111,7 +113,7 @@ sub loadDb() {
           or die ("Failed while connecting to $whoIsNotZfin\n");
     #cp unload to zfindb location.
 }
-
+##NEED A GMAKE TO REDIRECT LOADDB OUTPUT TO FILE##
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
        system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
