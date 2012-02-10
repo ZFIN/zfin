@@ -59,12 +59,10 @@ sub getEnvFileName {
     my $sth = $dbhNotZfin->prepare("select denm_env_file_name from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
     $sth->execute() or die "could not execute";
     $sth->bind_columns(\$env);
-    $sth->dump_results();
     for ($env) {
         s/^\s+//;
         s/\s+$//;
     }
-    #print $env."\n";
     return $env;
 }
 
