@@ -77,4 +77,7 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> PhenoytpeCount.sql > P
 &sendResult("Monthly Phenotype statistics", "<!--|COUNT_PATO_OUT|-->","./PhenotypeStatistics");
 &sendResult("Monthly Phenotype statistics Err", "<!--|COUNT_VEGA_ERR|-->", "./err");
 
+print "\n call FinCount.pl to get monthly fin phenotype count\n";
+system ("<!--|ROOT_PATH|-->/server_apps/Reports/PATO/FinCount.pl");
+
 exit;
