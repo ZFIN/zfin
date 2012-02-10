@@ -97,9 +97,9 @@ sub loadDb() {
         s/^\s+//;
         s/\s+$//;
     }
-    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/ >out 2> warehouseSqlReport.txt" ) or die "can't unloaddb";
+    system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/");
     $dbhNotZfin->disconnect;
-    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName >out 2> warehouseSqlReport.txt") ;
+    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
     if ($? ne 0){
 	die "loadDb.sh failed";
     }
