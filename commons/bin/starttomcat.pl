@@ -13,7 +13,31 @@ BEGIN {
 };
 
 use English;
+use feature 'switch';
 
+given ($ARGV[0]) {
+    when (undef) {
+        $command="/etc/init.d/tomcat start";
+    }
+    when ("trunk") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start trunk";
+    }
+    when ("watson_test") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start watson_test";
+    }
+    when ("crick_test") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick_test";
+    }
+    when ("watson") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start watson";
+    }
+    when ("crick") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick";
+    }
+    default {
+        die "Incorrect argument '$ARGV[0]'"
+    }
+}
 
 # set all the user and group ids we can figure out how to.
 my @userData = getpwnam("root");
@@ -21,4 +45,4 @@ $REAL_USER_ID = $userData[2];
 $EFFECTIVE_USER_ID = $userData[2];
 $REAL_GROUP_ID = $userData[3];
 $EFFECTIVE_GROUP_ID = $userData[3];
-system("/etc/init.d/tomcat start");
+system($command);
