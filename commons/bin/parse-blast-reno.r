@@ -1,4 +1,4 @@
-#! /private/bin/rebol -sq
+#! /private/bin/rebol -sqw
 rebol [
         title: "parse BLAST output for ReNo"
         file: %parse-blast-reno.r
@@ -128,7 +128,7 @@ run-rule: [ ;;; get meta data for the run from the first report
     (   token: trim  token
         probe token
         foreach pth parse token none[
-         insert tail run/database last load trim pth
+         insert tail run/database either path? pth[last load trim pth][pth]
         ]
     )
     ;;; Thu Mar 17 13:16:47 2005
@@ -171,17 +171,18 @@ report-rule: [ ;;;
                 report/acc:     row/2
                 report/locus_acc: first parse/all row/3 " "
                 if "tpe" = row/1 [ ;;; vega transcript
-                    either find/match row/4 "ZDB-GENE"
+                    either find/part row/4 "ZDB-GENE" 8
                     [;;; known to zfin
                         report/alt_id: second parse row/4 none
-                    ][;;; from havana
-                        report/alt_id: lowercase copy/part row/5 find row/5 " "
-                        if find  ["BUSM" "CH21" "CH73" "DKEY" "RP71" "ZFOS" "CH10"] copy/part report/alt_id 4[
+                    ][;;; candidate name from havana
+                      ;;; >tpe|OTTDART00000048259|OTTDARG00000034170| DKEY-281I15.9|no_translation DKEY-281I15.9-001 LG_1 BX571828.6 Danio rerio processed_transcript NOVEL, 206 bp
+                        ;;; report/alt_id:  lowercase second parse row/5 none ;;; transcript name
+                        report/alt_id: lowercase trim row/4  ;;; gene name
+                        if find["BUSM" "CH21" "CH73" "DKEY" "RP71" "ZFOS" "CH10"] copy/part report/alt_id 4[
                             insert report/alt_id "si:"
                         ]
                     ]
                     report/acc_type: "transcript"
-
                 ]
                 {can we tell the sequence type?
                 DNA,
@@ -218,7 +219,7 @@ report-rule: [ ;;;
          |
          [some [
             here:
-            [   "sp|" | "gb|" | "tpe|" | "ref|" | "emb|" | "gnl|wz|"
+            [   "sp|" | "gb|" | "tpe|" | "ref|" | "emb|" | "gnl|wz|" | "lcl|"
                 |
                 [ bs
                   (print [" !!! NEW DEFLINE !!! ^/" copy/part :here 60 ]) ;;; to find new db codes
@@ -249,7 +250,8 @@ hit-rule: [;here: (print [tab "hit" copy/part :here 40])
          ["gb|"  (hit/acc_db:  "gb")] |
          ["ref|" (hit/acc_db: "ref")] |
          ["tpe|" (hit/acc_db: "tpe")] |
-         ["gnl|wz|"  (hit/acc_db:  "wz"  hit/species: "Danio rerio")] |
+         ["gnl|wz|"  (hit/acc_db: "wz" hit/species: "Danio rerio")] |
+         ["lcl|"     (hit/acc_db: "wz" hit/species: "Danio rerio")] |
          [here: "OTTDART" :here (hit/acc_db: "vega" hit/species: "Danio rerio")]
         ]
         copy token to "^/^/"
@@ -310,7 +312,9 @@ hit-rule: [;here: (print [tab "hit" copy/part :here 40])
 ;;;
 
 fname: first system/options/args
-blast-output: join system/script/parent/path fname
+blast-output: either #"/" == first fname  ;;; absolute or relative path to fname?
+	[to-file fname][join system/script/parent/path fname]
+
 
 blk: parse/all read blast-output "^L"
 recycle
@@ -351,8 +355,7 @@ while[not tail? blk][
     ;save/all %run.ctx run
     save/all join system/script/parent/path [trim/all second system/options/args ".ctx"] run
 
-;
-halt
+;halt
 
 
 
