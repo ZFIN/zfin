@@ -44,6 +44,7 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 
 ### MAIN ###
 `/bin/rm -rf $globalResultFile`;
+&cronStop();
 &disableUpdates();
 &loadDb();
 &runWarehouse();
@@ -51,6 +52,29 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 &updateWarehouseTracking("fish mart");
 &enableUpdates();
 &swapZfin();
+&cronStart();
+
+sub cronStart($){
+    # hardcode cron starting for kinetix and watson and crick only.  This needs attention to be more
+    # generic.
+    if (("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "watsondb")){
+	chdir("/research/zprod/users/watson/ZFIN_WWW/server_apps/cron");
+	system("/local/bin/gmake start"); 
+    }
+    else if 
+	(("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "crickdb")){
+	chdir("/research/zprod/users/crick/ZFIN_WWW/server_apps/cron");	
+	system("/local/bin/gmake start"); 
+    }
+}
+
+sub cronStop($) {
+    if ("<!--|MACHINE_NAME|-->" eq "kinetix"){
+	chdir("<!--|SOURCEROOT|-->/server_apps/cron");
+	system("/local/bin/gmake stop"); 
+    }
+}
+
 
 sub getEnvFileName {
     my $env = "error";
@@ -76,6 +100,8 @@ sub swapZfin(){
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
+    chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
+    system("<!--|SOURCEROOT|-->/commons/bin/stoptomcat.pl $whoIsZfinDb");
 
 }
 
@@ -84,8 +110,8 @@ sub enableUpdates() {
     $flag->execute;
     print "updates enabled\n";
     print "restarting tomcat";
-    chdir("<!--|SOURCEROOT|-->") or die "can't chdir to <!--|SOURCEROOT|-->";
-    system("/private/bin/ant restart");
+    chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
+    system("<!--|SOURCEROOT|-->/commons/bin/starttomcat.pl $whoIsNotZfinDb");
 }
 
 sub loadDb() {
@@ -93,7 +119,6 @@ sub loadDb() {
     my $envName;
     my $dirName;
     $envName = &getEnvFileName();
-    ## CHANGE TO LOADDB.SH ##
     $dirName= `getUnloadDir.sh`;
     for ($dirName) {
         s/^\s+//;
@@ -113,7 +138,6 @@ sub loadDb() {
           or die ("Failed while connecting to $whoIsNotZfin\n");
     #cp unload to zfindb location.
 }
-##NEED A GMAKE TO REDIRECT LOADDB OUTPUT TO FILE##
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
        system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
