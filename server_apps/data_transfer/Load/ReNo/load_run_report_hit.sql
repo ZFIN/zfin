@@ -877,20 +877,14 @@ select accbk_acc_num hit ,accbk_length len,accbk_fdbcont_zdb_id fdbcont
 ! echo "############################################################################"
 
 
------------------------------------------------------
---
-drop table tmp_run;
---
-drop table tmp_report;
---
-drop table tmp_hit;
---
-drop table tmp_candidate;
---
-drop table tmp_run_cnd;
---
-drop table tmp_blast_query;
---drop table ;
+-------- droops outside rollback/commit ---------------------------------
+--drop table tmp_run;
+--drop table tmp_report;
+--drop table tmp_hit;
+--drop table tmp_candidate;
+--drop table tmp_run_cnd;
+--drop table tmp_blast_query;
+--drop table ; 
 
 --rollback/commit applied externally with drop tables
 
