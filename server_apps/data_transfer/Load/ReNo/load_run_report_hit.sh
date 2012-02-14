@@ -11,7 +11,7 @@ setenv INFORMIXSQLHOSTS <!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
 
 ###
 if ("commit" =~ $1) then
-	cat load_run_report_hit.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess  <!--|DB_NAME|-->
+	cat load_run_report_hit.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
 else
-        cat load_run_report_hit.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess  <!--|DB_NAME|-->
+	cat load_run_report_hit.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
 endif
