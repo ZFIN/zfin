@@ -7,8 +7,20 @@
 --   ->run_candidate
 --    -> blast_query
 --     -> [blast_report & blast_hit]
+----------------------------------------------------------
+-- try moving the transaction start  to after all the create tables
+--
+--  "Cleanup on Aisle 5"
+{  dbaccess -a $DBNAME << END
+drop table tmp_run;
+drop table tmp_report;
+drop table tmp_hit;
+drop table tmp_candidate;
+drop table tmp_run_cnd;
+drop table tmp_blast_query;
+END
+}
 
-begin work;
 ! echo "BEGIN `date`"
 create table tmp_run (
     trun_name    	varchar(40),
@@ -22,7 +34,10 @@ create table tmp_run (
   --trun_zad
   --trun_query_fdbcont
   --trun_target_fdbcont
-);
+)
+in tbldbs1
+--extent size 1722 next size 172 -- swag == size in k of a load
+;
 
 ! echo "Import run table"
 load from 'run.unl' insert into tmp_run;
@@ -81,7 +96,10 @@ create table tmp_report (
   --trpt_cnd_zdbid
   --trpt_brpt_zad
 
-) fragment by round robin in tbldbs1,tbldbs2,tbldbs3 ;
+) fragment by round robin in tbldbs1,tbldbs2,tbldbs3
+--
+extent size  2000 next size  2000 --
+;
 
 
 ! echo "Import report table"
@@ -97,6 +115,17 @@ create index tmp_report_trpt_alt_id_idx on tmp_report (trpt_alt_id )in idxdbs1 ;
 create index tmp_report_trpt_acc_len_idx on tmp_report (trpt_acc_len )in idxdbs1 ; -- cheap and might help speed up accession bank update.
 
 update statistics high for table tmp_report;
+
+
+! echo "report extent"
+select dbsname, tabname, round (sum (pe_size ) * 4 )ext_size
+ from sysmaster:systabnames, sysmaster:sysptnext
+ where partnum == pe_partnum
+   and dbsname == 'tomdb'    --  <<< -- CHANGE ME
+   and tabname == 'tmp_report'
+group by 1, 2
+;
+
 ------------------------------------------------------------------
 create table tmp_hit (
     thit_rpt             varchar(30), --;;; : BC146618.1
@@ -120,7 +149,14 @@ create table tmp_hit (
     thit_alignment       lvarchar(30400)     --;;;; : {(99%), Strand = Plus / Plus ...
   --thit_target_id       (accession_bank_id)
   --thit_zad
-) fragment by round robin in tbldbs1,tbldbs2,tbldbs3;
+) fragment by round robin in tbldbs1,tbldbs2,tbldbs3
+--
+
+extent size 3407376 next size 340737
+-- swag == size in k of a load  155327020 --- nope
+-- Maximum size of an extent is 33554430  k
+
+;
 
 ! echo "Import hit table `date`"
 load from 'hit.unl' insert into tmp_hit;
@@ -131,8 +167,23 @@ create index tmp_hit_thit_acc_idx on  tmp_hit(thit_acc)in idxdbs3;
 
 update statistics high for table tmp_hit;
 
+! echo "hit extents"
+select dbsname, tabname, round (sum (pe_size ) * 4 )ext_size
+ from sysmaster:systabnames, sysmaster:sysptnext
+ where partnum == pe_partnum
+   and dbsname == 'tomdb'    --  <<< -- CHANGE ME
+   and tabname == 'tmp_hit'
+group by 1, 2
+;
+
+
+
+------------------------------------------------------------------------
+
+
+
 ! echo "filter hits to self (should not be any)"
-delete from tmp_hit where thit_rpt = thit_acc;
+--delete from tmp_hit where thit_rpt = thit_acc;
 
 ! echo "this is a stop-gap on loading old runs srt >tpe| deflines to transcripts"
 update tmp_hit set thit_acc_type = (
@@ -148,7 +199,61 @@ update tmp_hit set thit_acc_type = (
 update tmp_hit set thit_acc_type = trim(thit_acc_type);
 
 update statistics high for table tmp_hit;
-----------------------------------------------------------------------------------
+
+
+--###############################
+-- these tables will not be populated till later on
+
+create table tmp_candidate (
+	tcnd_zad           VARCHAR(50),
+--	tcnd_is_problem       BOOLEAN,
+--	tcnd_mrkr_zdb_id      VARCHAR(50),
+ 	tcnd_mrkr_type        VARCHAR(10), --GENEP
+--	tcnd_run_count        INTEGER,
+--	tcnd_last_done_date   DATETIME YEAR TO FRACTION(5),
+	tcnd_suggested_name   VARCHAR(60)--,
+--	tcnd_note             LVARCHAR DEFAULT
+)
+fragment by round robin in tbldbs1,tbldbs2,tbldbs3
+extent size 5000 next size  5000
+;
+
+create table tmp_run_cnd (
+    truncan_zad       varchar(50) ,
+    truncan_run_zdb_id   varchar(50) ,
+    truncan_cnd_zdb_id   varchar(50)
+--    truncan_done         boolean default 'f' ,
+--    truncan_locked_by    varchar(50)
+)
+fragment by round robin in tbldbs1,tbldbs2,tbldbs3
+extent size  5000 next size  5000
+;
+
+
+create table tmp_blast_query (
+    tbqry_zad varchar(50) ,
+    tbqry_runcan_zdb_id varchar(50),
+    tbqry_accbk_pk_id int8
+)
+fragment by round robin in tbldbs1,tbldbs2,tbldbs3
+extent size  5000 next size  5000
+;
+
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+
+
+-- everything above does not impact existing tables
+-- so although there maybe broken tables to remove
+-- if a roll back happend  it might be better than the locks
+
+							begin work;
+
 ! echo "move run to schema table"
 insert into zdb_active_data select trun_zad from tmp_run;
 
@@ -201,7 +306,7 @@ update run set run_relation_pub_zdb_id = trim(run_relation_pub_zdb_id)
 
 ! echo "add the accession bank id for the query  to the record (if it exists)"
 ! echo "`date`"
-alter table tmp_report add trpt_query_id varchar(50);
+alter table tmp_report add trpt_query_id int8;
 
 update tmp_report
  set trpt_query_id = (
@@ -231,8 +336,8 @@ update accession_bank set accbk_length = (
        and trpt_acc_len > 0
 );
 
-! echo "update accession_bank with NEW length  *** ACTION SKIPPED FOR EXCESSIVE TIME ***"
-! echo "`date`"
+--! echo "update accession_bank with NEW length  *** ACTION SKIPPED FOR EXCESSIVE TIME ***"
+--! echo "`date`"
 --update accession_bank set accbk_length = (
 --    select trpt_acc_len
 --     from tmp_report
@@ -295,13 +400,14 @@ select distinct
  from tmp_report, tmp_run
  where trpt_query_id is NULL
 ;
--- clean up after the SQL's superior conditional operator skillz
+-- clean up after the informix's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
  where exists (select 1 from tmp_report where accbk_acc_num = trpt_acc)
    and octet_length(accbk_fdbcont_zdb_id) != length(accbk_fdbcont_zdb_id)
 ;
 
-update statistics high for table accession_bank;
+-- would be better to not use accession bank at all
+--update statistics high for table accession_bank;
 
 ! echo "add the new accession bank ids back in to the queries"
 ! echo "`date`"
@@ -339,16 +445,6 @@ select count(*) howmany from tmp_report where trpt_cnd_zdbid is NULL;
 
 ! echo "create new candidates if not seen before"
 ! echo "`date`"
-create table tmp_candidate (
-	tcnd_zad           VARCHAR(50),
---	tcnd_is_problem       BOOLEAN,
---	tcnd_mrkr_zdb_id      VARCHAR(50),
- 	tcnd_mrkr_type        VARCHAR(10), --GENEP
---	tcnd_run_count        INTEGER,
---	tcnd_last_done_date   DATETIME YEAR TO FRACTION(5),
-	tcnd_suggested_name   VARCHAR(60)--,
---	tcnd_note             LVARCHAR DEFAULT
-) fragment by round robin in tbldbs1,tbldbs2,tbldbs3;
 
 insert into tmp_candidate (tcnd_suggested_name,tcnd_mrkr_type)
 select distinct trpt_alt_id,
@@ -402,14 +498,6 @@ update tmp_report set trpt_cnd_zdbid = (
 ! echo "`date`"
 
 
-create table tmp_run_cnd (
-    truncan_zad       varchar(50) ,
-    truncan_run_zdb_id   varchar(50) ,
-    truncan_cnd_zdb_id   varchar(50)
---    truncan_done         boolean default 'f' ,
---    truncan_locked_by    varchar(50)
-)fragment by round robin in tbldbs1,tbldbs2,tbldbs3;
-
 insert into  tmp_run_cnd (truncan_run_zdb_id, truncan_cnd_zdb_id)
  select  distinct trun_zad, trpt_cnd_zdbid
   from tmp_run, tmp_report
@@ -434,11 +522,6 @@ select * from  tmp_run_cnd
 ! echo "next make blast_query"
 ! echo "`date`"
 
-create table tmp_blast_query (
-    tbqry_zad varchar(50) ,
-    tbqry_runcan_zdb_id varchar(50),
-    tbqry_accbk_pk_id int
-) fragment by round robin in tbldbs1,tbldbs2,tbldbs3;
 
 insert into tmp_blast_query (
     tbqry_runcan_zdb_id,
@@ -647,7 +730,8 @@ select distinct
  group by thit_acc
 ;
 
-update statistics high for table accession_bank;
+-- would be better to not use accession_bank at all
+--update statistics high for table accession_bank;
 
 -- clean up after the SQL's superior conditional operator skillz
 update accession_bank set accbk_fdbcont_zdb_id = trim (accbk_fdbcont_zdb_id)
@@ -750,12 +834,7 @@ select count(*) blstrpt from blast_report;
 select count(*) hit from blast_hit;
 
 
--- TODO:
---  make a seperate script (in it's own transaction) to:
---  create novle genes where there is not enough information to say otherwise
 
--- find candidates with insufficent data
--- no hits
 {
 select trpt_locus_acc no_hit
  from tmp_report,tmp_run
@@ -788,17 +867,30 @@ select accbk_acc_num hit ,accbk_length len,accbk_fdbcont_zdb_id fdbcont
    and accbk_fdbcont_zdb_id is NULL
 ;
 }
+! echo "FINISHED `date`"
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+-- ############################################################################
+! echo "############################################################################"
 
 
+-----------------------------------------------------
+--
 drop table tmp_run;
+--
 drop table tmp_report;
+--
 drop table tmp_hit;
+--
 drop table tmp_candidate;
+--
 drop table tmp_run_cnd;
+--
 drop table tmp_blast_query;
 --drop table ;
 
-! echo "FINISHED `date`"
+--rollback/commit applied externally with drop tables
 
-
---rollback/commit applied externally
