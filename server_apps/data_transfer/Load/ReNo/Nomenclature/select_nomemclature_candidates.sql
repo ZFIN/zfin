@@ -219,6 +219,7 @@ unload to 'nomenclature_candidate_pp.unl'
 ;
 
 drop table nomenclature_candidate;
+
+! echo "this roll back is expected"
 --
 rollback work;
---commit work;
