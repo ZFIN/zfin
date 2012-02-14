@@ -1,8 +1,8 @@
 
-typicaly run on production the beginning of the month by hand
-in any instance (for testing) but from helix
+Run on request by hand in any instance (for testing) 
+but _from_ <production> as yourself. (hence production)
 
-generate_UniProt_Nomenclature_run.sh
+./generate_UniProt_Nomenclature_run.sh
 	
 will fetch accessions for longest protein associated
 with genes without orthologs or informative nomenclature
@@ -15,12 +15,15 @@ blast the fasta file against Human Mouse and zebrafish Uniprot
 parse the blast output into more convineiant objects and
 write the result out as a  UniProt_{timestamp}.ctx file
 
-which may be (manualy) coppied into *any* ReNo directory as 
+which may be (manualy) coppied into the ReNo directory 
+on any instance as 
 
-'run.ctx' where you would issue a 'gmake run' command 
+	'run.ctx' 
+
+where you would issue a 'gmake run' command 
 to populate ReNo with this run in which ever instance 
 the .ctx file was coppied to.
 
 recomend loading into at least one test db before production
-till we are more comfortable with this process
+
    

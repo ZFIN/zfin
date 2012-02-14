@@ -2,7 +2,7 @@
 begin work;
 
 -- priority
--- xpat = 128, zgc: = 64, si: = 32   wu: = 4
+-- xpat = 128, si: = 64 zgc: = 32,  wu: = 4
 
 create table nomenclature_candidate (
     nc_mrkr_zdb_id varchar(50),
@@ -31,21 +31,21 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
 ! echo "bump expression pattern priority"
 update tmp_xpat_genes set priority = priority + 128
  where exists (
-  select 1 from expression_experiment
+  select 't' from expression_experiment
   where mrkr_zdb_id = xpatex_gene_zdb_id
 );
 
 ! echo "bump zgc: OR si: priority"
 update tmp_xpat_genes set priority = priority +
     case mrkr_abbrev[1,3]
-        when 'zgc' then 64
-        when 'si:' then 32
+        when 'zgc' then 32
+        when 'si:' then 64
         else 4
     end
 ;
 
 ! echo "bump priority of si: genes that are also zgc:"
-update tmp_xpat_genes set priority = priority + 64
+update tmp_xpat_genes set priority = priority + 32
  where mrkr_abbrev[1,4] <> 'zgc:'
  and exists (
     select 1 from data_alias
@@ -55,18 +55,17 @@ update tmp_xpat_genes set priority = priority + 64
 ;
 
 ! echo "bump priority of zgc: genes that are also si:"
-update tmp_xpat_genes set priority = priority + 32
+update tmp_xpat_genes set priority = priority + 64
  where mrkr_abbrev[1,3] <> 'si:'
- and exists (
+ and (exists (
     select 1 from data_alias
      where dalias_data_zdb_id = mrkr_zdb_id
      and   dalias_alias[1,3] = 'si:'
- ) or exists (
-    select 1 from db_link
-     where dblink_linked_recid = mrkr_zdb_id
-     and   dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
- )
-;
+ ) or exists ( -- should not matter but just incase
+    select 't' from marker_relationship
+     where mrkr_zdb_id = mrel_mrkr_1_zdb_id
+      and mrel_type == 'gene produces transcript'
+));
 
 
 ! echo "find the longest protein associated with each gene"
@@ -192,15 +191,24 @@ insert into nomenclature_candidate(
     db_name,
     priority
  from  tmp_can_pp
- where priority > 223   -- TWIDDEL THIS
+ where priority between 161  AND 223 -- TWIDDEL THIS
+
  --order by priority DESC
  ;
+{
+-- xpat+si 		= 192 
+-- xpat+si+zgc  = 224  
+-- zpat+zgc    == 160
+
+}
+
+
 
 ---------------------------------------------------------------------------
 -- #######################################################################
 ---------------------------------------------------------------------------
 
-
+! echo "select_nomenclature_candidate.sql -> nomenclature_candidate_pp.unl"
 unload to 'nomenclature_candidate_pp.unl'
  select  *
  --nc_mrkr_zdb_id, nc_priority

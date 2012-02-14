@@ -33,6 +33,7 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-run	:
+
+run:  
 	generate_UniProt_Nomenclature_run.sh
 
