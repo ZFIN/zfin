@@ -26,7 +26,7 @@ for ($whoIsZfinDb) {
     s/\s+$//;
 }
 
-system("/bin/rm -f *.txt") and die "can not rm txt" ;
+system("/bin/rm -rf *.txt") and die "can not rm txt" ;
 
 $dbhZfin = DBI->connect("DBI:Informix:$whoIsZfinDb",
 		       '',
@@ -46,7 +46,7 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 `/bin/rm -rf $globalResultFile`;
 &cronStop();
 &disableUpdates();
-&loadDb();
+#&loadDb();
 &runWarehouse();
 &integrityChecks("fish mart");
 &updateWarehouseTracking("fish mart");
@@ -141,7 +141,7 @@ sub loadDb() {
 }
 sub runWarehouse() {
     chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
-       system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb >out 2> warehouseSqlReport.txt");
+       system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb > ../warehouseSqlReport.txt");
     if ($? ne 0){
 	die "runFishMart.sh died";
     }
