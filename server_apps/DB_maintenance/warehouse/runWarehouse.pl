@@ -102,7 +102,7 @@ sub disableUpdates() {
     $flag->execute;
     chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
     system("<!--|SOURCEROOT|-->/commons/bin/stoptomcat.pl $whoIsZfinDb");
-
+    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
 }
 
 sub enableUpdates() {
