@@ -119,6 +119,7 @@ sub loadDb() {
     my $envName;
     my $dirName;
     $envName = &getEnvFileName();
+    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     $dirName= `getUnloadDir.sh`;
     for ($dirName) {
         s/^\s+//;
