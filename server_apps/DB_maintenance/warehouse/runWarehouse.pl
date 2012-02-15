@@ -58,20 +58,23 @@ sub cronStart($){
     # hardcode cron starting for kinetix and watson and crick only.  This needs attention to be more
     # generic.
     if (("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "watsondb")){
-	chdir("/research/zprod/users/watson/ZFIN_WWW/server_apps/cron");
+	chdir("/research/zprod/users/watson/ZFIN_WWW/server_apps/cron") or die "can't chdir to server_apps/cron";
 	system("/local/bin/gmake start"); 
+	print "last return from gmake start is: $?";
     }
      
     if (("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "crickdb")){
-	chdir("/research/zprod/users/crick/ZFIN_WWW/server_apps/cron");	
-	system("/local/bin/gmake start"); 
+	chdir("/research/zprod/users/crick/ZFIN_WWW/server_apps/cron") or die "can't chdir to server_apps/cron";	
+	system("/local/bin/gmake start");
+	print "last return from gmake start is: $?";
     }
 }
 
 sub cronStop($) {
     if ("<!--|MACHINE_NAME|-->" eq "kinetix"){
-	chdir("<!--|SOURCEROOT|-->/server_apps/cron");
+	chdir("<!--|SOURCEROOT|-->/server_apps/cron") or die "can't chdir to server_apps/cron";
 	system("/local/bin/gmake stop"); 
+	print "last return from gmake stop is: $?";
     }
 }
 
@@ -100,9 +103,11 @@ sub swapZfin(){
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
-    chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
     system("<!--|SOURCEROOT|-->/commons/bin/stoptomcat.pl $whoIsZfinDb");
-    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
+    if($? ne 0){
+	die "stoptomcat.pl failed";
+    }
+    print "disable updates stoptomcat.pl return is: $?";
 }
 
 sub enableUpdates() {
@@ -112,6 +117,7 @@ sub enableUpdates() {
     print "restarting tomcat";
     chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
     system("<!--|SOURCEROOT|-->/commons/bin/starttomcat.pl $whoIsNotZfinDb");
+    print "return from starttomcat.pl is: $?";
 }
 
 sub loadDb() {
@@ -119,13 +125,13 @@ sub loadDb() {
     my $envName;
     my $dirName;
     $envName = &getEnvFileName();
-    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     $dirName= `getUnloadDir.sh`;
     for ($dirName) {
         s/^\s+//;
         s/\s+$//;
     }
     system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/");
+    print "return from unloaddb.pl is: $?";
     $dbhNotZfin->disconnect;
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
     if ($? ne 0){
@@ -140,12 +146,13 @@ sub loadDb() {
     #cp unload to zfindb location.
 }
 sub runWarehouse() {
-    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/");
-       system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb > ../warehouseSqlReport.txt");
+    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/") or die "can't chdir to server_apps/DB_maintenance/warehouse/fishMart/";
+    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh $whoIsNotZfinDb > ../warehouseSqlReport.txt");
+    print $?;
     if ($? ne 0){
 	die "runFishMart.sh died";
     }
-    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
+    chdir ("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or die "can't chdir to DB_maintenance/warehouse/";
 }
 
 sub execSql {
