@@ -46,7 +46,7 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 `/bin/rm -rf $globalResultFile`;
 &cronStop();
 &disableUpdates();
-#&loadDb();
+&loadDb();
 &runWarehouse();
 &integrityChecks("fish mart");
 &updateWarehouseTracking("fish mart");
