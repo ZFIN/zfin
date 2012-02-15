@@ -107,7 +107,6 @@ sub disableUpdates() {
     if($? ne 0){
 	die "stoptomcat.pl failed";
     }
-    print "disable updates stoptomcat.pl return is: $?";
 }
 
 sub enableUpdates() {
@@ -116,8 +115,7 @@ sub enableUpdates() {
     print "updates enabled\n";
     print "restarting tomcat";
     chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
-    system("<!--|SOURCEROOT|-->/commons/bin/starttomcat.pl $whoIsNotZfinDb");
-    print "return from starttomcat.pl is: $?";
+    system("<!--|SOURCEROOT|-->/commons/bin/starttomcat.pl $whoIsNotZfinDb") or die "can't starttomcat.pl";
 }
 
 sub loadDb() {
