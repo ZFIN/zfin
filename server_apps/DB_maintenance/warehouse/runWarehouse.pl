@@ -176,7 +176,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "fish_annotation_search table does not have enough records.< 16000";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "fish_annotation_search table does not have enough records.< 16000";	
     }
@@ -188,7 +188,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
     }
@@ -200,7 +200,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$checkFasAllNotNull records have null fas_all values";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$checkFasAllNotNull records have null fas_all values";
     }
@@ -212,7 +212,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
     }
@@ -224,7 +224,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "only $fishSignificanceCount records have significance < 999999";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "only $fishSignificanceCount records have significance < 999999";
     }
@@ -236,7 +236,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "gene_feature_result_view table does not have enough records. < 20312";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "gene_feature_result_view table does not have enough records. < 20312";
     }
@@ -248,7 +248,7 @@ sub integrityChecks($){
 	open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result.";
 	print RESULT "figure_term_fish_search table does not have enough records.< 13997";
 	close(RESULT);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	die "figure_term_fish_search table does not have enough records.< 13997";
     }
@@ -261,7 +261,7 @@ sub integrityChecks($){
 	print RESULT "bts index on fish_annotation_search is inacurate: shha < 81";
 	close(RESULT);
 	updateWarehouseReleaseTracking($wrt_fail, undef);
-	&sendMail("ERROR","<!--|VALIDATION_EMAIL_DBA|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
+	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	die "bts index on fish_annotation_search is inacurate: shha < 81";
     }
    print "fas_all bts_index ok.\n";
@@ -274,7 +274,7 @@ sub updateWarehouseTracking($){
     print RESULT "$martName updated successfully.";
     close(RESULT);
     updateWarehouseReleaseTracking($sqlUpdate, undef);
-    &sendMail("SUCCESS","<!--|VALIDATION_EMAIL_DBA|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
+    &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
 }
 
 sub sendMail($) {
@@ -287,7 +287,7 @@ sub sendMail($) {
     # Create a new multipart message:
     $msg1 = new MIME::Lite 
 	From    => "$ENV{LOGNAME}",
-	To      => "<!--|VALIDATION_EMAIL_DBA|-->,cmpich\@zfin.org",
+	To      => "<!--|WAREHOUSE_REGN_EMAIL|-->,cmpich\@zfin.org",
 	Subject => "$SUBJECT",
 	Type    => 'multipart/mixed';
 
