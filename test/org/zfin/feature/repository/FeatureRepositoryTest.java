@@ -160,7 +160,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         }
         assertNotNull(featurePrefixLights);
         assertTrue(featurePrefixLights.size() > 100);
-        assertTrue(featurePrefixLights.size() < 300);
+        assertTrue(featurePrefixLights.size() < 500);
         assertTrue(containsEd);
         assertTrue(containsEr);
         assertTrue(containsSb);
@@ -171,7 +171,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturesForPrefixNoSources() {
         List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("zf");
         assertTrue(featureLabEntries.size() > 140);
-        assertTrue(featureLabEntries.size() < 200);
+        assertTrue(featureLabEntries.size() < 600);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
         assertTrue(hasDominant);
         assertTrue(featureLabEntries.size() > 400);
-        assertTrue(featureLabEntries.size() < 500);
+        assertTrue(featureLabEntries.size() < 1000);
     }
 
     @Test
