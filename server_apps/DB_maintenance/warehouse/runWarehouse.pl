@@ -61,8 +61,8 @@ sub cronStart($){
 	chdir("/research/zprod/users/watson/ZFIN_WWW/server_apps/cron");
 	system("/local/bin/gmake start"); 
     }
-    else if 
-	(("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "crickdb")){
+     
+    if (("<!--|MACHINE_NAME|-->" eq "kinetix") && ($whoIsZfinDb eq "crickdb")){
 	chdir("/research/zprod/users/crick/ZFIN_WWW/server_apps/cron");	
 	system("/local/bin/gmake start"); 
     }
@@ -80,10 +80,10 @@ sub getEnvFileName {
     my $env = "error";
 
     #print $whoIsNotZfinDb;
-    my $sth = $dbhNotZfin->prepare("select denm_env_file_name from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
-    $sth->execute() or die "could not execute";
-    $sth->bind_columns(\$env);
-    $sth->dump_results();
+    my $sthEn = $dbhNotZfin->prepare("select denm_env_file_name from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
+    $sthEn->execute() or die "could not execute";
+    $sthEn->bind_columns(\$env);
+    $sthEn->dump_results();
     for ($env) {
         s/^\s+//;
         s/\s+$//;
@@ -106,8 +106,8 @@ sub disableUpdates() {
 }
 
 sub enableUpdates() {
-    my $flag = $dbhNotZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
-    $flag->execute;
+    my $flag2 = $dbhNotZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
+    $flag2->execute;
     print "updates enabled\n";
     print "restarting tomcat";
     chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
@@ -152,17 +152,17 @@ sub execSql {
   my $sql = shift;
   my $nRecords = 0;
  
-  my $sth = $dbhNotZfin->prepare($sql) or die "Prepare fails";
-  $sth -> execute() or die "could not execute";
-  my @row = $sth->fetchrow_array();
+  my $sthE = $dbhNotZfin->prepare($sql) or die "Prepare fails";
+  $sthE -> execute() or die "could not execute";
+  my @row = $sthE->fetchrow_array();
   $nRecords = $row[0];
   return ($nRecords);
 }
 
 sub updateWarehouseReleaseTracking {
     my $sql = shift;
-    my $sth = $dbhNotZfin->prepare($sql) or die "Prepare fails";
-    $sth -> execute() or die "could not execute";
+    my $sthU = $dbhNotZfin->prepare($sql) or die "Prepare fails";
+    $sthU -> execute() or die "could not execute";
 }
 
 sub integrityChecks($){
