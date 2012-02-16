@@ -40,7 +40,8 @@
 
 	    WAREHOUSE
 	    recreate-bts-indexes: recreate the BTS index on the warehouse tables (drop and create them).
-
+	    build-fishmart: builds the fish search-related warehouse tables.
+	
             TOMCAT:
             tomcat-restart: Restarts tomcat
             tomcat-start: Start tomcat
