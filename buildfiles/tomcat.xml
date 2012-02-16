@@ -2,30 +2,25 @@
 <project name="tomcat" basedir=".">
     <!-- todo: the location of the commons tree should probably come from the env -->
     <property name="tomcat-script-mutant" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
-    <property name="tomcat-script-production-stop" value="/private/ZfinLinks/Commons/bin/stoptomcat.pl"/>
-    <property name="tomcat-script-production-start" value="/private/ZfinLinks/Commons/bin/starttomcat.pl"/>
-    <property name="tomcat-script-happy-stop" value="/private/ZfinLinks/Commons/bin/stophappytomcat.pl"/>
-    <property name="tomcat-script-happy-start" value="/private/ZfinLinks/Commons/bin/starthappytomcat.pl"/>
-    <property name="tomcat-script-trunk-stop" value="/private/ZfinLinks/Commons/bin/stoptrunktomcat.pl"/>
-    <property name="tomcat-script-trunk-start" value="/private/ZfinLinks/Commons/bin/starttrunktomcat.pl"/>
-    <property name="tomcat-script-test-stop" value="/private/ZfinLinks/Commons/bin/stoptesttomcat.pl"/>
-    <property name="tomcat-script-test-start" value="/private/ZfinLinks/Commons/bin/starttesttomcat.pl"/>
+
+    <property name="tomcat-script-informix-zfishweb-start" value="/private/ZfinLinks/Commons/bin/starttomcat.pl"/>
+    <property name="tomcat-script-informix-zfishweb-stop" value="/private/ZfinLinks/Commons/bin/stoptomcat.pl"/>
 
 
-
-    <target name="productionandalmost-tomcat-start" if="isalmostorproduction" description="Starts tomcat if production or almost">
-        <exec executable="${tomcat-script-production-start}" failifexecutionfails="true">
-            <arg value="start"/>
+    <target name="informix-zfishweb-tomcat-start" if="isinformix" description="Starts tomcat if running as informix/zfishweb">
+        <exec executable="${tomcat-script-informix-zfishweb-start}" failifexecutionfails="true">
+            <arg value="${INSTANCE}"/>
         </exec>
         <echo message=":TOMCAT START SUCCESSFUL:"/>
     </target>
 
-    <target name="productionandalmost-tomcat-stop" if="isalmostorproduction" description="Stops tomcat if production or almost">
-        <exec executable="${tomcat-script-production-stop}" failifexecutionfails="true">
-            <arg value="stop"/>
+    <target name="informix-zfishweb-tomcat-stop" if="isinformix" description="Stops tomcat if running as informix/zfishweb">
+        <exec executable="${tomcat-script-informix-zfishweb-start}" failifexecutionfails="true">
+            <arg value="${INSTANCE}"/>
         </exec>
-        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
+        <echo message=":TOMCAT START SUCCESSFUL:"/>
     </target>
+
 
     <target name="mutant-tomcat-start" if="ismutant" description="Starts tomcat if mutant">
         <exec executable="${tomcat-script-mutant}"  failifexecutionfails="true">
@@ -41,54 +36,8 @@
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
 
-
-    <target name="zfinonembryonix-tomcat-start" if="iszfinonembryonix"  description="Starts tomcat if zfin on embryonix">
-        <echo message=":Manually START Tomcat:"/>
-        <echo>
-            "ssh username@embryonix sudo tomcat.sh start embryonix"
-        </echo>
-    </target>
-
-    <target name="zfinonembryonix-tomcat-stop" if="iszfinonembryonix"  description="Stops tomcat if zfin on embryonix">
-        <echo message=":Manually STOP Tomcat:"/>
-        <echo>
-            "ssh username@embryonix sudo tomcat.sh stop embryonix"
-        </echo>
-    </target>
-
-    <target name="happy-tomcat-start" if="is-happy-zfin-org" description="Starts tomcat if happy.zfin.org">
-        <exec executable="${tomcat-script-happy-start}"  failifexecutionfails="true"/>
-        <echo message=":TOMCAT START SUCCESSFUL:"/>
-    </target>
-
-    <target name="happy-tomcat-stop" if="is-happy-zfin-org" description="Stops tomcat if happy.zfin.org">
-        <exec executable="${tomcat-script-happy-stop}" failifexecutionfails="true"/>
-        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
-    </target>
-
-    <target name="trunk-tomcat-start" if="is-trunk-zfin-org" description="Starts tomcat if trunk.zfin.org">
-        <exec executable="${tomcat-script-trunk-start}"  failifexecutionfails="true"/>
-        <echo message=":TOMCAT START SUCCESSFUL:"/>
-    </target>
-
-    <target name="trunk-tomcat-stop" if="is-trunk-zfin-org" description="Stops tomcat if trunk.zfin.org">
-        <exec executable="${tomcat-script-trunk-stop}" failifexecutionfails="true"/>
-        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
-    </target>
-
-    <target name="test-tomcat-start" if="is-test-zfin-org" description="Starts tomcat if test.zfin.org">
-        <exec executable="${tomcat-script-test-start}"  failifexecutionfails="true"/>
-        <echo message=":TOMCAT START SUCCESSFUL:"/>
-    </target>
-
-    <target name="test-tomcat-stop" if="is-test-zfin-org" description="Stops tomcat if test.zfin.org">
-        <exec executable="${tomcat-script-test-stop}" failifexecutionfails="true"/>
-        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
-    </target>
-
-
-    <target name="tomcat-stop" depends="productionandalmost-tomcat-stop,zfinonembryonix-tomcat-stop,mutant-tomcat-stop,happy-tomcat-stop,trunk-tomcat-stop,test-tomcat-stop"  description="Stops tomcat by calling all tomcat stop targets"/>
-    <target name="tomcat-start" depends="productionandalmost-tomcat-start,zfinonembryonix-tomcat-start,mutant-tomcat-start,happy-tomcat-start,trunk-tomcat-start,test-tomcat-start"   description="Starts tomcat if zfin on embryonix"/>
+    <target name="tomcat-stop" depends="mutant-tomcat-stop,informix-zfishweb-tomcat-stop" description="Stops tomcat by calling all tomcat stop targets"/>
+    <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start" description="Starts tomcat by calling all tomcat stop targets"/>
 
 
     <target name="tomcat-debug-start"   description="Starts tomcat in debug mode">
