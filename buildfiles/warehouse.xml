@@ -15,5 +15,12 @@
         </exec>
     </target>
 
+    <target name="build-fishmart" description="Re-create the warehouse table for mutant search (aka fishmart).">
+        <echo message="Re-create fishmart on '${DBNAME}'"/>
+        <exec executable="${TARGETROOT}/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+        </exec>
+    </target>
+
 </project>
 
