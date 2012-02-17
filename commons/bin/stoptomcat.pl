@@ -37,6 +37,14 @@ given ($ARGV[0]) {
     when ("crick") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop crick";
     }
+    when ("watsondb") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop watson_test";
+    }
+    when ("crickdb") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop crick_test";
+    }
+
+
     default {
         die "Incorrect argument '$ARGV[0]'"
     }
