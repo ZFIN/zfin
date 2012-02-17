@@ -15,7 +15,7 @@
 <!--|CURATORS_AT_ZFIN|-->	informix\@cs.uoregon.edu
 <!--|DB_NAME|-->	crickdb
 <!--|DB_OWNER|-->	informix
-<!--|DOMAIN_NAME|-->	crick.zfin.org
+<!--|DOMAIN_NAME|-->	istest.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
