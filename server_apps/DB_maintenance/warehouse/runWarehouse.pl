@@ -106,7 +106,7 @@ sub swapZfin(){
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
-    system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $whoIsZfinDb");
+    system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $whoIsNotZfinDb");
     if($? ne 0){
 	die "stoptomcat.pl failed";
     }
