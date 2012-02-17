@@ -68,6 +68,8 @@ sub cronStart($){
 	system("/local/bin/gmake start");
 	print "last return from gmake start is: $?";
     }
+    print "zfin is: $whoIsZfinDb";
+    print "zfin is not: $whoIsNotZfinDb";
    &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
 }
 
@@ -116,6 +118,7 @@ sub enableUpdates() {
     print "updates enabled\n";
     print "restarting tomcat";
     chdir("/private/ZfinLinks/Commons/bin") or die "can't chdir to /private/ZfinLinks/Commons/bin";
+    print "starttomcat.pl on $whoIsNotZfinDb");
     system("/private/ZfinLinks/Commons/bin/starttomcat.pl $whoIsNotZfinDb") or die "can't starttomcat.pl";
 }
 
