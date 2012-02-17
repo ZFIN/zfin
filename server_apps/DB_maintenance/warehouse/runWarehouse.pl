@@ -103,7 +103,7 @@ sub swapZfin(){
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
-    system("<!--|SOURCEROOT|-->/commons/bin/stoptomcat.pl $whoIsZfinDb");
+    system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $whoIsZfinDb");
     if($? ne 0){
 	die "stoptomcat.pl failed";
     }
@@ -114,8 +114,8 @@ sub enableUpdates() {
     $flag2->execute;
     print "updates enabled\n";
     print "restarting tomcat";
-    chdir("<!--|SOURCEROOT|-->/commons/bin") or die "can't chdir to <!--|SOURCEROOT|-->/commons/bin";
-    system("<!--|SOURCEROOT|-->/commons/bin/starttomcat.pl $whoIsNotZfinDb") or die "can't starttomcat.pl";
+    chdir("/private/ZfinLinks/Commons/bin") or die "can't chdir to /private/ZfinLinks/Commons/bin";
+    system("/private/ZfinLinks/Commons/bin/starttomcat.pl $whoIsNotZfinDb") or die "can't starttomcat.pl";
 }
 
 sub loadDb() {
