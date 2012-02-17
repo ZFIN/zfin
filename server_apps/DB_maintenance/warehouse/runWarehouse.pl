@@ -53,6 +53,13 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 &enableUpdates();
 &swapZfin();
 &cronStart();
+&success();
+
+sub success() {
+    
+    &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
+
+}
 
 sub cronStart($){
     # hardcode cron starting for kinetix and watson and crick only.  This needs attention to be more
@@ -70,7 +77,7 @@ sub cronStart($){
     }
     print "zfin is: $whoIsZfinDb";
     print "zfin is not: $whoIsNotZfinDb";
-   &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
+  
 }
 
 sub cronStop($) {
@@ -107,6 +114,7 @@ sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
     system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $whoIsNotZfinDb");
+    print "$? \n";
     if($? ne 0){
 	die "stoptomcat.pl failed";
     }
@@ -118,7 +126,7 @@ sub enableUpdates() {
     print "updates enabled\n";
     print "restarting tomcat";
     chdir("/private/ZfinLinks/Commons/bin") or die "can't chdir to /private/ZfinLinks/Commons/bin";
-    print "starttomcat.pl on $whoIsNotZfinDb");
+    print ("starttomcat.pl on $whoIsNotZfinDb");
     system("/private/ZfinLinks/Commons/bin/starttomcat.pl $whoIsNotZfinDb") or die "can't starttomcat.pl";
 }
 
