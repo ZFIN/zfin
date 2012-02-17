@@ -22,6 +22,10 @@ given ($ARGV[0]) {
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart trunk";
     }
+    when ("test") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart test";
+    }
+
     when ("watson_test") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart watson_test";
     }
@@ -35,10 +39,10 @@ given ($ARGV[0]) {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart crick";
     }
     when ("watsondb") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart watson";
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart watson_test";
     }
     when ("crickdb") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart crick";
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart crick_test";
     }
     default {
 	die "Incorrect argument '$ARGV[0]'"

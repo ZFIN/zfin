@@ -22,6 +22,9 @@ given ($ARGV[0]) {
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start trunk";
     }
+    when ("test") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start test";
+    }
     when ("watson_test") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start watson_test";
     }
@@ -34,15 +37,6 @@ given ($ARGV[0]) {
     when ("crick") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick";
     }
-
-    when ("watsondb") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start watson";
-    }
-    when ("crickdb") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick";
-    }
-
-
     default {
         die "Incorrect argument '$ARGV[0]'"
     }
