@@ -68,6 +68,7 @@ sub cronStart($){
 	system("/local/bin/gmake start");
 	print "last return from gmake start is: $?";
     }
+   &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
 }
 
 sub cronStop($) {
@@ -167,8 +168,8 @@ sub execSql {
 
 sub updateWarehouseReleaseTracking {
     my $sql = shift;
-    my $sthU = $dbhNotZfin->prepare($sql) or die "Prepare fails";
-    $sthU -> execute() or die "could not execute";
+    my $sthU = $dbhNotZfin->prepare($sql) or die "Prepare fails on update release tracking";
+    $sthU -> execute() or die "could not execute update release tracking";
 }
 
 sub integrityChecks($){
