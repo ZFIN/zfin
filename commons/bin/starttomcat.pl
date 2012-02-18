@@ -43,6 +43,15 @@ given ($ARGV[0]) {
     when ("crickdb") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick_test";
     }
+
+    when ("darwin") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwin";
+    }
+    when ("smith") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smith";
+    }
+    
+
     
     
     default {

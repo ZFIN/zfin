@@ -44,6 +44,12 @@ given ($ARGV[0]) {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop crick_test";
     }
 
+    when ("darwin") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop darwin";
+    }
+    when ("smith") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop smith";
+    }
 
     default {
         die "Incorrect argument '$ARGV[0]'"

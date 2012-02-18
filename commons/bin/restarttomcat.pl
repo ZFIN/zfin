@@ -44,6 +44,13 @@ given ($ARGV[0]) {
     when ("crickdb") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart crick_test";
     }
+    when ("darwin") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart darwin";
+    }
+    when ("smith") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart smith";
+    }
+
     default {
 	die "Incorrect argument '$ARGV[0]'"
     }
