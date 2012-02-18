@@ -1,11 +1,11 @@
 #!/bin/sh
 
-RESULT=`grep watson /private/apps/apache/conf/conf-test.zfin.org`
+RESULT=`grep smith /private/apps/apache/conf/conf-test.zfin.org`
 
 if [ "$RESULT" != "" ]
 then
-    ZFINDB=crickdb
+    ZFINDB=darwindb
 else
-    ZFINDB=watsondb
+    ZFINDB=smithdb
 fi
 echo $ZFINDB
