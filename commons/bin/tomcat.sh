@@ -24,7 +24,10 @@ $CATALINA_HOME/bin/startStop.sh stop
 $CATALINA_HOME/bin/startStop.sh start
 chmod 644 $CATALINA_BASE/logs/*
 chmod 644 $CATALINA_PID
+;breaksw;
 
+case "dump-stack":
+/private/apps/java/bin/jstack -F `cat $CATALINA_PID` >> $CATALINA_BASE/logs/catalina.out
 ;breaksw;
 
 case "debug-start":
