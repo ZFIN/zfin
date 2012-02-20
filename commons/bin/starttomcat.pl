@@ -50,7 +50,12 @@ given ($ARGV[0]) {
     when ("smith") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smith";
     }
-    
+        when ("darwin") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwindb";
+    }
+    when ("smith") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smithdb";
+    }
 
     
     
