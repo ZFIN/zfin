@@ -44,17 +44,17 @@ given ($ARGV[0]) {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start crick_test";
     }
 
+    when ("darwindb") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwin";
+    }
+    when ("smithdb") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smith";
+    }
     when ("darwin") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwin";
     }
     when ("smith") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smith";
-    }
-        when ("darwin") {
-	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwindb";
-    }
-    when ("smith") {
-	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smithdb";
     }
 
     
