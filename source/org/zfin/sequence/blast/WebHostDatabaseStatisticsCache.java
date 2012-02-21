@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible getting database abbreviation sizes
@@ -12,6 +13,7 @@ public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCa
 
     private static DatabaseStatisticsCache localDatabaseSizeCache;
     private final static Logger logger = Logger.getLogger(WebHostDatabaseStatisticsCache.class);
+    private boolean isCached = false;
 
     public static DatabaseStatisticsCache getInstance() {
         if (localDatabaseSizeCache == null) {
@@ -46,6 +48,7 @@ public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCa
         if (map.containsKey(abbrev)) {
             return map.get(abbrev);
         } else {
+
             Database database = RepositoryFactory.getBlastRepository().getDatabase(abbrev);
             int numberOfSequences = MountedWublastBlastService.getInstance().getDatabaseStatistics(database).getNumSequences();
 
@@ -68,31 +71,64 @@ public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCa
      * @return The number of cached databases.
      */
     public int cacheAll() {
+
+        logger.debug("starting cache of all blast database accession counts");
+        Map<String, Integer> accessionCounts = RepositoryFactory.getBlastRepository().getValidAccessionCountsForAllBlastDatabases();
+
         List<Database> databases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
         for (Database database : databases) {
+            Integer accessionCount = accessionCounts.get(database.getAbbrev().toString());
 //            (new DatabaseThread(database)).start();
-            (new DatabaseThread(database)).run();
+            (new DatabaseThread(database, accessionCount)).run();
         }
+
+        logger.debug("finishing cache of all blast database accession counts");
+
+        isCached = true;
+
         return map.size();
     }
 
     public class DatabaseThread extends Thread {
         private Database database;
+        private Integer accessionCount;
 
-        public DatabaseThread(Database database) {
+        public DatabaseThread(Database database, Integer accessionCount) {
             this.database = database;
+            this.accessionCount = accessionCount;
         }
 
         @Override
         public void run() {
             try {
-                DatabaseStatistics statistics = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(database);
-                // this may need to be turned on if run in a threaded mode.
+                if (database == null)
+                    logger.debug("database is null");
+                logger.debug("database: " + database.getAbbrev() + ", " + database.getZdbID());
+                DatabaseStatistics statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(database);
+
+                if (statistics == null) {
+                    logger.debug("statistics was null for " + database.getAbbrev() + ", " + database.getZdbID());
+                } else {
+                    if (accessionCount == null)
+                        logger.debug("accessionCount was null");
+                    else
+                        statistics.setNumAccessions(accessionCount);
 //                HibernateUtil.closeSession();
                 logger.info("Number of sequences: " + statistics.getNumSequences() + " database: " + database.getAbbrev());
+
+                }
+                map.put(database.getAbbrev(), statistics);
+                // this may need to be turned on if run in a threaded mode.
+
             } catch (BlastDatabaseException e) {
                 logger.error("Failed to cache threads", e);
             }
         }
     }
+
+    public boolean isCached() {
+        return isCached;
+    }
+
+
 }

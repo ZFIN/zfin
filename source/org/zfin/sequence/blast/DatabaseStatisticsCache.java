@@ -13,4 +13,6 @@ public interface DatabaseStatisticsCache {
     public int clearCache();
 
     public int cacheAll();
+    
+    public boolean isCached();
 }

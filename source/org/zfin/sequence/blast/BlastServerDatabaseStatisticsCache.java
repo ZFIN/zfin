@@ -15,6 +15,7 @@ public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisti
 
     private static BlastServerDatabaseStatisticsCache blastServerDatabaseSizeCache;
     private final static Logger logger = Logger.getLogger(BlastServerDatabaseStatisticsCache.class);
+    private boolean isCached = false;
 
 
     public static BlastServerDatabaseStatisticsCache getInstance() {
@@ -29,7 +30,13 @@ public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisti
         for (Database database : databases) {
             (new DatabaseThread(database)).start();
         }
+        isCached = true;
         return map.size();
+    }
+
+    @Override
+    public boolean isCached() {
+       return isCached;
     }
 
     public class DatabaseThread extends Thread {

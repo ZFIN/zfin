@@ -14,9 +14,11 @@ import org.zfin.sequence.blast.repository.BlastRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -249,5 +251,21 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
+    @Test
+    public void testGetValidAccessionCountsForAllBlastDatabases() {
+        Map<String, Integer> map = blastRepository.getValidAccessionCountsForAllBlastDatabases();
+        assertNotNull("accession count map is not null", map);
+
+        List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
+
+        for (String key : map.keySet()) {
+            assertNotNull(key + " has a non-null count", map.get(key));
+        }
+
+        for (Database database : databases) {
+            assertNotNull(database.getAbbrev().toString() + " should be in the accession count map", map.get(database.getAbbrev().toString()));
+        }
+
+    }
 
 }

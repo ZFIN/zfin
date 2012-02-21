@@ -88,10 +88,12 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
         logger.debug("do refresh: " + blastInfoBean.isDoRefresh());
 
         // handle refresh
-        if (blastInfoBean.isDoRefresh()) {
+        if (blastInfoBean.isDoRefresh() || databaseStatisticsCache.isCached() == false) {
             databaseStatisticsCache.clearCache();
+            databaseStatisticsCache.cacheAll();
             blastInfoBean.setDoRefresh(false);
         }
+
 
 
         if (CollectionUtils.isNotEmpty(blastInfoBean.getNucleotideDatabases())) {

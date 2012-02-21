@@ -1,6 +1,7 @@
 package org.zfin.sequence.blast.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
@@ -8,19 +9,20 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.sequence.blast.BlastRegenerationCache;
-import org.zfin.sequence.blast.Database;
-import org.zfin.sequence.blast.DatabaseRelationship;
-import org.zfin.sequence.blast.Origination;
+import org.zfin.sequence.blast.*;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  */
 public class HibernateBlastRepository implements BlastRepository {
+
+    public static Logger logger = Logger.getLogger(HibernateBlastRepository.class);
 
     public Database getDatabase(Database.AvailableAbbrev blastDatabaseAvailableAbbrev) {
         Session session = HibernateUtil.currentSession();
@@ -105,6 +107,74 @@ public class HibernateBlastRepository implements BlastRepository {
     }
 
 
+    public Map<String, Integer> getValidAccessionCountsForAllBlastDatabases() {
+
+        String sql = " select bdb.blastdb_abbrev, count(distinct dbl.dblink_acc_num) " +
+                " from db_link dbl " +
+                " join foreign_db_contains fdbc " +
+                "    on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
+                " join blast_database bdb " +
+                "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
+                " join blast_database_origination_type orig " +
+                "    on bdb.blastdb_origination_id=orig.bdot_pk_id" +
+                " where orig.bdot_type != :originationType " +
+                "  group by bdb.blastdb_abbrev ";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setParameter("originationType", Origination.Type.EXTERNAL.toString());
+        List<Object[]> blastDatabaseCounts = query.list();
+
+        if (blastDatabaseCounts == null)
+            return null;
+
+        Map<String, Integer> accessionCountMap = new HashMap<String,Integer>();
+
+        for (Object[] o : blastDatabaseCounts) {
+            String blastDatabaseAbbrev = (String)o[0];
+            Integer accessionCount = ((BigDecimal)o[1]).intValue();
+            accessionCountMap.put(blastDatabaseAbbrev, accessionCount);
+        }
+
+
+        // repeat the pattern above for the accession bank blast databases
+/*
+
+        sql =  " select bdb.blastdb_abbrev, count(ab.accbk_acc_num) " +
+                " from accession_bank ab " +
+                " join foreign_db_contains fdbc " +
+                "    on ab.accbk_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
+                " join blast_database bdb " +
+                "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
+                "  group by bdb.blastdb_abbrev ";
+        query = HibernateUtil.currentSession().createSQLQuery(sql);
+        blastDatabaseCounts = query.list();
+
+        if (blastDatabaseCounts == null)
+            return null;
+
+        for (Object[] o : blastDatabaseCounts) {
+            String blastDatabaseAbbrev = (String)o[0];
+            Integer accessionCount = ((BigDecimal)o[1]).intValue();
+
+            accessionCountMap.put(blastDatabaseAbbrev, accessionCount);
+        }
+*/
+
+
+        //now handle databases that don't show up in either
+        List<Database> databases = getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
+        for (Database database : databases) {
+            if (!accessionCountMap.containsKey(database.getAbbrev().toString())) {
+                //if they weren't in either query, they must have 0 dblinks.  
+                accessionCountMap.put(database.getAbbrev().toString(), 0);
+            }
+        }
+
+
+       return accessionCountMap;
+
+    }
+
     /**
      * Number of valid accessions.  The other method is too memory intensive.
      * Must implement in SQL to get a proper union.
@@ -118,17 +188,16 @@ public class HibernateBlastRepository implements BlastRepository {
                 "from db_link dbl" +
                 " join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 " join blast_database bdb on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
-                " where bdb.blastdb_zdb_id = :databaseZdbID " +
-                " union  " +
-                " select ab.accbk_acc_num " +
-                " from accession_bank ab " +
-                " join foreign_db_contains fdbc on ab.accbk_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-                " join blast_database bdb on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
                 " where bdb.blastdb_zdb_id = :databaseZdbID ";
         Query query2 = HibernateUtil.currentSession().createSQLQuery(sql);
         query2.setString("databaseZdbID", database.getZdbID());
         ScrollableResults results = query2.scroll();
+
+
+        logger.debug("running slow individual blast database dblink count query");
+
         results.last();
+
         return results.getRowNumber() + 1;
     }
 
