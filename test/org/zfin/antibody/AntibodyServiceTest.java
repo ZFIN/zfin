@@ -511,4 +511,13 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void distinctLabelingStatements() {
+        // zna-1
+        // has AO : CC combinations.
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-24");
+        AntibodyService service = new AntibodyService(antibody);
+        List<ExpressionStatement> labeledTerms = service.getAntibodyLabelingStatements();
+        assertNotNull(labeledTerms);
+    }
 }

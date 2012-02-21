@@ -366,10 +366,7 @@ public class AntibodyMarkerService {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = exp.getGenotypeExperiment().getGenotype();
 
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
-
-            if (geno.isWildtype() && experiment.isStandard()) {
+            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 

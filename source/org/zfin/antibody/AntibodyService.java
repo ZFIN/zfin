@@ -48,7 +48,7 @@ public class AntibodyService {
     }
 
     /**
-     * Returns a list of distinct anatomy terms that this antibody labels.
+     * Returns a list of distinct statements that this antibody labels.
      *
      * @return ist of distinct and sorted AO terms.
      */
@@ -399,6 +399,50 @@ public class AntibodyService {
         return labelingDisplays;
     }
 
+    /**
+     * Retrieve all distinct labeled expression statements
+     *
+     * @return list of expression statements
+     */
+    public List<ExpressionStatement> getAntibodyLabelingStatements() {
+
+        // get a set of ExpressionExperiment objects associated with the antibody
+        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        List<ExpressionStatement> labelingDisplays = new ArrayList<ExpressionStatement>();
+
+        // loop through the set of ExpressionExperiment objects to get the related data
+        if (CollectionUtils.isNotEmpty(experiments)) {
+            labelingDisplays = getDistinctExpressionStatements(experiments);
+        }
+        Collections.sort(labelingDisplays);
+        setNumOfLabelings(labelingDisplays.size());
+        return labelingDisplays;
+    }
+
+    private List<ExpressionStatement> getDistinctExpressionStatements(Set<ExpressionExperiment> experiments) {
+        if (experiments == null)
+            return null;
+        Set<ExpressionStatement> statementSet = new HashSet<ExpressionStatement>();
+
+        for (ExpressionExperiment exp : experiments) {
+            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
+                if (exp.getExpressionResults() != null)
+                    for (ExpressionResult result : exp.getExpressionResults()) {
+                        if (result.isExpressionFound()) {
+                            ExpressionStatement statement = new ExpressionStatement();
+                            statement.setEntity(result.getEntity());
+                            statement.setExpressionFound(result.isExpressionFound());
+                            statementSet.add(statement);
+                        }
+                    }
+            }
+        }
+        List<ExpressionStatement> statements = new ArrayList<ExpressionStatement>(statementSet.size());
+        statements.addAll(statementSet);
+        return statements;
+    }
+
     private void processExperiments(Map<String, AnatomyLabel> map, Set<ExpressionExperiment> experiments) {
         for (ExpressionExperiment exp : experiments) {
 
@@ -496,10 +540,7 @@ public class AntibodyService {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = exp.getGenotypeExperiment().getGenotype();
 
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
-
-            if (geno.isWildtype() && experiment.isStandard()) {
+            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 

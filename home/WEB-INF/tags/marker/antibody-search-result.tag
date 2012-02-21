@@ -5,13 +5,12 @@
 <c:if test="${formBean.totalRecords > 0}">
     <table class="searchresults rowstripes">
         <tr>
-            <th>Name</th>
-            <th width=10%>Gene</th>
-            <th width=25%>Anatomy</th>
-            <th width=20%>Cellular Components</th>
-            <th width=15%>Stage Range</th>
+            <th width=10%>Name</th>
+            <th width=15%>Gene</th>
+            <th width=35%>Anatomical Labeling</th>
+            <th width=20%>Stage Range</th>
             <c:if test="${formBean.matchingTextSearch}">
-                <th>Matching Text g</th>
+                <th>Matching Text</th>
             </c:if>
         </tr>
         <c:forEach var="antibodyStat" items="${formBean.antibodyStats}" varStatus="loop">
@@ -26,15 +25,8 @@
                     </c:forEach>
                 </td>
                 <td>
-                    <zfin2:toggledHyperlinkList collection="${antibodyStat.distinctAnatomyTerms}" maxNumber="3"
+                    <zfin2:toggledHyperlinkList collection="${antibodyStat.antibodyLabelingStatements}" maxNumber="3"
                                                 id="${antibodyStat.antibody.zdbID}"/>
-                </td>
-                <td>
-                    <c:forEach var="goTerm" items="${antibodyStat.distinctGoTermsWTAndStandard}"
-                               varStatus="index">
-                        <zfin:link entity="${goTerm}"/>
-                        <c:if test="${!index.last}">, </c:if>
-                    </c:forEach>
                 </td>
                 <td>
                     <zfin:link entity="${antibodyStat.earliestStartStage}"/>
