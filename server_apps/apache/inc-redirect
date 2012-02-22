@@ -49,6 +49,10 @@ RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=
 
 
 #aliases for ZFIN_jump
-RewriteRule ^/jump/(.*) /cgi-bin/ZFIN_jump?record=$1 [NC,PT]
-RewriteRule ^/id/(.*) /cgi-bin/ZFIN_jump?record=$1 [NC,PT]
-RewriteRule ^/cgi-bin/zfin_jump(.*) /cgi-bin/ZFIN_jump$1 [NC,PT]
+
+RewriteCond %{QUERY_STRING}     ^record=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=%1 [NC,R=301]
+
+RewriteRule ^/jump/(.*)  /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=$1 [NC,PT]
+RewriteRule ^/id/(.*)  /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=$1 [NC,PT]
+
