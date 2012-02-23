@@ -22,6 +22,14 @@ RewriteCond %{HTTPS} =on
 RewriteCond %{REQUEST_URI} ^/$
 RewriteRule ^/$ http://%{SERVER_NAME}/ [R=301,L]
 
+#Require https on some pages
+RewriteCond %{HTTPS} =off
+  # Enumerate all urls that require https here, [OR]
+  # goes at the end of all but the last one
+RewriteCond %{REQUEST_URI} ^/action/people/edit-user$ [OR]
+RewriteCond %{REQUEST_URI} ^/action/login-redirect$
+RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+
 #Remove extra stuff for home page url
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
@@ -29,7 +37,7 @@ RewriteCond <!--|MUTANT_NAME|--> =zfin.org
 RewriteRule ^/$ /cgi-bin/webdriver?MIval=aa-ZDB_home.apg [PT]
 
 #lab designation page
-Redirect  /zf_info/zfbook/lab_desig.html http://<!--|DOMAIN_NAME|-->/action/feature/line-designations
+RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
 
 # retired apg urls
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
