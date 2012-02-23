@@ -490,6 +490,14 @@ marker = '';
   <?MICOMMENT>-----------end of mapping info ---------------------<?/MICOMMENT>
 
 
+ <?MICOMMENT> ** KLUDGE: there is a table somewhere within this structure that 
+                         gets opened and not closed, so we're adding an extra
+                         close table tag.  For genes, we get an extra close table
+                         tag that doesn't seem to affect anything, for non-allelic
+                         features and clones, we get the tables properly closed.  ** <?/MICOMMENT>
+ </table>
+
+
 
  <?MIVAR NAME=$mapdetails_mode>standalone<?/MIVAR>
  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
@@ -1175,6 +1183,7 @@ marker = '';
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
 <?/MIBLOCK>
 <?/MIBLOCK>
+
 
 <?MICOMMENT>------------ end details mode -----<?/MICOMMENT>
 
