@@ -221,33 +221,16 @@
 	###
 	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
-	  my $bot = LWP::UserAgent->new();
-	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
-	  [   compare=> 'contains',
-	      marker_type=> 'all',
-	      lg=> 0,
-	      refcross=> 'NULL',
-	      plinks=> 'on',
-	      action=> 'SEARCH',
-              paged_by=> 'mapper',
-              map_type=> 'individual',
-	      MIval=> 'aa-newmrkrselect.apg',
-              query_results=> 'exist',
-	      input_name=> "$marker",
-	      zfin_login=> $Q->cookie('zfin_login')
-	  ];
-	  print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
-	  my $res = $bot->request($req);
 
-      # check the outcome
-      if ($res->is_success) {print $res->content . "\n";}
-      else { print "Error: " . $res->status_line . "\n";}
-	  exit 1;
+	  print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
+          print "<meta http-equiv=\"refresh\" content=\"0; url=\/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg&compare=contains&input_name=$marker&input_acc=&marker_type=all&lg=0&WINSIZE=25&query_results=exist&START=1&action=SEARCH\"> \n";
+          exit 0;
+
 	}
-	###
-	### huh? got nothing, advance to re-try do not pass map
-	###
-	elsif($unique < 1) { #! defined $rowref ){ #
+            ###
+            ### huh? got nothing, advance to re-try do not pass map
+            ###
+          elsif($unique < 1) { #! defined $rowref ){ #
 	  print $Q->header(). "\n".
 		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
 		 "<script type=\"text/javascript\" src=\"/javascript/header.js\"></script>" ."\n";

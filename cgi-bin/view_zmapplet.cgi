@@ -213,35 +213,10 @@
             if( $unique > 1) {#defined @$rowref[1] ){
                 ### not unique shunt off to search result page
                 #$note = $note . $unique . " ->Too Many Choices  <p>\n";
-                my $bot = LWP::UserAgent->new();
-                my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
-                [
-                compare=> 'contains',
-                marker_type=> 'all',
-                lg=> 0,
-                refcross=> 'NULL',
-                plinks=> 'on',
-                action=> 'SEARCH',
-                paged_by=> 'mapper',
-                map_type=> 'merged',
-                MIval=> 'aa-newmrkrselect.apg',
-                query_results=> 'exist',
-                input_name=> "$marker",
-                zfin_login=> $Q->cookie('zfin_login')
-                ];
+
                 print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";
-                my $res = $bot->request($req);
-                # check the outcome
-                if ($res->is_success) {print $res->content . "\n";}
-                else { print "Error: " . $res->status_line . "\n";}
-
-                # debugging
-                #open(IN, ">> /tmp/tomc_zmapplet.log") || die "input dump failed";
-                #print IN "\n*****************************************************".
-                #      $note. "\nrowref\t@$rowref \n";
-                #close IN;
-
-                exit 1;
+                print "<meta http-equiv=\"refresh\" content=\"0; url=\/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg&compare=contains&input_name=$marker&input_acc=&marker_type=all&lg=0&WINSIZE=25&query_results=exist&START=1&action=SEARCH\"> \n";
+                exit 0;
            }
             ###
             ### huh? got nothing, advance to re-try do not pass map
