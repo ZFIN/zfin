@@ -111,10 +111,10 @@ c.clone_mrkr_zdb_id='$OID';
 
 <TD>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="<!--|SECURE_HTTP|--><!--|DOMAIN_NAME|-->/action/people/edit-user?zdbID=$OID"><font size=-1 color=red> Add/Edit ZFIN Registration</font></A> 
+<A HREF="/action/people/edit-user?zdbID=$OID"><font size=-1 color=red> Add/Edit ZFIN Registration</font></A> 
 <?/MIVAR>
 <?MIVAR COND="$(EC,$AUTHORIZED,owner)">
-<A HREF="<!--|SECURE_HTTP|--><!--|DOMAIN_NAME|-->/action/people/edit-user?zdbID=$OID"><font size=-1 color=red> Change ZFIN Password</font></A>
+<A HREF="/action/people/edit-user?zdbID=$OID"><font size=-1 color=red> Change ZFIN Password</font></A>
 <?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends cond PERSON and authorized -->
