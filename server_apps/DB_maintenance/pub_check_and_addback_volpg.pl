@@ -134,7 +134,7 @@ $cur->finish();
 $ctNoPubmedId = 0;
 foreach $key (sort keys %nopubmedidPubZdbIds) {
    $ctNoPubmedId++;
-   print NOTUPDATED "\n\nThe following publication(s) are not processed because the pubmed IDs are missing.\n\n" if $ctNoPubmedId == 1;
+   print NOTUPDATED "\n\nThe following publication(s) missing volume and/or page numbers are not processed because the pubmed IDs are missing.\n\n" if $ctNoPubmedId == 1;
    print NOTUPDATED "$key\n";
 }
 
