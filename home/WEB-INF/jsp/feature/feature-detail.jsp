@@ -55,7 +55,7 @@
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}">${featureAlias.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -289,7 +289,7 @@
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureGenbank.singlePublication.zdbID}">${featureGenbank.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbank.zdbID}">${featureGenbank.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbank.zdbID}&rtype=genotype">${featureGenbank.publicationCount}</a>)
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -313,7 +313,7 @@
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureZfishbook.singlePublication.zdbID}">${featureZfishbook.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureZfishbook.zdbID}">${featureZfishbook.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureZfishbook.zdbID}&rtype=genotype">${featureZfishbook.publicationCount}</a>)
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -587,7 +587,7 @@
 
 
 <hr width="80%">
-<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
+<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
     function expand() {
