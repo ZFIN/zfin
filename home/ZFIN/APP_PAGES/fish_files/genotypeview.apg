@@ -577,12 +577,12 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
             <?MIVAR>
    	    function expandAnatomyList1() {
      	       var elem = document.getElementById("anatomyList1");
-               elem.innerHTML = '$genovw_entity_long_list_escp1 <a href=javascript:onClick=shrinkAnatomyList1()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
+               elem.innerHTML = '$genovw_entity_long_list_escp1 <a href=javascript:onClick=shrinkAnatomyList1()><img border=0 src=/images/left_arrow.gif></a>';	
 	    }
 
    	    function shrinkAnatomyList1() {
      	       var elem = document.getElementById("anatomyList1");
-               elem.innerHTML = '$genovw_entity_short_list_escp1 ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
+               elem.innerHTML = '$genovw_entity_short_list_escp1 ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=/images/right_arrow.gif></a>';	
 	    }
 	    <?/MIVAR>
           </script> 
@@ -591,7 +591,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
           <?MIVAR>$genovw_entity_short_list_escp1<?/MIVAR>
 
           <?MIVAR COND="$(>,$genovw_entity_totalnum1,$genovw_entity_short_list_cap)">   
-	   ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+	   ... <a href=javascript:onClick=expandAnatomyList1()>(all $genovw_entity_totalnum1) <img border=0 src=/images/right_arrow.gif></a>
           <?/MIVAR>
           </span>
         </td>
@@ -669,12 +669,12 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
             <?MIVAR>
    	    function expandAnatomyList2() {
      	       var elem = document.getElementById("anatomyList2");
-               elem.innerHTML = "$genovw_entity_long_list_escp2 <a href=javascript:onClick=shrinkAnatomyList2()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+               elem.innerHTML = "$genovw_entity_long_list_escp2 <a href=javascript:onClick=shrinkAnatomyList2()><img border=0 src=/images/left_arrow.gif></a>";	
 	    }
 
    	    function shrinkAnatomyList2() {
      	       var elem = document.getElementById("anatomyList2");
-               elem.innerHTML = "$genovw_entity_short_list_escp2 ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+               elem.innerHTML = "$genovw_entity_short_list_escp2 ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=/images/right_arrow.gif></a>";	
 	    }
 
 	    <?/MIVAR>
@@ -684,7 +684,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypevie
             <?MIVAR>$genovw_entity_short_list_escp2<?/MIVAR>
 
             <?MIVAR COND="$(>,$genovw_entity_totalnum2,$genovw_entity_short_list_cap)">   
-	    ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+	    ... <a href=javascript:onClick=expandAnatomyList2()>(all $genovw_entity_totalnum2) <img border=0 src=/images/right_arrow.gif></a>
             <?/MIVAR>
           </span>
         </td>

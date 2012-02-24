@@ -152,17 +152,17 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
                  <?/MISQL>
      <?/MISQL>
 <?MIBLOCK COND="$(NE,$fxallfig_probe_rating,)">
-<?MIVAR COND="$(=,$fxallfig_probe_rating,0)" NAME=$fxallfig_probe_image><img src=http://<!--|DOMAIN_NAME|-->/images/10stars.gif><?/MIVAR>
+<?MIVAR COND="$(=,$fxallfig_probe_rating,0)" NAME=$fxallfig_probe_image><img src=/images/10stars.gif><?/MIVAR>
  <?MIVAR COND="$(=,$fxallfig_probe_rating,0)" NAME=$fxallfig_probe_key>Probe is difficult to use. Generally basal level of expression with more intense labeling in particular structure.<?/MIVAR>
- <?MIVAR COND="$(=,$fxallfig_probe_rating,1)" NAME=$fxallfig_probe_image><img src=http://<!--|DOMAIN_NAME|-->/images/20stars.gif title="finicky probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$fxallfig_probe_rating,1)" NAME=$fxallfig_probe_image><img src=/images/20stars.gif title="finicky probe"><?/MIVAR>
  <?MIVAR COND="$(=,$fxallfig_probe_rating,1)" NAME=$fxallfig_probe_key>Weak expression pattern<?/MIVAR>
- <?MIVAR COND="$(=,$fxallfig_probe_rating,2)" NAME=$fxallfig_probe_image><img src=http://<!--|DOMAIN_NAME|-->/images/30stars.gif title="adequate probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$fxallfig_probe_rating,2)" NAME=$fxallfig_probe_image><img src=/images/30stars.gif title="adequate probe"><?/MIVAR>
  <?MIVAR COND="$(=,$fxallfig_probe_rating,2)" NAME=$fxallfig_probe_key>Moderate expression pattern<?/MIVAR>
- <?MIVAR COND="$(=,$fxallfig_probe_rating,3)" NAME=$fxallfig_probe_image><img src=http://<!--|DOMAIN_NAME|-->/images/40stars.gif title="good probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$fxallfig_probe_rating,3)" NAME=$fxallfig_probe_image><img src=/images/40stars.gif title="good probe"><?/MIVAR>
  <?MIVAR COND="$(=,$fxallfig_probe_rating,3)" NAME=$fxallfig_probe_key>Nice and strong expression pattern<?/MIVAR>
- <?MIVAR COND="$(=,$fxallfig_probe_rating,4)" NAME=$fxallfig_probe_image><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif title="excellent probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$fxallfig_probe_rating,4)" NAME=$fxallfig_probe_image><img src=/images/50stars.gif title="excellent probe"><?/MIVAR>
  <?MIVAR COND="$(=,$fxallfig_probe_rating,4)" NAME=$fxallfig_probe_key>Simple to use intense expression pattern restricted to a few structures<?/MIVAR>
- <?MIVAR NAME=$fxallfig_probe_best><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif>= intense staining in a restricted group of structures<?/MIVAR>        
+ <?MIVAR NAME=$fxallfig_probe_best><img src=/images/50stars.gif>= intense staining in a restricted group of structures<?/MIVAR>        
 <?/MIBLOCK>
    &nbsp;<b>Probe : </b><?MIVAR><a href="/action/marker/view/$fxallfig_probe_zdb_id">$fxallfig_probe_name<?/MIVAR></a>
  <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>

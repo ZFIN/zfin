@@ -460,7 +460,7 @@ DEBUGGING:
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
           <?MIVAR>
             <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb">
-              <img border=1 src="<!--|IMAGE_LOAD|-->/$phenosum_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=http://<!--|DOMAIN_NAME|-->/images/multibars.gif>)
+              <img border=1 src="<!--|IMAGE_LOAD|-->/$phenosum_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=/images/multibars.gif>)
             </a>
           <?/MIVAR>
         <?/MIBLOCK>
@@ -543,7 +543,7 @@ DEBUGGING:
         <?MIVAR><span id="$phenosum_mo_elem_id">
           $phenosum_mo_short_list_escp<?/MIVAR>
           <?MIVAR COND="$(>,$phenosum_morphant_pheno_flag,$phenosum_mo_short_list_cap)">   
-            ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+            ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=/images/right_arrow.gif></a>
           <?/MIVAR>
         </span>
         
@@ -551,14 +551,14 @@ DEBUGGING:
           <?MIVAR>
    	    function expandMOList$phenosum_mo_elem_id() {
      	      var elem = document.getElementById('$phenosum_mo_elem_id');
-              elem.innerHTML = "$phenosum_mo_long_list_escp <a href=javascript:onClick=shrinkMOList$phenosum_mo_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+              elem.innerHTML = "$phenosum_mo_long_list_escp <a href=javascript:onClick=shrinkMOList$phenosum_mo_elem_id()><img border=0 src=/images/left_arrow.gif></a>";	
               processPopupLinks();
 
 	    }
 
    	    function shrinkMOList$phenosum_mo_elem_id() {
               var elem = document.getElementById('$phenosum_mo_elem_id');
-              elem.innerHTML = "$phenosum_mo_short_list_escp ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+              elem.innerHTML = "$phenosum_mo_short_list_escp ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=/images/right_arrow.gif></a>";	
               processPopupLinks();
 
 	    }

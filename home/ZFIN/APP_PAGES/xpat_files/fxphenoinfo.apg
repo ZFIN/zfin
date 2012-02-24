@@ -41,7 +41,7 @@ EFFECTS
 <?MIVAR name=$highlighter><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR name=$white>#ffffff<?/MIVAR>
 <?MIVAR name=$row_color>$fxphenoinfo_rowcolor<?/MIVAR>
-<?MIVAR NAME=$fxphenoinfo_up_arrow>&nbsp; <a href="#topofpage"><img src="http://<!--|DOMAIN_NAME|-->/images/up.gif" border=0 alt title="Back to top"></a> <?/MIVAR>
+<?MIVAR NAME=$fxphenoinfo_up_arrow>&nbsp; <a href="#topofpage"><img src="/images/up.gif" border=0 alt title="Back to top"></a> <?/MIVAR>
 <?MISQL SQL="
                select distinct geno_display_name, 
                        st1.stg_abbrev s1, st2.stg_abbrev s2,

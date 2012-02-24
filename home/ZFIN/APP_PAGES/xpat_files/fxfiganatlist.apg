@@ -139,8 +139,8 @@ stage range, experiment, or expression_found in the same figure.
   
   <?MIVAR NAME=fxfiganat_zdb_minus>$(REPLACE,$fxfiganat_fig_zdb_id,"-","")<?/MIVAR>
 
-<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList$fxfiganat_zdb_minus(\'short\') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList$fxfiganat_zdb_minus(\'long\') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_left_arrow><img border=0 onClick=updateAnatomyList$fxfiganat_zdb_minus(\'short\') src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiganat_right_arrow><img onClick=updateAnatomyList$fxfiganat_zdb_minus(\'long\') src=/images/right_arrow.gif><?/MIVAR>
 
   
 <script>

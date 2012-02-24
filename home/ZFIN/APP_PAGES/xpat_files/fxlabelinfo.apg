@@ -47,7 +47,7 @@ EFFECTS
 <?MIVAR name=$highlighter><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR name=$white>#ffffff<?/MIVAR>
 <?MIVAR name=$row_color>$fxinfo_rowcolor<?/MIVAR>
-<?MIVAR NAME=$fxinfo_up_arrow>&nbsp; <a href="#topofpage"><img src="http://<!--|DOMAIN_NAME|-->/images/up.gif" border=0 alt title="Back to top"></a> <?/MIVAR>
+<?MIVAR NAME=$fxinfo_up_arrow>&nbsp; <a href="#topofpage"><img src="/images/up.gif" border=0 alt title="Back to top"></a> <?/MIVAR>
 <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'"><?/MISQL>
    <?MIVAR NAME=$dbquery>$1<?/MIVAR>
 

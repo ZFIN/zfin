@@ -131,8 +131,8 @@ stage range, experiment, or expression_found in the same figure.
 <?MIVAR NAME="$wtanatlst_count">$MI_ROWCOUNT<?/MIVAR>
 
 
-<?MIVAR NAME=$wtanatlst_left_arrow><img class="clickable" border=0 onClick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();" src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$wtanatlst_right_arrow> ... <span class="clickable" onclick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();">(all $wtanatlst_count) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></span><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_left_arrow><img class="clickable" border=0 onClick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();" src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$wtanatlst_right_arrow> ... <span class="clickable" onclick="jQuery('.wt-term-list-long').toggle();jQuery('.wt-term-list-short').toggle();">(all $wtanatlst_count) <img border=0 src=/images/right_arrow.gif></span><?/MIVAR>
 
 <?MIBLOCK COND="$(<,$wtanatlst_count,5)">
   <?MIVAR>

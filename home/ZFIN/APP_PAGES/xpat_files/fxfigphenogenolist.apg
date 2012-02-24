@@ -45,7 +45,7 @@ EFFECTS
              === take advantage of the pre-efforts
 <?/MICOMMENT>
 
-<?MIVAR NAME=$fxfiggeno_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
+<?MIVAR NAME=$fxfiggeno_down_arrow>/images/darrow.gif<?/MIVAR>
 <?MIVAR COND=$(NXST,$fxfiggeno_display_option) NAME=$fxfiggeno_display_option><?/MIVAR>
 
   <?MIVAR NAME=$fxfigfl_sql>
@@ -65,7 +65,7 @@ EFFECTS
 <?/MICOMMENT>
 <?MISQL SQL="$fxfigfl_sql">
 <?MIBLOCK COND=$(EC,$fxfiggeno_display_option,anchor)>
-      <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
+      <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
  <?MIVAR NAME=fxfiggeno_geno_href><a href="/action/genotype/genotype-detail?zdbID=$3"><?/MIVAR>
 <?MIELSE>
 <?MIVAR NAME=$fxfiggeno_down_arrow><?/MIVAR>

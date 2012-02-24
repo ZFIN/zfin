@@ -51,12 +51,12 @@
            <?MIVAR>
    	   function expandAlleleList() {
      	       var elem = document.getElementById("alleleList");
-               elem.innerHTML = "$allele_long_list_escp <a href=javascript:onClick=shrinkAlleleList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+               elem.innerHTML = "$allele_long_list_escp <a href=javascript:onClick=shrinkAlleleList()><img border=0 src=/images/left_arrow.gif></a>";	
 	   }
 
    	   function shrinkAlleleList() {
      	       var elem = document.getElementById("alleleList");
-               elem.innerHTML = "$allele_short_list_escp ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+               elem.innerHTML = "$allele_short_list_escp ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=/images/right_arrow.gif></a>";	
 	   }
 
 	   <?/MIVAR>
@@ -66,7 +66,7 @@
          <?MIVAR>$allele_short_list_escp<?/MIVAR>
 
          <?MIVAR COND="$(>,$MI_ROWCOUNT,$allele_short_list_cap)">   
-	   ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+	   ... <a href=javascript:onClick=expandAlleleList()>(all $MI_ROWCOUNT) <img border=0 src=/images/right_arrow.gif></a>
          <?/MIVAR>
        </span>
 

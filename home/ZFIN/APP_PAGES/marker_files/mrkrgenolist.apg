@@ -92,8 +92,8 @@ EFFECTS
  
   <?MIVAR NAME=mrkrgeno_zdb_minus><?/MIVAR>
 
-<?MIVAR NAME=$mrkrgeno_left_arrow><img border=0 onClick=updateTGList$mrkrgeno_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-<?MIVAR NAME=$mrkrgeno_right_arrow><img onClick=updateTGList$mrkrgeno_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$mrkrgeno_left_arrow><img border=0 onClick=updateTGList$mrkrgeno_zdb_minus('short') src=/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$mrkrgeno_right_arrow><img onClick=updateTGList$mrkrgeno_zdb_minus('long') src=/images/right_arrow.gif><?/MIVAR>
 
   
 <script>

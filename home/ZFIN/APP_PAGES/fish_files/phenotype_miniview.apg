@@ -172,8 +172,8 @@
     <?/MISQL>
     <?MIVAR NAME="$phmview_count">$MI_ROWCOUNT<?/MIVAR>
 
-    <?MIVAR NAME=$phmview_left_arrow><img class="clickable" border=0 onClick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();" src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
-    <?MIVAR NAME=$phmview_right_arrow> ... <span class="clickable" onclick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();">(all $phmview_count) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></span><?/MIVAR>
+    <?MIVAR NAME=$phmview_left_arrow><img class="clickable" border=0 onClick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();" src=/images/left_arrow.gif><?/MIVAR>
+    <?MIVAR NAME=$phmview_right_arrow> ... <span class="clickable" onclick="jQuery('.phmview_entity_long_list_dom_class').toggle();jQuery('.phmview_entity_short_list_dom_class').toggle();">(all $phmview_count) <img border=0 src=/images/right_arrow.gif></span><?/MIVAR>
 
     <tr>
       <th>Observed&nbsp;in:</th>

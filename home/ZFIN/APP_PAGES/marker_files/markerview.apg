@@ -1837,12 +1837,12 @@ union
            <?MIVAR>
    	   function expandGenotypeList() {
      	       var elem = document.getElementById("genoList");
-               elem.innerHTML = '$mkvw_geno_long_list_escp <a href=javascript:onClick=shrinkGenotypeList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';
+               elem.innerHTML = '$mkvw_geno_long_list_escp <a href=javascript:onClick=shrinkGenotypeList()><img border=0 src=/images/left_arrow.gif></a>';
 	   }
 
    	   function shrinkGenotypeList() {
      	       var elem = document.getElementById("genoList");
-               elem.innerHTML = '$mkvw_geno_short_list_escp ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';
+               elem.innerHTML = '$mkvw_geno_short_list_escp ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=/images/right_arrow.gif></a>';
 	   }
 
 	   <?/MIVAR>
@@ -1860,7 +1860,7 @@ union
          <?MIVAR>$mkvw_geno_short_list_escp<?/MIVAR>
 
          <?MIVAR COND="$(>,$MI_ROWCOUNT,$mkvw_geno_short_list_cap)">
-	   ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+	   ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=/images/right_arrow.gif></a>
          <?/MIVAR>
 
        </span>
