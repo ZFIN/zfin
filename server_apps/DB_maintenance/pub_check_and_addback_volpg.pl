@@ -233,7 +233,7 @@ foreach $key (sort keys %pmids) {
         print REPORT "$key\t$pmids{$key}\t$xmlVol\t$xmlPg           \n";
   }  else {  
         $notupdated++;
-        print NOTUPDATED "\n\nThe following publication(s) are not processed because the similarities between the paper titles are below 40%. Could be due to wrong pubmed ID?\n\n" if $notupdated == 1;
+        print NOTUPDATED "\n\nThe following publication(s) missing volume and/or page numbers are not processed because the similarities between the paper titles are below 40%. Could be due to wrong pubmed ID?\n\n" if $notupdated == 1;
         print NOTUPDATED "$titlePercentageSimilar\t$key\t$pmids{$key}\nTitle stored in ZFIN: $titleStoredAtZfin\nTitle stored in pubmed: $xmlTitle\n\n";
   }  
 }
