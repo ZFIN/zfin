@@ -26,7 +26,7 @@ public class FeatureMarkerRelationshipValidationService {
                 relationshipsForFeatureDTOList.add(compareDto) ;
             }
         }
-        FeatureTypeEnum featureTypeEnum = newFeatureMarkerRelationshipDTO.getFeatureDTO().getFeatureType() ;
+       FeatureTypeEnum featureTypeEnum = newFeatureMarkerRelationshipDTO.getFeatureDTO().getFeatureType() ;
         switch(featureTypeEnum){
             case POINT_MUTATION:
             case DELETION:
@@ -43,8 +43,7 @@ public class FeatureMarkerRelationshipValidationService {
                                 ) ;
             case DEFICIENCY:
                 return
-                        validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO,existingFeatureMarkerRelationshipDTOs,2)
-                                &&
+
                                 validateExclusiveMarkerRelationshipTypes(newFeatureMarkerRelationshipDTO,relationshipsForFeatureDTOList
                                         , FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF
                                         , FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING
@@ -131,7 +130,7 @@ public class FeatureMarkerRelationshipValidationService {
                                                               List<FeatureMarkerRelationshipDTO> relationshipsForMarkerDTOList,
                                                               int maxIsAlleleOfRelationships) throws  ValidationException{
         if(countFeatureMarkerRelationshipsForType(newFeatureMarkerRelationship,relationshipsForMarkerDTOList)>= maxIsAlleleOfRelationships){
-            throw new ValidationException("Features of type "+ newFeatureMarkerRelationship.getFeatureDTO().getFeatureType().toString() +
+            throw new ValidationException("ok wow he is doing multiplication now? tFeatures of type "+ newFeatureMarkerRelationship.getFeatureDTO().getFeatureType().toString() +
                     " may only have up to "+maxIsAlleleOfRelationships +" '"+ newFeatureMarkerRelationship.getRelationshipType()+"' relationships.") ;
         }
         return true ;
