@@ -1087,6 +1087,7 @@ if (! createDb($dbName, $schemaFile)) {
 			  # access thier web pages
 			  logMsg("Restarting Apache ...");
 			  restartApache();
+			  sleep(10);
 		      }
 		      logMsg("Enabling logging...");
 		      if (system("$globalBinDir/enableLogging.pl $dbName")) {
