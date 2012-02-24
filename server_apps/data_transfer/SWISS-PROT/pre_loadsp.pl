@@ -341,7 +341,7 @@ foreach $block (@blocks) {
             
         foreach $newLineNumber (sort keys %toNewInput) {
            if ($deletes{$newLineNumber} == 0) {
-               print ZFINDAT "$newLineNumber ::: $toNewInput{$newLineNumber}\n";
+               print ZFINDAT "$toNewInput{$newLineNumber}\n";
                $totalOnZfinDat = $totalOnZfinDat + 1;  
            } else {
                print ZFINDATDELETED "$toNewInput{$newLineNumber}\n";
