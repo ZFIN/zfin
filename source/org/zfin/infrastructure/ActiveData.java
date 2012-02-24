@@ -144,7 +144,7 @@ public class ActiveData implements ZdbID {
         TSCRIPT,
         URLREF,
         XPAT,
-        XPAINF,
+        XPATINF,
         XPATRES,
         ZYG;
 
