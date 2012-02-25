@@ -179,9 +179,6 @@
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
                 <a href="fish-detail/${fish.fishID}"> ${fish.name}</a>
-                <authz:authorize ifAnyGranted="root">
-                    [<a href="/action/database/view-record/FISH-${fish.ID}">Fish: ${fish.ID}</a>]
-                </authz:authorize>
             </td>
             <td>
                 <c:if test="${fish.phenotypeFigureCount > 0}">
@@ -216,31 +213,36 @@
                     <zfin:link entity="${featureGene.construct}"/>
                 </td>
                 <td>
+
+
                     <c:if test="${(fgIndex.last) && (!formBean.showAllMutantFish)}">
-                        <div style="text-align:right" id="matching-details-show-link${loop.index}">
+                      <authz:authorize ifAnyGranted="root">
+                        <span style="font-size:small ; opacity: 0.33;">
+                          <a style=" " class="clickable" onclick="jQuery('#${fish.ID}-text').slideToggle(); ">Score</a>
+                          | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
+                        </span>
+                      </authz:authorize>
+
+                        <span style="text-align:right" id="matching-details-show-link${loop.index}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.fishID}&<%= request.getQueryString()%>', function() { processPopupLinks(); });">
                                 Matching Detail</a>
-                        </div>
-                        <div style="text-align:right; display: none;" id="matching-details-hide-detail${loop.index}">
+                        </span>
+                        <span style="text-align:right; display: none;" id="matching-details-hide-detail${loop.index}">
                             <a style="font-size:small; margin-right: 1em;" class="clickable hideAll"
                                onclick="jQuery('#matching-details-${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').hide();
                                        jQuery('#matching-details-show-link${loop.index}').show();">Hide Detail</a>
-                        </div>
+                        </span>
                     </c:if>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>
         <zfin:alternating-tr loopName="loop">
-            <td colspan="4">
-                <authz:authorize ifAnyGranted="root">
-                    &nbsp;<a style="font-size:small; margin-right: 2em;" class="clickable"
-                    onclick="jQuery('#${fish.ID}-text').slideToggle(10); ">Score</a>
-                </authz:authorize>
+            <td colspan="6">
                 <authz:authorize ifAnyGranted="root">
                     <div id="${fish.ID}-text"
                          style="width: 800px ; display:none; margin: 0.5em 2em; padding: .5em; ">
@@ -248,8 +250,6 @@
                         <div>${fish.scoringText}</div>
                     </div>
                 </authz:authorize>
-            </td>
-            <td colspan="2">
                 <div align="right" style="font-size:smaller;" id="matching-details-${loop.index}"></div>
             </td>
         </zfin:alternating-tr>
