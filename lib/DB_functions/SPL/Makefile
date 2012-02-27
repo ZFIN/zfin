@@ -75,7 +75,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_delete_curator_session.sql	\
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql create_all_terms_contains.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
@@ -95,7 +95,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
-	get_entity_name_html.sql get_postcomposed_term_html.sql regen_anatomy_counts.sql \
+	get_entity_name_html.sql get_postcomposed_term_html.sql \
 	get_phenotype_link_html.sql get_phenotype_popup_link_html.sql
 # insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
 # are special cases.  They contain 
