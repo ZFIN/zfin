@@ -1,8 +1,8 @@
 #! /bin/tcsh -e
 
 #$1 db name
-setenv INFORMIXSERVER waldo
-setenv INFROMIXDIR /private/apps/Informix/informix/
+setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
+setenv INFROMIXDIR <!--|INFORMIX_DIR|-->
 set FISHMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart 
 set FULL_SCRIPT_FILE=$FISHMARTDIR/fishMartAutomated.sql 
 
