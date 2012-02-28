@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	pm\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	pm\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	pm\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	pm\@cs.uoregon.edu
 <!--|DB_NAME|-->	plkdb
 <!--|DB_OWNER|-->	pm

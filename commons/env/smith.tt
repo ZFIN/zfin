@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	informix\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	informix\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	informix\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	trunkdb
+<!--|CURATION_INSTANCE|-->	trunk
 <!--|CURATORS_AT_ZFIN|-->	informix\@cs.uoregon.edu
 <!--|DB_NAME|-->	smithdb
 <!--|DB_OWNER|-->	informix

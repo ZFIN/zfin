@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	ndunn\@uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	ndunn\@uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	ndunn\@uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	ndunn\@uoregon.edu
 <!--|DB_NAME|-->	yoyodb
 <!--|DB_OWNER|-->	ndunn

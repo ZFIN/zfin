@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	ryanm\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	ryanm\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	ryanm\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	zfindb
+<!--|CURATION_INSTANCE|-->	kinetix
 <!--|CURATORS_AT_ZFIN|-->	ryanm\@cs.uoregon.edu
 <!--|DB_NAME|-->	crickdb
 <!--|DB_OWNER|-->	informix

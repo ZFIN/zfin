@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	tomc\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	tomc\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	tomc\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	tomc\@cs.uoregon.edu
 <!--|DB_NAME|-->	xraydb
 <!--|DB_OWNER|-->	tomc

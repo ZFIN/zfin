@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	jknight\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	jknight\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	jknight\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	jknight\@cs.uoregon.edu
 <!--|DB_NAME|-->	ruzdb
 <!--|DB_OWNER|-->	jknight

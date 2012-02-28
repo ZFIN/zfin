@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	xshao\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	xshao\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	xshao\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	xshao\@cs.uoregon.edu
 <!--|DB_NAME|-->	whrdb
 <!--|DB_OWNER|-->	xshao

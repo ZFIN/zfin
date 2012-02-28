@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	kschaper\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	kschaper\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	kschaper\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	kschaper\@cs.uoregon.edu
 <!--|DB_NAME|-->	dicerdb
 <!--|DB_OWNER|-->	kschaper

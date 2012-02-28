@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	cmpich\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	cmpich\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	cmpich\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	cmpich\@cs.uoregon.edu
 <!--|DB_NAME|-->	esedb
 <!--|DB_OWNER|-->	cmpich

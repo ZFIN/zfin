@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	staylor\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	staylor\@cs.uoregon.edu
 <!--|DB_NAME|-->	hoovdb
 <!--|DB_OWNER|-->	staylor

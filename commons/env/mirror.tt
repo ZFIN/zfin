@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	ksf\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	tomc\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	sramacha\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu dfashena\@uoneuro.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	curators\@zfin.org
 <!--|DB_NAME|-->	mirrordb
 <!--|DB_OWNER|-->	informix

@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	bsprunge\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	bsprunge\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	bsprunge\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	bsprunge\@cs.uoregon.edu
 <!--|DB_NAME|-->	brockdb
 <!--|DB_OWNER|-->	bsprunge
