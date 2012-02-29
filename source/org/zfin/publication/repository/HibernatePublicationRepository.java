@@ -1542,13 +1542,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct mutant from Genotype mutant, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
                 "        and attr.dataZdbID = mutant.zdbID" +
-                "        and attr.sourceType = :sourceType" +
                 "        and mutant.wildtype = 'f'" +
                 "   order by mutant.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
 
         return (List<Genotype>) query.list();
     }
