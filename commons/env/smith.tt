@@ -50,7 +50,7 @@
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/smith
 <!--|SECURE_HTTP|-->	https://
-<!--|SHARED_INSTANCE|-->	test
+<!--|SHARED_DOMAIN_NAME|-->	istest.zfin.org
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/research/zusers/smith/ZFIN_WWW_trunk

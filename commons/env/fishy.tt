@@ -50,7 +50,7 @@
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/fishy
 <!--|SECURE_HTTP|-->	https://
-<!--|SHARED_INSTANCE|-->	false
+<!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/tmp
