@@ -56,9 +56,11 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 &success();
 
 sub success() {
-    
+    open RESULT, ">$globalResultFile" or die "Cannot open the file to write error.";
+    print RESULT "SUCCESS: warehouse has been regenerated.";
     &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
-
+    close(RESULT);
+    exit 0;
 }
 
 sub cronStart($){
@@ -75,9 +77,7 @@ sub cronStart($){
 	system("/local/bin/gmake start");
 	print "last return from gmake start is: $?\n";
     }
-    print "zfin is: $whoIsZfinDb";
-    print "zfin is not: $whoIsNotZfinDb";
-  
+    print "cronStart completed.\n";
 }
 
 sub cronStop($) {
@@ -108,7 +108,7 @@ sub getEnvFileName {
 sub swapZfin(){
     chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch_test.sh") && &logError("switch zfin to new warehouse failed.");
-    
+    print "swap sites execution complete.\n"
 }
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
@@ -124,12 +124,12 @@ sub enableUpdates() {
     my $flag2 = $dbhNotZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
     $flag2->execute;
     print "updates enabled\n";
-    print "restarting tomcat";
+    print "restarting tomcat\n";
     chdir("/private/ZfinLinks/Commons/bin") or &logError("can't chdir to /private/ZfinLinks/Commons/bin");
-    print ("starttomcat.pl on $whoIsNotZfinDb");
     system("/private/ZfinLinks/Commons/bin/starttomcat.pl $whoIsNotZfinDb") ;
     if($? ne 0){
 	&logError("starttomcat.pl on $whoIsNotZfinDb failed");
+	die;
     }
 }
 
@@ -324,19 +324,17 @@ sub sendMail($) {
     
 }
 
-sub logError(@) {
+sub logError() {
     open RESULT, ">$globalResultFile" or die "Cannot open the file to write error.";
-    my $line;
+    my $line = $_;
     print(RESULT "\n");
-    foreach $line (@_) {
-        print(RESULT "ERROR: $line\n");
-    }
+    print(RESULT "ERROR: $line\n");
     print(RESULT "\n");
     &cronStart();
     my $flagError = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
     $flagError->execute;
-    print "updates enabled on $dbhZfin\n";
-    
-    exit -1;
+    print "\nupdates enabled on $whoIsZfinDb after failure in runWarehouse.pl \n";
+    &sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on $whoIsNotZfinDb: FAIL","$globalResultFile");
+    die "runWarehouse died because of $line";
 
 }
