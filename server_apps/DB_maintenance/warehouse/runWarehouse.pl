@@ -10,10 +10,10 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $jobTitle = "Cron Job: runWarehouse: ";
 $globalResultFile = "/tmp/warehouse_regeneration"."<!--|DB_NAME|-->";
 $martName = "fish mart";
-@whoIsZfin = `who_is_test.sh`;
+@whoIsZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_test.sh`;
 $whoIsZfinDb = $whoIsZfin[0];
 print "zfin is: $whoIsZfinDb";
-@whoIsNotZfin = `who_is_not_test.sh`;
+@whoIsNotZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_not_test.sh`;
 $whoIsNotZfinDb=$whoIsNotZfin[0];
 print "zfin is not: $whoIsNotZfinDb";
 
