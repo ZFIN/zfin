@@ -138,7 +138,7 @@ sub loadDb() {
     my $envName;
     my $dirName;
     $envName = &getEnvFileName();
-    $dirName= `getUnloadDir.sh`;
+    $dirName= `<!--|ROOT_PATH|-->/server_aps/DB_maintenace/warehouse/getUnloadDir.sh`;
     for ($dirName) {
         s/^\s+//;
         s/\s+$//;
