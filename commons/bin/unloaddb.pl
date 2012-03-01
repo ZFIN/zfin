@@ -116,7 +116,7 @@ sub execSql($$$) {
     my $stderrFile = "$fileBase.$globalStderrExt";
     my $stdoutFile = "$fileBase.$globalStdoutExt";
     
-    system("echo '$sql' | dbaccess $dbName - > $stdoutFile 2> $stderrFile");
+    system("echo '$sql' | /private/apps/Informix/informix/bin/dbaccess $dbName - > $stdoutFile 2> $stderrFile");
 
     return ();
 }
@@ -133,7 +133,7 @@ sub execUpdateStats($) {
 
     my $dbName   = $_[0];
    
-    system("echo 'update statistics high' | dbaccess $dbName");
+    system("echo 'update statistics high' | /private/apps/Informix/informix/bin/dbaccess $dbName");
 
     return ();
 }
@@ -206,7 +206,7 @@ sub createSchema($$) {
     my $dbName     = $_[0];
     my $schemaFile = $_[1];
  
-    my $retStatus = system("dbschema -d $dbName -ss $schemaFile");
+    my $retStatus = system("/private/apps/Informix/informix/bin/dbschema -d $dbName -ss $schemaFile");
 
     if ($retStatus) {
 	logError("dbschema return status was $retStatus.  Failed to generate"
