@@ -33,6 +33,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
+<!--|INSTANCE|-->	ogon
 <!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	ndunn\@uoregon.edu

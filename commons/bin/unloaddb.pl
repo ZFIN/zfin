@@ -640,7 +640,9 @@ if (! createSchema($dbName, $schemaFile)) {
 	     # keep the following two lines after you re-comment out the
 	     # above disable updates code.
 	     logMsg("Unloading data...");
-	     executeUnload($dbName);
+	     if (executeUnload($dbName)){
+		 logError("Failed to executeUnload");
+	     }
 	}
     }
 }

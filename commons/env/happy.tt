@@ -30,6 +30,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2005
 <!--|INFORMIX_SERVER|-->	wildtype
+<!--|INSTANCE|-->	happy
 <!--|INTERNAL_BLAST_PATH|-->	/research/zprodmore/blast/hapdb/Current
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@cs.uoregon.edu
