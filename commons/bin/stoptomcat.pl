@@ -19,6 +19,18 @@ given ($ARGV[0]) {
     when (undef) {
         $command="/etc/init.d/tomcat stop";
     }
+    when ("zfin.org") {
+        $command="/etc/init.d/tomcat stop";
+    }
+    when ("almost") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop almost";
+    }
+    when ("helix") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop helix";
+    }
+    when ("kinetix") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop kinetix";
+    }
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop trunk";
     }
