@@ -4,7 +4,7 @@
 #$2 swrdb
 #$3 hoovdb
 
-RESULT=`grep $1 /private/apps/apache/conf/conf-is.zfin.org`
+RESULT=`grep swirl /private/apps/apache/conf/conf-is.zfin.org`
 
 if [ "$RESULT" != "" ]
 then
