@@ -137,8 +137,8 @@ sub loadDb() {
     # get env name from db table.
     my $envName;
     my $dirName;
-    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     $envName = &getEnvFileName();
+    chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     $dirName= `getUnloadDir.sh`;
     for ($dirName) {
         s/^\s+//;
