@@ -389,7 +389,7 @@ and mrkr_type = 'MRPHLNO'
       ; ">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/action/antibody/antibodies-per-publication?publicationZdbID=$OID">Antibodies</a> &nbsp; ($1)
+  <li><a href="/action/antibody/antibodies-per-publication/$OID" id="list-of-antibodies">Antibodies</a> &nbsp; ($1)
   <?/MIVAR> 
 
 <?MICOMMENT> ======== EFG  ============ <?/MICOMMENT>

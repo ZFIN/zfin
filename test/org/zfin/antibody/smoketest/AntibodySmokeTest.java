@@ -1,10 +1,7 @@
 package org.zfin.antibody.smoketest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.*;
 import org.junit.Test;
 import org.zfin.AbstractSmokeTest;
 
@@ -195,6 +192,37 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that pub Liu et al is present.
                 assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
+
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    /**
+     * Check that the link from the publication page to the list of antibodies is not broken.0
+     */
+    @Test
+    public void testListOfAntibodiesLinkOnPublication() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                // Depletion of Zebrafish Essential and Regulator publication with at last 3 antibodies
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-080326-24");
+                assertTrue(page.getTitleText().contains("Chen et al"));
+
+                HtmlAnchor antibodiesLink = (HtmlAnchor) page.getElementById("list-of-antibodies");
+                HtmlPage antibodyListPage = antibodiesLink.click();
+                assertNotNull(antibodyListPage);
+                assertTrue(antibodyListPage.getTitleText().contains("Chen"));
+
+                // AB-F59 is one of a few antibodies that are used in this publication.
+                HtmlAnchor antibodyLink = (HtmlAnchor) antibodyListPage.getElementById("ab-f59");
+                assertNotNull(antibodyLink);
+
+                // check that the link to the antibody view page is working as well.
+                HtmlPage antibodyPage = antibodyLink.click();
+                assertNotNull(antibodyPage);
+                assertTrue(antibodyPage.getTitleText().contains("ZFIN Antibody: ab-f59"));
 
             } catch (IOException e) {
                 fail(e.toString());
