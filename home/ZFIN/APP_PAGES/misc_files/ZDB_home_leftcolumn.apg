@@ -32,7 +32,11 @@
     </ul>
               
     <ul>
-     <li><a href="/action/fish/search"
+      <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+      <li><a href="/action/fish/search"><em>New Fish Search</em></a></li>
+      <?/MIBLOCK>
+     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg"
                    title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
          <strong>Mutants / Morphants / Transgenics</strong></a></li>
      <ul>
