@@ -90,18 +90,18 @@ sub cronStop($) {
 
 
 sub getEnvFileName {
-    my $env = "error";
+    my $env = "noDbNameFound!";
 
     #print $whoIsNotZfinDb;
     my $sthEn = $dbhNotZfin->prepare("select denm_env_file_name from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
-    $sthEn->execute() or &logError("could not execute");
+    $sthEn->execute() or &logError("could not execute getEnvFileName SQL statement");
     $sthEn->bind_columns(\$env);
     $sthEn->dump_results();
     for ($env) {
         s/^\s+//;
         s/\s+$//;
     }
-    #print $env."\n";
+    print $env."\n";
     return $env;
 }
 
@@ -147,6 +147,7 @@ sub loadDb() {
     system("/private/ZfinLinks/Commons/bin/unloaddb.pl $whoIsZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/$dirName/");
     print "return from unloaddb.pl is: $?\n";
     $dbhNotZfin->disconnect;
+    print "disconnect from notZfin\n";
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
     if ($? ne 0){
 	&logError("loadDb.sh failed");
