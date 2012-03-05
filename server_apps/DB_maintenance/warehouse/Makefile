@@ -18,8 +18,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse
 SUBDIRS = fishMart
-GENERICS = runWarehouse.pl 
-STATICS = who_is_zfin.sh who_is_not_zfin.sh switch_zfin_swirl_and_hoover.sh getUnloadDir.sh who_is_test.sh who_is_not_test.sh switch_test.sh who_is.sh who_is_not.sh switch.sh
+GENERICS = runWarehouse.pl who_is.sh who_is_not.sh switch.sh
+STATICS = getUnloadDir.sh 
 
 
 # ---------------  Production Rules  ------------------------------------
