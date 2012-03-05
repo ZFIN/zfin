@@ -108,7 +108,9 @@ sub getEnvFileName {
 sub swapZfin(){
     chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch.sh") && &logError("switch zfin to new warehouse failed.");
-    print "swap sites execution complete.\n"
+    print "return from swapZfin is: $?\n";
+    print "swap sites execution complete.\n";
+ 
 }
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
