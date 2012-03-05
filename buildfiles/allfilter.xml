@@ -51,7 +51,6 @@
 <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
-<filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
 <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
 <filter token="HEADER_COLOR" value="${HEADER_COLOR}"/>
 <filter token="HIBERNATE_CONFIGURATION_DIRECTORY" value="${HIBERNATE_CONFIGURATION_DIRECTORY}"/>
@@ -64,7 +63,9 @@
 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
 <filter token="INDEXER_WIKI_PASSWORD" value="${INDEXER_WIKI_PASSWORD}"/>
 <filter token="INDEXER_WIKI_USERNAME" value="${INDEXER_WIKI_USERNAME}"/>
+<filter token="INFORMIXDIR" value="${INFORMIXDIR}"/>
 <filter token="INFORMIXSERVER" value="${INFORMIXSERVER}"/>
+<filter token="INFORMIXSQLHOSTS" value="${INFORMIXSQLHOSTS}"/>
 <filter token="INFORMIX_DIR" value="${INFORMIX_DIR}"/>
 <filter token="INFORMIX_PORT" value="${INFORMIX_PORT}"/>
 <filter token="INFORMIX_SERVER" value="${INFORMIX_SERVER}"/>
@@ -72,6 +73,7 @@
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
+<filter token="LD_LIBRARY_PATH" value="${LD_LIBRARY_PATH}"/>
 <filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
@@ -88,10 +90,9 @@
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>
 <filter token="NON_SECURE_HTTP" value="${NON_SECURE_HTTP}"/>
+<filter token="ONCONFIG" value="${ONCONFIG}"/>
 <filter token="ONCONFIG_FILE" value="${ONCONFIG_FILE}"/>
 <filter token="ONTOLOGY_LOADER_EMAIL" value="${ONTOLOGY_LOADER_EMAIL}"/>
-<filter token="PARTNER_DBNAME" value="${PARTNER_DBNAME}"/>
-<filter token="PARTNER_INTERNAL_INSTANCE" value="${PARTNER_INTERNAL_INSTANCE}"/>
 <filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
@@ -102,7 +103,6 @@
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>
 <filter token="SECURE_SERVER" value="${SECURE_SERVER}"/>
-<filter token="SHARED_INSTANCE" value="${SHARED_INSTANCE}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
 <filter token="SIDEBAR_COLOR" value="${SIDEBAR_COLOR}"/>
