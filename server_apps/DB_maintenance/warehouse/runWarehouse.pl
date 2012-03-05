@@ -10,10 +10,10 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $jobTitle = "Cron Job: runWarehouse: ";
 $globalResultFile = "/tmp/warehouse_regeneration"."<!--|DB_NAME|-->";
 $martName = "fish mart";
-@whoIsZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_test.sh`;
+@whoIsZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is.sh`;
 $whoIsZfinDb = $whoIsZfin[0];
 print "zfin is: $whoIsZfinDb";
-@whoIsNotZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_not_test.sh`;
+@whoIsNotZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_not.sh`;
 $whoIsNotZfinDb=$whoIsNotZfin[0];
 print "zfin is not: $whoIsNotZfinDb";
 
@@ -107,7 +107,7 @@ sub getEnvFileName {
 
 sub swapZfin(){
     chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
-    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch_test.sh") && &logError("switch zfin to new warehouse failed.");
+    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch.sh") && &logError("switch zfin to new warehouse failed.");
     print "swap sites execution complete.\n"
 }
 sub disableUpdates() {
