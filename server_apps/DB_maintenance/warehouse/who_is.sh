@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RESULT=`grep <!--|INSTANCE|--> /private/apps/apache/conf/conf-test.zfin.org`
+RESULT=`grep <!--|INSTANCE|--> /private/apps/apache/conf/conf-<!--|SHARED_DOMAIN_NAME|-->`
 
 if [ "$RESULT" != "" ]
 then
