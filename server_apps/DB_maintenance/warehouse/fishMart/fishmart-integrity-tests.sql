@@ -4,7 +4,7 @@ unload to fish_annotation_search_records
   select count(*) as counter
   from fish_annotation_search;
 
-TEST (fish_annotation_search_records < 160000) 'fish_annotation_search table has fewer than 16,000 records: $x';
+TEST (fish_annotation_search_records < 16000) 'fish_annotation_search table has fewer than 16,000 records: $x';
 
 -- 2 -------------------------------------------------------------------------------------------------------------------
 
