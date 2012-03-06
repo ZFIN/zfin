@@ -35,7 +35,7 @@ either any[ none? args: system/script/args    3 <> length? args: parse args none
         probe disarm err
         quit/return FAIL
     ]
-    ;;; Bail if cannot write to the "specific" file
+    ;;; Bail if cannot write (append nothing) to the "specific" file
     specific: path trim args/3
     either not error? mode: try[get-modes specific 'owner-write][
         ;;; file may exist, attempt to make writable
@@ -96,21 +96,26 @@ foreach line translation-table [
 wonky: false
 forskip tt 2 [
     if any[wonky not find first tt start-tag     not find first tt end-tag][
-        wonky: true tt: tail tt
+        wonky: true 
+	;tt: tail tt
+	break
     ]
-] tt: head tt
+] 
 
 if any [wonky zero? length? tt    odd? length? tt][
-    print ["MAKESPECIFIC ERROR TRANSLATION TABLE IS WONKEY" ]
+    print "MAKESPECIFIC ERROR TRANSLATION TABLE IS WONKEY" 
+    print first tt
     print ["        TRANSLATION TABLE FORMAT:  " start-tag "<key>" end-tag
            " whitespace <value ...>newline"
           ]
     quit/return FAIL
 ]
 
+tt: head tt
 translated: make string! 2 * length? buffer
 
 ;;; check that at least one tag demarker pair could exist in the generic file
+;;; where the translation tag does not occur is not answerable
 either here: find buffer start-tag
     [ if not find here end-tag[
         print ["MAKESPECIFIC WARNING NO END tag in: " generic]
@@ -143,12 +148,18 @@ if empty? translated[
     ]
 ]
 ;;; sanity check on untranslated tags
-if find translated start-tag[
+;;; give a bit of context and remove the (broken/empty) destination file
+;;; so gmake will not succeed on the next blind pass
+if here: find translated start-tag[
     print ["MAKESPECIFIC WARNING unmatched START tag in: " generic]
+    print ["... " copy/part at here -20 at here 40 " ..."]
+    call rejoin["rm -f " specific] 
     quit/return FAIL
 ]
-if find translated end-tag[
+if here: find translated end-tag[
     print ["MAKESPECIFIC WARNING unmatched END tag in:" generic]
+    print ["... " copy/part at here -20 at here 40 " ..."]
+    call rejoin["rm -f " specific]
     quit/return FAIL
 ]
 
