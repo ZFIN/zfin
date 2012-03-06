@@ -17,7 +17,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load
 
-SUBDIRS = ReNo Entrez
+SUBDIRS = ReNo Entrez Vega
 
 GENERICS =
 
