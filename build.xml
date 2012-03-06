@@ -24,7 +24,6 @@
         </classpath>
     </taskdef>
 
-
     <property name="commons.dir" value="${basedir}/commons/env"/>
 
     <property environment="env"/>

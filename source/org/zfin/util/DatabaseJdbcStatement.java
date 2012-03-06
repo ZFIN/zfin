@@ -1,5 +1,7 @@
 package org.zfin.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Single DB query instruction that will be issued through JDBC connection.
  */
@@ -29,6 +31,11 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     public static final String TO = "TO";
     public static final String ECHO = "!ECHO";
     public static final String DEBUG = "DEBUG";
+    public static final String TEST = "TEST";
+
+    private String booleanOperator;
+    private int comparisonValue;
+    private String errorMessage;
 
     public DatabaseJdbcStatement() {
     }
@@ -57,6 +64,27 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (query != null && statementStart.toUpperCase().startsWith(ECHO)) {
             checkIfEchoStatement();
         }
+        if (query != null && statementStart.toUpperCase().startsWith(TEST)) {
+            parseTestLine();
+        }
+    }
+
+    private void parseTestLine() {
+        int startComparison = query.indexOf("(");
+        int endComparison = query.indexOf(")");
+        String testLine = query.substring(startComparison + 1, endComparison);
+        String[] tokens = testLine.split(" ");
+        // first element is the value variable
+        if (tokens.length != 3)
+            throw new RuntimeException("Need exactly three elements for comparison");
+        dataKey = tokens[0];
+        booleanOperator = tokens[1].trim();
+        comparisonValue = Integer.valueOf(tokens[2].trim());
+        int startMessage = query.indexOf("'");
+        String message = query.substring(startMessage + 1);
+        int endQuote = message.indexOf("'");
+        message = message.substring(0, endQuote);
+        errorMessage = message;
     }
 
     private void checkIfEchoStatement() {
@@ -85,7 +113,8 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         } else {
             // remove unloading directive part from query
             int indexOfQueryStart = query.toString().indexOf("'");
-            query.delete(0, indexOfQueryStart);
+            if (indexOfQueryStart > -1)
+                query.delete(0, indexOfQueryStart);
         }
     }
 
@@ -124,6 +153,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         return (dataKey != null && dataKey.toUpperCase().equals(DEBUG));
     }
 
+    public boolean isTest() {
+        return (query != null && query.toString().toUpperCase().startsWith(TEST));
+    }
+
     public int getStartLine() {
         return startLine;
     }
@@ -144,7 +177,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (query == null)
             return false;
         String queryString = query.toString().trim().toUpperCase();
-        return queryString.startsWith(BEGIN_WORK) || queryString.startsWith(COMMIT_WORK)|| queryString.startsWith(ROLLBACK_WORK);
+        return queryString.startsWith(BEGIN_WORK) || queryString.startsWith(COMMIT_WORK) || queryString.startsWith(ROLLBACK_WORK);
     }
 
     public String getDataKey() {
@@ -212,4 +245,17 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         return SqlQueryUtil.getHumanReadableQueryString(query.toString());
     }
 
+    public boolean isTestTrue(int value) {
+        if (booleanOperator.equals(">"))
+            return value > comparisonValue;
+        if (booleanOperator.equals("<"))
+            return value < comparisonValue;
+        if (booleanOperator.equals("="))
+            return value == comparisonValue;
+        return false;
+    }
+
+    public String getErrorMessage(int value) {
+        return StringUtils.replace(errorMessage, "$x", "" + value);
+    }
 }

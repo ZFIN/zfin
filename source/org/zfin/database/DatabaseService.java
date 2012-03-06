@@ -2,13 +2,15 @@ package org.zfin.database;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.database.presentation.*;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
+import org.zfin.util.DbScriptFileParser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.SqlQueryKeywords.*;
@@ -286,5 +288,92 @@ public class DatabaseService {
             return o1.getForeignKey().getForeignKeyTable().getTableName().compareToIgnoreCase(o2.getForeignKey().getForeignKeyTable().getTableName());
         }
     }
+
+
+    public List<String> runDbScriptFile(String dbScriptFile) {
+        File file = new File(dbScriptFile);
+        return runDbScriptFile(file, null);
+    }
+
+    public List<String> runDbScriptFile(File dbScriptFile) {
+        return runDbScriptFile(dbScriptFile, null);
+    }
+
+    public List<String> runDbScriptFile(String dbScriptFile, Map<String, List<List<String>>> dataMap) {
+        File file = new File(dbScriptFile);
+        return runDbScriptFile(file, dataMap);
+    }
+
+    public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap) {
+        List<String> errorMessage = new ArrayList<String>(2);
+        if (!dbScriptFile.exists()) {
+            String message = "Could not find script file " + dbScriptFile.getAbsolutePath();
+            LOG.error(message);
+            errorMessage.add(message);
+            return errorMessage;
+        }
+
+        if (dataMap == null)
+            dataMap = new HashMap<String, List<List<String>>>(5);
+        DbScriptFileParser parser = new DbScriptFileParser(dbScriptFile);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
+        if (!LOG.isDebugEnabled())
+            LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
+        for (DatabaseJdbcStatement statement : queries) {
+            LOG.info("Statement " + statement.getLocationInfo() + ": " + statement.getHumanReadableQueryString());
+            if (statement.isInformixWorkStatement())
+                continue;
+            if (statement.isLoadStatement()) {
+                List<List<String>> data = dataMap.get(statement.getDataKey());
+                if (data == null) {
+                    LOG.info("No data found for key: " + statement.getDataKey());
+                    continue;
+                }
+                statement.updateInsertStatement(data.get(0).size());
+                infrastructureRep.executeJdbcStatement(statement, data);
+                LOG.info(data.size() + " records inserted");
+            } else if (statement.isDebug()) {
+                List<List<String>> dataReturn = null;
+                if (LOG.isDebugEnabled()) {
+                    dataReturn = infrastructureRep.executeNativeQuery(statement);
+                    if (dataReturn == null)
+                        LOG.debug("  Debug data: No records found.");
+                    else {
+                        LOG.debug("  Debug data: " + dataReturn.size() + " records.");
+                        for (List<String> row : dataReturn)
+                            LOG.debug("  " + row);
+                    }
+                }
+            } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
+                List<List<String>> dataReturn = null;
+                dataReturn = infrastructureRep.executeNativeQuery(statement);
+                if (dataReturn == null) {
+                    LOG.info("  Debug data: No records found.");
+                } else if (statement.getDataKey() == null) {
+                    LOG.info("  Data: " + dataReturn.size() + " records.");
+                } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
+                    LOG.info("  Debug data: " + dataReturn.size() + " records.");
+                    for (List<String> row : dataReturn)
+                        LOG.info("  " + row);
+                } else
+                    dataMap.put(statement.getDataKey(), dataReturn);
+            } else if (statement.isEcho()) {
+                LOG.info(statement.getQuery());
+            } else if (statement.isTest()) {
+                LOG.info(statement.getQuery());
+                String key = statement.getDataKey();
+                int value = Integer.valueOf(dataMap.get(key).get(0).get(0));
+                if (statement.isTestTrue(value))
+                    errorMessage.add(statement.getErrorMessage(value));
+            } else {
+                infrastructureRep.executeJdbcStatement(statement);
+            }
+            DbSystemUtil.logLockInfo();
+        }
+        return errorMessage;
+    }
+
+    private final Logger LOG = Logger.getLogger(DatabaseService.class);
 
 }

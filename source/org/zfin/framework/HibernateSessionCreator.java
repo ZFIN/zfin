@@ -69,7 +69,7 @@ public class HibernateSessionCreator implements FactoryBean {
         HibernateUtil.init(config.buildSessionFactory());
     }
 
-    private static File[] getHibernateConfigurationFiles() {
+    public static File[] getHibernateConfigurationFiles() {
         // first in the source directory
         File hibernateConfDir = FileUtil.createFileFromStrings("source", "org", "zfin");
         // if not found in the source (used for testing) then check in the classpath

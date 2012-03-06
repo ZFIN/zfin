@@ -335,6 +335,15 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void generateAssertionStatement() {
+        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))" +
+                "with no log;";
+        DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
+        statement.addQueryPart(query);
+        infrastructureRepository.executeJdbcStatement(statement);
+    }
+
+    @Test
     public void runDbScript() {
         String fileName = "test//dbTestScript.sql";
         File file = new File(fileName);

@@ -1,0 +1,1 @@
+update zdb_flag set zflag_is_on = 'f', zflag_last_modified = current where zflag_name = 'disable updates';
