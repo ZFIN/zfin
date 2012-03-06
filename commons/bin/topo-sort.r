@@ -17,7 +17,6 @@ rebol[
 ; cc: conn-comp copy graph
 ; foreach [s d] g [print [a b]]
 
-
 context[
 graph: copy [] ;;; partial order of edges
 
