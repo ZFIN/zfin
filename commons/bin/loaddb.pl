@@ -1036,13 +1036,11 @@ mkdir($globalTmpDir, $dirPerms);
 # Set PDQPRIORITY to HIGH.  This doesn't speed up the loading of the data, 
 # but it really speeds up the enabling of the indexes and constraints.
 
-if {$ENV{HOST} =~ /kinetix/}{
+if ($ENV{HOST} =~ /kinetix/){
     $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
 }
 else {
     $ENV{PDQPRIORITY} = "60";    # Take as much as you can.
-}
-else {
     logMsg("Restarting Apache ...");
     restartApache();
 
@@ -1089,11 +1087,13 @@ if (! createDb($dbName, $schemaFile)) {
 			  restartApache();
 		      }
 		      logMsg("Enabling logging...");
-		      if($ENV{HOST} =~ /kinetix/ && $ENV{USER} eq "informix"){
-			  system("sleep 5; echo "" |ontape -s -B $dbName -L 0") or die "can not enable logging as informix on kinetix.";
+		      if(($ENV{HOST} =~ /kinetix/) && ($ENV{USER} eq "informix")){
+			  system("ontape -s -B $dbName -L 0") or die "can not enable logging as informix on kinetix.";
 		      }
-		      else (system("$globalBinDir/enableLogging.pl $dbName")) {
-			  logError("Failed to enable logging.");
+		      else {
+			  if (system("$globalBinDir/enableLogging.pl $dbName")){
+			      logError("Failed to enable logging.");
+			  }
 		      }
 		      if ($opt_b && $ENV{HOST} !~ /kinetix/) {
 			  print "creating developer blastdb copy";
