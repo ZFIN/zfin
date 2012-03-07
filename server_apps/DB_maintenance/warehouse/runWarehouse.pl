@@ -44,6 +44,8 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 
 ### MAIN ###
 `/bin/rm -rf $globalResultFile`;
+my ($notZfinInstance,$zfinInstance) = &getInstances() or logError("can't execute getInstances()");;
+
 &cronStop();
 &disableUpdates();
 &loadDb();
@@ -105,6 +107,33 @@ sub getEnvFileName {
     return $env;
 }
 
+sub getInstances(){
+    
+    my $notZfinInstance = "noInstance";
+    my $zfinInstance = "noInstance";
+
+    my $sthInst = $dbhNotZfin->prepare("select denm_instance from database_env_name_matrix where denm_db_name = '$whoIsNotZfinDb';");
+    $sthInst->execute() or &logError("could not execute getInstances SQL statement");
+    $sthInst->bind_columns(\$notZfinInstance);
+    $sthInst->dump_results();
+    for ($notZfinInstance) {
+        s/^\s+//;
+        s/\s+$//;
+    }
+    my $sthInstZ = $dbhZfin->prepare("select denm_instance from database_env_name_matrix where denm_db_name = '$whoIsZfinDb';");
+    $sthInstZ->execute() or &logError("could not execute getInstances SQL statement");
+    $sthInstZ->bind_columns(\$zfinInstance);
+    $sthInstZ->dump_results();
+    for ($zfinInstance) {
+        s/^\s+//;
+        s/\s+$//;
+    }
+    print "not zfin instance is: ".$notZfinInstance."\n";
+    print "zfin instance is: ".$zfinInstance."\n";
+    return ($notZfinInstance, $zfinInstance);
+
+}
+
 sub swapZfin(){
     chdir("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/") or &logError("can't chdir to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/");
     system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/switch.sh") && &logError("switch zfin to new warehouse failed.");
@@ -115,7 +144,8 @@ sub swapZfin(){
 sub disableUpdates() {
     my $flag = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 't' where zflag_name = 'disable updates'");
     $flag->execute;
-    system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $whoIsNotZfinDb");
+    
+    system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $notZfinInstance");
     print "$? \n";
     if($? ne 0){
 	&logError("stoptomcat.pl failed");
@@ -128,7 +158,7 @@ sub enableUpdates() {
     print "updates enabled\n";
     print "restarting tomcat\n";
     chdir("/private/ZfinLinks/Commons/bin") or &logError("can't chdir to /private/ZfinLinks/Commons/bin");
-    system("/private/ZfinLinks/Commons/bin/starttomcat.pl $whoIsNotZfinDb") ;
+    system("/private/ZfinLinks/Commons/bin/starttomcat.pl $zfinInstance") ;
     if($? ne 0){
 	&logError("starttomcat.pl on $whoIsNotZfinDb failed");
 	die;
@@ -150,9 +180,19 @@ sub loadDb() {
     print "return from unloaddb.pl is: $?\n";
     $dbhNotZfin->disconnect;
     print "disconnect from notZfin\n";
-    system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
-    if ($? ne 0){
+    if ($whoIsZfinDb eq "<!--|DB_NAME|-->"){
+	
+	system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|PARTNER_SOURCEROOT|--> <!--|PARTNER_SOURCEROOT|-->/commons/env/$envName") ;
+	if ($? ne 0){
 	&logError("loadDb.sh failed");
+	}
+    }
+    if ($whoIsZfinDb ne "<!--|DB_NAME|-->"){	
+	system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|SOURCEROOT|--> <!--|SOURCEROOT|-->/commons/env/$envName") ;
+    
+	if ($? ne 0){
+	    &logError("loadDb.sh failed");
+	}
     }
     $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 		       '',

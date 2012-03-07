@@ -46,6 +46,7 @@
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	smithdb
 <!--|PARTNER_INTERNAL_INSTANCE|-->	smith
+<!--|PARTNER_SOURCEROOT|-->	/research/zusers/smith/ZFIN_WWW_trunk
 <!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@cs.uoregon.edu

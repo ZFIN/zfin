@@ -46,6 +46,7 @@
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	crickdb
 <!--|PARTNER_INTERNAL_INSTANCE|-->	crick
+<!--|PARTNER_SOURCEROOT|-->	/research/zprod/users/crick/ZFIN_WWW_trunk
 <!--|PATO_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	ryanm\@cs.uoregon.edu

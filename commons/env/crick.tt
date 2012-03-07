@@ -46,6 +46,7 @@
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	watsondb
 <!--|PARTNER_INTERNAL_INSTANCE|-->	watson
+<!--|PARTNER_SOURCEROOT|-->	/research/zprod/users/watson/ZFIN_WWW_trunk
 <!--|PATO_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	ryanm\@cs.uoregon.edu

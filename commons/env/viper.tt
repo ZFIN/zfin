@@ -46,6 +46,7 @@
 <!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
+<!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	xshao\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	xshao\@cs.uoregon.edu
