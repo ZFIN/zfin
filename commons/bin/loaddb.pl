@@ -1042,9 +1042,6 @@ if {$ENV{HOST} =~ /kinetix/}{
 else {
     $ENV{PDQPRIORITY} = "60";    # Take as much as you can.
 }
-if ($ENV{HOST} =~ /kinetix/) {
-    $ENV{PSORT_NPROCS} = 3;    # 4 CPUs, suck it all up
-}
 else {
     logMsg("Restarting Apache ...");
     restartApache();
