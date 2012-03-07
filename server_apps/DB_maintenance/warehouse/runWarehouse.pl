@@ -2,18 +2,26 @@
 
 use DBI;
 use MIME::Lite;
+use IO::Handle;
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
+$ENV{"INFORMIXSERVER"}="waldo";
+$ENV{"ONCONFIG"}="onconfig";
+$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
+
 $jobTitle = "Cron Job: runWarehouse: ";
-$globalResultFile = "/tmp/warehouse_regeneration"."<!--|DB_NAME|-->";
 $martName = "fish mart";
-@whoIsZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is.sh`;
+$globalResultFile = "/tmp/warehouse_regeneration"."smithdb";
+open OUTPUT, '>', $globalResultFile or die "can't open $globalResultFile.\n";
+open ERROR,  '>', $globalResultFile or die "can't open $globalResultFile.\n";
+STDOUT->fdopen( \*OUTPUT, 'w' ) or die "can't redirect STDOUT to $globalResultFile.\n";
+STDERR->fdopen( \*ERROR,  'w' ) or die "can't redirect STDERR to $globalResultFile.\n";
+
+@whoIsZfin = `/research/zcentral/www_homes/smith/server_apps/DB_maintenance/warehouse/who_is.sh`;
 $whoIsZfinDb = $whoIsZfin[0];
 print "zfin is: $whoIsZfinDb";
-@whoIsNotZfin = `<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/who_is_not.sh`;
+
+@whoIsNotZfin = `/research/zcentral/www_homes/smith/server_apps/DB_maintenance/warehouse/who_is_not.sh`;
 $whoIsNotZfinDb=$whoIsNotZfin[0];
 print "zfin is not: $whoIsNotZfinDb";
 
@@ -58,10 +66,9 @@ my ($notZfinInstance,$zfinInstance) = &getInstances() or &logError("can't execut
 &success();
 
 sub success() {
-    open RESULT, ">$globalResultFile" or die "Cannot open the file to write error.";
-    print RESULT "SUCCESS: warehouse has been regenerated.";
+    print "SUCCESS: warehouse has been regenerated.";
     &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
-    close(RESULT);
+    close(OUTPUT);
     exit 0;
 }
 
@@ -238,9 +245,8 @@ sub integrityChecks($){
     my $fishAnnotationSearchCount = execSql ($sql, undef);
 
     if ($fishAnnotationSearchCount < 16000) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "fish_annotation_search table does not have enough records.< 16000";
-	close(RESULT);
+	print "fish_annotation_search table does not have enough records.< 16000";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("fish_annotation_search table does not have enough records.< 16000");	
@@ -250,9 +256,8 @@ sub integrityChecks($){
     my $genotypeGenoxAvailable = execSql ($sql, undef);
 
     if ($genotypeGenoxAvailable >0) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
-	close(RESULT);
+	print "$genotypeGenoxAvailable records are missing both a genotype and a genox_group";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("$genotypeGenoxAvailable records are missing both a genotype and a genox_group");
@@ -262,9 +267,8 @@ sub integrityChecks($){
     my $checkFasAllNotNull = execSql($sql, undef);
 
     if ($checkFasAllNotNull >0) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "$checkFasAllNotNull records have null fas_all values";
-	close(RESULT);
+	print "$checkFasAllNotNull records have null fas_all values";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("$checkFasAllNotNull records have null fas_all values");
@@ -274,9 +278,8 @@ sub integrityChecks($){
     my $constructAbbrevOrderMismatchCount = execSql($sql, undef);
 
     if ($constructAbbrevOrderMismatchCount >0) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
-	close(RESULT);
+	print "$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("$constructAbbrevOrderMismatchCount records have mismatched construct abbrev/order mismatches in gene_feature_result_view");
@@ -286,9 +289,8 @@ sub integrityChecks($){
     my $fishSignificanceCount = execSql($sql, undef);
 
     if ($fishSignificanceCount < 10) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "only $fishSignificanceCount records have significance < 999999";
-	close(RESULT);
+	print "only $fishSignificanceCount records have significance < 999999";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("only $fishSignificanceCount records have significance < 999999");
@@ -298,9 +300,8 @@ sub integrityChecks($){
     my $geneFeatureResultViewCount = execSql($sql, undef);
 
     if ($geneFeatureResultViewCount < 20312) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "gene_feature_result_view table does not have enough records. < 20312";
-	close(RESULT);
+	print "gene_feature_result_view table does not have enough records. < 20312";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("gene_feature_result_view table does not have enough records. < 20312");
@@ -310,9 +311,8 @@ sub integrityChecks($){
     my $figureTermFishSearchCount = execSql($sql, undef);
 
     if ($figureTermFishSearchCount < 13997) {
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "figure_term_fish_search table does not have enough records.< 13997";
-	close(RESULT);
+	print "figure_term_fish_search table does not have enough records.< 13997";
+	close(OUTPUT);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&logError("figure_term_fish_search table does not have enough records.< 13997");
@@ -322,9 +322,8 @@ sub integrityChecks($){
 
     my $btsContainssshhaCount = execSql($sql, undef);
     if ($btsContainssshhaCount < 81){
-	open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-	print RESULT "bts index on fish_annotation_search is inacurate: shha < 81";
-	close(RESULT);
+	print "bts index on fish_annotation_search is inacurate: shha < 81";
+	close(OUTPUT);
 	updateWarehouseReleaseTracking($wrt_fail, undef);
 	&sendMail("ERROR","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse generation on NotZfinDb: FAIL","$globalResultFile");
 	&logError("bts index on fish_annotation_search is inacurate: shha < 81");
@@ -335,9 +334,8 @@ sub integrityChecks($){
 sub updateWarehouseTracking($){
 
     my $sqlUpdate = 'update warehouse_run_tracking set (wrt_mart_load_successful, wrt_last_loaded_date) = ("t",current year to second) where wrt_mart_name = "$martName"';
-    open RESULT, ">$globalResultFile" or &logError("Cannot open the file to write check result.");
-    print RESULT "$martName updated successfully.";
-    close(RESULT);
+    print "$martName updated successfully.";
+    close(OUTPUT);
     updateWarehouseReleaseTracking($sqlUpdate, undef);
     &sendMail("SUCCESS","<!--|WAREHOUSE_REGN_EMAIL|-->","warehouse has been regenerated and zfin has switched","$globalResultFile");
 }
@@ -369,11 +367,8 @@ sub sendMail($) {
 }
 
 sub logError() {
-    open RESULT, ">$globalResultFile" or die "Cannot open the file to write error.";
     my $line = $_;
-    print(RESULT "\n");
-    print(RESULT "ERROR: $line\n");
-    print(RESULT "\n");
+    print("ERROR: $line\n");
     &cronStart();
     my $flagError = $dbhZfin->prepare ("update zdb_flag set zflag_is_on = 'f' where zflag_name = 'disable updates'");
     $flagError->execute;
