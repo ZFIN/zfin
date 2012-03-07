@@ -1,4 +1,8 @@
-create temp table tmp_syns (term_id varchar(30),synonym varchar(255),scoper varchar(30),type varchar(30), syn varchar(30))
+create temp table tmp_syns (term_id varchar(30),
+       	    	  	    synonym varchar(255),
+			    scoper varchar(30),
+			    type varchar(30), 
+			    syn varchar(30))
 with no log;
 
 !echo "start of the synonym loading";
@@ -67,7 +71,14 @@ delete from tmp_syns
 --			    and dalias_data_zdb_id = term_zdb_id);
 
 
-create temp table tmp_syns_with_ids (zdb_id varchar(50), term_id varchar(30),synonym varchar(255),type varchar(30), scoper varchar(30), data_id varchar(50))
+create temp table tmp_syns_with_ids (zdb_id varchar(50), 
+       	    	  		     term_id varchar(30),
+				     synonym varchar(255), 
+				     type varchar(30), 
+				     scoper varchar(30), 
+				     data_id varchar(50), 
+				     alias_group_id int, 
+				     scoper_group_id int)
 with no log;
 
 
@@ -79,12 +90,24 @@ update tmp_syns_with_ids
   set type = trim(type);
 
 update tmp_syns_with_ids
+  set synonym = trim(synonym);
+
+-- remove trailing, pre white spaces and convert multiple white spaces into single white space
+-- as the trigger on data_alias will apply to the alias.
+-- without it a constraint violation might happen.
+update tmp_syns_with_ids
+  set synonym = scrub_char(synonym);
+
+update tmp_syns_with_ids
   set data_id = (Select term_zdb_id
       	      		from term
 			where term_id = term_ont_id);
 
 select count(*) from tmp_syns_with_ids where data_id is not null;
 
+
+unload to debug
+	select * from tmp_syns_with_ids;
 delete from tmp_syns_with_ids where data_id is null;
 
 
@@ -110,14 +133,40 @@ select distinct type
   	    	   	   from alias_group
 			   where aliasgrp_name = type);
 
+update tmp_syns_with_ids
+  set alias_group_id = (select aliasgrp_pk_id from alias_group where aliasgrp_name = type);
+
+-- remove records that are already in the data_alias table.
+delete from tmp_syns_with_ids as newSyn
+where exists
+	(Select 'x' from data_alias 
+	  where dalias_data_zdb_id = newSyn.data_id 
+	    and dalias_alias = newSyn.synonym
+	    and dalias_group_id = newSyn.alias_group_id);
+	
+update tmp_syns_with_ids
+  set scoper_group_id = (select aliasscope_pk_id from alias_scope where trim(aliasscope_scope)=scoper);
+
+unload to insertIndividualRecords
+	select zdb_id, data_id, synonym, synonym, alias_group_id, scoper_group_id
+    from tmp_syns_with_ids;
+    
+--single-load from insertIndividualRecords
+-- insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_alias_lower, dalias_group_id, dalias_scope_id);
+
 insert into data_alias (dalias_zdb_id, dalias_alias, dalias_group_id, dalias_scope_id, dalias_data_zdb_id)
-  select zdb_id, synonym, (select aliasgrp_pk_id from alias_group where aliasgrp_name = type), (select aliasscope_pk_id from alias_scope where trim(aliasscope_scope)=scoper),data_id
+  select zdb_id, synonym, alias_group_id, scoper_group_id, data_id
     from tmp_syns_with_ids;
 
 select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
   from data_alias
  group by dalias_data_zdb_id, dalias_group_id, dalias_alias
  having count(*) > 1;
+
+unload to newAliases
+  select syn.zdb_id, syn.synonym, term.term_ont_id, term.term_name  from tmp_syns_with_ids as syn, term as term
+  where term.term_zdb_id = syn.data_id;
+
 
 --!!  COMMENT THIS BACK IN WHEN XREFS are REQUESTED.  Also in the works is a new table for TERM xrefs
 --!!  outside of db_link. Currently, for the GO load, this loads 1.5 million rows into db_link and adds

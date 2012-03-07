@@ -79,7 +79,8 @@ public class LoadOntology extends AbstractScriptWrapper {
     // There are about 20 different types of data set to be imported.  
     private Map<String, List<List<String>>> dataMap = new HashMap<String, List<List<String>>>(20);
     private OntologyMetadata oboMetadata;
-    private ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
+    private static final ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
+    private static final ChoiceFormat aliasChoice = new ChoiceFormat("0#aliases| 1#alias| 2#aliases");
 
     /**
      * Used from within the web app. No initialization needed.
@@ -396,6 +397,15 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-secondary-terms.ftl", cronReport);
         }
+        // new aliases.
+        if (dataMap.get(UnloadFile.NEW_ALIASES.getValue()) != null) {
+            List<List<String>> rows = dataMap.get(UnloadFile.NEW_ALIASES.getValue());
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " new " + aliasChoice.format(rows.size()) + " found");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-new-aliases.ftl", cronReport);
+        }
         updatePhenotypesReport();
         updateExpressionReport();
     }
@@ -482,6 +492,15 @@ public class LoadOntology extends AbstractScriptWrapper {
                 }
                 statement.updateInsertStatement(data.get(0).size());
                 infrastructureRep.executeJdbcStatement(statement, data);
+                LOG.info(data.size() + " records inserted");
+            } else if (statement.isSingleLoadStatement()) {
+                List<List<String>> data = dataMap.get(statement.getDataKey());
+                if (data == null) {
+                    LOG.info("No data found for key: " + statement.getDataKey());
+                    continue;
+                }
+                statement.updateInsertStatement(data.get(0).size());
+                infrastructureRep.executeJdbcStatementOneByOne(statement, data);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {
                 List<List<String>> dataReturn = null;
@@ -727,6 +746,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     enum UnloadFile {
+        NEW_ALIASES("newAliases"),
         TERM_PARSED("term_parsed.unl"),
         TERM_CONSIDER("term_consider.unl"),
         TERM_RELATIONSHIPS("term_relationships.unl"),

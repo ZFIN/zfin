@@ -1004,6 +1004,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return 1;
     }
 
+    @Override
+    public void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data) {
+        executeJdbcStatement(statement, data, 200);
+    }
+
     /**
      * Execute a sql statement through straight JDBC call and inserting given string data.
      *
@@ -1011,16 +1016,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param data          string data
      */
     @Override
-    public void executeJdbcStatement(DatabaseJdbcStatement jdbcStatement, List<List<String>> data) {
+    public void executeJdbcStatement(DatabaseJdbcStatement jdbcStatement, List<List<String>> data, int batchSize) {
         long start = System.currentTimeMillis();
         Session session = currentSession();
         Connection connection = session.connection();
         PreparedStatement statement = null;
         ResultSet rs = null;
-        int batchSize = 200;
         int accumulatedBatchCounter = 0;
         int currentBatchSize = 0;
-        boolean error = false;
         try {
             Statement st = connection.createStatement();
             rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
@@ -1033,6 +1036,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     if (columnType.equals("java.lang.Boolean")) {
                         boolean columnTypeBol = column.equals("t");
                         statement.setBoolean(index++, columnTypeBol);
+                    } else if (columnType.equals("java.lang.Long")) {
+                        long number = Long.valueOf(column);
+                        statement.setLong(index++, number);
                     } else
                         statement.setString(index++, column);
                 }
@@ -1057,7 +1063,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 int index1 = accumulatedBatchCounter - batchSize + index;
                 logger.error("Record number " + index1 + ", record: " + data.get(index1));
             }
-            error = true;
             logger.error(DbSystemUtil.getLockInfo());
             throw new RuntimeException(exception);
         } finally {
@@ -1452,6 +1457,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             }
         }
         return columns;
+    }
+
+
+    /**
+     * execute SQL query for each provided data row individually (for debugging purposes).
+     *
+     * @param statement
+     * @param data
+     */
+    @Override
+    public void executeJdbcStatementOneByOne(DatabaseJdbcStatement statement, List<List<String>> data) {
+        executeJdbcStatement(statement, data, 1);
     }
 }
 

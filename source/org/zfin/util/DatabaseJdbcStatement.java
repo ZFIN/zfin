@@ -22,10 +22,12 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     // syntypedefs_header is the key for a collection of an array of five values.
     private String dataKey;
     public static final String LOAD = "LOAD";
+    public static final String SINGLE_LOAD = "SINGLE-LOAD";
     public static final String SEMICOLON = ";";
 
     private boolean unload;
     private boolean load;
+    private boolean singleLoad;
     private boolean echo;
     public static final String UNLOAD = "UNLOAD";
     public static final String TO = "TO";
@@ -56,6 +58,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     private void parseLoadingInstruction() {
         String statementStart = query.toString().trim();
         if (query != null && statementStart.toUpperCase().startsWith(LOAD)) {
+            checkIfLoadStatement();
+        }
+        if (query != null && statementStart.toUpperCase().startsWith(SINGLE_LOAD)) {
             checkIfLoadStatement();
         }
         if (query != null && statementStart.toUpperCase().startsWith(UNLOAD)) {
@@ -131,7 +136,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             int indexOfQueryStart = query.toString().toUpperCase().indexOf(INSERT);
             query.delete(0, indexOfQueryStart);
         }
-        load = true;
+        if (token[0].toUpperCase().equals(LOAD))
+            load = true;
+        if (token[0].toUpperCase().equals(SINGLE_LOAD))
+            singleLoad = true;
     }
 
     public void addQueryPart(String part) {
@@ -171,6 +179,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public boolean isLoadStatement() {
         return load;
+    }
+
+    public boolean isSingleLoadStatement() {
+        return singleLoad;
     }
 
     public boolean isInformixWorkStatement() {

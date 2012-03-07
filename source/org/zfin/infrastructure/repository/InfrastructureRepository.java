@@ -332,6 +332,15 @@ public interface InfrastructureRepository {
     void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data);
 
     /**
+     * Execute a sql statement through straight JDBC call and inserting given string data.
+     *
+     * @param statement query
+     * @param data      string data
+     * @param batchSize size of of individual batches.
+     */
+    void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data, int batchSize);
+
+    /**
      * Execute a query with a native JDBC call
      *
      * @param query query string
@@ -382,6 +391,13 @@ public interface InfrastructureRepository {
      * @return list of column objects
      */
     List<Column> retrieveColumnMetaData(Table table);
+
+    /**
+     * execute SQL query for each provided data row individually (for debugging purposes).
+     * @param statement
+     * @param data
+     */
+    void executeJdbcStatementOneByOne(DatabaseJdbcStatement statement, List<List<String>> data);
 }
 
 
