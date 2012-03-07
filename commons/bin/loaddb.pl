@@ -1089,7 +1089,7 @@ if (! createDb($dbName, $schemaFile)) {
 			  restartApache();
 		      }
 		      logMsg("Enabling logging...");
-		      if{$ENV{HOST} =~ /kinetix/ && $ENV{USER} eq "informix")}{
+		      if($ENV{HOST} =~ /kinetix/ && $ENV{USER} eq "informix"){
 			  system("sleep 5; echo "" |ontape -s -B $dbName -L 0") or die "can not enable logging as informix on kinetix.";
 		      }
 		      else (system("$globalBinDir/enableLogging.pl $dbName")) {
