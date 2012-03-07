@@ -44,7 +44,7 @@ $dbhNotZfin = DBI->connect("DBI:Informix:$whoIsNotZfinDb",
 
 ### MAIN ###
 `/bin/rm -rf $globalResultFile`;
-my ($notZfinInstance,$zfinInstance) = &getInstances() or logError("can't execute getInstances()");;
+my ($notZfinInstance,$zfinInstance) = &getInstances() or &logError("can't execute getInstances()");;
 
 &cronStop();
 &disableUpdates();
@@ -181,7 +181,7 @@ sub loadDb() {
     $dbhNotZfin->disconnect;
     print "disconnect from notZfin\n";
     if ($whoIsZfinDb eq "<!--|DB_NAME|-->"){
-	
+	print "use partner sourceroot for loadDb gmake postloaddb.\n";
 	system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadDb.sh $whoIsNotZfinDb <!--|WAREHOUSE_DUMP_DIR|-->/ <!--|PARTNER_SOURCEROOT|--> <!--|PARTNER_SOURCEROOT|-->/commons/env/$envName") ;
 	if ($? ne 0){
 	&logError("loadDb.sh failed");
