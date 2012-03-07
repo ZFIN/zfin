@@ -1036,11 +1036,14 @@ mkdir($globalTmpDir, $dirPerms);
 # Set PDQPRIORITY to HIGH.  This doesn't speed up the loading of the data, 
 # but it really speeds up the enabling of the indexes and constraints.
 
-$ENV{PDQPRIORITY} = "60";    # Take as much as you can.
-
-
+if {$ENV{HOST} =~ /kinetix/}{
+    $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
+}
+else {
+    $ENV{PDQPRIORITY} = "60";    # Take as much as you can.
+}
 if ($ENV{HOST} =~ /kinetix/) {
-    $ENV{PSORT_NPROCS} = 4;    # 4 CPUs, suck it all up
+    $ENV{PSORT_NPROCS} = 3;    # 4 CPUs, suck it all up
 }
 else {
     logMsg("Restarting Apache ...");
@@ -1087,7 +1090,6 @@ if (! createDb($dbName, $schemaFile)) {
 			  # access thier web pages
 			  logMsg("Restarting Apache ...");
 			  restartApache();
-			  sleep(10);
 		      }
 		      logMsg("Enabling logging...");
 		      if (system("$globalBinDir/enableLogging.pl $dbName")) {
