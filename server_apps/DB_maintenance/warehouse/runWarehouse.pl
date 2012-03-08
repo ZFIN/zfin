@@ -13,9 +13,9 @@ $jobTitle = "Cron Job: runWarehouse: ";
 $martName = "fish mart";
 $globalResultFile = "/tmp/warehouse_regeneration"."smithdb";
 open OUTPUT, '>', $globalResultFile or die "can't open $globalResultFile.\n";
-open ERROR,  '>', $globalResultFile or die "can't open $globalResultFile.\n";
-STDOUT->fdopen( \*OUTPUT, 'w' ) or die "can't redirect STDOUT to $globalResultFile.\n";
-STDERR->fdopen( \*ERROR,  'w' ) or die "can't redirect STDERR to $globalResultFile.\n";
+#open ERROR,  '>', $globalResultFile or die "can't open $globalResultFile.\n";
+#STDOUT->fdopen( \*OUTPUT, 'w' ) or die "can't redirect STDOUT to $globalResultFile.\n";
+#STDERR->fdopen( \*ERROR,  'w' ) or die "can't redirect STDERR to $globalResultFile.\n";
 
 @whoIsZfin = `/research/zcentral/www_homes/smith/server_apps/DB_maintenance/warehouse/who_is.sh`;
 $whoIsZfinDb = $whoIsZfin[0];
