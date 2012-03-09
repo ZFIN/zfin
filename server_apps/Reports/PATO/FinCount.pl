@@ -115,8 +115,6 @@ if ($month eq "01") {
     $prevYear = $year;
 }
 
-#my $todayStr = "2012-02-01 00:00:00";
-
 my $todayStr = $year."-".$month."-".$date." "."00:00:00";
 my $oneMonthAgoStr = $prevYear."-".$preMonth."-".$date." "."00:00:00";
 
@@ -192,9 +190,9 @@ print SQLFILE "rollback work;\n\n";
 
 close(SQLFILE);
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> finPhenoCount.sql > FinPhenotypeStatistics 2> err");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> finPhenoCount.sql > FinPhenotypeStatistics 2> errFin");
 
 &sendResult("Monthly Fin Phenotype statistics", "<!--|COUNT_PATO_OUT|-->","./FinPhenotypeStatistics");
-&sendResult("Monthly Phenotype statistics Err", "xshao\@cs.uoregon.edu", "./err");
+&sendResult("Monthly Phenotype statistics Err", "<!--|COUNT_VEGA_ERR|-->", "./errFin");
 
 exit;
