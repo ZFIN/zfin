@@ -16,7 +16,7 @@ use DBI;
 # No parameter
 #
 
-sub sendReport {
+sub sendReport1 {
 		
   $SUBJECT="Auto: publications that have been updated";
   $MAILTO="<!--|COUNT_PATO_OUT|-->";
@@ -38,6 +38,11 @@ sub sendReport {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg1->print(\*SENDMAIL);
 
+  close(SENDMAIL);
+}
+
+sub sendReport2 {
+
   $SUBJECT="Auto: publications not updated";
   $MAILTO="<!--|COUNT_PATO_OUT|-->";
   $TXTFILE="./notupdated.txt";
@@ -57,6 +62,29 @@ sub sendReport {
 
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg2->print(\*SENDMAIL);
+  close(SENDMAIL);
+}
+
+sub sendReport3 {
+
+  $SUBJECT="Auto: publications with bad DOI that have been updated";
+  $MAILTO="<!--|COUNT_PATO_OUT|-->";
+  $TXTFILE="./doi.txt";
+  # Create a new multipart message:
+  my $msg3 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+ 
+  attach $msg3 
+   Type     => 'text/plain',   
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg3->print(\*SENDMAIL);
 
   close(SENDMAIL);
 }
@@ -238,10 +266,69 @@ foreach $key (sort keys %pmids) {
   }  
 }
 
-$dbh->disconnect(); 
 close (REPORT);
-sendReport();
+close (NOTUPDATED);
 
-print "\nDone.\n\n\n";
+print "$updated pubs fixed with vol and/or page numbers\n\n\n";
+
+if ($updated > 0) {
+  sendReport1();
+}
+
+
+if ($ctNoPubmedId > 0 || $notupdated > 0) {
+  sendReport2();
+}
+
+############################################################################
+# This part deals with bad pub_doi field
+###########################################################################
+
+print "processing the publication checking and would fix the bad pub_doi ... \n";
+
+
+$sql = 'select distinct zdb_id, pub_doi 
+          from publication 
+         where pub_doi like "% %"';
+
+$cur = $dbh->prepare($sql);
+$cur ->execute();
+
+$cur->bind_columns(\$pubZdbId,\$pubDOI);
+
+%dois = ();
+      
+while ($cur->fetch()) {
+   $dois{$pubZdbId} = $pubDOI;
+}
+
+$cur->finish();
+
+$ctTotalBadDOIs = 0;
+open (DOI, ">doi.txt") || die "Cannot open doi.txt : $!\n";
+foreach $key (sort keys %dois) {
+   $pubDOI = $dois{$key};
+   $correctDOI = $pubDOI;
+   $correctDOI =~ s/\s+//g;
+   $sql = 'update publication set pub_doi = ? where zdb_id = ?; ';  
+   $cur = $dbh->prepare($sql);
+   $cur ->execute($correctDOI,$key);  
+   $cur->finish(); 
+   $ctTotalBadDOIs++;
+   print DOI "\nThe following publications have been updated with the pub_doi:\n\n" if $ctTotalBadDOIs == 1;
+   print DOI "zdbId              \told pub_doi                 \tnew pub_doi                 \n" if $ctTotalBadDOIs == 1;
+   print DOI "-------------------\t----------------------------\t----------------------------\n" if $ctTotalBadDOIs == 1;
+   print DOI "$key\t$pubDOI\t$correctDOI      \n";   
+}
+
+
+$dbh->disconnect(); 
+close (DOI);
+
+print "$ctTotalBadDOIs bad dois found and fixed\n";
+
+if ($ctTotalBadDOIs > 0) {
+  sendReport3();
+}
   
 exit;
