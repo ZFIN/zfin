@@ -21,7 +21,7 @@ chdir <!--|ROOT_PATH|-->/server_apps/Reports/Thisse
 # Generate the accession number list
 #-------------------------------------
 
-$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> siGene_wo_xpat.sql > siGeneVegaAcc.unl
+$INFORMIXDIR/bin/dbaccess -a <!--|DB_NAME|--> siGene_wo_xpat.sql > siGeneVegaAcc.unl
 
 /bin/grep ^OTTDART siGeneVegaAcc.unl > siGeneVegaAcc.txt
 

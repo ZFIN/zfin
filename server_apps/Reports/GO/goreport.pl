@@ -60,7 +60,7 @@ sub sendResults {
 #-----------------------MAIN--------------------#
 
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> goreport.sql") and die "goreport.sql did not complete successfully";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> goreport.sql") and die "goreport.sql did not complete successfully";
 
 system ("/bin/rm -rf golist.txt.gz");
 system ("/bin/gzip -f  golist.txt > golist.txt.gz");
