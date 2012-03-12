@@ -14,15 +14,15 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../..
+TOP = ../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/Reports
+TARGETDIR = $(TARGETROOT)/server_apps/Reports/Nomenclature
 
-SUBDIRS = ZGC Vega PATO GO Nomenclature
+SUBDIRS = 
 
 
-GENERICS = Count.pl
+GENERICS = get_uninformative.sh
 STATICS  =  
 
 
@@ -35,6 +35,6 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-run : $(TARGETDIR)/Count.pl
-	$(TARGETDIR)/Count.pl
+run : $(TARGETDIR)/get_uninformative.sh
+	$(TARGETDIR)/get_uninformative.sh
 
