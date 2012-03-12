@@ -64,6 +64,7 @@ public class TranscriptType {
         V_GENE("V-gene"),
         ABERRANT_PROCESSED_TRANSCRIPT("aberrant processed transcript"),
         ANTISENSE("antisense"),
+        LINCRNA("lincRNA"),
         MRNA("mRNA"),
         MIRNA("miRNA"),
         NCRNA("ncRNA"),
