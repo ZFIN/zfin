@@ -133,7 +133,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             if (featurePrefixLight.getPrefix().equals("ba")) {
                 assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
-            if (featurePrefixLight.getPrefix().equals("bc")) {
+            if (featurePrefixLight.getPrefix().equals("b")) {
                 assertTrue(featurePrefixLight.getLabList().size() > 0);
             }
             if (featurePrefixLight.getPrefix().equals("be")) {
