@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.server;
 
 //import org.apache.commons.lang.StringUtils;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.zfin.expression.Figure;
@@ -67,14 +68,13 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         if (attribute != null) {
             if (StringUtils.isNotEmpty(attribute.getValue())) {
                 Figure figure = pubRepository.getFigureByID(attribute.getValue());
-                if (figure==null){
-                 profileRep.deleteCuratorSession(attribute);
-            }
-                else{
-                FigureDTO figureDTO = new FigureDTO();
-                figureDTO.setLabel(figure.getLabel());
-                figureDTO.setZdbID(figure.getZdbID());
-                values.setFigure(figureDTO);
+                if (figure == null) {
+                    profileRep.deleteCuratorSession(attribute);
+                } else {
+                    FigureDTO figureDTO = new FigureDTO();
+                    figureDTO.setLabel(figure.getLabel());
+                    figureDTO.setZdbID(figure.getZdbID());
+                    values.setFigure(figureDTO);
                 }
             }
         }
@@ -162,7 +162,9 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         fishDTOs.add(separator);
         List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
         for (Genotype genotype : wildtypes) {
-            fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
+            // only add non-WT wildtypes as WT is placed at the top
+            if (!genotype.getHandle().equals(Genotype.WT))
+                fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
         }
         return fishDTOs;
     }

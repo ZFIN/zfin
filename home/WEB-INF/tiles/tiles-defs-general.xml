@@ -46,6 +46,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
     </definition>
 
+    <definition name="feature/wildtype-lines.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN: Wild-Type Lines: Summary Listing"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/feature/wildtype-lines.jsp"/>
+    </definition>
+
     <definition name="feature/*.insert" template="/WEB-INF/jsp/feature/{1}.jsp"/>
     <definition name="anatomy/*.ajax" template="/WEB-INF/jsp/anatomy/{1}.jsp"/>
 

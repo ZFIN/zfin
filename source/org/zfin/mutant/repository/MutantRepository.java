@@ -156,13 +156,6 @@ public interface MutantRepository {
 
 
     /**
-     * Retrieve all distinct wild-type genotypes.
-     *
-     * @return list of wildtype fish
-     */
-    List<Genotype> getAllWildtypeGenotypes();
-
-    /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
      * @param genotypeExperimentID expression experiment
@@ -336,7 +329,7 @@ public interface MutantRepository {
      * Retrieve all wildtype genotypes.
      * @return
      */
-    List<Genotype> getWildtypeGenotypes();
+    List<Genotype> getAllWildtypeGenotypes();
 
 }
 

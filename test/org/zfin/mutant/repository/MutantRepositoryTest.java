@@ -192,7 +192,7 @@ public class MutantRepositoryTest {
     @Test
     public void retrieveAllWildtypeGenotypes() {
         MutantRepository mr = mutantRepository;
-        List<Genotype> terms = mr.getAllWildtypeGenotypes();
+        List<Genotype> terms = mr.getWildtypeGenotypesWithoutWT();
         assertNotNull(terms);
     }
 
@@ -391,7 +391,7 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getWildtypeLines() {
+    public void getWildtypeLinesSummary() {
         List<Genotype> wildtypes = mutantRepository.getAllWildtypeGenotypes();
         assertNotNull(wildtypes);
         assertTrue(wildtypes.size() > 20);

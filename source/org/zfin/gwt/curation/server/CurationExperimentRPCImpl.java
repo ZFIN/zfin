@@ -207,6 +207,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         genotypes.add(fish);
         List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
         for (Genotype wiltype : wildtypes) {
+            // only add non-WT wildtypes as WT is placed at the top
+            if (genotype.getHandle().equals(Genotype.WT))
+                continue;
             FishDTO fishy = new FishDTO();
             fishy.setZdbID(wiltype.getZdbID());
             fishy.setName(wiltype.getNickname());

@@ -440,26 +440,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }*/
 
     /**
-     * Retrieve all distinct wild-type genotypes.
-     *
-     * @return list of wildtype fish
-     */
-    @SuppressWarnings("unchecked")
-    public List<Genotype> getAllWildtypeGenotypes() {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct geno from Genotype geno" +
-                "     where geno.wildtype = :isWildtype" +
-                "           and geno.handle != :wt " +
-                "    order by geno.nameOrder ";
-        Query query = session.createQuery(hql);
-        query.setBoolean("isWildtype", true);
-        query.setString("wt", Genotype.WT);
-
-        return (List<Genotype>) query.list();
-    }
-
-    /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
      * @param genotypeExperimentID expression experiment
@@ -1275,7 +1255,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<Genotype> getWildtypeGenotypes() {
+    public List<Genotype> getAllWildtypeGenotypes() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Genotype.class);
         criteria.add(Restrictions.eq("wildtype", true));
