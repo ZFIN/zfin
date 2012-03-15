@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="organization" type="org.zfin.people.Organization" required="false" %>

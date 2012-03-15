@@ -52,7 +52,7 @@
           <td align=center>
 
 	   <DIV class="header">
-            <A HREF="/@cgi-bin_frost@/webdriver?MIval=aa-wtlist.apg">Wild-Types</a>
+            <A HREF="/action/feature/wildtype-list">Wild-Types</a>
 	   </DIV>
           </td>
           <td align=center>
@@ -1207,7 +1207,7 @@
 
 
  	    <option
-		value=CI>Côte d'Ivoire
+		value=CI>Cï¿½te d'Ivoire
 
 
 
@@ -2151,7 +2151,7 @@
 
 
  	    <option
-		value=RE>Réunion
+		value=RE>Rï¿½union
 
 
 
@@ -2631,7 +2631,7 @@
 
 
  	    <option
-		value=AX>Åland Islands
+		value=AX>ï¿½land Islands
 
 
       	</select>

@@ -169,7 +169,7 @@ and "end" is greater by ten if forward strand or less by ten if reverse strand
 
 
 parents:  "T/AB-5"  neither "T" nor "AB-5" are current strains on
-http://zfin.org/cgi-bin/webdriver?MIval=aa-wtlist.apg
+http://zfin.org/action/feature/wildtype-list
 note 1: the Strain given in the GenBank report is "TAB-5"
 note 2: there is a wildtype line 	AB/Tuebingen  AB/TU
 	which mentions both TAB-5 and TAB-14, may be inclusive.

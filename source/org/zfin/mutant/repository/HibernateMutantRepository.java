@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
@@ -91,7 +92,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
             public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0] ;
+                return tuple[0];
             }
         });
 
@@ -1225,6 +1226,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     /**
      * Retrieve citation list of pubs for fish annotations.
+     *
      * @param genotypeExperimentIDs
      * @return
      */
@@ -1265,6 +1267,21 @@ public class HibernateMutantRepository implements MutantRepository {
      */
     public Morpholino getMorpholinosById(String moId) {
         return (Morpholino) HibernateUtil.currentSession().get(Morpholino.class, moId);
+    }
+
+    /**
+     * Retrieve all wildtype genotypes.
+     *
+     * @return
+     */
+    @Override
+    public List<Genotype> getWildtypeGenotypes() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Genotype.class);
+        criteria.add(Restrictions.eq("wildtype", true));
+        criteria.addOrder(Order.asc("nameOrder"));
+        return criteria.list();
+
     }
 
     public List<Marker> getMorpholinos(List<String> genotypeExperimentIDs) {

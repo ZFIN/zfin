@@ -57,7 +57,6 @@ aa-mappingdetail.apg
 aa-quickfindpers.apg
 aa-refcrosslist.apg
 aa-sequence.apg
-aa-wtlist.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
 aa-ZDB_home.apg

@@ -39,6 +39,10 @@ RewriteRule ^/$ /cgi-bin/webdriver?MIval=aa-ZDB_home.apg [PT]
 #lab designation page
 RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
 
+#wild-type lines
+RewriteCond %{QUERY_STRING}     ^MIval=aa-wtlist.apg$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/feature/wildtype-list [NC,R=301]
+
 # retired apg urls
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/view/%1? [NC,R=301]

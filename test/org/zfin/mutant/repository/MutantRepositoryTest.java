@@ -390,5 +390,12 @@ public class MutantRepositoryTest {
         assertTrue(attributions.size() > 1);
     }
 
+    @Test
+    public void getWildtypeLines() {
+        List<Genotype> wildtypes = mutantRepository.getAllWildtypeGenotypes();
+        assertNotNull(wildtypes);
+        assertTrue(wildtypes.size() > 20);
+    }
+
 
 }

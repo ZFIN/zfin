@@ -331,5 +331,12 @@ public interface MutantRepository {
      * @return            list of MOs
      */
     Morpholino getMorpholinosById(String moIds);
+
+    /**
+     * Retrieve all wildtype genotypes.
+     * @return
+     */
+    List<Genotype> getWildtypeGenotypes();
+
 }
 
