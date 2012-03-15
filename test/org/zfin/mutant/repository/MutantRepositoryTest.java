@@ -190,13 +190,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void retrieveAllWildtypeGenotypes() {
-        MutantRepository mr = mutantRepository;
-        List<Genotype> terms = mr.getWildtypeGenotypesWithoutWT();
-        assertNotNull(terms);
-    }
-
-    @Test
     public void goTermsByMarkerAndPublication() {
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-040624-2");
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-020724-1");
