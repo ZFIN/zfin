@@ -1,10 +1,12 @@
 package org.zfin.util.servlet;
 
+import org.zfin.database.DatabaseLock;
+import org.zfin.database.TableLock;
 import org.zfin.people.Person;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -19,6 +21,7 @@ public class RequestBean {
     private Cookie tomcatJSessioncookie;
     private String queryRequestString;
     private HttpServletRequest httRequest;
+    private List<TableLock> locks;
 
     public Person getPerson() {
         return person;
@@ -82,5 +85,42 @@ public class RequestBean {
 
     public void setHttRequest(HttpServletRequest httRequest) {
         this.httRequest = httRequest;
+    }
+
+    public Map<String, String> getRequestParameterMap() {
+        Map<String, String> map = new HashMap<String, String>();
+        Iterator<String> set = queryParameter.keySet().iterator();
+        while (set.hasNext()) {
+            String key = set.next();
+            String[] vals = (String[]) queryParameter.get(key);
+            if (vals.length == 1)
+                map.put(key, vals[0]);
+            else {
+                int index = 0;
+                for (String value : vals)
+                    map.put(key + "[" + index++ + "]", value);
+            }
+        }
+        return map;
+    }
+
+    public String getReferrer() {
+        return httRequest.getHeader("referer");
+    }
+
+    public String getUserAgent() {
+        return httRequest.getHeader("user-agent");
+    }
+
+    public Date getRequestDate() {
+        return new Date();
+    }
+
+    public void setLocks(List<TableLock> locks) {
+        this.locks = locks;
+    }
+
+    public List<TableLock> getLocks() {
+        return locks;
     }
 }

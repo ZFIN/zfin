@@ -66,7 +66,7 @@ public class DbSystemUtil {
      * @param locks list of row locks
      * @return collection of TableLock objects
      */
-    private static List<TableLock> getLockSummary(List<DatabaseLock> locks) {
+    public static List<TableLock> getLockSummary(List<DatabaseLock> locks) {
         if (locks == null)
             return null;
         List<TableLock> tableLocks = new ArrayList<TableLock>(locks.size());

@@ -72,7 +72,7 @@ public class AntibodyFigureSummaryController {
                               @RequestParam(value = "antibodyID", required = true) String antibodyID,
                               @RequestParam(value = "startStageID", required = false) String startStageID,
                               @RequestParam(value = "endStageID", required = false) String endStageID,
-                              @RequestParam(value = "figuresWithImg", required = false) Boolean figuresWithImg,
+                              @RequestParam(value = "figuresWithImg", required = false, defaultValue = "false") Boolean figuresWithImg,
                               @ModelAttribute("formBean") AntibodyBean form,
                               Model model) throws Exception {
 

@@ -1,14 +1,19 @@
 package org.zfin.database;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
+import org.zfin.database.repository.SysmasterRepository;
 import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.people.Person;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.util.ZfinSMTPAppender;
 import org.zfin.util.log4j.Log4jService;
 import org.zfin.util.servlet.RequestBean;
@@ -17,7 +22,11 @@ import org.zfin.util.servlet.ServletService;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This servlet filter creates a Hibernate session for each incoming request
@@ -41,6 +50,7 @@ public class HibernateSessionRequestFilter implements Filter {
     // a transaction fails. Maybe back to the previous page?
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        List<TableLock> locks = null;
         try {
             chain.doFilter(request, response);
             // this probably should go into its own filter as it is not much related to hibernate session handling.
@@ -53,34 +63,29 @@ public class HibernateSessionRequestFilter implements Filter {
             }
         } catch (Exception e) {
             HttpServletRequest req = (HttpServletRequest) request;
-            StringBuffer message = new StringBuffer("Unhandled Exception in Servlet Filter found: ");
-            message.append(NEWLINE);
-            message.append("Request URL: ").append(req.getRequestURL());
-            message.append(NEWLINE);
-            String requestQueryString = req.getQueryString();
-            if (requestQueryString != null) {
-                message.append("Query parameters: ").append(URLDecoder.decode(requestQueryString));
-            }
+            StringBuffer message = new StringBuffer("Unhandled Exception");
             String gwtRequestString = (String) req.getAttribute(ZfinRemoteServiceServlet.GWT_REQUEST_STRING);
             if (StringUtils.isNotEmpty(gwtRequestString)) {
                 message.append(getDebugMessage(gwtRequestString));
             }
             LOG.error(message, e);
-            LOG.error(DbSystemUtil.getLockInfo());
+            List<DatabaseLock> dbLocks = SysmasterRepository.getLocks();
+            locks = DbSystemUtil.getLockSummary(dbLocks);
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
             GBrowseHibernateUtil.closeSession();
             SysmasterHibernateUtil.closeSession();
-            callSmtpAppender((HttpServletRequest) request);
+            callSmtpAppender((HttpServletRequest) request, locks);
         }
     }
 
-    private void callSmtpAppender(HttpServletRequest request) {
+    private void callSmtpAppender(HttpServletRequest request, List<TableLock> locks) {
         ZfinSMTPAppender smtpAppender = Log4jService.getSmtpAppender();
         if (smtpAppender != null) {
             RequestBean bean = ServletService.getRequestBean(request);
+            bean.setLocks(locks);
             smtpAppender.sendEmailOfEvents(bean);
         }
     }

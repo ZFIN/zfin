@@ -1,11 +1,17 @@
 package org.zfin.util;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.CyclicBuffer;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.net.SMTPAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
+import org.zfin.database.DatabaseLock;
+import org.zfin.database.repository.SysmasterRepository;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.log4j.ZfinHtmlLayout;
 import org.zfin.util.servlet.RequestBean;
@@ -15,8 +21,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
-import java.util.Date;
-import java.util.Properties;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.*;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -77,9 +84,10 @@ public class ZfinSMTPAppender extends SMTPAppender {
 
             String rootCause = null;
             int len = localBuffer.length();
+            events = new ArrayList<LoggingEvent>();
             for (int i = 0; i < len; i++) {
                 LoggingEvent event = localBuffer.get();
-                messageBuffer.append(layout.format(event));
+                events.add(event);
                 if (i == 0)
                     rootCause = getRootCause(event.getThrowableInformation());
                 if (layout.ignoresThrowable()) {
@@ -92,10 +100,7 @@ public class ZfinSMTPAppender extends SMTPAppender {
                     }
                 }
             }
-            t = layout.getFooter();
-            if (t != null)
-                messageBuffer.append(t);
-            part.setContent(messageBuffer.toString(), layout.getContentType());
+            part.setContent(getHtmlReport(bean), layout.getContentType());
 
             Multipart mp = new MimeMultipart();
             mp.addBodyPart(part);
@@ -109,6 +114,8 @@ public class ZfinSMTPAppender extends SMTPAppender {
             LogLog.error("Error occurred while sending e-mail notification.", e);
         }
     }
+
+    private List<LoggingEvent> events;
 
     private String createSubjectLine(RequestBean bean, String rootCause) {
         StringBuffer subject = new StringBuffer();
@@ -167,8 +174,29 @@ public class ZfinSMTPAppender extends SMTPAppender {
         props.put("mail.smtp.host", "smtp.uoregon.edu");
         props.put("mail.transport.protocol", "smtp");
         Session session = Session.getInstance(props, null);
-        //session.setDebug(true);
         return session;
     }
+
+    private String getHtmlReport(RequestBean bean) {
+
+        Configuration configuration = ZfinProperties.getTemplateConfiguration();
+        StringWriter writer = new StringWriter();
+        try {
+            Template template = configuration.getTemplate("tomcat-error-report.ftl");
+            Map<String, Object> root = new HashMap<String, Object>();
+            root.put("root", bean);
+            root.put("loggingEvents", events);
+            template.process(root, writer);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error finding template file.", e);
+        } catch (TemplateException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while creating email body", e);
+        }
+        return writer.getBuffer().toString();
+    }
+
 
 }

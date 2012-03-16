@@ -155,7 +155,25 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
-                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+                assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+                // check that Pub Zhou et al is present.
+                assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
+
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    /**
+     * Check that antibody figure summary page comes up without stage and figWithImage Info.
+     */
+    @Test
+    public void testAntibodyFigureSummaryPageSupertermAllFiguresNoStageInfo() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053");
+                assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
                 // check that Pub Zhou et al is present.
                 assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
 
@@ -173,7 +191,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
-                assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+                assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
 
             } catch (IOException e) {
                 fail(e.toString());
