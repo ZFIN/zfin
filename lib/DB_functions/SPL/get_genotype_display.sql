@@ -44,7 +44,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
   define featType	 like feature.feature_type;
   define zygOrder	 like zygocity.zyg_abbrev;
   define mrkrAbbrev	 like marker.mrkr_abbrev; 
-  define featMrkrAbbrev	 like feature.feature_mrkr_abbrev;
+  define featMrkrAbbrev	 varchar(120);
 
   select geno_display_name, geno_is_wildtype 
   into startName, wildtype 
