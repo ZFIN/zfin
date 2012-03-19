@@ -98,7 +98,7 @@
 
 
 
-        <security:intercept-url pattern="/action/login" access="permitAll"  requires-channel="http"/>
+        <security:intercept-url pattern="/action/login" access="permitAll"  />
         <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}"  requires-channel="https"/>
         <security:intercept-url pattern="/action/reno/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
@@ -109,8 +109,8 @@
         <security:intercept-url pattern="/action/marker/antibody-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/dev-tools/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/dev-tools/view-session-info" access="permitAll" />
-        <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
-        <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="http"/>
+        <security:intercept-url pattern="/action/dev-tools/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/database/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/security-check" requires-channel="https"/>
@@ -126,9 +126,6 @@
         <security:intercept-url pattern="/ajax/cloneservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/ajax/antibodyservice" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/ajax/curation*" access="hasRole('root') or ${DISABLE_SECURITY}" />
-
-
-        <security:intercept-url pattern="/**" access="permitAll" requires-channel="http"  />
 
     </security:http>
 
