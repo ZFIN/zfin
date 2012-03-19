@@ -23,7 +23,8 @@ SUBDIRS = loadUp/ warehouse/
 GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh validatedata.pl \
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
            fx_permission_check.pl pnas_report.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh \
-	   performance.pl  orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh
+	   performance.pl  orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh \
+	   check_undefined_environment.pl
 
 
 STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \
