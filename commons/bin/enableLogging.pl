@@ -80,20 +80,20 @@ $REAL_GROUP_ID = $userData[3];
 $EFFECTIVE_GROUP_ID = $userData[3];
 
 if (($dbName eq "watsondb") || ($dbName eq "crickdb")) {
-    if (system("echo | $INFORMIXDIR/bin/ontape", "-s", "-B", $dbName, "-L", "0")) {
+    if (system("echo | $INFORMIXDIR/bin/ontape -s -B $dbName -L 0")) {
 	sleep(10);
 	print "enableLogging failed once, trying again...\n";
-	if (system("ontape", "-s", "-B", $dbName, "-L", "0")) {
+	if (system("echo | $INFORMIXDIR/bin/ontape -s -B $dbName -L 0")) {
 	    logError("Unable to turn on logging for $dbName",
 		     "  Try running ontape -s -B $dbName as user informix.");
 	}
     }
 }
 else {
-    if (system("echo | $INFORMIXDIR/bin/ontape", "-s", "-B", $dbName)) {
+    if (system("echo | $INFORMIXDIR/bin/ontape -s -B $dbName")) {
 	sleep(10);
 	print "enableLogging failed once, trying again...\n";
-	if (system("echo | $INFORMIXDIR/bin/ontape","-s", "-B", $dbName)) {
+	if (system("echo | $INFORMIXDIR/bin/ontape -s -B $dbName")) {
 	    logError("Unable to turn on logging for $dbName",
 		     "  Try running ontape -s -B $dbName as user informix.");
 	}
