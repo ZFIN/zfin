@@ -73,8 +73,11 @@
 # 0         3:15am   CURATOR SUPPORT: monthly zgc related statistics email
 15 03 1 * * /research/zcentral/www_homes/mirror/server_apps/Reports/Count.pl
 #
-# 0         3:25am   CURATOR SUPPORT: monthly figure permission check
-25 03 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/fx_permission_check.pl
+# 0         4:25am   CURATOR SUPPORT: monthly figure permission check
+25 04 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/fx_permission_check.pl
+#
+# 0         5:25am   CURATOR SUPPORT: monthly undefined environment check
+25 05 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/check_undefined_environment.pl
 #
 #
 # ========================================================================
