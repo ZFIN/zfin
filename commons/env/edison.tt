@@ -57,7 +57,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/tmp
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	embryonix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	pm\@cs.uoregon.edu
