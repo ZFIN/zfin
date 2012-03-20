@@ -1,5 +1,6 @@
 package org.zfin.database.presentation;
 
+import junit.framework.Assert;
 import org.junit.Test;
 import org.zfin.database.DatabaseService;
 import org.zfin.marker.Marker;
@@ -48,5 +49,15 @@ public class TableTest {
     @Test
     public void validateTableDefinitions() {
         Table.validateUniquePkIdentifier();
+    }
+
+    @Test
+    public void hasZdbIdPk() {
+        assertTrue(Table.ANATOMY_ITEM.hasZdbPk());
+        assertTrue(Table.PUBLICATION.hasZdbPk());
+        assertTrue(!Table.PHENOTYPE_EXPERIMENT.hasZdbPk());
+
+        List<Table> allTablesWithZdbPk = Table.getAllTablesWithZdbPk();
+        Assert.assertTrue(allTablesWithZdbPk.size() > 15);
     }
 }

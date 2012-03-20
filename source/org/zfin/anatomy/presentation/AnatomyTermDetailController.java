@@ -18,6 +18,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ReplacementZdbID;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
@@ -147,11 +149,18 @@ public class AnatomyTermDetailController {
                     ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());
                 } else {
                     ai = anatomyRepository.getAnatomyTermByID(aoTermID);
+                    if(ai == null){
+                        // check if it was replaced
+                        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+                        ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(aoTermID);
+                        if(replacementZdbID != null)
+                            ai = anatomyRepository.getAnatomyTermByID(replacementZdbID.getReplacementZdbID());
+                    }
                 }
                 // ToDo: This should make the above retrieval of the term from the anatomy_item table superfluous.
                 // For now we still use it to serve this page.
                 if (ai == null) {
-                    LOG.error("Unable to retrieve anatomy item for term ID: " + aoTermID);
+                    LOG.info("Unable to retrieve anatomy item for term ID: " + aoTermID);
                     return null;
                 }
                 form.setAnatomyItem(ai);

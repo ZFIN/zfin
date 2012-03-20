@@ -1203,6 +1203,52 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     /**
+     * Return a set of data from a native SELECT statement.
+     *
+     * @param statement jdbc query
+     * @return list of strings
+     */
+    @Override
+    public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement, Session session) {
+        SQLQuery query = session.createSQLQuery(statement.getQuery());
+        List objects = query.list();
+        if (objects == null)
+            return null;
+        if (objects.size() == 0)
+            return null;
+
+        List<List<String>> data = new ArrayList<List<String>>(objects.size());
+        if (objects.get(0) instanceof Object[]) {
+            List<Object[]> entities = (List<Object[]>) objects;
+            for (Object[] row : entities) {
+                List<String> singleRow = new ArrayList<String>(row.length);
+                for (Object o : row) {
+                    if (o != null)
+                        singleRow.add(o.toString());
+                    else
+                        singleRow.add("");
+                }
+                data.add(singleRow);
+            }
+        } else if (objects.get(0) instanceof BigDecimal) {
+            List<BigDecimal> entities = (List<BigDecimal>) objects;
+            for (BigDecimal row : entities) {
+                List<String> singleRow = new ArrayList<String>(1);
+                singleRow.add(row.toString());
+                data.add(singleRow);
+            }
+        } else {
+            List<String> entities = (List<String>) objects;
+            for (String row : entities) {
+                List<String> singleRow = new ArrayList<String>(1);
+                singleRow.add(row);
+                data.add(singleRow);
+            }
+        }
+        return data;
+    }
+
+    /**
      * Retrieve all term ids.
      * If firstNIds > 0 return only the first N.
      * If firstNIds < 0 return null

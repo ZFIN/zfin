@@ -198,6 +198,14 @@
         <a href="/action/database/browse-database">Browse Database tables</a>
     </td>
 </tr>
+<tr>
+    <td>
+
+    </td>
+    <td>
+        <a href="/action/unload/summary">Browse Data History</a>
+    </td>
+</tr>
 
 
 <tr bgcolor="#ccccc0">

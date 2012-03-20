@@ -82,4 +82,6 @@ public class AbstractScriptWrapper {
     }
 
     private static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);
+    public static final String NEWLINE = System.getProperty("line.separator");
+
 }

@@ -348,6 +348,11 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/unload/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/database/*</url-pattern>
     </servlet-mapping>
 

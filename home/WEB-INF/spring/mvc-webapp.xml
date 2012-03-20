@@ -23,6 +23,8 @@
     <context:component-scan base-package="org.zfin.antibody.presentation"/>
     <context:component-scan base-package="org.zfin.anatomy.presentation"/>
     <context:component-scan base-package="org.zfin.database.presentation"/>
+    <context:component-scan base-package="org.zfin.util.database"/>
+    <context:component-scan base-package="org.zfin.util.database.presentation"/>
     <mvc:annotation-driven/>
 
 </beans>

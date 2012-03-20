@@ -3,6 +3,7 @@
  */
 package org.zfin.infrastructure.repository;
 
+import org.hibernate.Session;
 import org.zfin.ExternalNote;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
@@ -398,6 +399,8 @@ public interface InfrastructureRepository {
      * @param data
      */
     void executeJdbcStatementOneByOne(DatabaseJdbcStatement statement, List<List<String>> data);
+
+    List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement, Session session);
 }
 
 

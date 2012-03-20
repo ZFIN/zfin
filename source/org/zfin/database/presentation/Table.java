@@ -14,14 +14,14 @@ public enum Table {
     ALL_NAME_ENDS("ANE", "all_name_ends", "allnmend_name_end_lower,allnmend_allmapnm_serial_id"),
     ALL_TERM_CONTAINS("ALLTERM", "all_term_contains", null, ""),
     ANATOMY_DISPLAY("MARKER", "anatomy_display", "anatdisp_stg_zdb_id,anatdisp_seq_num"),
-    ANATOMY_ITEM("ANAT", "anatomy_item", "anatitem_zdb_id","anatitem_name","anatitem_is_cell,anatitem_is_obsolete"),
+    ANATOMY_ITEM("ANAT", "anatomy_item", "anatitem_zdb_id", "anatitem_name", "anatitem_is_cell,anatitem_is_obsolete"),
     ANATOMY_STATS("ANATOMY_STATS", "anatomy_stats", "anatstat_term_zdb_id,anatstat_object_type"),
     ANTIBODY("MARKER", "antibody", "atb_zdb_id"),
     APATO_TAG("PATOTAG", "apato_tag", "apatotag_name"),
     CLONE("MARKER", "clone", "clone_mrkr_zdb_id"),
-    BLAST_DB("BLASTDB", "blast_database", "blastdb_zdb_id","blastdb_name"),
-    BLAST_DB_ORINGINATION_TYPE("BLAST_DB_ORINGINATION_TYPE", "blast_database_origination_type", "bdot_pk_id"),
-    BLAST_DB_TYPE("BLAST_DB_TYPE", "blast_database_type", "bdbt_type","blastdb_public"),
+    BLAST_DB("BLASTDB", "blast_database", "blastdb_zdb_id", "blastdb_name"),
+    BLAST_DB_ORIGINATION_TYPE("BLAST_DB_ORIGINATION_TYPE", "blast_database_origination_type", "bdot_pk_id"),
+    BLAST_DB_TYPE("BLAST_DB_TYPE", "blast_database_type", "bdbt_type", "blastdb_public"),
     BLAST_HIT("BHIT", "blast_hit", "bhit_zdb_id"),
     BLAST_QUERY("BQRY", "blast_query", "bqry_zdb_id"),
     BLAST_REPORT("BRPT", "blast_report", "cnd_zdb_id"),
@@ -33,7 +33,7 @@ public enum Table {
     CURATION("CUR", "curation", "cur_zdb_id"),
     CURATION_TOPIC("CURTOPIC", "curation_topic", "curtopic_name"),
     COMPANY("COMPANY", "company", "zdb_ID", "name"),
-    DATA_ALIAS("DALIAS", "data_alias", "dalias_zdb_id","dalias_alias"),
+    DATA_ALIAS("DALIAS", "data_alias", "dalias_zdb_id", "dalias_alias"),
     DATA_NOTE("DNOTE", "data_note", "dnote_zdb_id"),
     DBLINK("DBLINK", "db_link", "dblink_zdb_id", "dblink_acc_num_display"),
     EXPERIMENT("EXP", "experiment", "exp_zdb_id", "exp_name"),
@@ -106,7 +106,7 @@ public enum Table {
     PUBLICATION("PUB", "publication", "zdb_id", "pub_mini_ref "),
     PUBLICATION_NOTE("PNOTE", "publication_note", "pnote_zdb_id"),
     RECORD_ATTRIBUTION("REC_ATTR", "record_attribution", "recattrib_data_zdb_id,recattrib_source_zdb_id,recattrib_source_type"),
-    RUN("RUN", "run", "run_zdb_id","run_name"),
+    RUN("RUN", "run", "run_zdb_id", "run_name"),
     RUN_CANDIDATE("RUNCAN", "run_candidate", "runcan_zdb_id"),
     RUN_PROGRAM("RUN_PROGRAM", "run_program", "runprog_program"),
     RUN_TYPE("RUN_TYPE", "run_type", "runtype_name"),
@@ -338,5 +338,23 @@ public enum Table {
         if (manyToManyTableMap == null)
             throw new RuntimeException("No many-to-many Key relation defined");
         return manyToManyTableMap.get(rootTable);
+    }
+
+    // excluding many-to-many tables
+    public static List<Table> getAllTablesWithZdbPk() {
+        List<Table> zdbTables = new ArrayList<Table>(60);
+        for (Table entityTable : values())
+            if (entityTable.hasZdbPk() && !entityTable.isManyToManyTable())
+                zdbTables.add(entityTable);
+
+        return zdbTables;
+    }
+
+    public boolean hasZdbPk() {
+        return pkName != null && pkName.contains("zdb_id");
+    }
+
+    public boolean isManyToManyTable() {
+        return manyToManyTableMap != null;
     }
 }

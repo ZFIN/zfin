@@ -283,6 +283,25 @@ public class DatabaseService {
         return createJoinJdbcStatement(lookup, foreignKeyList, entityTable);
     }
 
+    public static DatabaseJdbcStatement createJdbcStatementAllSortedRecords(String tableName) {
+        List<String> result = getInfrastructureRepository().retrieveMetaData(tableName);
+        DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
+        StringBuilder builder = new StringBuilder();
+        builder.append("Select * from ");
+        builder.append(tableName);
+        builder.append(" order by 1");
+        int index = 1;
+        for (String columnName : result) {
+            if (index > 1) {
+                builder.append(",");
+                builder.append(index);
+            }
+            index++;
+        }
+        statement.addQueryPart(builder.toString());
+        return statement;
+    }
+
     public static class ForeignKeyResultSort implements Comparator<ForeignKeyResult> {
         public int compare(ForeignKeyResult o1, ForeignKeyResult o2) {
             return o1.getForeignKey().getForeignKeyTable().getTableName().compareToIgnoreCase(o2.getForeignKey().getForeignKeyTable().getTableName());

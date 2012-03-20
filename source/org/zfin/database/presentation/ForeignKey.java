@@ -84,7 +84,7 @@ public enum ForeignKey {
     CONTACT_PERSON_LAB(Table.PERSON, Table.LAB, "contact_person"),
     CONTACT_PERSON_COMP(Table.PERSON, Table.COMPANY, "contact_person"),
     BLAST_TYPE_BLAST_DB(Table.BLAST_DB_TYPE, Table.BLAST_DB, "blastdb_type"),
-    BLAST_ORINGINATION_BLAST_DB(Table.BLAST_DB_ORINGINATION_TYPE, Table.BLAST_DB, "blastdb_origination_id"),
+    BLAST_ORINGINATION_BLAST_DB(Table.BLAST_DB_ORIGINATION_TYPE, Table.BLAST_DB, "blastdb_origination_id"),
     BLAST_QUERY_BLAST_DB(Table.BLAST_QUERY, Table.BLAST_HIT, "bhit_bqry_zdb_id"),
     ACCESSION_BLAST_DB(Table.ACCESSION_BANK, Table.BLAST_HIT, "bhit_target_accbk_pk_id"),
     RUN_CANDIDATE_BLAST_QUERY(Table.RUN_CANDIDATE, Table.BLAST_QUERY, "bqry_runcan_zdb_id"),
