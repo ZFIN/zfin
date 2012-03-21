@@ -23,9 +23,7 @@ public class LoginController implements Controller {
         if (url.endsWith("/action/login")) {
 //            response.sendRedirect("/action/login-redirect");
 
-            String loginRedirectUrl = ZfinPropertiesEnum.SECURE_HTTP.toString()
-                    + ZfinPropertiesEnum.DOMAIN_NAME.toString()
-                    + "/action/login-redirect" ;
+            String loginRedirectUrl = "/action/login-redirect" ;
             response.sendRedirect(loginRedirectUrl);
         }
 
