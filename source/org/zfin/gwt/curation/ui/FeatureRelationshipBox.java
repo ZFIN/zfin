@@ -236,7 +236,7 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
             @Override
             public void onClick(ClickEvent event) {
                 FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO = getFeatureMarkerRelationshipFromGui();
-               try {
+                try {
                     FeatureMarkerRelationshipValidationService.validateFeatureMarkerRelationshipToAdd(featureMarkerRelationshipDTO,featureMarkerRelationshipDTOs) ;
                 } catch (ValidationException e) {
                     setError(e.getMessage());
