@@ -1,5 +1,7 @@
 package org.zfin.ontology;
 
+import org.obo.test.GOAnnotationFilePlusOntologyTest;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -42,7 +44,8 @@ public enum Ontology implements Serializable {
     SPATIAL("spatial", "Spatial Ontology", false),
     BEHAVIOR("behavior_ontology", "Behavior Ontology", false),
     MPATH("mouse_pathology.ontology", "MPATH", false),
-    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false);
+    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false),
+    AOGO(ANATOMY.getOntologyName()+GO.getOntologyName(),"AO and GO",true) ;
 
     private String ontologyName;
     private String commonName;
@@ -95,7 +98,7 @@ public enum Ontology implements Serializable {
     }
 
     public static Ontology[] getSerializableOntologies() {
-        Ontology[] ontologies = new Ontology[12];
+        Ontology[] ontologies = new Ontology[13];
         int i = 0;
         ontologies[i++] = Ontology.STAGE;
         ontologies[i++] = Ontology.ANATOMY;
@@ -108,6 +111,7 @@ public enum Ontology implements Serializable {
         ontologies[i++] = Ontology.BEHAVIOR;
         ontologies[i++] = Ontology.MPATH;
         ontologies[i++] = Ontology.MPATH_NEOPLASM;
+        ontologies[i++] = Ontology.AOGO;
         ontologies[i] = Ontology.SPATIAL;
 
         return ontologies;
@@ -214,6 +218,7 @@ public enum Ontology implements Serializable {
         doNotIndexOntologyList.add(Ontology.QUALITY_QUALITIES);
         doNotIndexOntologyList.add(Ontology.ANATOMY_FULL);
         doNotIndexOntologyList.add(Ontology.QUALITY_QUALITIES);
+        doNotIndexOntologyList.add(Ontology.AOGO);
     }
 
     public boolean shouldNotBeIndexed() {

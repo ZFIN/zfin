@@ -1179,7 +1179,7 @@ marker = '';
  <?MICOMMENT>-------------- end EST and/or Gene containing SNP -----------------<?/MICOMMENT>
 
  </TABLE></TD></TR>
-<?MIBLOCK COND="$(EC,$mapped,t)"> <br><TR><TD> <hr width=80%></TD></TR>
+<?MIBLOCK COND="$(EC,$mapped,t)"> <br><TR><TD> <hr width=80%></TD></TR> </TABLE>
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
 <?/MIBLOCK>
 <?/MIBLOCK>

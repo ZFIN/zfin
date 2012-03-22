@@ -44,10 +44,27 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
         allCriteria.add(geneOrFeatureNameCriteria);
 
         phenotypeAnatomyCriteria = new SearchCriterion(SearchCriterionType.PHENOTYPE_ANATOMY_ID, true);
-        phenotypeAnatomyCriteria.setValue(formBean.getAnatomyTermIDs());
-        phenotypeAnatomyCriteria.setSeparator(",");
-        phenotypeAnatomyCriteria.setNameSeparator("\\|");
-        phenotypeAnatomyCriteria.setName(formBean.getAnatomyTermNames());
+         if (formBean.getAnatomyTermIDs()==null){
+             formBean.setAnatomyTermIDs("");
+         }
+        if (formBean.getGoTermIDs()!=null){
+
+               phenotypeAnatomyCriteria.setValue(formBean.getAnatomyTermIDs()+formBean.getGoTermIDs());
+                    }
+       else{
+               phenotypeAnatomyCriteria.setValue(formBean.getAnatomyTermIDs());
+        }
+
+
+         phenotypeAnatomyCriteria.setSeparator(",");
+   //     phenotypeAnatomyCriteria.setNameSeparator("\\|");
+        if (formBean.getGoTermNames()!=null){
+        phenotypeAnatomyCriteria.setName(formBean.getAnatomyTermNames()+formBean.getGoTermNames());
+        }
+        else
+        {
+          phenotypeAnatomyCriteria.setName(formBean.getAnatomyTermNames());
+        }
         allCriteria.add(phenotypeAnatomyCriteria);
 
         featureTypeCriteria = new SearchCriterion(SearchCriterionType.FEATURE_TYPE, false);

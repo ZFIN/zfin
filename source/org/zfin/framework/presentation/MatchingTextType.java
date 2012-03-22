@@ -19,6 +19,7 @@ public enum MatchingTextType {
     ANTIBODY_NAME("Name"),
     ANTIBODY_ALIAS("Alias [Antibody]"),
     AO_TERM("Anatomy Term"),
+    GO_TERM("Gene Ontology Term"),
     CONSTRUCT("Construct"),
     RELATED_MARKER("Related Marker"),
     RELATED_MARKER_ABBREVIATION("Related Marker to Construct [Marker Symbol]"),

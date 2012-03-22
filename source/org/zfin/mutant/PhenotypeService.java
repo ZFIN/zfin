@@ -14,6 +14,7 @@ import java.util.*;
 public class PhenotypeService {
 
     public static final String ANATOMY = "ANATOMY";
+    public static final String GO = "GO";
 
     /**
      * Return a map of phenotype descriptions, comma-delimited, and grouped by ontology for a given
@@ -229,9 +230,32 @@ public class PhenotypeService {
         return termList;
     }
 
+    public static Set<Term> getAllGOTerms(PhenotypeStatement phenotypeStatement) {
+        if (phenotypeStatement == null)
+            return null;
+        // at most 4 entries
+        Set<Term> termList = new HashSet<Term>(2);
+        PostComposedEntity entity = phenotypeStatement.getEntity();
+        if (entity != null) {
+            addIfGOTerm(termList, entity.getSuperterm());
+            addIfGOTerm(termList, entity.getSubterm());
+        }
+        PostComposedEntity relatedEntity = phenotypeStatement.getRelatedEntity();
+        if (relatedEntity != null) {
+            addIfGOTerm(termList, relatedEntity.getSuperterm());
+            addIfGOTerm(termList, relatedEntity.getSubterm());
+        }
+        return termList;
+    }
+
     private static void addIfAnatomyTerm(Set<Term> termList, GenericTerm superterm) {
         if (superterm != null)
             if (superterm.getOntology().equals(Ontology.ANATOMY))
+                termList.add(superterm);
+    }
+    private static void addIfGOTerm(Set<Term> termList, GenericTerm superterm) {
+        if (superterm != null)
+            if (superterm.getOntology().equals(Ontology.GO_BP))
                 termList.add(superterm);
     }
 

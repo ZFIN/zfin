@@ -142,6 +142,7 @@ public class FishMatchingService {
                 Set<Term> allPhenotypeTerms = new HashSet<Term>();
                 for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
                     allPhenotypeTerms.addAll(PhenotypeService.getAllAnatomyTerms(phenotypeStatement));
+                    allPhenotypeTerms.addAll(PhenotypeService.getAllGOTerms(phenotypeStatement));
                 }
                 compareQueryTermWithPhenotypeTermList(queryTermID, allPhenotypeTerms);
             }

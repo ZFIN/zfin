@@ -479,6 +479,9 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
     /**
      * Check if a given term name is a quality relational term
      *
+     *
+     *
+     *
      * @param termName term name
      */
     @Override

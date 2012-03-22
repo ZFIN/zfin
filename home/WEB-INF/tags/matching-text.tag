@@ -35,6 +35,13 @@
                                             highlightString="${matchingTerm.queryString}"/>
                             ${matchingTerm.appendix}
                         </c:when>
+                        <c:when test="${matchingTerm.matchingQuality eq 'SUBTERM'}">
+                            ${matchingTerm.matchedString} ${matchingTerm.appendix}
+                            ${matchingTerm.matchingQuality.name} of
+                            <zfin:highlight highlightEntity="${matchingTerm.queryString}"
+                                            highlightString="${matchingTerm.queryString}"/>
+                            ${matchingTerm.appendix}
+                        </c:when>
                         <c:otherwise>
                             <zfin:highlight highlightEntity="${matchingTerm.matchedString}"
                                             highlightString="${matchingTerm.queryString}"/>
