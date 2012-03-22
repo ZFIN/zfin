@@ -105,7 +105,7 @@ public class FeatureMarkerRelationshipTest {
 
     }
 
-   /* @Test
+    @Test
     public void validateTranslocationExclusiveRelationships() throws ValidationException {
 
         featureDTO.setFeatureType(FeatureTypeEnum.TRANSLOC);
@@ -152,7 +152,7 @@ public class FeatureMarkerRelationshipTest {
         } catch (ValidationException ve) {
         }
     }
-*/
+
     @Test
     public void validateCounts() {
         featureDTO.setFeatureType(FeatureTypeEnum.DEFICIENCY);
@@ -190,7 +190,7 @@ public class FeatureMarkerRelationshipTest {
 
     }
 
-    /*@Test
+    @Test
     public void validateDeficiencyExclusiveRelationships() throws ValidationException {
         featureDTO.setFeatureType(FeatureTypeEnum.DEFICIENCY);
 
@@ -275,5 +275,5 @@ public class FeatureMarkerRelationshipTest {
         }
 
     }
-*/
+
 }
