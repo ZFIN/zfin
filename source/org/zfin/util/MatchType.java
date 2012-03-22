@@ -112,14 +112,6 @@ public enum MatchType {
             return matchString.equalsIgnoreCase(query);
         }
     },
-    SUBTERM("Subterm") {
-        @Override
-        public boolean isMatch(String matchString, String query) {
-            if (matchString == null || query == null)
-                return false;
-            return matchString.equalsIgnoreCase(query);
-        }
-    },
     MATCH_ON_FILTER("Matches on Filter") {
         @Override
         public boolean isMatch(String matchString, String query) {
