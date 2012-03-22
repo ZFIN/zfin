@@ -121,7 +121,9 @@ public class FeatureService {
         List<String> featureDBLinkList = new ArrayList<String>();
         for (FeatureDBLink featureDBLink : featureSequences) {
             if (!featureDBLink.getReferenceDatabase().getForeignDB().isZfishbook()){
+                if (!featureDBLink.getReferenceDatabase().getForeignDB().isZmp()){
             featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+            }
             }
         }
         return featureDBLinkList;

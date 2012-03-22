@@ -366,4 +366,34 @@ public class Feature implements EntityNotes{
         return true;
     }
 
+     public boolean isAllZmp () {
+		if (dbLinks == null || dbLinks.isEmpty())
+           return false;
+
+        int countZmp = 0;
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("ZMP")) {
+                  countZmp++;
+            }
+        }
+
+        if (countZmp == dbLinks.size())
+	         return true;
+
+        return false;
+    }
+
+    public boolean isNoZmp () {
+		if (dbLinks == null || dbLinks.isEmpty())
+           return true;
+
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
+                  return false;
+            }
+        }
+
+        return true;
+    }
+
 }
