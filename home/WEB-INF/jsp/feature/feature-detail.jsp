@@ -281,6 +281,7 @@
         <td>
             <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
               <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
+                  <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zmp}">
                 <%--${featureGenbank.accessionNumber}--%>
                 <zfin:link entity="${featureGenbank}"/>
                 <c:if test="${featureGenbank.publicationCount > 0}">
@@ -295,6 +296,7 @@
                 </c:if>
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
               </c:if>
+                </c:if>
             </c:forEach>
         </td>
     </tr>
@@ -305,7 +307,7 @@
         </td>
         <td>
             <c:forEach var="featureZfishbook" items="${formBean.feature.dbLinks}" varStatus="loop">
-              <c:if test="${featureZfishbook.referenceDatabase.foreignDB.zfishbook}">
+              <%--<c:if test="${featureZfishbook.referenceDatabase.foreignDB.zfishbook}">--%>
                 <zfin:link entity="${featureZfishbook}"/>
                 <c:if test="${featureZfishbook.publicationCount > 0}">
                     <c:choose>
@@ -318,8 +320,9 @@
                     </c:choose>
                 </c:if>
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
-              </c:if>
+              <%--</c:if>--%>
             </c:forEach>
+
         </td>
     </tr>
 
