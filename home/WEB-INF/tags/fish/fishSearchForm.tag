@@ -130,22 +130,17 @@
             </form:select>
         </td>
     </tr>
-   <tr>
-            <th>
-                <label class="namesearchLabel">Phenotype&nbsp;
-                  <select name="ontologyType" onChange="changeOntology(this.value)">
-                      <option SELECTED value=AO>Anatomy</option>
-                      <option value=GO>Gene Ontology</option>
-                   </select>
-                    </label>
-            </th>
+    <tr>
+        <th>
+            <label class="namesearchLabel">Phenotype Anatomy</label>
+        </th>
         <td>
             <form:hidden path="anatomyTermIDs"/>
             <form:hidden path="anatomyTermNames"/>
             <script type="text/javascript">
                 var LookupProperties = {
                     inputDiv:"anatomyTermInput",
-                    termListDiv:"searchTermList",
+                    termListDiv:"anatomyTermList",
                     inputName:"searchTerm",
                     showError:true,
                     <c:if test='${formBean.anatomyTermNames != null}' >
@@ -171,88 +166,9 @@
             <script language="javascript"
                     src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
             <div id="anatomyTermInput"></div>
-            <form:hidden path="goTermIDs"/>
-            <form:hidden path="goTermNames"/>
-            <script type="text/javascript">
-                var LookupProperties1 = {
-                    inputDiv: "goTermInput",
-                    termListDiv: "searchTermList",
-                    inputName: "searchGoTerm",
-                    showError: true,
-                    <c:if test='${formBean.goTermNames != null}' >
-                    previousTableValues: "${formBean.goTermNames}",
-                    </c:if>
-                    hiddenNames: "goTermNames",
-                    hiddenIds: "goTermIDs",
-                    type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName: "<%= Ontology.GO %>",
-                    width: 30,
-                    wildcard: false,
-                    useTermTable: true
-                }
-            </script>
-            <style type="text/css">
-                .accessoryLabel {
-                    font-size: .75em;
-                }
 
-                .purpletable {
-                    background: magenta;
-
-                }
-            </style>
-
-            <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
-
-            <div id="goTermInput" style="display:none; visibility:hidden;">
-
-            </div>
-
-            <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
-            <script language="javascript"
-                    src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
-            <div id="anatomyTermInput"></div>
-            <form:hidden path="aogoTermIDs"/>
-            <form:hidden path="aogoTermNames"/>
-            <script type="text/javascript">
-                var LookupProperties1 = {
-                    inputDiv: "aogoTermInput",
-                    termListDiv: "searchTermList",
-                    inputName: "searchAoGoTerm",
-                    showError: true,
-                    <c:if test='${formBean.aogoTermNames != null}' >
-                    previousTableValues: "${formBean.aogoTermNames}",
-                    </c:if>
-                    hiddenNames: "aogoTermNames",
-                    hiddenIds: "aogoTermIDs",
-                    type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName: "<%= Ontology.AOGO %>",
-                    width: 30,
-                    wildcard: false,
-                    useTermTable: true
-                }
-            </script>
-            <style type="text/css">
-                .accessoryLabel {
-                    font-size: .75em;
-                }
-
-                .purpletable {
-                    background: magenta;
-
-                }
-            </style>
-
-            <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
-
-            <div id="aogoTermInput" style="display:none; visibility:hidden;">
-
-            </div>
 
         </td>
-
-
-
         <td rowspan=2>
             <span class="bold">Filters:</span>
             <table>
@@ -287,7 +203,7 @@
     <tr>
         <th></th>
         <td>
-            <div id="searchTermList">
+            <div id="anatomyTermList">
                 <a style="display:none; float: right;" id="term-list-remove-all-link"
                    href="javascript:clearTable();decorateTermList();">remove all</a>
             </div>
@@ -352,22 +268,19 @@
     jQuery('input[name=anatomyTermIDs]').change(function () {
         decorateTermList();
     });
-    jQuery('input[name=goTermIDs]').change(function () {
-        decorateTermList();
-    });
 
     function decorateTermList() {
-        termCount = jQuery('#searchTermList .gwt-Hyperlink').size();
+        termCount = jQuery('#anatomyTermList .gwt-Hyperlink').size();
         if (termCount == 0) {
-            jQuery('#searchTermList').hide();
+            jQuery('#anatomyTermList').hide();
             jQuery('#term-list-remove-all-link').hide();
 
         } else if (termCount == 1) {
-            jQuery('#searchTermList').show();
+            jQuery('#anatomyTermList').show();
             jQuery('#term-list-remove-all-link').hide();
 
         } else {
-            jQuery('#searchTermList').show();
+            jQuery('#anatomyTermList').show();
             jQuery('#term-list-remove-all-link').show();
         }
 
@@ -423,21 +336,6 @@
             document.getElementById("Antibody Search").submit();
         }
     }
-      function changeOntology(ontology){
-
-            if (ontology=='GO'){
-                document.getElementById("anatomyTermInput").style.display='none' ;
-                document.getElementById("anatomyTermInput").style.visiblity='hidden' ;
-                document.getElementById("goTermInput").style.display='' ;
-                document.getElementById("goTermInput").style.visibility='visible' ;
-
-            }
-            if (ontology=='AO'){
-                document.getElementById("goTermInput").style.display='none' ;
-                document.getElementById("anatomyTermInput").style.display='' ;
-                document.getElementById("anatomyTermInput").style.visibility='visible' ;
-            }
-        }
 
 </script>
 
