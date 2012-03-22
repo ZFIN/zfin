@@ -3,7 +3,6 @@ package org.zfin.util;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 
 import java.util.*;
@@ -98,12 +97,7 @@ public class MatchingService {
     public void addMatchingSubstructureOntologyTerm(String termName, String parentTermName, MatchingTextType type) {
         MatchingText match = new MatchingText(type);
         match.addMatchingTermPair(termName, parentTermName);
-        if (type.equals(MatchingTextType.AO_TERM)){
         match.setMatchingQuality(MatchType.SUBSTRUCTURE);
-        }
-        if (type.equals(MatchingTextType.GO_TERM)){
-        match.setMatchingQuality(MatchType.SUBTERM);
-        }
         match.setRelatedEntity(parentTermName);
         matchingTextList.add(match);
 
@@ -121,12 +115,7 @@ public class MatchingService {
         if (terms != null) {
             for (Term term : terms) {
                 if (term.getZdbID().equals(termID)) {
-                    if (term.getOntology().equals(Ontology.ANATOMY)){
-                     addMatchingOntologyTerm(term.getTermName(), MatchingTextType.AO_TERM);
-                }
-                    if (term.getOntology().equals(Ontology.GO_BP)){
-                    addMatchingOntologyTerm(term.getTermName(), MatchingTextType.GO_TERM);
-                    }
+                    addMatchingOntologyTerm(term.getTermName(), MatchingTextType.AO_TERM);
                     return true;
                 }
             }
@@ -147,12 +136,7 @@ public class MatchingService {
             GenericTerm queryTerm = getOntologyRepository().getTermByZdbID(queryTermID);
             for (Term term : terms) {
                 if (getOntologyRepository().isParentChildRelationshipExist(queryTerm, term)) {
-                    if (term.getOntology().equals(Ontology.ANATOMY)){
                     addMatchingSubstructureOntologyTerm(term.getTermName(), queryTerm.getTermName(), MatchingTextType.AO_TERM);
-                    }
-                    if (term.getOntology().equals(Ontology.GO_BP)){
-                    addMatchingSubstructureOntologyTerm(term.getTermName(), queryTerm.getTermName(), MatchingTextType.GO_TERM);
-                    }
                     return true;
                 }
             }
