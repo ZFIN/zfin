@@ -43,27 +43,8 @@ public class FishSearchFormBean extends PaginationBean {
     private Term term;
     private String anatomyTermNames;
     private String anatomyTermIDs;
-    private String goTermNames;
-    private String goTermIDs;
 
     private boolean includeSubstructures;
-
-    public String getGoTermNames() {
-        return goTermNames;
-    }
-
-    public void setGoTermNames(String goTermNames) {
-        this.goTermNames = goTermNames;
-    }
-
-    public String getGoTermIDs() {
-        return goTermIDs;
-    }
-
-    public void setGoTermIDs(String goTermIDs) {
-        this.goTermIDs = goTermIDs;
-    }
-
     // by default sort by best match
     private String sortBy = SortBy.BEST_MATCH.toString();
 
@@ -116,8 +97,7 @@ public class FishSearchFormBean extends PaginationBean {
         return StringUtils.equals(filter1, SHOW_ALL) &&
                 !hasMutationTypeSelected() &&
                 StringUtils.isEmpty(geneOrFeatureName) &&
-                StringUtils.isEmpty(anatomyTermIDs) &&
-                StringUtils.isEmpty(goTermIDs);
+                StringUtils.isEmpty(anatomyTermIDs);
     }
 
 
@@ -221,13 +201,6 @@ public class FishSearchFormBean extends PaginationBean {
         mutationTypeList.put(MutationType.UNSPECIFIED.getName(), FeatureTypeEnum.UNSPECIFIED.getDisplay());
 
         return mutationTypeList;
-    }
-
-    public Map<String, String> getOntologyTypeList() {
-        LinkedHashMap<String, String> ontologyTypeList = new LinkedHashMap<String, String>();
-        ontologyTypeList.put("AO", "AO");
-        ontologyTypeList.put("GO", "GO");
-        return ontologyTypeList;
     }
 
 
