@@ -124,7 +124,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         WASHUZ("WashUZ"),
         ZF_ESPRESSO("ZF-Espresso"),
         ZFIN_PROT("ZFIN_PROT"),
-        ZFISHBOOK("zfishbook");
+        ZFISHBOOK("zfishbook"),
+        ZMP("ZMP");
 
 
         private final String value;
@@ -149,6 +150,12 @@ public class ForeignDB implements Comparable<ForeignDB> {
 
     public boolean isZfishbook () {
         if (displayName != null && displayName.equals("zfishbook"))
+			   return true;
+
+	    return false;
+    }
+    public boolean isZmp () {
+        if (displayName != null && displayName.equals("ZMP"))
 			   return true;
 
 	    return false;
