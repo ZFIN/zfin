@@ -27,7 +27,7 @@
         <tr style="background: #ccc">
         <th></th>
         <th>Accession</th>
-        <th>LG</th>
+        <th>Chr</th>
         <th>GENE</th>
         <th>Species</th>
         <th>Score</th>
