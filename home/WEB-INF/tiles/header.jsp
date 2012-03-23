@@ -172,7 +172,7 @@
             <a href="/">Home</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-newmrkrselect.apg"
-               title="Search by name, accession number, LG, vector or sequence type">Genes / Markers / Clones</a>
+               title="Search by name, accession number, chromosome, vector or sequence type">Genes / Markers / Clones</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/action/blast/blast"
                title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a>
