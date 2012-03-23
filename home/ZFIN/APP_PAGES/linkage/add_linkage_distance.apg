@@ -84,7 +84,7 @@ Possible vars:  update
   <?/MIBLOCK>
   $display_source
   <br>
-  LG: $(IF,$(EC,$2,0),,$2)
+  Chromosome: $(IF,$(EC,$2,0),,$2)
   <br>
   Comments: $3
 <?/MISQL>

@@ -284,11 +284,11 @@ Expected vars:  None.
  
 
     <?MIBLOCK COND="$(NXST,$update)">
-    <!-- get LG  -->
+    <!-- get chromosome  -->
 
      <p>
       <?MIVAR>
-	<font size=2><big><b>LG: </b></big> 
+	<font size=2><big><b>Chromosome: </b></big> 
 	<SELECT name=lg>
           <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
             <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),unknown,$1)

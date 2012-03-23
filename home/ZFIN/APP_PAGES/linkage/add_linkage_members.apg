@@ -115,7 +115,7 @@ Possible vars: update
   <?MIVAR>  
     $display_source
     <br>
-    LG: $(IF,$(EC,$lg,0),,$lg)
+    Chromosome: $(IF,$(EC,$lg,0),,$lg)
     <br>
     Comments: $usercomments
   <?/MIVAR>

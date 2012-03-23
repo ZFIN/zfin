@@ -101,7 +101,7 @@ Expected vars: link_id
     </TR>
     <p>
     <TR>
-	<b>Linkage Group:</b>
+	<b>Chromosome:</b>
 	<SELECT name=lg >
 	  <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
 	    <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),unknown,$1)

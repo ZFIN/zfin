@@ -1,5 +1,5 @@
 <?MICOMMENT>
-this app page is used to insert new linkage group info. The table where the 
+this app page is used to insert new linkage group or chromosome info. The table where the 
 record insertion occurs is dependent upon the calling form.  The page the user 
 is returned to is also dependent upon the calling form
 
