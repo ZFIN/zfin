@@ -26,7 +26,7 @@ top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showscores
 <TABLE width=100%>
 <TR>
 <TD align=center><b><font size=3>$panel_abbrev Panel;
-$(IF,$(NC,$OR_LG,None),LG $OR_LG)
+$(IF,$(NC,$OR_LG,None),Chr $OR_LG)
 $(IF,$(AND,$(NC,$marker_abbrev,undefined),$(NC,$marker_abbrev,None)),; $marker_abbrev)
  </B>
 </TD>

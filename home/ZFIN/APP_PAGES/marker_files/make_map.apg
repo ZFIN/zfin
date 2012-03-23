@@ -33,7 +33,7 @@ $(IF,$(EC,$1,$marker),$(SETVAR,$focus,$MI_CURRENTROW))
 
 </TABLE>
 
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no publicly available markers on this Linkage Group!</B>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no publicly available markers on this chromosome!</B>
 <?/MIVAR>
 
 <?MIVAR COND="$(XST,$focus)">

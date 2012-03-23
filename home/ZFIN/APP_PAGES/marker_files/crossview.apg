@@ -263,11 +263,11 @@ ERROR -- something bad happened -- no OID passed in!
        <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
         <p>
         <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
-         <B>NOTE:</B> There is too much data to display an entire Linkage Group <br>
+         <B>NOTE:</B> There is too much data to display an entire chromosome <br>
          Please use <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?marker="> Search ZMap </A>
          to restrict the query.
         <?MIELSE>
-         Click "View Map" in table at right to see a graphical map of an individual linkage group.
+         Click "View Map" in table at right to see a graphical map of an individual chromosome.
         <?/MIBLOCK>
         <p align=center>OR</p>
         <?MIVAR>
@@ -278,7 +278,7 @@ ERROR -- something bad happened -- no OID passed in!
         <?MIVAR>
          <TABLE BORDER=0 cellpadding=2 bgcolor="white" cols=4>
         <?/MIVAR>
-        <TH>LG</TH><TH>Markers on LG</TH><TH> </TH><TH> </TH>
+        <TH>Chromosome</TH><TH>Markers on chromosome</TH><TH> </TH><TH> </TH>
         <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
         <?MIVAR NAME=$last>0<?/MIVAR>
         <?MIVAR NAME=$marker>None<?/MIVAR>

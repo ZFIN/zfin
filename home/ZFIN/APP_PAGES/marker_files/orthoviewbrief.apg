@@ -108,7 +108,7 @@ display summarized orthology data on gene page.
       $1
     <?/MISQL>
     
-    <?MIVAR NAME=$noLGChrString>$(TRIM,$(REPLACE,$longChrString,"LG:",""))<?/MIVAR>
+    <?MIVAR NAME=$noLGChrString>$(TRIM,$(REPLACE,$longChrString,"Chr:",""))<?/MIVAR>
     <?MIVAR NAME=$posOfSpace>$(POSITION,$noLGChrString," ")<?/MIVAR>
     <?MIVAR NAME=$shortChrString>$(SUBSTR,$noLGChrString,1,$posOfSpace)<?/MIVAR>
     <?MIVAR NAME=$restChrString>$(SUBSTR,$noLGChrString,$(+,$posOfSpace,1))<?/MIVAR>

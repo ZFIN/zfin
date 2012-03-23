@@ -154,7 +154,7 @@ FILE: mappingdetail.apg
      <?/MICOMMENT>
 
      <?MIVAR COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$mapdetails_mode,mini_slim),$(NC,$mapdetails_mode,nodetail))">
-	LG:
+	Chr:
      <?/MIVAR>
      <?MIVAR COND="$(AND,$(>,$MI_CURRENTROW,1),$(NC,$last,0),$(NC,$1,$last))">,<?/MIVAR>
 
@@ -179,7 +179,7 @@ FILE: mappingdetail.apg
   <?/MIBLOCK>
 
 <?MIELSE><?MICOMMENT>if lg_list is provided (need modification)<?/MICOMMENT>
-  <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
+  <?MIVAR>Chr:&nbsp;$lg_list<?/MIVAR>
 
 <?/MIBLOCK>
 
@@ -607,11 +607,11 @@ marker = '';
 
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 <?MIVAR>	  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
 <?MIVAR>	  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
           <?MICOMMENT>
@@ -652,11 +652,11 @@ marker = '';
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 	<?MIVAR>  <A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
 	  <?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
             we need to save the OID, and set it to the detOID when calling
@@ -699,11 +699,11 @@ marker = '';
 		<?MIVAR NAME=fmrelID>$4<?/MIVAR>
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 <?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?MIELSE>
 ,
 <?MIVAR><A href="/action/marker/view/$mrkrZdbId">$1</A> <?/MIVAR>
-&nbsp;LG:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;Chr:<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=nodetail&oID=$mrkrZdbId')from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 <?/MIBLOCK>
           <?MICOMMENT>
             we need to save the OID, and set it to the detOID when calling
@@ -746,7 +746,7 @@ marker = '';
 
     <font size=-1>
     <TR><TD>
-        LG&nbsp;<b>$4</b><b>&nbsp;$2</b>&nbsp;$7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>)
+        Chr&nbsp;<b>$4</b><b>&nbsp;$2</b>&nbsp;$7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>)
           $(IF,$(ISNULL,$11),,<br>&nbsp;&nbsp;Mapped as $11)
     </TD>
 
@@ -816,7 +816,7 @@ marker = '';
     <?/MIBLOCK>
 
      $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")
-     <TD width=30%>LG $lg</TD>
+     <TD width=30%>Chr $lg</TD>
      <TD><A href="$sourceviewer$2">$source_name</a></TD><TD><A HREF=javascript:show_detail('$link_id','$detOID','$(IF,$(XST,$abbrev),$abbrev)','$(IF,$(XST,$abbrev),$abbrev)');>Details</A></TD></TR>
       <?MIVAR NAME=$mapped>t<?/MIVAR>
 
@@ -928,14 +928,14 @@ marker = '';
       <?MIELSE>
       <?MIVAR>  <TD>$member_abbrev ($member_type_display)</TD><?/MIVAR>
        <?/MIBLOCK>
-        <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
+        <TD> Chr $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD>&nbsp; &nbsp;</TD>
         <TD><A HREF=javascript:show_detail("$link_id","$member_zdb_id","$member_abbrev","$(IF,$(XST,$abbrev),$abbrev)");>Details</A></TD>
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR>
         <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
-        <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
+        <TD> Chr $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD></TD>
 	<?/MIVAR>
     <?/MIBLOCK>

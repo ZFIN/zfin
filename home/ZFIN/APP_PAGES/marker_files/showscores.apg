@@ -8,7 +8,7 @@ lg  -- the lg you want
 <?MISQL SQL="select name,abbrev,current from panels where zdb_id='$panel';"><?/MISQL>
 
 
-<?MIVAR>PANEL: $1 ($2), $(IF,$(NC,$lg,NULL),LG $lg) 
+<?MIVAR>PANEL: $1 ($2), $(IF,$(NC,$lg,NULL),Chr $lg) 
 $(IF,$(AND,$(NC,$marker_abbrev,undefined),$(NC,$marker_abbrev,None)),$marker_abbrev)
 as of $3<?/MIVAR>
 

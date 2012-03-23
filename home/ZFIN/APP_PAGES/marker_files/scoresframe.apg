@@ -7,7 +7,7 @@
 <?MIVAR COND="$(NXST,$marker_abbrev)" NAME=$marker_abbrev>None<?/MIVAR>
 
 <?MIVAR>
-<title>Score View: $panel, $(IF,$(NC,$lg,NULL),LG $lg) ,
+<title>Score View: $panel, $(IF,$(NC,$lg,NULL),Chr $lg) ,
 $(IF,$(AND,$(NC,$marker_abbrev,undefined),$(NC,$marker_abbrev,None)),$marker_abbrev)</title>
 <?/MIVAR>
 
