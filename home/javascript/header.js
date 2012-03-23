@@ -407,7 +407,7 @@ document.write("     </div>");
 document.write("     <div id=\"hdr-zfinlinks\" class=\"hdr-linkbar\"> ");
 document.write("       <a href=\"/\">Home</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-newmrkrselect.apg\" title=\"Search by name, accession number, LG, vector or sequence type\">Genes / Markers / Clones</a>");
+document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-newmrkrselect.apg\" title=\"Search by name, accession number, chromosome, vector or sequence type\">Genes / Markers / Clones</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("        <a href=\"/action/blast/blast\" title=\"Search for sequence alignment against ZFIN datasets and zebrafish datasets\">BLAST</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
