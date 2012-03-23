@@ -221,7 +221,7 @@
 
         <c:when test="${!empty formBean.featureMap}">
             <td>
-                LG:
+                Chr:
                 <c:forEach var="lg" items="${formBean.featureMap}" varStatus="index">
 
                     <c:if test="${lg != 0}">
@@ -245,7 +245,7 @@
 
         <c:when test="${!empty formBean.featureLocations}">
             <td>
-                LG:
+                Chr:
                 <c:forEach var="lg" items="${formBean.featureLocations}" varStatus="index">
                     <c:if test="${lg != 0}">
 
