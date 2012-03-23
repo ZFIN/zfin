@@ -72,7 +72,7 @@
   my $g_zoom = 60;
   my $zoom  = 60;       ### the target number of markers for any one backbone
   my %zooms;            ### hash of zoom values
-  my $lg;               ### the linkgage group containing $marker
+  my $lg;               ### the linkgage group or chromosome containing $marker
   my $lgs;              ### hash of linkage groups
   my $loc;              ### the location of $marker
   my $lo;               ### name above $loc on map
@@ -797,7 +797,7 @@
     "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=".
     $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
-    " panel, LG: ".$lg .", units: cM".
+    " panel, Chr: ".$lg .", units: cM".
     "</b></font></td>";
 	$order_increment++;
       } else { $order_increment++; }

@@ -789,7 +789,7 @@
     "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
     "OID=" . $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
-    " panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
+    " panel, Chr: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
     "</b></font></td>";
 	$order_increment++;
       } else { $order_increment++; }
