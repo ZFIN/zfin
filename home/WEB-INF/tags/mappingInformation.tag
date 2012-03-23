@@ -15,7 +15,7 @@
         <tr>
             <c:if test="${!empty mappedMarker.unMappedMarkers}">
                 <td width="25%">
-                    LG:
+                    Chr:
                     <c:choose>
                         <c:when test="${fn:length(mappedMarker.unMappedMarkers)==1 and mappedMarker.unMappedMarkers[0] eq '0'}">
                             Unknown
