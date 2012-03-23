@@ -2,7 +2,7 @@
 
   <ul>	
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg" 
-                   title="Search by name, accession number, LG, vector or sequence type">
+                   title="Search by name, accession number, chromosome, vector or sequence type">
          <strong>Genes / Markers / Clones</strong></a></li>
      <ul>
             <li><a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"

@@ -209,7 +209,7 @@ Before proposing and reserving a name, review the current guidelines and search 
       </td>
     </tr>
     <tr>
-      <td>Linkage Group</td>
+      <td>Chromosome</td>
       <td><input name="chr" type="text" size="2">
       </td>
     </tr>
