@@ -568,7 +568,7 @@ function doValidateAndSubmit(currentTime ){
 <?/MIBLOCK>
 
     <?MICOMMENT> =================================================================
-                          if LG is searched
+                          if chromosome is searched
          ==============================================================================
     <?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$lg),$(NE, $lg, any),$(NE, $lg, 0))">
@@ -1171,7 +1171,7 @@ function doValidateAndSubmit(currentTime ){
             <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>                   
             <?MIVAR><th  width=$widthGene><b>Affected Gene(s)</b></th><?/MIVAR>
             <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>     
-            <?MIVAR><th  width=$widthLG><b>&nbsp;LG</b></th><?/MIVAR>
+            <?MIVAR><th  width=$widthLG><b>&nbsp;Chromosome</b></th><?/MIVAR>
           </tr></table>
         </th>
 
@@ -1394,7 +1394,7 @@ function doValidateAndSubmit(currentTime ){
       
       </TD>
      
-      <?MICOMMENT> ====== Innner table: Allele, Parental Zygosity, Type,  Affected Gene(s), LG ========== <?/MICOMMENT>
+      <?MICOMMENT> ====== Innner table: Allele, Parental Zygosity, Type,  Affected Gene(s), Chromosome ========== <?/MICOMMENT>
 
       <?MIVAR><TD align=left width=$widthInnerTable><?/MIVAR>
         <table width=100% border=0 cellspacing=0>
@@ -1470,7 +1470,7 @@ function doValidateAndSubmit(currentTime ){
              
               <?MIVAR><TD width=$widthSpace%>&nbsp;</TD><?/MIVAR>
    
-              <?MICOMMENT> ============== LG ============= <?/MICOMMENT>
+              <?MICOMMENT> ============== Chromosome ============= <?/MICOMMENT>
               <?MIVAR><TD align=left width=$widthLG class="anatomy"><?/MIVAR>
 <?MIBLOCK COND="$(AND,$(NE,$fsel_rec_feature_type,deficiency),$(NE,$fsel_rec_feature_type,translocation))">
               <?MISQL NAME=$slimChrString 
@@ -1712,7 +1712,7 @@ return false ; ">
      </td>
 
      <td class="halfwidth">
-       <b>LG:</b>
+       <b>Chromosome:</b>
 
        <SELECT name=lg onChange='document.BrowserForm.START.value = "";'>
 	<?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
