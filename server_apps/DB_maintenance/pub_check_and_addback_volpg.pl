@@ -7,7 +7,7 @@
 # The script generate 2 reports and send it to Ceri: one for those pubs that are updated by this script and the other with pubs still missing vol or pgnumbers 
 # could not be updated by this script.
 
-
+use strict;
 use MIME::Lite;
 use DBI;
 
@@ -18,9 +18,9 @@ use DBI;
 
 sub sendReport1 {
 		
-  $SUBJECT="Auto: publications that have been updated";
-  $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  $TXTFILE="./report.txt";
+  my $SUBJECT="Auto: publications that have been updated";
+  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
+  my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
   my $msg1 = new MIME::Lite 
@@ -43,9 +43,9 @@ sub sendReport1 {
 
 sub sendReport2 {
 
-  $SUBJECT="Auto: publications not updated";
-  $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  $TXTFILE="./notupdated.txt";
+  my $SUBJECT="Auto: publications not updated";
+  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
+  my $TXTFILE="./notupdated.txt";
  
   # Create a new multipart message:
   my $msg2 = new MIME::Lite 
@@ -67,9 +67,9 @@ sub sendReport2 {
 
 sub sendReport3 {
 
-  $SUBJECT="Auto: publications with bad DOI that have been updated";
-  $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  $TXTFILE="./doi.txt";
+  my $SUBJECT="Auto: publications with bad DOI that have been updated";
+  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
+  my $TXTFILE="./doi.txt";
   # Create a new multipart message:
   my $msg3 = new MIME::Lite 
     From    => "$ENV{LOGNAME}",
@@ -101,18 +101,16 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/pub_check/";
-
 print "processing the publication checking and would add missing vol and page numbers ... \n";
 
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
+my $dbname = "<!--|DB_NAME|-->";
+my $username = "";
+my $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
 
-$sql = 'select distinct zdb_id, accession_no, title 
+my $sql = 'select distinct zdb_id, accession_no, title 
           from publication 
          where status = "active" 
            and jtype in ("Journal", "Review") 
@@ -121,13 +119,17 @@ $sql = 'select distinct zdb_id, accession_no, title
            and accession_no not in ("None","none",""," ") 
            and title is not null';
 
-$cur = $dbh->prepare($sql);
+my $cur = $dbh->prepare($sql);
 $cur ->execute();
+
+my $pubZdbId;
+my $accession;
+my $pubTitle;
 
 $cur->bind_columns(\$pubZdbId,\$accession,\$pubTitle);
 
-%pmids = ();
-%titles = ();
+my %pmids = ();
+my %titles = ();
       
 while ($cur->fetch()) {
    $pmids{$pubZdbId} = $accession;
@@ -149,9 +151,10 @@ $sql = 'select zdb_id
 $cur = $dbh->prepare($sql);
 $cur ->execute();
 
+my $nopubmedidPubZdbId;
 $cur->bind_columns(\$nopubmedidPubZdbId);
 
-%nopubmedidPubZdbIds = ();
+my %nopubmedidPubZdbIds = ();
       
 while ($cur->fetch()) {
    $nopubmedidPubZdbIds{$nopubmedidPubZdbId} = 1;
@@ -159,18 +162,38 @@ while ($cur->fetch()) {
 
 $cur->finish(); 
 
-$ctNoPubmedId = 0;
+my $ctNoPubmedId = 0;
+my $key;
 foreach $key (sort keys %nopubmedidPubZdbIds) {
    $ctNoPubmedId++;
    print NOTUPDATED "\n\nThe following publication(s) missing volume and/or page numbers are not processed because the pubmed IDs are missing.\n\n" if $ctNoPubmedId == 1;
    print NOTUPDATED "$key\n";
 }
 
-$cmdPart1 = "perl -MLWP::Simple -e ";
-$cmdPart2 = '"getprint ';
-$cmdPart3 = '" > pubXml 2> err';
-$singleQuote = '\'';
-$ctTotal = $updated = $notupdated = 0;
+my $cmdPart1 = "perl -MLWP::Simple -e ";
+my $cmdPart2 = '"getprint ';
+my $cmdPart3 = '" > pubXml 2> err';
+my $singleQuote = '\'';
+my $ctTotal = 0;
+my $updated = 0;
+my $notupdated = 0;
+my $url = "";
+my $cmd = "";
+my $xmlIssue = "none";
+my $line = "";
+my @lines = ();
+my @fields = ();
+my $rightPart = "";
+my $xmlVol = "";
+my $xmlPg = "";
+my $xmlTitle = "";
+my @xmlTitleWords = ();
+my $titleStoredAtZfin = "";
+my $ctMatch = 0;
+my $w = "";
+my @wordsInTitleStoredAtZfin = ();
+my $titlePercentageSimilar = 0;
+
 foreach $key (sort keys %pmids) {
   $ctTotal++;
 
@@ -190,7 +213,6 @@ foreach $key (sort keys %pmids) {
   foreach $line (@lines) {  
     $line =~ s/>\n+//g;          
     if ($line =~ m/<Volume>/) {      # volume
-        undef (@fields);
         @fields = split(/>/, $line);
         $rightPart = $fields[1];
         undef (@fields);  
@@ -294,17 +316,20 @@ $sql = 'select distinct zdb_id, pub_doi
 $cur = $dbh->prepare($sql);
 $cur ->execute();
 
+my $pubDOI;
+
 $cur->bind_columns(\$pubZdbId,\$pubDOI);
 
-%dois = ();
+my %dois = ();
       
 while ($cur->fetch()) {
    $dois{$pubZdbId} = $pubDOI;
 }
 
 $cur->finish();
+my $correctDOI = "";
 
-$ctTotalBadDOIs = 0;
+my $ctTotalBadDOIs = 0;
 open (DOI, ">doi.txt") || die "Cannot open doi.txt : $!\n";
 foreach $key (sort keys %dois) {
    $pubDOI = $dois{$key};
