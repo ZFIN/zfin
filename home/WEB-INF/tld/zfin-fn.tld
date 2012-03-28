@@ -142,6 +142,18 @@
         <description>
             Turn the difference of date and time into a time string
         </description>
+        <name>getTimeDurationToday</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getTimeDuration(java.util.Date)</function-signature>
+        <example>
+            ${fn:getTimeDuration(start))}">
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Turn the difference of date and time into a time string
+        </description>
         <name>getTimeBetweenRequests</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>java.lang.String getTimeBetweenRequests(java.util.List, int)</function-signature>

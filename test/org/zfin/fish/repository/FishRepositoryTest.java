@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.SortBy;
@@ -195,7 +196,6 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-
     @Test
     public void retrieveFishByGenoAlone() {
         String genoID = "ZDB-GENO-110210-2";
@@ -270,54 +270,93 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
     //single gene, full & partial
     @Test
-    public void fgf8aTest() {  genericGeneAlleleBoxTest("fgf8a");  }
-    @Test
-    public void fgfTest() { genericGeneAlleleBoxTest("fgf"); };
+    public void fgf8aTest() {
+        genericGeneAlleleBoxTest("fgf8a");
+    }
 
+    @Test
+    public void fgfTest() {
+        genericGeneAlleleBoxTest("fgf");
+    }
+
+    ;
 
 
     //double gene
     @Test
-    public void doubleGeneTest() { genericGeneAlleleBoxTest("fgf8a pax2a"); }
+    public void doubleGeneTest() {
+        genericGeneAlleleBoxTest("fgf8a pax2a");
+    }
 
 
     //case insensitivity
     @Test
-    public void lowCaseMoTest() { genericGeneAlleleBoxTest("mo3-fgf8a"); }
-    @Test
-    public void normalCaseMoTest() { genericGeneAlleleBoxTest("MO3-fgf8a"); }
-    @Test
-    public void upperCaseMoTest() { genericGeneAlleleBoxTest("MO3-FGF8A"); }
+    public void lowCaseMoTest() {
+        genericGeneAlleleBoxTest("mo3-fgf8a");
+    }
 
+    @Test
+    public void normalCaseMoTest() {
+        genericGeneAlleleBoxTest("MO3-fgf8a");
+    }
+
+    @Test
+    public void upperCaseMoTest() {
+        genericGeneAlleleBoxTest("MO3-FGF8A");
+    }
 
 
     //single quote
     @Test
-    public void singleQuoteTest() { genericGeneAlleleBoxTest("popeye's sister"); }
+    public void singleQuoteTest() {
+        genericGeneAlleleBoxTest("popeye's sister");
+    }
 
 
     //full Tg name, several cases including commas, spaces, underscores and colons
     @Test
-    public void tgTest() { genericGeneAlleleBoxTest("Tg(-2.4shha-M12:GFP)ka1"); }
+    public void tgTest() {
+        genericGeneAlleleBoxTest("Tg(-2.4shha-M12:GFP)ka1");
+    }
+
     @Test
-    public void tgWithSpaceAndCommaTest() {genericGeneAlleleBoxTest("Tg(shhb:Gal4TA4, 5xUAS:mRFP)"); }
+    public void tgWithSpaceAndCommaTest() {
+        genericGeneAlleleBoxTest("Tg(shhb:Gal4TA4, 5xUAS:mRFP)");
+    }
+
     @Test
-    public void superNastyTgTest() { genericGeneAlleleBoxTest("Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine-YFP,cryaa:RFP)"); }
+    public void superNastyTgTest() {
+        genericGeneAlleleBoxTest("Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine-YFP,cryaa:RFP)");
+    }
+
     @Test
-    public void tgWithCommaAndUnderscoreTest() { genericGeneAlleleBoxTest("Tg(ompb:Rno.Vamp2-EGFP,ompb:ptprsa_C1556S)"); }
+    public void tgWithCommaAndUnderscoreTest() {
+        genericGeneAlleleBoxTest("Tg(ompb:Rno.Vamp2-EGFP,ompb:ptprsa_C1556S)");
+    }
 
 
     //partial Tg
     @Test
-    public void partialTgWithColonTest() { genericGeneAlleleBoxTest("hsp70l:dntbx5a"); }
+    public void partialTgWithColonTest() {
+        genericGeneAlleleBoxTest("hsp70l:dntbx5a");
+    }
+
     @Test
-    public void partialTgWithSpaceTest() { genericGeneAlleleBoxTest("hsp70 gal4"); }
+    public void partialTgWithSpaceTest() {
+        genericGeneAlleleBoxTest("hsp70 gal4");
+    }
 
     //double gene morpoholino
     @Test
-    public void doubleGeneMorpholinoNameTest() { genericGeneAlleleBoxTest("MO1-epcam,zgc:110304"); }
+    public void doubleGeneMorpholinoNameTest() {
+        genericGeneAlleleBoxTest("MO1-epcam,zgc:110304");
+    }
 
-
+    @Test
+    public void warehouseReleaseTrackingInfo() {
+        WarehouseSummary summary = RepositoryFactory.getFishRepository().getWarehouseSummary(WarehouseSummary.Mart.FISH_MART);
+        assertNotNull(summary);
+    }
 
 
     public void genericGeneAlleleBoxTest(String value) {

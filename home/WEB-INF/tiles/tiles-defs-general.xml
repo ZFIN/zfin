@@ -65,6 +65,10 @@
         <put-attribute name="body" value="/WEB-INF/jsp/fish/{1}.jsp"/>
     </definition>
 
+    <definition name="dev-tools/database/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/database/{1}.jsp"/>
+    </definition>
+
     <definition name="fish/*.insert" template="/WEB-INF/jsp/fish/{1}.jsp"/>
 
     <!-- webdriver definitions -->

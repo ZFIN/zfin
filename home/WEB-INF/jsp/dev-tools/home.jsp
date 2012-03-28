@@ -228,6 +228,9 @@
     <td>
         <a href="/action/dev-tools/jdbc-driver-info">JDBC Driver Info</a>
     </td>
+    <td>
+        <a href="/action/database/overview">Informix Database </a>
+    </td>
 </tr>
 
 

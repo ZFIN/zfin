@@ -3,6 +3,7 @@ package org.zfin.fish.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.fish.MutationType;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.ontology.Term;
@@ -20,7 +21,15 @@ public class FishSearchFormBean extends PaginationBean {
     private String geneOrFeatureName;
     // default value: show all records in regards to filter elements
     private String filter1 = SHOW_ALL;
+    private WarehouseSummary summary;
 
+    public WarehouseSummary getSummary() {
+        return summary;
+    }
+
+    public void setSummary(WarehouseSummary summary) {
+        this.summary = summary;
+    }
 
     public String getMutationType() {
         return mutationType;

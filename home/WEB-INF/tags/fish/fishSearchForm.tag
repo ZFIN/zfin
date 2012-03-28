@@ -53,6 +53,14 @@
     </span>
     <a href="/ZFIN/misc_html/fish_search_tips.html" class="popup-link help-popup-link"></a>
 
+    <authz:authorize ifAnyGranted="root">
+    <span style="font-style: italic;">
+        Last Updated:  ${zfn:getTimeDurationToday(formBean.summary.releaseDate)} ago
+        (<fmt:formatDate value="${formBean.summary.releaseDate}" type="date"/>
+        <fmt:formatDate value="${formBean.summary.releaseDate}" pattern="HH:mm:ss"/>)
+
+    </span>
+    </authz:authorize>
     <div class="search-form-your-input-welcome">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
             <tiles:putAttribute name="subjectName" value="Fish search"/>

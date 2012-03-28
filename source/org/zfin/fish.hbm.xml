@@ -19,9 +19,21 @@
         <property name="morpholinoGroupName" column="fas_morpholino_group"/>
     </class>
 
+    <class name="org.zfin.fish.WarehouseSummary" table="warehouse_run_tracking">
+
+        <id name="ID">
+            <column name="wrt_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+
+        <property name="martName" column="wrt_mart_name"/>
+        <property name="releaseDate" column="wrt_last_loaded_date"/>
+        <property name="successfulLoad" column="wrt_mart_load_successful"/>
+    </class>
+
     <class name="FeatureGene" table="gene_feature_result_View">
         <cache usage="read-only"/>
-        <id name="ID" >
+        <id name="ID">
             <column name="gfrv_pk_id" not-null="true"/>
             <generator class="increment"/>
         </id>
@@ -39,7 +51,7 @@
             <property name="nameOrder" column="gfrv_affector_abbrev_order"/>
         </component>
         <component name="construct">
-            <property name="ID" column="gfrv_construct_zdb_id" />
+            <property name="ID" column="gfrv_construct_zdb_id"/>
             <property name="name" column="gfrv_construct_name"/>
             <property name="nameOrder" column="gfrv_construct_abbrev_order"/>
         </component>

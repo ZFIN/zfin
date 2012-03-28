@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.repository.FishMatchingService;
+import org.zfin.fish.repository.FishRepository;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.MatchingText;
@@ -30,6 +32,9 @@ public class FishSearchController {
     private FishSearchFormBean getDefaultSearchForm() {
         return new FishSearchFormBean();
     }
+
+    @Autowired
+    FishRepository fishRepository;
 
     private
     @Autowired
@@ -60,6 +65,7 @@ public class FishSearchController {
             formBean.setTotalRecords(searchResult.getResultsFound());
             formBean.setFishList(fishList);
         }
+        formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search Results");
         return "fish/fish-search-result.page";
     }
@@ -74,6 +80,7 @@ public class FishSearchController {
     protected String showSearchForm(Model model) {
         FishSearchFormBean formBean = new FishSearchFormBean();
         formBean.setIncludeSubstructures(true);
+        formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search");
         return "fish/fish-search.page";

@@ -1,7 +1,9 @@
 package org.zfin.fish.repository;
 
+import org.springframework.stereotype.Repository;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.infrastructure.ZfinFigureEntity;
 
@@ -54,14 +56,23 @@ public interface FishRepository {
      * directly or indirectly through a substructure.
      *
      * @param fishID  fish ID
-     * @param termIDs  term ID list
+     * @param termIDs term ID list
      * @return set of figures
      */
     Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs);
 
     /**
      * Retrieve the longest genotype experiment group id for all fish
+     *
      * @return String
      */
     String getGenoxMaxLength();
+
+    /**
+     * Retrieve the Warehouse summary info for a given mart.
+     *
+     * @param mart mart
+     * @return warehouse summary
+     */
+    WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
 }

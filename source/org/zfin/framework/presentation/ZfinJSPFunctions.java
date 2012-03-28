@@ -234,6 +234,10 @@ public class ZfinJSPFunctions {
         return DateUtil.getTimeDuration(start, end);
     }
 
+    public static String getTimeDuration(Date start) {
+        return DateUtil.getTimeDuration(start, new Date());
+    }
+
     public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
         if (loopIndex < 0 || list == null)
             return "";

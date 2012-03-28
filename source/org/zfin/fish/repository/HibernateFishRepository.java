@@ -6,12 +6,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.database.BtsContainsService;
 import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.fish.FeatureGene;
-import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.FishSearchResult;
-import org.zfin.fish.FishAnnotation;
+import org.zfin.fish.*;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -28,6 +26,7 @@ import java.util.*;
 /**
  * Basic repository class to handle fish searches against a database.
  */
+@Repository
 public class HibernateFishRepository implements FishRepository {
 
     private static Logger logger = Logger.getLogger(HibernateFishRepository.class);
@@ -522,6 +521,20 @@ public class HibernateFishRepository implements FishRepository {
         String sqlFeatures = "select first 1 fas_genox_group From fish_annotation_search order by length(fas_genox_group) desc ";
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
         return (String) sqlQuery.uniqueResult();
+    }
+
+    /**
+     * Retrieve the Warehouse summary info for a given mart.
+     *
+     * @param mart mart
+     * @return warehouse summary
+     */
+    @Override
+    public WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(WarehouseSummary.class);
+        criteria.add(Restrictions.eq("martName", mart.getName()));
+        return (WarehouseSummary) criteria.uniqueResult();
     }
 
     /**
