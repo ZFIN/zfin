@@ -365,7 +365,11 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             // get the next URL in our list
             UrlLink link;
             while ((link = dequeueURL()) != null) {
-                indexURL(link);
+                // only index if not already done so
+                if (!discoveredURLs.contains(link.getLinkUrl())){
+                    indexURL(link);
+		    discoveredURLs.add(link.getLinkUrl());
+		}
             }
         } catch (Exception e) {
             log.println(Thread.currentThread().getName() + ": aborting with error");
@@ -419,10 +423,12 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * @param referrer referrer URL
      */
     public synchronized void enqueueURL(String url, String referrer) {
-        if (!discoveredURLs.contains(url))  // careful not to add something we already saw
+        //System.out.println(url+" "+referrer);
+
+    if (!discoveredURLs.contains(url))  // careful not to add something we already saw
         {
-            urlsToIndex.add(new UrlLink(url, referrer));  // adds the new url
-            discoveredURLs.add(url);  // keeps track that we have now "seen" it so we don't do it again next time
+            UrlLink urlLink = new UrlLink(url, referrer);
+            urlsToIndex.add(urlLink);  // adds the new url
             notifyAll();
         }
     }
