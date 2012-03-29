@@ -35,8 +35,9 @@ GENERICS = pull.sh
 # home directory being made before the server_apps directory.
 
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer
+LOCAL_DATA_CACHE_DIR = $(HTTP_DATA_TRANSFER_DIR)/Data
 
-ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
+ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR) $(LOCAL_DATA_CACHE_DIR)
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -49,6 +50,9 @@ include $(TOP)/make.default.rules
 # ---------------  Endemic Targets  --------------------------------------
 
 $(HTTP_DATA_TRANSFER_DIR) :
+	$(TARGET_MKDIR) $@
+	
+$(LOCAL_DATA_CACHE_DIR) :
 	$(TARGET_MKDIR) $@
 
 
