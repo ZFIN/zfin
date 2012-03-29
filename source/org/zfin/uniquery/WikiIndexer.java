@@ -47,7 +47,7 @@ public class WikiIndexer {
     }
 
     private List<WebPageSummary> processPagesForSpace(String wikispace) throws WikiLoginException {
-        RemotePageSummary[] pages = WikiWebService.getInstance().getAllPagesForSpace(wikispace);
+        RemotePageSummary[] pages = WikiWebService.getInstance("wiki.zfin.org").getAllPagesForSpace(wikispace);
         List<WebPageSummary> summaryList = new ArrayList<WebPageSummary>(pages.length);
         for (RemotePageSummary remoteSummary : pages) {
             try {

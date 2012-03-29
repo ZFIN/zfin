@@ -47,11 +47,18 @@ public class WikiWebService {
 
     private static WikiWebService instance = null;
 
-    protected WikiWebService() { }
+    protected WikiWebService() {
+    }
 
     public static WikiWebService getInstance() throws WikiLoginException {
+        return getInstance(null);
+    }
+
+    public static WikiWebService getInstance(String wikiHost) throws WikiLoginException {
         if (instance == null) {
             instance = new WikiWebService();
+            if (wikiHost != null)
+                instance.wikiHost= wikiHost;
         }
         if (instance.login()) {
             return instance;
