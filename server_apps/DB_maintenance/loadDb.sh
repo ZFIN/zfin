@@ -12,8 +12,6 @@
 #echo env file $4
 source $4
 
-echo "command /private/ZfinLinks/Commons/bin/loaddb.pl $1 /bin/ls -1t $2 | head -1" ;
-
 # reload db
 cd $2
 set dumpToUse = `/bin/ls -1t | head -1` 
