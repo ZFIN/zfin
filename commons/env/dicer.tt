@@ -57,7 +57,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/tmp
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	embryonix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	kschaper\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	kschaper\@cs.uoregon.edu

@@ -320,7 +320,7 @@ sub createLoadFile($$) {
     # to wait 60 seconds to save a load that may have already run for
     # half an hour.
 
-    print(LOAD "SET LOCK MODE TO WAIT 60;\n");
+    print(LOAD "SET LOCK MODE TO WAIT 5;\n");
 
     foreach $tableName (@globalTableNames) {
 
