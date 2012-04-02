@@ -1040,7 +1040,7 @@ if ($ENV{HOST} =~ /kinetix/){
     $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
 }
 else {
-    $ENV{PDQPRIORITY} = "60";    # Take as much as you can.
+    $ENV{PDQPRIORITY} = "50";    # Take as much as you can.
     logMsg("Restarting Apache ...");
     restartApache();
 
