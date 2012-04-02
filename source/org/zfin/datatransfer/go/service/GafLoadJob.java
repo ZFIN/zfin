@@ -100,7 +100,9 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
 //            gafService.addAnnotations(gafJobData);
 //            HibernateUtil.flushAndCommitCurrentSession();
 
-            gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            if (GafOrganization.OrganizationEnum.FP_INFERENCES != GafOrganization.OrganizationEnum.getType(gafOrganization.getOrganization())) {
+               gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            }
 
             removeAnnotations(gafJobData);
 //            HibernateUtil.createTransaction();
