@@ -23,8 +23,8 @@
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
-<!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu ndunn\@uoregon.edu xshao\@cs.uoregon.edu
-<!--|GO_EMAIL_ERR|-->	ndunn\@uoregon.edu dhowe\@cs.uoregon.edu informix\@cs.uroegon.edu
+<!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu xshao\@cs.uoregon.edu
+<!--|GO_EMAIL_ERR|-->	xshao\@cs.uoregon.edu dhowe\@cs.uoregon.edu informix\@cs.uroegon.edu
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
@@ -34,7 +34,7 @@
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
 <!--|INSTANCE|-->	trunk
-<!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
+<!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp

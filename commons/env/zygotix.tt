@@ -21,8 +21,8 @@
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
-<!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu ndunn\@uoregon.edu xshao\@cs.uoregon.edu
-<!--|GO_EMAIL_ERR|-->	staylor\@cs.uoregon.edu ndunn\@uoregon.edu xshao\@cs.uoregon.edu dhowe\@cs.uoregon.edu
+<!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu
+<!--|GO_EMAIL_ERR|-->	staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu dhowe\@cs.uoregon.edu
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
@@ -31,7 +31,7 @@
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
 <!--|INSTANCE|-->	zygotix
-<!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
+<!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp
@@ -57,20 +57,20 @@
 <!--|VALIDATION_EMAIL_AD|-->	tomc\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu dfashena\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	informix\@cs.uoregon.edu
-<!--|VALIDATION_EMAIL_EST|-->	judys\@cs.uoregon.edu
+<!--|VALIDATION_EMAIL_EST|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_GENE|-->	ksf\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_GENOCURATOR|-->	curators\@zfin.org
-<!--|VALIDATION_EMAIL_LINKAGE|-->	judys\@cs.uoregon.edu
+<!--|VALIDATION_EMAIL_LINKAGE|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_MORPHOLINO|-->	staylor\@cs.uoregon.edu bayrakt\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_MUTANT|-->	dhowe\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_OTHER|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	mochla\@zfin.org holly\@zfin.org knight\@uoneuro.uoregon.edu
-<!--|VALIDATION_EMAIL_TRANSCRIPT|-->	ndunn\@uoregon.edu sramacha\@uoneuro.uoregon.edu informix\@cs.uoregon.edu
+<!--|VALIDATION_EMAIL_TRANSCRIPT|-->	sramacha\@uoneuro.uoregon.edu informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@cs.uoregon.edu kevin\@zfin.org
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu kschaper\@cs.uoregon.edu cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu ndunn\@uoregon.edu
+<!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	knight\@uoneuro.uoregon.edu mochla\@zfin.org staylor\@cs.uoregon.edu
 <!--|ZFIN_COOKIE|-->	st4mwtR

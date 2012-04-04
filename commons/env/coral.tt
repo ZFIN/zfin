@@ -34,7 +34,7 @@
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
 <!--|INSTANCE|-->	coral
-<!--|INTERNAL_BLAST_PATH|-->	/research/zusers/ndunn/yoyoblastfiles/
+<!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	kschaper\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
