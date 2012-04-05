@@ -296,17 +296,10 @@ public class GafService {
                 }
 
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
-
-
-                    InferenceCategory[] inferenceCategories = goEvidenceCodeEnum.getInferenceCategories(publicationZdbId);
-                    int ct = 0;
-        for (InferenceCategory inferenceCategory : inferenceCategories) {
-			ct++;
-            throw new GafValidationError(ct + "DEBUGGING inferenceCategory.match:::" + inferenceCategory.match() + "Invalid inference code[" + inference + "] " +
+                     throw new GafValidationError("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
                             , gafEntry);
-        }
                 }
                 InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
                 inferenceGroupMember.setInferredFrom(inference);
