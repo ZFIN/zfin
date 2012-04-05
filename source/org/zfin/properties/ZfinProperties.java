@@ -43,6 +43,10 @@ public final class ZfinProperties {
         return splitValues(ZfinPropertiesEnum.INDEXER_REPORT_EMAIL);
     }
 
+    public static String getInstance() {
+        return ZfinPropertiesEnum.INSTANCE.value();
+    }
+
     public static String getWebDriver() {
         return ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value();
     }

@@ -20,16 +20,6 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/";
 
-# a place on development_machine is used to store the fasta files for blast db update.
-
-my $host = "<!--|DOMAIN_NAME|-->";
-if ($host ne "zfin.org") {
-    $dir_on_development_machine = "/research/zblastfiles/dev_files/daily" ;
-}
-else {
-    $dir_on_development_machine = "/research/zblastfiles/files/daily" ;    
-}
-
 $report = "acc_update.report";
 
 #remove old files
@@ -105,8 +95,10 @@ system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 # only move the FASTA files and flat files to development_machine if that script
 # is run from production.
 
+$dir_on_development_machine = "/research/zblastfiles/files/daily" ;    
+my $move_blast_files_to_development = "<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->";
 
-if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
+if ($move_blast_files_to_development eq "true") {
 	if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
 
 		&writeReport("Fasta files moved to development_machine.");
@@ -157,7 +149,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
-    print MAIL "To: informix\@cs.uoregon.edu\n";
+    print MAIL "To: <!--|GENBANK_DAILY_EMAIL|-->\n";
     print MAIL "Subject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {

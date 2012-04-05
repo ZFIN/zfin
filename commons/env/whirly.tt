@@ -23,6 +23,7 @@
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
+<!--|GENBANK_DAILY_EMAIL|-->	xshao\@cs.uoregon.edu
 <!--|GO_EMAIL_CURATOR|-->	xshao\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	xshao\@cs.uoregon.edu
 <!--|HAS_PARTNER|-->	false
@@ -40,6 +41,7 @@
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	xshao\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
+<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	whirly
 <!--|NOMEN_COORDINATOR|-->	xshao\@cs.uoregon.edu
 <!--|NON_SECURE_HTTP|-->	http://

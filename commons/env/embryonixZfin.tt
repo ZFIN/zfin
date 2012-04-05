@@ -19,6 +19,7 @@
 <!--|FTP_ROOT|-->	/research/zcentral/ftp
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
+<!--|GENBANK_DAILY_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
 <!--|HEADER_COLOR|-->	#99CCCC
@@ -34,6 +35,7 @@
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
+<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
 <!--|ONCONFIG_FILE|-->	onconfig
