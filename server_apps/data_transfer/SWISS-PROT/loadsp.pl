@@ -637,6 +637,9 @@ close (POSTLOADREPORT);
 
 &sendStatistics();
 
+print "\n create_file_for_swiss_prot.pl\n";
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
+
 exit;
 
 
