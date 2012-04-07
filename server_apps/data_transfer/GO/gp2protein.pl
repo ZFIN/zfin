@@ -38,7 +38,6 @@ $outFile = "gp2protein.zfin";
 
 $dbh->disconnect();
 
-###undef %validPids;
 exit;
 
 #---------------------------------------------------------------------------
@@ -47,24 +46,7 @@ sub gp2proteinReport()
 {
     system("/bin/rm -f $outFile");
 
-    system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
-    open (INP, "zfin.dat") || die "Can't open zfin.dat : $!\n";
-    @lines=<INP>;
-    close(INP);
-
-    %lengths = ();
-    $ct1 = 0;
-    foreach $line (@lines) {
-      $ct1++;
-      if ($line =~ m/^ID\s+(\w.+)_DANRE.*\s+(\d+)\sAA/) {
-        $id = $1;
-        $len = $2;
-        $lengths{$id};
-      }
-     }
-
     open (REPORT, ">$outFile") or die "cannot open report";
-    ###open (ERRREPORT, ">invalid_id_gp2protein.zfin") or die "cannot open invalid_id_gp2protein.zfin";
     printf REPORT "!Version: %.3f\n",$rev;
     print REPORT "!Date: ".`/usr/bin/date +%Y/%m/%d`;
     print REPORT "!From: ZFIN (zfin.org) \n";

@@ -55,9 +55,9 @@ sub sendResults {
 
  #----- Another mail send out problem files ----
 
-  my $SUBJECT="Auto: gp2protein.zfin file";
+  my $SUBJECT="Auto: gp2protein.zfin.gz file";
   my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
-  my $ATTFILE = "gp2protein.zfin";
+  my $ATTFILE = "gp2protein.zfin.gz";
 
   # Create another new multipart message:
   $msg2 = new MIME::Lite
@@ -106,6 +106,12 @@ sendErrorReport ("/local/bin/gzip gene_association.zfin failed") if
 
 sendErrorReport ("gp2protein.pl failed") if
     system ("./gp2protein.pl");
+
+sendErrorReport ("/bin/rm -f gp2protein.zfin.gz") if
+    system ("/bin/rm -f gp2protein.zfin.gz");
+
+sendErrorReport ("/local/bin/gzip gp2protein.zfin failed") if
+    system ("/local/bin/gzip gp2protein.zfin");
 
 sendResults();
 
