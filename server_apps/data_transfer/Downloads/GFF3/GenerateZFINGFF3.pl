@@ -38,12 +38,10 @@ my $cmd = "cat ".
     "unload_vega_chromosome_gff.sql " .
     "unload_vega_transcripts.sql ".
     "unload_zfin_morpholino.sql " .
-	#
-"";
+	#"";
 ###############################################
 ###  Ensembl
-#
-my $cmd = "cat " .
+#my $cmd = "cat " .
     "E_unload_zfin_tginsertion_gff.sql ".
     "E_unload_transcript_gff.sql " .
     "E_unload_ensembl_contig.sql " .

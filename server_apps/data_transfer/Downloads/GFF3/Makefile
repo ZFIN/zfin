@@ -42,10 +42,21 @@ HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
-# (production) data source is /research/zprodmore/gff3/
-# can be re-set in GFF3Files.pl for development for Ensembl & Vega
+# (productions) data source is /research/zprodmore/gff3/
+# can be re-set in GenerateZFINGFF3.pl for development for Ensembl & Vega
 
 GLOBALSTORE= /research/zprodmore/gff3
+
+LOCALSTORE = $(TARGETROOT)/home/data_transfer/Data
+
+ifeq ($(store),local)
+	STORE = $(LOCALSTORE)
+else
+	STORE = $(GLOBALSTORE)
+endif
+
+showstore:
+	echo $(STORE)
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -61,46 +72,49 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  This extracts data from ZFIN and places it in
-# the public http directory
+# Run the download script.  
+# This extracts data from ZFIN and places it in the public http directory
+# TODO: paramererize the $STORE and pass it in to the perl script.
 
-# Note: explanation per request from SM.
-# As with all make targets, items following the colon after the target
-# (on the same logical line) are the targets depencencies.
-# commands follow the set of depencencies on new lines with a mandatory
-#	tab as their first character.
-# the effect is, if any dependicies are false (i.e. do not exist)
-# evoking "gmake <target>" will not result in the comands being run
-# note that empty dependicies are vacously true.
-# but being empty is not the only path to truth. HTH
+$(TARGETDIR)/drerio_vega_id.unl: $(STORE)/drerio_vega_id.unl
+	cp $< $
 
-
-load_vega:  $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/rollback.sql        # $(TARGETDIR)/drerio_vega_id.unl
+load_vega: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/LoadVegaGFF3.pl \
+           $(TARGETDIR)/rollback.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
+           $(TARGETDIR)/drerio_vega_id.unl $(TARGETDIR)/unload_zfin_morpholino.sql
 	cd $(TARGETDIR) && LoadVegaGFF3.pl rollback
 
-load_vega_commit: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/commit.sql    # $(TARGETDIR)/drerio_vega_id.unl
+load_vega_commit: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/LoadVegaGFF3.pl \
+           $(TARGETDIR)/commit.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
+           $(TARGETDIR)/drerio_vega_id.unl $(TARGETDIR)/unload_zfin_morpholino.sql	              	              
 	cd $(TARGETDIR) && LoadVegaGFF3.pl commit
 
-load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql      # $(TARGETDIR)/drerio_ensembl.unl
+# $(TARGETDIR)/drerio_ensembl.unl
+load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl rollback
-
-load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql # $(TARGETDIR)/drerio_ensembl.unl
+	
+# $(TARGETDIR)/drerio_ensembl.unl
+load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
 
+
+########################################################################
 ### BurgessLin bed file converted to a informix loadable gff3 track
+
 bl_datafile: $(TARGETDIR)/Burgess_Lin.unl 
-	cp $(GLOBALSTORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
+	cp $(STORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
 
 $(TARGETDIR)/Burgess_Lin.unl:  $(GLOBALSTORE)/Burgess_Lin.unl
-	cp $(GLOBALSTORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
+	cp $(STORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
 
 load_bl:  $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/rollback.sql bl_datafile
 	cd $(TARGETDIR) && cat load_BL_gff.sql rollback.sql | dbaccess -a $(DBNAME)
 
 load_bl_commit: $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/commit.sql bl_datafile
 	cd $(TARGETDIR) && cat load_BL_gff.sql commit.sql | dbaccess -a $(DBNAME)
-
-### daily tracks
+	
+########################################################################
+###                     daily tracks
 
 run: $(TARGETDIR)/GenerateZFINGFF3.pl     $(TARGETDIR)/rollback.sql \
 $(TARGETDIR)/unload_zfin_genes_gff.sql    $(TARGETDIR)/E_unload_zfin_tginsertion_gff.sql \
@@ -115,40 +129,103 @@ $(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/gather_alias.awk
 	cd $(TARGETDIR) && GenerateZFINGFF3.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
 
-
+########################################################################
 # these are here as reminders of how the generate the mo tracks
 # they do not need to be regenerated daily
 # but they may be regenerated more frequently than the assemblies change
-# the target bowtie indexes will need to be updated manualy
 
-run_morpholino_E : get_mo_seq.sql
-	cd $(TARGETDIR) && dbaccess -a $(DBNAME) get_mo_seq.sql && \
-	/private/bin/bowtie --best -strata --sam -f /research/zprodmore/gff3/Ensembl_Zv9.62 mo_seq.fa > E_mo_seq.sam && \
-	nawk -f sam2gff3.awk < E_mo_seq.sam > E_mo_seq.gff3 && \
-	sort -k9,9 -k 1,1n -k 4,4n  E_mo_seq.gff3 | ./increment_id.awk > E_zfin_morpholino.gff3
 
-run_morpholino : get_mo_seq.sql
-	cd $(TARGETDIR) && dbaccess -a $(DBNAME) get_mo_seq.sql && \
-	/private/bin/bowtie --best -strata --sam -f /research/zprodmore/gff3/VEGA45_LG_DNA mo_seq.fa > mo_seq.sam && \
-	nawk -f sam2gff3.awk < mo_seq.sam > mo_seq.gff3 && \
-	sort -k9,9 -k 1,1n -k 4,4n  mo_seq.gff3 | ./increment_id.awk > zfin_morpholino.gff3
+# the target bowtie indexes will need to be updated manualy 
+# it takes hours so do not run it unecessairly
 
+#SANGER_FTP = ftp://ftp.sanger.ac.uk/pub/vega/zebrafish/dna/
+
+# WARNING about a half hour download
+#$(STORE)/Danio_rerio.VEGA47.47.dna.toplevel.fa.gz: $(SANGER_FTP)  $(STORE)
+#	wget --timestamping "$(SANGER_FTP)/Danio_rerio.VEGA47.47.dna.toplevel.fa.gz" -o $(STORE)
+	
+#$(STORE)/Danio_rerio.VEGA47.47.dna.toplevel.fa: $(STORE)/Danio_rerio.VEGA47.47.dna.toplevel.fa.gz
+#	zcat $< > $@
+
+# In reality the sequence does not change from release to release 
+# just when the major version changes which takes years and is slowing.
+# best to just download the new fasta and see if there are significant 
+# differences if not, leave the bowtie index alone
+
+#$(STORE)/Vega_Zv9_47: $(STORE)/Danio_rerio.VEGA45.%.dna.toplevel.fa
+#	cd $(STORE) && nice +10 /private/bin/bowtie-build --big -f $< $@
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_Zv9.62
+BOWTIE_V_IDX = $(GLOBALSTORE)/VEGA45_LG_DNA
+
+$(TARGETDIR)/mo_seq.fa_line:  $(TARGETDIR)/get_mo_seq.sql
+	@cd $(TARGETDIR) && dbaccess -a $(DBNAME) $<
+
+# rearange .unl format to fasta format
+$(TARGETDIR)/mo_seq.fa: $(TARGETDIR)/mo_seq.fa_line
+	@cd $(TARGETDIR) && tr \~ '\n' < $< > $@
+
+$(TARGETDIR)/E_mo_seq.sam: $(TARGETDIR)/mo_seq.fa /private/bin/bowtie  
+	/private/bin/bowtie --best -strata --sam -f $(BOWTIE_E_IDX) $< > $@ 
+
+$(TARGETDIR)/E_mo_seq.gff3: $(TARGETDIR)/E_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
+	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_E_miss.fa
+	@echo "\nthe misses could be processed some other way (that allows gaps)" 
+	@grep -c "^>"  $(TARGETDIR)/mo_seq_E_miss.fa
+
+$(TARGETDIR)/E_zfin_morpholino.gff3: $(TARGETDIR)/E_mo_seq.gff3 increment_id.awk
+	@sort -k9,9 -k 1,1n -k 4,4n $< | ./increment_id.awk > $@ 
+
+run_mo_E: $(TARGETDIR)/E_zfin_morpholino.gff3
+
+clean_mo_E: 
+	rm -f $(TARGETDIR)/mo_seq.fa_line $(TARGETDIR)/mo_seq.fa \
+	$(TARGETDIR)/E_mo_seq.sam $(TARGETDIR)/E_mo_seq.gff3 $(TARGETDIR)/E_zfin_morpholino.gff3
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+$(TARGETDIR)/V_mo_seq.sam: $(TARGETDIR)/mo_seq.fa
+	/private/bin/bowtie --best -strata --sam -f $(BOWTIE_V_IDX) $< > $@ 
+
+$(TARGETDIR)/V_mo_seq.gff3: $(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
+	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_V_miss.fa
+	@echo "\nthe misses could be processed some other way (that allows gaps)" 
+	@grep -c "^>"  $(TARGETDIR)/mo_seq_V_miss.fa
+
+$(TARGETDIR)/zfin_morpholino.gff3: $(TARGETDIR)/V_mo_seq.gff3 increment_id.awk
+	@sort -k9,9 -k 1,1n -k 4,4n $< | ./increment_id.awk > $@ 
+
+run_morpholino:  $(TARGETDIR)/zfin_morpholino.gff3
+
+clean_morpholino:
+	rm -f $(TARGETDIR)/zfin_morpholino.gff3 $(TARGETDIR)/V_mo_seq.gff3 \
+	$(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/mo_seq.fa $(TARGETDIR)/mo_seq.fa_line
+
+########################################################################
 # not sure about enforcing the existence of the input files
 # but want _some_ record of the end of an infrequent process
 # so at least provide a reminder of their existence
-# these two files are created as part of the vega load and
-# should be found there and brought here.
+# these files created as part of the vega load and
+# should be used here.
 
-assembly_for_tom: assembly_for_tom.tab
-	cp assembly_for_tom.tab $(TARGETDIR)/assembly_for_tom.tab
-clone_acc_status: clone_acc_status.unl
-	cp clone_acc_status.unl $(TARGETDIR)/clone_acc_status.unl
+$(TARGETDIR)/assembly_for_tom.tab: $(STORE)/assembly_for_tom.tab
+	cp $< $@ 
+	
+$(TARGETDIR)/clone_acc_status.unl: $(STORE)/clone_acc_status.unl
+	cp $< $@
+
+$(TARGETDIR)/vega_chromosome.gff3: $(STORE)/vega_chromosome.gff3
+	cp $< $@
 
 # price of avoiding transactions is that if the script fails you
 # need to uncomment the drop table statments at the top of the sql
 # for the next attempt (and recomment when done).
-load_vega_assembly: assembly_for_tom clone_acc_status
+
+load_vega_assembly: $(TARGETDIR)/assembly_for_tom.tab  $(TARGETDIR)/clone_acc_status.unl \
+	$(TARGETDIR)/unload_assembly_clone_gff.sql $(TARGETDIR)/vega_chromosome.gff3
 	cd $(TARGETDIR) && dbaccess -a $(DBNAME) unload_assembly_clone_gff.sql
 
 # a similar treatment may need to be devised for
 # $(TARGETDIR)/unload_zfin_morpholino.sql
+

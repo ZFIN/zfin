@@ -32,5 +32,5 @@ BEGIN {FS="\t";OFS="\t";split($9,ATT,";");
 	ID=ATT[1];
 	print $0;
 }
-END {}
+
 

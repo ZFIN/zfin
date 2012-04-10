@@ -33,10 +33,11 @@ print "starting here: \n". `pwd`. "\n";
 my $data_cache = "/research/zprodmore/gff3";
 
 # opportunity to change data_cache for testing enviroment i.e.:
-# $data_cache = "/research/zusers/tomc/data_transfer/VEGA/2011-Aug/PostLoad";
+# 
+$data_cache = "${TARGETROOT}/home/data_transfer/Data";
 
-# note there is doc on creating 'drerio_vega_id.unl'
-# in test enviroment cache directory readme
+# note 'drerio_vega_id.unl' is built in: 
+# ZFIN_WWW/server_apps/data_transfer/Load/Vega
 
 print "Fetching data files from $data_cache\n";
 
