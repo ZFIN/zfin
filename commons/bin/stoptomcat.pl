@@ -29,7 +29,7 @@ given ($ARGV[0]) {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop helix";
     }
     when ("kinetix") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop kinetix";
+        $command="/etc/init.d/tomcat stop";
     }
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop trunk";
