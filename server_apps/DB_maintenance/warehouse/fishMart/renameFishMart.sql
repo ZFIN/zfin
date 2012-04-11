@@ -1,0 +1,8 @@
+drop table fish_annotation_search;
+rename table fish_annotation_search_temp to fish_annotation_search_temp;
+
+drop table gene_feature_result_view;
+rename table gene_feature_result_view_temp to gene_feature_result_view;
+
+drop table figure_term_fish_search;
+rename table figure_term_fish_search_temp to figure_term_fish_search; 
