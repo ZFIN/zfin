@@ -3,8 +3,6 @@
 
 !echo "begin aliases.sql";
 
-set pdqpriority 80;
-
 select distinct dalias_alias, fg_Geno_zdb_id, fg_group_name as group_name, fg_group_pk_id as group_id
  from data_alias, feature_group,               
 	feature_group_member 

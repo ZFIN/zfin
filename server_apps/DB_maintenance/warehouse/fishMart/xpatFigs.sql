@@ -1,7 +1,7 @@
 
 !echo "XPAT FIGURE";
 
-update statistics high for table functional_annotation;
+--update statistics high for table functional_annotation;
 
 insert into xpat_figure_group (xfigg_genox_zdb_id, xfigg_geno_handle)
   select distinct xpatex_genox_zdb_id, geno_handle from expression_Experiment, experiment, genotype, genotype_Experiment
@@ -12,7 +12,7 @@ insert into xpat_figure_group (xfigg_genox_zdb_id, xfigg_geno_handle)
   and genox_geno_zdb_id = geno_zdb_id
  and geno_is_wildtype = 't';
 
-update statistics high for table xpat_figure_group;
+--update statistics high for table xpat_figure_group;
 
 select distinct xpatfig_fig_Zdb_id, xfigg_genox_zdb_id
   from expression_pattern_Figure, expression_Result, expression_experiment, xpat_Figure_group

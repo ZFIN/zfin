@@ -41,7 +41,7 @@ insert into term_group_member (tgm_group_id, tgm_member_name, tgm_member_id)
      and phenox_pk_id = phenos_phenox_pk_id
      and phenos_tag != 'normal';
 
-update statistics high for table term_group;
+--update statistics high for table term_group;
 
 
 create temp table tmp_term (phenox_genox_zdb_id varchar(50), term varchar(50), category char(2))
@@ -74,7 +74,7 @@ delete from tmp_Tg where tg_name is null;
 create index tgtemp_genox on tmp_tg(ttg_genox_group)
   using btree in idxdbs2;
 
-update statistics high for table tmp_Tg;
+--update statistics high for table tmp_Tg;
 
 update term_group
   set tg_group_name = (Select tg_name from tmp_tg where ttg_genox_group = tg_genox_group and tg_name is not null );
@@ -113,8 +113,8 @@ into temp tmp_term2;
 create index term_genox3 on tmp_term2(phenox_genox_zdb_id)
   using btree in idxdbs2;
 
-update statistics high for table tmp_term;
-update statistics high for table tmp_term2;
+--update statistics high for table tmp_term;
+--update statistics high for table tmp_term2;
 
 select replace(replace(replace(substr(multiset (
 							  select distinct item term from tmp_term2
@@ -131,7 +131,7 @@ delete from tmp_tg where tg_name is null;
 create index tgtemp_Genox on tmp_tg(ttg_genox_group)
   using btree in idxdbs2;
 
-update statistics high for table tmp_Tg;
+--update statistics high for table tmp_Tg;
 
 update term_group 
   set tg_group_name = tg_group_name||(Select tg_name from tmp_tg where ttg_genox_group = tg_genox_group and tg_name is not null)
@@ -160,7 +160,7 @@ select distinct phenox_genox_zdb_id,alltermcon_container_zdb_id as term, 3
      	 		and phenos_entity_2_superterm_zdb_id = tmp_term.term)
 ;
 
-update statistics high for table tmp_term;
+--update statistics high for table tmp_term;
 
 select phenox_genox_zdb_id, term
   from tmp_term
@@ -171,8 +171,8 @@ into temp tmp_term3;
 create index term_genox4 on tmp_term3(phenox_genox_zdb_id)
   using btree in idxdbs1;
 
-update statistics high for table tmp_term;
-update statistics high for table tmp_term3;
+--update statistics high for table tmp_term;
+--update statistics high for table tmp_term3;
 
 select replace(replace(replace(substr(multiset (
 							  select distinct item term from tmp_term3
@@ -214,7 +214,7 @@ select distinct phenox_genox_zdb_id,alltermcon_container_zdb_id  as term, 4
      	 		and phenos_entity_2_subterm_zdb_id = tmp_term.term);
 
 
-update statistics high for table tmp_term;
+--update statistics high for table tmp_term;
 
 
 select phenox_genox_zdb_id, term
@@ -225,8 +225,8 @@ into temp tmp_term4;
 create index term_genox5 on tmp_term4(phenox_genox_zdb_id)
   using btree in idxdbs3;
 
-update statistics high for table tmp_term;
-update statistics high for table tmp_term4;
+--update statistics high for table tmp_term;
+--update statistics high for table tmp_term4;
 
 select replace(replace(replace(substr(multiset (
 							  select distinct item term from tmp_term4
@@ -241,7 +241,7 @@ into temp tmp_tg;
 create index tgtemp_Genox on tmp_tg(ttg_genox_group)
   using btree in idxdbs2;
 
-update statistics high for table tmp_Tg;
+--update statistics high for table tmp_Tg;
 
 update term_group 
   set tg_group_name = tg_group_name||(Select tg_name from tmp_tg where ttg_genox_group = tg_genox_group and tg_name is not null)

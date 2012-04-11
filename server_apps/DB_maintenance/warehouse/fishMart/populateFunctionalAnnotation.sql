@@ -19,10 +19,6 @@ select distinct genox_zdb_id
 create index genox_idx on tmp_genox (genox_zdb_id)
   using btree in idxdbs3;
 
-
-update statistics high for table morpholino_group;
-update statistics high for table feature_group;
-
 -- !!! INSERT INTO FUNCTIONAL ANNOTATION !!!---
 
 
@@ -58,6 +54,7 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name)
 
 --no pheno, no expression, yes genox (this should be zero)
 !echo "zero rows should be inserted here:" ;
+
 insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name, fa_genox_zdb_id)
   select distinct genox_geno_zdb_id, geno_handle, geno_display_name,  genox_zdb_id
    from genotype_Experiment, genotype
@@ -214,8 +211,6 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
     and exists (select 'x' from expression_experiment
     	       	       where xpatex_genox_zdb_id = genox_zdb_id)
 and geno_is_wildtype = 'f';
-
-update statistics high for table functional_annotation;
 
 
 

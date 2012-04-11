@@ -1,6 +1,6 @@
 
 drop table functional_annotation;
-drop table fish_annotation_search;
+--drop table fish_annotation_search_temp;
 drop table morpholino_group;
 drop table morpholino_group_member;
 
@@ -25,8 +25,8 @@ drop table phenotype_figure_group;
 drop table phenotype_figure_group_member;
 drop table construct_group;
 drop table construct_group_member;
-drop table gene_feature_result_view;
-drop table figure_term_fish_search;
+--drop table gene_feature_result_view_temp;
+--drop table figure_term_fish_search_temp;
 
 drop table xpat_figure_group;
 drop table xpat_figure_group_member;

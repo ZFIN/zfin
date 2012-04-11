@@ -1,9 +1,7 @@
 
 
-update statistics high for table functional_annotation;
-update statistics high for table feature_group;
-
-set pdqpriority 80;
+--update statistics high for table functional_annotation;
+--update statistics high for table feature_group;
 
 update functional_annotation
   set fa_gene_group = (Select distinct afg_group_name 
@@ -111,9 +109,9 @@ update functional_annotation
 
 
 
-update statistics high for table phenotype_figure_group;
+--update statistics high for table phenotype_figure_group;
 
-update statistics high for table environment_group;
+--update statistics high for table environment_group;
 
 update functional_annotation
  set fa_environment_group_is_standard_or_control = 't'
@@ -138,12 +136,12 @@ delete from functional_annotation
   or fa_environment_group like '%temperature%')
   and fa_environment_group_is_standard_or_control = 'f';
 
-update statistics high for table functional_annotation;
-update statistics high for table feature_group;
-update statistics high for table morpholino_group;
-update statistics high for table affected_gene_group;
-update statistics high for table environment_group;
-update statistics high for table term_group;
+--update statistics high for table functional_annotation;
+--update statistics high for table feature_group;
+--update statistics high for table morpholino_group;
+--update statistics high for table affected_gene_group;
+--update statistics high for table environment_group;
+--update statistics high for table term_group;
 
 update functional_annotation
    set fa_affector_type_group = 'zzzzzzzzzzzzzzzzzzzzzz'

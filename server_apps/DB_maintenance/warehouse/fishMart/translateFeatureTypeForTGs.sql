@@ -1,8 +1,9 @@
+!echo "start translate feature type for TGs";
 
 update statistics high for table gene_feature_result_view;
-update statistics high for table fish_Annotation_Search;
+update statistics high for table fish_annotation_search_temp;
 
-update fish_annotation_Search
+update fish_annotation_search_temp
   set fas_fish_significance = 0;
 
 update gene_feature_result_View
@@ -14,7 +15,7 @@ update gene_feature_result_View
 
 --set explain on avoid_execute;
 
-update fish_Annotation_Search
+update fish_annotation_search_temp
   set fas_fish_significance = (Select sum(fto_priority)
       			      	      from feature_Type_ordering, gene_feature_result_View
 				      where fto_name = gfrv_affector_type_display
@@ -30,11 +31,11 @@ update gene_feature_result_view
   set gfrv_affector_type_display = 'Transgenic Insertion'
   where gfrv_affector_type_display = 'Unspecified Transgenic Insertion' ;
 
-update fish_annotation_search
+update fish_annotation_search_temp
   set fas_affector_type_group = fas_affector_type_group||", transgenic_insertion"
  where fas_affector_type_Group like '%transgenic_unspecified%';
   
 
-update fish_annotation_search
+update fish_annotation_search_temp
   set fas_affector_type_group = replace(fas_affector_type_group,"_","");
   

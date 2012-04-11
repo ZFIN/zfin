@@ -1,10 +1,10 @@
 
 !echo "PHENO FIGURE";
 
-update statistics high for table phenotype_figure_group;
-update statistics high for table functional_annotation;
+--update statistics high for table phenotype_figure_group;
+--update statistics high for table functional_annotation;
 
-set pdqpriority 80;
+--set pdqpriority 80;
 
 insert into phenotype_figure_group (pfigg_genox_zdb_id)
   select genox_zdb_id from genotype_Experiment

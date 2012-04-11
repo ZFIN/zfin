@@ -1,4 +1,4 @@
-
+!echo "start add counts to functional annotation";
 update statistics high for table functional_annotation;
 update statistics high for table feature_group;
 update statistics high for table feature_group_member;

@@ -1,6 +1,6 @@
 
-
-delete from figure_term_fish_Search;
+!echo "start populate figure term fish search";
+delete from figure_term_fish_search_temp;
 
 select distinct geno_handle, phenox_genox_zdb_id, phenox_fig_zdb_id, alltermcon_container_zdb_id as term
   from phenotype_experiment, phenotype_statement, genotype_Experiment, genotype, all_term_contains
@@ -48,20 +48,21 @@ create index genox_index
 create index fig_index
   on tmp_phenox(phenox_fig_zdb_id)
  using btree in idxdbs2;
+
 update statistics high for table tmp_phenox;
 
-insert into figure_term_fish_search (ftfs_fas_id, ftfs_geno_handle, ftfs_fig_zdb_id, ftfs_genox_zdb_id)
+insert into figure_term_fish_search_temp (ftfs_fas_id, ftfs_geno_handle, ftfs_fig_zdb_id, ftfs_genox_zdb_id)
  select distinct  fas_pk_id, fas_geno_handle, phenox_fig_Zdb_id, phenox_genox_zdb_id
-    from fish_annotation_Search, phenotype_Experiment, functional_annotation
+    from fish_annotation_search_temp, phenotype_Experiment, functional_annotation
     where fas_geno_handle = fa_geno_handle
     and phenox_genox_zdb_id = fa_genox_zdb_id;
 
 
-update statistics high for table figure_term_fish_Search;
+update statistics high for table figure_term_fish_search_temp;
 
 
 --set explain on avoid_execute;
-update figure_term_fish_search
+update figure_term_fish_search_temp
   set ftfs_term_group = replace(replace(replace(substr(multiset (select distinct item term 
       		      						   from tmp_phenox, functional_annotation
 								   where ftfs_geno_handle = fa_geno_handle
@@ -69,8 +70,8 @@ update figure_term_fish_search
 								   and ftfs_fig_zdb_id = phenox_fig_zdb_id
 							  )::lvarchar(3000),11),""),"'}",""),"'","");
 
-update figure_term_fish_search set ftfs_term_group = replace(ftfs_term_group,","," ");
+update figure_term_fish_search_temp set ftfs_term_group = replace(ftfs_term_group,","," ");
 
 
-update figure_term_fish_search
+update figure_term_fish_search_temp
  set ftfs_term_group = lower(ftfs_term_group);
