@@ -48,7 +48,7 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: <!--|CURATORS_AT_ZFIN|-->
+To: <!--|COUNT_PATO_OUT|-->
 From: $email
 Subject: $data{subject}
 
