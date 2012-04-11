@@ -11,14 +11,14 @@
         <exec executable="${tomcat-script-informix-zfishweb-start}" failifexecutionfails="true">
             <arg value="${INSTANCE}"/>
         </exec>
-        <echo message=":TOMCAT START SUCCESSFUL:"/>
+        <echo message=":ZFISHWEB TOMCAT START SUCCESSFUL:"/>
     </target>
 
     <target name="informix-zfishweb-tomcat-stop" if="isinformix" description="Stops tomcat if running as informix/zfishweb">
-        <exec executable="${tomcat-script-informix-zfishweb-start}" failifexecutionfails="true">
+        <exec executable="${tomcat-script-informix-zfishweb-stop}" failifexecutionfails="true">
             <arg value="${INSTANCE}"/>
         </exec>
-        <echo message=":TOMCAT START SUCCESSFUL:"/>
+        <echo message=":ZFISHWEB TOMCAT STOP SUCCESSFUL:"/>
     </target>
 
 
