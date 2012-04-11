@@ -10,13 +10,21 @@ update gff3 set gff_Name = (
 	 from transcript
 	  join marker on tscript_mrkr_zdb_id = mrkr_zdb_id
 	 where tscript_load_id = gff_ID
-	   and gff_Name != mrkr_abbrev
+	   and (gff_Name is NULL or gff_Name != mrkr_abbrev)
 )
  where gff_source == 'vega'
    and gff_feature = 'transcript'
    and exists (
 	select 't' from transcript where gff_ID = tscript_load_id
 );
+
+! echo "update Vega transcript names to (ottdarT) if NULL"
+update gff3 set gff_Name = gff_ID
+ where gff_source == 'vega'
+   and gff_feature = 'transcript'
+   and gff_Name is NULL
+;
+
 
 ! echo "update Vega gene names (ottdarG) to zfin names"
 update gff3 set gff_Name = (
@@ -27,7 +35,7 @@ update gff3 set gff_Name = (
 	 where dblink_acc_num = gff_ID
 	   and mrel_type == "gene produces transcript"
 	   and mrkr_type[1,4] == "GENE"
-	   and gff_Name != mrkr_abbrev
+	   and (gff_Name is NULL or gff_Name != mrkr_abbrev)
 )
  where gff_source == 'vega'
    and gff_feature = 'gene'

@@ -10,7 +10,7 @@ select
     ";Name="    || gff_Name    ||
     ";Parent="  || gff_Parent  ||
     ";biotype=" || gff_biotype ||
-    ";zdb_id="  || case tscript_mrkr_zdb_id when NULL then "" else tscript_mrkr_zdb_id end ||
+    ";zdb_id="  || case tscript_load_id when NULL then "" else mrkr_zdb_id end ||
     ";Alias="   || gff_ID
     when 'gene' then
     "ID="       || gff_ID      ||
@@ -25,9 +25,10 @@ select
     ";Name="    || gff_Name    ||
     ";Parent="  || gff_Parent
     end
-from gff3, outer transcript
-where tscript_load_id = gff_ID
-  and gff_source == 'vega'
+from gff3, outer transcript 
+where gff_source == 'vega'
+  and tscript_load_id = gff_ID 
+  and mrkr_zdb_id == tscript_mrkr_zdb_id
 
 order by 1::integer,4,3
 ;
