@@ -1,4 +1,5 @@
 
+/* Server: @INSTANCE@ */
 
 
 
@@ -418,7 +419,7 @@ document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar
 document.write("       <a href=\"/action/antibody/antibody-search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 
-document.write("       <a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg\">Mutants / Morphants / Tg</a>");
+document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-fishselect.apg\">Mutants / Morphants / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("      <a href=\"/action/anatomy/anatomy-search\" title=\"Search the zebrafish anatomical ontology\">Anatomy</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
