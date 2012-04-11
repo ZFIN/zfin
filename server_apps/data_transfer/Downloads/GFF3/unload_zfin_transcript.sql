@@ -4,7 +4,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_tscript.gff3' DE
 
 select gff_seqname,'ZFIN_transcript' gff_source,gff_feature,gff_start,gff_end,gff_score,gff_strand,gff_frame,
 case gff_feature when 'transcript' then
- "ID="||gff_ID||";Name="||mrkr_gff_Name||";Parent="||gff_Parent||";biotype="||tscriptt_type||";zdb_id="||mrkr_zdb_id
+ "ID="||gff_ID||";Name="||mrkr_abbrev||";Parent="||gff_Parent||";biotype="||tscriptt_type||";zdb_id="||mrkr_zdb_id
 else
  "ID="||gff_ID||";Name="||gff_Name||";Parent="|| gff_Parent
 end attribute
