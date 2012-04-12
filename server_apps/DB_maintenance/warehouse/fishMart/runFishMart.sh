@@ -59,6 +59,9 @@ set fishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateNullOrderingColumns.sql \
+	     commit.sql \ 
+	     begin.sql \
+	     createTempBtsIndexes.sql \
 	     commit.sql \
 	     )
 
