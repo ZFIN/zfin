@@ -75,8 +75,7 @@ set regenFishMartScripts=(begin.sql \
 	     commit.sql \
 	     )
 
-set fullFishMartScripts=(
-	     begin.sql \
+set fullFishMartScripts=(begin.sql \
 	     dropTables.sql \
 	     schemaTables.sql \
 	     commit.sql \
