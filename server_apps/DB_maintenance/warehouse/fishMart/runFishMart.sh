@@ -6,7 +6,7 @@ setenv INFROMIXDIR <!--|INFORMIX_DIR|-->
 set FISHMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart 
 set FULL_SCRIPT_FILE=$FISHMARTDIR/fishMartAutomated.sql 
 set CONVERT_FISHMART_FILE=$FISHMARTDIR/fishMartRegen.sql
-set ALL_FISHMART_SCRIPTS=$FISMARTDIR/allFishMart.sql
+set ALL_FISHMART_SCRIPTS=$FISHMARTDIR/allFishMart.sql
 
 /bin/rm -rf $FULL_SCRIPT_FILE 
 /bin/rm -rf $CONVERT_FISHMART_FILE 
