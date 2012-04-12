@@ -79,7 +79,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
         if (CollectionUtils.isNotEmpty(organizationLinks)) {
             for (OrganizationLink organizationLink : organizationLinks) {
-                s += organizationLink.getOrderThisLink() + " ";
+                s += organizationLink.getOrderThisLink();
             }
         }
 
