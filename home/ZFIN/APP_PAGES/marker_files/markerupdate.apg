@@ -61,7 +61,7 @@ function make_correction(mrkr_id,old_v,attr) {
 	    where mrkr_zdb_id = '$OID'
 	      and mrkr_type = marker_type;">
 	<?/MISQL>
-	<?MIVAR NAME=$current_value>$1<?/MIVAR>
+	<?MIVAR NAME=$current_value>$(URLENCODE,$1)<?/MIVAR>
 	<?MIVAR NAME=$update_target>$2<?/MIVAR>
 	<?MIVAR NAME=$mrkr_type>$3<?/MIVAR>
 	<?MIVAR NAME=$mrkr_type_display>$4<?/MIVAR>
@@ -89,7 +89,9 @@ function make_correction(mrkr_id,old_v,attr) {
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
 	<INPUT TYPE=hidden name=OID Value=$OID>
-	<INPUT TYPE=hidden name=old_value Value="$current_value">
+      <?/MIVAR>
+	<INPUT TYPE=hidden name=old_value Value="<?MIVAR>$(URLDECODE,$current_value)<?/MIVAR>">
+      <?MIVAR>
 	<INPUT TYPE=hidden name=attr Value=$attr>
 	<INPUT TYPE=hidden name=attr_type Value=$attr_type>
 	<INPUT TYPE=hidden name=target_table Value=$target_table>
@@ -102,20 +104,19 @@ function make_correction(mrkr_id,old_v,attr) {
 	<?MIBLOCK COND="$(EC,$attr_type,textarea)">
 	  <?MIVAR>
 	    <TD valign=middle><b>$print_name</b>: </TD>
-	    <TD>
-              <TEXTAREA name=new_value rows=10 cols=70 wrap=virtual>$(IF,$(NC,$current_value,NULL),$current_value)</TEXTAREA>
-	    </TD>
 	  <?/MIVAR>
+	    <TD>
+              <TEXTAREA name=new_value rows=10 cols=70 wrap=virtual><?MIVAR COND="$(NC,$current_value,NULL)">$(URLDECODE,$current_value)<?/MIVAR></TEXTAREA>
+	    </TD>
+	  
 	<?/MIBLOCK>
 
 	<!-- Else you are doing a simple one-line text attribute -->
-	<?MIBLOCK COND="$(EC,$attr_type,text)">
-	  <?MIVAR>
-	    <TD><b>$print_name</b>:</TD>
+	<?MIBLOCK COND="$(EC,$attr_type,text)">	  
+	    <TD><b><?MIVAR>$print_name<?/MIVAR></b>:</TD>
 	    <TD width=80%>
-	    <INPUT TYPE=text name=new_value SIZE=50
-	           $(IF,$(NC,$current_value,NULL),VALUE='$current_value')>
-	  <?/MIVAR>
+	    <INPUT TYPE=text name=new_value SIZE=60
+	           value="<?MIVAR COND="$(NC,$current_value,NULL)">$(URLDECODE,$current_value)<?/MIVAR>">
 	  </TD>
           <?MIVAR COND="$(AND,$(>,$(POSITION,$mrkr_type,GENE),0),$(OR,$(EC,$attr,mrkr_name),$(EC,$attr,mrkr_abbrev)))">
             </tr>
@@ -148,9 +149,10 @@ function make_correction(mrkr_id,old_v,attr) {
       <TABLE width=100%>
         <TR align=center><TD>
         <INPUT TYPE=submit name=s_change value="SUBMIT this UPDATE">
-        <?MIVAR COND=$(OR,$(EC,$attr,mrkr_name),$(EC,$attr,mrkr_abbrev))>
-        <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$current_value','$attr');">
-        <?/MIVAR>
+        <?MIBLOCK COND="$(OR,$(EC,$attr,mrkr_name),$(EC,$attr,mrkr_abbrev))">
+           <?MIVAR NAME=$decoded_current_value>$(URLDECODE,$current_value)<?/MIVAR>
+        <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$decoded_current_value','$attr');">
+        <?/MIBLOCK>
         </TD><TD>
         <INPUT TYPE=button 
           name=veto 
