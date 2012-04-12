@@ -25,7 +25,7 @@ select
     ";Name="    || gff_Name    ||
     ";Parent="  || gff_Parent
     end
-from gff3, outer transcript 
+from gff3, outer (transcript, marker) 
 where gff_source == 'vega'
   and tscript_load_id = gff_ID 
   and mrkr_zdb_id == tscript_mrkr_zdb_id
