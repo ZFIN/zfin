@@ -140,6 +140,18 @@ public class GafService {
         gafJobData.markStopTime();
     }
 
+    protected ReferenceDatabase getUniprot () {
+      if (uniprot == null) {
+        // get uniprot ReferenceDatabase
+        uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB
+                , ForeignDBDataType.DataType.POLYPEPTIDE
+        );
+      }
+
+      return uniprot;
+    }
+
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
         Set<Marker> returnGenes = new HashSet<Marker>() ;
         if(entryId.startsWith("ZDB-GENE-")){
@@ -150,7 +162,7 @@ public class GafService {
             returnGenes.add(gene);
         }
         else{
-            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, uniprot);
+            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprot());
             for(MarkerDBLink markerDBLink : markerDBLinks){
                 Marker gene = markerDBLink.getMarker();
                 if(gene.getZdbID().startsWith("ZDB-GENE-")){

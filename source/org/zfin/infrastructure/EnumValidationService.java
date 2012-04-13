@@ -318,13 +318,15 @@ public class EnumValidationService {
         }
 
         // 3 is the exclude list, maybe there is a better way to represent this
-        Enum[] enums = new Enum[InferenceCategory.values().length - 4];
+        Enum[] enums = new Enum[InferenceCategory.values().length - 6];
         int i = 0;
         for (InferenceCategory inferenceCategory : InferenceCategory.values()) {
             if (inferenceCategory != InferenceCategory.ZFIN_MRPH_GENO
                     && inferenceCategory != InferenceCategory.ZFIN_GENE
                     && inferenceCategory != InferenceCategory.GO
                     && inferenceCategory != InferenceCategory.ENSEMBL
+                    && inferenceCategory != InferenceCategory.SP_KW
+                    && inferenceCategory != InferenceCategory.SP_SL
                     ) {
                 enums[i] = inferenceCategory;
                 ++i;

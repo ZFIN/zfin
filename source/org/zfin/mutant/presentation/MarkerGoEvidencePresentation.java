@@ -73,7 +73,7 @@ public class MarkerGoEvidencePresentation {
     public static ReferenceDatabase getSpkwReferenceDatabase() {
         if (spkwReferenceDatabase == null) {
             spkwReferenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.SP_KW,
+                    ForeignDB.AvailableName.UNIPROTKB_KW,
                     ForeignDBDataType.DataType.GENE_ONTOLOGY,
                     ForeignDBDataType.SuperType.INFERENCE,
                     Species.ZEBRAFISH);
@@ -102,7 +102,7 @@ public class MarkerGoEvidencePresentation {
 
     private static ForeignDB getSpslForeignDBDatabase() {
         if (spslForeignDB == null) {
-            spslForeignDB = RepositoryFactory.getSequenceRepository().getForeignDBByName(ForeignDB.AvailableName.SP_SL);
+            spslForeignDB = RepositoryFactory.getSequenceRepository().getForeignDBByName(ForeignDB.AvailableName.UNIPROTKB_SUBCELL);
         }
         return spslForeignDB;  //To change body of created methods use File | Settings | File Templates.
     }
@@ -166,6 +166,8 @@ public class MarkerGoEvidencePresentation {
                 return createLink(accession, getRefseqReferenceDatabase().getForeignDB(), inferenceCategory);
             case SP_KW:
                 return createLink(accession, getSpkwReferenceDatabase().getForeignDB(), inferenceCategory);
+            case UNIPROTKB_KW:
+                return createLink(accession, getSpkwReferenceDatabase().getForeignDB(), inferenceCategory);
             case INTERPRO:
                 return createLink(accession, getInterproReferenceDatabase().getForeignDB(), inferenceCategory);
             case EC:
@@ -173,6 +175,8 @@ public class MarkerGoEvidencePresentation {
             case HAMAP:
                 return createLink(accession, getHamapForeignDBDatabase(), inferenceCategory);
             case SP_SL:
+                return createLink(accession, getSpslForeignDBDatabase(), inferenceCategory);
+            case UNIPROTKB_SUBCELL:
                 return createLink(accession, getSpslForeignDBDatabase(), inferenceCategory);
             default:
                 return inferredFrom;

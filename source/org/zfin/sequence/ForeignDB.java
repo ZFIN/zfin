@@ -108,8 +108,11 @@ public class ForeignDB implements Comparable<ForeignDB> {
         QUICKGO("QuickGO"),
         REFSEQ("RefSeq"),
         SANGER_CLONE("Sanger_Clone"),
-        SP_KW("SP_KW"),
-        SP_SL("SP_SL"),
+        // FB case 8239
+        //SP_KW("SP_KW"),
+        UNIPROTKB_KW("UniProtKB-KW"),
+        //SP_SL("SP_SL"),
+        UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
         TAO("TAO"),
         UNIGENE("UniGene"),
         UNIPROTKB("UniProtKB"),

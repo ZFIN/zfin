@@ -146,7 +146,7 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                                     if (relatedEntityDTO.getDataZdbID() == null) {
                                         availableList.addItem(relatedEntityDTO.getDataZdbID(), "null");
                                     } else {
-                                        availableList.addItem(relatedEntityDTO.getName(), 
+                                        availableList.addItem(relatedEntityDTO.getName(),
                                                 relatedEntityDTO.getGoTerm().getOboID().substring(InferenceCategory.GO.prefix().length()));
                                     }
                                 }
@@ -157,7 +157,9 @@ public abstract class AbstractInferenceListBox extends AbstractStackComposite<Go
                             }
                         }
                     });
-        } else if (inferenceCategoryList.getSelected().equals(InferenceCategory.SP_KW.name())
+        } else if (inferenceCategoryList.getSelected().equals(InferenceCategory.UNIPROTKB_KW.name())
+                ||
+                inferenceCategoryList.getSelected().equals(InferenceCategory.SP_KW.name())
                 ||
                 inferenceCategoryList.getSelected().equals(InferenceCategory.INTERPRO.name())
                 ||

@@ -141,7 +141,7 @@ begin work;
 -- order the boolean column secondary, obsolete makes the obsolete(t) comes first,
 -- secondary(t) comes second, if obsolete&secondary(?) comes last. 
 	unload to "spkw2go_obsl_secd.unl" 
-		select distinct "SP_KW:"||sp_kwd_id, s.goterm_name, s.goterm_id,
+		select distinct "UniProtKB-KW:"||sp_kwd_id, s.goterm_name, s.goterm_id,
 			t.term_is_obsolete, t.term_is_secondary 
 		  from spkw_goterm_with_dups s, term t
 		 where "GO:"||s.goterm_id = t.term_ont_id
@@ -234,7 +234,7 @@ begin work;
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct sk.mrkr_zdb_id, term_zdb_id, "ZDB-PUB-020723-1", 
-		       "SP_KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
+		       "UniProtKB-KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
 		  from sp_kwd sk,  spkw_goterm_with_dups sg, term
 		 where sk.sp_kwd = sg.sp_kwd_name
 		   and term_ont_id = "GO:"||sg.goterm_id;

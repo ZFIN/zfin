@@ -108,8 +108,8 @@ public class InferenceUnitTest {
         assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.EC.zdbID()).length);
         assertEquals(InferenceCategory.EC, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.EC.zdbID())[0]);
 
-        assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.SPKW.zdbID()).length);
-        assertEquals(InferenceCategory.SP_KW, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.SPKW.zdbID())[0]);
+        //assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.SPKW.zdbID()).length);
+        //assertEquals(InferenceCategory.SP_KW, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.SPKW.zdbID())[0]);
 
         assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.INTERPRO.zdbID()).length);
         assertEquals(InferenceCategory.INTERPRO, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.INTERPRO.zdbID())[0]);

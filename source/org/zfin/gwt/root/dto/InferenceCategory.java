@@ -21,10 +21,12 @@ public enum InferenceCategory {
     GENPEPT("GenPept"),
     REFSEQ("RefSeq"),
     SP_KW("SP_KW"),
+    UNIPROTKB_KW("UniProtKB-KW"),
     INTERPRO("InterPro"),
     EC("EC"),
     HAMAP("HAMAP"),
     SP_SL("SP_SL"),
+    UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
     ENSEMBL("Ensembl"),
     PANTHER("PANTHER",false),
     ;
@@ -64,6 +66,14 @@ public enum InferenceCategory {
     }
 
     public String prefix() {
+        if (prefix.equals("SP_SL")) {
+            return "UniProtKB-SubCell" + SEPARATOR;
+        }
+
+        if (prefix.equals("SP_KW")) {
+            return "UniProtKB-KW" + SEPARATOR;
+        }
+
         return prefix + SEPARATOR;
     }
 

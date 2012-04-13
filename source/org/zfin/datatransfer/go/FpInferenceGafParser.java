@@ -26,6 +26,9 @@ public class FpInferenceGafParser {
         goRefExcludePubMap.add(GOREF_PREFIX + "0000003");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000004");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000015");
+        //add the following 2 for FB case 8239, GOA GAF load needs pub filters adjusted
+        goRefExcludePubMap.add(GOREF_PREFIX + "0000037");
+        goRefExcludePubMap.add(GOREF_PREFIX + "0000038");
     }
 
     public List<GafEntry> parseGafFile(File downloadedFile) throws Exception {

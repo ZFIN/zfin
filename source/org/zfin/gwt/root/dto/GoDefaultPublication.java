@@ -7,7 +7,8 @@ import java.util.Set;
  */
 public enum GoDefaultPublication implements PubEnum {
     INTERPRO("InterPro2GO Mapping", "ZDB-PUB-020724-1", InferenceCategory.INTERPRO),
-    SPKW("SPKW2GO Mapping", "ZDB-PUB-020723-1", InferenceCategory.SP_KW),
+    //SPKW("SPKW2GO Mapping", "ZDB-PUB-020723-1", InferenceCategory.SP_KW),
+    UNIPROTKBKW("UNIPROTKB_KW2GO Mapping", "ZDB-PUB-020723-1", InferenceCategory.UNIPROTKB_KW),
     EC("EC2GO Mapping", "ZDB-PUB-031118-3", InferenceCategory.EC),
     ROOT("Annotation to Root Terms", "ZDB-PUB-031118-1"),
     ISS_REF_GENOME("ISS from Ref. Genome", "ZDB-PUB-071010-1"),
@@ -15,6 +16,8 @@ public enum GoDefaultPublication implements PubEnum {
     GOREF_ENSEMBL("GO_REF:0000019", "ZDB-PUB-110127-1", InferenceCategory.ENSEMBL, false),
     GOREF_HAMAP("GO_REF:0000020", "ZDB-PUB-110127-2", InferenceCategory.HAMAP, false),
     GOREF_SP_SL("GO_REF:0000023", "ZDB-PUB-110127-3", InferenceCategory.SP_SL, false),
+    GOREF_UNIPROTKB_SUBCELL1("GO_REF:0000039", "ZDB-PUB-120306-2", InferenceCategory.UNIPROTKB_SUBCELL, false),
+    GOREF_UNIPROTKB_SUBCELL2("GO_REF:0000040", "ZDB-PUB-120306-4", InferenceCategory.UNIPROTKB_SUBCELL, false),
     GOREF_UNIPROT("GO_REF:0000024", "ZDB-PUB-110105-1", InferenceCategory.UNIPROTKB, false),
     GOREF_PAINT("GO_REF:0000033", "ZDB-PUB-110330-1", InferenceCategory.PANTHER, false),
     ;
@@ -91,6 +94,8 @@ public enum GoDefaultPublication implements PubEnum {
         if (goRefPubs == null) {
             goRefPubs = new HashSet<GoDefaultPublication>();
             goRefPubs.add(GOREF_SP_SL);
+            goRefPubs.add(GOREF_UNIPROTKB_SUBCELL1);
+            goRefPubs.add(GOREF_UNIPROTKB_SUBCELL2);
             goRefPubs.add(GOREF_HAMAP);
             goRefPubs.add(GOREF_ENSEMBL);
             goRefPubs.add(GOREF_UNIPROT);
@@ -103,9 +108,12 @@ public enum GoDefaultPublication implements PubEnum {
         if (ieaPubs == null) {
             ieaPubs = new HashSet<GoDefaultPublication>();
             ieaPubs.add(INTERPRO);
-            ieaPubs.add(SPKW);
+            //ieaPubs.add(SPKW);
+            ieaPubs.add(UNIPROTKBKW);
             ieaPubs.add(EC);
             ieaPubs.add(GOREF_SP_SL);
+            ieaPubs.add(GOREF_UNIPROTKB_SUBCELL1);
+            ieaPubs.add(GOREF_UNIPROTKB_SUBCELL2);
             ieaPubs.add(GOREF_HAMAP);
             ieaPubs.add(GOREF_ENSEMBL);
         }
