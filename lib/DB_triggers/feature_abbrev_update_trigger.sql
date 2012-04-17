@@ -9,7 +9,7 @@ create trigger feature_abbrev_update_trigger update of
        		 		     newf.feature_type, 
        		 		     newf.feature_abbrev, 
 				     newf.feature_lab_prefix_id, 
-				     newf.feature_line_number, 
+				     newf.feature_line_number,
 				     newf.feature_df_transloc_complex_prefix,
 				     newf.feature_dominant, 
 				     newf.feature_unspecified,
@@ -23,6 +23,5 @@ create trigger feature_abbrev_update_trigger update of
 	execute procedure fhist_event(newf.feature_zdb_id,
        		'reassigned', newf.feature_abbrev,oldf.feature_abbrev),
     execute procedure checkDupFeaturePrefixLineDesignation (newf.feature_lab_prefix_id, newf.feature_line_number),
- execute procedure populate_feature_tracking(newf.feature_Abbrev, newf.feature_name, newf.feature_zdb_id)
+ execute procedure populate_feature_tracking(newf.feature_Abbrev, newf.feature_name, newf.feature_zdb_id) 
 );
-
