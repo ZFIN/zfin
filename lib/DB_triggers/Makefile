@@ -82,6 +82,8 @@ TRIGGERS = \
 	orthologue_evidence_display_update_trigger.sql \
 	orthologue_insert_trigger.sql \
 	orthologue_update_trigger.sql \
+	one_to_one_accession_insert_trigger.sql \
+	one_to_one_accession_update_trigger.sql \
 	person_insert_trigger.sql \
 	person_update_trigger.sql \
 	person_address_update_trigger.sql \

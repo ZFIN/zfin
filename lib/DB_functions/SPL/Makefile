@@ -34,6 +34,7 @@ DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       getZfinAccessionNumber.sql \
 	       setTscriptLoadId.sql
 FISH_STATS   = get_image_stats.sql \
+	       p_update_related_names.sql \
 	       p_update_related_genotype_names.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
@@ -51,6 +52,7 @@ FISH_STATS   = get_image_stats.sql \
 	       p_check_fx_postcomposed_terms.sql \
 	       p_markers_present_absent_exclusive.sql \
 	       checkFeatureAbbrev.sql \
+	       checkDblinkOneToOneAccessionMapping.sql \
 	       updateConstructAbbrev.sql \
 	       checkDupFeaturePrefixLineDesignation.sql \
 	       populate_feature_tracking.sql 
