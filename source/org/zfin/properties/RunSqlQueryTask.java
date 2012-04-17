@@ -24,6 +24,9 @@ public class RunSqlQueryTask extends Task {
 
     @Override
     public void execute() {
+        System.setProperty("java.io.tmpdir", "test/temp");
+	System.out.println("java.io.tmpdir: "+System.getProperty("java.io.tmpdir"));
+
         LOG.info("Running SQLQueryTask on instance: " + instance);
         File baseDirectory = new File(baseDir);
         if (!baseDirectory.exists()) {
