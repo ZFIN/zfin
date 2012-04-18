@@ -1,5 +1,6 @@
 package org.zfin.properties;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.Task;
@@ -64,15 +65,15 @@ public class RunSqlQueryTask extends Task {
     }
 
     private void createErrorReport(List<String> errorMessages) {
-        if (errorMessages != null) {
+        if (CollectionUtils.isEmpty(errorMessages))
+            return;
 
-            int index = 1;
-            for (String error : errorMessages) {
-                System.out.println("\r" + index++ + ". ");
-                System.out.println(error);
-            }
-            throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
+        int index = 1;
+        for (String error : errorMessages) {
+            System.out.println("\r" + index++ + ". ");
+            System.out.println(error);
         }
+        throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
     }
 
     private void initDatabase() {

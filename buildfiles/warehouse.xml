@@ -74,6 +74,14 @@
         </exec>
     </target>
 
+    <target name="timestamp-unload" description="Set the timestamp of the unload in the database_info table">
+        <echo message="Update time stamp in DATABASE_INFO table:"/>
+<!--
+        <run-db-query db-query-file="disable-updates.sql" instanceName="esedb"/>
+-->
+    </target>
+
+
     <target name="run-fishmart-unittests">
         <echo message="Run unit tests for fishmart"/>
 	<run-sql-query-tests sql-query-file="fishmart-integrity-tests.sql" directory="${warehouseDir}/fishMart"/>
