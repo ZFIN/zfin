@@ -5,6 +5,7 @@ import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.presentation.Fish;
+import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinFigureEntity;
 
 import java.util.List;
@@ -75,4 +76,13 @@ public interface FishRepository {
      * @return warehouse summary
      */
     WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
+
+    /**
+     * Retrieve the status of the fish mart:
+     * true: fish mart ready for usage
+     * false: fish mart is being rebuilt.
+     *
+     * @return status
+     */
+    ZdbFlag getFishMartStatus();
 }

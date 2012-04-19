@@ -46,7 +46,8 @@ public class ZdbFlag {
         FISHSEARCH("regen_fishsearch"),
         GENOTYPE_DISPLAY("regen_genotype_display"),
         MAPS("regen_maps"),
-        NAMES("regne_names"),
+        NAMES("regen_names"),
+        REGEN_FISHMART_BTS_INDEXES("regen_fishmart_bts_indexes"),
         OEVDISP("regen_oevdisp");
 
         private final String value;

@@ -4,7 +4,7 @@
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishSearchFormBean" scope="request"/>
 
 
-    <zfin-fish:fishSearchForm formBean="${formBean}"/>
+    <zfin-fish:fishSearchFormPage formBean="${formBean}"/>
 
     <c:choose>
         <c:when test="${formBean.totalRecords > 0}">

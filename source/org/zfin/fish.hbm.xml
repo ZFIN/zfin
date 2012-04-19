@@ -28,7 +28,6 @@
 
         <property name="martName" column="wrt_mart_name"/>
         <property name="releaseDate" column="wrt_last_loaded_date"/>
-        <property name="successfulLoad" column="wrt_mart_load_successful"/>
     </class>
 
     <class name="FeatureGene" table="gene_feature_result_View">

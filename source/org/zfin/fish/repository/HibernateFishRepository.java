@@ -15,6 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.search.SortType;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.MarkerRelationship;
@@ -535,6 +536,21 @@ public class HibernateFishRepository implements FishRepository {
         Criteria criteria = session.createCriteria(WarehouseSummary.class);
         criteria.add(Restrictions.eq("martName", mart.getName()));
         return (WarehouseSummary) criteria.uniqueResult();
+    }
+
+    /**
+     * Retrieve the status of the fish mart:
+     * true: fish mart ready for usage
+     * false: fish mart is being rebuilt.
+     *
+     * @return status
+     */
+    @Override
+    public ZdbFlag getFishMartStatus() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ZdbFlag.class);
+        criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_FISHMART_BTS_INDEXES));
+        return (ZdbFlag) criteria.uniqueResult();
     }
 
     /**

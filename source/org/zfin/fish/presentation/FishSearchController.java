@@ -17,6 +17,7 @@ import org.zfin.fish.repository.FishRepository;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.MatchingText;
+import org.zfin.infrastructure.ZdbFlag;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -67,6 +68,9 @@ public class FishSearchController {
         }
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search Results");
+        ZdbFlag status = fishRepository.getFishMartStatus();
+        model.addAttribute(status);
+
         return "fish/fish-search-result.page";
     }
 
@@ -83,6 +87,8 @@ public class FishSearchController {
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search");
+        ZdbFlag status = fishRepository.getFishMartStatus();
+        model.addAttribute(status);
         return "fish/fish-search.page";
     }
 
