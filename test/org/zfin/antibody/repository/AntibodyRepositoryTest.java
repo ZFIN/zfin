@@ -34,6 +34,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.Organization;
 import org.zfin.people.SourceUrl;
@@ -609,7 +610,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
         assertNotNull(abs);
-        assertEquals(count, abs.getTotalCount() );
+        assertEquals(count, abs.getTotalCount());
     }
 
     @Test
@@ -625,7 +626,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
         int count = getAntibodyRepository().getAntibodiesByAOTermCount(term);
-        assertThat(count ,greaterThan(-1));
+        assertThat(count, greaterThan(-1));
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
     }
@@ -641,11 +642,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
         assertTrue(numOfFigures > 0);
-        assertThat(numOfFigures ,greaterThan(0) );
+        assertThat(numOfFigures, greaterThan(0));
 
         List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
         assertNotNull(figures);
-        assertThat(figures.size() ,greaterThan(0));
+        assertThat(figures.size(), greaterThan(0));
     }
 
     @Test
@@ -849,13 +850,24 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPublicationsPerAntibodyAndAoTerm() {
-        String antibodyName = "zn-5";
+        String antibodyName = "Ab-SV2";
         String aoTermName = "spinal cord";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
-        AnatomyItem aoTerm = getAnatomyRepository().getAnatomyItem(aoTermName);
+        GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
 
-        PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm.createGenericTerm());
+        PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
         assertTrue(pubs != null);
+    }
+
+    @Test
+    public void getFiguresPerAntibodyAndAoTerm() {
+        String antibodyName = "Ab-SV2";
+        String aoTermName = "spinal cord";
+        Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
+        GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
+
+        List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
+        assertTrue(figures != null);
     }
 
     @Test

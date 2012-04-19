@@ -79,8 +79,7 @@
                      foreign-key="mreltype_mrkr_type_group_2" class="org.zfin.marker.MarkerTypeGroup"/>
     </class>
 
-
-    <class name="org.zfin.marker.Marker" table="marker">
+    <class name="org.zfin.marker.Marker" table="marker" dynamic-update="true">
         <id name="zdbID" type="string">
             <column name="mrkr_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
