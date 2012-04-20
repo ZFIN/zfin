@@ -24,6 +24,8 @@ public interface MarkerRepository {
 
     Marker getMarkerByID(String zdbID);
 
+    Marker getMarkerOrReplacedByID(String zdbID);
+
     Marker getGeneByID(String zdbID);
 
     Clone getCloneById(String zdbID);

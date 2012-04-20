@@ -15,12 +15,17 @@ public class RelatedTranscriptsController {
 
     @RequestMapping(value = "/related-transcripts")
     protected String handleRequestInternal(Model model
-            ,@RequestParam("zdbID") String zdbID
+            , @RequestParam("zdbID") String zdbID
     ) throws Exception {
 
         TranscriptBean transcriptBean = new TranscriptBean();
 
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(zdbID);
+        if (gene == null) {
+            model.addAttribute("zdbID", zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
         transcriptBean.setMarker(gene);
 
         transcriptBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));

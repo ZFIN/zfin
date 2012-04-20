@@ -73,6 +73,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) session.get(Marker.class, zdbID);
     }
 
+    @Override
+    public Marker getMarkerOrReplacedByID(String zdbID) {
+        Marker marker = getMarkerByID(zdbID);
+        if (marker != null)
+            return marker;
+        String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+        marker = getMarkerByID(replacedZdbID);
+        return marker;
+    }
+
     public Marker getGeneByID(String zdbID) {
         if (!zdbID.startsWith("ZDB-GENE")) return null;
         return (Marker) HibernateUtil.currentSession().createCriteria(Marker.class)
@@ -1673,7 +1683,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     public List transformList(List list) {
                         Map<String, PreviousNameLight> map = new HashMap<String, PreviousNameLight>();
                         for (Object o : list) {
-                            PreviousNameLight previousName = (PreviousNameLight)o;
+                            PreviousNameLight previousName = (PreviousNameLight) o;
                             PreviousNameLight previousNameStored = map.get(previousName.getAlias());
 
                             //if it hasn't been stored, it's the first occurrence of this alias text, store it
@@ -1689,7 +1699,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
                         Collections.sort(list);
 
-                        return list;   
+                        return list;
                     }
                 })
                 .list();
@@ -2203,6 +2213,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     /**
      * Retrieve all engineered region markers.
+     *
      * @return
      */
     public List<Marker> getAllEngineeredRegions() {
@@ -2242,7 +2253,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2) {
-        return getWeakReferenceMarker(zdbID,type1,type2,null) ;
+        return getWeakReferenceMarker(zdbID, type1, type2, null);
     }
 
     @Override
