@@ -10,13 +10,13 @@ delete from fish_annotation_Search_backup;
 delete from gene_feature_result_view_backup;
 delete from figure_term_fish_search_backup;
 
-insert into fish_annotation_search_backup;
+insert into fish_annotation_search_backup
 select * from fish_annotation_Search;
 
-insert into gene_feature_result_view_backup;
+insert into gene_feature_result_view_backup
 select * from gene_feature_Result_View;
 
-insert into figure_term_Fish_Search_backup;
+insert into figure_term_Fish_Search_backup
 select * from figure_term_Fish_Search;
 
 delete from fish_annotation_search;
