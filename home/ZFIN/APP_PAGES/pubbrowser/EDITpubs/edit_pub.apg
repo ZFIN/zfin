@@ -197,7 +197,7 @@ code added for Bugz 6986<?/MICOMMENT>
     <TEXTAREA rows=2 cols=80 name="q_authors" wrap=virtual>$(REPLACE,$q_authors,"&","&amp;")</TEXTAREA>
     <p>
     <b>NUMBER of authors listed:</b> (must be a number!) 
-    <INPUT TYPE=text name=q_num_auths size=2 maxlength=2 value=$q_num_auths>
+    <INPUT TYPE=text name=q_num_auths size=3 maxlength=3 value=$q_num_auths>
     <p>
     <b>DATE:</b> (format: mm/dd/yyyy) 
     <INPUT TYPE=text name=q_pub_date size=10 value="$q_pub_date">
