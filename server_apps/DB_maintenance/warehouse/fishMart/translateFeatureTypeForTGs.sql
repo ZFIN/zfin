@@ -17,7 +17,7 @@ update gene_feature_result_View
 
 update fish_annotation_search_temp
   set fas_fish_significance = (Select sum(fto_priority)
-      			      	      from feature_Type_ordering, gene_feature_result_View
+      			      	      from feature_Type_ordering, gene_feature_result_View_temp
 				      where fto_name = gfrv_affector_type_display
 				       and fas_pk_id = gfrv_fas_id
 				       group by gfrv_fas_id);
