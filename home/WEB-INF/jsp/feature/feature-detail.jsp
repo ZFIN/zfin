@@ -202,11 +202,11 @@
     <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
 
     <td>
-
+      <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
                 ${source.organization.name}
         </a>
-
+       </c:if>
         </c:forEach>
 
         </c:when>
@@ -274,40 +274,40 @@
 
 </tr>
 
-    <tr>
-        <td>
-            <b> Sequence: </b>
-        </td>
-        <td>
-            <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
-              <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
-                  <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zmp}">
-                <%--${featureGenbank.accessionNumber}--%>
-                <zfin:link entity="${featureGenbank}"/>
-                <c:if test="${featureGenbank.publicationCount > 0}">
-                    <c:choose>
-                        <c:when test="${featureGenbank.publicationCount == 1}">
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureGenbank.singlePublication.zdbID}">${featureGenbank.publicationCount}</a>)
-                        </c:when>
-                        <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbank.zdbID}&rtype=genotype">${featureGenbank.publicationCount}</a>)
-                        </c:otherwise>
-                    </c:choose>
+<tr>
+    <td>
+        <b> Sequence: </b>
+    </td>
+    <td>
+        <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
+            <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
+                <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zmp}">
+                    <%--${featureGenbank.accessionNumber}--%>
+                    <zfin:link entity="${featureGenbank}"/>
+                    <c:if test="${featureGenbank.publicationCount > 0}">
+                        <c:choose>
+                            <c:when test="${featureGenbank.publicationCount == 1}">
+                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureGenbank.singlePublication.zdbID}">${featureGenbank.publicationCount}</a>)
+                            </c:when>
+                            <c:otherwise>
+                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbank.zdbID}&rtype=genotype">${featureGenbank.publicationCount}</a>)
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                    <c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:if>
-                <c:if test="${!loop.last}">,&nbsp;</c:if>
-              </c:if>
-                </c:if>
-            </c:forEach>
-        </td>
-    </tr>
+            </c:if>
+        </c:forEach>
+    </td>
+</tr>
 
-    <tr>
-        <td>
-            <b> Other Pages: </b>
-        </td>
-        <td>
-            <c:forEach var="featureZfishbook" items="${formBean.feature.dbLinks}" varStatus="loop">
-              <%--<c:if test="${featureZfishbook.referenceDatabase.foreignDB.zfishbook}">--%>
+<tr>
+    <td>
+        <b> Other Pages: </b>
+    </td>
+    <td>
+        <c:forEach var="featureZfishbook" items="${formBean.feature.dbLinks}" varStatus="loop">
+            <c:if test="${featureZfishbook.referenceDatabase.foreignDB.zfishbook}">
                 <zfin:link entity="${featureZfishbook}"/>
                 <c:if test="${featureZfishbook.publicationCount > 0}">
                     <c:choose>
@@ -320,11 +320,25 @@
                     </c:choose>
                 </c:if>
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
-              <%--</c:if>--%>
-            </c:forEach>
+            </c:if>
+            <c:if test="${featureZfishbook.referenceDatabase.foreignDB.zmp}">
+                <zfin:link entity="${featureZfishbook}"/>
+                <c:if test="${featureZfishbook.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${featureZfishbook.publicationCount == 1}">
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureZfishbook.singlePublication.zdbID}">${featureZfishbook.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureZfishbook.zdbID}&rtype=genotype">${featureZfishbook.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:if>
+        </c:forEach>
 
-        </td>
-    </tr>
+    </td>
+</tr>
 
 <tr>
     <td width="150" valign="top">
