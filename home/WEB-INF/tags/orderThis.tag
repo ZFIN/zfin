@@ -23,6 +23,7 @@
                     &nbsp;(<span style="font-size: smaller;"><a href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</a></span>)
                 </c:if>
             </c:forEach>
+            <br/>
         </c:forEach>
     </c:otherwise>
 </c:choose>
