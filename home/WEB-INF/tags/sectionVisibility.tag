@@ -62,7 +62,7 @@
     <a href="javascript:showSection('${sectionName}', true)" title="Click to see all data." >
         <img src="/images/plus-13.png" alt="expand" border="0" style="vertical-align:absmiddle;"></a>
     &nbsp;
-    <a onclick="javascript:showSection('${sectionName}', true)" 
+    <a onclick="javascript:showSection('${sectionName}', true)"
        onmouseover="this.style.cursor='pointer'" title="Click to see all data.">${displaySectionName}</a>
 </span>
 
@@ -114,13 +114,19 @@
         if (show) {
             addParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
             addParameter += '=' + sectionID;
-            if (link.indexOf(addParameter) == -1) {
+            if (link.indexOf(addParameter) == -1 && link.indexOf("?") == -1) {
                 link += "?" + addParameter;
+            } else if (link.indexOf(addParameter) == -1 && link.indexOf("?") > -1) {
+                link += "&" + addParameter;
             }
         } else {
             removeParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
             removeParameter += '=' + sectionID;
-            link = link.replace("?" + removeParameter, "");
+            if (link.indexOf("&") > -1) {
+                link = link.replace("&" + removeParameter, "");
+            } else if (link.indexOf("?") > -1) {
+                link = link.replace("?" + removeParameter, "");
+            }
         }
         return link;
     }
