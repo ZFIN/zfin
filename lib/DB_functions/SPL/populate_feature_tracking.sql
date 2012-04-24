@@ -6,7 +6,9 @@ create procedure populate_feature_tracking (featureAbbrev varchar(70),
    define vOk int;
    let vOk = 0;
 
-   let vOk = (select count(*) from feature_tracking where ft_Feature_abbrev = featureAbbrev);
+
+   let vOk = (select count(*) from feature_tracking where ft_Feature_abbrev = featureAbbrev and featureZdbId != ft_feature_zdb_id);
+  
 
    if (vOk > 0)
 

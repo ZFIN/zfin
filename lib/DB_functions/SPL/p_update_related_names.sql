@@ -1,18 +1,49 @@
+-- take feature_tracking feature_name update trigger off
+
 create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbrev varchar(70), vNewMrkrAbbrev varchar(70))
 
 	define vGenotypeZDB like genotype.geno_zdb_id;
 	define vGenoDisplay like genotype.geno_display_name;
 	define vGenoHandle like genotype.geno_handle;
+	define vFeatureNameNew like feature.feature_name;
+	define vFeatureNameOld like feature.feature_name;
+	define vFeatureAbbrev like feature.feature_abbrev;
 		
         if (get_obj_type(vMarkerZdbId) in ('GENE','TGCONSTRCT','PTCONSTRCT','ETCONSTRCT','GTCONSTRCT')) then
 
 	 if (exists (select 'x' from feature_marker_relationship where fmrel_mrkr_zdb_id = vMarkerZdbId))
 	 then
-		update feature
-		    set (feature_name, feature_abbrev) = (replace(feature_name,vOldMrkrAbbrev,vNewMrkrAbbrev),replace(feature_abbrev,vOldMrkrAbbrev,vNewMrkrAbbrev))
-		    where exists (select 'x' from feature_marker_relationship where fmrel_ftr_Zdb_id = feature_zdb_id
-		    	  	 	     and fmrel_mrkr_Zdb_id = vMarkerZdbId);
-			   
+
+		foreach 
+			select feature_abbrev, feature_name into vFeatureAbbrev, vFeatureNameOld
+			       		     	     from feature, feature_marker_relationship
+			       			     where feature_zdb_id = fmrel_ftr_zdb_id
+			       			     and fmrel_mrkr_Zdb_id = vMarkerZdbId
+			
+			let vFeatureNameNew = replace(vFeatureNameOld,vOldMrkrAbbrev,vNewMrkrAbbrev);      
+			if ((vFeatureNameOld != vFeatureNameNew) and vFeatureAbbrev = vFeatureNameOld )
+			then
+				update feature
+		    		 set (feature_name,feature_abbrev) = (
+									(replace(feature_name,vOldMrkrAbbrev,vNewMrkrAbbrev)),
+									(replace(feature_abbrev,vOldMrkrAbbrev,vNewMrkrAbbrev))
+									)
+		    		 where exists (select 'x' from feature_marker_relationship 
+						          where fmrel_ftr_Zdb_id = feature_zdb_id
+		    	         			  and fmrel_mrkr_Zdb_id = vMarkerZdbId
+				 			  and feature_name = vFeatureNameOld);
+			end if;
+
+			if ((vFeatureNameOld != vFeatureNameNew) and vFeatureAbbrev != vFeatureNameOld)
+			then
+				update feature
+		    		 set feature_name = replace(feature_name,vOldMrkrAbbrev,vNewMrkrAbbrev)
+		    		 where exists (select 'x' from feature_marker_relationship 
+						          where fmrel_ftr_Zdb_id = feature_zdb_id
+		    	         			  and fmrel_mrkr_Zdb_id = vMarkerZdbId
+				 			  and feature_name = vFeatureNameOld);	
+			end if;  
+	        end foreach; 
 			   
          
 	 foreach
