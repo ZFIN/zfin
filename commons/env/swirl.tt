@@ -57,7 +57,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFCCFF
-<!--|SOURCEROOT|-->	/research/zusers/staylor/hoover/ZFIN_WWW_fish
+<!--|SOURCEROOT|-->	/research/zusers/staylor/swirl/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	staylor\@cs.uoregon.edu
