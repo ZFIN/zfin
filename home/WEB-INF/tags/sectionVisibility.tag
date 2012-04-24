@@ -122,11 +122,9 @@
         } else {
             removeParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
             removeParameter += '=' + sectionID;
-            if (link.indexOf("&") > -1) {
-                link = link.replace("&" + removeParameter, "");
-            } else if (link.indexOf("?") > -1) {
-                link = link.replace("?" + removeParameter, "");
-            }
+            link = link.replace("&" + removeParameter, "");
+            link = link.replace("?" + removeParameter, "");
+            link = link.replace("&", "?");
         }
         return link;
     }
