@@ -124,6 +124,8 @@
             removeParameter += '=' + sectionID;
             link = link.replace("&" + removeParameter, "");
             link = link.replace("?" + removeParameter, "");
+            
+            // assuming there are only two sections (now Expression and Phenotype) being handled
             link = link.replace("&", "?");
         }
         return link;
