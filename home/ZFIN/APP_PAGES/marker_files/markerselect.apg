@@ -1212,9 +1212,8 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
 <?MICOMMENT>--------------  Query Form ----------------------------<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">
-
+  <?MIVAR NAME=$marker_type COND="$(XST,$marker_type)">all<?/MIVAR>
   <?MISQL SQL="select WebExplode(object,'page=markerselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
-
 <?/MIBLOCK>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
