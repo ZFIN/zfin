@@ -9,15 +9,14 @@ update marker
 
 --set pdqpriority high;
 
+insert into tmp_genox(genox_Zdb_id)
 select distinct genox_zdb_id 
   from genotype_Experiment, experiment_condition, experiment
  where exp_Zdb_id = expcond_exp_zdb_id
  and exp_zdb_id = genox_exp_zdb_id
  and expcond_mrkr_zdb_id is not null
- into temp tmp_genox;
+;
 
-create index genox_idx on tmp_genox (genox_zdb_id)
-  using btree in idxdbs3;
 
 -- !!! INSERT INTO FUNCTIONAL ANNOTATION !!!---
 
@@ -42,8 +41,8 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name,
     and not exists (Select 'x' from phenotype_experiment, genotype_experiment
     	    	   	   where phenox_genox_zdb_id = genox_zdb_id
 			   and genox_geno_zdb_id = geno_zdb_id)
-    and not exists (Select 'x' from genotype_Experiment, tmp_genox where genotype_experiment.genox_zdb_id =tmp_genox.genox_zdb_id
-    	    	   	   and genotype_Experiment.genox_geno_Zdb_id = geno_Zdb_id) 
+    and not exists (Select 'x' from tmp_genox 
+    	    	   	   where genotype_experiment.genox_zdb_id = tmp_genox.genox_zdb_id) 
     and genox_geno_zdb_id = geno_Zdb_id;
 
 --all genos reguardless

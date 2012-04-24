@@ -505,3 +505,10 @@ delete from genotype_Experiment
  where genox_zdb_id not in (select xpatex_genox_zdb_id from expression_experiment)
  and genox_zdb_id not in (select phenox_genox_zdb_id from phenotype_Experiment);
 
+create table tmp_genox(genox_zdb_id varchar(50))
+fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 9964 next size 9964;
+
+create index genox_idx on tmp_genox (genox_zdb_id)
+  using btree in idxdbs3;
+

@@ -30,6 +30,7 @@ drop table construct_group_member;
 
 drop table xpat_figure_group;
 drop table xpat_figure_group_member;
+drop table tmp_Genox;
 
 drop index fish_annotation_search_temp_fas_all_bts_index;
 drop index figure_term_fish_search_term_group_temp_bts_index;
