@@ -1212,7 +1212,12 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->
 
 <?MICOMMENT>--------------  Query Form ----------------------------<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">
-  <?MIVAR NAME=$marker_type COND="$(XST,$marker_type)">all<?/MIVAR>
+  <?MISQL SQL="select mtgrpmem_mrkr_type 
+                 from marker_type_group_member 
+                where mtgrpmem_mrkr_type = '$marker_type' 
+                  and mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG';">
+  <?/MISQL>
+  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">$(SETVAR,$marker_type,all)<?/MIVAR>
   <?MISQL SQL="select WebExplode(object,'page=markerselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
