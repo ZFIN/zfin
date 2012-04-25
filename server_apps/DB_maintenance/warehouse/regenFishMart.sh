@@ -23,7 +23,7 @@ echo "done with file delete" ;
 
 if ($? != 0) then
  echo "trying to send notification runFishMart";
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMartReport.txt -s "regen fish mart (the building tables, not the public tables) failed" -- staylor@cs.uoregon.edu < /tmp/char; 
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMartReport.txt -s "regen fish mart (the building tables, not the public tables) failed" -- staylor@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
 exit 1;
 endif
 
@@ -38,7 +38,7 @@ echo "cd'd to <!--|SOURCEROOT|-->" ;
 
 if ($? != 0) then
    echo "trying to send notification unit tests";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/reports/fishMartUnitTests.txt -s "regen fish mart (the building tables, not the public tables) failed" -- staylor@cs.uoregon.edu < /tmp/char ; 
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/reports/fishMartUnitTests.txt -s "regen fish mart (the building tables, not the public tables) failed" -- staylor@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 exit 1;
 endif
 
@@ -50,11 +50,12 @@ echo "done with ant tests" ;
 
 if ($? != 0) then
    echo "trying to send notification regenFishMartReport";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "refresh fish mart (the public tables) failed and was rolled back" -- staylor@cs.uoregon.edu < /tmp/char; 
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "refresh fish mart (the public tables) failed and was rolled back" -- staylor@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
 exit 1;
 endif
 
+echo "sending success email." ;
 
-/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "regen fishmart successful." -- staylor@cs.uoregon.edu < /tmp/char ; 
+/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "regen fishmart successful." -- staylor@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 exit 0;
