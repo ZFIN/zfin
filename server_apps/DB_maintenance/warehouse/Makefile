@@ -19,7 +19,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse
 SUBDIRS = fishMart
 GENERICS = runWarehouse.pl who_is.sh who_is_not.sh switch.sh regenFishMart.sh
-STATICS = getUnloadDir.sh regenFishMartReport.txt runFishMartReport.txt
+STATICS = getUnloadDir.sh regenFishMartReport.txt runFishMartReport.txt char
 
 
 # ---------------  Production Rules  ------------------------------------
