@@ -132,7 +132,8 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	          select *
 	          from feature_marker_relationship as fm2
 	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
-	            and fm1.fmrel_type = "contains innocuous sequence feature"
+	            and fm1.fmrel_type in ("contains innocuous sequence feature",
+	                                   "contains phenotypic sequence feature")
 	            and fm2.fmrel_type = "is allele of"
 	       )
 
