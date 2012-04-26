@@ -35,12 +35,8 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name,
 insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name, fa_genox_zdb_id)
   select distinct geno_zdb_id, geno_handle,geno_display_name, genox_Zdb_id
    from genotype, genotype_experiment
-   where exists (Select 'x' 
-   	     	    	   from genotype_Experiment 
-			    where genox_geno_zdb_id = geno_Zdb_id)
-    and not exists (Select 'x' from phenotype_experiment, genotype_experiment
-    	    	   	   where phenox_genox_zdb_id = genox_zdb_id
-			   and genox_geno_zdb_id = geno_zdb_id)
+   where exists (Select 'x' from phenotype_experiment
+    	    	   	   where phenox_genox_zdb_id = genox_zdb_id)
     and not exists (Select 'x' from tmp_genox 
     	    	   	   where genotype_experiment.genox_zdb_id = tmp_genox.genox_zdb_id) 
     and genox_geno_zdb_id = geno_Zdb_id;
