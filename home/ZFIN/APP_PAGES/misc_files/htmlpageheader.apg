@@ -399,7 +399,7 @@ function hdrSetTabs() {
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/antibody/antibody-search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Mutants / Morphants / Tg</a>
+      <a href="/action/fish/search">Mutants / Morphants / Tg</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
       <a href="/action/anatomy/anatomy-search">Anatomy</a>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">

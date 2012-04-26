@@ -186,7 +186,7 @@
                title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
 
-            <a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg">Mutants / Morphants / Tg</a>
+            <a href="/action/fish/search">Mutants / Morphants / Tg</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/action/anatomy/anatomy-search" title="Search the zebrafish anatomical ontology">Anatomy</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
