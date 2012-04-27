@@ -127,18 +127,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         else {
-                List<RecordAttribution> recordAttributions = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
-                  if (recordAttributions.size() != 0) {
-                      if (recordAttributions.get(0).getSourceZdbID().equals(featureDTO.getPublicationZdbID())) {
-                        feature.setType(featureDTO.getFeatureType());
-                      }
-                  else{
-                      feature.setType(featureDTO.getFeatureType());
+            RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(),featureDTO.getPublicationZdbID(),RecordAttribution.SourceType.FEATURE_TYPE);
+            if (recordAttributions == null) {
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-                      }
-                  }
             }
+        }
+
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
         String existingFeatureAbbrev = feature.getAbbreviation();
        /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
