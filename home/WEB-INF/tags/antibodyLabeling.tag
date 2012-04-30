@@ -4,7 +4,7 @@
 
 <c:set var="antibodyDetailLabeling" value="${formBean.antibodyDetailedLabelings}"/>
 
-<zfin2:subsection title="ANATOMICAL LABELING"
+<zfin2:subsection title="ANATOMICAL LABELING" 
                   test="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}"
         >
     <div id="short-version">

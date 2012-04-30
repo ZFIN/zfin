@@ -4,7 +4,7 @@
 
 
 
-<zfin2:subsection noDataText="None Submitted" title="NOTES"
+<zfin2:subsection noDataText="None Submitted" title="NOTES" 
                         test="${!empty notes and fn:length(notes)>0}">
     <table width=100% border=0 cellspacing=0>
         <tr bgcolor="#cccccc">

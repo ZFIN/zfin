@@ -17,7 +17,7 @@
 </c:if>
 
 
-<zfin2:subsection title="${title}"
+<zfin2:subsection title="${title}" anchor="other_pages"
                   test="${!empty links}" showNoData="true" noDataText="No links to external sites">
     <table class="summary">
         <tr>

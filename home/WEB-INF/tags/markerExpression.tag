@@ -23,6 +23,7 @@
 <%--3 - (only geo link is possible) eq 1 && (markerExpression.geoLinkSearching):--%>
 <%--[put No data avialable / or blank into Curated Microarray Expression]--%>
 <%--4 - (no data available) (markerExpression.geoLinkSearching = false && eq 0)--%>
+<a name="gene_expression"></a>
 <div class="summary">
     <c:choose>
         <c:when test="${markerExpression.totalCountForStuff gt 0}">

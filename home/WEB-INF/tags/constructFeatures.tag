@@ -14,7 +14,7 @@
     <c:set var="title" value="CONSTRUCT FEATURES"/>
 </c:if>
 
-<zfin2:subsection title="${title}"
+<zfin2:subsection title="${title}" anchor="construct_features"
                   test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">

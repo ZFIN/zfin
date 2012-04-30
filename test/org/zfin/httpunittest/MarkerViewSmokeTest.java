@@ -1,5 +1,7 @@
 package org.zfin.httpunittest;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.zfin.AbstractSmokeTest;
@@ -17,12 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Test;
+
 /**
  * Main Integration Test class.
  * Tests main pages of ZFIN.
  * @deprecated  Use JWebUnit style smoke test.
  */
-public class MarkerViewSmokeTest extends AbstractSmokeTest{
+public class MarkerViewSmokeTest extends AbstractSmokeTest {
 
 
     private static final Logger LOG = Logger.getLogger(MarkerViewSmokeTest.class);
@@ -53,17 +57,26 @@ public class MarkerViewSmokeTest extends AbstractSmokeTest{
         markerTypes.put("1ad1330", "RAPD");
         markerTypes.put("gof13", "SSLP");
         markerTypes.put("18af.1190", "STS");
-//        markerTypes.put("Tg(kdr:GFP)", "Transgenic Construct");
     }
 
 
-    @Before
-    public void setUp() {
-        super.setUp();
-        testUrl.append("http://").append(domain);
+
+    @Test
+    public void testGenePagePhenotypeAnchor() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/view/ZDB-GENE-990712-18");
+                List<?> pubs = page.getByXPath("//a[@name='phenotype']");
+                assertEquals(1, pubs.size());
+
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
     }
 
-//    @Test
+
+   @Test
     public void markerViewPages() throws Exception {
         testUrl.append("/");
         testUrl.append(mutant);

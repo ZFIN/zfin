@@ -14,6 +14,7 @@ import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.curation.PileConstructionSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
+import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
@@ -37,7 +38,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         LookupSmokeTest.class,
         MarkerSoapSmokeTest.class,
         MarkerSoapClientSmokeTest.class,
-//        MarkerViewSmokeTest.class,
+        MarkerViewSmokeTest.class,
         MarkerRestSmokeTest.class,
         MorpholinoAddSmokeTest.class,
         OntologySmokeTest.class,

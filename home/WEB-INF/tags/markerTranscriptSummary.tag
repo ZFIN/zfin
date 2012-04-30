@@ -11,7 +11,7 @@
               description="Don't make a link or show sequence tools for this transcript" %>
 <%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String"
               description="optional title, overrides default" %>
-
+<a name="related_transcripts">
 <div class="summary">
     <c:choose>
         <c:when test="${!empty relatedTranscriptDisplay.transcripts}">

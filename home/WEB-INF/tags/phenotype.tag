@@ -13,7 +13,7 @@
     <c:set var="title" value="PHENOTYPE <a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a>"/>
 </c:if>
 
-<zfin2:subsection title="${title}"
+<zfin2:subsection title="${title}" anchor="phenotype"
                         test="${!empty phenotypeOnMarkerBean and phenotypeOnMarkerBean.numPublications>0}" showNoData="true">
 
     <table class="summary horizontal-solidblock">

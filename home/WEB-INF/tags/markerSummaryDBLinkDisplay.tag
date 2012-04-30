@@ -8,13 +8,15 @@
      own, one per cell.  it's kind of odd.  Maybe it can actually be a list, just inline
      and not allowing any wrapping --%>
 
+
+
 <c:if test="${empty title}">
     <c:set var="title">
         OTHER <zfin:abbrev entity="${marker}"/> ${fn:toUpperCase(marker.markerType.displayName)} PAGES
     </c:set>
 </c:if>
 
-<zfin2:subsection title="${title}"
+<zfin2:subsection title="${title}" anchor="other_pages"
                   test="${!empty links}" noDataText="No links to external site">
     <table class="summary">
         <tr>
