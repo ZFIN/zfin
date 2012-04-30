@@ -20,6 +20,10 @@ delete from functional_annotation
  and fa_feature_group is null
  and fa_construct_group is null;
 
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
+ where zflag_name = "regen_fishmart_bts_indexes";
+
 update statistics high for table morpholino_group_member;
 update statistics high for table affected_gene_group_member;
 update statistics high for table feature_group_member;
@@ -389,3 +393,7 @@ and (Select count(*) from gene_feature_result_view_temp a
                 where a.gfrv_fas_id = fas_pk_id) < 4;
 
 set pdqpriority 80;
+
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
+ where zflag_name = "regen_fishmart_bts_indexes";
