@@ -4,12 +4,19 @@
 <%@ page language="java" %>
 <%@ page session="false" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.properties.ZfinProperties" %>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<!-- Server: <%=ZfinProperties.getInstance()%> -->
+
 
 <%-- Screws up superscripts in links (check feature pages to fix) --%>
 <%--<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">--%>
 
+<%--
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+--%>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

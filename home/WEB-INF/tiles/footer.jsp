@@ -19,14 +19,11 @@
             src="/images/research-dot.png" class="hdr-linkbar-divider">
         <a href="/zf_info/dbase/db.html" title="About ZFIN">About</A>
     </div>
-    <div id="footercredits">
-        <center>
+    <div id="footercredits" style="text-align: center">
             <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br></span>
             <a href="/warranty.html">Disclaimer, limitations, copyright &copy;  </a> <a href="http://www.uoregon.edu">
-            University of Oregon</a>, 1994-2011,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
+            University of Oregon</a>, 1994-2012,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
             <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>
-            <br>
-        </center>
     </div>
 </div>
 

@@ -10,13 +10,11 @@ document.write("     <a href=\"/zf_info/dbase/db.html#citing\" title=\"Citing ZF
 document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact information\">Contact</A> <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\"> ");
 document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN\">About</A> ");
 document.write("   </div> ");
-document.write("   <div id=\"footercredits\"> ");
-document.write("     <center> ");
+document.write("   <div id=\"footercredits\" style=\"text-align: center \"> ");
 document.write("       <span id=\"footer-generous-support\">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br></span> ");
 document.write("       <a href=\"/warranty.html\">Disclaimer, limitations, copyright &copy;  </a> <a href=\"http://www.uoregon.edu\"> ");
-document.write("       University of Oregon</a>, 1994-2011,<a href=\"http://www.ci.eugene.or.us\"> Eugene</a>, Oregon. <br> ");
-document.write("       <small>ZFIN logo design by Kari Pape, <A HREF=\"http://www.uoregon.edu\">University of Oregon</a></small><br> ");
-document.write("    </center>  ");
+document.write("       University of Oregon</a>, 1994-2012,<a href=\"http://www.ci.eugene.or.us\"> Eugene</a>, Oregon. <br> ");
+document.write("       <small>ZFIN logo design by Kari Pape, <A HREF=\"http://www.uoregon.edu\">University of Oregon</a></small> ");
 document.write("   </div> ");
 document.write(" </div>  ");
 
