@@ -273,8 +273,8 @@ select distinct fa_pk_id,
  and fa_feature_group is not null
  and fgm_member_id = feature_zdb_id
  and feature_type = ftrtype_name
- and exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='SSLP')
- and not exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='GENE')
+ and exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='SSLP' and fmrel_type in ('markers missing','markers absent','is allele of','markers moved'))
+ and not exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='GENE' and fmrel_type in ('markers missing','markers absent','is allele of','markers moved'))
 and fas_geno_handle = fa_geno_handle
 ;
 
