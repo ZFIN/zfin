@@ -83,6 +83,7 @@ update affected_gene_group
 update affected_gene_group
   set afg_group_name = replace(afg_Group_name,"$","'");
 
+
 drop table tmp_ordered_markers;
 
 
@@ -174,9 +175,6 @@ update affected_gene_group
   set afg_group_name = replace(afg_Group_name,"$","'");
 
 
-
-
-
 drop table tmp_ordered_markers;
 
 select distinct 
@@ -216,7 +214,6 @@ update affected_gene_group
 update affected_gene_group
   set afg_group_name = replace(afg_Group_name,"$","'");
 
-
 drop table tmp_ordered_markers;
 
 
@@ -236,6 +233,7 @@ insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_me
 							  and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
 							  and b.mrkr_type like 'GENE%';
 
+
  insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_member_id)
    select afg_group_pk_id, mrkr_abbrev, mrkr_zdb_id					
    	  from marker, feature_marker_relationship,affected_gene_group,
@@ -245,7 +243,9 @@ insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_me
 							  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 							  and fmrel_mrkr_zdb_id = mrkr_zdb_id
 							  and genox_zdb_id = afg_genox_zdb_id
-							  and mrkr_type like 'GENE%' ;
+							  and mrkr_type like 'GENE%' 
+							  and fmrel_type in ('markers missing','markers absent','is allele of','markers moved');
+
 
 insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_member_id)
    select afg_group_pk_id, mrkr_abbrev, mrkr_zdb_id					
@@ -255,7 +255,9 @@ insert into affected_gene_group_member (afgm_group_id, afgm_member_name, afgm_me
 							  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 							  and fmrel_mrkr_zdb_id = mrkr_zdb_id
 							  and mrkr_type like 'GENE%' 
-							  and afg_genox_zdb_id is null;
+							  and afg_genox_zdb_id is null
+							  and fmrel_type in ('markers missing','markers absent','is allele of','markers moved');
+
 							  --and not exists (Select 'x' from genotype_Experiment
 							   --   	  where genox_Geno_zdb_id = afg_geno_Zdb_id);
 
