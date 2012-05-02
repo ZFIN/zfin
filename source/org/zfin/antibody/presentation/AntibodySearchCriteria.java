@@ -19,7 +19,7 @@ public class AntibodySearchCriteria extends Antibody {
     private String assay;
     private int resultsPerPage;
     private boolean zircOnly;
-    private PaginationBean paginationBean;
+    private PaginationBean paginationBean = new PaginationBean();
     private Term term;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;

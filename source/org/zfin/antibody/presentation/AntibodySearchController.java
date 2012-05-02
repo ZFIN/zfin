@@ -20,6 +20,8 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.antibody.presentation.AntibodySearchFormBean;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
@@ -64,28 +66,29 @@ public class AntibodySearchController {
         return "antibody/antibody-search-form.page";
     }
 
-    private @Autowired
+    private
+    @Autowired
     HttpServletRequest request;
 
     @RequestMapping(value = "/antibody-do-search", method = RequestMethod.GET)
     public String doSearch(Model model,
-                              @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
-                              BindingResult result
+                           @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
+                           BindingResult result
     ) throws Exception {
         AntibodySearchCriteria antibodySearchCriteria = antibodySearchFormBean.getAntibodyCriteria();
         antibodySearchCriteria.setPaginationBean(antibodySearchFormBean);
         model.addAttribute(LookupStrings.FORM_BEAN, antibodySearchFormBean);
         antibodySearchFormBean.setQueryString(request.getQueryString());
         antibodySearchFormBean.setRequestUrl(request.getRequestURL());
-        int numberOfRecords = antibodyRepository.getNumberOfAntibodies(antibodySearchCriteria);
+        PaginationResult<Antibody> antibodies = antibodyRepository.getAntibodies(antibodySearchCriteria);
+        int numberOfRecords = antibodies.getTotalCount();
         antibodySearchFormBean.setTotalRecords(numberOfRecords);
-        List<Antibody> antibodies = antibodyRepository.getAntibodies(antibodySearchCriteria);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody Search");
         if (numberOfRecords != 1) {
-            antibodySearchFormBean.setAntibodies(antibodies);
+            antibodySearchFormBean.setAntibodies(antibodies.getPopulatedResults());
             return "antibody/antibody-search-result.page";
         } else {
-            return  "redirect:/action/marker/view/"+antibodies.get(0).getZdbID() ;
+            return "redirect:/action/marker/view/" + antibodies.getPopulatedResults().get(0).getZdbID();
         }
     }
 

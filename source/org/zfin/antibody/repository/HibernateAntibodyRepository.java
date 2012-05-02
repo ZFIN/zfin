@@ -22,6 +22,7 @@ import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.infrastructure.AllNamesFastSearch;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -74,7 +75,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
+    public PaginationResult<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select distinct antibody ");
         hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
@@ -106,9 +107,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (searchCriteria.isAnatomyDefined()) {
             applyAnatomyTermsFilter(searchCriteria, query);
         }
-        PaginationBean paginationBean = searchCriteria.getPaginationBean();
-        setPaginationParameters(query, paginationBean);
-        return (List<Antibody>) query.list();
+        int start = 0;
+        if (searchCriteria.getPaginationBean() != null)
+            start = searchCriteria.getPaginationBean().getFirstRecord() - 1;
+        PaginationResult<Antibody> antibodyObjects = PaginationResultFactory.createResultFromScrollableResultAndClose(start, start + searchCriteria.getPaginationBean().getMaxDisplayRecords(), query.scroll());
+
+        return antibodyObjects;
     }
 
     private String getGenePrecedenceInClause() {
@@ -434,7 +438,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(" markerSupplier.organization.zdbID = :zircLabID AND markerSupplier.marker = antibody ");
             hasOneWhereClause = true;
         }
-        if (searchCriteria.isStageDefined()) {
+        // only stage range defined
+        if (searchCriteria.isStageDefined() && !searchCriteria.isAnatomyDefined()) {
             if (hasOneWhereClause)
                 hql.append(" AND ");
             hasOneWhereClause = true;
@@ -450,17 +455,32 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append("  ( ");
             int numberOfTerms = searchCriteria.getTermIDs().length;
             for (int i = 0; i < numberOfTerms; i++) {
-                if (!searchCriteria.isIncludeSubstructures())
-                    hql.append("    exists ( select result from ExpressionResult result, ExpressionTermFastSearch expressionTerm " +
-                            "                  where  expressionTerm.expressionResult = result " +
-                            "                     AND expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                            "                     AND result.expressionExperiment.antibody = antibody " +
-                            "                     AND expressionTerm.originalAnnotation = 't')");
-                if (searchCriteria.isIncludeSubstructures())
-                    hql.append("    exists ( select result from ExpressionResult result, ExpressionTermFastSearch expressionTerm " +
-                            "                  where  expressionTerm.expressionResult = result " +
-                            "                     AND expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                            "                     AND result.expressionExperiment.antibody = antibody )");
+                if (!searchCriteria.isIncludeSubstructures()) {
+                    if (searchCriteria.isStageDefined())
+                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
+                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
+                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
+                                "                     AND expressionTerm.originalAnnotation = 't' " +
+                                "                     AND expressionTerm.expressionResult.startStage.hoursStart >= :hoursStart " +
+                                "                     AND expressionTerm.expressionResult.endStage.hoursEnd <= :hoursEnd) ");
+                    else
+                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
+                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
+                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
+                                "                     AND expressionTerm.originalAnnotation = 't')");
+                }
+                if (searchCriteria.isIncludeSubstructures()) {
+                    if (searchCriteria.isStageDefined())
+                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
+                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
+                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
+                                "                     AND expressionTerm.expressionResult.startStage.hoursStart >= :hoursStart " +
+                                "                     AND expressionTerm.expressionResult.endStage.hoursEnd <= :hoursEnd) ");
+                    else
+                        hql.append("    exists ( select  expressionTerm from ExpressionTermFastSearch expressionTerm " +
+                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
+                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody )");
+                }
                 if (i < numberOfTerms - 1) {
                     if (searchCriteria.isAnatomyEveryTerm())
                         hql.append(" AND ");

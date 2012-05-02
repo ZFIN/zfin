@@ -43,7 +43,7 @@ public interface AntibodyRepository {
      * @param antibody Antibody with search parameters.
      * @return list of antibodies
      */
-    List<Antibody> getAntibodies(AntibodySearchCriteria antibody);
+    PaginationResult<Antibody> getAntibodies(AntibodySearchCriteria antibody);
 
     /**
      * Retrieve the total number of records.
