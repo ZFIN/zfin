@@ -16,12 +16,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensdarg.sh fetch_ensdarT_dbacc.sh fetch_ensembl_agp.sh
+GENERICS = fetch_ensembl_agp.sh
 
-STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql readme.ensembl_mysql\
-	rollback.sql commit.sql load_ensdarT_dbacc.sql fetch_ensdarT_dbacc.mysql \
+STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
+	load_ensdarG.sql load_ensdarT_dbacc.sql \
 	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
-	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk 
+	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
+	  rollback.sql commit.sql readme readme.ensembl_mysql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -46,29 +47,53 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # does not commit the changes unless run_commit target is made
 
 #     1 to 1 gene mapping from ensdarG to ZDB-GENE
-run : $(TARGETDIR)/fetch_ensdarg.sh
-	$(TARGETDIR)/fetch_ensdarg.sh rollback
 
-run_commit : $(TARGETDIR)/fetch_ensdarg.sh
-	- touch $(TARGETDIR)/fetch_ensembl.log
-	$(TARGETDIR)/fetch_ensdarg.sh commit
+$(TARGETDIR)/ensdarT_dbacc.unl:  $(TARGETDIR)/fetch_ensdarT_dbacc.mysql \
+                                 $(TARGETDIR)/ensdarG.unl
 
-#         all ensdarT that map to an ottdarT in ZFIN
-run_transcript : fetch_ensdarT_dbacc.sh
-	cd $(TARGETDIR) && fetch_ensdarT_dbacc.sh rollback
+$(TARGETDIR)/ensdarG.unl: $(TARGETDIR)/fetch_ensdarG.mysql 
+	cd $(TARGETDIR) && fetch_ensdarTG.sh
+	 
+load_ensdarG: $(TARGETDIR)/load_ensdarG.sql \
+ $(TARGETDIR)/rollback.sql $(TARGETDIR)/ensdarG.unl 
+	cd $(TARGETDIR) && cat $< rollback.sql | dbaccess -a $$DBNAME
+	
+load_ensdarG_commit: $(TARGETDIR)/load_ensdarG.sql \
+ $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarG.unl
+	cd $(TARGETDIR)/ && cat $< commit.sql | dbaccess -a $$DBNAME
 
-run_transcript_commit : fetch_ensdarT_dbacc.sh
-	- touch $(TARGETDIR)/fetch_ensembl.log
-	cd $(TARGETDIR) && fetch_ensdarT_dbacc.sh commit
+load_ensdarT: $(TARGETDIR)/load_ensdarT_dbacc.sql \
+ $(TARGETDIR)/rollback.sql $(TARGETDIR)/ensdarT_dbacc.unl
+	cd $(TARGETDIR)/ && cat $< rollback.sql | dbaccess -a $$DBNAME
+	
+load_ensdarT_commit: $(TARGETDIR)/load_ensdarT_dbacc.sql \
+ $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarT_dbacc.unl
+	cd $(TARGETDIR)/ && cat $< commit.sql | dbaccess -a $$DBNAME
 
-# 		fetch and convert Ensembl GTF to gff3
-run_gff: fetch_ensembl_gff.sh
+
+# 		fetch  Ensembl GTF and convert to gff3
+run_gff: $(TARGETDIR)/fetch_ensembl_gff.sh
 	cd $(TARGETDIR) && fetch_ensembl_gff.sh
 
 # pre delete any versions of the file to be downloaded
-run_gff_force: fetch_ensembl_gff.sh
+run_gff_force: $(TARGETDIR)/fetch_ensembl_gff.sh
 	cd $(TARGETDIR) && fetch_ensembl_gff.sh -f
 
 # 		fetch and convert Ensembl AGP to gff3
-run_agp: fetch_ensembl_agp.sh agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk
+run_agp: $(TARGETDIR)/fetch_ensembl_agp.sh $(TARGETDIR)/agp_to_gff3.awk \
+ $(TARGETDIR)/agp_to_gff3_trim.awk $(TARGETDIR)/clone_gff3_w_alias.awk
 	cd $(TARGETDIR) && fetch_ensembl_agp.sh
+
+########################################################################
+run:        load_ensdarG        load_ensdarT        run_gff run_agp
+
+run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp
+
+
+
+clean_ensembl:
+	rm -f $(TARGETDIR)/load_ensdarG.sql $(TARGETDIR)/ensdarT_dbacc.unl
+	touch $(TARGETDIR)/*.mysql $(TARGETDIR)/*.sql 
+	
+.PHONY += load_ensdarG load_ensdarG_commit load_ensdarT load_ensdarT_commit \
+	run_gff run_gff_force run_agp

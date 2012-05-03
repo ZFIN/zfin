@@ -1,9 +1,11 @@
 begin work;
 
 create table ens_zdb( ez_zdb varchar(50), ez_ens varchar(20));
-load from 'ensdarg.unl' insert into ens_zdb;
+
+! echo "ensdarG.unl -> load_ensdarG.sql"
+load from 'ensdarG.unl' insert into ens_zdb;
 create index ez_zdb_idx on ens_zdb( ez_zdb );
-update statistics for table ens_zdb;
+update statistics high for table ens_zdb;
 
 ! echo "if a gene has been merged, fix it's zdbid"
 update ens_zdb set ez_zdb = (

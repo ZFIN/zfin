@@ -12,6 +12,7 @@ fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 789585 next size 789585
 ; -- SWAG  extents needs adjusting, want tool
 
+! echo "ensdarT_dbacc.unl -> load_ensdarT_dbacc.sql"
 load from 'ensdarT_dbacc.unl' insert into ensdarT_dbacc;
 
 -- note adding miRNA data makes both columns non-unique
