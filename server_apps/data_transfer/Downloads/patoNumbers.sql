@@ -190,12 +190,13 @@ update tmp_ortho_pheno
 --select distinct count(*) 
  -- from tmp_ortho_pheno;
 
-unload to pheno.txt
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno.txt' DELIMITER "	"
   select gene_id, entrezZebrafishId,entrezHumanId, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
   	 c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev, ortho_abbrev, type;
 
-unload to ortho_gene.txt
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ortho.txt' DELIMITER "	"
   select distinct gene_id, mrkr_abbrev, entrezZebrafishId, ortho_abbrev, entrezHumanId
      from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev, ortho_abbrev;
