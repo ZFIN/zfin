@@ -211,7 +211,7 @@ clean_withdrawn_check:
 
 # want to augment the deflines we create with info from other files sent
 $(DEST)/clnacc_lg.txt: $(DEST)/assembly_for_tom.txt
-	@echo "\nPossibly Bodus Clone names"
+	@echo "\nPossibly Bogus Clone names"
 	@grep '_' $?                         
 	@nawk 'BEGIN{OFS="\t"}{print $$4,substr(1,8,$$5),$$1}' $< | sort -u > $@
 
@@ -534,8 +534,10 @@ clean_update_tscript_names:
 	rm -fr $(DEST)/vega_transcript_names.tsv.gz
 
 ########################################################################
-# GFF3
-$(DEST)/zebrafish_VEGA*.gff3.gz: /${FTP} ${DEST}
+#                        GFF3
+
+
+$(DEST)/zebrafish_VEGA*.gff3.gz: ${DEST}
 	wget --timestamping "ftp://${FTP}/zebrafish_VEGA*.gff3.gz" -P ${DEST}
 
 $(DEST)/zebrafish_VEGA.gff3: $(DEST)/zebrafish_VEGA*.gff3.gz

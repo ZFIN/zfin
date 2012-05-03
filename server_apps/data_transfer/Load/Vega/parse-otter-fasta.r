@@ -130,5 +130,5 @@ while [not tail? fasta][
 
 ;write/append %vega_transcript.nt  f
 
-print "hit 'q' to quit"
-halt
+;print "hit 'q' to quit"
+;halt
