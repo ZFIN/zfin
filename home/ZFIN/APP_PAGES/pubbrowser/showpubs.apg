@@ -882,7 +882,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished')
+	   and p.jtype not in ('Curation','Unpublished', 'Active_Curation')
        and mrkrgoev_gflag_name is null
        $infwhere order by $pubOrder;">
   	<TR bgcolor=$showpubs_tr_bg>
@@ -897,7 +897,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   	<?/MISQL>
 
-<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished<?/MICOMMENT>
+<p>Debugginggggggggggggg  $infwhere <br/>
+<?MIVAR>$infwhere<?/MIVAR>
+
+<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished or Active_Curation<?/MICOMMENT>
   <TR><TD>&nbsp;</TD><TR>
       <?MISQL SQL="
   	select distinct title, 
@@ -920,7 +923,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
-	   and p.jtype in ('Curation','Unpublished')
+	   and p.jtype in ('Curation','Unpublished','Active_Curation')
        and mrkrgoev_gflag_name is null
         $infwhere;">
 
@@ -936,6 +939,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?/MISQL>
    
 <?MIELSE>
+
       <?MISQL SQL="
   	select distinct title, 
 		p.zdb_id, 
@@ -957,7 +961,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype not in ('Curation','Unpublished')
+	   and p.jtype not in ('Curation','Unpublished', 'Active_Curation')
        and mrkrgoev_gflag_name is null
        $infwhere;">
   	<TR bgcolor=$showpubs_tr_bg>
@@ -971,7 +975,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
         <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
 
   	<?/MISQL>
-<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished<?/MICOMMENT>
+<?MICOMMENT> SQL for listing pubs of type Curation or Unpublished or Active_Curation<?/MICOMMENT>
   <TR><TD>&nbsp;</TD><TR>
       <?MISQL SQL="
   	select distinct title, 
@@ -994,7 +998,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	   and jrnl_zdb_id = pub_jrnl_zdb_id
 	   and mrkrgoev_term_zdb_id ='$goterm'
 	   and mrkrgoev_evidence_code  ='$evidence'
-	   and p.jtype  in ('Curation','Unpublished')
+	   and p.jtype  in ('Curation','Unpublished','Active_Curation')
         and mrkrgoev_gflag_name is null
          $infwhere;">
   	<TR bgcolor=$showpubs_tr_bg>

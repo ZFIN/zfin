@@ -248,7 +248,7 @@ Number exists
     <A HREF="<!--|PDF_LOAD|-->/$pub_file">PDF</A>
   <?/MIVAR>
   <?MIVAR COND="$(EC,$pub_file,)">
-<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation))">
+<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation), $(NC,$jtype,Active_Curation))">
 <?MIVAR>
     Upload a PDF from the 
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
@@ -260,7 +260,7 @@ Number exists
 <?/MIVAR>
 
 <?MICOMMENT> =========== FIGURES link ================
-	     == if non-Unpublished, non-curation, 
+	     == if non-Unpublished, non-curation, non-active_curation
   	     == with non-GELI figure(s)
 <?/MICOMMENT>
 
@@ -272,7 +272,7 @@ Number exists
 <?/MISQL>
 <?MIVAR NAME=$pbv_fig_nongeli_count>$1<?/MIVAR>
 
-<?MIVAR COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(!=,$pbv_fig_nongeli_count,0))">
+<?MIVAR COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(NC,$jtype,Active_Curation),$(!=,$pbv_fig_nongeli_count,0))">
   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$OID">
 	  <b>FIGURES</b>
   </a> &nbsp;
@@ -313,11 +313,11 @@ Number exists
 <?MICOMMENT> =========================================================
              ==         ADDITIONAL INFORMATION        
              ==
-             == only for non-Unpublished and non-Curation pubs
+             == only for non-Unpublished and non-Curation and non-Active_curation pubs
              =========================================================   
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation))">
+<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation), $(NC,$jtype,Active_Curation))">
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
