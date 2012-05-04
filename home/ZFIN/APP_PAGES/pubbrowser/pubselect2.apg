@@ -487,7 +487,7 @@ $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER
      <?MIVAR>$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$pubsel2_zdb_id"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(AND,$(NC,$pubsel2_jtype,Unpublished),$(NC,$pubsel2_jtype,Curation), $(NC,$pubsel2_jtype,Active_Curation))">
+<?MIBLOCK COND="$(AND,$(NC,$pubsel2_jtype,Unpublished),$(NC,$pubsel2_jtype,Curation))">
 <?MIVAR>
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
 <?/MIVAR>

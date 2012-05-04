@@ -354,7 +354,7 @@ OPTIONAL VARS:
       </td>
       <td align=right>
 <?MICOMMENT>Bugz6808 checking for pub type to disable Cuartion links<?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(NC,$pub_jtype,Unpublished),$(NC,$pub_jtype,Curation), $(NC,$pub_jtype,Active_Curation))">        
+<?MIBLOCK COND="$(AND,$(NC,$pub_jtype,Unpublished),$(NC,$pub_jtype,Curation))">        
 <?MIVAR>
           $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
 <?/MIVAR>
