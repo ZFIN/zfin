@@ -34,7 +34,7 @@ cd <!--|SOURCEROOT|-->
 
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-fishmart-unittests >&! reports/tests/fishmartUnitTests.txt
+/private/bin/ant run-fishmart-unittests >&! reports/tests/fishMartUnitTests.txt
 
 if ($? != 0) then
    echo "trying to send notification unit tests";  
