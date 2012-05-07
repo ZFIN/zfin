@@ -38,7 +38,7 @@ echo "cd'd to <!--|SOURCEROOT|-->" ;
 
 if ($? != 0) then
    echo "trying to send notification unit tests";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/reports/tests/fishMartUnitTests.txt -s "regen fish mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+ /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/fishMartUnitTests.txt -s "regen fish mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 exit 1;
 endif
 
