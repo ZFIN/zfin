@@ -46,7 +46,7 @@
 # ========================================================================
 #              ==== DAILY / WEEKLY SCRIPTS ==== 
 # ========================================================================
-* T         3:15 am  weekly report to Dave the list of elsevier pubs associated with ZFIN data
+# T         3:15 am  weekly report to Dave the list of elsevier pubs associated with ZFIN data
 15 03 * * 4 /research/zcentral/www_homes/mirror/server_apps/Reports/elsevier_report.pl
 
 # ========================================================================
