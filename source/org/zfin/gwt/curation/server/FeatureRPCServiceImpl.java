@@ -129,8 +129,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         else {
             RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(),featureDTO.getPublicationZdbID(),RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions == null) {
+                List<RecordAttribution> recordAttribution = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
+                if (recordAttribution.size() != 0) {
+
+                        infrastructureRepository.removeRecordAttributionForType(recordAttribution.get(0).getSourceZdbID(), feature.getZdbID());
+                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), recordAttribution.get(0).getSourceZdbID());
+                        infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+                    }
+                else{
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
                 infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+                }
             }
         }
 
