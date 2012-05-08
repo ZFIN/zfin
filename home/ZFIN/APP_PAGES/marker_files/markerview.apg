@@ -376,6 +376,31 @@ function jump(form_select){
 	function new_attrib_mrel(attrmrelform) {
 		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.strip());
 		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().strip();
+                <?MICOMMENT> 
+                   Do not allow "clone contains gene" marker_relationship for ZDB-PUB-030703-1.
+                   
+                   1. The form passes in gene abbrevs, so get all the abbrevs that have 
+                   the not allowed relationship.
+                   2. Compare the pub id to the identified pub id.
+                   3. If the pub is a match, compare against each gene abbrev.
+                   4. If an abbrev matches, display error message.
+                <?/MICOMMENT>
+		var mrkr_match = false;
+		var pub_match = false;
+		
+		if (pub_id == "ZDB-PUB-030703-1") { pub_match = true;}
+		
+		<?MIVAR>
+		  <?MISQL SQL="select mrkr_abbrev from marker, marker_relationship where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id = mrkr_zdb_id;">
+		     if (mrkr_abbrev == "$1") {mrkr_match = true;}
+		  <?/MISQL>
+		<?/MIVAR>
+		
+		if ((pub_match == true) && (mrkr_match == true))
+		{
+		   alert("clone contains gene is not allowed with Vega Load pub.");
+		   return false;
+		}
 		if ((mrkr_abbrev != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
   		}
