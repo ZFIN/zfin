@@ -51,7 +51,7 @@ public class MarkerSoapDbTest extends AbstractDatabaseTest {
         assertTrue(geneResponse.getGenes().size() > 5);
         assertTrue(geneResponse.getGenes().size() < 100);
         for (Gene gene : geneResponse.getGenes()) {
-            assertTrue(gene.getAbbreviation().startsWith("sox1"));
+            assertTrue(gene.getAbbreviation().contains("sox1"));
         }
     }
 

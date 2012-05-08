@@ -100,14 +100,14 @@ public class MarkerSoapSmokeTest extends WebServiceGatewaySupport {
         assertTrue(geneResponse.getGenes().size() > 5);
         assertTrue(geneResponse.getGenes().size() < 100);
         for (Gene gene : geneResponse.getGenes()) {
-            assertTrue(gene.getAbbreviation().startsWith("sox1"));
+            assertTrue(gene.getAbbreviation().contains("sox1"));
             assertEquals(0, gene.getExpressionAnatomyWildType().size());
         }
         geneRequest.setExpressionAnatomyWildType(true);
         geneResponse = (GeneSearchResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(geneResponse);
         for (Gene gene : geneResponse.getGenes()) {
-            assertTrue(gene.getAbbreviation().startsWith("sox1"));
+            assertTrue(gene.getAbbreviation().contains("sox1"));
         }
     }
 }
