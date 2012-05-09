@@ -2,6 +2,7 @@ set pdqpriority 50;
 
 delete from fish_annotation_search_temp;
 
+
 update phenotype_figure_group
  set pfigg_geno_handle = (Select distinct fa_geno_handle
      		       	       from functional_annotation
@@ -36,6 +37,8 @@ select distinct fa_geno_name,
 		fa_gene_count
   from functional_annotation;
 
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
 
 
 update fish_annotation_search_temp
@@ -72,25 +75,44 @@ update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_gene_alias from functional_annotation where fa_geno_handle = fas_geno_handle and fa_gene_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_gene_alias is not null);
 
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
+
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_gene_alt_alias from functional_annotation where fa_geno_handle = fas_geno_handle and fa_gene_alt_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_gene_alt_alias is not null);
+
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
 
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_feature_alias from functional_annotation where fa_geno_handle = fas_geno_handle and fa_feature_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_feature_alias is not null);
 
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
+
+
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_morph_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_morph_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_morph_alias is not null);
+
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
 
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_geno_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_geno_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_geno_alias is not null);
 
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
+
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct fa_construct_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_construct_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_geno_handle and fa_construct_alias is not null);
+
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
 
 update fish_annotation_search_temp
   set fas_all = replace(fas_all,'sierra,','');
@@ -117,6 +139,10 @@ from fish_annotation_search_temp, tmp_dups2
 
 delete from fish_annotation_search_temp
  where fas_geno_handle in (Select geno_handle from tmp_dups2);
+
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
+ where zflag_name = "regen_fishmart_bts_indexes";
 
 update statistics high for table fish_annotation_search_temp;
 update statistics high for table phenotype_figure_group;
@@ -351,3 +377,9 @@ update fish_annotation_search_temp
 update fish_annotation_search_temp
   set fas_affector_type_group = lower(fas_affector_type_group);
 
+select fas_All from fish_Annotation_Search_temp
+where fas_Geno_handle = 'b380[2,U,U]';
+
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
+ where zflag_name = "regen_fishmart_bts_indexes";
