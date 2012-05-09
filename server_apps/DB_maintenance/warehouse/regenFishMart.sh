@@ -2,6 +2,8 @@
 
 # rm old reports
 
+setenv INSTANCE <!--|INSTANCE|-->;
+
 if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runFishMartReport.txt) then
  /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runFishMartReport.txt
 
