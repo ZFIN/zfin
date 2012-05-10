@@ -198,7 +198,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveFishByGenoAlone() {
-        String genoID = "ZDB-GENO-110210-2";
+        String genoID = "ZDB-GENO-110210-2,ZDB-GENOX-110210-12";
         String fishID = genoID;
         Fish fish = getFishRepository().getFish(fishID);
         assertNotNull(fish);
