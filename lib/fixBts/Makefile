@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, lib directory
+# Makefile for ZFIN_WWW CVS Project, Database maintenance directory
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -8,28 +8,21 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# 
+# Targets made by this makefile are used to maintain the ZFIN database.
 
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ..
+TOP = ../../
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/lib
+TARGETDIR = $(TARGETROOT)/lib/fixBts/
 
-SUBDIRS = DB_functions DB_triggers  Perl DB_bts_indexes fixBts
-POSTLOADDB_SUBDIRS = DB_functions DB_triggers DB_bts_indexes fixBts
-
+SUBDIRS = 
+GENERICS = 
+STATICS = dropBtsIndexes.sql createBtsIndexes.sql createTempBtsIndexes.sql dropload.sql fix_bts.sql reload.sh
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
 
 include $(TOP)/make.default.rules
-
-
-
-# ---------------  Special Targets  -------------------------------------
-
-postloaddb :
-	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@; )
