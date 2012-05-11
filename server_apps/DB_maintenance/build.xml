@@ -8,14 +8,11 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
 
-    <property name="logsDir" value="${uniqueryDir}/logs"/>
-
     <property environment="env" />
 
     <!-- Classpath definitions -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
-        <pathelement path="${logsDir}"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
@@ -29,6 +26,12 @@
         </fileset>
     </path>
 
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
+
     <target name="init">
         <tstamp/>
         <echo message="Set Timestamp on unload."/>
@@ -36,7 +39,8 @@
 
     <target name="timestamp-unload" description="Set the timestamp of the unload in the database_info table">
         <echo message="Update time stamp in DATABASE_INFO table:"/>
-        <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${env.DBNAME}"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance" />	
