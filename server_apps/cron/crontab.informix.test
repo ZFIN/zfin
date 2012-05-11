@@ -84,11 +84,6 @@
 #
 00 22 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/DownloadFiles.pl
 #
-# Th       10:10pm   Generate download files for Sanger
-#
-10 22 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/Sanger/SangerFiles.pl
-#
-#
 # Th        10:30pm   weekly run of GO file generation
 #
 30 22 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.pl
