@@ -47,17 +47,6 @@ foreach $item (@items) {
 $email=$data{email};
 if ($email eq 'Unknown') {$email=''};
 
-
-if (!$data{subject} || $data{subject} =~ m/^\s*$/
- || !$data{firstname} || $data{firstname} =~ m/^\s*$/
- || !$data{lastname} || $data{lastname} =~ m/^\s*$/
- || !$data{email} || $data{email} =~ m/^\s*$/
- || !$data{institution} || $data{institution} =~ m/^\s*$/
- || !$data{comments} || $data{comments} =~ m/^\s*$/ 
- ) {
-  exit;
-}
-
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
 To: <!--|COUNT_PATO_OUT|-->

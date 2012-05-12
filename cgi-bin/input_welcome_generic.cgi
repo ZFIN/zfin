@@ -46,6 +46,8 @@ foreach $item (@items) {
 $email=$data{email};
 if ($email eq 'Unknown') {$email=''};
 
+&print_confirmation;
+
 if (!$data{subject} || $data{subject} =~ m/^\s*$/
  || !$data{firstname} || $data{firstname} =~ m/^\s*$/
  || !$data{lastname} || $data{lastname} =~ m/^\s*$/
@@ -99,7 +101,5 @@ Zebrafish Information Network
 
 STOP1
 close(MAIL) || die "pipe exited $?";
-
-&print_confirmation;
 
 exit;
