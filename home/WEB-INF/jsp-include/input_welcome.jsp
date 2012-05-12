@@ -15,5 +15,5 @@
 --%>
 
 
-<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-your_input_welcome.apg&subject=<tiles:getAsString name="subjectName"/>&page_id=<tiles:getAsString name="subjectID"/>">
+<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-your_input_welcome.apg&subject=<tiles:getAsString name="subjectName"/>&page_name=<tiles:getAsString name="subjectID"/>">
 <button>Your Input Welcome</button></a>
