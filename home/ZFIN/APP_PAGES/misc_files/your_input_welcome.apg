@@ -2,6 +2,8 @@
 <HTML>
 <head>
   <title>ZFIN: Input Welcome</title>
+<?MIVAR NAME="subject" DEFAULT="">$subject<?/MIVAR>
+<?MIVAR NAME="page_name" DEFAULT="">$page_name<?/MIVAR>
 
 <SCRIPT>
 function isBlank(s)
@@ -31,14 +33,26 @@ function valid(fieldname,fieldvalue)
 
 function validateForm()
 {
+  if(!valid("Subject",document.input.subject.value))
+    return false;
+
   if(!valid("First Name",document.input.firstname.value))
-    return false
+    return false;
 
   if(!valid("Last Name",document.input.lastname.value))
-    return false
+    return false;
 
-  if(!valid("Email",document.input.email.value))
-    return false
+  if(!valid("Institution",document.input.institution.value))
+    return false;
+
+   var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+   if(reg.test(document.input.email.value) == false) { 
+      alert('Invalid Email Address');
+      return false;
+   }
+
+//  if(!valid("Email",document.input.email.value))
+//    return false
 
   if(!valid("Comments",document.input.comments.value))
     return false
@@ -59,14 +73,15 @@ We welcome your input and comments. Please use this form to recommend updates to
 <?MIVAR>
 <FORM NAME=input 
       METHOD=post 
-      ACTION="/<!--|CGI_BIN_DIR_NAME|-->/input_welcome.cgi"
+      ACTION="/<!--|CGI_BIN_DIR_NAME|-->/input_welcome_generic.cgi"
       ONSUBMIT="return validateForm();">
 <TABLE>
   <TR>
-    <TD>Subject<TD>
+    <TD>*Subject<TD>
     <INPUT TYPE=text NAME="subject" SIZE=45 VALUE="$subject">
   </TR>
 </TABLE>
+<INPUT TYPE=hidden NAME="page_name" VALUE="$page_name">
 <?/MIVAR>
 
 <H3>From</H3> 
@@ -78,7 +93,7 @@ We welcome your input and comments. Please use this form to recommend updates to
     <TD>*Last Name</TD><TD><INPUT TYPE=text NAME="lastname" SIZE=30></TD>
   </TR>
   <TR>
-    <TD><font color="#FFFFFF">*</font>Institution</TD>
+    <TD>*Institution</TD>
     <TD><INPUT TYPE=text NAME="institution" SIZE=30></TD>
   </TR>
   <TR>

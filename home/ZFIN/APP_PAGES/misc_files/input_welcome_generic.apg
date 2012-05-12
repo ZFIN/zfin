@@ -10,15 +10,15 @@ function isBlank(s)
 {
   var len=s.length
   if(len==0)
-    return true
+    return true;
 
   var i
   for(i=0;i<len;i++)
   {
-    if(s.charAt(i)!=" ") return false
+    if(s.charAt(i)!=" ") return false;
   }
 
-  return true
+  return true;
 }
 
 function valid(fieldname,fieldvalue)
@@ -26,24 +26,36 @@ function valid(fieldname,fieldvalue)
   if(isBlank(fieldvalue))
   {
     alert(fieldname+" cannot be left blank.")
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 function validateForm()
 {
+  if(!valid("Subject",document.input.subject.value))
+    return false;
+
   if(!valid("First Name",document.input.firstname.value))
-    return false
+    return false;
 
   if(!valid("Last Name",document.input.lastname.value))
-    return false
+    return false;
 
-  if(!valid("Email",document.input.email.value))
-    return false
+  if(!valid("Institution",document.input.institution.value))
+    return false;
+
+   var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+   if(reg.test(document.input.email.value) == false) { 
+      alert('Invalid Email Address');
+      return false;
+   }
+
+//  if(!valid("Email",document.input.email.value))
+//    return false;
 
   if(!valid("Comments",document.input.comments.value))
-    return false
+    return false;
 
   return true;
 }
@@ -65,7 +77,7 @@ We welcome your input and comments. Please use this form to recommend updates to
       ONSUBMIT="return validateForm();">
 <TABLE>
   <TR>
-    <TD>Subject<TD>
+    <TD>*Subject<TD>
     <INPUT TYPE=text NAME="subject" SIZE=45 VALUE="$subject">
   </TR>
 </TABLE>
@@ -81,7 +93,7 @@ We welcome your input and comments. Please use this form to recommend updates to
     <TD>*Last Name</TD><TD><INPUT TYPE=text NAME="lastname" SIZE=30></TD>
   </TR>
   <TR>
-    <TD><font color="#FFFFFF">*</font>Institution</TD>
+    <TD>*Institution</TD>
     <TD><INPUT TYPE=text NAME="institution" SIZE=30></TD>
   </TR>
   <TR>
