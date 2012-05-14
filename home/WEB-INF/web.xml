@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
             http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
-    <display-name>ZFIN: Zebrafish Information Network</display-name>
+    <display-name>ZFIN: Zebrafish Model Organism Database</display-name>
 
     <context-param>
         <param-name>log4jConfigLocation</param-name>
