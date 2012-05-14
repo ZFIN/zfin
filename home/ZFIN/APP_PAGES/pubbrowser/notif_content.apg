@@ -136,7 +136,7 @@ OUTPUT VARS:
 Dear <?MIVAR>$(IF,$(EC,$status,preview),$notif_recipient,<input type=text size=50 name=notif_recipient $(IF,$(XST,$notif_recipient),value='$notif_recipient')>)<?/MIVAR>,
 <p>
 
-I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.
+I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Model Organism Database.
 <p>
 
 <?MIVAR>
@@ -178,7 +178,7 @@ $sender_name
 <br>
 Scientific Curation Group
 <p>
-Zebrafish Information Network <br>
+Zebrafish Model Organism Database <br>
 5291 University of Oregon <br>
 Eugene, Oregon, USA
 97403-5291
