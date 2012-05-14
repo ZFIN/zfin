@@ -217,7 +217,8 @@ OLDCODENOTE
 
  print "</TD></TR>";
  print "<TR> <TD align=left>NOTE: Large maps may take a few moments to load.  </TD>  \
-<TD align=right> * indicates markers that map to different linkage groups on different panels.  </TD> \
+<TD align=right> * indicates markers that map to different linkage groups on different panels.  </TD></TR> \
+<TR> <TD align=left colspan=2>Physical map location as displayed in the GBrowse or Ensembl browsers is more precise than linkage map location.  Physical map location should be used whenever possible.</TD>  \
 </TR></TABLE>";
  print "</form>";
  print "</TD></TR></TABLE>";
