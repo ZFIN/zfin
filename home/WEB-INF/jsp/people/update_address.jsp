@@ -182,13 +182,13 @@
 			size=40
 			value="">
      	  <p>
-	  <p><b>Current Address (old table):</b> <br>Zebrafish Information Network<br>5291 University of Oregon<br>Eugene, OR<br>97405-5291<br>USA
+	  <p><b>Current Address (old table):</b> <br>ZFIN, Zebrafish Model Organism Database<br>5291 University of Oregon<br>Eugene, OR<br>97405-5291<br>USA
      	  <p>
      	  <b>Street:</b>
 
      	  <INPUT TYPE=text name=ua_pers_street1
 			size=85
-			value="Zebrafish Information Network">
+			value="Zebrafish Model Organism Database">
      	  <p>
 	  <b>Street:</b>
      	  <INPUT TYPE=text name=ua_pers_street2
