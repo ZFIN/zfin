@@ -85,7 +85,7 @@ $data{comments}
 -----------------------------------------------------------------
 
 Regards,
-Zebrafish Information Network
+Zebrafish Model Organism Database
 
 STOP1
 close(MAIL) || die "pipe exited $?";
