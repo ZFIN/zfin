@@ -1178,6 +1178,8 @@ marker = '';
   <?/MIBLOCK>
  <?MICOMMENT>-------------- end EST and/or Gene containing SNP -----------------<?/MICOMMENT>
 
+  <TR><TD colspan=2>Physical map location as displayed in the GBrowse or Ensembl browsers is more precise than linkage map location.  Physical map location should be used whenever possible.</TD></TR>
+
  </TABLE></TD></TR>
 <?MIBLOCK COND="$(EC,$mapped,t)"> <br><TR><TD> <hr width=80%></TD></TR>
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
