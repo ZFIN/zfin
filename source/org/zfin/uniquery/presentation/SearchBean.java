@@ -546,6 +546,8 @@ public class SearchBean extends PaginationBean {
             returnResults += "Advanced search: ";
             if (categoryDisplayName.toLowerCase().equals("anatomy"))
                 returnResults += "<a href='/action/" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
+            else if (categoryDisplayName.toLowerCase().equals("mutants/transgenics"))
+                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
             else
                 returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
 

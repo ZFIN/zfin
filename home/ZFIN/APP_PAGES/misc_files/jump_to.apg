@@ -93,7 +93,6 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-labselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-quickfindpers.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPUB),0)">MIval=aa-pubselect2.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-fishselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-refcrosslist.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOEST),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOXPAT),0)">MIval=aa-xpatselect.apg<?/MIVAR>
