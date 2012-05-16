@@ -8,6 +8,11 @@ update phenotype_figure_group
      		       	       from functional_annotation
 			       where fa_genox_zdb_id = pfigg_genox_zdb_id);
 
+update xpat_figure_group
+ set xfigg_geno_handle = (Select distinct fa_geno_handle
+     		       	       from functional_annotation
+			       where fa_genox_zdb_id = xfigg_genox_zdb_id);
+
 update term_group
  set tg_geno_handle = (Select distinct fa_geno_handle
      		       	       from functional_annotation
@@ -182,6 +187,8 @@ update fish_annotation_search_temp
 				       where pfiggm_group_id = pfigg_group_pk_id
 				       and pfigg_geno_handle = fas_geno_handle);
 
+
+!echo "xpatfig in fish annotation search";
 
 update fish_annotation_search_temp
   set fas_xpat_figure_count = (Select count(distinct xfiggm_member_id)

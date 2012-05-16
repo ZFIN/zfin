@@ -42,7 +42,6 @@ create table functional_annotation(
  extent size 16384 next size 16384;
 
 
-
 create unique index fa_pk_id_index on functional_annotation(fa_pk_id)
   using btree in idxdbs2;
 

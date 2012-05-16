@@ -34,6 +34,9 @@ set fishMartScripts=(begin.sql \
 	     phenoTermGroup.sql \
 	     commit.sql \
 	     begin.sql \
+	     xpatTermGroup.sql\
+	     commit.sql \
+	     begin.sql \
 	     addGroupsToFunctionalAnnotation.sql \
 	     commit.sql \
 	     begin.sql \
@@ -50,6 +53,9 @@ set fishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateFigureTermFishSearch.sql \
+	     commit.sql \
+	     begin.sql \
+	     populateFigureTermXpatFishSearch.sql \
 	     commit.sql \
 	     begin.sql \
 	     translateFeatureTypeForTGs.sql \
