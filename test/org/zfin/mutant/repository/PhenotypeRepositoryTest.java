@@ -410,7 +410,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
         Marker m2 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-031112-7");
         int numAnatomy2 = getPhenotypeRepository().getPhenotypeAnatomy(m2).size();
-        assertEquals(63, numAnatomy2);
+        assertTrue(numAnatomy2 > 40);
     }
 
     @Test
