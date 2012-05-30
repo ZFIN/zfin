@@ -108,4 +108,13 @@ public class GafEntry {
         sb.append('}').append("\n");
         return sb.toString();
     }
+
+    //FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
+    public boolean isCell () {
+        if (goTermId.equalsIgnoreCase("GO:0005623")) {
+            return true;
+        }
+        return false;
+    }
+
 }

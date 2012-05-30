@@ -97,7 +97,8 @@ public class GafService {
 
         int count = 0;
         for (GafEntry gafEntry : gafEntries) {
-
+          ////FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
+          if (!gafEntry.isCell()) {
             // find genes based on uniprot ID via marker relations
             try {
                 Collection<Marker> genes = getGenes(gafEntry.getEntryId()) ;
@@ -134,6 +135,7 @@ public class GafService {
                 logger.info("at " + count + " of " + gafEntries.size() + " done "
                         + ((float) count / (float) gafEntries.size()) * 100f + "%");
             }
+          }
         } // end of gaf entry for loop
 
 
