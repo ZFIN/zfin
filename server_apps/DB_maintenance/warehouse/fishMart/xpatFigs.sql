@@ -8,7 +8,7 @@ insert into xpat_figure_group (xfigg_genox_zdb_id)
   select distinct xpatex_genox_zdb_id
   from expression_pattern_Figure, expression_Result, expression_experiment
   where xpatres_zdb_id = xpatfig_xpatres_zdb_id
-  and xpatres_expression_found = 't'
+  and xpatex_gene_zdb_id is not null
   and xpatex_zdb_id = xpatres_Xpatex_zdb_id
  and not exists (Select 'x' from genotype,genotype_Experiment where geno_is_wildtype = 't'
      	 		and genox_geno_zdb_id = geno_zdb_id
@@ -25,8 +25,8 @@ where exists (Select 'x' from genotype_experiment where genox_zdb_id = xfigg_gen
 select distinct xpatfig_fig_Zdb_id, xpatex_genox_zdb_id
   from expression_pattern_Figure, expression_Result, expression_experiment
   where xpatres_zdb_id = xpatfig_xpatres_zdb_id
+  and xpatex_gene_zdb_id is not null
   and xpatres_xpatex_zdb_id = xpatex_zdb_id
-  and xpatres_expression_found = 't'
  and not exists (Select 'x' from genotype,genotype_Experiment 
      	 		where geno_is_wildtype = 't'
      	 		and genox_geno_zdb_id = geno_zdb_id
@@ -49,6 +49,7 @@ insert into xpat_figure_group_member (xfiggm_group_id, xfiggm_member_name, xfigg
   select distinct xfigg_group_pk_id, fig_label, xpatfig_fig_zdb_id
     from xpat_figure_group, expression_experiment, expression_result, expression_pattern_figure, figure
     where xpatex_genox_zdb_id = xfigg_genox_zdb_id
+    and xpatex_gene_zdb_id is not null
     and xpatex_zdb_id = xpatres_xpatex_zdb_id
     and xpatres_zdb_id = xpatfig_xpatres_zdb_id
     and fig_zdb_id = xpatfig_fig_zdb_id
