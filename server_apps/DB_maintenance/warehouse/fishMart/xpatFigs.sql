@@ -52,6 +52,7 @@ insert into xpat_figure_group_member (xfiggm_group_id, xfiggm_member_name, xfigg
     and xpatex_zdb_id = xpatres_xpatex_zdb_id
     and xpatres_zdb_id = xpatfig_xpatres_zdb_id
     and fig_zdb_id = xpatfig_fig_zdb_id
+    and xpatres_expression_found = 't'
     and not exists (Select 'x' from genotype,genotype_Experiment where geno_is_wildtype = 't'
      	 		and genox_geno_zdb_id = geno_zdb_id
 			and genox_Zdb_id = xpatex_genox_zdb_id
