@@ -34,7 +34,7 @@
     <form:input path="<%= CandidateBean.NEW_GENE_NAME%>" size="25"></form:input>
     <form:errors path="<%= CandidateBean.NEW_GENE_NAME%>" cssClass="error indented-error"/>
     <br>
-    <label for="geneAbbreviation" class="indented-label">Candidate Gene:</label>
+    <label for="geneAbbreviation" class="indented-label">Gene Symbol:</label>
     <form:input path="<%= CandidateBean.NEW_ABBREVIATION%>" size="25"></form:input>
     <br>
     <form:errors path="<%= CandidateBean.NEW_ABBREVIATION%>" cssClass="error indented-error"/>
