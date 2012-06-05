@@ -45,6 +45,8 @@ public class MarkerViewController {
     @Autowired
     private EfgViewController efgViewController;
     @Autowired
+    private RegionViewController reginoViewController;
+    @Autowired
     private ConstructViewController constructViewController;
     @Autowired
     private MorpholinoViewController morpholinoViewController;
@@ -135,6 +137,8 @@ public class MarkerViewController {
                 return pseudoGeneViewController.getGeneView(model, zdbID);
             } else if (type.equals(Marker.Type.EFG.name())) {
                 return efgViewController.getView(model, zdbID);
+            } else if (type.equals(Marker.Type.REGION.name())) {
+                return reginoViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.ETCONSTRCT.name())
                     || type.equals(Marker.Type.GTCONSTRCT.name())
                     || type.equals(Marker.Type.PTCONSTRCT.name())
@@ -152,7 +156,7 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.SSLP.name())
                     || type.equals(Marker.Type.BAC_END.name())
                     || type.equals(Marker.Type.PAC_END.name())
-                    || type.equals(Marker.Type.REGION.name())
+//                    || type.equals(Marker.Type.REGION.name())
                     ) {
                 return genericMarkerViewController.getGenericMarkerView(model, zdbID);
             }
