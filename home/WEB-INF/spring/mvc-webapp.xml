@@ -8,6 +8,10 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
        ">
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="useDefaultSuffixPattern" value="false"/>
+    </bean>
+
     <context:component-scan base-package="org.zfin.webservice"/>
     <context:component-scan base-package="org.zfin.datatransfer.webservice"/>
     <context:component-scan base-package="org.zfin.people.rpc"/>
@@ -25,7 +29,10 @@
     <context:component-scan base-package="org.zfin.anatomy.presentation"/>
     <context:component-scan base-package="org.zfin.database.presentation"/>
     <context:component-scan base-package="org.zfin.util.database"/>
+    <context:component-scan base-package="org.zfin.util.downloads"/>
     <context:component-scan base-package="org.zfin.util.database.presentation"/>
+    <context:component-scan base-package="org.zfin.util.database.quartz"/>
+    <context:component-scan base-package="org.zfin.uniquery"/>
     <mvc:annotation-driven/>
 
 </beans>

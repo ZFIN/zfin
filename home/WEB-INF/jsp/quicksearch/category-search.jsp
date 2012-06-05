@@ -118,7 +118,7 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
             <c:when test="${formBean.replacementZdbID != null}">
     <span class="results_header">
       ${formBean.queryTerm} has been changed. <p>
-        Please check <a href="/action/quicksearch?query=${formBean.replacementZdbID.replacementZdbID}">
+        Please check <a href="/action/quicksearch/query?query=${formBean.replacementZdbID.replacementZdbID}">
             ${formBean.replacementZdbID.replacementZdbID}</a>.
     </span>
             </c:when>

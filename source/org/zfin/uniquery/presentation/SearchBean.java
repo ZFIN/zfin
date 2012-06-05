@@ -61,7 +61,7 @@ public class SearchBean extends PaginationBean {
     private static String indexDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
     private ReplacementZdbID replacementZdbID;
     private SearchResults searchResult;
-    public static final String WEBDRIVER_LOCATION = ZfinPropertiesEnum.WEBDRIVER_LOC.value() ;
+    public static final String WEBDRIVER_LOCATION = ZfinPropertiesEnum.WEBDRIVER_LOC.value();
     public static final String ALTERNATIVE_SEARCH_ID = "alternative-search";
     public static final String ALIAS_TERM_ID = "alias-term";
 
@@ -154,8 +154,8 @@ public class SearchBean extends PaginationBean {
      *
      * @return SearchResult object
      */
-    public SearchResults doCategorySearch() {
-
+    public SearchResults doCategorySearch(String indexDir) {
+            indexDirectory = indexDir;
         String queryString = getQueryTerm();
         String categoryId = getCategoryID();
 
@@ -396,7 +396,7 @@ public class SearchBean extends PaginationBean {
             returnResults += "<TD nowrap class='category_item'>";
             returnResults += cellSelected;
             returnResults += categoryHtml;
-            if (! (currentCategoryId.equalsIgnoreCase("All") && numberOfResults >= MAX_RESULTS_PER_CATEGORY)) {
+            if (!(currentCategoryId.equalsIgnoreCase("All") && numberOfResults >= MAX_RESULTS_PER_CATEGORY)) {
                 returnResults += " (" + numberOfResults + ")";
             }
             returnResults += "</TD> \n";
@@ -468,9 +468,9 @@ public class SearchBean extends PaginationBean {
             String viewPageUrl;
             if (theMatchId.startsWith("ZDB-GENO")) {
 
-               // viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
-               viewPageUrl = "/action/genotype/genotype-detail?zdbID=" + theMatchId;
-            } else if (theMatchId.startsWith("ZDB-ANAT")|| theMatchId.startsWith("ZDB-TERM")) {
+                // viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
+                viewPageUrl = "/action/genotype/genotype-detail?zdbID=" + theMatchId;
+            } else if (theMatchId.startsWith("ZDB-ANAT") || theMatchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + theMatchId;
             } else {
                 viewPageUrl = "/action/marker/view/" + theMatchId;

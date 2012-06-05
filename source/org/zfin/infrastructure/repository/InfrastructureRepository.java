@@ -5,6 +5,7 @@ package org.zfin.infrastructure.repository;
 
 import org.hibernate.Session;
 import org.zfin.ExternalNote;
+import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
@@ -18,6 +19,7 @@ import org.zfin.people.Person;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -401,6 +403,13 @@ public interface InfrastructureRepository {
     void executeJdbcStatementOneByOne(DatabaseJdbcStatement statement, List<List<String>> data);
 
     List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement, Session session);
+
+    /**
+     * Retrieve the date when the database was loaded from. For dev sites it's the date of the production database that
+     * was used for loading.
+     * @return UnloadInfo of the production database.
+     */
+    UnloadInfo getUnloadDate();
 }
 
 

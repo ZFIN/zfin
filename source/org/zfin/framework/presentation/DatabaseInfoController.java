@@ -22,6 +22,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+
 /**
  * Controller that obtains the meta data for the database.
  */
@@ -32,6 +34,7 @@ public class DatabaseInfoController extends MultiActionController {
         DatabaseMetaData meta = getMetaData();
         ModelAndView mv = new ModelAndView("metadata");
         mv.addObject("metadata", meta);
+        mv.addObject("unloadDate", getInfrastructureRepository().getUnloadDate());
         return mv;
     }
 

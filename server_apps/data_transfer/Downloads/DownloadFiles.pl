@@ -21,7 +21,7 @@
 #   zebrafish - yeast
 #	zfin id,  zebrafish symbol, yeast symbol,  SGD id
 #
-# Gene Onotology-
+# Gene Ontology-
 #	A copy of the file we send to GO.
 #
 # Gene Expression
@@ -36,7 +36,7 @@
 #	zfin id, symbol, accession number
 #	
 # Genotypes
-#	zfin id, allele/construct, type, gene symblol, corresponding zfin gene id
+#	zfin id, allele/construct, type, gene symbol, corresponding zfin gene id
 #
 # Morpholino
 #       zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
@@ -48,13 +48,9 @@
 # set environment variables
 
 $ENV{"DBDATE"}="Y4MD-";
-
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
@@ -76,3 +72,8 @@ foreach $line (@lines) {
 }
 close INP;
 close RESULT;
+
+# remove temporary file
+system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
+
+system("/private/bin/ant archive-download-files");

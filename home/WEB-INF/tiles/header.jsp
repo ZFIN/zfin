@@ -91,7 +91,7 @@
     </div>
 </noscript>
 <div id="quicksearchBox">
-    <form method="GET" action="/action/quicksearch" name="quicksearch">
+    <form method="GET" action="/action/quicksearch/query" name="quicksearch">
         <label for="qsearch" id="quicksearchLabel">
             <a href="/zf_info/syntax_help.html">
                 Site Search:

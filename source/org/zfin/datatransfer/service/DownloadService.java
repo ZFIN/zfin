@@ -159,7 +159,8 @@ public class DownloadService {
         try {
             logger.info(remoteFile.getUserInfo()) ;
             long remoteFileSize = 100 ; // this file is gzipped
-            long localFileSize = localFile.length(); // ths file is not
+            //long localFileSize = localFile.length(); // ths file is not
+            long localFileSize =0;
 
             // do we have a local file?
             logger.info("downloaded file should be here: " + localFile.getAbsolutePath());

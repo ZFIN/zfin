@@ -86,8 +86,8 @@ public class WikiScriptRunner {
             }
             WikiSynchronizationReport wikiSynchronizationReport = new WikiSynchronizationReport(true);
             AntibodyWikiWebService.getInstance().validateAntibodiesOnWikiWithZFIN(zfinAntibodyHashMap,wikiSynchronizationReport);
-//            WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
-//            wikiScriptRunner.addWebPage("zn-5");
+            WikiScriptRunner wikiScriptRunner = new WikiScriptRunner();
+            wikiScriptRunner.replaceWebPage("zn-5");
 //            wikiScriptRunner.addWebPage("Ab-10E4");
 //            wikiScriptRunner.addWebPage("Ab-3A10");
 //            wikiScriptRunner.replaceWebPage("Ab1-tuba");

@@ -1,6 +1,7 @@
 package org.zfin.ontology.datatransfer;
 
 import org.zfin.util.DateUtil;
+import org.zfin.wiki.WikiSynchronizationReport;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ public class CronJobReport {
     private List rows;
     private String dataSectionTitle;
     private CronJobUtil cronJobUtil;
+    private WikiSynchronizationReport report;
 
     public CronJobReport(String jobName) {
         this.jobName = jobName;
@@ -156,6 +158,14 @@ public class CronJobReport {
         errorMessages.add(errorString.toString());
         status = AbstractScriptWrapper.ScriptExecutionStatus.ERROR;
 
+    }
+
+    public WikiSynchronizationReport getReport() {
+        return report;
+    }
+
+    public void setReport(WikiSynchronizationReport report) {
+        this.report = report;
     }
 
     public void info() {

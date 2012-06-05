@@ -80,4 +80,13 @@
             <c:out value="${metadata.extraNameCharacters}" />
         </td>
     </tr>
+
+    <tr>
+        <td class="listContent">
+            Unload Date
+        </td>
+        <td class="listContent">
+            <fmt:formatDate pattern="d MMM yyyy hh:mm a" value="${unloadDate.date}"/>
+        </td>
+    </tr>
 </table>

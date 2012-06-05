@@ -230,5 +230,8 @@
         <available type="dir" file="${tomcat-work}/org"/>
     </condition>
 
+    <condition property="has.download.symlink">
+        <available type="dir" file="${home.target}/data-transfer"/>
+    </condition>
 
 </project>

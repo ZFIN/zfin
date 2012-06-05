@@ -22,7 +22,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 String query = "cadherin";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch/query?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -44,7 +44,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 String query = "gsc";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch/query?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -64,7 +64,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 String query = "nitr";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch/query?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
@@ -85,7 +85,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 String query = "midbrain-hindbrain boundary neural tube";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch?query=" + query);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/quicksearch/query?query=" + query);
                 webClient.setJavaScriptEnabled(true);
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 

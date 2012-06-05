@@ -33,7 +33,7 @@ public class UnloadService {
 
     // Used from Controller
     public UnloadService() {
-        this(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value() + "/WEB-INF/unload-index");
+        this(ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY.value()+"/index");
     }
 
     public UnloadService(String indexDirectory) {

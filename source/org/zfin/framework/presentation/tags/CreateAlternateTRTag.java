@@ -38,28 +38,38 @@ public class CreateAlternateTRTag extends TagSupport {
     private List groupBeanCollection;
     // class names for the tr-element
     private String trClassNames;
+    private boolean newGroup = true;
 
-    // this index is used to indicate if a new group is started with a new element
-    private int groupIndex;
     private static final Logger LOG = Logger.getLogger(GroupByDisplayTag.class);
 
 
     public int doStartTag() throws JspException {
 
         LoopTagStatus loop = (LoopTagStatus) pageContext.getAttribute(loopName, PageContext.PAGE_SCOPE);
+        // this index is used to indicate if a new group is started with a new element
+        Object object = pageContext.getAttribute("groupIndex", PageContext.PAGE_SCOPE);
+        int groupIndex = 0;
+        if (object != null) {
+            if (object instanceof String)
+                groupIndex = new Integer((String) object);
+            else
+                groupIndex = (Integer) object;
+        }
+
         if (loop == null)
             throw new RuntimeException("No counter named " + loopName + " being found in page context");
         int loopIndex = loop.getCount();
-        init(loopIndex);
+        init(loopIndex, groupIndex);
 
-        boolean isNewGroup = true;
+        //boolean isNewGroup = true;
         if (loopIndex > 1 && groupByBean != null) {
             Object previousObject = groupBeanCollection.get(loopIndex - 2);
             Object currentObject = groupBeanCollection.get(loopIndex - 1);
             try {
                 Object previousGroupBeanAttribute = PropertyUtils.getProperty(previousObject, groupByBean);
                 Object currentGroupBeanAttribute = PropertyUtils.getProperty(currentObject, groupByBean);
-                isNewGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
+                if (newGroup)
+                    newGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
                 LOG.debug("previousGroupBeanAttribute: " + previousGroupBeanAttribute);
                 LOG.debug("currentGroupBeanAttribute:" + currentGroupBeanAttribute);
             } catch (IllegalAccessException e) {
@@ -82,7 +92,7 @@ public class CreateAlternateTRTag extends TagSupport {
             sb.append(" even ");
 
         //if not grouping by anything, treat every row as a new group
-        if (isNewGroup || groupByBean == null) {
+        if (newGroup || groupByBean == null) {
             sb.append(" newgroup ");
             groupIndex++;
         }
@@ -93,19 +103,20 @@ public class CreateAlternateTRTag extends TagSupport {
             else
                 sb.append(" evengroup ");
         }
-        sb.append("\">");
+        sb.append("\" id=\"loopindex-" + loopIndex + "\">");
 
         try {
             pageContext.getOut().print(sb.toString());
         } catch (IOException ioe) {
             throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }
+        pageContext.setAttribute("groupIndex", groupIndex, PageContext.PAGE_SCOPE);
         return Tag.EVAL_BODY_INCLUDE;
     }
 
-    private void init(int index) {
+    private void init(int index, int groupIndex) {
         // if start of the loop set group index accordingly
-        if (index == 1) {
+        if (index == 1 && newGroup) {
             groupIndex = 0;
         }
     }
@@ -135,6 +146,7 @@ public class CreateAlternateTRTag extends TagSupport {
         groupBeanCollection = null;
         groupByBean = null;
         trClassNames = null;
+        newGroup = true;
     }
 
 
@@ -168,5 +180,13 @@ public class CreateAlternateTRTag extends TagSupport {
 
     public void setTrClassNames(String trClassNames) {
         this.trClassNames = trClassNames;
+    }
+
+    public boolean isNewGroup() {
+        return newGroup;
+    }
+
+    public void setNewGroup(boolean newGroup) {
+        this.newGroup = newGroup;
     }
 }

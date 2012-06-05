@@ -5,14 +5,31 @@
     <target name="recreate-bts-indexes" description="drop and re-create the BTS indexes on the warehouse tables.">
         <echo message="Re-create BTS indexes on '${env.DBNAME}'"/>
         <echo message="Drop existing indexes ..."/>
+        <echo message="DropBtsIndexes.sql ..."/>
         <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="${DBNAME}"/>
             <arg value="/research/zunloads/projects/search/testLoad/dropBtsIndexes.sql"/>
         </exec>
-        <echo message="Create BTS indexes ..."/>
+        <echo message="Dropload.sql ..."/>
         <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="${DBNAME}"/>
-            <arg value="/research/zunloads/projects/search/testLoad/createBtsIndexes.sql"/>
+            <arg value="/research/zunloads/projects/unregisterBts/dropload.sql"/>
+        </exec>
+        <echo message="Create BTS indexes ..."/>
+        <echo message="createBtsIndexes.sql ..."/>
+        <exec executable="dbaccess" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+            <arg value="/research/zcentral/www_homes/$INSTANCE/server_apps/DB_maintenance/warehouse/fishMart/createBtsIndexes.sql"/>
+        </exec>
+        <echo message="createTempBtsIndexes.sql ..."/>
+        <exec executable="dbaccess" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+            <arg value="/research/zcentral/www_homes/$INSTANCE/server_apps/DB_maintenance/warehouse/fishMart/createTempBtsIndexes.sql"/>
+        </exec>
+        <echo message="fix_bts.sql ..."/>
+        <exec executable="dbaccess" failifexecutionfails="true">
+            <arg value="${DBNAME}"/>
+            <arg value="/research/zunloads/projects/search/testLoad/fix_bts.sql"/>
         </exec>
     </target>
 

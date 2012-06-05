@@ -38,14 +38,11 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getName(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM) || marker.isInTypeGroup(Marker.TypeGroup.EFG)){
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM) || marker.isInTypeGroup(Marker.TypeGroup.EFG)) {
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
-        }
-        else
-        if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)){
+        } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
             cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();
-        }
-        else{
+        } else {
             cssClassName = NONGENEDOMMARKER;
         }
         return getSpanTag(cssClassName, marker.getAbbreviation(), marker.getName());
@@ -83,7 +80,7 @@ public class MarkerPresentation extends EntityPresentation {
      * @return A rendered wiki link.
      */
     public static String getWikiLink(Marker marker) {
-        return getWikiLink(ZfinProperties.getWebDriver() + marker_uri, marker.getZdbID(), "_" + marker.getAbbreviation() + "_", marker.getName());
+        return getWikiLink("action/" + marker_uri, marker.getZdbID(), "_" + marker.getAbbreviation() + "_", marker.getName());
     }
 
 
@@ -143,7 +140,7 @@ public class MarkerPresentation extends EntityPresentation {
         return null;
     }
 
-    private static Marker getMarkerFromEntity(ZfinEntity entity, Marker.Type type, Marker.TypeGroup groupType ) {
+    private static Marker getMarkerFromEntity(ZfinEntity entity, Marker.Type type, Marker.TypeGroup groupType) {
         Marker marker = new Marker();
         marker.setAbbreviation(entity.getName());
         marker.setName(entity.getName());
@@ -158,7 +155,7 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getTranscriptLink(Transcript transcript) {
-        return getTomcatLink(marker_uri, transcript.getZdbID(), getName(transcript), null)  + (transcript.isWithdrawn() ? WITHDRAWN: "") ;
+        return getTomcatLink(marker_uri, transcript.getZdbID(), getName(transcript), null) + (transcript.isWithdrawn() ? WITHDRAWN : "");
     }
 
     public static String getCloneLink(Marker marker) {
@@ -167,7 +164,7 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getTomcatLink(marker_uri, marker.getZdbID(), marker.getName(), null,marker.getAbbreviation());
+        return getTomcatLink(marker_uri, marker.getZdbID(), marker.getName(), null, marker.getAbbreviation());
     }
 
     /**
@@ -235,14 +232,11 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getAbbreviation(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
-        }
-        else
-        if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)){
+        } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
             cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();
-        }
-        else{
+        } else {
             cssClassName = NONGENEDOMMARKER;
         }
         return getSpanTag(cssClassName, marker.getName(), marker.getAbbreviation());
@@ -294,7 +288,7 @@ public class MarkerPresentation extends EntityPresentation {
 
 
         return getAttributionLink(relatedMarker.getMarker().getZdbID(),
-                                  mrel.getZdbID(),
+                mrel.getZdbID(),
                 sourceZdbID,
                 mrel.getPublicationCount());
 

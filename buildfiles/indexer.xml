@@ -39,9 +39,11 @@
         <echo message="Regenerating Indexes."/>
     </target>
 
-    <target name="create-new-index-folder" description="Remove this folder that should not be there">
+    <target name="create-new-index-folder" description="Remove this folder that should not be there and create 
+                  the index folder if not present">
         <delete dir="${newIndexDir}"/>
         <mkdir dir="${newIndexDir}"/>
+        <mkdir dir="${indexDir}"/>
     </target>
 
     <target name="rotate-indexes">
@@ -54,6 +56,20 @@
             <fileset dir="${newIndexDir}"/>
         </move>
     </target>
+
+    <property name="unload-dir" value="${env.INDEXER_UNLOAD_DIRECTORY}" />
+
+    <target name="unload-index">
+        <tstamp>
+            <format property="time-stamp" pattern="yyyy.MM.dd" />
+        </tstamp>
+        <echo message="Time stamp: ${time-stamp}" />
+        <mkdir dir="${unload-dir}/${time-stamp}"/>
+	<copy todir="${unload-dir}/${time-stamp}">
+	     <fileset dir="${indexDir}"/>
+        </copy>
+    </target>
+
 
     <target name="run-indexer" depends="init, generate-detail-page-urls" description="run the indexer">
         <echo message="Launching Java Indexer"/>
@@ -133,7 +149,9 @@
         </java>
     </target>
 
-    <target name="index" depends="create-new-index-folder, run-indexer, rotate-indexes"/>
+    <target name="index" depends="create-new-index-folder, run-indexer, rotate-indexes, unload-index"/>
+
+    <target name="index-test" depends="create-new-index-folder, run-indexer-test, rotate-indexes, unload-index"/>
 
     <target name="usage">
         <echo>

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test class for FileUtil.
@@ -100,24 +101,34 @@ public class FileUtilTest {
     @Test
     public void readNumberOfLines() throws IOException {
         String fileName = FileUtil.createAbsolutePath("test", "test-count-number-of-lines.txt");
-        int numOfLines = FileUtil.countLines(fileName);
+        int numOfLines = FileUtil.countLines(new File(fileName));
         assertEquals(13, numOfLines);
     }
 
     @Test
-    public void deleteDirectory() throws Exception{
-        File dirTop = new File("test/delete-me") ;
-        if(dirTop.exists()){
+    public void createFileInfo() throws IOException {
+        String fileName = FileUtil.createAbsolutePath("test", "test-count-number-of-lines.txt");
+        FileInfo fileInfo = FileUtil.getFileInfo(new File(fileName));
+        assertNotNull(fileInfo);
+        assertEquals(13, fileInfo.getNumberOfLines());
+        assertEquals(59, fileInfo.getSize());
+        assertEquals("test-count-number-of-lines.txt", fileInfo.getName());
+    }
+
+    @Test
+    public void deleteDirectory() throws Exception {
+        File dirTop = new File("test/delete-me");
+        if (dirTop.exists()) {
             FileUtils.deleteDirectory(dirTop);
             assertFalse(dirTop.exists());
         }
         assertTrue(dirTop.mkdir());
-        File dirNext = new File("test/delete-me/delete-you") ;
+        File dirNext = new File("test/delete-me/delete-you");
         assertTrue(dirNext.mkdir());
-        File file1 = new File("test/delete-me/bob.txt") ;
-        assertTrue(file1.createNewFile()) ;
-        File file2 = new File("test/delete-me/delete-you/bob.txt") ;
-        assertTrue(file2.createNewFile()) ;
+        File file1 = new File("test/delete-me/bob.txt");
+        assertTrue(file1.createNewFile());
+        File file2 = new File("test/delete-me/delete-you/bob.txt");
+        assertTrue(file2.createNewFile());
 
         FileUtils.deleteDirectory(dirTop);
         assertFalse(dirTop.exists());

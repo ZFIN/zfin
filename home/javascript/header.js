@@ -342,7 +342,7 @@ document.write("      Many ZFIN features require that javascript be enabled.");
 document.write("    </div>");
 document.write("   </noscript>");
 document.write("   <div id=\"quicksearchBox\">");
-document.write("     <form method=\"GET\" action=\"/action/quicksearch\" name=\"quicksearch\">");
+document.write("     <form method=\"GET\" action=\"/action/quicksearch/query\" name=\"quicksearch\">");
 document.write("       <label for=\"qsearch\" id=\"quicksearchLabel\">");
 document.write("         <a href=\"/zf_info/syntax_help.html\">");
 document.write("           Site Search:");

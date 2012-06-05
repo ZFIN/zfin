@@ -3,16 +3,25 @@
 
 <jsp:useBean id="formBean" class="org.zfin.util.database.presentation.UnloadBean" scope="request"/>
 
-<b>Tables and Unload Dates:</b>
+<h3>Tables and Unload Dates:</h3>
 
-<table>
+<p/>
+Back to <a href="/action/dev-tools/home">Dev Tools Home Page</a>
+
+<table class="primary-entity-attributes summary">
     <tr>
-        <td>Index File</td>
+        <th width="200">Index File</th>
         <td>${formBean.unloadService.indexDirectory}</td>
     </tr>
     <tr>
-        <td>Unloads Directory</td>
+        <th>Unloads Directory</th>
         <td><%=ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY %>
+        </td>
+    </tr>
+    <tr>
+        <th>Number of Documents</th>
+        <td>
+            <fmt:formatNumber type="number" pattern="###,###" value="${formBean.unloadService.numberOfDocuments}"/>
         </td>
     </tr>
 </table>
@@ -20,9 +29,6 @@
 <p/>
 <a href="re-load-index">Re-load Index:</a>
 
-<p/>
-Number of Documents: <fmt:formatNumber type="number" pattern="###,###"
-                                       value="${formBean.unloadService.numberOfDocuments}"/>
 
 <table class="summary rowstripes">
     <tr>

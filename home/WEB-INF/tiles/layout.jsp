@@ -43,6 +43,7 @@
     <%--<script src="/javascript/header.js" type="text/javascript"></script>--%>
     <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="/javascript/sorttable.js"></script>
 
 
     <!-- Start GOOGLE Analytics -->

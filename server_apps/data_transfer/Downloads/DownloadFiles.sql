@@ -740,16 +740,9 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'
  DELIMITER "	" select * from tmp_veg order by 1,3;
 drop table tmp_veg;
 
--- Anatomical Ontologies
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology.txt'
- DELIMITER "	"
-select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id
- from anatomy_relationship
-;
-
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'DELIMITER "   "
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
+ DELIMITER "	"
 select stg_zdb_id, stg_obo_id, stg_name, stg_hours_start, stg_hours_end
   from stage
   order by stg_hours_start, stg_hours_end desc
@@ -1127,3 +1120,31 @@ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,p
  where pub_jrnl_zdb_id = jrnl_zdb_id
    and jtype = 'Journal'
 ;
+
+-- a list of all features ordered by abbreviation (case insensitive)
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features.txt'
+ DELIMITER "	"
+select feature_zdb_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee
+from feature, feature_type, feature_assay
+where feature_type =ftrtype_name
+ and feature_zdb_id = featassay_feature_zdb_id
+order by lower(feature_abbrev);
+
+-- a list of all features ordered by abbreviation (case insensitive)
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features-affected-genes.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features-affected-genes.txt'
+ DELIMITER "	"
+select feature_zdb_id, feature_name, mrkr_abbrev, mrkr_zdb_id, fmrel_type from feature,
+feature_marker_relationship,marker
+where fmrel_ftr_zdb_id = feature_zdb_id and
+mrkr_zdb_id = fmrel_mrkr_zdb_id and
+mrkr_type = 'GENE' and
+(
+  (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+                    'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED') AND fmrel_type ='is allele of') OR
+  (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
+  (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
+)
+order by lower( feature_name);
+

@@ -13,6 +13,8 @@ import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.ontology.datatransfer.CronJobReport;
+import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.people.MarkerSupplier;
 import org.zfin.people.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
@@ -421,13 +423,21 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @throws FileNotFoundException Thrown if unable to find the template file.
      */
     public void synchronizeAntibodiesOnWikiWithZFIN() throws FileNotFoundException {
+        CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
+        CronJobReport cronReport = new CronJobReport("Synchronization of Antibodies on wiki.zfin.org with zfin.org");
+        cronReport.start();
+
         if (false == ZfinProperties.isPushToWiki()) {
             logger.info("not authorized to push antibodies to wiki");
+            cronReport.error("Application is not configured to synchronize antibodies on the wiki: "+ ZfinPropertiesEnum.WIKI_HOST.value());
+            sendEmailReport(cronJobUtil, cronReport);
             return;
         }
         List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
         if (CollectionUtils.isEmpty(antibodies)) {
             logger.error("no antibodies returned");
+            cronReport.error("No Antibodies found");
+            sendEmailReport(cronJobUtil, cronReport);
             return;
         }
 
@@ -469,8 +479,16 @@ public class AntibodyWikiWebService extends WikiWebService {
         }
 
         // send mail reporting
+        cronReport.setReport(wikiSynchronizationReport);
+        sendEmailReport(cronJobUtil, cronReport);
         emailReport(antibodies.size(), wikiSynchronizationReport);
 
+    }
+
+    private void sendEmailReport(CronJobUtil cronJobUtil, CronJobReport report) {
+        report.finish();
+        cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
+        cronJobUtil.emailReport("wiki-antibody-synchronization.ftl", report);
     }
 
     private void emailReport(int numAntibodies, WikiSynchronizationReport wikiSynchronizationReport) {

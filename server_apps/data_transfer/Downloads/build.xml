@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Archive-Downloadfiles" default="archive-download-files" basedir="../../../">
+
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="download.dir" value="${web.dir}/data_transfer/Downloads"/>
+
+
+    <property environment="env" />
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${env.CATALINA_HOME}/common/lib">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <echo message="Copy download files into archive directory ..."/>
+    </target>
+
+    <property name="download-dir" value="${env.DOWNLOAD_DIRECTORY}" />
+
+    <target name="archive-download-files">
+        <tstamp>
+            <format property="time-stamp" pattern="yyyy.MM.dd" />
+        </tstamp>
+        <echo message="Copy download files into archive directory: '${download-dir}/${time-stamp}'"/>
+        <mkdir dir="${download-dir}/${time-stamp}"/>
+	<copy todir="${download-dir}/${time-stamp}">
+	     <fileset dir="${download.dir}"/>
+        </copy>
+        <copyfile src="${web-inf.dir}/conf/download-registry.xml" dest="${download-dir}/${time-stamp}/download-registry.xml" />
+    </target>
+
+
+    <target name="usage">
+        <echo>
+            TARGETS
+            archive-download-files
+        </echo>
+    </target>
+
+</project>

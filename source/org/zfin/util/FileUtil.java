@@ -1,6 +1,5 @@
 package org.zfin.util;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -200,6 +199,17 @@ public final class FileUtil {
         return archiveFileName.toString();
     }
 
+    public static String addTimeStampToFileName(String fileName, String timestamp) {
+        int indexOfLastDot = fileName.lastIndexOf(DOT);
+        String extension = fileName.substring(indexOfLastDot + 1);
+        StringBuilder archiveFileName = new StringBuilder(fileName.substring(0, indexOfLastDot));
+        archiveFileName.append("_");
+        archiveFileName.append(timestamp);
+        archiveFileName.append(DOT);
+        archiveFileName.append(extension);
+        return archiveFileName.toString();
+    }
+
     private static boolean copyFileIntoArchive(File file, File archiveFile) {
         boolean success = true;
         FileInputStream fis = null;
@@ -307,8 +317,7 @@ public final class FileUtil {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.error(e);
         }
         return file;
@@ -388,15 +397,17 @@ public final class FileUtil {
         return file;
     }
 
-    public static int countLines(String filename) throws IOException {
-        LineNumberReader reader = new LineNumberReader(new FileReader(filename));
-        int cnt;
-        String lineRead = "";
-        while ((lineRead = reader.readLine()) != null) {
-        }
-        cnt = reader.getLineNumber();
-        reader.close();
-        return cnt;
+    public static int countLines(File file) throws IOException {
+        LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file));
+        lineNumberReader.skip(Long.MAX_VALUE);
+        return lineNumberReader.getLineNumber() + 1;
+    }
+
+    public static FileInfo getFileInfo(File file) throws IOException {
+        FileInfo info = new FileInfo(file);
+        info.setNumberOfLines(countLines(file));
+        info.setSize(file.length());
+        return info;
     }
 
 }

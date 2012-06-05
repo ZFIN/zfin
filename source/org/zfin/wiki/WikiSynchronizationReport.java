@@ -89,4 +89,16 @@ public class WikiSynchronizationReport {
 
         return stringBuilder.toString();
     }
+
+    public List<String> getCreatedPages() {
+        return createdPages;
+    }
+
+    public List<String> getDroppedPages() {
+        return droppedPages;
+    }
+
+    public List<String> getUpdatedPages() {
+        return updatedPages;
+    }
 }

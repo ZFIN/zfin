@@ -113,3 +113,17 @@ table.searchresults tr.evengroup {
 }
 
 .selected-radio-label { font-weight: bold; }
+
+.csv {
+    background-color: green;
+}
+
+.tsv {
+    background-color: green;
+}
+
+.gff3 {
+    padding-right: 13px;
+    background-color: orange;
+}
+

@@ -338,6 +338,11 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/quicksearch/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/genotype/*</url-pattern>
     </servlet-mapping>
 
@@ -349,6 +354,11 @@
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/unload/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/download/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

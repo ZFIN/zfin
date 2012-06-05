@@ -60,6 +60,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
     </definition>
 
+    <definition name="site-search.page" extends="main_layout">
+        <put-attribute name="staticTitle" value="ZFIN: Site Search: "/>
+        <put-attribute name="body" value="/WEB-INF/jsp/quicksearch/category-search.jsp"/>
+    </definition>
+
     <!--fish definitions-->
     <definition name="fish/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/fish/{1}.jsp"/>

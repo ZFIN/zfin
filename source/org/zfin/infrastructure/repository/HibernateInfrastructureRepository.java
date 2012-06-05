@@ -15,6 +15,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.ExternalNote;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
@@ -1246,6 +1247,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             }
         }
         return data;
+    }
+
+    /**
+     * Retrieve the date when the database was loaded from. For dev sites it's the date of the production database that
+     * was used for loading.
+     *
+     * @return unload date of the production database.
+     */
+    @Override
+    public UnloadInfo getUnloadDate() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(UnloadInfo.class);
+        return (UnloadInfo) criteria.uniqueResult();
     }
 
     /**

@@ -10,6 +10,7 @@ import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.service.AnatomyService;
+import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyType;
@@ -117,6 +118,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         AntibodySearchCriteria ab = new AntibodySearchCriteria();
         ab.setName(name);
         ab.setAntibodyNameFilterType(FilterType.CONTAINS);
+        ab.setPaginationBean(new PaginationBean());
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(ab);
         assertTrue(abs != null);

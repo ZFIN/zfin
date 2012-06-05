@@ -1,14 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table cellpadding="2" cellspacing="1" border="0" width="70%">
-<tr>
-    <td colspan="3" class="sectionTitle"><b>ZFIN Application: Developer Tools</b></td>
-</tr>
-<tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-</tr>
+<h3>ZFIN Application: Developer Tools</h3>
 
+<table cellpadding="2" cellspacing="1" border="0" width="70%">
 <tr bgcolor="#ccccc0">
     <td>
         <b>Testing Tools</b>
@@ -91,7 +85,7 @@
 
 <tr bgcolor="#ccccc0">
     <td>
-        <b>Hibernate Configuration</b>
+        <b></b>
     </td>
     <td>
         <b>Logging</b>
@@ -204,6 +198,22 @@
     </td>
     <td>
         <a href="/action/unload/summary">Browse Data History</a>
+    </td>
+</tr>
+<tr>
+    <td>
+
+    </td>
+    <td>
+        <a href="/action/unload/index-summary">Site Search Index</a>
+    </td>
+</tr>
+<tr>
+    <td>
+
+    </td>
+    <td>
+        <a href="/action/unload/downloads/archive">Download Files Archive</a>
     </td>
 </tr>
 

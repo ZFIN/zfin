@@ -16,7 +16,6 @@
     <!--have to wait until the end to do these as they all will be mapped to their context / -->
     <import resource="webdriver.xml"/>
     <import resource="framework.xml"/>
-    <import resource="quicksearch.xml"/>
     <import resource="mapper.xml"/>
 
 

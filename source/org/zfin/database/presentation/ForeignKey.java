@@ -97,7 +97,7 @@ public enum ForeignKey {
     FEATURE_RELATION_FEATURE(Table.FEATURE, Table.FEATURE_RELATION, "fmrel_ftr_zdb_id"),
     FEATURE_FEATURE_PREFIX(Table.FEATURE_PREFIX, Table.FEATURE, "feature_lab_prefix_id"),
     FEATURE_FEATURE_TYPE(Table.FEATURE_TYPE, Table.FEATURE, "feature_type"),
-    FEATURE_ABBREV_MARKER_ABBREV(Table.MARKER, Table.FEATURE, "feature_mrkr_abbrev", "mrkr_abbrev"),
+    //FEATURE_ABBREV_MARKER_ABBREV(Table.MARKER, Table.FEATURE, "feature_abbrev", "mrkr_abbrev"),
     MARKER_RELATION_1(Table.MARKER, Table.MARKER_RELATION, "mrel_mrkr_1_zdb_id"),
     MARKER_RELATION_2(Table.MARKER, Table.MARKER_RELATION, "mrel_mrkr_2_zdb_id"),
     FEATURE_RELATION_GENE(Table.MARKER, Table.FEATURE_RELATION, "fmrel_mrkr_zdb_id"),

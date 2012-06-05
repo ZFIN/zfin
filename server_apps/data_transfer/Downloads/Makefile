@@ -24,6 +24,7 @@ SUBDIRS = GFF3
 
 GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql
 
+STATICS = build.xml
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
 

@@ -43,6 +43,7 @@ action/antibody
 action/ontology
 action/blast
 action/feature/detail
+action/feature/feature-detail
 action/fish
 /phenotype-statement
 mutant/mutant-list

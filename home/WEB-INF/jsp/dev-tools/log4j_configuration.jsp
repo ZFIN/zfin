@@ -12,7 +12,7 @@
 </table>
 
 <form:form method="GET" action="/action/dev-tools/log4j-configuration" commandName="loggerForm">
-    <table width="500">
+    <table width="500" class="sortable">
         <tr bgcolor="#ccccc0">
             <td class="bold left-align">Name</td>
             <td class="bold left-align">Level</td>

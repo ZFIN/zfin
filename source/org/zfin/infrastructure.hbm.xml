@@ -276,10 +276,10 @@
             <key column="iit_term_zdb_id"/>
             <many-to-many column="iit_img_zdb_id" class="org.zfin.expression.Image"/>
         </set>
-        
+
         <set name="subsets" lazy="true" table="term_subset">
-  	            <key column="termsub_term_zdb_id"/>
-  	            <many-to-many column="termsub_subset_id" class="org.zfin.ontology.Subset"/>
+            <key column="termsub_term_zdb_id"/>
+            <many-to-many column="termsub_subset_id" class="org.zfin.ontology.Subset"/>
         </set>
 
         <set name="childTermRelationships" lazy="true" table="term_relationship" inverse="true">
@@ -313,8 +313,8 @@
         <id name="id">
             <column name="osubset_pk_id" not-null="true"/>
         </id>
-        <property name="internalName" column="osubset_subset_name" />
-        <property name="name" column="osubset_subset_definition" />
+        <property name="internalName" column="osubset_subset_name"/>
+        <property name="name" column="osubset_subset_definition"/>
         <many-to-one name="metaData" column="osubset_ont_id" not-null="false"/>
     </class>
 
@@ -332,19 +332,19 @@
             <column name="ont_pk_id" not-null="true"/>
         </id>
 
-        <property name="name" column="ont_ontology_name" />
-        <property name="date" column="ont_current_date" />
-        <property name="dataVersion" column="ont_data_version" />
-        <property name="defaultNamespace" column="ont_default_namespace" />
-        <property name="generatedBy" column="ont_import" />
-        <property name="oboVersion" column="ont_format_version" />
-        <property name="order" column="ont_order" />
-        <property name="remark" column="ont_remark" />
-        <property name="savedBy" column="ont_saved_by" />
+        <property name="name" column="ont_ontology_name"/>
+        <property name="date" column="ont_current_date"/>
+        <property name="dataVersion" column="ont_data_version"/>
+        <property name="defaultNamespace" column="ont_default_namespace"/>
+        <property name="generatedBy" column="ont_import"/>
+        <property name="oboVersion" column="ont_format_version"/>
+        <property name="order" column="ont_order"/>
+        <property name="remark" column="ont_remark"/>
+        <property name="savedBy" column="ont_saved_by"/>
 
-        <set name="subsets" lazy="false" inverse="true" >
-  	            <key column="osubset_ont_id" not-null="false" />
-  	            <one-to-many class="org.zfin.ontology.Subset" />
+        <set name="subsets" lazy="false" inverse="true">
+            <key column="osubset_ont_id" not-null="false"/>
+            <one-to-many class="org.zfin.ontology.Subset"/>
         </set>
     </class>
 
@@ -354,8 +354,8 @@
             <column name="obstermrep_pk_id" not-null="true"/>
         </id>
 
-        <many-to-one name="obsoletedTerm" column="obstermrep_term_zdb_id" />
-        <many-to-one name="replacementTerm" column="obstermrep_term_replacement_zdb_id" />
+        <many-to-one name="obsoletedTerm" column="obstermrep_term_zdb_id"/>
+        <many-to-one name="replacementTerm" column="obstermrep_term_replacement_zdb_id"/>
     </class>
 
     <class name="org.zfin.ontology.ConsiderTerm" table="OBSOLETE_TERM_SUGGESTION">
@@ -363,8 +363,18 @@
             <column name="obstermsug_pk_id" not-null="true"/>
         </id>
 
-        <many-to-one name="obsoletedTerm" column="obstermsug_term_zdb_id" />
-        <many-to-one name="considerTerm" column="obstermsug_term_suggestion_zdb_id" />
+        <many-to-one name="obsoletedTerm" column="obstermsug_term_zdb_id"/>
+        <many-to-one name="considerTerm" column="obstermsug_term_suggestion_zdb_id"/>
+    </class>
+
+    <class name="org.zfin.database.UnloadInfo" table="DATABASE_INFO">
+        <id name="id">
+            <column name="di_pk_id" not-null="true"/>
+        </id>
+
+        <property name="date" column="di_date_unloaded"/>
+        <property name="version" column="di_code_version"/>
+
     </class>
 
 </hibernate-mapping>

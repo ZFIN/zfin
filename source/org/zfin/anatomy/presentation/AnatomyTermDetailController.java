@@ -143,7 +143,7 @@ public class AnatomyTermDetailController {
                 if (aoTermID.contains(ActiveData.Type.TERM.name())) {
                     term = ontologyRepository.getTermByZdbID(aoTermID);
                     if (term == null) {
-                        LOG.error("Failed to find term for Term ID: " + aoTermID);
+                        LOG.info("Failed to find term for Term ID: " + aoTermID);
                         return null;
                     }
                     ai = anatomyRepository.getAnatomyTermByOboID(term.getOboID());

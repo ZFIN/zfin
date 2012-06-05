@@ -77,10 +77,10 @@ public class NCBIEfetch {
                     ||
                     e.getMessage().contains("Unexpected subelement Bioseq-set")
                     ) {
-                logger.error("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
+                logger.info("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
                 logger.info(e);
             } else {
-                logger.error("Error trying to find sequence at NCBI[" + accession.toUpperCase() + "]", e);
+                logger.info("Error trying to find sequence at NCBI[" + accession.toUpperCase() + "]", e);
             }
             return null;
         }

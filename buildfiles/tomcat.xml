@@ -179,4 +179,16 @@
         <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/>
     </target>
 
+    <target name="has-download-symlink">
+        <echo message="Checking symlink between ${web}/data-exchange and ${env.DOWNLOAD_DIRECTORY}.  "/>
+        <fail message=":FAIL SYMLINK NOT FOUND:  Try running 'ant create-download-file-symlink'." unless="has.download.symlink"/>
+        <echo message="Download link exists"/>
+    </target>
+
+    <target name="create-download-file-symlink">
+      <symlink link="${home.target}/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
+    </target>
+
+
+
 </project>

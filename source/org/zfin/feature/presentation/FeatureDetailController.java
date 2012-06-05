@@ -3,6 +3,7 @@ package org.zfin.feature.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
@@ -28,31 +29,28 @@ public class FeatureDetailController {
     private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
-    @RequestMapping( value={
+    @RequestMapping(value = {
 //            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
 //            "/detail?feature.zdbID={zdbID}" // using old link
             "/detail" // using old link
     }
     )
     protected String getOldFeatureDetailPage(
-            @RequestParam(value="feature.zdbID",required = false) String featureZdbID,
-            @RequestParam(value="genotype.zdbID",required = false) String genotypeZdbID,
-                                             Model model){
-        if(featureZdbID!=null){
-            return "redirect:/action/feature/feature-detail?zdbID="+featureZdbID;
-        }
-        else
-        if(genotypeZdbID!=null){
-            return "redirect:/action/genotype/genotype-detail?zdbID="+genotypeZdbID;
-        }
-        else{
-            model.addAttribute(LookupStrings.ZDB_ID, featureZdbID) ;
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            @RequestParam(value = "feature.zdbID", required = false) String featureZdbID,
+            @RequestParam(value = "genotype.zdbID", required = false) String genotypeZdbID,
+            Model model) {
+        if (featureZdbID != null) {
+            return "redirect:/action/feature/feature-detail?zdbID=" + featureZdbID;
+        } else if (genotypeZdbID != null) {
+            return "redirect:/action/genotype/genotype-detail?zdbID=" + genotypeZdbID;
+        } else {
+            model.addAttribute(LookupStrings.ZDB_ID, featureZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
     }
 
 
-    @RequestMapping( value={
+    @RequestMapping(value = {
 //            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
 //            "/detail?feature.zdbID={zdbID}" // using old link
             "/feature-detail" // using old link
@@ -61,9 +59,9 @@ public class FeatureDetailController {
     protected String getFeatureDetail(@RequestParam String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
-        if (feature == null){
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        if (feature == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         FeatureBean form = new FeatureBean();
@@ -83,6 +81,13 @@ public class FeatureDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());
 
         return "feature/feature-detail.page";
+    }
+
+    @RequestMapping(value = "/feature/view/{zdbID}")
+    public String retrieveFeatureDetail(Model model
+            , @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        return getFeatureDetail(zdbID, model);
     }
 
     private void retrieveGenoData(Feature fr, FeatureBean form) {

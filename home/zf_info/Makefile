@@ -34,7 +34,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info
 SUBDIRS = anatomy catch dbase images movies news \
 	zfbook sequence 2006_tutorial 
 
-GENERICS = defs.html  zfprbs.html downloads.html \
+GENERICS = defs.html  zfprbs.html  \
 	nomen_tutorial.html stars.html \
 	syntax_help.html
 
