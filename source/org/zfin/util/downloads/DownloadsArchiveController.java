@@ -46,8 +46,15 @@ public class DownloadsArchiveController {
     @RequestMapping(value = "/downloads/archive")
     public String archiveSummary(Model model) throws Exception {
         LOG.info("Start Detail Controller");
+
+        if (hasErrors())
+            return "unload/download-error-message.page";
         model.addAttribute(LookupStrings.FORM_BEAN, getDefaultBean());
         return "unload/download-summary.page";
+    }
+
+    private boolean hasErrors() {
+        return !downloadFileService.isDownloadArchiveExists() || !downloadFileService.isValidArchiveFound();
     }
 
     @RequestMapping(value = "/downloads/update-cache")
@@ -62,6 +69,8 @@ public class DownloadsArchiveController {
                                        @PathVariable String month,
                                        @PathVariable String day,
                                        @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String date = year + "." + month + "." + day;
         formBean.setDate(date);
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
@@ -74,6 +83,8 @@ public class DownloadsArchiveController {
                                   @PathVariable String extension,
                                   @ModelAttribute("formBean") UnloadBean formBean) {
 
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String currentDate = downloadFileService.getMostRecentMatchingDate();
         String fullFileName = fileName + "." + extension;
         File file = downloadFileService.getFile(fullFileName, currentDate);
@@ -92,6 +103,8 @@ public class DownloadsArchiveController {
                                   @PathVariable String extension,
                                   @ModelAttribute("formBean") UnloadBean formBean) {
 
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String fullFileName = fileName + "." + extension;
         String archiveDate = year + "." + month + "." + day;
         File file = downloadFileService.getFile(fullFileName, archiveDate);
@@ -107,6 +120,8 @@ public class DownloadsArchiveController {
                                @PathVariable String extension,
                                @ModelAttribute("formBean") UnloadBean formBean,
                                HttpServletResponse response) throws Exception {
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String currentDate = downloadFileService.getMostRecentMatchingDate();
         String[] dateArray = currentDate.split("\\.");
         return downloadArchiveFile(model, dateArray[0], dateArray[1], dateArray[2], fileName, extension, formBean, response);
@@ -121,6 +136,8 @@ public class DownloadsArchiveController {
                                       @PathVariable String extension,
                                       @ModelAttribute("formBean") UnloadBean formBean,
                                       HttpServletResponse response) throws Exception {
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String fullFileName = fileName + "." + extension;
         String archiveDate = year + "." + month + "." + day;
         DownloadFileEntry downloadFile = downloadFileService.getDownloadFile(fullFileName, archiveDate);
@@ -160,6 +177,8 @@ public class DownloadsArchiveController {
     @RequestMapping(value = "/downloads")
     public String getCurrentDownloadFiles(Model model,
                                           @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
+        if (hasErrors())
+            return "unload/download-error-message.page";
         String date = downloadFileService.getMostRecentMatchingDate();
         formBean.setDate(date);
         formBean.setCurrentDate((true));

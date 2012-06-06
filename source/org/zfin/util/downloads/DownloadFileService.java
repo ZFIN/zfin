@@ -87,9 +87,14 @@ public class DownloadFileService {
     private int getLatestNumberUnloadFiles() {
         File unloadDir = new File(downloadDirectory);
         if (!unloadDir.exists())
-            throw new RuntimeException("Unload directory not found: " + unloadDir.getAbsolutePath());
+            throw new DownloadFilesException("Unload directory not found: " + unloadDir.getAbsolutePath());
         LOG.info("Found " + unloadDir.list().length + " backups.");
         return unloadDir.list().length;
+    }
+
+    public boolean isDownloadArchiveExists() {
+        File unloadDir = new File(downloadDirectory);
+        return unloadDir.exists();
     }
 
     /**
@@ -298,15 +303,29 @@ public class DownloadFileService {
     }
 
     public String getMostRecentMatchingDate() {
-        UnloadInfo unloadInfo = getInfrastructureRepository().getUnloadDate();
-        Date unloadDate = unloadInfo.getDate();
+        Date unloadDate = getUnloadInfo().getDate();
         List<Date> allUnloadDates = getAllUnloadedDate();
         for (Date date : allUnloadDates) {
             if (unloadDate.after(date)) {
                 return getDateString(date);
             }
         }
-        throw new RuntimeException("No download file found that for " + unloadDate.toString() + " or earlier");
+        throw new DownloadFilesException("No download file found that for " + unloadDate.toString() + " or earlier");
+    }
+
+    public boolean isValidArchiveFound(){
+        Date unloadDate = getUnloadInfo().getDate();
+        List<Date> allUnloadDates = getAllUnloadedDate();
+        for (Date date : allUnloadDates) {
+            if (unloadDate.after(date)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public UnloadInfo getUnloadInfo(){
+        return getInfrastructureRepository().getUnloadDate();
     }
 
     private String getDateString(Date date) {
