@@ -91,6 +91,18 @@
 
     </target>
 
+    <target name="check-obo-7bit" description="Check if a term name or a term definition contain a non-7-bit character">
+        <java classname="org.zfin.ontology.datatransfer.service.OntologyValidation" fork="yes" maxmemory="256m"
+              classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="anatomy.obo"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+        </java>
+
+    </target>
+
     <target name="download-anatomy-ontology" >
         <property name="localOboFile" value="zebrafish_anatomy.obo"/>
         <property name="oboFileURL" value="${anatomyOboURL}"/>
