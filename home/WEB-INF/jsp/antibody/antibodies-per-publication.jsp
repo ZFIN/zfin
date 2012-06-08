@@ -3,7 +3,7 @@
 <table width="100%">
     <tbody>
         <tr>
-            <td width="90%">
+            <td width="85%">
                 <font size="+1">
                     <center>
                         Antibodies List (<b>${fn:length(formBean)}</b> records) in <zfin:link entity="${publication}"/>
@@ -11,22 +11,11 @@
                     </center>
                 </font>
             </td>
-            <td width="10%">
-
-                <input name="MIval" value="aa-input_welcome_generic.apg" type="hidden">
-                <input name="page_name" value="ZFIN Antibodis per Publications " type="hidden">
-
-                <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" border="0" cellpadding="0"
-                       cellspacing="0">
-                    <form method="post" action="/zezem/webdriver" target="comments"></form>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input value="Your Input Welcome" type="submit">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <td align="right" width="110" nowrap="nowrap">
+                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                    <tiles:putAttribute name="subjectName" value="Antibodies per Publication"/>
+                    <tiles:putAttribute name="subjectID" value="${publication}"/>
+                </tiles:insertTemplate>
             </td>
         </tr>
     </tbody>
