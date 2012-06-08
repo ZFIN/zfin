@@ -8,7 +8,6 @@ import org.obo.dataadapter.OBOParseEngine;
 import org.obo.dataadapter.OBOParseException;
 import org.obo.datamodel.*;
 import org.obo.history.SessionHistoryList;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
@@ -17,14 +16,12 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.*;
 
-import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.oboFileNameOption;
-import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
+import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 
 
 /**
@@ -44,15 +41,13 @@ public class OntologyValidation extends AbstractScriptWrapper {
 
     static {
         options.addOption(oboFileNameOption);
+        options.addOption(log4jFileOption);
         options.addOption(webrootDirectory);
     }
 
     private OBOSession oboSession;
     private String oboFilename;
-
-    private Ontology ontology;
     private CronJobReport report;
-    private long sectionTime;
     // this attribute holds all the data that need to be imported into the database,
     // i.e. new terms, synonyms etc.. They have a key that is used (referred to) in the db script file
     // Currently, all the data need to be of type string!
@@ -63,9 +58,9 @@ public class OntologyValidation extends AbstractScriptWrapper {
     public OntologyValidation(String oboFile, String propertyDirectory) throws IOException {
         initializeLoad(oboFile);
         if (propertyDirectory == null)
-            initAll();
+            initProperties();
         else
-            initAll(propertyDirectory + "/WEB-INF/zfin.properties");
+            ZfinProperties.init(propertyDirectory + "/WEB-INF/zfin.properties");
         if (propertyDirectory == null)
             throw new RuntimeException("No property file found.");
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(propertyDirectory);
@@ -82,6 +77,7 @@ public class OntologyValidation extends AbstractScriptWrapper {
         LOG = Logger.getLogger(OntologyValidation.class);
         LOG.info("Start Ontology Loader class: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
+//        initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
         String oboFile = commandLine.getOptionValue(oboFileNameOption.getOpt());
         String propertyFileName = commandLine.getOptionValue(webrootDirectory.getOpt());
         LOG.info("Loading obo file: " + oboFile);
@@ -98,7 +94,6 @@ public class OntologyValidation extends AbstractScriptWrapper {
         loader.initialize(oboFile, cronJobUtil);
         loader.processOboFile();
         loader.checkForNonAsciiCharacters();
-        LOG.info("Hello");
     }
 
     private void checkForNonAsciiCharacters() {
@@ -116,7 +111,8 @@ public class OntologyValidation extends AbstractScriptWrapper {
                     if (character > 128) {
                         LOG.info(attribute);
                         System.out.println("Term ID: " + termID);
-                        System.out.println("Character <" + character + "> at position " + position + " with code " + (int) character + " is beyond 7-bit ASCII code. Attribute: " + attribute);
+                        System.out.println("Attribute: " + attribute);
+                        System.out.println("Character <" + character + "> at position " + position + " with code " + (int) character + " is beyond 7-bit ASCII code.");
                     }
                     position++;
                 }
@@ -125,21 +121,17 @@ public class OntologyValidation extends AbstractScriptWrapper {
     }
 
     public boolean initialize(String fileName, CronJobUtil cronJobUtil) {
-        return initialize(new CronJobReport("Load Ontology: " + fileName, cronJobUtil));
+        return initialize();
     }
 
-    public boolean initialize(CronJobReport cronJobReport) {
-        sectionTime = System.currentTimeMillis();
-        this.report = cronJobReport;
+    public boolean initialize() {
         try {
             createOboSession();
         } catch (OBOParseException e) {
             LOG.error("Error while parsing Obo file", e);
-            report.error("Error while parsing Obo file");
             return false;
         } catch (IOException e) {
             LOG.error("No obo file found", e);
-            report.error("Error while parsing Obo file");
             return false;
         }
         return true;
@@ -205,7 +197,6 @@ public class OntologyValidation extends AbstractScriptWrapper {
         }
         String message = "Number of Terms in obo file: " + numberOfTerms;
         LOG.info(message);
-        report.addMessageToSection(message, "Header");
     }
 
     private void appendSynonym(UnloadFile unloadFile, String id, int scope, String text) {
@@ -353,42 +344,5 @@ public class OntologyValidation extends AbstractScriptWrapper {
         individualRecord.addAll(Arrays.asList(record));
         data.add(individualRecord);
         dataMap.put(unloadFile.getValue(), data);
-    }
-
-    private void appendRecord(UnloadFile unloadFile, String record) {
-        try {
-            fileWriters.get(unloadFile).write(record);
-        } catch (IOException e) {
-            LOG.error("Could not write to file " + unloadFile.getValue());
-        }
-    }
-
-    private void openAllFiles() {
-        for (UnloadFile unloadFile : UnloadFile.values()) {
-            File file = new File(unloadFile.getValue());
-            try {
-                FileWriter fileWriter = new FileWriter(file);
-                fileWriters.put(unloadFile, fileWriter);
-            } catch (IOException e) {
-                LOG.error("Could not open file " + file.getAbsolutePath());
-            }
-        }
-    }
-
-    private void closeAllFiles() {
-        if (fileWriters == null)
-            return;
-
-        for (UnloadFile unloadFile : fileWriters.keySet()) {
-            try {
-                fileWriters.get(unloadFile).close();
-            } catch (IOException e) {
-                LOG.error("Could not close file " + unloadFile.getValue());
-            }
-        }
-    }
-
-    public CronJobReport getReport() {
-        return report;
     }
 }
