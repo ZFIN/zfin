@@ -150,7 +150,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             assertTrue("marker lg list contains self linkage group mapping", mr.getLG(marker4).contains("12"));
             Marker marker5 = mr.getMarkerByID("ZDB-BAC-030616-45");
             assertTrue("marker lg list contains linkage mapping of contained marker/segment", mr.getLG(marker5).contains("9"));
-            Marker marker6 = mr.getMarkerByID("ZDB-GENE-030616-611");
+            Marker marker6 = mr.getMarkerByID("ZDB-GENE-061013-119");
             assertTrue("gene lg list contains clone's linkage mapping", mr.getLG(marker6).contains("19"));
 
             Marker marker7 = mr.getMarkerByID("ZDB-GENE-070117-36");
