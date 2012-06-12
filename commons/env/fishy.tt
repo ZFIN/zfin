@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	pm\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/fishy
 <!--|VALIDATION_EMAIL_AD|-->	pm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	pm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	pm\@cs.uoregon.edu

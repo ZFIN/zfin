@@ -6,6 +6,7 @@
 <!--|INFORMIX_SERVER|-->	wildtype
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|SQLHOSTS_HOST|-->	helix.cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zprod/www_homes/zfin.org
 <!--|WIKI_HOST|-->	azraelwiki.zfin.org
 # ----------------  SANITY CHECKS  -------------
 

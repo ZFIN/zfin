@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	xshao\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/whirly
 <!--|VALIDATION_EMAIL_AD|-->	xshao\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	xshao\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	xshao\@cs.uoregon.edu

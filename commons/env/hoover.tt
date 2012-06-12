@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	staylor\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	staylor\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	staylor\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/hoover
 <!--|VALIDATION_EMAIL_AD|-->	staylor\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	staylor\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	staylor\@cs.uoregon.edu

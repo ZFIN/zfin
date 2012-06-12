@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	cmpich\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/nagel
 <!--|VALIDATION_EMAIL_AD|-->	cmpich\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	cmpich\@cs.uoregon.edu

@@ -1,5 +1,16 @@
 RewriteEngine On
 
+RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
+
+#ZDB-[TYPE]-000000-0 ids
+RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3 [PT]
+
+#[TYPE]:000000 ids
+RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 [PT]
+
+
+
+
 #zirc "order this" redirects, I'm not sure if there are CDNAs or just ESTs...
 RedirectMatch /zirc-order/ZDB-EST-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-EST-$1
 RedirectMatch /zirc-order/ZDB-CDNA-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-CDNA-$1
@@ -15,7 +26,7 @@ RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
 
 #Allow use of same cgi-bin/webdriver path on all dev sites
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
-RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 
 
 #Require https on some pages
 RewriteCond %{HTTPS} =off
@@ -62,13 +73,38 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-search? 
 
 #RewriteRule /action/anatomy/search    /action/anatomy/anatomy-search [NC,R=301]
 
-#aliases for ZFIN_jump
+#We have these strange ZFIN_jump search page links to support...
 
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOGENE$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOLAB$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOPERSON$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOPUB$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOREFCROSS$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOEST$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOXPAT$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg [NC,R=301]
+
+
+# normal ZFIN_jump requests
 RewriteCond %{QUERY_STRING}     ^record=([\w-]+)$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=%1 [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
 
-RewriteRule ^/jump/(.*)  /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=$1 [NC,PT]
-RewriteRule ^/id/(.*)  /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-jump_to.apg&record=$1 [NC,PT]
+# catch the jump-to.apg as well!
+RewriteCond %{QUERY_STRING}     ^Mival=aa-jump_to.apg&record=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+
 
 #download page
 RewriteRule ^/downloads/archive/(.*) /action/unload/downloads/archive/$1 [NC,L,PT]
@@ -76,4 +112,4 @@ RewriteRule ^/downloads/archive /action/unload/downloads/archive [NC,L,PT]
 RewriteRule ^/downloads/(.*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads [NC,PT]
 RewriteRule ^/zf_info/downloads.html /downloads [NC,R=301]
-RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
+RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]>>>>>>> .r26861

@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	ryanm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	ryanm\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zprod/www_homes/crick
 <!--|VALIDATION_EMAIL_AD|-->	ryanm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	ryanm\@cs.uoregon.edu

@@ -47,6 +47,26 @@ function updateInnerHTMLAnat(element_id,html_to_display) {
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
+<?MICOMMENT> ** if an xpat id is passed in, it's probably from an old
+                Thisse url redirect, find the pub & probe to match ** <?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$xpatID)">
+    <?MISQL SQL="
+		select xpatex_source_zdb_id, jtype, xpatex_probe_feature_zdb_id
+                  from expression_experiment
+		       join publication on xpatex_source_zdb_id = zdb_id
+	         where xpatex_zdb_id = '$xpatID';">
+    <?/MISQL>
+      <?MIVAR NAME="$fxallfig_pub_zdb_id">$1<?/MIVAR>
+      <?MIVAR NAME="$OID">$1<?/MIVAR>
+      <?MIBLOCK COND="$(EC,jtype,unpublished)">
+        <?MIVAR NAME="$fxallfig_probe_zdb_id">$3<?/MIVAR>           
+      <?/MIBLOCK>
+<?/MIBLOCK>
+
+
+
+
 <?MIVAR NAME=$fxallfig_pub_zdb_id>$OID<?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>

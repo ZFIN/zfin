@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/apache
 
-GENERICS = inc-redirect 
+GENERICS = inc-redirect view-page-url-map.txt
 
 # ---------------  Production Rules  ------------------------------------
 

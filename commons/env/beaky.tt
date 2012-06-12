@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	tomc\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	tomc\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	tomc\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/beaky
 <!--|VALIDATION_EMAIL_AD|-->	tomc\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	tomc\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	tomc\@cs.uoregon.edu

@@ -63,6 +63,7 @@
 <!--|SWISSPROT_EMAIL_CURATOR|-->	jknight\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	jknight\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	jknight\@cs.uoregon.edu
+<!--|TARGETROOT|-->	/research/zcentral/www_homes/runzel
 <!--|VALIDATION_EMAIL_AD|-->	jknight\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	jknight\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	jknight\@cs.uoregon.edu
