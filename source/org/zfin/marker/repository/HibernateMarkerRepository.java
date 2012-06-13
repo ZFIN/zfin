@@ -339,6 +339,24 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameter("thirdRelationship", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING);
         lgList.addAll(query.list());
 
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            query = session.createQuery(
+                    "select l.lg " +
+                            "from MarkerRelationship gt , MarkerRelationship ct, Linkage l join l.linkageMemberMarkers lm " +
+                            " where gt.type = :firstRelationship " +
+                            " and ct.type = :secondRelationship" +
+                            " and gt.secondMarker.zdbID = ct.secondMarker.zdbID  " +
+                            " and ct.firstMarker.zdbID = lm.zdbID  " +
+                            " and gt.firstMarker.zdbID = :zdbID  " +
+                            " ");
+
+            query.setParameter("zdbID", marker.getZdbID());
+            query.setParameter("firstRelationship", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+            query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+
+            lgList.addAll(query.list());
+        }
+
         return lgList;
     }
 
