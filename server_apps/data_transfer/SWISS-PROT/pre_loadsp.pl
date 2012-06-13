@@ -449,17 +449,26 @@ print REDGENERPT "zfinLines = $zfinLines\n";
 
 
 #--------------- Delete records from last SWISS-PROT loading-----
-print "\n delete records source from last SWISS-PROT loading.\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>report.txt");
-open F, "out" or die "Cannot open out file";
-if (<F>) {
+#print "\n delete records source from last SWISS-PROT loading.\n";
+#system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>report.txt");
+#open F, "out" or die "Cannot open out file";
+#if (<F>) {
  
-  &sendErrorReport("Failed to delete old records");
-  exit;
-}
-close F;
+#  &sendErrorReport("Failed to delete old records");
+#  exit;
+#}
+#close F;
  
 # --------------- Check SWISS-PROT file --------------
+
+
+my $sleepnum = 500;
+while($sleepnum--){
+    sleep(1);
+}
+
+system("touch zfin.dat");
+
 # good records for loading are placed in "okfile"
 print "\n sp_check.pl zfin.dat >checkreport.txt \n";
 system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_check.pl zfin.dat >checkreport.txt" );
@@ -482,8 +491,9 @@ while( !( -e "okfile" &&
     }
     else
     {
-      &sendErrorReport("Failed to run sp_check.pl");
-      exit;
+#      &sendErrorReport("Failed to run sp_check.pl");
+print "\nfailed to run sp_check.pl.............\n\n"; 
+     exit;
     }
   }  
 }
