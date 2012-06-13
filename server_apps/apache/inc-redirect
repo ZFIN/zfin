@@ -112,4 +112,4 @@ RewriteRule ^/downloads/archive /action/unload/downloads/archive [NC,L,PT]
 RewriteRule ^/downloads/(.*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads [NC,PT]
 RewriteRule ^/zf_info/downloads.html /downloads [NC,R=301]
-RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]>>>>>>> .r26861
+RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
