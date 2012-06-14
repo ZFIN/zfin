@@ -19,8 +19,7 @@ create temp table ekkerLabData (
         ekker_geneId varchar(50),
         ekker_feature varchar(255) not null,
         ekker_featureId varchar(50),
-        ekker_constructId varchar(50) not null,
-        ekker_accession varchar(50)
+        ekker_constructId varchar(50) not null
 ) with no log;
 
 
@@ -31,18 +30,6 @@ load from pre_load_input.txt
 unload to 'ekkerLabData.unl' select * from ekkerLabData;
 ! echo "         to ekkerLabData.unl"
    
--- load record_attribution table
-insert into record_attribution (
-    recattrib_data_zdb_id,
-    recattrib_source_zdb_id
-)
-select  ekker_geneId,
-        'ZDB-PUB-120111-1'
- from ekkerLabData
-where ekker_geneId is not null
-  and ekker_geneId <> "";
- 
-! echo "         into record_attribution table."
 
 create table pre_feature (
         preftr_indx int not null,
@@ -585,7 +572,10 @@ insert into pre_db_link (
   select distinct preftr_feature_zdb_id, preftr_alias, preftr_alias, fdbcont_zdb_id 
     from pre_feature, foreign_db, foreign_db_contains 
    where fdbcont_fdb_db_id = fdb_db_pk_id 
-     and fdb_db_name = 'zfishbook';
+     and fdb_db_name = 'zfishbook'
+     and not exists (select * from db_link 
+                             where dblink_acc_num = preftr_alias
+                               and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-120213-1");
      
 ! echo "         into pre_db_link table."  
      
@@ -599,8 +589,10 @@ insert into pre_db_link (
     from ekkerLabData, foreign_db, foreign_db_contains 
    where ekker_featureId is not null
      and fdbcont_fdb_db_id = fdb_db_pk_id 
-     and fdb_db_name = 'zfishbook';
-     
+     and fdb_db_name = 'zfishbook'
+     and not exists (select * from db_link 
+                             where dblink_acc_num = ekker_alias
+                               and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-120213-1");     
 ! echo "         into pre_db_link table."  
 
 
@@ -640,5 +632,5 @@ drop table pre_db_link;
 
 commit work;
 
-execute function regen_names();
+--execute function regen_names();
 

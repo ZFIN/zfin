@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/zfishbook
 
-GENERICS = zfishbook.pl                                    
+GENERICS = zfishbook.pl preprocess_zfishbook.pl                                   
            
 STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql zfishbookData.txt README
 
