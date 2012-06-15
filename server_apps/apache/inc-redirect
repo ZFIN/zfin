@@ -24,10 +24,6 @@ Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.a
 #version independent gbrowse link
 RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
 
-#Allow use of same cgi-bin/webdriver path on all dev sites
-RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
-RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 
-
 #Require https on some pages
 RewriteCond %{HTTPS} =off
   # Enumerate all urls that require https here, [OR]
@@ -113,3 +109,14 @@ RewriteRule ^/downloads/(.*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads [NC,PT]
 RewriteRule ^/zf_info/downloads.html /downloads [NC,R=301]
 RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
+
+
+#Allow use of same cgi-bin/webdriver path on all dev sites,
+#this rule should be below anything else webdriver related
+RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
+RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+
+#also need to 301 redirect anything that came in with mutant name as the webdriver
+#path so that they're still supported
+RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
+RewriteRule ^/<!--|MUTANT_NAME|-->/webdriver(.*) /cgi-bin/webdriver$1 [R=301]
