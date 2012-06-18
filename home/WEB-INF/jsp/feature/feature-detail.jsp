@@ -82,7 +82,7 @@
                                 (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
                             </c:when>
                             <c:otherwise>
-                                (<a href="relationship-publication-list?featuremarkerRelationship.zdbID=${fmRel.zdbID}&orderBy=author">${fmRel.publicationCount}</a>)
+                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${fmRel.zdbID}&rtype=genotype">${fmRel.publicationCount}</a>)
                             </c:otherwise>
                         </c:choose>
                     </c:if>
@@ -122,7 +122,7 @@
                         (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
                     </c:when>
                     <c:otherwise>
-                        (<a href="relationship-publication-list?featuremarkerRelationship.zdbID=${mRel.zdbID}&orderBy=author">${mRel.publicationCount}</a>)
+                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)
                     </c:otherwise>
                 </c:choose>
             </c:if>
