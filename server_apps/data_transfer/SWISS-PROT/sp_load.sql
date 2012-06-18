@@ -15,6 +15,8 @@
 
 begin work;
 
+set pdqpriority 50;
+
 --the unloaded record if already in, only add zdb_id into record_attribution with SWISS_PROT source
 --	create temp table exist_record (
 --		extrecd_zdb_id	varchar(50),
@@ -34,6 +36,7 @@ begin work;
 --!echo 'Load from dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
 --!echo '		from dr_dblink.unl'
+
 
 --!echo 'Update merged gene ids'
 	update db_link_with_dups
@@ -56,13 +59,13 @@ begin work;
               ) with no log;
               
 --!echo 'Create pre_db_link_acc_index on pre_db_link (acc_num)'              
-	create index pre_db_link_acc_index on pre_db_link (acc_num);
+	create index pre_db_link_acc_index on pre_db_link (acc_num,linked_recid,dblink_fdbcont_zdb_id);
 
 	insert into pre_db_link (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
 			      from db_link_with_dups;
 --!echo '		into pre_db_link'
-        
+
 -- per curator's request, GenBank and GenPept accession are no longer loaded from SP file
 -- due to additional entries for certain database, we need to specify the db types
 	update pre_db_link set dblink_fdbcont_zdb_id = 
@@ -87,6 +90,8 @@ begin work;
 		   and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
 		);
 --!echo '		from pre_db_link'
+
+        update statistics high for table pre_db_link;
 
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
 
@@ -230,6 +235,12 @@ begin work;
                 mrkrgoev_note           lvarchar
 	)with no log;
 
+
+create index pmge_mrkr_id_index
+  on pre_marker_go_evidence (mrkr_zdb_id)
+  using btree in idxdbs2;
+
+
 --!echo 'Load spkw'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
@@ -273,12 +284,36 @@ begin work;
 -- db trigger is added for this purpose. 
 
 
+delete from pre_marker_go_evidence
+  where exists (select 'x' from marker a
+		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
+					      and a.mrkr_abbrev like 'WITHDRAWN%');
 
+update statistics high for table pre_marker_go_evidence;
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
 		select pre_mrkrgoev_zdb_id from pre_marker_go_evidence;
 --!echo '		into zdb_active_data'
+
+!echo "delete root go terms in bulk" ;
+
+delete from marker_go_term_evidence
+       where mrkrgoev_term_zdb_id in ('ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029')
+       and exists (Select 'x' from pre_marker_go_Evidence
+       	   	  	  where mrkrgoev_mrkr_Zdb_id =mrkr_zdb_id
+			  and mrkrgoev_term_zdb_id = go_zdb_id);
+
+delete from record_Attribution
+ where recattrib_source_zdb_id = 'ZDB-PUB-031118-1'
+ and not exists (Select 'x' from marker_go_term_evidence
+     	 		   where mrkrgoev_mrkr_zdb_id = recattrib_datA_zdb_id
+			   and mrkrgoev_term_zdb_id in ('ZDB-TERM-091209-4029',
+                                         'ZDB-TERM-091209-2432',
+                                         'ZDB-TERM-091209-6070'))
+and exists (Select 'x' from pre_marker_go_term_evidence
+  where mrkr_zdb_id = recattrib_data_zdb_id);
+ 
 
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
@@ -286,10 +321,7 @@ begin work;
 				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
 		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, "IEA", 
 		       CURRENT, CURRENT, '5', CURRENT, p.mrkrgoev_note
-		  from pre_marker_go_evidence p
-		  where not exists (Select 'x' from marker a
-		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
-					      and a.mrkr_abbrev like 'WITHDRAWN%');
+		  from pre_marker_go_evidence p;
 --!echo '		into marker_go_term_evidence'
 	
 --	db trigger attributes MRKRGOEV to the internal pub record
