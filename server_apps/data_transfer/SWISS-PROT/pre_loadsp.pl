@@ -14,7 +14,7 @@ use DBI;
 sub downloadGOtermFiles () {
     &process_vertebrates ;
 
-   system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
+   system("wget -q http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
    system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
    system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
  }

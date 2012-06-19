@@ -6,11 +6,14 @@
 # Run this script to do SWISS-PROT load. 
 # It calls many of the subroutine of SWISS-PROT load.
 #
-# It assumes that the following files are in place:
+# It assumes that the following 6 files are in place (copied from a testdb targert directory):
 #
 # zfin.dat
 # okfile
 # ok2file
+# spkw2go
+# interpro2go
+# ec2go
 
 use DBI;  
 use MIME::Lite;
@@ -122,14 +125,9 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 system("rm -f ./ccnote/*");
 system("rmdir ./ccnote");
 system("rm -f *.ontology");
-system("rm -f *2go");
 system("rm -f *.unl");
 system("rm -f *.txt");
 system("mkdir ./ccnote");
-
-system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
-system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
 
 
 print "WARNING!!! no zfin.dat provided. \n" if (!-e "zfin.dat");

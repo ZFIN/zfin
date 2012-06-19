@@ -18,8 +18,9 @@ if (@ARGV == 0) {
 open KWGO, ">sp_mrkrgoterm.unl" or die "Cannot open the sp_mrkrgoterm file: $!";
 while(<>) {
  #SP_KW:KW-0117 Actin capping > GO:barbed-end actin filament capping ; GO:0051016
- if(/^SP/) {
-    chomp;
+ # as of June 17, 2012, it has been changed to:
+ #UniProtKB-KW:KW-0117 Actin capping > GO:actin filament capping ; GO:0051693
+ if(/^UniProtKB/) {    chomp;
     @line = split(/ > /, $_);
     $spIDandName = $line[0];
     @spkw = split(/ /, $spIDandName);
