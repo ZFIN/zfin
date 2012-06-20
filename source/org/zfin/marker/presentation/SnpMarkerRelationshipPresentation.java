@@ -27,7 +27,7 @@ public class SnpMarkerRelationshipPresentation extends MarkerRelationshipPresent
     @Override
     public String getLink() {
         StringBuilder sb = new StringBuilder();
-        String uri = "?MIval=aa-snpview.apg&OID="+getZdbId()+"&snppubs=1" ;
+        String uri = "?MIval=aa-snpview.apg&OID=";
         sb.append(EntityPresentation.getWebdriverLink(uri, getZdbId(), "Retrieval Details"));
         return sb.toString();
     }
