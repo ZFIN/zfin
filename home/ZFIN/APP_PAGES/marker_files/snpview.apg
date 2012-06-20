@@ -147,8 +147,15 @@ Detailed information for the list of reference SNPs on this clone can be obtaine
 <?MICOMMENT> ----- Citation Link ----- <?/MICOMMENT>
 
 <hr>
+
+<?MISQL SQL="select distinct snpdattr_pub_zdb_id 
+               from snp_download_attribution, snp_download 
+              where snpdattr_snpd_pk_id = snpd_pk_id 
+                and snpd_mrkr_zdb_id = '$OID';">
+<?/MISQL>
+
 <?MIVAR>
- <b> <a href="/action/marker/snp-publication-list?markerID=$OID&orderBy=author">CITATIONS</a></b> (<?MIVAR>$snppubs<?/MIVAR>)
+ <b> <a href="/action/marker/snp-publication-list?markerID=$OID&orderBy=author">CITATIONS</a></b> ($MI_ROWCOUNT)
 <?/MIVAR>
 <hr>
 <p>
