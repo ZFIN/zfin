@@ -3,10 +3,10 @@ RewriteEngine On
 RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
 
 #ZDB-[TYPE]-000000-0 ids
-RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3 [PT]
+RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3 
 
 #[TYPE]:000000 ids
-RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 [PT]
+RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 
 
 
 
@@ -112,9 +112,17 @@ RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
 
 
 #Allow use of same cgi-bin/webdriver path on all dev sites,
-#this rule should be below anything else webdriver related
+#this rule should be below anything else webdriver related,
+#This passthrough is required so that any url altered in
+#this file actually is passed through to webdriver
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+
+#we also need to pass through any url that gets altered above and
+#needs to go to proxy.  Any url created in the url mapping needs to
+#be handled here.
+RewriteRule ^/action/(.*) /action/$1 [PT]
+
 
 #also need to 301 redirect anything that came in with mutant name as the webdriver
 #path so that they're still supported
