@@ -45,11 +45,11 @@ function popUp(cloneID) {
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 <?MISQL SQL="select mrkr_zdb_id from marker where mrkr_zdb_id='$OID'"><?/MISQL>
-<?MIVAR NAME=$geneid>$1<?/MIVAR>
+<?MIVAR NAME=$abbrevid>$1<?/MIVAR>
 <?mivar name=$caller>$(SUBSTR,$OID,5,3)<?/mivar>
 <?MISQL SQL="select mrkr_name,mrkr_abbrev from marker where mrkr_zdb_id='$OID'"><?/MISQL>
 <?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$gene>$2<?/MIVAR>
+<?MIVAR NAME=$abbrev>$2<?/MIVAR>
 
 <head>
 <title>ZFIN: SNP Retrieval Details: <?MIVAR> $name <?/MIVAR>
@@ -68,14 +68,14 @@ function popUp(cloneID) {
         </TD>
       </TR>
     </TABLE>
-<?MIVAR NAME=link_backto_OID><a href="/action/marker/view/$OID"><i>$gene</i></a><?/MIVAR>
+<?MIVAR NAME=link_backto_OID><a href="/action/marker/view/$OID"><i>$name</i></a><?/MIVAR>
 <!------------- Title display------------>
     <table border=0 width=100%>
       <tr>
         <td>
           <font><b>
           <?MIVAR>
-              Clone Name: <i>$name</i><br>
+              Clone Name: <i>$link_backto_OID</i><br>
 
           <?/MIVAR>
           </b></font>
@@ -88,7 +88,7 @@ function popUp(cloneID) {
                   <form method=post
                         action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
                         target=comments>
-                     <input type=hidden name=subject value="$gene">
+                     <input type=hidden name=subject value="$abbrev">
                      <input type=hidden name=marker_id value="$OID">
                      <input type=hidden name=MIval value="aa-your_input_welcome.apg">
                      <input type=hidden name=page_id value="$OID">
