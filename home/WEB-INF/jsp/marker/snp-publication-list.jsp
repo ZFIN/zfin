@@ -33,8 +33,8 @@
 
     <font size=+1>
         <b>
-            Clone name: ${formBean.marker.name}
-            <br/>
+            Clone name: <zfin:link entity="${formBean.marker}"/>  
+            <br/><br/>
         </b>
     </font>
 
