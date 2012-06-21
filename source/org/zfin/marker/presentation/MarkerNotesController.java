@@ -88,6 +88,7 @@ public class MarkerNotesController {
 
         bean.setPublications(pubs);
         model.addAttribute(LookupStrings.FORM_BEAN, bean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "SNP Publication List");
 
         return "marker/snp-publication-list.page";
     }
