@@ -239,9 +239,6 @@ update transcript set tscript_type_id = (
   and tscript_type_id IS NULL
 ;
 
-
-
-
 ! echo "update zfin transcript TYPE from  vega transcript type"
 update transcript set tscript_type_id = (
         select tvtt_zfin_type
@@ -564,7 +561,7 @@ select nt_zad,nt_tname,nt_tname,'TSCRIPT','ZDB-PERS-001130-2'
 
 
 ! echo "Translate Vega's transcript and gene types to"
-! echo "ZFIN transscript TYPE and STATUS"
+! echo "ZFIN transcript TYPE and STATUS"
 
 alter table novel_transcript add zfin_ttype integer default 0;
 alter table novel_transcript add zfin_tstatus integer default NULL;
