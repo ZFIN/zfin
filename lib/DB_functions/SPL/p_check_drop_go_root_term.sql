@@ -37,7 +37,7 @@ create procedure p_check_drop_go_root_term (
                and u.term_ontology = n.term_ontology
 	       and u.term_ont_id in ("GO:0005575", "GO:0003674", "GO:0008150");
 	    
-	    if (gotermZdbId not like 'ok') then
+	    if (goTermZdbId not like 'ok') then
 	    
 	
 	    -- delete the root term annotation
