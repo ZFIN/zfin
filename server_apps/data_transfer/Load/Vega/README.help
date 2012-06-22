@@ -1,0 +1,122 @@
+#  README.help
+
+the Vega laod process beging with someone at the Sanger institute 
+alerting ZFIN that a set of files are available and their location.
+the set of files has stabalized but location & person sending them hasn't.
+If they start sending new files or change the names in the existing file
+set those changes will need to be reflected in the Makefile.
+
+Manualy create a directory based on the year and month under
+/research/zprod/data/VEGA
+
+Manualy update the Makefile in 
+...ZFIN_WWW/server_apps/data_transfer/Load/Vega/
+
+to have the variable $(PREV) point at whatever $(DEST) is, then have the 
+variable $(DEST) point at the directory just created
+
+Also set $(FTP) to where ever the files at Sanger are this time.
+
+It is not necessary to continue, but I am starting a mini local history 
+by just commenting out old variable assignments when adding new ones.
+
+Much of the work need only be done on development for the results to be
+available for production.
+
+
+gmake fetch_vega 
+
+Will fetch a local copy of the files at Sanger only downloading if the 
+remote files are newer than the local files. it then write protects the 
+local copies so they remain priistine copies in case anything goes wrong.
+
+This also means that if the original file set really does need updating, 
+the permissions will need to be reset accordingly.
+
+
+gmake novel_check
+
+This is leftover from by gone days when we needed to quickly get a handle 
+on how much work dad just been dumped and still is useful information 
+although we always have much more than enough time now. (too much)
+
+It runs through basic sanity checks on the incomming files and figures 
+out what has changed w.r.t. the previous load giving numbers of new and
+changed transcripts. 
+
+
+gmake withdrawn_check
+
+This hints at the rest of the story for new transcripts. Although Vega
+calls the ottdarT a "stable_id" and gives them versioning numbers, there 
+is no deceriable pattern as to when they increment a version number or 
+replace an ottdarT without any mapping to the previous version.
+this creates a problem for us as we end up with withdrawn transcripts
+to make matters worse, some transcripts are effectivly replaced, 
+some are actually dropped and some just go on Holiday for a bit.
+An improvment would allow a curator looking at a new transcript that 
+aligns sufficently well with a withdrawn transcript in the ReNo interface
+to merge the transcripts with a click. As it is they need to explicitly 
+ask a developer to merge them.
+This make target isolates potential merges in advance to get a sense of 
+what we are missing, but we have yet to do anything about it on the 
+frontend.
+
+
+gmake blast_transcripts
+
+Blasts all the transcripts that are new, or are updated, or are a 
+sibbling of an updated transcript, against ZFIN_cDNA.
+parses the (WU)Blast output into a json like structure (developed before 
+json existed) for downstream processing. The output file is named
+"Vega_[timestamp]_NEW_"  the "_NEW_" part is important because it is used
+as a flag for the java implementation of reno so it can handle it's default 
+use case, which was neither copied from the working prototype nor 
+ever properly considered while building it, so it is stuck on here as an 
+afterthought, a perpetual reminder of where it all went wrong. 
+Have a nice day. 
+
+
+gmake load_transcripts [_commit]
+
+creates new transcript records for all of the novle transcripts, even 
+those that it would be nice to just replace the ottdart for.
+
+Occasionaly one of the sub-steps here is updating a mapping fron Vega's 
+transcript and gene types to to ZFIN's transcript type and status. 
+The mapping is not direct as nither group is using the terms equivently. 
+There is a mapping table in ZFIN, created by the transcript group. It is 
+insufficent but wrong and should be deleted before some poor sucker 
+comes along and uses it. 
+
+
+
+This target reports on potentialy bad clone names. Sanger has a 
+policy of not appending gibberish on the ends of clone names but no 
+constranits to enforce it, so we get clone names with gibberish.
+You can ask them to remove them but it is rarely productive and never in   
+time for the current load. So you trim them from your local working 
+(not archive) copy
+the names to edit are in the destination directory in the files: 
+	assembly_for_tom.txt 
+	clonelist_for_tom.txt 
+
+This target will create an augment load file with Sangers side of the 
+mapping in place and the null zfin side will get default values. If the 
+default are not appropiate you will need to fifure out wuat is and add
+it to the "vega_type_translation.unl"  see "load_novel_transcript.sql"
+for defaults.
+
+The load will report a lot of details and counts so you can develop a 
+sense of what is going on and how things are changing.
+it updates the length of existing transcripts in the database so you 
+can marvle at how volatile transcript lengths are. 
+
+It checks for impending name collisions, although transcript names are
+fairly useless it may provide addtional hints for merging and in any case 
+a name collision will force the incomming name to be the ottdarT so it 
+might be worthwhile to change the names of the existing if that is 
+prefferable. in any case the name given now is subject to change when 
+they send back the official transcript names for this load which do not 
+exist yet  
+
