@@ -57,5 +57,7 @@ sleep 3
 echo ""
 echo "Parse the Blast output for loading into ReNo"
 echo ""
-# I can hope this commons/bin gets updated...
-/private/ZfinLinks/Commons/bin/parse-blast-reno.r UniProt_${timestamp}.out "UniProt_${timestamp}"
+
+# $SOURCEROOT is the right thing to use here but we are too lame for that 
+
+../../../../../commons/bin/parse-blast-reno.r UniProt_${timestamp}.out "UniProt_${timestamp}"
