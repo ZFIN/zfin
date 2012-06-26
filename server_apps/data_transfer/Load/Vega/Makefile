@@ -321,7 +321,7 @@ blast_transcripts: Vega_%_NEW_.ctx  push_local_blast
 clean_blast_transcripts:
 	rm -f vega_transcript.xn* \
 	$(DEST)/vega_reno_gene.nt $(DEST)/vega_reno_gene.out \
-	$(DEST)/Vega_*_NEW_.ctx
+	$(DEST)/Vega_*_NEW_.ctx Vega_*_NEW_.ctx
 
 ########################################################################
 #                 Load Transcripts target
@@ -417,6 +417,7 @@ load_transcripts_commit: $(TS_LOAD_FILES)  commit.sql vega_type_translation.unl
 	@cat $< commit.sql | dbaccess -a $$DBNAME
 #	|&  tee load_novel_transcript.log
 	@echo "load_transcripts COMMITED\n"
+	rm -f ottdarT_length.unl novel_transcript.unl query_ottdarT.unl
 
 clean_load_transcripts:
 	rm -f $(DEST)/ottdarT.lst $(DEST)/novel_transcripts.lst \
@@ -464,7 +465,9 @@ withdrawn_dblink: update_withdrawn_dblink.sql rollback.sql withdrawn_transcripts
 	cat $<  rollback.sql | dbaccess -a $$DBNAME
 	
 withdrawn_dblink_commit: update_withdrawn_dblink.sql commit.sql 
-	cat $< commit.sql| dbaccess -a $$DBNAME
+	cat $< commit.sql| dbaccess -a $$DBNAME ;\
+	rm -f select_withdrawn.txt  all_withdrawn.fa select_withdrawn.lst \
+		fresh_withdrawn.fa existing_withdrawn.fa 
 
 clean_withdrawn_dblink:
 	rm -f select_withdrawn.txt  all_withdrawn.fa \
