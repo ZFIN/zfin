@@ -55,9 +55,6 @@ else
 	STORE = $(GLOBALSTORE)
 endif
 
-showstore:
-	@echo "using store $(STORE)"
-
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
@@ -71,6 +68,10 @@ $(HTTP_DATA_TRANSFER_DIR) :
 	$(TARGET_MKDIR) $@
 
 # ---------------  Misc Targets  ----------------------------------------
+
+showstore:
+	@echo "using store $(STORE)"
+
 
 # Run the download script.
 # This extracts data from ZFIN and places it in the public http directory

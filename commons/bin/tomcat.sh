@@ -6,7 +6,6 @@ if ($# == 2 ) then
   source /private/ZfinLinks/Commons/env/$2.env
 endif
 
-
 switch ($1)
 
 case "start":
