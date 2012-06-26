@@ -82,17 +82,17 @@ This target outputs instructions on how to push the blast file to our
 blast database repositorywhich at this time, is in the clutches of our
 all controlling informix user... just because. 
 
-note: blasting can take some time
+note: blasting and parsing can take some time
 
 
 gmake load_transcripts [_commit]
 
-creates new transcript records for all of the novle transcripts, even 
+creates new transcript records for all of the novel transcripts, even 
 those that it would be nice to just replace the ottdart for.
 
-Occasionally one of the sub-steps here is updating a mapping fron Vega's 
+Occasionally one of the sub-steps here is updating a mapping from Vega's 
 transcript and gene types to to ZFIN's transcript type and status. 
-The mapping is not direct as nither group is using the terms equivalently. 
+The mapping is not direct as neither group is using the terms equivalently. 
 There is a mapping table in ZFIN, created by the transcript group. It is 
 insufficient but wrong, and should be deleted before some poor sucker 
 comes along and tries to use it. 
@@ -107,11 +107,11 @@ the names to edit are in the destination directory in the files:
 	assembly_for_tom.txt 
 	clonelist_for_tom.txt 
 
-This target will create an augment load file with Sanger's side of the 
-mapping in place and the null zfin side will get default values. If the 
-default are not appropriate you will need to figure out wuat is and add
-it to the "vega_type_translation.unl"  see "load_novel_transcript.sql"
-for defaults.
+This target will create and augment a load file with Sanger's side of the 
+mapping in place and the nulls on zfin's side will get default values. 
+If the default are not appropriate you will need to figure out what is 
+and add it to the "vega_type_translation.unl"  
+see "load_novel_transcript.sql" for defaults.
 
 The load will report a lot of details and counts so you can develop a 
 sense of what is going on and how things are changing.
