@@ -44,17 +44,17 @@ include $(TOP)/make.default.rules
 #
 ########################################################################
 
-# nothing by default
-all:
-
 help:
 	@cat README.help
+	
+# nothing in all by default
+all:
 
 #begin fetch novel_check withdrawn_check blast_transcripts load_transcripts
 
-run: begin  novel_check withdrawn_check blast_transcripts load_transcripts
+run: begin novel_check withdrawn_check blast_transcripts load_transcripts
 
-run_commit: begin  novel_check withdrawn_check blast_transcripts load_transcripts_commit
+run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load_transcripts_commit
 
 
 
@@ -64,13 +64,19 @@ run_commit: begin  novel_check withdrawn_check blast_transcripts load_transcript
 
 # So:
 # gmake FTP="blablabla" DEST="blabla" PREV="blabla" fetch
+# a bit safer would be hardcode it in,  
+# since it only changes a few times a year but needs 
+# to be run quite a few times with the same arguments 
 
-FTP  = ftp.sanger.ac.uk/pub/ds23/vega47
 
 VEGADIR = /research/zprod/data/VEGA
 
 DEST = $(VEGADIR)/2012-06
+FTP  = ftp.sanger.ac.uk/pub/st3/vega49
 PREV = $(VEGADIR)/2012-01
+#FTP  = ftp.sanger.ac.uk/pub/ds23/vega47 
+
+
 #PREV = $(VEGADIR)/2011-08
 #DEST = "$(VEGA)/`date +%Y-%m`"
 
@@ -85,34 +91,51 @@ begin:
 # fetch_vega target
 
 # the typical file names we get, but it has jumped around alot
-INCOMMING = $(DEST)/genes_for_tom.txt $(DEST)/evidence_for_tom.txt \
-$(DEST)/transcripts_for_tom.fa $(DEST)/dumped_transcripts_for_tom.fa \
-$(DEST)/clonelist_for_tom.txt $(DEST)/assembly_for_tom.txt
+INCOMMING = genes_for_tom.txt evidence_for_tom.txt clonelist_for_tom.txt \
+ dumped_transcripts_for_tom.fa  assembly_for_tom.txt
+# transcripts_for_tom.fa -> now being sent as dumped ...
 
-# get and  decompress a copy of the vega data files
+WORKINGSET=$(foreach IN, $(INCOMMING), $(DEST)/$(IN))
+ORIGSET=$(foreach IN, $(INCOMMING), $(DEST)/$(FTP)/$(IN))
+ORIGZIP=$(foreach IN, $(INCOMMING), $(DEST)/$(FTP)/$(IN).gz)
+
+# get the vega data files
+
+
+#fetch: 
+#	chmod -R ug+w $(DEST)/$(FTP)
+#	wget -r -q -np --timestamping "ftp://$(FTP)" -P $(DEST)/
+
+# dosn't like the difference in time zones from here & england
+# creating "fetch" rule without dependancy on overseas timestamp
+$(ORIGZIP): 
+	chmod -R ug+w $(DEST)/$(FTP)
+	wget -r -q -np --timestamping "ftp://$(FTP)" -P $(DEST)/
+	
+# decompress a copy 
+$(ORIGSET): $(ORIGZIP) 
+	-gunzip -fc $@.gz > $@
+
+# only update wnen orig is newer than working
+# if this was gnu cp there would be a -u option
+# allows corrections Sanger will not get around to.
+$(WORKINGSET): $(ORIGSET)
+	rsync -u $(DEST)/$(FTP)/$(lastword $(subst /, ,$@)) $@;\
+	chmod ug+w $@
+
+# easier to change name here once than wherever used
+$(DEST)/transcripts_for_tom.fa: $(DEST)/dumped_transcripts_for_tom.fa
+	-cp -f $< $@
+	
 # protect the originals
-fetch: $(FTP%) $(DEST)
-	wget -r -np --timestamping "ftp://$(FTP)" -P $(DEST)/
+protect_orig:   $(ORIGSET) $(WORKINGSET)
+	-chmod -R a-w $(DEST)/$(FTP)/*.gz
 
-copy_orig: fetch
-	-chmod a+w $(DEST)/*
-	-cp $(DEST)/$(FTP)/* $(DEST)/
-	-gunzip -f $(DEST)/*.gz
-	-rm -f $(DEST)/*.gz
-
-$(DEST)/transcripts_for_tom.fa: copy_orig
-	-mv -f  $(DEST)/dumped_transcripts_for_tom.fa $@
-
-protect_orig:   copy_orig
-	-chmod -R a-w $(DEST)/$(FTP)
-
-$(DEST)/assembly_for_tom.txt: copy_orig
-
-fetch_vega: $(DEST)/transcripts_for_tom.fa protect_orig
+fetch_vega: $(ORIGSET) $(WORKINGSET) protect_orig $(DEST)/transcripts_for_tom.fa
 	-echo "Vega fetched\n"
 
-clean_fetch_vega:
-	 $(DEST)/transcripts_for_tom.fa  $(DEST)/assembly_for_tom.fa
+clean_fetch_vega: 
+	$(foreach IN,$(WORKINGSET),rm -f $(IN);)
 
 
 ########################################################################
@@ -214,8 +237,8 @@ clean_withdrawn_check:
 # want to augment the deflines we create with info from other files sent
 $(DEST)/clnacc_lg.txt: $(DEST)/assembly_for_tom.txt
 	@echo "\nPossibly Bogus Clone names"
-	@grep '_' $?
-	@nawk 'BEGIN{OFS="\t"}{print $$4,substr(1,8,$$5),$$1}' $< | sort -u > $@
+	-grep '_' $< 
+	gawk 'BEGIN{OFS="\t"}{print $$4,substr($$5,1,8),$$1}' $< | sort -u > $@
 
 # also want to create deflines which both allow retrivial via a number
 # of keys and provide curators with useful information at a glance
@@ -251,13 +274,14 @@ $(DEST)/vega_transcript.nt: $(DEST)/transcripts_for_tom.fa \
 	@chgrp fishadmin *.nt *.unl
 	@mv vega_reno.nt  $(DEST)/vega_reno.nt
 	@mv vega_transcript.nt $@
-	@mv ottdarT_ottdarG_ottdarP.unl $(DEST)/ottdarT_ottdarG_ottdarP.unl
+	@cp ottdarT_ottdarG_ottdarP.unl $(DEST)/ottdarT_ottdarG_ottdarP.unl
 	@mv vega_zfin.nt  $(DEST)/vega_zfin.nt
 	@rm clnacc_lg.txt
 
 # the previous target also produces:
 # the current mapping of vega ottdar[TGP] identifiers
 $(DEST)/ottdarT_ottdarG_ottdarP.unl: $(DEST)/vega_transcript.nt
+
 # Partitions the load into novel and existing transcripts
 $(DEST)/vega_zfin.nt:  $(DEST)/vega_transcript.nt
 # vega_transcript.nt is the combination of the two which will become
@@ -292,7 +316,6 @@ Vega_%_NEW_.ctx: $(DEST)/vega_reno_gene.out
 blast_transcripts: Vega_%_NEW_.ctx  push_local_blast
 	@echo "\nFeed Vega_%_NEW_.ctx to the reno pipeline"
 	@echo "blast_transcripts finished\n"
-
 
 
 clean_blast_transcripts:
@@ -336,22 +359,34 @@ $(DEST)/check_vega_type.plain: novel_transcript.unl
 $(PREV)/check_vega_type.plain: $(PREV)/novel_transcript.unl
 	cut -f 4,9 -d \| $< | sort -u > $@
 
-# vega_type_translation.unl should be in a dependenccy of some sort
-#  it should be re-commited when it changes
-#  until it is in the database instead of the transcript teams attempt
+refresh_vega_type_translation:
+	rm -f vega_type_translation.unl ;\
+	svn up vega_type_translation.unl
 
-$(DEST)/novel_vega_type_to_add: $(PREV)/check_vega_type.plain $(DEST)/check_vega_type.plain
-	@comm -13 $+  | nawk -F "|" '{print "transcript|"$$1 "|||";print "gene|"$$2"|||"}' | \
-	sort -u | comm -23 - vega_type_translation.unl > $@
-	# TODO: need to check that the first two column _alone_ do not match
-	# may need to ask curators about zfin types & statuses to add to the 3rd & 4th columns
+$(DEST)/novel_vega_type_NOT_to_add: refresh_vega_type_translation
+	cut -f 1-2 -d \| < vega_type_translation.unl  > $@ 
+
+$(DEST)/novel_vega_type_to_add: $(PREV)/check_vega_type.plain \
+	    $(DEST)/check_vega_type.plain $(DEST)/novel_vega_type_NOT_to_add
+	@rm -f $(DEST)/novel_vega_type_to_add    
+	-comm -13 $(PREV)/check_vega_type.plain $(DEST)/check_vega_type.plain |\
+	nawk -F "|" '{print "transcript|"$$1 "|||";print "gene|"$$2"|||"}' |\
+	sort -u | comm -23 -  vega_type_translation.unl |\
+	ggrep -v -f $(DEST)/novel_vega_type_NOT_to_add > $@
+	
 	# need to sort the appended line into its place the file
-	@if [ -s $@ ] ; then cat $@ vega_type_translation.unl | sort -u > tmp_vtt.unl; mv tmp_vtt.unl  vega_type_translation.unl; rm -f tmp_vtt.unl ;fi
+	@if [ -s $@ ] ; then cat $@ vega_type_translation.unl |\
+		sort -u > tmp_vtt.unl; mv tmp_vtt.unl  vega_type_translation.unl;\
+		rm -f tmp_vtt.unl;fi
+		
+	# may need to ask curators about zfin types & statuses to add to the 3rd & 4th columns		
 	@if [ -s $@ ] ; then echo "Rows added to 'vega_type_translation.unl'\n"; fi
 	@if [ -s $@ ] ; then cat $@; fi
 	@if [ -s $@ ] ; then echo "\n\tThe last 2 columns may need to be popupated"; fi
 	@if [ -s $@ ] ; then echo "\twith the vega type|status IDs from ZFIN\n"; fi
 
+vega_type_translation.unl:
+	if [ 0 < `svn diff vega_type_translation.unl | grep "^+" | wc -l` ] ; then echo "commit vega_type_translation.unl" fi
 
 # make the transcript length available for the load
 ottdarT_length.unl:	$(DEST)/vega_transcript.nt
@@ -367,45 +402,81 @@ query_ottdarT.unl: $(DEST)/vega_reno_gene.nt
 	grep "^>" $< |cut -f2 -d\| | $(COMMON_BIN)/tailpipe >  $@
 	cp -f $@ $(DEST)/$@
 
-vega_type_translation.unl: $(DEST)/novel_vega_type_to_add
-	@echo "vega_type_translation.unl just needs to be up to date"
-
 load_novel_transcript.log:
 	@touch load_novel_transcript.log
 	@cat /dev/null > load_novel_transcript.log
 
 TS_LOAD_FILES = load_novel_transcript.sql  $(DEST)/novel_vega_type_to_add \
-	vega_type_translation.unl ottdarT_length.unl novel_transcript.unl \
-	query_ottdarT.unl load_novel_transcript.log
+	ottdarT_length.unl novel_transcript.unl query_ottdarT.unl load_novel_transcript.log
 
-load_transcripts:  $(TS_LOAD_FILES) rollback.sql
-	cat $< rollback.sql | dbaccess -a $$DBNAME
+load_transcripts:  $(TS_LOAD_FILES) rollback.sql vega_type_translation.unl
+	@cat $< rollback.sql | dbaccess -a $$DBNAME
 	@echo "load_transcript TESTED\n"
 
-load_transcripts_commit: $(TS_LOAD_FILES)  commit.sql
-	cat $< commit.sql | dbaccess -a $$DBNAME
+load_transcripts_commit: $(TS_LOAD_FILES)  commit.sql vega_type_translation.unl
+	@cat $< commit.sql | dbaccess -a $$DBNAME
 #	|&  tee load_novel_transcript.log
 	@echo "load_transcripts COMMITED\n"
 
 clean_load_transcripts:
-	rm -f $(DEST)/ottdarT.lst $(DEST)/novel_transcripts_for_tom.defline \
+	rm -f $(DEST)/ottdarT.lst $(DEST)/novel_transcripts.lst \
+	 $(DEST)/novel_transcripts_for_tom.defline \
 	 $(DEST)/check_vega_type.plain $(DEST)/query_ottdarT.unl \
-	novel_vega_type_to_add ottdarT_length.unl novel_transcript.unl
+	 $(DEST)/novel_vega_type_to_add $(DEST)/novel_vega_type_NOT_to_add \
+	 ottdarT_length.unl novel_transcript.unl \
+	 query_ottdarT.unl
 
 
 ########################################################################
+#                   Withdraw Transcripts
+
+BLASTFILES = /research/zblastfiles/files/LOCAL
+
+existing_withdrawn.fa:  $(BLASTFILES)/vega_withdrawn.fa
+	cp $< $@
+	grep -c "^>" $@
+
+fresh_withdrawn.fa: $(DEST)/withdrawn.ottdarT  $(PREV)/vega_transcript.nt
+	$(COMMON_BIN)/fastagrep -f $+ > $@
+	grep -c "^>" $@
+
+all_withdrawn.fa: existing_withdrawn.fa fresh_withdrawn.fa
+	cat $+ > $@
+	grep -c "^>" $@
+
+select_withdrawn.txt: select_withdrawn.sql all_withdrawn.fa
+	dbaccess -a $$DBNAME $<
+
+select_withdrawn.lst: select_withdrawn.txt
+	cut -f1 $< > $@
+
+vega_withdrawn.fa: select_withdrawn.lst all_withdrawn.fa
+	$(COMMON_BIN)/fastagrep -f $+ > $@
+	grep -c "^>" $@
+
+withdrawn_transcripts: vega_withdrawn.fa
+	@echo "\n*******************   AS INFORMIX   ************************\n"
+	@echo "$(COMMON_BIN)/push_local_blastdb.sh $<"
+	@echo "\n************************************************************\n"
+
+# ...should depend on blast database actually being in place
+withdrawn_dblink: update_withdrawn_dblink.sql rollback.sql withdrawn_transcripts
+	cat $<  rollback.sql | dbaccess -a $$DBNAME
+	
+withdrawn_dblink_commit: update_withdrawn_dblink.sql commit.sql 
+	cat $< commit.sql| dbaccess -a $$DBNAME
+
+clean_withdrawn_dblink:
+	rm -f select_withdrawn.txt  all_withdrawn.fa \
+		fresh_withdrawn.fa existing_withdrawn.fa select_withdrawn.lst
+
 ########################################################################
-
-
-ottdarT_ottdarG_ottdarP.unl: $(DEST)/ottdarT_ottdarG_ottdarP.unl
-	@cp $< $@
+########################################################################
 
 sanity_check_post_reno: sanity_check_post_reno.sql ottdarT_ottdarG_ottdarP.unl
 	dbaccess -a $$DBNAME $<
-	@rm ottdarT_ottdarG_ottdarP.unl
 
-
-
+########################################################################		
 ########################################################################
 #                       Load Assembly
 # separate the clone acc from it's version # first
@@ -418,7 +489,7 @@ assembly_for_tom.tab: $(DEST)/assembly_for_tom.tab
 $(DEST)/clonelist_for_tom.tab: $(DEST)/clonelist_for_tom.txt
 	tr '\.' '\11' < $<  > $@
 
-# removing the wrong underscore_suffix on clone names here
+# removing the wrong underscore_suffix on clone names here (if not done)
 annotated_clones.unl: $(DEST)/clonelist_for_tom.tab
 	cut -f 1-3 $< | nawk '{sub(/_[A-Z_]*/,"",$$1);print $$2"|"$$1"|"}' > $@
 
@@ -431,70 +502,29 @@ load_assembly_commit:  load_assembly.sql assembly_for_tom.tab annotated_clones.u
 
 clean_load_assembly:
 	rm -f  annotated_clones.unl  assembly_for_tom.tab \
-	$(DEST)/assembly_for_tom.tab $(DEST)/clonelist_for_tom.tab
-
-########################################################################
-#                   Withdraw Transcripts
-
-BLASTFILES = /research/zblastfiles/files/LOCAL
-
-existing_withdrawn.fa:  $(BLASTFILES)/vega_withdrawn.fa
-	cp @< $@
-	grep -c "^>" $@
-
-fresh_withdrawn.fa: $(DEST)/withdrawn.ottdarT  $(PREV)/vega_transcript.nt
-	$(COMMON_BIN)/fastagrep -f $+ > $@
-	grep -c "^>" $@
-
-all_withdrawn.fa: existing_withdrawn.fa fresh_withdrawn.fa
-	cat $+ > $@
-	grep -c "^>" $@
-
-select_withdrawn.txt: select_withdrawn.sql
-	dbaccess -a $$DBNAME $<
-
-select_withdrawn.lst: select_withdrawn.txt
-	cut -f1 $< > $@
-
-vega_withdrawn.fa: select_withdrawn.lst all_withdrawn.fa
-	$(COMMON_BIN)/fastagrep -f $+ > $@
-	grep -c "^>" $@
-
-withdraw_transcripts: vega_withdrawn.fa
-	@echo "\n*******************   AS INFORMIX   ************************\n"
-	@echo "$(COMMON_BIN)/push_local_blastdb.sh $<"
-	@echo "\n************************************************************\n"
-
-# should depend on public blast databases in position
-withdrawn_dblink: update_withdrawn_dblink.sql rollback.sql
-	cat $+ | dbaccess -a $$DBNAME
-
-withdrawn_dblink_commit: update_withdrawn_dblink.sql commit.sql
-	cat $+ | dbaccess -a $$DBNAME
-
-clean_withdraw_transcripts:
-	rm -f select_withdrawn.txt  all_withdrawn.fa \
-		fresh_withdrawn.fa existing_withdrawn.fa select_withdrawn.lst
+	$(DEST)/assembly_for_tom.tab $(DEST)/clonelist_for_tom.tab		
+		
 
 ########################################################################
 #              Update Supporting Sequence
 
-count_evidence: $(DEST)/evidence_for_tom.txt
+evidence.unl: $(DEST)/evidence_for_tom.txt
 	@echo "all evidence"
 	grep -c "	Em:" $<
-	grep "	Em:" $<|cut -f 4|sort|uniq -c|sort -n
-
-evidence.unl: count_evidence
+	@echo "all evidence by type"
+	grep "	Em:" $<|cut -f 4|sort|uniq -c|sort -nr
+	
 	grep -v Protein $< |grep "^OTT"|cut -f1-3|sed 's/Em://g'| \
 	awk '{print $$1 "|" substr($$3,1,8 ) "|"}'|sort -u > $@
 
-load_evidence: load_supporting_sequence.sql  rollback.sql evidence.unl
+load_evidence: load_supporting_sequence.sql evidence.unl rollback.sql 
 	#dbaccess -a $DBNAME $< |& tee load_supporting_sequence.log
 	cat $< rollback.sql | dbaccess -a $$DBNAME
 
 load_evidence_commit: load_supporting_sequence.sql commit.sql evidence.unl
 	#dbaccess -a $DBNAME $< |& tee load_supporting_sequence.log
 	cat $< commit.sql | dbaccess -a $$DBNAME
+	rm -f evidence.unl
 
 clean_load_evidence:
 	rm -f evidence.unl
@@ -512,12 +542,12 @@ clean_load_evidence:
 
 # the file names they make available and locations are subject to change
 $(DEST)/vega_transcript_names.tsv.gz: $(FTP) $(DEST)
-	#wget --timestamping "ftp://$(FTP)/vega_transcript_names.tsv.gz" -P $(DEST)
+	wget --timestamping "ftp://$(FTP)/vega_transcript_names.tsv.gz" -P $(DEST)
 	#!!!	 they have made a correction the the name file
 	#!!!	 left in a different place and so I am hardcoding it here.
 	#!!! TODO: remove kludge uncomment
- #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	wget --timestamping "ftp://ftp.sanger.ac.uk/pub/ds23/vega47/vega_transcript_names.tsv.gz" -P ${DEST}
+ #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+ # wget --timestamping "ftp://ftp.sanger.ac.uk/pub/ds23/vega47/vega_transcript_names.tsv.gz" -P ${DEST}
  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 $(DEST)/vega_transcript_names.tsv: $(DEST)/vega_transcript_names.tsv.gz
@@ -583,8 +613,8 @@ gff3_backbone: $(DEST)/drerio_vega_id.unl $(DEST)/vega_chromosome.gff3 \
 	@echo "$${TARGETROOT}/home/data_transfer/Data"
 	@ls -lt $${TARGETROOT}/home/data_transfer/Data
 
-gff3_backbone_commit: $(DEST)/drerio_vega_id.unl $(DEST)/vega_chromosome.gff3 \
-	                 assembly_for_tom.tab $(DEST)/clone_acc_status.unl
+gff3_backbone_commit: $(DEST)/drerio_vega_id.unl assembly_for_tom.tab \
+			  $(DEST)/vega_chromosome.gff3  $(DEST)/clone_acc_status.unl
 	cp assembly_for_tom.tab         /research/zprod/gff3
 	cp $(DEST)/drerio_vega.unl      /research/zprod/gff3
 	cp $(DEST)/vega_chromosome.gff3 /research/zprod/gff3
@@ -595,9 +625,33 @@ clean_gff3_backbone:
 	rm -f $(DEST)/drerio_vega.gff3
 	touch $(DEST)/zebrafish_VEGA*.gff3.gz
 
-# vega on Ensembl coordinates
+# fetch vega on Ensembl coordinates
 $(DEST)/zebrafish_Zv9_%.gff3.gz:
 	wget --timestamping "ftp://${FTP}/zebrafish_Zv9_%.gff3.gz" -P $(DEST)
+
+
+
+########################################################################
+# after Sanger is made public. 
+# the ottdarTs need to be flipped from prevega to vega trans 
+# and the ottdarGs and ottdarP on novel transcripts 
+# need to be inserted in dblink, 
+# (and be deleted where sanger dropped them if they aren't already)
+
+
+vega_public:  move_post_vega.sql update_ottdarP.sql rollback.sql \
+											ottdarT_ottdarG_ottdarP.unl 
+	cat move_post_vega.sql rollback.sql | dbaccess -a $$DBNAME;\
+	cat update_ottdarP.sql rollback.sql | dbaccess -a $$DBNAME
+
+vega_public_commit:  move_post_vega.sql update_ottdarP.sql commit.sql
+											ottdarT_ottdarG_ottdarP.unl
+	cat move_post_vega.sql commit.sql | dbaccess -a $$DBNAME;\
+	cat update_ottdarP.sql commit.sql | dbaccess -a $$DBNAME;\
+	rm ottdarT_ottdarG_ottdarP.unl
+
+clean_vega_public: 
+		rm -f ottdarT_ottdarG_ottdarP.unl
 
 ########################################################################
 
@@ -607,11 +661,11 @@ clean: 	clean_fetch_vega \
 		clean_blast_transcripts \
 		clean_load_transcripts \
 		clean_load_assembly \
-		clean_withdraw_transcripts \
+		clean_withdrawn_dblink \
 		clean_update_tscript_names \
-		clean_gff3_backbone \
-		clean_introspect
+		clean_gff3_backbone 
 
 
 .PHONY: begin clean all withdrawn_check count_deflines count_versions \
 	sanity_check_vers blast_transcripts check_vega_type
+	refresh_vega_type_translation  
