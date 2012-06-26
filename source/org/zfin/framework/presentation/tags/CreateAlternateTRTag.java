@@ -48,12 +48,12 @@ public class CreateAlternateTRTag extends TagSupport {
         LoopTagStatus loop = (LoopTagStatus) pageContext.getAttribute(loopName, PageContext.PAGE_SCOPE);
         // this index is used to indicate if a new group is started with a new element
         Object object = pageContext.getAttribute("groupIndex", PageContext.PAGE_SCOPE);
-        int groupIndex = 0;
+        long groupIndex = 0;
         if (object != null) {
             if (object instanceof String)
-                groupIndex = new Integer((String) object);
+                groupIndex = new Long((String) object);
             else
-                groupIndex = (Integer) object;
+                groupIndex = (Long) object;
         }
 
         if (loop == null)
@@ -114,7 +114,7 @@ public class CreateAlternateTRTag extends TagSupport {
         return Tag.EVAL_BODY_INCLUDE;
     }
 
-    private void init(int index, int groupIndex) {
+    private void init(int index, long groupIndex) {
         // if start of the loop set group index accordingly
         if (index == 1 && newGroup) {
             groupIndex = 0;
