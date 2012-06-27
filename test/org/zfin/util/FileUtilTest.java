@@ -111,7 +111,7 @@ public class FileUtilTest {
         FileInfo fileInfo = FileUtil.getFileInfo(new File(fileName));
         assertNotNull(fileInfo);
         assertEquals(13, fileInfo.getNumberOfLines());
-        assertEquals(59, fileInfo.getSize());
+        assertEquals(60, fileInfo.getSize());
         assertEquals("test-count-number-of-lines.txt", fileInfo.getName());
     }
 

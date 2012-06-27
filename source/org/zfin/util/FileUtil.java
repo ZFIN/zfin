@@ -400,7 +400,7 @@ public final class FileUtil {
     public static int countLines(File file) throws IOException {
         LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file));
         lineNumberReader.skip(Long.MAX_VALUE);
-        return lineNumberReader.getLineNumber() + 1;
+        return lineNumberReader.getLineNumber();
     }
 
     public static FileInfo getFileInfo(File file) throws IOException {
