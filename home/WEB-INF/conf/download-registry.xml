@@ -17,7 +17,7 @@
                 select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type
                 from marker order by 1
             </Query>
-            <Column id="1" unqiue="true">Marker ID</Column>
+            <Column id="1" unique="true">Marker ID</Column>
             <Column id="2">Marker Symbol</Column>
             <Column id="3">Marker Name</Column>
             <Column id="4">Marker Type</Column>
@@ -37,7 +37,7 @@
             <Query>
                 select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data
             </Query>
-            <Column id="1" unqiue="true">Former ZFIN ID</Column>
+            <Column id="1" unique="true">Former ZFIN ID</Column>
             <Column id="2">Current ZFIN ID</Column>
         </Download>
         <Download orderIndex="1">
@@ -59,7 +59,7 @@
                 where mrkr_zdb_id = atb_zdb_id
                 order by 1
             </Query>
-            <Column id="1" unqiue="true">Antibody ID</Column>
+            <Column id="1" unique="true">Antibody ID</Column>
             <Column id="2">Name</Column>
             <Column id="3">Clonal Type</Column>
             <Column id="4">Heavy Chain</Column>
@@ -95,7 +95,7 @@
                 AND geno_is_wildtype = 't'
                 order by mrkr_zdb_id
             </Query>
-            <Column id="1" unqiue="true">Antibody ID</Column>
+            <Column id="1" unique="true">Antibody ID</Column>
             <Column id="2">AnatomyStructure ID</Column>
             <Column id="3">AnatomyStructure Name</Column>
             <Column id="4">Substructure ID</Column>
@@ -127,7 +127,7 @@
                 where dalias_data_zdb_id = geno_Zdb_id
                 order by 1, 4
             </Query>
-            <Column id="1" unqiue="true">Current ZFIN ID</Column>
+            <Column id="1" unique="true">Current ZFIN ID</Column>
             <Column id="2">Current Name</Column>
             <Column id="3">Current Symbol</Column>
             <Column id="4">Previous Name</Column>
@@ -150,7 +150,7 @@
                 where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
                 order by 1
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">Panel Symbol</Column>
             <Column id="4">Chromosome</Column>
@@ -171,7 +171,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -195,7 +195,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -219,7 +219,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -243,7 +243,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -267,7 +267,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -291,7 +291,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -315,7 +315,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -339,7 +339,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -363,7 +363,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -387,7 +387,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -411,7 +411,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -435,7 +435,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -459,7 +459,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -483,7 +483,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -507,7 +507,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -531,7 +531,7 @@
             <FileFormat>gff3</FileFormat>
             <Query>
             </Query>
-            <Column id="1" unqiue="true">Chromosome</Column>
+            <Column id="1" unique="true">Chromosome</Column>
             <Column id="2">Source</Column>
             <Column id="3">Type</Column>
             <Column id="4">Start</Column>
@@ -581,7 +581,7 @@
                 where gener.mrel_type='gene produces transcript'
                 and cloner.mrel_type='clone contains transcript'
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Name</Column>
             <Column id="3">Gene ID</Column>
             <Column id="4">Clone ID</Column>
@@ -634,7 +634,7 @@
                 -- but since neither catch anything go with the faster/cheaper
                 and dblink_acc_num[1,6] != "OTTDAR"
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Sequence Accession</Column>
         </Download>
@@ -653,7 +653,7 @@
             <Query>
                 select * from tmp_veg order by 1,3
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Sequence Accession</Column>
         </Download>
@@ -678,7 +678,7 @@
                 and fdb_db_name = 'GenPept'
                 order by 1
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">GenePept ID</Column>
         </Download>
@@ -708,7 +708,7 @@
                 where mrkr_zdb_id = dblink_linked_recid
                 and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">GenePept ID</Column>
         </Download>
@@ -738,7 +738,7 @@
                 and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
                 ) order by 1]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Name</Column>
             <Column id="3">GenBank ID</Column>
         </Download>
@@ -765,7 +765,7 @@
                  order by 1
                  ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">Gene ID</Column>
         </Download>
@@ -792,7 +792,7 @@
                 order by 1
                  ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">InterPro ID</Column>
         </Download>
@@ -820,7 +820,7 @@
                  order by 1
                   ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">RefSeq ID</Column>
         </Download>
@@ -847,7 +847,7 @@
                      order by 1
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">Vega ID</Column>
         </Download>
@@ -874,7 +874,7 @@
                     order by 1
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">UniGene ID</Column>
         </Download>
@@ -901,7 +901,7 @@
                     order by 1
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
             <Column id="3">UniProt ID</Column>
         </Download>
@@ -925,7 +925,7 @@
                      order by 1
                     ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
             <Column id="3">ZFIN Name</Column>
             <Column id="4">Fly Symbol</Column>
@@ -952,7 +952,7 @@
                      order by 1
                      ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
             <Column id="3">ZFIN Name</Column>
             <Column id="4">Human Symbol</Column>
@@ -980,7 +980,7 @@
                      order by 1
                      ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
             <Column id="3">ZFIN Name</Column>
             <Column id="4">Mouse Symbol</Column>
@@ -1007,7 +1007,7 @@
                     order by gene_id, mrkr_abbrev, ortho_abbrev
                      ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN ID</Column>
+            <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">ZFIN Symbol</Column>
             <Column id="3">Entrez Zebrafish Gene ID</Column>
             <Column id="4">Human Gene Symbol</Column>
@@ -1042,7 +1042,7 @@
                        and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id
                         ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
+            <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Marker ID</Column>
             <Column id="4">Marker Symbol</Column>
@@ -1081,7 +1081,7 @@
                      order by mrkr_zdb_id
                         ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
+            <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Genotype</Column>
             <Column id="4">Super Structure ID</Column>
@@ -1128,7 +1128,7 @@
                      order by  1,2
                         ]]>
             </Query>
-            <Column id="1" unqiue="true">Environment ID</Column>
+            <Column id="1" unique="true">Environment ID</Column>
             <Column id="2">Condition Group</Column>
             <Column id="3">Condition Content</Column>
             <Column id="4">Value</Column>
@@ -1156,7 +1156,7 @@
                      order by xpatex_zdb_id
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Expression ID</Column>
+            <Column id="1" unique="true">Expression ID</Column>
             <Column id="2">Expression Result ID</Column>
             <Column id="3">Figure ID</Column>
         </Download>
@@ -1187,7 +1187,7 @@
                      order by xpatres_xpatex_zdb_id
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Expression Result ID</Column>
+            <Column id="1" unique="true">Expression Result ID</Column>
             <Column id="2">Expression ID</Column>
             <Column id="3">Start Stage ID</Column>
             <Column id="4">End Stage ID</Column>
@@ -1237,7 +1237,7 @@
                      order by antibody.atb_zdb_id, xpat_zdb
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Antibody ID</Column>
+            <Column id="1" unique="true">Antibody ID</Column>
             <Column id="2">Antibody Name</Column>
             <Column id="3">Gene ID (Optional)</Column>
             <Column id="4">Gene Symbol (Option)</Column>
@@ -1283,7 +1283,7 @@
                      ) order by gene_zdb, xpat_zdb, probe_zdb
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
+            <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">EST ID (Optional)</Column>
             <Column id="4">EST Symbol (Optional)</Column>
@@ -1314,8 +1314,8 @@
                      order by genox_geno_zdb_id
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
-            <Column id="2" unqiue="true">Figure ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2" unique="true">Figure ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1359,25 +1359,25 @@
                      order by geno_zdb_id, fig_source_zdb_id
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
-            <Column id="2" unqiue="true">Genotype Name</Column>
-            <Column id="3" unqiue="true">Start Stage ID</Column>
-            <Column id="4" unqiue="true">Start Stage Name</Column>
-            <Column id="5" unqiue="true">End Stage ID</Column>
-            <Column id="6" unqiue="true">End Stage Name</Column>
-            <Column id="7" unqiue="true">Affected Structure or Process 1 superterm ID</Column>
-            <Column id="8" unqiue="true">Affected Structure or Process 1 superterm Name</Column>
-            <Column id="9" unqiue="true">Affected Structure or Process 1 subterm ID</Column>
-            <Column id="10" unqiue="true">Affected Structure or Process 1 subterm Name</Column>
-            <Column id="11" unqiue="true">Phenotype Keyword ID</Column>
-            <Column id="12" unqiue="true">Phenotype Keyword Name</Column>
-            <Column id="13" unqiue="true">Phenotypep Modifier</Column>
-            <Column id="14" unqiue="true">Affected Structure or Process 2 superterm ID</Column>
-            <Column id="15" unqiue="true">Affected Structure or Process 2 superterm Name</Column>
-            <Column id="16" unqiue="true">Affected Structure or Process 2 subterm ID</Column>
-            <Column id="17" unqiue="true">Affected Structure or Process 2 subterm Name</Column>
-            <Column id="18" unqiue="true">Publication ID</Column>
-            <Column id="19" unqiue="true">Environment ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2" unique="true">Genotype Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7" unique="true">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="8" unique="true">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="9" unique="true">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="10" unique="true">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="11" unique="true">Phenotype Keyword ID</Column>
+            <Column id="12" unique="true">Phenotype Keyword Name</Column>
+            <Column id="13" unique="true">Phenotypep Modifier</Column>
+            <Column id="14" unique="true">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="15" unique="true">Affected Structure or Process 2 superterm Name</Column>
+            <Column id="16" unique="true">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17" unique="true">Affected Structure or Process 2 subterm Name</Column>
+            <Column id="18" unique="true">Publication ID</Column>
+            <Column id="19" unique="true">Environment ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1428,18 +1428,18 @@
                      order by geno_zdb_id, fig_source_zdb_id
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
-            <Column id="2" unqiue="false">Genotype Name</Column>
-            <Column id="3" unqiue="true">Start Stage OBO ID</Column>
-            <Column id="4" unqiue="true">End Stage OBO ID</Column>
-            <Column id="5" unqiue="true">Affected Structure or Process 1 superterm OBO ID</Column>
-            <Column id="6" unqiue="true">Affected Structure or Process 1 subterm OBO ID</Column>
-            <Column id="7" unqiue="true">Phenotype Keyword OBO ID</Column>
-            <Column id="8" unqiue="true">Phenotypep Modifier</Column>
-            <Column id="9" unqiue="true">Affected Structure or Process 2 superterm OBO ID</Column>
-            <Column id="10" unqiue="true">Affected Structure or Process 2 subterm OBO ID</Column>
-            <Column id="11" unqiue="true">Publication ID</Column>
-            <Column id="12" unqiue="true">Environment ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2" unique="false">Genotype Name</Column>
+            <Column id="3" unique="true">Start Stage OBO ID</Column>
+            <Column id="4" unique="true">End Stage OBO ID</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="6" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
+            <Column id="7" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="8" unique="true">Phenotypep Modifier</Column>
+            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="10" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="11" unique="true">Publication ID</Column>
+            <Column id="12" unique="true">Environment ID</Column>
         </Download>
         <Download orderIndex="3">
             <Name>
@@ -1478,7 +1478,7 @@
                      order by 1,2
                            ]]>
             </Query>
-            <Column id="1" unqiue="true">Environment ID</Column>
+            <Column id="1" unique="true">Environment ID</Column>
             <Column id="2">Condition Group</Column>
             <Column id="3">Condition</Column>
         </Download>
@@ -1501,21 +1501,21 @@
                         order by gene_id, mrkr_abbrev, ortho_abbrev, type
                   ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
-            <Column id="2" unqiue="false">Entrez Zebrafish Gene ID</Column>
-            <Column id="3" unqiue="true">Entrez Human Gene ID</Column>
-            <Column id="4" unqiue="true">ZFIN Gene Symbol</Column>
-            <Column id="5" unqiue="true">Affected Structure or Process 1 superterm OBO ID</Column>
-            <Column id="6" unqiue="true">Affected Structure or Process 1 superterm name</Column>
-            <Column id="7" unqiue="true">Affected Structure or Process 1 subterm OBO ID</Column>
-            <Column id="8" unqiue="true">Affected Structure or Process 1 subterm name</Column>
-            <Column id="9" unqiue="true">Affected Structure or Process 2 superterm OBO ID</Column>
-            <Column id="10" unqiue="true">Affected Structure or Process 2 superterm name</Column>
-            <Column id="11" unqiue="true">Affected Structure or Process 2 subterm OBO ID</Column>
-            <Column id="12" unqiue="true">Affected Structure or Process 2 subterm name</Column>
-            <Column id="13" unqiue="true">Phenotype Keyword OBO ID</Column>
-            <Column id="14" unqiue="true">Phenotype Quality</Column>
-            <Column id="15" unqiue="true">Phenotype Tag</Column>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
+            <Column id="3" unique="true">Entrez Human Gene ID</Column>
+            <Column id="4" unique="true">ZFIN Gene Symbol</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
+            <Column id="7" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
+            <Column id="8" unique="true">Affected Structure or Process 1 subterm name</Column>
+            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="10" unique="true">Affected Structure or Process 2 superterm name</Column>
+            <Column id="11" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="12" unique="true">Affected Structure or Process 2 subterm name</Column>
+            <Column id="13" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="14" unique="true">Phenotype Quality</Column>
+            <Column id="15" unique="true">Phenotype Tag</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1536,7 +1536,7 @@
                      where geno_Zdb_id = genoback_geno_Zdb_id
                   ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Background</Column>
         </Download>
@@ -1569,7 +1569,7 @@
                      order by genotype_id, geno_display_name
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Genotye Unique Name</Column>
             <Column id="4">Allele ID</Column>
@@ -1604,7 +1604,7 @@
                        and geno_zdb_id = genofeat_geno_zdb_id
                       ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Genotye Unique Name</Column>
             <Column id="4">Affected Gene Symbol</Column>
@@ -1630,7 +1630,7 @@
                        and recattrib_source_type = 'standard'
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Publication ID</Column>
         </Download>
         <Download orderIndex="1">
@@ -1654,7 +1654,7 @@
                     order by lower(feature_abbrev);
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Genomic Feature ID</Column>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
             <Column id="2">Genomic Feature Abbreviation</Column>
             <Column id="3">Genomic Feature Name</Column>
             <Column id="4">Genomic Feature Type</Column>
@@ -1689,9 +1689,9 @@
                     order by lower( feature_name)
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Genomic Feature ID</Column>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
             <Column id="2">Genomic Feature Abbreviation</Column>
-            <Column id="3" unqiue="true">Gene Symbol</Column>
+            <Column id="3" unique="true">Gene Symbol</Column>
             <Column id="4">Gene ID</Column>
             <Column id="5">Genomic Feature - Marker Relationship</Column>
         </Download>
@@ -1714,7 +1714,7 @@
                      where geno_is_wildtype = 't'
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Genotype ID</Column>
+            <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Genotype Abbreviation</Column>
         </Download>
@@ -1738,7 +1738,7 @@
                        and jtype = 'Journal'
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Publication ID</Column>
+            <Column id="1" unique="true">Publication ID</Column>
             <Column id="2">pubMed ID (none or blank when not available)</Column>
             <Column id="3">Authors</Column>
             <Column id="4">Title</Column>
@@ -1897,7 +1897,7 @@
                     and jtype='Journal';
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">ZFIN Marker ID</Column>
+            <Column id="1" unique="true">ZFIN Marker ID</Column>
             <Column id="2">UniProtKB ID</Column>
             <Column id="3">PubMed ID</Column>
             <Column id="4">ZFIN Annotation (GO/Phenotype/Expression)</Column>
@@ -1922,7 +1922,7 @@
                        and jtype = 'Journal'
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Publication ZFIN ID</Column>
+            <Column id="1" unique="true">Publication ZFIN ID</Column>
             <Column id="2">PubMed ID (none or blank when not available)</Column>
         </Download>
         <Download orderIndex="5">
@@ -1947,7 +1947,7 @@
                      order by stg_hours_start, anatdisp_seq_num;
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Entire Staged Anatomy (tab indented)</Column>
+            <Column id="1" unique="true">Entire Staged Anatomy (tab indented)</Column>
         </Download>
         <Download orderIndex="3">
             <Name>
@@ -1971,8 +1971,8 @@
                        and term2.term_zdb_id = termrel_term_2_zdb_id
                          ]]>
             </Query>
-            <Column id="1" unqiue="true">Parent Item ID</Column>
-            <Column id="2" unqiue="true">Child Item ID</Column>
+            <Column id="1" unique="true">Parent Item ID</Column>
+            <Column id="2" unique="true">Child Item ID</Column>
             <Column id="3">Relationship Type ID</Column>
         </Download>
         <Download orderIndex="1">
@@ -1994,7 +1994,7 @@
                      where term_ont_id = anatitem_obo_id
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Anatomy ID</Column>
+            <Column id="1" unique="true">Anatomy ID</Column>
             <Column id="2">Anatomy Name</Column>
             <Column id="3">Start Stage ID</Column>
             <Column id="4">End Stage ID</Column>
@@ -2023,7 +2023,7 @@
                      order by anatitem_name
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Anatomy ID</Column>
+            <Column id="1" unique="true">Anatomy ID</Column>
             <Column id="2">Anatomy Name</Column>
             <Column id="3">Anatomy Synonym</Column>
         </Download>
@@ -2051,7 +2051,7 @@
                      order by anatitem_name
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Stage ID</Column>
+            <Column id="1" unique="true">Stage ID</Column>
             <Column id="2">Stage OBO ID</Column>
             <Column id="3">Stage Name</Column>
             <Column id="4">Begin Hours</Column>
@@ -2083,7 +2083,7 @@
                        order by gn.mrkr_abbrev
                           ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
+            <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Morpholino ID</Column>
             <Column id="4">Morpholino Symbol</Column>
@@ -2114,7 +2114,7 @@
                      order by img_zdb_id
                       ]]>
             </Query>
-            <Column id="1" unqiue="true">Image ID</Column>
+            <Column id="1" unique="true">Image ID</Column>
             <Column id="2">Figure ID</Column>
             <Column id="3">Image Preparation</Column>
         </Download>
@@ -2137,7 +2137,7 @@
                     from lamhdi_tmp
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">OMIM ID</Column>
+            <Column id="1" unique="true">OMIM ID</Column>
             <Column id="2">OMIM Disease Name</Column>
             <Column id="3">OMIM Disease Symbol</Column>
             <Column id="4">Gene ID</Column>
@@ -2148,6 +2148,37 @@
             <Column id="9">Genomic Feature Name</Column>
             <Column id="10">Genomic Feature ID</Column>
         </Download>
+
+        <Download private="true" orderIndex="1">
+            <Name>
+                Sanger Alleles used in non Sanger pubs
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description> FB Case 8490</Description>
+            <WikiLink></WikiLink>
+            <FileName>saAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'sa%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev
+                 ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+         </Download>
+
         <Download private="true" orderIndex="10">
             <Name>
                 Vega Transcript
@@ -2174,7 +2205,7 @@
                        ) order by 1
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">Transcript ID</Column>
+            <Column id="1" unique="true">Transcript ID</Column>
             <Column id="2">Transcript Symbol</Column>
             <Column id="3">GenBank Accession Number</Column>
         </Download>
@@ -2201,7 +2232,7 @@
                     order by 1
                    ]]>
             </Query>
-            <Column id="1" unqiue="true">Gene ID</Column>
+            <Column id="1" unique="true">Gene ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Pfam Accession Number</Column>
         </Download>
