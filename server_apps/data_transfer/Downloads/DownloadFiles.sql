@@ -889,6 +889,24 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
  order by mrkr_zdb_id
 ;
 
+--case 8490. Report of all publications that use an sa allele
+--not for public consumption
+--only for Sanger, will be picked up by sanger folks.
+
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt'"
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt'
+DELIMITER "	"
+select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+from feature, record_attribution, publication, journal 
+where recattrib_data_zdb_id=feature_zdb_id 
+and feature_abbrev like 'sa%'  
+and zdb_id=recattrib_source_zdb_id 
+and jtype='Journal' 
+and pub_jrnl_zdb_id=jrnl_zdb_id 
+order by feature_abbrev;
+ 
+
+
 {
 case 4402  Weekly download file available via the web.
 Fields: OMIM, ZFIN-GENE-ID, ZFIN-GENO-ID, ZIRC-ALT-ID
