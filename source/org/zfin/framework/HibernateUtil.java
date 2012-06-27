@@ -89,7 +89,7 @@ public class HibernateUtil {
      * Need to set the PDQPRIORITY back to a high value.
      */
     public static void flushAndCommitCurrentSessionWithLowPdq() {
-        String pdqQuery = "SET PDQPRIORITY 80 ";
+        String pdqQuery = "SET PDQPRIORITY 50 ";
         RepositoryFactory.getInfrastructureRepository().executeJdbcQuery(pdqQuery);
         currentSession().flush();
         currentSession().getTransaction().commit();

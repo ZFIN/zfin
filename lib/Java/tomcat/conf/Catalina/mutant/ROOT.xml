@@ -16,7 +16,7 @@ preferredTestQuery. If unhealthy, a new connection will be created.-->
            user="zfinner" password="Rtwm4ts"
            driverClass="com.informix.jdbc.IfxDriver" 
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high;IFX_ISOLATION_LEVEL=DR"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=50;IFX_ISOLATION_LEVEL=DR"
            maxPoolSize="8" minPoolSize="6"  
            idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
 />
@@ -33,7 +33,7 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
            user="zfinner" password="Rtwm4ts"
            driverClass="com.informix.jdbc.IfxDriver" 
            
-jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=high;IFX_ISOLATION_LEVEL=DR"
+jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/sysmaster:INFORMIXSERVER=@INFORMIXSERVER@;IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=50;IFX_ISOLATION_LEVEL=DR"
            maxPoolSize="8" minPoolSize="2" />
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"
