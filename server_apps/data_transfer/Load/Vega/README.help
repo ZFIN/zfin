@@ -85,10 +85,10 @@ all controlling informix user... just because.
 note: blasting and parsing can take some time
 
 
-gmake load_transcripts [_commit]
+gmake load_transcripts[_commit]
 
 creates new transcript records for all of the novel transcripts, even 
-those that it would be nice to just replace the ottdart for.
+those that it would be nice to just replace the ottdarT for.
 
 Occasionally one of the sub-steps here is updating a mapping from Vega's 
 transcript and gene types to to ZFIN's transcript type and status. 
@@ -105,13 +105,15 @@ time for the current load. So you trim them from your local working
 (not archive) copy
 the names to edit are in the destination directory in the files: 
 	assembly_for_tom.txt 
-	clonelist_for_tom.txt 
+	clonelist_for_tom.txt
+	 
+(Think I have code to truncate clone names with underscore suffix later)
 
-This target will create and augment a load file with Sanger's side of the 
-mapping in place and the nulls on zfin's side will get default values. 
+***This target will create and augment a load file with Sanger's side of 
+the mapping in place and the nulls on zfin's side will get default values. 
 If the default are not appropriate you will need to figure out what is 
 and add it to the "vega_type_translation.unl"  
-see "load_novel_transcript.sql" for defaults.
+see "load_novel_transcript.sql" for the defaults.
 
 The load will report a lot of details and counts so you can develop a 
 sense of what is going on and how things are changing.
@@ -122,7 +124,7 @@ It checks for impending name collisions, although transcript names are
 fairly useless it may provide additional hints for merging and in any case 
 a name collision will force the incoming name to be the ottdarT so it 
 might be worthwhile to change the names of the existing if that is 
-preferable. in any case the name given now is subject to change when 
+preferable. In any case the name given now is subject to change when 
 they send back the official transcript names for this load which do not 
 exist yet  
 
@@ -142,20 +144,22 @@ as informix.
 
 ########################################################################
 
-With the blast done, prevega blast database in place, and transcripts 
-records loaded and withdrawn in zfin you can populate a reno run for the
-curators to work on. Creating the reno run entails copying the 
-"Vega_[timestamp]_NEW_.ctx" file to the .../data_transfer/Load/Reno/ dir
-as "run.ctx"  and doing a run[_commit] there.  And of course, letting 
-the curators know. You should always load on a development instance 
-and test it yourself before putting it on production.
+With the blast done, 
+prevega blast database in place (you did this as informix ,right?), 
+and transcript records loaded and withdrawn in zfin, you can populate a 
+reno run for the curators to work on. Creating the reno run entails 
+copying the "Vega_[timestamp]_NEW_.ctx" file to the 
+.../data_transfer/Load/Reno/ dir as "run.ctx"  and doing a run[_commit] 
+there.  And of course, letting the curators know. You should always load
+and test on a development instance yourself before moving to production.
 
-we do not get huge loads anymore but if we do you may need to carefully
+We do not get huge loads anymore but if we do, you may need to carefully
 split up the sets of accessions which are blasted making sure you keep 
 "families" of transcripts together.  this will create smaller .ctx files
-which will avoid the long transaction timeout. you can not arbitrarily 
-pick a number  to blast because the it is the size and number of hits  
-which you do not know in advance that will decide.
+which will avoid the long transaction timeout. 
+(you can not just arbitrarily pick a number of accessions to blast 
+because it is the size and number of hits, which you do not know in 
+advance, that will matter).
  
 ######################################################################## 
 
@@ -210,18 +214,21 @@ which we fetch and load.
 gff3_backbone[_commit]
 
 they sometimes provide the gff3 before they go public and sometimes not
-when they do you can fetch it (may need to edit)
+when they do you can fetch it (may need to edit ftp path or name)
 
 
 ########################################################################
 
 vega_public[_commit]
+long after every thing else is done the last and most easily forgotten 
+step is to change prevega dblinks to Vega_trans links and add/delete vega 
+gene and protein links. (ottdar[GP]) 
+you will need to figure out when they go public by paying attention to 
+them.
 
-the last and most easily forgotten step is to change prevega dblinks 
-to Vega_trans links and  add/delete vega gene and protein links.
-
-this means pushing the same fasta file you created the prevega blast database 
-with as the vega_trans blast database
-
+this also means pushing the same fasta file you created the prevega blast 
+database with as the vega_zfin blast database
 so copy or symlink the vega_transcript.nt file to vega_zfin.fa and push.
 
+Then cross your parts and hope the local blast database fairies do not 
+decide to correct it by clobbering with the previous version.

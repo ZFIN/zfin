@@ -116,7 +116,7 @@ $(ORIGZIP):
 $(ORIGSET): $(ORIGZIP) 
 	-gunzip -fc $@.gz > $@
 
-# only update wnen orig is newer than working
+# only update when orig is newer than working
 # if this was gnu cp there would be a -u option
 # allows corrections Sanger will not get around to.
 $(WORKINGSET): $(ORIGSET)
@@ -419,6 +419,12 @@ load_transcripts_commit: $(TS_LOAD_FILES)  commit.sql vega_type_translation.unl
 	@echo "load_transcripts COMMITED\n"
 	rm -f ottdarT_length.unl novel_transcript.unl query_ottdarT.unl
 
+# may want to look at how 
+# diff zfin_tscript_pre.unl novel_tscript_post.unl |\
+# grep "<" | cut -f2- -d \| | sort | uniq -c | sort -k2,2n	
+	
+	
+
 clean_load_transcripts:
 	rm -f $(DEST)/ottdarT.lst $(DEST)/novel_transcripts.lst \
 	 $(DEST)/novel_transcripts_for_tom.defline \
@@ -432,6 +438,10 @@ clean_load_transcripts:
 #                   Withdraw Transcripts
 
 BLASTFILES = /research/zblastfiles/files/LOCAL
+
+# should add in a check for transcripts incorrectly flagged as withdrawn
+# as there was one
+
 
 existing_withdrawn.fa:  $(BLASTFILES)/vega_withdrawn.fa
 	cp $< $@
