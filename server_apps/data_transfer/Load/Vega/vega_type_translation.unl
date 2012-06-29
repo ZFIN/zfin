@@ -1,5 +1,9 @@
 gene|IG_gene|2||
+gene|IG_pseudogene|2||
 gene|TEC|||
+gene|antisense|||
+gene|lincRNA|||
+gene|non_coding|||
 gene|polymorphic_pseudogene||18|
 gene|polymorphic||18|
 gene|processed_pseudogene|||
@@ -7,8 +11,11 @@ gene|processed_transcript|||
 gene|protein_coding_in_progress|||
 gene|protein_coding|||
 gene|pseudogene|||
+gene|sense_intronic|||
+gene|sense_overlapping|||
 gene|transcribed_unprocessed_pseudogene|||
-gene|unprocessed_pseudogene|||
+gene|unprocessed_pseudogene|4||
+transcript|IG_pseudogene|4||
 transcript|TEC||15|
 transcript|antisense|1||
 transcript|artifact||8|
