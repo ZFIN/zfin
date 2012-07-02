@@ -376,7 +376,7 @@
                     <tr align="left">
                         <td>
                             Show all <a
-                                href="show_all_expression?genoID=${formBean.genotype.zdbID}">${formBean.totalNumberOfExpressedGenes}&nbsp;expressed
+                                href="/action/genotype/show_all_expression?genoID=${formBean.genotype.zdbID}">${formBean.totalNumberOfExpressedGenes}&nbsp;expressed
                             genes</a>
                         </td>
                     </tr>
