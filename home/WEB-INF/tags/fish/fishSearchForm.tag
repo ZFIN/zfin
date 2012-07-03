@@ -154,7 +154,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <%--<tr>
         <td colspan="2"></td>
         <td>
             <div class="search-form-alternate-link">
@@ -162,7 +162,7 @@
                 <a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg">It's still available</a>
             </div>
         </td>
-    </tr>
+    </tr>--%>
 </table>
 
 <div class="search-form-bottom-bar" style="text-align:right">
