@@ -17,6 +17,7 @@
 <%@ attribute name="anchor" required="false" rtexprvalue="true" type="java.lang.String"
               description="An anchor name to link directly to this section of the page" %>
 
+<%-- 
 <c:if test="${empty anchor}">  
   <c:set var="anchor" value="${fn:replace(title, \" \", \"_\")}" />
   <c:set var="anchor" value="${fn:replace(anchor, \"(\",\"\")}" />
@@ -24,7 +25,7 @@
   <c:set var="anchor" value="${fn:replace(anchor, \",\", \"\")}" />
   <c:set var="anchor" value="${fn:toLowerCase(anchor)}" />
 </c:if>
-
+--%> 
 
 <c:choose>
     <c:when test="${!empty noDataText}">
