@@ -12,6 +12,8 @@
 <!--|COUNT_VEGA_OUT|-->	informix\@cs.uoregon.edu
 <!--|COUNT_ZGC_ERR|-->	informix\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	informix\@cs.uoregon.edu
+<!--|CURATION_DBNAME|-->	false
+<!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	informix\@cs.uoregon.edu
 <!--|DB_NAME|-->	zfindb
 <!--|DB_OWNER|-->	${USER}
@@ -22,6 +24,7 @@
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
+<!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
@@ -39,10 +42,14 @@
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
 <!--|ONCONFIG_FILE|-->	onconfig
+<!--|PARTNER_DBNAME|-->	false
+<!--|PARTNER_INTERNAL_INSTANCE|-->	false
+<!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/embryonix
+<!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/tmp

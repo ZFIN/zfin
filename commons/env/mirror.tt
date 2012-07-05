@@ -81,7 +81,7 @@
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu kschaper\@cs.uoregon.edu cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu
-<!--|WIKI_HOST|-->	azraelwiki.zfin.org
+<!--|WIKI_HOST|-->	devwiki.zfin.org
 <!--|ZFIN_ADMIN|-->	knight\@uoneuro.uoregon.edu mochla\@zfin.org staylor\@cs.uoregon.edu
 <!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
