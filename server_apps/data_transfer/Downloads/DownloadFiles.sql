@@ -978,16 +978,16 @@ drop table lamhdi_tmp;
 
 -- download file Case 4200 as reuqested by uniprot
        
+delete from tmp_gene_pubcount;
+
+insert into tmp_gene_pubcount
 select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
  from record_attribution
  where recattrib_data_zdb_id[1,8] = 'ZDB-GENE'
  group by recattrib_data_zdb_id
- into temp tmp_gene_pubcount with no log
 ;
 
-create index  tmp_gene_pubcount_pubcount_idx on tmp_gene_pubcount(pubcount) in idxdbs3;
-
-update statistics medium for table tmp_gene_pubcount;
+update statistics low for table tmp_gene_pubcount;
 
 -- why isn't this file tab delimited?
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'"
@@ -1002,7 +1002,9 @@ and geneid=xpatex_gene_zdb_id
 and xpatex_source_zdb_id=zdb_id
 and pubcount <= 20
 and jtype='Journal'
+
 union
+
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
 from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, marker_go_term_evidence
 where geneid=dblink_linked_recid
@@ -1013,9 +1015,12 @@ and geneid=mrkrgoev_mrkr_zdb_id
 and mrkrgoev_source_zdb_id=zdb_id
 and pubcount <= 20
 and jtype='Journal'
+
 union
+
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
+--select count(*)
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment,  phenotype_experiment, phenotype_statement, figure
 where geneid=dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1031,8 +1036,11 @@ and pubcount <= 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
+
 union
+
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+--select count(*)
 from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
@@ -1047,8 +1055,11 @@ and fig_source_zdb_id = zdb_id
 and pubcount <= 20
 and jtype='Journal'
 and phenos_tag!='normal'
+
 union
+
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+--select count(*)
 from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search, marker_relationship
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
@@ -1064,8 +1075,11 @@ and fig_source_zdb_id = zdb_id
 and pubcount <= 20
 and jtype = 'Journal'
 and phenos_tag != 'normal'
+
 union
+
 select geneid, dblink_acc_num,zdb_id,accession_no,'GO' as  cur_topic
+--select count(*)
 from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, marker_go_term_evidence
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
@@ -1075,9 +1089,12 @@ and geneid = mrkrgoev_mrkr_zdb_id
 and mrkrgoev_source_zdb_id = zdb_id
 and pubcount > 20
 and jtype = 'Journal'
+
 union
+
 select geneid, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, experiment, phenotype_experiment, phenotype_statement, figure
+--select count(*)
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, phenotype_experiment, phenotype_statement, figure
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1093,8 +1110,11 @@ and pubcount > 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
+
 union
+
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+--select count(*)
 from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount, foreign_db_contains fdbc, foreign_db fdb, db_link, publication, mutant_fast_search
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
@@ -1109,8 +1129,11 @@ and fig_source_zdb_id = zdb_id
 and pubcount > 20
 and jtype='Journal'
 and phenos_tag !='normal'
+
 union
+
 select geneid,dblink_acc_num,zdb_id,accession_no,'Phenotype' as cur_topic 
+--select count(*)
 from phenotype_experiment, phenotype_statement, figure, tmp_gene_pubcount,foreign_db_contains fdbc, foreign_db fdb, db_link, publication,mutant_fast_search, marker_relationship
 where phenox_genox_zdb_id = mfs_genox_zdb_id
 and geneid = dblink_linked_recid
@@ -1126,8 +1149,6 @@ and fig_source_zdb_id = zdb_id
 and pubcount > 20
 and phenos_tag !='normal'
 and jtype='Journal';
-
-drop table tmp_gene_pubcount;
 
 -- download file Case 4693 as reuqested by uniprot
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfinpubs.txt'"
