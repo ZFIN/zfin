@@ -934,7 +934,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " from record_attribution ra ,  genotype_feature gf " +
                     " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = gf.genofeat_feature_zdb_id " +
+                    // expression_experiment
+                    " union " +
+                    " select xpatex_source_zdb_id  " +
+                    " from expression_experiment " +
+                    " where :markerZdbID = xpatex_gene_zdb_id " +
                     " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
+
 
     @Override
     public List<Publication> getPubsForDisplay(String zdbID) {
