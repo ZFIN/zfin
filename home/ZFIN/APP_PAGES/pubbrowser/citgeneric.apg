@@ -113,6 +113,13 @@
       and recattrib_source_zdb_id = p.zdb_id 
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, expression_experiment
+      where recattrib_data_zdb_id = xpatex_zdb_id
+      and xpatex_gene_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
 <?/MIVAR>
 
 
@@ -148,6 +155,9 @@
 
 
 <?MIVAR NAME=sp_G_returnvar>$citfish_sql<?/MIVAR>
+
+<?MIVAR>$citfish_sql<?/MIVAR>
+
 
 <script type="javascript">
 alert("$sp_G_returnvar") ; 
