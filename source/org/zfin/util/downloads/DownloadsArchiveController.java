@@ -74,6 +74,7 @@ public class DownloadsArchiveController {
         String date = year + "." + month + "." + day;
         formBean.setDate(date);
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, date);
         return "unload/download-date-summary.page";
     }
 
@@ -111,6 +112,7 @@ public class DownloadsArchiveController {
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         File dFile = FileUtil.createFile("data-transfer", archiveDate, file.getName());
         formBean.setFileName("/" + dFile.getPath());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, archiveDate);
         return "unload/view-download-file";
     }
 
@@ -183,6 +185,7 @@ public class DownloadsArchiveController {
         formBean.setDate(date);
         formBean.setCurrentDate((true));
         String[] dateArray = date.split("\\.");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, date);
         return getArchivedDownloads(model, dateArray[0], dateArray[1], dateArray[2], formBean);
     }
 
