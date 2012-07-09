@@ -992,6 +992,7 @@ update statistics low for table tmp_gene_pubcount;
 -- why isn't this file tab delimited?
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'"
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'
+ DELIMITER "	"
 select geneid, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
 from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment
 where geneid=dblink_linked_recid

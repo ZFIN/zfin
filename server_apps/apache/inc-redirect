@@ -106,13 +106,20 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
 
 #download page
-RewriteRule ^/downloads/archive/(.*) /action/unload/downloads/archive/$1 [NC,L,PT]
+# archive pages
+RewriteRule ^/downloads/archive/(.+)/file/(.+) /action/unload/downloads/archive/$1/file/$2 [NC]
+RewriteRule ^/downloads/archive/(.+)/(.+) /data-transfer/$1/$2 [NC,L]
+RewriteRule ^/downloads/archive/(.+) /action/unload/downloads/archive/$1 [NC,L,PT]
 RewriteRule ^/downloads/archive /action/unload/downloads/archive [NC,L,PT]
-RewriteRule ^/downloads/(.*) /action/unload/downloads/$1 [NC,L,PT]
-RewriteRule ^/downloads /action/unload/downloads [NC,PT]
+# redirect old download pages
 RewriteRule ^/zf_info/downloads.html /downloads [NC,R=301]
 RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
-
+# current files
+RewriteRule ^/downloads/file/(.+) /action/unload/downloads/file/$1 [NC]
+## download files
+RewriteRule ^/downloads/([\S]+[.][\S]+) /data-transfer/current/$1 [NC,L]
+RewriteRule ^/downloads/([\S]*) /action/unload/downloads/$1 [NC,L,PT]
+RewriteRule ^/downloads /action/unload/downloads/ [NC,L,PT]
 
 #Allow use of same cgi-bin/webdriver path on all dev sites,
 #this rule should be below anything else webdriver related,
