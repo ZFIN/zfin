@@ -26,8 +26,8 @@
             The 'Download File' link will display the file in your browser. Click the download button to
             save the file onto your local system (includes timestamp and header info). If you choose to link to
             a ZFIN data page from your web site, append the ZFIN ID to the URL
-            http://zfin.org/cgi-bin/ZFIN_jump?record=<br/>
-            e.g. http://zfin.org/cgi-bin/ZFIN_jump?record=ZDB-GENE-980526-166 <br/>
+            http://zfin.org/<br/>
+            e.g. http://zfin.org/ZDB-GENE-980526-166 <br/>
             for the 'shha' gene.
             Please direct questions or requests for additional data to <a href="mailto:zfinadmn@zfin.org">ZFIN.</a>
         </td>
