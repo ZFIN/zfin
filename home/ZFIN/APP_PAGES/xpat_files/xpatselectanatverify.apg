@@ -8,7 +8,7 @@ converting anatomical terms to a zdb_id list
 and display information about the expression
 patterns related to the anatomy items.
 
-This file is called from either xpatselect.apg or fishselect.apg (with parameter $xpanatv_called_from = "mutantpage")
+This file is called from either xpatselect.apg (with parameter $xpanatv_called_from = "mutantpage")
 
 INPUT VARS:
   xpanatv_processed_selected_structures		pipe seperated list of user entered terms
