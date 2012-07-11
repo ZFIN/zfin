@@ -13,9 +13,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.uniquery.categories.SiteSearchCategories;
@@ -34,21 +32,19 @@ public class SiteSearchTest {
     private String[] title = {"Gene", "Antibodies"};
     private String[] text = {"Gene clew is expressed in the eye and ear.",
             "Antibody ab-clew is use in immunohistochemistry, wer.antibody"};
-    private IndexWriter index;
-    String indexDir = "indexer-test";
-    File indexDirectory = new File(indexDir);
 
-    FSDirectory fsDirectory;
+    private IndexWriter index;
+    private RAMDirectory ramDirectory;
 
     @Test
     public void indexText() {
-        createIndex();
 
+        createIndex();
         String queryString = "Antibody";
         IndexReader reader = null;
         Searcher searcher = null;
         try {
-            reader = IndexReader.open(fsDirectory);
+            reader = IndexReader.open(ramDirectory);
             searcher = new IndexSearcher(reader);
             Analyzer analyzer = new StandardAnalyzer();
             QueryParser parser = new QueryParser("body", analyzer);
@@ -57,13 +53,14 @@ public class SiteSearchTest {
             //        BooleanQuery query = new BooleanQuery();
             //      query.add(new PrefixQuery(new Term("title", queryString)), BooleanClause.Occur.SHOULD);
 
-            searcher.search(query);
-
-            System.out.println("End of search");
+            Hits hits = searcher.search(query);
+            assertNotNull(hits);
         } catch (IOException e) {
             e.printStackTrace();
+            fail();
         } catch (ParseException pe) {
             pe.printStackTrace();
+            fail();
         } finally {
             try {
                 if (reader != null)
@@ -74,10 +71,6 @@ public class SiteSearchTest {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("End of search");
-
-
     }
 
     private void createIndex() {
@@ -92,16 +85,14 @@ public class SiteSearchTest {
             try {
                 // index the document (the results of parsing URL)
                 index.addDocument(doc);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         try {
             index.optimize();
             index.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -140,31 +131,18 @@ public class SiteSearchTest {
         directory.close();
     }
 
-
     @Before
-    public void before() throws Exception {
-        indexDirectory.deleteOnExit();
-        fsDirectory = FSDirectory.getDirectory(indexDirectory);
-        FSDirectory.setDisableLocks(true);
-
-        if (!indexDirectory.exists()) {
-            boolean success = indexDirectory.mkdir();
-            if (!success)
-                System.out.println("Could not create indexer directory");
-        }
-
-        try {
-            index = new IndexWriter(new File(indexDir), new StandardAnalyzer(), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setup() throws Exception {
+        Analyzer analyzer = new StandardAnalyzer();
+        ramDirectory = new RAMDirectory();
+        index = new IndexWriter(ramDirectory, analyzer, true);
 
     }
 
     @Test
-    public void fancyExcludeDefinition(){
+    public void fancyExcludeDefinition() {
 //        Pattern  pattern = Pattern.compile("\\p{ASCII}*marker/view\\p{ASCII}*ZDB-(!GENE|!ATB|\\p{ASCII}*)-\\p{ASCII}*") ;
-        Pattern  pattern = Pattern.compile("marker/view/ZDB-(?!(GENE|ATB))") ;
+        Pattern pattern = Pattern.compile("marker/view/ZDB-(?!(GENE|ATB))");
 //        Pattern  pattern = Pattern.compile("marker/view") ;
         assertFalse(pattern.matcher("http://localhost/action/marker/view/ZDB-GENE-040425-396").find());
         assertFalse(pattern.matcher("http://localhost/action/marker/view/ZDB-ATB-040425-396").find());
@@ -182,13 +160,6 @@ public class SiteSearchTest {
         assertEquals("MarkerView", docType);
         docType = SiteSearchCategories.getDocType("http://localhost/action/marker/view/ZDB-ATB-081002-20");
         assertEquals("AntibodyView", docType);
-    }
-
-    @After
-    public void after() {
-        boolean success = indexDirectory.delete();
-        if (!success)
-            System.out.println("Could not delete indexer directory");
     }
 
 }

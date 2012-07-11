@@ -14,10 +14,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-/**
- * This is the test class that tests funcionality of the AnatomyPresentation class,
- * a helper class to provide convenience methods for presentation.
- */
 @SuppressWarnings({"FeatureEnvy"})
 public class AnatomyPresentationTest {
 
@@ -151,6 +147,9 @@ public class AnatomyPresentationTest {
         syn1.setName("first");
         Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
         synonyms.add(syn1);
+        DataAliasGroup group = new DataAliasGroup();
+        group.setSignificance(1);
+        syn1.setAliasGroup(group);
         item.setSynonyms(synonyms);
 
         String list = AnatomyPresentation.createFormattedSynonymList(item);
@@ -234,6 +233,9 @@ public class AnatomyPresentationTest {
 
         AnatomySynonym syn = new AnatomySynonym();
         syn.setName("neuron");
+        DataAliasGroup group = new DataAliasGroup();
+        group.setSignificance(1);
+        syn.setAliasGroup(group);
         Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
         syns.add(syn);
         termTwo.setSynonyms(syns);
@@ -278,6 +280,9 @@ public class AnatomyPresentationTest {
         syn.setName("neuron");
         Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
         synonyms.add(syn);
+        DataAliasGroup group = new DataAliasGroup();
+        group.setSignificance(1);
+        syn.setAliasGroup(group);
         termTwo.setSynonyms(synonyms);
 
         // match on first term and second terms synonym
@@ -293,6 +298,7 @@ public class AnatomyPresentationTest {
 
         syn = new AnatomySynonym();
         syn.setName("Neuron");
+        syn.setAliasGroup(group);
         synonyms.clear();
         synonyms.add(syn);
         termTwo.setSynonyms(synonyms);
@@ -335,6 +341,9 @@ public class AnatomyPresentationTest {
 
         AnatomySynonym syn = new AnatomySynonym();
         syn.setName("neuron  ");
+        DataAliasGroup group = new DataAliasGroup();
+        group.setSignificance(1);
+        syn.setAliasGroup(group);
         Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
         syns.add(syn);
         termTwo.setSynonyms(syns);
@@ -352,6 +361,7 @@ public class AnatomyPresentationTest {
 
         syn = new AnatomySynonym();
         syn.setName("Neuron");
+        syn.setAliasGroup(group);
         syns.clear();
         syns.add(syn);
         termTwo.setSynonyms(syns);
