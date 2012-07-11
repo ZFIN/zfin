@@ -33,6 +33,8 @@
 <filter token="COUNT_VEGA_OUT" value="${COUNT_VEGA_OUT}"/>
 <filter token="COUNT_ZGC_ERR" value="${COUNT_ZGC_ERR}"/>
 <filter token="COUNT_ZGC_OUT" value="${COUNT_ZGC_OUT}"/>
+<filter token="CURATION_DBNAME" value="${CURATION_DBNAME}"/>
+<filter token="CURATION_INSTANCE" value="${CURATION_INSTANCE}"/>
 <filter token="CURATORS_AT_ZFIN" value="${CURATORS_AT_ZFIN}"/>
 <filter token="DATABASE_UNLOAD_DIRECTORY" value="${DATABASE_UNLOAD_DIRECTORY}"/>
 <filter token="DBNAME" value="${DBNAME}"/>
@@ -54,6 +56,7 @@
 <filter token="GENBANK_DAILY_EMAIL" value="${GENBANK_DAILY_EMAIL}"/>
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
+<filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
 <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
 <filter token="HEADER_COLOR" value="${HEADER_COLOR}"/>
 <filter token="HIBERNATE_CONFIGURATION_DIRECTORY" value="${HIBERNATE_CONFIGURATION_DIRECTORY}"/>
@@ -98,6 +101,9 @@
 <filter token="ONCONFIG" value="${ONCONFIG}"/>
 <filter token="ONCONFIG_FILE" value="${ONCONFIG_FILE}"/>
 <filter token="ONTOLOGY_LOADER_EMAIL" value="${ONTOLOGY_LOADER_EMAIL}"/>
+<filter token="PARTNER_DBNAME" value="${PARTNER_DBNAME}"/>
+<filter token="PARTNER_INTERNAL_INSTANCE" value="${PARTNER_INTERNAL_INSTANCE}"/>
+<filter token="PARTNER_SOURCEROOT" value="${PARTNER_SOURCEROOT}"/>
 <filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
@@ -108,6 +114,7 @@
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>
 <filter token="SECURE_SERVER" value="${SECURE_SERVER}"/>
+<filter token="SHARED_DOMAIN_NAME" value="${SHARED_DOMAIN_NAME}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
 <filter token="SIDEBAR_COLOR" value="${SIDEBAR_COLOR}"/>
