@@ -35,6 +35,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
 
         //piles of fake data
         MarkerType gene = new MarkerType();
+        gene.setDisplayName("gene");
         HashSet<Marker.TypeGroup> geneGroups = new HashSet<Marker.TypeGroup>();
         geneGroups.add(Marker.TypeGroup.GENEDOM);
         gene.setTypeGroups(geneGroups);
@@ -49,7 +50,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
         HashSet<Marker.TypeGroup> transcriptGroups = new HashSet<Marker.TypeGroup>();
         transcriptGroups.add(Marker.TypeGroup.GENEDOM);
         transcript.setTypeGroups(transcriptGroups);
-
+        transcript.setDisplayName("transcript");
 
         Marker gene1 = new Marker();
         gene1.setName("gene");
