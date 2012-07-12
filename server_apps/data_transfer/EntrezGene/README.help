@@ -1,0 +1,20 @@
+
+
+The load processes downloads files from Entrez Gene via FTP, 
+if all files need to be fetched, it takes about 20 minutes to transfer.
+the large one being gene2accession which is not zebrafish specific.
+
+the job of the load is to:
+
+	1) maintain links from ZFIN genes to NCBI EntrezGene.
+	2) maintain other links From ZFIN genes to NCBI 
+	   based on their EntrezGene acession. 
+	   these other NCBI links include:
+	   
+		a) UniGene
+		b) RefSeq  RNA & Protien
+		c) GenBank RNA & Protien and DNA
+	   
+RefSeq & GenBank have their own load processes which are responsible
+for maintaining links to theit respective databases. this load is 
+only adding in "extra" links identifies by 

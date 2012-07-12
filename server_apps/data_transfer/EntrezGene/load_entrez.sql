@@ -6,7 +6,7 @@ gene pages to various NCBI databases that may have their own load process.
 so these links
 	Are only on ZFIN genes with Entrez Gene links. 
 	Strive to not shadow existing links, directly or pulled from clones.
-	Are good to be stolen by other scripts/curation.
+	Attributions are to good to be stolen by other scripts/curation.
 
 }
 
@@ -66,8 +66,7 @@ create index entrez_gb_eg_rna_idx on entrez_gb(eg_rna) in idxdbs2;
 create index entrez_gb_eg_aa_idx  on entrez_gb(eg_aa)  in idxdbs1;
 create index entrez_gb_eg_dna_idx on entrez_gb(eg_dna) in idxdbs3;
 
-! echo "update Entrez zdbids from zdb_replaced_data"
-  
+! echo "Update the zdbids Entrez sends us through zdb_replaced_data"
 update entrez_zdbid set ez_zdbid = (
 	select zrepld_new_zdb_id from zdb_replaced_data 
 	 where ez_zdbid == zrepld_old_zdb_id
@@ -77,7 +76,7 @@ where exists (
 	 where ez_zdbid == zrepld_old_zdb_id
 );
 
-! echo "Are any of entrez zdbid unknown"
+! echo "Are any zdbids Entrez sends to us unknown to us?"
 select ez_zdbid very_bad 
  from entrez_zdbid 
  where not exists (
@@ -92,7 +91,7 @@ delete from entrez_zdbid
 	  and mrkr_zdb_id[1,8] ==  "ZDB-GENE"
 );
 
-! echo "what Existing EntrezGene links are not in this load?"
+! echo "What existing EntrezGene links are not in this load?"
 select dblink_linked_recid[1,25] geneid, dblink_acc_num[1,20] entrezid  
  from db_link 
  join foreign_db_contains on dblink_fdbcont_zdb_id == fdbcont_zdb_id
@@ -117,11 +116,12 @@ delete from zdb_active_data where exists (
 	)
    and dblink_zdb_id == zactvd_zdb_id	
 );
+
 -- could delete other links based on 
 -- their load attribuion and being gene w/o EntrezGene link
 -- or use as later check 
 
-! echo "what Entrez Gene links are oddly attributed"
+! echo "What existing Entrez Gene links are ... oddly attributed?"
 select dblink_linked_recid[1,25],dblink_acc_num[1,20], 
 		recattrib_source_zdb_id[1,25], dblink_info
  from db_link 
@@ -131,6 +131,41 @@ select dblink_linked_recid[1,25],dblink_acc_num[1,20],
  where fdb_db_name == "EntrezGene"
   and recattrib_source_zdb_id != "ZDB-PUB-020723-3"    -- NCBI Gene
 ;
+
+! echo "What new EntrezGene links can we add?"
+select ez_zdbid mrkr ,ez_eid acc, get_id("DBLINK") zad
+ from entrez_zdbid where not exists (
+	select 't' from db_link 
+	 where dblink_fdbcont_zdb_id == "ZDB-FDBCONT-040412-1"
+	   and ez_zdbid == dblink_linked_recid
+	   and ez_eid ==  dblink_acc_num
+) into temp tmp_dbl with no log;
+
+insert into zdb_active_data select zad from tmp_dbl;
+
+insert into db_link (
+    dblink_linked_recid,
+    dblink_acc_num,
+    dblink_info,
+    dblink_zdb_id,
+    --dblink_acc_num_display,
+    --dblink_length,
+    dblink_fdbcont_zdb_id 
+) select mrkr,acc,"uncurated " || TODAY, zad, "ZDB-FDBCONT-040412-1"
+from tmp_dbl
+;
+
+! echo "Attribute to NCBI EntrezGene load"
+insert into record_attribution (
+ recattrib_data_zdb_id,
+    recattrib_source_zdb_id
+    --recattrib_source_significance,
+    --recattrib_source_type 
+)
+select zad, "ZDB-PUB-020723-3" from tmp_dbl
+;
+
+drop table tmp_dbl;
 
 ! echo "Are there any other NCBI links attributed to dropped Entrez?"
 --######################################################################
@@ -467,21 +502,75 @@ drop table tmp_entrez;
 ! echo "what is left may be added as new links on genes "
 ! echo "attribibuted to the NCBI Gene Load"
 
-select count(*) ug_remaining from entrez_ug;
+select count(*) ug_remaining from entrez_ug where eu_ug != "-";
 select count(*) rs_remaining from entrez_rs where er_rs != "-";
 select count(*) rp_remaining from entrez_rs where er_rp != "-";
 select count(*) gb_rna_remaining from entrez_gb where eg_rna != "-";
-select count(*) gb_aa_remaining from entrez_gb where eg_aa != "-";
+select count(*) gb_aa_remaining  from entrez_gb where eg_aa  != "-";
 select count(*) gb_dna_remaining from entrez_gb where eg_dna != "-";
 
+-- TODO: do we have information on UniGene being RNA or SeqClusters?
 
+create temp table tmp_dblink (
+	mrkr varchar(50), acc varchar(50), zad varchar(50), fdb varchar(50)
+);
 
+select ez_zdbid mrkr, eu_ug acc, "ZDB-FDBCONT-040412-43" fdb
+ from entrez_zdbid join entrez_ug on ez_eid == eu_eid
+ where eu_ug != "-"
+union
+select ez_zdbid, er_rs, "ZDB-FDBCONT-040412-38"
+ from entrez_zdbid join entrez_rs on ez_eid == er_eid
+ where er_rs != "-"
+union
+select ez_zdbid, er_rp, "ZDB-FDBCONT-040412-39"
+ from entrez_zdbid join entrez_rs on ez_eid == er_eid
+ where er_rp != "-"
+union
+select ez_zdbid, eg_rna, "ZDB-FDBCONT-040412-37"
+ from entrez_zdbid join entrez_gb on ez_eid == eg_eid
+ where eg_rna != "-"
+union
+select ez_zdbid, eg_aa, "ZDB-FDBCONT-040412-42"
+ from entrez_zdbid join entrez_gb on ez_eid == eg_eid
+ where eg_aa != "-"
+union
+select ez_zdbid, eg_dna,"ZDB-FDBCONT-040412-36"
+ from entrez_zdbid join entrez_gb on ez_eid == eg_eid
+ where eg_dna != "-"
+ into temp tmp_dbl with no log
+;
 
+insert into tmp_dblink(mrkr,acc,fdb) select * from tmp_dbl;
+drop table tmp_dbl;
+update tmp_dblink set zad = get_id("DBLINK");
 
+insert into zdb_active_data select zad from tmp_dblink;
 
+insert into db_link (
+    dblink_linked_recid,
+    dblink_acc_num,
+    dblink_info,
+    dblink_zdb_id,
+    --dblink_acc_num_display,
+    --dblink_length,
+    dblink_fdbcont_zdb_id 
+) select mrkr,acc,"uncurated " || TODAY, zad, fdb 
+from tmp_dblink
+;
 
+! echo "attribute to ncbi EntrezGene load"
+insert into record_attribution (
+ recattrib_data_zdb_id,
+    recattrib_source_zdb_id
+    --recattrib_source_significance,
+    --recattrib_source_type 
+)
+select zad, "ZDB-PUB-020723-3" from tmp_dblink
+;
 
- 
+drop table tmp_dblink;
+
 ! echo "###############################################################"
 drop table  entrez_zdbid; 
 drop table  entrez_gb; 
@@ -489,5 +578,6 @@ drop table  entrez_rs;
 drop table  entrez_ug; 
 
 
-rollback work;
+-- transaction terminated externally
+
 

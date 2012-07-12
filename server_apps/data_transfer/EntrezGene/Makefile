@@ -145,3 +145,11 @@ entrezid_refseq_refpept.tab: release%.accession2geneid.gz
 
 fetch_entrez: entrezid_refseq_refpept.tab entrezid_ugc.tab \
 				entrezid_GBnt_GBaa_GBdna.tab
+
+
+run: load_entrez.sql rollback.sql fetch_entrez
+	cat $< rollback.sql | dbaccess -a $$DBNAME
+
+
+run_commit: load_entrez.sql rollback.sql fetch_entrez
+	cat $< commit.sql | dbaccess -a $$DBNAME
