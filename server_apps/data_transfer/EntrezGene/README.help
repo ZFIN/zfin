@@ -17,4 +17,22 @@ the job of the load is to:
 	   
 RefSeq & GenBank have their own load processes which are responsible
 for maintaining links to theit respective databases. this load is 
-only adding in "extra" links identifies by 
+only adding in "extra" links as identified by Entrez and not picked up 
+by the our other load scripts.
+
+to execute: 
+
+gmake run[_commit]
+
+gmake clean        will delete the localy generated working files 
+
+gmake very_clean   will also delete the downloaded files
+
+
+The output is verbose to begin with to facilitate testing/checking 
+but after a while you should be able to tone it down.
+
+You will need to decide what to do about the oddly attributed links,
+and other issues.
+
+you may decide to put datafiles somewhere else (or not).

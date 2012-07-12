@@ -153,3 +153,14 @@ run: load_entrez.sql rollback.sql fetch_entrez
 
 run_commit: load_entrez.sql rollback.sql fetch_entrez
 	cat $< commit.sql | dbaccess -a $$DBNAME
+
+
+clean:
+	rm -f entrezid_zdbid_lg_type.unl entrezid_refseq_refpept.tab \
+	entrezid_ugc.tab entrezid_GBnt_GBaa_GBdna.tab
+           
+
+very_clean: clean
+	rm -f gene2accession.gz release*.accession2geneid.gz gene2unigene \
+	Danio_rerio.gene_info.gz
+
