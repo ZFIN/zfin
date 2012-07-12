@@ -17,9 +17,11 @@ open (OUT,">$out_file");
 $tool="esearch";
 $urlsearch = "$ebase$tool.fcgi?usehistory=n\&db=$db\&term=$term\&retmode=html\&dopt=GenPept\&email=bsprunge\@cs.uoregon.edu";
 
+#
+print "/local/bin/wget  $urlsearch -O gpresult.txt";
+
 `/local/bin/wget -q "$urlsearch" -O gpresult`;
 
-#print "/local/bin/wget  $urlsearch -O gpresult.txt";
 #$results=getUrl("$ebase$tool.fcgi?usehistory=n&db=$db&term=$term&retmode=html&dopt=GenPept&email=bsprunge/@cs.uoregon.edu");
 
 open (GP,"gpresult");
@@ -58,7 +60,6 @@ close OUT;
 sub init(){
   $ebase="http://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   $retmax=300;
-
 }
 
 

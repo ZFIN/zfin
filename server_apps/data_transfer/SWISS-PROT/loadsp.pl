@@ -270,10 +270,10 @@ $numMrkrProcessBefore = countData($sql);
 
 #--------------- Delete records from last SWISS-PROT loading-----
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_addbackattr.sql  >out 2>addBackAttributionReport.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> sp_addbackattr.sql  >out 2>addBackAttributionReport.txt");
 
 print "\n delete records source from last SWISS-PROT loading.\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>deletereport.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> sp_delete.sql >out 2>deletereport.txt");
 open F, "out" or die "Cannot open out file";
 if (<F>) {
  
@@ -403,7 +403,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
 
 #--------------------------- record counts after loading finishes ----------------------------
 

@@ -24,8 +24,12 @@ GENERICS = load_run_report_hit.sh
 STATICS =  write-run-report-hit.r load_run_report_hit.sql \
 	   commit.sql rollback.sql
 
-# trying to pick the most current blast run context file
-RUN_CTX = ls -1t *.ctx | head -1
+## provide a default run name so developers can copy or symlink a file
+# and do: gmake run
+# or 
+# or they can provide a filename:  gmake CTX=<filename> run
+
+RUNCTX = run.ctx
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -36,16 +40,31 @@ include $(TOP)/make.default.rules
 
 
 # ---------------  Misc Targets  ----------------------------------------
+$(RUNCTX):
+	$(error "need to provide the run.ctx file")
 
-run	:
-	./write-run-report-hit.r run.ctx 
+run:   $(RUNCTX)
+	./write-run-report-hit.r $(RUNCTX) 
 	cp -f *.unl $(TARGETDIR)
 	$(TARGETDIR)/load_run_report_hit.sh
-	rm -f *.unl
+# 	$(error "\
+# 	dbaccess -a $$DBNAME << END\
+# 	drop table tmp_run;\
+# 	drop table tmp_report;\
+# 	drop table tmp_hit;\
+# 	drop table tmp_candidate;\
+# 	drop table tmp_run_cnd;\
+# 	drop table tmp_blast_query;\
+# 	END\
+# 	")
+#	rm -f *.unl
 
-run_commit	:
-	./write-run-report-hit.r run.ctx
+
+
+run_commit: $(RUNCTX)
+	./write-run-report-hit.r $(RUNCTX)
 	cp -f *.unl $(TARGETDIR)
 	$(TARGETDIR)/load_run_report_hit.sh commit
-	rm -f *.unl
-	rm -f run.ctx
+#	rm -f *.unl
+#	rm -f run.ctx
+

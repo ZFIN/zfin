@@ -63,6 +63,6 @@ print "parsing vegaFasta file done\n";
 
 print "loading...\n";
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadVegaTranscripts.sql >out 2> report.txt") and die "loadVegaTranscripts.sql did not complete successfully";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadVegaTranscripts.sql >out 2> report.txt") and die "loadVegaTranscripts.sql did not complete successfully";
 
 exit;

@@ -5,7 +5,7 @@
 # Makefile has a run_agp target to fire this off
 # keep assembly version up to date
 
-V="9"                                         # <-- CHANGEME!
+V="9"                                         # <-- CHANGE_ME!
 AGP="Zv${V}_chr.agp"
 
 # where we put these source data files these days

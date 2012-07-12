@@ -48,3 +48,6 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 run : all
 	cd $(TARGETDIR); ./go.pl 
+
+validate:  $(TARGETDIR)/validateUniprotIDsZFIN.pl
+	 cd $(TARGETDIR); ./validateUniprotIDsZFIN.pl

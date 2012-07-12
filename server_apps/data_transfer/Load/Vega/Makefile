@@ -284,8 +284,9 @@ $(DEST)/ottdarT_ottdarG_ottdarP.unl: $(DEST)/vega_transcript.nt
 
 # Partitions the load into novel and existing transcripts
 $(DEST)/vega_zfin.nt:  $(DEST)/vega_transcript.nt
+
 # vega_transcript.nt is the combination of the two which will become
-# the PREVEGA blast database then the Vega_transcript blasdb.
+# the PREVEGA blast database then the Vega_transcript blastdb.
 # but first use it to isolate the sequence for existing genes which have
 # been updated
 

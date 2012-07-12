@@ -1,7 +1,7 @@
 
 Loads/
 	ReNo/
-		rmake run    select most recent *.ctx in this dir
+		gmake run    select most recent *.ctx in this dir
 		gmake zgc    trigger ../../../ZGC/fetch_ZGC.sh ?
 		gmake vega
 
@@ -21,3 +21,12 @@ insert_reno.sh (blast_file "standardized namename")
 	cleanup files
 
 
+to drop a run delete the run_zdb_is from zdb_active_data
+
+
+
+
+
+still need trailspace trimmed : 
+	blast_hit bhit_strand 
+	candidate cnd_mrkr_type 

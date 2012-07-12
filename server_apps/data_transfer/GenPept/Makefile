@@ -31,4 +31,5 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 
-
+run :
+	$(TARGETDIR)/fetch-genpept.pl

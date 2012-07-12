@@ -38,6 +38,8 @@ else
     set datatype = ""
 endif
 
+set dbaccess = "$INFORMIXDIR/bin/dbaccess -a"
+
 #----------------------------------------
 # Set Variables
 #----------------------------------------
@@ -102,12 +104,12 @@ endif
 # abort with cleanup on errors, or user request
 #--------------------------------------------
 
-$INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load.sql
+$dbaccess $dbname pre_gxp_load.sql
 
 foreach file (*.err)
     if (! -z $file) then
 	echo "ERROR! Check $file!";
-	$INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
+	$dbaccess $dbname pre_gxp_load_cleanup.sql
    	exit;
     endif
 end
@@ -116,7 +118,7 @@ end
 echo "Ready to load database? (y or n)"
 set goahead = $< 
 if ($goahead == 'n') then
-    $INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
+    $dbaccess $dbname pre_gxp_load_cleanup.sql
     exit;
 endif
 
@@ -128,18 +130,18 @@ endif
 # the load. 
 #-----------------------------------------------
 
-$INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& preload_quantity.txt
+$dbaccess $dbname gxp_load_quantity_check.sql >& preload_quantity.txt
 
-$INFORMIXDIR/bin/dbaccess $dbname gxp_load_func.sql
+$dbaccess $dbname gxp_load_func.sql
 
 echo "execute function gxp_load_func('$labname', '$datatype', '$mrkrOwnerId','$imgOwnerId','$mrkrPubId','$xpatPubId','$sourceId','$genox', '$genePrefix','$assayname')" | $INFORMIXDIR/bin/dbaccess $dbname
 
 # when we get a little more confidence on the stableness of the function,
 # we will move it to lib/DB_function, and get rid of the creation and 
 # deletion. 
-echo "drop function gxp_load_func" | $INFORMIXDIR/bin/dbaccess $dbname
+echo "drop function gxp_load_func" | $dbaccess $dbname
 
-$INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& postload_quantity.txt
+$dbaccess $dbname gxp_load_quantity_check.sql >& postload_quantity.txt
 
 # we add control here to avoid image copying on failure.
 echo "Good to continue? (y or n)"
@@ -148,7 +150,7 @@ if ($goahead == 'n') then
     # In case of failture,  gxp_load_func() rolls back transaction,
     # but we need to cleanup tables from pre_gxp_load.sql so that to 
     # have a fresh start after we fix things.
-    $INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
+    $dbaccess $dbname pre_gxp_load_cleanup.sql
     exit;
 endif
 
@@ -166,8 +168,8 @@ echo "== Please compare with the probe # and image # sent  =="
 
 echo "Generating statistics ..."
 if ($labname == "Thisse" && $datatype != "cb") then
-    $INFORMIXDIR/bin/dbaccess $dbname get_fr_gene_list.sql
-    $INFORMIXDIR/bin/dbaccess $dbname getStat4Load.sql >& statistics.txt 
+    $dbaccess $dbname get_fr_gene_list.sql
+    $dbaccess $dbname getStat4Load.sql >& statistics.txt 
 endif
 
 
@@ -210,8 +212,8 @@ echo "Copy images to repository..."
 echo "Ready to drop the temporary tables? (y or n)"
 set goahead = $< 
 if ($goahead == 'y') then
-    $INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
-    $INFORMIXDIR/bin/dbaccess $dbname gxp_load_cleanup.sql
+    $dbaccess $dbname pre_gxp_load_cleanup.sql
+    $dbaccess $dbname gxp_load_cleanup.sql
     if ($labname == "Thisse" && $datatype != "cb" && $HOST == "helix") then
        	echo "Please submit thisseName_ZfinMarker.txt and statistics.txt to curator." 
     endif

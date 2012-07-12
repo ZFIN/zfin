@@ -25,10 +25,11 @@
 #      !0    None or only some of the data was successsfully pulled from
 #            ZIRC and loaded in the DB.  See output for details.
 
+package <!--|ROOT_PATH|-->/lib/Perl/SendLoadReport;
 use DBI;
-use MIME::Lite;
+
 #----------------------------------------------------------------------
-# Write a line to the report 
+# Write a line to the report
 #
 # Params
 #  @     Lines to write out.
@@ -38,39 +39,11 @@ use MIME::Lite;
 sub writeReport(@) {
     my $line;
 
-    foreach $line (@_) {
+    foreach $line (@_) { 
 	print(ZIRCREPORT "$line\n");
     }
     return ();
 }
-
-sub sendLoadReport ($) { # send email on error or completion
-
-# . is concantenate
-# $_[x] means to take from the array of values passed to the fxn, the
-# number indicated: $_[0] takes the first member.
-
-    my $SUBJECT="pullFromZirc:".$_[0];
-    my $MAILTO=$_[1];
-    my $TXTFILE=$_[2];
-    my $data=readpipe "cat $TXTFILE";
-
-    # Create a new message:
-    $msg1 = new MIME::Lite
-	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
-	Subject => "$SUBJECT",
-    Type    => 'text/plain',
-    Data    => "$data"
-    ;
-
-    # Output the message to sendmail
-
-    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-    $msg1->print(\*SENDMAIL);
-    close (SENDMAIL);
-}
-
 
 #----------------------------------------------------------------------
 # Writes out an error message and then aborts the program.
@@ -78,12 +51,12 @@ sub sendLoadReport ($) { # send email on error or completion
 # Params
 #  @     List of lines to write out.
 #
-# Returns
-#  does not return.  Exits with an error status.
+# Returns error status to calling shell.
 
 sub errorExit(@) {
     &writeReport(@_);
     &writeReport("All database changes are being rolled back.");
+	&sendLoadReport(" FAIL ","<!--|VALIDATION_EMAIL_DBA|-->", "./loadReport.txt") ;
     exit 1;
 }
 
@@ -110,7 +83,6 @@ sub downloadFiles($$) {
 		   "  See $wgetStatusFile for details.");
     }
 #    else {
-
 #    $wgetStatusFile = "/tmp/pullFromZirc.almdb.$filename";
 #    system("rm -f $wgetStatusFile");
 #    if (system("/local/bin/wget http://zirc.uoregon.edu/zfin/$filename >> $wgetStatusFile 2>&1")) {
@@ -185,6 +157,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->, ron\@zebrafish.org", "./loadReport.txt") ;
+#&sendLoadReport("Suscuss","<!--|VALIDATION_EMAIL_DBA|-->,ron\@zebrafish.org", "./loadReport.txt") ;
+&sendLoadReport("Suscuss","<!--|VALIDATION_EMAIL_DBA|-->", "./loadReport.txt") ;
 
 exit 0;
