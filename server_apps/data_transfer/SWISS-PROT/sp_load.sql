@@ -300,7 +300,7 @@ update statistics high for table pre_marker_go_term_evidence;
 
 delete from marker_go_term_evidence
        where mrkrgoev_term_zdb_id in ('ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029')
-       and exists (Select 'x' from pre_marker_go_Evidence
+       and exists (Select 'x' from pre_marker_go_term_evidence
        	   	  	  where mrkrgoev_mrkr_Zdb_id =mrkr_zdb_id
 			  and mrkrgoev_term_zdb_id = go_zdb_id);
 
