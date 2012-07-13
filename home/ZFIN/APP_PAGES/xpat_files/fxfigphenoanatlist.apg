@@ -129,6 +129,7 @@ stage range, experiment, or expression_found in the same figure.
        and phenox_pk_id = phenos_phenox_pk_id
        and phenos_entity_1_superterm_zdb_id = super.term_zdb_id
        and phenos_entity_1_subterm_zdb_id = sub.term_zdb_id
+       and phenos_tag <> 'normal'
     UNION 
     SELECT distinct get_postcomposed_term_html(phenos_entity_2_superterm_zdb_id, phenos_entity_2_subterm_zdb_id),
                     lower(sub.term_name) as superterm_name_order, lower(sub.term_name) as subterm_name_order
@@ -137,6 +138,7 @@ stage range, experiment, or expression_found in the same figure.
        and phenox_pk_id = phenos_phenox_pk_id
        and phenos_entity_2_superterm_zdb_id = super.term_zdb_id
        and phenos_entity_2_subterm_zdb_id = sub.term_zdb_id
+       and phenos_tag <> 'normal'
      order by superterm_name_order, subterm_name_order">
    <?MIVAR NAME="$fxfigphenoanat_term_html">$1<?/MIVAR>
 
