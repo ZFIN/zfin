@@ -226,7 +226,7 @@ set pdqpriority 50;
          where mrkr_zdb_id in (select zrepld_old_zdb_id 
                                   from zdb_replaced_data); 
 
-	create temp table pre_marker_go_evidence (
+	create temp table pre_marker_go_term_evidence (
                 pre_mrkrgoev_zdb_id 	varchar(50), 
 		mrkr_zdb_id		varchar(50),
 		go_zdb_id		varchar(50),
@@ -237,12 +237,12 @@ set pdqpriority 50;
 
 
 create index pmge_mrkr_id_index
-  on pre_marker_go_evidence (mrkr_zdb_id)
+  on pre_marker_go_term_evidence (mrkr_zdb_id)
   using btree in idxdbs2;
 
 
 --!echo 'Load spkw'
-	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
+	insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct sk.mrkr_zdb_id, term_zdb_id, "ZDB-PUB-020723-1", 
 		       "UniProtKB-KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
@@ -251,7 +251,7 @@ create index pmge_mrkr_id_index
 		   and term_ont_id = "GO:"||sg.goterm_id;
 
 --!echo 'Load intepro'
-	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
+	insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-020724-1",
 		       "InterPro:"||ip.ip_acc, "ZFIN InterPro 2 GO"
@@ -260,7 +260,7 @@ create index pmge_mrkr_id_index
 		   and term_ont_id = "GO:"||ip.goterm_id;
 	
 --!echo 'Load ec'
-        insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
+        insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
 					    mrkrgoev_inference, mrkrgoev_note)
 		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-031118-3", 
 		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
@@ -271,10 +271,10 @@ create index pmge_mrkr_id_index
 
                
 
-	update pre_marker_go_evidence set pre_mrkrgoev_zdb_id = get_id ("MRKRGOEV");
+	update pre_marker_go_term_evidence set pre_mrkrgoev_zdb_id = get_id ("MRKRGOEV");
 
 --!echo 'do not include "unknown" terms and root terms if any'
-        delete from pre_marker_go_evidence where go_zdb_id in 
+        delete from pre_marker_go_term_evidence where go_zdb_id in 
 		(select term_zdb_id 
 		   from term 
 		  where term_ont_id in ("GO:0005554", "GO:0000004", "GO:0008372",
@@ -284,16 +284,16 @@ create index pmge_mrkr_id_index
 -- db trigger is added for this purpose. 
 
 
-delete from pre_marker_go_evidence
+delete from pre_marker_go_term_evidence p
   where exists (select 'x' from marker a
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
 					      and a.mrkr_abbrev like 'WITHDRAWN%');
 
-update statistics high for table pre_marker_go_evidence;
+update statistics high for table pre_marker_go_term_evidence;
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
-		select pre_mrkrgoev_zdb_id from pre_marker_go_evidence;
+		select pre_mrkrgoev_zdb_id from pre_marker_go_term_evidence;
 --!echo '		into zdb_active_data'
 
 !echo "delete root go terms in bulk" ;
@@ -321,12 +321,12 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
 		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, "IEA", 
 		       CURRENT, CURRENT, '5', CURRENT, p.mrkrgoev_note
-		  from pre_marker_go_evidence p;
+		  from pre_marker_go_term_evidence p;
 --!echo '		into marker_go_term_evidence'
 	
 --	db trigger attributes MRKRGOEV to the internal pub record
 --	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
---	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
+--	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_term_evidence;
 
 --!echo 'db trigger attributes MRKRGOEV to the internal pub record'
 
@@ -334,7 +334,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 -- load inference_group_member
 	insert into inference_group_member (infgrmem_inferred_from, infgrmem_mrkrgoev_zdb_id)
 			select mrkrgoev_inference, pre_mrkrgoev_zdb_id
-			  from pre_marker_go_evidence
+			  from pre_marker_go_term_evidence
 			 where exists (select * from marker_go_term_evidence where pre_mrkrgoev_zdb_id = mrkrgoev_zdb_id);
 		
 --!echo '		into inference_group_member'
