@@ -114,12 +114,11 @@ if ($sys_status > 0)
 
 
 &dblinksReport();
-&reportOmimDups();
+
 
 &reportFile('gene_with_multiple_linked_recid.unl','RefSeq Multiples', 'tech');
 &reportFile('conflict_dblink.unl','Marker/DbLink Conflicts', 'tech');
-&reportFile('hs_ortho_abbrev_conflict.unl','Human Ortho Conflicts','bio');
-&reportFile('mm_ortho_abbrev_conflict.unl','Mouse Ortho Conflicts','bio');
+
 
 &sendReport('tech');
 &sendReport('bio','<!--|VALIDATION_EMAIL_GENE|-->');
@@ -164,7 +163,6 @@ sub openReport()
   {
     system("/bin/rm -f report*");
     system("touch report");
-    system("touch report_ortho");
     dblinksReport();
   }
 
@@ -188,35 +186,6 @@ sub dblinksReport()
     while ($cur->fetch)
     {
       print REPORT "$db_name\t$db_count\n";
-    }
-    print REPORT "\n";
-    close(REPORT);
-  }
-
-
-sub reportOmimDups()
-  {
-    open (REPORT, ">>report") or die "can not open report";
-
-    print REPORT "OMIM dups\n";
-
-    my $cur = $dbh->prepare('select mrkr_abbrev
-                               from db_link, orthologue, marker, 
-                                       foreign_db_contains, foreign_db
-                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                                and fdb_db_name = "OMIM"
-                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                and dblink_linked_recid = zdb_id
-                                and c_gene_id = mrkr_zdb_id
-                              group by mrkr_abbrev
-                             having count(*) > 1;'
-			   );
-    $cur->execute;
-    my($mrkr_abbrev);
-    $cur->bind_columns(\$mrkr_abbrev);
-    while ($cur->fetch)
-    {
-      print REPORT "$mrkr_abbrev\n";
     }
     print REPORT "\n";
     close(REPORT);
@@ -269,7 +238,7 @@ sub sendReport()
       print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
     }
     
-    print MAIL "Subject: refseq/ortho report\n";
+    print MAIL "Subject: refseq report\n";
     while($line = <REPORT>)
     {
       print MAIL $line;
@@ -280,8 +249,6 @@ sub sendReport()
 
 sub getReportName ()
   {
-    if ($_[0] eq "tech") {  return "report";}
-    elsif ($_[0] eq "bio") { return "report_ortho";}
-    
+    if ($_[0] eq "tech") { return "report";}
     return "report";      
   }
