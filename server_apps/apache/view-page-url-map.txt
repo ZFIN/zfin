@@ -26,6 +26,7 @@ PAC_END	/action/marker/view/ZDB-PAC_END
 PATO	/action/ontology/term-detail?termID=PATO
 PERS	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=ZDB-PERS
 PGCONSTRCT	/action/marker/view/ZDB-PGCONSTRCT
+PTCONSTRCT	/action/marker/view/ZDB-PTCONSTRCT
 PUB	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB
 RAPD	/action/marker/view/ZDB-RAPD
 REFCROSS	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS
