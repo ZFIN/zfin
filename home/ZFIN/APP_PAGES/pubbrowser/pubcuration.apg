@@ -494,7 +494,7 @@ Commenting out survey as a part of FB case 7820
         AND l.name like 'ZFIN%'
         AND (   position = 'Research Staff'
              or
-                p.name like 'Sprunger%'
+                p.zdb_id = 'ZDB-PERS-030612-2'
              or
                 position = 'Adminstrative Staff'
             )
