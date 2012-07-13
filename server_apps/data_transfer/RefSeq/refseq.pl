@@ -78,8 +78,6 @@ $retry = 1;
 #wait until load files are made
 while( !( 
           -e "ll_id.unl" && 
-          -e "ll_hs_id.unl" && 
-	  -e "ll_mm_id.unl" &&
 	  -e "loc2acc.unl" &&
 	  -e "loc2ref.unl" &&
 	  -e "loc2acclen.unl" &&
