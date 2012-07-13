@@ -24,7 +24,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/RefSeq
 
 GENERICS = refseq.pl 
 
-STATICS = parseLL_HSintoUNL.pl parseLL_MMintoUNL.pl parseLLintoUNL.pl\
+STATICS = parseLLintoUNL.pl\
           parseLoc2RefintoUNL.pl parseRefSeq.pl parseloc2UG.pl load_refSeq.sql\
           parseloc2acc.pl parseloc2acclen.pl README
 
