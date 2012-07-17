@@ -29,7 +29,8 @@
                             <small>[${typeMap.key.displayName}]</small> <%-- marker type --%>
                             <%-- the nasty long line is to remove spaces before commas --%>
                             <c:forEach var="relatedMarker" items="${typeMap.value}" varStatus="insideLoop">
-                                <zfin:link entity="${relatedMarker.marker}"/><zfin:attribution entity="${relatedMarker}"/><c:forEach var="supplier" items="${relatedMarker.marker.suppliers}"><small> (<a href="${supplier.orderURL}${supplier.accNum}">${supplier.organization.organizationOrderURL.hyperlinkName}</a>)</small></c:forEach><c:if test="${!insideLoop.last}">,</c:if>
+                                <%--//<zfin:link entity="${relatedMarker.marker}"/><zfin:attribution entity="${relatedMarker}"/><c:forEach var="supplier" items="${relatedMarker.marker.suppliers}"><small> (<a href="${supplier.orderURL}${supplier.accNum}">${supplier.organization.organizationOrderURL.hyperlinkName}</a>)</small></c:forEach><c:if test="${!insideLoop.last}">,</c:if>--%>
+                                <zfin:link entity="${relatedMarker.marker}"/><zfin:attribution entity="${relatedMarker}"/><c:forEach var="supplier" items="${relatedMarker.marker.suppliers}"><small> (<a href="${supplier.orderURL}">${supplier.organization.organizationOrderURL.hyperlinkName}</a>)</small></c:forEach><c:if test="${!insideLoop.last}">,</c:if>
                             </c:forEach>
                         </div>
                     </c:forEach>
