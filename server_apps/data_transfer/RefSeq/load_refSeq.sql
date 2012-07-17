@@ -181,21 +181,7 @@ CREATE INDEX pla_gene_idx ON prot_len_acc(pla_gene);
 UPDATE STATISTICS FOR TABLE prot_len_acc;
 
 
---UNI_GENE
-CREATE TEMP TABLE uni_gene
-  (
-    uni_ll_id		varchar (50) not null,
-    uni_cluster_id	varchar (50) not null
-  )
-with no log;
 
-!echo 'LOAD loc2UG.unl'
-LOAD FROM 'loc2UG.unl' INSERT INTO uni_gene;
-
-CREATE INDEX uni_ll_id_index ON uni_gene
-    (uni_ll_id) using btree;
-CREATE INDEX uni_cluster_id_index ON uni_gene
-    (uni_cluster_id) using btree;
 
 {
 --TMP_DB_LINK
@@ -259,6 +245,8 @@ INSERT INTO tmp_db_link
     AND refseq_nM_acc[1,2] = 'NM'
     AND acclen_acc = refseq_nM_acc
 ;
+
+
 INSERT INTO tmp_db_link
   SELECT
     mrkr_zdb_id,
@@ -902,60 +890,7 @@ DELETE FROM zdb_active_data
 }
 
 -- ------------------  UNI_GENE  ------------------- --
-!echo 'remove existing temp_db_link records'
---DELETE FROM tmp_db_link;
-
-!echo 'INSERT INTO temp_db_link'
-INSERT INTO tmp_db_link
-  SELECT
-    llzdb_zdb_id,
-    'UniGene',
-    uni_cluster_id,
-    'Uncurated: RefSeq load ' || TODAY,
-    'x',
-    fdbcont_zdb_id,
-    ''
-  FROM uni_gene, ll_zdb, marker, foreign_db_contains,foreign_db,foreign_db_data_type
-  WHERE uni_ll_id = llzdb_ll_id
-    AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdb_db_name = 'UniGene'
-    AND fdbcont_fdb_db_id = fdb_db_pk_id
-    AND fdbcont_fdbdt_id = fdbdt_pk_id
-    AND fdbdt_data_type = 'Sequence Clusters'
-;
-
--- ------------------ add new records ------------------ --
-!echo 'get all UniGene db_links that remain'
-
-CREATE TEMP TABLE unigene_link
-  (
-    dblink_linked_recid varchar(50),
-    dblink_acc_num varchar(50),
-    dblink_info varchar(80),
-    dblink_zdb_id varchar(50),
-    dblink_acc_num_display varchar(50),
-    dblink_length integer,
-    dblink_fdbcont_zdb_id varchar(50)
-  )
-with no log;
-
-  INSERT INTO unigene_link
-  SELECT * 
-  FROM db_link
-  WHERE EXISTS
-    (
-      SELECT 'x'
-      FROM foreign_db_contains, foreign_db
-      WHERE fdb_db_name = "UniGene"
-      AND fdbcont_fdb_db_id = fdb_db_pk_id
-      AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
-    );
-
---only keep new links
-DELETE FROM tmp_db_link
-WHERE EXISTS (SELECT 'x' 
-      		    FROM unigene_link
-		    WHERE dblink_acc_num = tmp_acc_num);
+-- moved to Entrez_Gene where it belongs
 
 
     SELECT dblink_linked_recid, fdb_db_name as db_name, dblink_acc_num
