@@ -47,7 +47,7 @@
 
     <div class="summary">
 
-       <div class="summaryTitle">Sequence</div>
+       <div class="summaryTitle">SEQUENCE</div>
         <div class="sequence-view-table-wrapper">
                 <%--todo: this should use an attribute, not a formBean, which is a nucleotideSequence --%>
             <c:forEach var="sequence" items="${sequences}" varStatus="index">
