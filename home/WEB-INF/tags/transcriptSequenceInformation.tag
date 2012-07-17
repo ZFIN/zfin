@@ -24,7 +24,7 @@
 <zfin2:subsection title="${title}" anchor="sequence_information" test="${!empty sequenceInfo and !empty sequenceInfo.dbLinks }" showNoData="true">
     <table class="summary rowstripes">
             <tr>
-                <th width="25%">Type<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
+                <th width="25%">Type</th>
                 <th width="25%"> Accession # </th>
                 <th width="15%" style="text-align: right"> Length (bp/aa) </th>
                 <th width="35%" style="text-align: center">

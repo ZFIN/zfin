@@ -12,14 +12,15 @@
         <th><span class="name-label">Transcript&nbsp;Name:</span></th>
         <td><span class="name-value"><zfin:name entity="${transcript}"/></span></td>
     </tr>
-    <c:if test="${!empty previousNames}">
+    <%--<c:if test="${!empty previousNames}">
         <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
-    </c:if>
+    </c:if>--%>
+    <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
     <tr>
         <th>Transcript&nbsp;Type:<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
         <td><span title="${transcript.transcriptType.definition}">${transcript.transcriptType.display}</span></td>
     </tr>
-    <c:if test="${!empty transcript.status}">
+    <%--<c:if test="${!empty transcript.status}">--%>
         <tr>
             <th>Annotation&nbsp;Status:<a class="popup-link info-popup-link" href="/action/marker/transcript-statuses"></a></th>
             <td>
@@ -29,15 +30,25 @@
                 </c:if>
             </td>
         </tr>
-    </c:if>
-    <c:if test="${!empty strain}">
+    <%--</c:if>--%>
+    <%--<c:if test="${!empty strain}">--%>
         <tr>
             <th>Strain:</th>
             <td>
                     <zfin:link entity="${strain}"/>
             </td>
         </tr>
-    </c:if>
+    <%--</c:if>--%>
+    <tr>
+    <th>Non Reference Strains:</th>
+    <td>
+
+        <zfin2:toggledHyperlinkList collection="${formBean.nonReferenceStrains}"
+                                    id="nonRefererenceStrains"
+                                    maxNumber="6"/>
+    </td>
+    </tr>
+
     <tr><th>Associated with Genes:</th>
         <td>
         <zfin2:toggledHyperlinkList collection="${relatedGenes}"
