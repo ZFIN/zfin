@@ -44,13 +44,13 @@
 </c:if>
 
 
-<zfin2:subsection title="Non-Reference Strains"
-                  inlineTitle="true"
-                  test="${!empty formBean.nonReferenceStrains}" showNoData="true">
+<%--<zfin2:subsection title="Non-Reference Strains"
+                  inlineTitle="true">
+                  &lt;%&ndash;test="${!empty formBean.nonReferenceStrains}" showNoData="true">&ndash;%&gt;
     <zfin2:toggledHyperlinkList collection="${formBean.nonReferenceStrains}"
                                 id="nonRefererenceStrains"
                                 maxNumber="6"/>
-</zfin2:subsection>
+</zfin2:subsection>--%>
 
 <%-- This section shows a flat list of related transcripts--%>
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
@@ -105,7 +105,7 @@
 <zfin2:markerSummaryDBLinkDisplay marker="${formBean.marker}" links="${formBean.proteinProductDBLinkDisplay}"
                                   title="PROTEIN PRODUCTS"/>
 
-<zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="SEQUENCE INFORMATION"
+<zfin2:transcriptSequenceInformation sequenceInfo="${formBean.sequenceInfo}" title="ZEBRAFISH SUPPORTING SEQUENCES"
                                      showAllSequences="true"/>
 
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
