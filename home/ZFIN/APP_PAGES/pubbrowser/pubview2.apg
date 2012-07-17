@@ -317,7 +317,7 @@ Number exists
              =========================================================   
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation))">
+<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(NC,$jtype,Active Curation))">
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
