@@ -68,7 +68,7 @@ RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-search? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/fish/search? [NC,R=301]
+RewriteRule ^.*$ /action/fish/search? [NC,R=301]
 
 #RewriteRule /action/anatomy/search    /action/anatomy/anatomy-search [NC,R=301]
 
