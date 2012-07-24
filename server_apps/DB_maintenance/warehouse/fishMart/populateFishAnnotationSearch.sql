@@ -196,6 +196,12 @@ update fish_annotation_search_temp
 				       where xfiggm_group_id = xfigg_group_pk_id
 				       and xfigg_geno_handle = fas_geno_handle);
 
+update fish_annotation_Search_temp
+  set fas_xfigg_has_images = "t"
+  where exists (select 'x' from xpat_Figure_group
+  	       	       	   where xfigg_geno_handle = fas_geno_handle
+			   and xfigg_has_images = "t");
+
 update statistics high for table fish_annotation_search_temp;
 
 select distinct fa_genox_zdb_id, fa_geno_handle
@@ -231,20 +237,6 @@ update fish_annotation_search_temp
 							  )::lvarchar(1000),11),""),"'}",""),"'","")
 
  where fas_genotype_group is null;
-
-insert into genotype_group (gg_geno_name)
- select distinct geno_display_name from genotype;
-
-update genotype_group
-  set gg_group_name = replace(replace(replace(substr(multiset (select item geno_Zdb_id
-      		      						   from genotype
-								   where geno_handle = gg_geno_handle 
-							  )::lvarchar(1000),11),""),"'}",""),"'","");
-
-insert into genotype_group_member (ggm_group_id, ggm_member_name, ggm_member_id)
-  select gg_group_pk_id, geno_Display_name, geno_Zdb_id
-   from genotype_Group, genotype
-   where geno_handle = gg_geno_handle;
 
 select max(octet_length(fa_geno_handle))
   from functional_annotation;
