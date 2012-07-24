@@ -15,9 +15,6 @@ drop table environment_group_member;
 drop table affected_gene_group;
 drop table affected_gene_group_member;
 
-drop table genotype_group;
-drop table genotype_group_member;
-
 drop table term_group;
 drop table term_group_member;
 
