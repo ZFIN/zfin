@@ -55,8 +55,9 @@ FISH_STATS   = get_image_stats.sql \
 	       checkDblinkOneToOneAccessionMapping.sql \
 	       updateConstructAbbrev.sql \
 	       checkDupFeaturePrefixLineDesignation.sql \
-	       populate_feature_tracking.sql 
-LOAD_STATS   = p_zgc_load.sql
+	       populate_feature_tracking.sql \
+	       p_update_BurgessLinn_genotype_names.sql
+LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
