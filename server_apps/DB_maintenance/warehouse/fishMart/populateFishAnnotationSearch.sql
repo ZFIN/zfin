@@ -196,11 +196,6 @@ update fish_annotation_search_temp
 				       where xfiggm_group_id = xfigg_group_pk_id
 				       and xfigg_geno_handle = fas_geno_handle);
 
-update fish_annotation_Search_temp
-  set fas_xfigg_has_images = "t"
-  where exists (select 'x' from xpat_Figure_group
-  	       	       	   where xfigg_geno_handle = fas_geno_handle
-			   and xfigg_has_images = "t");
 
 update statistics high for table fish_annotation_search_temp;
 
