@@ -52,7 +52,7 @@ public class QuicksearchController {
         int numberOfRecords = 0;
         // if replaced ID found do not do a search
         if (StringUtils.isNotEmpty(queryTerm) && replacementZdbID == null) {
-            SearchResults expressionResults = searchBean.doCategorySearch(siteSearchIndexService.getMatchingIndexDirectory());
+            SearchResults expressionResults = searchBean.doCategorySearch(siteSearchIndexService.getFullPathToIndex());
             searchBean.setSearchResult(expressionResults);
             numberOfRecords = expressionResults.getTotalHits();
         }

@@ -8,14 +8,19 @@ import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.zfin.database.UnloadInfo;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.database.LuceneQueryService;
+import org.zfin.util.downloads.DownloadFilesException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 
 /**
@@ -53,6 +58,16 @@ public class SiteSearchIndexService {
         File[] files = unloadDir.listFiles();
         unloadFiles = Arrays.asList(files);
         Collections.sort(unloadFiles);
+        Collections.reverse(unloadFiles);
+        List<File> cleanedUpFiles = new ArrayList<File>();
+        for (File file : unloadFiles) {
+            String name = file.getName();
+            boolean lastCharacterIsNumber = Character.isDigit(name.charAt(name.length() - 1));
+            if (name.startsWith("20") && lastCharacterIsNumber)
+                //if (file.listFiles().length > 100)
+                cleanedUpFiles.add(file);
+        }
+        unloadFiles = cleanedUpFiles;
         if (luceneQueryService == null)
             luceneQueryService = new LuceneQueryService(unloadFiles.get(0).getAbsolutePath());
     }
@@ -81,7 +96,7 @@ public class SiteSearchIndexService {
         // the number stored here then update the file list
         if (getLatestNumberUnloadFiles() > numberOfUnloadFiles)
             getUnloadFiles();
-        return unloadFiles.get(unloadFiles.size() - 1).getName();
+        return unloadFiles.get(0).getName();
     }
 
     public String getIndexDirectory() {
@@ -90,15 +105,40 @@ public class SiteSearchIndexService {
 
     /**
      * Checks which index files matches most closely the current data.
-     * 
+     *
      * @return
      */
-    public String getMatchingIndexDirectory(){
-        if(CollectionUtils.isEmpty(unloadFiles))
+    public String getMatchingIndexDirectory() {
+        if (CollectionUtils.isEmpty(unloadFiles))
             throw new NullPointerException("No index files found");
-        return unloadFiles.get(0).getAbsolutePath();
+        Date unloadDate = getUnloadDate().getDate();
+        for (File file : unloadFiles) {
+            String date = file.getName();
+
+            if (unloadDate.after(getDateString(date))) {
+                return date;
+            }
+        }
+        throw new DownloadFilesException("No download file found that for " + unloadDate.toString() + " or earlier");
     }
-    
+
+    public UnloadInfo getUnloadDate() {
+        return getInfrastructureRepository().getUnloadDate();
+    }
+
+    public String getFullPathToIndex() {
+        return indexDirectory + "/" + getMatchingIndexDirectory();
+    }
+
+    public Date getDateString(String dataString) {
+        DateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+        try {
+            return dt.parse(dataString);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getNumberOfDocuments() {
         return luceneQueryService.getNumberOfDocuments();
     }
