@@ -33,7 +33,13 @@
         <echo message="Copy download files into archive directory ..."/>
     </target>
 
-    <property name="download-dir" value="${env.DOWNLOAD_DIRECTORY}" />
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
+
+    <property name="download-dir" value="${DOWNLOAD_DIRECTORY}" />
 
     <target name="archive-download-files">
         <tstamp>
