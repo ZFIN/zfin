@@ -478,10 +478,6 @@ create index xfiggm_member_id_index on xpat_Figure_group_member (xfiggm_member_i
   using btree in idxdbs1;
 
 
-
-create index xfigg_group_name_index on xpat_Figure_group (xfigg_group_name)
-  using btree in idxdbs3;
-
 create unique index xfigg_group_id_index on xpat_Figure_group (xfigg_group_pk_id)
   using btree in idxdbs1;
 
