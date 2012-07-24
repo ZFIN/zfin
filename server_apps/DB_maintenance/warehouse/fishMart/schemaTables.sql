@@ -36,7 +36,8 @@ create table functional_annotation(
        fa_feature_count int,
        fa_pheno_term_count int,
        fa_pheno_figure_count int,
-       fa_total_figure_count int
+       fa_total_figure_count int,
+       fa_xfigg_has_images boolean default "f"
 )
  fragment by round robin in tbldbs1, tbldbs2, tbldbs3
  extent size 16384 next size 16384;
@@ -242,17 +243,12 @@ alter table feature_group
   constraint feature_group_primary_key;
 
 create table morpholino_group (morphg_group_pk_id serial8 not null constraint morphg_group_pk_id_not_null, 
-       	     		      			  morphg_group_name lvarchar(380), 
-						  morphg_genox_Zdb_id varchar(50),
-						  morphg_group_order lvarchar(500), 
-						  morphg_geno_name varchar(255))
+       	     		      			  morphg_group_name lvarchar(200), 
+						  morphg_genox_Zdb_id varchar(50))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
 create unique index morphg_group_id_index on morpholino_group (morphg_group_pk_id)
-  using btree in idxdbs2;
-
-create index morphg_geno_name_index on morpholino_group (morphg_geno_name)
   using btree in idxdbs2;
 
 alter table morpholino_group
@@ -314,45 +310,6 @@ create index morphg_group_name_index on morpholino_group (morphg_group_name)
 
 create index morphg_genox_zdb_index on morpholino_group (morphg_genox_zdb_id)
   using btree in idxdbs3;
-
-create table genotype_group_member (ggm_pk_id serial8 not null constraint genogm_pk_id_not_null, 
-       	     			   	      ggm_group_id int8 not null constraint genogm_group_id_not_null, 
-					      ggm_member_name varchar(50), 
-					      ggm_member_id varchar(50) not null constraint genogm_member_id_not_null, 
-					      ggm_significance int)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-extent size 9964 next size 9964;
-
-create unique index genotype_group_member_primary_key_index on genotype_group_member (ggm_pk_id)
-  using btree in idxdbs2;
-
-create index genotype_group_member_id_index on genotype_group_member (ggm_member_id)
-  using btree in idxdbs2;
-
-create index genotype_group_member_group_id_index on genotype_group_member (ggm_group_id)
-  using btree in idxdbs2;
-
-alter table genotype_group_member
-  add constraint primary key (ggm_pk_id) constraint genotype_group_member_primary_key;
-
-
-create table genotype_group (gg_group_name lvarchar(500), 
-       	     		    		   gg_geno_name varchar(255), 
-					   gg_geno_handle varchar(255), 
-					   gg_group_pk_id serial8 not null constraint genog_Group_pk_id_not_null)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-extent size 9964 next size 9964;
-
-
-create unique index genotype_group_primary_key_index on genotype_group (gg_group_pk_id)
-  using btree in idxdbs3;
-
-create  index genotype_handle_index on genotype_group (gg_geno_handle)
-  using btree in idxdbs3;
-
-alter table genotype_group
-  add constraint primary key (gg_group_pk_id)
-  constraint genotype_Group_primary_key;
 
 
 create table term_group (tg_group_name lvarchar(5000), 
@@ -453,6 +410,7 @@ alter table phenotype_figure_group_member
 create table xpat_figure_group (xfigg_group_name lvarchar(380), 
        	     		       			 xfigg_genox_Zdb_id varchar(50),
 						 xfigg_geno_handle varchar(255), 
+						 xfigg_has_images boolean default "f",
 						 xfigg_group_pk_id serial8 not null constraint xfigg_group_pk_id_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
