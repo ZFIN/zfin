@@ -4,7 +4,7 @@
 -- TL background :ZDB-GENO-990623-2
 -- genotypes are on a [2,1,1] background
 -- zygocity:
--- ZDB-LAB-050412-2  Stemple Lab
+-- ZDB-LAB-050412-2  Stemple Lab or ZDB-LAB-070815-1 cuppen Lab
 -- ZDB-PUB-120207-1
 
 
@@ -74,19 +74,25 @@ create table pre_gene (
         dblink_id varchar(50), 
         ensdarg_id varchar(50),
         gene_abbrev varchar(255),
-        gene_name varchar(255)); 
+        gene_name varchar(255),
+        feature_abbrev varchar(50)); 
 
-unload to "geneunnamed.unl" select distinct sanger_input_ens_gene_zdb_id,sanger_input_ens_gene_zdb_id,sanger_input_ens_gene_zdb_id,  "unm_"||sanger_input_ens_feature_abbrev, "un-named "||sanger_input_ens_feature_abbrev  from sanger_input_ensdarg where sanger_input_ens_gene_zdb_id like '%ENSDARG%';
+unload to "geneunnamed.unl" select distinct sanger_input_ens_gene_zdb_id,sanger_input_ens_gene_zdb_id,sanger_input_ens_gene_zdb_id,  "unm_"||sanger_input_ens_feature_abbrev, "un-named "||sanger_input_ens_feature_abbrev,sanger_input_ens_feature_abbrev  from sanger_input_ensdarg where sanger_input_ens_gene_zdb_id like '%ENSDARG%';
 
 load from geneunnamed.unl insert into pre_gene;
+
+
+unload to pre_gene.unl select * from pre_gene;
+unload to 'inzfinunm' select gene_abbrev from pre_gene where gene_abbrev in (select mrkr_abbrev from marker where mrkr_type='GENE' and mrkr_abbrev like 'unm_%');
+delete from pre_gene
+ where exists (select "x" from marker
+                         where mrkr_abbrev = gene_abbrev);
 
 update pre_gene set gene_zdb_id=get_id('GENE');
 update pre_gene set dblink_id=get_id('DBLINK');
 
 insert into zdb_active_data select gene_zdb_id from pre_gene;
 insert into zdb_active_data select dblink_id from pre_gene;
-
-unload to pre_gene.unl select * from pre_gene;
 
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) select dblink_id,"ZDB-PUB-020723-5" from pre_gene;
 
@@ -96,14 +102,14 @@ insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_zdb_id,dblink_fdb
 
 --updatng inuput table with gene ids 
 
-update sanger_input_ensdarg set sanger_input_ens_gene_zdb_id = (select distinct gene_zdb_id  from pre_gene where sanger_input_ens_gene_zdb_id=ensdarg_id and sanger_input_ens_gene_zdb_id like '%ENSDARG%') where sanger_input_ens_gene_zdb_id in (select ensdarg_id from pre_gene);
+--update sanger_input_ensdarg set sanger_input_ens_gene_zdb_id = (select distinct gene_zdb_id  from pre_gene where sanger_input_ens_gene_zdb_id=ensdarg_id and sanger_input_ens_gene_zdb_id like '%ENSDARG%') where sanger_input_ens_gene_zdb_id in (select ensdarg_id from pre_gene);
 
-  
+update sanger_input_ensdarg set sanger_input_ens_gene_zdb_id = (select distinct gene_zdb_id  from pre_gene where sanger_input_ens_feature_abbrev=feature_abbrev and sanger_input_ens_gene_zdb_id like '%ENSDARG%') where sanger_input_ens_gene_zdb_id in (select ensdarg_id from pre_gene);
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct sanger_input_gene_zdb_id, 'ZDB-PUB-120207-1' from sanger_input_known where sanger_input_gene_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-120207-1');
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct feature_zdb_id, 'ZDB-PUB-120207-1' from sanger_input_known, feature where feature_abbrev=sanger_input_feature_abbrev and feature_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-120207-1');
 
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select fmrel_zdb_id , 'ZDB-PUB-120207-1' from feature, feature_marker_relationship where feature_zdb_id=fmrel_ftr_zdb_id and feature_abbrev in (select sanger_input_feature_abbrev from sanger_input_known);
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select fmrel_zdb_id , 'ZDB-PUB-120207-1' from feature, feature_marker_relationship where feature_zdb_id=fmrel_ftr_zdb_id and feature_abbrev in (select sanger_input_feature_abbrev from sanger_input_known) and fmrel_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-120207-1');
 
  
 
@@ -117,7 +123,7 @@ create table pre_feature (
         preftr_lab_prefix_id int8
 );
 
--- if the feature is not in ZFIN and no affected gene
+-- if the feature is not in ZFIN and no affected gene and only sa's
 insert into pre_feature (
       preftr_feature_abbrev,
       preftr_gene_zdb_id,
@@ -136,6 +142,28 @@ insert into pre_feature (
                   fp_pk_id
     from sanger_input_known, feature_prefix
      where fp_prefix = "sa"
+     and sanger_input_feature_abbrev like 'sa%'
+     and sanger_input_feature_abbrev not in (select feature_abbrev from feature);
+
+insert into pre_feature (
+      preftr_feature_abbrev,
+      preftr_gene_zdb_id,
+      preftr_data_source,
+      preftr_mutagee,
+      preftr_mutagen,
+      preftr_line_number,
+      preftr_lab_prefix_id
+      )
+  select distinct sanger_input_feature_abbrev,
+                  sanger_input_gene_zdb_id,
+                  'ZDB-LAB-070815-1',
+                  'embryos',
+                  'DNA',
+                  sanger_input_line_number,
+                  fp_pk_id
+    from sanger_input_known, feature_prefix
+     where fp_prefix = "hu"
+     and sanger_input_feature_abbrev like 'hu%'
      and sanger_input_feature_abbrev not in (select feature_abbrev from feature);
 
 insert into pre_feature (
@@ -150,13 +178,36 @@ insert into pre_feature (
   select distinct sanger_input_ens_feature_abbrev,
                   sanger_input_ens_gene_zdb_id,
                   'ZDB-LAB-050412-2',
-                  'embryos',
-                  'DNA',
+                  'adult males',
+                  'ENU',
                   sanger_input_ens_line_number,
                   fp_pk_id
     from sanger_input_ensdarg, feature_prefix
      where fp_prefix = "sa"
+     and sanger_input_ens_feature_abbrev like 'sa%'
      and sanger_input_ens_feature_abbrev not in (select feature_abbrev from feature);
+
+insert into pre_feature (
+      preftr_feature_abbrev,
+      preftr_gene_zdb_id,
+      preftr_data_source,
+      preftr_mutagee,
+      preftr_mutagen,
+      preftr_line_number,
+      preftr_lab_prefix_id
+      )
+  select distinct sanger_input_ens_feature_abbrev,
+                  sanger_input_ens_gene_zdb_id,
+                  'ZDB-LAB-070815-1',
+                  'adult males',
+                  'ENU',
+                  sanger_input_ens_line_number,
+                  fp_pk_id
+    from sanger_input_ensdarg, feature_prefix
+     where fp_prefix = "hu"
+     and sanger_input_ens_feature_abbrev like 'hu%'
+     and sanger_input_ens_feature_abbrev not in (select feature_abbrev from feature);
+
 unload to 'distinctftrcount.unl' select * from pre_feature;     
 
 alter table pre_feature add preftr_feature_zdb_id varchar(50);
@@ -246,7 +297,8 @@ insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_ma
 alter table pre_feature_marker_relationship add prefmrel_zdb_id varchar(50);
 
 update pre_feature_marker_relationship set prefmrel_zdb_id = get_id('FMREL');
-
+unload to 'prefmrel' select distinct * from pre_feature_marker_relationship;
+unload to 'nomarker' select distinct prefmrel_marker_zdb_id from pre_feature_marker_relationship where prefmrel_marker_zdb_id not in (select mrkr_zdb_id from marker);
 
 insert into zdb_active_data select prefmrel_zdb_id from pre_feature_marker_relationship;
 
