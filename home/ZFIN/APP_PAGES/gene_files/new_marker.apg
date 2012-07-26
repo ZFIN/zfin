@@ -349,7 +349,7 @@ var ENTER_KEY = 13;
           <input type=text onkeypress="return noenter(event)" name=abbrev size=15>
         <?/MIBLOCK>
 
-        <?MIBLOCK COND="$(EC,$marker_type_display,Morpholino)">
+        <?MIBLOCK COND="$(OR,$(EC,$marker_type_display,Morpholino),$(EC,$marker_type_display,Engineered Foreign Gene))">
           <?MIVAR><p><b>$marker_type_display</b> alias:<?/MIVAR>
           <input type=text onkeypress="return noenter(event)" name="alias" size=30>
         <?/MIBLOCK>
