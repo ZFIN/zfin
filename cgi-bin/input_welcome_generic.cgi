@@ -62,7 +62,7 @@ open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailpro
 print MAIL <<"STOP";
 To: <!--|COUNT_PATO_OUT|-->
 From: $email
-Subject: $data{subject}
+Subject: Your Input Welcome - $data{subject}
 
 USER INPUT:
 
