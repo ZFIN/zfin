@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.CreateAntibodyFormBeanValidator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -39,13 +38,20 @@ public class AntibodyCreateController {
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 
     @ModelAttribute("formBean")
-    private CreateAntibodyFormBean getDefaultSearchForm() {
-        return new CreateAntibodyFormBean();
+    private CreateAntibodyFormBean getDefaultSearchForm(@RequestParam(value = "antibodyPublicationZdbID", required = false) String zdbID) {
+
+        CreateAntibodyFormBean abBean = new CreateAntibodyFormBean();
+
+        if (StringUtils.isNotEmpty(zdbID))
+            abBean.setAntibodyPublicationZdbID(zdbID);
+
+        return abBean;
     }
 
     @RequestMapping("/antibody-add-form")
-    protected String showForm() throws Exception {
+    protected String showForm(Model model) throws Exception {
 
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Antibody");
         return "marker/antibody-add-form.page";
     }
 
@@ -58,7 +64,7 @@ public class AntibodyCreateController {
     }
 
     @RequestMapping(value = "/antibody-do-submit", method = RequestMethod.POST)
-    public String doSearch(Model model,
+    public String createAntibody (Model model,
                               @Valid @ModelAttribute("formBean") CreateAntibodyFormBean formBean,
                               BindingResult result) throws Exception {
 
