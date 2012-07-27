@@ -2,6 +2,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.CreateAntibodyFormBean" scope="request"/>
+
 
 <html>
 <form:form action="antibody-do-submit" commandName="formBean" method="post">
@@ -13,7 +15,7 @@
         <label for="antibodyPublicationZdbID" class="indented-label">Publication:</label>
             <form:input path="<%= CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID%>" size="25"
                         onkeypress="return noenter(event)"></form:input>
-            <form:errors path="<%= CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
+            <form:errors path="<%= CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID%>" cssClass="error indented-error" value="${formBean.antibodyPublicationZdbID}"/>
 
     <p>
         <input type=submit name=s_new value="Submit new Antibody">
