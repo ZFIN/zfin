@@ -1,4 +1,3 @@
-
 #!/bin/tcsh -e
 
 # $1 = dbName
