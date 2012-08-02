@@ -75,7 +75,7 @@ public class EfgViewController {
         markerBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(efg.getZdbID()));
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(efg));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + efg.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EFG.getTitleString() + efg.getAbbreviation());
 
         return "marker/efg-view.page";
     }
