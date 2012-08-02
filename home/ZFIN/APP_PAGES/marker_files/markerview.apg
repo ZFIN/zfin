@@ -2500,11 +2500,13 @@ union
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS
   <?MIELSE>
+    <?MIBLOCK COND="$(NE,$marker_type,REGION)">
     MARKER RELATIONSHIPS
+    <?/MIBLOCK>
   <?/MIBLOCK>
   </b>
 <?/MIBLOCK>
-<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(NE,$marker_type,REGION))">
  <br><form name=updaterrel>
  <b>Add relationship:</b> &nbsp;
  Relationship:<SELECT name=relship>
@@ -2641,11 +2643,13 @@ union
 
 
 <?MIBLOCK COND="$(OR,$mrkrview_nSequenceLinks,$(XST,$UPDATE))">
+   <?MIBLOCK COND="$(NE,$marker_type,REGION)">
     <HR width="80%">
     <a name=sequence><b>SEQUENCE INFORMATION</b></a>
+   <?/MIBLOCK>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(NE,$marker_type,REGION))">
   <form name=updateseq>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
   <br>
@@ -3018,9 +3022,11 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     <?/MIBLOCK>
 
   <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
+    <?MIBLOCK COND="$(NE,$marker_type,REGION)">
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES</b><?/MIVAR>
-<?MIBLOCK COND="$(XST,$UPDATE)">
+    <?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(NE,$marker_type,REGION))">
 
   <form name=updateother>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
@@ -3086,6 +3092,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(AND,$(NXST,$type_of_knockdown_reagent),$(=,$(POSITION,$OID,CONSTRCT),0), $(=,$(POSITION,$OID,-EFG-),0))">
+  <?MIBLOCK COND="$(NE,$marker_type,REGION)">
   <hr width="80%" align = center>
   <b>MAPPING INFORMATION  </b>
 
@@ -3096,6 +3103,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
     </TD>
    </TR>
   </TABLE>
+  <?/MIBLOCK>
 <?/MIBLOCK>
 
 <form name=updater1>
