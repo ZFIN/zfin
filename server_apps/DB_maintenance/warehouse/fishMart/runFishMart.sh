@@ -46,6 +46,9 @@ set fishMartScripts=(begin.sql \
 	     populateFishAnnotationSearch.sql \
 	     commit.sql \
 	     begin.sql \
+	     addXpatCounts.sql \
+	     commit.sql \
+	     begin.sql \
 	     populateGeneFeatureResultView.sql \
 	     commit.sql \
 	     begin.sql \
