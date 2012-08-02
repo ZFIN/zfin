@@ -13,6 +13,8 @@ public enum Area {
     MARKER("Marker")     ,
     USER("User")     ,
     PUBLICATION("Publication")     ,
+    REGION("Engineered Region")    ,
+    EFG("Engineered Foreign Gene")
     ;
 
 // area variables
