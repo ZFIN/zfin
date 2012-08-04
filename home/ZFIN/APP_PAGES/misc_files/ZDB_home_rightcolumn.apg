@@ -20,7 +20,8 @@
 
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/action/marker/transcript-add"><em>transcript</em></a>
+          <a href="/action/marker/transcript-add"><em>transcript</em></a>,
+          <a href="/action/marker/region-add"><em>engineered region</em></a>
 
 
 
