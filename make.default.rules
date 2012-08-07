@@ -105,14 +105,15 @@ onetimeonly :
 #-----------------  Auto Documentation  --------------------------------
 # Tom Conlin
 DOT  = /local/apps/Graphics/graphviz-2.28.0/bin/dot
+
 # last in list
 #SELF = $(word $(words $(MAKEFILE_LIST)) ,$(MAKEFILE_LIST))
-
 # first in list -> makfile invoked
 SELF = $(word 1 ,$(MAKEFILE_LIST))
+
 $(SELF).partial_order: $(SELF)
 	@gawk '{while(sub(/\\$$/,"\t",$$0)){getline t;$$0=sprintf("%s\t%s",$$0,t)}print $$0}' $(SELF)| \
-	gawk '/^[^ \09]*:[ \09]/{for(n=2;n<=NF;n++){print $$n,$$1}}' > $@
+	gawk '/^[^ \09#]*:[ \09]/{for(n=2;n<=NF;n++){print $$n,$$1}}' > $@
 
 $(SELF).dot:  $(TOP)/commons/bin/potodot.awk $(SELF).partial_order
 	$(TOP)/commons/bin/potodot.awk -v pwd=`pwd` $(SELF).partial_order > $@
