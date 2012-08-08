@@ -181,12 +181,13 @@ associated zfin gene names, which they will return after a while.
 
 load_assembly[_commit]
 
-Typically after the curators are able to be working on the reno run, you
-can turn your attention away from the transcript aspect of the load.
+After the curators are able to be working on the reno run, you can turn 
+your attention away from the transcript aspect of the load.
 Being tied to the Ensembl assembly has dramatically reduced churn on the 
 clones
 
-(* should/could maybe revisit "clone contains transcript" here)
+*this step needs to be taken strictly after novel transcripts are loaded
+as it now also creates the "clone contains transcript" relationships.
 
 ########################################################################
 
