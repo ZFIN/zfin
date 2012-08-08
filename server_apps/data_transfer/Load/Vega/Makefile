@@ -506,13 +506,20 @@ $(DEST)/clonelist_for_tom.tab: $(DEST)/clonelist_for_tom.txt
 # removing the wrong underscore_suffix on clone names here (if not done)
 annotated_clones.unl: $(DEST)/clonelist_for_tom.tab
 	cut -f 1-3 $< | nawk '{sub(/_[A-Z_]*/,"",$$1);print $$2"|"$$1"|"}' > $@
+	
+# currently all the clone accessions are 8 chars but I would not want to count on it
+ottdarT_clnacc.unl: $(DEST)/transcripts_for_tom.defline
+	awk '{split($$NF,acc,",");for(a in acc)printf("%s|%s|\n",substr($$1,2),substr(acc[a],1,index(acc[a],".")-1))}' $< > $@
 
-load_assembly:  load_assembly.sql assembly_for_tom.tab annotated_clones.unl
-	cat $< rollback.sql | dbaccess -a $$DBNAME
-
+load_assembly:  load_assembly.sql assembly_for_tom.tab annotated_clones.unl\
+  ottdarT_clnacc.unl
+	cat load_assembly.sql rollback.sql | dbaccess -a $$DBNAME &&\
+	cat insert_marker_relationship.sql rollback.sql | dbaccess -a $$DBNAME
+	
 load_assembly_commit:  load_assembly.sql assembly_for_tom.tab annotated_clones.unl
-	cat $< commit.sql | dbaccess -a $$DBNAME
-	@rm -f  annotated_clones.unl  assembly_for_tom.tab
+	cat load_assembly.sql commit.sql | dbaccess -a $$DBNAME &&\
+	cat insert_marker_relationship.sql commit.sql | dbaccess -a $$DBNAME;\
+	@rm -f  annotated_clones.unl  assembly_for_tom.tab ottdarT_clnacc.unl
 
 clean_load_assembly:
 	rm -f  annotated_clones.unl  assembly_for_tom.tab \
