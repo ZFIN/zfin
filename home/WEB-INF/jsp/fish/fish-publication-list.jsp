@@ -19,7 +19,7 @@
 <font size=+1>
     <b>
         Genotype + Morpholinos:&nbsp;
-        <a href="fish-detail/${formBean.fish.fishID}"> ${formBean.fish.name}</a><a
+        <a href="fish-detail/${formBean.fish.fishID}"> ${formBean.fish.name}</a>  
         <br/>
     </b>
 </font>
@@ -30,12 +30,12 @@
         <c:choose>
             <c:when test="${formBean.orderBy == 'author'}">
                 <input type=button name=resultOrder
-                       onClick="document.location.replace('fish-publication-list?antibodyID=${formBean.fishID}&orderBy=date<c:if test="${formBean.update}">&update=true</c:if>')"
+                       onClick="document.location.replace('fish-publication-list?fishID=${formBean.fish.fishID}&orderBy=date')"
                        value="Order By Date">
             </c:when>
             <c:otherwise>
                 <input type=button name=resultOrder
-                       onClick="document.location.replace('fish-publication-list?antibodyID=${formBean.fishID}&orderBy=author<c:if test="${formBean.update}">&update=true</c:if>')"
+                       onClick="document.location.replace('fish-publication-list?fishID=${formBean.fish.fishID}&orderBy=author')"
                        value="Order By Author">
             </c:otherwise>
         </c:choose>
