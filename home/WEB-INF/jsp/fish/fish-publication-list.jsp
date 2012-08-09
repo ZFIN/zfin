@@ -19,7 +19,7 @@
 <font size=+1>
     <b>
         Genotype + Morpholinos:&nbsp;
-        <a href="fish-detail/${formBean.fish.fishID}"> ${formBean.fish.name}</a>  
+        <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
         <br/>
     </b>
 </font>
