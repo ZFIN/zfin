@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class serves the phenotype summary page.
@@ -73,6 +74,7 @@ public class FishPhenotypeController {
 
     @RequestMapping("/fish-publication-list")
     public String fishCitationList(@RequestParam(value = "fishID", required = true) String fishID,
+                                   @RequestParam(value = "orderBy", required = false) String orderBy,
                                        Model model) throws Exception {
 
         Fish fish = getFishRepository().getFish(fishID);
@@ -80,7 +82,10 @@ public class FishPhenotypeController {
             return LookupStrings.idNotFound(model, fishID);
         FishPublicationBean bean = new FishPublicationBean();
         bean.setFish(fish);
+        if (StringUtils.isNotEmpty(orderBy))
+            bean.setOrderBy(orderBy);
         model.addAttribute("formBean", bean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "publication list");
         return "fish/fish-publication-list.page";
     }
 
