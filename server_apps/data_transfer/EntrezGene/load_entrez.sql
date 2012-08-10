@@ -202,7 +202,7 @@ select dblink_linked_recid[1,25],dblink_acc_num[1,20],
  where dblink_fdbcont_zdb_id == "ZDB-FDBCONT-040412-1"
   and recattrib_source_zdb_id != "ZDB-PUB-020723-3"    -- NCBI Gene
 ;
--- TODO: should this script should the odities?
+-- TODO: should this script adopt the odities?
 
 
 ! echo "What new EntrezGene links can we add?"
@@ -497,6 +497,94 @@ delete from entrez_gb where exists (
 	   and fdb_db_name in ("GenBank","GenPept")
 	   and dblink_linked_recid[1,8] not in("ZDB-GENE","ZDB-TRAN") -- transcript evidence
 );
+
+! echo "###############################################################"
+! echo "delete existing Entrez attributed links that shadow other links"
+ 
+select dblink_zdb_id, dblink_linked_recid mrkr, dblink_acc_num acc, dblink_fdbcont_zdb_id fdb
+ from db_link entrez
+ join record_attribution on entrez.dblink_zdb_id == recattrib_data_zdb_id
+ join foreign_db_contains on dblink_fdbcont_zdb_id == fdbcont_zdb_id
+ join foreign_db on fdbcont_fdb_db_id == fdb_db_pk_id
+ where fdb_db_name not in ("EntrezGene","UniGene")
+   and recattrib_source_zdb_id == "ZDB-PUB-020723-3"
+  into temp tmp_entrez with no log
+;
+ 
+! echo "drop redundant attributions"
+select distinct recattrib_data_zdb_id
+ from record_attribution
+ where recattrib_source_zdb_id != "ZDB-PUB-020723-3"
+   and exists (
+ select 't' from tmp_entrez
+  where recattrib_data_zdb_id == mrkr
+) into temp dup_attrib with no log
+;
+ 
+delete from record_attribution
+ where recattrib_source_zdb_id == "ZDB-PUB-020723-3"
+   and exists (
+ select 't' from dup_attrib
+  where dup_attrib.recattrib_data_zdb_id == record_attribution.recattrib_data_zdb_id
+);
+drop table dup_attrib;
+ 
+! echo "spare any up for deletion that have alternative attribution"
+delete from tmp_entrez where exists (
+ select 't' from record_attribution
+  where recattrib_source_zdb_id != "ZDB-PUB-020723-3"
+    and recattrib_data_zdb_id == dblink_zdb_id
+);
+ 
+! echo "---------------------------------------------------------------"
+! echo "drop redundant gene-based shadow links "
+ 
+select distinct dblink_acc_num dl_mrkr ,dblink_acc_num dl_acc, dblink_fdbcont_zdb_id dl_fdb
+ from db_link
+ join record_attribution on dblink_zdb_id == recattrib_data_zdb_id
+ join tmp_entrez on mrkr == dblink_linked_recid
+ where recattrib_source_zdb_id != "ZDB-PUB-020723-3"
+   and dblink_acc_num == acc
+   and dblink_fdbcont_zdb_id == fdb
+ into temp dup_link with no log
+;
+ 
+delete from zdb_active_data where exists (
+ select 't'
+  from tmp_entrez join dup_link on dl_acc == acc
+  where dl_mrkr == mrkr
+    and dl_fdb == fdb
+    and dblink_zdb_id == zactvd_zdb_id
+);
+ 
+drop table dup_link;
+ 
+! echo "---------------------------------------------------------------"
+! echo "drop redundant marker-based shadow links"
+ 
+select distinct dblink_linked_recid dl_mrkr ,dblink_acc_num dl_acc, dblink_fdbcont_zdb_id dl_fdb
+ from db_link
+ join record_attribution on dblink_zdb_id == recattrib_data_zdb_id
+ join marker_relationship on mrel_mrkr_2_zdb_id == dblink_linked_recid
+ join tmp_entrez on mrkr == mrel_mrkr_1_zdb_id
+ where recattrib_source_zdb_id != "ZDB-PUB-020723-3"
+   and dblink_linked_recid[1,8] != "ZDB-GENE"
+   and dblink_acc_num == acc
+   and dblink_fdbcont_zdb_id == fdb
+ into temp dup_link with no log
+;
+ 
+delete from zdb_active_data where exists (
+ select 't'
+  from tmp_entrez join dup_link on dl_acc == acc
+  where dl_mrkr == mrkr
+    and dl_fdb == fdb
+    and dblink_zdb_id == zactvd_zdb_id
+);
+
+drop table dup_link;
+drop table tmp_entrez; 
+
 
 
 ! echo "###############################################################"
