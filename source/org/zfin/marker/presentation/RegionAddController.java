@@ -3,14 +3,13 @@ package org.zfin.marker.presentation;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.presentation.CreateAntibodyFormBeanValidator;
-import org.zfin.antibody.presentation.RegionAddBeanValidator;
+import org.zfin.marker.presentation.RegionAddBeanValidator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
@@ -63,6 +62,7 @@ public class RegionAddController {
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.setValidator(new RegionAddBeanValidator());
     }
 
@@ -117,12 +117,12 @@ public class RegionAddController {
         Marker createdRegion = mr.getMarkerByName(newRegion.getName());
         String alias = formBean.getRegionAlias();
 
-        if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
+        if (alias != null && !addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
             return "redirect:/action/dev-tools/test-error-page";
         }
 
         String curationNote = formBean.getRegionCuratorNote();
-        if (!addCuratorNote(createdRegion, curationNote, currentUser).equalsIgnoreCase(curationNote)) {
+        if (curationNote != null && !addCuratorNote(createdRegion, curationNote, currentUser).equalsIgnoreCase(curationNote)) {
             return "redirect:/action/dev-tools/test-error-page";
         }
 

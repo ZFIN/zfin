@@ -1,10 +1,9 @@
-package org.zfin.antibody.presentation;
+package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.CreateAntibodyFormBean;
 import org.zfin.marker.presentation.RegionAddBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.presentation.PublicationValidator;
