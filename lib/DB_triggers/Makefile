@@ -24,7 +24,8 @@ TRIGGERS = \
 	anatomy_display_insert_trigger.sql \
 	anatomy_display_update_trigger.sql \
 	anatomy_items_insert_trigger.sql \
-	anatomy_items_update_trigger.sql \
+	anatomy_items_name_update_trigger.sql \
+	anatomy_items_end_stage_update_trigger.sql \
 	anatomy_relationship_insert_trigger.sql \
 	anatomy_relationship_update_trigger.sql \
 	clone_problem_type_insert_trigger.sql \
