@@ -39,6 +39,8 @@ help: README.help
 #	$(TARGETDIR)/
 
 
+COMMONSBIN = ${TOP}/commons/bin
+
 # GOAL is to maintain (ADDTIONAL) links from ZFIN to NCBI
 # Types of links are GenBank, RefSeq, UniGene, GenPept.
 # The basis of the link is NCBI's mapping of EntrezID to ZDBID
@@ -61,7 +63,7 @@ Danio_rerio.gene_info.gz:
 
 # Mapping from Entrez ID to ZFIN ID
 
-# TODO: handle their pipe seperated multiple LG in 7th col
+# TODO: handle their pipe seperated multiple LG in 7th col? (or not)
 
 entrezid_zdbid_lg_type.unl: Danio_rerio.gene_info.gz
 	#zgrep "ZDB-" Danio_rerio.gene_info.gz | cut -f2,6,7,10 |\
@@ -109,18 +111,6 @@ entrezid_ugc.tab:	gene2unigene
 # may better belong in a RefSeq dir or nowhere if just a onetime patch
 REFSEQCAT=ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog
 
-### TODO If there is more than one keep the more recent
-RefSeq-release%.catalog.gz: 
-	wget --timestamping $(REFSEQCAT)/RefSeq-release[0-9]*.catalog.gz
-
-refseq_len.unl: RefSeq-release[0-9]*.catalog.gz
-	zcat RefSeq-release*.catalog.gz | \
-	awk '/^7955/ {print substr($$4,1,index($$4,".")-1)"|"$$8"|"}'> $@;\
-	wc -l $@
-
-update_RS_len: update_refseq_pept_length.sql refseq_len.unl  
-	dbaccess -a $$DBNAME $<
-
 #there is a 21M (compressed) file that has the RefSeq/RefPept accessions
 release%.accession2geneid.gz: 
 	wget --timestamping $(REFSEQCAT)/release[0-9]*.accession2geneid.gz
@@ -129,7 +119,7 @@ release%.accession2geneid.gz:
 entrezid_refseq_refpept.tab: release%.accession2geneid.gz
 	zgrep "^7955" release*.accession2geneid.gz |tr \. '	'|cut -f2,3,5|sort -n > $@
 
-#entrezid_RSnt_RSaa_RSdna.tab: 	entrezid_zdbid_lg_type.tab \
+# entrezid_RSnt_RSaa_RSdna.tab: 	entrezid_zdbid_lg_type.tab \
 #								enterzid_refseq_refpept.tab
 #	join -j 1 $+ > $@;\
 #	@ wc -l $@
@@ -143,24 +133,82 @@ entrezid_refseq_refpept.tab: release%.accession2geneid.gz
 #	sort -u |sort -n >! entrezid_RSnt_RSaa_RSdna.tab
 
 
-fetch_entrez: entrezid_refseq_refpept.tab entrezid_ugc.tab \
-				entrezid_GBnt_GBaa_GBdna.tab
+# possible  RefSeq->UniProtKB mapping 
+# ~8M rows maybe better used in UPKB dir
+#wget ftp://ftp.ncbi.nih.gov/refseq/uniprotkb/gene_refseq_uniprotkb_collab.gz
 
+########################################################################
+# 
+# Need the lengths of sequences other then GenBank nuclotide 
 
-run: load_entrez.sql rollback.sql fetch_entrez
-	cat $< rollback.sql | dbaccess -a $$DBNAME
+# RefSeq fasta lengths
 
+REFSEQLEN := ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot
 
-run_commit: load_entrez.sql rollback.sql fetch_entrez
+zebrafish.rna.fna.gz:
+	wget --timestamping ${REFSEQLEN}/zebrafish.rna.fna.gz
+	
+zebrafish.protein.faa.gz:
+	wget --timestamping  ${REFSEQLEN}/zebrafish.protein.faa.gz
+
+refseq_len.unl: zebrafish.rna.fna.gz zebrafish.protein.faa.gz ${COMMONSBIN}/fasta_len.awk
+	zcat zebrafish.*.f?a.gz | ${COMMONSBIN}/fasta_len.awk > $@
+
+# GenPept fasta lengths
+GENPEPTLEN = ftp://ftp.ncbi.nih.gov/genomes/D_rerio/protein/
+
+# ... these are only RefPept acessions
+protein.fa.gz: 
+	wget --timestamping ${GENPEPTLEN}/protein.fa.gz
+
+genpeptRP_len.unl: protein.fa.gz  ${COMMONSBIN}/fasta_len.awk
+	zcat protein.fa.gz | ${COMMONSBIN}/fasta_len.awk > $@
+
+# Gnomon_prot.fsa.gz  not GenPepts	
+# too big ...
+#	ftp://ftp.ncbi.nih.gov/ncbi-asn1/protein_fasta/
+#   ftp://ftp.ncifcrf.gov/pub/genpept/
+
+#
+# So a valid question is should GenPept links be made for RefPept 
+# acessions my thought is NO. they should be RefPept only
+# GenPept is not its own DB but a byproduct of
+# scraping other databases including RefPept and GenBank
+# we already do have mechanism for links to RefReq proteins 
+# so use them instead of secondhand GenPepts which are useful
+# for translated Genbank records and a NCBI record of other (SPTR) dbs
+# the question to be asked of the curators is:
+# what value, beyond that already found on RefPept pages has GenPept?
+
+########################################################################
+
+fetch_entrez: entrezid_ugc.tab refseq_len.unl genpeptRP_len.unl\
+		entrezid_GBnt_GBaa_GBdna.tab entrezid_refseq_refpept.tab 
+
+EntrezGenPept_acc.unl: load_entrez.sql commit.sql fetch_entrez
 	cat $< commit.sql | dbaccess -a $$DBNAME
 
+GenPept.fasta: EntrezGenPept_acc.unl ${COMMONSBIN}/efetch.r
+	${COMMONSBIN}/efetch.r -t fasta -i $<  -o $@
 
-clean:
+genpept_len.unl: GenPept.fasta ${COMMONSBIN}/fasta_len.awk
+	${COMMONSBIN}/fasta_len.awk $< > $@
+
+run: load_entrez.sql fetch_entrez  rollback.sql
+	cat $< rollback.sql | dbaccess -a $$DBNAME
+	@echo "NB: GenPept lenght update needs the entrez load commited" 
+
+run_commit: update_GenPept_len.sql genpept_len.unl 
+	cat load_entrez.sql commit.sql | dbaccess -a $$DBNAME ;\
+	cat update_GenPept_len.sql commit.sql | dbaccess -a $$DBNAME ;\
+	rm -f genpept_len.unl EntrezGenPept_acc.unl GenPept.fasta
+	
+clean_entrez:
 	rm -f entrezid_zdbid_lg_type.unl entrezid_refseq_refpept.tab \
-	entrezid_ugc.tab entrezid_GBnt_GBaa_GBdna.tab
+	entrezid_ugc.tab entrezid_GBnt_GBaa_GBdna.tab \
+    genpept_len.unl EntrezGenPept_acc.unl GenPept.fasta
            
-
-very_clean: clean
+very_clean_entrez: clean_entrez
 	rm -f gene2accession.gz release*.accession2geneid.gz gene2unigene \
 	Danio_rerio.gene_info.gz
 

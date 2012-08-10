@@ -14,11 +14,17 @@ the job of the load is to:
 		a) UniGene
 		b) RefSeq  RNA & Protien
 		c) GenBank RNA & Protien and DNA
+		
+	3) Provide sequence lengths for non GneBank-neculotide acessions.
+		in paeticular RefSeq and GenPept.
 	   
-RefSeq & GenBank have their own load processes which are responsible
-for maintaining links to theit respective databases. this load is 
+GenBank has its own load processes which are responsible
+for maintaining links to their respective databases. this load is 
 only adding in "extra" links as identified by Entrez and not picked up 
 by the our other load scripts.
+
+
+
 
 to execute: 
 
