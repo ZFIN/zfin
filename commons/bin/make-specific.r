@@ -1,5 +1,5 @@
 #! /private/bin/rebol -sqw
-;;;w
+;;;
 rebol[Title: "make specific"
     Date: [2005-Aug-02 2009-Apr-24 2010-Mar-31]
     usage: "make-specific.r <generic-file> <translation-table-file> <specific-file>"
@@ -96,14 +96,14 @@ foreach line translation-table [
 wonky: false
 forskip tt 2 [
     if any[wonky not find first tt start-tag     not find first tt end-tag][
-        wonky: true 
+        wonky: true
 	;tt: tail tt
 	break
     ]
-] 
+]
 
 if any [wonky zero? length? tt    odd? length? tt][
-    print "MAKESPECIFIC ERROR TRANSLATION TABLE IS WONKEY" 
+    print "MAKESPECIFIC ERROR TRANSLATION TABLE IS WONKEY"
     print first tt
     print ["        TRANSLATION TABLE FORMAT:  " start-tag "<key>" end-tag
            " whitespace <value ...>newline"
@@ -133,7 +133,7 @@ either here: find buffer start-tag
 ;;; copy everything, but always only once.
 ;;; allows for the same tag to be both stop & start  i.e. a separater
 
-if empty? translated[
+if empty? translated [
     parse/all buffer[
         there:
         some[
@@ -147,13 +147,14 @@ if empty? translated[
         (insert tail translated copy :there )
     ]
 ]
+
 ;;; sanity check on untranslated tags
 ;;; give a bit of context and remove the (broken/empty) destination file
 ;;; so gmake will not succeed on the next blind pass
 if here: find translated start-tag[
     print ["MAKESPECIFIC WARNING unmatched START tag in: " generic]
     print ["... " copy/part at here -20 at here 40 " ..."]
-    call rejoin["rm -f " specific] 
+    call rejoin["rm -f " specific]
     quit/return FAIL
 ]
 if here: find translated end-tag[
@@ -176,6 +177,7 @@ either err: error? try[write specific ""][
 ;;; call rejoin[ "getfacl " generic " | setfacl -f - " specific]
 ;;; if error? err: try[...]
 ;;;    ["MAKESPECIFIC WARNING cannot match permissions^/" probe disarm err]
+
 set-modes specific get-modes generic [owner-read owner-write owner-execute
     group-read group-write group-execute world-read world-write world-execute
     set-user-id set-group-id
