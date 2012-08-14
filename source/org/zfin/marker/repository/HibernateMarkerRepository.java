@@ -1214,7 +1214,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         sqlQquery.setString("aoterm", aoTerm.getZdbID());
         sqlQquery.setString("type", "High-Quality-Probe");
         sqlQquery.setFirstResult(pagination.getFirstRecord() - 1);
-        sqlQquery.setMaxResults(pagination.getMaxDisplayRecords());
+        sqlQquery.setMaxResults(pagination.getMaxDisplayRecordsInteger());
         List<Object[]> objs = sqlQquery.list();
         List<Marker> hqpRecords = new ArrayList<Marker>();
         for (Object[] objects : objs) {
@@ -1270,7 +1270,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // When paginating from a place other than the start of all records we have to go through
         // the worst case scenario list (assuming there is only one record per probe) and then
         // loop over the results and check if the probe is in the list of probes from above
-        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecords() + 1) {
+        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecordsInteger() + 1) {
             Object[] record = scrollableResults.get();
             HighQualityProbeAOStatistics highQualityProbeStats = new HighQualityProbeAOStatistics();
             Marker probe = new Marker();
@@ -1309,7 +1309,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 populateProbeStatisticsRecord(highQualityProbeStats, list, aoTerm);
         }
         // remove the last entity as it is beyond the display limit.
-        if (list.size() > pagination.getMaxDisplayRecords())
+        if (list.size() > pagination.getMaxDisplayRecordsInteger())
             list.remove(list.size() - 1);
         scrollableResults.close();
         return new PaginationResult<HighQualityProbe>(totalCount, list);

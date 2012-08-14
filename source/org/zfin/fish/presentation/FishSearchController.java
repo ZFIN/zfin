@@ -20,6 +20,7 @@ import org.zfin.framework.presentation.MatchingText;
 import org.zfin.infrastructure.ZdbFlag;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -51,11 +52,16 @@ public class FishSearchController {
      */
     @RequestMapping(value = "/do-search", method = RequestMethod.GET)
     protected String search(Model model,
-                            @ModelAttribute("formBean")
+                            @Valid @ModelAttribute("formBean")
                             FishSearchFormBean formBean, BindingResult result) {
 
-        if (result.getErrorCount() > 0)
-            LOG.error("Errors found during form binding: " + result);
+        //fishSearchFormValidator.validate(formBean, result);
+
+        if (result.getErrorCount() > 0){
+            LOG.info("Errors found during form binding: " + result);
+            attachMetaData(model, formBean);
+            return "fish/fish-search-result.page";
+        }
 
         formBean.setQueryString(request.getQueryString());
         formBean.setRequestUrl(request.getRequestURL());
@@ -66,12 +72,16 @@ public class FishSearchController {
             formBean.setTotalRecords(searchResult.getResultsFound());
             formBean.setFishList(fishList);
         }
+        attachMetaData(model, formBean);
+
+        return "fish/fish-search-result.page";
+    }
+
+    private void attachMetaData(Model model, FishSearchFormBean formBean) {
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search Results");
         ZdbFlag status = fishRepository.getFishMartStatus();
         model.addAttribute(status);
-
-        return "fish/fish-search-result.page";
     }
 
     /**

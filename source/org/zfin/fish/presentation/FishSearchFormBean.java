@@ -43,7 +43,24 @@ public class FishSearchFormBean extends PaginationBean {
         return filter1;
     }
 
+    public String getAogoTermNames() {
+        return aogoTermNames;
+    }
+
+    public void setAogoTermNames(String aogoTermNames) {
+        this.aogoTermNames = aogoTermNames;
+    }
+
+    public String getAogoTermIDs() {
+        return aogoTermIDs;
+    }
+
+    public void setAogoTermIDs(String aogoTermIDs) {
+        this.aogoTermIDs = aogoTermIDs;
+    }
+
     public void setFilter1(String filter1) {
+
         this.filter1 = filter1;
     }
 
@@ -52,8 +69,29 @@ public class FishSearchFormBean extends PaginationBean {
     private Term term;
     private String anatomyTermNames;
     private String anatomyTermIDs;
+    private String goTermNames;
+    private String goTermIDs;
+    private String aogoTermNames;
+    private String aogoTermIDs;
 
     private boolean includeSubstructures;
+
+    public String getGoTermNames() {
+        return goTermNames;
+    }
+
+    public void setGoTermNames(String goTermNames) {
+        this.goTermNames = goTermNames;
+    }
+
+    public String getGoTermIDs() {
+        return goTermIDs;
+    }
+
+    public void setGoTermIDs(String goTermIDs) {
+        this.goTermIDs = goTermIDs;
+    }
+
     // by default sort by best match
     private String sortBy = SortBy.BEST_MATCH.toString();
 
@@ -72,7 +110,7 @@ public class FishSearchFormBean extends PaginationBean {
     }
 
     public void setGeneOrFeatureName(String geneOrFeatureName) {
-        this.geneOrFeatureName = geneOrFeatureName;
+        this.geneOrFeatureName = geneOrFeatureName.trim();
     }
 
 
@@ -106,7 +144,8 @@ public class FishSearchFormBean extends PaginationBean {
         return StringUtils.equals(filter1, SHOW_ALL) &&
                 !hasMutationTypeSelected() &&
                 StringUtils.isEmpty(geneOrFeatureName) &&
-                StringUtils.isEmpty(anatomyTermIDs);
+                StringUtils.isEmpty(anatomyTermIDs) &&
+                StringUtils.isEmpty(goTermIDs);
     }
 
 
@@ -120,6 +159,14 @@ public class FishSearchFormBean extends PaginationBean {
 
     public String getAnatomyTermNames() {
         return anatomyTermNames;
+    }
+
+    public List<String> getTermNames() {
+        if (StringUtils.isEmpty(anatomyTermNames))
+            return null;
+        String[] names = anatomyTermNames.split("\\|");
+        List<String> termNameList = Arrays.asList(names);
+        return termNameList;
     }
 
     public void setAnatomyTermNames(String anatomyTermNames) {
@@ -212,9 +259,16 @@ public class FishSearchFormBean extends PaginationBean {
         return mutationTypeList;
     }
 
+    public Map<String, String> getOntologyTypeList() {
+        LinkedHashMap<String, String> ontologyTypeList = new LinkedHashMap<String, String>();
+        ontologyTypeList.put("AO", "AO");
+        ontologyTypeList.put("GO", "GO");
+        return ontologyTypeList;
+    }
+
 
     public List<Integer> getRecordsPerPageList() {
-        return Arrays.asList(20,50,100,200);
+        return Arrays.asList(20, 50, 100, 200);
     }
 
 }

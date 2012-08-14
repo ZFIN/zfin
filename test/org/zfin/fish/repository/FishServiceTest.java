@@ -1,24 +1,30 @@
 package org.zfin.fish.repository;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.Figure;
+import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.framework.presentation.MatchingText;
+import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.MatchType;
 
 import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertTrue;
 
 public class FishServiceTest extends AbstractDatabaseTest {
@@ -142,8 +148,6 @@ public class FishServiceTest extends AbstractDatabaseTest {
         criteria.getPhenotypeAnatomyCriteria().setValue("ZDB-TERM-100331-2060");
         matchingTexts = service.getMatchingText(criteria);
         assertNotNull(matchingTexts);
-
-
     }
 
     @Test
@@ -216,5 +220,34 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // At least two matches on the two structures.
         assertTrue("One Match", matchingTextList.size() > 1);
     }
+
+    @Test
+    public void testExpressionSummary() {
+        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-6";
+        List<FigureExpressionSummary> displaySummary = FishService.getExpressionSummary(fishID);
+        Assert.assertNotNull(displaySummary);
+    }
+
+    @Test
+    public void hasImages() {
+        String fishID = "ZDB-GENO-070228-3,ZDB-GENOX-070228-3";
+        boolean hasImages = FishService.hasImagesOnExpressionFigures(fishID);
+        assertTrue(hasImages);
+    }
+
+    @Test
+    public void matchingOnFeatureLineNumber() {
+        Fish fish = FishService.getFish("ZDB-GENO-100427-4,ZDB-GENOX-100427-2");
+        criteria.getGeneOrFeatureNameCriteria().setValue("F0104a");
+
+        FishMatchingService service = new FishMatchingService(fish);
+        Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
+        assertNotNull(matchingTexts);
+        assertThat(matchingTexts.size(), greaterThan(0));
+        MatchingText matchingText = matchingTexts.iterator().next();
+        assertEquals(matchingText.getMatchingQuality(), MatchType.EXACT);
+        assertEquals(matchingText.getType(), MatchingTextType.FEATURE_LINE_NUMBER);
+    }
+
 
 }

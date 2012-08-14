@@ -13,6 +13,13 @@
                                      highlightString="${matchingTerm.queryString}"/>]
                     ${matchingTerm.appendix}
                 </c:when>
+                <c:when test="${matchingTerm.matchingQuality eq 'SUBTERM'}">
+                    Match on ${matchingTerm.matchingQuality.name}: GO Term:
+                    ${matchingTerm.matchedString}
+                    [<zfin:highlight highlightEntity="${matchingTerm.queryString}"
+                                     highlightString="${matchingTerm.queryString}"/>]
+                    ${matchingTerm.appendix}
+                </c:when>
                 <c:otherwise>
                     ${matchingTerm.matchingQuality.name}: ${matchingTerm.descriptor}:
                     <zfin:highlight highlightEntity="${matchingTerm.matchedString}"
@@ -29,6 +36,13 @@
                 <li style="list-style: circle outside; green;">${matchingTerm.matchingQuality.name}: ${matchingTerm.descriptor}:
                     <c:choose>
                         <c:when test="${matchingTerm.matchingQuality eq 'SUBSTRUCTURE'}">
+                            ${matchingTerm.matchedString} ${matchingTerm.appendix}
+                            ${matchingTerm.matchingQuality.name} of
+                            <zfin:highlight highlightEntity="${matchingTerm.queryString}"
+                                            highlightString="${matchingTerm.queryString}"/>
+                            ${matchingTerm.appendix}
+                        </c:when>
+                        <c:when test="${matchingTerm.matchingQuality eq 'SUBTERM'}">
                             ${matchingTerm.matchedString} ${matchingTerm.appendix}
                             ${matchingTerm.matchingQuality.name} of
                             <zfin:highlight highlightEntity="${matchingTerm.queryString}"

@@ -19,16 +19,16 @@
         </th>
     </tr>
     </thead>
-    <c:forEach var="pheno" items="${phenotypeDisplays}" varStatus="loop" end="${showNumberOfRecords-1}">
+    <c:forEach var="expressionSummary" items="${phenotypeDisplays}" varStatus="loop" end="${showNumberOfRecords-1}">
         <zfin:alternating-tr loopName="loop">
             <td>
-                <zfin:link entity="${pheno.phenoStatement}"/>
+                <zfin:link entity="${expressionSummary.phenoStatement}"/>
             </td>
             <td>
-                <zfin:link entity="${pheno.experiment}" suppressMoDetails="${displayMoDetails}"/>
+                <zfin:link entity="${expressionSummary.experiment}" suppressMoDetails="${displayMoDetails}"/>
             </td>
             <td>
-                <c:forEach var="figsPub" items="${pheno.figuresPerPub}">
+                <c:forEach var="figsPub" items="${expressionSummary.figuresPerPub}">
                     <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
                         <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${fig.zdbID}'><zfin2:figureOrTextOnlyLink
                                 figure="${fig}" integerEntity="1"/></a>

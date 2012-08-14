@@ -39,7 +39,7 @@ public class ExpressionService {
 //    private static ReferenceDatabase geoDatabase ;
 //    private static ReferenceDatabase zfEspressoDatabase ;
 
-    private Set<String> thissePubs ;
+    private Set<String> thissePubs;
 
     public ExpressionService() {
 //    static{
@@ -50,7 +50,7 @@ public class ExpressionService {
     }
 
     public Set<String> getThissePublicationZdbIDs() {
-        if(thissePubs==null){
+        if (thissePubs == null) {
             thissePubs = new HashSet<String>();
             thissePubs.add("ZDB-PUB-051025-1");
             thissePubs.add("ZDB-PUB-040907-1");
@@ -152,10 +152,9 @@ public class ExpressionService {
                 if (publicationAttribution != null) {
                     logger.debug(publicationAttribution);
                     return 1;
-                }
-                else {
-                   logger.error("failed to add publication attribution for data["+publicationAttribution.getDataZdbID()
-                           +"] source["+publicationAttribution.getSourceZdbID()+"]");
+                } else {
+                    logger.error("failed to add publication attribution for data[" + publicationAttribution.getDataZdbID()
+                            + "] source[" + publicationAttribution.getSourceZdbID() + "]");
                 }
             }
         }
@@ -165,7 +164,7 @@ public class ExpressionService {
 
     public String getGeoLinkForMarkerZdbId(String markerZdbID) {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
-        if(m==null) return null;
+        if (m == null) return null;
         return getGeoLinkForMarker(m);
     }
 
@@ -264,7 +263,7 @@ public class ExpressionService {
             allMarkerExpressionInstance.setSinglePublication(expressionRepository.getExpressionSinglePub(marker));
         }
         allMarkerExpressionInstance.setFigureCount(
-                expressionRepository.getExpressionFigureCountForEfg( marker));
+                expressionRepository.getExpressionFigureCountForEfg(marker));
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
 
         // directly submitted
@@ -396,5 +395,21 @@ public class ExpressionService {
             obsoletedTerms.add(expressionResult.getEntity().getSubterm());
         }
         return obsoletedTerms;
+    }
+
+    /**
+     * Return a distinct list of expression experiments from a given expression result collection
+     *
+     * @param results expression result objects
+     * @return list of expression experiments
+     */
+    public static List<ExpressionExperiment> getDistinctExpressionExperiments(List<ExpressionResult> results) {
+        if (results == null)
+            return null;
+        Set<ExpressionExperiment> expressionExperimentSet = new HashSet<ExpressionExperiment>(results.size());
+        for (ExpressionResult result : results) {
+            expressionExperimentSet.add(result.getExpressionExperiment());
+        }
+        return new ArrayList<ExpressionExperiment>(expressionExperimentSet);
     }
 }

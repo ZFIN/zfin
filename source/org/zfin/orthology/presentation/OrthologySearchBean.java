@@ -220,7 +220,7 @@ public class OrthologySearchBean extends PaginationBean implements Serializable 
     public ZfinCriteria getBasicCriteria() {
         ZfinCriteria criteria = new ZfinCriteria();
         criteria.setFirstRow(getFirstRecord());
-        criteria.setMaxDisplayRows(getMaxDisplayRecords());
+        criteria.setMaxDisplayRows(getMaxDisplayRecordsInteger());
         criteria.addOrdering(ordering, true);
         criteria.setOrRelationship(isAnyComparisonSpecies());
         return criteria;

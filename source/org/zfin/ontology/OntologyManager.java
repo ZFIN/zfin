@@ -35,6 +35,7 @@ public class OntologyManager {
     protected static final String QUALITY_TERM_NORMAL = "PATO:0000461";
     protected static final String MPATH_NEOPLASM_ROOT = "MPATH:218";
 
+
     public static final int NUMBER_OF_SERIALIZABLE_ONTOLOGIES = Ontology.getSerializableOntologies().length;
     private static Map<OntologyDTO, PatriciaTrieMultiMap<TermDTO>> ontologyTermDTOMap = new HashMap<OntologyDTO, PatriciaTrieMultiMap<TermDTO>>(NUMBER_OF_SERIALIZABLE_ONTOLOGIES);
     private OntologyTokenizer tokenizer = new OntologyTokenizer(3);
@@ -603,6 +604,7 @@ public class OntologyManager {
 //        PatriciaTrieMultiMap<TermDTO> termMap = getTermOntologyMapCopy(ontology);
         Set<TermDTO> terms = new HashSet<TermDTO>();
         String lookupValue = termName.trim().toLowerCase();
+       // String lookupValue = termName.trim();
 
         if (ontology.isComposedOntologies()) {
             // now we construct a map
@@ -859,6 +861,7 @@ public class OntologyManager {
             reloadOntology(Ontology.GO_BP);
             return;
         }
+
         initOntologyMapFast(ontology);
         serializeOntology(ontology);
         if (ontology.equals(Ontology.QUALITY)) {

@@ -189,6 +189,12 @@ update fish_annotation_search_temp
 
 
 
+update fish_annotation_Search_temp
+  set fas_xfigg_has_images = "t"
+  where exists (select 'x' from xpat_Figure_group
+  	       	       	   where xfigg_geno_handle = fas_geno_handle
+			   and xfigg_has_images = "t");
+
 update statistics high for table fish_annotation_search_temp;
 
 select distinct fa_genox_zdb_id, fa_geno_handle

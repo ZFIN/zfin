@@ -2,7 +2,9 @@ package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.util.URLCreator;
+import org.zfin.util.validation.IntegerValue;
 
+import javax.validation.constraints.Max;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +27,10 @@ public class PaginationBean {
        to include the current page in the total number of pages.
     **/
 
-    protected int maxDisplayRecords = MAX_DISPLAY_RECORDS_DEFAULT;
+    @Max(value = 1000, message = "maxDisplayRecords must be less or equal 1000")
+    protected int maxDisplayRecordsInteger = MAX_DISPLAY_RECORDS_DEFAULT;
     private int totalRecords;
-    protected int page = 1;
+    protected int pageInteger = 1;
     private String formLink;
 
     private String welcomeInputSubject;
@@ -35,16 +38,49 @@ public class PaginationBean {
     private String queryString;
     private StringBuffer requestUrl;
 
+
+    // preempts the integer attribute 'maxDisplayRecords' in the super class which is an integer.
+    // This allows validating the values before the Integer-conversion fails.
+    @IntegerValue(message = "The value {0} of the request parameter 'maxDisplayRecordsString' is not a number")
+    private String maxDisplayRecords;
+
+    // preempts the integer attribute 'page' (int) in the super class
+    @IntegerValue(message = "The value of the request parameter 'pageString' is not a number")
+    private String page;
+
+
     // for APG pagination
     private String actionUrl;
     private int firstPageRecord;
 
-    public int getMaxDisplayRecords() {
+    public String getMaxDisplayRecords() {
         return maxDisplayRecords;
     }
 
-    public void setMaxDisplayRecords(int maxDisplayRecords) {
+    public String getMaxDisplayRecordsTop() {
+        return maxDisplayRecords;
+    }
+
+    public String getMaxDisplayRecordsBottom() {
+        return maxDisplayRecords;
+    }
+
+    public void setMaxDisplayRecords(String maxDisplayRecord) {
+        setMaxDisplayRecords((Object) maxDisplayRecord);
+    }
+
+    public void setMaxDisplayRecords(Object maxDisplayRecord) {
+        if (maxDisplayRecord instanceof Integer) {
+            maxDisplayRecordsInteger = (Integer) maxDisplayRecord;
+            return;
+        }
+        String maxDisplayRecords = (String) maxDisplayRecord;
         this.maxDisplayRecords = maxDisplayRecords;
+        try {
+            maxDisplayRecordsInteger = Integer.parseInt(maxDisplayRecords);
+        } catch (NumberFormatException e) {
+            // ignore as this object will be validated at a later stage.
+        }
     }
 
     public int getTotalRecords() {
@@ -55,82 +91,82 @@ public class PaginationBean {
         this.totalRecords = totalRecords;
     }
 
-    public int getPage() {
-        return page;
+    public int getPageInteger() {
+        return pageInteger;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public void setPageInteger(int page) {
+        this.pageInteger = page;
     }
 
     public int getTotalNumPages() {
-        return (int) Math.ceil((double) totalRecords / (double) maxDisplayRecords);
+        return (int) Math.ceil((double) totalRecords / (double) maxDisplayRecordsInteger);
     }
 
     public int getFirstRecord() {
-        return ((page - 1) * maxDisplayRecords + 1);
+        return ((pageInteger - 1) * maxDisplayRecordsInteger + 1);
     }
 
     public int getLastRecord() {
-        return (page * maxDisplayRecords);
+        return (pageInteger * maxDisplayRecordsInteger);
     }
 
     public int getPreviousPage() {
-        return page - 1;
+        return pageInteger - 1;
     }
 
     public int getNextPage() {
-        return page + 1;
+        return pageInteger + 1;
     }
 
     public List<Integer> getPageList() {
         int totalPages = getTotalNumPages();
         List<Integer> pageList = new ArrayList<Integer>();
         for (int i = MAXPAGELINKS / 2; i > 0; i--) {
-            if (page - i > 0)
-                pageList.add(page - i);
+            if (pageInteger - i > 0)
+                pageList.add(pageInteger - i);
         }
 
-        pageList.add(page);
+        pageList.add(pageInteger);
 
         for (int i = 1; i <= MAXPAGELINKS / 2; i++) {
-            if (page + i <= totalPages)
-                pageList.add(page + i);
+            if (pageInteger + i <= totalPages)
+                pageList.add(pageInteger + i);
         }
 
         return pageList;
     }
 
     public boolean isFirstPage() {
-        return page == 1;
+        return pageInteger == 1;
     }
 
     public boolean isLastPage() {
-        return page == getTotalNumPages();
+        return pageInteger == getTotalNumPages();
     }
 
     public boolean getIsFirstPage() {
-        return page == 1;
+        return pageInteger == 1;
     }
 
     public boolean getIsLastPage() {
-        return page == getTotalNumPages();
+        return pageInteger == getTotalNumPages();
     }
 
     public boolean isElisionForHigherPages() {
-        return (getTotalNumPages() - page) >= (MAXPAGELINKS + 3) / 2;
+        return (getTotalNumPages() - pageInteger) >= (MAXPAGELINKS + 3) / 2;
     }
 
     public boolean isShowLastPage() {
-        return page + (MAXPAGELINKS - 1) / 2 < getTotalNumPages();
+        return pageInteger + (MAXPAGELINKS - 1) / 2 < getTotalNumPages();
     }
 
     public boolean isShowFirstPage() {
-        return page - (MAXPAGELINKS - 1) / 2 > 1;
+        return pageInteger - (MAXPAGELINKS - 1) / 2 > 1;
     }
 
     public boolean isElisionForLowerPages() {
-        return page > (MAXPAGELINKS + 3) / 2;
+        return pageInteger > (MAXPAGELINKS + 3) / 2;
     }
 
     public void addRequestParameter(String name, String value) {
@@ -142,7 +178,7 @@ public class PaginationBean {
     }
 
     public boolean isPaginationNeeded() {
-        return totalRecords > maxDisplayRecords;
+        return totalRecords > maxDisplayRecordsInteger;
     }
 
     public String getWelcomeInputSubject() {
@@ -182,7 +218,7 @@ public class PaginationBean {
     }
 
     public int getFirstRecordOnPage() {
-        return (page - 1) * maxDisplayRecords + 1;
+        return (pageInteger - 1) * maxDisplayRecordsInteger + 1;
     }
 
     public int getFirstPageRecord() {
@@ -198,7 +234,7 @@ public class PaginationBean {
     }
 
     public void setQueryString(String queryString) {
-        if(queryString == null)
+        if (queryString == null)
             return;
         this.queryString = URLDecoder.decode(queryString);
     }
@@ -206,4 +242,22 @@ public class PaginationBean {
     public void setRequestUrl(StringBuffer requestUrl) {
         this.requestUrl = requestUrl;
     }
+
+    public String getPage() {
+        return page;
+    }
+
+    public void setPage(String pageString) {
+        this.page = pageString;
+        try {
+            pageInteger = Integer.parseInt(pageString);
+        } catch (NumberFormatException e) {
+            // ignore as this object will be validated at a later stage.
+        }
+    }
+
+    public int getMaxDisplayRecordsInteger() {
+        return maxDisplayRecordsInteger;
+    }
+
 }

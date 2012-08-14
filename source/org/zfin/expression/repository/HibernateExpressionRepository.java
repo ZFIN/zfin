@@ -1545,9 +1545,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
             aliasMap.put("xpatex.genotypeExperiment", "genox");
-            aliasMap.put("genox.experiment", "exp");
-            criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                    Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+            criteria.add(Restrictions.eq("genox.standardOrGenericControl", true));
             logger.debug("standard or generic-control only");
         }
 

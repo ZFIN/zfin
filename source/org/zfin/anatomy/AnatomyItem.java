@@ -42,7 +42,7 @@ public class AnatomyItem extends AbstractTerm {
     }
 
     public Ontology getOntology() {
-        return Ontology.ANATOMY;
+        return Ontology.AOGO;
     }
 
     public String getComment() {

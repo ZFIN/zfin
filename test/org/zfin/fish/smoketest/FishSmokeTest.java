@@ -86,4 +86,40 @@ public class FishSmokeTest extends AbstractSmokeTest {
         }
     }
 
+    /**
+     * Check that the full expressed gene section is displayed looking for 'pax6a'
+     */
+    @Test
+    public void testExpressionSummary() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-show-all-expression/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1");
+                // make sure pax6a is listed
+                List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-200']");
+                assertEquals(1, pubs.size());
+
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    /**
+     * Check that the full expressed gene section is displayed looking for 'alcama'
+     */
+    @Test
+    public void testExpressionSummaryOnFishView() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1");
+                // make sure alcama is listed
+                List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-30']");
+                assertEquals(1, pubs.size());
+
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
+    }
+
 }

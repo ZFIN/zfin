@@ -10,7 +10,7 @@
 <form:form method="Get" action="antibody-do-search" modelAttribute="formBean" name="Antibody Search"
            id="Antibody Search" onsubmit="return false;">
 
-    <table width="100%" class="error-box">
+    <table width="100%" class="error">
         <tr>
             <td>
                 <form:errors path="*" cssClass="Error"/>
@@ -186,6 +186,8 @@
                             onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}  "/>
                 results per page
+                <br/>
+                <form:errors path="maxDisplayRecords" cssClass="error"/>
             </td>
         </tr>
     </table>

@@ -26,16 +26,16 @@ The form bean has to extend PaginationBean to make this work.
                         <c:if test="${paginationBean.showFirstPage}">
                             <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=1">1</a>
                         </c:if><c:if test="${paginationBean.elisionForLowerPages}">
-                            ...
-                        </c:if><c:forEach var="currentPage" items="${paginationBean.pageList}">
-                            <c:if test="${currentPage != paginationBean.page}">
-                                <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${currentPage}">
-                                        ${currentPage}</a>
-                            </c:if>
-                            <c:if test="${currentPage == paginationBean.page}">
-                               <span class="current"> ${currentPage}</span>
-                            </c:if>
-                        </c:forEach>
+                        ...
+                    </c:if><c:forEach var="currentPage" items="${paginationBean.pageList}">
+                        <c:if test="${currentPage != paginationBean.page}">
+                            <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${currentPage}">
+                                    ${currentPage}</a>
+                        </c:if>
+                        <c:if test="${currentPage == paginationBean.page}">
+                            <span class="current"> ${currentPage}</span>
+                        </c:if>
+                    </c:forEach>
                         <c:if test="${paginationBean.elisionForHigherPages}">
                             ...
                         </c:if>
@@ -48,7 +48,7 @@ The form bean has to extend PaginationBean to make this work.
                             </c:when>
                             <c:otherwise>
                     <span class="disabled">
-                    Next &raquo;
+                    next &raquo;
                         </span>
                             </c:otherwise>
                         </c:choose>

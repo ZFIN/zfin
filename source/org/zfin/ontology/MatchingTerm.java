@@ -39,7 +39,9 @@ public class MatchingTerm {
 
 
     public boolean startsWithQuery() {
-        return (term.getName().toLowerCase().startsWith(query));
+       return (term.getName().toLowerCase().startsWith(query.toLowerCase()));
+
+
     }
 
     public String getAlias() {

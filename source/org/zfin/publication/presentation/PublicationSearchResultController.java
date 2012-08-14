@@ -40,7 +40,7 @@ public class PublicationSearchResultController extends AbstractCommandController
         // ToDo All this stuff about pagination and ordering should be more streamlined
         // in a framework
         pr.setFirstRow(form.getFirstRecord());
-        pr.setMaxDisplayRows(form.getMaxDisplayRecords());
+        pr.setMaxDisplayRows(form.getMaxDisplayRecordsInteger());
         pr.setUsePagination(true);
         pr.removeOrderByFields();
         pr.addOrdering("publication.publicationDate asc");

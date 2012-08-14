@@ -9,6 +9,7 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,17 +37,17 @@ public class ExpressionExperiment {
     }
 
 
-    public int getAlternateKey(){
+    public int getAlternateKey() {
         int hash = 1;
         hash = hash * 31 + publication.hashCode();  // uses zdbID
         hash = hash * 31 + genotypeExperiment.getZdbID().hashCode();
         hash = hash * 31 + assay.getName().hashCode();
-        hash = hash * 31 + (probe== null ? 0 : probe.hashCode()); // uses zdbID
-        hash = hash * 31 + (gene== null ? 0 : gene.hashCode());// uses zdbID
+        hash = hash * 31 + (probe == null ? 0 : probe.hashCode()); // uses zdbID
+        hash = hash * 31 + (gene == null ? 0 : gene.hashCode());// uses zdbID
         // dblink
-        hash = hash * 31 + (markerDBLink== null ? 0 : markerDBLink.hashCode());// uses zdbID
+        hash = hash * 31 + (markerDBLink == null ? 0 : markerDBLink.hashCode());// uses zdbID
         // atb
-        hash = hash * 31 + (antibody== null ? 0 : antibody.hashCode());// uses zdbID
+        hash = hash * 31 + (antibody == null ? 0 : antibody.hashCode());// uses zdbID
 
         return hash;
     }
@@ -148,12 +149,12 @@ public class ExpressionExperiment {
     }
 
     public ExpressionResult getMatchingExpressionResult(ExpressionResult expressionResult) {
-        for(ExpressionResult aExpressionResult:getExpressionResults()){
-            if(false==canMergeExpressionResult(aExpressionResult,expressionResult)){
-                return aExpressionResult ;
+        for (ExpressionResult aExpressionResult : getExpressionResults()) {
+            if (false == canMergeExpressionResult(aExpressionResult, expressionResult)) {
+                return aExpressionResult;
             }
         }
-        return null ; 
+        return null;
     }
 
     /**
@@ -161,20 +162,36 @@ public class ExpressionExperiment {
      * experiment, anatomy item, start stage, end stage, expression found, and term
      * Only term can be null.  Expression found is a boolean.
      * Since experiment is going ot be moved, we don't really care about that.
+     *
      * @param era First expresion result.
      * @param erb Second expression result.
      * @return Indicates if these records are too similar (false) or not (true).
      */
-    private boolean canMergeExpressionResult(ExpressionResult era,ExpressionResult erb){
-        if(!era.getSuperTerm().equals(erb.getSuperTerm())) return true ;
-        if(!era.getStartStage().equals(erb.getStartStage())) return true ;
-        if(!era.getEndStage().equals(erb.getEndStage())) return true ;
-        if(!era.isExpressionFound()==erb.isExpressionFound()) return true ;
-        if(era.getSubTerm()==null && erb.getSubTerm()!=null) return true ;
-        if(era.getSubTerm()!=null && erb.getSubTerm()==null) return true ;
-        if(era.getSubTerm()!=null && erb.getSubTerm()!=null &&
-                false==era.getSubTerm().equals(erb.getSubTerm())) return true ;
+    private boolean canMergeExpressionResult(ExpressionResult era, ExpressionResult erb) {
+        if (!era.getSuperTerm().equals(erb.getSuperTerm())) return true;
+        if (!era.getStartStage().equals(erb.getStartStage())) return true;
+        if (!era.getEndStage().equals(erb.getEndStage())) return true;
+        if (!era.isExpressionFound() == erb.isExpressionFound()) return true;
+        if (era.getSubTerm() == null && erb.getSubTerm() != null) return true;
+        if (era.getSubTerm() != null && erb.getSubTerm() == null) return true;
+        if (era.getSubTerm() != null && erb.getSubTerm() != null &&
+                false == era.getSubTerm().equals(erb.getSubTerm())) return true;
 
-        return false ;
+        return false;
+    }
+
+    /**
+     * Retrieve all distinct figures for this expression experiment.
+     * @return set of figures to which expression results are linked
+     */
+    public Set<Figure> getAllFigures() {
+        if (expressionResults == null)
+            return null;
+        // at maximum as many figures as result records
+        Set<Figure> figures = new HashSet<Figure>(expressionResults.size());
+        for (ExpressionResult result : expressionResults) {
+            figures.addAll(result.getFigures());
+        }
+        return figures;
     }
 }

@@ -12,7 +12,7 @@
             <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"></a>
 
         </td>
-        <td align="right" class="titlebar">
+        <td align="right" class="titlebarRight">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Antibody search"/>
                 <tiles:putAttribute name="subjectID" value=""/>

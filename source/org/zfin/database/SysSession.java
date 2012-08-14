@@ -28,6 +28,7 @@ public class SysSession {
     private Date startDate;
     private Set<DatabaseLock> syslocks;
     private SysOpenDb sysOpenDb;
+    private Set<SysOpenDb> sysOpenDbList;
 
     public int getSid() {
         return sid;
@@ -223,6 +224,13 @@ public class SysSession {
         return new Date(date.getTime() + pst.getRawOffset());
     }
 
+    public Set<SysOpenDb> getSysOpenDbList() {
+        return sysOpenDbList;
+    }
+
+    public void setSysOpenDbList(Set<SysOpenDb> sysOpenDbList) {
+        this.sysOpenDbList = sysOpenDbList;
+    }
 
     public enum State implements Comparable<State> {
         USER_STRUCTURE(1, "User structure in use"),

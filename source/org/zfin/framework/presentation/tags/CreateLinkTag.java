@@ -11,6 +11,8 @@ import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
+import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
@@ -105,6 +107,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
             link = FigurePresentation.getLink((Figure) o);
+        else if (o instanceof Fish)
+            link = FishPresentation.getLink((Fish) o);
         else if (o instanceof Image)
             link = ImagePresentation.getLink((Image) o);
         else if (o instanceof OrthologySpecies)

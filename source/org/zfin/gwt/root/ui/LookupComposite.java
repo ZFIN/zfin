@@ -33,11 +33,13 @@ public class LookupComposite extends Composite implements Revertible {
     private TextBox textBox = new TextBox();
     private SuggestBox suggestBox;
     private SuggestOracle.Suggestion suggestion = null;
+
     private Button submitButton;
     private String currentText = null;
     private HTML noteLabel = new HTML("", true);
     private VerticalPanel rootPanel = new VerticalPanel();
     private TermInfoComposite termInfoTable;
+
 
 
     // internal ui data
@@ -107,15 +109,27 @@ public class LookupComposite extends Composite implements Revertible {
     public void initGui() {
         textBox.setName(inputName);
         textBox.setTitle(inputName);
+
+
         DOM.setElementProperty(textBox.getElement(), "id", inputName);
         textBox.setVisibleLength(suggestBoxWidth);
         DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
+
         textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> stringValueChangeEvent) {
                 markUnValidateText();
             }
         });
+
+        /*textBox.addFocusHandler((new FocusHandler() {
+            public void onFocus(FocusEvent event) {
+                textBox.setValue("");
+                textBox.setStyleName("gwt-lookup-error");
+
+            }
+        }); */
+
         suggestBox = new SuggestBox(oracle, textBox);
         addSuggestBoxHandlers();
         //suggestBox.

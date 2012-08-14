@@ -13,14 +13,14 @@
 <table width="100%" class="error-box">
     <tr>
         <td>
-            <form:errors path="*" cssClass="Error"/>
+            <form:errors path="*" cssClass="error"/>
         </td>
     </tr>
 </table>
 
 <style type="text/css">
 
-    #anatomyTermList {
+    #searchTermList {
         margin-left: 10px;
         display: none;
         width: 300px;
@@ -58,15 +58,19 @@
     }
 </style>
 
+
 <table width="100%" class="searchform">
     <tr>
         <th nowrap="nowrap">
-            <label class="namesearchLabel" for="geneOrFeatureName" title="Gene/Allele Name">Gene/Allele Name</label>
+            <label class="namesearchLabel" for="geneOrFeatureName" title="Gene/Allele Name">Gene/Allele</label>
         </th>
         <td>
+           <%-- <form:input id="geneOrFeatureName" path="geneOrFeatureName" size="30" value="ti282,  ntl tbx,  tnnt EGFP" style="color:#C0C0C0"
+                        onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
+		                        if (k == 13 ) { submitForm(1);}"/>--%>
             <form:input id="geneOrFeatureName" path="geneOrFeatureName" size="30"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
-		                        if (k == 13 ) { submitForm(1);}  "/>
+		                        if (k == 13 ) { submitForm(1);}"/>
         </td>
         <td colspan="2">
             <span class="bold">Mutation Type:</span>
@@ -77,7 +81,12 @@
     </tr>
     <tr>
         <th>
-            <label class="namesearchLabel">Phenotype Anatomy</label>
+            <label class="namesearchLabel">Phenotype&nbsp;
+                    <%--<select name="ontologyType" onChange="changeOntology(this.value)">
+                       <option SELECTED value=AO>Anatomy</option>
+                       <option value=AOGO>Gene Ontology</option>
+                    </select>--%>
+            </label>
         </th>
         <td>
             <form:hidden path="anatomyTermIDs"/>
@@ -85,7 +94,7 @@
             <script type="text/javascript">
                 var LookupProperties = {
                     inputDiv:"anatomyTermInput",
-                    termListDiv:"anatomyTermList",
+                    termListDiv:"searchTermList",
                     inputName:"searchTerm",
                     showError:true,
                     <c:if test='${formBean.anatomyTermNames != null}' >
@@ -94,7 +103,8 @@
                     hiddenNames:"anatomyTermNames",
                     hiddenIds:"anatomyTermIDs",
                     type:"<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName:"<%= Ontology.ANATOMY %>",
+                    ontologyName:"<%= Ontology.AOGO %>",
+                    action:"<%= LookupComposite.ACTION_TERM_SEARCH %>",
                     width:30,
                     wildcard:false,
                     useTermTable:true
@@ -143,17 +153,28 @@
             </table>
             <form:hidden path="sortBy" id="sort-by"/>
             <form:hidden path="maxDisplayRecords" id="max-display-records-hidden" cssClass="auto-submit"/>
+            <input type="hidden" name="page" id="page"/>
+
         </td>
     </tr>
     <tr>
         <th></th>
         <td>
-            <div id="anatomyTermList">
+            <div id="searchTermList">
                 <a style="display:none; float: right;" id="term-list-remove-all-link"
                    href="javascript:clearTable();decorateTermList();">remove all</a>
             </div>
         </td>
     </tr>
+        <%--<tr>
+            <td colspan="2"></td>
+            <td>
+                <div class="search-form-alternate-link">
+                    Miss our old search form?
+                    <a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg">It's still available</a>
+                </div>
+            </td>
+        </tr>--%>
 </table>
 
 <div class="search-form-bottom-bar" style="text-align:right">
@@ -165,7 +186,37 @@
 <script type="text/javascript">
 
     //experimental, submit form on any form element change
+
     jQuery(document).ready(function () {
+        var default_Value="ti282,  ntl tbx,  tnnt EGFP"    ;
+        var Input =  jQuery('input[name=geneOrFeatureName]');
+        if (Input.val().length == 0){
+            Input.val(default_Value).css('color','silver');
+        }
+
+        //alert(default_Value);
+        Input.focus(function(){
+
+            if(Input.val() == default_Value) Input.val("").css('color','black');
+        }).blur(function(){
+
+                    if(Input.val().length == 0) {
+
+                        Input.val(default_Value).css('color','silver');
+                    }
+                    else
+                    {
+
+                        Input.css('color','black');
+                    }
+
+                });
+      /*  jQuery('#fish-search-form').submit(function(){
+            var Input =  jQuery('input[name=geneOrFeatureName]');
+            var default_Value=Input.val();
+            alert(default_Value);
+            if(Input.val() == default_Value) Input.val("");
+                });*/
         jQuery('#fish-search-form .auto-submit').change(function () {
             submitForm(1)
         });
@@ -173,22 +224,56 @@
 
         //set the results per page pulldowns on top and bottom
         jQuery('#max-display-records-top, #max-display-records-bottom').val(jQuery('#max-display-records-hidden').val());
+        jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
+        /*jQuery('input[name=geneOrFeatureName]').val('ti282,  ntl tbx,  tnnt EGFP');
+        jQuery('input[name=geneOrFeatureName]').css('color', '#C0C0C0');*/
+        jQuery('#searchTerm').focus(function () {
+            jQuery('#searchTerm').css('color', '#000000').val('');
 
+        });
         //handle display details of the term list
         //this is hacky - delay a tad so that it'll be after GWT has loaded.  yuck.
         setTimeout(function () {
+             jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
+
+             jQuery('#searchTerm').focus(function () {
+             jQuery('#searchTerm').css('color', '#000000').val('');
+
+             });
+
+        }, 50);
+
+        setTimeout(function () {
+            jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
+
+            jQuery('#searchTerm').focus(function () {
+                jQuery('#searchTerm').css('color', '#000000').val('');
+
+            });
+
+
             decorateTermList();
         }, 200);
         //try again at longer intervals... just in case.  nothing bad happens if we run this more than once
         setTimeout(function () {
+
             decorateTermList();
+
         }, 500);
         setTimeout(function () {
             decorateTermList();
+//
         }, 1000);
         setTimeout(function () {
+
             decorateTermList();
+
         }, 3000);
+        setTimeout(function () {
+
+            decorateTermList();
+
+        }, 5000);
 
 
     });
@@ -202,23 +287,32 @@
     //decorate anatomy box when it has terms, add a remove all link when there's 2 or more
 
     jQuery('input[name=anatomyTermIDs]').change(function () {
+
         decorateTermList();
+        jQuery('#searchTerm').css('color', '#000000').val('');
+
     });
 
+
     function decorateTermList() {
-        termCount = jQuery('#anatomyTermList .gwt-Hyperlink').size();
+        termCount = jQuery('#searchTermList .gwt-Hyperlink').size();
+
         if (termCount == 0) {
-            jQuery('#anatomyTermList').hide();
+            jQuery('#searchTermList').hide();
             jQuery('#term-list-remove-all-link').hide();
+
 
         } else if (termCount == 1) {
-            jQuery('#anatomyTermList').show();
+            jQuery('#searchTermList').show();
             jQuery('#term-list-remove-all-link').hide();
+            jQuery('#searchTerm').css('color', '#000000');
 
         } else {
-            jQuery('#anatomyTermList').show();
+            jQuery('#searchTermList').show();
             jQuery('#term-list-remove-all-link').show();
+            jQuery('#searchTerm').css('color', '#000000');
         }
+
 
     }
 
@@ -231,10 +325,16 @@
         jQuery('#max-display-records-hidden').val('20');
         jQuery('input[name=sortBy]').val('<%= SortBy.BEST_MATCH %>');
         jQuery('#sort-by-pulldown').val('0');
-
         clearTable();
         decorateTermList();
+        var inputElement = document.getElementById(LookupProperties.inputName);
+        inputElement.style.color = '#C0C0C0';
+        inputElement.value = "kidney, mitosis, nucleus ";
+        jQuery('input[name=geneOrFeatureName]').val('ti282,  ntl tbx,  tnnt EGFP');
+        jQuery('input[name=geneOrFeatureName]').css('color', '#C0C0C0');
     }
+
+
 
 
     function submitForm(page) {
@@ -251,6 +351,31 @@
         var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
         if (pageField != null)
             pageField.value = page;
+
+        var Input =  jQuery('input[name=geneOrFeatureName]');
+        var default_Value='ti282,  ntl tbx,  tnnt EGFP';
+
+        var defaultSearch=false;
+
+        if(Input.val() == default_Value){
+
+            Input.val("").css('color','black');
+            var defaultSearch=true
+        }  else{
+            var defaultSearch=false;
+        }
+       // alert(defaultSearch);
+/*
+        var params = jQuery("#fish-search-form").serialize();
+
+        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
+        if (defaultSearch==true){
+            Input.val("ti282,  ntl tbx,  tnnt EGFP").css('color','silver');
+        }
+*/
+       /* var inputElement = document.getElementById(LookupProperties.inputName);
+        inputElement.style.color = '#000000';
+        inputElement.value="" ;*/
         form.submit();
     }
 
@@ -277,3 +402,26 @@
 
 
 </form:form>
+
+
+<div id="fish-search-results"/>
+
+<%--
+<script type="text/javascript">
+    function submitFishSearchWithNumOfRecordsTop(id) {
+        document.getElementById("max-display-records-hidden").value = jQuery('#' + id).val();
+        var params = jQuery("#fish-search-form").serialize();
+
+        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
+    }
+    function submitFishSearchByPage(page) {
+        document.getElementById("page").value = page;
+        var params = jQuery("#fish-search-form").serialize();
+        //alert('j: ' + params);
+        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
+    }
+
+
+
+</script>
+--%>

@@ -23,6 +23,12 @@ public enum OntologyDTO implements IsSerializable {
             return QUALITY;
         }
     },
+    AOGO(1, "AOGO", "zebrafish_anatomy,cellular_component,molecular_function,biological_process", true) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     // Subset of GO: Cellular Components
     GO_CC(2, "GO-CC", "cellular_component", false) {
         @Override

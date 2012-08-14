@@ -7,8 +7,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.framework.presentation.MatchingText;
+import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -18,7 +17,6 @@ import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
-import org.zfin.util.MatchingService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public class AntibodyServiceTest extends AbstractDatabaseTest {
 
-        private static final Logger logger = Logger.getLogger(AntibodyServiceTest.class);
+    private static final Logger logger = Logger.getLogger(AntibodyServiceTest.class);
 
 
     @Test
@@ -135,23 +133,20 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void distinctAOTermListWithSecondaryAoTerm() {
-        AnatomyItem termOne = new AnatomyItem();
+        GenericTerm termOne = new GenericTerm();
         termOne.setZdbID("ZDB-ANAT-011113-512");
-        termOne.setNameOrder("Halle");
-        AnatomyItem termTwo = new AnatomyItem();
+        GenericTerm termTwo = new GenericTerm();
         termTwo.setZdbID("ZDB-ANAT-011113-223");
-        termTwo.setNameOrder("Zwitter");
-        AnatomyItem termThree = new AnatomyItem();
+        GenericTerm termThree = new GenericTerm();
         termThree.setZdbID("ZDB-ANAT-011113-514");
-        termThree.setNameOrder("Margor");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperTerm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(createMinimalGenericTerm(termOne, Ontology.ANATOMY));
         resultOne.setExpressionFound(true);
-        resultOne.setSubTerm(termThree.createGenericTerm());
+        resultOne.setSubTerm(createMinimalGenericTerm(termThree, Ontology.ANATOMY));
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperTerm(termTwo.createGenericTerm());
+        resultOne.setSuperTerm(createMinimalGenericTerm(termTwo, Ontology.ANATOMY));
         resultTwo.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -286,7 +281,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void multipleRepeatingGoTermList() {
-       GenericTerm termOne = getNucleusTerm();
+        GenericTerm termOne = getNucleusTerm();
         GenericTerm termTwo = getCyokineTerm();
 
         ExpressionResult resultOne = new ExpressionResult();
@@ -432,11 +427,11 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibodyService.createFigureSummary(criteria);
 
 
-        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<FigureExpressionSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
         List<Figure> figures = new ArrayList<Figure>();
 
 
-        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
         }
 
@@ -449,7 +444,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
 
     /**
-     * from the antibody page, it's a summary for a single antibody, a single stage and 
+     * from the antibody page, it's a summary for a single antibody, a single stage and
      */
     @Test
     public void figureSummaryTestFromAntibodyPage() {
@@ -484,29 +479,29 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, prim5, prim5, false);
         antibodyService.createFigureSummary(criteria);
 
-        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<FigureExpressionSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
         List<Figure> figures = new ArrayList<Figure>();
         Set<ExpressionStatement> statements = new HashSet<ExpressionStatement>();
 
 
-        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
-            statements.addAll(figureSummary.getExpressionStatementList());
+            statements.addAll(figureSummary.getExpressedGene().getExpressionStatements());
 
             //all figures returned should have slow muscle cell
             assertTrue(figureSummary.getPublication().getShortAuthorList() + " " + figureSummary.getFigure().getLabel()
-                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressionStatementList().contains(slowMuscleCellStatement));
+                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressedGene().getExpressionStatements().contains(slowMuscleCellStatement));
         }
 
 
         //find the figure 6 summary, test against it
-        FigureSummaryDisplay figS3Summary = null;
-        for (FigureSummaryDisplay fs : figureSummaryList) {
+        FigureExpressionSummaryDisplay figS3Summary = null;
+        for (FigureExpressionSummaryDisplay fs : figureSummaryList) {
             if (fs.getFigure().equals(figS3))
                 figS3Summary = fs;
         }
         assertNotNull("figureSummaryList should have " + figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel(), figS3Summary);
-        assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressionStatementList().contains(myotomeStatement));
+        assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressedGene().getExpressionStatements().contains(myotomeStatement));
 
 
     }
@@ -520,4 +515,10 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         List<ExpressionStatement> labeledTerms = service.getAntibodyLabelingStatements();
         assertNotNull(labeledTerms);
     }
+
+    public GenericTerm createMinimalGenericTerm(GenericTerm genericTerm, Ontology ontology) {
+        genericTerm.setOntology(ontology);
+        return genericTerm;
+    }
+
 }

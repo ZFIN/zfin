@@ -142,6 +142,7 @@ public class FishMatchingService {
                 Set<Term> allPhenotypeTerms = new HashSet<Term>();
                 for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
                     allPhenotypeTerms.addAll(PhenotypeService.getAllAnatomyTerms(phenotypeStatement));
+                    allPhenotypeTerms.addAll(PhenotypeService.getAllGOTerms(phenotypeStatement));
                 }
                 compareQueryTermWithPhenotypeTermList(queryTermID, allPhenotypeTerms);
             }
@@ -265,22 +266,24 @@ public class FishMatchingService {
 
     }
 
-    private void addMatchingFeature(String geneNameField, List<ZfinEntity> features) {
+    private void addMatchingFeature(String geneFeatureField, List<ZfinEntity> features) {
         if (CollectionUtils.isNotEmpty(features)) {
             // the loop exists for the first match as this is enough!
             for (ZfinEntity entity : features) {
                 Feature feature = getFeatureRepository().getFeatureByID(entity.getID());
                 if (feature == null)
                     continue;
-                if (service.addMatchingText(geneNameField, feature.getAbbreviation(), MatchingTextType.FEATURE_ABBREVIATION).equals(MatchType.EXACT))
+                if (service.addMatchingText(geneFeatureField, feature.getAbbreviation(), MatchingTextType.FEATURE_ABBREVIATION).equals(MatchType.EXACT))
                     break;
-                if (service.addMatchingText(geneNameField, feature.getName(), MatchingTextType.FEATURE_NAME).equals(MatchType.EXACT))
+                if (service.addMatchingText(geneFeatureField, feature.getName(), MatchingTextType.FEATURE_NAME).equals(MatchType.EXACT))
+                    break;
+                if (service.addMatchingText(geneFeatureField, feature.getLineNumber(), MatchingTextType.FEATURE_LINE_NUMBER).equals(MatchType.EXACT))
                     break;
                 Set<FeatureAlias> prevNames = feature.getAliases();
                 if (prevNames != null) {
                     // loop until the first exact match is encountered
                     for (FeatureAlias prevName : prevNames) {
-                        if (service.addMatchingText(geneNameField, prevName.getAlias(), MatchingTextType.FEATURE_ALIAS).equals(MatchType.EXACT))
+                        if (service.addMatchingText(geneFeatureField, prevName.getAlias(), MatchingTextType.FEATURE_ALIAS).equals(MatchType.EXACT))
                             break;
                     }
                 }

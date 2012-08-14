@@ -36,7 +36,7 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
         sort = new ArrayList<SortType>();
 
         setStart(formBean.getFirstRecord());
-        setRows(formBean.getMaxDisplayRecords());
+        setRows(formBean.getMaxDisplayRecordsInteger());
 
         geneOrFeatureNameCriteria = new SearchCriterion(SearchCriterionType.GENE_OR_FEATURE_NAME, true);
         geneOrFeatureNameCriteria.setSeparator(SearchCriterion.WHITESPACE_SEPARATOR);

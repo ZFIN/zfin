@@ -35,6 +35,26 @@ public class ExecProcessTest {
         }
     }
 
+    @Test
+    public void processList(){
+        DefaultExecutor defaultExecutor = new DefaultExecutor();
+        CommandLine commandLine = new CommandLine("ps") ;
+        commandLine.addArgument("-ef");
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream() ;
+        ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream() ;
+        try {
+            PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream,byteArrayErrorStream) ;
+            defaultExecutor.setStreamHandler(pumpStreamHandler);
+            int exitValue = defaultExecutor.execute(commandLine) ;
+            String output = byteArrayOutputStream.toString();
+            assertFalse(defaultExecutor.isFailure(exitValue));
+            assertNotSame("Standard output should not be 0",0,output.length());
+        } catch (Exception e) {
+            fail(e.toString()) ;
+        }
+    }
+
 
     @Test
     public void execPushStreamFromFile(){
@@ -70,7 +90,7 @@ public class ExecProcessTest {
 
         File tempFile = null ;
         PrintWriter printWriter = null ;
-        BufferedReader bufferedReader = null ;
+        BufferedReader bufferedReader;
         try {
             tempFile = File.createTempFile("test",".txt") ;
             tempFile.deleteOnExit();

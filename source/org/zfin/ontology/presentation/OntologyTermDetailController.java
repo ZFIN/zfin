@@ -96,13 +96,30 @@ public class OntologyTermDetailController {
 
     @RequestMapping(value = {("/term-detail-popup")})
     public String getTermDetailPopup(@RequestParam String termID, Model model) {
+        OntologyBean form = new OntologyBean();
+        if (termID.contains("ZDB-TERM")){
+            GenericTerm term=RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+            termID=term.getOboID();
+    }
+
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
+
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
             return "record-not-found.popup";
         }
 
-        model.addAttribute("term", term);
+        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTerms(term);
+        Collections.sort(termRelationships);
+
+        /*form.setTermRelationships(termRelationships);
+        form.setTerm(term);
+        model.addAttribute("formBean", form);*/
+        //model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getTermName());
+
+
+         model.addAttribute("term", term);
+        model.addAttribute("termRelationships", termRelationships);
         return "ontology/ontology-term-popup.popup";
     }
 

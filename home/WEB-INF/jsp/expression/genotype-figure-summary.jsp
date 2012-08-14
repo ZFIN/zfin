@@ -26,5 +26,5 @@
 
 <div class="summary">
   <span class="summaryTitle">Genotype Expression</span>
-  <zfin2:figureSummary figureSummaryDisplayList="${figureSummaryDisplayList}"/>
+  <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}"/>
 </div>

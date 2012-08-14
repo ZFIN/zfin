@@ -25,6 +25,7 @@ public class Fish extends ZfinEntity {
     private List<ZfinEntity> affectedGenes;
     private List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
     private int phenotypeFigureCount;
+    private int expressionFigureCount;
     private boolean imageAvailable;
     //todo: probably remove this once we have real matching text
     private String geneOrFeatureText;
@@ -145,6 +146,14 @@ public class Fish extends ZfinEntity {
 
     public void setPhenotypeFigureCount(int phenotypeFigureCount) {
         this.phenotypeFigureCount = phenotypeFigureCount;
+    }
+
+    public int getExpressionFigureCount() {
+        return expressionFigureCount;
+    }
+
+    public void setExpressionFigureCount(int expressionFigureCount) {
+        this.expressionFigureCount = expressionFigureCount;
     }
 
     public String getGeneOrFeatureText() {

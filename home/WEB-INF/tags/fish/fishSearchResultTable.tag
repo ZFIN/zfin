@@ -8,39 +8,45 @@
 
 <span style="text-align: center; margin-top: 8px; margin-left: 4px;">
     <c:if test="${formBean.totalRecords > 0}">
-        <b>
+        <span class=bold>
             <fmt:formatNumber value="${formBean.totalRecords}" pattern="##,###"/> Fish found
-        </b>
+        </span>
     </c:if>
 </span>
 
-    <p/>
+    <p></p>
 
     <div style="float:left ; margin-top: 1px;">
 
         Sort by
-        <select name="sortByPulldown" id="sort-by-pulldown">
-            <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)
-            </option>
-            <option value="<%= SortBy.GENES %>" id="sort-by-genes">Mutant/MO Gene
-            </option>
-            <%--
-                    <option value="<%= SortBy.GENES_REVERSE %>" id="sort-by-genes-reverse"
-                            onclick="setSortingOption('<%= SortBy.GENES_REVERSE %>');">Affected Genes (Reversed)
-                    </option>
-            --%>
-            <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/MO
-            </option>
-            <%--
-                    <option value="<%= SortBy.FEATURES_REVERSE %>" id="sort-by-features-reverse"
-                            onclick="setSortingOption('<%= SortBy.FEATURES_REVERSE %>');">Genomic Features (Reversed)
-                    </option>
-            --%>
-        </select>
+        <label for="sort-by-pulldown">
+            <select name="sortByPulldown" id="sort-by-pulldown">
+                <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)
+                </option>
+                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Mutant/MO Gene
+                </option>
+                <%--
+                        <option value="<%= SortBy.GENES_REVERSE %>" id="sort-by-genes-reverse"
+                                onclick="setSortingOption('<%= SortBy.GENES_REVERSE %>');">Affected Genes (Reversed)
+                        </option>
+                --%>
+                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/MO
+                </option>
+                <%--
+                        <option value="<%= SortBy.FEATURES_REVERSE %>" id="sort-by-features-reverse"
+                                onclick="setSortingOption('<%= SortBy.FEATURES_REVERSE %>');">Genomic Features (Reversed)
+                        </option>
+                --%>
+            </select>
+        </label>
     </div>
 
     <div style="float:right ; margin-top: 2px;">
-        <select name="maxDisplayRecordsTop" id="max-display-records-top">
+<%--
+        <form:select path="maxDisplayRecords" items="${formBean.recordsPerPageList}"
+                     onchange="submitFishSearchWithNumOfRecords(50);return true;"></form:select>
+--%>
+        <select name="maxDisplayRecordsTop" id="max-display-records-top" >
             <c:forEach items="${formBean.recordsPerPageList}" var="option">
                 <option>${option}</option>
             </c:forEach>
@@ -51,6 +57,9 @@
 
 
     <script>
+
+        jQuery('#max-display-records-top').val(${formBean.maxDisplayRecords});
+        jQuery('#max-display-records-bottom').val(${formBean.maxDisplayRecords});
 
         function setMaxDisplayRecords(value) {
             jQuery('#max-display-records-hidden').val(value);
@@ -131,13 +140,14 @@
             style="vertical-align: text-top;"
             title="Fish = genotype + morpholinos">
             Fish
-            <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif"/>
+            <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif" alt=""/>
         </th>
 
         <th>&nbsp;</th>
         <th></th>
         <th></th>
         <th></th>
+        <th>Expression</th>
         <th>Phenotype</th>
     </tr>
     <tr>
@@ -157,10 +167,11 @@
                     class="secretly-clickable sortable-column ${featureColumnClass}"
         --%>
             style="white-space: nowrap;">Line/MO
-            <img class="column-sort-button feature-column-sort-button" src="/images/transp.gif"/>
+            <img class="column-sort-button feature-column-sort-button" src="/images/transp.gif" alt=""/>
         </th>
         <th width="15%">Mutation Type</th>
         <th>Construct</th>
+        <th></th>
         <th width="18%">
             <div id="showAllLink" style="float: right; font-size:small; font-weight:normal;">
                 <a href="javascript:showAll();">All Matching Details</a>
@@ -178,7 +189,18 @@
     <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
-                <a href="fish-detail/${fish.fishID}"> ${fish.name}</a>
+                <zfin:link entity="${fish}"/>
+            </td>
+            <td>
+                <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${fish.fishID}"
+                                                      figureCount="${fish.expressionFigureCount}"/>
+                    <span id="image-icon-${loop.index}">
+                    </span>
+                <script type="text/javascript">
+                    jQuery('#image-icon-${loop.index}').load('/action/fish/expression-image-exist?fishID=${fish.fishID}&<%= request.getQueryString()%>', function () {
+                        processPopupLinks();
+                    });
+                </script>
             </td>
             <td>
                 <c:if test="${fish.phenotypeFigureCount > 0}">
@@ -213,17 +235,17 @@
                     <zfin:link entity="${featureGene.construct}"/>
                 </td>
                 <td>
-
-
+                </td>
+                <td>
                     <c:if test="${(fgIndex.last) && (!formBean.showAllMutantFish)}">
-                      <authz:authorize ifAnyGranted="root">
+                        <authz:authorize ifAnyGranted="root">
                         <span style="font-size:small ; opacity: 0.33;">
                           <a style=" " class="clickable" onclick="jQuery('#${fish.ID}-text').slideToggle(); ">Score</a>
                           | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
                         </span>
-                      </authz:authorize>
+                        </authz:authorize>
 
-                        <span style="text-align:right" id="matching-details-show-link${loop.index}">
+                        <span style="float:right" id="matching-details-show-link${loop.index}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
@@ -242,7 +264,7 @@
             </zfin:alternating-tr>
         </c:forEach>
         <zfin:alternating-tr loopName="loop">
-            <td colspan="6">
+            <td colspan="7">
                 <authz:authorize ifAnyGranted="root">
                     <div id="${fish.ID}-text"
                          style="width: 800px ; display:none; margin: 0.5em 2em; padding: .5em; ">
@@ -270,7 +292,7 @@
 <zfin2:pagination paginationBean="${formBean}"/>
 
 
-<script>
+<script type="text/javascript">
     jQuery('#max-display-records-bottom').change(function () {
         setMaxDisplayRecords(jQuery('#max-display-records-bottom option:selected').val());
     });

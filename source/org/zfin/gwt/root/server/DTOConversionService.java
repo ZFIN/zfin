@@ -994,6 +994,8 @@ public class DTOConversionService {
                 return Ontology.GO_BP_MF;
             case GO:
                 return Ontology.GO;
+            case AOGO:
+                return Ontology.AOGO;
             case STAGE:
                 return Ontology.STAGE;
             case SPATIAL:

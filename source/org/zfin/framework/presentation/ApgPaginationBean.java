@@ -17,22 +17,22 @@ public class ApgPaginationBean extends PaginationBean {
         int totalPages = getTotalNumPages();
         Map<Integer, Integer> pageList = new TreeMap<Integer, Integer>();
         for (int i = MAXPAGELINKS / 2; i > 0; i--) {
-            if (page - i > 0)
-                pageList.put(page - i, getFirstRecordOnGivenPage(page - i));
+            if (pageInteger - i > 0)
+                pageList.put(pageInteger - i, getFirstRecordOnGivenPage(pageInteger - i));
         }
 
-        pageList.put(page, getFirstRecordOnGivenPage(page));
+        pageList.put(pageInteger, getFirstRecordOnGivenPage(pageInteger));
 
         for (int i = 1; i <= MAXPAGELINKS / 2; i++) {
-            if (page + i <= totalPages)
-                pageList.put(page + i, getFirstRecordOnGivenPage(page + i));
+            if (pageInteger + i <= totalPages)
+                pageList.put(pageInteger + i, getFirstRecordOnGivenPage(pageInteger + i));
         }
 
         return pageList;
     }
 
     public int getFirstRecordOnGivenPage(int page) {
-        return (page - 1) * maxDisplayRecords + 1;
+        return (page - 1) * maxDisplayRecordsInteger + 1;
     }
 
     public int getFirstRecordOnPreviousPage() {

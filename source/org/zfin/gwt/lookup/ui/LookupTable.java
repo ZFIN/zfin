@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -166,6 +167,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
                 public void onClick(ClickEvent event) {
                     // this is new each time . . I think so that we never inadvertently browse to new events
                     lookupPopup = new LookupPopup(lookup.getType(), term.getZdbID());
+//                    lookupPopup = new LookupPopup(lookup.getType(), RepositoryFactory.getInfrastructureRepository().getTermByID());
                 }
             });
 

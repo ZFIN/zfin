@@ -110,7 +110,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         int start = 0;
         if (searchCriteria.getPaginationBean() != null)
             start = searchCriteria.getPaginationBean().getFirstRecord() - 1;
-        PaginationResult<Antibody> antibodyObjects = PaginationResultFactory.createResultFromScrollableResultAndClose(start, start + searchCriteria.getPaginationBean().getMaxDisplayRecords(), query.scroll());
+        PaginationResult<Antibody> antibodyObjects = PaginationResultFactory.createResultFromScrollableResultAndClose(start, start + searchCriteria.getPaginationBean().getMaxDisplayRecordsInteger(), query.scroll());
 
         return antibodyObjects;
     }
@@ -497,7 +497,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     private void setPaginationParameters(Query query, PaginationBean paginationBean) {
         if (paginationBean == null)
             return;
-        query.setMaxResults(paginationBean.getMaxDisplayRecords());
+        query.setMaxResults(paginationBean.getMaxDisplayRecordsInteger());
         query.setFirstResult(paginationBean.getFirstRecord() - 1);
     }
 
@@ -532,12 +532,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 .setParameter("aoterm", aoTerm).scroll();
         List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
 
-        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecords() + 1) {
+        while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecordsInteger() + 1) {
             AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.get(0);
             populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm);
         }
         // remove the last entity as it is beyond the display limit.
-        if (list.size() > pagination.getMaxDisplayRecords()) {
+        if (list.size() > pagination.getMaxDisplayRecordsInteger()) {
             list.remove(list.size() - 1);
         }
         scrollableResults.close();

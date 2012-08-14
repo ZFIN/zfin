@@ -295,9 +295,9 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         sb.append("\n");
         sb.append("zdbID: ").append(zdbID);
         sb.append("\n");
-        sb.append("name: ").append(name);
-        sb.append("\n");
         sb.append("symbol: ").append(abbreviation);
+        sb.append("\n");
+        sb.append("name: ").append(name);
         sb.append("\n");
         sb.append("type: ").append(markerType);
         sb.append("\n");

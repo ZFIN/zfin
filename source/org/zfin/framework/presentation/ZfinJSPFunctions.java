@@ -235,6 +235,8 @@ public class ZfinJSPFunctions {
     }
 
     public static String getTimeDuration(Date start) {
+        if (start == null)
+            return null;
         return DateUtil.getTimeDuration(start, new Date());
     }
 

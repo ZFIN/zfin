@@ -50,13 +50,16 @@ public class MatchingTermComparator implements Comparator<MatchingTerm> {
             return lhsCompare - rhsCompare;
         }
 
-        return comparator.compare(lhs.getTerm().getName().toLowerCase(),rhs.getTerm().getName().toLowerCase()) ;
+       return comparator.compare(lhs.getTerm().getName().toLowerCase(),rhs.getTerm().getName().toLowerCase()) ;
+
+
     }
 
     protected int scoreTerm(MatchingTerm term) {
         int score = 0 ;
         
         // for each token that hits the first
+
         if(!term.startsWithQuery()) score += 100 ;
         if(term.isHitAlias()) score += 10000 ;
         if(term.getTerm().isObsolete()) score += 100000 ;

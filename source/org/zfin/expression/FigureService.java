@@ -1,8 +1,9 @@
 package org.zfin.expression;
 
 import org.apache.log4j.Logger;
-import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -44,7 +45,6 @@ public class FigureService {
 
     /**
      * this is the method (parameter set?) as it will be used for genotype expression display of nonstandard envs
-     *
      */
     public static ExpressionSummaryCriteria createExpressionCriteria(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
@@ -58,8 +58,9 @@ public class FigureService {
 
     /**
      * This method (parameter set) will be used for genotype expression display of standard envs
-     * @param geno genotype
-     * @param gene gene
+     *
+     * @param geno         genotype
+     * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
      * @return expressionsummarycriteria object
      */
@@ -78,8 +79,9 @@ public class FigureService {
 
     /**
      * This method (parameter set) will be used for genotype expression display of chemical envs
-     * @param geno genotype
-     * @param gene gene
+     *
+     * @param geno         genotype
+     * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
      * @return expressionsummarycriteria object
      */
@@ -98,15 +100,14 @@ public class FigureService {
     }
 
 
-    public static List<FigureSummaryDisplay> createExpressionFigureSummary(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
+    public static List<FigureExpressionSummaryDisplay> createExpressionFigureSummary(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = createExpressionCriteria(genox, gene, withImgsOnly);
         return createExpressionFigureSummary(criteria);
     }
 
-    public static List<FigureSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
-        Set<Publication> publications = new HashSet<Publication>();
+    public static List<FigureExpressionSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
         // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
+        Map<String, FigureExpressionSummaryDisplay> map = new HashMap<String, FigureExpressionSummaryDisplay>();
         List<Figure> figures;
 
         figures = expressionRepository.getFigures(expressionCriteria);
@@ -122,28 +123,20 @@ public class FigureService {
             // if the key is not in the map, instantiate a display object and add it to the map
             // otherwise, get the display object from the map
             if (!map.containsKey(key)) {
-                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
-                figureData.setPublication(pub);
-                publications.add(pub);
-                figureData.setFigure(figure);
-                figureData.setExpressionStatementList(getFigureExpressionStatementList(figure,expressionCriteria));
-                for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
-                        figureData.setThumbnail(img.getThumbnail());
-                }
-
+                FigureExpressionSummaryDisplay figureData = new FigureExpressionSummaryDisplay(figure);
+                ExpressedGene expressedGene = new ExpressedGene(expressionCriteria.getAntibody());
+                expressedGene.setExpressionStatements(getFigureExpressionStatementList(figure, expressionCriteria));
+                figureData.setExpressedGene(expressedGene);
                 map.put(key, figureData);
-
             }
         }
 
 
-        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
+        List<FigureExpressionSummaryDisplay> summaryRows = new ArrayList<FigureExpressionSummaryDisplay>();
         if (map.values().size() > 0) {
             summaryRows.addAll(map.values());
         }
         Collections.sort(summaryRows);
-
         return summaryRows;
 
 

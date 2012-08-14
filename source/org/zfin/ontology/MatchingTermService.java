@@ -33,7 +33,8 @@ public class MatchingTermService {
 
     protected Set<MatchingTerm> getMatchingTerms(String query, PatriciaTrieMultiMap<TermDTO> termMap) {
         Set<MatchingTerm> matchingTermSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
-        String[] termsToMatch = query.toLowerCase().trim().split("\\s+");
+         String[] termsToMatch = query.toLowerCase().trim().split("\\s+");
+     //   String[] termsToMatch = query.trim().split("\\s+");
         for (String termToMatch : termsToMatch) {
             Set<TermDTO> matchedTerms = termMap.getSuggestedValues(termToMatch);
             for (TermDTO term : matchedTerms) {
@@ -90,6 +91,7 @@ public class MatchingTermService {
     protected boolean containsAllTokens(String matchTerm, String[] hits) {
 
         Set<String> matchTokens = tokenizer.tokenize(matchTerm.toLowerCase().trim());
+        //Set<String> matchTokens = tokenizer.tokenize(matchTerm.trim());
         for (String hit : hits) {
             boolean matches = false;
             for (Iterator<String> iter = matchTokens.iterator(); iter.hasNext() && false == matches; ) {

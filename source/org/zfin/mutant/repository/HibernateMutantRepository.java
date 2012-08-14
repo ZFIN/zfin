@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -11,6 +12,10 @@ import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
+import org.zfin.expression.Figure;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
@@ -18,6 +23,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -1174,6 +1180,22 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
+    /**
+     * Retrieve phenotype statements by genotype experiment ids
+     *
+     * @param genotypeExperimentIDs genox ids
+     * @return list of expression statements
+     */
+    @Override
+    public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs) {
+        String hql = " from ExpressionResult where " +
+                "expressionExperiment.genotypeExperiment.zdbID in (:genoxIds)";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        return query.list();
+    }
+
 
     public Set<String> getGenoxAttributions(List<String> genotypeExperimentIDs) {
         String hql = "select distinct publication.zdbID from ExpressionExperiment where " +
@@ -1262,6 +1284,54 @@ public class HibernateMutantRepository implements MutantRepository {
         criteria.addOrder(Order.asc("nameOrder"));
         return criteria.list();
 
+    }
+
+    /**
+     * Retrieve a list of expression result records that show expression data for a given fish
+     *
+     * @return
+     */
+    @Override
+    public List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID) {
+        if (CollectionUtils.isEmpty(genoxIds) || StringUtils.isEmpty(genotypeID))
+            return null;
+
+        String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
+                " expressionResult.expressionExperiment.genotypeExperiment.genotype.zdbID = :genotypeID AND " +
+                " expressionResult.expressionExperiment.genotypeExperiment.zdbID in (:genoxIds) AND ";
+        if (geneID == null)
+            hql += " expressionResult.expressionExperiment.gene is not null";
+        else
+            hql += " expressionResult.expressionExperiment.gene = :geneID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", genotypeID);
+        query.setParameterList("genoxIds", genoxIds);
+        if (geneID != null)
+            query.setString("geneID", geneID);
+        return query.list();
+    }
+
+    /**
+     * Check if a given fish has expression data with at least one figure that has an image.
+     *
+     * @return
+     */
+    @Override
+    public boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds) {
+        if (CollectionUtils.isEmpty(genoxIds) || StringUtils.isEmpty(genotypeID))
+            return false;
+
+        String hql = " select count(figure) from Figure figure, ExpressionResult expressionResult where " +
+                " expressionResult.expressionExperiment.genotypeExperiment.genotype.zdbID = :genotypeID AND " +
+                " expressionResult.expressionExperiment.genotypeExperiment.zdbID in (:genoxIds) AND " +
+                " expressionResult.expressionExperiment.gene is not null AND " +
+                " figure member of expressionResult.figures AND " +
+                " figure.images is not empty ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", genotypeID);
+        query.setParameterList("genoxIds", genoxIds);
+        long numOfImages = (Long) query.uniqueResult();
+        return numOfImages > 0;
     }
 
     public List<Marker> getMorpholinos(List<String> genotypeExperimentIDs) {

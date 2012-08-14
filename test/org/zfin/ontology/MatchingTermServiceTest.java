@@ -157,7 +157,7 @@ public class MatchingTermServiceTest {
     }
 
 
-    @Test
+  @Test
     public void termMatchStartMel() {
         PatriciaTrieMultiMap<TermDTO> termMapLarge = new PatriciaTrieMultiMap<TermDTO>();
         for (TermDTO term : createTermsList()) {

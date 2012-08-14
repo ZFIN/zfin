@@ -18,6 +18,9 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -61,7 +64,7 @@ public class AntibodySearchController {
 
     @RequestMapping(value = "/antibody-do-search", method = RequestMethod.GET)
     public String doSearch(Model model,
-                           @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
+                           @Valid @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
                            BindingResult result
     ) throws Exception {
         AntibodySearchCriteria antibodySearchCriteria = antibodySearchFormBean.getAntibodyCriteria();

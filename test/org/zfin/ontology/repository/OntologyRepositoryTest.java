@@ -349,9 +349,9 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getTermByNameForComposedOntologies() {
-        String termName = "retinal isomerase activity";
+        String termName = "bract formation";
         try {
-            GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.GO_BP_MF);
+            GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.AOGO);
             assertNotNull(term);
         } catch (NonUniqueResultException e) {
             fail("Found more than one term with name '" + termName + "'");

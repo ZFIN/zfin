@@ -1,11 +1,12 @@
 package org.zfin.mutant.repository;
 
 import org.zfin.anatomy.AnatomyItem;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -305,6 +306,14 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
 
     /**
+     * Retrieve phenotype statements by genotype experiment ids
+     *
+     * @param genotypeExperimentIDs genox ids
+     * @return list of expression statements
+     */
+    List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
+
+    /**
      * Retrieve citation list of pub ids
      * @param genotypeExperimentIDs
      * @return
@@ -331,5 +340,16 @@ public interface MutantRepository {
      */
     List<Genotype> getAllWildtypeGenotypes();
 
+    /**
+     * Retrieve a list of expression result records that show expression data for a given fish
+     * @return  list of expression results
+     */
+    List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID);
+
+    /**
+     * Check if a given fish has expression data with at least one figure that has an image.
+     * @return
+     */
+    boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds);
 }
 

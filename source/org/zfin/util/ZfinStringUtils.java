@@ -1,5 +1,10 @@
 package org.zfin.util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Utilities that are not in StringUtils.
  */
@@ -91,4 +96,28 @@ public class ZfinStringUtils {
         buffer.append("</table>");
         return buffer.toString();
     }
+
+    public static List<Integer> detectWhiteSpaces(String line) {
+        return detectWhiteSpaces(line, 0);
+    }
+
+    public static List<Integer> detectWhiteSpaces(String line, int startPosition) {
+        if (line == null)
+            return null;
+        List<Integer> whiteSpaceSet = new ArrayList<Integer>();
+        String[] tokens = line.split(" ");
+        int accumulatedPosition = startPosition;
+        int index = 0;
+        for (String token : tokens) {
+            if (index++ == tokens.length - 1)
+                break;
+            accumulatedPosition += token.length() + 1;
+            whiteSpaceSet.add(accumulatedPosition - 1);
+        }
+        if (line.substring(line.length() - 1).equals(" "))
+            whiteSpaceSet.add(line.length() - 1);
+        return whiteSpaceSet;
+    }
+
+
 }

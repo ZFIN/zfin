@@ -2,8 +2,12 @@ package org.zfin.util;
 
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Set;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -63,4 +67,19 @@ public class ZfinStringUtilsTest {
         String htmlIzed = ZfinStringUtils.getHtmlTableFromQueryString(text);
         assertEquals("<table><tr><td>page</td><td>1</td></tr><tr><td>antibodyCriteria.antibodyNameFilterType</td><td>contains</td></tr><tr><td>antibodyCriteria.name</td><td></td></tr></table>", htmlIzed);
     }
+
+    @Test
+    public void detectWhiteSpaces() {
+        String text = " ??  9907- 00o ";
+        List<Integer> whiteSpaces = ZfinStringUtils.detectWhiteSpaces(text);
+        assertNotNull(whiteSpaces);
+        assertEquals(5, whiteSpaces.size());
+        assertTrue(whiteSpaces.contains(0));
+        assertTrue(whiteSpaces.contains(3));
+        assertTrue(whiteSpaces.contains(4));
+        assertTrue(whiteSpaces.contains(10));
+        assertTrue(whiteSpaces.contains(14));
+    }
+
+
 }

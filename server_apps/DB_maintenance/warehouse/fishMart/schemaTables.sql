@@ -36,7 +36,8 @@ create table functional_annotation(
        fa_feature_count int,
        fa_pheno_term_count int,
        fa_pheno_figure_count int,
-       fa_total_figure_count int
+       fa_total_figure_count int,
+       fa_xfigg_has_images boolean default "f"
 
 )
  fragment by round robin in tbldbs1, tbldbs2, tbldbs3
@@ -410,6 +411,7 @@ alter table phenotype_figure_group_member
 create table xpat_figure_group (xfigg_group_name lvarchar(380), 
        	     		       			 xfigg_genox_Zdb_id varchar(50),
 						 xfigg_geno_handle varchar(255),
+						 xfigg_has_images boolean default "f",
 						 xfigg_group_pk_id serial8 not null constraint xfigg_group_pk_id_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;

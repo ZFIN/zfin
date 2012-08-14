@@ -46,7 +46,7 @@ public class GenotypeExpressionSummaryController   {
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteria(genox, gene, imagesOnly);
         model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        List<FigureExpressionSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genox.getGenotype().getName() + " Expression Figure Summary");
@@ -78,7 +78,7 @@ public class GenotypeExpressionSummaryController   {
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(geno, gene, imagesOnly);
         model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        List<FigureExpressionSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, geno.getName() + " Expression Figure Summary");
@@ -107,7 +107,7 @@ public class GenotypeExpressionSummaryController   {
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(geno, gene, imagesOnly);
         model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        List<FigureExpressionSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, geno.getName() + " Expression Figure Summary");

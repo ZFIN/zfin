@@ -1,10 +1,13 @@
 package org.zfin.expression.presentation;
 
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
@@ -12,8 +15,13 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private Figure figure;
     private int imgCount;
     private String thumbnail;
-    private List<ExpressionStatement> expressionStatementList;
+    // for phenotype summary page
     private List<PhenotypeStatement> phenotypeStatementList;
+    // for expression summary page
+    private List<ExpressionStatement> expressionStatementList;
+    private DevelopmentStage earliestStartStage;
+    private DevelopmentStage latestEndStage;
+    private List<Marker> expressedGenes;
 
     private boolean publicationDisplayed;
 
@@ -65,6 +73,32 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.phenotypeStatementList = phenotypeStatementList;
     }
 
+    public List<Marker> getExpressedGenes() {
+        return expressedGenes;
+    }
+
+    public void setExpressedGenes(List<Marker> expressedGenes) {
+        this.expressedGenes = expressedGenes;
+    }
+
+    public DevelopmentStage getEarliestStartStage() {
+        return earliestStartStage;
+    }
+
+    public void setEarliestStartStage(DevelopmentStage earliestStartStage) {
+        this.earliestStartStage = earliestStartStage;
+    }
+
+    public DevelopmentStage getLatestEndStage() {
+        return latestEndStage;
+    }
+
+    public void setLatestEndStage(DevelopmentStage latestEndStage) {
+        this.latestEndStage = latestEndStage;
+    }
+
+
+
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {
         if (anotherFigureSummary == null)
             return 1;
@@ -86,4 +120,9 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.imgCount = imgCount;
     }
 
+    public void addExpressionStatement(ExpressionStatement expressionStatement) {
+        if (expressionStatementList == null)
+            expressionStatementList = new ArrayList<ExpressionStatement>();
+        expressionStatementList.add(expressionStatement);
+    }
 }

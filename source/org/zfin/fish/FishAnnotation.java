@@ -14,6 +14,7 @@ public class FishAnnotation {
     private String uniqueName;
     private String phenotypeFigureGroupName;
     private int phenotypeFigureCount;
+    private int expressionFigureCount;
 
     //todo: probably remove these, they're around mostly to help develop the sorting algorithm
     private String geneOrFeatureText;
@@ -107,4 +108,11 @@ public class FishAnnotation {
         this.uniqueName = uniqueName;
     }
 
+    public int getExpressionFigureCount() {
+        return expressionFigureCount;
+    }
+
+    public void setExpressionFigureCount(int expressionFigureCount) {
+        this.expressionFigureCount = expressionFigureCount;
+    }
 }

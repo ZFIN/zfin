@@ -21,24 +21,21 @@ public class ExecProcess {
     // this might get used once we have an input stream
 //    protected FileInputStream fileInputStream  ;
 
-    public ExecProcess() {
-    }
-
     /**
      * This command assumes a tokenizer
      *
-     * @param command
+     * @param command line
      */
     public ExecProcess(String command) {
         setCommand(command);
     }
 
-    public ExecProcess(List<String> commandList,boolean handleQuoting) {
-        setCommand(commandList,handleQuoting);
+    public ExecProcess(List<String> commandList, boolean handleQuoting) {
+        setCommand(commandList, handleQuoting);
     }
 
     public ExecProcess(List<String> commandList) {
-        this(commandList,true);
+        this(commandList, true);
     }
 
     public int exec() throws IOException, InterruptedException {
@@ -59,15 +56,15 @@ public class ExecProcess {
         commandLine = CommandLine.parse(command);
     }
 
-    public void setCommand(List<String> commandList,boolean handleQuoting) {
+    public void setCommand(List<String> commandList, boolean handleQuoting) {
         commandLine = new CommandLine(commandList.get(0));
         for (int i = 1; i < commandList.size(); i++) {
-            commandLine.addArgument(commandList.get(i),handleQuoting);
+            commandLine.addArgument(commandList.get(i), handleQuoting);
         }
     }
 
     public void setCommand(List<String> commandList) {
-        setCommand(commandList,true);
+        setCommand(commandList, true);
     }
 
     public String getStandardError() {

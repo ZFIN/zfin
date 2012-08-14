@@ -116,8 +116,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
     public TermStatus validateTerm(String term, OntologyDTO ontologyDto) {
 
         int foundInexactMatch = 0;
+
         if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
-            TermDTO termObject = OntologyManager.getInstance().getTermByID(term, ontologyDto);
+            //TermDTO termObject = OntologyManager.getInstance().getTermByID(term);
+            TermDTO termObject = OntologyManager.getInstance().getTermByID(term,ontologyDto);
             if (termObject != null)
                 return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getName(), termObject.getZdbID());
             else
@@ -478,6 +480,9 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
     /**
      * Check if a given term name is a quality relational term
+     *
+     *
+     *
      *
      * @param termName term name
      */

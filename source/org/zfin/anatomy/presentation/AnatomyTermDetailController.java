@@ -59,15 +59,19 @@ public class AnatomyTermDetailController {
         LOG.info("Start Anatomy Term Detail Controller");
 
         AnatomyItem term = retrieveAnatomyTermData(defaultFormBean, zdbID);
+
         if (term == null) {
             return LookupStrings.idNotFound(model, zdbID);
         }
+
 
         model.addAttribute(LookupStrings.FORM_BEAN, defaultFormBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANATOMY.getTitleString() + term.getTermName());
 
         return "anatomy/anatomy-preview.ajax";
-    }
+        }
+
+
 
     @RequestMapping(value = "/anatomy-view/{zdbID}")
     public String getAnatomyView(Model model

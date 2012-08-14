@@ -9,7 +9,10 @@
     <import resource="properties.xml"/>
 
     <!--put hibernate, etc. in here-->
-    
+
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    </bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="zfin-messages"/>

@@ -62,7 +62,7 @@
         </c:if>
     </table>
 
-
+ <p>
     <div class="summary">
         <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
         <table class="summary horizontal-solidblock">

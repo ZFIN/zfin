@@ -45,6 +45,7 @@ action/blast
 action/feature/detail
 action/feature/feature-detail
 action/fish
+gene-product-description
 /phenotype-statement
 mutant/mutant-list
 /zirc/

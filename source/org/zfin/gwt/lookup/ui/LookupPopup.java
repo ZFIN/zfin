@@ -3,15 +3,18 @@ package org.zfin.gwt.lookup.ui;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.PopupPanel;
 import org.zfin.gwt.root.ui.LookupComposite;
+import org.zfin.repository.RepositoryFactory;
 
 /**
  */
 public class LookupPopup extends PopupPanel {
 
-    private final String ANATOMY_BASE_URL = "/action/anatomy/anatomy-preview/";
+   // private final String ANATOMY_BASE_URL = "/action/anatomy/anatomy-preview/";
     private final String MARKER_BASE_URL = "/action/marker/mini-gene?zdbID=";
+    private final String ANATOMY_BASE_URL = "/action/ontology/term-detail-popup?termID=";
     private Frame frame;
     private String type;
+
 
     public LookupPopup(String type) {
         super(true, true);
@@ -22,6 +25,7 @@ public class LookupPopup extends PopupPanel {
 
     public LookupPopup(String type, String zdbID) {
         this(type);
+        //String oboID=RepositoryFactory.getInfrastructureRepository().getTermByID(zdbID).getOboID();
         showPopup(zdbID);
     }
 

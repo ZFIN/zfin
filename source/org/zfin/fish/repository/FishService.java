@@ -2,8 +2,13 @@ package org.zfin.fish.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
+import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.presentation.Fish;
@@ -14,6 +19,7 @@ import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -203,14 +209,94 @@ public class FishService {
     }
 
     public static List<String> getGenoxIds(String fishID) {
-       return getFish(fishID).getGenotypeExperimentIDs();
+        return getFish(fishID).getGenotypeExperimentIDs();
     }
 
     /**
      * Retrieve the longest genotype experiment group id for all fish
+     *
      * @return String
      */
     public static String getGenoxMaxLength() {
         return RepositoryFactory.getFishRepository().getGenoxMaxLength();
+    }
+
+    /**
+     * Retrieve Summary of expression statements, figures and pub info
+     *
+     * @param fishID fish ID
+     * @return list of expression statements records grouped by figure.
+     */
+    public static List<FigureExpressionSummary> getExpressionSummary(String fishID) {
+        return getExpressionSummary(fishID, null);
+    }
+
+    /**
+     * Retrieve Summary of expression statements, figures and pub info
+     *
+     * @param fishID fish ID
+     * @param geneID gene ID
+     * @return list of expression statements records grouped by figure.
+     */
+    public static List<FigureExpressionSummary> getExpressionSummary(String fishID, String geneID) {
+
+        String genotypeID = getGenotypeID(fishID);
+        List<String> genoxIds = getGenoxIds(fishID);
+        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(genotypeID, genoxIds, geneID);
+        if (CollectionUtils.isEmpty(results))
+            return null;
+
+        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<Figure, Set<ExpressionResult>>(results.size());
+        for (ExpressionResult result : results) {
+            for (Figure figure : result.getFigures()) {
+                Set<ExpressionResult> expressionResults = figureListMap.get(figure);
+                if (expressionResults == null) {
+                    expressionResults = new HashSet<ExpressionResult>();
+                    figureListMap.put(figure, expressionResults);
+                }
+                expressionResults.add(result);
+            }
+        }
+
+        List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<FigureExpressionSummary>(figureListMap.keySet().size());
+        List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
+        for (Figure figure : figureListMap.keySet()) {
+            FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
+            List<ExpressedGene> expressedGenes = new ArrayList<ExpressedGene>(figureListMap.get(figure).size());
+            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+                List<ExpressionStatement> expressionStatements = new ArrayList<ExpressionStatement>(figureListMap.get(figure).size());
+                if (!expressionExperiment.getAllFigures().contains(figure))
+                    continue;
+                for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
+                    ExpressionStatement statement = new ExpressionStatement();
+                    if (!result.getFigures().contains(figure))
+                        continue;
+                    statement.setEntity(result.getEntity());
+                    statement.setExpressionFound(result.isExpressionFound());
+                    // ensure distinctness
+                    if (!expressionStatements.contains(statement))
+                        expressionStatements.add(statement);
+                }
+                Collections.sort(expressionStatements);
+                ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
+                expressedGene.setExpressionStatements(expressionStatements);
+                expressedGenes.add(expressedGene);
+            }
+            figureExpressionSummary.setExpressedGenes(expressedGenes);
+            figureExpressionSummaries.add(figureExpressionSummary);
+        }
+        return figureExpressionSummaries;
+    }
+
+    /**
+     * Check if a given fish has expression data with at least one figure that has an image.
+     *
+     * @param fishID
+     * @return
+     */
+    public static boolean hasImagesOnExpressionFigures(String fishID) {
+        String genotypeID = getGenotypeID(fishID);
+        List<String> genoxIds = getGenoxIds(fishID);
+        return getMutantRepository().hasImagesOnExpressionFigures(genotypeID, genoxIds);
     }
 }

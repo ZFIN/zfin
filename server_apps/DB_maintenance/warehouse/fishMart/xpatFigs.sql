@@ -22,7 +22,7 @@ where exists (Select 'x' from genotype_experiment where genox_zdb_id = xfigg_gen
 
 --update statistics high for table xpat_figure_group;
 
-select distinct xpatfig_fig_Zdb_id, xpatex_genox_zdb_id
+select distinct xpatfig_fig_Zdb_id, xpatex_genox_zdb_id, "t" as images
   from expression_pattern_Figure, expression_Result, expression_experiment
   where xpatres_zdb_id = xpatfig_xpatres_zdb_id
   and xpatex_gene_zdb_id is not null
@@ -32,7 +32,22 @@ select distinct xpatfig_fig_Zdb_id, xpatex_genox_zdb_id
      	 		and genox_geno_zdb_id = geno_zdb_id
 			and genox_Zdb_id = xpatex_genox_zdb_id
 			and genox_is_std_or_generic_control = 't')
+ and exists (select 'x' from image where img_fig_Zdb_id = xpatfig_fig_zdb_id)
 into temp tmp_xpat;
+
+insert into tmp_xpat
+select distinct xpatfig_fig_Zdb_id, xpatex_genox_zdb_id, "f" as images
+  from expression_pattern_Figure, expression_Result, expression_experiment
+  where xpatres_zdb_id = xpatfig_xpatres_zdb_id
+  and xpatex_gene_zdb_id is not null
+  and xpatres_xpatex_zdb_id = xpatex_zdb_id
+ and not exists (Select 'x' from genotype,genotype_Experiment 
+     	 		where geno_is_wildtype = 't'
+     	 		and genox_geno_zdb_id = geno_zdb_id
+			and genox_Zdb_id = xpatex_genox_zdb_id
+			and genox_is_std_or_generic_control = 't')
+ and not exists (select 'x' from image where img_fig_Zdb_id = xpatfig_fig_zdb_id)
+;
 
 create index xfig_genox_index
   on tmp_xpat (xpatex_genox_zdb_id)
@@ -44,6 +59,11 @@ update xpat_figure_group
       		       	 					 	 	  where tmp_xpat.xpatex_genox_zdb_id = xpat_figure_group.xfigg_genox_zdb_id
 										  )::lvarchar,11),""),"'}",""),"'","");
 
+update xpat_figure_group
+  set xfigg_has_images = 't'
+ where exists (select 'x' from tmp_xpat
+       	      	      where tmp_xpat.xpatex_genox_zdb_id = xpat_figure_group.xfigg_genox_zdb_id
+		      and images = "t");
 
 --set explain off;
 insert into xpat_figure_group_member (xfiggm_group_id, xfiggm_member_name, xfiggm_member_id)
@@ -63,3 +83,8 @@ update functional_annotation
   set fa_xpat_figure_group = (select xfigg_group_name 
       			      	      from xpat_figure_group 
 				      where fa_genox_zdb_id = xfigg_genox_zdb_id);
+update functional_Annotation 
+  set fa_xfigg_has_images = 't'
+  where exists (select 'x' from xpat_figure_group
+  	       	       where fa_genox_zdb_id = xfigg_genox_zdb_id
+		       and xfigg_has_images = "t");

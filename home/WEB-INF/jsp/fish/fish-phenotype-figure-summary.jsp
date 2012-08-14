@@ -61,5 +61,5 @@
             </c:if>
         </span>
     --%>
-    <zfin2:figureSummary figureSummaryDisplayList="${figureSummaryDisplay}" expressionData="false"/>
+    <zfin2:figurePhenotypeSummary figureSummaryDisplayList="${figureSummaryDisplay}" />
 </div>

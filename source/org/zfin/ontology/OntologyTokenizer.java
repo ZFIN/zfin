@@ -46,12 +46,12 @@ public class OntologyTokenizer {
         String word;
         while (iter.hasNext()) {
             word = iter.next();
-            if (word.startsWith("(")) {
+            /*if (word.startsWith("(")) {
                 word = word.substring(1);
             }
             if (word.endsWith(")")) {
                 word = word.substring(0, word.length() - 1);
-            }
+            }*/
             if (word.trim().length() >= minLength) {
                 returnStrings.add(word);
             }
@@ -78,6 +78,7 @@ public class OntologyTokenizer {
     }
 
     public int tokenizeTerm(TermDTO term, PatriciaTrieMultiMap<TermDTO> termMap) {
+        //String exactTerm = term.getName().toLowerCase();
         String exactTerm = term.getName().toLowerCase();
 
         int count = 0;

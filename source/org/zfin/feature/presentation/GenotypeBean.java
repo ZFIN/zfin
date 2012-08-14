@@ -2,10 +2,7 @@ package org.zfin.feature.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionResultTermComparator;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.fish.presentation.AbstractFishViewBean;
 import org.zfin.marker.Marker;
@@ -27,6 +24,7 @@ public class GenotypeBean  extends AbstractFishViewBean{
     private List<GenotypeFeature> genotypeFeatures;
     private List<GenotypeFigure> genotypeFigures;
     private List<PhenotypeStatement> phenoStatements;
+    private List<ExpressionStatement> expressionStatements;
     private List<PhenotypeDisplay> phenoDisplays;
     private List<ExpressionDisplay> expressionDisplays;
     private List<ExpressionResult> expressionResults;
@@ -84,6 +82,14 @@ public class GenotypeBean  extends AbstractFishViewBean{
 
     public void setPhenoStatements(List<PhenotypeStatement> phenoStatements) {
         this.phenoStatements = phenoStatements;
+    }
+
+    public List<ExpressionStatement> getExpressionStatements() {
+        return expressionStatements;
+    }
+
+    public void setExpressionStatements(List<ExpressionStatement> expressionStatements) {
+        this.expressionStatements = expressionStatements;
     }
 
     public List<ExpressionDisplay> getExpressionDisplays() {

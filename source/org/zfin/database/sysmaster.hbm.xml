@@ -47,13 +47,21 @@
             <one-to-many class="DatabaseLock"/>
         </set>
 
+        <set name="sysOpenDbList">
+            <key column="odb_sessionid"/>
+            <one-to-many class="SysOpenDb"/>
+        </set>
+
+<!--
         <join table="sysopendb" optional="true">
             <key column="odb_sessionid"/>
+            <many-to-one name="sysOpenDbList" ></many-to-one>
             <component name="sysOpenDb">
                 <property name="name" column="odb_dbname"/>
                 <property name="isolation" column="odb_isolation"/>
             </component>
         </join>
+-->
 
     </class>
 

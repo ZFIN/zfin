@@ -1,63 +1,69 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%@ attribute name="figureSummaryDisplayList" type="java.util.List" required="true"
+<%@ attribute name="figureExpressionSummaryList" type="java.util.List" required="true"
               description="List of FigureSummaryDisplay objects" %>
 
 <%@ attribute name="expressionData" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="showMarker" type="java.lang.Boolean" required="false" %>
 
-<c:if test="${!empty figureSummaryDisplayList}">
+<c:if test="${!empty figureExpressionSummaryList}">
 
     <table class="summary rowstripes">
         <tr>
             <th align="left" width="20%">Publication</th>
             <th align="left" width="5%">Data</th>
             <th align="left" width="5%"> &nbsp; </th>
+            <c:if test="${showMarker}">
+                <th align="left" width="15%">Expressed Genes</th>
+            </c:if>
             <th align="left">
-                <c:choose>
-                    <c:when test="${expressionData}">
-                        Anatomy
-                    </c:when>
-                    <c:otherwise>
-                        Phenotype </c:otherwise>
-                </c:choose>
+                Anatomy
             </th>
         </tr>
-        <c:forEach var="figureData" items="${figureSummaryDisplayList}" varStatus="status">
+        <c:forEach var="figureExpressionSummaryDisplay" items="${figureExpressionSummaryList}" varStatus="status">
             <zfin:alternating-tr loopName="status"
-                                 groupBeanCollection="${figureSummaryDisplayList}"
-                                 groupByBean="publication">
+                                 groupBeanCollection="${figureExpressionSummaryList}"
+                                 groupByBean="figure">
                 <td>
                     <zfin:groupByDisplay loopName="status"
-                                         groupBeanCollection="${figureSummaryDisplayList}"
+                                         groupBeanCollection="${figureExpressionSummaryList}"
                                          groupByBean="publication">
-                        <zfin:link entity="${figureData.publication}"/>
+                        <zfin:link entity="${figureExpressionSummaryDisplay.figure.publication}"/>
                     </zfin:groupByDisplay>
                 </td>
                 <td>
-                    <zfin:link entity="${figureData.figure}"/>
+                    <zfin:groupByDisplay loopName="status"
+                                         groupBeanCollection="${figureExpressionSummaryList}"
+                                         groupByBean="figure">
+                        <zfin:link entity="${figureExpressionSummaryDisplay.figure}"/>
+                    </zfin:groupByDisplay>
                 </td>
                 <td>
-                    <c:if test="${figureData.thumbnail != null}">
-                        <zfin:link entity="${figureData.figure}">
-                            <img border="1" src="/imageLoadUp/${figureData.thumbnail}" height="50"
-                                 title="${figureData.imgCount} image<c:if test="${figureData.imgCount > 1}">s</c:if>"
-                                    />
-                            <c:if test="${figureData.imgCount > 1}"><img border="0"
-                                                                         src="/images/multibars.gif"/></c:if>
-                        </zfin:link>
-                    </c:if>
+                    <zfin:groupByDisplay loopName="status"
+                                         groupBeanCollection="${figureExpressionSummaryList}"
+                                         groupByBean="figure">
+                        <c:if test="${figureExpressionSummaryDisplay.thumbnail != null}">
+                            <zfin:link entity="${figureExpressionSummaryDisplay.figure}">
+                                <img border="1" src="/imageLoadUp/${figureExpressionSummaryDisplay.thumbnail}"
+                                     height="50"
+                                     title="${figureExpressionSummaryDisplay.imgCount} image<c:if test="${figureExpressionSummaryDisplay.imgCount > 1}">s</c:if>"
+                                     alt=""/>
+                                <c:if test="${figureExpressionSummaryDisplay.imgCount > 1}">
+                                    <img border="0" src="/images/multibars.gif" alt="multiple images"/>
+                                </c:if>
+                            </zfin:link>
+                        </c:if>
+                    </zfin:groupByDisplay>
                 </td>
+                <c:if test="${showMarker}">
+                    <td>
+                        <zfin:link entity="${figureExpressionSummaryDisplay.expressedGene.gene}"/>
+                    </td>
+                </c:if>
                 <td>
-                    <c:choose>
-                        <c:when test="${expressionData}">
-                            <zfin2:toggledHyperlinkList collection="${figureData.expressionStatementList}"
-                                                        maxNumber="6" id="${figureData.figure.zdbID}-terms"/>
-                        </c:when>
-                        <c:otherwise>
-                            <zfin2:toggledHyperlinkList collection="${figureData.phenotypeStatementList}"
-                                                        maxNumber="6" id="${figureData.figure.zdbID}-terms" commaDelimited="false"/>
-                        </c:otherwise>
-                    </c:choose>
+                    <zfin2:toggledHyperlinkList
+                            collection="${figureExpressionSummaryDisplay.expressedGene.expressionStatements}"
+                            maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>

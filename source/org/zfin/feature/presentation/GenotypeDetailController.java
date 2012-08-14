@@ -53,7 +53,7 @@ public class GenotypeDetailController {
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
         if (!genotype.isWildtype()) {
-            retrieveGenotypeAndFeatureData(form,genotype);
+            retrieveGenotypeAndFeatureData(form, genotype);
             retrieveExpressionData(form, genotype);
             retrievePhenotypeData(form, genotype);
             retrievePublicationData(form, genotype);
@@ -69,7 +69,7 @@ public class GenotypeDetailController {
     }
 
     @RequestMapping(value = {"/show_all_expression"})
-    protected String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
+    public String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
         LOG.debug("Start All Expressions for Genotype");
         Genotype genotype = mutantRepository.getGenotypeByID(genoID);
         if (genotype == null) {
@@ -97,7 +97,6 @@ public class GenotypeDetailController {
 
     private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {
         List<ExpressionResult> xpRslts = expressionRepository.getExpressionResultsByGenotype(genotype);
-
         form.setExpressionResults(xpRslts);
     }
 

@@ -6,6 +6,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
+import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
@@ -39,7 +40,7 @@ public class AntibodyService {
 
     private int numberOfPublications;
 
-    private List<FigureSummaryDisplay> figureSummary;
+    private List<FigureExpressionSummaryDisplay> figureSummary;
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -672,9 +673,9 @@ public class AntibodyService {
     public void createFigureSummary(ExpressionSummaryCriteria criteria) {
         Set<Publication> publications = new HashSet<Publication>();
 
-        List<FigureSummaryDisplay> summaryRows = FigureService.createExpressionFigureSummary(criteria);
+        List<FigureExpressionSummaryDisplay> summaryRows = FigureService.createExpressionFigureSummary(criteria);
 
-        for (FigureSummaryDisplay summaryRow : summaryRows) {
+        for (FigureExpressionSummaryDisplay summaryRow : summaryRows) {
             publications.add(summaryRow.getPublication());
         }
 
@@ -709,11 +710,11 @@ public class AntibodyService {
         this.numberOfPublications = numberOfPublications;
     }
 
-    public List<FigureSummaryDisplay> getFigureSummary() {
+    public List<FigureExpressionSummaryDisplay> getFigureSummary() {
         return figureSummary;
     }
 
-    public void setFigureSummary(List<FigureSummaryDisplay> figureSummary) {
+    public void setFigureSummary(List<FigureExpressionSummaryDisplay> figureSummary) {
         this.figureSummary = figureSummary;
     }
 }

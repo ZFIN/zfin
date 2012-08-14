@@ -16,7 +16,7 @@ public class FishPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Fish fish) {
-        return getGeneralHyperLink(uri + fish.getGenotypeExperimentIDsString(), getName(fish));
+        return getGeneralHyperLink(uri + fish.getFishID(), getName(fish));
     }
 
     /**

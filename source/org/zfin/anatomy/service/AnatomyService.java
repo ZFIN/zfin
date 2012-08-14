@@ -9,6 +9,7 @@ import org.zfin.anatomy.presentation.RelationshipPresentation;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.AntibodyStatistics;
@@ -73,5 +74,36 @@ public class AnatomyService {
         return stageListDisplay;
     }
 
+    public static DevelopmentStage getEarliestStartStage(Collection<ExpressionResult> results) {
+        if (results == null)
+            return null;
+
+        DevelopmentStage stage = null;
+        for (ExpressionResult result : results) {
+            if (stage == null) {
+                stage = result.getStartStage();
+                continue;
+            }
+            if (result.getStartStage().earlierThan(stage))
+                stage = result.getStartStage();
+        }
+        return stage;
+    }
+
+    public static DevelopmentStage getLatestEndStage(Collection<ExpressionResult> results) {
+        if (results == null)
+            return null;
+
+        DevelopmentStage stage = null;
+        for (ExpressionResult result : results) {
+            if (stage == null) {
+                stage = result.getEndStage();
+                continue;
+            }
+            if (stage.earlierThan(result.getEndStage()))
+                stage = result.getEndStage();
+        }
+        return stage;
+    }
 
 }
