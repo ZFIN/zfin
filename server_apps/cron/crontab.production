@@ -48,7 +48,7 @@
 0,6,12,18,24,30,36,42,48,54 * * * * <!--|ROOT_PATH|-->/server_apps/WebSiteTools/signsoflife.sh
 #
 # SMTWTFS regenFishMart.sh
-25 08 * * * /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/warehouse/regenFishMart.sh
+25 15 * * * /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/warehouse/regenFishMart.sh
 #
 #
 #
