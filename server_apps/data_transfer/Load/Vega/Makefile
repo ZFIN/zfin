@@ -109,7 +109,7 @@ ORIGZIP=$(foreach IN, $(INCOMMING), $(DEST)/$(FTP)/$(IN).gz)
 # dosn't like the difference in time zones from here & england
 # creating "fetch" rule without dependancy on overseas timestamp
 $(ORIGZIP): 
-	chmod -R ug+w $(DEST)/$(FTP)
+	-chmod -R ug+w $(DEST)/$(FTP)
 	wget -r -q -np --timestamping "ftp://$(FTP)" -P $(DEST)/
 	
 # decompress a copy 
@@ -676,7 +676,7 @@ clean_vega_public:
 
 ########################################################################
 
-clean: 	clean_fetch_vega \
+allclean: 	clean_fetch_vega \
 		clean_novel_check \
 		clean_withdrawn_check \
 		clean_blast_transcripts \
@@ -687,6 +687,6 @@ clean: 	clean_fetch_vega \
 		clean_gff3_backbone 
 
 
-.PHONY: begin clean all withdrawn_check count_deflines count_versions \
-	sanity_check_vers blast_transcripts check_vega_type
-	refresh_vega_type_translation  
+.PHONY: begin all withdrawn_check count_deflines count_versions \
+	sanity_check_vers blast_transcripts check_vega_type \
+	refresh_vega_type_translation allclean 
