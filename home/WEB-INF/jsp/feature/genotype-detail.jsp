@@ -117,8 +117,7 @@
             </th>
             <td>
                 <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}" varStatus="loop">
-                    <zfin:link entity="${affectedGene}"/>
-                    <c:if test="${!loop.last}">,&nbsp;</c:if>
+                    <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>
         </tr>
