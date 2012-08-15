@@ -127,6 +127,8 @@ RewriteRule ^/downloads /action/unload/downloads/ [NC,L,PT]
 #this file actually is passed through to webdriver
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+RewriteCond <!--|MUTANT_NAME|--> =zfin.org
+RewriteRule ^/cgi-bin/webdriver(.*) /cgi-bin/webdriver$1 [PT]
 
 #we also need to pass through any url that gets altered above and
 #needs to go to proxy.  Any url created in the url mapping needs to
