@@ -76,8 +76,7 @@ echo ""
 ###
 ### note: leave in tab separated format as 'location' uses pipes sometimes.
 ###
-###
-###
+
 
 prior="`ls -l ./$human`"
 echo "Begin Human update `date +'%Y-%m-%d %H:%M:%S'`"
