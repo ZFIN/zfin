@@ -21,7 +21,7 @@ insert_reno.sh (blast_file "standardized namename")
 	cleanup files
 
 
-to drop a run delete the run_zdb_is from zdb_active_data
+to drop a run delete the run_zdb_id from zdb_active_data
 
 
 
