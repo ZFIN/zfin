@@ -12,4 +12,4 @@ if (! -e "<!--|FTP_ROOT|-->/pub/transfer/MEOW") {
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW";
 print "beginning in ". `pwd` ."\n";
 print "running MEOW_dump.sql on <!--|DB_NAME|-->\n";
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> MEOW_dump.sql");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> MEOW_dump.sql");

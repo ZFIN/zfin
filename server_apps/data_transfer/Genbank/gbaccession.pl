@@ -112,7 +112,7 @@ if ($move_blast_files_to_development eq "true") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
+    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }

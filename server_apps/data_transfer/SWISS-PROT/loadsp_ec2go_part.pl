@@ -63,7 +63,7 @@ system("rm -f *2go");
 &downloadGOtermFiles();
 
 print "\n delete records source from last ec2go loading.\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
 
 
 # ------------ Parse ec2go ---------------
@@ -95,7 +95,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> sp_load_ec2gopart.sql >out 2> report2.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load_ec2gopart.sql >out 2> report2.txt");
 
 open F, "out" or die "Cannot open out";
 if (<F>) {

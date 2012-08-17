@@ -79,4 +79,4 @@ undef $dreName;
 undef $ENSDART;
 undef $geneName;
 
-system("/private/apps/Informix/informix/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/transcript/loadMIRANDALinks.sql");
+system("/private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/transcript/loadMIRANDALinks.sql");

@@ -42,7 +42,7 @@ endif
 #=========== Duplication check =================
 echo "== checking duplication ..."
 
-$INFORMIXDIR/bin/dbaccess -a $dbname checkDups.sql >& checkDups.out
+$INFORMIXDIR/bin/dbaccess $dbname checkDups.sql >& checkDups.out
 set rs = `grep retrieved checkDups.out`
 if ( "$rs" != "") then
 	echo "Duplication detected in checkDups.out"

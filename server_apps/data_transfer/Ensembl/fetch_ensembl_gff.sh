@@ -89,12 +89,7 @@ if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 	#	put in long term storage
 
 	# note: can use ~/bin/unlcollen.awk to get max length of columns
-	echo "using a third party gtf to gff3 converter that emits cruft"
-	echo "use: perldoc gtf2gff3.pl  for more information" 
-	 
-	echo "$GTF  ~~~>  gtf2gff3.pl ~~~>  drerio_ensembl.${ver}.unl"
-	
-	
+
 	zcat ${GTF}|nawk 'BEGIN{FS="\"";OFS="\""}/\(/{gsub(" ","",$8);print}{print}'|\
 	./gtf2gff3.pl|\
 	nawk -v OFS='|' '/^[^#]/{$2="Ensembl_"$2;att=substr(substr($9,1,length($9)-1),4);\

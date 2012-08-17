@@ -19,7 +19,6 @@ setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
 setenv ONCONFIG <!--|ONCONFIG_FILE|-->
 setenv INFORMIXSQLHOSTS <!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
 
-set dbaccess = "$INFORMIXDIR/bin/dbaccess -a "
 #--------------------------------------
 # Check and prepare AO_translation.unl
 #---------------------------------------
@@ -29,7 +28,7 @@ if (-e AO_translation.unl) then
     /bin/sed 's/\|$//' AO_translation.unl | /bin/sed 's/$/\|/' > n_AO_translation.unl
     /bin/mv n_AO_translation.unl AO_translation.unl
 
-    $dbaccess <!--|DB_NAME|--> verify_stage_abbrev.sql
+    $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> verify_stage_abbrev.sql
 
 else
     echo "WARNING: Cannot find AO_translation.unl";
@@ -60,7 +59,7 @@ endif
 # Run loading
 #---------------------------------------
 echo "=== Load AO  ==="
-$dbaccess <!--|DB_NAME|--> loadAO.sql
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> loadAO.sql
 
 #-------------------------------------------
 # Define batch_xpat_annot_adjust() function
@@ -68,18 +67,18 @@ $dbaccess <!--|DB_NAME|--> loadAO.sql
 # then, check annotation again for any omission
 #-------------------------------------------
 echo "=== Adjust annotation  ==="
-$dbaccess <!--|DB_NAME|--> batch_xpat_annot_adjust.sql
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> batch_xpat_annot_adjust.sql
 
-$dbaccess <!--|DB_NAME|--> make_annot_translation.sql
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> make_annot_translation.sql
 
-$dbaccess <!--|DB_NAME|--> check_annotation.sql
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> check_annotation.sql
 
 #--------------------------------------
 # Check keywords in Thisse template
 # Email results to <!--|AO_EMAIL_CURATOR|-->
 #---------------------------------------
 echo "=== Check Thisse keyword file  ==="
-$dbaccess <!--|DB_NAME|--> check_thisse_keywords.sql
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> check_thisse_keywords.sql
 
 
 set SUBJECT = "Auto: Problem AO in Thiss Template"

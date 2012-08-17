@@ -83,4 +83,4 @@ undef $mature2ID;
 undef $mature1seq;
 undef $mature2seq;
 
-#system("/private/apps/Informix/informix/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/transcript/loadMicroRNA.sql");
+#system("/private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/transcript/loadMicroRNA.sql");

@@ -91,7 +91,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
 
 sendErrorReport ("gofile.sql failed") if
-    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> gofile.sql");
+    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> gofile.sql");
 
 sendErrorReport ("goparser.pl failed") if system ("./goparser.pl");
 

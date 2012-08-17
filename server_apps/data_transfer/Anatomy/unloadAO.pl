@@ -142,7 +142,7 @@ if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_
 
 &loadOboToDB();
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> unloadAOFile.sql >out 2> report.txt") and die "unloadAOFile.sql failed";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> unloadAOFile.sql >out 2> report.txt") and die "unloadAOFile.sql failed";
 
 system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
 

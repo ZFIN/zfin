@@ -57,8 +57,8 @@ my $sqlgenbank ="unload to \"$accFileGenBank\" delimiter \" \"
 #################
 # Execute
 #################
-system ("echo '$sqlrefseq' | $ENV{INFORMIXDIR}/bin/dbaccess -a $dbname -") && die "Failure on sql: $sqlrefseq \n"; 
+system ("echo '$sqlrefseq' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sqlrefseq \n"; 
 
-system ("echo '$sqlgenbank' | $ENV{INFORMIXDIR}/bin/dbaccess -a $dbname -") && die "Failure on sql: $sqlgenbank \n"; 
+system ("echo '$sqlgenbank' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sqlgenbank \n"; 
 
 exit;

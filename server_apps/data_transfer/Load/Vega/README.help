@@ -79,7 +79,7 @@ ever properly considered while building it, so it is stuck on here as an
 afterthought, a perpetual reminder of where it all went so very wrong. 
 Have a nice day. 
 This target outputs instructions on how to push the blast file to our 
-blast database repository which at this time, is in the clutches of our
+blast database repositorywhich at this time, is in the clutches of our
 all controlling informix user... just because. 
 
 note: blasting and parsing can take some time
@@ -181,13 +181,12 @@ associated zfin gene names, which they will return after a while.
 
 load_assembly[_commit]
 
-After the curators are able to be working on the reno run, you can turn 
-your attention away from the transcript aspect of the load.
+Typically after the curators are able to be working on the reno run, you
+can turn your attention away from the transcript aspect of the load.
 Being tied to the Ensembl assembly has dramatically reduced churn on the 
 clones
 
-*this step needs to be taken strictly after novel transcripts are loaded
-as it now also creates the "clone contains transcript" relationships.
+(* should/could maybe revisit "clone contains transcript" here)
 
 ########################################################################
 

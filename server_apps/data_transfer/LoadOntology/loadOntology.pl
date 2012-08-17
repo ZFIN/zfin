@@ -196,14 +196,14 @@ print "parsing obo file done\n";
 
 print "loading...\n";
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadTerms.sql >out 2> report.txt") and die "loadTerms.sql failed";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadTerms.sql >out 2> report.txt") and die "loadTerms.sql failed";
 
 if ($fileName eq "quality.obo"){
-    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> fixPatoAnnotations.sql >out 2> report.txt") and die "fixPatoAnnotations.sql failed";
+    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> fixPatoAnnotations.sql >out 2> report.txt") and die "fixPatoAnnotations.sql failed";
 }
 
 if ($fileName eq "sequence_ontology.obo"){
-    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> fixSoAnnotations.sql >out 2> report.txt") and die "fixSoAnnotations.sql failed";
+    system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> fixSoAnnotations.sql >out 2> report.txt") and die "fixSoAnnotations.sql failed";
 }
 
 

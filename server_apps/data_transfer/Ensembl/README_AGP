@@ -1,16 +1,5 @@
 README_AGP
 
-
-On 06/17/2011 11:16 PM, Kevin Schaper wrote:
-> This might work:
->
-> ftp://ftp.ensembl.org/pub/assembly/zebrafish/Zv9release/Zv9_chr.agp.gz
->
-> Kevin
-
-sounds promising
-
-
 Zv9_scaffold.agp
 - tab-delimited file containing golden path information
 - describes how scaffolds are assembled from contigs
@@ -24,7 +13,14 @@ Zv9_chr.agp
 - as above, but describes how chromosomes are assembled from contigs
 
 
+sounds promising
 
+On 06/17/2011 11:16 PM, Kevin Schaper wrote:
+> This might work:
+>
+> ftp://ftp.ensembl.org/pub/assembly/zebrafish/Zv9release/Zv9_chr.agp.gz
+>
+> Kevin
 
 
 #####################################################################
