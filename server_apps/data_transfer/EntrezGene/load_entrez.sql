@@ -64,7 +64,7 @@ load from 'refseq_len.unl' insert into rs_len;
 update statistics high for table rs_len; 
  
 
- 
+--  
 create table gprp_len( 
 	gprpl_gp varchar(16) PRIMARY KEY not NULL, 
 	gprpl_len integer not NULL
@@ -584,8 +584,6 @@ delete from zdb_active_data where exists (
 
 drop table dup_link;
 drop table tmp_entrez; 
-
-
 
 ! echo "###############################################################"
 ! echo "what is left may be added as new links on genes "

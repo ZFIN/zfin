@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/EntrezGene
 
 GENERICS =  
 
-STATICS = README.help
+STATICS = README.help load_entrez.sql commit.sql rollback.sql update_GenPept_len.sql
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -52,21 +52,22 @@ COMMONSBIN = ${TOP}/commons/bin
 
 ########################################################################
 
-ENTREZGENE := ftp://ftp.ncbi.nih.gov/gene/DATA
+ENTREZGENE = ftp://ftp.ncbi.nih.gov/gene/DATA
 ############
 ### Entrez is kind enough to produce a zebrafish specific file
 ### 1.4M instead of 135M and avoids needing to parse out the
 ### txid 7955 set  -> 1M load file
 
-Danio_rerio.gene_info.gz:  
-	wget --timestamping $(ENTREZGENE)/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz
+$(TARGETDIR)/Danio_rerio.gene_info.gz: 
+	cd $(TARGETDIR) && \
+	wget --timestamping $(ENTREZGENE)/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz 
 
 # Mapping from Entrez ID to ZFIN ID
 
 # TODO: handle their pipe seperated multiple LG in 7th col? (or not)
 
-entrezid_zdbid_lg_type.unl: Danio_rerio.gene_info.gz
-	#zgrep "ZDB-" Danio_rerio.gene_info.gz | cut -f2,6,7,10 |\
+$(TARGETDIR)/entrezid_zdbid_lg_type.unl: $(TARGETDIR)/Danio_rerio.gene_info.gz
+	cd $(TARGETDIR) && \
 	zgrep "ZDB-" Danio_rerio.gene_info.gz | cut -f2,6,10 |\
 	nawk 'BEGIN{FS="\t";OFS="|"}{split($$2,z,":");i=index(z[2],"|");\
 	if(i){z[2]=substr(z[2],1,i-1)};$$2=z[2];print $$0"|"}' | sort -n > $@;\
@@ -80,10 +81,12 @@ entrezid_zdbid_lg_type.unl: Danio_rerio.gene_info.gz
 # Mapping from  Entrez ID to GenBank accession (inc GenPept?)
 # GenBank 325M download (compressed)  -> 2.5M load file
 
-gene2accession.gz:  
+$(TARGETDIR)/gene2accession.gz: 
+	cd $(TARGETDIR) && \
 	wget --timestamping $(ENTREZGENE)/gene2accession.gz
 
-entrezid_GBnt_GBaa_GBdna.tab: gene2accession.gz entrezid_zdbid_lg_type.unl
+$(TARGETDIR)/entrezid_GBnt_GBaa_GBdna.tab: $(TARGETDIR)/gene2accession.gz\
+ $(TARGETDIR)/entrezid_zdbid_lg_type.unl
 	-zgrep "^7955" $< | cut -f 2,3,4,6,8 | \
 	nawk 'BEGIN{FS="\t";OFS="\t"} $$2=="-" {\
 		for(i=3;i<6;i++){j=index($$i,".");if(j){$$i=substr($$i,1,j-1)}}; \
@@ -97,27 +100,35 @@ entrezid_GBnt_GBaa_GBdna.tab: gene2accession.gz entrezid_zdbid_lg_type.unl
 # Mapping from Entrez ID to UniGene accession
 # UniGene file ~9M download (uncompressed)  -> 300k load file
 
-gene2unigene:
-	wget --timestamping $(ENTREZGENE)/$@
+$(TARGETDIR)/gene2unigene:
+	cd $(TARGETDIR) && \
+	wget --timestamping $(ENTREZGENE)/gene2unigene
 	
-entrezid_ugc.tab:	gene2unigene
+$(TARGETDIR)/entrezid_ugc.tab:	$(TARGETDIR)/gene2unigene
+	cd $(TARGETDIR) && \
 	grep "Dr." $< | sed 's/Dr.//g' | sort -n > $@;\
 	wc -l $@
 	
 # md5sum entrezid_ugc.tab > entrezid_ugc_new.md5
-
 
 # Mapping from RefSeq accession to Entrez ID
 # may better belong in a RefSeq dir or nowhere if just a onetime patch
 REFSEQCAT=ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog
 
 #there is a 21M (compressed) file that has the RefSeq/RefPept accessions
-release%.accession2geneid.gz: 
+$(TARGETDIR)/release%.accession2geneid.gz:
+	cd $(TARGETDIR) && \
 	wget --timestamping $(REFSEQCAT)/release[0-9]*.accession2geneid.gz
-## TODO If there is more than one keep the more recent
+	
+## TODO? If there is more than one, keep the more recent
 
-entrezid_refseq_refpept.tab: release%.accession2geneid.gz
-	zgrep "^7955" release*.accession2geneid.gz |tr \. '	'|cut -f2,3,5|sort -n > $@
+$(TARGETDIR)/entrezid_refseq_refpept.tab: $(TARGETDIR)/release%.accession2geneid.gz
+	# de-dupe release*.accession2geneid.gz?
+	# there are example of howto in other stuff I have done
+	
+	#if ( ! -z $(TARGETDIR)/release*.accession2geneid.gz) then
+		zgrep "^7955" $(TARGETDIR)/release*.accession2geneid.gz |tr \. '	'|cut -f2,3,5|sort -n > $@
+	#endif
 
 # entrezid_RSnt_RSaa_RSdna.tab: 	entrezid_zdbid_lg_type.tab \
 #								enterzid_refseq_refpept.tab
@@ -145,24 +156,28 @@ entrezid_refseq_refpept.tab: release%.accession2geneid.gz
 
 REFSEQLEN := ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot
 
-zebrafish.rna.fna.gz:
+$(TARGETDIR)/zebrafish.rna.fna.gz:
+	cd $(TARGETDIR) && \
 	wget --timestamping ${REFSEQLEN}/zebrafish.rna.fna.gz
 	
-zebrafish.protein.faa.gz:
+$(TARGETDIR)/zebrafish.protein.faa.gz:
+	cd $(TARGETDIR) && \
 	wget --timestamping  ${REFSEQLEN}/zebrafish.protein.faa.gz
 
-refseq_len.unl: zebrafish.rna.fna.gz zebrafish.protein.faa.gz ${COMMONSBIN}/fasta_len.awk
-	zcat zebrafish.*.f?a.gz | ${COMMONSBIN}/fasta_len.awk > $@
+$(TARGETDIR)/refseq_len.unl: $(TARGETDIR)/zebrafish.rna.fna.gz \
+       $(TARGETDIR)/zebrafish.protein.faa.gz ${COMMONSBIN}/fasta_len.awk
+	zcat $< | ${COMMONSBIN}/fasta_len.awk > $@
 
 # GenPept fasta lengths
 GENPEPTLEN = ftp://ftp.ncbi.nih.gov/genomes/D_rerio/protein/
 
-# ... these are only RefPept acessions
-protein.fa.gz: 
+# ... these are _only_ RefPept acessions, (I don't want)
+$(TARGETDIR)/protein.fa.gz:
+	cd $(TARGETDIR) && \
 	wget --timestamping ${GENPEPTLEN}/protein.fa.gz
 
-genpeptRP_len.unl: protein.fa.gz  ${COMMONSBIN}/fasta_len.awk
-	zcat protein.fa.gz | ${COMMONSBIN}/fasta_len.awk > $@
+$(TARGETDIR)/genpeptRP_len.unl: $(TARGETDIR)/protein.fa.gz  ${COMMONSBIN}/fasta_len.awk
+	zcat $< | ${COMMONSBIN}/fasta_len.awk > $@
 
 # Gnomon_prot.fsa.gz  not GenPepts	
 # too big ...
@@ -182,33 +197,40 @@ genpeptRP_len.unl: protein.fa.gz  ${COMMONSBIN}/fasta_len.awk
 
 ########################################################################
 
-fetch_entrez: entrezid_ugc.tab refseq_len.unl genpeptRP_len.unl\
-		entrezid_GBnt_GBaa_GBdna.tab entrezid_refseq_refpept.tab 
+fetch_entrez: $(TARGETDIR)/entrezid_ugc.tab $(TARGETDIR)/genpeptRP_len.unl\
+	$(TARGETDIR)/refseq_len.unl $(TARGETDIR)/entrezid_refseq_refpept.tab \
+	$(TARGETDIR)/entrezid_GBnt_GBaa_GBdna.tab
 
-EntrezGenPept_acc.unl: load_entrez.sql commit.sql fetch_entrez
+$(TARGETDIR)/EntrezGenPept_acc.unl: $(TARGETDIR)/load_entrez.sql \
+		$(TARGETDIR)/commit.sql fetch_entrez
+	cd $(TARGETDIR) && \
 	cat $< commit.sql | dbaccess -a $$DBNAME
 
-GenPept.fasta: EntrezGenPept_acc.unl ${COMMONSBIN}/efetch.r
+$(TARGETDIR)/GenPept.fasta: $(TARGETDIR)/EntrezGenPept_acc.unl ${COMMONSBIN}/efetch.r
 	${COMMONSBIN}/efetch.r -t fasta -i $<  -o $@
 
-genpept_len.unl: GenPept.fasta ${COMMONSBIN}/fasta_len.awk
+$(TARGETDIR)/genpept_len.unl: $(TARGETDIR)/GenPept.fasta ${COMMONSBIN}/fasta_len.awk
 	${COMMONSBIN}/fasta_len.awk $< > $@
 
-run: load_entrez.sql fetch_entrez  rollback.sql
+run: $(TARGETDIR)/load_entrez.sql fetch_entrez  $(TARGETDIR)/rollback.sql
+	cd $(TARGETDIR) && \
 	cat $< rollback.sql | dbaccess -a $$DBNAME
 	@echo "NB: GenPept lenght update needs the entrez load commited" 
 
-run_commit: update_GenPept_len.sql genpept_len.unl 
+run_commit: $(TARGETDIR)/update_GenPept_len.sql $(TARGETDIR)/genpept_len.unl 
+	cd $(TARGETDIR) && \
 	cat load_entrez.sql commit.sql | dbaccess -a $$DBNAME ;\
 	cat update_GenPept_len.sql commit.sql | dbaccess -a $$DBNAME ;\
 	rm -f genpept_len.unl EntrezGenPept_acc.unl GenPept.fasta
 	
 clean_entrez:
+	cd $(TARGETDIR) && \
 	rm -f entrezid_zdbid_lg_type.unl entrezid_refseq_refpept.tab \
 	entrezid_ugc.tab entrezid_GBnt_GBaa_GBdna.tab \
     genpept_len.unl EntrezGenPept_acc.unl GenPept.fasta
            
 very_clean_entrez: clean_entrez
+	cd $(TARGETDIR) && \
 	rm -f gene2accession.gz release*.accession2geneid.gz gene2unigene \
 	Danio_rerio.gene_info.gz
 
