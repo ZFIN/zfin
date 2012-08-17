@@ -11,20 +11,6 @@ load from 'vega_transcript_names.tsv' delimiter "	"
  insert into ottdarT_abbrev
 ;
 
-{
--- randomly started sending  as uppercase ... and without the si:
--- I hope that is all they sent in uppercase == WRONG
-! echo "prepend si: & lowercase CLONE.ORF-00X"
-update ottdarT_abbrev set oa_abbrev = "si:" || lower(oa_abbrev)
- where oa_abbrev == upper(oa_abbrev)
-;
--- it is a mess but to play make belive till a fixed set comes ..
-update ottdarT_abbrev set oa_abbrev = lower(oa_abbrev)
- where oa_abbrev != lower(oa_abbrev)
-;
-! echo "DO NOT LOAD INTO PRODUCTION LIKE THIS ^"
-unload to 'vega_transcript_namesII.unl' select * from ottdarT_abbrev order by 1;
-}
 
 create index ottdarT_abbrev_oa_abbrev_idx on ottdarT_abbrev(oa_abbrev) in idxdbs3;
 
