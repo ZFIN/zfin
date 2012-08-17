@@ -30,9 +30,9 @@ to execute:
 
 gmake run[_commit]
 
-gmake clean        will delete the localy generated working files 
+gmake clean_entrez        will delete the localy generated working files 
 
-gmake very_clean   will also delete the downloaded files
+gmake very_clean_entrez   will also delete the downloaded files
 
 
 The output is verbose to begin with to facilitate testing/checking 
@@ -41,4 +41,8 @@ but after a while you should be able to tone it down.
 You will need to decide what to do about the oddly attributed links,
 and other issues.
 
-you may decide to put datafiles somewhere else (or not).
+include a simple wrapper to call 
+
+./load_entrez_wrapper.sh $MUTANT_NAME
+
+someone may extend it to filter the output for mailing

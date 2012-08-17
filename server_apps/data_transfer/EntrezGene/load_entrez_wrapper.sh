@@ -4,11 +4,17 @@
 
 #private/bin:/private/apps/Informix/informix/bin:/private/ZfinLinks/Commons/bin:/private/bin:/local/bin:/usr/bin:/bin
 
-instance=$1
+
+if ( $1 == "" | $1 == "commit" ) then
+	instance =$MUTANT_NAME
+else
+	instance=$1
+endif
 
 source /private/ZfinLinks/Commons/env/${instance}.env
 
-if ( "$1" == "commit" ) then
+
+if ( "$2" == "commit" || "$1" == "commit") then
 	gmake run_commit
 else
 	gmake run
