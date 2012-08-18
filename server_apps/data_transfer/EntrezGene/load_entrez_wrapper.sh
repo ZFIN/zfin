@@ -6,9 +6,9 @@
 
 
 if ( $1 == "" | $1 == "commit" ) then
-	instance =$MUTANT_NAME
+	set instance="$MUTANT_NAME"
 else
-	instance=$1
+	set instance="$1"
 endif
 
 source /private/ZfinLinks/Commons/env/${instance}.env
