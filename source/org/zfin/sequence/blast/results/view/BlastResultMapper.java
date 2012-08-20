@@ -384,6 +384,25 @@ public class BlastResultMapper {
             hitViewBean.setId(hit.getHitId());
             // - get the hit accession ID
             String hitAccession = hit.getHitAccession();
+
+            //WUBlast on genomix returns hitAccession, WUBlast on embryonix does not
+            //The same data should be there as the first word in the second bit of
+            //the defline, I think, so here's an attempt at populating it.
+
+            if (hitAccession == null) {
+                String[] deflineParts = hit.getHitId().split("\\|");
+                if (deflineParts[1] != null) {
+                    String[] accessions = deflineParts[1].split(" ");
+                    if (accessions[0] != null)
+                        hitAccession = accessions[0];
+                    else
+                        hitAccession = "";
+                }
+                logger.debug("Attempted to fix an empty hitAccesion");
+                logger.debug("Hit_id: " + hit.getHitId());
+                logger.debug("invented Hit_accession:" + hitAccession);
+            }
+
             // now that we have the accessionID set, we can write the contains method
             if (false == hitViewBeans.containsKey(hitAccession)) {
 
