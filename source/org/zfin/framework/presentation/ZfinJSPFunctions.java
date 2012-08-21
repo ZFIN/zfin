@@ -8,9 +8,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.database.presentation.Table;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.Term;
 import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
@@ -322,6 +325,16 @@ public class ZfinJSPFunctions {
         if (foreignKey.isManyToManyRelationship())
             return foreignKey.getManyToManyTable().getPkName();
         return foreignKey.getForeignKey();
+    }
+
+    /**
+     * @return substructure name of a phenotype statement that matches a given parent Term.
+     */
+    public static String getSubstructure(PhenotypeStatement statement, Term parentTerm) {
+        if (statement == null || parentTerm == null)
+            return null;
+
+        return PhenotypeService.getSubstructureName(statement, parentTerm);
     }
 
 }

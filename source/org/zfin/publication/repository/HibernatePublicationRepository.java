@@ -587,17 +587,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @return list of figures.
      */
     @SuppressWarnings("unchecked")
-    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term) {
+    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
-                "GenotypeExperiment genox, Genotype geno " +
+                "GenotypeExperiment genox, Genotype geno, TransitiveClosure transitiveClosure " +
                 "where geno.zdbID = :genoID AND " +
                 "      genox.genotype = geno AND " +
                 "      phenos.phenotypeExperiment.genotypeExperiment = genox  AND " +
                 "      phenos.phenotypeExperiment.figure = figure AND " +
-                "      ( phenos.entity.superterm = :aoTerm OR phenos.entity.subterm = :aoTerm OR " +
-                "        phenos.relatedEntity.superterm = :aoTerm OR phenos.relatedEntity.subterm = :aoTerm) " +
+                "      transitiveClosure.root = :aoTerm AND " +
+                "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
+                "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
                 "      and not exists (from ExperimentCondition as cond where " +
                 "                           cond.experiment = genox.experiment" +
                 "                           AND cond.morpholino is not null)" +
@@ -607,6 +608,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("aoTerm", term);
         PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
         return paginationResult;
+    }
+
+    /**
+     * Retrieve list of figures for a given genotype and anatomy term
+     * for mutant genotypes excluding morpholinos.
+     *
+     * @param geno genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
+    @Override
+    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term) {
+        return getFiguresByGenoAndAnatomy(geno, term,false);
     }
 
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
@@ -687,12 +701,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
      */
-    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select publication from Publication as publication, PhenotypeStatement as phenotype where " +
+        String hql = "select publication from Publication as publication, PhenotypeStatement as phenotype, " +
+                "     TransitiveClosure transitiveClosure " +
+                "where " +
                 " phenotype.phenotypeExperiment.figure.publication = publication and " +
-                "(phenotype.entity.superterm = :aoTerm OR phenotype.entity.subterm = :aoTerm OR " +
-                " phenotype.relatedEntity.superterm = :aoTerm OR phenotype.relatedEntity.subterm = :aoTerm) " +
+                " transitiveClosure.root = :aoTerm and " +
+                "(phenotype.entity.superterm = transitiveClosure.child OR phenotype.entity.subterm = transitiveClosure.child OR " +
+                " phenotype.relatedEntity.superterm = transitiveClosure.child OR phenotype.relatedEntity.subterm = transitiveClosure.child) " +
                 " AND phenotype.phenotypeExperiment.genotypeExperiment.genotype = :genotype" +
                 " AND phenotype.phenotypeExperiment.genotypeExperiment.genotype.wildtype = :wildtype" +
                 " AND not exists (from ExperimentCondition as cond " +
@@ -710,6 +727,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 */
         query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return new PaginationResult<Publication>((List<Publication>) query.list());
+    }
+
+    /**
+     * Retrieve publications that have phenotype data for a given term and genotype including
+     * substructures
+     * @param genotype Genotype
+     * @param aoTerm   ao term
+     * @return Number of publications with figures per genotype and anatomy
+     */
+    @Override
+    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm) {
+        return getPublicationsWithFigures(genotype, aoTerm, false);
     }
 
     public PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype) {

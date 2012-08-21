@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
@@ -12,4 +11,5 @@
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
                                        totalRecordCount="${formBean.genotypeCount}"
-                                       useWebdriverURL="false"/>
+                                       useWebdriverURL="false"
+                                       substructureSearchLink="/action/anatomy/show-all-phenotype-mutants-substructures/${formBean.aoTerm.zdbID}"/>

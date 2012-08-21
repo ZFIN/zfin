@@ -42,6 +42,7 @@ public class ExpressionSummaryCriteria {
         criteria.setWildtypeOnly(isWildtypeOnly);
         criteria.setWithImagesOnly(withImagesOnly);
         criteria.setStandardEnvironment(isStandardEnvironment);
+        criteria.setChemicalEnvironment(isChemicalEnvironment);
 
         return criteria;
     }

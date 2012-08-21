@@ -267,6 +267,16 @@ public interface PublicationRepository extends PaginationParameter {
      */
     PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term);
 
+    /**
+     * Retrieve list of figures for a given genotype and anatomy term
+     * for mutant genotypes excluding morpholinos.
+     *
+     * @param geno genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
+    PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term, boolean includeSubstructures);
+
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
 
     PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
@@ -285,6 +295,15 @@ public interface PublicationRepository extends PaginationParameter {
      * @return Number of publications with figures per genotype and anatomy
      */
     PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm);
+
+    /**
+     * Retrieve publications that have phenotype data for a given term and genotype including
+     * substructures
+     * @param genotype Genotype
+     * @param aoTerm   ao term
+     * @return Number of publications with figures per genotype and anatomy
+     */
+    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm, boolean includeSubstructures);
 
     /**
      * @param genotype Genotype

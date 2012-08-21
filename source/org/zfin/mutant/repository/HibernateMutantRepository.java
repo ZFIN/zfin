@@ -16,6 +16,7 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
@@ -59,8 +60,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     /**
-     * This returns a list genotypes (mutants) that are annotated
-     * to a given anatomy item. Do not include MO conditions.
+     * This returns a list of genotypes (mutants) that are annotated
+     * to a given anatomy item. Does not include MO conditions.
      *
      * @param item     Anatomy Item
      * @param wildtype return wildtype genotypes
@@ -102,6 +103,50 @@ public class HibernateMutantRepository implements MutantRepository {
             }
         });
 
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+    }
+
+    /**
+     * This returns a list genotypes (mutants) that are annotated
+     * to a given anatomy item or any substructure.
+     *
+     * @param item     Anatomy Item
+     * @param wildtype return wildtype genotypes
+     * @param bean     Pagination bean info
+     * @return list of genotypes
+     */
+    @Override
+    public PaginationResult<Genotype> getGenotypesByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql =
+                "select distinct geno from Genotype geno, GenotypeExperiment genox, " +
+                        "PhenotypeTermFastSearch fastSearch " +
+                        "WHERE fastSearch.phenotypeStatement.phenotypeExperiment.genotypeExperiment = genox " +
+                        "AND fastSearch.term = :aoTerm " +
+                        "AND fastSearch.phenotypeStatement.tag != :tag " +
+                        "AND genox.genotype = geno " +
+                        "AND genox.standardOrGenericControl = :standardOrGeneric " +
+                        "AND not exists (select 1 from ExperimentCondition cond where" +
+                        " cond.experiment = genox.experiment " +
+                        " AND cond.morpholino is not null ) ";
+
+        if (!wildtype) {
+            hql += "AND geno.wildtype = 'f' ";
+        }
+        hql += "ORDER BY geno.nameOrder asc";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("aoTerm", item);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setBoolean("standardOrGeneric", true);
+        // have to add extra select because of ordering, but we only want to return the first
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0];
+            }
+        });
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
@@ -1332,6 +1377,65 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameterList("genoxIds", genoxIds);
         long numOfImages = (Long) query.uniqueResult();
         return numOfImages > 0;
+    }
+
+    /**
+     * Retrieve figures for phenotypes for a given genotype and structure.
+     *
+     * @param term                 structure
+     * @param genotype             genotype
+     * @param includeSubstructures true or false
+     * @return list of figures
+     */
+    @Override
+    public List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
+        String hql = "select phenox.figure from PhenotypeExperiment phenox, PhenotypeTermFastSearch fastSearch " +
+                "where fastSearch.term = :term and " +
+                "fastSearch.phenotypeStatement.phenotypeExperiment = phenox and " +
+                "phenox.genotypeExperiment.genotype = :genotype";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+        query.setParameter("genotype", genotype);
+        return (List<Figure>) query.list();
+    }
+
+    /**
+     * Retrieve phenotype statements for given structure and genotype.
+     *
+     * @param term
+     * @param genotype
+     * @param includeSubstructures
+     * @return
+     */
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch " +
+                "where fastSearch.phenotypeStatement = pheno and " +
+                "pheno.phenotypeExperiment.genotypeExperiment.genotype = :genotype and "+
+                "fastSearch.directAnnotation = :directAnnotation ";
+
+        if (term != null)
+            hql += " and fastSearch.term = :term ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (term != null)
+            query.setParameter("term", term);
+        query.setParameter("genotype", genotype);
+        query.setBoolean("directAnnotation", !includeSubstructures);
+        return (List<PhenotypeStatement>) query.list();
+    }
+
+    /**
+     * Retrieve phenotype statements for given structure and genotype.
+     *
+     * @param genotype
+     * @param includeSubstructures
+     * @return
+     */
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures) {
+        return getPhenotypeStatement(null, genotype, includeSubstructures);
     }
 
     public List<Marker> getMorpholinos(List<String> genotypeExperimentIDs) {

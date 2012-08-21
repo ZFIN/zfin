@@ -11,6 +11,8 @@ import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.expression.FigureService;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
@@ -41,8 +43,6 @@ import java.util.List;
 @Controller
 public class AnatomyAjaxController {
 
-    @Autowired
-    private AnatomyService anatomyService;
     @Autowired
     private AnatomyRepository anatomyRepository;
     @Autowired
@@ -120,7 +120,7 @@ public class AnatomyAjaxController {
         AnatomySearchBean form = new AnatomySearchBean();
         form.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         form.setAoTerm(term);
-        retrieveMutantData(term, form);
+        retrieveMutantData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-mutants.ajax";
     }
@@ -136,8 +136,25 @@ public class AnatomyAjaxController {
             return "";
 
         form.setAoTerm(term);
-        retrieveMutantData(term, form);
+        retrieveMutantData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-all-phenotype-mutants.page";
+    }
+
+    @RequestMapping(value = "/show-all-phenotype-mutants-substructures/{zdbID}")
+    public String showAllPhenotypeMutantsIncludingSubstructures(Model model
+            , @ModelAttribute("formBean") AnatomySearchBean form
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
+
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
+
+        form.setAoTerm(term);
+        retrieveMutantData(term, form, true);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute("includingSubstructures", true);
         return "anatomy/show-all-phenotype-mutants.page";
     }
 
@@ -154,6 +171,63 @@ public class AnatomyAjaxController {
         retrieveMorpholinoData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-wildtype-morpholinos.ajax";
+    }
+
+    @RequestMapping(value = "/{oboID}/phenotype-summary/{genoypteID}")
+    public String genotypeSummary(Model model
+            , @PathVariable("oboID") String oboID
+            , @PathVariable("genoypteID") String genotypeID
+    ) throws Exception {
+        GenericTerm term = ontologyRepository.getTermByOboID(oboID);
+        if (term == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, oboID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
+        if (geno == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, genotypeID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+
+        AnatomySearchBean form = new AnatomySearchBean();
+
+        form.setAoTerm(term);
+
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, geno, true);
+        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        retrieveMutantData(term, form, true);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute("includingSubstructures", true);
+        model.addAttribute("genotype", geno);
+        model.addAttribute("entity", term);
+        return "anatomy/phenotype-summary.page";
+    }
+
+    @RequestMapping(value = "/{genoypteID}/phenotype-summary")
+    public String genotypeSummary(Model model
+            , @PathVariable("genoypteID") String genotypeID
+    ) throws Exception {
+
+        Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
+        if (geno == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, genotypeID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+
+        AnatomySearchBean form = new AnatomySearchBean();
+
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(null, geno, true);
+        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        retrieveMutantData(null, form, true);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute("includingSubstructures", true);
+        model.addAttribute("genotype", geno);
+        return "anatomy/phenotype-summary.page";
     }
 
     @RequestMapping(value = "/show-phenotype-non-wildtype-morpholinos/{zdbID}")
@@ -232,11 +306,24 @@ public class AnatomyAjaxController {
         form.setAnatomyStatistics(statistics);
     }
 
-    private @Autowired
+    private
+    @Autowired
     HttpServletRequest request;
 
-    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form) {
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false, form);
+    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures) {
+        PaginationResult<Genotype> genotypeResult;
+        if (includeSubstructures)
+            genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(ai, false, form);
+        else
+            genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false, form);
+        populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
+    }
+
+    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Genotype> genotypeResult) {
+        populateFormBeanForMutantList(ai, form, genotypeResult, false);
+    }
+
+    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Genotype> genotypeResult, boolean includeSubstructures) {
         form.setGenotypeCount(genotypeResult.getTotalCount());
         form.setTotalRecords(genotypeResult.getTotalCount());
         form.setQueryString(request.getQueryString());
@@ -244,20 +331,20 @@ public class AnatomyAjaxController {
 
         List<Genotype> genotypes = genotypeResult.getPopulatedResults();
         form.setGenotypes(genotypes);
-        List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai);
+        List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai, includeSubstructures);
         form.setGenotypeStatistics(genoStats);
 
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getZdbID());
         form.setAnatomyStatisticsMutant(statistics);
     }
 
-    private List<GenotypeStatistics> createGenotypeStats(List<Genotype> genotypes, GenericTerm ai) {
+    private List<GenotypeStatistics> createGenotypeStats(List<Genotype> genotypes, GenericTerm ai, boolean includeSubstructures) {
         if (genotypes == null || ai == null)
             return null;
 
         List<GenotypeStatistics> stats = new ArrayList<GenotypeStatistics>();
         for (Genotype genoType : genotypes) {
-            GenotypeStatistics stat = new GenotypeStatistics(genoType, ai);
+            GenotypeStatistics stat = new GenotypeStatistics(genoType, ai, includeSubstructures);
             stats.add(stat);
         }
         return stats;

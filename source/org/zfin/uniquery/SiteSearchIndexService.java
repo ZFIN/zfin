@@ -53,7 +53,12 @@ public class SiteSearchIndexService {
     private int numberOfUnloadFiles;
 
     public void checkUnloadDirectory() {
-        numberOfUnloadFiles = getLatestNumberUnloadFiles();
+        try {
+            numberOfUnloadFiles = getLatestNumberUnloadFiles();
+        } catch (Exception e) {
+            LOG.error(e);
+            return;
+        }
         File unloadDir = new File(indexDirectory);
         File[] files = unloadDir.listFiles();
         unloadFiles = Arrays.asList(files);

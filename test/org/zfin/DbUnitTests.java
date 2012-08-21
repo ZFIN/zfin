@@ -10,11 +10,13 @@ import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
+import org.zfin.expression.FigureServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
+import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
@@ -26,6 +28,7 @@ import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
+import org.zfin.mutant.PhenotypeServiceDBTest;
 import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
 import org.zfin.mutant.repository.PhenotypeRepositoryTest;
@@ -73,6 +76,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
         FeatureRepositoryTest.class,
+        FigureServiceTest.class,
         FishRepositoryTest.class,
         FishServiceTest.class,
         FpInferenceGafServiceTest.class,
@@ -99,6 +103,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         PhenotypeRepositoryTest.class,
         ProfileRepositoryTest.class,
         PublicationRepositoryTest.class,
+        PhenotypeServiceDBTest.class,
         RenoRedundancyCandidateControllerTest.class,
         RenoMultiRunTest.class,
 //        NomenclatureCandidateControllerTest.class, // no tests
@@ -109,7 +114,8 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AntibodyWikiWebServiceTest.class,
         EnumValidationTest.class,
         SingleCandidateRepositoryTest.class,
-        TranscriptRepositoryTest.class
+        TranscriptRepositoryTest.class,
+        ZfinJSPFunctionsTest.class
 //        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })

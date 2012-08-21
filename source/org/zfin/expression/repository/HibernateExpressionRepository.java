@@ -575,7 +575,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      *
      * @param publicationID Publication
      * @param geneZdbID     gene
-     * @param fishZdbID        fish
+     * @param fishZdbID     fish
      * @return list of experiment figure stages.
      */
     @SuppressWarnings("unchecked")
@@ -591,17 +591,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 + "       join result.expressionExperiment.genotypeExperiment.genotype as geno "
                 + "       where result.expressionExperiment.publication.zdbID = :pubID "
                 + "       AND fig member of result.figures ";
-        if(geneZdbID!=null){
-            hql += " and gene.zdbID = :geneZdbID " ;
+        if (geneZdbID != null) {
+            hql += " and gene.zdbID = :geneZdbID ";
         }
-        if(figureZdbID !=null){
-            hql += " and fig.zdbID = :figureZdbID " ;
+        if (figureZdbID != null) {
+            hql += " and fig.zdbID = :figureZdbID ";
         }
-        if(fishZdbID !=null){
-            hql += " and geno.zdbID = :fishZdbID " ;
+        if (fishZdbID != null) {
+            hql += " and geno.zdbID = :fishZdbID ";
         }
 
-                hql +=  "       order by fig.orderingLabel, gene.abbreviationOrder "
+        hql += "       order by fig.orderingLabel, gene.abbreviationOrder "
                 + "             , geno.nickname "
                 + "             , result.expressionExperiment.assay.displayOrder "
                 + "             , result.startStage.abbreviation "
@@ -609,14 +609,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
 
-        if(geneZdbID!=null){
-            query.setString("geneZdbID",geneZdbID) ;
+        if (geneZdbID != null) {
+            query.setString("geneZdbID", geneZdbID);
         }
-        if(figureZdbID !=null){
-            query.setString("figureZdbID", figureZdbID) ;
+        if (figureZdbID != null) {
+            query.setString("figureZdbID", figureZdbID);
         }
-        if(fishZdbID !=null){
-            query.setString("fishZdbID", fishZdbID) ;
+        if (fishZdbID != null) {
+            query.setString("fishZdbID", fishZdbID);
         }
 
         query.setResultTransformer(new ResultTransformer() {
@@ -715,7 +715,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select experiment from ExpressionExperiment experiment "
                 + "       left join experiment.gene as gene "
                 + "       left join experiment.genotypeExperiment as genox"
-                + "     where experiment.publication.zdbID = :pubID " ;
+                + "     where experiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
             hql += "           and gene.zdbID = :geneID ";
         if (fishID != null) {
@@ -727,10 +727,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             experiment.assay.displayOrder ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubID", publicationID);
-        if (geneZdbID != null){
+        if (geneZdbID != null) {
             query.setString("geneID", geneZdbID);
         }
-        if (fishID != null){
+        if (fishID != null) {
             query.setString("fishID", fishID);
         }
         query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
@@ -1654,7 +1654,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
 
         if (expressionCriteria.isChemicalEnvironment()) {
-            aliasMap.put("xpatres.expressionExperiment", "xpatex");
+            if (!aliasMap.values().contains("xpatex"))
+                aliasMap.put("xpatres.expressionExperiment", "xpatex");
             aliasMap.put("xpatex.genotypeExperiment", "genox");
             aliasMap.put("genox.experiment", "exp");
             aliasMap.put("exp.experimentConditions", "cond");

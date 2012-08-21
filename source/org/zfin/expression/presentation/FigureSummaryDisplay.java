@@ -120,9 +120,9 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
         this.imgCount = imgCount;
     }
 
-    public void addExpressionStatement(ExpressionStatement expressionStatement) {
-        if (expressionStatementList == null)
-            expressionStatementList = new ArrayList<ExpressionStatement>();
-        expressionStatementList.add(expressionStatement);
+    public void addPhenotypeStatement(PhenotypeStatement statement) {
+        if (phenotypeStatementList == null)
+            phenotypeStatementList = new ArrayList<PhenotypeStatement>();
+        phenotypeStatementList.add(statement);
     }
 }

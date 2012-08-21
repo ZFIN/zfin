@@ -7,7 +7,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -427,11 +427,11 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibodyService.createFigureSummary(criteria);
 
 
-        List<FigureExpressionSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
         List<Figure> figures = new ArrayList<Figure>();
 
 
-        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
         }
 
@@ -479,29 +479,29 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, prim5, prim5, false);
         antibodyService.createFigureSummary(criteria);
 
-        List<FigureExpressionSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
+        List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
         List<Figure> figures = new ArrayList<Figure>();
         Set<ExpressionStatement> statements = new HashSet<ExpressionStatement>();
 
 
-        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
-            statements.addAll(figureSummary.getExpressedGene().getExpressionStatements());
+            statements.addAll(figureSummary.getExpressionStatementList());
 
             //all figures returned should have slow muscle cell
             assertTrue(figureSummary.getPublication().getShortAuthorList() + " " + figureSummary.getFigure().getLabel()
-                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressedGene().getExpressionStatements().contains(slowMuscleCellStatement));
+                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressionStatementList().contains(slowMuscleCellStatement));
         }
 
 
         //find the figure 6 summary, test against it
-        FigureExpressionSummaryDisplay figS3Summary = null;
-        for (FigureExpressionSummaryDisplay fs : figureSummaryList) {
+        FigureSummaryDisplay figS3Summary = null;
+        for (FigureSummaryDisplay fs : figureSummaryList) {
             if (fs.getFigure().equals(figS3))
                 figS3Summary = fs;
         }
         assertNotNull("figureSummaryList should have " + figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel(), figS3Summary);
-        assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressedGene().getExpressionStatements().contains(myotomeStatement));
+        assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressionStatementList().contains(myotomeStatement));
 
 
     }

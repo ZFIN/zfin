@@ -136,7 +136,7 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
 
     @Override
     public int compareTo(PhenotypeStatement statement) {
-            return getDisplayNameWithoutTag().compareTo(statement.getDisplayNameWithoutTag());
+            return getDisplayNameWithoutTag().compareToIgnoreCase(statement.getDisplayNameWithoutTag());
     }
 
     @Override

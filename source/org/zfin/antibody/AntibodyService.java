@@ -40,7 +40,7 @@ public class AntibodyService {
 
     private int numberOfPublications;
 
-    private List<FigureExpressionSummaryDisplay> figureSummary;
+    private List<FigureSummaryDisplay> figureSummary;
 
     public AntibodyService(Antibody antibody) {
         if (antibody == null)
@@ -673,9 +673,9 @@ public class AntibodyService {
     public void createFigureSummary(ExpressionSummaryCriteria criteria) {
         Set<Publication> publications = new HashSet<Publication>();
 
-        List<FigureExpressionSummaryDisplay> summaryRows = FigureService.createExpressionFigureSummary(criteria);
+        List<FigureSummaryDisplay> summaryRows = FigureService.createExpressionFigureSummary(criteria);
 
-        for (FigureExpressionSummaryDisplay summaryRow : summaryRows) {
+        for (FigureSummaryDisplay summaryRow : summaryRows) {
             publications.add(summaryRow.getPublication());
         }
 
@@ -710,11 +710,11 @@ public class AntibodyService {
         this.numberOfPublications = numberOfPublications;
     }
 
-    public List<FigureExpressionSummaryDisplay> getFigureSummary() {
+    public List<FigureSummaryDisplay> getFigureSummary() {
         return figureSummary;
     }
 
-    public void setFigureSummary(List<FigureExpressionSummaryDisplay> figureSummary) {
+    public void setFigureSummary(List<FigureSummaryDisplay> figureSummary) {
         this.figureSummary = figureSummary;
     }
 }

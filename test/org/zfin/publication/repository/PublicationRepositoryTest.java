@@ -174,6 +174,19 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getAllExpressedMutantsForAoIncludingSubstructures() {
+        // actinotrichium
+        String aoZdbID = "ZDB-TERM-100614-30";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(aoZdbID);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(item, false, bean);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertTrue(genotypeResult.getTotalCount() > 2);
+    }
+
+    @Test
     public void getNumOfPublicationsPerAOAndGli1Mutant() {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
@@ -284,7 +297,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         AnatomyItem item = new AnatomyItem();
         item.setZdbID(aoZdbID);
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item.createGenericTerm());
-        assertTrue(figs.getPopulatedResults() != null);
+        assertNotNull(figs.getPopulatedResults());
 
 /*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
         // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
@@ -299,6 +312,21 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getFiguresForGenotypeAndAoPlusSubstructures() {
+        //  genotype Df(Chr03:sox8,sox9b)b971/b971
+        String genoZdbID = "ZDB-GENO-050322-1";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // actinotrichium
+        String aoZdbID = "ZDB-TERM-100614-30";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(aoZdbID);
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item, true);
+        assertNotNull(figs.getPopulatedResults());
+        assertTrue(figs.getPopulatedResults().size() > 0);
+    }
+
+    @Test
     public void getPublicationsForGenoAndAo() {
         // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
         String genoZdbID = "ZDB-GENO-091207-3";
@@ -309,7 +337,23 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String aoZdbID = "ZDB-TERM-100331-40";
         item.setZdbID(aoZdbID);
         PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item);
-        assertTrue(publications.getPopulatedResults() != null);
+        assertNotNull(publications.getPopulatedResults());
+        assertTrue(publications.getPopulatedResults().size() > 0);
+    }
+
+    @Test
+    public void getPublicationsForGenoAndAoIncludingSubstructures() {
+        //  genotype Df(Chr03:sox8,sox9b)b971/b971
+        String genoZdbID = "ZDB-GENO-050322-1";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // actinotrichium
+        String aoZdbID = "ZDB-TERM-100614-30";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(aoZdbID);
+        PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item, true);
+        assertNotNull(publications.getPopulatedResults());
+        assertTrue(publications.getPopulatedResults().size() > 0);
     }
 
     @Test
@@ -676,7 +720,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size() > 15);
         assertEquals(0, publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
         assertEquals(12, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"));
-        assertTrue(publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1")> 15);
+        assertTrue(publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1") > 15);
         assertEquals(0, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-SSLP-000315-3"));
     }
 

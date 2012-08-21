@@ -4,6 +4,8 @@
               description="List of FigureSummaryDisplay objects" %>
 
 <%@ attribute name="expressionData" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="phenotypeData" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="expressionGenotypeData" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="showMarker" type="java.lang.Boolean" required="false" %>
 
 <c:if test="${!empty figureExpressionSummaryList}">
@@ -61,9 +63,21 @@
                     </td>
                 </c:if>
                 <td>
-                    <zfin2:toggledHyperlinkList
-                            collection="${figureExpressionSummaryDisplay.expressedGene.expressionStatements}"
-                            maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                    <c:if test="${expressionData}">
+                        <zfin2:toggledHyperlinkList
+                                collection="${figureExpressionSummaryDisplay.expressedGene.expressionStatements}"
+                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                    </c:if>
+                    <c:if test="${phenotypeData}">
+                        <zfin2:toggledHyperlinkList
+                                collection="${figureExpressionSummaryDisplay.phenotypeStatementList}"
+                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                    </c:if>
+                    <c:if test="${expressionGenotypeData}">
+                        <zfin2:toggledHyperlinkList
+                                collection="${figureExpressionSummaryDisplay.expressionStatementList}"
+                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                    </c:if>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>

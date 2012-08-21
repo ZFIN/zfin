@@ -1,12 +1,16 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.mutant.presentation.PhenotypeStatementSubstructure;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Service class that deals with Phenotype-related logic
@@ -84,17 +88,29 @@ public class PhenotypeService {
      * in any position (E1 or E2) in a given genotype experiment
      *
      * @param genoExperiment Genotype Experiment
+     * @return list of phenotype statements
+     */
+    public static Set<PhenotypeStatement> getPhenotypeStatements(GenotypeExperiment genoExperiment) {
+        return getPhenotypeStatements(genoExperiment, null);
+    }
+
+    /**
+     * Retrieve a list of phenotype statements that contain the given term
+     * in any position (E1 or E2) in a given genotype experiment
+     *
+     * @param genoExperiment Genotype Experiment
      * @param term           Term
      * @return list of phenotype statements
      */
     public static Set<PhenotypeStatement> getPhenotypeStatements(GenotypeExperiment genoExperiment, GenericTerm term) {
-        if (genoExperiment == null || term == null)
+        if (genoExperiment == null)
             return null;
 
+        boolean includeAll = term == null;
         Set<PhenotypeStatement> phenoStatements = new HashSet<PhenotypeStatement>(5);
         for (PhenotypeExperiment phenox : genoExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement statement : phenox.getPhenotypeStatements()) {
-                if (statement.contains(term))
+                if (includeAll || statement.contains(term))
                     phenoStatements.add(statement);
 
             }
@@ -103,6 +119,36 @@ public class PhenotypeService {
         // I have to create a distinct list myself.
         Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenoStatements.size());
         for (PhenotypeStatement statement : phenoStatements) {
+            boolean recordFound = false;
+            for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
+                if (distinctStatement.equalsByPhenotype(statement)) {
+                    recordFound = true;
+                    break;
+                }
+            }
+            if (!recordFound)
+                distinctPhenoStatements.add(statement);
+        }
+        return distinctPhenoStatements;
+    }
+
+    /**
+     * Retrieve a list of phenotype statements that contain the given term
+     * in any position (E1 or E2) in a given genotype experiment
+     *
+     * @param genotype Genotype
+     * @param term     Term
+     * @return list of phenotype statements
+     */
+    public static Set<PhenotypeStatement> getPhenotypeStatements(Genotype genotype, GenericTerm term, boolean includSubstructures) {
+        if (genotype == null)
+            return null;
+
+        List<PhenotypeStatement> phenotypeStatementList = getMutantRepository().getPhenotypeStatement(term, genotype, includSubstructures);
+        // since I do not want to change the equals() method to ignore the PK id
+        // I have to create a distinct list myself.
+        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenotypeStatementList.size());
+        for (PhenotypeStatement statement : phenotypeStatementList) {
             boolean recordFound = false;
             for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
                 if (distinctStatement.equalsByPhenotype(statement)) {
@@ -164,6 +210,51 @@ public class PhenotypeService {
         return secondaryTerms;
     }
 
+    public static String getSubstructureName(PhenotypeStatement phenotypeStatement, Term parentTerm) {
+        PostComposedEntity entity = phenotypeStatement.getEntity();
+        if (entity != null) {
+            GenericTerm superterm = entity.getSuperterm();
+            if (superterm != null)
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm))
+                    return superterm.getTermName();
+            Term subterm = entity.getSubterm();
+            if (subterm != null)
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm))
+                    return subterm.getTermName();
+        }
+        PostComposedEntity relatedEntity = phenotypeStatement.getRelatedEntity();
+        if (relatedEntity != null) {
+            GenericTerm superterm = relatedEntity.getSuperterm();
+            if (superterm != null)
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm))
+                    return superterm.getTermName();
+            Term subterm = relatedEntity.getSubterm();
+            if (subterm != null)
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm))
+                    return subterm.getTermName();
+        }
+        return null;
+    }
+
+    public static boolean hasStructureOrSubstructure(GenericTerm anatomyItem, PhenotypeStatement statement) {
+        PostComposedEntity entity = statement.getEntity();
+        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSuperterm()))
+            return true;
+        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSubterm()))
+            return true;
+
+        PostComposedEntity relatedEntity = statement.getRelatedEntity();
+        if (relatedEntity == null)
+            return false;
+        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSuperterm()))
+            return true;
+        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSubterm()))
+            return true;
+
+        return false;
+    }
+
+
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
             if (o1 == null)
@@ -176,6 +267,7 @@ public class PhenotypeService {
                 return +1;
             return o1.compareTo(o2);
         }
+
     }
 
 

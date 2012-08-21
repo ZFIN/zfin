@@ -161,6 +161,23 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         }
     }
 
+   /**
+     * Check that a list of genotypes for a given structure is rendered.
+     */
+    public void testShowGenotypesPerAOSubstructures() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                webClient.waitForBackgroundJavaScriptStartingBefore(1000);
+                // 	actinotrichium [ZDB-TERM-100614-30]
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/anatomy/show-all-phenotype-mutants-substructures/ZDB-TERM-100614-30");
+                // Genotype Df(Chr03:sox8,sox9b)b971/b971
+                assertNotNull(page.getByXPath("//a[@id='ZDB-GENO-050322-1']").get(0));
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    }
+
 
 
 }

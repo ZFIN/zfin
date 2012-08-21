@@ -12,7 +12,6 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -25,6 +24,7 @@ public class GenotypeStatistics extends EntityStatistics {
     private Genotype genotype;
     private GenericTerm anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
+    private boolean includeSubstructures;
 
     public GenotypeStatistics(Genotype genotype) {
         this.genotype = genotype;
@@ -35,19 +35,25 @@ public class GenotypeStatistics extends EntityStatistics {
         this.anatomyItem = anatomyItem;
     }
 
+    public GenotypeStatistics(Genotype genotype, GenericTerm anatomyItem, boolean includeSubstructures) {
+        this.genotype = genotype;
+        this.anatomyItem = anatomyItem;
+        this.includeSubstructures = includeSubstructures;
+    }
+
     public Genotype getGenotype() {
         return genotype;
     }
 
     public int getNumberOfFigures() {
         if (figureResults == null) {
-            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem);
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem, includeSubstructures);
         }
         return figureResults.getTotalCount();
     }
 
     public boolean isImgInFigure() {
-        if (figureResults == null || figureResults.getTotalCount() == 0)  {
+        if (figureResults == null || figureResults.getTotalCount() == 0) {
             return false;
         }
         boolean thereIsImg = false;
@@ -75,7 +81,7 @@ public class GenotypeStatistics extends EntityStatistics {
 
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         PublicationRepository repository = RepositoryFactory.getPublicationRepository();
-        return repository.getPublicationsWithFigures(genotype, anatomyItem);
+        return repository.getPublicationsWithFigures(genotype, anatomyItem, includeSubstructures);
     }
 
     public SortedSet<Marker> getAffectedMarkers() {
@@ -85,13 +91,13 @@ public class GenotypeStatistics extends EntityStatistics {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
             for (FeatureMarkerRelationship rel : rels) {
-               if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag())  {
-                  Marker marker = rel.getMarker();
-                  // Only add true genes
-                  if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                      markers.add(marker);
-                  }
-               }
+                if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                    Marker marker = rel.getMarker();
+                    // Only add true genes
+                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        markers.add(marker);
+                    }
+                }
             }
 
 
@@ -101,10 +107,8 @@ public class GenotypeStatistics extends EntityStatistics {
 
 
     public Set<PhenotypeStatement> getPhenotypeStatements() {
-        Set<PhenotypeStatement> phenotypeStatements = new HashSet<PhenotypeStatement>();
-        for (GenotypeExperiment genoExperiment : genotype.getGenotypeExperiments()) {
-            phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(genoExperiment, anatomyItem));
-        }
+        Set<PhenotypeStatement> phenotypeStatements = new TreeSet<PhenotypeStatement>();
+        phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(genotype, anatomyItem, includeSubstructures));
         return phenotypeStatements;
     }
 

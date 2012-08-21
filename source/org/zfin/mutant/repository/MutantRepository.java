@@ -4,6 +4,7 @@ import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
+import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -351,5 +352,34 @@ public interface MutantRepository {
      * @return
      */
     boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds);
-}
+    /**
+     * Retrieve figures for phenotypes for a given genotype and structure.
+     *
+     * @param term                 structure
+     * @param genotype                 genotype
+     * @param includeSubstructures true or false
+     * @return list of figures
+     */
+    List<Figure> getPhenotypeFigures(GenericTerm term, Genotype genotype, boolean includeSubstructures);
+
+    /**
+     * Retrieve phenotype statements for given structure and genotype.
+     * @param term
+     * @param genotype
+     * @param includeSubstructures
+     * @return
+     */
+    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Genotype genotype, boolean includeSubstructures);
+
+    /**
+     * Retrieve phenotype statements for given structure and genotype.
+     * @param genotype
+     * @param includeSubstructures
+     * @return
+     */
+    List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures);
+
+    PaginationResult<Genotype> getGenotypesByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
+
+    }
 

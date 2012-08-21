@@ -1,16 +1,19 @@
 package org.zfin.expression;
 
 import org.apache.log4j.Logger;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * Utility methods for the Figure class
@@ -100,14 +103,14 @@ public class FigureService {
     }
 
 
-    public static List<FigureExpressionSummaryDisplay> createExpressionFigureSummary(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
+    public static List<FigureSummaryDisplay> createExpressionFigureSummary(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = createExpressionCriteria(genox, gene, withImgsOnly);
         return createExpressionFigureSummary(criteria);
     }
 
-    public static List<FigureExpressionSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
+    public static List<FigureSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
         // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureExpressionSummaryDisplay> map = new HashMap<String, FigureExpressionSummaryDisplay>();
+        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
         List<Figure> figures;
 
         figures = expressionRepository.getFigures(expressionCriteria);
@@ -123,16 +126,21 @@ public class FigureService {
             // if the key is not in the map, instantiate a display object and add it to the map
             // otherwise, get the display object from the map
             if (!map.containsKey(key)) {
-                FigureExpressionSummaryDisplay figureData = new FigureExpressionSummaryDisplay(figure);
-                ExpressedGene expressedGene = new ExpressedGene(expressionCriteria.getAntibody());
-                expressedGene.setExpressionStatements(getFigureExpressionStatementList(figure, expressionCriteria));
-                figureData.setExpressedGene(expressedGene);
+                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
+                figureData.setPublication(pub);
+                figureData.setFigure(figure);
+                figureData.setExpressionStatementList(getFigureExpressionStatementList(figure, expressionCriteria));
+                for (Image img : figure.getImages()) {
+                    if (figureData.getThumbnail() == null)
+                        figureData.setThumbnail(img.getThumbnail());
+                }
+
                 map.put(key, figureData);
             }
         }
 
 
-        List<FigureExpressionSummaryDisplay> summaryRows = new ArrayList<FigureExpressionSummaryDisplay>();
+        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
         if (map.values().size() > 0) {
             summaryRows.addAll(map.values());
         }
@@ -161,4 +169,47 @@ public class FigureService {
 
     }
 
+    public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Genotype geno, boolean includeSubstructures) {
+
+        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, geno, includeSubstructures);
+        // a map of publicationID-FigureID as keys and figure summary display objects as values
+        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
+        for (PhenotypeStatement statement : statements) {
+            Figure figure = statement.getPhenotypeExperiment().getFigure();
+            Publication pub = figure.getPublication();
+            String key = pub.getZdbID() + figure.getZdbID();
+
+            // if the key is not in the map, instantiate a display object and add it to the map
+            // otherwise, get the display object from the map
+            if (!map.containsKey(key)) {
+                FigureSummaryDisplay figureData = new FigureSummaryDisplay();
+                figureData.setPublication(pub);
+                figureData.setFigure(figure);
+                figureData.addPhenotypeStatement(statement);
+                for (Image img : figure.getImages()) {
+                    if (figureData.getThumbnail() == null)
+                        figureData.setThumbnail(img.getThumbnail());
+                }
+                map.put(key, figureData);
+            } else {
+                map.get(key).addPhenotypeStatement(statement);
+            }
+        }
+        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
+        if (map.values().size() > 0) {
+            summaryRows.addAll(map.values());
+        }
+        Collections.sort(summaryRows);
+        return summaryRows;
+    }
+
+    private static Set<Figure> getDistinctFiguresFromPhenotypeStatements(List<PhenotypeStatement> statements) {
+        if (statements == null)
+            return null;
+        Set<Figure> figures = new HashSet<Figure>(statements.size());
+        for (PhenotypeStatement statement : statements) {
+            figures.add(statement.getPhenotypeExperiment().getFigure());
+        }
+        return figures;
+    }
 }

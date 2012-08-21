@@ -6,13 +6,16 @@
     <tbody>
     <tr align="left">
         <td><b>All ${formBean.genotypeCount} Genotypes
-            for:</b>
+            affecting</b>
             <zfin:link entity="${formBean.aoTerm}"/>
+            <c:if test="${includingSubstructures}">
+                <b>or Substructures</b>
+            </c:if>
         </td>
     </tr>
     </tbody>
 </table>
 
-<zfin2:show-phenotype-mutants formBean="${formBean}"/>
+<zfin2:show-phenotype-mutants formBean="${formBean}" includingSubstructures="${includingSubstructures}"/>
 
 <zfin2:pagination paginationBean="${formBean}"/>

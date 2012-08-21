@@ -10,6 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
@@ -19,6 +20,7 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -31,6 +33,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
 public class MutantRepositoryTest {
@@ -390,5 +393,30 @@ public class MutantRepositoryTest {
         assertTrue(wildtypes.size() > 20);
     }
 
+    @Test
+    public void getPhenotypeFigures() {
+        // actinotrichium
+        ////String oboID = "ZFA:0005435";
+        // fin fold actinotrichium
+        String oboID = "ZFA:0000089";
+        String genotypeID = "ZDB-GENO-090827-1";
+        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
+        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
+        List<Figure> figures = getMutantRepository().getPhenotypeFigures(term, genotype, true);
+        assertNotNull(figures);
+    }
+
+    @Test
+    public void getPhenotypeStatementsForGenoAndStructure() {
+        // actinotrichium
+        ////String oboID = "ZFA:0005435";
+        // fin fold actinotrichium
+        String oboID = "ZFA:0000089";
+        String genotypeID = "ZDB-GENO-090827-1";
+        GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
+        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
+        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, genotype, true);
+        assertNotNull(statements);
+    }
 
 }

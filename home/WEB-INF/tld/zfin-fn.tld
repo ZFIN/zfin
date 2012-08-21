@@ -248,5 +248,18 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Retrieve the latest zfin method invocation on a given thread.
+            If no zfin class involved give last method call
+        </description>
+        <name>getSubstructure</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getSubstructure(org.zfin.mutant.PhenotypeStatement,org.zfin.ontology.Term))</function-signature>
+        <example>
+            ${fn:getSubstructure(phenotype, term)}
+        </example>
+    </function>
+
 
 </taglib>

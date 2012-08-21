@@ -3,7 +3,7 @@ package org.zfin.expression;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -73,7 +73,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         boolean withImgOnly = false;
 
-        List<FigureExpressionSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(genox, pax2a, withImgOnly);
+        List<FigureSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(genox, pax2a, withImgOnly);
 
         assertNotNull("figureSummaryList is not null", figureSummaryList);
         assertTrue("figureSummaryList is not empty", figureSummaryList.size() > 0);
@@ -82,11 +82,11 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         Set<ExpressionStatement> statements = new HashSet<ExpressionStatement>();
 
 
-        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
-            statements.addAll(figureSummary.getExpressedGene().getExpressionStatements());
+            statements.addAll(figureSummary.getExpressionStatementList());
 
-            for (ExpressionStatement statement: figureSummary.getExpressedGene().getExpressionStatements()) {
+            for (ExpressionStatement statement: figureSummary.getExpressionStatementList()) {
                 logger.debug(figureSummary.getPublication().getShortAuthorList() + " "
                         + figureSummary.getFigure().getLabel() + " has: " + statement.getEntity().getSuperterm().getTermName());
             }
@@ -96,17 +96,17 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
 
 
-        FigureExpressionSummaryDisplay fig5Summary = null;
-        for (FigureExpressionSummaryDisplay fs : figureSummaryList) {
+        FigureSummaryDisplay fig5Summary = null;
+        for (FigureSummaryDisplay fs : figureSummaryList) {
             if (fs.getFigure().equals(figure))
                 fig5Summary = fs;
         }
         assertNotNull("figureSummaryList should have Hans fig 5", fig5Summary);
         assertTrue(fig5Summary.getPublication().getShortAuthorList() + " "
-                + fig5Summary.getFigure().getLabel() + " should contain " + oticPlacodeStatement.getEntity().getSuperterm().getTermName(), fig5Summary.getExpressedGene().getExpressionStatements().contains(oticPlacodeStatement));
+                + fig5Summary.getFigure().getLabel() + " should contain " + oticPlacodeStatement.getEntity().getSuperterm().getTermName(), fig5Summary.getExpressionStatementList().contains(oticPlacodeStatement));
         //ectoderm is associaed with sox9a in this figure, not pax2a, if it comes in, the gene parameter is being ignored
         assertFalse(fig5Summary.getPublication().getShortAuthorList()
-                + " " + fig5Summary.getFigure().getLabel() + " should NOT contain " + ectodermStatement.getEntity().getSuperterm().getTermName(), fig5Summary.getExpressedGene().getExpressionStatements().contains(ectodermStatement));
+                + " " + fig5Summary.getFigure().getLabel() + " should NOT contain " + ectodermStatement.getEntity().getSuperterm().getTermName(), fig5Summary.getExpressionStatementList().contains(ectodermStatement));
 
     }
 
@@ -179,19 +179,19 @@ public class FigureServiceTest extends AbstractDatabaseTest {
      * @return list of FigureSummaryDisplay objects, so that there is an option to do
      *  extra tests.
      */
-    public List<FigureExpressionSummaryDisplay> genericGenotypeExpressionFigureSummaryTest(ExpressionSummaryCriteria expressionCriteria,
+    public List<FigureSummaryDisplay> genericGenotypeExpressionFigureSummaryTest(ExpressionSummaryCriteria expressionCriteria,
                                                            Figure figure,
                                                            ExpressionStatement presentInFigure,
                                                            ExpressionStatement notPresentInFigure) {
         
-        List<FigureExpressionSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        List<FigureSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(expressionCriteria);
 
         assertNotNull("figureSummaryList is not null", figureSummaryList);
         assertTrue("figureSummaryList is not empty", figureSummaryList.size() > 0);
 
-        FigureExpressionSummaryDisplay figureSummaryDisplay = null;
+        FigureSummaryDisplay figureSummaryDisplay = null;
         List<Figure> figures = new ArrayList<Figure>();
-        for (FigureExpressionSummaryDisplay figureSummary : figureSummaryList) {
+        for (FigureSummaryDisplay figureSummary : figureSummaryList) {
             figures.add(figureSummary.getFigure());
             if (figureSummary.getFigure().equals(figure)) {
                 figureSummaryDisplay = figureSummary;
@@ -204,11 +204,11 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         assertTrue(figure.getPublication().getShortAuthorList() + " " + figure.getLabel()
                 + " has statement " + presentInFigure.getDisplayName(),
-                figureSummaryDisplay.getExpressedGene().getExpressionStatements().contains(presentInFigure));
+                figureSummaryDisplay.getExpressionStatementList().contains(presentInFigure));
 
         assertTrue(figure.getPublication().getShortAuthorList() + " " + figure.getLabel()
                 + " should NOT have statement " + notPresentInFigure.getDisplayName(),
-                !figureSummaryDisplay.getExpressedGene().getExpressionStatements().contains(notPresentInFigure));
+                !figureSummaryDisplay.getExpressionStatementList().contains(notPresentInFigure));
 
         return figureSummaryList;
     }

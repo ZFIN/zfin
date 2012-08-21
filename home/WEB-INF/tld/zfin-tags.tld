@@ -69,7 +69,6 @@
     </tag>
 
 
-
     <tag>
         <name>geneRelationLink</name>
         <tagclass>org.zfin.framework.presentation.tags.GeneEncodedRelationLinkTag</tagclass>
@@ -137,8 +136,9 @@
         <tagclass>org.zfin.framework.presentation.tags.HighlightTag</tagclass>
         <bodycontent>empty</bodycontent>
         <info>Highlight a sub string within a given string (use highlightString)
-              or a string array (use highlightEntities) which highlights only the second and following components.
-              By default the string replacement is case insensitive</info>
+            or a string array (use highlightEntities) which highlights only the second and following components.
+            By default the string replacement is case insensitive
+        </info>
         <attribute>
             <name>highlightEntity</name>
             <required>false</required>
@@ -162,6 +162,25 @@
         <attribute>
             <name>caseSensitive</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>highlightSubstructure</name>
+        <tagclass>org.zfin.framework.presentation.tags.HighlightSubstructureTag</tagclass>
+        <info>Highlight a sub string within a given string (use highlightString)
+            or a string array (use highlightEntities) which highlights only the second and following components.
+            By default the string replacement is case insensitive
+        </info>
+        <attribute>
+            <name>parentStructure</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>phenotypeStatement</name>
+            <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
@@ -292,7 +311,8 @@
         <name>groupByDisplay</name>
         <tagclass>org.zfin.framework.presentation.tags.GroupByDisplayTag</tagclass>
         <info>If the another element of a collection is the same in the group by attribute then
-              do not display the the attribute again</info>
+            do not display the the attribute again
+        </info>
         <attribute>
             <name>loopName</name>
             <required>true</required>
@@ -361,6 +381,22 @@
         <attribute>
             <name>suppressMoDetails</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>linkWithSubstructure</name>
+        <tagclass>org.zfin.framework.presentation.tags.HighlightSubstructureTag</tagclass>
+        <info>Create a hyperlink for an object of a given type and mark the term that is substructure</info>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>parentTerm</name>
+            <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
