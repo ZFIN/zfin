@@ -34,7 +34,8 @@
     <ul>
      <li><a href="/action/fish/search"
                    title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
-         <sup><img src="/images/new1.gif" border="0"></sup><strong>Mutants / Morphants / Transgenics</strong></a></li>
+         <strong>Mutants / Morphants / Transgenics</strong>
+         <sup><img src="/images/new1.gif" border="0"></sup></a></li>
      <ul>
        <li><a href="/action/feature/wildtype-list"
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
