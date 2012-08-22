@@ -36,6 +36,9 @@ echo 'execute function regen_feature_ao_fast_search(); update statistics for pro
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'execute function regen_expression_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
+echo "Starting regen_pheno_fast_search at `date`"
+dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/DB_maintenance/pheno/pheno_term_regen.sql 
+
 echo "do extra update statistics high to try and avoid 710 errors `date`"
 echo 'update statistics high' | dbaccess <!--|DB_NAME|-->
 
