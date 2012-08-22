@@ -91,16 +91,20 @@ public class SiteSearchIndexService {
      * @return list of unload files.
      */
     public List<File> getUnloadFiles() {
-        if (unloadFiles == null)
+        return getUnloadFiles(false);
+    }
+
+    public List<File> getUnloadFiles(boolean forceReload) {
+        if (unloadFiles == null || forceReload)
             checkUnloadDirectory();
         return unloadFiles;
     }
 
     public String getLatestUnloadDate() {
-        // if the current number of files found in the unload directory is greater than
+        // if the current number of files found in the unload directory is different from
         // the number stored here then update the file list
-        if (getLatestNumberUnloadFiles() > numberOfUnloadFiles)
-            getUnloadFiles();
+        if (getLatestNumberUnloadFiles() != numberOfUnloadFiles)
+            getUnloadFiles(true);
         return unloadFiles.get(0).getName();
     }
 
