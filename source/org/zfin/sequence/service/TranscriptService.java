@@ -98,7 +98,7 @@ public class TranscriptService {
                 logger.debug("attempting to get GBrowseImage list");
                 rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
             } catch (Exception e) {
-                logger.error("Couldn't get GBrowse Feature " + e.getMessage());
+                logger.warn("Couldn't get GBrowse Feature " + e.getMessage());
             }
         } else {
             logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
