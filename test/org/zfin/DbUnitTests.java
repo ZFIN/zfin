@@ -82,7 +82,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FpInferenceGafServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
-        GoEvidenceTest.class,
         GwtConversionTest.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
