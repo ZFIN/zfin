@@ -170,7 +170,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
 
         try {
             goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
-            System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
+            //System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
         } catch (DuplicateEntryException e) {
             fail("Should have allowed this as it was not duplicate: " + e.toString());
         }
@@ -184,7 +184,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         assertNotNull(pub1);
 
         HibernateUtil.createTransaction();
-        System.out.println("deleting: " + goEvidenceDTOCreated.getZdbID()) ;
+        //System.out.println("deleting: " + goEvidenceDTOCreated.getZdbID()) ;
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(goEvidenceDTOCreated.getZdbID());
         HibernateUtil.flushAndCommitCurrentSession();
     }
