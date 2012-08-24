@@ -369,7 +369,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         // already saved, sadly, so we just check to see that there is more than one.
         // fogbugz 5656
         if (mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence) > 1) {
-            logger.warn("Duplicate marker go evidence attempted: " + markerGoTermEvidence);
+            logger.info("Duplicate marker go evidence attempted: " + markerGoTermEvidence);
             throw new DuplicateEntryException("GO annotation not saved because it is identical to an existing annotation.");
         }
 
