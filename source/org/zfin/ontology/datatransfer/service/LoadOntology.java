@@ -171,7 +171,11 @@ public class LoadOntology extends AbstractScriptWrapper {
             } finally {
                 HibernateUtil.closeSession();
             }
+            // needed to allow the generate absolute hyperlinks in emails
+            TermPresentation.domain = "http://" + ZfinPropertiesEnum.DOMAIN_NAME;
             postLoadProcess();
+            // need to reverse it. A bit of a hack!
+            TermPresentation.domain = null;
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
         //ontologyLoader.closeAllFiles();
@@ -200,7 +204,6 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
-        TermPresentation.domain = "http://" + ZfinPropertiesEnum.DOMAIN_NAME;
         List<PhenotypeStatement> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
