@@ -3,11 +3,9 @@ package org.zfin.marker.presentation;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
+import org.zfin.sequence.service.TranscriptService;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class RelatedTranscriptDisplay  {
 
@@ -39,7 +37,7 @@ public class RelatedTranscriptDisplay  {
     public void add(RelatedMarker rm) {
         transcripts.add(rm);
     }
-    
+
     public List<GBrowseImage> getGbrowseImages() {
         return gbrowseImages;
     }
@@ -73,4 +71,51 @@ public class RelatedTranscriptDisplay  {
         return list;
     }
 
+    public TreeSet<RelatedMarker> getNonWithdrawnTranscripts() {
+         if (transcripts == null || transcripts.size() == 0) {
+            return null;
+         }
+         TreeSet<RelatedMarker> nonWithdrawnTranscripts = new TreeSet<RelatedMarker> ();
+         for (RelatedMarker marker : transcripts) {
+             Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
+             if (!transcript.isWithdrawn()) {
+                  nonWithdrawnTranscripts.add(marker);
+             }
+         }
+         return nonWithdrawnTranscripts;
+    }
+
+    public TreeSet<RelatedMarker> getWithdrawnTranscripts() {
+         if (transcripts == null || transcripts.size() == 0) {
+            return null;
+         }
+         TreeSet<RelatedMarker> withdrawnTranscripts = new TreeSet<RelatedMarker> ();
+         for (RelatedMarker marker : transcripts) {
+             Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
+             if (transcript.isWithdrawn()) {
+                  withdrawnTranscripts.add(marker);
+             }
+         }
+         return withdrawnTranscripts;
+    }
+
+    public List<RelatedMarker> getWithdrawnList() {
+         TreeSet<RelatedMarker> withdrawnTranscripts = getWithdrawnTranscripts();
+         if (withdrawnTranscripts == null) {
+            return null;
+         }
+         List<RelatedMarker> withdrawnlist = new ArrayList<RelatedMarker>(withdrawnTranscripts.size());
+         withdrawnlist.addAll(withdrawnTranscripts);
+         return withdrawnlist;
+    }
+
+    public List<RelatedMarker> getNonWithdrawnList() {
+         TreeSet<RelatedMarker> nonWithdrawnTranscripts = getNonWithdrawnTranscripts();
+         if (nonWithdrawnTranscripts == null) {
+            return null;
+         }
+         List<RelatedMarker> nonWithdrawnlist = new ArrayList<RelatedMarker>(nonWithdrawnTranscripts.size());
+         nonWithdrawnlist.addAll(nonWithdrawnTranscripts);
+         return nonWithdrawnlist;
+    }
 }
