@@ -533,7 +533,7 @@ public class OntologyManager {
 
         if (terms != null && terms.size() > 0) {
             if (terms.size() != 1) {
-                logger.warn("multiple terms [" + terms.size() + "] returned for termID: " + id);
+                logger.info("multiple terms [" + terms.size() + "] returned for termID: " + id);
             }
             // return if an exact match, otherwise, return the first one
             for (TermDTO t : terms) {
