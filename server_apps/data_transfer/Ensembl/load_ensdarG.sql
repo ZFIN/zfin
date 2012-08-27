@@ -46,7 +46,11 @@ delete from zdb_active_data where zactvd_zdb_id in (
 	 	select 1 from ens_zdb
 	 	 where dblink_linked_recid = ez_zdb
 	 	   and dblink_acc_num = ez_ens
-	)
+	   )
+	   and not exists (Select 'x' from record_attribution, ens_zdb
+                 where recattrib_data_zdb_id = ez_zdb
+                   and recattrib_source_zdb_id = 'ZDB-PUB-120207-1' 
+           )
 );
 
 ! echo "remove incomming Ensembl links that already exist in ZFIN"
