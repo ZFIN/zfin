@@ -42,6 +42,9 @@ Disallow: /action/pagination
 Disallow: /cgi-bin/webdriver?MIval=aa-markerupdate.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
 
+Disallow: /downloads/archive
+Disallow: /downloads/archive/*
+
 Crawl-delay: 1
 
 User-Agent: Yeti/1.0
