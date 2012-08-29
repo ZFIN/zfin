@@ -82,6 +82,8 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$pubcount)" NAME=$pubcount><?/MIVAR>
 <?MIVAR COND="$(NXST,$caller)" NAME=$caller><?/MIVAR>
 <?MIVAR COND="$(NXST,$geno_name)" NAME=$geno_name><?/MIVAR>
+<?MIVAR COND="$(NXST,$feature_name)" NAME=$feature_name><?/MIVAR>
+<?MIVAR COND="$(NXST,$ao_name)" NAME=$ao_name><?/MIVAR>
 <?MIVAR COND="$(NXST,$goflag)" NAME=$goflag><?/MIVAR>
 <?MIVAR NAME=cit_G_filter><?/MIVAR>
 <?MIVAR COND="$(NXST,$recattrsrctype)" NAME=recattrsrctype>standard<?/MIVAR>
@@ -133,10 +135,22 @@ OUTPUT VARS:
    <?/MISQL>
 <?/MIBLOCK>
 <?/MIBLOCK>
-<?MIBLOCK COND="$(EC,$rtype,genotype)">
+<?MIBLOCK COND="$(AND,$(EC,$rtype,genotype),$(>,$(POSITION,$OID,GENO),0))">
    <?MISQL SQL="select get_geno_name_html_link('$OID') from genotype
                where geno_zdb_id='$OID'">
                <?MIVAR NAME=$geno_name>$1<?/MIVAR>
+    <?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(EC,$rtype,genotype),$(>,$(POSITION,$OID,ALT),0))">
+   <?MISQL SQL="select get_feature_name_html_link('$OID') from feature
+               where feature_zdb_id='$OID'">
+               <?MIVAR NAME=$feature_name>$1<?/MIVAR>
+    <?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(>,$(POSITION,$OID,ANAT),0)">
+   <?MISQL SQL="select get_ao_name_html_link('$OID') from anatomy_item
+               where anatitem_zdb_id='$OID'">
+               <?MIVAR NAME=$ao_name>$1<?/MIVAR>
     <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR>
@@ -391,8 +405,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      <?/MIVAR><br>
     <?MIELSE>
      <?MIVAR>
-	$(IF,$(>,$(POSITION,$OID,GENO),0),Genotype Name:&nbsp;$geno_name) <br>
-      <?/MIVAR>
+	$(IF,$(>,$(POSITION,$OID,GENO),0),Genotype Name:&nbsp;$geno_name) 
+	$(IF,$(>,$(POSITION,$OID,ALT),0),Feature Name:&nbsp;$feature_name)
+	$(IF,$(>,$(POSITION,$OID,ANAT),0),Anatomy Name:&nbsp;$ao_name)
+      <?/MIVAR><br>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(>,$(POSITION,$OID,GEN0),1)">
