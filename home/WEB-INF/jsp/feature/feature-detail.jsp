@@ -379,7 +379,7 @@
 <c:choose>
     <c:when test="${fn:length(formBean.featgenoStats) > 0 }">
         <div id="short-version" class="summary">
-            <div class="summaryTitle">GENOTYPES:</div>
+            <div class="summaryTitle">GENOTYPES</div>
             <table class="summary rowstripes">
                 <tbody>
                 <tr>
