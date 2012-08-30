@@ -43,6 +43,29 @@ public class FishDetailController {
                                     @PathVariable("ID") String fishID) {
         LOG.info("Start Fish Detail Controller");
 
+        String delimiter = ",";
+        if (fishID.indexOf(delimiter) > 0) {
+            String[] fishIDPieces = fishID.split(delimiter);
+            for(int i =0; i < fishIDPieces.length ; i++) {
+                  String newStr = fishIDPieces[i].trim();
+                  if (!newStr.startsWith("ZDB")) {
+                        String[] piecesZDBId = newStr.split("ZDB");
+                        if (i == 0) {
+                              fishID = "ZDB" + piecesZDBId[1];
+                        }   else {
+                              fishID = fishID + delimiter + "ZDB" + piecesZDBId[1];
+                        }
+                  }   else {
+                        if (i == 0) {
+                              fishID = newStr;
+                        }   else {
+                              fishID = fishID + delimiter + newStr;
+                        }
+                  }
+
+            }
+        }
+
         Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
@@ -64,6 +87,10 @@ public class FishDetailController {
         fishName = fishName.replaceAll("</sup>", "");
 
         addExpressionSummaryToForm(model, fishID);
+
+        // the following put the fish Id to page title as debugging for FB case 8817
+        // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + fishID);
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + fishName);
 
         return "fish/fish-detail.page";
