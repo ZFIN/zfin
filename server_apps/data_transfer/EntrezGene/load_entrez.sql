@@ -663,7 +663,7 @@ insert into db_link (
     --dblink_acc_num_display,
     --dblink_length,
     dblink_fdbcont_zdb_id 
-) select mrkr,acc,"uncurated: EmtrezGene load " || TODAY, zad, fdb 
+) select mrkr,acc,"uncurated: EntrezGene load " || TODAY, zad, fdb 
 from tmp_dblink
 ;
 
