@@ -10,6 +10,8 @@ import java.util.*;
 public class RelatedTranscriptDisplay  {
 
     private TreeSet<RelatedMarker> transcripts;
+    private TreeSet<RelatedMarker> nonWithdrawnTranscripts;
+    private TreeSet<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
     private List<GBrowseImage> gbrowseImages;
 
@@ -75,21 +77,31 @@ public class RelatedTranscriptDisplay  {
          if (transcripts == null || transcripts.size() == 0) {
             return null;
          }
-         TreeSet<RelatedMarker> nonWithdrawnTranscripts = new TreeSet<RelatedMarker> ();
-         for (RelatedMarker marker : transcripts) {
+
+        if (nonWithdrawnTranscripts != null) {
+               return nonWithdrawnTranscripts;
+        }
+
+        nonWithdrawnTranscripts = new TreeSet<RelatedMarker> ();
+        for (RelatedMarker marker : transcripts) {
              Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
              if (!transcript.isWithdrawn()) {
                   nonWithdrawnTranscripts.add(marker);
              }
-         }
-         return nonWithdrawnTranscripts;
+        }
+        return nonWithdrawnTranscripts;
     }
 
     public TreeSet<RelatedMarker> getWithdrawnTranscripts() {
          if (transcripts == null || transcripts.size() == 0) {
             return null;
          }
-         TreeSet<RelatedMarker> withdrawnTranscripts = new TreeSet<RelatedMarker> ();
+
+         if (withdrawnTranscripts != null) {
+               return withdrawnTranscripts;
+         }
+
+         withdrawnTranscripts = new TreeSet<RelatedMarker> ();
          for (RelatedMarker marker : transcripts) {
              Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
              if (transcript.isWithdrawn()) {
@@ -100,20 +112,35 @@ public class RelatedTranscriptDisplay  {
     }
 
     public List<RelatedMarker> getWithdrawnList() {
-         TreeSet<RelatedMarker> withdrawnTranscripts = getWithdrawnTranscripts();
          if (withdrawnTranscripts == null) {
             return null;
          }
+         if (withdrawnTranscripts == null) {
+               withdrawnTranscripts = getWithdrawnTranscripts();
+         }
+
+         if (withdrawnTranscripts == null) {
+               return null;
+         }
+
          List<RelatedMarker> withdrawnlist = new ArrayList<RelatedMarker>(withdrawnTranscripts.size());
          withdrawnlist.addAll(withdrawnTranscripts);
          return withdrawnlist;
     }
 
     public List<RelatedMarker> getNonWithdrawnList() {
-         TreeSet<RelatedMarker> nonWithdrawnTranscripts = getNonWithdrawnTranscripts();
          if (nonWithdrawnTranscripts == null) {
             return null;
          }
+
+         if (nonWithdrawnTranscripts == null) {
+               nonWithdrawnTranscripts = getNonWithdrawnTranscripts();
+         }
+
+         if (nonWithdrawnTranscripts == null) {
+               return null;
+         }
+
          List<RelatedMarker> nonWithdrawnlist = new ArrayList<RelatedMarker>(nonWithdrawnTranscripts.size());
          nonWithdrawnlist.addAll(nonWithdrawnTranscripts);
          return nonWithdrawnlist;
