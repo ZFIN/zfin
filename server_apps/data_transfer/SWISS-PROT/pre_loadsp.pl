@@ -12,11 +12,45 @@ use DBI;
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
-    &process_vertebrates ;
+   &process_vertebrates ;
+
+   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
+
+   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
+
+   my $sleepNumDownload1 = 500;
+   while($sleepNumDownload1--){
+      sleep(1);
+   }
+
+   system("touch pre_zfin.dat");
 
    system("wget -q http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
    system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
    system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+   
+   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
+
+   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
+
+   print "WARNING!!! no spkw2go provided. \n" if (!-e "spkw2go");
+
+   print "WARNING!!! no interpro2go provided. \n" if (!-e "interpro2go");
+
+   print "WARNING!!! no ec2go provided. \n" if (!-e "ec2go");
+
+   if (!-e "pre_pre_zfin.dat" || !-e "pre_zfin.dat" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
+      print "One or more required file(s) not exisiting. Exit.\n";
+      exit;
+   }   
+
+   my $sleepNumDownload2 = 500;
+   while($sleepNumDownload2--){
+      sleep(1);
+   }
+
+   system("touch *2go");
+   
  }
 
 # ----------------- Send Error Report -------------
@@ -462,7 +496,7 @@ print REDGENERPT "zfinLines = $zfinLines\n";
 # --------------- Check SWISS-PROT file --------------
 
 
-my $sleepnum = 500;
+my $sleepnum = 1000;
 while($sleepnum--){
     sleep(1);
 }

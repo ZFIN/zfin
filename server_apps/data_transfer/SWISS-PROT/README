@@ -6,7 +6,7 @@ report into ZFIN.
 
 
 -> NOTE: Uniprot was to update DE line format post Feb 1st, 2008. Please check 
-http://ca.expasy.org/sprot/relnotes/sp_soon.html and make change to sp_parse.pl 
+http://www.uniprot.org/help/changes and make change to sp_parse.pl 
 accordingly.
 
 
@@ -15,7 +15,7 @@ accordingly.
 ------------------------------------
 
 First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when the file is last updated!
-Doesn't hurt to check http://www.geneontology.org/external2go/spkw2go, interpro2go, and ec2go too.
+Doesn't hurt to check http://www.geneontology.org/external2go/uniprotkb_kw2go, interpro2go, and ec2go too.
 
 
 Test on a testing site or almost
