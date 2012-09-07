@@ -928,8 +928,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void isFromChimericClone() {
         assertFalse(markerRepository.isFromChimericClone("ZDB-GENE-980526-403"));
         assertFalse(markerRepository.isFromChimericClone("ZDB-GENE-030131-350"));
-        assertTrue(markerRepository.isFromChimericClone("ZDB-GENE-031118-133"));
-
+        assertTrue(markerRepository.isFromChimericClone("ZDB-GENE-040625-82"));
     }
 
     @Test
