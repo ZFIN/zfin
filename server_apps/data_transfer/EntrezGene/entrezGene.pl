@@ -13,10 +13,47 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
+
+####system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/*.gz");
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/Danio_rerio.gene_info.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/gene2accession.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.protein.faa.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.rna.fna.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/release54.accession2geneid.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/protein.fa.gz");
+
+
+###system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/*.tab");
+
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/entrezid_GBnt_GBaa_GBdna.tab");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/entrezid_refseq_refpept.tab");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/entrezid_ugc.tab");
+
+###system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/*.unl");
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/entrezid_zdbid_lg_type.unl");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refseq_len.unl");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/genpeptRP_len.unl");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/genpept_len.unl");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/EntrezGenPept_acc.unl");
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/GenPept.fasta");
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/gene2unigene");
+
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/statsEntrezGeneLoad");
-system("/bin/touch <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/statsEntrezGeneLoad");
 
 $statsfile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/statsEntrezGeneLoad";
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListLost");
+
+$refSeqGeneListLost = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListLost";
+
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListNewlyAdded");
+
+$refSeqGeneListNewlyAdded = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListNewlyAdded";
 
 #--------------------------- record counts before loading starts ----------------------------
 $sql = 'select distinct dblink_zdb_id
@@ -70,9 +107,84 @@ $sql = 'select distinct dblink_zdb_id
            
 $numDblinksMissingLenGenPeptBefore = countData($sql);  
 
-open STATS, '>', $statsfile or die "can not open report statsEntrezGeneLoad" ;
+#--------------------------------------------------------------------------------------------------
 
-print STATS "db_link records from EntrezGene load     \t";
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "RefSeq"
+           and dblink_acc_num like "NM_%"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesRefSeqNMBefore = countData($sql);
+
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "RefSeq"
+           and dblink_acc_num like "NP_%"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesRefSeqNPBefore = countData($sql);
+
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "Gene"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesEntrezGeneBefore = countData($sql);
+
+#--------------------------------------------------------------------------------------------------
+
+### open a handle on the db
+$handle = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '',
+                       '',
+		       {AutoCommit => 1,RaiseError => 1}
+		      )
+    or die ("Failed while connecting to <!--|DB_NAME|-->");
+
+
+$refSeq_gene_list_query_before = 'select m.mrkr_zdb_id,  m.mrkr_abbrev 
+                      from marker m where  m.mrkr_zdb_id like "ZDB-GENE-%" 
+                       and exists (select "t" from db_link, foreign_db_contains, foreign_db 
+                                             where dblink_linked_recid = m.mrkr_zdb_id 
+                                               and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id and fdb_db_name = "RefSeq");';
+
+
+# execute the query
+
+$cur = $handle->prepare($refSeq_gene_list_query_before);
+
+$cur->execute;
+
+my($refSeq_gene_id,$refSeq_gene_abbrev);
+
+$cur->bind_columns(\$refSeq_gene_id,\$refSeq_gene_abbrev);
+
+%resSeq_genes_before = ();
+$totalRefSeqGenesBefore = 0;
+while ($cur->fetch) {
+   $totalRefSeqGenesBefore++;
+   $resSeq_genes_before{$refSeq_gene_id} = $refSeq_gene_abbrev;
+}
+
+$handle->disconnect
+    or warn "Disconnection failed: $DBI::errstr\n";
+
+
+
+
+open STATS, '>', $statsfile or die "can not open statsEntrezGeneLoad" ;
+
+print STATS "number of db_link records               \t";
 print STATS "before load\t";
 print STATS "after load\t";
 print STATS "percentage change\n";
@@ -81,13 +193,30 @@ close (STATS);
 
 chdir("<!--|SOURCEROOT|-->/server_apps/data_transfer/EntrezGene") or &logError("cannot chdir to SOURCEROOT/server_apps/data_transfer/EntrezGene");
 
+$dir = "<!--|ROOT_PATH|-->";
 
-system("bin/rm -f report");
-system("/bin/rm -f errReport");
+@dirPieces = split(/www_homes/,$dir);
 
-print "\n\nStarted ....\n\n\n";
+$dbname = $dirPieces[1];
+$dbname =~ s/\///;
 
-system("gmake run_commit > report 2>errReport");
+print $dbname;
+print "\n\n";
+
+
+system("bin/rm -f log1");
+
+system("/bin/rm -f log2");
+
+print "\n\nStarted EntrezGene load....\n\n\n";
+
+$cmd = "load_entrez_wrapper.sh $dbname commit > log1 2>log2";
+
+print $cmd;
+print "\n\n";
+
+system("$cmd");
+
 
 
 #--------------------------- record counts after loading starts ----------------------------
@@ -143,14 +272,47 @@ $sql = 'select distinct dblink_zdb_id
 $numDblinksMissingLenGenPeptAfter = countData($sql);  
 
 
-open STATS, '>>', "$statsfile" or die "can not open report statsEntrezGeneLoad again" ;
+#--------------------------------------------------------------------------------------------------
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "RefSeq"
+           and dblink_acc_num like "NM_%"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesRefSeqNMAfter = countData($sql);
+
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "RefSeq"
+           and dblink_acc_num like "NP_%"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesRefSeqNPAfter = countData($sql);
+
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "Gene"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesEntrezGeneAfter = countData($sql);
+
+open STATS, '>>', "$statsfile" or die "can not open statsEntrezGeneLoad again" ;
 
 print STATS "RefSeq                                  \t";
 print STATS "$numDblinksRefSeqBefore   \t";
 print STATS "$numDblinksRefSeqAfter   \t";
 printf STATS "%.2f\n", ($numDblinksRefSeqAfter - $numDblinksRefSeqBefore) / $numDblinksRefSeqBefore * 100 if ($numDblinksRefSeqBefore > 0);
  
-print STATS "Gene                                    \t";
+print STATS "Entrez Gene                             \t";
 print STATS "$numDblinksGeneBefore        \t";
 print STATS "$numDblinksGeneAfter       \t";
 printf STATS "%.2f\n", ($numDblinksGeneAfter - $numDblinksGeneBefore) / $numDblinksGeneBefore * 100 if ($numDblinksGeneBefore > 0);
@@ -176,13 +338,126 @@ print STATS "$numDblinksMissingLenGenPeptBefore        \t";
 print STATS "$numDblinksMissingLenGenPeptAfter       \t";
 printf STATS "%.2f\n", ($numDblinksMissingLenGenPeptAfter - $numDblinksMissingLenGenPeptBefore) / $numDblinksMissingLenGenPeptBefore * 100 if ($numDblinksMissingLenGenPeptBefore > 0);
 
+print STATS "\n\n\n";
 
+print STATS "number of genes                          \t";
+print STATS "before load\t";
+print STATS "after load\t";
+print STATS "percentage change\n";
+print STATS "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+
+print STATS "with RefSeq NM_                         \t";
+print STATS "$numGenesRefSeqNMBefore   \t";
+print STATS "$numGenesRefSeqNMAfter   \t";
+printf STATS "%.2f\n", ($numGenesRefSeqNMAfter - $numGenesRefSeqNMBefore) / $numGenesRefSeqNMBefore * 100 if ($numDblinksRefSeqBefore > 0);
+
+print STATS "with RefSeq NP_                         \t";
+print STATS "$numGenesRefSeqNPBefore   \t";
+print STATS "$numGenesRefSeqNPAfter   \t";
+printf STATS "%.2f\n", ($numGenesRefSeqNPAfter - $numGenesRefSeqNPBefore) / $numGenesRefSeqNPBefore * 100 if ($numGenesRefSeqNPBefore > 0);
+ 
+print STATS "with Entrez Gene                        \t";
+print STATS "$numGenesEntrezGeneBefore        \t";
+print STATS "$numGenesEntrezGeneAfter       \t";
+printf STATS "%.2f\n", ($numGenesEntrezGeneAfter - $numGenesEntrezGeneBefore) / $numGenesEntrezGeneBefore * 100 if ($numGenesEntrezGeneBefore > 0);
 
 close (STATS);
 
-&sendMail("Auto: entrezGene.pl : ","xshao\@zfin.org","stats","$statsfile");
-&sendMail("Auto: entrezGene.pl : ","xshao\@zfin.org","report","report");
-&sendMail("Auto: entrezGene.pl : ","xshao\@zfin.org","errReport","errReport");
+
+
+### open a handle on the db
+$handle = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '',
+                       '',
+		       {AutoCommit => 1,RaiseError => 1}
+		      )
+    or die ("Failed while connecting to <!--|DB_NAME|-->");
+
+
+$refSeq_gene_list_query_after = 'select m.mrkr_zdb_id,  m.mrkr_abbrev 
+                      from marker m where  m.mrkr_zdb_id like "ZDB-GENE-%" 
+                       and exists (select "t" from db_link, foreign_db_contains, foreign_db 
+                                             where dblink_linked_recid = m.mrkr_zdb_id 
+                                               and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+                                               and fdbcont_fdb_db_id = fdb_db_pk_id and fdb_db_name = "RefSeq");';
+
+
+# execute the query
+
+$cur = $handle->prepare($refSeq_gene_list_query_after);
+
+$cur->execute;
+
+my($refSeq_gene_id_new,$refSeq_gene_abbrev_new);
+
+$cur->bind_columns(\$refSeq_gene_id_new,\$refSeq_gene_abbrev_new);
+
+%resSeq_genes_after = ();
+$totalRefSeqGenesAfter = 0;
+while ($cur->fetch) {
+   $totalRefSeqGenesAfter++;
+   $resSeq_genes_after{$refSeq_gene_id_new} = $refSeq_gene_abbrev_new;
+}
+
+$handle->disconnect
+    or warn "Disconnection failed: $DBI::errstr\n";
+
+
+print "\ntotalRefSeqGenesBefore: $totalRefSeqGenesBefore\ttotalRefSeqGenesAfter:  $totalRefSeqGenesAfter\n\n";
+
+open LOSTREFSEQGENES, '>', $refSeqGeneListLost or die "can not open refSeqGeneListLost" ;
+
+print LOSTREFSEQGENES "\ngenes used to have RefSeq but don't any longer after the load\n";
+print LOSTREFSEQGENES "-------------------------------------------------------------------------------------------------\n";
+
+
+@keysBefore = sort { lc($resSeq_genes_before{$a}) cmp lc($resSeq_genes_before{$b}) } keys %resSeq_genes_before;
+$numLostGenes = 0;
+foreach $key (@keysBefore) {
+  $value = $resSeq_genes_before{$key};
+  if(!exists $resSeq_genes_after{$key}) {
+      print LOSTREFSEQGENES "$key\t$value\n";
+      $numLostGenes++;
+  }
+}
+
+print LOSTREFSEQGENES "-------------------------------------------------------------------------------------------------\n";
+print LOSTREFSEQGENES "total:$numLostGenes \n";
+
+close (LOSTREFSEQGENES);
+
+
+open NEWREFSEQGENES, '>', $refSeqGeneListNewlyAdded or die "can not open refSeqGeneListNewlyAdded" ;
+
+
+print NEWREFSEQGENES "\ngenes used to NOT have RefSeq but now have RefSeq after the load\n";
+print NEWREFSEQGENES "-------------------------------------------------------------------------------------------------\n";
+
+
+@keysAfter = sort { lc($resSeq_genes_after{$a}) cmp lc($resSeq_genes_after{$b}) } keys %resSeq_genes_after;
+$numGainedGenes = 0;
+foreach $key (@keysAfter) {
+  $value = $resSeq_genes_after{$key};
+  if(!exists $resSeq_genes_before{$key}) {
+      print NEWREFSEQGENES "$key\t$value\n";
+      $numGainedGenes++;
+  }
+}
+
+print NEWREFSEQGENES "-------------------------------------------------------------------------------------------------\n";
+print NEWREFSEQGENES "total:$numGainedGenes \n";
+
+
+close (NEWREFSEQGENES);
+
+
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","stats","$statsfile");
+&sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log1","log1");
+&sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log2","log2");
+
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","genes lost association with RefSeq","$refSeqGeneListLost");
+
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
 
 print "\nDone\n\n";
 
@@ -248,5 +523,10 @@ sub countData() {
 
   return ($nRecords);
 }
+
+
+
+
+
 
 
