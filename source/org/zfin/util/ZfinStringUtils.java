@@ -119,5 +119,39 @@ public class ZfinStringUtils {
         return whiteSpaceSet;
     }
 
+    // useful for cases such as FB case 8817,Fish Search: Fish view page geno/genox id list parser error
+    public static String cleanUpConcatenatedZDBIdsDelimitedByComma (String concatenatedZDBIdsDelimitedByComma) {
+        if (concatenatedZDBIdsDelimitedByComma == null) {
+            return null;
+        }
+        String delimiter = ",";
+        if (concatenatedZDBIdsDelimitedByComma.indexOf(delimiter) > 0) {
+            String[] concatenatedIDsPieces = concatenatedZDBIdsDelimitedByComma.split(delimiter);
+            for(int i =0; i < concatenatedIDsPieces.length ; i++) {
+                  String newStr = concatenatedIDsPieces[i].trim();
+                  if (newStr.isEmpty() || newStr.indexOf("ZDB") < 0)  {
+                      continue;
+                  }
 
+                  if (!newStr.startsWith("ZDB")) {
+                        String[] piecesZDBId = newStr.split("ZDB");
+                        if (i == 0) {
+                              concatenatedZDBIdsDelimitedByComma = "ZDB" + piecesZDBId[1];
+                        }   else {
+                              concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + "ZDB" + piecesZDBId[1];
+                        }
+                  }   else {
+                        if (i == 0) {
+                              concatenatedZDBIdsDelimitedByComma = newStr;
+                        }   else {
+                              concatenatedZDBIdsDelimitedByComma = concatenatedZDBIdsDelimitedByComma + delimiter + newStr;
+                        }
+                  }
+
+            }
+        }
+        return concatenatedZDBIdsDelimitedByComma;
+    }
 }
+
+
