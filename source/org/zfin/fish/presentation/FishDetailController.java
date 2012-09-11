@@ -22,6 +22,7 @@ import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Morpholino;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -43,28 +44,7 @@ public class FishDetailController {
                                     @PathVariable("ID") String fishID) {
         LOG.info("Start Fish Detail Controller");
 
-        String delimiter = ",";
-        if (fishID.indexOf(delimiter) > 0) {
-            String[] fishIDPieces = fishID.split(delimiter);
-            for(int i =0; i < fishIDPieces.length ; i++) {
-                  String newStr = fishIDPieces[i].trim();
-                  if (!newStr.startsWith("ZDB")) {
-                        String[] piecesZDBId = newStr.split("ZDB");
-                        if (i == 0) {
-                              fishID = "ZDB" + piecesZDBId[1];
-                        }   else {
-                              fishID = fishID + delimiter + "ZDB" + piecesZDBId[1];
-                        }
-                  }   else {
-                        if (i == 0) {
-                              fishID = newStr;
-                        }   else {
-                              fishID = fishID + delimiter + newStr;
-                        }
-                  }
-
-            }
-        }
+        fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
 
         Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)
