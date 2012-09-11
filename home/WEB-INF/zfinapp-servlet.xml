@@ -9,7 +9,8 @@
 
     <import resource="spring/applicationContext.xml"/>
 
-    <context:component-scan base-package="org.zfin.people.repository"/>
+    <context:component-scan base-package="org.zfin.profile.repository"/>
+    <context:component-scan base-package="org.zfin.profile.service"/>
     <context:component-scan base-package="org.zfin.wiki.service"/>
     <context:component-scan base-package="org.zfin.datatransfer.service"/>
     <context:component-scan base-package="org.zfin.expression.service"/>

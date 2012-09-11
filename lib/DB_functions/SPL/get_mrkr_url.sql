@@ -22,7 +22,7 @@ create function get_mrkr_url( mrkrZdbId varchar(50) )
 
   define mrkrUrl lvarchar;
 
-  let mrkrUrl = '/action/marker/view/' || mrkrZdbId ;
+  let mrkrUrl = '/' || mrkrZdbId ;
 
   return mrkrUrl;
 

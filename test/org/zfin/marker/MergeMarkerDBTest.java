@@ -17,7 +17,7 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 

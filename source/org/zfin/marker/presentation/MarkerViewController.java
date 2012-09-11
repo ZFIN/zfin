@@ -11,6 +11,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.profile.presentation.ProfileController;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
@@ -57,12 +58,20 @@ public class MarkerViewController {
     @Autowired
     private GenericMarkerViewController genericMarkerViewController;
 
+    // for rerouting
+    @Autowired
+    private ProfileController profileController;
 
     @RequestMapping("/view/{key}")
     public String getAnyMarker(Model model
             , @PathVariable String key
             , @RequestHeader("User-Agent") String userAgent) {
 
+        // hack because they all share the same servlet space
+        if (key.startsWith("ZDB-PERS") || key.startsWith("ZDB-LAB") || key.startsWith("ZDB-COMPANY")) {
+            return profileController.viewProfile(key,model,userAgent);
+        }
+        else
         // first we set the key properly
         if (key.startsWith("ZDB-")) {
             if (false == markerRepository.markerExistsForZdbID(key)) {

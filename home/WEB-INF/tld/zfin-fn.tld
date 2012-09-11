@@ -224,6 +224,18 @@
 
     <function>
         <description>
+            Generate a random number between approximately 0 and 9999
+        </description>
+        <name>generateSmallRandomNumber</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.Integer generateSmallRandomNumber()</function-signature>
+        <example>
+            ${zfn:generateShortRandomNumber()}
+        </example>
+    </function>
+
+    <function>
+        <description>
             Retrieve the latest zfin method invocation on a given thread.
             If no zfin class involved give last method call
         </description>

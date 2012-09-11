@@ -1,7 +1,7 @@
 package org.zfin.feature.presentation;
 
 import org.zfin.feature.Feature;
-import org.zfin.people.Organization;
+import org.zfin.profile.Organization;
 
 /**
  */

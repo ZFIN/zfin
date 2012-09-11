@@ -1,7 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.ontology.GenericTerm;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.Date;

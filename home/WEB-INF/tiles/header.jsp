@@ -211,13 +211,13 @@
             <a href="/zf_info/news/newsgroup.html"
                title="Moderated, online discussion group for anyone interested in zebrafish research">Newsgroup</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75"
+            <a href="/action/profile/person/search"
                title="Search for zebrafish researchers by name or address">People</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-labselect.apg&select_from=LAB"
+            <a href="/action/profile/lab/search"
                title="Search for laboratories by name, address or research interests">Labs</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230"
+            <a href="/action/profile/company/search"
                title="Search for companies supplying zebrafish reagents">Companies</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>

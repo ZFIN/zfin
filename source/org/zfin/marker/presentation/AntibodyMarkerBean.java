@@ -4,7 +4,7 @@ import org.zfin.ExternalNote;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.people.MarkerSupplier;
+import org.zfin.profile.MarkerSupplier;
 
 import java.util.List;
 import java.util.Set;

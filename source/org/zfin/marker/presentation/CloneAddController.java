@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 /**

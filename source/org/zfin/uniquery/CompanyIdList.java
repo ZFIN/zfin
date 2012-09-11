@@ -2,7 +2,7 @@ package org.zfin.uniquery;
 
 import org.springframework.stereotype.Service;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.people.Company;
+import org.zfin.profile.Company;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;

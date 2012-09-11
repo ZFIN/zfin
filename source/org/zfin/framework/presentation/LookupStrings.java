@@ -9,6 +9,8 @@ public class LookupStrings {
 
     public final static String DYNAMIC_TITLE = "dynamicTitle";
     public final static String FORM_BEAN = "formBean";
+    public final static String IS_OWNER = "isOwner";
+    public final static String ERRORS = "errors";
 
     // lookups
     public final static String ZDB_ID = "zdbID";
@@ -22,6 +24,9 @@ public class LookupStrings {
     // suffix
     public final static String PAGE_SUFFIX = ".page";
     public final static String INSERT_SUFFIX = ".insert";
+
+    // form processing
+    public static final String SELECTED_TAB = "selectedTab";
 
     public static String idNotFound(Model model, String fishID) {
         model.addAttribute(LookupStrings.ZDB_ID, fishID);

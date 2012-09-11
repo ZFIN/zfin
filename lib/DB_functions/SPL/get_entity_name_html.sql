@@ -34,7 +34,7 @@ create function get_entity_name_html ( entityZdbId varchar(50) )
   from term
   where term_zdb_id = entityZdbId;
 
-  let entityNameHtml = '<a href="/action/ontology/term-detail?termID=' || entityOntologyId 
+  let entityNameHtml = '<a href="/' || entityOntologyId 
                        || '">' ||  entityName || '</a>' 
                        || '<a class="popup-link data-popup-link" ' 
                        || 'href="/action/ontology/term-detail-popup?termID=' || entityOntologyId || '"></a>'  ;

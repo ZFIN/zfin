@@ -11,8 +11,10 @@ import org.hibernate.id.IdentifierGenerationException;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.type.Type;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.marker.Marker;
+import org.zfin.profile.Company;
+import org.zfin.profile.Lab;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -42,6 +44,8 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
     private boolean insertActiveSource = false;
     private boolean isMarker = false;
     private String query = null;
+
+
 
     /**
      * Precreates ZdbIDs in a single session database access.
@@ -107,6 +111,12 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
             if (type == null)
                 throw new HibernateException("No marker type found for Marker: " + marker.getName());
             objectType = type.toString();
+            setQueryToRetrieveID();
+        } else if (object instanceof Lab) {
+            objectType = "LAB";
+            setQueryToRetrieveID();
+        } else if (object instanceof Company) {
+            objectType = "COMPANY";
             setQueryToRetrieveID();
         }
 

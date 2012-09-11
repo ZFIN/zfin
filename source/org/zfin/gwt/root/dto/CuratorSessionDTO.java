@@ -3,7 +3,7 @@ package org.zfin.gwt.root.dto;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * GWT data transfer object corresponding to {@link org.zfin.people.CuratorSession}.
+ * GWT data transfer object corresponding to {@link org.zfin.profile.CuratorSession}.
  */
 public class CuratorSessionDTO implements IsSerializable {
 

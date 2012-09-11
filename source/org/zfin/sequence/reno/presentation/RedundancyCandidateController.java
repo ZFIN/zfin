@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.List;

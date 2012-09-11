@@ -219,4 +219,13 @@ public final class ZfinProperties {
         return freeMarkerConfiguration;
     }
 
+
+    public static String getJavaRoot(){
+        return getJavaRoot(false);
+    }
+
+    public static String getJavaRoot(boolean secure){
+        return (secure ? ZfinPropertiesEnum.SECURE_HTTP : ZfinPropertiesEnum.NON_SECURE_HTTP)
+                + ZfinPropertiesEnum.DOMAIN_NAME.value() + "/action" ;
+    }
 }

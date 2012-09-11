@@ -52,7 +52,7 @@ create function get_geno_name_with_bg_html_link( genoZdbId varchar(50) )
   end if
 
   return 
-    '<a href="/action/genotype/genotype-detail?zdbID=' ||
+    '<a href="/' ||
       genoZdbId || '">' ||genoNameHtml || '</a>';
 
 end function;

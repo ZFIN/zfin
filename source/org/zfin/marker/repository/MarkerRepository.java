@@ -12,8 +12,8 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
-import org.zfin.people.MarkerSupplier;
-import org.zfin.people.Person;
+import org.zfin.profile.MarkerSupplier;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 

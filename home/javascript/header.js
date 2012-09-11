@@ -446,11 +446,11 @@ document.write(" <a href=\"https://wiki.zfin.org/display/meetings\" title=\"Zebr
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
  document.write("    <a href=\"/zf_info/news/newsgroup.html\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75\" title=\"Search for zebrafish researchers by name or address\">People</a>");
+document.write("     <a href=\"/action/profile/person/search\" title=\"Search for zebrafish researchers by name or address\">People</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-labselect.apg&select_from=LAB\" title=\"Search for laboratories by name, address or research interests\">Labs</a>");
+document.write("     <a href=\"/action/profile/lab/search\" title=\"Search for laboratories by name, address or research interests\">Labs</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230\" title=\"Search for companies supplying zebrafish reagents\">Companies</a>");
+document.write("     <a href=\"/action/profile/company/search\" title=\"Search for companies supplying zebrafish reagents\">Companies</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/zf_info/news/education.html\" title=\"Educational websites for students and educators\">Education</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

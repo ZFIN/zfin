@@ -5,7 +5,7 @@ import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.Collection;

@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.*;

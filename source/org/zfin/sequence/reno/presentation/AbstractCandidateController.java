@@ -18,7 +18,7 @@ import org.zfin.orthology.OrthoEvidence;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.orthology.repository.OrthologyRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;

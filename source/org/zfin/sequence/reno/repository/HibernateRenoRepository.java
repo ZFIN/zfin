@@ -13,7 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;

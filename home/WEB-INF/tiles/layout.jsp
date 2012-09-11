@@ -3,6 +3,7 @@
 <%@ page import="org.zfin.framework.HibernateUtil" %>
 <%@ page language="java" %>
 <%@ page session="false" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 

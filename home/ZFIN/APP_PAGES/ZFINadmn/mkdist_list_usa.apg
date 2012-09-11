@@ -3,6 +3,16 @@
 -->
 
 <PRE>
-<?MISQL SQL="select email from person where on_dist_list='t' and upper(address) like '%USA%' and email is not null and email <> 'NULL';">$1
+<?MISQL SQL="
+select distinct email 
+from person p 
+join address a on a.add_pk_id=p.pers_address
+where on_dist_list='t' 
+and upper(a.add_country_code) like '%USA%' 
+and email is not null 
+and email <> ''
+order by email asc
+;
+">$1
 <?/MISQL>
 </PRE>

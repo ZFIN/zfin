@@ -3,7 +3,7 @@ package org.zfin.security;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.repository.UserRepository;
 

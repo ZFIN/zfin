@@ -3,7 +3,7 @@ package org.zfin.infrastructure;
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 /**

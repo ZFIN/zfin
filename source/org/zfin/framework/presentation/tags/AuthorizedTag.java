@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.people.UserService;
+import org.zfin.profile.UserService;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;

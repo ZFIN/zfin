@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;

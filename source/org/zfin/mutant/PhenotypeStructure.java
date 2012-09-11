@@ -2,7 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.Date;

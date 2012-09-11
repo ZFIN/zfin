@@ -20,7 +20,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Subset;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -286,7 +286,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         Person person = structure.getPerson();
         if (person == null)
             throw new IllegalStateException("No Security Person found (not logged in)");
-        dto.setCreator(person.getName());
+        dto.setCreator(person.getShortName());
         dto.setDate(structure.getDate());
 
         GenericTerm genericTerm = structure.getSuperterm();
@@ -333,7 +333,7 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         dto.setZdbID(structure.getZdbID());
         if (structure.getPerson() == null)
             throw new NullPointerException("No user info found for pile structure " + structure.getZdbID());
-        dto.setCreator(structure.getPerson().getName());
+        dto.setCreator(structure.getPerson().getShortName());
         dto.setDate(structure.getDate());
         return dto;
 

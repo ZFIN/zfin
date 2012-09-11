@@ -1,19 +1,8 @@
 package org.zfin.publication.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.presentation.AntibodyBean;
-import org.zfin.antibody.repository.AntibodyRepository;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.MarkerAlias;
@@ -21,9 +10,6 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerAliasBean;
 import org.zfin.marker.presentation.MarkerRelationshipBean;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.Person;
-import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.ServletException;

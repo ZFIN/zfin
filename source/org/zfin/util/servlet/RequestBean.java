@@ -1,8 +1,7 @@
 package org.zfin.util.servlet;
 
-import org.zfin.database.DatabaseLock;
 import org.zfin.database.TableLock;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

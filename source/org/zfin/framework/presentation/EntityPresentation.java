@@ -14,7 +14,7 @@ public abstract class EntityPresentation {
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
     protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
     public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
-    public static final String ZFIN_JUMP_URL = "/ZFIN_jump?record=";
+    public static final String ZFIN_JUMP_URL = "/";
     public static String domain;
     public static final String CURATION_URI = "?MIval=aa-curation.apg&";
 
@@ -32,11 +32,18 @@ public abstract class EntityPresentation {
 
     protected static StringBuilder getTomcatHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
-        if (domain != null)
-            sb.append("<a href=\"" + domain + "/action/");
-        else
-            sb.append("<a href=\"/action/");
+        sb.append("<a href=\"" + getTomcatUrlStart());
         return sb;
+    }
+
+    protected static StringBuilder getViewHyperlinkStart() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<a href=\"/");
+        return sb;
+    }
+
+    protected static String getTomcatUrlStart() {
+        return "/action/";
     }
 
     protected static String getWikiLink(String uri, String zdbID, String abbreviation) {
@@ -73,6 +80,21 @@ public abstract class EntityPresentation {
         sb.append("|");
         sb.append(link);
         sb.append("]");
+        return sb.toString();
+    }
+
+    public static String getViewLink(String zdbID, String abbreviation, String name) {
+        StringBuilder sb = getViewHyperlinkStart();
+        sb.append(zdbID);
+        sb.append("\"");
+        if(name != null) {
+            sb.append(" title=\"");
+            sb.append(name);
+            sb.append("\"");
+        }
+        sb.append(">");
+        sb.append(abbreviation);
+        sb.append("</a>");
         return sb.toString();
     }
 
@@ -190,8 +212,6 @@ public abstract class EntityPresentation {
         sb.append(ZfinPropertiesEnum.NON_SECURE_HTTP.value());
         sb.append(ZfinPropertiesEnum.DOMAIN_NAME.value());
         sb.append("/");
-        sb.append(ZfinPropertiesEnum.WEBDRIVER_LOC.value());
-        sb.append("/ZFIN_jump?record=");
         sb.append(zdbID);
         return sb.toString();
     }

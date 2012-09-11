@@ -3,13 +3,15 @@ package org.zfin.security.repository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.security.ApgCookieHandler;
 
 /**
  * Hibernate implementation of the UserRepository.
  */
+@Repository
 public class HibernateUserRepository implements UserRepository {
 
     public Person getPersonByLoginName(String username) {

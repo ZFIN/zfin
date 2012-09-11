@@ -27,9 +27,9 @@ import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.Species;
-import org.zfin.people.CuratorSession;
-import org.zfin.people.Lab;
-import org.zfin.people.Organization;
+import org.zfin.profile.CuratorSession;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Organization;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -812,7 +812,7 @@ public class DTOConversionService {
         PhenotypePileStructureDTO dto = new PhenotypePileStructureDTO();
         dto.setZdbID(structure.getZdbID());
         dto.setPhenotypeTerm(convertToPhenotypeTermDTO(structure));
-        dto.setCreator(structure.getPerson().getName());
+        dto.setCreator(structure.getPerson().getShortName());
         dto.setDate(structure.getDate());
         return dto;
     }
@@ -913,7 +913,7 @@ public class DTOConversionService {
     public static ExpressionPileStructureDTO convertToExpressionPileStructureDTO(ExpressionStructure es) {
         ExpressionPileStructureDTO dto = new ExpressionPileStructureDTO();
         dto.setZdbID(es.getZdbID());
-        dto.setCreator(es.getPerson().getName());
+        dto.setCreator(es.getPerson().getShortName());
         dto.setDate(es.getDate());
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
         dto.setExpressedTerm(expressionTerm);

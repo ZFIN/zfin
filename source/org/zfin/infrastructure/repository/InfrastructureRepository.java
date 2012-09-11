@@ -15,7 +15,8 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
@@ -91,6 +92,10 @@ public interface InfrastructureRepository {
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
+    void insertUpdatesTable(String recID, String comments, String submitterZdbID,Date updateDate);
+
+    void insertUpdatesTable(String recID, String fieldName, String comments);
+
     void insertUpdatesTable(String recID, String fieldName, String new_value, String comments);
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
@@ -99,6 +104,8 @@ public interface InfrastructureRepository {
 
 
     void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person);
+
+    void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 
 
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);

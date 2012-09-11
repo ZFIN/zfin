@@ -1,7 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import javax.servlet.ServletContext;

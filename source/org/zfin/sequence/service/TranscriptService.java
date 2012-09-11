@@ -10,7 +10,7 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;

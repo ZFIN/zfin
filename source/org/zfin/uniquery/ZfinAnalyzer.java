@@ -38,7 +38,7 @@ public class ZfinAnalyzer extends Analyzer {
                     "way", "we", "well", "were", "what", "when",
                     "where", "which", "while", "who", "will",
                     "with", "would", "you", "your", "zfin", "fish",
-                    "anatomy", "publication", "people", "lab", "companies",
+                    "anatomy", "publication", "profile", "lab", "companies",
                     "acc", "email", "home", "mutant", "transgenic", "wild",
                     "type", "gene", "marker", "clone", "expression", "map",
                     "about", "helpful", "hint", "citing", "copyright",

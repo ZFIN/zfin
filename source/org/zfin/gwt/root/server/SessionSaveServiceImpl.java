@@ -6,9 +6,9 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.SessionSaveService;
-import org.zfin.people.CuratorSession;
-import org.zfin.people.Person;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.CuratorSession;
+import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Iterator;

@@ -9,10 +9,10 @@ import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
-import org.zfin.people.Lab;
-import org.zfin.people.LabFeaturePrefix;
-import org.zfin.people.Organization;
-import org.zfin.people.Person;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Organization;
+import org.zfin.profile.OrganizationFeaturePrefix;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
 
@@ -43,7 +43,7 @@ public interface FeatureRepository {
 
     List<FeatureLabEntry> getFeaturesForPrefix(String prefix);
 
-    List<LabFeaturePrefix> getLabFeaturePrefixForPrefix(String prefix);
+    List<OrganizationFeaturePrefix> getOrganizationFeaturePrefixForPrefix(String prefix);
 
     List<Organization> getLabsWithFeaturesForPrefix(String prefix);
 
@@ -52,9 +52,11 @@ public interface FeatureRepository {
      */
     Organization getLabByFeature(Feature ftr);
 
-    String getPrefix(int labPrefixID);
+    String getPrefixById(int labPrefixID);
 
     List<FeaturePrefix> getLabPrefixes(String labName);
+
+    List<FeaturePrefix> getLabPrefixes(String labName,boolean assignIfEmpty);
 
     List<Organization> getLabsOfOriginWithPrefix();
 
@@ -106,7 +108,7 @@ public interface FeatureRepository {
 
     String getCurrentPrefixForLab(String labZdbId);
 
-    String setCurrentLabPrefix(String labZdbId, String prefix);
+    String setCurrentPrefix(String labZdbId, String prefix);
 
     List<Feature> getFeaturesForLab(String labZdbId);
 
@@ -128,4 +130,10 @@ public interface FeatureRepository {
      * @return list of ids
      */
     List<String> getAllFeatures(int firstNIds);
+
+   FeaturePrefix getFeaturePrefixByPrefix(String prefix);
+
+   int insertOrganizationPrefix(Organization organization, FeaturePrefix featurePrefix);
+
+   int setNoLabPrefix(String zdbID);
 }

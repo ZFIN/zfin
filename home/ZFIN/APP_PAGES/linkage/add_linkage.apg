@@ -209,9 +209,9 @@ Expected vars:  None.
     <hr>
     <TABLE cols=3>
     <TR><TH></TH><TH>Name</TH><TH>Address</TH></TR>
-    <?MISQL SQL="select distinct zdb_id,full_name,HTML_breaks(address) 
+    <?MISQL SQL="select distinct zdb_id,get_person_full_name(zdb_id),HTML_breaks(address) 
       from person 
-	where lower(full_name) like '%$(LOWER,$person_source)%' order by full_name;">
+	where lower(get_person_full_name(zdb_id)) like '%$(LOWER,$person_source)%' order by last_name,first_name;">
     <TR>
       <TD valign=top>
 	<?MIVAR>
@@ -238,7 +238,7 @@ Expected vars:  None.
     <!-- output the source that has been specified -->
 
     <?MIBLOCK COND="$(AND,$(NC,$person_pick,''),$(NXST,$update))">
-	<?MISQL SQL="select distinct full_name,HTML_breaks(address) 
+	<?MISQL SQL="select distinct get_person_full_name(zdb_id),HTML_breaks(address) 
 	  from person 
 	    where zdb_id = '$person_pick';">
 	<p>

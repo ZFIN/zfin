@@ -11,7 +11,7 @@
                 <td>
                     <c:choose>
                         <c:when test="${supplier.organization.url == null}">
-                            <a href="/${webdriverPath}?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                            <a href="/action/profile/view/${supplier.organization.zdbID}"
                                id="${supplier.organization.zdbID}">
                                     ${supplier.organization.name}
                             </a>

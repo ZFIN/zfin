@@ -8,8 +8,9 @@ import java.util.List;
  */
 public class PaginationResult<T> {
 
-    private int totalCount = -1;
     private List<T> populatedResults = null;
+    private int totalCount = -1;
+    private int start ;
 
     public PaginationResult() {
     }
@@ -39,5 +40,13 @@ public class PaginationResult<T> {
 
     public void setPopulatedResults(List<T> populatedResults) {
         this.populatedResults = populatedResults;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
     }
 }

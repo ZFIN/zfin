@@ -76,14 +76,15 @@
 
     <definition name="fish/*.insert" template="/WEB-INF/jsp/fish/{1}.jsp"/>
 
-    <!-- webdriver definitions -->
-    <definition name="webdriver.page" template="/WEB-INF/jsp/webdriver/webdriver.jsp">
-    </definition>
-
     <!-- profile defintions -->
     <definition name="profile/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/people/{1}.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/profile/{1}.jsp" />
     </definition>
+
+
+    <!-- profile defintions -->
+    <definition name="profile/*.print" template="/WEB-INF/jsp/profile/{1}.jsp"/>
+    <definition name="profile/*.insert" template="/WEB-INF/jsp/profile/{1}.jsp"/>
 
     <!-- reno defintions -->
     <definition name="reno/*.page" extends="main_layout">

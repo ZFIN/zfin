@@ -221,8 +221,16 @@ public class PaginationBean {
         return (pageInteger - 1) * maxDisplayRecordsInteger + 1;
     }
 
+    public int getLastRecordOnPage() {
+        return (pageInteger) * maxDisplayRecordsInteger ;
+    }
+
     public int getFirstPageRecord() {
         return firstPageRecord;
+    }
+
+    public int getLastPageRecord(){
+        return firstPageRecord + maxDisplayRecordsInteger ;
     }
 
     public void setFirstPageRecord(int firstPageRecord) {

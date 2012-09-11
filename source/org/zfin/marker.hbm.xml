@@ -102,7 +102,7 @@
             <column name="mrkr_abbrev" not-null="true"/>
         </property>
         <many-to-one name="owner" column="mrkr_owner"
-                     class="org.zfin.people.Person"
+                     class="org.zfin.profile.Person"
                      not-null="true"/>
 
         <many-to-one name="markerType" column="mrkr_type"
@@ -162,7 +162,7 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.MarkerSupplier"/>
+            <one-to-many class="org.zfin.profile.MarkerSupplier"/>
         </set>
 
         <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">

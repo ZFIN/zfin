@@ -565,6 +565,11 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 
   <?MIBLOCK COND="$(NXST,$query_results)">
 	  <b>Search for PUBLICATION</b>
+      <?MICOMMENT>
+                <a href="/action/profile/help/international-characters" class="popup-link help-popup-link"></a>
+                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html" class="popup-link help-popup-link"></a>
+
+      <?/MICOMMENT>
   <?MIELSE>
           <a name=modify></a><b>Modify your search</b>
   <?/MIBLOCK>
@@ -676,18 +681,21 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<b>Curated by:</b>
 	<SELECT name=curator onChange='document.critform.START.value = "";'>
 	<option value="anyone" $(IF,$(EC,$1,$curator),SELECTED)> Anyone
-	<?MISQL SQL="SELECT p.name, p.zdb_id
-                     FROM person p, lab l, int_person_lab
+	<?MISQL SQL="
+        SELECT p.name, p.zdb_id
+        FROM person p, lab l, int_person_lab ipl, lab_position lp
                      WHERE p.zdb_id = source_id 
-                       AND target_id = l.zdb_id 
+        AND ipl.position_id = lp.labpos_pk_id
+        AND ipl.target_id = l.zdb_id 
                        AND l.name like 'ZFIN%'
-                       AND (   position = 'Research Staff'
+        AND (   lp.labpos_position = 'Research Staff'
                             or
                                p.name like 'Sprunger%'
                             or 
-                               position = 'Adminstrative Staff'
+        lp.labpos_position = 'Adminstrative Staff'
                            )
-                     ORDER BY p.name;">
+          ORDER BY p.name;
+                     ">
             <OPTION VALUE="$2" $(IF,$(EC,$2,$curator),SELECTED)> $1
         <?/MISQL>
 	</SELECT>  

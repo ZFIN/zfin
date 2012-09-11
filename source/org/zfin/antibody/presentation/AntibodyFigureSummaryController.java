@@ -8,16 +8,12 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
@@ -28,19 +24,13 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.AddPublicationValidator;
-import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
-import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;

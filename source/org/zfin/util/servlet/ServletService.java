@@ -2,7 +2,7 @@ package org.zfin.util.servlet;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

@@ -96,17 +96,21 @@ public class PaginationResultFactory {
         boolean foundAtLeastOneRecord = false;
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1)
+            if (scrollableResults.get().length == 1){
                 list.add((T) scrollableResults.get(0));
-            else
+            }
+            else{
                 list.add((T) scrollableResults.get());
+            }
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.
-        if (foundAtLeastOneRecord)
+        if (foundAtLeastOneRecord){
             returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
-        else
+        }
+        else{
             returnResult.setTotalCount(scrollableResults.getRowNumber());
+        }
         returnResult.setPopulatedResults(list);
         scrollableResults.close();
         return returnResult;

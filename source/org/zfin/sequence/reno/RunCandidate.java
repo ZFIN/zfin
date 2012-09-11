@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;

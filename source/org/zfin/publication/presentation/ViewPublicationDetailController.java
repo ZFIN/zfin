@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Controller that serves the people pages.
+ * Controller that serves the profile pages.
  * TODO: is this used????
  */
 public class ViewPublicationDetailController extends AbstractCommandController {

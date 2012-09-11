@@ -3,7 +3,7 @@
  */
 package org.zfin.sequence.reno.repository;
 
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
 import org.zfin.sequence.reno.Run;

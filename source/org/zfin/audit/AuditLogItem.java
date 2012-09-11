@@ -1,6 +1,6 @@
 package org.zfin.audit;
 
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 import java.util.Date;
 

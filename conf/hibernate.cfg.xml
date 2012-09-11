@@ -53,7 +53,7 @@
         <mapping resource="org/zfin/mapping.hbm.xml"/>
         <mapping resource="org/zfin/mutant.hbm.xml"/>
         <mapping resource="org/zfin/orthology.hbm.xml"/>
-        <mapping resource="org/zfin/people.hbm.xml"/>
+        <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
         <mapping resource="org/zfin/reno.hbm.xml"/>

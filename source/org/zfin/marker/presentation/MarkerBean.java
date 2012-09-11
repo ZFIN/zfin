@@ -4,7 +4,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 import java.util.List;
 import java.util.Set;

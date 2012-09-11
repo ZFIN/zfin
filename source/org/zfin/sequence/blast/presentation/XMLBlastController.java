@@ -15,7 +15,7 @@ import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.*;

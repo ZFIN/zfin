@@ -15,7 +15,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.Species;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;

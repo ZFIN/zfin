@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%@ attribute name="organization" type="org.zfin.people.Organization" required="false" %>
+<%@ attribute name="organization" type="org.zfin.profile.Organization" required="false" %>
 <%@ attribute name="markerSuppliers" type="java.util.Collection" required="false" %>
 <%@ attribute name="accessionNumber" type="java.lang.String" required="true" %>
 

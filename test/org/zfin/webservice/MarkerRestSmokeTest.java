@@ -24,7 +24,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
     private Logger logger = Logger.getLogger(MarkerRestSmokeTest.class) ;
 
     private String BASE_URL ;
-    private String FULL_JUMP_URL = ZfinPropertiesEnum.NON_SECURE_HTTP.toString()+ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/" + ZfinPropertiesEnum.WEBDRIVER_LOC + EntityPresentation.ZFIN_JUMP_URL;
+    private String FULL_JUMP_URL = ZfinPropertiesEnum.NON_SECURE_HTTP.toString()+ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/";
     private RestTemplate restTemplate = new RestTemplate();
 
     private WebserviceXmlMarshaller marshaller = new WebserviceXmlMarshaller();

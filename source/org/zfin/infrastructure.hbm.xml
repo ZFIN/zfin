@@ -91,7 +91,7 @@
             <column name="dnote_date"/>
         </property>
         <many-to-one name="curator" column="dnote_curator_zdb_id"
-                     class="org.zfin.people.Person"/>
+                     class="org.zfin.profile.Person"/>
     </class>
 
     <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group">

@@ -18,9 +18,9 @@
 <span id="notesS_${idName}">
     <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true" escape="html" escapeHtml="false"/>
     <c:if test="${fn:length(text) > shortLength}">
-        <a href="javascript:toggleVersion(${idName}, true)"  title="Show full text">
+        <a href="javascript:toggleVersion('${idName}', true)"  title="Show full text">
             &nbsp;...
-            <img onclick="toggleVersion(${idName}, true)"
+            <img onclick="toggleVersion('${idName}', true)"
                  src="/images/right_arrow.gif" alt="expand" title="Show full text" border="0">
         </a>
     </c:if>
@@ -28,8 +28,8 @@
 <span style="display:none;" id="notesL_${idName}">
     ${zfn:escapeHtml(text, false)}
 &nbsp;
-    <img onclick="toggleVersion(${idName}, false)"
-         src="/images/left_arrow.gif" alt="collapse" title="Show beginning text">
+    <img onclick="toggleVersion('${idName}', false)"
+         src="/images/left_arrow.gif" alt="collapse" title="Show beginning text" border="0">
 </span>
 
 <script type="text/javascript">

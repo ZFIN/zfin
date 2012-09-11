@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 /**

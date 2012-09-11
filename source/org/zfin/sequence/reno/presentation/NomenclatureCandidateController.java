@@ -14,7 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.orthology.Species;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.reno.NomenclatureRun;

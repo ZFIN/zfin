@@ -10,7 +10,7 @@ import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;

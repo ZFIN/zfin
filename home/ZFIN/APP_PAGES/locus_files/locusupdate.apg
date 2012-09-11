@@ -141,29 +141,6 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$temp_oid>$OID<?/MIVAR>
 
 
-<!-- Want to specify an owner.  -->
-<?MIBLOCK COND="$(EC,$attr,owner)">
-<?MIVAR NAME=$select_from>PERSON<?/MIVAR>
-<?MIVAR NAME=$action>return_id<?/MIVAR>
-<?MIVAR NAME=$fill_field>owner<?/MIVAR>
-<?MIVAR NAME=$fill_table>locus<?/MIVAR>
-<?MIVAR NAME=$jump_to>top<?/MIVAR>
-<?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-persselect.apg<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- Want to specify associated gene -->
-<?MIBLOCK COND="$(EC,$attr,cloned_gene)">
-<?MIVAR NAME=$select_from>marker<?/MIVAR>
-<?MIVAR NAME=$action>return_id<?/MIVAR>
-<?MIVAR NAME=$fill_field>cloned_gene<?/MIVAR>
-<?MIVAR NAME=$fill_table>locus<?/MIVAR>
-<?MIVAR NAME=$jump_to>top<?/MIVAR>
-<?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-newmrkrselect.apg<?/MIVAR>
-<?MIVAR NAME=$update_mode>update<?/MIVAR>
-<?/MIBLOCK>
-
 <?MIBLOCK COND="$(EC,$attr,prim_pub)">
 <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
 <?MIVAR NAME=$action>intersect<?/MIVAR>

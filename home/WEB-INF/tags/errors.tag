@@ -24,7 +24,7 @@
         </c:when>
         <c:otherwise>
             <c:forEach var="error" items="${errorResult.allErrors}">
-                <c:catch var="exception">${error.field}</c:catch>
+                <c:catch var="exception">${(error.field ? '' : '')}</c:catch>
                 <c:if test="${exception==null && error.field eq path}">
                     <div class="${cssClass}"> ${error.defaultMessage}</div>
                 </c:if>

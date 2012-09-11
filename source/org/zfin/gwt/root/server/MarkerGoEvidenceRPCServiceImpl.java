@@ -26,7 +26,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.orthology.Species;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;

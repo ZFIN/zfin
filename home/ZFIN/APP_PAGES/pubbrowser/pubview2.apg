@@ -186,11 +186,14 @@ displays a publication record, or many publication records if > 1 returned.
      <B>REGISTERED AUTHORS:</B>
        <?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
 	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
+        <?MICOMMENT>
+		<A HREF="/action/profile/lab/edit/$2">$1</A>
+        <?/MICOMMENT>
+<A HREF="/action/profile/view/$2">$1</A>
 	<?/MISQL>
        <?MIELSE>
-	<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
-          <?MIVAR NAME=registered_author_html><span nowrap><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A><?/MIVAR>
+	<?MISQL SQL="select get_person_full_name(a.zdb_id),a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.last_name, a.first_name ;">
+          <?MIVAR NAME=registered_author_html><span nowrap><A HREF="/action/profile/view/$2">$1</A><?/MIVAR>
           $(VECAPPEND,$registered_author_list,$registered_author_html)
 	<?/MISQL>
       <?MIVAR NAME=registered_author_list_sepa SEPARATE=", ">$registered_author_list<?/MIVAR> 

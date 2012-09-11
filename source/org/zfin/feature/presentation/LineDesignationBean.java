@@ -1,8 +1,7 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.zfin.people.LabFeaturePrefix;
+import org.zfin.profile.LabFeaturePrefix;
 
 import java.util.ArrayList;
 import java.util.List;

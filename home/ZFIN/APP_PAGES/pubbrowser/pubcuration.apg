@@ -691,13 +691,13 @@ Commenting out survey as a part of FB case 7820
   <font color="black"><b> Contact Author(s) </b></font><a name=contact_author></a> <br>
   &nbsp;&nbsp;
 
-  <?MISQL SQL="SELECT a.full_name, a.zdb_id,  a.email 
+  <?MISQL SQL="SELECT get_person_full_name(a.zdb_id), a.zdb_id,  a.email 
                  FROM person a, int_person_pub b 
                 WHERE source_id = a.zdb_id 
                   AND target_id='$OID' 
                   AND a.email is not null
                   AND a.email <> ''
-             ORDER BY a.full_name ; ">
+             ORDER BY a.last_name,a.first_name; ">
      <?MIVAR NAME=author_name>$1<?/MIVAR>
      <?MIVAR NAME=author_id>$2<?/MIVAR>
      <?MIVAR NAME=author_email>$3<?/MIVAR>

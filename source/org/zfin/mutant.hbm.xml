@@ -88,7 +88,7 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.GenotypeSupplier"/>
+            <one-to-many class="org.zfin.profile.GenotypeSupplier"/>
         </set>
 
         <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
@@ -131,9 +131,9 @@
         <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode"
                      not-null="true"/>
 
-        <many-to-one name="createdBy" column="mrkrgoev_contributed_by" not-null="false" class="org.zfin.people.Person"/>
+        <many-to-one name="createdBy" column="mrkrgoev_contributed_by" not-null="false" class="org.zfin.profile.Person"/>
         <property name="createdWhen" column="mrkrgoev_date_entered" not-null="true"/>
-        <many-to-one name="modifiedBy" column="mrkrgoev_modified_by" not-null="false" class="org.zfin.people.Person"/>
+        <many-to-one name="modifiedBy" column="mrkrgoev_modified_by" not-null="false" class="org.zfin.profile.Person"/>
         <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="true"/>
         <property name="externalLoadDate" column="mrkrgoev_external_load_date" not-null="false"/>
         <property name="organizationCreatedBy" column="mrkrgoev_annotation_organization_created_by" not-null="true"/>
@@ -300,7 +300,7 @@
         </set>
         <set name="sources">
             <key column="ids_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.FeatureSource"/>
+            <one-to-many class="org.zfin.profile.FeatureSource"/>
         </set>
         <property name="type" column="feature_type" type="featureType" not-null="true"/>
 
@@ -312,7 +312,7 @@
 
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
-            <one-to-many class="org.zfin.people.FeatureSupplier"/>
+            <one-to-many class="org.zfin.profile.FeatureSupplier"/>
         </set>
 
         <set name="dataNotes" lazy="true">

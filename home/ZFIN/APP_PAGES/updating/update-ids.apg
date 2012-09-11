@@ -148,9 +148,9 @@ $sourceType -- the table name containing the source
       <?MIVAR NAME=$fill_table>int_data_source<?/MIVAR>
       <?MIVAR NAME=$jump_to>origins-info<?/MIVAR>
       <?MIVAR NAME=$info>NULL<?/MIVAR>
-      <?MIVAR NAME=$selector COND="$(EC,$sourceType,lab)">aa-labselect.apg<?/MIVAR>
-      <?MIVAR NAME=$selector COND="$(EC,$sourceType,person)">aa-persselect.apg<?/MIVAR>
-      <?MIVAR NAME=$selector COND="$(EC,$sourceType,company)">aa-companyselect.apg<?/MIVAR>
+      <?MIVAR NAME=$selector COND="$(EC,$sourceType,lab)">/action/profile/lab/search<?/MIVAR>
+      <?MIVAR NAME=$selector COND="$(EC,$sourceType,person)">/action/profile/person/search<?/MIVAR>
+      <?MIVAR NAME=$selector COND="$(EC,$sourceType,company)">/action/profile/company/search<?/MIVAR>
 
 
     <!-- NOW CREATE THE NEW RETURN RECORD -->

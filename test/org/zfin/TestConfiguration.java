@@ -7,8 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.zfin.people.Person;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
@@ -45,7 +45,7 @@ public class TestConfiguration {
     private static Person createNonSecurityPerson() {
         Person user = new Person();
         user.setZdbID("ZDB-PERS-060413-1");
-        user.setName("Authenticated User");
+        user.setShortName("Authenticated User");
         return user;
     }
 

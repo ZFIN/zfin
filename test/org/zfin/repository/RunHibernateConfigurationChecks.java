@@ -12,14 +12,13 @@ import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.people.Lab;
-import org.zfin.people.Person;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.util.FileUtil;
-import org.zfin.webdriver.repository.HibernateWebExplodeRepository;
 
 import java.io.File;
 import java.sql.CallableStatement;
@@ -110,20 +109,9 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         //recommendedMarkers();
         getFigures();
         unnameHibernatepropFile();
-        getZdbId();
 
     }
 
-    private static void getZdbId() {
-        HibernateWebExplodeRepository impl = new HibernateWebExplodeRepository();
-        String contents = null;
-        try {
-            contents = impl.getWebExplodeContents("aa-htmlpageheader.apg", null);
-        } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        System.out.println(contents);
-    }
 
     private static void getFigures() {
         String est = "eu815";
@@ -171,9 +159,10 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
 
     private static void createPerson() {
         Person person = new Person();
-        person.setFullName("Marga Manitius");
-        person.setName("M. Man");
-        person.setAddress("address");
+        person.setLastName("Manitius");
+        person.setFirstName("Marga");
+        person.setShortName("M. Man");
+//        person.setOldAddress("address");
 
         Lab lab = new Lab();
         lab.setName("TUM");

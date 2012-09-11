@@ -534,7 +534,7 @@ public class SearchBean extends PaginationBean {
                     specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + " ";
                 }
             }
-        } else if (categoryDisplayName.toLowerCase().equals("people")) {
+        } else if (categoryDisplayName.toLowerCase().equals("profile")) {
             specificSearchURL = "aa-quickfindpers.apg&pname=" + queryTerm;
         } else {
             specificSearchURL = "";

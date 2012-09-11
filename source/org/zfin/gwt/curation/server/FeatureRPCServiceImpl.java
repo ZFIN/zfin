@@ -27,16 +27,17 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
-import org.zfin.people.FeatureSource;
-import org.zfin.people.Lab;
-import org.zfin.people.Organization;
-import org.zfin.people.Person;
+import org.zfin.profile.FeatureSource;
+import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.repository.ProfileRepository;
 
 import java.util.*;
 
@@ -57,6 +58,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
     private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation.";
+    private ProfileService profileService = new ProfileService();
 
     public FeatureDTO getFeature(String featureZdbID) {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureZdbID);
@@ -344,7 +346,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         validateUnspecified(featureDTO);
 
         HibernateUtil.createTransaction();
-        Person person = Person.getCurrentSecurityUser();
+        Person person = profileService.getCurrentSecurityUser();
         Feature feature = DTOConversionService.convertToFeature(featureDTO);
         HibernateUtil.currentSession().save(feature);
         currentSession().flush();
@@ -602,7 +604,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
-        Person person = Person.getCurrentSecurityUser();
+        Person person = profileService.getCurrentSecurityUser();
 
         // allows debugging
 //        if(person==null){

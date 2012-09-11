@@ -89,9 +89,14 @@
       <h3>Administration</h3>
       <ul>
 	<li> Add
+        <!--
 	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=person&MIval=aa-new_person.apg"><em>person</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=lab&MIval=aa-new_lab.apg"><em>lab</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=company&MIval=aa-new_company.apg"><em>company</em></a>,
+        -->
+            <a href="/action/profile/person/create"><em>person</em></a>,
+            <a href="/action/profile/lab/create"><em>lab</em></a>,
+            <a href="/action/profile/company/create"><em>company</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><em>pub</em></a>,

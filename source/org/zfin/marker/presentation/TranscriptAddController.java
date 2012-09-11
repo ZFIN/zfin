@@ -12,7 +12,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.TranscriptType;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.LinkedHashMap;

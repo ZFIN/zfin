@@ -27,6 +27,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+
         AnatomySmokeTest.class,
         AntibodySmokeTest.class,
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable

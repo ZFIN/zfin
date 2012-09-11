@@ -18,7 +18,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;

@@ -1,7 +1,6 @@
 package org.zfin.feature.presentation;
 
-import org.zfin.people.Lab;
-import org.zfin.people.Organization;
+import org.zfin.profile.Organization;
 
 /**
  * A wrapper around a lab that gets displayed in line designation.

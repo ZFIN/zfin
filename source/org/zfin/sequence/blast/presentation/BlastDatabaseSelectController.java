@@ -3,7 +3,7 @@ package org.zfin.sequence.blast.presentation;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 

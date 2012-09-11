@@ -29,7 +29,7 @@ create function get_mrkr_abbrev_html_link( mrkrZdbId varchar(50) )
   --    ever changes and different marker types have different display pages
   --    then change this code to get the view app page from the zdb_object_type
   --    table.
-
+  --  o 2012/08 updating to use /ZDB- for all links
 
   define mrkrAbbrevHtmlLink lvarchar;
   define mrkrAbbrev like marker.mrkr_abbrev;

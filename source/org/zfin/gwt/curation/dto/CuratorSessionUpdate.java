@@ -3,7 +3,7 @@ package org.zfin.gwt.curation.dto;
 import java.io.Serializable;
 
 /**
- * GWT data transfer object corresponding to {@link org.zfin.people.CuratorSession}.
+ * GWT data transfer object corresponding to {@link org.zfin.profile.CuratorSession}.
  */
 public class CuratorSessionUpdate implements Serializable {
     String publicationZdbID;

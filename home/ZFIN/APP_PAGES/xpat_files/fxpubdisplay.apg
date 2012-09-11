@@ -146,14 +146,14 @@ to display the "Additional figures" link
           <td valign=top>
           <b>Submitted by:</b>
           <?MISQL SQL="
-             SELECT full_name, zdb_id
+             SELECT get_person_full_name(zdb_id),zdb_id
              FROM person, int_data_source, expression_experiment
              WHERE xpatex_probe_feature_zdb_id = '$fxpubdis_probe_zdb_id'
              and xpatex_zdb_id=ids_data_zdb_id 
              and ids_source_zdb_id = zdb_id
 	     and xpatex_source_zdb_id = '$fxpubdis_zdb_id'
              ORDER by 1;">
-             <?MIVAR NAME=fxpubdis_auth_link><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+             <?MIVAR NAME=fxpubdis_auth_link><a href="/action/profile/view/$2">$1</a><?/MIVAR>
              <?MIVAR>
                $(IF,$(=,$MI_CURRENTROW,1),$fxpubdis_auth_link,", "$fxpubdis_auth_link)
              <?/MIVAR>

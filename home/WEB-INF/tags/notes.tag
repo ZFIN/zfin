@@ -12,7 +12,7 @@
         </c:if>
         <c:forEach var="curatorNote" items="${hasNotes.dataNotes}" varStatus="loopCurNote">
             <%--<tr><td>${curatorNote.note}</td></tr>--%>
-            <tr><td>${curatorNote.curator.name}&nbsp;&nbsp;${curatorNote.date}<br/>${curatorNote.note}
+            <tr><td>${curatorNote.curator.shortName}&nbsp;&nbsp;${curatorNote.date}<br/>${curatorNote.note}
             <c:if test="${!loopCurNote.last}"><br/>&nbsp;<br/></c:if>
         </c:forEach>
         <c:if test="${fn:length(hasNotes.dataNotes) > 1}">

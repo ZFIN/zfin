@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 import java.io.Serializable;
 

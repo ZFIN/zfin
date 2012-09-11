@@ -1,8 +1,8 @@
 package org.zfin.mapping;
 
 import org.zfin.marker.Marker;
-import org.zfin.people.Lab;
-import org.zfin.people.Person;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Person;
 
 public class MappedMarker implements Comparable {
     private String zdbID;

@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.people.Person;
-import org.zfin.people.repository.ProfileRepository;
+import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.security.MockAuthenticationManager;
 
 /**

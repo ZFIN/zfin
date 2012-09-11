@@ -74,21 +74,21 @@
             <!-- <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, -->
             <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>,
             <a href="/zf_info/news/newsgroup.html" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>       
-            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" 
+            <li><a href="/action/profile/person/search"
                  title="Search for zebrafish researchers by name or address">
                  People,</a>
 
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg&select_from=LAB" 
+                 <a href="/action/profile/lab/search"
                  title="Search for laboratories by name, address or research interests">
                  Labs,</a>
 
-                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230" 
+                  <a href="/action/profile/company/search"
                  title="Search for companies supplying zebrafish reagents">
                  Companies</a> </li>
 
             <?MIBLOCK COND="$(NC,$AUTHORIZED,GUEST)">
               <?MIVAR>
-              <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$ZDB_ident"><em>Update Your ZFIN Record</em></a> 
+              <li><a href="/action/profile/view/$ZDB_ident"><em>Update Your ZFIN Record</em></a>
               <?/MIVAR>
               <?MICOMMENT> ** According to the database, it appears that it's possible 
                      for a person to belong to more than one lab.  For the sake
@@ -96,7 +96,7 @@
 
               <?MISQL SQL="select first 1 lab.zdb_id, 
                            case
-                             when lab.owner = person.zdb_id then 't'
+                             when lab.contact_person = person.zdb_id then 't'
                            else 'f' 
                            end as is_lab_owner    
                       from lab 
@@ -106,9 +106,9 @@
               <?MIVAR NAME="zdbhome_lab_zdb_id">$1<?/MIVAR>
               <?MIVAR NAME="zdbhome_is_lab_owner">$2<?/MIVAR>
               <?MIBLOCK COND="$(EC,$zdbhome_is_lab_owner,t)">         
-               <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a> 
+               <li><a href="/action/profile/view/<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>Update Lab Record</em></a>
               <?MIELSE>  
-                <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a> 
+                <li><a href="/action/profile/view/<?MIVAR>$zdbhome_lab_zdb_id<?/MIVAR>"><em>View Lab Record</em></a>
               <?/MIBLOCK>
 
             <?/MISQL>
@@ -138,7 +138,9 @@
    <span style="font-size: .8em;"> 
       to update person and lab records.
   <?MIELSE>
-      Logged in to ZFIN as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
-      <a href="/action/logout">[<em>Logout</em>]</a>
-  <?/MIBLOCK>  
+  <form method="post" action="/action/logout">
+      Logged in as: <?MIVAR><span style="color: red;">$ZDB_name</span><?/MIVAR>
+      <input type="submit" value="Logout">
+      </form>
+  <?/MIBLOCK>
   </span>

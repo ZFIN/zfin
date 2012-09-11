@@ -77,8 +77,6 @@ TRIGGERS = \
 	inference_group_member_inferred_from_update_trigger.sql \
 	marker_relationship_insert_trigger.sql \
 	marker_relationship_update_trigger.sql \
-	new_person_address_update_trigger.sql \
-	new_person_address_insert_trigger.sql \
 	orthologue_evidence_display_insert_trigger.sql \
 	orthologue_evidence_display_update_trigger.sql \
 	orthologue_insert_trigger.sql \
@@ -87,9 +85,6 @@ TRIGGERS = \
 	one_to_one_accession_update_trigger.sql \
 	person_insert_trigger.sql \
 	person_update_trigger.sql \
-	person_address_update_trigger.sql \
-	persaddress_insert_trigger.sql \
-	persaddress_update_trigger.sql \
 	phenotype_experiment_insert_trigger.sql \
 	phenotype_experiment_update_trigger.sql \
 	phenotype_statement_insert_trigger.sql \

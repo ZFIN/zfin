@@ -36,11 +36,11 @@
             <column name="refcross_id" not-null="true"/>
         </property>
 
-        <many-to-one name="submitter" class="org.zfin.people.Person" column="submitter" insert="false" update="false"/>
+        <many-to-one name="submitter" class="org.zfin.profile.Person" column="submitter" insert="false" update="false"/>
 
-        <many-to-one name="lab" class="org.zfin.people.Lab" column="lab" insert="false" update="false"/>
+        <many-to-one name="lab" class="org.zfin.profile.Lab" column="lab" insert="false" update="false"/>
 
-        <many-to-one name="owner" class="org.zfin.people.Person" column="owner" insert="false" update="false"/>
+        <many-to-one name="owner" class="org.zfin.profile.Person" column="owner" insert="false" update="false"/>
 
         <property name="comments">
             <column name="comments"/>

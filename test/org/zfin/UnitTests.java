@@ -44,7 +44,9 @@ import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
-import org.zfin.people.OrganizationUrlTest;
+import org.zfin.profile.OrganizationUrlTest;
+import org.zfin.profile.ProfileUnitTests;
+import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.PublicationTest;
 import org.zfin.security.Md5PasswordEncoderTest;
@@ -71,6 +73,7 @@ import org.zfin.util.*;
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
         ApgPaginationBeanTest.class,
+        BeanCompareServiceTest.class,
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         BtsContainsServiceTest.class,
@@ -113,6 +116,7 @@ import org.zfin.util.*;
         PhenotypeStatementTest.class,
         PhenotypeStructureTest.class,
         PhenotypeStatementTest.class,
+        ProfileUnitTests.class,
         PublicationTest.class,
         RelationshipTypeSortingTest.class,
         RunCandidatePresentationTest.class,

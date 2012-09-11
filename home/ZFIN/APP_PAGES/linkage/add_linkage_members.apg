@@ -107,7 +107,7 @@ Possible vars: update
     <?/MISQL>
   <?/MIBLOCK>
   <?MIBLOCK COND="$(>,$(POSITION,$source,PER),0)">
-    <?MISQL SQL="select distinct full_name from person  
+    <?MISQL SQL="select distinct get_person_full_name(zdb_id) from person  
         where zdb_id = '$source';">
     <?MIVAR NAME=$display_source>$1<?/MIVAR>
     <?/MISQL>

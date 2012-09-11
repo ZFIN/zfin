@@ -1,7 +1,7 @@
 package org.zfin.util.database.presentation;
 
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.util.FileInfo;
 import org.zfin.util.database.UnloadIndexingService;
 import org.zfin.util.database.UnloadService;

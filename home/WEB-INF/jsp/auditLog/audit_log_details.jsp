@@ -11,7 +11,7 @@
                     <tr>
                         <td width=30%>
                             <b>Submitter:</b>
-                            <A HREF="/action/people/view-person-detail?person.zdbID=<c:out value='${session.owner.zdbID}'/>">
+                            <A HREF="/action/profile/view-person-detail?person.zdbID=<c:out value='${session.owner.zdbID}'/>">
                                 <c:out value="${session.owner.name}"/>
                             </A>
                         </td>

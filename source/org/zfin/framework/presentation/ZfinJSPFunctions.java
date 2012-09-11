@@ -3,18 +3,16 @@ package org.zfin.framework.presentation;
 import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang3.StringEscapeUtils;
 //import org.apache.commons.lang.StringEscapeUtils;
-import org.hibernate.mapping.ForeignKey;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.database.presentation.Table;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.profile.Person;
 import org.zfin.ontology.Term;
-import org.zfin.people.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DateUtil;
 
@@ -294,6 +292,11 @@ public class ZfinJSPFunctions {
 
     public static String generateRandomDomID() {
         return UUID.randomUUID().toString();
+    }
+    
+    public static Integer generateSmallRandomNumber() {
+        Double number = Math.random() * 9999;
+        return number.intValue();
     }
 
     /**

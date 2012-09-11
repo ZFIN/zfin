@@ -27,7 +27,8 @@ import org.zfin.marker.MarkerType;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
@@ -39,9 +40,12 @@ import java.util.Date;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
+
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
     private static Logger logger = Logger.getLogger(HibernateInfrastructureRepository.class);
+
+
 
 
     public void insertActiveData(String zdbID) {
@@ -429,6 +433,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (PublicationAttribution) criteria.uniqueResult();
     }
 
+    @Override
+    public void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate) {
+        Session session = HibernateUtil.currentSession();
+
+        Updates up = new Updates();
+        Date date = new Date();
+        up.setRecID(recID);
+
+        up.setSubmitterID(submitterZdbID);
+
+        up.setComments(comments);
+        up.setWhenUpdated(date);
+        session.save(up);
+    }
+
     public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments) {
         Session session = HibernateUtil.currentSession();
 
@@ -447,6 +466,24 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setNewValue(new_value);
         up.setWhenUpdated(date);
         session.save(up);
+    }
+
+
+    @Override
+    public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
+        String from = (beanFieldUpdate.getFrom() == null) ? null : beanFieldUpdate.getFrom().toString();
+        String to = (beanFieldUpdate.getTo() == null) ? null : beanFieldUpdate.getTo().toString();
+
+        insertUpdatesTable(recID,
+                beanFieldUpdate.getField(),
+                from,
+                to,
+                null);
+    }
+
+    @Override
+    public void insertUpdatesTable(String recID, String fieldName, String comments) {
+        insertUpdatesTable(recID, fieldName, null, null, comments);
     }
 
     @Override

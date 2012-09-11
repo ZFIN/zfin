@@ -3,7 +3,7 @@ package org.zfin.mutant;
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.people.GenotypeSupplier;
+import org.zfin.profile.GenotypeSupplier;
 
 import java.util.*;
 

@@ -15,7 +15,8 @@
 	       proxyPort="80"
                maxThreads="150" minSpareThreads="5" maxSpareThreads="75"
                enableLookups="false" redirectPort="8843" acceptCount="100"
-               connectionTimeout="20000" disableUploadTimeout="true" compression="on"/>
+               connectionTimeout="20000" disableUploadTimeout="true" compression="on"
+               URIEncoding="UTF-8" />
 
     <!-- Define a SSL HTTP/1.1 Connector  -->
     <Connector port="@SECUREPORT@" maxHttpHeaderSize="8192"
@@ -23,7 +24,8 @@
                maxThreads="100" minSpareThreads="5" maxSpareThreads="50"
                enableLookups="false" disableUploadTimeout="true"
                acceptCount="100" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" compression="on" keystoreFile="/private/apps/tomcat/conf/keystore"/>
+               clientAuth="false" sslProtocol="TLS" compression="on" keystoreFile="/private/apps/tomcat/conf/keystore"
+               URIEncoding="UTF-8" />
     
 
     <Engine name="Catalina" defaultHost="@DOMAIN-NAME@">

@@ -14,7 +14,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;

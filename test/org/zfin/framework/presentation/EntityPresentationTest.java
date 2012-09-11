@@ -22,9 +22,7 @@ public class EntityPresentationTest {
     @Test
     public void testJumpToLink(){
         String zdbId = "ZDB-GENE-040718-186" ;
-        String assertionString = "http://"+ ZfinPropertiesEnum.DOMAIN_NAME+"/"+
-                ZfinPropertiesEnum.WEBDRIVER_LOC.value() +
-                "/" + "ZFIN_jump?record=" + zdbId ;
+        String assertionString = "http://"+ ZfinPropertiesEnum.DOMAIN_NAME+"/" + zdbId ;
         logger.debug(assertionString);
 
         assertEquals(assertionString,EntityPresentation.getJumpToLink(zdbId)) ;

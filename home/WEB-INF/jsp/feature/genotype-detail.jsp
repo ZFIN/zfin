@@ -143,7 +143,7 @@
                                 ${supplier.organization.name}&nbsp;&nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20">&nbsp;
                             </c:when>
                             <c:otherwise>
-                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
+                                <a href="/action/profile/view/${supplier.organization.zdbID}"
                                    id="${supplier.organization.zdbID}">
                                         ${supplier.organization.name}</a>
                                 <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;

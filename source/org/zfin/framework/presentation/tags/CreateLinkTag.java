@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyItemPresentation;
@@ -34,8 +35,12 @@ import org.zfin.ontology.presentation.TermDTOPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
-import org.zfin.people.Organization;
-import org.zfin.people.presentation.SourcePresentation;
+import org.zfin.profile.Company;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
+import org.zfin.profile.presentation.ProfilePresentation;
+import org.zfin.profile.presentation.SourcePresentation;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.ImagePresentation;
@@ -67,6 +72,8 @@ import java.util.Collection;
  */
 public class CreateLinkTag extends BodyTagSupport {
 
+    private final Logger logger = Logger.getLogger(CreateLinkTag.class) ;
+
     private Object entity;
     private String name;
     private boolean longVersion;
@@ -79,6 +86,11 @@ public class CreateLinkTag extends BodyTagSupport {
     }
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
+
+        if(o == null){
+            logger.error("Tying to create a link with a null object:\n"+getBodyContent().getString());
+            return "" ;
+        }
 
         String link;
         if (o instanceof String) // assumes that the link is being passed in
@@ -150,6 +162,10 @@ public class CreateLinkTag extends BodyTagSupport {
         String linkStart;
         if (o instanceof Figure)
             linkStart = FigurePresentation.getLinkStartTag((Figure) o);
+        else if (o instanceof Organization)
+            linkStart = ProfilePresentation.getLinkStartTag((Organization) o);
+        else if (o instanceof Person)
+            linkStart = ProfilePresentation.getLinkStartTag((Person) o);
         else if (o instanceof Image)
             linkStart = ImagePresentation.getLinkStartTag((Image) o);
         else
@@ -163,6 +179,8 @@ public class CreateLinkTag extends BodyTagSupport {
             linkEnd = FigurePresentation.getLinkEndTag();
         else if (o instanceof Image)
             linkEnd = ImagePresentation.getLinkEndTag();
+        else if (o instanceof Person || o instanceof Organization)
+            linkEnd = ProfilePresentation.getLinkEndTag();
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return linkEnd;

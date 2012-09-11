@@ -15,8 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.people.Lab;
-import org.zfin.people.Organization;
+import org.zfin.profile.Organization;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;

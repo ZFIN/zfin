@@ -71,7 +71,7 @@ create function get_mutants_html_link
 	elif (genoCount == 1 ) then
 	-- in this case, the genoZdbId would either be filled with either of the two queris
         -- above but not both in which case genoCount would be 2.
-		return '<A HREF="/action/genotype/genotype-detail?zdbID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
+		return '<A HREF="/' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix|| '</A>';
 
         else
 		return '<A HREF="/action/mutant/mutant-list?zdbID=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || '</A>';

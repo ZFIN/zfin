@@ -125,7 +125,7 @@ function updateAuthor(strURL) {
 
     <?MIBLOCK INDEX=$linkauth_author FOREACH=$linkauth_authorList>
      
-     <?MISQL SQL="select person.zdb_id, full_name,
+     <?MISQL SQL="select person.zdb_id, get_person_full_name(zdb_id),
                      case
                        when source_id is not null
                        then 'CHECKED'
@@ -134,8 +134,8 @@ function updateAuthor(strURL) {
                      from person 
                        left outer join int_person_pub
                          on target_id = '$OID' and source_id = person.zdb_id
-                     where full_name like '$linkauth_author%'
-                     order by full_name;">
+                     where get_person_full_name(zdb_id) like '$linkauth_author%'
+                     order by last_name,first_name;">
 
         <?MIVAR NAME="linkauth_pers_zdb_id">$1<?/MIVAR>
         <?MIVAR NAME="linkauth_full_name">$2<?/MIVAR>

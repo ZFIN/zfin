@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.OrthoEvidence;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.sequence.Entrez;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.ReferenceDatabase;

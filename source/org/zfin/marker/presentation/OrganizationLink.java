@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ProvidesLink;
-import org.zfin.people.presentation.SourcePresentation;
+import org.zfin.profile.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
 
 
@@ -21,14 +21,7 @@ public class OrganizationLink implements ProvidesLink {
 
     @Override
     public String getLink() {
-        if (supplierZdbId.startsWith("ZDB-LAB-")) {
-            return "<a href=\"/" + ZfinProperties.getWebDriver()  + SourcePresentation.LAB_URI + supplierZdbId + "\">" + labName + "</a>";
-        } else if (supplierZdbId.startsWith("ZDB-COMPANY-")) {
-            return "<a href=\"/" + ZfinProperties.getWebDriver()  + SourcePresentation.COMANY_URI + supplierZdbId + "\">" + companyName + "</a>";
-        } else {
-            logger.error("bad zdbID for Organization Link[" + supplierZdbId + "]");
-            return null;
-        }
+        return SourcePresentation.getLink(supplierZdbId, getName());
     }
 
     @Override
@@ -49,14 +42,19 @@ public class OrganizationLink implements ProvidesLink {
             return "<span style=\"font-size: small;\">(<a href=\"" + sourceUrl
                     + (accessionNumber!=null ? accessionNumber : "")
                     + "\">" + urlDisplayText + "</a>)</span>";
-        } else if (supplierZdbId.startsWith("ZDB-LAB-")) {
-            return "<span style=\"font-size: small;\">(<a href=\"/" + ZfinProperties.getWebDriver() + SourcePresentation.LAB_URI + supplierZdbId + "\">order this</a>)</span>";
-        } else if (supplierZdbId.startsWith("ZDB-COMPANY-")) {
-            return "<span style=\"font-size: small;\">(<a href=\"/" + ZfinProperties.getWebDriver()  + SourcePresentation.COMANY_URI + supplierZdbId + "\">order this</a>)</span>";
+        } else if (
+                supplierZdbId.startsWith("ZDB-LAB-")
+         || supplierZdbId.startsWith("ZDB-COMPANY-")
+                ) {
+            return "<span style=\"font-size: small;\">(<a href=\"" + SourcePresentation.getUrl(supplierZdbId) + "\">order this</a>)</span>";
         } else {
             logger.error("bad zdbID for Organization Link[" + supplierZdbId + "]");
             return null;
         }
+    }
+
+    public String getName() {
+        return supplierZdbId.startsWith("ZDB-LAB") ? labName  : companyName;
     }
 
     public String getSupplierZdbId() {

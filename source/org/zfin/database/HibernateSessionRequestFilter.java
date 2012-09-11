@@ -1,8 +1,5 @@
 package org.zfin.database;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
@@ -12,8 +9,7 @@ import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
-import org.zfin.people.Person;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.profile.Person;
 import org.zfin.util.ZfinSMTPAppender;
 import org.zfin.util.log4j.Log4jService;
 import org.zfin.util.servlet.RequestBean;
@@ -22,11 +18,7 @@ import org.zfin.util.servlet.ServletService;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This servlet filter creates a Hibernate session for each incoming request
@@ -94,7 +86,7 @@ public class HibernateSessionRequestFilter implements Filter {
         Table output = new Table(2);
         if (Person.getCurrentSecurityUser() != null) {
             output.addCell("User Name");
-            output.addCell(Person.getCurrentSecurityUser().getName());
+            output.addCell(Person.getCurrentSecurityUser().getShortName());
         }
         output.addCell("GWT Data");
         output.addCell("");

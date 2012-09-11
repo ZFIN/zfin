@@ -203,6 +203,8 @@
 
     <td>
       <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
+        <zfin:link entity="${source.organization}"/><br>
+
         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
                 ${source.organization.name}
         </a>

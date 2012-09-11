@@ -1,4 +1,4 @@
-<%@ page import="org.zfin.people.Person" %>
+<%@ page import="org.zfin.profile.Person" %>
 <%@ page import="org.zfin.framework.presentation.UserRequestTrackBean" %>
 <%@ page import="org.zfin.framework.presentation.UserRequestTrackController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>

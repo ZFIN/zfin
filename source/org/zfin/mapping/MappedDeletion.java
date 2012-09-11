@@ -1,7 +1,7 @@
 package org.zfin.mapping;
 
 import org.zfin.marker.Marker;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 /**
  * Created by IntelliJ IDEA.

@@ -33,7 +33,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.repository.RepositoryFactory;

@@ -1,7 +1,7 @@
 package org.zfin.security.repository;
 
 import org.springframework.security.access.annotation.Secured;
-import org.zfin.people.Person;
+import org.zfin.profile.Person;
 
 /**
  * Repository that is used for Person-related persistence logic.

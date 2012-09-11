@@ -147,13 +147,13 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
           
           &nbsp;<b>Submitted by:</b>
           <?MISQL SQL="
-             SELECT full_name, zdb_id
+             SELECT get_person_full_name(zdb_id), zdb_id
              FROM person, int_data_source, expression_experiment
              WHERE xpatex_probe_feature_zdb_id = '$fxallfig_probe_zdb_id'
              and xpatex_zdb_id=ids_data_zdb_id 
              and ids_source_zdb_id = zdb_id
              ORDER by 1;">
-             <?MIVAR NAME=AUTH_LINK><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+             <?MIVAR NAME=AUTH_LINK><a href="/action/profile/view/$2">$1</a><?/MIVAR>
              <?MIVAR>
                $(IF,$(=,$MI_CURRENTROW,1),$AUTH_LINK,", "$AUTH_LINK)
              <?/MIVAR>

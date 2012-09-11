@@ -2,8 +2,8 @@ package org.zfin.framework.presentation.tags;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.zfin.people.AccountInfo;
-import org.zfin.people.Person;
+import org.zfin.profile.AccountInfo;
+import org.zfin.profile.Person;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
