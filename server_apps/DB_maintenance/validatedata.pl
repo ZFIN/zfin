@@ -2164,34 +2164,6 @@ sub pubTitlesAreUnique($) {
   &recordResult($routineName, $nRecords);
 } 
 
-#-------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub addressStillNeedsUpdate ($) {
-	
-  my $routineName = "addressStillNeedsUpdate";
-	
-  my $sql = 'select pers_zdb_id
-		from person_address
-                where pers_old_address is null';
-
-  my @colDesc = ("Person ZDB ID           ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Autogen: People that need their addresses updated";
-    my $errMsg ="$nRecords people need their addresses updated in new address table.";
-      		        
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
 #---------------------------------------------------------------
 # Each entry in foreign_db should have 1 or more entries in
 # foreign_db_contains.  foreign_db_contains describes what type(s) of
@@ -2772,10 +2744,11 @@ if($daily) {
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
     
     my $sql = " select email, zdb_id,full_name
-                from int_person_lab join person
-                     on source_id = zdb_id
+                from int_person_lab 
+                     join person on source_id = zdb_id
+                     join lab_position on position_id = labpos_pk_id
                where target_id = 'ZDB-LAB-000914-1'
-                 and position = 'Research Staff'";
+                 and labpos_position = 'Research Staff'";
     my $sth = $dbh->prepare ($sql) or die "Prepare fails on email selection";
     $sth->execute();
 
@@ -2841,17 +2814,17 @@ if($monthly) {
   mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
-  addressStillNeedsUpdate($adminEmail);
   mrkrgoevInfgrpDuplicatesFound($goEmail);
   printTop40PostcomposedTerms($aoEmail);
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
   my $sql = " select email, full_name
-                from int_person_lab join person
-                     on source_id = zdb_id
+                from int_person_lab 
+                     join person on source_id = zdb_id
+                     join lab_position on position_id =  labpos_pk_id
                where target_id = 'ZDB-LAB-000914-1'
-                 and position = 'Research Staff'";
+                 and labpos_position = 'Research Staff'";
   my $sth = $dbh->prepare ($sql) or die "Prepare fails";
   $sth->execute();
 
