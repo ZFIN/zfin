@@ -11,7 +11,7 @@ document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact i
 document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN\">About</A> ");
 document.write("   </div> ");
 document.write("   <div id=\"footercredits\" style=\"text-align: center \"> ");
-document.write("       <span id=\"footer-generous-support\">Development of the Zebrafish Database is generously supported by the NIH (P41 HG002659). <br></span> ");
+document.write("       <span id=\"footer-generous-support\">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (U41 HG002659, HG004838, and HG004834) of the National Institutes of Health. <br></span> ");
 document.write("       <a href=\"/warranty.html\">Disclaimer, limitations, copyright &copy;  </a> <a href=\"http://www.uoregon.edu\"> ");
 document.write("       University of Oregon</a>, 1994-2012,<a href=\"http://www.ci.eugene.or.us\"> Eugene</a>, Oregon. <br> ");
 document.write("       <small>ZFIN logo design by Kari Pape, <A HREF=\"http://www.uoregon.edu\">University of Oregon</a></small> ");
