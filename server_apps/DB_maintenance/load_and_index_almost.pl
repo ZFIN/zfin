@@ -250,23 +250,25 @@ if ( $jsvc_pid ) {
 #  db reload?)
 $status = system("/private/ZfinLinks/Commons/bin/restartapache.pl");
 
-open (SESSID, "$ENV{INFORMIXDIR}/bin/onstat -g sql | grep $dbName | ");
-while (<SESSID>) {
-   
-    my ($sessionId) = split;
-   
-    if ($sessionId =~ /^\d+$/) {
+for($q=0; $q<2; $q++){
+	open (SESSID, "$ENV{INFORMIXDIR}/bin/onstat -g sql | grep $dbName | ");
+	while (<SESSID>) {
 
-	open (ONSTAT, "$ENV{INFORMIXDIR}/bin/onstat -g ses $sessionId |");
-	while (<ONSTAT>) {
-	    print ;
+	    my ($sessionId) = split;
+
+	    if ($sessionId =~ /^\d+$/) {
+
+		open (ONSTAT, "$ENV{INFORMIXDIR}/bin/onstat -g ses $sessionId |");
+		while (<ONSTAT>) {
+		    print ;
+		}
+		close ONSTAT;
+
+		system ("$ENV{INFORMIXDIR}/bin/onmode -z $sessionId ");	
+	    }
 	}
-	close ONSTAT;
-
-	system ("$ENV{INFORMIXDIR}/bin/onmode -z $sessionId ");	
-    }
+	close SESSID;
 }
-close SESSID;
 
 # load it
 close(LOG) or abort("Cannot close log file $logFile.\n");
