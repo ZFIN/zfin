@@ -24,7 +24,7 @@
             font-family: sans-serif;
             font-weight: bold;
             text-decoration: none;
-            font-size: Large;
+            font-size: large;
         }
 
         body {
@@ -33,21 +33,19 @@
     </style>
 </head>
 
-<%--<div class="popup-header">
-     Term: <zfin:name entity="${term}"/>
-</div>--%>
 <div class="popup-body phenotype-popup-body">
-   <%-- <div>
-        <zfin2:termMiniSummary term="${term}"/>
-    </div>--%>
-       <div style="float: right">
-           <input type="button" alt="Add To Search" value="Add To Search"
-                  onclick="window.parent.useTerm('${term.termName}'); ">
-           &nbsp;
-           &nbsp;
-           <a title="Close window" class="xpatanat-close_link" onclick="window.parent.hideTerm(); " href="javascript:">x</a>
 
-       </div>
+    <c:if test="${hasAddToSearchButton}">
+        <div style="float: right">
+            <input type="button" alt="Add To Search" value="Add To Search"
+                   onclick="window.parent.useTerm('${term.termName}'); ">
+            &nbsp;
+            &nbsp;
+            <a title="Close window" class="xpatanat-close_link" onclick="window.parent.hideTerm(); "
+               href="javascript:">x</a>
+
+        </div>
+    </c:if>
     <table class="primary-entity-attributes">
 
         <tr>
@@ -85,7 +83,8 @@
         </c:if>
     </table>
 
-   <p>
+    <p>
+
     <div class="summary">
         <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
         <table class="summary horizontal-solidblock">
@@ -99,16 +98,25 @@
                         <c:forEach var="term" items="${relationshipPresentation.items}">
                             <%--<span class="related-ontology-term" id="${term.termName}"><zfin:link
                                     entity="${term}"/></span>--%>
-                            <span class="related-ontology-term" id="${term.termName}"><a href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a></span>
+                            <c:choose>
+                                <c:when test="${hasAddToSearchButton}">
+                            <span class="related-ontology-term" id="${term.termName}"><a
+                                    href="/action/ontology/term-detail-popup-button?termID=${term.zdbID}">${term.termName}</a></span>
+                                </c:when>
+                                <c:otherwise>
+                            <span class="related-ontology-term" id="${term.termName}"><a
+                                    href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a></span>
+                                </c:otherwise>
+                            </c:choose>
                         </c:forEach>
                     </td>
                 </tr>
             </c:forEach>
         </table>
     </div>
-      <p></p>
-       <c:if test="${!empty term && fn:contains(term.ontology.commonName,'Anatomy Ontology')}">
-       <a href="/action/anatomy/anatomy-view/${term.zdbID}" target="_blank">Show Anatomy Details</a>
-       </c:if>
+    <p></p>
+    <c:if test="${!empty term && fn:contains(term.ontology.commonName,'Anatomy Ontology')}">
+        <a href="/action/anatomy/anatomy-view/${term.zdbID}" target="_blank">Show Anatomy Details</a>
+    </c:if>
 </div>
 </html>

@@ -94,6 +94,13 @@ public class OntologyTermDetailController {
 
     }
 
+    @RequestMapping(value = {("/term-detail-popup-button")})
+    public String getTermDetailPopupButton(@RequestParam String termID, Model model) {
+        model.addAttribute("hasAddToSearchButton", true);
+        return getTermDetailPopup(termID, model);
+
+    }
+
     @RequestMapping(value = {("/term-detail-popup")})
     public String getTermDetailPopup(@RequestParam String termID, Model model) {
         OntologyBean form = new OntologyBean();
