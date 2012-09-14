@@ -334,7 +334,6 @@ public class MutantRepositoryTest {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-94");
         List<String> links = mutantRepository.getTransgenicLines(m);
         assertThat(links.size(), greaterThan(65));
-        assertThat(links.size(), lessThan(100));
     }
 
     @Test
