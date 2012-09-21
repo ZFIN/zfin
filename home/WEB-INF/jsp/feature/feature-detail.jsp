@@ -9,43 +9,36 @@
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="feature"/>
 
-<table width="100%" border="0">
-<tr>
-    <td width="180">
-        <FONT SIZE=+1><STRONG>Genomic Feature:</STRONG></FONT>
-    </td>
-    <td>
-        <FONT SIZE=+1><STRONG>
-            ${formBean.feature.name}
-        </STRONG></FONT>
-    </td>
+<div style="float: right;">
+    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:putAttribute name="subjectName" value="${formBean.feature.name}"/>
+        <tiles:putAttribute name="subjectID" value="${formBean.feature.zdbID}"/>
+    </tiles:insertTemplate>
+</div>
 
-    <td align="right">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="${formBean.feature.name}"/>
-            <tiles:putAttribute name="subjectID" value="${formBean.feature.zdbID}"/>
-        </tiles:insertTemplate>
+<table class="primary-entity-attributes">
+<tr>
+    <th class="genotype-name-label">
+        <span class="name-label">Genomic Feature:</span>
+    </th>
+    <td>
+        <span class="name-value">${formBean.feature.name}</span>
     </td>
 </tr>
 
 <c:if test="${fn:contains(formBean.feature.abbreviation, 'unrecovered')==true}">
-
     <br style="font-size:small;"> Note: This record has been created to support data for unrecovered alleles reported by a TILLING project. </br>
-
 </c:if>
 
 <c:if test="${formBean.feature.type.unspecified}">
-
-
     <br style="font-size:small;"> Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature. </br>
-
 </c:if>
-<hr>
+
 <c:if test="${formBean.feature.aliases != null}">
     <tr>
-        <td>
-            <b> Previous Names: </b>
-        </td>
+        <th>
+            Previous Names: 
+        </th>
         <td>
             <c:forEach var="featureAlias" items="${formBean.feature.aliases}" varStatus="loop">
                 ${featureAlias.alias}
@@ -65,17 +58,14 @@
     </tr>
 </c:if>
 <tr>
-
-    <td width="180">
-        <b><b>Affected Genes:</b> </b>
-    </td>
+    <th>
+       Affected Genes:
+    </th>
     <c:choose>
         <c:when test="${fn:length(formBean.sortedMarkerRelationships) > 0 }">
-
             <td>
                 <c:forEach var="fmRel" items="${formBean.sortedMarkerRelationships}" varStatus="loop">
                     <zfin:link entity="${fmRel.marker}"/>
-
                     <c:if test="${fmRel.publicationCount > 0}">
                         <c:choose>
                             <c:when test="${fmRel.publicationCount == 1}">
@@ -85,12 +75,8 @@
                                 (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${fmRel.zdbID}&rtype=genotype">${fmRel.publicationCount}</a>)
                             </c:otherwise>
                         </c:choose>
-                    </c:if>
-                    <c:if test="${!loop.last}">
-                        ,&nbsp;
-                    </c:if>
+                    </c:if><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
-
             </td>
         </c:when>
         <c:otherwise>
@@ -103,14 +89,13 @@
             </c:if>
         </c:otherwise>
     </c:choose>
-
 </tr>
 
 <c:if test="${formBean.feature.type.transgenic}">
 <tr>
-    <td width="180">
-        <b>Construct:</b>
-    </td>
+    <th>
+        Construct:
+    </th>
     <td>
         <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
             <a href="/action/marker/view/${mRel.marker.zdbID}">${mRel.marker.name}</a>
@@ -134,10 +119,10 @@
 </tr>
 </c:if>
 <tr>
-    <td width="180">
-        <b>Type:</b>
-    </td>
-    <td>  ${formBean.feature.type.display}
+    <th>
+        Type:
+    </th>
+    <td>${formBean.feature.type.display}
         <c:if test="${fn:length(formBean.featureTypeAttributions) > 0 }">
             <c:choose>
                 <c:when test="${fn:length(formBean.featureTypeAttributions)== 1 }">
@@ -152,9 +137,9 @@
 </tr>
 
 <tr>
-    <td>
-        <b>Protocol:</b>
-    </td>
+    <th>
+        Protocol:
+    </th>
     <td>
         <c:choose>
             <c:when test="${formBean.feature.featureAssay.mutagen eq null || formBean.feature.featureAssay.mutagen eq 'not specified'}">
@@ -168,95 +153,58 @@
                 ${formBean.feature.featureAssay.mutagee} treated with ${formBean.feature.featureAssay.mutagen}
             </c:otherwise>
         </c:choose>
-
     </td>
 </tr>
 
 <tr>
-    <td width="180">
-        <b>Lab Of Origin:</b>
-    </td>
-
+    <th>
+        Lab Of Origin:
+    </th>
+    <td>
     <c:choose>
       <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
-
       <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
-      <td>
         <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
           <zfin:link entity="${source.organization}"/>
          </c:if>
-      </td>
       </c:forEach>
       </c:when>
     </c:choose>
+    </td>
 </tr>
 
 <tr>
-    <td width="180">
-        <b>Map:</b>
-    </td>
-
-
+    <th>
+        Map:
+    </th>
     <c:choose>
-
         <c:when test="${!empty formBean.featureMap}">
-            <td>
-                Chr:
+            <td>Chr:
                 <c:forEach var="lg" items="${formBean.featureMap}" varStatus="index">
-
-                    <c:if test="${lg != 0}">
-
-                        ${lg}
-                    </c:if>
-                    <c:if test="${!index.last}">
-                        <c:if test="${lg != 0}">
-                            ,&nbsp;
-                        </c:if>
-                    </c:if>
+                    <c:if test="${lg != 0}">${lg}</c:if><c:if test="${!index.last}"><c:if test="${lg != 0}">,&nbsp;</c:if></c:if>
                 </c:forEach>
                 &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
-
             </td>
-
-
         </c:when>
-
-
         <c:when test="${!empty formBean.featureLocations}">
             <td>
                 Chr:
                 <c:forEach var="lg" items="${formBean.featureLocations}" varStatus="index">
-                    <c:if test="${lg != 0}">
-
-                        ${lg}
-                    </c:if>
-                    <c:if test="${!index.last}">
-                        ,&nbsp;
-                    </c:if>
+                    <c:if test="${lg != 0}">${lg}</c:if><c:if test="${!index.last}"><c:if test="${lg != 0}">,&nbsp;</c:if></c:if>
                 </c:forEach>
-                &nbsp;<a
-                    href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
-
+                &nbsp;<a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-mappingdetail.apg&OID=${formBean.feature.zdbID}">Details</a>
             </td>
-
-
         </c:when>
-
-
         <c:otherwise>
-
             <td class="no-data-tag"></td>
-
         </c:otherwise>
     </c:choose>
-
-
 </tr>
 
 <tr>
-    <td>
-        <b> Sequence: </b>
-    </td>
+    <th>
+        Sequence:
+    </th>
     <td>
         <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
             <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
@@ -282,10 +230,10 @@
 
 
 <tr>
-    <td width="150" valign="top">
-        <b>Current Sources:</b>
-    </td>
-    <td valign="top">
+    <th>
+        Current Sources:
+    </th>
+    <td>
         <c:choose>
             <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
                 <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
@@ -312,10 +260,9 @@
     </td>
 </tr>
 
-<zfin2:notes hasNotes="${formBean.feature}" inTable="false"/>
+<zfin2:notesInDiv hasNotes="${formBean.feature}"/>
 
 </table>
-
     <c:choose>
         <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">
           <div class="summary">
