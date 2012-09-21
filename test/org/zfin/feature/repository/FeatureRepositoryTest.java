@@ -23,6 +23,8 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 public class FeatureRepositoryTest extends AbstractDatabaseTest {
@@ -101,25 +103,14 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturePrefixes() {
         List<String> featurePrefixes = featureRepository.getAllFeaturePrefixes();
         assertTrue(featurePrefixes.size() > 100);
-        assertTrue(featurePrefixes.size() < 300);
+        assertTrue(featurePrefixes.size() < 1000);
     }
 
     @Test
     public void getPrefixForLab() {
-        assertEquals("b", featureRepository.getCurrentPrefixForLab("ZDB-LAB-970408-1")); // westerfield
-        assertEquals("w", featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
+        assertEquals("Westerfield lab has line prefix 'b'", "b", featureRepository.getCurrentPrefixForLab("ZDB-LAB-970408-1"));
+        assertEquals("Raible lab has line prefix 'w'", "w", featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1"));
     }
-
-    // TODO: fix durin line designation edit phase.  Was getting a weird trigger error
-//    @Test
-//    public void setPrefixForLab(){
-//        HibernateUtil.createTransaction();
-//        assertEquals("w",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
-//        featureRepository.setCurrentLabPrefix("ZDB-LAB-980202-1","b") ;
-//        HibernateUtil.currentSession().flush();
-//        assertEquals("b",featureRepository.getCurrentPrefixForLab("ZDB-LAB-980202-1")); // raible should be 'w', not 'b'
-//        HibernateUtil.rollbackTransaction();
-//    }
 
     @Test
     public void getAllFeaturePrefixesWithDesignations() {
@@ -127,42 +118,38 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         boolean containsEd = false;
         boolean containsEr = false;
         boolean containsSb = false;
-        boolean containsZy = false;
+        assertNotNull(featurePrefixLights);
         for (FeaturePrefixLight featurePrefixLight : featurePrefixLights) {
             if (featurePrefixLight.getPrefix().equals("ba")) {
-                assertTrue(featurePrefixLight.getLabList().size() > 0);
+                assertThat("Expect at least one lab for line designation 'ba'", featurePrefixLight.getLabList().size(), greaterThan(0));
             }
             if (featurePrefixLight.getPrefix().equals("b")) {
-                assertTrue(featurePrefixLight.getLabList().size() > 0);
+                assertThat("Expect at least one lab for line designation 'b'", featurePrefixLight.getLabList().size(), greaterThan(0));
             }
             if (featurePrefixLight.getPrefix().equals("be")) {
-                assertTrue(featurePrefixLight.getLabList().size() > 0);
+                assertThat("Expect at least one lab for line designation 'be'", featurePrefixLight.getLabList().size(), greaterThan(0));
             }
             if (featurePrefixLight.getPrefix().equals("bi")) {
-                assertTrue(featurePrefixLight.getLabList().size() > 0);
+                assertThat("Expect at least one lab for line designation 'bi'", featurePrefixLight.getLabList().size(), greaterThan(0));
             }
             if (featurePrefixLight.getPrefix().equals("bk")) {
-                assertTrue(featurePrefixLight.getLabList().size() > 0);
+                assertThat("Expect at least one lab for line designation 'bk'", featurePrefixLight.getLabList().size(), greaterThan(0));
             }
             if (featurePrefixLight.getPrefix().equals("ed")) {
-                assertNull(featurePrefixLight.getLabList());
                 containsEd = true;
             }
             if (featurePrefixLight.getPrefix().equals("er")) {
-                assertNull(featurePrefixLight.getLabList());
                 containsEr = true;
             }
             if (featurePrefixLight.getPrefix().equals("sb")) {
-                assertNull(featurePrefixLight.getLabList());
                 containsSb = true;
             }
         }
-        assertNotNull(featurePrefixLights);
-        assertTrue(featurePrefixLights.size() > 100);
-        assertTrue(featurePrefixLights.size() < 500);
-        assertTrue(containsEd);
-        assertTrue(containsEr);
-        assertTrue(containsSb);
+        assertThat("No more than 1000 different prefixe lines", featurePrefixLights.size(), lessThan(1000));
+        assertThat("At least 100 different prefixes lines", featurePrefixLights.size(), lessThan(1000));
+        assertTrue("Feature line with prefix 'ed' found", containsEd);
+        assertTrue("Feature line with prefix 'er' found", containsEr);
+        assertTrue("Feature line with prefix 'sb' found", containsSb);
     }
 
 
@@ -170,7 +157,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturesForPrefixNoSources() {
         List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("zf");
         assertTrue(featureLabEntries.size() > 140);
-        assertTrue(featureLabEntries.size() < 600);
+        assertTrue(featureLabEntries.size() < 1000);
     }
 
     @Test
@@ -194,7 +181,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("a");
 
         assertTrue(featureLabEntries.size() > 5);
-        assertTrue(featureLabEntries.size() < 50);
+        assertTrue(featureLabEntries.size() < 500);
 
         for (FeatureLabEntry featureLabEntry : featureLabEntries) {
             if (featureLabEntry.getFeature().getAbbreviation().equals("a75")) {
@@ -210,7 +197,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getLabsWithFeaturesForPrefix() {
         List<Organization> labs = featureRepository.getLabsWithFeaturesForPrefix("b");
         assertTrue(labs.size() > 5);
-        assertTrue(labs.size() < 20);
+        assertTrue(labs.size() < 100);
     }
 
 
@@ -219,20 +206,15 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Organization> labs = featureRepository.getLabsOfOriginWithPrefix();
         assertNotNull(labs);
         logger.info("number of lab: " + labs.size());
-        assertTrue(labs.size() > 200); // should be around 283, otherwise closer to 300
+        assertTrue(labs.size() > 200);
         // just choose the first 5
         for (int i = 0; i < 5; i++) {
-            // just test the tostring method
+            // just test the toString() method
             labs.get(i).toString();
             assertNotSame("Lab must have a prefix", 0, featureRepository.getLabPrefixes(labs.get(i).getName()));
         }
-        // assert that affolter is not in there
     }
 
-    //    s	true
-//m	false
-//sk	false
-//st	false
     @Test
     public void getLabPrefix() {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes("Stainier Lab");
