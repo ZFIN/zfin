@@ -329,7 +329,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         publicCommentsStringBuilder.append(antibody.getName());
         publicCommentsStringBuilder.append(" at ZFIN ");
         publicCommentsStringBuilder.append("|");
-        publicCommentsStringBuilder.append("http://zfin.org/action/antibody/antibody-publication-list?antibodyID=");
+        publicCommentsStringBuilder.append("http://zfin.org/action/antibody/antibody-publication-list?orderBy=author&antibodyID=");
         publicCommentsStringBuilder.append(antibody.getZdbID());
         publicCommentsStringBuilder.append("]");
         publicCommentsStringBuilder.append(FileUtil.LINE_SEPARATOR);
