@@ -177,7 +177,7 @@
         </tr>--%>
 </table>
 
-<div class="search-form-bottom-bar" style="text-align:right">
+<div class="search-form-bottom-bar" style="text-align:left">
     <input value="Search" onclick="submitForm(1)" type="button">
     <input value="Reset" type="button" onclick="call_reset()">
     <img style="display:none;" id="fish-form-loading-notify" src="/images/ajax-loader1.gif"/>
