@@ -256,8 +256,8 @@ calls journalview.apg when clicking on a found-journal link.
 
         <TR>
         <TD class="submitbar" colspan=2 align="right">
-          <input type=submit name=action value="SEARCH";>
-          <input type=button value="RESET" onClick="call_reset()";> 
+          <input type=submit name=action value="Search">
+          <input type=button value="Reset" onClick="call_reset()"> 
         </TD> 
         </TR>
 

@@ -145,9 +145,9 @@ Input:
 	<input type=hidden NAME=marker_type value=$marker_type>
   	<?/MIVAR>
 
-	<input type=submit name=action value="SEARCH";">
-	<input type=submit name=getTop value="BEST MATCH";">
-	<input type=button value="RESET" onClick="call_reset()";>  
+	<input type=submit name=action value="Search">
+	<input type=submit name=getTop value="Best match">
+	<input type=button value="Reset" onClick="call_reset()">  
       </TD></form>
     </TR>
  </TABLE>

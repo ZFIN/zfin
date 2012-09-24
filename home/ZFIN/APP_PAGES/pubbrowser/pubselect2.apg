@@ -833,8 +833,8 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
     </tr>
     <tr>
       <td class=submitbar colspan=2 align="right">
-	<input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();"> 
-	<input type=button name=action value="RESET" onClick="call_reset('$ZDB_access');"> 
+	<input type=submit name=action value="Search" onSubmit="document.critform.submit();"> 
+	<input type=button name=action value="Reset" onClick="call_reset('$ZDB_access');"> 
 	<input type=button name=clear_all value="List all publications" onClick="list_all('$ZDB_access');">
       </td>
     </tr>
