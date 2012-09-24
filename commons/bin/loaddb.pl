@@ -247,6 +247,7 @@ sub checkConnect($) {
         }
     }
     if ($unknown) {
+	&dropLockFile();
 	# Shouldn't be able to happen.
 	die("Connect status file $fileName was unexpectedly empty.  " .
 	    "Terminating.");
@@ -921,7 +922,12 @@ sub postLoad($$) {
     return checkPreOrPostLoad($postLoadLog);
 }
 
-
+sub dropLockFile(){
+    if (-e $sharedTempFile){
+	system("/bin/rm -f $sharedTmpFile");
+    }
+    return 0;
+}
 
 
 #------------------------------------------------------------------------
@@ -986,6 +992,7 @@ else {
     system ("chmod o-w /tmp/loaddb");
 }
 $globalErrorCount = 0;
+$sharedTmpFile="/tmp/loadRunningAlready.txt";
 $globalTmpDir = "/tmp/loaddb/loaddb.$PROCESS_ID";
 $globalStderrExt = "err";
 $globalStdoutExt = "out";
@@ -1035,6 +1042,16 @@ mkdir($globalTmpDir, $dirPerms);
 
 # Set PDQPRIORITY to HIGH.  This doesn't speed up the loading of the data, 
 # but it really speeds up the enabling of the indexes and constraints.
+
+if ((-e $sharedTmpFile) && ($dbName ne "mirrordb")) {
+    logMsg("load already running, please check back later.");
+    exit 1;
+}
+else {
+    logMsg("creating lock file for this load");
+    system("/bin/touch $sharedTmpFile");
+}
+
 
 if ($ENV{HOST} =~ /kinetix/){
     $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
@@ -1086,6 +1103,7 @@ if (! createDb($dbName, $schemaFile)) {
 			  logMsg("Restarting Apache ...");
 			  restartApache();
 		      }
+		   
 		      logMsg("Enabling logging...");
 		      if(($ENV{HOST} =~ /kinetix/) && ($ENV{USER} eq "informix")){
 			  system("ontape -s -B $dbName -L 0") or die "can not enable logging as informix on kinetix.";
@@ -1102,6 +1120,7 @@ if (! createDb($dbName, $schemaFile)) {
 		      
 		      
 		  }
+		    
 		}
 	    }
 	}
@@ -1117,7 +1136,14 @@ if (! $globalErrorCount) {
   print(STDOUT "WARNING!!!!  behavior in your web site, and the ire of all\n");
   print(STDOUT "WARNING!!!!  your coworkers.\n\n");
 
-  system("/bin/rm -r $globalTmpDir");
+  if ($dbName ne "mirrordb") {
+      system("/bin/rm -rf $sharedTmpFile");
+      system("/bin/rm -r $globalTmpDir");
+  }
+}
+else {
+    &dropLockFile();
+    system("/bin/rm -rf $sharedTmpFile");
 }
 
 logMsg("Finished with $globalErrorCount errors.");
