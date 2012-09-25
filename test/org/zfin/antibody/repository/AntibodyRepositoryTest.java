@@ -10,7 +10,6 @@ import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.service.AnatomyService;
-import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyType;
@@ -179,9 +178,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyByAnatomyTermIncludingSubstructures() {
 
         // brain
-        String termID = "ZDB-ANAT-010921-415";
+        String termID = "ZDB-TERM-100331-8";
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(termID);
+        searchCriteria.setAnatomyTermNames("brain|");
         searchCriteria.setIncludeSubstructures(true);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -191,6 +191,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
 
+        // search without including substructure
+        searchCriteria.setIncludeSubstructures(false);
+        int numberOfAbWithout = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(numberOfAb > numberOfAbWithout);
+
     }
 
     // Test search by two ao terms ANDed
@@ -198,11 +203,12 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnected() {
 
-        // brain,rhombomere
-        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
+        // brain,eye
+        String aoTermIds = "ZDB-TERM-100331-8,ZDB-TERM-100331-100";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermIds);
+        searchCriteria.setAnatomyTermNames("brain|eye");
         searchCriteria.setIncludeSubstructures(false);
         searchCriteria.setAnatomyEveryTerm(true);
 
@@ -211,6 +217,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
+
+        searchCriteria.setIncludeSubstructures(true);
+        int numberOfAbWith = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(numberOfAb <  numberOfAbWith);
 
     }
 

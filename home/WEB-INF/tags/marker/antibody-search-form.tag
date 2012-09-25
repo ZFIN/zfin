@@ -90,20 +90,12 @@
                 <div id="anatomyTerm"></div>
                 <table>
                     <tr>
-                        <td valign="top" width="60%">
+                        <td valign="top">
                             <form:checkbox path="antibodyCriteria.includeSubstructures"/>
                             <label for="antibodyCriteria.includeSubstructures" class="accessoryLabel">Include
                                 substructures</label>
                         </td>
                         <td>
-                            <form:radiobutton path="antibodyCriteria.anatomyEveryTerm" value="true"/>
-                            <label for="antibodyCriteria.anatomyEveryTerm" class="accessoryLabel"> <b>Every</b> term
-                                entered
-                                &nbsp;<br></label>
-                            <form:radiobutton path="antibodyCriteria.anatomyEveryTerm" value="false"/>
-                            <label for="antibodyCriteria.anatomyEveryTerm2" class="accessoryLabel"> <b>Any</b> term
-                                entered
-                            </label>
                         </td>
                     </tr>
                 </table>

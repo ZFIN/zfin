@@ -22,7 +22,6 @@ import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.infrastructure.AllNamesFastSearch;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -391,7 +390,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         if (searchCriteria.isZircOnly())
             hql.append(", MarkerSupplier markerSupplier ");
-        if (searchCriteria.isAssaySearch())
+        if (searchCriteria.isAssaySearch() || searchCriteria.isAnatomyDefined())
             hql.append(", ExpressionExperiment experiment ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
             hql.append(",  AbstractMarkerRelationshipInterface rel   ");
@@ -399,6 +398,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
             hql.append(",  AllMarkerNamesFastSearch mapGene   ");
+        if (searchCriteria.isAnatomyDefined())
+            hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult expressionResult ");
 
         if (searchCriteria.isAny())
             hql.append("where ");
@@ -454,41 +455,39 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             //hql.append(" experiment.antibody = antibody AND ( ");
             hql.append("  ( ");
             int numberOfTerms = searchCriteria.getTermIDs().length;
-            for (int i = 0; i < numberOfTerms; i++) {
-                if (!searchCriteria.isIncludeSubstructures()) {
-                    if (searchCriteria.isStageDefined())
-                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
-                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
-                                "                     AND expressionTerm.originalAnnotation = 't' " +
-                                "                     AND expressionTerm.expressionResult.startStage.hoursStart >= :hoursStart " +
-                                "                     AND expressionTerm.expressionResult.endStage.hoursEnd <= :hoursEnd) ");
-                    else
-                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
-                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
-                                "                     AND expressionTerm.originalAnnotation = 't')");
-                }
-                if (searchCriteria.isIncludeSubstructures()) {
-                    if (searchCriteria.isStageDefined())
-                        hql.append("    exists ( select expressionTerm from ExpressionTermFastSearch expressionTerm " +
-                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody " +
-                                "                     AND expressionTerm.expressionResult.startStage.hoursStart >= :hoursStart " +
-                                "                     AND expressionTerm.expressionResult.endStage.hoursEnd <= :hoursEnd) ");
-                    else
-                        hql.append("    exists ( select  expressionTerm from ExpressionTermFastSearch expressionTerm " +
-                                "                  where  expressionTerm.term.zdbID = :aoTermID_" + i + " " +
-                                "                     AND expressionTerm.expressionResult.expressionExperiment.antibody = antibody )");
-                }
-                if (i < numberOfTerms - 1) {
+            // handle the first term
+            hql.append("     expressionTerm.term.zdbID = :aoTermID_0 " +
+                    "                     AND experiment.antibody = antibody " +
+                    "                     AND expressionTerm.expressionResult = expressionResult" +
+                    "                     AND expressionResult.expressionExperiment = experiment ");
+            if (searchCriteria.isStageDefined())
+                hql.append("                  AND expressionResult.startStage.hoursStart >= :hoursStart " +
+                        "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
+            if (!searchCriteria.isIncludeSubstructures())
+                hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+
+            if (numberOfTerms > 1) {
+                for (int i = 1; i < numberOfTerms; i++) {
                     if (searchCriteria.isAnatomyEveryTerm())
                         hql.append(" AND ");
                     else
                         hql.append(" OR ");
+                    hql.append(" exists (select expressionTerm from ExpressionTermFastSearch expressionTerm, " +
+                            "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
+                            "   where " +
+                            "       expressionTerm.term.zdbID = :aoTermID_" + i +
+                            "                     AND expressionResult2.expressionExperiment = experiment2 " +
+                            "                     AND experiment2.antibody = antibody " +
+                            "                     AND expressionTerm.expressionResult = expressionResult2 ");
+                    if (searchCriteria.isStageDefined())
+                        hql.append("                  AND expressionResult2.startStage.hoursStart >= :hoursStart " +
+                                "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
+                    if (!searchCriteria.isIncludeSubstructures())
+                        hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                    hql.append(" ) ");
                 }
             }
-            hql.append(")");
+            hql.append(") ");
         }
 
         return hql.toString();
