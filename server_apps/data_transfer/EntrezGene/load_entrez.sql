@@ -839,7 +839,7 @@ update statistics high for table entrez_gb;
 unload to 'EntrezGenPept_acc.unl' 
 select distinct dblink_acc_num 
  from entrez_gb join db_link on eg_aa == dblink_acc_num
-  and dblink_fdbcont_zdb_id != "ZDB-FDBCONT-040412-42" --  GenPept
+--  and dblink_fdbcont_zdb_id != "ZDB-FDBCONT-040412-42" --  GenPept
   --and dblink_length is NULL  -- much cheaper but lengths *can* change
   order by 1
 ; 

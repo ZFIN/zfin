@@ -220,8 +220,7 @@ run: $(TARGETDIR)/load_entrez.sql fetch_entrez  $(TARGETDIR)/rollback.sql
 run_commit: $(TARGETDIR)/update_GenPept_len.sql $(TARGETDIR)/genpept_len.unl 
 	cd $(TARGETDIR) && \
 	cat load_entrez.sql commit.sql | dbaccess -a $$DBNAME ;\
-	cat update_GenPept_len.sql commit.sql | dbaccess -a $$DBNAME ;\
-	rm -f genpept_len.unl EntrezGenPept_acc.unl GenPept.fasta
+	cat update_GenPept_len.sql commit.sql | dbaccess -a $$DBNAME ;
 	
 clean_entrez:
 	cd $(TARGETDIR) && \
