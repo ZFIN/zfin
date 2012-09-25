@@ -296,18 +296,21 @@ create dba function regen_anatomy_counts()
 
      insert into genos_with_phenos
 	  select distinct gffs_geno_zdb_id,term_zdb_id,'p'
-	    from genotype_figure_fast_search, term
-
+	    from genotype_figure_fast_search, term, genotype
 	    where gffs_superterm_zdb_id = term_Zdb_id
-	      and gffs_morph_zdb_id is null;
+	      and gffs_morph_zdb_id is null
+	      and geno_zdb_id = gffs_geno_zdb_id
+	      and geno_is_wildtype = 'f';
 
     let errorhint = "second genos_with_phenos insert";
 
      insert into genos_with_phenos
 	  select distinct gffs_geno_zdb_id,term_zdb_id,'p'
-	    from genotype_figure_fast_search,term
+	    from genotype_figure_fast_search,term, genotype
 	    where gffs_subterm_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null;
+	      and gffs_morph_zdb_id is null
+	      and geno_zdb_id = gffs_geno_zdb_id
+	      and geno_is_wildtype = 'f';
 
     let errorhint = "update stats for genos_with_phenos";
 
@@ -331,20 +334,24 @@ create dba function regen_anatomy_counts()
     insert into genos_with_phenos
 	  select distinct gffs_geno_zdb_id, term_zdb_id, 'c'
 	    from all_term_contains, term,
-		 genotype_figure_fast_search
+		 genotype_figure_fast_search, genotype
 	    where alltermcon_contained_zdb_id = gffs_subterm_zdb_id
 	      and alltermcon_container_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null;
+	      and gffs_morph_zdb_id is null
+	      and geno_zdb_id = gffs_geno_zdb_id
+	      and geno_is_wildtype = 'f';
 
     let errorhint = "fourth genos with phenos insert";
 
     insert into genos_with_phenos
 	  select distinct gffs_geno_zdb_id, term_zdb_id, 'c'
 	    from all_term_contains, term,
-		 genotype_figure_fast_search
+		 genotype_figure_fast_search, genotype
 	    where alltermcon_contained_zdb_id = gffs_superterm_zdb_id
 	      and alltermcon_container_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null;
+	      and gffs_morph_zdb_id is null
+	      and geno_zdb_id = gffs_geno_zdb_id
+	      and geno_is_wildtype = 'f';
 
 	      update statistics high for table genos_with_phenos;
 
