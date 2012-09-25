@@ -3,8 +3,6 @@
 alter table gene_feature_result_view
   drop constraint gfrv_fas_id_foreign_key;
 
-alter table figure_term_fish_search
-  drop constraint ftfs_fas_foreign_key;
 
 delete from fish_annotation_Search_backup;
 delete from gene_feature_result_view_backup;
@@ -35,11 +33,6 @@ alter table gene_feature_Result_view
   add constraint (Foreign key (gfrv_fas_id)
   references fish_annotation_search
   on delete cascade constraint gfrv_fas_id_foreign_key);
-
-alter table figure_term_Fish_search
-  add constraint (Foreign key (ftfs_fas_id)
-  references fish_annotation_search on delete cascade
-   constraint ftfs_Fas_foreign_key);
 
 
 update zdb_flag
