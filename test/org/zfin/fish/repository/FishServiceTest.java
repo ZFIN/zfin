@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
+import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
@@ -13,7 +14,9 @@ import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
+import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
@@ -249,5 +252,33 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertEquals(matchingText.getType(), MatchingTextType.FEATURE_LINE_NUMBER);
     }
 
+    @Test
+    public void getExpressionSummary() {
+        // genotype: apchu745/hu745
+        String fishID = "ZDB-GENO-090916-1,ZDB-GENOX-090916-4,ZDB-GENOX-120518-12,ZDB-GENOX-120518-13,ZDB-GENOX-120518-16,ZDB-GENOX-120518-17,ZDB-GENOX-120518-7,ZDB-GENOX-120518-8,ZDB-GENOX-120518-9";
+        Fish fish = FishService.getFish(fishID);
+        List<FigureExpressionSummary> summaryList = FishService.getExpressionSummary(fishID, null);
+        assertNotNull(summaryList);
+
+        //
+        String figID = "ZDB-FIG-101206-3";
+        String geneAbbreviation = "fabp2";
+        for (FigureExpressionSummary figureExpressionSummary : summaryList) {
+            if (figureExpressionSummary.getFigure().getZdbID().equals(figID)) {
+                for (ExpressedGene expressedGene : figureExpressionSummary.getExpressedGenes())
+                    if (expressedGene.getGene().getAbbreviation().equals(geneAbbreviation))
+                        assertTrue("There are at least one expression statements on gene " + expressedGene.getGene().getAbbreviation(), expressedGene.getExpressionStatements().size() > 0);
+            }
+        }
+
+        List<FigureExpressionSummaryDisplay> list = PresentationConverter.getFigureExpressionSummaryDisplay(summaryList);
+        assertNotNull(list);
+        for (FigureExpressionSummaryDisplay display : list) {
+            if (display.getFigure().getZdbID().equals(figID)) {
+                if (display.getExpressedGene().getGene().getAbbreviation().equals(geneAbbreviation))
+                    assertTrue("More than one expression statement: ", display.getExpressedGene().getExpressionStatements().size() > 1);
+            }
+        }
+    }
 
 }

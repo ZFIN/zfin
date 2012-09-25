@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class PresentationConverter {
 
+    // Convert list of FigureExpressionSummary records into unique FigureExpressionSummaryDisplay records
     public static List<FigureExpressionSummaryDisplay> getFigureExpressionSummaryDisplay(List<FigureExpressionSummary> figureExpressionSummaryList) {
         if (figureExpressionSummaryList == null)
             return null;
@@ -21,7 +22,15 @@ public class PresentationConverter {
             for (ExpressedGene expressedGene : summary.getExpressedGenes()) {
                 FigureExpressionSummaryDisplay display = new FigureExpressionSummaryDisplay(summary.getFigure());
                 display.setExpressedGene(expressedGene);
-                list.add(display);
+                if (list.contains(display)) {
+                    for (FigureExpressionSummaryDisplay fesd : list) {
+                        if (fesd.getFigure().equals(display.getFigure()) && fesd.getExpressedGene().getGene().equals(display.getExpressedGene().getGene())) {
+                            // add missing expression statements
+                            fesd.getExpressedGene().addExpressionStatements(display.getExpressedGene().getExpressionStatements());
+                        }
+                    }
+                } else
+                    list.add(display);
             }
         }
         Collections.sort(list);

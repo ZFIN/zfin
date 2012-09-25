@@ -53,5 +53,26 @@ public class FigureExpressionSummaryDisplay implements Comparable<FigureExpressi
         return figure.getImages().size();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
+        FigureExpressionSummaryDisplay that = (FigureExpressionSummaryDisplay) o;
+
+        if (expressedGene != null ? !expressedGene.getGene().equals(that.expressedGene.getGene()) : that.expressedGene != null)
+            return false;
+        if (figure != null ? !figure.equals(that.figure) : that.figure != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = figure != null ? figure.hashCode() : 0;
+        result = 31 * result + (expressedGene != null ? expressedGene.getGene().hashCode() : 0);
+        return result;
+    }
 }
