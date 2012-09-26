@@ -451,7 +451,7 @@ print NEWREFSEQGENES "total:$numGainedGenes \n";
 close (NEWREFSEQGENES);
 
 
-&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->“,"stats","$statsfile");
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->","stats","$statsfile");
 &sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log1","log1");
 &sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log2","log2");
 
