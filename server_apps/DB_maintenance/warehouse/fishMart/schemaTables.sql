@@ -16,7 +16,7 @@ create table functional_annotation(
        fa_geno_name varchar(255),
        fa_geno_handle varchar(255) not null constraint fa_geno_handle_not_null,
        fa_genox_zdb_id varchar(50),
-       fa_feature_group lvarchar(1000),
+       fa_feature_group lvarchar(2500),
        fa_gene_group lvarchar(1500),
        fa_construct_group lvarchar(500),
        fa_morpholino_group lvarchar(380),
@@ -217,7 +217,7 @@ create index construct_group_member_group_id_index on construct_group_member (cg
 alter table construct_Group_member
   add constraint primary key (cgm_pk_id) constraint construct_group_member_primary_key;
 
-create table feature_group (fg_group_name lvarchar(1000), 
+create table feature_group (fg_group_name lvarchar(2500), 
        	     		   		  fg_group_order lvarchar(2000),
 					  fg_genox_Zdb_id varchar(50), 
 					  fg_geno_zdb_id varchar(50), 
