@@ -12,7 +12,7 @@
         <c:set var="blastLinkString"
                value="/action/blast/external-blast?accession=${dbLink.accessionNumber}&refDB=${dbLink.referenceDatabase.zdbID}&blastDB=${blastDB.zdbID}"/>
         <c:choose>
-            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq 'Polypeptide'}">
+            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq ForeignDBDataType.DataType.Polypeptide}">
                 <c:set var="blastLinkString" value="${blastLinkString}&sequenceType=pt"/>
                 <c:set var="blastLinkString" value="${blastLinkString}&program=blastp"/>
             </c:when>
@@ -22,6 +22,7 @@
             </c:otherwise>
         </c:choose>
 
+${dbLink.referenceDatabase.foreignDBDataType.dataType}
         <a href="${blastLinkString}"
                 >Blast at ${blastDB.displayName}</a>
     </c:when>
@@ -56,7 +57,7 @@
                         </c:choose>
 
                         <c:choose>
-                            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq 'Polypeptide'}">
+                            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq  ForeignDBDataType.DataType.Polypeptide}">
                                 <c:set var="blastLinkString" value="${blastLinkString}&sequenceType=pt"/>
                                 <c:set var="blastLinkString" value="${blastLinkString}&program=blastp"/>
                             </c:when>

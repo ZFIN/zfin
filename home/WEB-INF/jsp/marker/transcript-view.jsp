@@ -96,7 +96,7 @@
 <zfin2:markerRelationships relationships="${formBean.markerRelationships}" marker="${formBean.marker}"
                            title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
 
-<c:if test="${formBean.marker.transcriptType.type eq 'miRNA'}">
+<c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
     <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
 </c:if>
 
