@@ -451,13 +451,13 @@ print NEWREFSEQGENES "total:$numGainedGenes \n";
 close (NEWREFSEQGENES);
 
 
-&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","stats","$statsfile");
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->“,"stats","$statsfile");
 &sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log1","log1");
 &sendMail("Auto from $dbname: entrezGene.pl : ","xshao\@zfin.org","log2","log2");
 
-&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","genes lost association with RefSeq","$refSeqGeneListLost");
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->","genes lost association with RefSeq","$refSeqGeneListLost");
 
-&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->,xshao\@zfin.org","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
 
 print "\nDone\n\n";
 
