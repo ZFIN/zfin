@@ -1,11 +1,13 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.GenotypeExperiment;
@@ -45,8 +47,17 @@ public class AllMorpholinoExperimentController {
     ) throws Exception {
 
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+
+        //try converting from anatomy to term if it gets an anatomy id...
+        if (term == null && StringUtils.contains(termID, "ZDB-ANAT")) {
+            AnatomyItem ai = RepositoryFactory.getAnatomyRepository().getAnatomyTermByID(termID);
+            term = RepositoryFactory.getOntologyRepository().getTermByOboID(ai.getOboID());
+        }
+
         if (term == null)
             return "";
+
+
         form.setAoTerm(term);
         form.setRequestUrl(request.getRequestURL());
         if (request.getQueryString() != null)
