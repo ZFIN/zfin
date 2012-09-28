@@ -24,12 +24,13 @@
             <fmt:formatDate value="${service.unloadInfo.date}" pattern="dd-MM-yyyy"/>
             <br/>
             but no archive before this date is found.
-            <c:if test="${service.futureArchivesAvailable}">
-                <p/>
-                Future download archive available:
-                <a href="archive/${service.futureArchive}"> ${service.futureArchive}
-            </c:if>
-
+            <authz:authorize ifAnyGranted="root">
+                <c:if test="${service.futureArchivesAvailable}">
+                    <p/>
+                    Future download archive available:
+                    <a href="archive/${service.futureArchive}"> ${service.futureArchive}
+                </c:if>
+            </authz:authorize>
         </c:if>
     </c:otherwise>
 </c:choose>
