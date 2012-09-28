@@ -69,7 +69,8 @@ public class DownloadsArchiveController {
                                        @PathVariable String month,
                                        @PathVariable String day,
                                        @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
-        if (hasErrors())
+        // no archives found at all?
+        if (!downloadFileService.isDownloadArchiveExists())
             return "unload/download-error-message.page";
         String date = year + "." + month + "." + day;
         formBean.setDate(date);
@@ -104,7 +105,8 @@ public class DownloadsArchiveController {
                                   @PathVariable String extension,
                                   @ModelAttribute("formBean") UnloadBean formBean) {
 
-        if (hasErrors())
+        // no archives found at all?
+        if (!downloadFileService.isDownloadArchiveExists())
             return "unload/download-error-message.page";
         String fullFileName = fileName + "." + extension;
         String archiveDate = year + "." + month + "." + day;
@@ -138,7 +140,8 @@ public class DownloadsArchiveController {
                                       @PathVariable String extension,
                                       @ModelAttribute("formBean") UnloadBean formBean,
                                       HttpServletResponse response) throws Exception {
-        if (hasErrors())
+        // no archives found at all?
+        if (!downloadFileService.isDownloadArchiveExists())
             return "unload/download-error-message.page";
         String fullFileName = fileName + "." + extension;
         String archiveDate = year + "." + month + "." + day;

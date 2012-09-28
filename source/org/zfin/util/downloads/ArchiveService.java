@@ -227,6 +227,7 @@ public abstract class ArchiveService {
     }
 
     protected boolean cacheIsBeingUpdated;
+
     /**
      * Should be implemented by sub classes.
      * Make sure to call this as well...
@@ -237,6 +238,24 @@ public abstract class ArchiveService {
 
     public UnloadInfo getUnloadInfo() {
         return getInfrastructureRepository().getUnloadInfo();
+    }
+
+    public String getFutureArchive() {
+        Date unloadDate = getUnloadInfo().getDate();
+        List<Date> allUnloadDates = getAllArchiveDates();
+        if (CollectionUtils.isEmpty(archiveDirectories))
+            LOG.error("No archive files found");
+
+        for (Date date : allUnloadDates) {
+            if (unloadDate.before(date)) {
+                return getDateString(date);
+            }
+        }
+        return null;
+    }
+
+    public boolean isFutureArchivesAvailable() {
+        return getFutureArchive() != null;
     }
 
     public Date getDateString(String dataString) {

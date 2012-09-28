@@ -20,12 +20,16 @@
         <c:if test="${!service.validArchiveFound}">
             No download archive found that matches the data. <p/>
 
-            <authz:authorize ifAnyGranted="root">
-                The time stamp of the data (unload) is:
-                <fmt:formatDate value="${service.unloadInfo.date}" pattern="dd-mm-yyyy - HH:mm:ss"/>
-                <br/>
-                but no archive before this date is found.
-            </authz:authorize>
+            The time stamp of the data (unload) is:
+            <fmt:formatDate value="${service.unloadInfo.date}" pattern="dd-MM-yyyy"/>
+            <br/>
+            but no archive before this date is found.
+            <c:if test="${service.futureArchivesAvailable}">
+                <p/>
+                Future download archive available:
+                <a href="archive/${service.futureArchive}"> ${service.futureArchive}
+            </c:if>
+
         </c:if>
     </c:otherwise>
 </c:choose>
