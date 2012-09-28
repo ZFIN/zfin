@@ -3,6 +3,7 @@ package org.zfin.uniquery.search;
 import org.apache.lucene.document.Document;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.Indexer;
+import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.presentation.SearchBean;
 
 import java.util.Iterator;
@@ -45,8 +46,8 @@ public class SearchResults {
             Hit hit = (Hit) hitsIterator.next();
 
             Document doc = hit.getDocument();
-            String pageTitle = doc.get(SearchBean.TITLE);
-            String searchResultURL = doc.get(SearchBean.URL);
+            String pageTitle = doc.get(SiteSearchService.TITLE);
+            String searchResultURL = doc.get(SiteSearchService.URL);
 
             if (pageTitle.trim().length() < 1) {
                 pageTitle = "Untitled";

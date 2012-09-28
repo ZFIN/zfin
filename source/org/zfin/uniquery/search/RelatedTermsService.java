@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.uniquery.SiteSearchService;
@@ -16,13 +18,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RelatedTerms {
+@Service
+public class RelatedTermsService {
 
-    private static final Logger LOG = Logger.getLogger(RelatedTerms.class);
+    private static final Logger LOG = Logger.getLogger(RelatedTermsService.class);
+    @Autowired
+    private SiteSearchService siteSearchService;
 
     /**
      * Searches anatomy tokens for a match of a given query string.
-     * Returns results {token=hits} as a Hashtable,
+     * Returns results {token=hits} as a Hash table,
      * where hits is an ArrayList.
      *
      * @param queryString string
@@ -95,7 +100,7 @@ public class RelatedTerms {
                 // do not add alias if it is the same string ignoring the case
                 if (!queryString.toLowerCase().equals(alias)) {
                     // check if the new alias has actual hits to offer...
-                    if (SiteSearchService.hasHits(alias))
+                    if (siteSearchService.hasHits(alias))
                         validAliases.add(alias);
                 }
             }

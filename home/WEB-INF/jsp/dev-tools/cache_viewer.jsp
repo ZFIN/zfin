@@ -1,6 +1,8 @@
 <%@ page import="org.zfin.framework.presentation.CacheForm" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.framework.presentation.CacheForm" scope="request"/>
+
 <table cellpadding="3" cellspacing="1" border="0" width="90%">
 
     <tr>
@@ -13,13 +15,8 @@
                 <tr>
                     <td class="titlebar">Entity Name</td>
                     <td class="titlebar"># of objects</td>
-                    <td class="titlebar"># of Memory Hits</td>
-                    <td class="titlebar"># of Disk Hits</td>
                     <td class="titlebar">Max elements</td>
-                    <td class="titlebar">Max Idle Time</td>
-                    <td class="titlebar">eternal</td>
                     <td class="titlebar">status</td>
-                    <td class="titlebar">Expiry [s]</td>
                     <td class="titlebar"><a
                             href="?regionName=${cacheItem.cache.name}&action=<%= CacheForm.ACTION_SHOW_SIZE %>">Show
                         Size</a></td>
@@ -30,13 +27,13 @@
                         <td>
                             <a href="?action=<%= CacheForm.ACTION_SHOW_OBJECTS %>&regionName=${cacheItem.cache.name}">${cacheItem.cache.size}</a>
                         </td>
-                        <td> ${cacheItem.cache.memoryStoreHitCount} </td>
-                        <td> ${cacheItem.cache.diskStoreHitCount} </td>
-                        <td> ${cacheItem.cache.maxElementsInMemory} </td>
-                        <td> ${cacheItem.cache.timeToIdleSeconds} </td>
-                        <td> ${cacheItem.cache.eternal} </td>
-                        <td> ${cacheItem.cache.status} </td>
-                        <td> ${cacheItem.cache.diskExpiryThreadIntervalSeconds} </td>
+                        <td> ${cacheItem.cache.memoryStoreSize} </td>
+                        <td> ${cacheItem.cache.diskStoreSize} </td>
+                        <td>  </td>
+                        <td>  </td>
+                        <td>  </td>
+                        <td> heItem.cache.status} </td>
+                        <td>  </td>
                         <td><c:if test="${formBean.showSize}">
                             <c:if test="${cacheItem.memorySize > 1024}">
                             ${cacheItem.memorySizeKB} KB

@@ -58,7 +58,8 @@
 
     </class>
 
-    <class name="org.zfin.infrastructure.Updates" table="updates">
+    <class name="org.zfin.infrastructure.Updates" mutable="false" table="updates">
+        <cache usage="read-only"/>
         <id name="ID" type="long">
             <column name="upd_pk_id" not-null="true"/>
             <generator class="identity"/>
@@ -94,7 +95,7 @@
                      class="org.zfin.profile.Person"/>
     </class>
 
-    <class name="org.zfin.infrastructure.DataAliasGroup" table="alias_group">
+    <class name="org.zfin.infrastructure.DataAliasGroup" mutable="false" table="alias_group">
         <cache usage="read-only"/>
         <id name="id" access="field">
             <column name="aliasgrp_pk_id"/>
@@ -249,8 +250,8 @@
         <property name="oldName" column="zrepld_old_name"/>
     </class>
 
-    <class name="org.zfin.ontology.GenericTerm" table="TERM">
-
+    <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM">
+        <cache usage="read-only"/>
         <id name="zdbID" type="string">
             <column name="term_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">

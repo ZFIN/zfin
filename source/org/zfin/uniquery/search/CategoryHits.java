@@ -7,8 +7,8 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.zfin.uniquery.SearchCategory;
+import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
-import org.zfin.uniquery.presentation.SearchBean;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -38,13 +38,13 @@ public class CategoryHits {
         * We use the highlighter and query term to provide additional string formatting.
         */
         for (int i = 0; i < (hits.length() > max_hits ? max_hits : hits.length()); i++) {
-            String text = hits.doc(i).get(SearchBean.BODY);
+            String text = hits.doc(i).get(SiteSearchService.BODY);
             String highlightedText = "";
             if (text != null) {
-                TokenStream tokenStream = analyzer.tokenStream(SearchBean.BODY, new StringReader(text));
+                TokenStream tokenStream = analyzer.tokenStream(SiteSearchService.BODY, new StringReader(text));
                 highlightedText = highlighter.getBestFragments(tokenStream, text, 3, "<b> ... </b>");
                 /* the next line is a RegEx replacement that means: 
-                 * replace all occurrances of non-word characters except "<" at the beginning of a line 
+                 * replace all occurrences of non-word characters except "<" at the beginning of a line
                  */
                 highlightedText = highlightedText.replaceFirst("^[^\\w<]*", "<b>... </b>");
                 highlightedText = highlightedText.concat("<b> ...</b>");

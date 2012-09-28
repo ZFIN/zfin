@@ -24,7 +24,8 @@ SUBDIRS = GFF3
 
 GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql
 
-STATICS = build.xml
+STATICS = build.xml set_download_timestamp.sql
+
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
 

@@ -11,7 +11,7 @@ import java.io.Serializable;
  * This object is a composite on the a AnatomyItem object,
  * i.e. this business objects exists only in conjunction with its parent.
  * The relationship is read as follows: the parent item relates to the
- * item in this obejcts via the relationship attribute.
+ * item in this objects via the relationship attribute.
  */
 public class AnatomyRelationshipOne extends AnatomyRelationship implements Serializable {
 

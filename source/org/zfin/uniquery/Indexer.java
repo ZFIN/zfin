@@ -578,22 +578,22 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
 
         Document doc = new Document();
         if (uriName != null) {
-            doc.add(new Field(SearchBean.URL, uriName, Field.Store.YES, Field.Index.TOKENIZED));
+            doc.add(new Field(SiteSearchService.URL, uriName, Field.Store.YES, Field.Index.TOKENIZED));
 
             if (summary.getText() != null && summary.getText().length() > 0) {
-                doc.add(new Field(SearchBean.BODY, summary.getText(), Field.Store.YES, Field.Index.TOKENIZED));
+                doc.add(new Field(SiteSearchService.BODY, summary.getText(), Field.Store.YES, Field.Index.TOKENIZED));
             } else {
-                doc.add(new Field(SearchBean.BODY, "", Field.Store.YES, Field.Index.TOKENIZED));
+                doc.add(new Field(SiteSearchService.BODY, "", Field.Store.YES, Field.Index.TOKENIZED));
                 log.println(Thread.currentThread().getName() + ": no body text for URL: " + summary.getUrlLink());
                 cronJobReport.warning(Thread.currentThread().getName() + ": no body text for URL: " + summary.getUrlLink());
             }
 
             String title = summary.getAdjustedTitle();
-            doc.add(new Field(SearchBean.TITLE, title, Field.Store.YES, Field.Index.TOKENIZED));
+            doc.add(new Field(SiteSearchService.TITLE, title, Field.Store.YES, Field.Index.TOKENIZED));
         }
 
         String docType = SiteSearchCategories.getDocType(url);
-        doc.add(new Field(SearchBean.TYPE, docType, Field.Store.YES, Field.Index.TOKENIZED));
+        doc.add(new Field(SiteSearchService.TYPE, docType, Field.Store.YES, Field.Index.TOKENIZED));
 
         synchronized (this) {
             bytes += summary.getBody().length();

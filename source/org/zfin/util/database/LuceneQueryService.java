@@ -5,12 +5,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -21,7 +19,7 @@ import java.util.Map;
  */
 public class LuceneQueryService {
 
-
+    // current lucene index
     private String indexDirectory;
     private Analyzer analyzer = new KeywordAnalyzer();
     private IndexReader reader;
@@ -59,7 +57,6 @@ public class LuceneQueryService {
             reader.reopen();
         } catch (IOException e) {
             LOG.warn(e);
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -168,5 +165,24 @@ public class LuceneQueryService {
 
     public String getIndexDirectory() {
         return indexDirectory;
+    }
+
+    @Override
+    // cleanup all handles to index files.
+    protected void finalize() throws Throwable {
+        reader.close();
+        super.finalize();
+    }
+
+    public void changeIndex(String fullPathMatchingIndexDirectory) {
+
+        try {
+            finalize();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        this.indexDirectory = fullPathMatchingIndexDirectory;
+        initSummary();
+
     }
 }

@@ -1,9 +1,11 @@
 package org.zfin.anatomy.repository;
 
+import java.io.Serializable;
+
 /**
  * This is a convenience class only used for data retrieval. 
  */
-public class AnatomyRelationshipTypePersistence {
+public class AnatomyRelationshipTypePersistence implements Serializable{
 
     private String typeID;
     private String relationOneToTwo;

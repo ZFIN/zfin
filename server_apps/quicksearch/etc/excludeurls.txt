@@ -47,6 +47,7 @@ action/feature/feature-detail
 action/fish
 gene-product-description
 /phenotype-statement
+/downloads
 mutant/mutant-list
 /zirc/
 action/genotype/

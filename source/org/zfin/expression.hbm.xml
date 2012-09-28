@@ -55,8 +55,8 @@
 
     </class>
 
-    <class name="org.zfin.expression.Image" table="image">
-
+    <class name="org.zfin.expression.Image" mutable="false" table="image">
+        <cache usage="read-only"/>
         <id name="zdbID" type="string">
             <column name="img_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">

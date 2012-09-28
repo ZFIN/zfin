@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="Archive-Downloadfiles" default="archive-download-files" basedir="../../../">
+<project name="Archive-Downloadfiles" default="timestamp-download" basedir="../../../">
 
     <property name="web.dir" value="${basedir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -8,9 +8,10 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="download.dir" value="${web.dir}/data_transfer/Downloads"/>
+    <property name="download-execute.dir" value="server_apps/data_transfer/Downloads"/>
 
 
-    <property environment="env" />
+    <property environment="env"/>
 
     <!-- Classpath definitions -->
     <path id="classpath">
@@ -43,15 +44,35 @@
 
     <target name="archive-download-files">
         <tstamp>
-            <format property="time-stamp" pattern="yyyy.MM.dd" />
+            <format property="time-stamp" pattern="yyyy.MM.dd"/>
         </tstamp>
         <echo message="Copy download files into archive directory: '${download-dir}/${time-stamp}'"/>
         <mkdir dir="${download-dir}/${time-stamp}"/>
-	<copy todir="${download-dir}/${time-stamp}">
-	     <fileset dir="${download.dir}"/>
+        <copy todir="${download-dir}/${time-stamp}">
+            <fileset dir="${download.dir}"/>
         </copy>
-        <copyfile src="${web-inf.dir}/conf/download-registry.xml" dest="${download-dir}/${time-stamp}/download-registry.xml" />
+        <copyfile src="${web-inf.dir}/conf/download-registry.xml"
+                  dest="${download-dir}/${time-stamp}/download-registry.xml"/>
     </target>
+
+    <target name="timestamp-download" depends="archive-download-files" description="Set the timestamp of the unload in the database_info table">
+        <echo message="Update time stamp in DATABASE_INFO table:"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <run-db-query db-query-file="set_download_timestamp.sql" instanceName="${DBNAME}"/>
+    </target>
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${download-execute.dir}"/>
+            </java>
+        </sequential>
+    </macrodef>
 
 
     <target name="usage">

@@ -1,26 +1,18 @@
 package org.zfin.uniquery;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-import org.zfin.database.UnloadInfo;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.database.LuceneQueryService;
-import org.zfin.util.downloads.DownloadFilesException;
+import org.zfin.util.downloads.ArchiveService;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -30,128 +22,129 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * reads of files.
  */
 @Service
-public class SiteSearchIndexService {
+public class SiteSearchIndexService extends ArchiveService {
 
     private static Logger LOG = Logger.getLogger(SiteSearchIndexService.class);
-
-    private String indexDirectory = "/research/zunloads/indexes/production";
-    private Analyzer analyzer = new KeywordAnalyzer();
-
     private LuceneQueryService luceneQueryService;
 
     public SiteSearchIndexService() {
-        checkUnloadDirectory();
+        rootArchiveDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
+        readAllArchiveDirectories();
+        luceneQueryService = new LuceneQueryService(getFullPathMatchingIndexDirectory());
     }
 
-    // index single table up-to-date
     public SiteSearchIndexService(String indexDirectory) throws IOException {
         if (indexDirectory != null)
-            this.indexDirectory = indexDirectory;
+            rootArchiveDirectory = indexDirectory;
+        readAllArchiveDirectories();
+        luceneQueryService = new LuceneQueryService(getFullPathMatchingIndexDirectory());
     }
-
-    private List<File> unloadFiles;
-    private int numberOfUnloadFiles;
 
     public void checkUnloadDirectory() {
         try {
-            numberOfUnloadFiles = getLatestNumberUnloadFiles();
+            numberOfArchiveDirectories = getLatestNumberUnloadFiles();
         } catch (Exception e) {
             LOG.error(e);
             return;
         }
-        File unloadDir = new File(indexDirectory);
+        File unloadDir = new File(rootArchiveDirectory);
         File[] files = unloadDir.listFiles();
-        unloadFiles = Arrays.asList(files);
-        Collections.sort(unloadFiles);
-        Collections.reverse(unloadFiles);
+        if (files == null) {
+            LOG.error("No files found in archive directory: " + rootArchiveDirectory);
+            return;
+        }
+
+        archiveDirectories = Arrays.asList(files);
+        Collections.sort(archiveDirectories);
+        Collections.reverse(archiveDirectories);
         List<File> cleanedUpFiles = new ArrayList<File>();
-        for (File file : unloadFiles) {
+        for (File file : archiveDirectories) {
             String name = file.getName();
             boolean lastCharacterIsNumber = Character.isDigit(name.charAt(name.length() - 1));
             if (name.startsWith("20") && lastCharacterIsNumber)
                 //if (file.listFiles().length > 100)
                 cleanedUpFiles.add(file);
         }
-        unloadFiles = cleanedUpFiles;
-        if (luceneQueryService == null)
-            luceneQueryService = new LuceneQueryService(unloadFiles.get(0).getAbsolutePath());
-    }
-
-    private int getLatestNumberUnloadFiles() {
-        File unloadDir = new File(indexDirectory);
-        if (!unloadDir.exists())
-            throw new RuntimeException("Unload directory not found: " + unloadDir.getAbsolutePath());
-        LOG.info("Found " + unloadDir.list().length + " backups.");
-        return unloadDir.list().length;
-    }
-
-    /**
-     * The list of files is in ascending order of time.
-     *
-     * @return list of unload files.
-     */
-    public List<File> getUnloadFiles() {
-        return getUnloadFiles(false);
-    }
-
-    public List<File> getUnloadFiles(boolean forceReload) {
-        if (unloadFiles == null || forceReload)
-            checkUnloadDirectory();
-        return unloadFiles;
-    }
-
-    public String getLatestUnloadDate() {
-        // if the current number of files found in the unload directory is different from
-        // the number stored here then update the file list
-        if (getLatestNumberUnloadFiles() != numberOfUnloadFiles)
-            getUnloadFiles(true);
-        return unloadFiles.get(0).getName();
-    }
-
-    public String getIndexDirectory() {
-        return indexDirectory;
-    }
-
-    /**
-     * Checks which index files matches most closely the current data.
-     *
-     * @return
-     */
-    public String getMatchingIndexDirectory() {
-        if (CollectionUtils.isEmpty(unloadFiles))
-            throw new NullPointerException("No index files found");
-        Date unloadDate = getUnloadDate().getDate();
-        for (File file : unloadFiles) {
-            String date = file.getName();
-
-            if (unloadDate.after(getDateString(date))) {
-                return date;
-            }
-        }
-        throw new DownloadFilesException("No download file found that for " + unloadDate.toString() + " or earlier");
-    }
-
-    public UnloadInfo getUnloadDate() {
-        return getInfrastructureRepository().getUnloadDate();
-    }
-
-    public String getFullPathToIndex() {
-        return indexDirectory + "/" + getMatchingIndexDirectory();
-    }
-
-    public Date getDateString(String dataString) {
-        DateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
-        try {
-            return dt.parse(dataString);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        archiveDirectories = cleanedUpFiles;
     }
 
     public int getNumberOfDocuments() {
         return luceneQueryService.getNumberOfDocuments();
     }
 
+    /**
+     * We cannot keep track of when an indexer was created for production as we generate the sites search index from almost.
+     * I.e. we cannot update database_info to hold the correct date.
+     * To allow running the indexer on dev sites we have the following logic:
+     * If the property INDEXER_DIRECTORY points to production, i.e use production indexer for site searches
+     * then check the unload date and obtain the most recent matching dated archive.
+     * If the property INDEXER_DIRECTORY points to a different site than production
+     * use the latest dated archive that is available. When you run the indexer generation on a dev site you most likely
+     * want to use that index for the UI. When pointing to production then you are 'only' reusing the production
+     * index and that should match with the data, i.e. with the unload date di_date_unloaded.
+     *
+     * @return most current archive directory to be used.
+     */
+    public List<File> getUnloadFiles() {
+        return getUnloadFiles(false);
+    }
 
+    public List<File> getUnloadFiles(boolean forceReload) {
+        if (archiveDirectories == null || forceReload)
+            checkUnloadDirectory();
+        return archiveDirectories;
+    }
+
+    @Override
+    public String getFullPathMatchingIndexDirectory() {
+        return getFullPath(getMatchingIndexDirectory());
+    }
+
+    public String getLatestUnloadDate() {
+        // if the current number of files found in the unload directory is different from
+        // the number stored here then update the file list
+        if (getLatestNumberUnloadFiles() != numberOfArchiveDirectories)
+            getUnloadFiles(true);
+        return archiveDirectories.get(0).getName();
+    }
+
+    /**
+     * Checks which index files matches most closely the current data.
+     * <p/>
+     * Index consists of three files:
+     * 1) <xxx>.cfs
+     * 2) <yyy>.gen
+     * 3) segments_<iii>
+     * Note that this is specific to the lucene API we are using
+     *
+     * @return boolean
+     */
+    @Override
+    protected boolean isValidArchive(File archiveDirectory) {
+        if (archiveDirectory == null)
+            return false;
+        File[] indexFiles = archiveDirectory.listFiles();
+        if (indexFiles == null || indexFiles.length == 0)
+            return false;
+        indexFiles = archiveDirectory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith("gen") || name.endsWith("cfs");
+            }
+        });
+        return indexFiles != null && indexFiles.length >= 2;
+    }
+
+    @Override
+    public void updateCache() {
+        if (cacheIsBeingUpdated)
+            return;
+        cacheIsBeingUpdated = true;
+        super.updateCache();
+        // point lucene service to new directory
+        if (luceneQueryService != null)
+            luceneQueryService.changeIndex(getFullPathMatchingIndexDirectory());
+        cacheIsBeingUpdated = false;
+    }
 }
 

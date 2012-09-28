@@ -30,7 +30,7 @@
         <property name="releaseDate" column="wrt_last_loaded_date"/>
     </class>
 
-    <class name="FeatureGene" table="gene_feature_result_View">
+    <class name="FeatureGene" mutable="false" table="gene_feature_result_View">
         <cache usage="read-only"/>
         <id name="ID">
             <column name="gfrv_pk_id" not-null="true"/>

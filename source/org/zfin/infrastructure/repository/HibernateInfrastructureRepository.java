@@ -1293,7 +1293,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return unload date of the production database.
      */
     @Override
-    public UnloadInfo getUnloadDate() {
+    public UnloadInfo getUnloadInfo() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(UnloadInfo.class);
         return (UnloadInfo) criteria.uniqueResult();

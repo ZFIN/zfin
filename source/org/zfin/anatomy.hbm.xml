@@ -37,7 +37,7 @@
 
     </class>
 
-    <class name="org.zfin.anatomy.AnatomyItem" table="anatomy_item">
+    <class name="org.zfin.anatomy.AnatomyItem" mutable="false" table="anatomy_item">
         <cache usage="read-only"/>
         <id name="zdbID">
             <column name="anatitem_zdb_id" not-null="true"/>
@@ -131,7 +131,7 @@
 
     </class>
 
-    <class name="org.zfin.anatomy.repository.AnatomyRelationshipOne" table="anatomy_relationship">
+    <class name="org.zfin.anatomy.repository.AnatomyRelationshipOne" mutable="false" table="anatomy_relationship">
         <cache usage="read-only"/>
         <composite-id>
             <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false"/>
@@ -143,7 +143,7 @@
 
     </class>
 
-    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTwo" table="anatomy_relationship">
+    <class name="org.zfin.anatomy.repository.AnatomyRelationshipTwo" mutable="false" table="anatomy_relationship">
         <cache usage="read-only"/>
         <composite-id>
             <key-many-to-one name="anatomyItemOne" column="anatrel_anatitem_1_zdb_id" lazy="false"/>

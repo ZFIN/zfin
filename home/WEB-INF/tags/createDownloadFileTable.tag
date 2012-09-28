@@ -26,7 +26,7 @@
             <td>
                 <c:choose>
                     <c:when test="${formBean.currentDate}">
-                        <a href="downloads/${fileInfo.name}">${fileInfo.downloadFile.name}</a>
+                        <a href="downloads/${fileInfo.name}" id="${fileInfo.name}">${fileInfo.downloadFile.name}</a>
                     </c:when>
                     <c:otherwise>
                         <a href="${formBean.date}/${fileInfo.name}">${fileInfo.downloadFile.name}</a>

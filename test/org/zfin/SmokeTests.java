@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
+import org.zfin.datatransfer.DownloadSmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
@@ -31,6 +32,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         AnatomySmokeTest.class,
         AntibodySmokeTest.class,
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
+        DownloadSmokeTest.class,
         ExpressionSmokeTest.class,
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,

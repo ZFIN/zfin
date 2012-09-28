@@ -5,7 +5,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.zfin.AbstractSmokeTest;
-import org.zfin.uniquery.presentation.SearchBean;
+import org.zfin.uniquery.SiteSearchService;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,7 +49,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(200);
 
                 // find alternative search field
-		assertSingleAlternativeTermName(page, "insulin-responsive compartment");
+                assertSingleAlternativeTermName(page, "insulin-responsive compartment");
             } catch (IOException e) {
                 fail(e.toString());
             }
@@ -100,19 +100,19 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
     }
 
     private void assertAlternativeSearchLineAbsent(HtmlPage page) {
-        HtmlElement alternativeSearchLines = page.getElementById(SearchBean.ALTERNATIVE_SEARCH_ID);
+        HtmlElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
         assertNull("There is no alternative search line", alternativeSearchLines);
     }
 
     private void assertSingleAlternativeTermName(HtmlPage page, String anchorText) {
-        List<?> relatedTerms = page.getByXPath("//a[@id='" + SearchBean.ALIAS_TERM_ID + "']");
+        List<?> relatedTerms = page.getByXPath("//a[@id='" + SiteSearchService.ALIAS_TERM_ID + "']");
         assertEquals("There is only one alternate search term", 1, relatedTerms.size());
         HtmlAnchor anchor = (HtmlAnchor) relatedTerms.get(0);
         assertEquals("Alternate search term is", anchorText, anchor.getTextContent());
     }
 
     private void assertAlternativeTermLinePresent(HtmlPage page) {
-        HtmlElement alternativeSearchLines = page.getElementById(SearchBean.ALTERNATIVE_SEARCH_ID);
+        HtmlElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
         assertNotNull("There is only one alternative search line", alternativeSearchLines);
     }
 

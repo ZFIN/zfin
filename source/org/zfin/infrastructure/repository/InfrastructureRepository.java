@@ -416,7 +416,7 @@ public interface InfrastructureRepository {
      * was used for loading.
      * @return UnloadInfo of the production database.
      */
-    UnloadInfo getUnloadDate();
+    UnloadInfo getUnloadInfo();
 }
 
 

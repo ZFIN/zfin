@@ -86,7 +86,7 @@ public class DownloadsArchiveController {
 
         if (hasErrors())
             return "unload/download-error-message.page";
-        String currentDate = downloadFileService.getMostRecentMatchingDate();
+        String currentDate = downloadFileService.getMatchingIndexDirectory();
         String fullFileName = fileName + "." + extension;
         File file = downloadFileService.getFile(fullFileName, currentDate);
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
@@ -124,7 +124,7 @@ public class DownloadsArchiveController {
                                HttpServletResponse response) throws Exception {
         if (hasErrors())
             return "unload/download-error-message.page";
-        String currentDate = downloadFileService.getMostRecentMatchingDate();
+        String currentDate = downloadFileService.getMatchingIndexDirectory();
         String[] dateArray = currentDate.split("\\.");
         return downloadArchiveFile(model, dateArray[0], dateArray[1], dateArray[2], fileName, extension, formBean, response);
     }
@@ -181,7 +181,7 @@ public class DownloadsArchiveController {
                                           @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
         if (hasErrors())
             return "unload/download-error-message.page";
-        String date = downloadFileService.getMostRecentMatchingDate();
+        String date = downloadFileService.getMatchingIndexDirectory();
         formBean.setDate(date);
         formBean.setCurrentDate((true));
         String[] dateArray = date.split("\\.");

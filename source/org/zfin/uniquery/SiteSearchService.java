@@ -7,7 +7,8 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.zfin.properties.ZfinPropertiesEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.IOException;
@@ -17,13 +18,21 @@ import java.util.List;
 /**
  * Service class to provided services to site search related problems.
  */
+@Service
 public class SiteSearchService {
 
     public static final String BODY = "body";
+    public static final String URL = "url";
+    public static final String TITLE = "title";
+    public static final String TYPE = "type";
+    public static final int MAX_RESULTS_PER_CATEGORY = 5000;
+    public static final String ALTERNATIVE_SEARCH_ID = "alternative-search";
+    public static final String ALIAS_TERM_ID = "alias-term";
 
     private static final Logger LOG = Logger.getLogger(SiteSearchService.class);
-    private static ZfinAnalyzer analyzer = new ZfinAnalyzer();
-    private static String indexDirectory = ZfinPropertiesEnum.INDEXER_DIRECTORY.value();
+    private ZfinAnalyzer analyzer = new ZfinAnalyzer();
+    @Autowired
+    private SiteSearchIndexService siteSearchIndexService;
 
     /**
      * Check if a given query string produces at least one hit, i.e. at least one page
@@ -32,7 +41,7 @@ public class SiteSearchService {
      * @param queryString query string
      * @return true or false
      */
-    public static boolean hasHits(String queryString) {
+    public boolean hasHits(String queryString) {
         List<SearchCategory> categories = SiteSearchCategories.allCategories;
         for (SearchCategory category : categories) {
             Hits hits = getHits(category, queryString);
@@ -50,12 +59,12 @@ public class SiteSearchService {
      * @param queryString search string
      * @return Hits object
      */
-    public static Hits getHits(SearchCategory category, String queryString) {
+    public Hits getHits(SearchCategory category, String queryString) {
         Hits hits = null;
         try {
             Query query = parseQuery(queryString, BODY, new ZfinAnalyzer());
             Query fullQuery = addCategoryPrefixToQuery(category, query, analyzer);
-            IndexReader reader = IndexReader.open(indexDirectory);
+            IndexReader reader = IndexReader.open(siteSearchIndexService.getFullPathMatchingIndexDirectory());
             Searcher searcher = new IndexSearcher(reader);
             hits = searcher.search(fullQuery);
         } catch (IOException e) {

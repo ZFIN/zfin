@@ -233,7 +233,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     public void blastDatabases(){
         List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("CU651595");
         assertThat(dbLinkList.size(),greaterThan(1));
-        assertThat(dbLinkList.size(), lessThan(3));
+        assertThat(dbLinkList.size(), lessThan(10));
         for(DBLink dbLink : dbLinkList){
             if(dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.GENBANK)){
                 List<Database> blastDatabases =  dbLink.getBlastableDatabases();

@@ -34,7 +34,7 @@ public class DatabaseInfoController extends MultiActionController {
         DatabaseMetaData meta = getMetaData();
         ModelAndView mv = new ModelAndView("metadata");
         mv.addObject("metadata", meta);
-        mv.addObject("unloadDate", getInfrastructureRepository().getUnloadDate());
+        mv.addObject("unloadDate", getInfrastructureRepository().getUnloadInfo());
         return mv;
     }
 

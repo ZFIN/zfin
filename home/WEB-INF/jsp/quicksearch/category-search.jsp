@@ -83,8 +83,8 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
         font-size: 100%;
         font-weight: bold;
         font-family: arial, sans-serif;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
     }
 
     .search_tip {
@@ -96,19 +96,19 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
     .best_match {
         font-size: 100%;
         font-family: arial, sans-serif;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
     }
 </style>
 
 <script type="text/javascript">
-    document.getElementById("qsearch").value = "${formBean.queryTerm}";
+    document.getElementById("qsearch").value = "${siteSearchHelper.queryTerm}";
 </script>
 
 
 <!--- Only display results if there is a query --->
 <c:choose>
-    <c:when test="${formBean.queryTerm eq ''}">
+    <c:when test="${siteSearchHelper.queryTerm eq ''}">
     <span class="results_header">
       Please enter a search term.
    </span>
@@ -117,7 +117,7 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
         <c:choose>
             <c:when test="${formBean.replacementZdbID != null}">
     <span class="results_header">
-      ${formBean.queryTerm} has been changed. <p>
+      ${siteSearchHelper.queryTerm} has been changed. <p>
         Please check <a href="/action/quicksearch/query?query=${formBean.replacementZdbID.replacementZdbID}">
             ${formBean.replacementZdbID.replacementZdbID}</a>.
     </span>
@@ -127,7 +127,7 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                     <tr>
                         <td width=85% align=center>
                             <span class="results_header">
-                                ${formBean.categorySearch} results for '${formBean.queryTerm}   '
+                                ${formBean.categorySearch} results for '${siteSearchHelper.queryTerm}   '
                             </span>
                             <span class="search_tip">
                                 <a href="/zf_info/syntax_help.html"> Tips </a>
@@ -155,13 +155,13 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                     <tr>
                         <td>
                             <!--- Display Related Words List --->
-                                ${formBean.relatedTermsHTML}
+                                ${siteSearchHelper.relatedTermsHTML}
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <!---  Display suggestion to use ZFIN specific search forms. --->
-                                ${formBean.relatedSearchPageHTML}
+                                ${siteSearchHelper.relatedSearchPageHTML}
                         </td>
                     </tr>
                 </table>
@@ -169,13 +169,13 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                 <!--- Display Category List (as a TABLE) --->
                 <font size=-1>(Each category displays the first 5000 results)</font>
                 <center>
-                        ${formBean.categoryListingHTML}
+                        ${siteSearchHelper.categoryListingHTML}
                 </center>
 
-                ${formBean.bestMatchHTML}
+                ${siteSearchHelper.bestMatchHTML}
                 <!--- END: Display the best match --->
 
-                ${formBean.searchResult}
+                ${siteSearchHelper.searchResults}
 
                 <zfin2:pagination paginationBean="${formBean}" />
             </c:otherwise>

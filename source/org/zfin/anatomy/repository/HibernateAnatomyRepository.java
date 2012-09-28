@@ -201,6 +201,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "       order by rel.anatomyItemTwo.nameOrder asc ";
         Query queryOne = session.createQuery(hqlOne);
         queryOne.setParameter("aoTerm", anatomyItem);
+        queryOne.setCacheable(true);
         List<AnatomyRelationship> list = queryOne.list();
         allRelationships.addAll(list);
 
@@ -210,6 +211,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "       order by rel.anatomyItemOne.nameOrder asc ";
         Query queryTwo = session.createQuery(hqlTwo);
         queryTwo.setParameter("aoTerm", anatomyItem);
+        queryTwo.setCacheable(true);
         List<AnatomyRelationship> list2 = queryTwo.list();
         allRelationships.addAll(list2);
 

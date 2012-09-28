@@ -34,4 +34,5 @@ public class UnloadInfo {
     public void setVersion(String version) {
         this.version = version;
     }
+
 }

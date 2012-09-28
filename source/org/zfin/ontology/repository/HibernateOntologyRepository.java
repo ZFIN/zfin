@@ -1,9 +1,6 @@
 package org.zfin.ontology.repository;
 
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
@@ -230,6 +227,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.eq("oboID", termID));
+        criteria.setCacheable(true);
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
         if (term == null)
             return null;

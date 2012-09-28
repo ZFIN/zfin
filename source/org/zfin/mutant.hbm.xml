@@ -529,7 +529,7 @@
     </class>
 
 
-    <class name="org.zfin.feature.FeatureTypeGroup" table="feature_type_group">
+    <class name="org.zfin.feature.FeatureTypeGroup" mutable="false" table="feature_type_group">
         <cache usage="read-only"/>
         <id name="name">
             <column name="ftrgrp_name"/>

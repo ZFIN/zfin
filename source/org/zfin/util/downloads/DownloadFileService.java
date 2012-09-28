@@ -18,9 +18,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -34,99 +31,57 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * if the current time and date is more than 20 hours past the last caching.
  */
 @Service
-public class DownloadFileService {
+public class DownloadFileService extends ArchiveService {
 
     private static Logger LOG = Logger.getLogger(DownloadFileService.class);
 
-    // hard-coded location of the download archive
-    // one archive per instance
-    private String downloadDirectory = "/research/zunloads/download-files/" + ZfinPropertiesEnum.DB_NAME.toString();
     // store the date the cache was last updated
     // every time a download request comes in we check the current date against this value.
     private Calendar lastUpdatedCacheDate = new GregorianCalendar(2000, 1, 1);
 
     // registry file name. One per download archive
-    private String downloadRegistry = "download-registry.xml";
+    public final String DOWNLOAD_REGISTRY = "download-registry.xml";
 
     public DownloadFileService() {
+        // hard-coded location of the root download archive
+        // one archive per instance
+        rootArchiveDirectory = "/research/zunloads/download-files/" + ZfinPropertiesEnum.DB_NAME.toString();
     }
 
     // index single table up-to-date
     public DownloadFileService(String unloadDirectory) throws IOException {
         if (unloadDirectory != null)
-            this.downloadDirectory = unloadDirectory;
+            rootArchiveDirectory = unloadDirectory;
     }
 
     public String getDownloadDirectory() {
-        return downloadDirectory;
-    }
-
-    private List<File> downloadFileDirectories;
-    private int numberOfUnloadFiles;
-
-    private void checkUnloadDirectory() {
-        numberOfUnloadFiles = getLatestNumberUnloadFiles();
-        File unloadDir = new File(downloadDirectory);
-        File[] files = unloadDir.listFiles();
-        if (files == null)
-            return;
-        downloadFileDirectories = Arrays.asList(files);
-        Collections.sort(downloadFileDirectories);
-
-        List<File> cleanedUpFiles = new ArrayList<File>();
-        for (File file : downloadFileDirectories) {
-            String name = file.getName();
-            boolean lastCharacterIsNumber = Character.isDigit(name.charAt(name.length() - 1));
-            if (name.startsWith("20") && lastCharacterIsNumber)
-                //if (file.listFiles().length > 100)
-                cleanedUpFiles.add(file);
-        }
-        downloadFileDirectories = cleanedUpFiles;
-    }
-
-    private int getLatestNumberUnloadFiles() {
-        File unloadDir = new File(downloadDirectory);
-        if (!unloadDir.exists())
-            throw new DownloadFilesException("Unload directory not found: " + unloadDir.getAbsolutePath());
-        LOG.info("Found " + unloadDir.list().length + " backups.");
-        return unloadDir.list().length;
+        return getRootArchiveDirectory();
     }
 
     public boolean isDownloadArchiveExists() {
-        File unloadDir = new File(downloadDirectory);
+        File unloadDir = new File(rootArchiveDirectory);
         return unloadDir.exists();
-    }
-
-    /**
-     * The list of files is in ascending order of time.
-     *
-     * @return list of unload files.
-     */
-    public List<File> getDownloadFileDirectories() {
-        if (downloadFileDirectories == null)
-            checkUnloadDirectory();
-        return downloadFileDirectories;
     }
 
     public String getFirstDownloadDate() {
         // if the current number of files found in the unload directory is greater than
         // the number stored here then update the file list
-        if (getLatestNumberUnloadFiles() > numberOfUnloadFiles)
-            getDownloadFileDirectories();
-        return downloadFileDirectories.get(0).getName();
+        if (getLatestNumberUnloadFiles() > numberOfArchiveDirectories)
+            getArchiveDirectories();
+        return archiveDirectories.get(archiveDirectories.size() - 1).getName();
     }
 
     public String getLatestDownloadDate() {
         // if the current number of files found in the unload directory is greater than
         // the number stored here then update the file list
-        if (getLatestNumberUnloadFiles() > numberOfUnloadFiles)
-            getDownloadFileDirectories();
-        return downloadFileDirectories.get(downloadFileDirectories.size() - 1).getName();
+        if (getLatestNumberUnloadFiles() > numberOfArchiveDirectories)
+            getArchiveDirectories();
+        return archiveDirectories.get(0).getName();
     }
 
     public List<String> getDownloadFileNames(String date) {
         File directory = null;
-        for (File file : downloadFileDirectories) {
+        for (File file : archiveDirectories) {
             if (file.getName().equals(date))
                 directory = file;
         }
@@ -157,7 +112,7 @@ public class DownloadFileService {
      */
     public List<DownloadFileInfo> getOfficialDownloadFileInfo(String date) {
         File directory = null;
-        for (File file : getDownloadFileDirectories()) {
+        for (File file : archiveDirectories) {
             if (file.getName().equals(date))
                 directory = file;
         }
@@ -179,7 +134,7 @@ public class DownloadFileService {
      */
     public List<DownloadFileInfo> getDownloadFileInfo(String date) {
         File directory = null;
-        for (File file : getDownloadFileDirectories()) {
+        for (File file : archiveDirectories) {
             if (file.getName().equals(date))
                 directory = file;
         }
@@ -200,7 +155,7 @@ public class DownloadFileService {
         DownloadFileRegistry registry = null;
         try {
             // read registry file
-            registry = readRegistryFile(directory, downloadRegistry);
+            registry = readRegistryFile(directory, DOWNLOAD_REGISTRY);
             for (String fileName : directory.list()) {
                 File dFile = new File(directory, fileName);
                 //
@@ -275,18 +230,6 @@ public class DownloadFileService {
         return buffer.toString();
     }
 
-    private List<String> dateList = new ArrayList<String>();
-
-    public List<String> getAllUnloadedDateStrings() {
-        if (dateList.size() > 0)
-            return dateList;
-        if (downloadFileDirectories == null)
-            checkUnloadDirectory();
-        for (File file : downloadFileDirectories)
-            dateList.add(file.getName());
-        return dateList;
-    }
-
     public List<FileInfo> getUnusedDownloadFileInfo(String date) {
         if (date == null)
             return null;
@@ -302,20 +245,9 @@ public class DownloadFileService {
         return null;
     }
 
-    public String getMostRecentMatchingDate() {
-        Date unloadDate = getUnloadInfo().getDate();
-        List<Date> allUnloadDates = getAllUnloadedDate();
-        for (Date date : allUnloadDates) {
-            if (unloadDate.after(date)) {
-                return getDateString(date);
-            }
-        }
-        throw new DownloadFilesException("No download file found that for " + unloadDate.toString() + " or earlier");
-    }
-
-    public boolean isValidArchiveFound(){
-        Date unloadDate = getUnloadInfo().getDate();
-        List<Date> allUnloadDates = getAllUnloadedDate();
+    public boolean isValidArchiveFound() {
+        Date unloadDate = getInfrastructureRepository().getUnloadInfo().getDate();
+        List<Date> allUnloadDates = getAllArchiveDates();
         for (Date date : allUnloadDates) {
             if (unloadDate.after(date)) {
                 return true;
@@ -324,92 +256,34 @@ public class DownloadFileService {
         return false;
     }
 
-    public UnloadInfo getUnloadInfo(){
-        return getInfrastructureRepository().getUnloadDate();
-    }
-
-    private String getDateString(Date date) {
-        DateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
-        return dt.format(date);
+    @Override
+    protected boolean isValidArchive(File archiveDirectory) {
+        return true;
     }
 
     /**
-     * Sorted list of unload files in descending order, i.e. most current date first.
+     * Checks which index files matches most closely the current data.
      *
-     * @return list of download file dates
+     * @return date matching most recently with current date.
      */
-    private List<Date> getAllUnloadedDate() {
-        checkCacheStale();
-        List<String> allUnloadedDateStrings = getAllUnloadedDateStrings();
-        List<Date> dates = new ArrayList<Date>(allUnloadedDateStrings.size());
-        for (String dataString : allUnloadedDateStrings) {
-            dates.add(getArchiveDate(dataString));
-        }
-        Collections.sort(dates, new Comparator<Date>() {
-            @Override
-            public int compare(Date o1, Date o2) {
-                return -o1.compareTo(o2);
-            }
-        });
-        return dates;
+    public String getMatchingIndexDirectory() {
+        return super.getMatchingIndexDirectory();
     }
 
-    // checks if the last date the cache was updated is more than one day old.
-    // If so update cache and set lastCacheUpdate to now.
-    private void checkCacheStale() {
-        Calendar todayCalMinus20 = new GregorianCalendar();
-        todayCalMinus20.setTime(new Date());
-        todayCalMinus20.add(Calendar.HOUR, -20);
-        if (lastUpdatedCacheDate.before(todayCalMinus20)) {
-            updateCache();
-            Calendar now = new GregorianCalendar();
-            now.setTime(new Date());
-            lastUpdatedCacheDate = now;
-        }
-    }
-
-    public Date getArchiveDate(String dataString) {
-        DateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
-        try {
-            return dt.parse(dataString);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getFormattedDate(Date date) {
-        StringBuilder builder = new StringBuilder(12);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        builder.append(cal.get(Calendar.YEAR));
-        builder.append(".");
-        // months integers start with '0'
-        builder.append(getPaddedDateNumber(cal.get(Calendar.MONTH) + 1));
-        builder.append(".");
-        builder.append(getPaddedDateNumber(cal.get(Calendar.DAY_OF_MONTH)));
-        return builder.toString();
-    }
-
-    private String getPaddedDateNumber(int number) {
-        if (number < 10)
-            return "0" + number;
-        else
-            return number + "";
-    }
-
+    @Override
     public void updateCache() {
-        dateList = new ArrayList<String>();
-        downloadFileDirectories = null;
+        archiveDateList = new ArrayList<String>();
+        archiveDirectories = null;
         downloadFileInfoList = new HashMap<String, List<DownloadFileInfo>>();
         // forces to reread download files and create
         // file collection and
         // date collection
-        getAllUnloadedDateStrings();
+        super.updateCache();
     }
 
     public List<DownloadFileInfo> getUnofficialDownloadFileInfo(String date) {
         File directory = null;
-        for (File file : getDownloadFileDirectories()) {
+        for (File file : archiveDirectories) {
             if (file.getName().equals(date))
                 directory = file;
         }
@@ -428,9 +302,9 @@ public class DownloadFileService {
      * @return list of download dates
      */
     public List<String> getDataMatchingUnloadedDateStrings() {
-        UnloadInfo unloadInfo = getInfrastructureRepository().getUnloadDate();
+        UnloadInfo unloadInfo = getInfrastructureRepository().getUnloadInfo();
         Date unloadDate = unloadInfo.getDate();
-        List<Date> allUnloadDates = getAllUnloadedDate();
+        List<Date> allUnloadDates = getAllArchiveDates();
         List<String> dateList = new ArrayList<String>(allUnloadDates.size());
         for (Date date : allUnloadDates) {
             if (unloadDate.after(date)) {

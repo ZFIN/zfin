@@ -285,7 +285,7 @@
         </id>
     </class>
 
-    <class name="org.zfin.marker.MarkerType" table="marker_types">
+    <class name="org.zfin.marker.MarkerType" mutable="false" table="marker_types">
         <cache usage="read-only"/>
         <id name="name">
             <column name="marker_type"/>
@@ -327,7 +327,7 @@
     </class>
 
 
-    <class name="org.zfin.marker.MarkerTypeGroup" table="marker_type_group">
+    <class name="org.zfin.marker.MarkerTypeGroup" mutable="false" table="marker_type_group">
         <cache usage="read-only"/>
         <id name="name">
             <column name="mtgrp_name"/>

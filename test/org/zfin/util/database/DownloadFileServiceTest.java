@@ -12,7 +12,7 @@ public class DownloadFileServiceTest extends AbstractDatabaseTest {
     @Test
     public void getMostRecentMatchingDate() {
         DownloadFileService service = new DownloadFileService();
-        String unloadDate = service.getMostRecentMatchingDate();
+        String unloadDate = service.getMatchingIndexDirectory();
         assertNotNull(unloadDate);
     }
 }

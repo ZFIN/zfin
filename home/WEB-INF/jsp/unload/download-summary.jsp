@@ -21,7 +21,7 @@
         </tr>
         <tr>
             <th>Number of Archives</th>
-            <td>${fn:length(formBean.downloadFileService.downloadFileDirectories)}
+            <td>${fn:length(formBean.downloadFileService.archiveDirectories)}
             </td>
         </tr>
         <tr>
@@ -42,10 +42,32 @@
     </table>
 
     <p/>
+
+    Database Info:
+    <table class="summary groupstripes" width="80%">
+        <tr>
+            <th width="200" nowrap="nowrap">
+                Last Unload Date
+            </th>
+            <th>
+                Version
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <fmt:formatDate pattern="d MMM yyyy" value="${formBean.downloadFileService.unloadInfo.date}"/><br/>
+                <fmt:formatDate pattern="HH:mm" value="${formBean.downloadFileService.unloadInfo.date}"/>
+            </td>
+            <td>
+                    ${formBean.downloadFileService.unloadInfo.version}
+            </td>
+        </tr>
+    </table>
+    <p/>
 </authz:authorize>
 
 <form:form method="Get" modelAttribute="formBean" name="Date History" onsubmit="return false;">
-    Show archive for <form:select path="date" items="${formBean.downloadDateList}"/>
+    Archive Date: <form:select path="date" items="${formBean.downloadDateList}"/>
     <input value="Show" onclick="goToArchive();" type="button" id="date">
 </form:form>
 
