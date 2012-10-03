@@ -103,15 +103,13 @@ insert into pheno_term_fast_search_tmp
 )
 select 
   phenos_pk_id,
-  t2.term_zdb_id,
+  alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains, term t2
+  phenotype_statement, all_term_contains
 where
-  phenos_entity_1_superterm_zdb_id = alltermcon_contained_zdb_id
-  and alltermcon_container_zdb_id = t2.term_zdb_id
-  
+  phenos_entity_1_superterm_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
@@ -125,15 +123,13 @@ insert into pheno_term_fast_search_tmp
 )
 select 
   phenos_pk_id,
-  t2.term_zdb_id,
+  alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains, term t2
+  phenotype_statement, all_term_contains
 where
-  phenos_entity_1_subterm_zdb_id = alltermcon_contained_zdb_id
-  and alltermcon_container_zdb_id = t2.term_zdb_id
-  
+  phenos_entity_1_subterm_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
@@ -147,15 +143,13 @@ insert into pheno_term_fast_search_tmp
 )
 select 
   phenos_pk_id,
-  t2.term_zdb_id,
+  alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains, term t2
+  phenotype_statement, all_term_contains
 where
   phenos_entity_2_superterm_zdb_id = alltermcon_contained_zdb_id
-  and alltermcon_container_zdb_id = t2.term_zdb_id
-  
 ;
 
 
@@ -168,15 +162,13 @@ insert into pheno_term_fast_search_tmp
 )
 select 
   phenos_pk_id,
-  t2.term_zdb_id,
+  alltermcon_container_zdb_id,
   phenos_tag,
   phenos_created_date
 from
-  phenotype_statement, all_term_contains, term t2
+  phenotype_statement, all_term_contains
 where
-  phenos_entity_2_subterm_zdb_id = alltermcon_contained_zdb_id
-  and alltermcon_container_zdb_id = t2.term_zdb_id
-  
+  phenos_entity_2_subterm_zdb_id = alltermcon_contained_zdb_id  
 ;
 
 
@@ -200,4 +192,4 @@ from pheno_term_fast_search_tmp;
 
 commit work;
 
-update statistics low for table pheno_term_fast_search;
+update statistics high for table pheno_term_fast_search;
