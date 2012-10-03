@@ -25,7 +25,7 @@
     <%= Lookup.JSREF_TYPE%>: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
     <c:choose>
     <c:when test="${!empty ontology}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology}",
+    <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology.ontologyName}",
     </c:when>
     <c:when test="${!empty ontologyName}">
     <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontologyName}",
