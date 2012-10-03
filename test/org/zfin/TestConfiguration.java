@@ -29,7 +29,19 @@ public class TestConfiguration {
 
         // set tomcat temp directory
         ZfinProperties.init();
-        System.setProperty("java.io.tmpdir", ZfinPropertiesEnum.CATALINA_BASE.value()+"/temp") ;
+        File tempDir = new File("/tmp/");
+        if (tempDir.canWrite()) {
+            tempDir = new File(tempDir, ZfinPropertiesEnum.MUTANT_NAME.value());
+            if (!tempDir.exists())
+                tempDir.mkdir();
+            tempDir = new File(tempDir, "unit-test");
+            if (!tempDir.exists())
+                tempDir.mkdir();
+        }
+        if (tempDir.canWrite())
+            System.setProperty("java.io.tmpdir", tempDir.getAbsolutePath());
+        else
+            System.setProperty("java.io.tmpdir", ZfinPropertiesEnum.CATALINA_BASE.value() + "/temp");
     }
 
     public static void setAuthenticatedUser() {
@@ -49,7 +61,7 @@ public class TestConfiguration {
         return user;
     }
 
-    public static Person getPerson(){
+    public static Person getPerson() {
         ProfileRepository pr = RepositoryFactory.getProfileRepository();
         return pr.getPerson("ZDB-PERS-000103-2");
     }
