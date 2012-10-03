@@ -13,7 +13,7 @@
     <form:input path="<%= RegionAddBean.NEW_REGION_NAME%>" size="80"
                 onkeypress="return noenter(event)"></form:input>
     <form:errors path="<%= RegionAddBean.NEW_REGION_NAME%>" cssClass="error indented-error"/>
-    <p><strong>Engineered Foreign Gene alias:</strong>
+    <p><strong>Engineered Region alias:</strong>
     <form:input onkeypress="return noenter(event)" path="<%= RegionAddBean.NEW_REGION_ALIAS%>" size="50"></form:input>
     <form:errors path="<%= RegionAddBean.NEW_REGION_ALIAS%>" cssClass="error indented-error"/>
     <p>
