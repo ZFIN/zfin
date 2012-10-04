@@ -38,6 +38,7 @@
                         </TD>
                         <Td>
                             <form:input path="name" size="30"/>
+                            <form:hidden path="maxDisplayRecords"/>
                         </Td>
                     </tr>
                     <tr class="optionalSearch">
@@ -73,7 +74,7 @@
                             document.getElementById('name').value = '' ;
                             document.getElementById('address').value= '' ;
                             document.getElementById('contains').value = '' ;
-                            document.getElementById('containsType').value = 'email' ;
+                            document.getElementById('containsType').value = 'bio' ;
                             return true ;
                     "/>
                 </div>

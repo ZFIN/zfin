@@ -20,7 +20,7 @@
 
 
     <div class="search-form-your-input-welcome">
-        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-your_input_welcome.apg&subject=Lab Search&page_id=">
+        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-your_input_welcome.apg&subject=Company Search&page_id=">
             <button>Your Input Welcome</button>
         </a>
     </div>
@@ -42,6 +42,7 @@
                         </td>
                         <td>
                             <form:input path="name" size="30"/>
+                            <form:hidden path="maxDisplayRecords"/>
                         </TD>
                     </tr>
                     <tr class="optionalSearch">
@@ -57,8 +58,8 @@
                         <td>
                             <b>
                                 <form:select path="containsType">
-                                    <form:option value="email">Email Address</form:option>
                                     <form:option value="bio">Products/Services</form:option>
+                                    <form:option value="email">Email Address</form:option>
                                     <form:option value="url">URL</form:option>
                                     <form:option value="phone">phone</form:option>
                                     <form:option value="fax">fax</form:option>
@@ -78,7 +79,7 @@
                             document.getElementById('name').value = '' ;
                             document.getElementById('address').value= '' ;
                             document.getElementById('contains').value = '' ;
-                            document.getElementById('containsType').value = 'email' ;
+                            document.getElementById('containsType').value = 'bio' ;
                             return true ;
                     "/>
                 </div>
