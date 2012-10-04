@@ -28,6 +28,7 @@ public class LabSearchController {
             Model model,
             LabSearchBean formBean
     ) {
+        formBean.setMaxDisplayRecords("25");
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Lab Search");
         return "profile/lab-search.page";

@@ -28,6 +28,7 @@ public class CompanySearchController {
             Model model,
             CompanySearchBean formBean
     ) {
+        formBean.setMaxDisplayRecords("25");
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Company Search");
         return "profile/company-search.page";

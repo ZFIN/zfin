@@ -30,8 +30,10 @@ public class PersonSearchController {
     // for value
     @RequestMapping(value = "/person/search", method = RequestMethod.GET)
     public String personSearch(Model model,PersonSearchBean formBean) {
+        formBean.setMaxDisplayRecords("25");
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Person Search");
+
         return "profile/person-search.page" ;
     }
 
