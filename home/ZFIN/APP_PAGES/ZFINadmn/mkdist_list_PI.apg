@@ -3,6 +3,6 @@
 -->
 
 <PRE>
-<?MISQL SQL="select email from person , int_person_lab where zdb_id = source_id and position in ('PI/Director', 'Co-PI/Senior Scientist') and email is not null and email <> 'NULL' and on_dist_list='t'">$1
+<?MISQL SQL="select email from person , int_person_lab, lab_position where zdb_id = source_id and position_id = labpos_pk_id and labpos_position in ('PI/Director', 'Co-PI/Senior Scientist') and email is not null and email <> 'NULL' and email <> '' and on_dist_list='t'">$1
 <?/MISQL>
 </PRE>
