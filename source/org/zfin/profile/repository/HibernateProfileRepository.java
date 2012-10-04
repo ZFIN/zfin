@@ -36,8 +36,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     private Logger logger = Logger.getLogger(HibernateProfileRepository.class);
 
-    @Autowired
-    private ProfileService profileService;
+    private ProfileService profileService = new ProfileService();
 
     private OrganizationLookupTransformer organizationLookupEntryTransformer = new OrganizationLookupTransformer();
 
