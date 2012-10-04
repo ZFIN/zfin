@@ -4,7 +4,7 @@
 
 <zfin2:personSearchForm searchBean="${formBean}"/>
 
-<c:if test="${formBean.totalRecords>=0}">
+<c:if test="${formBean.totalRecords>0}">
 
     <%--<div style="float: left; margin-top: 2px; width: auto !important;" class="pagination">--%>
         <%--<zfin2:recordsView view="html" searchBean="${formBean}" type="person"/>--%>

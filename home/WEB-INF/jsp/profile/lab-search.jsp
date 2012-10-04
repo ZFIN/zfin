@@ -6,7 +6,7 @@
 <zfin2:labSearchForm searchBean="${formBean}"/>
 
 
-<c:if test="${formBean.totalRecords>=0}">
+<c:if test="${formBean.totalRecords>0}">
 
     <div style="float: right; margin-top: 2px; width: auto !important;" class="pagination ">
         <b>${formBean.totalRecords} ${formBean.totalRecords == 1 ? 'lab' : 'labs'} found </b> &nbsp;
