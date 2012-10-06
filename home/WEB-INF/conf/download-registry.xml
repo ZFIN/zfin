@@ -66,6 +66,7 @@
             <Column id="5">Light Chain</Column>
             <Column id="6">Immunogen Organism</Column>
             <Column id="7">Host Organism</Column>
+            <Column id="8">Source</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -303,6 +304,30 @@
         </Download>
         <Download orderIndex="7">
             <Name>
+                Transgenic Insertion: ENSEMBL
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfin_tginsertion</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="8">
+            <Name>
                 ZFIN Genes with Antibodies: Ensembl
             </Name>
             <Category>
@@ -325,7 +350,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="8">
+        <Download orderIndex="9">
             <Name>
                 ZFIN Genes with Antibodies: VEGA
             </Name>
@@ -349,7 +374,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="9">
+        <Download orderIndex="10">
             <Name>
                 ZFIN Genes with Expression: Ensembl
             </Name>
@@ -373,7 +398,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="10">
+        <Download orderIndex="11">
             <Name>
                 ZFIN Genes with Expression: VEGA
             </Name>
@@ -397,7 +422,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="11">
+        <Download orderIndex="12">
             <Name>
                 ZFIN Genes with Phenotype: Ensembl
             </Name>
@@ -421,7 +446,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="12">
+        <Download orderIndex="13">
             <Name>
                 ZFIN Genes with Phenotype: VEGA
             </Name>
@@ -445,7 +470,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="13">
+        <Download orderIndex="14">
             <Name>
                 ZFIN Genes: Ensembl
             </Name>
@@ -469,7 +494,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="14">
+        <Download orderIndex="15">
             <Name>
                 ZFIN Genes: VEGA
             </Name>
@@ -493,7 +518,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="15">
+        <Download orderIndex="16">
             <Name>
                 ZFIN Morpholinos: Ensembl
             </Name>
@@ -517,7 +542,7 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
-        <Download orderIndex="16">
+        <Download orderIndex="17">
             <Name>
                 ZFIN Morpholinos: VEGA
             </Name>
@@ -609,9 +634,6 @@
                 and fdbcont_fdbdt_id = fdbdt_pk_id
                 and fdbcont_fdb_db_id = fdb_db_pk_id
                 and fdbdt_data_type='RNA'
-                -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
-                -- note: the below would have the same effect as above
-                -- but since neither catch anything go with the faster/cheaper
                 and dblink_acc_num[1,6] != "OTTDAR"
                 union
                 select distinct gene.mrkr_zdb_id gene_zdb,
@@ -629,9 +651,6 @@
                 and fdbcont_fdbdt_id = fdbdt_pk_id
                 and fdbcont_fdb_db_id = fdb_db_pk_id
                 and fdbdt_data_type='RNA'
-                -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
-                -- note: the below would have the same effect as above
-                -- but since neither catch anything go with the faster/cheaper
                 and dblink_acc_num[1,6] != "OTTDAR"
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
@@ -698,11 +717,6 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                select "# ZDBID ","SYMBOL", fdb_db_name
-                from foreign_db_contains, foreign_db
-                where fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
-                and fdbcont_fdb_db_id = fdb_db_pk_id
-                union
                 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
                 from marker, db_link
                 where mrkr_zdb_id = dblink_linked_recid
@@ -710,7 +724,7 @@
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
-            <Column id="3">GenePept ID</Column>
+            <Column id="3">Ensembl ID</Column>
         </Download>
         <Download orderIndex="40">
             <Name>
@@ -732,7 +746,7 @@
                 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                 and fdb_db_name = 'GenBank'
                 and fdbcont_fdb_db_id = fdb_db_pk_id
-                and dblink_acc_num[3] <> "_"  -- filter misplaced acc
+                and dblink_acc_num[3] <> "_"
                 and not (
                 dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
                 and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
@@ -1073,10 +1087,9 @@
                      join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id
                      join stage endStage on xpatres_end_stg_zdb_id = endStage.stg_zdb_id
                      join term super on xpatres_superterm_zdb_id = super.term_zdb_id
-                     left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id  -- why slow
+                     left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id
                      where geno_is_wildtype = 't'
-                       --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
-                       and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
+                       and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
                        and xpatres_expression_found = 't'
                      order by mrkr_zdb_id
                         ]]>
@@ -1120,7 +1133,6 @@
                          where exp_zdb_id = genox_exp_zdb_id
                            and genox_zdb_id = xpatex_genox_zdb_id
                     )
-                    -- special handling for _Generic-control ;;insert into tmp_env
                     union
                     select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
                      from experiment
@@ -1181,7 +1193,7 @@
                            superterm.term_ont_id,
                            subterm.term_ont_id,
                            xpatres_expression_found
-                     from expression_result, term superterm, OUTER term subterm -- not snappy
+                     from expression_result, term superterm, OUTER term subterm
                      where superterm.term_zdb_id = xpatres_superterm_zdb_id
                        and subterm.term_zdb_id = xpatres_subterm_zdb_id
                      order by xpatres_xpatex_zdb_id
@@ -1276,7 +1288,7 @@
                        on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
                      left join clone
                        on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-                     where gene.mrkr_abbrev[1,11] != 'WITHDRAWN: ' -- Xiang noticed this misses those without a space after :
+                     where gene.mrkr_abbrev[1,11] != 'WITHDRAWN: '
                        and exists (
                         select 1 from expression_result
                          where xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -1471,7 +1483,6 @@
                            and genox_zdb_id = phenox_genox_zdb_id
                     )
                     union
-                    -- special handling for _Generic-control--insert into tmp_env
                     select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
                      from experiment
                      where exp_name = "_Generic-control"
@@ -1935,8 +1946,8 @@
             <Description></Description>
             <WikiLink></WikiLink>
             <FileName>staged_anatomy</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
+            <FileExtension>other</FileExtension>
+            <FileFormat>other</FileFormat>
             <Query>
                 <![CDATA[
                      select stg_zdb_id, stg_name, anatitem_name, anatdisp_indent
@@ -2076,7 +2087,7 @@
                      from marker gn, marker mo, marker_sequence, marker_relationship
                      where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
                        and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                       and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+                       and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-"
                        and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
                        and mrel_type = "knockdown reagent targets gene"
                        and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
@@ -2088,7 +2099,8 @@
             <Column id="3">Morpholino ID</Column>
             <Column id="4">Morpholino Symbol</Column>
             <Column id="5">Morpholino Sequence</Column>
-            <Column id="6">Note</Column>
+            <Column id="6">Publication(s)</Column>
+            <Column id="7">Note</Column>
         </Download>
         <Download orderIndex="1">
             <Name>

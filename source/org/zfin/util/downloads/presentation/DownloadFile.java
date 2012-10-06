@@ -74,7 +74,7 @@ public enum DownloadFile {
     GENO_ENVIRONMENT("Phenotype Environment Description", "pheno_environment.txt", "Phenotype Data", "Environment ID,Condition Group,Condition Content,Value,Unit,Comment"),
     GENO_FIG("Genotype-Figure relation", "genofig.txt", "Phenotype Data", "Genotype ID,Figure ID"),
     GENO_HUMAN("Phenotype for Zebrafish genes with Human Orthology", "pheno.txt", "Phenotype Data", "ZFIN Gene ID ,Entrez Zebrafish Gene ID ,Entrez Human Gene ID ,ZFIN Gene Symbol ,Affected Structure or Process 1 superterm obo ID ,Affected Structure or Process 1 superterm name ID ,Affected Structure or Process 1 subterm obo ID ,Affected Structure or Process 1 subtrem name ID ,Affected Structure or Process 2 superterm obo ID ,Affected Structure or Process 2 superterm name ,Affected Structure or Process 2 subterm obo ID ,Affected Structure or Process 2 subterm name ,Phenotype Keyword obo ID ,Phenotype Quality ,Phenotype Tag"),
-    AO_TERMS("Zebrafish Anatomical Terms", "staged_anatomy.txt", "Anatomical Ontologies", "Entire Staged Anatomy (tab indented)"),
+    AO_TERMS("Zebrafish Anatomical Terms", "staged_anatomy.other", "Anatomical Ontologies", "Entire Staged Anatomy (tab indented)"),
     AO_RELS("Zebrafish Anatomy Term Relationships", "anatomy_relationship.txt", "Anatomical Ontologies", "Parent Item ID,Child Item ID,Relationship Type ID"),
     STAGE("Zebrafish Stage Series", "stage_ontology.txt", "Anatomical Ontologies", "Stage ID,Stage OBO ID,Stage Name,Begin Hours,End Hours"),
     TERM_STAGE("Zebrafish Anatomy Term Stages", "anatomy_item.txt", "Anatomical Ontologies", "Anatomy Item ID,Anatomy Item Name,Begin Stage ID,End Stage ID"),
@@ -200,7 +200,7 @@ public enum DownloadFile {
     }
 
     enum Type {
-        CSV, GFF3, TSV;
+        CSV, GFF3, TSV, OTHER;
 
         public static Type getTypeByName(String name) {
             if (name == null)

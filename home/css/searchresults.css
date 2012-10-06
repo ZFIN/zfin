@@ -115,11 +115,11 @@ table.searchresults tr.evengroup {
 .selected-radio-label { font-weight: bold; }
 
 .csv {
-    background-color: green;
+    background-color: LightGreen;
 }
 
 .tsv {
-    background-color: green;
+    background-color: PaleGreen;
 }
 
 .gff3 {
@@ -127,3 +127,6 @@ table.searchresults tr.evengroup {
     background-color: orange;
 }
 
+.other {
+    background-color: SpringGreen;
+}

@@ -88,7 +88,8 @@
                         </tr>
                     </table>
                     <authz:authorize ifAnyGranted="root">
-                        <table>
+                    <c:if test="${!empty fileInfo.downloadFile.query}">
+                         <table>
                             <tr>
                                 <td style="background-color: #CCFFFF; font-weight: bold;">SQL Query</td>
                             </tr>
@@ -99,7 +100,8 @@
                                     </div>
                                 </td>
                             </tr>
-                        </table>
+                         </table>
+                    </c:if>
                     </authz:authorize>
                 </div>
             </td>

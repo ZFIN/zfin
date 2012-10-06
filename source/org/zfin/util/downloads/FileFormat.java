@@ -5,7 +5,7 @@ package org.zfin.util.downloads;
  */
 public enum FileFormat {
 
-    CSV, GFF3, TSV;
+    CSV, GFF3, TSV, OTHER;
 
     public static FileFormat getTypeByName(String name) {
         if (name == null)

@@ -162,7 +162,9 @@ public class DownloadFileService extends ArchiveService {
                 DownloadFileEntry downloadFile = registry.getDownloadFileEntryByName(fileName);
                 // ignore files that are not registered.
                 if (downloadFile == null) {
-                    unusedDownloadFiles.add(FileUtil.getFileInfo(dFile));
+                    if (!fileName.equalsIgnoreCase("download-registry.xml")) {
+                      unusedDownloadFiles.add(FileUtil.getFileInfo(dFile));
+                    }
                     continue;
                 }
                 if (downloadFile.isPrivateDownload())

@@ -64,8 +64,8 @@ select mrkr_zdb_id, dblink_acc_num
 where mrkr_Zdb_id = dblink_linked_recid;
 
 -- create antibody download file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt'
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 	atb_immun_organism, atb_host_organism
@@ -592,11 +592,6 @@ select distinct mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'
  DELIMITER "	"
-select  "#    ZDBID          ","SYMBOL", fdb_db_name
- from foreign_db_contains, foreign_db
- where fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
-   and fdbcont_fdb_db_id = fdb_db_pk_id
-union
 select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link
  where mrkr_zdb_id = dblink_linked_recid
@@ -820,7 +815,6 @@ select dalias_data_zdb_id, anatitem_name, dalias_alias
 -- which will be removed by Perl script
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'"
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'
- DELIMITER "	"
 select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, mo.mrkr_abbrev,
 	mrkrseq_sequence, mo.mrkr_comments
  from marker gn, marker mo, marker_sequence, marker_relationship
@@ -907,20 +901,20 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
  order by mrkr_zdb_id
 ;
 
---case 8490. Report of all publications that use an sa allele
+--case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
 --only for Sanger, will be picked up by sanger folks.
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt'
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt'"
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt'
 DELIMITER "	"
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
-from feature, record_attribution, publication, journal 
-where recattrib_data_zdb_id=feature_zdb_id 
-and feature_abbrev like 'sa%'  
-and zdb_id=recattrib_source_zdb_id 
-and jtype='Journal' 
-and pub_jrnl_zdb_id=jrnl_zdb_id 
+from feature, record_attribution, publication, journal
+where recattrib_data_zdb_id=feature_zdb_id
+and feature_abbrev like 'sa%'
+and zdb_id=recattrib_source_zdb_id
+and jtype='Journal'
+and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
  
 

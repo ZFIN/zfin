@@ -3,15 +3,15 @@
 # Runs script to create data files for public download.
 #
 # We extract several different kinds of information:
-# 
+#
 # All genetic markers (includes genes, ests, sslps, etc.)
 #	zfin id, name, symbol, type
-#	
-# Synonyms  (for any item in all genetic markers file) There may be multiple lines 	
-#   per zfin id
-#	zfin id, synonym 
 #
-# Orthology - separate files for: 
+# Synonyms  (for any item in all genetic markers file) There may be multiple lines
+#   per zfin id
+#	zfin id, synonym
+#
+# Orthology - separate files for:
 #   zebrafish - human
 #	zfin id , zebrafish symbol, human symbol, OMIM id, Entrez Gene id
 #   zebrafish - mouse
@@ -26,21 +26,22 @@
 #
 # Gene Expression
 #	gene zfin id , gene symbol, probe zfin id, probe name, expression type,
-#       expression pattern zfin id, pub zfin id, genotype zfin id, 
+#       expression pattern zfin id, pub zfin id, genotype zfin id,
 #       experiment zfin id#
 # Mapping data
 #	zfin id, symbol, panel symbol, LG, loc, metric
 #
-# Sequence data - separate files for GenBank, RefSeq, EntrezGene, Unigene, 
+# Sequence data - separate files for GenBank, RefSeq, EntrezGene, Unigene,
 # SWISS-PROT, Interpro
 #	zfin id, symbol, accession number
-#	
+#
 # Genotypes
 #	zfin id, allele/construct, type, gene symbol, corresponding zfin gene id
 #
 # Morpholino
 #       zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
 
+use DBI;
 
 
 # define GLOBALS
@@ -61,20 +62,171 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
 
 system("./generateStagedAnatomy.pl");
 
-# remove HTML tags from the public note column of the download file of Morpholino data
-$fileWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt';
-open (INP, $fileWithHTMLtags) || die "Can't open $fileWithHTMLtags : $!\n";
-@lines=<INP>;
-$fileWithNoHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos.txt';
-open (RESULT,  ">$fileWithNoHTMLtags") || die "Can't open: $fileWithNoHTMLtags $!\n";
+
+### open a handle on the db
+$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '',
+                       '',
+		       {AutoCommit => 1,RaiseError => 1}
+		      )
+    or die ("Failed while connecting to <!--|DB_NAME|-->");
+
+
+### FB case 8651, Include Publication in Morpholino Data Download
+
+$MOfileWithNoPubAndWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt';
+
+open (MO, "$MOfileWithNoPubAndWithHTMLtags") || die "Cannot open Morpholinos2.txt : $!\n";
+@lines=<MO>;
+close(MO);
+
+$MOfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos.txt';
+
+open (MOWITHPUBS, ">$MOfileWithPubsAndNoHTMLtags") || die "Cannot open $MOfileWithPubsAndNoHTMLtags : $!\n";
+
+
+foreach $line (@lines) {
+
+    chop($line);
+    undef (@fields);
+    @fields = split(/\|/, $line);
+
+    $geneId = $fields[0];
+    $gene = $fields[1];
+    $MoId = $fields[2];
+    $Mo = $fields[3];
+    $MoSeq = $fields[4];
+    $note = " ";
+    $note = $fields[5];
+
+    # remove HTML tags and back slash from the public note column of the download file of Morpholino data
+    if ($note) {
+      $note =~ s/<[^<>]+>//g;
+      $note =~ s/\\//g;
+    } else {
+        $note = "";
+    }
+
+
+    $cur = $dbh->prepare('select distinct recattrib_source_zdb_id from record_attribution, marker_sequence where recattrib_data_zdb_id = mrkrseq_zdb_id and mrkrseq_mrkr_zdb_id = ? order by recattrib_source_zdb_id;');
+    $cur->execute($MoId);
+    my ($pub);
+    %pubIds = ();
+    $numOfPubs = 0;
+    $cur->bind_columns(\$pub);
+    while ($cur->fetch()) {
+         $pubIds{$numOfPubs} = $pub;
+         $numOfPubs++;
+    }
+
+    $cur->finish();
+
+    print MOWITHPUBS "$geneId\t$gene\t$MoId\t$Mo\t$MoSeq\t";
+
+    if ($numOfPubs > 0) {
+        $numOfPubsCt = $numOfPubs;
+        foreach $key (keys %pubIds) {
+           $numOfPubsCt--;
+           $value = $pubIds{$key};
+           if ($numOfPubsCt == 0) {
+               print MOWITHPUBS "$value\t$note\n";
+           } else {
+               print MOWITHPUBS "$value,";
+           }
+        }
+    } else {
+        print MOWITHPUBS "\t$note\n";
+    }
+
+}
+
+close MOWITHPUBS;
+close MO;
+
+
+# FB case 7670, add Source field to antibodies.txt download file
+
+$antibodyFile = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt';
+
+open (AB, "$antibodyFile") || die "Cannot open antibodies2.txt : $!\n";
+@lines=<AB>;
+close(AB);
+
+
+$antibodyFileWithSupplier = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt';
+
+open (ABSOURCE, ">$antibodyFileWithSupplier") || die "Cannot open $antibodyFileWithSupplier : $!\n";
+
+
+foreach $line (@lines) {
+
+    chop($line);
+    undef (@fields);
+    @fields = split(/\s+/, $line);
+
+    $antibodyId = $fields[0];
+
+    $cur = $dbh->prepare('select distinct l.name from int_data_supplier, lab l where idsup_data_zdb_id = ? and idsup_supplier_zdb_id = l.zdb_id union select distinct c.name from int_data_supplier, company c where idsup_data_zdb_id = ? and idsup_supplier_zdb_id = c.zdb_id;');
+    $cur->execute($antibodyId,$antibodyId);
+    my ($supplier);
+    %suppliers = ();
+    $numOfSuppliers = 0;
+    $cur->bind_columns(\$supplier);
+    while ($cur->fetch()) {
+         $suppliers{$numOfSuppliers} = $supplier;
+         $numOfSuppliers++;
+    }
+
+    $cur->finish();
+
+    print ABSOURCE "$line\t";
+
+    if ($numOfSuppliers > 0) {
+        $numOfSuppliersCt = $numOfSuppliers;
+        foreach $key (sort { $suppliers{$a} cmp $suppliers{$b} } keys %suppliers) {
+           $numOfSuppliersCt--;
+           $value = $suppliers{$key};
+           if ($numOfSuppliersCt == 0) {
+               print ABSOURCE "$value\n";
+           } else {
+               print ABSOURCE "$value, ";
+           }
+        }
+    } else {
+        print ABSOURCE "\t \n";
+    }
+
+}
+
+close ABSOURCE;
+close AB;
+
+$dbh->disconnect
+    or warn "Disconnection failed: $DBI::errstr\n";
+
+
+# FB case 8886, remove HTML tags from the download file of Sanger Alleles
+
+$sangerAllelesWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt';
+
+open (SAHTML, $sangerAllelesWithHTMLtags) || die "Can't open $sangerAllelesWithHTMLtags : $!\n";
+
+@lines=<SAHTML>;
+$sangerAlleles = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt';
+
+open (SA,  ">$sangerAlleles") || die "Can't open: $sangerAlleles $!\n";
 foreach $line (@lines) {
   $line =~ s/<[^<>]+>//g;
-  print RESULT "$line";
+  print SA "$line";
 }
-close INP;
-close RESULT;
 
-# remove temporary file
+close SAHTML;
+close SA;
+
+# remove temporary files
+
+system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt");
+
 system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
 
 system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
