@@ -152,7 +152,7 @@ public class CompanyController {
         model.addAttribute(LookupStrings.FORM_BEAN, company);
 
         boolean isOwner = profileService.isCurrentSecurityUserRoot();
-        if (!isOwner && profileService.getCurrentSecurityUser() != null) {
+        if (!isOwner && profileService.getCurrentSecurityUser() != null && company.getContactPerson() != null) {
             isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(company.getContactPerson().getZdbID());
         }
         model.addAttribute(LookupStrings.IS_OWNER, isOwner);

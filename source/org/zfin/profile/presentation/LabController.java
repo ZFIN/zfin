@@ -154,7 +154,7 @@ public class LabController {
         }
 
         boolean isOwner = profileService.isCurrentSecurityUserRoot();
-        if (!isOwner && profileService.getCurrentSecurityUser() != null) {
+        if (!isOwner && profileService.getCurrentSecurityUser() != null && lab.getContactPerson() != null) {
             isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(lab.getContactPerson().getZdbID());
         }
         model.addAttribute(LookupStrings.IS_OWNER, isOwner);
