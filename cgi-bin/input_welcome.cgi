@@ -49,7 +49,7 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: <!--|COUNT_PATO_OUT|-->
+To: <!--|CURATORS_AT_ZFIN|-->
 From: $email
 Subject: $data{subject}
 
@@ -65,6 +65,8 @@ Comments: $data{comments}
 STOP
 close(MAIL) || die "pipe exited $?";
 
+
+=head1
 
 #email 'thanks' to submitter
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
@@ -91,5 +93,7 @@ STOP1
 close(MAIL) || die "pipe exited $?";
 
 &print_confirmation;
+
+=cut
 
 exit;
