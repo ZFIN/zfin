@@ -492,11 +492,11 @@ Commenting out survey as a part of FB case 7820
       WHERE p.zdb_id = source_id 
         AND target_id = l.zdb_id 
         AND l.name like 'ZFIN%'
-        AND (   position = 'Research Staff'
+        AND (   position_id = '6'
              or
                 p.zdb_id = 'ZDB-PERS-030612-2'
              or
-                position = 'Adminstrative Staff'
+                position_id = '9'
             )
       ORDER BY p.name;
   <?/MIVAR>
