@@ -19,7 +19,6 @@ OPTIONAL VARS:
   $reassignCurator :: curator ZDB-ID to assign $reassignTopic
   $calling_apg :: url to recreate the state of the calling page
   $paper_indexting :: indexed the paper
-
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$OID)">
