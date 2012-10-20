@@ -200,6 +200,8 @@ $dir = "<!--|ROOT_PATH|-->";
 $dbname = $dirPieces[1];
 $dbname =~ s/\///;
 
+$dbname = "kinetix" if ($dbname eq "zfin.org"); 
+
 print $dbname;
 print "\n\n";
 
