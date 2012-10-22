@@ -45,23 +45,6 @@
 -- Marker Relationship data
 --	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
---create marker identifier file for intermine id resolver.
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/markerIdentifiers.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/markerIdentifiers.txt'
- delimiter "	"
-select mrkr_zdb_id, mrkr_name
- from marker
- union
- select mrkr_Zdb_id, mrkr_abbrev
- from marker
-union 
- select mrkr_zdb_id, dalias_alias
-  from data_alias, marker
- where mrkr_Zdb_id = dalias_data_zdb_id
-union
-select mrkr_zdb_id, dblink_acc_num
-  from marker, db_link
-where mrkr_Zdb_id = dblink_linked_recid;
 
 -- create antibody download file
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt'"
