@@ -69,6 +69,10 @@ given ($ARGV[0]) {
     when ("smith") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart smith";
     }
+    when ("zygotix" {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart zygotix";
+    }
+	  
 
     default {
 	die "Incorrect argument '$ARGV[0]'"
