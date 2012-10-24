@@ -4,8 +4,7 @@
 
 -- to create the input file for this script ...
 --# currently all the clone accessions are 8 chars but I would not want to count on it
---awk '{split($NF,acc,",");for(a in acc)printf("%s|%s|\n",substr($1,2),substr(acc[a],1,index(acc[a],".")-1));}'\
--- \transcripts_for_tom.defline >! ottdarT_clnacc.unl
+--awk '{split($NF,acc,",");for(a in acc)printf("%s|%s|\n",substr($1,2),substr(acc[a],1,index(acc[a],".")-1));}' \transcripts_for_tom.defline >! ottdarT_clnacc.unl
 
 
 
@@ -20,7 +19,7 @@ load from "ottdarT_clnacc.unl" insert into ott_acc;
 create index ott_acc_oa_tscript_idx on ott_acc(oa_tscript) in idxdbs3;
 create index ott_acc_oa_clone_idx on ott_acc(oa_clone) in idxdbs3;
 
-update statistics for table ott_acc;
+update statistics high for table ott_acc;
 
 ! echo "find transcript zdb_ids"
 update ott_acc set oa_tscript = (
@@ -49,11 +48,13 @@ update ott_acc set oa_clone = (
 	 where oa_clone = dblink_acc_num
 	 and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36' -- GenBank-Genomic
 	 and dblink_linked_recid[1,8]  !=  'ZDB-GENE'        -- curators direct assignment
+	 and dblink_linked_recid[1,8]  !=  'ZDB-TGCO'
 ) where exists (
 	select 't' from db_link
 	 where oa_clone = dblink_acc_num
 	 and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36' -- GenBank-Genomic
-	 and dblink_linked_recid[1,8]  !=  'ZDB-GENE'
+	 and dblink_linked_recid[1,8]  !=  'ZDB-GENE'       -- curators direct assignment
+	 and dblink_linked_recid[1,8]  !=  'ZDB-TGCO'
 );
 
 ! echo "Find any marked as withdrawn but here none the less (zombie transcripts?)"
@@ -124,4 +125,4 @@ drop table ott_acc;
 
 -- transaction cloaed externally
 --rollback work;
---commit work;
+commit work;

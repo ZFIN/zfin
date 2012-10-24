@@ -6,18 +6,24 @@
 
 begin work;
 create table ottdarT_ottdarP ( --ot varchar (25) primary key, op varchar(50) 
-	tp_ottdarT varchar(20) primary key, 
+	tp_ottdarT varchar(20), -- primary key, 
 	tp_mrkrid varchar(50),
 	tp_ottdarP varchar(20) 
 )
 fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 ;
 
-load from 'ottdarT_ottdarP.unl' insert into ottdarT_ottdarP;
+load from 'novel_vega_genes_generated.unl' insert into ottdarT_ottdarP;
 
 create index ottdarT_ottdarP_tp_ottdarP_idx on ottdarT_ottdarP(tp_ottdarP);
 
 update statistics for table ottdarT_ottdarP;
+
+
+select tp_ottdarT, tp_ottdarP, count(*)
+from ottdarT_ottdarP
+group by 1, 2
+having count(*) > 1;
 
 ! echo "Drop any incomming rows with NULL  ottdarP"
 delete from ottdarT_ottdarP where tp_ottdarP is NULL;
@@ -57,18 +63,34 @@ select * from ottdarT_ottdarP where tp_mrkrid[1,8] == 'OTTDARG0';
 delete from ottdarT_ottdarP where tp_mrkrid[1,8] == 'OTTDARG0';
 
 ! echo "ensure remainder is unique"
-select distinct tp_mrkrid, tp_ottdarP prot
- from ottdarT_ottdarP into temp tmp_tp with no log;
+select distinct tp_mrkrid tp_mrkr, tp_ottdarP tp_p, count(*) tp_count
+ from ottdarT_ottdarP 
+ group by 1,2
+ having count(*) == 1
+ into temp tmp_tp with no log;
 
-delete from ottdarT_ottdarP;
+delete from ottdarT_ottdarP
+where not exists (
+   select * from tmp_tp
+   where tp_mrkr = tp_mrkrid
+     and tp_p = tp_ottdarP
+   )
+;
 
-insert into ottdarT_ottdarP select * from tmp_tp;
 drop table tmp_tp;
 
 ! echo "generate new dblinks"
 
 alter table ottdarT_ottdarP add zad varchar (50);
 update ottdarT_ottdarP set zad = get_id('DBLINK');
+
+select tp_mrkrid from ottdarT_ottdarP
+where not exists (
+   select tp_mrkrid 
+   from marker
+   where mrkr_zdb_id = tp_mrkrid )
+;
+
 insert into zdb_active_data select zad from ottdarT_ottdarP;
 
 insert into db_link  (

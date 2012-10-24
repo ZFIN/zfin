@@ -16,7 +16,7 @@ create table ottdarT_ottdarG(
 ;
 
 ! echo "load ottdarT_ottdarG.unl"
-load from 'ottdarT_ottdarG.unl' insert into ottdarT_ottdarG;
+load from 'ottdarT_ottdarG_ottdarP.unl' insert into ottdarT_ottdarG;
 
 create index ottdarT_ottdarG_gidx on ottdarT_ottdarG(tg_ottdarG) in idxdbs3;
 
@@ -183,7 +183,9 @@ select * from ottdarT_ottdarG  where tscript_id is NULL;
 
 ! echo "write out novel_vega_genes_generated"
 unload to 'novel_vega_genes_generated.unl'
-select tg_ottdarG, tscript_id from ottdarT_ottdarG;
+select tg_ottdarG, tscript_id, tg_ottdarP 
+from ottdarT_ottdarG
+where tg_ottdarP != "no_translation";
 
 
 -- 'ZDB-FDBCONT-060417-1' -- vega_trans
@@ -194,6 +196,6 @@ select tg_ottdarG, tscript_id from ottdarT_ottdarG;
 ! echo "###############################################################"
 ------------------------------------------------------------------------
 
-drop ottdarT_ottdarG;
+drop table ottdarT_ottdarG;
 
 -- transaction terminated externally

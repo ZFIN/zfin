@@ -71,9 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2012-06
-FTP  = ftp.sanger.ac.uk/pub/st3/vega49
-PREV = $(VEGADIR)/2012-01
+DEST = $(VEGADIR)/2012-06a
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega49
+PREV = $(VEGADIR)/2012-01a
 #FTP  = ftp.sanger.ac.uk/pub/ds23/vega47 
 
 
@@ -562,7 +562,7 @@ clean_load_evidence:
 #                 Post Reno Load
 
 # the file names they make available and locations are subject to change
-$(DEST)/vega_transcript_names.tsv.gz: $(FTP) $(DEST)
+$(DEST)/vega_transcript_names.tsv.gz: 
 	wget --timestamping "ftp://$(FTP)/vega_transcript_names.tsv.gz" -P $(DEST)
 	#!!!	 they have made a correction the the name file
 	#!!!	 left in a different place and so I am hardcoding it here.
@@ -659,14 +659,14 @@ $(DEST)/zebrafish_Zv9_%.gff3.gz:
 # need to be inserted in dblink, 
 # (and be deleted where sanger dropped them if they aren't already)
 
+ottdarT_ottdarG_ottdarP:
+	cp $(DEST)/ottdarT_ottdarG_ottdarP.unl .  
 
-vega_public:  move_post_vega.sql update_ottdarP.sql rollback.sql \
-											ottdarT_ottdarG_ottdarP.unl 
+vega_public:  move_post_vega.sql update_ottdarP.sql rollback.sql ottdarT_ottdarG_ottdarP 
 	cat move_post_vega.sql rollback.sql | dbaccess -a $$DBNAME;\
 	cat update_ottdarP.sql rollback.sql | dbaccess -a $$DBNAME
 
-vega_public_commit:  move_post_vega.sql update_ottdarP.sql commit.sql
-											ottdarT_ottdarG_ottdarP.unl
+vega_public_commit:  move_post_vega.sql update_ottdarP.sql commit.sql ottdarT_ottdarG_ottdarP
 	cat move_post_vega.sql commit.sql | dbaccess -a $$DBNAME;\
 	cat update_ottdarP.sql commit.sql | dbaccess -a $$DBNAME;\
 	rm ottdarT_ottdarG_ottdarP.unl
