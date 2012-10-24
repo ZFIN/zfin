@@ -68,7 +68,7 @@ given ($ARGV[0]) {
     when ("smith") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start smith";
     }
-    when ("zygotix" {
+    when ("zygotix") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start zygotix";
     }
 

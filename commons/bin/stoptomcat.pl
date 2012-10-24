@@ -69,7 +69,7 @@ given ($ARGV[0]) {
     when ("smithdb") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop smith";
     }
-    when ("zygotix" {
+    when ("zygotix") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop zygotix";
     }
 
