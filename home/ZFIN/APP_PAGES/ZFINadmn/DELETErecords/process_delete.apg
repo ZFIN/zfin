@@ -103,14 +103,31 @@
                   WHERE dalias_data_zdb_id = '$OID';">
          <?/MISQL>  
 
+         <?MICOMMENT>Check for a data alias record that has the same name as the merging marker.
+                     If a data_alias record is found, use that record. Otherwise create a new
+                     data_alias record.
+         <?/MICOMMENT>
+              <?MIVAR NAME=dalias_id>none<?/MIVAR>
+
          <?MISQL SQL="
-		EXECUTE FUNCTION get_id('DALIAS');">
+             SELECT dalias_zdb_id 
+             FROM data_alias, marker going, marker staying
+             WHERE dalias_alias = lower(going.mrkr_abbrev)
+               and dalias_data_zdb_id = staying.mrkr_zdb_id
+               and going.mrkr_zdb_id = '$OID'
+               and staying.mrkr_zdb_id = '$merge_oid';">  <?MIVAR NAME=dalias_id>$1<?/MIVAR>
          <?/MISQL>
-         <?MIVAR NAME=dalias_id>$1<?/MIVAR>
-         <?MISQL SQL="
-              INSERT INTO zdb_active_data VALUES('$dalias_id');">
-         <?/MISQL>
-         <?MISQL SQL="
+             
+         <?MICOMMENT> IF no Dalias_id is set, then make one.<?/MICOMMENT>
+         <?MIVAR COND="$(EQ,$dalias_id,none)">
+             <?MISQL SQL="
+   		  EXECUTE FUNCTION get_id('DALIAS');">
+             <?/MISQL>
+             <?MIVAR NAME=dalias_id>$1<?/MIVAR>
+             <?MISQL SQL="
+                  INSERT INTO zdb_active_data VALUES('$dalias_id');">
+             <?/MISQL>
+             <?MISQL SQL="
                  INSERT INTO data_alias (
                      		dalias_zdb_id, dalias_data_zdb_id,
                     		dalias_alias, dalias_group_id,
@@ -119,8 +136,9 @@
 			      lower(mrkr_abbrev)
                         FROM marker
                        WHERE mrkr_zdb_id = '$OID';">
-         <?/MISQL>
-              
+             <?/MISQL>
+         <?/MIVAR>
+         <?MICOMMENT> End set data_alias <?/MICOMMENT>              
 
 	 <?MICOMMENT> --- Mapping & Linkage ---  <?/MICOMMENT>
 	 <?MISQL SQL="
