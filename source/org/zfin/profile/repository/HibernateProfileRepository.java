@@ -860,8 +860,6 @@ public class HibernateProfileRepository implements ProfileRepository {
                 criteria.add(Restrictions.ilike("phone", "%" + searchBean.getContains() + "%"));
             } else if (containsType.equals("zdb_id")) {
                 criteria.add(Restrictions.ilike("zdbID", "%" + searchBean.getContains() + "%"));
-            } else if (containsType.equals("title")) {
-                criteria = addTokenizedLikeRestriction("titles", searchBean.getContains(), criteria);
             }
         }
 //        return criteria.list();
