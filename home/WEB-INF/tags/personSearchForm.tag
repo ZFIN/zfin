@@ -53,7 +53,6 @@
                                 <form:option value="phone">phone</form:option>
                                 <form:option value="fax">fax</form:option>
                                 <form:option value="zdb_id">ZFIN record ID</form:option>
-                                <form:option value="title">Title</form:option>
                             </form:select>
                                 <%--contains--%>
                                 <%--<input type=text name=anon1text size=15 >--%>
