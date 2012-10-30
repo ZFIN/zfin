@@ -722,9 +722,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void getParentTerms() {
 //        Term ciliumMovement = getOntologyRepository().getTermByName("cilium movement", Ontology.GO_BP);
         GenericTerm regulationOfCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
-        assertEquals(2, ontologyRepository.getParentDirectTerms(regulationOfCiliumMovement).size());
+        assertEquals(1, ontologyRepository.getParentDirectTerms(regulationOfCiliumMovement).size());
         assertEquals(1, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 0).size());
-        assertEquals(2, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size());
+        assertEquals(1, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size());
     }
 
     @Test
