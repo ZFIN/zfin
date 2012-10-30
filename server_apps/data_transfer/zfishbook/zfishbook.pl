@@ -9,10 +9,10 @@
 use MIME::Lite;
 
 
-#------------------ Send output ----------------
-# No parameter
+#------------------ Send load output ----------------
+# 
 #
-sub sendPreLoadInput($) {
+sub sendLoadOutput($) {
 
   my $SUBJECT="Auto: zfishbook data new genotypes on ".$_[0];
   my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
@@ -58,6 +58,55 @@ sub sendPreLoadInput($) {
 }
 
 
+#------------------ Send load output ----------------
+# 
+#
+sub sendLoadLogs($) {
+
+  my $SUBJECT="Auto: zfishbook data load log1 on ".$_[0];
+  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $TXTFILE="./log1";
+
+  # Create a new multipart message:
+  my $msg1 = new MIME::Lite
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+
+  attach $msg1
+   Type     => 'text/plain',
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg1->print(\*SENDMAIL);
+
+  my $SUBJECT="Auto: zfishbook data load log2 on ".$_[0];
+  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $TXTFILE="./log2";
+
+  # Create a new multipart message:
+  my $msg2 = new MIME::Lite
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+
+  attach $msg2
+   Type     => 'text/plain',
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg2->print(\*SENDMAIL);
+
+  close(SENDMAIL);
+}
+
+
 #=======================================================
 #
 #   Main
@@ -76,6 +125,9 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/zfishbook/";
  
 system("rm -f *.unl");
 system("rm -f *.dat");
+system("rm -f report");
+system("rm -f log1");
+system("rm -f log2");
 
 $dir = "<!--|ROOT_PATH|-->";
 
@@ -89,7 +141,7 @@ print $dbname;
 print "\n\n";
 
 
-print "\nRunning zfishbook loading script ...\n\n";
+print "\nRunning zfishbook pre-process script ...\n\n";
 
 system("preprocess_zfishbook.pl");
 
@@ -97,6 +149,7 @@ open (ERRREPORT, "report") || die "Cannot open report : $!\n";
 
 @lines = <ERRREPORT>;
 
+$doTheLoad = 1;
 foreach $line (@lines) {
    next if $line !~ m/numOfCrucialErrors/;
    chop($line);
@@ -105,17 +158,25 @@ foreach $line (@lines) {
    print "\nnumber of crucial errors:  $line\n\n"; 
    if ($line > 0) {
       print "\nThe loading is not done due to crucial error(s).\nExit!\n\n\n";
+      $doTheLoad = 0;
       exit;
    }
 } 
 
 close(ERRREPORT);
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadZfishbookData.sql");
+print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
+
+print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
+
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
 
 ##system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> cleanupGBTfeatureNotes.sql");
 
+sendLoadLogs("$dbname") if $doTheLoad > 0;
 
-sendPreLoadInput("$dbname");
+sendLoadOutput("$dbname") if $doTheLoad > 0;
+
+print "\n\nLoading data done.\n\n\n" if $doTheLoad > 0;
 
 exit;
