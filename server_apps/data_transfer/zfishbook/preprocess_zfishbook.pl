@@ -8,13 +8,13 @@ use DBI;
 
 
 #------------------ Send Checking Result ----------------
-# No parameter
+#
 #
 
 sub sendReport {
 		
   my $SUBJECT="Auto: zfishbook sanity checking result";
-  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./report";
  
   # Create a new multipart message:
@@ -34,7 +34,7 @@ sub sendReport {
   $msg1->print(\*SENDMAIL);
 
   my $SUBJECT="Auto: zfishbook pre_load_input";
-  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./pre_load_input.txt";
  
   # Create a new multipart message:
@@ -82,15 +82,13 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
 
 
 ## for gene trap construct Ids
-##%gtCnstructIds = ();
+%gtCnstructIds = ();
 
-##$rp2 = "RP2";
-##$rp14point5 = "R14.5";
-##$gtCnstructIds[$rp2] = "ZDB-GTCONSTRCT-111117-2";
-##$gtCnstructIds[$rp14point5] = "ZDB-GTCONSTRCT-100624-1";
-
-##print "gtCnstructIds[$rp2]:  $gtCnstructIds[$rp2]\n";
-##print "gtCnstructIds[$rp14point5]:  $gtCnstructIds[$rp14point5]\n";
+$gtCnstructIds{"RP2"} = "ZDB-GTCONSTRCT-111117-2";
+$gtCnstructIds{"RP8"} = "ZDB-GTCONSTRCT-121023-1";
+$gtCnstructIds{"RP8 pr. 18"} = "ZDB-GTCONSTRCT-121023-1";
+$gtCnstructIds{"R14.5"} = "ZDB-GTCONSTRCT-100624-1";
+$gtCnstructIds{"RP15"} = "ZDB-GTCONSTRCT-100121-2";
 
 
 open (ZFISHBOOKDATA, "zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
@@ -108,7 +106,7 @@ open (ZFISHBOOK, ">pre_load_input.txt") || die "Cannot open pre_load_input.txt :
 
 foreach $line (@lines) {
   $ct++;
-  next if $ct < 3;
+  next if $ct < 2;
   if ($line) {
 
     chop($line);
@@ -119,7 +117,6 @@ foreach $line (@lines) {
     $prev =~ s/^\s+//; 
     $prev =~ s/\s+$//;
     if (exists $prviousNames{$prev}) {
-       $numErr++;
        $numOfCrucialErrors++;
        print REPORT "\n$ct :: $prev ::  Redundant: $prev\n";
     }  else {
@@ -127,9 +124,6 @@ foreach $line (@lines) {
     }
     
     $lineNum = substr($prev, 3);
-    
-    
-###    $allele = $fields[1];
     
     $allele = "mn" . $lineNum . "Gt";
     
@@ -139,7 +133,6 @@ foreach $line (@lines) {
     $allele =~ s/GT$/Gt/;
     
     if (exists $alleles{$allele}) {
-       $numErr++;
        $numOfCrucialErrors++;
        print REPORT "\n$ct :: $prev :: Redundant: $allele\n";
     }  else {
@@ -147,7 +140,6 @@ foreach $line (@lines) {
     }    
 
     if (exists $allelePrevs{$allele}) {
-       $numErr++;
        $numOfCrucialErrors++;
          print REPORT "\n$ct :: $prev :: Redundant allele-prev : $allele $prev\n";
     }  else {
@@ -159,21 +151,12 @@ foreach $line (@lines) {
     $vector =~ s/\s+$//; 
 
     $cnstrtId = "";    
-##    if (!$vector || $vector eq "" || !exists($gtCnstructIds[$vector])) {
 
-    if (!$vector || $vector eq "" || ($vector ne "RP2" && $vector ne "R14.5" && $vector ne "R15")) {
+    if (!$vector || !exists($gtCnstructIds{$vector})) {
         print REPORT "\n$ct :: $prev :: no vector or construct found\n";
-        $numErr++;
         $numOfCrucialErrors++;
     } else {
-        if ($vector eq "RP2") {
-           $cnstrtId = "ZDB-GTCONSTRCT-111117-2"; 
-        } elsif ($vector eq "R14.5") {
-           $cnstrtId = "ZDB-GTCONSTRCT-100624-1";
-        } else {
-           $cnstrtId = "ZDB-GTCONSTRCT-100121-2";
-        }
-        
+        $cnstrtId = $gtCnstructIds{$vector};
     }
          
     $geneId = $fields[3];
@@ -196,7 +179,6 @@ foreach $line (@lines) {
       }
    
       if ($cur->rows == 0) {
-         $numErr++;
          $numOfCrucialErrors++;
          print REPORT "\n$ct :: $prev :: $geneId is not a valid ZDB Id\n"; 
       }
@@ -262,7 +244,6 @@ foreach $line (@lines) {
       
       ### look up data_alias table
       if ($featureId eq "") {
-   ###   print "$ct|$prev|$lineNum|$allele\n\n";
         $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
         $cur->execute($allele);
         my ($ZFINfeatureIdFromAlias);
@@ -277,9 +258,7 @@ foreach $line (@lines) {
            $featureId = $ZFINfeatureIdFromAlias;
         }
       
-        $cur->finish();  
-        
-   ####     print "$ct|$prev|$lineNum|$allele ---  featureId = $featureId   -- ZFINfeatureIdFromAlias = $ZFINfeatureIdFromAlias\n\n";
+        $cur->finish();
       }
         
 
@@ -305,7 +284,6 @@ foreach $line (@lines) {
 
       ### look up data_alias table with mnXXXX without trailing 'Gt'
       if ($featureId eq "") {
-   ###   print "$ct|$prev|$lineNum|$allele\n\n";
         $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
         $cur->execute($alleleWithoutGt);
         my ($ZFINfeatureIdFromAliasWithoutGt);
@@ -319,10 +297,7 @@ foreach $line (@lines) {
         } else {
            $featureId = $ZFINfeatureIdFromAliasWithoutGt;
         }
-      
-        $cur->finish();  
-        
- ####       print "$ct|$prev|$lineNum|$allele ---  featureId = $featureId   -- ZFINfeatureIdFromAliasWithoutGt = $ZFINfeatureIdFromAliasWithoutGt\n\n";
+        $cur->finish();
       }
 
       ### look up feature table with GBTXXX
@@ -348,7 +323,6 @@ foreach $line (@lines) {
 
       ### look up data_alias table with with GBTXXX
       if ($featureId eq "") {
-   ###   print "$ct|$prev|$lineNum|$allele\n\n";
         $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
         $cur->execute($prev);
         my ($ZFINfeatureIdFromAliasGBT);
