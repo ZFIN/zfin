@@ -8,11 +8,12 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
 
-    <property environment="env" />
+    <property environment="env"/>
 
     <!-- Classpath definitions -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
+        <pathelement location="${basedir}/server_apps/DB_maintenance/conf"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
@@ -26,11 +27,17 @@
         </fileset>
     </path>
 
+    <path id="log4j">
+        <fileset dir="${basedir}">
+            <include name="log4j.xml"/>
+        </fileset>
+    </path>
+
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="classpath" />
 
-    <loadProperties file="${web-inf.dir}/zfin.properties" />
+    <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
     <target name="init">
         <tstamp/>
@@ -43,7 +50,7 @@
         <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
-    <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance" />	
+    <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
@@ -51,9 +58,10 @@
         <sequential>
             <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
                   failonerror="true">
+                <classpath refid="log4j"/>
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
-		<arg value="${unloadDir}"/>
+                <arg value="${unloadDir}"/>
             </java>
         </sequential>
     </macrodef>

@@ -33,7 +33,7 @@
             eternal="false"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
-            overflowToDisk="true"
+            overflowToDisk="false"
             />
 
     <!--Predefined caches.  Add your cache configuration settings here.
@@ -60,7 +60,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.anatomy.AnatomyItem"
@@ -68,7 +68,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.anatomy.repository.AnatomyRelationshipOne"
@@ -76,7 +76,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.anatomy.repository.AnatomyRelationshipTwo"
@@ -84,7 +84,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.anatomy.repository.AnatomyRelationshipTypePersistence"
@@ -92,7 +92,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.infrastructure.DataAlias"
@@ -100,7 +100,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.infrastructure.DataAliasGroup"
@@ -108,7 +108,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.anatomy.AnatomySynonym"
@@ -116,7 +116,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.ExpressionAssay"
@@ -124,7 +124,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.DataAliasGroup"
@@ -132,7 +132,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.marker.MarkerType"
@@ -140,7 +140,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.marker.MarkerTypeGroup"
@@ -148,7 +148,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.Figure"
@@ -156,7 +156,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.FigureFigure"
@@ -164,7 +164,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.TextOnlyFigure"
@@ -172,7 +172,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.feature.FeatureTypeGroup"
@@ -180,7 +180,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.fish.FeatureGene"
@@ -188,7 +188,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.ontology.GenericTerm"
@@ -196,7 +196,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.expression.Image"
@@ -204,7 +204,7 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 
     <cache name="org.zfin.infrastructure.Updates"
@@ -212,6 +212,6 @@
            eternal="true"
            timeToIdleSeconds="0"
            timeToLiveSeconds="0"
-           overflowToDisk="true"
+           overflowToDisk="false"
             />
 </ehcache>
