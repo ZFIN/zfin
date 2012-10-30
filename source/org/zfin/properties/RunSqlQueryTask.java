@@ -3,9 +3,7 @@ package org.zfin.properties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.Task;
 import org.hibernate.cfg.Configuration;
-import org.nocrala.tools.texttablefmt.Table;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -15,7 +13,7 @@ import java.util.List;
 
 /**
  */
-public class RunSqlQueryTask extends Task {
+public class RunSqlQueryTask {
 
     private final Logger LOG = Logger.getLogger(RunSqlQueryTask.class);
 
@@ -23,10 +21,9 @@ public class RunSqlQueryTask extends Task {
     private String sqlFileName;
     private String baseDir;
 
-    @Override
     public void execute() {
-        System.setProperty("java.io.tmpdir", "test/temp");
-	System.out.println("java.io.tmpdir: "+System.getProperty("java.io.tmpdir"));
+        //System.setProperty("java.io.tmpdir", "test/temp");
+        System.out.println("java.io.tmpdir: " + System.getProperty("java.io.tmpdir"));
 
         LOG.info("Running SQLQueryTask on instance: " + instance);
         File baseDirectory = new File(baseDir);
