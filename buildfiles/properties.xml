@@ -85,6 +85,9 @@
         <!--</fileset>-->
     </path>
 
+    <path id="log4j">
+	<pathelement location="${basedir}/test"/>
+    </path>
 
     <!-- where all of the static xml data files are -->
     <property name="conf.dir" value="${basedir}/conf"/>

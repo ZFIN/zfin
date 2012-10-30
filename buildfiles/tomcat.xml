@@ -132,6 +132,7 @@
             <mkdir dir="${pre.jsp-compile}"/>
             <taskdef classname="org.apache.jasper.JspC" name="jasper2">
                 <classpath id="jspc.classpath">
+		    <path refid="log4j" />
                     <path refid="classpath"/>
                     <pathelement location="${pre-web-inf}"/>
                     <fileset dir="${CATALINA_HOME}/bin">
