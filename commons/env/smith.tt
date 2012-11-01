@@ -17,7 +17,7 @@
 <!--|CURATORS_AT_ZFIN|-->	informix\@cs.uoregon.edu
 <!--|DB_NAME|-->	smithdb
 <!--|DB_OWNER|-->	informix
-<!--|DOMAIN_NAME|-->	istest.zfin.org
+<!--|DOMAIN_NAME|-->	smith.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
