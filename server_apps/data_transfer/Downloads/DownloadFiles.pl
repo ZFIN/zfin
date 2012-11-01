@@ -229,5 +229,7 @@ system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt");
 
 system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
 
+system("./FBcase8787.pl");
+
 system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
 
