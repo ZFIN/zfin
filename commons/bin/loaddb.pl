@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/private/apps/perl64-5.16.1/bin/perl
 #------------------------------------------------------------------------
 # 
 # Script to load a ZFIN database from a files that were created by unloaddb.pl
@@ -38,6 +38,7 @@
 # $Source: /research/zusers/ndunn/CVSROOT/Commons/bin/loaddb.pl,v $
 
 
+use threads;
 use English;
 use Getopt::Long;
 
@@ -431,7 +432,7 @@ sub checkPreOrPostLoad($) {
         # Ignore blank lines, database selected, mode set, and database closed
 	# There is also an update statistics high at the end of the post load
 	#  script, so handle that too.
-        if (! ($line =~ /^\s*$|^Mode set\.\s*$|^Database selected\.\s*$|^Database closed\.\s*$|^Statistics updated\.\s*$/)) {
+        if (! ($line =~ /^\s*$|^Mode set\.\s*$|^Database selected\.\s*$|^Database closed\.\s*$|^Lockmode set\.\s*$|^Statistics updated\.\s*$/)) {
 	    $ploadError = 1;   # Serious problem.
 	    logError("Unexpected line encountered:", $line);
 	}
@@ -797,6 +798,10 @@ sub createPreAndPostLoadFiles($$$) {
     open(POSTLOAD, ">$postLoadFile")
 	or die "Unable to open $postLoadFile";
     
+    print(POSTLOAD
+          "set lock mode to wait 20;\n");
+ 
+
     # Have to handle foreign key constraints in a special way.  Before 
     # loading they have to be disabled before the primary key constraints 
     # they are dependent on are disabled.  After loading they have to 
@@ -943,6 +948,7 @@ sub dropLockFile(){
 #  !=0 Problem encountered.  Error has been logged.  Some tables have 
 #      probably been loaded.
 
+
 sub loadDb($$) {
 
     my $dbName = $_[0];
@@ -952,12 +958,44 @@ sub loadDb($$) {
     my $loadLog = "$globalTmpDir/loadLog";
     open DOLOAD, ">$doLoadSqlFile" or die "Cannot open the $doLoadSqlFile to write.";
 
+    open FILE,"<$_[1]" or die("unable to open load.sql for parsing");
+    my @threads ;
+    my $count = 0;
 
-    &execSqlFile($dbName, $loadSqlFile, $loadLog);
-    
-    return checkLoad($loadLog);
+    while(<FILE>) {
+        $b = $_;
+
+        $count++;
+        my $t = threads->create(execSqlThreaded,$dbName,"set lock mode to wait 20; ".$b,$loadLog);
+	push(@threads,$t);
+    }
+
+    #print scalar(grep {defined $_} @threads), "\n";                                                                                               
+    #print "$count\n";                                                                                                                             
+
+    foreach (@threads){
+
+        $_->join();
+    }
+
+    sub execSqlThreaded($$$){
+
+        my $dbName   = $_[0];
+        my $sql  = $_[1];
+        my $fileBase = $_[2];
+        my $stderrFile = "$fileBase.$globalStderrExt";
+        my $stdoutFile = "$fileBase.$globalStdoutExt";
+
+        system("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess $dbName - > $stdoutFile 2> $stderrFile");
+
+        return 0;
+    }
+
+
+    close(FILE);
+    return 0;
+    #return checkLoad($loadLog);                                                                                                                   
 }
-
 
 
 
@@ -1058,6 +1096,8 @@ if ($ENV{HOST} =~ /kinetix/){
 }
 else {
     $ENV{PDQPRIORITY} = "50";    # Take as much as you can.
+    $ENV{IFX_DIRTY_WAIT} = "30";
+
     logMsg("Restarting Apache ...");
     restartApache();
 
