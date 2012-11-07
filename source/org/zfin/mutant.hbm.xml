@@ -476,7 +476,7 @@
 
         <id name="pkid" type="int">
             <column name="featassay_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="native"/>
         </id>
         <property name="featzdbID">
             <column name="featassay_feature_zdb_id"/>
