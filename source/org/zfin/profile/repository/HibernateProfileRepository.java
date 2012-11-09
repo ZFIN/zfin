@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -546,7 +547,6 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
 
-
     @Override
     public int removeMemberFromOrganization(String personZdbID, String organizationZdbID) {
         String sql;
@@ -593,7 +593,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public int addCompanyMember(String personZdbID, String organizationZdbID, Integer position) {
         String sql = "insert into int_person_company (source_id,target_id,position_id) " +
                 " values (:personZdbID,:companyZdbID,:positionID)  ";
-        logger.debug("personZdbID: "  + personZdbID);
+        logger.debug("personZdbID: " + personZdbID);
         logger.debug("organizationZdbID: " + organizationZdbID);
         logger.debug("positionID: " + position);
         return HibernateUtil.currentSession().createSQLQuery(sql)
@@ -722,8 +722,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public PaginationResult<Company> searchCompanies(CompanySearchBean searchBean) {
 
         Criteria criteria = HibernateUtil.currentSession()
-                .createCriteria(Company.class).addOrder(Order.asc("name"))
-                ;
+                .createCriteria(Company.class).addOrder(Order.asc("name"));
         if (StringUtils.isNotEmpty(searchBean.getName())) {
             criteria = addTokenizedLikeRestriction("name", searchBean.getName(), criteria);
         }
@@ -750,7 +749,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 //        return criteria.list();
         PaginationResult<Company> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-                searchBean.getFirstRecordOnPage()-1,searchBean.getLastRecordOnPage(),criteria.scroll());
+                searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), criteria.scroll());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
@@ -760,8 +759,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public PaginationResult<Lab> searchLabs(LabSearchBean searchBean) {
 
         Criteria criteria = HibernateUtil.currentSession()
-                .createCriteria(Lab.class).addOrder(Order.asc("name"))
-                ;
+                .createCriteria(Lab.class).addOrder(Order.asc("name"));
         if (StringUtils.isNotEmpty(searchBean.getName())) {
             criteria = addTokenizedLikeRestriction("name", searchBean.getName(), criteria);
         }
@@ -789,7 +787,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         }
 
         PaginationResult<Lab> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-                searchBean.getFirstRecordOnPage()-1,searchBean.getLastRecordOnPage(),criteria.scroll());
+                searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), criteria.scroll());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
@@ -837,8 +835,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Criteria criteria = HibernateUtil.currentSession()
                 .createCriteria(Person.class)
                 .addOrder(Order.asc("lastName"))
-                .addOrder(Order.asc("firstName"))
-                ;
+                .addOrder(Order.asc("firstName"));
         if (StringUtils.isNotEmpty(searchBean.getName())) {
             criteria = addTokenizedLikeRestriction("fullName", searchBean.getName(), criteria);
         }
@@ -864,7 +861,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         }
 //        return criteria.list();
         PaginationResult<Person> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-                searchBean.getFirstRecordOnPage()-1,searchBean.getLastRecordOnPage(),criteria.scroll());
+                searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), criteria.scroll());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
@@ -873,7 +870,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     /**
      * Doing multi-word searching is something that's useful in all of these searches
-     *
+     * <p/>
      * Returning the criteria doesn't really do anything, but it feels like it's a little
      * more immediately obvious what's going on if I do it that way.
      *

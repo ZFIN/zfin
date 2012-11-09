@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 //import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.zfin.gwt.root.dto.Mutagee;
+import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -14,6 +16,7 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.profile.Person;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
 
 import javax.servlet.http.HttpSession;
@@ -338,6 +341,18 @@ public class ZfinJSPFunctions {
             return null;
 
         return PhenotypeService.getSubstructureName(statement, parentTerm);
+    }
+
+    public static Mutagen getMutagen(String name){
+        return Mutagen.getType(name);
+    }
+
+    public static Mutagee getMutagee(String name){
+        return Mutagee.getType(name);
+    }
+
+    public static Database.AvailableAbbrev getAvailableAbbrev(String name){
+        return Database.AvailableAbbrev.getType(name);
     }
 
 }

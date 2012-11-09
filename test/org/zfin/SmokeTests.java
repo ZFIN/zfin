@@ -18,6 +18,7 @@ import org.zfin.gwt.marker.GeneEditSmokeTest;
 import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
+import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
 import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
 import org.zfin.webservice.MarkerSoapClientSmokeTest;
@@ -32,6 +33,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         AnatomySmokeTest.class,
         AntibodySmokeTest.class,
 //        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
+        BlastSmokeTest.class,
         DownloadSmokeTest.class,
         ExpressionSmokeTest.class,
         FigureSummarySmokeTest.class,

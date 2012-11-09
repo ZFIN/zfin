@@ -116,6 +116,8 @@
 
     <!-- Tomcat related environment variables -->
     <property name="tomcat-conf" value="${CATALINA_BASE}/conf"/>
+    <property name="tomcat-lib" value="${CATALINA_BASE}/lib"/>
+    <property name="tomcat-bin" value="${CATALINA_BASE}/bin"/>
     <property name="domain-conf" value="${CATALINA_BASE}/conf/Catalina/${DOMAIN_NAME}"/>
 
     <property name="template-dir" value="lib/Java/tomcat"/>

@@ -1,5 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
@@ -37,7 +35,7 @@
 <c:if test="${formBean.feature.aliases != null}">
     <tr>
         <th>
-            Previous Names: 
+            Previous Names:
         </th>
         <td>
             <c:forEach var="featureAlias" items="${formBean.feature.aliases}" varStatus="loop">
@@ -141,16 +139,18 @@
         Protocol:
     </th>
     <td>
+        <c:set var="mutagen" value="${formBean.feature.featureAssay.mutagen}" />
+        <c:set var="mutagee" value="${formBean.feature.featureAssay.mutagee}" />
         <c:choose>
-            <c:when test="${formBean.feature.featureAssay.mutagen eq null || formBean.feature.featureAssay.mutagen eq 'not specified'}">
+            <c:when test="${mutagen eq null || mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagee eq 'not specified' && formBean.feature.featureAssay.mutagen eq 'not specified'}">
+            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
-            <c:when test="${formBean.feature.featureAssay.mutagee eq 'not specified' && formBean.feature.featureAssay.mutagen ne 'not specified'}">
-               ${formBean.feature.featureAssay.mutagen}
+            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
+               ${mutagen}
             </c:when>
             <c:otherwise>
-                ${formBean.feature.featureAssay.mutagee} treated with ${formBean.feature.featureAssay.mutagen}
+                ${mutagee.value} treated with ${mutagen}
             </c:otherwise>
         </c:choose>
     </td>

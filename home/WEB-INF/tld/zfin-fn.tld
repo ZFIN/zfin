@@ -273,5 +273,29 @@
         </example>
     </function>
 
+    <function>
+        <description>
+        </description>
+        <name>getMutagen</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.gwt.root.dto.Mutagen getMutagen(java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getMutagee</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.gwt.root.dto.Mutagee getMutagee(java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getAvailableAbbrev</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.sequence.blast.Database.AvailableAbbrev getAvailableAbbrev(java.lang.String)</function-signature>
+    </function>
+
 
 </taglib>

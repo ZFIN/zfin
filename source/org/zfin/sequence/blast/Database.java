@@ -270,6 +270,10 @@ public class Database {
             return this.value;
         }
 
+        public String getValue(){
+            return value;
+        }
+
         public static AvailableAbbrev getType(String type) {
             for (AvailableAbbrev t : values()) {
                 if (t.toString().equals(type.trim()))

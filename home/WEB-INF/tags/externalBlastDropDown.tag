@@ -52,7 +52,7 @@ ${dbLink.referenceDatabase.foreignDBDataType.dataType}
                             </c:when>
                             <c:otherwise>
                                 <c:set var="blastLinkString"
-                                       value="/action/blast/blast?sequenceID=${dbLink.accessionNumber}&queryType=SEQUENCE_ID&dataLibraryString=${blastDB.abbrev}"/>
+                                       value="/action/blast/blast?sequenceID=${dbLink.accessionNumber}&queryType=SEQUENCE_ID&dataLibraryString=${blastDB.abbrev.value}"/>
                             </c:otherwise>
                         </c:choose>
 

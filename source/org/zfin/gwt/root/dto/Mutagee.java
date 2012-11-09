@@ -20,6 +20,12 @@ public enum Mutagee {
     public String toString() {
         return this.value;
     }
+
+
+    public String getValue() {
+        return value;
+    }
+
     public static Mutagee getType(String type) {
         for (Mutagee t : values()) {
             if (t.toString().equals(type))
