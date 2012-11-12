@@ -687,13 +687,10 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
                      WHERE p.zdb_id = source_id 
         AND ipl.position_id = lp.labpos_pk_id
         AND ipl.target_id = l.zdb_id 
-                       AND l.name like 'ZFIN%'
+                       AND l.zdb_id = 'ZDB-LAB-000914-1'
         AND (   lp.labpos_position = 'Research Staff'
                             or
-                               p.name like 'Sprunger%'
-                            or 
-        lp.labpos_position = 'Adminstrative Staff'
-                           )
+                               p.zdb_id = 'ZDB-PERS-030612-2')
           ORDER BY p.name;
                      ">
             <OPTION VALUE="$2" $(IF,$(EC,$2,$curator),SELECTED)> $1
