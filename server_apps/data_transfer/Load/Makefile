@@ -19,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load
 
 SUBDIRS = ReNo Entrez Vega
 
-GENERICS =
+GENERICS = blast_withdrawn.pl 
 
 STATICS =
 
