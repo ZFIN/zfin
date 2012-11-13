@@ -91,6 +91,14 @@ $numDblinksGenPeptBefore = countData($sql);
 
 $sql = 'select distinct dblink_zdb_id
           from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "GenBank";';
+
+$numDblinksGenBankBefore = countData($sql);
+
+$sql = 'select distinct dblink_zdb_id
+          from db_link, foreign_db_contains, foreign_db
          where (dblink_length is null or dblink_length = "" or dblink_length = "0") 
            and dblink_fdbcont_zdb_id = fdbcont_zdb_id
            and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -139,6 +147,16 @@ $sql = 'select distinct dblink_linked_recid
            and dblink_linked_recid like "ZDB-GENE-%";';
 
 $numGenesEntrezGeneBefore = countData($sql);
+
+
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "GenBank"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesGenBankBefore = countData($sql);
 
 #--------------------------------------------------------------------------------------------------
 
@@ -212,7 +230,10 @@ system("/bin/rm -f log2");
 
 print "\n\nStarted EntrezGene load....\n\n\n";
 
+$dbname = "kinetix" if ($dbname eq "zfin.org");
+
 $cmd = "load_entrez_wrapper.sh $dbname commit > log1 2>log2";
+
 
 print $cmd;
 print "\n\n";
@@ -254,6 +275,14 @@ $sql = 'select distinct dblink_zdb_id
            and fdb_db_name = "GenPept";';
 
 $numDblinksGenPeptAfter = countData($sql); 
+
+$sql = 'select distinct dblink_zdb_id
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "GenBank";';
+
+$numDblinksGenBankAfter = countData($sql);
 
 $sql = 'select distinct dblink_zdb_id
           from db_link, foreign_db_contains, foreign_db
@@ -307,6 +336,15 @@ $sql = 'select distinct dblink_linked_recid
 
 $numGenesEntrezGeneAfter = countData($sql);
 
+$sql = 'select distinct dblink_linked_recid
+          from db_link, foreign_db_contains, foreign_db
+         where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+           and fdbcont_fdb_db_id = fdb_db_pk_id
+           and fdb_db_name = "GenBank"
+           and dblink_linked_recid like "ZDB-GENE-%";';
+
+$numGenesGenBankAfter = countData($sql);
+
 open STATS, '>>', "$statsfile" or die "can not open statsEntrezGeneLoad again" ;
 
 print STATS "RefSeq                                  \t";
@@ -329,6 +367,11 @@ print STATS "GenPept                                 \t";
 print STATS "$numDblinksGenPeptBefore   \t";
 print STATS "$numDblinksGenPeptAfter   \t";
 printf STATS "%.2f\n", ($numDblinksGenPeptAfter - $numDblinksGenPeptBefore) / $numDblinksGenPeptBefore * 100 if ($numDblinksGenPeptBefore > 0);
+
+print STATS "GenBank                                 \t";
+print STATS "$numDblinksGenBankBefore  \t";
+print STATS "$numDblinksGenBankAfter  \t";
+printf STATS "%.2f\n", ($numDblinksGenBankAfter - $numDblinksGenBankBefore) / $numDblinksGenBankBefore * 100 if ($numDblinksGenBankBefore > 0);
 
 print STATS "RefSeq missing len                      \t";
 print STATS "$numDblinksMissingLenRefSeqBefore       \t";
@@ -362,6 +405,11 @@ print STATS "with Entrez Gene                        \t";
 print STATS "$numGenesEntrezGeneBefore        \t";
 print STATS "$numGenesEntrezGeneAfter       \t";
 printf STATS "%.2f\n", ($numGenesEntrezGeneAfter - $numGenesEntrezGeneBefore) / $numGenesEntrezGeneBefore * 100 if ($numGenesEntrezGeneBefore > 0);
+
+print STATS "with GenBank                            \t";
+print STATS "$numGenesGenBankBefore        \t";
+print STATS "$numGenesGenBankAfter       \t";
+printf STATS "%.2f\n", ($numGenesGenBankAfter - $numGenesGenBankBefore) / $numGenesGenBankBefore * 100 if ($numGenesGenBankBefore > 0);
 
 close (STATS);
 

@@ -395,6 +395,7 @@ select dblink_linked_recid[1,25],dblink_acc_num[1,20],
 
 ! echo "---------------------------------------------------------------"
 ! echo "Delete incomming UniGene unmappable to zfin genes"
+  
 delete from entrez_ug where not exists (
 	select 't' from entrez_zdbid where ez_eid == eu_eid
 );
@@ -410,6 +411,7 @@ select count(*) rs_remaining from entrez_rs;
 delete from entrez_gb where not exists (
 	select 't' from entrez_zdbid where ez_eid == eg_eid
 );
+
 select count(*) gb_remaining from entrez_gb;
 
 ! echo "---------------------------------------------------------------"
@@ -438,6 +440,11 @@ delete from entrez_rs where exists (
 );
 
 ! echo "Delete incomming GenBank correctly mapped to zfin genes via Entrez"
+
+
+{ FB case 9020: a defect was found that removed those records from entrez_gb table
+  with accessions that have not been on zfin yet - resulting missing loading a lot of GenBank accessions.
+
 delete from entrez_gb where exists (
 	select 't' from entrez_zdbid 
 	 join db_link on dblink_linked_recid == ez_zdbid
@@ -450,6 +457,44 @@ delete from entrez_gb where exists (
 	   and fdb_db_name in ("GenBank","GenPept")
 );
 select count(*) gb_remaining from entrez_gb;
+
+The solution is: replace those accessions with "-" rather than deleting the whole record from entrez_gb table
+
+}
+
+! echo "mark - to those already stored at zfin"
+update entrez_gb set eg_rna = "-"
+ where exists (
+	select 't' from entrez_zdbid, db_link, foreign_db_contains, foreign_db
+	          where dblink_linked_recid == ez_zdbid
+	            and dblink_fdbcont_zdb_id == fdbcont_zdb_id
+	            and fdbcont_fdb_db_id == fdb_db_pk_id
+	            and ez_eid == eg_eid
+	            and dblink_acc_num == eg_rna
+	            and fdb_db_name in ("GenBank","GenPept")
+);
+
+update entrez_gb set eg_aa = "-"
+ where exists (
+	select 't' from entrez_zdbid, db_link, foreign_db_contains, foreign_db
+	          where dblink_linked_recid == ez_zdbid
+	            and dblink_fdbcont_zdb_id == fdbcont_zdb_id
+	            and fdbcont_fdb_db_id == fdb_db_pk_id
+	            and ez_eid == eg_eid
+	            and dblink_acc_num == eg_aa
+	            and fdb_db_name in ("GenBank","GenPept")
+);
+
+update entrez_gb set eg_dna = "-"
+ where exists (
+	select 't' from entrez_zdbid, db_link, foreign_db_contains, foreign_db
+	          where dblink_linked_recid == ez_zdbid
+	            and dblink_fdbcont_zdb_id == fdbcont_zdb_id
+	            and fdbcont_fdb_db_id == fdb_db_pk_id
+	            and ez_eid == eg_eid
+	            and dblink_acc_num == eg_dna
+	            and fdb_db_name in ("GenBank","GenPept")
+);
 
 -- TODO 
 -- explore if also exists incorectly mapped for same correct mapping? 
@@ -495,7 +540,7 @@ delete from entrez_gb where exists (
 	        dblink_acc_num == eg_aa  OR 
 	        dblink_acc_num == eg_dna)
 	   and fdb_db_name in ("GenBank","GenPept")
-	   and dblink_linked_recid[1,8] not in("ZDB-GENE","ZDB-TRAN") -- transcript evidence
+	   and dblink_linked_recid[1,8] not in("ZDB-GENE","ZDB-TSCR") -- transcript evidence
 );
 
 ! echo "###############################################################"
