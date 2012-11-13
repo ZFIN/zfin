@@ -28,7 +28,7 @@
 
     <path id="extended.classpath">
         <path refid="classpath"/>
-        <fileset dir="${env.CATALINA_HOME}/common/lib">
+        <fileset dir="${env.CATALINA_HOME}/endorsed">
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
