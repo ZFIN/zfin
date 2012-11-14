@@ -985,8 +985,10 @@ sub loadDb($$) {
         my $fileBase = $_[2];
         my $stderrFile = "$fileBase.$globalStderrExt";
         my $stdoutFile = "$fileBase.$globalStdoutExt";
-
-        system("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess $dbName - > $stdoutFile 2> $stderrFile");
+	
+	
+        system("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess $dbName - >> $stdoutFile 2>> $stdoutFile");
+	
 
         return 0;
     }
