@@ -10,6 +10,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
@@ -33,8 +34,21 @@ public class LuceneQueryService {
     }
 
     protected void initSummary() {
+        if (indexDirectory == null) {
+            LOG.warn("No indexDirectory provided. Class is not initialized properly");
+            return;
+        }
         try {
-            reader = IndexReader.open(indexDirectory);
+            File indexDir = new File(indexDirectory);
+            if (!indexDir.exists()) {
+                LOG.warn("indexDirectory " + indexDirectory + " not found. Class is not initialized properly");
+                return;
+            }
+            if (!indexDir.canWrite()) {
+                LOG.warn("indexDirectory " + indexDirectory + " cannot be written to.");
+                return;
+            }
+            reader = IndexReader.open(indexDir);
             isInitialized = true;
         } catch (Exception e) {
             LOG.warn("Ignoring. Make sure to re-initialize later.", e);
