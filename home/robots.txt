@@ -38,6 +38,7 @@ Disallow: /cgi-perl/gbrowse
 #bots are misusing these prefixes to run APG pages that otherwise are disallowed.
 Disallow: /action/webdriver
 Disallow: /action/pagination
+Disallow: /action/quicksearch
 #bots should not do updates or submit feedback
 Disallow: /cgi-bin/webdriver?MIval=aa-markerupdate.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
