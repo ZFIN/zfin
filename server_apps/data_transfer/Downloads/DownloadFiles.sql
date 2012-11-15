@@ -252,7 +252,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
    on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
  left join clone
    on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- where gene.mrkr_abbrev[1,11] != 'WITHDRAWN: ' -- Xiang noticed this misses those without a space after :
+ where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:' -- Xiang noticed this misses those without a space after :
    and exists (
 	select 1 from expression_result
 	 where xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -286,7 +286,7 @@ UNION
    on antibody.atb_zdb_id = xpatex_atb_zdb_id
  join marker gene
    on gene.mrkr_zdb_id = xpatex_gene_zdb_id, marker as atb
- where gene.mrkr_abbrev[1,11] != 'WITHDRAWN: '
+ where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
    and atb.mrkr_zdb_id  = antibody.atb_zdb_id
  order by antibody.atb_zdb_id, xpat_zdb
 ;
