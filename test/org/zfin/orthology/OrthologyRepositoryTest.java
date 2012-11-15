@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test for utiltity methods in the repository class.
+ * Test for utility methods in the repository class.
  */
 public class OrthologyRepositoryTest extends AbstractDatabaseTest {
 
