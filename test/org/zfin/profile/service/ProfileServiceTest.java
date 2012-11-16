@@ -30,6 +30,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
         // will come in automatically with Spring
         profileService.setBeanCompareService(new BeanCompareService());
         profileService.setProfileRepository(profileRepository);
+        profileService.setFeatureRepository(featureRepository);
     }
 
     /**
@@ -64,54 +65,52 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void setCurrentPrefix(){
-        String prefix ;
+    public void setCurrentPrefix() {
+        String prefix;
         try {
+            HibernateUtil.createTransaction();
             // only sets one that is already there
-            Lab lab1 = profileRepository.getLabById("ZDB-LAB-001018-1") ;
-            profileService.setCurrentPrefix(lab1,"zf");
+            Lab lab1 = profileRepository.getLabById("ZDB-LAB-001018-1");
+            profileService.setCurrentPrefix(lab1, "zf");
             prefix = featureRepository.getCurrentPrefixForLab("ZDB-LAB-001018-1");
-            assertEquals("zf",prefix);
+            assertEquals("zf", prefix);
             profileService.setCurrentPrefix(lab1, "ae");
-            assertEquals("ae",prefix);
             prefix = featureRepository.getCurrentPrefixForLab("ZDB-LAB-001018-1");
-            assertEquals("ae",prefix);
+            assertEquals("ae", prefix);
         } catch (Exception e) {
             logger.error(e.fillInStackTrace().toString());
-        }
-        finally{
+        } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
 
 
-
     @Test
-    public void setMembersToOrganizationAddress(){
+    public void setMembersToOrganizationAddress() {
         HibernateUtil.createTransaction();
         try {
-            int returnCount = profileService.setMembersToOrganizationAddress("ZDB-LAB-000914-1") ;
-            assertThat(returnCount,greaterThan(1));
-            assertThat(returnCount,lessThan(40));
+            int returnCount = profileService.setMembersToOrganizationAddress("ZDB-LAB-000914-1");
+            assertThat(returnCount, greaterThan(1));
+            assertThat(returnCount, lessThan(40));
         } catch (Exception e) {
-            fail(e.toString()) ;
+            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
-    public void createLab(){
+    public void createLab() {
         HibernateUtil.createTransaction();
         try {
-            Lab lab = new Lab() ;
+            Lab lab = new Lab();
             lab.setName("Bob Jones School of Intelligent Design");
-            lab = profileService.createLab(lab) ;
+            lab = profileService.createLab(lab);
             assertNotNull(lab);
             assertEquals("Bob Jones School of Intelligent Design", lab.getName());
             assertNotNull(lab.getZdbID());
         } catch (Exception e) {
-            fail(e.toString()) ;
+            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -119,17 +118,17 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void createCompany(){
+    public void createCompany() {
         HibernateUtil.createTransaction();
         try {
-            Company company = new Company() ;
+            Company company = new Company();
             company.setName("Bob Jones Company of Intelligent Design");
-            company = profileService.createCompany(company) ;
+            company = profileService.createCompany(company);
             assertNotNull(company);
-            assertEquals("Bob Jones Company of Intelligent Design",company.getName());
+            assertEquals("Bob Jones Company of Intelligent Design", company.getName());
             assertNotNull(company.getZdbID());
         } catch (Exception e) {
-            fail(e.toString()) ;
+            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -137,23 +136,23 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void createPerson (){
+    public void createPerson() {
         HibernateUtil.createTransaction();
         try {
-            Person person = new Person() ;
+            Person person = new Person();
             person.setPutativeLoginName("bobjones");
             person.setPass1("password");
             person.setPass2("password");
             person.setFirstName("Bob");
             person.setLastName("Jones");
-            person = profileService.createPerson(person) ;
+            person = profileService.createPerson(person);
             assertNotNull(person);
             assertEquals("Jones-B.", person.getShortName());
             assertNotNull(person.getZdbID());
             assertNotNull(person.getAccountInfo());
             assertNotNull(person.getAccountInfo().getZdbID());
         } catch (Exception e) {
-            fail(e.fillInStackTrace().toString()) ;
+            fail(e.fillInStackTrace().toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

@@ -259,6 +259,9 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
+    public void setFeatureRepository(FeatureRepository featureRepository) {
+        this.featureRepository = featureRepository;
+    }
 
     public void updateImage(String zdbID, String securityPersonZdbID, Blob snapshot) throws Exception {
 
