@@ -58,9 +58,6 @@ class Task implements Callable<String> {
         AntibodyWikiWebService service = AntibodyWikiWebService.getInstance();
         String title = service.getWikiTitleFromAntibody(antibody);
         assertEquals("zn-5", title);
-        String contents = service.createWikiPageContentForAntibodyFromTemplate(antibody);
-        assertTrue("contains alcama gene", contents.contains("alcama"));
-        assertTrue("contains hyperlink to alcama gene", contents.contains("/action/marker/view/ZDB-GENE-990415-30"));
         return "Ready!";
     }
 }
