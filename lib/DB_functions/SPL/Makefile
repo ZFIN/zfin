@@ -78,7 +78,7 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 PER_STATS    = get_person_full_name.sql	 
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
-	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
+	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_anatomy.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql create_all_terms_contains.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
@@ -100,7 +100,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
 	get_entity_name_html.sql get_postcomposed_term_html.sql \
 	get_phenotype_link_html.sql get_phenotype_popup_link_html.sql
-# insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
+# insert_clone, regen_anatomy.sql 
 # are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
 # these into a single file per function, but the functions are tightly
@@ -108,26 +108,22 @@ ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql \
 # leaving them all in one file, then by splitting them up.
 MULTIPLE_PROCS_STATIC = insert_clone.sql clone_2_sanger.sql \
 		 get_genofeat_mp_zyg_html_display.sql
-
-MULTIPLE_PROCS_GENERIC = regen_anatomy.sql regen_term.sql 
+#MULTIPLE_PROCS_GENERIC = regen_anatomy.sql regen_term.sql 
 GENERIC_AGGR = $(ZDB_AGGR) 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) 
-		 	         	
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(PER_STATS) $(XPAT_STATS) \
 		concat_init.sql concat_iter.sql concat_combine.sql concat_final.sql \
 		get_mrkr_name_html_link.sql get_mrkr_abbrev_html_link.sql \
 		get_geno_name_html_link.sql get_geno_name_with_bg_html_link.sql \
-		get_genotype_backgrounds_html_link.sql  get_genofeat_mp_zyg_html_display.sql \
+		get_genotype_backgrounds_html_link.sql  \
 		get_mutants_html_link.sql get_feature_name_html_link.sql get_ao_name_html_link.sql
-
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
-MULTIPLE_PROC_TARGETS_G = $(foreach SPEC, $(MULTIPLE_PROCS_GENERIC), $(TARGETDIR)/$(SPEC))
-MULTIPLE_PROC_TARGETS_S = $(foreach SPEC, $(MULTIPLE_PROCS_STATIC), $(TARGETDIR)/$(SPEC))
-SPECIFIC_AGGR_TARGETS = $(foreach SPEC, $(GENERIC_AGGR), $(TARGETDIR)/$(SPEC))
-
+#MULTIPLE_PROC_TARGETS_G = $(foreach MPG, $(MULTIPLE_PROCS_GENERIC), $(TARGETDIR)/$(SPEC))
+MULTIPLE_PROC_TARGETS_S = $(foreach MPS, $(MULTIPLE_PROCS_STATIC), $(TARGETDIR)/$(SPEC))
+SPECIFIC_AGGR_TARGETS = $(foreach SPECAT, $(GENERIC_AGGR), $(TARGETDIR)/$(SPEC))
 ENDEMICTARGETS_POSTTARGETS = $(SPECIFIC_PROC_TARGETS) $(STATIC_PROC_TARGETS) \
 			     $(MULTIPLE_PROC_TARGETS) $(SPECIFIC_AGGR_TARGETS) 
 
@@ -148,15 +144,15 @@ $(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 	$(DBACCESS) $(DBNAME) $@
 	echo 'update statistics for procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME)
 
-$(MULTIPLE_PROC_TARGETS_G) : $(TARGETDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-	-$(DBACCESS) $(DBNAME) $@
+#$(MULTIPLE_PROC_TARGETS_G) : $(TARGETDIR)/% : %
+#	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+#	$(DBACCESS) $(DBNAME) $@
 
 $(MULTIPLE_PROC_TARGETS_S) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
 
-	-$(DBACCESS) $(DBNAME) $@
+	$(DBACCESS) $(DBNAME) $@
 
 $(SPECIFIC_AGGR_TARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@

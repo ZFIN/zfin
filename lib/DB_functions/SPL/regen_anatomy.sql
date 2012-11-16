@@ -1,8 +1,8 @@
 
 -- Estimated Run Time: 3 hours
-
+--test
 -- Drop all out-of-date functions.
-drop function regen_anatomy;
+--drop function regen_anatomy;
 drop function populate_all_anatomy_contains;
 drop function populate_anat_display_stage_children;
 

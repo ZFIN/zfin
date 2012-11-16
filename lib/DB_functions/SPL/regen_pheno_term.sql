@@ -94,7 +94,7 @@ create dba function regen_pheno_term()
 		 pt_pheno_entity varchar(50) not null
 		 )
 	fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-	extent size 1024 next size 1024 ;
+	extent size 35840  next size 35840  ;
 
 
     let errorHint = "insert into pheno_term_temp" ;
