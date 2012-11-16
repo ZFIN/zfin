@@ -390,14 +390,31 @@ public class BlastResultMapper {
             //the defline, I think, so here's an attempt at populating it.
 
             if (hitAccession == null) {
-                String[] deflineParts = hit.getHitId().split("\\|");
-                if (deflineParts[1] != null) {
-                    String[] accessions = deflineParts[1].split(" ");
-                    if (accessions[0] != null)
-                        hitAccession = accessions[0];
-                    else
-                        hitAccession = "";
+                hitAccession = "";
+                if (StringUtils.startsWith(hit.getHitId(), ">OTTDART")) {
+                    StringTokenizer deflineTokenizer = new StringTokenizer(hit.getHitId()," ");
+
+                    //we want the first token, minus the ">"
+                    if (deflineTokenizer.hasMoreTokens())
+                        hitAccession = deflineTokenizer.nextToken();
+
+                    if (StringUtils.startsWith(hitAccession, ">"))
+                        hitAccession = hitAccession.substring(1);
+
+                } else if (StringUtils.startsWith(hit.getHitId(), "OTTDART") && StringUtils.length(hit.getHitId())==18) {
+                    hitAccession = hit.getHitId();
+                } else {
+                StringTokenizer deflineTokenizer = new StringTokenizer(hit.getHitId(),"\\|");
+
+                //not interested in the first token...
+                if (deflineTokenizer.hasMoreTokens())
+                    deflineTokenizer.nextToken();
+
+                if (deflineTokenizer.hasMoreTokens())
+                    hitAccession = deflineTokenizer.nextToken();
+
                 }
+
                 logger.debug("Attempted to fix an empty hitAccesion");
                 logger.debug("Hit_id: " + hit.getHitId());
                 logger.debug("invented Hit_accession:" + hitAccession);
