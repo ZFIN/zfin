@@ -12,7 +12,7 @@
 
 <table class="summary">
     <tr>
-        <th>Key</th>
+        <th>Variable Name</th>
         <th>Value</th>
     </tr>
     <tr>
@@ -38,6 +38,10 @@
     <tr>
         <td> Management Spec Version</td>
         <td> ${runtimeMXBean.managementSpecVersion} </td>
+    </tr>
+    <tr>
+        <td> Unix Process ID (PID)</td>
+        <td> ${pid} </td>
     </tr>
 </table>
 
