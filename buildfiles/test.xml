@@ -63,7 +63,14 @@
 
     <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
         <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
+        <runTest testclass="org.zfin.infrastructure.EnumValidationTest" outfile="$validate-test" verbose="false"/>
     </target>
+
+    <target name="validate" depends="compile,build-tests" description="Unit tests.">
+        <runTest testclass="org.zfin.infrastructure.EnumValidationTest" outfile="validate-test" verbose="true"/>
+        <echo message=":VALIDATE TESTS SUCCESSFUL:"/>
+    </target>
+
 
 
     <target name="runDBtests" depends="compile,build-tests"
@@ -132,6 +139,11 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="plain"/>
             </test>
 
+            <test name="org.zfin.infrastructure.EnumValidationTest" todir="${test.reports.dir}"
+                  outfile="validate-tests">
+                <formatter type="plain"/>
+            </test>
+               
             <test name="org.zfin.sequence.blast.BlastAndDBTests" todir="${test.reports.dir}"
                   outfile="${blastTestFile}">
                 <formatter type="plain"/>

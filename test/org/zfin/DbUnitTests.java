@@ -21,7 +21,6 @@ import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
-import org.zfin.infrastructure.EnumValidationTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
@@ -73,7 +72,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         DatabaseServiceDbTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
-        EnumValidationTest.class,
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
         FeatureRepositoryTest.class,
@@ -113,7 +111,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         TranscriptServiceTest.class,
         SequenceIdListTest.class,
         AntibodyWikiWebServiceTest.class,
-        EnumValidationTest.class,
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
         ZfinJSPFunctionsTest.class

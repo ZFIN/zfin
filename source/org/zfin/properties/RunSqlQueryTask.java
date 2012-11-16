@@ -134,7 +134,7 @@ public class RunSqlQueryTask {
 
         config.setProperty("hibernate.cache.provider_class", "net.sf.ehcache.hibernate.EhCacheProvider");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
-        config.setProperty("hibernate.cache.use_second_level_cache", "true");
+        config.setProperty("hibernate.cache.use_second_level_cache", "false");
         config.setProperty("hibernate.cache.use_query_cache", "true");
 
         return config;
