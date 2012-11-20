@@ -20,7 +20,7 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/Danio
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/gene2accession.gz");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.protein.faa.gz");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.rna.fna.gz");
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/release54.accession2geneid.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/release*.accession2geneid.gz");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/protein.fa.gz");
 
 
