@@ -178,6 +178,7 @@
     </macrodef>
 
 
+<!--
     <target name="has-tomcat-symlink">
         <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
         <fail message=":FAIL TOMCAT JSP-COMPILE SYMLINK NOT FOUND:  Try running 'ant create-tomcat-symlink'." unless="has.tomcat.symlink"/>
@@ -187,6 +188,7 @@
     <target name="create-tomcat-symlink">
         <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/>
     </target>
+-->
 
     <target name="has-download-symlink">
         <echo message="Checking symlink between ${web}/data-exchange and ${env.DOWNLOAD_DIRECTORY}.  "/>
@@ -200,7 +202,6 @@
 
     <target name="upgrade-tomcat">
         <antcall target="deploy-catalina-base"/>
-        <antcall target="create-tomcat-symlink"/>
     </target>
 
 
