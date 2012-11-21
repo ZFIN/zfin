@@ -40,19 +40,4 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
         }
     }
 
-    /**
-     * Check that site search index summary page is coming up
-     */
-    public void testDeveloperSiteSearchSummaryPage() {
-        for (WebClient webClient : publicWebClients) {
-            try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/index-summary");
-                assertTrue("Download Archive", page.getTitleText().contains("Download Archive"));
-
-            } catch (IOException e) {
-                fail(e.toString());
-            }
-        }
-    }
-
 }
