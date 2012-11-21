@@ -132,7 +132,6 @@ public class RunSqlQueryTask {
         config.setProperty("hibernate.connection.pool_size", "1");
         config.setProperty("hibernate.connection.autocommit", "false");
 
-        config.setProperty("hibernate.cache.provider_class", "net.sf.ehcache.hibernate.EhCacheProvider");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
         config.setProperty("hibernate.cache.use_second_level_cache", "false");
         config.setProperty("hibernate.cache.use_query_cache", "true");
