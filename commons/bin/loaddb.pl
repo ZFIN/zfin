@@ -42,6 +42,15 @@ use threads;
 use English;
 use Getopt::Long;
 
+#for empty tables
+use feature 'switch';
+use DBI;
+if ($ENV{"INFORMIXDIR"} !~ /informix/)
+{
+   die("Environment must source database info.");
+}
+
+
 #------------------------------------------------------------------------
 # Log message.  Writes a message to output.
 #
@@ -966,7 +975,7 @@ sub loadDb($$) {
         $b = $_;
 
         $count++;
-        my $t = threads->create(execSqlThreaded,$dbName,"set lock mode to wait 20; ".$b,$loadLog);
+        my $t = threads->create(execSqlThreaded,$dbName,"set lock mode to wait 30; ".$b,$loadLog);
 	push(@threads,$t);
     }
 
@@ -997,6 +1006,92 @@ sub loadDb($$) {
     close(FILE);
     return 0;
     #return checkLoad($loadLog);                                                                                                                   
+}
+
+#for empty tables
+sub cleanTail ($) {
+  my $var = $_[0];
+
+  while ($var !~ /\w$/) {
+    chop ($var);
+  }
+
+  return $var;
+}
+	
+
+sub loadEmptyTables($$)
+{
+	
+	my $dbname = $_[0];;
+	my $unload_path = $_[1];
+	my @zero_size_load_tables;
+	my @zero_size_tables;
+
+        #fetch_non_zero_table_names
+	  open (LSAL, "/bin/ls -al $unload_path/ | grep ' 0 ' | ");
+	  while($line = <LSAL>)
+	  {
+	    @lszero = split(' ',$line);
+	    push(@zero_size_load_tables, $lszero[8]);
+	  }
+	  close(LSAL);
+
+	### open a handle on the db
+	my $dbh = DBI->connect("DBI:Informix:$dbname",
+			       '', 
+			       '', 
+			       {AutoCommit => 1,RaiseError => 1}
+			      )
+	  || emailError("Failed while connecting to $dbname "); 
+
+
+	$sql_command = "update statistics low;";
+	my $cur = $dbh->prepare($sql_command);
+	$cur->execute();
+
+	$sql_command = "create temp table zero_size_table (zname varchar(200));";
+	my $cur = $dbh->prepare($sql_command);
+	$cur->execute();
+
+	foreach $a (@zero_size_load_tables)
+	{
+	  $sql_command = "insert into zero_size_table values('$a');";
+	  $cur = $dbh->prepare($sql_command);
+	  $cur->execute();
+	}
+
+	$sql_command = "select tabname from systables where nrows < 1 and tabtype = 'T' and tabname not like 'sys%' and tabname not in (select zname from zero_size_table);";
+
+	my($ztabname);
+	$cur = $dbh->prepare($sql_command);
+	$cur->execute;
+	$cur->bind_columns(\$ztabname) ;
+
+	while ($cur->fetch) {
+	    $ztabname =~ cleanTail($ztabname);
+	    push(@zero_size_tables, $ztabname);
+	}
+
+
+	### close database connection
+	$dbh->disconnect();
+
+        my $retCode=0;
+	foreach $zt (@zero_size_tables)
+	{
+	    print "loading $zt\n"; 
+	    $load = "load from \'$unload_path$zt\' insert into $zt ;";
+
+	    $retCode = system ("echo \"$load\" | ".$ENV{"INFORMIXDIR"}."/bin/dbaccess -a $dbname");
+	    if ($retCode != 0)
+	    {
+	        logMsg("Failed to $load");
+	        return 1;
+	    }
+	}
+
+    return 0;
 }
 
 
@@ -1135,6 +1230,11 @@ if (! createDb($dbName, $schemaFile)) {
 		  
        		if (! loadDb($dbName, $loadSqlFile)) {
 
+
+		    logMsg("Verify tables are not empty...");
+		    if (! loadEmptyTables( $dbName, $inputDir) ){
+
+
 		    logMsg("Enabling indexes, constraints, and triggers...");
 		    if (! postLoad($dbName, $postLoadSqlFile)) {
 		
@@ -1161,8 +1261,8 @@ if (! createDb($dbName, $schemaFile)) {
 		      }
 		      
 		      
-		  }
-		    
+		    }
+		    } #loadEmptyTables		    
 		}
 	    }
 	}
