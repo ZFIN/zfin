@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.sequence.reno.presentation.CandidateBean" %>
 <%@ page import="org.zfin.sequence.reno.presentation.RunBean" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <c:choose>
@@ -63,7 +64,7 @@
 
 
                 <c:choose>
-                    <c:when test="${formBean.run.type eq 'Nomenclature'}">
+                    <c:when test="${formBean.run.type eq nomenclature}">
                         <tr>
                             <td>
                                 Orthology Publication:
@@ -108,7 +109,7 @@
                     <td><input type="submit" value="Submit publication update"></td>
 
                     <td>
-                        <c:if test="${formBean.run.type eq 'Redundancy'}">
+                        <c:if test="${formBean.run.type eq redundancy}">
                             <a onclick="setRemainderToNovel = function () {
                                     var really = confirm('Really set remainder to novel?');
                                     if(really){
