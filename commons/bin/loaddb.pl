@@ -45,6 +45,7 @@ use Getopt::Long;
 #for empty tables
 use feature 'switch';
 use DBI;
+use Cwd;
 if ($ENV{"INFORMIXDIR"} !~ /informix/)
 {
    die("Environment must source database info.");
@@ -1024,10 +1025,31 @@ sub loadEmptyTables($$)
 {
 	
 	my $dbname = $_[0];;
-	my $unload_path = $_[1];
+	my $given_path = $_[1];
 	my @zero_size_load_tables;
 	my @zero_size_tables;
+	my $dir = getcwd();
+	my $unload_path;
 
+        #get the complete path to the unload dir
+        #test the given path, 
+        #current directory plus given path
+        #just current directory
+        if ( -d $given_path ){        
+           $unload_path = $given_path;
+        }
+        elsif ( -d $dir ){    
+           $unload_path = $dir;
+        }
+        elsif ( -d "$dir$given_path" ){    
+           $unload_path = $dir.$given_path;
+        }
+        else {    
+	        logMsg("Failed to find directory $given_path or $dir or $dir$given_path");
+	        return 1;
+        }
+        
+        
         #fetch_non_zero_table_names
 	  open (LSAL, "/bin/ls -al $unload_path/ | grep ' 0 ' | ");
 	  while($line = <LSAL>)
@@ -1081,7 +1103,7 @@ sub loadEmptyTables($$)
 	foreach $zt (@zero_size_tables)
 	{
 	    print "loading $zt\n"; 
-	    $load = "load from \'$unload_path$zt\' insert into $zt ;";
+	    $load = "load from \'$unload_path/$zt\' insert into $zt ;";
 
 	    $retCode = system ("echo \"$load\" | ".$ENV{"INFORMIXDIR"}."/bin/dbaccess -a $dbname");
 	    if ($retCode != 0)
