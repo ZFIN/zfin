@@ -71,9 +71,10 @@
     </target>
 
 
-    <target name="run-indexer" depends="init, generate-detail-page-urls" description="run the indexer">
+    <target name="run-indexer" depends="init" description="run the indexer">
         <echo message="Launching Java Indexer"/>
-        <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath" failonerror="true">
+        <java classname="org.zfin.uniquery.Indexer" fork="yes" classpathref="extended.classpath" failonerror="true"
+		maxmemory="2048m" >
             <classpath refid="classpath"/>
             <arg value="-u"/>
             <arg value="${indexAppDir}/etc/searchurls.txt"/>
@@ -82,7 +83,7 @@
             <arg value="-c"/>
             <arg value="${indexAppDir}/etc/crawlonlyurls.txt"/>
             <arg value="-t"/>
-            <arg value="6"/>
+            <arg value="3"/>
             <arg value="-categoryDir"/>
             <arg value="${web-inf.dir}/conf"/>
             <arg value="-indexerDir"/>

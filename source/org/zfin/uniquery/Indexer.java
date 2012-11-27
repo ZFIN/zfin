@@ -74,7 +74,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private boolean createDetailPageList = true;
 
     private IndexWriter index;
-    private Set<String> discoveredURLs = new TreeSet<String>();
+    private Set<UrlLink> discoveredURLs = new TreeSet<UrlLink>();
     private Map<String, Boolean> mimeTypes = new HashMap<String, Boolean>();
 
     private int threads = 2;
@@ -115,6 +115,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         options.addOption(withArgName("categoryDir").hasArg().withDescription("search urls").create("categoryDir"));
         options.addOption(withArgName("zfinPropertiesDir").hasArg().withDescription("zfin.properties path").create("zfinPropertiesDir"));
         options.addOption(withArgName("createDetailPageList").hasArg().withDescription("Create the list of view pages").create("createDetailPageList"));
+        options.addOption(withArgName("incremental").hasArg().withDescription("Index only missing pages").create("incremental"));
     }
 
 
@@ -128,6 +129,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         //DOMConfigurator.configure("server_apps/quicksearch/logs/log4j.xml");
         //initializeLog4j();
         CommandLine commandLine = parseArguments(arguments, "index ");
+        //System.out.println("lLL: "+commandLine.getOptions()[7].getValue());
         //initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
         Indexer indexer = new Indexer(commandLine);
 
@@ -140,6 +142,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     }
 
     public Indexer(CommandLine commandLine) throws IOException {
+        //System.out.println("lLL: "+commandLine.getOptions()[7].getValue());
         cronJobReport = new CronJobReport("Site Search Indexer: ");
         cronJobReport.start();
         parseCommandlineOptions(commandLine);
@@ -150,7 +153,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             GenerateEntityDetailPageUrls generateUrls = (GenerateEntityDetailPageUrls) context.getBean("detailPageGenerator");
             generateUrls.setDetailEntityProperties(indexRootDir, propertiesFileName);
             generateUrls.setNumberOfRecordsPerEntities(numberOfDetailPages);
-            if (createDetailPageList)
+            if (createDetailPageList && !incremental)
                 generateUrls.generateAllUrls();
             List<String> staticIndex = new ArrayList<String>();
             loadFromFile(generateUrls.getDetailPageFilePath(), staticIndex);
@@ -175,16 +178,24 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     }
 
     private void initLogFiles() throws IOException {
-        log = new PrintWriter(new FileWriter(logDirectory + "/spider.log"));
-        indexedUrlLog = new PrintWriter(new FileWriter(logDirectory + INDEXED_URLS_LOG));
-        crawledUrlLog = new PrintWriter(new FileWriter(logDirectory + CRAWLED_URLS_LOG));
-        ignoredUrlLog = new PrintWriter(new FileWriter(logDirectory + "/ignoredUrls.log"));
-        malformedUrlLog = new PrintWriter(new FileWriter(logDirectory + "/malformedUrls.log"));
-        loadFileLog = new PrintWriter(new FileWriter(logDirectory + "/loadFileLog.log"));
+        log = new PrintWriter(new FileWriter(logDirectory + "/spider.log", incremental));
+        indexedUrlLog = new PrintWriter(new FileWriter(logDirectory + INDEXED_URLS_LOG, incremental));
+        crawledUrlLog = new PrintWriter(new FileWriter(logDirectory + CRAWLED_URLS_LOG, incremental));
+        ignoredUrlLog = new PrintWriter(new FileWriter(logDirectory + "/ignoredUrls.log", incremental));
+        malformedUrlLog = new PrintWriter(new FileWriter(logDirectory + "/malformedUrls.log", incremental));
+        loadFileLog = new PrintWriter(new FileWriter(logDirectory + "/loadFileLog.log", incremental));
         mimeTypes.put("text/html", Boolean.TRUE);
         mimeTypes.put("text/plain", Boolean.TRUE);
         mimeTypes.put("text/html;charset=ISO-8859-1", Boolean.TRUE);
         mimeTypes.put("text/html;charset=UTF-8", Boolean.TRUE);
+        // if incremental read indexedUrls.log into discovered
+        if (incremental) {
+            List<String> urlsIndexed = new ArrayList<String>();
+            loadFromFile(logDirectory + INDEXED_URLS_LOG, urlsIndexed);
+            for (String url : urlsIndexed) {
+                discoveredURLs.add(new UrlLink(url, ""));
+            }
+        }
     }
 
     private void parseCommandlineOptions(CommandLine commandLine) throws IOException {
@@ -209,6 +220,8 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         propertiesFileName = commandLine.getOptionValue("zfinPropertiesDir");
         initAll(propertiesFileName);
         logDirectory = FileUtil.createAbsolutePath(indexRootDir, "logs");
+        incremental = !(commandLine.getOptionValue("incremental") == null || commandLine.getOptionValue("incremental").equalsIgnoreCase("false"));
+
     }
 
     /**
@@ -366,10 +379,10 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             UrlLink link;
             while ((link = dequeueURL()) != null) {
                 // only index if not already done so
-                if (!discoveredURLs.contains(link.getLinkUrl())){
+                if (!discoveredURLs.contains(link)) {
+                    discoveredURLs.add(link);
                     indexURL(link);
-		    discoveredURLs.add(link.getLinkUrl());
-		}
+                }
             }
         } catch (Exception e) {
             log.println(Thread.currentThread().getName() + ": aborting with error");
@@ -424,9 +437,8 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      */
     public synchronized void enqueueURL(String url, String referrer) {
         //System.out.println(url+" "+referrer);
-
-    if (!discoveredURLs.contains(url))  // careful not to add something we already saw
-        {
+        UrlLink newUrl = new UrlLink(url);
+        if (!discoveredURLs.contains(newUrl)) {
             UrlLink urlLink = new UrlLink(url, referrer);
             urlsToIndex.add(urlLink);  // adds the new url
             notifyAll();
