@@ -34,7 +34,7 @@ Candidate:
             </c:if>
             <c:if test="${!formBean.ownerViewing}">
                 <!-- todo: replace with link tag for person, once link tag supports person -->
-                <span style="color: red;">Locked by</span>: ${formBean.runCandidate.lockPerson.name}
+                <span style="color: red;">Locked by</span>: ${formBean.runCandidate.lockPerson.fullName}
                 <form:errors path="action" cssClass="Error"/>
             </c:if>
 

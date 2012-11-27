@@ -62,7 +62,7 @@
                 </c:if>
             </td>
 
-            <td>${rc.lockPerson.name}</td>
+            <td>${rc.lockPerson.fullName}</td>
         </zfin:alternating-tr>
     </c:forEach>
 </table>
