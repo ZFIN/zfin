@@ -199,7 +199,7 @@
             </tr>
             <c:forEach var="dataNote" items="${formBean.genotype.sortedDataNotes}" varStatus="loopCurNote">
                 <tr>
-                    <td>${dataNote.curator.name}&nbsp;&nbsp;${dataNote.date}<br/>${dataNote.note}
+                    <td>${dataNote.curator.fullName}&nbsp;&nbsp;${dataNote.date}<br/>${dataNote.note}
                         <c:if test="${!loopCurNote.last}"><br/>&nbsp;<br/></c:if>
                     </td>
                 </tr>
