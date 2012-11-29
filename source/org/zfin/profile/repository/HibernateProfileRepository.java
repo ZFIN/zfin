@@ -285,13 +285,21 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     /*
-    * Get a person record by fullName, "Westerfield, Monte"
+    * Gets person records by fullName, "Westerfield, Monte"
+    *
+    * Since it requires an equals match, it will only return
+    * more than one person for non-unique full names, but
+    * the interface needs to handle that in some way.
+    *
     * */
-    public Person getPersonByFullName(String fullName) {
+    public List<Person> getPeopleByFullName(String fullName) {
+        List<Person> people = new ArrayList<Person>();
         Session session = HibernateUtil.currentSession();
-        return (Person) session.createCriteria(Person.class)
+
+        people.addAll((List<Person>)session.createCriteria(Person.class)
                 .add(Restrictions.eq("fullName", fullName))
-                .uniqueResult();
+                .list());
+        return people;
     }
 
     /**

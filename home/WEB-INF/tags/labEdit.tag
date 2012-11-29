@@ -166,9 +166,7 @@
     jQuery(document).ready(function () {
         jQuery('#addMemberBox').autocomplete({
             source:'/action/profile/find-member', minLength:2, select:function (event, ui) {
-                if (personAddZdbID === undefined) {
-                    alert('personAddZdbID was undefined');
-                }
+                jQuery('#add-member-box').val(ui.item.label);
                 personToAddZdbID = ui.item.id;
             }
         });

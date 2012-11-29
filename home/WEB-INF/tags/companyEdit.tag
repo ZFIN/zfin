@@ -172,6 +172,7 @@
             source:  '/action/profile/find-member'
             ,minLength:  3
             ,select: function(event, ui) {
+                jQuery('#add-member-box').val(ui.item.label);
                 personToAddZdbID = ui.item.id;
             }
         });

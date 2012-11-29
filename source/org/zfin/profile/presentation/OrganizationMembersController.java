@@ -1,5 +1,6 @@
 package org.zfin.profile.presentation;
 
+import com.sun.mail.util.LineOutputStream;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,27 +41,6 @@ public class OrganizationMembersController {
         }
     }
 
-    @RequestMapping(value="/add-organization-member")
-    public @ResponseBody boolean addOrganizationMember( String personZdbID,
-                                                        String personName,
-                                                        String organizationZdbID,
-                                                        Integer position ) {
-        HibernateUtil.createTransaction();
-
-
-        final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
-        personMemberPresentation.setPersonZdbID(personZdbID);
-        personMemberPresentation.setOrganizationZdbID(organizationZdbID);
-        personMemberPresentation.setPosition(position);
-        personMemberPresentation.setAddFunction();
-        boolean status = profileService.addPersonToOrganization(personMemberPresentation);
-        HibernateUtil.currentSession().getTransaction().commit();
-
-        return status ;
-
-    }
-
-
     @RequestMapping(value = "/add-member/{personZdbID}/organization/{organizationZdbID}/position/{position}/name/{name}"
             , method = RequestMethod.POST)
     public
@@ -87,12 +67,14 @@ public class OrganizationMembersController {
         logger.debug(personZdbID);
         if (StringUtils.equals(personZdbID,"undefined")) {
 
-            Person person = profileRepository.getPersonByFullName(name);
+            List<Person> people = profileRepository.getPeopleByFullName(name);
+            if (people.size() > 1)
+                return "\"" + name + "\" is not a unique name, select based on the [ID] in the autocomplete menu";
 
-            if (person == null)
+            if (people.size() == 0)
                 return "\"" + name + "\" not found";
             else
-                personZdbID = person.getZdbID();
+                personZdbID = people.get(0).getZdbID();
         }
 
         final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
