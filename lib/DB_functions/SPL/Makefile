@@ -32,7 +32,8 @@ DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       get_genbank_dblink_length_type.sql increment_candidate_occurrences.sql \
 	       getZfinAccessionNumberNoInsert.sql \
 	       getZfinAccessionNumber.sql \
-	       setTscriptLoadId.sql
+	       setTscriptLoadId.sql \
+	       checkDblinkTranscriptWithdrawn.sql
 FISH_STATS   = get_image_stats.sql \
 	       p_update_related_names.sql \
 	       p_update_related_genotype_names.sql \
