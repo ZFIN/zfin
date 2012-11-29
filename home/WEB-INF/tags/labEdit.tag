@@ -107,7 +107,7 @@
 
 
             <%--this is just a dummy form--%>
-            <form class="edit-box">
+            <form class="edit-box" onsubmit="return false;">
                 ${empty members ? '<div class="no-member-error" style="color: red;">Please add at least one person to this company.</div>' : '' }
 
 
@@ -121,9 +121,9 @@
                     </c:forEach>
                 </select>
                 <input id="addMemberButton" value="Add Member" type="button"
-                       onclick="addMember( personToAddZdbID,'${lab.zdbID}' , personToAddPosition); "/>
+                       onclick="addMember( personToAddZdbID,'${lab.zdbID}' , personToAddPosition, jQuery('#addMemberBox').val()); "/>
                 <br>
-
+                <div class="error" id="add-member-error" style="display: none;"></div>
                 <div id=memberList></div>
 
 <%--
@@ -166,6 +166,9 @@
     jQuery(document).ready(function () {
         jQuery('#addMemberBox').autocomplete({
             source:'/action/profile/find-member', minLength:2, select:function (event, ui) {
+                if (personAddZdbID === undefined) {
+                    alert('personAddZdbID was undefined');
+                }
                 personToAddZdbID = ui.item.id;
             }
         });

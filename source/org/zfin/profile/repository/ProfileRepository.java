@@ -131,6 +131,8 @@ public interface ProfileRepository {
      */
     Person getPersonByName(String login);
 
+    Person getPersonByFullName(String fullName);
+
     /**
      * Delete a curator session element.
      *

@@ -67,25 +67,35 @@ var removeMember = function(personZdbID, organizationZdbID) {
     );
 };
 
-var addMember = function(personZdbID, organizationZdbID, position) {
+var addMember = function(personZdbID, organizationZdbID, position, name) {
     if (position === null) {
         alert('Please select a position.');
         return true;
     }
     jQuery.ajax(
         {
-            url: "/action/profile/add-member/" + personZdbID + "/organization/" + organizationZdbID + "/position/" + position,
+            url: "/action/profile/add-member/" + personZdbID + "/organization/" + organizationZdbID + "/position/" + position + "/name/" + name,
             type: "POST",
             success: function(data) {
+                if (data != "") {
+                    jQuery('#add-member-error').html(data);
+                    jQuery('#add-member-error').show();
+                } else {
+                    jQuery('#add-member-error').hide();
+                    jQuery('#memberList').html('');
+                    listMembers(organizationZdbID);
+                    jQuery('#addMemberBox').val('');
+                    jQuery('.no-member-error').hide();
+                    jQuery('#members-tab').css("color","black");
+
+
+                }
+/*
                 if(data===false){
                     alert('There was a problem adding this person to this organization.');
                     return false ;
                 }
-                jQuery('#memberList').html('');
-                listMembers(organizationZdbID);
-                jQuery('#addMemberBox').val('');
-                jQuery('.no-member-error').hide();
-                jQuery('#members-tab').css("color","black");
+*/
             },
             error: function(data) {
                 alert('There was a problem with your request: ' + data);

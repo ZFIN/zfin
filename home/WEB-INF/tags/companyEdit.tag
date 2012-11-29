@@ -106,7 +106,7 @@
 
 
             <%--this is just a dummy form--%>
-            <form class="edit-box">
+            <form class="edit-box" onsubmit="return false;">
                 ${empty members ? '<div class="no-member-error" style="color: red;">Please add at least one person to this company.</div>' : '' }
 
                 <input class="members-first-field" id="addMemberBox" type="text"/>
@@ -120,9 +120,9 @@
                     </c:forEach>
                 </select>
                 <input id="addMemberButton" value="Add Member" type="button"
-                       onclick="addMember( personToAddZdbID,'${company.zdbID}' , personToAddPosition); "/>
+                       onclick="addMember( personToAddZdbID,'${company.zdbID}' , personToAddPosition, jQuery('#addMemberBox').val()); "/>
                 <br>
-
+                <div class="error" id="add-member-error" style="display: none;"></div>
                 <div id=memberList></div>
 
 <%--

@@ -284,6 +284,16 @@ public class HibernateProfileRepository implements ProfileRepository {
         return (Person) criteria.uniqueResult();
     }
 
+    /*
+    * Get a person record by fullName, "Westerfield, Monte"
+    * */
+    public Person getPersonByFullName(String fullName) {
+        Session session = HibernateUtil.currentSession();
+        return (Person) session.createCriteria(Person.class)
+                .add(Restrictions.eq("fullName", fullName))
+                .uniqueResult();
+    }
+
     /**
      * Delete a curator session element.
      *

@@ -40,14 +40,37 @@ public class OrganizationMembersController {
         }
     }
 
-    @RequestMapping(value = "/add-member/{personZdbID}/organization/{organizationZdbID}/position/{position}"
+    @RequestMapping(value="/add-organization-member")
+    public @ResponseBody boolean addOrganizationMember( String personZdbID,
+                                                        String personName,
+                                                        String organizationZdbID,
+                                                        Integer position ) {
+        HibernateUtil.createTransaction();
+
+
+        final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
+        personMemberPresentation.setPersonZdbID(personZdbID);
+        personMemberPresentation.setOrganizationZdbID(organizationZdbID);
+        personMemberPresentation.setPosition(position);
+        personMemberPresentation.setAddFunction();
+        boolean status = profileService.addPersonToOrganization(personMemberPresentation);
+        HibernateUtil.currentSession().getTransaction().commit();
+
+        return status ;
+
+    }
+
+
+    @RequestMapping(value = "/add-member/{personZdbID}/organization/{organizationZdbID}/position/{position}/name/{name}"
             , method = RequestMethod.POST)
     public
     @ResponseBody
-    boolean addMember(
+    String addMember(
             @PathVariable String personZdbID,
             @PathVariable String organizationZdbID,
-            @PathVariable Integer position
+            @PathVariable Integer position,
+            @PathVariable String name
+
     ) {
         HibernateUtil.createTransaction();
 /*
@@ -61,6 +84,16 @@ public class OrganizationMembersController {
         }
 */
 
+        logger.debug(personZdbID);
+        if (StringUtils.equals(personZdbID,"undefined")) {
+
+            Person person = profileRepository.getPersonByFullName(name);
+
+            if (person == null)
+                return "\"" + name + "\" not found";
+            else
+                personZdbID = person.getZdbID();
+        }
 
         final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
         personMemberPresentation.setPersonZdbID(personZdbID);
@@ -70,7 +103,7 @@ public class OrganizationMembersController {
         boolean status = profileService.addPersonToOrganization(personMemberPresentation);
         HibernateUtil.currentSession().getTransaction().commit();
 
-        return status ;
+        return "";
     }
 
     @RequestMapping(value = "/change-position/{personZdbID}/organization/{organizationZdbID}/position/{position}"
