@@ -34,7 +34,7 @@ my $data_cache = "/research/zprodmore/gff3";
 
 # opportunity to change data_cache for testing enviroment i.e.:
 # 
-$data_cache = "<!--|ROOT_PATH|-->/home/data_transfer/Data";
+#$data_cache = "<!--|ROOT_PATH|-->/home/data_transfer/Data";
 
 # note 'drerio_vega_id.unl' is built in: 
 # ZFIN_WWW/server_apps/data_transfer/Load/Vega
