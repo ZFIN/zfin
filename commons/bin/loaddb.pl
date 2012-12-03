@@ -1182,9 +1182,9 @@ if (! chdir($inputDir)) {
 
 system("/bin/rm -f doload.sql");
  
-my $dirPerms = oct(770);
+my $dirPerms = oct(775);
 mkdir($globalTmpDir, $dirPerms);
-
+system ("chgrp fishadmin $globalTmpDir");
 
 # Execute a several step process:
 # o If running on development restart apache
@@ -1221,7 +1221,13 @@ else {
     restartApache();
 
     logMsg("stopping tomcat...");
-    system("/private/ZfinLinks/Commons/bin/tomcat.sh stop");
+    if ($ENV{USER} eq "informix"){
+	system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $ENV{INSTANCE}");
+
+    }
+    else {
+	system("/private/ZfinLinks/Commons/bin/tomcat.sh stop");
+    }
 
     if  ($ENV{HOST} =~ /zygotix/) {
 	$ENV{PSORT_NPROCS} = 3;    # 3 CPUs, leave a little for non-loaders
