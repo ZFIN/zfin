@@ -1,5 +1,49 @@
 -- Script to create data files for public download.
 --
+-- We extract several different kinds of information:
+--
+-- All genetic markers (includes genes, ests, sslps, etc.)
+--	zfin id, name, symbol, type, OR_lg
+--
+-- Synonyms  (for any item in all genetic markers file) There may be multiple lines
+--   per zfin id
+--	zfin id, synonym
+--
+-- Orthology - separate files for: D
+--   zebrafish - human
+--	zfin id , zebrafish symbol, human symbol, OMIM id, Gene id
+--   zebrafish - mouse
+--	zfin id , zebrafish symbol, mouse symbol, MGI id, Gene id
+--   zebrafish - fly
+--	zfin id,  zebrafish symbol, fly symbol,  Flybase id
+--   zebrafish - yeast [5 stale records]
+--	zfin id,  zebrafish symbol, yeast symbol,  SGD id
+--
+-- Gene Onotology-
+--	A copy of the file we send to GO.
+--
+-- Gene Expression
+--	gene zfin id , gene symbol, probe zfin id, probe name, expression type,
+--      expression pattern zfin id, pub zfin id, genotype zfin id,
+--      experiment zfin id
+--
+-- Mapping data
+--	zfin id, symbol, panel symbol, LG, loc, metric
+--
+-- Sequence data - separate files for GenBank, RefSeq, Gene, Unigene,
+-- UniProt, Interpro, GenPept and Vega (genes and transcripts) 1:1 Ensembl ID
+-- as well as sequences indirectly associated with genes
+--	zfin id, symbol, accession number
+--
+-- Genotypes
+--	zfin id, allele/construct, type, gene symblol, corresponding zfin gene id
+--
+-- create genetic markers file
+--
+-- Morpholino data
+--      zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
+-- Marker Relationship data
+--	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
 
 -- create antibody download file
@@ -13,6 +57,24 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
  order by 1;
 
 -- create antibody expression download file
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'
+ DELIMITER "	"
+select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
+ from marker, expression_experiment, expression_result, term as super,
+      outer term as sub, genotype_experiment, genotype
+ where xpatres_xpatex_zdb_id = xpatex_zdb_id
+   AND xpatex_atb_zdb_id = mrkr_zdb_id
+   AND mrkr_type = 'ATB'
+   AND super.term_zdb_id = xpatres_superterm_zdb_id
+   AND sub.term_zdb_id = xpatres_subterm_zdb_id
+   AND xpatex_genox_zdb_id = genox_zdb_id
+   AND genox_is_std_or_generic_control = 't'
+   AND xpatres_expression_found = 't'
+   AND geno_zdb_id = genox_geno_zdb_id
+   AND geno_is_wildtype = 't'
+ order by mrkr_zdb_id
+;
 
 -- create all marker file
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'"

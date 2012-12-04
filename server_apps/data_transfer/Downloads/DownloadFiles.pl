@@ -58,9 +58,9 @@ $ENV{"JAVA_HOME"}="/private/apps/java";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
-##############system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
 
-###########system("./generateStagedAnatomy.pl");
+system("./generateStagedAnatomy.pl");
 
 
 ### open a handle on the db
@@ -232,11 +232,4 @@ system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
 system("./FBcase8787.pl");
 
 system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
-
-
-# remove temporary files
-
-## system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
-
-### system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
 
