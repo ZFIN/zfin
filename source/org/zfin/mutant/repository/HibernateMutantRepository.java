@@ -1356,6 +1356,21 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
+    public List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds) {
+        if (CollectionUtils.isEmpty(genoxIds))
+            return null;
+
+        String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
+                " expressionResult.expressionExperiment.genotypeExperiment.zdbID in (:genoxIds) AND " +
+                 " expressionResult.expressionExperiment.gene is not null";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genoxIds);
+
+        return query.list();
+    }
+
+
     /**
      * Check if a given fish has expression data with at least one figure that has an image.
      *
@@ -1443,6 +1458,19 @@ public class HibernateMutantRepository implements MutantRepository {
                 "where genoExp.zdbID in (:genoxIDs)" +
                 "and genoExp.experiment=exp " +
                 "and exp.experimentConditions=expCond ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIDs", genotypeExperimentIDs);
+        return query.list();
+
+
+    }
+
+    public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {
+        String hql = "select distinct " +
+                "genotype from  GenotypeExperiment genoExp " +
+                "where genoExp.zdbID in (:genoxIDs)" +
+                " and genoExp.standardOrGenericControl=false";
+
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIDs", genotypeExperimentIDs);
         return query.list();

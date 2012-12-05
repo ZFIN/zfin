@@ -346,6 +346,8 @@ public interface MutantRepository {
      * @return  list of expression results
      */
     List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID);
+    List<ExpressionResult> getConstructExpressionSummary( List<String> genoxIds);
+
 
     /**
      * Check if a given fish has expression data with at least one figure that has an image.
@@ -380,6 +382,7 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures);
 
     PaginationResult<Genotype> getGenotypesByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
+    List<Genotype> getGenotypes(List<String> genotypeExperimentIDs);
 
     }
 

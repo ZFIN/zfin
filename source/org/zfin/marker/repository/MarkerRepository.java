@@ -370,4 +370,5 @@ public interface MarkerRepository {
 
     List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2, String resultType);
 
+    List<Marker> getCodingSequence(Marker construct);
 }

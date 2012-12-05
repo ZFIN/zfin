@@ -3,15 +3,27 @@ package org.zfin.expression.presentation;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 import org.zfin.marker.ExpressedGene;
+import org.zfin.mutant.ExpressedGenotype;
+import org.zfin.mutant.Genotype;
 import org.zfin.publication.Publication;
 
 public class FigureExpressionSummaryDisplay implements Comparable<FigureExpressionSummaryDisplay> {
     private Figure figure;
     private ExpressedGene expressedGene;
+    private Genotype expressedGenotype;
 
     private boolean publicationDisplayed;
 
+    public Genotype getExpressedGenotype() {
+        return expressedGenotype;
+    }
+
+    public void setExpressedGenotype(Genotype expressedGenotype) {
+        this.expressedGenotype = expressedGenotype;
+    }
+
     public FigureExpressionSummaryDisplay(Figure figure) {
+
         this.figure = figure;
     }
 

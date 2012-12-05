@@ -376,6 +376,11 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/mutant/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/unload/*</url-pattern>
     </servlet-mapping>
 
@@ -389,10 +394,6 @@
         <url-pattern>/action/database/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/mutant/*</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>

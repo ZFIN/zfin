@@ -2,14 +2,12 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
-      <configuration>
-        <fileset id="web: application context" profiles="" autodetected="true" />
-        <fileset id="web: zfinapp servlet context" profiles="" autodetected="true" />
-      </configuration>
+      <configuration />
     </facet>
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
+          <unit-entry name="conf:hibernate.cfg.xml" />
           <unit-entry name="home/WEB-INF/classes/hibernate.cfg.xml" value="hoovdb" />
           <unit-entry name="home:WEB-INF:classes:hibernate.cfg.xml" value="1e74b719-8c1e-4edd-886d-ceebde12847c" />
         </datasource-map>

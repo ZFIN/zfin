@@ -67,6 +67,32 @@ public class BtsContainsService {
         return null;
     }
 
+    public String getFullClauseConstructs() {
+        StringBuilder btsClause = new StringBuilder();
+        for (String clause : btsClauseList) {
+            if (!(btsClause.length() == 0))
+                btsClause.append(" and ");
+            btsClause.append(clause);
+        }
+        if (btsClause.length() > 0) {
+            return "bts_contains(" + btsTableColumn + ", '" + btsClause.toString() + "') ";
+        }
+        return null;
+    }
+
+    public String getFullOrClauseConstructs() {
+        StringBuilder btsClause = new StringBuilder();
+        for (String clause : btsClauseList) {
+            if (!(btsClause.length() == 0))
+                btsClause.append(" or ");
+            btsClause.append(clause);
+        }
+        if (btsClause.length() > 0) {
+            return "bts_contains(" + btsTableColumn + ", '" + btsClause.toString() + "') ";
+        }
+        return null;
+    }
+
     public static String btsExpand(String value) {
         StringBuilder sb = new StringBuilder();
         sb.append("(");

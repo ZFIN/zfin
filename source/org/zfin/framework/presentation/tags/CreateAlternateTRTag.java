@@ -34,11 +34,31 @@ public class CreateAlternateTRTag extends TagSupport {
     // name of the attribute on the collection that is used to decide if a new group is being started
     // within the collection loop. This can be a nested object path.
     private String groupByBean;
+
+    public String getTrNames() {
+        return trNames;
+    }
+
+    public void setTrNames(String trNames) {
+        this.trNames = trNames;
+    }
+
+    private String trNames;
     // the collection object
+
+    public String getTrStyleName() {
+        return trStyleName;
+    }
+
+    public void setTrStyleName(String trStyleName) {
+        this.trStyleName = trStyleName;
+    }
+
     private List groupBeanCollection;
     // class names for the tr-element
     private String trClassNames;
     private boolean newGroup = true;
+    private String trStyleName;
 
     private static final Logger LOG = Logger.getLogger(GroupByDisplayTag.class);
 
@@ -103,7 +123,12 @@ public class CreateAlternateTRTag extends TagSupport {
             else
                 sb.append(" evengroup ");
         }
-        sb.append("\" id=\"loopindex-" + loopIndex + "\">");
+//        sb.append("\" id=\"loopindex-" + loopIndex + "\">");
+        if (trStyleName!=null)
+//            sb.append("\" id=\"loopindex-" + loopIndex + "\" +  style="+ trStyleName +"\">");
+            sb.append("\" id=\"loopindex-" + loopIndex + "\"   style="+ trStyleName +"\"   name="+ trNames + ">");
+        else
+            sb.append("\" id=\"loopindex-" + loopIndex + "\">");
 
         try {
             pageContext.getOut().print(sb.toString());
@@ -147,6 +172,7 @@ public class CreateAlternateTRTag extends TagSupport {
         groupByBean = null;
         trClassNames = null;
         newGroup = true;
+        trStyleName = null;
     }
 
 

@@ -1,0 +1,62 @@
+#!/bin/tcsh
+
+# rm old reports
+
+setenv INSTANCE <!--|INSTANCE|-->;
+
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runConstructMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runConstructMartReport.txt
+
+endif
+
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenConstructMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenConstructMartReport.txt
+
+endif
+
+if ( -e <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt) then
+ /bin/rm <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt
+endif
+
+
+echo "done with file delete" ;
+# build up the warehouse
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt
+
+if ($? != 0) then
+ echo "trying to send notification runConstructMart";
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt -s "regen construct mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+exit 1;
+endif
+
+echo "done with runconstructmart";
+# run the validation tests via ant.
+
+cd <!--|SOURCEROOT|-->
+echo "cd'd to <!--|SOURCEROOT|-->" ;
+
+/private/bin/ant run-constructmart-unittests >&! reports/tests/constructMartUnitTests.txt
+
+if ($? != 0) then
+   echo "trying to send notification unit tests";  
+ /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt -s "regen construct mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+exit 1;
+endif
+
+#echo "done with ant tests" ;
+
+# move the current table data to backup, move the new data to current.
+
+<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/constructMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt
+
+if ($? != 0) then
+   echo "trying to send notification regenConstructMartReport";  
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "refresh construct mart (the public tables) failed and was rolled back" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+exit 1;
+endif
+
+echo "sending success email." ;
+
+/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "regen constructmart successful." -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+
+exit 0;

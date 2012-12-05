@@ -43,6 +43,7 @@
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
         <mapping resource="org/zfin/anatomy.hbm.xml"/>
+        <mapping resource="org/zfin/construct.hbm.xml"/>
         <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
         <mapping resource="org/zfin/fish.hbm.xml"/>

@@ -13,7 +13,14 @@ public enum SearchCriterionType {
     REQUIRE_MORPHOLNOS("Require Morpholinos"),
     EXCLUDE_TRANSGENICS("Exclude Transgenics"),
     REQUIRE_TRANSGENICS("Require Transgenics"),
-    MUTATION_TYPE("Mutation Type");
+    MUTATION_TYPE("Mutation Type"),
+    CONSTRUCT_NAME("Construct"),
+    PROMOTER_GENE("Promoter Gene"),
+    EXPRESSED_GENE("Expressed Gene"),
+    ENGINEERED_REGION("Engineered Region"),
+    AFFECTED_GENE("Affected Gene"),
+    LINE_AVAILABLE("Lines available"),
+    CONSTRUCT_TYPE("Construct Type");
 
     String name;
 

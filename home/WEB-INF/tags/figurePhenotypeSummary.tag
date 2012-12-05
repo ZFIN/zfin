@@ -13,6 +13,7 @@
             <th align="left">
                 Phenotype
             </th>
+
         </tr>
         <c:forEach var="figureData" items="${figureSummaryDisplayList}" varStatus="status">
             <zfin:alternating-tr loopName="status"
@@ -45,6 +46,7 @@
                                                 maxNumber="6" id="${figureData.figure.zdbID}-terms"
                                                 commaDelimited="false"/>
                 </td>
+
             </zfin:alternating-tr>
         </c:forEach>
     </table>

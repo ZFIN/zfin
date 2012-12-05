@@ -7,6 +7,7 @@
 <%@ attribute name="phenotypeData" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="expressionGenotypeData" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="showMarker" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="showGenotype" type="java.lang.Boolean" required="false" %>
 
 <c:if test="${!empty figureExpressionSummaryList}">
 
@@ -15,6 +16,11 @@
             <th align="left" width="20%">Publication</th>
             <th align="left" width="5%">Data</th>
             <th align="left" width="5%"> &nbsp; </th>
+            <c:if test="${showGenotype}">
+                <%--<th align="left" width="15%">Conditions</th>--%>
+                <th align="left" width="15%">Genotype</th>
+            </c:if>
+            <%--<th align="left" width="5%"> &nbsp; </th>--%>
             <c:if test="${showMarker}">
                 <th align="left" width="15%">Expressed Genes</th>
             </c:if>
@@ -57,11 +63,30 @@
                         </c:if>
                     </zfin:groupByDisplay>
                 </td>
+                <c:if test="${showGenotype}">
+                <%--<c:if test="${!empty figureExpressionSummaryDisplay.exp}">
+                    <td>
+                        <zfin:link entity="${figureExpressionSummaryDisplay.exp}"/>
+
+                            &lt;%&ndash;${figureExpressionSummaryDisplay.geno}&ndash;%&gt;
+
+                    </td>
+                </c:if>
+--%>
+                    <td>
+                <c:if test="${!empty figureExpressionSummaryDisplay.genotype}">
+                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype}"/>
+                            <%--${figureExpressionSummaryDisplay.geno}--%>
+
+                    </td>
+                </c:if>
+                </c:if>
                 <c:if test="${showMarker}">
                     <td>
                         <zfin:link entity="${figureExpressionSummaryDisplay.expressedGene.gene}"/>
                     </td>
                 </c:if>
+
                 <td>
                     <c:if test="${expressionData}">
                         <zfin2:toggledHyperlinkList

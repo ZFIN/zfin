@@ -2,6 +2,8 @@ package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.ExpressedGene;
+import org.zfin.mutant.ExpressedGenotype;
+import org.zfin.mutant.Genotype;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -11,7 +13,20 @@ public class FigureExpressionSummary implements Comparable<FigureExpressionSumma
     private Figure figure;
     private String thumbnail;
     private List<ExpressedGene> expressedGenes;
+    private Genotype expressedGenotypes;
+
+
+    public Genotype getExpressedGenotypes() {
+        return expressedGenotypes;
+    }
+
+    public void setExpressedGenotypes(Genotype expressedGenotypes) {
+        this.expressedGenotypes = expressedGenotypes;
+    }
+
     private DevelopmentStage earliestStartStage;
+
+
     private DevelopmentStage latestEndStage;
 
     private boolean publicationDisplayed;
@@ -54,7 +69,10 @@ public class FigureExpressionSummary implements Comparable<FigureExpressionSumma
         this.expressedGenes = expressedGenes;
     }
 
+
+
     public DevelopmentStage getEarliestStartStage() {
+
         return earliestStartStage;
     }
 

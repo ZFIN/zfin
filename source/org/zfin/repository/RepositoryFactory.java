@@ -22,10 +22,7 @@ import org.zfin.mapping.repository.HibernateLinkageRepository;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.repository.HibernateMutantRepository;
-import org.zfin.mutant.repository.HibernatePhenotypeRepository;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.mutant.repository.*;
 import org.zfin.ontology.repository.HibernateMarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.HibernateOntologyRepository;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
@@ -75,6 +72,8 @@ public class RepositoryFactory {
     private static PhenotypeRepository phenotypeRep = new HibernatePhenotypeRepository();
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
     private static FishRepository fishRepository = new HibernateFishRepository();
+    private static ConstructRepository constructRepository = new HibernateConstructRepository();
+
 
 
     public static ExpressionSummaryRepository getExpressionSummaryRepository() {
@@ -298,5 +297,16 @@ public class RepositoryFactory {
 
     public static void setFishRepository(FishRepository repository) {
         fishRepository = repository;
+    }
+
+    public static ConstructRepository getConstructRepository() {
+        if(constructRepository==null){
+            constructRepository = new HibernateConstructRepository();
+        }
+        return constructRepository;
+    }
+
+    public static void setConstructRepository(ConstructRepository repository) {
+        constructRepository = repository;
     }
 }

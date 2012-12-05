@@ -2164,6 +2164,26 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
+    public List<Marker> getCodingSequence(Marker gene) {
+
+
+
+        String hql = " select m from MarkerRelationship mr1,  Marker m " +
+                " where mr1.secondMarker.zdbID=m.zdbID " +
+                " and mr1.firstMarker.zdbID = :markerZdbID " +
+                " and mr1.type = :markerRelationshipType1 " +
+                " ";
+
+
+        return  HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID", gene.getZdbID())
+                .setParameter("markerRelationshipType1", MarkerRelationship.Type.CODING_SEQUENCE_OF)
+
+                .list()
+                ;
+    }
+
+
     @Override
     public Genotype getStrainForTranscript(String zdbID) {
 

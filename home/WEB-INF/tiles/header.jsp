@@ -188,6 +188,8 @@
 
             <a href="/action/fish/search">Mutants / Morphants / Tg</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
+            <a href="/action/mutant/construct-search">Constructs</a>
+            <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/action/anatomy/anatomy-search" title="Search the zebrafish anatomical ontology">Anatomy</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&select_from=PUBLICATION"

@@ -36,7 +36,8 @@ public class WarehouseSummary {
     }
 
     public enum Mart {
-        FISH_MART("fish mart");
+        FISH_MART("fish mart"),
+        CONSTRUCT_MART("construct mart");
 
         private String type;
 

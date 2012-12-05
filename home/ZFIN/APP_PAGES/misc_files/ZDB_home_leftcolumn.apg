@@ -29,6 +29,7 @@
 
       <li><a href="/action/antibody/antibody-search"
                     title="Search for antibodies by gene, labeled anatomy and other attributes"><strong>Antibodies</strong></a></li>
+
     </ul>
               
     <ul>
@@ -43,6 +44,11 @@
 <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
            Submit mutant/transgenic line names</a>
      </ul>
+  </ul>
+  <ul>
+    <li><a href="/action/mutant/construct-search"
+                       title="Search for constructs"><strong>Constructs</strong><sup><img src="/images/new1.gif" border="0"></sup></a></li>
+
   </ul>
                            
   <ul>

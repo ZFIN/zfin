@@ -136,6 +136,12 @@ set fullFishMartScripts=(begin.sql \
 	     refreshFishMart.sql \
 	     createBtsIndexes.sql \
 	     commit.sql \
+	     begin.sql \
+	     dropTables.sql \
+	     commit.sql \
+	     begin.sql \
+	     createTempBtsIndexes.sql \
+	     commit.sql \
 	     )
 
 touch $FULL_SCRIPT_FILE

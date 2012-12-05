@@ -104,6 +104,11 @@
 	<run-sql-query-tests sql-query-file="fishmart-integrity-tests.sql" directory="${warehouseDir}/fishMart"/>
     </target>
 
+   <target name="run-constructmart-unittests">
+        <echo message="Run unit tests for constructmart"/>
+	<run-sql-query-tests sql-query-file="constructmart-integrity-tests.sql" directory="${warehouseDir}/constructMart"/>
+    </target>
+
     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>

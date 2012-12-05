@@ -22,6 +22,7 @@
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="showAttributionLinks" type="java.lang.Boolean" required="false" %>
+<%@attribute name="showOrderLinks" type="java.lang.Boolean" required="false" %>
 <%@attribute name="commaDelimited" type="java.lang.Boolean" required="false" %>
 
 
@@ -35,6 +36,8 @@
             <span style="display:inline;" id="${id}-short">
             <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
                 <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+
+
                 <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
                 <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
             </c:forEach>
@@ -47,6 +50,7 @@
             <span style="display:none;" id="${id}-long">
             <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
                 <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+
                 <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
                 <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
             </c:forEach>&nbsp;
@@ -57,6 +61,7 @@
             <c:otherwise>
                 <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
                     <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+
                     <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
                     <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
                 </c:forEach>

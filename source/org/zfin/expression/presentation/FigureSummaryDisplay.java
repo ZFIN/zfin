@@ -1,9 +1,11 @@
 package org.zfin.expression.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
@@ -13,15 +15,51 @@ import java.util.List;
 public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private Publication publication;
     private Figure figure;
+
+
+
     private int imgCount;
+
+    public List<Experiment> getExp() {
+        return exp;
+    }
+
+    public void setExp(List<Experiment> exp) {
+        this.exp = exp;
+    }
+
     private String thumbnail;
+    private List<Experiment> exp;
     // for phenotype summary page
+
+
+
     private List<PhenotypeStatement> phenotypeStatementList;
+    public List<String> geno;
+
+    public List<String> getGeno() {
+        return geno;
+    }
+
+    public void setGeno(List<String> geno) {
+        this.geno = geno;
+    }
     // for expression summary page
+
+
+    public List<Genotype> getGenotype() {
+        return genotype;
+    }
+
+    public void setGenotype(List<Genotype> genotype) {
+        this.genotype = genotype;
+    }
+
     private List<ExpressionStatement> expressionStatementList;
     private DevelopmentStage earliestStartStage;
     private DevelopmentStage latestEndStage;
     private List<Marker> expressedGenes;
+    private List<Genotype> genotype;
 
     private boolean publicationDisplayed;
 
@@ -100,7 +138,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
 
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {
-        if (anotherFigureSummary == null)
+        if (anotherFigureSummary.publication == null)
             return 1;
         int compareResult = publication.compareTo(anotherFigureSummary.getPublication());
         if (compareResult == 0) {
@@ -125,4 +163,5 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
             phenotypeStatementList = new ArrayList<PhenotypeStatement>();
         phenotypeStatementList.add(statement);
     }
+
 }

@@ -48,6 +48,7 @@ public class ZdbFlag {
         MAPS("regen_maps"),
         NAMES("regen_names"),
         REGEN_FISHMART_BTS_INDEXES("regen_fishmart_bts_indexes"),
+        REGEN_CONSTRUCTMART("regen_constructmart"),
         OEVDISP("regen_oevdisp");
 
         private final String value;

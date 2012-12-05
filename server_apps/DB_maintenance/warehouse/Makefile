@@ -17,9 +17,9 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse
-SUBDIRS = fishMart
-GENERICS = runWarehouse.pl who_is.sh who_is_not.sh switch.sh regenFishMart.sh
-STATICS = getUnloadDir.sh regenFishMartReport.txt runFishMartReport.txt char
+SUBDIRS = fishMart constructMart
+GENERICS = runWarehouse.pl who_is.sh who_is_not.sh switch.sh regenFishMart.sh regenConstructMart.sh
+STATICS = getUnloadDir.sh regenFishMartReport.txt runFishMartReport.txt regenConstructMartReport.txt runConstructMartReport.txt char
 
 
 # ---------------  Production Rules  ------------------------------------

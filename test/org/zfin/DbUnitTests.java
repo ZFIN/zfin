@@ -28,9 +28,7 @@ import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
-import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
-import org.zfin.mutant.repository.MutantRepositoryTest;
-import org.zfin.mutant.repository.PhenotypeRepositoryTest;
+import org.zfin.mutant.repository.*;
 import org.zfin.ontology.OntologyManagerTest;
 import org.zfin.ontology.OntologySerializationTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
@@ -78,6 +76,8 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FigureServiceTest.class,
         FishRepositoryTest.class,
         FishServiceTest.class,
+        ConstructRepositoryTest.class,
+        ConstructServiceTest.class,
         FpInferenceGafServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,

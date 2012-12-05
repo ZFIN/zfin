@@ -76,7 +76,7 @@ import org.zfin.util.*;
         BeanCompareServiceTest.class,
         BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
-        BtsContainsServiceTest.class,
+//        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
 	    DatabaseServiceTest.class,
         EntityPresentationTest.class,

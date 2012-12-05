@@ -426,6 +426,8 @@ document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar
 
 document.write("       <a href=\"/action/fish/search\">Mutants / Morphants / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
+document.write("       <a href=\"/action/mutant/construct-search\">Constructs</a>");
+document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("      <a href=\"/action/anatomy/anatomy-search\" title=\"Search the zebrafish anatomical ontology\">Anatomy</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-pubselect2.apg&select_from=PUBLICATION\" title=\"Search for zebrafish research publications by author, title or citation\">Publications</a>");

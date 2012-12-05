@@ -5,8 +5,18 @@ package org.zfin.infrastructure;
 
 public class ZfinEntity {
     protected String ID;
+
+    public String getAbbrev() {
+        return abbrev;
+    }
+
+    public void setAbbrev(String abbrev) {
+        this.abbrev = abbrev;
+    }
+
     protected String name;
     protected String nameOrder;
+    protected String abbrev;
     protected String type;
 
     public String getID() {

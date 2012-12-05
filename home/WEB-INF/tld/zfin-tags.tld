@@ -296,9 +296,19 @@
             <rtexprvalue>false</rtexprvalue>
         </attribute>
         <attribute>
-            <name>trClassName</name>
+            <name>trClassNames</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>trNames</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>trStyleName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>newGroup</name>
