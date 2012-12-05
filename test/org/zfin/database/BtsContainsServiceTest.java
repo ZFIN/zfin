@@ -10,7 +10,7 @@ import static junit.framework.Assert.assertNotNull;
 
 public class BtsContainsServiceTest {
 
-    /*@Test
+    @Test
     public void singleGeneFeatureCriteria() {
         String queryString = "act";
         List<String> values = new ArrayList<String>(1);
@@ -39,6 +39,6 @@ public class BtsContainsServiceTest {
         assertNotNull(fullClause);
         assertEquals("bts_contains(fas_all, ' fas_all:(act^1000 or act*) and  " +
                 "fas_pheno_term_group:zdb\\-term\\-100331\\-8 and  fas_pheno_term_group:zdb\\-term\\-100331\\-107', fas_all_score # real) ", fullClause);
-    }*/
+    }
 
 }
