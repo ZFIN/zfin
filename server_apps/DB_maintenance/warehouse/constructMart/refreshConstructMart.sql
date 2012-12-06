@@ -41,6 +41,10 @@ delete from figure_term_construct_search;
 insert into figure_term_construct_search
   select * from figure_term_construct_search_temp; 
 
+delete from construct_component_search;
+insert into construct_component_search
+  select * from construct_component_search_temp;
+
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
  where zflag_name = "regen_constructmart" ;
