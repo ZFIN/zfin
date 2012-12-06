@@ -399,8 +399,8 @@ create temp table tmp_ao_updates (
 	--t_submitter_id	varchar(50),
 	t_rec_id	varchar(50),
 	t_field_name	varchar(50),
-	t_new_value	html,
-	t_old_value	html,
+	t_new_value	lvarchar(3000),
+	t_old_value	lvarchar(3000),
 	t_when		datetime year to fraction(3),
 	t_comments	lvarchar
 	--sumbitter_name	varchar(80)
@@ -1194,7 +1194,7 @@ insert into updates (submitter_id, submitter_name, rec_id,
     select "ZDB-PERS-000914-2", "Melissa Anne Haendel",
 	   t_rec_id, t_field_name,
            t_new_value, t_old_value, t_when, t_comments
-      from tmp_ao_updates;
+      from tmp_ao_updates where length(t_new_value) < 2000;
 
 
 
