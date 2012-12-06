@@ -50,3 +50,24 @@ unload to btsContainssShhaCount
 TEST (btsContainssShhaCount < 15)'bts index on construct_search_temp is inacurate: #shha = $x < 15';
 
 
+-- 7 -------------------------------------------------------------------------------------------------------------------
+
+unload to btsContainsshsp70Count
+  select
+       count(*)
+   from
+       construct_search
+   where
+       exists(
+           select
+               'c'
+           from
+               construct_component_search
+           where
+               ccs_cons_id = cons_pk_id
+               and ccs_relationship_type = 'promoter of'
+               and  bts_contains(ccs_promoter_all_names, ' ccs_promoter_all_names:(hsp70^1000 or hsp70*)')
+       )
+  ;
+
+TEST (btsContainsshsp70Count < 1)'bts index on construct_component_search_temp is inacurate: has 0, should have 146';
