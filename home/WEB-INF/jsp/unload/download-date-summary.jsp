@@ -140,7 +140,7 @@ To obtain previous versions you have to check the archive of the external source
             <a HREF="http://obo.cvs.sourceforge.net/">Sourceforge</a>
         </td>
         <td>
-            <a HREF="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo">zebrafish_anatomy.obo</a>
+            <a HREF="http://www.berkeleybop.org/ontologies/zfa.obo">zebrafish_anatomy.obo</a>
         </td>
         <td>
             monthly

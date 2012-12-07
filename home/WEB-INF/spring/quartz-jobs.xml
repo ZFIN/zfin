@@ -18,7 +18,9 @@
                 <ref bean="microarrayTrigger"/>
                 <ref bean="reloadOntologyTrigger"/>
                 <ref bean="loadQualityOntology"/>
-                <ref bean="loadAnatomyOntology"/>
+<!--
+Not needed any longer                <ref bean="loadAnatomyOntology"/>
+-->
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
                 <ref bean="loadMPATHOntology"/>
