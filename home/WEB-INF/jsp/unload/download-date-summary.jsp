@@ -137,7 +137,7 @@ To obtain previous versions you have to check the archive of the external source
             Zebrafish Anatomical Ontology in OBO Format
         </td>
         <td>
-            <a HREF="http://obo.cvs.sourceforge.net/">Sourceforge</a>
+            <a HREF="http://www.obofoundry.org/">Obofoundry</a>
         </td>
         <td>
             <a HREF="http://www.berkeleybop.org/ontologies/zfa.obo">zebrafish_anatomy.obo</a>
