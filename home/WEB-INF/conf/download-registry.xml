@@ -462,7 +462,7 @@
         </Download>
         <Download orderIndex="20">
             <Name>
-                ZFIN Marker associations to GenePept protein data
+                ZFIN Marker associations to GenPept protein data
             </Name>
             <Category>
                 Sequence Data
@@ -678,7 +678,7 @@
         </Download>
         <Download orderIndex="60">
             <Name>
-                ZFIN Marker associations to UnitProt protein data
+                ZFIN Marker associations to UniProt protein data
             </Name>
             <Category>
                 Sequence Data
