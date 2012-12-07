@@ -22,12 +22,12 @@
     <div id="${blastLinkPopup}" class="analysis_tools_box_popup_box">
         <c:forEach var="blastDB" items="${databases}">
             <c:choose>
-                <c:when test="${blastDB.abbrev eq 'RNASequences'}">
+                <c:when test="${blastDB.abbrev.value eq 'RNASequences'}">
                     <a style="font-size: small;"
                        href="/action/blast/blast?program=blastn&sequenceType=nt&queryType=FASTA&shortAndNearlyExact=true&dataLibraryString=RNASequences&querySequence=${sequence}">${blastDB.displayName}</a>
                     <br>
                 </c:when>
-                <c:when test="${blastDB.abbrev ne 'MEGA BLAST'}">
+                <c:when test="${blastDB.abbrev.value ne 'MEGA BLAST'}">
                     <a
                        href="/action/blast/blast-with-sequence?accession=${sequence}&blastDB=${blastDB.abbrev}">${blastDB.displayName}</a>
                     <br>
