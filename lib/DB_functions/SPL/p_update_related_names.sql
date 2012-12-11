@@ -1,6 +1,6 @@
 -- take feature_tracking feature_name update trigger off
 
-create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbrev varchar(70), vNewMrkrAbbrev varchar(70))
+create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbrev varchar(255), vNewMrkrAbbrev varchar(255))
 
 	define vGenotypeZDB like genotype.geno_zdb_id;
 	define vGenoDisplay like genotype.geno_display_name;
@@ -8,9 +8,10 @@ create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbre
 	define vFeatureNameNew like feature.feature_name;
 	define vFeatureNameOld like feature.feature_name;
 	define vFeatureAbbrev like feature.feature_abbrev;
-		
+	
         if (get_obj_type(vMarkerZdbId) in ('GENE','TGCONSTRCT','PTCONSTRCT','ETCONSTRCT','GTCONSTRCT')) then
 
+	
 	 if (exists (select 'x' from feature_marker_relationship where fmrel_mrkr_zdb_id = vMarkerZdbId))
 	 then
 
@@ -20,13 +21,16 @@ create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbre
 			       			     where feature_zdb_id = fmrel_ftr_zdb_id
 			       			     and fmrel_mrkr_Zdb_id = vMarkerZdbId
 			
-			let vFeatureNameNew = replace(vFeatureNameOld,vOldMrkrAbbrev,vNewMrkrAbbrev);      
+			let vFeatureNameNew = replace(vFeatureNameOld,vOldMrkrAbbrev,vNewMrkrAbbrev); 
+			
+ --    			insert into record_old values (vMarkerZdbId, vFeatureNameOld, vFeatureNameNew);
+
 			if ((vFeatureNameOld != vFeatureNameNew) and vFeatureAbbrev = vFeatureNameOld )
 			then
 				update feature
-		    		 set (feature_name,feature_abbrev) = (
-									(replace(feature_name,vOldMrkrAbbrev,vNewMrkrAbbrev)),
-									(replace(feature_abbrev,vOldMrkrAbbrev,vNewMrkrAbbrev))
+		    		 set (feature_name,feature_abbrev) = (replace(feature_name,vOldMrkrAbbrev,vNewMrkrAbbrev),
+				     				      replace(feature_abbrev,vOldMrkrAbbrev,vNewMrkrAbbrev)
+									
 									)
 		    		 where exists (select 'x' from feature_marker_relationship 
 						          where fmrel_ftr_Zdb_id = feature_zdb_id
@@ -65,5 +69,6 @@ create procedure p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbre
 	
 	end if; -- end if exists...
        end if ; -- if mrkr_type in GENE, etc..
+
 
 end procedure ;
