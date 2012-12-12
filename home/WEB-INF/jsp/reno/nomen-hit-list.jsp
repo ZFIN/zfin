@@ -30,7 +30,7 @@
         <th>Chr</th>
         <th>GENE</th>
         <th>Species</th>
-        <th>Score</th>
+        <th style="text-align: right">Score</th>
         <th>Positives</th>
         <th>Length</th>
         <th>Expect</th>
@@ -49,13 +49,13 @@
                     </a>
                     <c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
                         <c:if test="${relatedAccession.entrezAccession.abbreviation ne null}">
-                            <c:if test="${relatedAccession.organism eq 'Human'}">
+                            <c:if test="${relatedAccession.organism.toString() eq 'Human'}">
                                 , <a
                                     href="<c:out value='${formBean.humanReferenceDatabase.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${formBean.humanReferenceDatabase.foreignDB.dbUrlSuffix}'/>">
                                 <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
                             </a>
                             </c:if>
-                            <c:if test="${relatedAccession.organism eq 'Mouse'}">
+                            <c:if test="${relatedAccession.organism.toString() eq 'Mouse'}">
                                 , <a
                                     href="<c:out value='${formBean.mouseReferenceDatabase.foreignDB.dbUrlPrefix}'/><c:out value='${relatedAccession.entrezAccession.entrezAccNum}'/><c:out value='${formBean.mouseReferenceDatabase.foreignDB.dbUrlSuffix}'/>">
                                 <c:out value="${relatedAccession.entrezAccession.abbreviation}"/>
