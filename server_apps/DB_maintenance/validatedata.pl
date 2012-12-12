@@ -669,6 +669,7 @@ sub unrecoveredFeatureNameAbbrevUpdate($) {
   &recordResult($routineName, $nRecords);
  }
 }
+
 #---------------------------------------------------------------
 # morpholinoAbbrevContainsGeneAbbrev
 #
@@ -710,48 +711,36 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
 
 }
 
-
 #---------------------------------------------------------------
-# featureIsAlleleOfOrMrkrAbsent
-#
-# features can either be alleles of markers or have markers absent
-# not both.  we can not do this in the database via a trigger or
-# constraint because the two data are stored in different tables.
-#
-# Parameter
-# $ Email Address for recipients
-# as of 5/10 after MapRevamp, we no longer need this routine since we have a trigger in place to prevent curators from entering both markers present/missing and is allele of relationships
-
-
-#---------------------------------------------------------------
-# genotypesHaveNoNames
+# constructNameNotSubstringOfFeatureName
 #
 # Parameter
 # $ Email Address for recipients
 
-sub genotypesHaveNoNames($) {
-  my $routineName = "genotypesHaveNoNames";
+sub constructNameNotSubstringOfFeatureName ($) {
+  my $routineName = "constructNameNotSubstringOfFeatureName";
 	
-  my $sql = "select recattrib_source_zdb_id, geno_zdb_id,geno_display_name, geno_handle, geno_nickname
-               from genotype, record_attribution
-               where (geno_display_name = geno_zdb_id
-                 or geno_nickname = geno_zdb_id
-                      or geno_handle = geno_zdb_id)
-               and recattrib_data_zdb_id=geno_zdb_id
-             ";
+  my $sql = "select mrkr_zdb_id, mrkr_name, mrkr_abbrev, feature_zdb_id, feature_name
+             from marker, feature_marker_relationship, feature
+              where mrkr_type in ('PTCONSTRCT','ETCONSTRCT','GTCONSTRCT','TGCONSTRCT')
+             and feature_name not like mrkr_name||'%'
+             and feature_zdb_id = fmrel_ftr_zdb_id
+             and mrkr_zdb_id = fmrel_mrkr_zdb_id
+             and fmrel_type like 'contains%'
+             and (feature_name like 'Tg%' or feature_name like 'Pt%' or feature_name like 'Et%' or feature_name like 'Gt%')";
 
-  my @colDesc = ("Publication          ",
-                 "Genotype ID          ",
-                 "Genotype Nickname    ",
-                 "Genotype Display name         ",
-		 "Genotype handle       ");
+  my @colDesc = ("Marker Zdb ID          ",
+                 "Marker Name          ",
+                 "Marker Abbrev    ",
+                 "Feature Zdb ID         ",
+		 "Feature Name       ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Genotypes are incomplete";
-    my $errMsg = "The following genotypes have not been completed and are visible to the public using the ZDB ID as the name.  If you curated any of the pubs shown below please delete or complete these genotypes as necessary. ";
+    my $subject = "Constructs whose names are not substrings of related features";
+    my $errMsg = "The following constructs names are not substrings of their related feature names";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -2761,7 +2750,6 @@ if($daily) {
 	$curatorFirstName =~ s/^\s+//;
 	featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
     }
-    genotypesHaveNoNames($genoEmail);
     #removing this routine as it seems that it is no longer needed as curator is notified when pub is closed.
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     allTranscriptsHaveAtLeastOneDbLink($dbaEmail);
@@ -2788,8 +2776,8 @@ if($weekly) {
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xxGenesHaveNoClones($estEmail);
-    xpatObjectNotGeneOrEFG ($xpatEmail);
-
+	xpatObjectNotGeneOrEFG ($xpatEmail);
+	constructNameNotSubstringOfFeatureName($dbaEmail);
 	# these are curatorial errors (case219)
 	# however, errors returned are difficult to
 	# return to curators without dba
