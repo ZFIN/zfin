@@ -76,7 +76,7 @@
                 </td>
                 <%--<td>${hit.targetAccession.referenceDatabase.organism}</td>--%>
                 <td>
-                        ${hit.targetAccession.organism}
+                        ${hit.targetAccession.organism.toString()}
                         <%--<c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
                         <c:if test="${relatedAccession eq null}">
                             <%=CandidateBean.ZEBRAFISH%>
