@@ -7,9 +7,9 @@
     <td align="left"  valign="top">
         ${referenceDatabase.foreignDB.dbName}
         -
-        ${referenceDatabase.foreignDBDataType.dataType}
+        ${referenceDatabase.foreignDBDataType.dataType.toString()}
         -
-        ${referenceDatabase.foreignDBDataType.superType}
+        ${referenceDatabase.foreignDBDataType.superType.toString()}
     </td>
     <%--primary blast db--%>
     <td align="left"  valign="top">

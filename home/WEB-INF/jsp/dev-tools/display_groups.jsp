@@ -28,7 +28,7 @@
   <tr class="odd evengroup"><td>Members:</td>
       <td>
       <c:forEach var="refDB" items="${displayGroup.referenceDatabases}" varStatus="loop">
-         <small>${refDB.foreignDB.dbName} ${refDB.foreignDBDataType.dataType} <c:if test="${!loop.last}">,</c:if></small>
+         <small>${refDB.foreignDB.dbName} ${refDB.foreignDBDataType.dataType.toString()} <c:if test="${!loop.last}">,</c:if></small>
       </c:forEach>
   </td>
   </table>

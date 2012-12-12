@@ -39,7 +39,7 @@
                     <td>
                         <zfin:groupByDisplay loopName="loop" groupBeanCollection="${dbLinks}"
                                              groupByBean="referenceDatabase.foreignDBDataType.dataType">
-                            ${dblink.referenceDatabase.foreignDBDataType.dataType}
+                            ${dblink.referenceDatabase.foreignDBDataType.dataType.toString()}
                         </zfin:groupByDisplay>
                     </td>
                     <td>

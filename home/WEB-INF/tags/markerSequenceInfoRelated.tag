@@ -54,7 +54,7 @@
                         <c:set var="markerAbbrev" value="${dblink.marker.abbreviation}"/>
                     </td>
                     <td>
-                            ${dblink.referenceDatabase.foreignDBDataType.dataType}
+                            ${dblink.referenceDatabase.foreignDBDataType.dataType.toString()}
                     </td>
                     <td>
                         <zfin:link entity="${dblink}"/>

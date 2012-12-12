@@ -12,7 +12,7 @@
         <c:set var="blastLinkString"
                value="/action/blast/external-blast?accession=${dbLink.accessionNumber}&refDB=${dbLink.referenceDatabase.zdbID}&blastDB=${blastDB.zdbID}"/>
         <c:choose>
-            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq ForeignDBDataType.DataType.Polypeptide}">
+            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType.toString() eq 'Polypeptide'}">
                 <c:set var="blastLinkString" value="${blastLinkString}&sequenceType=pt"/>
                 <c:set var="blastLinkString" value="${blastLinkString}&program=blastp"/>
             </c:when>
@@ -22,7 +22,7 @@
             </c:otherwise>
         </c:choose>
 
-${dbLink.referenceDatabase.foreignDBDataType.dataType}
+        ${dbLink.referenceDatabase.foreignDBDataType.dataType.toString()}
         <a href="${blastLinkString}"
                 >Blast at ${blastDB.displayName}</a>
     </c:when>
@@ -57,7 +57,7 @@ ${dbLink.referenceDatabase.foreignDBDataType.dataType}
                         </c:choose>
 
                         <c:choose>
-                            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType eq  ForeignDBDataType.DataType.Polypeptide}">
+                            <c:when test="${dbLink.referenceDatabase.foreignDBDataType.dataType.toString() eq  'Polypeptide'}">
                                 <c:set var="blastLinkString" value="${blastLinkString}&sequenceType=pt"/>
                                 <c:set var="blastLinkString" value="${blastLinkString}&program=blastp"/>
                             </c:when>
@@ -74,9 +74,9 @@ ${dbLink.referenceDatabase.foreignDBDataType.dataType}
         </div>
 
 
-        <script>
-            jQuery(document).ready(function() {
-                jQuery('#${blastLink}').click(function() {
+        <script type="text/javascript">
+            jQuery(document).ready(function () {
+                jQuery('#${blastLink}').click(function () {
                     jQuery("#${blastLinkPopup}").slideToggle(70);
                 });
             });

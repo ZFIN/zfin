@@ -37,7 +37,7 @@
         <c:forEach var="dblink" items="${sequenceInfo.dbLinks}" varStatus="loop">
             <tr class=${loop.index%2==0 ? "even" : "odd"}>
                 <td>
-                        ${dblink.referenceDatabase.foreignDBDataType.dataType}
+                        ${dblink.referenceDatabase.foreignDBDataType.dataType.toString()}
                 </td>
                 <td>
                     <zfin:link entity="${dblink}"/>
