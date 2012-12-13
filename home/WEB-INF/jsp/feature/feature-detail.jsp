@@ -147,10 +147,10 @@
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-               ${mutagen}
+               ${mutagen.toString()}
             </c:when>
             <c:otherwise>
-                ${mutagee.value} treated with ${mutagen}
+                ${mutagee.toString()} treated with ${mutagen.toString()}
             </c:otherwise>
         </c:choose>
     </td>
