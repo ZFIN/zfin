@@ -51,7 +51,7 @@ Input:
 	     <option $(IF,$(EC,$compare,contains),SELECTED) value=contains>contains
 	     <option $(IF,$(EC,$compare,starts),SELECTED) value=starts>begins with
           </SELECT>
-	<INPUT type=text name=input_name size=30  value="$(IF,$(XST,$input_name),$input_name)">
+	<INPUT type=text name=input_name size=30 class="default-input" value="$(IF,$(XST,$input_name),$input_name)">
 	</td><?/MIVAR>
        </tr></table>
       </TD>

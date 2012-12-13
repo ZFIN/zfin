@@ -27,6 +27,10 @@
     </div>
 </div>
 
+<script>
+    jQuery(document).ready(function() { jQuery(".default-input").focus(); })
+</script>
+
 
 <!-- start AWStats -->
 <script src="/javascript/awstats_misc_tracker.js" type="text/javascript">

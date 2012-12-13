@@ -41,7 +41,7 @@
                             <b>Name</b>
                         </td>
                         <td>
-                            <form:input path="name" size="30"/>
+                            <form:input path="name" size="30" cssClass="default-input"/>
                             <form:hidden path="maxDisplayRecords"/>
                         </TD>
                     </tr>

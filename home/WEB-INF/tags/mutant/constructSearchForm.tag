@@ -73,6 +73,7 @@
         <td>
 
             <form:input id="construct" path="construct" size="50"   placeholder="shha, mCherry, lox, UAS, atoh7:GFP, Tg(actc1b:RFP) "
+                        cssClass="default-input"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}  "/>
 

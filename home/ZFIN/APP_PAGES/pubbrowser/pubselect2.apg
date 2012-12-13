@@ -592,7 +592,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<SELECT name=authtype onChange='document.critform.START.value = "";'>
 	<option $(IF,$(EC,$authtype, anyauth),SELECTED) value=anyauth>Author contains
 	<option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First Author begins with
-	</select>:</b> <input type=text name=authors size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$authors),$authors)">
+	</select>:</b> <input type=text class="default-input" name=authors size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$authors),$authors)">
       </TD> 
   <?/MIVAR>
   <?MIVAR>

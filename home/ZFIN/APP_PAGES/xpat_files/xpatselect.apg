@@ -821,14 +821,14 @@ return false ; "
 
 	    <!-- gene name -->
 
-	    <label for="xpatselGene" id="xpatselGeneLabel" class="namesearchLabel">Gene/EST name </label>
+	    <label for="xpatselGene" id="xpatselGeneLabel" class="namesearchLabel">Gene/EST </label>
 
 	    <SELECT name=searchtype>
 	        <option value="contains" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,contains)),SELECTED) >contains
   	        <option value="begins" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,begins)),SELECTED) >begins with
                 <option value="equals" $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,equals)),SELECTED) >equals
 	    </SELECT>
-	    <input id="xpatselGene" type=text name=gene_name size="27"
+	    <input id="xpatselGene" type=text name=gene_name class="default-input" size="12"
 		   onKeyDown="
 		     k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		     if (k == 13 ) { 
@@ -889,7 +889,7 @@ return false ; "
 	<tr>
 	  <td>
 	    <!-- begin morpholino --> 
-	    <label for="xpatselMoSearchtype" class="namesearchLabel" id="xpatselMOSearchLabel">MO knockdown: Gene name</label>
+	    <label for="xpatselMoSearchtype" class="namesearchLabel" id="xpatselMOSearchLabel">MO knockdown: Gene</label>
 	      <SELECT name="MOsearchtype">
 		<option value="contains" $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,contains)),SELECTED)>contains
 		<option value="begins"  $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,begins)),SELECTED) >begins with

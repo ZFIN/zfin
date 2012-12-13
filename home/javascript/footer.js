@@ -1,4 +1,8 @@
 
+
+jQuery(document).ready(function() { jQuery(".default-input").focus(); })
+
+
 document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
 document.write("   <div id=\"footerlinks\"> ");

@@ -5,6 +5,8 @@
 
 <script>
 
+    jQuery(document).ready(function() { jQuery(".default-input").focus(); })
+
 function randomUniqueID(prefix) {
   var id = prefix + Math.floor( Math.random()*99999 );
   // if the id exists, try again
