@@ -444,7 +444,9 @@ DEBUGGING:
          <?/MIVAR>
        <?MIELSE>
           <?MIVAR>
-	    <center><font size=+1>No Matching Results for: $(SUBSTR,$(SEPARATE,$critList,; ),3)</font><p></center>
+            <div class="no-results-found-message">
+	    No matching Results for: $(SUBSTR,$(SEPARATE,$critList,; ),3)
+            </div>
           <?/MIVAR>
        <?/MIBLOCK>
 
@@ -474,11 +476,16 @@ DEBUGGING:
 	<?MIELSE>
      <TABLE>
      <TR><TD width=80% align=center><p>
-		<?MIVAR> <font size=+1>
-			$(IF,$(=,$type_count,0),No Matching,Search) Results for:
-	  $(SUBSTR,$(SEPARATE,$critList,; ),3)
-                 </font>
-	<?/MIVAR>
+		<?MIBLOCK COND="$(=,$type_count,0)">
+                    <div class="no-results-found-message">
+                        No matching results for: <?MIVAR>$(SUBSTR,$(SEPARATE,$critList,; ),3)<?/MIVAR>
+                    </div>
+                <?MIELSE>
+                  <font size=+1>
+
+                        Search results for: <?MIVAR>$(SUBSTR,$(SEPARATE,$critList,; ),3)<?/MIVAR>
+                  </font>
+                <?/MIBLOCK>
        </TD>
 
        <TD width=10% align=right>

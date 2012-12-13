@@ -11,7 +11,9 @@
             <div align="center">
                 <c:choose>
                     <c:when test="${formBean.totalRecords == 0}">
-                        <b>No antibodies were found matching your query.</b><br><br>
+                        <div class="no-results-found-message">
+                            No antibodies were found matching your query.
+                        </div>
                     </c:when>
                     <c:otherwise>
                         <b>

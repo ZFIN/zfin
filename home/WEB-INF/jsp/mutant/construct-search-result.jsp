@@ -11,9 +11,9 @@
             <zfin-mutant:constructSearchResultTable formBean="${formBean}"/>
         </c:when>
         <c:otherwise>
-            <div style="text-align: center; font-weight: bold; margin-bottom: 1em;">
-                No matching constructs were found
-            </div>
+        <div class="no-results-found-message" style="margin-bottom: 1em;">
+            No matching constructs were found.
+        </div>
         </c:otherwise>
     </c:choose>
 

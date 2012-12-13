@@ -632,7 +632,7 @@ function openChild(childWinUrl,childWinName) {
   </div>
   <?/MICOMMENT>
 
-    <div style="font-weight: bold; text-align: center;">
+    <div class="no-results-found-message">
      No gene expression patterns were found for your search.
     </div>
     <br>

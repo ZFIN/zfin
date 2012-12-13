@@ -4,12 +4,18 @@
 
 <zfin2:personSearchForm searchBean="${formBean}"/>
 
+<c:if test="${formBean.totalRecords == 0 && !(people == null)}">
+    <div class="no-results-found-message">
+        No results were found matching your query.
+    </div>
+</c:if>
 <c:if test="${formBean.totalRecords>0}">
 
     <%--<div style="float: left; margin-top: 2px; width: auto !important;" class="pagination">--%>
         <%--<zfin2:recordsView view="html" searchBean="${formBean}" type="person"/>--%>
         <%--<zfin2:recordsView view="printable" searchBean="${formBean}" type="person"/>--%>
     <%--</div>--%>
+
 
 
     <div style="float: right; margin-top: 2px; width: auto !important;" class="pagination ">

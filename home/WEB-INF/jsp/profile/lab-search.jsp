@@ -5,6 +5,11 @@
 
 <zfin2:labSearchForm searchBean="${formBean}"/>
 
+<c:if test="${formBean.totalRecords == 0 && !(orgs == null)}">
+    <div class="no-results-found-message">
+        No results were found matching your query.
+    </div>
+</c:if>
 
 <c:if test="${formBean.totalRecords>0}">
 
