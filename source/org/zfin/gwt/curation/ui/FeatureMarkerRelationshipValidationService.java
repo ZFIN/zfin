@@ -130,7 +130,7 @@ public class FeatureMarkerRelationshipValidationService {
                                                               List<FeatureMarkerRelationshipDTO> relationshipsForMarkerDTOList,
                                                               int maxIsAlleleOfRelationships) throws  ValidationException{
         if(countFeatureMarkerRelationshipsForType(newFeatureMarkerRelationship,relationshipsForMarkerDTOList)>= maxIsAlleleOfRelationships){
-            throw new ValidationException("ok wow he is doing multiplication now? tFeatures of type "+ newFeatureMarkerRelationship.getFeatureDTO().getFeatureType().toString() +
+            throw new ValidationException("Features of type "+ newFeatureMarkerRelationship.getFeatureDTO().getFeatureType().toString() +
                     " may only have up to "+maxIsAlleleOfRelationships +" '"+ newFeatureMarkerRelationship.getRelationshipType()+"' relationships.") ;
         }
         return true ;
