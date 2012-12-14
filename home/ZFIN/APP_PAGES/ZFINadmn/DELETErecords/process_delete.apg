@@ -107,10 +107,10 @@
                      If a data_alias record is found, use that record. Otherwise create a new
                      data_alias record.
          <?/MICOMMENT>
-              <?MIVAR NAME=dalias_id>none<?/MIVAR>
+              <?MIVAR NAME=dalias_id>NOVALUE<?/MIVAR>
 
          <?MISQL SQL="
-             SELECT dalias_zdb_id 
+             SELECT going.mrkr_zdb_id 
              FROM data_alias, marker going, marker staying
              WHERE dalias_alias = lower(going.mrkr_abbrev)
                and dalias_data_zdb_id = staying.mrkr_zdb_id
@@ -119,7 +119,7 @@
          <?/MISQL>
              
          <?MICOMMENT> IF no Dalias_id is set, then make one.<?/MICOMMENT>
-         <?MIVAR COND="$(EQ,$dalias_id,none)">
+         <?MIBLOCK COND="$(NC,$dalias_id,$OID)">
              <?MISQL SQL="
    		  EXECUTE FUNCTION get_id('DALIAS');">
              <?/MISQL>
@@ -137,7 +137,16 @@
                         FROM marker
                        WHERE mrkr_zdb_id = '$OID';">
              <?/MISQL>
-         <?/MIVAR>
+         <?MIELSE>
+             <?MISQL SQL="
+             SELECT dalias_zdb_id 
+             FROM data_alias, marker going, marker staying
+             WHERE dalias_alias = lower(going.mrkr_abbrev)
+               and dalias_data_zdb_id = staying.mrkr_zdb_id
+               and going.mrkr_zdb_id = '$OID'
+               and staying.mrkr_zdb_id = '$merge_oid';">  <?MIVAR NAME=dalias_id>$1<?/MIVAR>
+             <?/MISQL>         
+         <?/MIBLOCK>
          <?MICOMMENT> End set data_alias <?/MICOMMENT>              
 
 	 <?MICOMMENT> --- Mapping & Linkage ---  <?/MICOMMENT>
