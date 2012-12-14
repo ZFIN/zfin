@@ -1,4 +1,4 @@
--- load_entrez.sql
+	-- load_entrez.sql
 {
 The point of the Entrez Gene load is to maintain "extra" links from Zfin 
 gene pages to various NCBI databases that may have their own load process.
@@ -106,6 +106,7 @@ select ez_zdbid very_bad
 	 where ez_zdbid == mrkr_zdb_id
 	  and mrkr_zdb_id[1,8] ==  "ZDB-GENE"
 );
+
 delete from entrez_zdbid 
  where not exists (
 	select 't' from marker 
@@ -124,6 +125,8 @@ select  dblink_zdb_id zad
   	 where entrez.dblink_zdb_id == recattrib_data_zdb_id
 ) into temp tmp_dblink with no log
 ;
+
+---dump these first, not adopt them, but let curator decide.
 ! echo "attribute to ncbi EntrezGene load"
 insert into record_attribution (
  recattrib_data_zdb_id,
@@ -145,6 +148,7 @@ select dblink_linked_recid[1,25] gene, recattrib_source_zdb_id[1,25] pub, dblink
 ;	
 
 ! echo "Abandon any Entrez attribution on links that have an alternative attribution"
+--don't abandon yet, report to curator.
 
 select dblink_zdb_id zad
  from db_link 
@@ -165,6 +169,9 @@ drop table tmp_dup_attrib;
 
 
 ! echo "What existing EntrezGene links are not in this load?"
+--EG should not have non-load attributions. 
+--report these to Xiang/Sierra first, if non-zero send to Ken after review.
+
 select dblink_linked_recid[1,25] geneid, dblink_acc_num[1,20] entrezid  
  from db_link 
  join foreign_db_contains on dblink_fdbcont_zdb_id == fdbcont_zdb_id
@@ -193,6 +200,8 @@ delete from zdb_active_data where exists (
 -- could delete other links based on 
 -- their load attribuion and being gene w/o EntrezGene link
 -- or use as later check, which is safer...  
+-- fix this note! (don't delete RefSeq here, yet, even if EntrezGene link goes away).
+-- what logic used to not do this?
 
 ! echo "What existing Entrez Gene links are ... oddly attributed?"
 select dblink_linked_recid[1,25],dblink_acc_num[1,20], 
@@ -202,7 +211,6 @@ select dblink_linked_recid[1,25],dblink_acc_num[1,20],
  where dblink_fdbcont_zdb_id == "ZDB-FDBCONT-040412-1"
   and recattrib_source_zdb_id != "ZDB-PUB-020723-3"    -- NCBI Gene
 ;
--- TODO: should this script adopt the odities?
 
 
 ! echo "What new EntrezGene links can we add?"
@@ -213,6 +221,46 @@ select ez_zdbid mrkr ,ez_eid acc, get_id("DBLINK") zad
 	   and ez_zdbid == dblink_linked_recid
 	   and ez_eid ==  dblink_acc_num
 ) into temp tmp_dbl with no log;
+
+
+select mrkr from tmp_dbl
+  where exists (Select 'x' from db_link, foreign_db_Contains
+  	       	       where mrkr = dblink_linked_recid
+		       and fdbcont_fdb_db_id = 10
+		       and dblink_acc_num != acc
+		       )
+into temp tmp_dup with no log;
+
+  select dblink_linked_recid, count(*) as counter
+  	 from db_link, foreign_db_contains
+	 where dblink_fdbcont_Zdb_id = fdbcont_zdb_id
+	 and fdbcont_fdb_db_id = 10
+group by dblink_linked_recid
+ having count(*) > 1
+into temp tmp_dupExisting;
+
+select count(*) as counter, mrkr
+  from tmp_dbl
+ group by mrkr
+ having count(*) > 1
+into temp tmp_loadDup;
+
+insert into tmp_dup
+  select mrkr from tmp_loadDup; 
+
+insert into tmp_dup
+  select dblink_linked_recid from tmp_dupExisting;
+
+unload to checkDupGENEs.txt
+  select tmp_dbl.mrkr, acc 
+    from tmp_dbl, tmp_dup
+ where tmp_dbl.mrkr = tmp_dup.mrkr;
+	 
+
+delete from tmp_dbl
+  where exists (Select tmp_dup.mrkr from tmp_dup 
+  	       	       where tmp_dup.mrkr = tmp_dbl.mrkr);
+
 
 insert into zdb_active_data select zad from tmp_dbl;
 
@@ -286,9 +334,17 @@ select distinct dblink_linked_recid[1,25], dblink_acc_num[1,25]
  join expression_experiment on xpatex_dblink_zdb_id == dblink_zdb_id
 ;
 
+---dump for curators where refseq ids arent in the load
 delete from tmp_rs where exists (
 	select 't' from  expression_experiment 
 	where xpatex_dblink_zdb_id == dblink_zdb_id
+);
+
+! echo "Avoid dropping links with other attribution" 
+delete from tmp_rs where exists (
+	select 't' from  record_attribution  
+	where recattrib_data_zdb_id == dblink_zdb_id
+	  and recattrib_source_zdb_id != "ZDB-PUB-020723-3" 
 );
 
 ! echo "Remove unsupported attributions"
@@ -298,12 +354,6 @@ delete from record_attribution where exists (
 	   and recattrib_source_zdb_id == "ZDB-PUB-020723-3"
 );
 
-! echo "Avoid dropping links with other attribution" 
-delete from tmp_rs where exists (
-	select 't' from  record_attribution  
-	where recattrib_data_zdb_id == dblink_zdb_id
-	  and recattrib_source_zdb_id != "ZDB-PUB-020723-3" 
-);
 
 delete from zdb_active_data where exists (
 	select 't' from tmp_rs where dblink_zdb_id == zactvd_zdb_id
@@ -377,7 +427,7 @@ delete from zdb_active_data where exists (
 select first 50 dblink_linked_recid[1,25], dblink_acc_num[1,25] from tmp_gb;
 
 drop table tmp_gb;
-{
+{ -- delete this code.
  --Genbank accessions are used widely outside of GenBank so this check is pointless
 ! echo "what GenBank links are oddly attributed"
 select dblink_linked_recid[1,25],dblink_acc_num[1,20], 

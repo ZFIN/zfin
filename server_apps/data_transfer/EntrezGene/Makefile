@@ -52,7 +52,7 @@ COMMONSBIN = ${TOP}/commons/bin
 
 ########################################################################
 
-ENTREZGENE = ftp://ftp.ncbi.nih.gov/gene/DATA
+ENTREZGENEVI = ftp://ftp.ncbi.nih.gov/gene/DATA
 ############
 ### Entrez is kind enough to produce a zebrafish specific file
 ### 1.4M instead of 135M and avoids needing to parse out the

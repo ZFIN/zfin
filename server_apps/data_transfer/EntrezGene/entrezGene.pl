@@ -47,6 +47,10 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/stats
 
 $statsfile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/statsEntrezGeneLoad";
 
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/checkDupGENEs.txt");
+
+$entrezGeneDupAccs = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/checkDupGENEs.txt" ;
+
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListLost");
 
 $refSeqGeneListLost = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListLost";
@@ -508,7 +512,7 @@ close (NEWREFSEQGENES);
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->","genes lost association with RefSeq","$refSeqGeneListLost");
 
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|GO_EMAIL_CURATOR|-->","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
-
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|PATO_EMAIL_CURATOR|-->","genes with more than one accession number","$entrezGeneDupAccs");
 print "\nDone\n\n";
 
 exit;
