@@ -209,9 +209,7 @@
         document.getElementById("startStage").selectedIndex = 0;
         document.getElementById("endStage").selectedIndex = document.getElementById("endStage").options.length - 1;
         document.getElementById("antibodyCriteria.includeSubstructures1").checked = true;
-        var inputElement = document.getElementById(LookupProperties.inputName);
-        //inputElement.style.color = '#C0C0C0';
-        inputElement.value = '';
+
         // clear the ao term table
         clearTable();
     }
