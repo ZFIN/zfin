@@ -243,7 +243,7 @@ print "\n\n";
 
 system("$cmd");
 
-system("./cleanUpSecondaryGeneAccessions.pl");
+## system("./cleanUpSecondaryGeneAccessions.pl");
 
 
 
