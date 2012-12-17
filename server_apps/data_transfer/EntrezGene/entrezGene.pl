@@ -513,7 +513,7 @@ close (NEWREFSEQGENES);
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|SWISSPROT_EMAIL_REPORT|-->","genes lost association with RefSeq","$refSeqGeneListLost");
 
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|SWISSPROT_EMAIL_REPORT|-->","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
-&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|PATO_EMAIL_CURATOR|-->","genes with more than one accession number","$entrezGeneDupAccs");
+&sendMail("Auto from $dbname: entrezGene.pl : ","<!--|PATO_EMAIL_CURATOR|-->","genes with more than one accession number","$entrezGeneDupAccs") if (-e "$entrezGeneDupAccs");
 print "\nDone\n\n";
 
 exit;
