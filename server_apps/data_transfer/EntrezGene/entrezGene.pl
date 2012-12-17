@@ -238,11 +238,12 @@ $dbname = "kinetix" if ($dbname eq "zfin.org");
 
 $cmd = "load_entrez_wrapper.sh $dbname commit > log1 2>log2";
 
-
 print $cmd;
 print "\n\n";
 
 system("$cmd");
+
+system("./cleanUpSecondaryGeneAccessions.pl");
 
 
 

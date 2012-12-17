@@ -251,7 +251,8 @@ insert into tmp_dup
 insert into tmp_dup
   select dblink_linked_recid from tmp_dupExisting;
 
-unload to checkDupGENEs.txt
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/checkDupGENEs.txt'
+  delimiter '	'
   select tmp_dbl.mrkr, acc 
     from tmp_dbl, tmp_dup
  where tmp_dbl.mrkr = tmp_dup.mrkr;

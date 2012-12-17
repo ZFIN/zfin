@@ -18,9 +18,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/EntrezGene
 
-GENERICS =  entrezGene.pl
+GENERICS =  entrezGene.pl cleanUpSecondaryGeneAccessions.pl load_entrez.sql
 
-STATICS = README.help load_entrez.sql commit.sql rollback.sql update_GenPept_len.sql
+STATICS = README.help commit.sql rollback.sql update_GenPept_len.sql deleteDiscountinuedGeneAccs.sql
 
 # ---------------  Production Rules  ------------------------------------
 
