@@ -49,7 +49,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
-<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu bjruef\@uoneuro.uoregon.edu
+<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu bjruef\@uoneuro.uoregon.edu xshao\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zprod/www_homes/zfin.org
@@ -60,9 +60,9 @@
 <!--|SOURCEROOT|-->	/research/zprod/users/zfin.org/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	kinetix.cs.uoregon.edu
-<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu
-<!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu
-<!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@cs.uoregon.edu informix\@cs.uoregon.edu
+<!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu
+<!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
+<!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|TARGETROOT|-->	/research/zprod/www_homes/zfin.org
 <!--|VALIDATION_EMAIL_AD|-->	bsprunge\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu dfashena\@uoneuro.uoregon.edu

@@ -35,7 +35,7 @@
 <!--|INFORMIX_PORT|-->	2005
 <!--|INFORMIX_SERVER|-->	whitebread
 <!--|INSTANCE|-->	watson
-<!--|INTERNAL_BLAST_PATH|-->	/nfs/kinetix/zprod/blast/watsondb/Current
+<!--|INTERNAL_BLAST_PATH|-->	/research/zprod/blast/watsondb/Current
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	ryanm\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp

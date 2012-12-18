@@ -16,7 +16,7 @@
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	annee\@cs.uoregon.edu
 <!--|DB_NAME|-->	ukidb
-<!--|DB_OWNER|-->	tomc
+<!--|DB_OWNER|-->	annee
 <!--|DOMAIN_NAME|-->	ukkie.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/ukkie
 <!--|GBROWSE_DB|-->	ensembl_current
