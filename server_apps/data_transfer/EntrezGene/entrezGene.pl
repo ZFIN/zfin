@@ -222,8 +222,6 @@ $dir = "<!--|ROOT_PATH|-->";
 $dbname = $dirPieces[1];
 $dbname =~ s/\///;
 
-$dbname = "kinetix" if ($dbname eq "zfin.org"); 
-
 print $dbname;
 print "\n\n";
 
@@ -242,10 +240,6 @@ print $cmd;
 print "\n\n";
 
 system("$cmd");
-
-## system("./cleanUpSecondaryGeneAccessions.pl");
-
-
 
 #--------------------------- record counts after loading starts ----------------------------
 $sql = 'select distinct dblink_zdb_id
@@ -514,7 +508,16 @@ close (NEWREFSEQGENES);
 
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|SWISSPROT_EMAIL_REPORT|-->","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|PATO_EMAIL_CURATOR|-->","genes with more than one accession number","$entrezGeneDupAccs") if (-e "$entrezGeneDupAccs");
+
 print "\nDone\n\n";
+
+print "\ncleanUpSecondaryGeneAccessions.pl\n\n";
+
+chdir("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene") or &logError("cannot chdir to TARGETROOT/server_apps/data_transfer/EntrezGene");
+
+system("./cleanUpSecondaryGeneAccessions.pl");
+
+print "\nAll done\n\n";
 
 exit;
 
