@@ -38,7 +38,7 @@
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
-<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp
+<!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp/zygotixLoadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
 <!--|MACHINE_NAME|-->	zygotix
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
