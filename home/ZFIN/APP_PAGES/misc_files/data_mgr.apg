@@ -3,7 +3,7 @@ A Subroutine that throws up a ZFIN data manager. Used in the VIEWERS for
 each data type.
 Parameters:
 rtype (required)	-- Name of the table the record is from.
-
+calling_page            -- called from which page
 
 Last updated by Prita on 12/15/04
 Removed the "Add/Update Gene Expression Index" link
@@ -126,11 +126,11 @@ c.clone_mrkr_zdb_id='$OID';
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
   <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
+    <?MIVAR COND="$(OR,$(NXST,$calling_page),$(NE,$calling_page,citation))">
     <TD>
-      <?MIVAR>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
-      <?/MIVAR>
     </TD>
+    <?/MIVAR>
   <?MIELSE>
     <TD>
       <?MIVAR>
