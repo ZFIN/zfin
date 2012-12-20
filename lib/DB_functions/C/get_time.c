@@ -18,7 +18,7 @@ get_time()
   time(&timer);
   gettimeofday(&tv, NULL);
 
-  cftime(sbuf, "%T", &timer);
+  strftime(sbuf, 20, "%T", localtime(&timer));
  
   sprintf(msbuf, "%d", tv.tv_usec/1000);
   sprintf(tbuf, "%s.%s", sbuf, msbuf);

@@ -10,6 +10,7 @@
 #include <milib.h>
 
 #define		MAXLEN		200
+#define		DAYBUFLEN	11
 #define		SEQ_START	"1"
 #define		NO_MEMORY(fun)	mi_db_error_raise(NULL, MI_SQL,\
 				"UGEN2", "FUNCTION%s", #fun, NULL)
@@ -100,7 +101,7 @@ send_sql(MI_CONNECTION *conn,
 mi_lvarchar *
 get_id(mi_lvarchar *name) 
 {
-  char		cmdbuf[MAXLEN], daybuf[11], buf[50], *name_s;
+  char		cmdbuf[MAXLEN], daybuf[DAYBUFLEN], buf[50], *name_s;
   time_t	seconds;
   MI_CONNECTION	*conn;
   MI_SAVE_SET	*ss;
@@ -142,7 +143,7 @@ get_id(mi_lvarchar *name)
   mi_value(row, 1, &num, &collen);
 
   time(&seconds);			/* What is today's date? */
-  cftime(daybuf, "%m/%d/%Y", &seconds);
+  strftime(daybuf, DAYBUFLEN, "%m/%d/%Y", localtime(&seconds));
 
   if (strcmp(daybuf, day)) {
 

@@ -51,16 +51,31 @@ ENDEMICTARGETS_POSTTARGETDIR = $(TARGETDIR_OBJS)
 ENDEMICTARGETS_CLEAN = $(OBJS)
 
 # ---- C compilation defines
+#
+UNAME := $(shell uname)
 
+ifeq ($(UNAME), Linux)
+CC= /usr/bin/gcc
+endif
+ifeq ($(UNAME), SunOS)
 CC= /local/apps/Lang/SUNWspro/bin/cc
+endif
 
 INCDIR = $(INFORMIXDIR)/incl/public
 LIBDIR = $(INFORMIXDIR)/lib
 
 # Use xcode because we are creating an so.  See cc man page for details.
+#
 
+ifeq ($(UNAME), Linux)
+CFLAGS = -m64 -shared -fPIC
+MICFLAGS = -DPLATFORM=linux -g -DELF -v -DPOSIX_SIGNALS -DLINUX -I$(INCDIR)
+endif
+ifeq ($(UNAME), SunOS)
 CFLAGS = -fast -xcode=pic32 -xtarget=ultra2 -m64 -xarch=sparcvis
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
+endif
+
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
 
