@@ -97,6 +97,7 @@ public class AntibodyFigureSummaryController {
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "antibody/antibody-figure-summary.page";
     }
 
@@ -116,6 +117,7 @@ public class AntibodyFigureSummaryController {
 */
 
         bean.setAntibody(ab);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "antibody/antibody-publication-list.page";
     }
 
@@ -145,6 +147,7 @@ public class AntibodyFigureSummaryController {
         }
 
         bean.setAntibody(ab);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "antibody/antibody-publication-list.page";
     }
 
@@ -159,8 +162,10 @@ public class AntibodyFigureSummaryController {
                                                    Model model) throws Exception {
         Antibody ab = antibodyRepository.getAntibodyByID(bean.getEntityID());
         bean.setAntibody(ab);
-        if (errors.getErrorCount() > 0)
+        if (errors.getErrorCount() > 0) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
             return "antibody/antibody-publication-list.page";
+        }
 
         String pubID = bean.getAntibodyNewPubZdbID();
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -186,6 +191,8 @@ public class AntibodyFigureSummaryController {
 
         bean.setAntibody(ab);
         bean.setAntibodyNewPubZdbID("");
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "antibody/antibody-publication-list.page";
     }
 
