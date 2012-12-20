@@ -17,6 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,13 +201,13 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 //        ontologyManager.initRootOntologyMap(Ontology.QUALITY_PROCESSES,Ontology.QUALITY, "PATO:0001236");
 //        ontologyManager.initQualityProcessesRootOntology();
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_PROCESSES, OntologyManager.QUALITY_PROCESSES_ROOT);
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , lessThan(120) );
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , lessThan(300) );
         assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , greaterThan(94));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_PROCESSES);
 
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_QUALITIES, OntologyManager.QUALITY_QUALITIES_ROOT);
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , lessThan(1300));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , lessThan(2000));
         assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , greaterThan(1100));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_QUALITIES);
