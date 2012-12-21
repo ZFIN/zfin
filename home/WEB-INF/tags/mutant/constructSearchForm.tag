@@ -239,6 +239,11 @@
 
 
 jQuery(document).ready(function () {
+    if ((jQuery('input[name=allTg]').attr('checked')==true)||(jQuery('input[name=allGt]').attr('checked')==true)||(jQuery('input[name=allPt]').attr('checked')==true)||(jQuery('input[name=allEt]').attr('checked')==true))       {
+
+        jQuery('input[name=allTypes]').attr('checked', false);
+
+    }
 
     jQuery('#construct-search-form .auto-submit').change(function () {
 
@@ -337,7 +342,7 @@ function checkUncheckAll(){
 
     else {
 
-        document.getElementById('allConstructs').checked = false;
+        document.getElementById('allConstructs').checked = true;
         document.getElementById('gtConstruct').checked=false;
         document.getElementById('etConstruct').checked=false;
         document.getElementById('ptConstruct').checked=false;
@@ -348,9 +353,16 @@ function checkUncheckAll(){
 }
 
 function UncheckAll(type){
-
-        document.getElementById('allConstructs').checked = false;
-
+        if (document.getElementById('allConstructs').checked == true){
+             document.getElementById('allConstructs').checked = false;
+        }
+        else {
+            if ((document.getElementById('gtConstruct').checked == false)&&(document.getElementById('tgConstruct').checked == false)&&(document.getElementById('ptConstruct').checked == false)&&(document.getElementById('etConstruct').checked == false))
+            document.getElementById('allConstructs').checked = true;
+            else{
+                document.getElementById('allConstructs').checked = false;
+            }
+}
 
 
 }
