@@ -97,7 +97,6 @@ public class AntibodyFigureSummaryController {
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "antibody/antibody-figure-summary.page";
     }
 
