@@ -19,7 +19,7 @@ public class PaginationBean {
 
     public static final String PAGE = "page";
     public static final int MAXPAGELINKS = 9;
-    public static final int MAX_DISPLAY_RECORDS_DEFAULT = 25;
+    public static final int MAX_DISPLAY_RECORDS_DEFAULT = 20;
 
     /* MAXPAGELINKS must be an odd integer that denotes the total number of
        page links to display at the bottom of each result page.  Calculate by:
