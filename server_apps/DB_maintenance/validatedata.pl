@@ -811,6 +811,7 @@ sub associatedDataforPUB030905_1 ($) {
   my $sql = "select recattrib_data_Zdb_id
              from   record_attribution
              where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and get_obj_type(recattrib_data_zdb_id) not in ('DBLINK','MREL','MRKRGOEV','DALIAS')
              and    recattrib_data_Zdb_id not in (
              select oevdisp_gene_zdb_id
              from   orthologue_evidence_display
@@ -851,6 +852,320 @@ sub associatedDataforPUB030905_1 ($) {
     my $sendToAddress = $_[0];
     my $subject = "Invalid data is associated with ZDB-PUB-030905-1.";
     my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-1"
+               . " that either do not have an attributed GENE or"
+               . " do not have attributed orthologue evidence.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedDBlinkDataforPUB030905_1
+#
+# Only orthology evidence code data should be associated with
+# ZDB-PUB-030905-1.
+#
+# In record attribution, each record should have both a GENE and
+# OEVDISP data associated (they should appear in pairs) for
+# this PUB.  These pairs should correspond to a record in 
+# orthologue_evidence_display.
+#
+# This test identifies any PUB data that does not fit this
+# criteria.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDBLinkforPUB030905_1 ($) {
+
+  my $routineName = "associatedDBLinkDataforPUB030905_1";
+
+  my $sql = "select recattrib_data_Zdb_id, dblink_linked_recid, dblink_acc_num
+             from   record_attribution, db_link
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and dblink_zdb_id = recattrib_data_zdb_id
+             and    recattrib_data_Zdb_id not in (
+             select oevdisp_gene_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             union
+             select oevdisp_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "data ZDB ID             ",
+                 "accession number        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid dblink data is associated with ZDB-PUB-030905-1.";
+    my $errMsg = "$nRecords dblink data are associated with ZDB-PUB-030905-1"
+               . " that either do not have an attributed GENE or"
+               . " do not have attributed orthologue evidence.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedAliasDataforPUB030905_1
+#
+# Only orthology evidence code data should be associated with
+# ZDB-PUB-030905-1.
+#
+# In record attribution, each record should have both a GENE and
+# OEVDISP data associated (they should appear in pairs) for
+# this PUB.  These pairs should correspond to a record in 
+# orthologue_evidence_display.
+#
+# This test identifies any PUB data that does not fit this
+# criteria.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedAliasDataforPUB030905_1 ($) {
+
+  my $routineName = "associatedAliasDataforPUB030905_1";
+
+  my $sql = "select recattrib_data_Zdb_id, dalias_data_zdb_id, dalias_alias
+             from   record_attribution, data_alias
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and dalias_zdb_id = recattrib_data_zdb_id
+             and    recattrib_data_Zdb_id not in (
+             select oevdisp_gene_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             union
+             select oevdisp_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "data ZDB ID             ",
+                 "alias        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid aliases data is associated with ZDB-PUB-030905-1.";
+    my $errMsg = "$nRecords alias data are associated with ZDB-PUB-030905-1"
+               . " that either do not have an attributed GENE or"
+               . " do not have attributed orthologue evidence.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+#---------------------------------------------------------------
+# associatedMrkrGoevDataforPUB030905_1
+#
+# Only orthology evidence code data should be associated with
+# ZDB-PUB-030905-1.
+#
+# In record attribution, each record should have both a GENE and
+# OEVDISP data associated (they should appear in pairs) for
+# this PUB.  These pairs should correspond to a record in 
+# orthologue_evidence_display.
+#
+# This test identifies any PUB data that does not fit this
+# criteria.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedMrkrGoevDataforPUB030905_1 ($) {
+
+  my $routineName = "associatedMrkrGoevDataforPUB030905_1";
+
+  my $sql = "select recattrib_data_Zdb_id, mrkrgoev_mrkr_zdb_id, mrkrgoev_evidence_code, mrkrgoev_term_zdb_id
+             from   record_attribution, marker_go_term_evidence
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and mrkrgoev_zdb_id = recattrib_data_zdb_id
+             and    recattrib_data_Zdb_id not in (
+             select oevdisp_gene_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             union
+             select oevdisp_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "marker id            ",
+		 "evidence code           ",
+                 "term zdb_id        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid mrkrgoev data is associated with ZDB-PUB-030905-1.";
+    my $errMsg = "$nRecords mrkrgoev data are associated with ZDB-PUB-030905-1"
+               . " that either do not have an attributed GENE or"
+               . " do not have attributed orthologue evidence.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+#---------------------------------------------------------------
+# associatedMrelDataforPUB030905_1
+#
+# Only orthology evidence code data should be associated with
+# ZDB-PUB-030905-1.
+#
+# In record attribution, each record should have both a GENE and
+# OEVDISP data associated (they should appear in pairs) for
+# this PUB.  These pairs should correspond to a record in 
+# orthologue_evidence_display.
+#
+# This test identifies any PUB data that does not fit this
+# criteria.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedMrelDataforPUB030905_1 ($) {
+
+  my $routineName = "associatedMrelDataforPUB030905_1";
+
+  my $sql = "select recattrib_data_Zdb_id, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrel_type
+             from   record_attribution, marker_relationship
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and mrel_zdb_id = recattrib_data_zdb_id
+             and    recattrib_data_Zdb_id not in (
+             select oevdisp_gene_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             union
+             select oevdisp_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "marker 1            ",
+		 "marker 2            ",
+                 "type        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid mrel data is associated with ZDB-PUB-030905-1.";
+    my $errMsg = "$nRecords mrel data are associated with ZDB-PUB-030905-1"
                . " that either do not have an attributed GENE or"
                . " do not have attributed orthologue evidence.";
 
@@ -911,7 +1226,6 @@ sub associatedDataforPUB030508_1 ($) {
 }
 
 
-
 #---------------------------------------------------------------
 # associatedDataforPUB030905_2
 #
@@ -931,6 +1245,7 @@ sub associatedDataforPUB030905_2 ($) {
   my $sql = "select recattrib_data_zdb_id
              from   record_attribution r1
              where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and get_obj_type(recattrib_Data_zdb_id) not in ('DBLINK','DALIAS','OEVDISP','MREL')
              and    not exists (
                     -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
                        select recattrib_data_zdb_id
@@ -955,7 +1270,7 @@ sub associatedDataforPUB030905_2 ($) {
              order by recattrib_data_zdb_id";
 
 
-  my @colDesc = ("Data ZDB ID       ");
+  my @colDesc = ("Attributed ZDB ID       ");
   
   my $nRecords = execSql ($sql, undef, @colDesc);
 	
@@ -963,6 +1278,261 @@ sub associatedDataforPUB030905_2 ($) {
     my $sendToAddress = $_[0];
     my $subject = "Invalid data is associated with ZDB-PUB-030905-2.";
     my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-2 "
+               . " that are not nucleotide sequence accession numbers "
+               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedDBLinkDataforPUB030905_2
+#
+# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
+
+# The only data that should be attributed should be sequence accessions (or their markers) 
+# of type Genomic, RNA, or Sequence Clusters.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDBLinkDataforPUB030905_2 ($) {
+
+  my $routineName = "associatedDBLinkDataforPUB030905_2";
+
+  my $sql = "select recattrib_data_zdb_id, dblink_linked_recid, dblink_acc_num
+             from   record_attribution r1, db_link
+             where  r1.recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and    r1.recattrib_data_zdb_id = dblink_zdb_id
+             and    not exists (
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
+                     union
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_linked_recid = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
+                    )  
+             order by recattrib_data_zdb_id";
+
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "Data ZDB ID             ",
+                 "Accession number        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid dblink data is associated with ZDB-PUB-030905-2.";
+    my $errMsg = "$nRecords dblink data are associated with ZDB-PUB-030905-2 "
+               . " that are not nucleotide sequence accession numbers "
+               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedAliasDataforPUB030905_2
+#
+# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
+
+# The only data that should be attributed should be sequence accessions (or their markers) 
+# of type Genomic, RNA, or Sequence Clusters.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedAliasDataforPUB030905_2 ($) {
+
+  my $routineName = "associatedAliasDataforPUB030905_2";
+
+  my $sql = "select recattrib_data_zdb_id, dalias_alias, dalias_data_zdb_id
+             from   record_attribution r1, data_alias
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and recattrib_data_zdb_id = dalias_zdb_id
+             and    not exists (
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
+                     union
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_linked_recid = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
+                    )  
+             order by recattrib_data_zdb_id";
+
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "Alias          ",
+                 "Data ZDB ID        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid alias data is associated with ZDB-PUB-030905-2.";
+    my $errMsg = "$nRecords alias data are associated with ZDB-PUB-030905-2 "
+               . " that are not nucleotide sequence accession numbers "
+               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedMrelDataforPUB030905_2
+#
+# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
+
+# The only data that should be attributed should be sequence accessions (or their markers) 
+# of type Genomic, RNA, or Sequence Clusters.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedMrelDataforPUB030905_2 ($) {
+
+  my $routineName = "associatedMrelDataforPUB030905_2";
+
+  my $sql = "select recattrib_data_zdb_id, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrel_type
+             from   record_attribution r1, marker_relationship
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and recattrib_data_zdb_id = mrel_zdb_id
+             and    not exists (
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
+                     union
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_linked_recid = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
+                    )  
+             order by recattrib_data_zdb_id";
+
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "marker 1          ",
+                 "marker 2        ",
+                 "relationship type     ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid mrel data is associated with ZDB-PUB-030905-2.";
+    my $errMsg = "$nRecords mrel data are associated with ZDB-PUB-030905-2 "
+               . " that are not nucleotide sequence accession numbers "
+               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+#---------------------------------------------------------------
+# associatedOrthoEvidenceDataforPUB030905_2
+#
+# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
+
+# The only data that should be attributed should be sequence accessions (or their markers) 
+# of type Genomic, RNA, or Sequence Clusters.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedOrthoEvidenceDataforPUB030905_2 ($) {
+
+  my $routineName = "associatedOrthoEvidenceDataforPUB030905_2";
+
+  my $sql = "select recattrib_data_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, oevdisp_organism_list
+             from   record_attribution r1, orthologue_evidence_display
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and recattrib_data_zdb_id = oevdisp_zdb_id
+             and    not exists (
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
+                     union
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_linked_recid = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_id = fdbdt_pk_id
+                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
+                    )  
+             order by recattrib_data_zdb_id";
+
+
+  my @colDesc = ("Attributed ZDB ID       ",
+                 "gene zdb_id          ",
+                 "evidence code     ",
+                 "organism list     ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid ortho data is associated with ZDB-PUB-030905-2.";
+    my $errMsg = "$nRecords ortho data are associated with ZDB-PUB-030905-2 "
                . " that are not nucleotide sequence accession numbers "
                . " (i.e. not Genomic, RNA or Sequence Clusters.)";
 
@@ -2778,12 +3348,25 @@ if($weekly) {
 	xxGenesHaveNoClones($estEmail);
 	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
-	# these are curatorial errors (case219)
-	# however, errors returned are difficult to
-	# return to curators without dba
-	associatedDataforPUB030905_1($geneEmail);
+
+	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
+	associatedDataforPUB030905_1($dbaEmail);
+
+	associatedMrelDataforPUB030905_1($geneEmail);
+	associatedAliasDataforPUB030905_1($geneEmail);
+	associatedMrkrGoevDataforPUB030905_1($goEmail);
+	associatedDBLinkforPUB030905_1($dbaEmail);
+
+	# each bit of the 030508_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
 	associatedDataforPUB030508_1($geneEmail);
-	associatedDataforPUB030905_2($geneEmail);
+
+	# each bit of the 030905_2 needs different data report to allow curators to clean up.  the generic one goes to DBA.
+	associatedDataforPUB030905_2($dbaEmail);
+	associatedOrthoEvidenceDataforPUB030905_2($geneEmail);
+	associatedAliasDataforPUB030905_2($geneEmail);
+	associatedMrelDataforPUB030905_2($geneEmail);
+	associatedDBLinkDataforPUB030905_2($geneEmail);
+
 
 	# put these here until we get them down to 0 records.  Then move them to 
 	# daily.
