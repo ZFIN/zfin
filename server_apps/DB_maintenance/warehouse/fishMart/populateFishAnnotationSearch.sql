@@ -1,6 +1,6 @@
 set pdqpriority 50;
 
-delete from fish_annotation_search_temp;
+--delete from fish_annotation_search_temp;
 
 
 update phenotype_figure_group
@@ -143,7 +143,8 @@ from fish_annotation_search_temp, tmp_dups2
  order by fas_geno_handle;
 
 delete from fish_annotation_search_temp
- where fas_geno_handle in (Select geno_handle from tmp_dups2);
+ where fas_geno_handle in (Select geno_handle from tmp_dups2)
+ and fas_geno_handle != "F1 Pool";
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
