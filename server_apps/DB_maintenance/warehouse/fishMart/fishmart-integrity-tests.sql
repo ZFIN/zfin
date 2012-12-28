@@ -11,7 +11,8 @@ TEST (fish_annotation_search_temp_records < 16000) 'fish_annotation_search_temp 
 unload to genotypeGenoxAvailable
   select count(*) as counter
   from fish_annotation_search_temp
-  where fas_genotype_group is null and fas_genox_group is null;
+  where fas_genotype_group is null and fas_genox_group is null
+  and fas_geno_name != 'F1 Pool';
 
 TEST (genotypeGenoxAvailable > 0) '$x records are missing both a genotype and a genox_group';
 
@@ -63,3 +64,50 @@ unload to btsContainssShhaCount
 TEST (btsContainssShhaCount < 81)'bts index on fish_annotation_search_temp is inacurate: #shha = $x < 81';
 
 
+-- 9 -------------------------------------------------------------------------------------------------------------------
+
+unload to btsContainssBrainCount
+select
+       count(distinct ftfs_fig_zdb_id)
+   from
+       figure_term_fish_search,
+       fish_annotation_search,
+           OUTER image where
+       img_fig_zdb_id = ftfs_fig_zdb_id
+       and ftfs_fas_id = fas_pk_id
+       and (
+           fas_genox_group = 'ZDB-GENOX-041102-1716'
+           AND fas_genotype_group = 'ZDB-GENO-980202-899'
+       )
+       AND bts_contains(ftfs_term_group,
+       ' ftfs_term_group:zdb\-term\-100331\-8', fas_all_score # real);
+
+TEST (btsContainssBrainCount < 4)'bts index on figure_Term_fish_search_temp is inacurate: #figures = $x < 4';
+
+
+-- 10 -------------------------------------------------------------------------------------------------------------------
+
+unload to fasAllCharLengthExceeded
+    select count(*) as counter from fish_annotation_search_temp where octet_length(fas_all) = 9000;
+
+TEST (fasAllCharLengthExceeded > 0)'there are fish with fas_all longer than the lvarchar field restriction of 9000 = $x > 0';
+
+
+-- 11 -------------------------------------------------------------------------------------------------------------------
+
+unload to fasFeatureGroupCharLengthExceeded
+    select count(*) as counter from fish_annotation_search_temp where octet_length(fas_feature_group) = 5000;
+
+TEST (fasFeatureGroupCharLengthExceeded > 0)'there are fish with fas_feature_group longer than the lvarchar field restriction of 5000 = $x > 0';
+
+-- 12 -------------------------------------------------------------------------------------------------------------------
+
+unload to checkAllTablesConstraintsAreEnabled
+
+SELECT count(*) as counter
+FROM systables, sysobjstate
+WHERE systables.tabid = sysobjstate.tabid
+AND sysobjstate.objtype = "C"
+AND sysobjstate.state = "D";
+
+TEST (checkAllTablesConstraintsAreEnabled > 0)'there are tables with disabled constraints! Run SQL in case 8968  = $x > 0';
