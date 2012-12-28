@@ -26,14 +26,14 @@
 #
 # 
 # SMTWT 9pm reload of mirrordb & daily validatedata.pl
-00 21 * * 0-4 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/loadDb.sh mirrordb /research/zunloads/databases/zfindb/ /research/zusers/mirror/ZFIN_WWW/ /research/zusers/mirror/ZFIN_WWW/commons/env/mirror.env ; cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;validatedata.pl -d mirrordb
+00 21 * * 0-4 /research/zusers/mirror/reload_mirror.sh
 # ------------------------------------------------------------------------
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
 #
 #
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
-00 03 * * 6 cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance; validatedata.pl -d -w mirrordb 
+00 03 * * 6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -d -w mirrordb 
 #
 #
 #
@@ -75,7 +75,8 @@
 #
 # Nights   When      Comments
 # 0         2:30am   DATA CLEANING: Run monthly data validation script.
-30 02 1 * * cd /research/zcentral/www_homes/mirror/server_apps/DB_maintenance;scrubscan.pl;validatedata.pl -m mirrordb
+30 02 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/scrubscan.pl
+00 04 1 * * /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -m mirrordb
 #
 # 0         3:15am   CURATOR SUPPORT: monthly zgc related statistics email
 15 03 1 * * /research/zcentral/www_homes/mirror/server_apps/Reports/Count.pl
