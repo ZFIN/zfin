@@ -25,10 +25,6 @@ select distinct feature.feature_name||"|"||feature.feature_abbrev||"|"||fp_prefi
 							  and feature.feature_line_number is not null
 							  and fp_prefix is not null;
 
-select * from tmp_ordered_markers
- where geno_id = 'ZDB-GENO-120806-2457 '
-and name like '%la023153Tg%';
-
 insert into tmp_ordered_markers (name, geno_id)
 select distinct feature.feature_name||"|"||feature.feature_abbrev||"|"||fp_prefix as name, 
 							   genofeat_geno_Zdb_id as geno_id
@@ -40,12 +36,6 @@ select distinct feature.feature_name||"|"||feature.feature_abbrev||"|"||fp_prefi
 							  and feature.feature_line_number is null
 							  and fp_prefix is not null;
 
-select * from tmp_ordered_markers
- where geno_id = 'ZDB-GENO-120806-2457 '
-and name like '%la023153Tg%';
-
-
-
 
 insert into tmp_ordered_markers (name, geno_id)
   select distinct feature.feature_name||"|"||feature.feature_abbrev as name, 
@@ -54,11 +44,6 @@ insert into tmp_ordered_markers (name, geno_id)
   	 	   	   				  where feature_zdb_id = genofeat_feature_zdb_id
 			   				  and genofeat_geno_zdb_id = fg_geno_Zdb_id
 							  and feature_lab_prefix_id is null;
-
-
-select * from tmp_ordered_markers
- where geno_id = 'ZDB-GENO-120806-2457 ';
-
 
 select * from tmp_ordered_markers
   where geno_id = 'ZDB-GENO-120130-345';
@@ -71,27 +56,15 @@ update statistics high for table tmp_ordered_markers;
 select first 4 * from tmp_ordered_markers
  where name is null;
 
-delete from tmp_ordered_markers
- where name = '';
-
-
 update feature_group 
   set fg_group_name = replace(replace(replace(substr(multiset (select distinct 
 						  	  item name from tmp_ordered_markers
 							  where geno_id = fg_geno_zdb_id
 							  and fg_geno_zdb_id is not null
 							  order by 1
-							  )::lvarchar(6000),11),""),"'}",""),"'","")
+							  )::lvarchar(3000),11),""),"'}",""),"'","")
   where fg_group_name is null
  and fg_geno_zdb_id is not null;
-
-select fg_group_name from feature_group
- where fg_geno_Zdb_id = 'ZDB-GENO-120806-2457 ';
-
-select octet_length(fg_group_namE)
-  from feature_group
- where fg_geno_zdb_id = 'ZDB-GENO-120806-2457 ';
-
 
 drop table tmp_ordered_markers;
 
@@ -127,9 +100,7 @@ update feature_group (fg_type_group)
 							  )::lvarchar(380),11),""),"'}",""),"'","")
  ;
 
-select fg_group_name 
- from feature_group
- where fg_geno_zdb_id = 'ZDB-GENO-120806-2457 ';
+
 
 insert into feature_group_member (fgm_group_id, fgm_member_name, fgm_member_id, fgm_genotype_id, fgm_significance, fgm_feature_type)
   select fg_group_pk_id, feature_name, feature_zdb_id, genofeat_geno_zdb_id, ftrtype_significance,  feature_type
@@ -149,4 +120,5 @@ where fgm_significance is null;
 
 select * from feature_group
  where fg_geno_zdb_id = 'ZDB-GENO-120130-345';
+
 

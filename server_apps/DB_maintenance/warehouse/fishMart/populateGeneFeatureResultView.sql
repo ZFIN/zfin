@@ -360,6 +360,11 @@ where gfrv_geno_handle ='p0[U,U,U] tm110b[2,2,U]';
 select * from gene_feature_result_view_temp
 where gfrv_affector_abbrev ='b250';
 
+
+!echo "records in fish_annotation_search_temp not in gene_feature_result_view_temp";
+select * from fish_annotation_search_temp
+ where fas_pk_id not in (Select gfrv_fas_id from gene_feature_result_view_temp);
+
 select * from gene_feature_result_view_temp
  where gfrv_geno_handle = 'Df(LG03)c1033/c1033 (AB)';
 

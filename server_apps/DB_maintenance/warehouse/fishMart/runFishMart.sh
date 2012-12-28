@@ -43,9 +43,6 @@ set fishMartScripts=(begin.sql \
 	     addCountsToFunctionalAnnotation.sql \
 	     commit.sql \
 	     begin.sql \
-	     populateBurgessLin.sql \
-	     commit.sql \
-	     begin.sql \
 	     populateFishAnnotationSearch.sql \
 	     commit.sql \
 	     begin.sql \
@@ -53,9 +50,6 @@ set fishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateGeneFeatureResultView.sql \
-	     commit.sql \
-	     begin.sql \
-	     populateBurgessLinGFRV.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateFigureTermFishSearch.sql \
@@ -115,16 +109,10 @@ set fullFishMartScripts=(begin.sql \
 	     addCountsToFunctionalAnnotation.sql \
 	     commit.sql \
 	     begin.sql \
-	     populateBurgessLin.sql \
-	     commit.sql \
-	     begin.sql \
 	     populateFishAnnotationSearch.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateGeneFeatureResultView.sql \
-	     commit.sql \
-	     begin.sql \
-	     populateBurgessLinGFRV.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateFigureTermFishSearch.sql \
