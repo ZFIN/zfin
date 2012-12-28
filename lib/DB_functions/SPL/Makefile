@@ -48,6 +48,7 @@ FISH_STATS   = get_image_stats.sql \
 	       get_genotype_display.sql \
 	       get_genotype_handle.sql \
 	       p_update_geno_nickname.sql \
+	       update_geno_sort_order.sql \
 	       get_feature_type.sql \
 	       p_check_pato_postcomposed_terms.sql \
 	       p_check_fx_postcomposed_terms.sql \
