@@ -14,6 +14,8 @@
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="hasCoPi" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
+<%@ attribute name="noPrefixes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
+
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
@@ -39,8 +41,8 @@
                 <c:if test="${hasCoPi}">
                     <tr>
                         <th>Co-PI:</th>
-                        <td>
                             <zfin2:listMembers members="${members}" only="2" suppressTitle="true" suffix="<br>"/>
+                        <td>
                         </td>
                     </tr>
                 </c:if>
@@ -73,7 +75,7 @@
                     <th>Line Designation:</th>
                     <td>
                         <c:choose>
-                            <c:when test="${empty prefixes}">
+                            <c:when test="${noPrefixes}">
                                 <span class="no-data-tag">None assigned</span>
                             </c:when>
                             <c:otherwise>
@@ -118,18 +120,18 @@
     }
 </script>
 
-<a id="showAlleleLink" href="javascript:;" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png"
-                                                                                       style="border:none;"></a>
-<?/MIVAR>
-<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()
-"><img src="/images/minus-13.png" style="border:none;"></a>
-</b>
+<c:if test="${!noPrefixes}">
+   <a id="showAlleleLink" href="javascript:;" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png" style="border:none;"></a>
+</c:if>
+
+<a id="hideAlleleLink" style="display: none;" href="javascript:;hideAlleles()" onclick="hideAlleles()"><img src="/images/minus-13.png" style="border:none;"></a>
+
 <span class="summaryTitle">GENOMIC FEATURES ORIGINATING FROM THIS LAB</span>
 
 <div style="display: none;" id="alleleDesignation"></div>
-
-
 <br>
+
+
 <br>
 
 
