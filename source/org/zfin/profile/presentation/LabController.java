@@ -56,7 +56,7 @@ public class LabController {
         ,MEMBERS("members",1)
         ,PICTURE("picture",2)
         ;
-      
+
         private String label ;
         private int index ;
 
@@ -64,15 +64,15 @@ public class LabController {
             this.label = label ;
             this.index = index ;
         }
-        
+
         public String getLabel(){
-            return label ; 
+            return label ;
         }
 
         public int getIndex(){
             return index ;
         }
-        
+
     }
 
     @RequestMapping(value = "/lab/edit/{zdbID}", method = RequestMethod.GET)
@@ -168,6 +168,18 @@ public class LabController {
         model.addAttribute("publications", publications);
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(lab.getName(), false);
         model.addAttribute("prefixes", featurePrefixes);
+
+        boolean noPrefixes = featurePrefixes.isEmpty();
+        if (!noPrefixes) {
+            int ctNoneActiveForSet = 0;
+            for (FeaturePrefix fpf : featurePrefixes) {
+                if (!fpf.isActiveForSet())
+                     ctNoneActiveForSet++;
+            }
+            if (ctNoneActiveForSet == featurePrefixes.size())
+                noPrefixes = true;
+        }
+        model.addAttribute("noPrefixes", noPrefixes);
 
         model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
 
