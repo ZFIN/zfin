@@ -1175,8 +1175,6 @@ sub associatedMrelDataforPUB030905_1 ($) {
   &recordResult($routineName, $nRecords); 
 }
 
-
-
 #---------------------------------------------------------------
 # associatedDataforPUB030508_1
 #
@@ -1196,6 +1194,8 @@ sub associatedDataforPUB030508_1 ($) {
   my $sql = "select recattrib_data_zdb_id, recattrib_source_zdb_id
              from   record_attribution
              where  recattrib_source_zdb_id = 'ZDB-PUB-030508-1'
+             and get_obj_type(recattrib_datA_zdb_id) not in ('OEVDISP','ALT','DBL
+INK')
              and    not exists (
                        select mrkr_zdb_id
                        from   marker
@@ -1224,6 +1224,160 @@ sub associatedDataforPUB030508_1 ($) {
   }
   &recordResult($routineName, $nRecords); 
 }
+#---------------------------------------------------------------
+# associatedAltDataforPUB030508_1
+#
+# Only data for gene name, gene symbol
+# abbreviation or previous name should be associated with
+# ZDB-PUB-030508-1.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedAltDataforPUB030508_1 ($) {
+
+  my $routineName = "associatedAltDataforPUB030508_1";
+
+  my $sql = "select recattrib_data_zdb_id, feature_name, feature_abbrev
+             from   record_attribution, feature
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030508-1'
+             and recattrib_datA_zdb_id = feature_zdb_id
+             
+             and    not exists (
+                       select mrkr_zdb_id
+                       from   marker
+                       where  recattrib_data_zdb_id = mrkr_zdb_id
+                    )
+             and    not exists (
+                       select dalias_zdb_id
+                       from   data_alias
+                       where  recattrib_data_zdb_id = dalias_zdb_id
+                    )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+		 "feature name       ",
+		 "feature symbol      ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid feature data is associated with ZDB-PUB-030508-1.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030508-1 "
+               . " that are not either: gene name, gene symbol "
+               . ", or previous name.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedDblinkDataforPUB030508_1
+#
+# Only data for gene name, gene symbol
+# abbreviation or previous name should be associated with
+# ZDB-PUB-030508-1.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDblinkDataforPUB030508_1 ($) {
+
+  my $routineName = "associatedDblinkDataforPUB030508_1";
+
+  my $sql = "select recattrib_data_zdb_id, dblink_linked_recid, dblink_acc_num
+             from   record_attribution, db_link
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030508-1'
+             and recattrib_datA_zdb_id = dblink_zdb_id
+             
+             and    not exists (
+                       select mrkr_zdb_id
+                       from   marker
+                       where  recattrib_data_zdb_id = mrkr_zdb_id
+                    )
+             and    not exists (
+                       select dalias_zdb_id
+                       from   data_alias
+                       where  recattrib_data_zdb_id = dalias_zdb_id
+                    )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+		 "marker zdb_id       ",
+		 "accession number      ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid link data is associated with ZDB-PUB-030508-1.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030508-1 "
+               . " that are not either: gene name, gene symbol "
+               . ", or previous name.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+#---------------------------------------------------------------
+# associatedOevDataforPUB030508_1
+#
+# Only data for gene name, gene symbol
+# abbreviation or previous name should be associated with
+# ZDB-PUB-030508-1.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedOevDataforPUB030508_1 ($) {
+
+  my $routineName = "associatedOevDataforPUB030508_1";
+
+  my $sql = "select recattrib_data_zdb_id, oevdisp_gene_zdb_id, oevdisp_organism_list, oevdisp_evidence_code
+             from   record_attribution, orthologue_evidence_display
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030508-1'
+             and recattrib_datA_zdb_id = oevdisp_zdb_id
+             
+             and    not exists (
+                       select mrkr_zdb_id
+                       from   marker
+                       where  recattrib_data_zdb_id = mrkr_zdb_id
+                    )
+             and    not exists (
+                       select dalias_zdb_id
+                       from   data_alias
+                       where  recattrib_data_zdb_id = dalias_zdb_id
+                    )";
+
+  my @colDesc = ("Attributed ZDB ID       ",
+		 "Gene  ZDB ID       ",
+		 "organism      ",
+                 "evidence code   ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid ortho data is associated with ZDB-PUB-030508-1.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030508-1 "
+               . " that are not either: gene name, gene symbol "
+               . ", or previous name.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
 
 
 #---------------------------------------------------------------
@@ -3358,7 +3512,10 @@ if($weekly) {
 	associatedDBLinkforPUB030905_1($dbaEmail);
 
 	# each bit of the 030508_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
-	associatedDataforPUB030508_1($geneEmail);
+	associatedDataforPUB030508_1($dbaEmail);
+	associatedAltDataforPUB030508_1($geneEmail);
+	associatedOevDataforPUB030508_1($geneEmail);
+	associatedDblinkDataforPUB030508_1($geneEmail);
 
 	# each bit of the 030905_2 needs different data report to allow curators to clean up.  the generic one goes to DBA.
 	associatedDataforPUB030905_2($dbaEmail);
