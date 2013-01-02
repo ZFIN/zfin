@@ -39,7 +39,7 @@
         <attribute name="testClass"/>
         <attribute name="outFile"/>
         <sequential>
-            <junit fork="yes"
+            <junit fork="false"
                    printsummary="yes"
                    haltonfailure="yes"
                    haltonerror="yes"
@@ -125,7 +125,7 @@ test(s) need to be run before committing changes or pushing files to production 
 
     <target name="runtests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
 
-        <junit fork="yes"
+        <junit fork="false"
                printsummary="yes"
                haltonfailure="yes"
                haltonerror="yes"
@@ -179,7 +179,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <target name="handleServiceFailure" if="service.failure">
         <echo message="${serviceFailureMessage}"/>
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
-              fork="yes"
+              fork="false"
               classpathref="classpath">
             <!--subject -->
             <arg value="Failed service tests.  See ${serviceTestFile}.txt."/>
@@ -206,7 +206,7 @@ test(s) need to be run before committing changes or pushing files to production 
     </target>
 
     <target name="testsingleclass" depends="build-tests" description="Runs a database tests for a single class specified in this target" >
-        <java fork="yes" classname="org.zfin.sequence.reno.RenoControllerTest" taskname="junit" failonerror="true">
+        <java fork="false" classname="org.zfin.sequence.reno.RenoControllerTest" taskname="junit" failonerror="true">
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <arg value="${junit.test.class.name}"/>
@@ -217,7 +217,7 @@ test(s) need to be run before committing changes or pushing files to production 
     </target>
 
     <target name="runatest" depends="build-tests"  description="Runs a test for a single database test specified by junit.test.class.name" >
-        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true" maxmemory="1024">
+        <java fork="false" classname="junit.textui.TestRunner" taskname="junit" failonerror="true" maxmemory="1024">
             <!--
                        <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
            -->
@@ -231,7 +231,7 @@ test(s) need to be run before committing changes or pushing files to production 
     </target>
 
     <target name="singletest" depends="build-tests"  description="Executes a single test">
-        <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+        <java fork="false" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
             <!--
                         <sysproperty key="java.endorsed.dirs" value="${endorsed.lib}"/>
             -->
