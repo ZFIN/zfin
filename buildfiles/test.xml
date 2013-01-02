@@ -19,7 +19,7 @@
         <attribute name="testClass"/>
         <attribute name="outFile"/>
         <sequential>
-            <junit fork="yes"
+            <junit fork="false"
                    printsummary="yes"
                    haltonfailure="yes"
                    haltonerror="yes"
