@@ -1,11 +1,13 @@
 package org.zfin.util;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.List;
-import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +16,8 @@ import static org.junit.Assert.assertTrue;
  * Utilities that are not in StringUtils.
  */
 public class ZfinStringUtilsTest {
+
+    public static Logger logger = Logger.getLogger(ZfinStringUtils.class);
 
     @Test
     public void splitStringMethod() {
@@ -81,5 +85,34 @@ public class ZfinStringUtilsTest {
         assertTrue(whiteSpaces.contains(14));
     }
 
+
+    @Test
+    public void stripHighUnicodeTest() {
+
+        //European characters in names should pass through
+        String before = "Torres-Nuñez";
+        String after = ZfinStringUtils.escapeHighUnicode(before);
+        logger.debug("BEFORE: " + before);
+        logger.debug(" AFTER: " + after);
+        assertEquals(before, after);
+
+
+        //bullet & endash characters should not!
+        before = "Am Klopferspitz 18 • D-82152 Martinsried, phone +49 89 8578 3263 • fax +49 89 8578 3240";
+        after = ZfinStringUtils.escapeHighUnicode(before);
+        logger.debug("BEFORE: " + before);
+        logger.debug(" AFTER: " + after);
+
+        assertTrue(!StringUtils.equals(before,after));
+
+
+        before = Character.toString((char)2012);
+        after = ZfinStringUtils.escapeHighUnicode(before);
+        logger.debug("BEFORE: " + before);
+        logger.debug(" AFTER: " + after);
+
+        assertTrue(StringUtils.equals(after,"&#2012;"));
+
+    }
 
 }

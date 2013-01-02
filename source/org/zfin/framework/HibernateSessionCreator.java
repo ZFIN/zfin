@@ -123,6 +123,7 @@ public class HibernateSessionCreator implements FactoryBean {
 
     private Configuration createConfiguration(String db) {
         Configuration config = new Configuration();
+        config.setInterceptor(new StringCleanInterceptor());
         config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
         String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value();

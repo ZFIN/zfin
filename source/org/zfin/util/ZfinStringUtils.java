@@ -1,9 +1,8 @@
 package org.zfin.util;
 
+import org.apache.commons.lang3.text.translate.NumericEntityEscaper;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Utilities that are not in StringUtils.
@@ -152,6 +151,23 @@ public class ZfinStringUtils {
         }
         return concatenatedZDBIdsDelimitedByComma;
     }
+
+    /**
+     * Escape characters into character entities if they are outside of the range supported by informix
+     * @param s String to escape
+     * @return escaped String
+     */
+    public static String escapeHighUnicode(String s) {
+
+        if (s==null)
+            return null;
+
+        String escaped = NumericEntityEscaper.above(0xFF).translate(s);
+        return escaped;
+
+    }
+
 }
+
 
 

@@ -41,6 +41,7 @@ public class HibernateUtil {
                 throw new RuntimeException("SessionFactory already instantiated");
             // Create the SessionFactory
             Configuration configuration = new Configuration();
+            configuration.setInterceptor(new StringCleanInterceptor());
             sessionFactory = configuration.configure().buildSessionFactory();
         } catch (Throwable ex) {
             log.error("Initial SessionFactory creation failed.", ex);

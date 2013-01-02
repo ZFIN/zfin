@@ -5,9 +5,11 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,43 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             HibernateUtil.rollbackTransaction();
         }
     }
+
+    @Test
+    public void updatePersonAddressWithUtf8Characters() {
+
+        HibernateUtil.createTransaction();
+
+
+        try {
+            Person p = profileRepository.getPerson("ZDB-PERS-960805-676");
+            String oldAddress = p.getAddress();
+            //This address has nasty high utf8 characters
+            String newAddress = "Max Planck Institute of Neurobiology\n" +
+                                "Dept. Genes - Circuits – Behavior (Group Baier) \n" +
+                                "Am Klopferspitz 18 • D-82152 Martinsried\n" +
+                                "phone +49 89 8578 3263 • fax +49 89 8578 3240";
+
+            List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<BeanFieldUpdate>();
+            BeanFieldUpdate beanFieldUpdate = new BeanFieldUpdate();
+            beanFieldUpdate.setField("address");
+            beanFieldUpdate.setFieldType(String.class);
+            beanFieldUpdate.setFrom(oldAddress);
+            beanFieldUpdate.setTo(newAddress);
+
+            beanFieldUpdateList.add(beanFieldUpdate);
+            profileService.updateProfileWithFields(p.getZdbID(), beanFieldUpdateList, p.getZdbID());
+            HibernateUtil.currentSession().flush();
+
+
+
+        } catch (Exception e) {
+            logger.error(e);
+            fail(e.toString());
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
 
 
     @Test
