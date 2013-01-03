@@ -3469,6 +3469,9 @@ if($daily) {
 	if ($globalDbName ne "mirrordb"){
 	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
 	}
+	if (!$curatorEmail){
+	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
+	}
 	my @curatorName = split(/,/,$curatorName);
 	my $curatorFirstName = $curatorName[$#curatorName];
 	$curatorFirstName =~ s/^\s+//;
@@ -3552,12 +3555,15 @@ if($monthly) {
                      join person on source_id = zdb_id
                      join lab_position on position_id =  labpos_pk_id
                where target_id = 'ZDB-LAB-000914-1'
-                 and labpos_position = 'Research Staff'
-		 and email is not null";
+                 and labpos_position = 'Research Staff'";
   my $sth = $dbh->prepare ($sql) or die "Prepare fails";
   $sth->execute();
 
   while (my ($curatorEmail, $curatorName) = $sth->fetchrow_array()) {
+
+      if (!$curatorEmail){
+	  $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
+      }
       my @curatorName = split(/,/,$curatorName);
       my $curatorFirstName = $curatorName[$#curatorName];
       $curatorFirstName =~ s/^\s+//;
