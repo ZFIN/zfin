@@ -3452,7 +3452,7 @@ if($daily) {
     findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-    xpatHasConsistentMarkerRelationship($xpatEmail);
+    xpatHasConsistentMarkerRelationship($geneEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
     
@@ -3552,7 +3552,8 @@ if($monthly) {
                      join person on source_id = zdb_id
                      join lab_position on position_id =  labpos_pk_id
                where target_id = 'ZDB-LAB-000914-1'
-                 and labpos_position = 'Research Staff'";
+                 and labpos_position = 'Research Staff'
+		 and email is not null";
   my $sth = $dbh->prepare ($sql) or die "Prepare fails";
   $sth->execute();
 
