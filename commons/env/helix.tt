@@ -50,7 +50,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
-<!--|SOURCEROOT|-->	/tmp
+<!--|SOURCEROOT|-->	/research/zusers/informix/helix/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu

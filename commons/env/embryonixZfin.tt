@@ -52,7 +52,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
-<!--|SOURCEROOT|-->	/tmp
+<!--|SOURCEROOT|-->	/research/zusers/${USER}/embryonixZfin/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu

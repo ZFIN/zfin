@@ -57,7 +57,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#eaf9fc
-<!--|SOURCEROOT|-->	/tmp
+<!--|SOURCEROOT|-->	/research/zusers/kschaper/iguana/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu

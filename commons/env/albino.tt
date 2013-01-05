@@ -57,7 +57,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFEE
-<!--|SOURCEROOT|-->	/tmp
+<!--|SOURCEROOT|-->	/research/zusers/staylor/albino/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_CURATOR|-->	staylor\@cs.uoregon.edu
