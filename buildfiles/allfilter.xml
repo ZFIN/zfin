@@ -1,5 +1,6 @@
 <project>
 <filterset id='allfilters'>
+<filter token="ANT_OPTS" value="${ANT_OPTS}"/>
 <filter token="AO_EMAIL_CURATOR" value="${AO_EMAIL_CURATOR}"/>
 <filter token="AO_EMAIL_ERR" value="${AO_EMAIL_ERR}"/>
 <filter token="APACHE_PORT" value="${APACHE_PORT}"/>
