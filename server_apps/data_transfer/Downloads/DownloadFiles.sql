@@ -900,7 +900,18 @@ and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
  
-
+--case 9235
+! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fhAlleles.txt'"
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fhAlleles.txt'
+DELIMITER "	"
+select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+from feature, record_attribution, publication, journal
+where recattrib_data_zdb_id=feature_zdb_id
+and feature_abbrev like 'fh%'
+and zdb_id=recattrib_source_zdb_id
+and jtype='Journal'
+and pub_jrnl_zdb_id=jrnl_zdb_id
+order by feature_abbrev;
 
 {
 case 4402  Weekly download file available via the web.
