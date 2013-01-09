@@ -189,9 +189,12 @@
     <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
+                <c:if test="${fish.genotypeID!=null}">
                 <zfin:link entity="${fish}"/>
+                </c:if>
             </td>
             <td>
+               <c:if test="${fish.expressionFigureCount > 0}">
                 <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${fish.fishID}"
                                                       figureCount="${fish.expressionFigureCount}"/>
                     <span id="image-icon-${loop.index}">
@@ -201,6 +204,7 @@
                         processPopupLinks();
                     });
                 </script>
+                </c:if>
             </td>
             <td>
                 <c:if test="${fish.phenotypeFigureCount > 0}">
@@ -246,13 +250,23 @@
                         </authz:authorize>
 
                         <span style="float:right" id="matching-details-show-link${loop.index}">
+                            <c:if test="${fish.genotypeID!=null}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.fishID}&<%= request.getQueryString()%>', function() { processPopupLinks(); });">
                                 Matching Detail</a>
+                                </c:if>
+                            <c:if test="${fish.genotypeID==null}">
+                            <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
+                               onclick="jQuery('#matching-details-show-link${loop.index}').hide();
+                                       jQuery('#matching-details-hide-detail${loop.index}').show();
+                                       jQuery('#matching-details-${loop.index}').show();
+                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.ID}&<%= request.getQueryString()%>', function() { processPopupLinks(); });">
+                                Matching Detail</a>
                         </span>
+                            </c:if>
                         <span style="text-align:right; display: none;" id="matching-details-hide-detail${loop.index}">
                             <a style="font-size:small; margin-right: 1em;" class="clickable hideAll"
                                onclick="jQuery('#matching-details-${loop.index}').hide();

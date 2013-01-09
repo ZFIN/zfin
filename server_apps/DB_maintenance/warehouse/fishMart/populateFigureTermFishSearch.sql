@@ -52,9 +52,9 @@ create index fig_index
 update statistics high for table tmp_phenox;
 
 insert into figure_term_fish_search_temp (ftfs_fas_id, ftfs_geno_handle, ftfs_fig_zdb_id, ftfs_genox_zdb_id)
- select distinct  fas_pk_id, fas_geno_handle, phenox_fig_Zdb_id, phenox_genox_zdb_id
+ select distinct  fas_pk_id, fas_line_handle, phenox_fig_Zdb_id, phenox_genox_zdb_id
     from fish_annotation_search_temp, phenotype_Experiment, functional_annotation
-    where fas_geno_handle = fa_geno_handle
+    where fas_line_handle = fa_geno_handle
     and phenox_genox_zdb_id = fa_genox_zdb_id;
 
 

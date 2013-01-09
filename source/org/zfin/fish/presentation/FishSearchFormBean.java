@@ -97,6 +97,7 @@ public class FishSearchFormBean extends PaginationBean {
 
     private String fishID;
 
+
     public String getFishID() {
         return fishID;
     }

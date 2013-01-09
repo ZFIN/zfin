@@ -1,12 +1,25 @@
-
-
 begin work;
------------------------------------------------
--- Tom's code
-------------------------------------------------
 
-create table burgess_lin1(
-	bl1_la_acc varchar(10) primary key,
+create temp table pre_burgess_lin1(
+	pre_bl1_la_acc varchar(10) ,
+	pre_bl1_vec_acc varchar(10),    -- all are JN244738
+	pre_bl1_gss_acc varchar(10),    -- suppose to be unique
+	pre_bl1_gene_sym varchar(40),   -- 2/3 to 3/4 are blank
+	pre_bl1_intron varchar(20),
+	pre_bl1_gene_zdbid varchar(50),  -- all blank
+	pre_bl1_chr   int,
+	pre_bl1_start int,
+	pre_bl1_end   int
+) with no log;
+-- extents first  extents next
+
+
+
+
+load from 'la_gb_chr_loc.tab' delimiter '	'  insert into pre_burgess_lin1;
+
+create temp table burgess_lin1(
+	bl1_la_acc varchar(10),
 	bl1_vec_acc varchar(10),    -- all are JN244738
 	bl1_gss_acc varchar(10),    -- suppose to be unique
 	bl1_gene_sym varchar(40),   -- 2/3 to 3/4 are blank
@@ -15,31 +28,66 @@ create table burgess_lin1(
 	bl1_chr   int,
 	bl1_start int,
 	bl1_end   int
-) fragment by round robin in tbldbs1, tbldbs2,tbldbs3
--- extents first  extents next
+) with no log
 ;
 
-create table burgess_lin2(
+create temp table pre_burgess_lin2(
+	pre_bl2_la_acc varchar(10), -- can not be unique
+	pre_bl2_plate  varchar(20),
+	pre_bl2_parent varchar(10)
+) with no log;
+
+
+create temp table burgess_lin2(
 	bl2_la_acc varchar(10), -- can not be unique
 	bl2_plate  varchar(20),
 	bl2_parent varchar(10)
-) fragment by round robin in tbldbs1, tbldbs2,tbldbs3
--- extents first  extents next
+)with no log
 ;
 
 create unique index burgess_lin1_bl1_gss_acc_idx
- on burgess_lin1(bl1_gss_acc) in idxdbs2
+ on burgess_lin1(bl1_la_acc) in idxdbs2
 ;
 
+
 ! echo "read la_gb_chr_loc.tab into table burgess_lin1"
-load from 'la_gb_chr_loc.tab' delimiter '	' insert into burgess_lin1;
+
+unload to 'notinZFIN.unl'
+select * from pre_burgess_lin1
+where trim(pre_bl1_la_acc) not in (select trim(dalias_alias) from data_alias where dalias_data_zdb_id like 'ZDB-ALT%' and dalias_alias like 'la%');
+
+load from notinZFIN.unl insert into burgess_lin1;
+
+
+
+!echo 'delete features that are alreday in ZFIN from input data set'
+delete from burgess_lin1
+where trim(bl1_la_acc)  in (select trim(feature_abbrev) from feature);
 
 ! echo "read la_fish_parent.tab into table burgess_lin2"
-load from 'la_fish_parent.tab' delimiter '	' insert into burgess_lin2;
+load from 'la_fish_parent.tab' delimiter '	' insert into pre_burgess_lin2;
+
+!echo 'check to see if plates have been duplicated'
+
+unload to 'plate_exists_in_zfin' select pre_bl2_plate from pre_burgess_lin2, bl_plate_tracking where blpt_plate=pre_bl2_plate;
+
+
+unload to 'platenotinZFIN.unl'
+select * from pre_burgess_lin2
+where trim(pre_bl2_la_acc) not in (select trim(dalias_alias) from data_alias where dalias_data_zdb_id like 'ZDB-ALT%' and dalias_alias like 'la%');
+
+load from platenotinZFIN.unl insert into burgess_lin2;
+
+delete from burgess_lin2
+where trim(bl2_la_acc)  in (select trim(feature_abbrev) from feature);
+
+unload to 'blplates.unl' select distinct bl2_plate, '1' from burgess_lin2;
+
+insert into bl_plate_tracking (blpt_plate, blpt_load_number) select distinct bl2_plate, '1' from burgess_lin2;
+
 
 update statistics high for table burgess_lin1;
 update statistics high for table burgess_lin2;
-
 -----------------------------------------------
 --- Brock's code
 -----------------------------------------------
@@ -51,15 +99,6 @@ create temp table tmp_mrkr
 )
 with no log;
 
-create temp table tmp_geno
-(
-   tmp_geno_pk   serial8,
-   tmp_geno_id   varchar(50),
-   tmp_plate_ID  varchar(50),
-   tmp_gname      varchar(255),
-   tmp_handle    varchar(255)
-)
-with no log;
 
 
 create temp table tmp_linked_recid
@@ -134,7 +173,30 @@ where bl1_gene_sym is not null
   and exists (select * from marker where mrkr_abbrev = bl1_gene_sym)
 ;
 
+
+select feature_zdb_id as bl_feat_id
+from feature
+where feature_lab_prefix_id = 85
+  and feature_zdb_id[9,14] in ("120130","120806")
+into temp bl_feature;
+
+!echo 'add new attribution to bl features from prev loads'
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)select bl_feat_id, 'ZDB-PUB-121121-1' from bl_feature;
+
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id,recattrib_source_type) select bl_feat_id, 'ZDB-PUB-121121-1' , 'feature type' from bl_feature;
+
+
+insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id) select dalias_zdb_id, 'ZDB-PUB-121121-1' from data_alias, bl_feature where dalias_data_zdb_id=bl_feat_id;
+
+
+
+insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id) select dblink_zdb_id , 'ZDB-PUB-121121-1' from db_link, bl_feature where dblink_linked_recid=bl_feat_id;
+
+insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id) select fmrel_zdb_id , 'ZDB-PUB-121121-1' from feature_marker_relationship, bl_feature where fmrel_ftr_zdb_id=bl_feat_id;
+
 --FEATURE
+
+
 insert into tmp_feature (tmp_name, tmp_abbrev, tmp_type)
 select "Tg(nLacz-GTvirus)" || "la" || bl1_la_acc[3,8] , "la"||bl1_la_acc[3,8] , "TRANSGENIC_INSERTION"
 from burgess_lin1
@@ -146,18 +208,22 @@ select "la"||bl1_la_acc[3,8]||"Tg", "la"||bl1_la_acc[3,8]||"Tg", "TRANSGENIC_INS
 from burgess_lin1
 where bl1_gene_zdbid is not null;
 
+
+!echo 'insert new features'
 update tmp_feature set tmp_feat_id = get_id("ALT");
 
 insert into zdb_active_data(zactvd_zdb_id) select tmp_feat_id from tmp_feature;
 
-
+unload to 'newfeatures.unl' select tmp_name, tmp_abbrev from tmp_feature;
+unload to 'newftrcount.unl' select count(*) from tmp_feature;
+ 
 insert into feature (feature_zdb_id, feature_abbrev, feature_name, feature_type, feature_lab_prefix_id, feature_line_number, feature_known_insertion_site)
 select tmp_feat_id, tmp_abbrev, tmp_name, tmp_type, 85, tmp_abbrev[3,8], 't'
 from tmp_feature;
 
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select tmp_feat_id, "ZDB-PUB-110915-1"
+select tmp_feat_id, "ZDB-PUB-121121-1"
 from tmp_feature;
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -165,7 +231,7 @@ select tmp_feat_id, "ZDB-PUB-070726-29"
 from tmp_feature;
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
-select tmp_feat_id, "ZDB-PUB-110915-1", "feature type"
+select tmp_feat_id, "ZDB-PUB-121121-1", "feature type"
 from tmp_feature;
 
 insert into feature_assay (featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee)
@@ -195,36 +261,10 @@ select tmp_da_id, tmp_da_f_id, tmp_da_alias, '1'
 from tmp_dalias;
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select tmp_da_id, "ZDB-PUB-110915-1"
+select tmp_da_id, "ZDB-PUB-121121-1"
 from tmp_dalias;
 
 
-
-!echo GENOTYPE
-
-insert into tmp_geno (tmp_plate_id ) select distinct bl2_plate from burgess_lin2;
-
-update tmp_geno set tmp_geno_id = get_id("GENO");
-
-insert into zdb_active_data (zactvd_zdb_id) select tmp_geno_id from tmp_geno;
-
-insert into genotype (geno_zdb_id, geno_display_name, geno_handle) select tmp_geno_id, tmp_plate_id, tmp_plate_id from tmp_geno;
-
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select tmp_geno_id, "ZDB-PUB-110915-1"
-from tmp_geno;
-
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select tmp_geno_id, "ZDB-PUB-070726-29"
-from tmp_geno;
-
-
-!echo GENOTYPE_BACKGROUND
-
-
-insert into genotype_background (genoback_geno_zdb_id, genoback_background_zdb_id)
-select tmp_geno_id , "ZDB-GENO-010924-10"
-from tmp_geno;
 
 
 
@@ -251,6 +291,8 @@ from tmp_feature, burgess_lin1
 where bl1_la_acc[3,8] = tmp_name[3,8]
   and bl1_gene_zdbid is not null;
 
+unload to 'genenotinzfin.unl' select tmp_fmrel_mrkr_id from tmp_fmrel where tmp_fmrel_mrkr_id not in (select mrkr_zdb_id from marker); 
+
 update tmp_fmrel set tmp_fmrel_id = get_id("FMREL");
 
 insert into zdb_active_data (zactvd_zdb_id) select tmp_fmrel_id from tmp_fmrel;
@@ -264,20 +306,20 @@ from tmp_fmrel;
 
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select distinct bl1_gene_zdbid, "ZDB-PUB-110915-1"
+select distinct bl1_gene_zdbid, "ZDB-PUB-121121-1"
 from burgess_lin1
 where bl1_gene_zdbid is not null
   and not exists (
       select *
       from record_attribution
-      where recattrib_source_zdb_id = "ZDB-PUB-110915-1"
+      where recattrib_source_zdb_id = "ZDB-PUB-121121-1"
       and recattrib_data_zdb_id = bl1_gene_zdbid)
 ;
 
 
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-values ("ZDB-TGCONSTRCT-070117-175", "ZDB-PUB-070726-29");
+values ("ZDB-TGCONSTRCT-070117-175", "ZDB-PUB-121121-1");
 
 !echo DB_LINK
 
@@ -291,9 +333,12 @@ select get_id('DBLINK'), tmp_feat_id, bl1_gss_acc, 'ZDB-FDBCONT-040412-36'
 from tmp_feature, burgess_lin1
 where bl1_la_acc||"Tg" = tmp_abbrev ;
 
-insert into tmp_dblink (tmp_dbl_id, tmp_dbl_feat, tmp_acc, tmp_fdbcont)
-values (get_id('DBLINK'), "ZDB-TGCONSTRCT-070117-175", "JN244738", 'ZDB-FDBCONT-040412-36')
-;
+unload to 'weirdaccession1.unl' select tmp_dbl_feat, tmp_acc from tmp_dblink where tmp_acc in (select dblink_acc_num from db_link) ;
+
+
+--insert into tmp_dblink (tmp_dbl_id, tmp_dbl_feat, tmp_acc, tmp_fdbcont)
+--values (get_id('DBLINK'), "ZDB-TGCONSTRCT-070117-175", "JN244738", 'ZDB-FDBCONT-040412-36')
+--;
 
 insert into zdb_active_data (zactvd_zdb_id) select tmp_dbl_id from tmp_dblink;
 
@@ -304,13 +349,19 @@ insert into db_link
 select tmp_dbl_id, tmp_acc, tmp_dbl_feat, tmp_fdbcont
 from tmp_dblink;
 
+unload to "newdblinks.unl" select tmp_acc, tmp_dbl_feat from tmp_dblink;
+
+update db_link set dblink_acc_num='JM426446' where dblink_linked_recid='ZDB-ALT-120130-601';
+update db_link set dblink_acc_num_display='JM426446' where dblink_linked_recid='ZDB-ALT-120130-601';
+update one_to_one_accession set ooa_dblink_acc_num='JM426446' where ooa_feature_zdb_id='ZDB-ALT-120130-601';
+
 insert into one_to_one_accession (ooa_feature_zdb_id, ooa_dblink_zdb_id, ooa_dblink_acc_num)
 select tmp_dbl_feat, tmp_dbl_id, tmp_acc
 from tmp_dblink
 where tmp_dbl_feat like "ZDB-ALT%";
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select tmp_dbl_id, "ZDB-PUB-110915-1"
+select tmp_dbl_id, "ZDB-PUB-121121-1"
 from tmp_dblink;
 
 
@@ -322,86 +373,16 @@ insert into int_data_source (ids_data_zdb_id, ids_source_zdb_id)
 select tmp_feat_id, 'ZDB-LAB-111117-3'
 from tmp_feature;
 
-
-
-!echo FEATURE_MRKR_NAME
-
-
-
-update tmp_feature set tmp_fmrkr_name =
-  (select mrkr_abbrev from marker, feature_marker_relationship
-  where tmp_feat_id = fmrel_ftr_zdb_id
-    and fmrel_mrkr_zdb_id = mrkr_zdb_id
-    and mrkr_zdb_id like "ZDB-GENE%");
-
-update tmp_feature set tmp_fmrkr_name = "Tg(nLacz-GTvirus)"
-where tmp_fmrkr_name is null;
-
-
-update feature set feature_mrkr_abbrev =
-(select tmp_fmrkr_name from tmp_feature where tmp_feat_id = feature_zdb_id)
-where feature_zdb_id in (select tmp_feat_id from tmp_feature);
+create index ftr_id_index on tmp_feature (tmp_feat_id)
+using btree in idxdbs3;
 
 
 
-!echo GENOTYPE_FEATURE
-create temp table tmp_genofeat
-(
-   tmp_genofeat_id   varchar(50),
-   tmp_genofeat_geno varchar(50),
-   tmp_genofeat_feat varchar(50)
-)
-with no log;
 
-insert into tmp_genofeat (tmp_genofeat_geno, tmp_genofeat_feat)
-select distinct tmp_geno_id, tmp_feat_id
-from tmp_feature, tmp_geno, burgess_lin2
-where bl2_plate = tmp_plate_id
-  and bl2_la_acc[3,8] = tmp_abbrev[3,8];
-
-select tmp_name, tmp_plate_id, count(*)
-from tmp_genofeat, tmp_feature, tmp_geno
-where tmp_genofeat_geno = tmp_geno_id
-  and tmp_genofeat_feat = tmp_feat_id
-group by 1,2
-having count(*) > 1;
-
-update tmp_genofeat set tmp_genofeat_id = get_id("GENOFEAT");
-
-insert into zdb_active_data (zactvd_zdb_id) select tmp_genofeat_id from tmp_genofeat;
-
-insert into genotype_feature
-(
-  genofeat_zdb_id, genofeat_feature_zdb_id, genofeat_geno_zdb_id,
-  genofeat_dad_zygocity, genofeat_mom_zygocity, genofeat_zygocity
-)
-select distinct tmp_genofeat_id, tmp_genofeat_feat, tmp_genofeat_geno,
-       "ZDB-ZYG-070117-7", "ZDB-ZYG-070117-7", "ZDB-ZYG-070117-7"
-from tmp_genofeat;
+update feature set feature_name = feature_name where exists (Select 'x' from tmp_feature where tmp_feat_id = feature_zdb_id);
 
 
---GENOTYPE NAME
-
-update tmp_geno set tmp_gname = get_genotype_display(tmp_geno_id);
-update tmp_geno set tmp_handle = get_genotype_handle(tmp_geno_id);
-
-select tmp_gname as dup_gname, count(*) as dup_count from tmp_geno group by 1 having count(*) > 1 into temp tmp_dup_geno;
-
-unload to 'gdup.unl' select * from tmp_dup_geno;
-
-update tmp_dup_geno set dup_count = (select min(tmp_geno_pk) from tmp_geno where dup_gname = tmp_gname);
-
-
-
-delete from zdb_active_data where exists (select * from tmp_dup_geno, tmp_geno where tmp_gname = dup_gname and dup_count != tmp_geno_pk and tmp_geno_id = zactvd_zdb_id);
-
-
-update feature set feature_name = feature_name where feature_zdb_id in
-(select tmp_feat_id from tmp_feature);
-
-
-drop table burgess_lin1;
-drop table burgess_lin2;
-
+--rollback work;
+commit work;
 -- commit/rollback handled externaly
 

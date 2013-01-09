@@ -35,8 +35,8 @@ public class Fish extends ZfinEntity {
     private Set<ZfinFigureEntity> phenotypeFigures;
 
     public String getFishID() {
-        if (getGenotypeID() == null)
-            throw new NullPointerException("No GENO id found for fish ID: " + ID);
+//        if (getGenotypeID() == null)
+//            throw new NullPointerException("No GENO id found for fish ID: " + ID);
         String fishID = getGenotypeID();
         if (genotypeExperimentIDsString != null)
             return fishID + "," + genotypeExperimentIDsString;

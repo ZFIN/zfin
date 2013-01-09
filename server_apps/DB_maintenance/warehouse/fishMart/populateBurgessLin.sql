@@ -1,0 +1,206 @@
+
+!echo "start Burgess Lin";
+
+set pdqpriority 50;
+
+delete from fish_annotation_search_temp;
+
+insert into fish_annotation_search_temp (fas_all,
+					fas_genotype_Group,
+					fas_geno_name, 
+       	    			   	fas_line_handle,
+       	    			   	fas_feature_group, 
+					fas_gene_group,
+					fas_construct_group, 
+					fas_fish_parts_count, 
+					fas_affector_type_group,
+					fas_feature_order,
+					fas_gene_order,
+					fas_gene_count)
+select feature_name||"|"||feature_abbrev||","||a.mrkr_name||"|"||a.mrkr_abbrev||","||b.mrkr_name||"|"||b.mrkr_abbrev,
+       'ZDB-GENO-F1 Pool',
+       '', 
+       		feature_zdb_id,
+       		feature_name||"|"||feature_abbrev, 
+		a.mrkr_name||"|"||a.mrkr_abbrev, 
+		b.mrkr_name||"|"||b.mrkr_name, 
+		"1", 
+		'TRANSGENIC_INSERTION',
+		feature_Abbrev_order, 
+		a.mrkr_abbrev_order, 
+		"1"
+  from feature, feature_marker_relationship c, feature_marker_relationship d, marker a, marker b
+  where feature_zdb_id = c.fmrel_ftr_zdb_id
+  and feature_zdb_id = d.fmrel_ftr_zdb_id
+  and a.mrkr_zdb_id = c.fmrel_mrkr_zdb_id
+  and c.fmrel_type = 'is allele of'
+and d.fmrel_type like 'contains%'
+and not exists (Select 'x' from genotype_feature
+ where genofeat_feature_zdb_id = feature_zdb_id)
+and feature_abbrev like 'la%'
+and d.fmrel_mrkr_zdb_id = b.mrkr_Zdb_id
+and d.fmrel_mrkr_zdb_id = 'ZDB-TGCONSTRCT-070117-175'
+;
+
+insert into fish_annotation_search_temp (fas_all,
+					fas_genotype_Group,
+					fas_geno_name, 
+       	    			   	fas_line_handle,
+       	    			   	fas_feature_group, 
+
+					fas_construct_group, 
+					fas_fish_parts_count, 
+					fas_affector_type_group,
+					fas_feature_order,
+					fas_gene_order,
+					fas_gene_count)
+select feature_name||"|"||feature_abbrev||","||b.mrkr_name||"|"||b.mrkr_abbrev,
+       'ZDB-GENO-F1 Pool',
+       '', 
+       		feature_zdb_id,
+       		feature_name||"|"||feature_abbrev, 
+
+		b.mrkr_name||"|"||b.mrkr_name, 
+		"1", 
+		'TRANSGENIC_INSERTION',
+		feature_Abbrev_order, 
+		b.mrkr_abbrev_order, 
+		"1"
+  from feature, feature_marker_relationship d, marker b
+  where feature_zdb_id = d.fmrel_ftr_zdb_id
+and d.fmrel_type like 'contains%'
+and not exists (Select 'x' from genotype_feature
+ where genofeat_feature_zdb_id = feature_zdb_id)
+and feature_abbrev like 'la%'
+and not exists (Select 'x' from feature_marker_relationship g
+    	       	       where g.fmrel_ftr_zdb_id = feature_zdb_id
+		       and fmrel_Type = 'is allele of')
+and d.fmrel_mrkr_zdb_id = b.mrkr_Zdb_id
+and d.fmrel_mrkr_zdb_id = 'ZDB-TGCONSTRCT-070117-175';
+
+select distinct dalias_alias, feature_zdb_id as f_id
+ from data_alias, feature
+ where dalias_data_zdb_id = feature_zdb_id
+ and not exists (Select 'x' from genotype_feature where genofeat_feature_zdb_id = feature_zdb_id)
+ and feature_abbrev like 'la%'
+ order by dalias_alias
+into temp tmp_aliasB;
+
+
+delete from tmp_aliasB where dalias_alias is null;
+
+create index daliasB on tmp_aliasB(dalias_alias)
+  using btree in idxdbs3;
+
+create index dalias3B on tmp_aliasB(f_id)
+  using btree in idxdbs3;
+
+update statistics high for table tmp_aliasB;
+
+--drop table tmp_tg;
+select feature_zdb_id fe_id
+ from feature
+ where not exists (Select 'x' from genotype_feature
+       	   	  	  where genofeat_feature_zdb_id = feature_zdb_id)
+into temp temp_features;
+
+create index f_id_index
+  on temp_features (fe_id)
+ using btree in idxdbs2;
+
+select replace(replace(replace(substr(multiset (select distinct item dalias_alias from tmp_aliasB
+							  where feature_zdb_id = f_id
+							  and fe_id = f_id
+							  order by dalias_alias
+							 )::lvarchar(4000),11),""),"'}",""),"'","") 
+							 as tg_name, feature_name||"|"||feature_abbrev as namer,feature_Zdb_id as f_id
+  from feature, temp_features
+ where feature_zdb_id = fe_id
+and feature_abbrev like 'la%'
+into temp tmp_tg1;
+
+delete from tmp_tg1 where tg_name is null;
+
+--select first 6 * from tmp_tg;
+
+create index tmp_fishB on tmp_tg1(f_id) 
+  using btree in idxdbs1;
+
+create index tmp_featB on tmp_tg1(namer) 
+  using btree in idxdbs1;
+
+update statistics high for table tmp_tg1;
+update statistics high for table fish_annotation_Search_temp;
+
+update fish_annotation_search_temp
+  set fas_all = fas_all||","||(select distinct tg_name 
+      		       	 	 from tmp_tg1 
+				 where fas_line_handle = f_id);
+
+drop table tmp_aliasB;
+
+drop table tmp_tg1;
+
+select distinct dalias_alias, fmrel_ftr_zdb_id as f_id
+ from data_alias, feature_marker_relationship,feature
+ where dalias_data_zdb_id = fmrel_mrkr_zdb_id
+ and fmrel_ftr_zdb_id = feature_zdb_id
+and feature_abbrev like 'la%'
+ and not exists (Select 'x' from genotype_feature where genofeat_feature_zdb_id = feature_zdb_id)
+ order by dalias_alias
+into temp tmp_aliasB;
+
+delete from tmp_aliasB where dalias_alias is null;
+
+
+create index daliasB on tmp_aliasB(dalias_alias)
+  using btree in idxdbs3;
+
+create index dalias3B on tmp_aliasB(f_id)
+  using btree in idxdbs3;
+
+
+--drop table tmp_tg;
+drop table temp_features;
+
+
+select feature_zdb_id fe_id
+ from feature
+ where not exists (Select 'x' from genotype_feature
+       	   	  	  where genofeat_feature_zdb_id = feature_zdb_id)
+into temp temp_features;
+
+create index fe_id_index on temp_features (fe_id)
+using btree in idxdbs3;
+
+select replace(replace(replace(substr(multiset (select distinct item dalias_alias from tmp_aliasB
+							  where f_id = feature_zdb_id
+							  and fe_id = f_id
+							  order by dalias_alias
+							 )::lvarchar(4000),11),""),"'}",""),"'","") 
+							 as tg_name, feature_name||"|"||feature_abbrev as namer,feature_Zdb_id as f_id
+  from feature, temp_features
+ where feature_zdb_id = fe_id
+and feature_abbrev like 'la%'
+into temp tmp_tg2;
+
+delete from tmp_tg2 where tg_name is null;
+
+--select first 6 * from tmp_tg;
+
+create index tmp_fishB on tmp_tg2(f_id) 
+  using btree in idxdbs1;
+
+
+create index tmp_tg2_namer on tmp_tg2(namer) 
+  using btree in idxdbs2;
+
+update statistics high for table tmp_tg2;
+update statistics high for table fish_annotation_Search_temp;
+
+update fish_annotation_search_temp
+  set fas_all = fas_all||","||(select distinct tg_name 
+      		       	 	 from tmp_tg2 
+				 where fas_line_handle = f_id) 
+;
+

@@ -31,7 +31,7 @@ update statistics high for table construct_group_member;
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
        gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -67,7 +67,7 @@ select distinct fa_pk_id,
  and fmreltype_produces_affected_marker = 't'
  and c.fmrel_type in ('markers missing','markers absent','is allele of','markers moved')
  and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
- and fas_geno_handle = fa_geno_handle;
+ and fas_line_handle = fa_geno_handle;
 
 
 select * from gene_feature_result_view_temp
@@ -75,7 +75,7 @@ select * from gene_feature_result_view_temp
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
        gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -110,13 +110,13 @@ select distinct fa_pk_id,
  and fmreltype_produces_affected_marker = 't'
  and c.fmrel_type in ('markers missing','markers absent','is allele of','markers moved')
  and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED') 
- and fas_geno_handle = fa_geno_handle;
+ and fas_line_handle = fa_geno_handle;
 
 
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
        gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -160,11 +160,11 @@ select distinct fa_pk_id,
  and d.fmrel_ftr_zdb_id = feature_zdb_id
  and d.fmrel_mrkr_zdb_id = b.mrkr_zdb_id
  and d.fmrel_type like 'contains%'
- and fas_geno_handle = fa_geno_handle;
+ and fas_line_handle = fa_geno_handle;
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
        gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -209,13 +209,13 @@ select distinct fa_pk_id,
  and d.fmrel_ftr_zdb_id = feature_zdb_id
  and d.fmrel_mrkr_zdb_id = b.mrkr_zdb_id
  and d.fmrel_type like 'contains%'
- and fas_geno_handle = fa_geno_handle;
+ and fas_line_handle = fa_geno_handle;
 
 
 ----MORPHS------
 insert into gene_feature_result_view_temp (gfrv_fa_id,
 gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -245,12 +245,12 @@ select distinct fa_pk_id,
  and morphgm_member_id = c.mrkr_zdb_id
  and c.mrkr_zdb_id = mrel_mrkr_1_zdb_id
  and a.mrkr_Zdb_id = mrel_mrkr_2_zdb_id
-and fas_geno_handle = fa_geno_handle;
+and fas_line_handle = fa_geno_handle;
 
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
 gfrv_fas_id,
-       gfrv_geno_handle,
+       gfrv_line_handle,
        gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
@@ -275,7 +275,7 @@ select distinct fa_pk_id,
  and feature_type = ftrtype_name
  and exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='SSLP' and fmrel_type in ('markers missing','markers absent','is allele of','markers moved'))
  and not exists (Select 'x' from feature_marker_Relationship where fmrel_ftr_zdb_id = fgm_member_id and get_obj_type(fmrel_mrkr_zdb_id)='GENE' and fmrel_type in ('markers missing','markers absent','is allele of','markers moved'))
-and fas_geno_handle = fa_geno_handle
+and fas_line_handle = fa_geno_handle
 ;
 
 
@@ -293,7 +293,7 @@ set gfrv_gene_zdb_id = null
 
 select a.gfrv_pk_id as id 
        from gene_feature_result_view_temp b, gene_feature_result_view_temp a
-  	       	       where b.gfrv_geno_handle = a.gfrv_geno_handle
+  	       	       where b.gfrv_line_handle = a.gfrv_line_handle
 		       and b.gfrv_gene_zdb_id is not null
 		       and a.gfrv_gene_zdb_id is null
 		       and b.gfrv_affector_id = a.gfrv_affector_id
@@ -308,7 +308,7 @@ create index id_index on tmp_deletes (id)
 delete from gene_feature_result_view_temp
  where exists (Select 'x' from tmp_deletes where id = gfrv_pk_id);
 
-select distinct gfrv_fas_id, gfrv_geno_handle, gfrv_affector_id,
+select distinct gfrv_fas_id, gfrv_line_handle, gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
        gfrv_affector_type_display,
@@ -325,7 +325,7 @@ into temp tmp_gfrv;
 
 delete from gene_feature_result_view_temp;
 
-insert into gene_feature_result_view_temp (gfrv_fas_id, gfrv_geno_handle, gfrv_affector_id,
+insert into gene_feature_result_view_temp (gfrv_fas_id, gfrv_line_handle, gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
        gfrv_affector_type_display,
@@ -335,7 +335,7 @@ gfrv_gene_zdb_id,
        gfrv_construct_zdb_id,
        gfrv_construct_name,
        gfrv_construct_abbrev_order)
-  select gfrv_fas_id, gfrv_geno_handle, gfrv_affector_id,
+  select gfrv_fas_id, gfrv_line_handle, gfrv_affector_id,
        gfrv_affector_abbrev,
        gfrv_affector_abbrev_order,
        gfrv_affector_type_display,
@@ -349,30 +349,25 @@ gfrv_gene_zdb_id,
 
 
 select * from gene_feature_result_view_temp
-where gfrv_geno_handle = 'hi459Tg[2,1,1]';
+where gfrv_line_handle = 'hi459Tg[2,1,1]';
 
 select * from gene_feature_result_view_temp
-where gfrv_geno_handle ='sb15[U,U,U] t24412[2,1,1]TU';
+where gfrv_line_handle ='sb15[U,U,U] t24412[2,1,1]TU';
 
 select * from gene_feature_result_view_temp
-where gfrv_geno_handle ='p0[U,U,U] tm110b[2,2,U]';
+where gfrv_line_handle ='p0[U,U,U] tm110b[2,2,U]';
 
 select * from gene_feature_result_view_temp
 where gfrv_affector_abbrev ='b250';
 
-
-!echo "records in fish_annotation_search_temp not in gene_feature_result_view_temp";
-select * from fish_annotation_search_temp
- where fas_pk_id not in (Select gfrv_fas_id from gene_feature_result_view_temp);
-
 select * from gene_feature_result_view_temp
- where gfrv_geno_handle = 'Df(LG03)c1033/c1033 (AB)';
+ where gfrv_line_handle = 'Df(LG03)c1033/c1033 (AB)';
 
 !echo 'leftovers missing 1';
 select count(*) from fish_annotation_search_temp, gene_feature_result_view_temp
 where
 fas_pk_id = gfrv_fas_id
-and fas_geno_handle like '%[%[%'
+and fas_line_handle like '%[%[%'
 and (Select count(*) from gene_feature_result_view_temp a
                 where a.gfrv_fas_id = fas_pk_id) < 2;
 
@@ -380,7 +375,7 @@ and (Select count(*) from gene_feature_result_view_temp a
 select count(*) from fish_annotation_search_temp, gene_feature_result_view_temp
 where
 fas_pk_id = gfrv_fas_id
-and fas_geno_handle like '%[%[%[%'
+and fas_line_handle like '%[%[%[%'
 and (Select count(*) from gene_feature_result_view_temp a
                 where a.gfrv_fas_id = fas_pk_id) < 3;
 
@@ -388,7 +383,7 @@ and (Select count(*) from gene_feature_result_view_temp a
 select count(*) from fish_annotation_search_temp, gene_feature_result_view_temp
 where
 fas_pk_id = gfrv_fas_id
-and fas_geno_handle like '%[%[%[%['
+and fas_line_handle like '%[%[%[%['
 and (Select count(*) from gene_feature_result_view_temp a
                 where a.gfrv_fas_id = fas_pk_id) < 4;
 

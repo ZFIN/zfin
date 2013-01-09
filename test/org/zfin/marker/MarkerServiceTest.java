@@ -200,7 +200,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest{
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(m);
         assertThat(sequenceInfo.getNumberDBLinks(),greaterThan(11));
-        assertThat(sequenceInfo.getNumberDBLinks(),lessThan(18)); // was 13
+        assertThat(sequenceInfo.getNumberDBLinks(),lessThan(25)); // was 18
         assertEquals(4, sequenceInfo.getDbLinks().size());
         Iterator<DBLink> iter = sequenceInfo.getDbLinks().iterator() ;
         DBLink dbLink ;

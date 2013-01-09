@@ -346,6 +346,8 @@ public class HibernateFishRepository implements FishRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(FishAnnotation.class);
         Fish minimalFish = FishService.getGenoGenoxByFishID(genoGenoxIDs);
+        if (minimalFish == null)
+            return null;
         if (StringUtils.isEmpty(minimalFish.getGenotypeExperimentIDsString())) {
             criteria.add(Restrictions.and(
                     Restrictions.isNull("genotypeExperimentIds"),
@@ -378,7 +380,9 @@ public class HibernateFishRepository implements FishRepository {
         singleFish.setGenotypeExperimentIDsString(annotation.getGenotypeExperimentIds());
         singleFish.setExpressionFigureCount(annotation.getExpressionFigureCount());
         populateGeneFeatureConstruct(singleFish, annotation);
+        if (singleFish.getGenotypeID()!=null){
         addFigures(singleFish, criteria);
+    }
         singleFish.setGeneOrFeatureText(annotation.getGeneOrFeatureText());
         singleFish.setScoringText(annotation.getScoringText());
         //

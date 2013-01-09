@@ -207,7 +207,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarkerAndDisplayGroup(m
                 ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE);
         assertThat(dbLinkList.size(), greaterThan(5));
-        assertThat(dbLinkList.size(), lessThan(15));
+        assertThat(dbLinkList.size(), lessThan(20));  //used to be 15
     }
 
 

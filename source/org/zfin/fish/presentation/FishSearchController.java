@@ -18,6 +18,7 @@ import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.infrastructure.ZdbFlag;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -114,18 +115,33 @@ public class FishSearchController {
     protected String showMatchingDetails(Model model,
                                          @ModelAttribute("formBean") FishSearchFormBean formBean,
                                          BindingResult result) {
-        if (result.getErrorCount() > 0)
+        if (result.getErrorCount() > 0)  {
             LOG.error("Errors found during form binding: " + result);
+        }
+        if (formBean.getFishID().contains("GENO")){
+           Fish fish = FishService.getFish(formBean.getFishID());
+            FishSearchCriteria criteria = new FishSearchCriteria(formBean);
+            FishMatchingService service = new FishMatchingService(fish);
+            Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
+            model.addAttribute("matchingTextList", matchingTextList);
+            model.addAttribute(LookupStrings.FORM_BEAN, formBean);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-        Fish fish = FishService.getFish(formBean.getFishID());
-        FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        FishMatchingService service = new FishMatchingService(fish);
-        Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
-        model.addAttribute("matchingTextList", matchingTextList);
-        model.addAttribute(LookupStrings.FORM_BEAN, formBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
+            return "fish/matching-detail.popup";
+        }
+        else
+        {
+            Fish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
+            FishSearchCriteria criteria = new FishSearchCriteria(formBean);
+            FishMatchingService service = new FishMatchingService(fish);
+            Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
+            model.addAttribute("matchingTextList", matchingTextList);
+            model.addAttribute(LookupStrings.FORM_BEAN, formBean);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-        return "fish/matching-detail.popup";
+            return "fish/matching-detail.popup";
+        }
+
     }
 
     private static final Logger LOG = Logger.getLogger(FishSearchController.class);
