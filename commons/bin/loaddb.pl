@@ -1055,13 +1055,7 @@ sub loadEmptyTables($$)
 	  while($line = <LSAL>)
 	  {
 	    @lszero = split(' ',$line);
-	    if (-s "$unload_path$lszero[8]") 
-	    
-#	    print "$unload_path/$lszero[8] - $zsize \n";
-
-	    {
-	      push(@zero_size_load_tables, $lszero[8]);
-	    }
+	    push(@zero_size_load_tables, $lszero[8]);
 	  }
 	  close(LSAL);
 
@@ -1243,9 +1237,6 @@ else {
     }
 }
 
-loadEmptyTables( $dbName, $inputDir) ;
-
-exit;
 
 logMsg("Dropping old database (if it exists)...");
 dropDb($dbName);
@@ -1316,8 +1307,8 @@ if (! $globalErrorCount) {
   print(STDOUT "WARNING!!!!  your coworkers.\n\n");
 
   
-  system("/bin/rm -rf $sharedTmpFile");
-  system("/bin/rm -r $globalTmpDir");
+      system("/bin/rm -rf $sharedTmpFile");
+      system("/bin/rm -r $globalTmpDir");
   
 }
 else {
