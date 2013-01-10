@@ -218,7 +218,7 @@
             if(Input.val() == default_Value) Input.val("");
                 });*/
         jQuery('#fish-search-form .auto-submit').change(function () {
-            alert('here');
+
             submitForm(1)
         });
         jQuery('input[name=filter1]:checked + label').addClass('selected-radio-label');
