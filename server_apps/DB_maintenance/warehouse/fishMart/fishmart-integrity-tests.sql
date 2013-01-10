@@ -12,7 +12,7 @@ unload to genotypeGenoxAvailable
   select count(*) as counter
   from fish_annotation_search_temp
   where fas_genotype_group is null and fas_genox_group is null
-  and fas_geno_name != 'F1 Pool';
+  and fas_geno_name != "";
 
 TEST (genotypeGenoxAvailable > 0) '$x records are missing both a genotype and a genox_group';
 
