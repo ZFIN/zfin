@@ -100,14 +100,3 @@ unload to fasFeatureGroupCharLengthExceeded
 
 TEST (fasFeatureGroupCharLengthExceeded > 0)'there are fish with fas_feature_group longer than the lvarchar field restriction of 5000 = $x > 0';
 
--- 12 -------------------------------------------------------------------------------------------------------------------
-
-unload to checkAllTablesConstraintsAreEnabled
-
-SELECT count(*) as counter
-FROM systables, sysobjstate
-WHERE systables.tabid = sysobjstate.tabid
-AND sysobjstate.objtype = "C"
-AND sysobjstate.state = "D";
-
-TEST (checkAllTablesConstraintsAreEnabled > 0)'there are tables with disabled constraints! Run SQL in case 8968  = $x > 0';
