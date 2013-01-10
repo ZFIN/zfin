@@ -1055,7 +1055,13 @@ sub loadEmptyTables($$)
 	  while($line = <LSAL>)
 	  {
 	    @lszero = split(' ',$line);
-	    push(@zero_size_load_tables, $lszero[8]);
+	    if (-s "$unload_path$lszero[8]") 
+	    
+#	    print "$unload_path/$lszero[8] - $zsize \n";
+
+	    {
+	      push(@zero_size_load_tables, $lszero[8]);
+	    }
 	  }
 	  close(LSAL);
 
@@ -1237,6 +1243,9 @@ else {
     }
 }
 
+loadEmptyTables( $dbName, $inputDir) ;
+
+exit;
 
 logMsg("Dropping old database (if it exists)...");
 dropDb($dbName);
@@ -1306,10 +1315,10 @@ if (! $globalErrorCount) {
   print(STDOUT "WARNING!!!!  behavior in your web site, and the ire of all\n");
   print(STDOUT "WARNING!!!!  your coworkers.\n\n");
 
-  if ($dbName ne "mirrordb") {
-      system("/bin/rm -rf $sharedTmpFile");
-      system("/bin/rm -r $globalTmpDir");
-  }
+  
+  system("/bin/rm -rf $sharedTmpFile");
+  system("/bin/rm -r $globalTmpDir");
+  
 }
 else {
     &dropLockFile();
