@@ -33,9 +33,9 @@ load from  featuresnotsubmitted.unl insert into featuresnotsubmitted;
 --insert into new table to load delete features
 !echo 'insert deleted features to new withdrawn_data table'
 
-insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select feat_zdb_id, 'ZDB-PUB-121121-1', "deleted b/c not submitted in 2012-10 B/L load" from featuresnotsubmitted;
+insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select feat_zdb_id, 'ZDB-PUB-121121-2', "deleted b/c not submitted in 2012-10 B/L load" from featuresnotsubmitted;
  
-insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select dblink_zdb_id, 'ZDB-PUB-121121-1', "deleted b/c not submitted in 2012-10 B/L load" from db_link, featuresnotsubmitted where dblink_linked_recid=feat_zdb_id;
+insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select dblink_zdb_id, 'ZDB-PUB-121121-2', "deleted b/c not submitted in 2012-10 B/L load" from db_link, featuresnotsubmitted where dblink_linked_recid=feat_zdb_id;
  
 delete from one_to_one_accession
 where ooa_feature_zdb_id in (select feat_zdb_id from featuresnotsubmitted);
@@ -75,7 +75,7 @@ order by geno_display_name;
 !echo 'load deleted genotypes into zdb_replaced_data'
 insert into zdb_replaced_data (zrepld_old_zdb_id,zrepld_new_zdb_id) select bl_geno_id, 'ZDB-TGCONSTRCT-070117-175' from bl_genotype;
 
-insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select bl_geno_id, 'ZDB-PUB-121121-1', "deleted  B/L genotype" from bl_genotype;
+insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select bl_geno_id, 'ZDB-PUB-121121-2', "deleted  B/L genotype" from bl_genotype;
 
 delete from zdb_active_data
 where exists (select bl_geno_id from bl_genotype where zactvd_zdb_id=bl_geno_id);
