@@ -8,7 +8,7 @@
               failonerror="true" maxmemory="1024M">
             <classpath refid="classpath"/>
             <arg value="-unloadDirectory"/>
-            <arg value="/Volumes/research/zunloads/databases/trunkdb"/>
+            <arg value="/research/zunloads/databases/trunkdb"/>
             <arg value="-tableNames"/>
             <arg value="anatomy_item"/>
             <arg value="-entityId"/>

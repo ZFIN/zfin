@@ -61,6 +61,11 @@
         <echo message=":UNIT TESTS SUCCESSFUL:"/>
     </target>
 
+    <target name="test-serial" depends="compile,build-tests" description="Unit tests.">
+        <runTest testclass="org.zfin.ontology.OntologySerializationTest" outfile="${unitTestFile}" verbose="true"/>
+        <echo message=":UNIT TESTS SUCCESSFUL:"/>
+    </target>
+
     <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
         <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
         <runTest testclass="org.zfin.infrastructure.EnumValidationTest" outfile="$validate-test" verbose="false"/>
