@@ -29,6 +29,7 @@ public class GenotypeDetailController {
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+    private String found;
 
 
     @RequestMapping(value = {
@@ -37,6 +38,7 @@ public class GenotypeDetailController {
     }
     )
     public String getGenotypeDetail(@RequestParam String zdbID, Model model) {
+
         LOG.debug("Start Genotype Detail Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
         if (genotype == null) {
@@ -44,9 +46,19 @@ public class GenotypeDetailController {
             if (replacedZdbID != null) {
                 LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
                 genotype = mutantRepository.getGenotypeByID(replacedZdbID);
+                found="true";
             }
+                else{
+                String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
+                if (newZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
+                     found="true";
+                    return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+
+                }
+                }
         }
-        if (genotype == null) {
+        if (genotype == null && found!="true" && found!=null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }

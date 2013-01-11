@@ -250,6 +250,15 @@
         <property name="oldName" column="zrepld_old_name"/>
     </class>
 
+    <class name="org.zfin.infrastructure.WithdrawnZdbID" table="withdrawn_data">
+        <composite-id>
+            <key-property name="wdoldZdbID" column="wd_old_zdb_id"/>
+            <key-property name="wdnewZdbID" column="wd_new_zdb_id"/>
+        </composite-id>
+
+
+    </class>
+
     <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM">
         <cache usage="read-only"/>
         <id name="zdbID" type="string">

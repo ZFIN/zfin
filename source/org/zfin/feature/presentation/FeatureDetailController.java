@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.publication.presentation.FigurePresentation;
+import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
 //@RequestMapping("/feature") // already provided in the context
 public class FeatureDetailController {
     private static final Logger LOG = Logger.getLogger(FeatureDetailController.class);
+    private static final String uri = "?MIval=aa-pubview2.apg&OID=";
 
     private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
@@ -60,10 +64,15 @@ public class FeatureDetailController {
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
         if (feature == null) {
+            String ftr=featureRepository.getFeatureByIDInTrackingTable(zdbID);
+            if (ftr!=null) {
+            return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+            }
+            else{
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-
+        }
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
         form.setFeature(feature);

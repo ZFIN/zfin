@@ -1005,6 +1005,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         return null;
     }
+    public String getNewZdbID(String wdoldZdbID) {
+        List<WithdrawnZdbID> replacedAccessionList =
+                (List<WithdrawnZdbID>) HibernateUtil.currentSession()
+                        .createCriteria(WithdrawnZdbID.class)
+                        .add(Restrictions.eq("wdoldZdbID", wdoldZdbID))
+                        .list();
+        if (replacedAccessionList != null && replacedAccessionList.size() == 1) {
+            return replacedAccessionList.get(0).getWdnewZdbID();
+        } else if (replacedAccessionList == null) {
+            logger.warn("Replacement list is null for zdbID: " + wdoldZdbID);
+        } else if (replacedAccessionList.size() > 1) {
+            logger.error("Replacement list has non-unique replacements: " + replacedAccessionList.size() + " for zdbID: " + wdoldZdbID);
+        }
+        return null;
+    }
 
     /**
      * Execute a sql statement through straight JDBC call.

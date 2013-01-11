@@ -47,12 +47,21 @@ public class FishDetailController {
         fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
 
         Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
-        if (fish == null)
-            return LookupStrings.idNotFound(model, fishID);
+        if (fish == null)    {
+            String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishID);
+           if (newZdbID != null) {
+            LOG.debug("found a replaced zdbID for: " + fishID + "->" + newZdbID);
 
+            return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+           }
+               else{
+            return LookupStrings.idNotFound(model, fishID);
+           }
+        }
         if (fish.getGenotype() != null && fish.getMorpholinos().size() == 0) {
             return genotypeDetailController.getGenotypeDetail(fish.getGenotypeID(), model);
         }
+
 
         FishBean form = new FishBean();
         form.setFish(fish);

@@ -324,6 +324,7 @@ public interface InfrastructureRepository {
     int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID);
 
     String getReplacedZdbID(String oldZdbID);
+    String getNewZdbID(String withdrawnZdbID);
 
     /**
      * Execute a sql statement through straight JDBC call.
