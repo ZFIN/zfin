@@ -72,8 +72,7 @@ where geno_zdb_id = bl_geno_id
 order by geno_display_name;
 
 
-!echo 'load deleted genotypes into zdb_replaced_data'
-insert into zdb_replaced_data (zrepld_old_zdb_id,zrepld_new_zdb_id) select bl_geno_id, 'ZDB-TGCONSTRCT-070117-175' from bl_genotype;
+!echo 'load deleted genotypes into new withdrawn table'
 
 insert into withdrawn_data(wd_old_zdb_id, wd_new_zdb_id, wd_display_note) select bl_geno_id, 'ZDB-PUB-121121-2', "deleted  B/L genotype" from bl_genotype;
 
