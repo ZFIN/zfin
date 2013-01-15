@@ -106,17 +106,17 @@
 # Who we should send db check to.
 <!--|CURATORS_AT_ZFIN|-->       curators\@zfin.org
 <!--|NOMEN_COORDINATOR|-->      van_slyke\@cs.uoregon.edu
-<!--|COUNT_VEGA_ERR|-->		tomc\@cs.uoregon.edu	
+<!--|COUNT_VEGA_ERR|-->		bsprunge\@cs.uoregon.edu	
 <!--|COUNT_VEGA_OUT|-->		sramacha\@uoneuro.uoregon.edu
 <!--|COUNT_THISSE_VEGA_ERR|-->		bsprunge\@cs.uoregon.edu	
 <!--|COUNT_THISSE_VEGA_OUT|-->		van_slyke\@uoneuro.uoregon.edu
-<!--|COUNT_ZGC_ERR|-->		tomc\@cs.uoregon.edu	
+<!--|COUNT_ZGC_ERR|-->		bsprunge\@cs.uoregon.edu	
 <!--|COUNT_ZGC_OUT|-->		sramacha\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|COUNT_PATO_ERR|-->		staylor\@cs.uoregon.edu	
 <!--|COUNT_PATO_OUT|-->		van_slyke\@uoneuro.uoregon.edu
 
 <!--|VALIDATION_EMAIL_MORPHOLINO|-->		staylor\@cs.uoregon.edu bayrakt@uoneuro.uoregon.edu
-<!--|VALIDATION_EMAIL_AD|-->		tomc\@cs.uoregon.edu	
+<!--|VALIDATION_EMAIL_AD|-->		bsprunge\@cs.uoregon.edu	
 <!--|VALIDATION_EMAIL_XPAT|-->		bsprunge\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_LINKAGE|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_OTHER|-->		informix\@cs.uoregon.edu
