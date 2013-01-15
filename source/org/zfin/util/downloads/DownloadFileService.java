@@ -45,7 +45,7 @@ public class DownloadFileService extends ArchiveService {
     public DownloadFileService() {
         // hard-coded location of the root download archive
         // one archive per instance
-        rootArchiveDirectory = "/research/zunloads/download-files/" + ZfinPropertiesEnum.DB_NAME.toString();
+        rootArchiveDirectory = ZfinPropertiesEnum.DOWNLOAD_DIRECTORY.toString();
     }
 
     // index single table up-to-date
