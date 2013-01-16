@@ -12,10 +12,18 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
       raise exception -746, 0, 
 	'FAIL!! abbreviation must exactly equal name for marker type ' || vMrkrType ;
     end if;
+    if exists (select 'x'
+		from marker_Type_group_member
+		where mtgrpmem_mrkr_type_group = 'ABBREV_EQ_NAME_UPPER'
+		and mtgrpmem_mrkr_Type = vMrkrType
+		and UPPER(vMrkrName) != vMrkrAbbrev) then     
+        raise exception -746, 0, 
+    	  'FAIL!! abbreviation must be upper case for marker type ' || vMrkrType ;
+    end if;
   else
     if exists (select 'x'
 		from marker_Type_group_member
-		where mtgrpmem_mrkr_type_group = 'CONSTRUCT'
+		where mtgrpmem_mrkr_type_group ='CONSTRUCT'
 		and mtgrpmem_mrkr_Type = vMrkrType)
 	 then 
 		let vOK = 't' ;
@@ -29,5 +37,13 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
      end if ;
     end if;
   end if;
+
+
+  if (vMrkrName[1,11] == 'WITHDRAWN: '  OR  vMrkrAbbrev[1,11] == 'WITHDRAWN: ' )
+     then
+
+      raise exception -746, 0,
+	'FAIL!! No space following : for WITHDRAWN ' || vMrkrName ;
+  end if ;
 
 end procedure;
