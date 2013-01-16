@@ -304,6 +304,31 @@ marker table.
             theform.newmrkrDisplaySequence.value = theform.newmrkrReportedSequence.value;
           }
 
+        if (theform.marker_type.value == "MRPHLNO")
+        {                  
+           var targetGene = document.getElementById("newmrkrTargetGene");
+           
+           if (isWhitespace(targetGene.value))
+           {
+              var goaheadNoTragetGene = window.confirm("No target gene is associated with this record. Click ok to proceed, or cancel to resubmit.");
+              if (!goaheadNoTragetGene) 
+              {
+                 return false;
+              }
+           }
+           
+           if (isWhitespace(theform.newmrkrReportedSequence.value)) 
+           {
+              var goaheadNoReportedSeq = window.confirm("No target sequence is associated with this record. Click ok to proceed, or cancel to resubmit.");
+              if (!goaheadNoReportedSeq) 
+              {
+                 return false;
+              }          
+           }
+           
+
+           
+        }
         
         return true;
       }
