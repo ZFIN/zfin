@@ -14,16 +14,13 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../..
+TOP = ../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/Reports
+TARGETDIR = $(TARGETROOT)/server_apps/Reports/AnnualStats
 
-SUBDIRS = ZGC Vega PATO GO Nomenclature AnnualStats
-
-
-GENERICS = Count.pl elsevier_report.pl
-STATICS  =  
+GENERICS = 
+STATICS  = stats.sql
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -35,6 +32,5 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-run : $(TARGETDIR)/Count.pl
-	$(TARGETDIR)/Count.pl
+
 
