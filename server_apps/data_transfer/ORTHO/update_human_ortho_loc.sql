@@ -57,8 +57,9 @@ select count(distinct eclsm_mim) from ent_chr_loc_sym_mim where eclsm_mim is not
 ! echo "many OMMIN gene links are NULL?"
 select count (*) from ent_chr_loc_sym_mim where eclsm_mim is  NULL;
 
-
-! echo "Are there any OMIM in ZFIN that are not for (current) genes?"
+! echo "  "
+! echo "############################################################"
+! echo "REPORT -- Are there any OMIM in ZFIN that are not for (current) genes?"
 select c_gene_id[1,25] gene, dblink_acc_num[1,15] nongene_omim
  from db_link join orthologue on dblink_linked_recid == zdb_id
  where dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-040412-25'  -- OMIM
@@ -352,7 +353,9 @@ select count(*) hum_loc_not_null
   and ortho_position is not NULL
 ;
 
-! echo "what zfin Human symbols are not in the current Entrez Gene set?"
+! echo "  "
+! echo "############################################################"
+! echo "REPORT -- what zfin Human symbols are not in the current Entrez Gene set?"
 select c_gene_id[1,25] gene,ortho_abbrev tsym from orthologue
  where organism == 'Human'
  and not exists (
@@ -362,8 +365,11 @@ select c_gene_id[1,25] gene,ortho_abbrev tsym from orthologue
 	select 't' from tmp_dup where ortho_abbrev == tsym
 );
 
+! echo "              "
 
-! echo "check if the Entrez gene accessions agree with Human symbol"
+! echo "  "
+! echo "############################################################"
+! echo "REPORT -- the following human orthology symbols stored at ZFIN may have been updated:"
 select c_gene_id[1,25] gene, ortho_abbrev[1,15] old_sym, eclsm_sym[1,20] new_sym, eclsm_ent[1,10] entrez_id
  from db_link, orthologue, ent_chr_loc_sym_mim
  where dblink_linked_recid ==  zdb_id
@@ -373,10 +379,12 @@ select c_gene_id[1,25] gene, ortho_abbrev[1,15] old_sym, eclsm_sym[1,20] new_sym
    and ortho_abbrev != eclsm_sym
 ;
 
+! echo "              "
 
-
-! echo "find othhologs in ZFIN that are missing a link to Entrez gene"
-select  c_gene_id[1,25] gene, eclsm_ent[1,15] entrez_id, eclsm_sym new_sym
+! echo "  "
+! echo "############################################################"
+! echo "REPORT -- find human othhologs in ZFIN that are missing a link to Entrez gene"
+select  c_gene_id gene, eclsm_sym human_orthology, eclsm_ent missed_entrez_id
  from orthologue, ent_chr_loc_sym_mim
  where organism = "Human"
    and not exists (
@@ -386,6 +394,7 @@ select  c_gene_id[1,25] gene, eclsm_ent[1,15] entrez_id, eclsm_sym new_sym
 ) and ortho_abbrev == eclsm_sym
 ;
 
+! echo "              "
 
 -- gives 13 false positives,  defer it to another bugz
 -- most likely b/c deleted while isolating for chr/loc
@@ -402,6 +411,50 @@ select  c_gene_id[1,25] gene, eclsm_ent[1,15] entrez_id, eclsm_sym new_sym
 --  order by entrez_id
 --;
 
+! echo "  "
+! echo "############################################################"
+! echo "REPORT -- find human othhologs in ZFIN that are missing OMIM number"
+select  c_gene_id gene, eclsm_sym human_orthology, eclsm_mim missed_OMIM
+ from orthologue, ent_chr_loc_sym_mim
+ where organism = "Human"
+   and not exists (
+	select 't' from db_link entrez
+	 where entrez.dblink_linked_recid ==  zdb_id
+	   and entrez.dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-040412-25' -- Entrez
+) and ortho_abbrev == eclsm_sym
+and eclsm_mim is not null
+;
+
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- list of human orthology stored at ZFIN that may have wrong OMIM number:"
+select c_gene_id gene, ortho_abbrev orthology, dblink_acc_num omim_at_ZFIN, eclsm_mim omim_at_OMIM
+  from db_link, orthologue, ent_chr_loc_sym_mim
+ where dblink_linked_recid = zdb_id
+   and ortho_abbrev = eclsm_sym
+   and organism = "Human"
+   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25"
+   and dblink_acc_num <> eclsm_mim
+   group by c_gene_id, ortho_abbrev, dblink_acc_num, eclsm_mim
+   order by c_gene_id, ortho_abbrev;
+
+! echo "              "
+
+
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- list of human orthology stored at ZFIN that may have wrong NCBI Gene Id:"
+select c_gene_id gene, ortho_abbrev orthology, dblink_acc_num acc_at_ZFIN, eclsm_ent acc_at_NCBI
+  from db_link, orthologue, ent_chr_loc_sym_mim
+ where dblink_linked_recid = zdb_id
+   and ortho_abbrev = eclsm_sym
+   and organism = "Human"
+   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-27"
+   and dblink_acc_num <> eclsm_ent
+   group by c_gene_id, ortho_abbrev, dblink_acc_num, eclsm_ent
+   order by c_gene_id, ortho_abbrev;
+
+! echo "              "
 
 drop table omim_gene;
 drop table tmp_dup;

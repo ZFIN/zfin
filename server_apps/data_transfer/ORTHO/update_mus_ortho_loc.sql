@@ -195,14 +195,17 @@ update chr_loc_symw set clsw_loc = clsw_loc || " cM"
  where clsw_loc not in ('N/A','syntenic');
 
 ! echo "done prepping the input"
-! echo "find existing mouse orthologs with withdrawn symbols. show curators?"
-select c_gene_id[1,25] gene, ortho_abbrev symbol
+! echo "              "
+! echo "find existing mouse orthologs with withdrawn symbols and put them into temp table tmp_mouse_sym_with_prob"
+! echo "              "
+select c_gene_id gene, ortho_abbrev symbol
  from orthologue, chr_loc_symw
  where organism == "Mouse"
    and ortho_abbrev == clsw_sym
+   into temp tmp_mouse_sym_with_prob with no log
 ;
 
-! echo "Do incomming withdrawn accessions have different gene symbols"
+! echo "Do incoming withdrawn accessions have different gene symbols"
 select ortho_abbrev old_sym,  clsw_sym new_sym
  from chr_loc_symw, db_link, orthologue
  where dblink_linked_recid ==  zdb_id
@@ -313,29 +316,45 @@ select count(*) mus_loc_not_null
   and ortho_position is not NULL
 ;
 
-! echo "what zfin mouse symbols are not in the current MGI set?"
-select c_gene_id[1,25] gene, ortho_abbrev tsym
+! echo "what zfin mouse symbols are not in the current MGI set? insert them into temp table tmp_mouse_sym_with_prob"
+insert into tmp_mouse_sym_with_prob
+select c_gene_id gene, ortho_abbrev symbol
  from orthologue
  where organism == 'Mouse'
  and not exists (
 	select 't' from chr_loc_sym
 	  where ortho_abbrev == cls_sym
-)  into temp tmp_sym with no log
+)
 ;
 
-select * from tmp_sym order by 1;
+--select * from tmp_sym order by 1;
 
-! echo "which are not in the withdrawn set either?"
 ! echo "symbols ending in '-ps' are pseudo genes not in this update"
-! echo "but someone might want to check one them once and a while"
-select gene,tsym
- from tmp_sym where not exists (
-	select 1 from chr_loc_symw
-	 where tsym == clsw_sym
-)order by 1;
 
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- combined list of mouse orthology symbols stored at ZFIN that may be wrong:"
+select distinct gene, symbol
+ from tmp_mouse_sym_with_prob
+ group by gene,symbol
+ order by gene,symbol;
+
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- list of mouse orthology stored at ZFIN that may have wrong MGI Id:"
+select c_gene_id gene, ortho_abbrev orthology, "MGI:"||dblink_acc_num acc_at_ZFIN, cls_mgi acc_at_MGI
+  from db_link, orthologue, chr_loc_sym
+ where dblink_linked_recid = zdb_id
+   and ortho_abbrev = cls_sym
+   and organism = "Mouse"
+   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-24"
+   and dblink_acc_num <> cls_mgi[5,15]
+   group by c_gene_id, ortho_abbrev, dblink_acc_num, cls_mgi
+   order by c_gene_id, ortho_abbrev;
+
+! echo "              "
 drop table chr_loc_symw;
-drop table tmp_sym;
+drop table tmp_mouse_sym_with_prob;
 drop table chr_loc_sym;
 
 

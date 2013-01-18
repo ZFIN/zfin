@@ -57,7 +57,7 @@ select c_gene_id[1,25] gene, ortho_abbrev fly_sym, dblink_acc_num old_entrez,cfs
    and ortho_abbrev == cfse_sym
 ;
 
-! echo "any Fruit fly ortho in ZFIN missing a entrez id?"
+! echo "any Fruit fly ortho in ZFIN missing an entrez id?"
 
 select c_gene_id[1,25] gene, ortho_abbrev fly_symbol, cfse_eg missing_entrez
  from orthologue, chr_fb_sym_eg
@@ -102,6 +102,38 @@ update orthologue set ortho_chromosome = (
 ---------------------------------------
 --  location are ommited delibertly  --
 ---------------------------------------
+
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- list of fly orthology stored at ZFIN that may have wrong flybase Id:"
+select c_gene_id gene, ortho_abbrev orthology, dblink_acc_num acc_at_ZFIN, cfse_fb acc_at_FlyBase
+  from db_link, orthologue, chr_fb_sym_eg
+ where dblink_linked_recid = zdb_id
+   and ortho_abbrev = cfse_sym
+   and organism = "Fruit fly"
+   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-21"
+   and dblink_acc_num <> cfse_fb
+   group by c_gene_id, ortho_abbrev, dblink_acc_num, cfse_fb
+   order by c_gene_id, ortho_abbrev;
+
+! echo "              "
+
+
+! echo "              "
+! echo "#########################################################################"
+! echo "REPORT -- list of fly orthology stored at ZFIN that may have wrong NCBI Gene Id:"
+select c_gene_id gene, ortho_abbrev orthology, dblink_acc_num NCBI_acc_at_ZFIN, cfse_eg NCBI_acc_at_FlyBase
+  from db_link, orthologue, chr_fb_sym_eg
+ where dblink_linked_recid = zdb_id
+   and ortho_abbrev = cfse_sym
+   and organism = "Fruit fly"
+   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-23"
+   and dblink_acc_num <> cfse_eg
+   group by c_gene_id, ortho_abbrev, dblink_acc_num, cfse_eg
+   order by c_gene_id, ortho_abbrev;
+
+! echo "              "
+
 
 drop table chr_fb_sym_eg;
 

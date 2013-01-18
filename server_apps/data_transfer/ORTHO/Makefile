@@ -19,9 +19,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ORTHO
 
-GENERICS = update_orthology.sh
-STATICS = update_fly_ortho_loc.sql update_human_ortho_loc.sql \
-	update_mus_ortho_loc.sql
+GENERICS = update_orthology.sh parseMGI.pl parseHumanData.pl emailOrthologyReports.pl
+STATICS = update_fly_ortho_loc.sql update_human_ortho_loc.sql update_mus_ortho_loc.sql
 #update_yeast_ortho_loc.sql
 
 

@@ -41,73 +41,28 @@ PATH="/private/bin:/private/apps/Informix/informix/bin:/private/ZfinLinks/Common
 export INFORMIXSERVER INFORMIXSQLHOSTS INFORMIXDIR ONCONFIG DBNAME PATH
 
 echo "###############################################################"
-regen="false"
-# get a sense of the data loaded 'last time'
-prior="`ls -l ./$mouse`"
 echo ""
 echo "Begin Mouse update `date +'%Y-%m-%d %H:%M:%S'`"
-wget -q --timestamping "ftp://ftp.informatics.jax.org/pub/reports/$mouse"
-geterr=$?
-post="`ls -l ./$mouse`"
 
-if [ ! -f $mouse -o  $geterr -eq 0 -a "$prior" != "$post" ] ; then
-	echo "Mouse has a new datafile"
-	echo $prior
-	echo $post
-	echo ""
-	# Withdrawn rows
-	cut -f 1-5,7 $mouse |grep "	Gene" |grep "	W" |cut -f1-4 |tr -d ' ' |sort -u > mus_chr_loc_sym_W.tab
-	# Offical & Interm rows
-	cut -f 1-5,7 $mouse |grep "	Gene" |grep  "	[OI]" |cut -f1-4 |tr -d ' ' |sort -u >  mus_chr_loc_sym.tab
-	if [ $? -eq 0 ] ; then
-		echo "$mouse is fetched and parsed into 'mus_chr_loc_sym.tab' `date +'%Y-%m-%d %H:%M:%S'`"
-		echo "Running 'update_mus_ortho_loc.sql'"
-		dbaccess -a $DBNAME update_mus_ortho_loc.sql
-		regen="true"
-	else
-		echo "ERROR parsing \'$mouse\'  NOT running 'update_mus_ortho_loc.sql' `date +'%Y-%m-%d %H:%M:%S'`"
-	fi
-fi
+parseMGI.pl
 
 echo "Finish Mouse update `date +'%Y-%m-%d %H:%M:%S'`"
 echo ""
 echo "###############################################################"
 echo ""
-###
-### note: leave in tab separated format as 'location' uses pipes sometimes.
-###
 
 
-prior="`ls -l ./$human`"
 echo "Begin Human update `date +'%Y-%m-%d %H:%M:%S'`"
-wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/$human"
-geterr=$?
-post="`ls -l ./$human`"
 
 # use to distinguish gene omim from phenotype omin
 # wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/mim2gene_partial"
+rm -f mim2gene.tab
+rm -f mim2gene.txt
 wget -q --timestamping "ftp://anonymous:tomc%40cs%2Euoregon%2Eedu@grcf.jhmi.edu/OMIM/mim2gene.txt"
+grep gene mim2gene.txt | cut -f1,3 | grep -v "-"> mim2gene.tab
 
-if [ ! -f $human -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
-	echo "Human has a new datafile"
-	echo $prior
-	echo $post
-	echo ""
-	grep gene mim2gene.txt | cut -f1,3 | grep -v "-"> mim2gene.tab
-	zcat ${human} | cut -f 2,3,6,7,8 | \
-	nawk '{n=split($3,dbid,"[:|]"); i=1; omim=""; \
-		while(i < n && "MIM" != dbid[i]){i+=2} omim=dbid[1+i]; \
-		printf("%s\t%s\t%s\t%s\t%s\t\n",$1,$4,$5,$2,omim)}' |\
-	sort -u > hum_chr_loc_sym_mim.tab
-	if [ 0 -eq $? ]; then
-		echo "$human fetched and parsed into 'hum_chr_loc_sym_mim.tab' `date +'%Y-%m-%d %H:%M:%S'`"
-		echo "Running 'update_human_ortho_loc.sql'"
-		dbaccess -a $DBNAME update_human_ortho_loc.sql
-		regen="true"
-	else
-		echo "ERROR parsing \'$human\'  NOT running 'update_human_ortho_loc.sql' `date +'%Y-%m-%d %H:%M:%S'`"
-	fi
-fi
+parseHumanData.pl
+
 echo "Finish Human update `date +'%Y-%m-%d %H:%M:%S'`"
 echo ""
 echo "###############################################################"
@@ -124,16 +79,10 @@ echo ""
 ### so we will have to delete older versions
 
 echo "Begin FLY update `date +'%Y-%m-%d %H:%M:%S'`"
-prior="`ls -lt ${fly} | head -1`"
+rm -f dmel-all-gene_extended2000-r*.fasta.gz
+rm -f fly_chr_id_sym_eg.tab
 wget -q --timestamping ftp://ftp.flybase.net/genomes/dmel/current/fasta/${fly}
-geterr=$?
-post="`ls -lt ${fly} | head -1`"
 
-if [ ! -f ${fly} -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
-#if [ 1 ] ; then
-	echo "Fly has a new datafile"
-	echo "$prior"
-	echo "$post"
 	echo ""
 	### if there are more than one $fly files then only keep the most recent
 	find . -name ${fly} ! -name `ls -1t ${fly}|head -1` -exec rm -f {} \;
@@ -144,20 +93,24 @@ if [ ! -f ${fly} -o $geterr -eq 0 -a "$prior" != "$post" ] ; then
 	if [ 0 -eq $? ]; then
 		echo "${fly} fetched and parsed into 'fly_chr_id_sym_eg.tab' `date +'%Y-%m-%d %H:%M:%S'`"
 		echo "Running 'update_fly_ortho_loc.sql'"
-		dbaccess -a $DBNAME update_fly_ortho_loc.sql
-		regen="true"
+		rm -f updateFlyOrthologyLog1
+		rm -f updateFlyOrthologyLog2
+		dbaccess -a $DBNAME update_fly_ortho_loc.sql >updateFlyOrthologyLog1 2> updateFlyOrthologyLog2
 	else
 		echo "ERROR parsing ${fly} NOT running 'update_fly_ortho_loc.sql' `date +'%Y-%m-%d %H:%M:%S'`"
 	fi
-fi
+
 
 echo "Finish fly update `date +'%Y-%m-%d %H:%M:%S'`"
 echo ""
 echo "###############################################################"
 
-# note this regen generates alot of locks (~149,192)
+# send the logs/reports via email
+emailOrthologyReports.pl
 
-if [ $regen != "false" ] ; then
-	echo "running Regen ortho edvidence display, should be zero"
-	echo 'execute function regen_oevdisp();' | dbaccess $DBNAME
-fi
+# note this regen generates a lot of locks (~149,192)
+
+echo "running Regen ortho edvidence display, should be zero"
+echo 'execute function regen_oevdisp();' | dbaccess $DBNAME
+
+
