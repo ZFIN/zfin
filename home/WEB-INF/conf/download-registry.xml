@@ -2057,6 +2057,36 @@
             <Column id="4">Genomic Feature Abbrev</Column>
          </Download>
 
+        <Download private="true" orderIndex="3">
+            <Name>
+                fh Alleles used in publications
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description> FB Case 9235</Description>
+            <WikiLink></WikiLink>
+            <FileName>fhAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'fh%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev
+                 ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+         </Download>
+
         <Download private="true" orderIndex="10">
             <Name>
                 Vega Transcript
