@@ -220,11 +220,11 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     }
 
     public String getRelationshipType() {
-        return relationshipType;
+        return relationshipType.intern();
     }
 
     public void setRelationshipType(String relationshipType) {
-        this.relationshipType = relationshipType;
+        this.relationshipType = relationshipType.intern();
     }
 
     public int getSignificance() {

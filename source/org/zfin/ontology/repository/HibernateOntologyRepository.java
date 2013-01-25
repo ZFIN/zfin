@@ -116,7 +116,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 if (subsets == null) {
                     subsets = new TreeSet<String>();
                 }
-                subsets.add(result[12].toString());
+                subsets.add(result[12].toString().intern());
                 termDTO.setSubsets(subsets);
             }
 

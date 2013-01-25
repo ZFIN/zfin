@@ -2,13 +2,16 @@ package org.zfin.util;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -83,6 +86,45 @@ public class ZfinStringUtilsTest {
         assertTrue(whiteSpaces.contains(4));
         assertTrue(whiteSpaces.contains(10));
         assertTrue(whiteSpaces.contains(14));
+    }
+
+    @Test
+    public void interningString() {
+        List<TermDTO> list = new ArrayList<TermDTO>(100000);
+        for (int index = 0; index < 100000; index++) {
+            TermDTO term = new TermDTO();
+            term.setRelationshipType("is_a");
+            list.add(term);
+        }
+        assertTrue(list.size() > 1000);
+    }
+
+    @Test
+    public void interningStringSimple() {
+        List<String> list = new ArrayList<String>(100000);
+        for (int index = 0; index < 100000; index++) {
+            list.add(new String("is_a"));
+        }
+        assertTrue(list.size() > 1000);
+        // two strings are equal by equals()
+        assertTrue(list.get(0).equals(list.get(1)));
+
+        // the two strings are not equal reference
+        assertFalse(list.get(0) == list.get(1));
+    }
+
+    @Test
+    public void interningStringSimplePool() {
+        List<String> list = new ArrayList<String>(100000);
+        for (int index = 0; index < 100000; index++) {
+            list.add((new String("is_a")).intern());
+        }
+        assertTrue(list.size() > 1000);
+        // two strings are equal by equals()
+        assertTrue(list.get(0).equals(list.get(1)));
+
+        // the two strings are not equal reference
+        assertTrue(list.get(0) == list.get(1));
     }
 
 
