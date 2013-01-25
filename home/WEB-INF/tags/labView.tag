@@ -15,6 +15,7 @@
 <%@ attribute name="hasCoPi" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
 <%@ attribute name="noPrefixes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
+<%@ attribute name="featuresForTheLab" type="java.util.Collection" required="true" %>
 
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
@@ -41,8 +42,8 @@
                 <c:if test="${hasCoPi}">
                     <tr>
                         <th>Co-PI:</th>
-                            <zfin2:listMembers members="${members}" only="2" suppressTitle="true" suffix="<br>"/>
                         <td>
+                            <zfin2:listMembers members="${members}" only="2" suppressTitle="true" suffix="<br>"/>
                         </td>
                     </tr>
                 </c:if>
@@ -120,7 +121,7 @@
     }
 </script>
 
-<c:if test="${!noPrefixes}">
+<c:if test="${!empty featuresForTheLab}">
    <a id="showAlleleLink" href="javascript:;" onclick="showAlleles('${lab.zdbID}');"><img src="/images/plus-13.png" style="border:none;"></a>
 </c:if>
 
