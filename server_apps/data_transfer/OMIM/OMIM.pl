@@ -1,6 +1,9 @@
 #!/private/bin/perl
 
 # OMIM.pl
+# parses OMIM data on mim2gene.txt and genemap files
+# does some checking for the OMIM data (since at first I doubled why there were only 5K+ records inserted while there are 10K+ gene MIM numbers at ZFIN)
+# calls loadOMIM.sql to do the loading with pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInsertedIntoOmimPhenotypeTable.txt
 # 
 
 use DBI;
@@ -151,6 +154,7 @@ $cur->bind_columns(\$omimPhenotypeName,\$zdbGeneId);
 $ctOMIMphenotypeNamesAtZFIN = 0;
 %OMIMphenotypeNamesAtZFIN = ();
 while ($cur->fetch()) {
+   ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
    $OMIMphenotypeNamesAtZFIN{$omimPhenotypeName} = $zdbGeneId;
    $ctOMIMphenotypeNamesAtZFIN++;
 }
@@ -237,23 +241,26 @@ foreach $line (@lines) {
              $disorder = $disordrTextPlus[0];
              $disorder =~ s/,$//; 
              $disorder =~ s/^\s+//;
-             $disorder =~ s/\s+$//;    
+             $disorder =~ s/\s+$//;
            
              if ($matchedGeneOrGenesFound == 1) {
                foreach $key (keys %ZDBgeneIdOMIMnums) {
+                 ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
                  if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
                    print OMIM "$key|$mimNumGene|$disorder|$phenotypeOMIMnum|\n";
                    $ctInput++;
                  }
                }
              }
-         } elsif ($phenotype =~ m/\s+\([0-9]\)$/) {
+         } elsif ($phenotype =~ m/\s+\([0-9]\)$/) {   ## no phenotype OMIM number
              @disordrTextPlus = split(/\s+\([0-9]\)$/, $phenotype);
              $disorder = $disordrTextPlus[0];
              $disorder =~ s/^\s+//;
              $disorder =~ s/\s+$//;
+             $disorder =~ s/\'/\"/g;
              if ($matchedGeneOrGenesFound == 1) {
                foreach $key (keys %ZDBgeneIdOMIMnums) {
+                 ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication               
                  if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
                    print OMIM "$key|$mimNumGene|$disorder||\n";
                    $ctInput++;
@@ -353,6 +360,8 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3 2> 
 &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","log1","log1");
 
 &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","log2","log2");
+
+&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what have been loaded","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
 
 ### &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","genes With MIM not Found On omim_phenotype table","genesWithMIMnotFoundOnOMIMPtable.txt");
 

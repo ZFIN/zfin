@@ -1,3 +1,9 @@
+
+-- loadOMIM.sql
+-- input file: pre_load_input_omim.txt, which is the parsing result of OMIM.pl
+-- records loaded to OMIM_Phenotype table are dumped to whatHaveBeenInsertedIntoOmimPhenotypeTable.txt for checking
+-- no duplication of omimp_gene_zdb_id and omimp_name
+
 begin work;
 
 {
@@ -23,10 +29,24 @@ create temp table omimPhenotypesAndGenes (
 --!echo 'Load from pre_load_input_omim.txt'
 load from pre_load_input_omim.txt insert into omimPhenotypesAndGenes;
 
-insert into omim_phenotype (omimp_gene_zdb_id, omimp_name, omimp_omim_id) 
+--!echo 'check what have been loaded into the omim_phenotype table'
+unload to whatHaveBeenInsertedIntoOmimPhenotypeTable.txt
  select gene_zdb_id,phenotype,phenotype_omim_id
-   from omimPhenotypesAndGenes;
+   from omimPhenotypesAndGenes
+  where not exists (select "x" from omim_phenotype
+                     where gene_zdb_id = omimp_gene_zdb_id
+                       and phenotype = omimp_name);
 
+-- !echo 'do the actual loading into the omim_phenotype table'
+insert into omim_phenotype (omimp_gene_zdb_id, omimp_name, omimp_omim_id)
+ select gene_zdb_id,phenotype,phenotype_omim_id
+   from omimPhenotypesAndGenes
+  where not exists (select "x" from omim_phenotype
+                     where gene_zdb_id = omimp_gene_zdb_id
+                       and phenotype = omimp_name);
+
+
+--!echo 'check what genes with human ortholog not having disorder records'
 unload to genesWithMIMnotFoundOnOMIMPtable.txt delimiter "	"
  select distinct c_gene_id gene, dblink_acc_num mim
    from orthologue, db_link 
