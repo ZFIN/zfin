@@ -18,10 +18,16 @@
             <include name="*.jar"/>
         </fileset>
     </path>
+	
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
 
     <path id="extended.classpath">
         <path refid="classpath"/>
-        <fileset dir="${env.CATALINA_HOME}/endorsed">
+        <fileset dir="${CATALINA_HOME}/endorsed">
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
@@ -32,12 +38,6 @@
             <include name="log4j.xml"/>
         </fileset>
     </path>
-
-    <taskdef name="loadProperties"
-             classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath" />
-
-    <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
     <target name="init">
         <tstamp/>
