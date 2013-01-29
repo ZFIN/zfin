@@ -5,27 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.GenotypeFigure;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.presentation.GenotypeStatistics;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.ontology.GenericTerm;
-
 
 import java.util.Collections;
 import java.util.HashSet;

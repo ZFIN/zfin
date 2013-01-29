@@ -201,15 +201,16 @@ create dba function "informix".regen_anatomy_tokens() returning integer
     let errorHint = "Anatomy names";
     insert into tokenize_in_temp
         ( tokin_zdb_id, tokin_name )
-      select anatitem_zdb_id, anatitem_name_lower
-        from anatomy_item;
+      select term_zdb_id, lower(term_name)
+        from term
+       where term_ont_id[1,3] = "ZFA";
 
     let errorHint = "Anatomy aliases";
     insert into tokenize_in_temp
         ( tokin_zdb_id, tokin_name )
-      select anatitem_zdb_id, dalias_alias_lower
-        from anatomy_item, data_alias
-        where anatitem_zdb_id = dalias_data_zdb_id;
+      select term_zdb_id, dalias_alias_lower
+        from term, data_alias
+        where term_zdb_id = dalias_data_zdb_id;
 
 
     -- -------------------------------------------------------------------
@@ -309,7 +310,7 @@ create dba function "informix".regen_anatomy_tokens() returning integer
       let errorHint = "anattok_anatitem_zdb_id FK constraint";
       alter table all_anatomy_tokens add constraint
 	foreign key (anattok_anatitem_zdb_id)
-        references anatomy_item
+        references term
         on delete cascade
 	constraint anattok_anatitem_zdb_id_foreign_key;
 

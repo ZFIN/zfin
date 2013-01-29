@@ -1,18 +1,19 @@
 package org.zfin.anatomy;
 
+import org.zfin.ontology.GenericTerm;
 import org.zfin.sequence.DBLink;
 
 /**
  */
 public class AnatomyDBLink extends DBLink {
 
-    private AnatomyItem anatomyItem ;
+    private GenericTerm anatomyItem ;
 
-    public AnatomyItem getAnatomyItem() {
+    public GenericTerm getAnatomyItem() {
         return anatomyItem;
     }
 
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
+    public void setAnatomyItem(GenericTerm anatomyItem) {
         this.anatomyItem = anatomyItem;
     }
 }

@@ -1,6 +1,7 @@
 package org.zfin.anatomy;
 
 import org.junit.Test;
+import org.zfin.ontology.GenericTerm;
 
 import java.io.Serializable;
 
@@ -14,13 +15,13 @@ public class AnatomyItemTest implements Serializable {
 
     @Test
     public void equality() {
-        AnatomyItem one = new AnatomyItem();
+        GenericTerm one = new GenericTerm();
         one.setTermName("root");
 
-        AnatomyItem oneOne = new AnatomyItem();
+        GenericTerm oneOne = new GenericTerm();
         oneOne.setTermName("root");
 
-        AnatomyItem two = new AnatomyItem();
+        GenericTerm two = new GenericTerm();
         two.setTermName("child");
 
         assertEquals("one = one", one, one);

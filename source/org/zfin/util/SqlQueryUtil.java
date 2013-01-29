@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 public class SqlQueryUtil implements SqlQueryKeywords {
 
     private static String newline = System.getProperty("line.separator");
-    protected static String true_newline = newline;
+    protected static final String true_newline = newline;
 
 
     public static String getHumanReadableQueryString(String query) {

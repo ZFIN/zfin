@@ -1,17 +1,17 @@
-<%@ page import="org.zfin.anatomy.AnatomyItem" %>
 <%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="org.zfin.gwt.root.dto.TermDTO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="tagunit" uri="http://www.tagunit.org/tagunit/core"  %>
 <%@ taglib prefix="zfin"    uri="/WEB-INF/tld/zfin-tags.tld"%>
 
 <%
-    List<AnatomyItem> items = new ArrayList<AnatomyItem>();
+    List<TermDTO> items = new ArrayList<TermDTO>();
     AnatomySearchBean bean = new AnatomySearchBean();
-    bean.setAnatomyItems(items);
+    bean.setTerms(items);
 
     AnatomySearchBean beanNull = new AnatomySearchBean();
-    beanNull.setAnatomyItems(null);
+    beanNull.setTerms(null);
 
     pageContext.setAttribute("bean", bean, PageContext.REQUEST_SCOPE);
     pageContext.setAttribute("beanNull", beanNull, PageContext.PAGE_SCOPE);
@@ -23,7 +23,7 @@
 Genes
 </tagunit:expectedResult>
 <tagunit:actualResult>
-<zfin:choice collectionEntity="${bean.anatomyItems}" choicePattern="0#Genes| 1#Gene| 2#Genes" scope="Request" />
+<zfin:choice collectionEntity="${bean.terms}" choicePattern="0#Genes| 1#Gene| 2#Genes" scope="Request" />
 </tagunit:actualResult>
 </tagunit:assertEquals>
 
@@ -32,9 +32,6 @@ Genes
 <tagunit:expectedResult>
 Genes
 </tagunit:expectedResult>
-<tagunit:actualResult>
-<zfin:choice name="beanNull" collection="anatomyItems" choicePattern="0#Genes| 1#Gene| 2#Genes" scope="Page" />
-</tagunit:actualResult>
 </tagunit:assertEquals>
 
 

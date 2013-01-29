@@ -44,6 +44,7 @@
 function processPopupLinks() {
   //for each popup link, create a div to store the popup contents
     jQuery('.popup-link').each( function() {
+        alert('kkklk');
         div_id = randomUniqueID("popup-");
         jQuery(this).attr("rel","#"+div_id);
         div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
@@ -428,7 +429,7 @@ document.write("       <a href=\"/action/fish/search\">Mutants / Morphants / Tg<
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/action/mutant/construct-search\">Constructs</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("      <a href=\"/action/anatomy/anatomy-search\" title=\"Search the zebrafish anatomical ontology\">Anatomy</a>");
+document.write("      <a href=\"/action/anatomy/anatomy-search\" title=\"Search anatomy and gene ontology\">Anatomy / GO</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-pubselect2.apg&select_from=PUBLICATION\" title=\"Search for zebrafish research publications by author, title or citation\">Publications</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

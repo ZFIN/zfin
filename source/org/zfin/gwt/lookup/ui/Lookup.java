@@ -1,6 +1,7 @@
 package org.zfin.gwt.lookup.ui;
 
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.ui.LookupComposite;
@@ -26,6 +27,7 @@ public class Lookup extends Composite {
     public static final String JSREF_OID = "OID";
     public static final String JSREF_ONTOLOGY_NAME = "ontologyName";
     public static final String JSREF_USE_ID_AS_TERM = "useIdAsTerm";
+    public static final String JSREF_TERMS_WITH_DATA_ONLY = "termsWithDataOnly";
 
     public void onModuleLoad(Dictionary lookupProperties) {
 
@@ -61,6 +63,10 @@ public class Lookup extends Composite {
         }
         if (keySet.contains(JSREF_USE_ID_AS_TERM)) {
             lookup.setUseIdAsValue(Boolean.valueOf(lookupProperties.get(JSREF_USE_ID_AS_TERM)));
+        }
+        if (keySet.contains(JSREF_TERMS_WITH_DATA_ONLY)) {
+
+            lookup.setUseTermsWithDataOnly(Boolean.valueOf(lookupProperties.get(JSREF_TERMS_WITH_DATA_ONLY)));
         }
 
         if (keySet.contains(JSREF_ACTION)) {

@@ -29,11 +29,10 @@ aoterm_overlaps_stg_window (
 
   select startStg.stg_hours_start, endStg.stg_hours_end
     into anatStart, anatEnd
-    from anatomy_item, stage startStg, stage endStg, term
-    where term_zdb_id = anatItemZdbId
-      and anatitem_obo_id = term_ont_id
-      and startStg.stg_zdb_id = anatitem_start_stg_zdb_id
-      and endStg.stg_zdb_id = anatitem_end_stg_zdb_id;
+    from term_stage, stage startStg, stage endStg
+    where anatItemZdbId = ts_term_zdb_id
+      and startStg.stg_zdb_id = ts_start_stg_zdb_id
+      and endStg.stg_zdb_id = ts_end_stg_zdb_id;
 
   select stg_hours_start
     into windowStartStart

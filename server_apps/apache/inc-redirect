@@ -79,6 +79,8 @@ RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
 
+RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
+
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-search? [NC,R=301]
 

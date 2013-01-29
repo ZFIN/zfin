@@ -5,6 +5,7 @@ import com.google.gwt.event.logical.shared.*;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -31,6 +32,9 @@ public class LookupComposite extends Composite implements Revertible {
     private HorizontalPanel lookupPanel = new HorizontalPanel();
     private ItemSuggestOracle oracle = new ItemSuggestOracle(this);
     private TextBox textBox = new TextBox();
+    private ListBox ontologySelector = new ListBox();
+    private CheckBox ontologyChecker = new CheckBox();
+    private CheckBox allTermsCheckbox = new CheckBox();
     private SuggestBox suggestBox;
     private SuggestOracle.Suggestion suggestion = null;
 
@@ -39,7 +43,6 @@ public class LookupComposite extends Composite implements Revertible {
     private HTML noteLabel = new HTML("", true);
     private VerticalPanel rootPanel = new VerticalPanel();
     private TermInfoComposite termInfoTable;
-
 
 
     // internal ui data
@@ -94,6 +97,7 @@ public class LookupComposite extends Composite implements Revertible {
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
     public static final String SHOW_TYPE = "SHOW_TYPE";
     private boolean useIdAsValue = false;
+    private boolean useTermsWithDataOnly = false;
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
@@ -119,6 +123,56 @@ public class LookupComposite extends Composite implements Revertible {
             @Override
             public void onValueChange(ValueChangeEvent<String> stringValueChangeEvent) {
                 markUnValidateText();
+            }
+        });
+
+
+        if (RootPanel.get("ontologySelector") != null) {
+            initializeOntologySelector();
+        }
+        if (RootPanel.get("ontologyChecker") != null) {
+            initializeOntologyChecker();
+        }
+        if (RootPanel.get("useAllTerms") != null) {
+            initializeAllTermsCheckbox();
+        }
+        DeferredCommand.addCommand(new Command() {
+            @Override
+            public void execute() {
+                textBox.setFocus(true);
+            }
+        });
+
+        ontologySelector.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                String selectedOntology = ontologySelector.getValue(ontologySelector.getSelectedIndex());
+                setOntologyName(selectedOntology);
+                // set focus back on the entry box
+                textBox.setFocus(true);
+            }
+        });
+
+        ontologyChecker.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                if (booleanValueChangeEvent.getValue())
+                    setOntologyName(OntologyDTO.ANATOMY.getOntologyName());
+                else
+                    setOntologyName(OntologyDTO.AOGO.getOntologyName());
+                // set focus back on the entry box
+                textBox.setFocus(true);
+            }
+        });
+
+        allTermsCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                //Window.alert("Check: "+booleanValueChangeEvent.getValue());
+                setUseTermsWithDataOnly(booleanValueChangeEvent.getValue());
+                // set focus back on the entry box
+                textBox.setFocus(true);
             }
         });
 
@@ -167,10 +221,36 @@ public class LookupComposite extends Composite implements Revertible {
 
     }
 
+    private void initializeOntologySelector() {
+        ontologySelector = new ZfinListBox(false);
+        ontologySelector.addItem("Select Ontology");
+        ontologySelector.addItem("Anatomy", OntologyDTO.ANATOMY.getOntologyName());
+        ontologySelector.addItem("GO: Cellular Components", OntologyDTO.GO_CC.getOntologyName());
+        ontologySelector.addItem("GO: Biological Processes", OntologyDTO.GO_BP.getOntologyName());
+        ontologySelector.addItem("GO: Molecular Function", OntologyDTO.GO_MF.getOntologyName());
+        // hacky as you have no way to find the entries in the widget any more...
+        // could hard-code the list and know the index from there as well.
+        for (int index = 0; index < 5; index++) {
+            if (ontologySelector.getValue(index).equals(getOntology().getOntologyName()))
+                ontologySelector.setSelectedIndex(index);
+        }
+        RootPanel.get("ontologySelector").add(ontologySelector);
+    }
+
+    private void initializeOntologyChecker() {
+        RootPanel.get("ontologyChecker").add(ontologyChecker);
+    }
+
+    private void initializeAllTermsCheckbox() {
+        // by default it is enabled
+        allTermsCheckbox.setValue(true);
+        RootPanel.get("useAllTerms").add(allTermsCheckbox);
+    }
+
     void addSubmitButtonHandler() {
         submitButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent sender) {
-                doSubmit(textBox.getText());
+                doSubmit(ontology.getOntologyName() + ":" + textBox.getText());
             }
         });
 
@@ -180,6 +260,7 @@ public class LookupComposite extends Composite implements Revertible {
         suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
             public void onSelection(SelectionEvent event) {
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
+                //Window.alert(ontology.getOntologyName() + ":" + suggestion.getReplacementString());
                 if (suggestion.getReplacementString() == null) {
                     suggestBox.setText(currentText);
                     doSubmit(currentText);
@@ -195,7 +276,9 @@ public class LookupComposite extends Composite implements Revertible {
                                 }
                         );
                     } else {
-                        doSubmit(suggestion.getReplacementString());
+                        String termQuery = suggestion.getReplacementString();
+                        termQuery += "?ontologyName=" + ontology.getOntologyName();
+                        doSubmit(termQuery);
                     }
                 }
             }
@@ -551,6 +634,14 @@ public class LookupComposite extends Composite implements Revertible {
 
     public boolean getUseIdAsValue() {
         return useIdAsValue;
+    }
+
+    public boolean isUseTermsWithDataOnly() {
+        return useTermsWithDataOnly;
+    }
+
+    public void setUseTermsWithDataOnly(boolean useTermsWithDataOnly) {
+        this.useTermsWithDataOnly = useTermsWithDataOnly;
     }
 
     public TermInfoComposite getTermInfoTable() {

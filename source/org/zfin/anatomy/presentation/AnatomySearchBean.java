@@ -7,6 +7,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
@@ -14,6 +15,9 @@ import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.MorpholinoStatistics;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -31,8 +35,6 @@ public class AnatomySearchBean extends PaginationBean {
     public static final int MAX_NUMBER_EPRESSED_GENES = 5;
     public static final int MAX_NUMBER_PROBES = 5;
 
-    private List<AnatomyItem> anatomyItems;
-    private AnatomyItem anatomyItem;
     private String id;
     private List<AnatomyStatistics> statisticItems;
     private DevelopmentStage stage;
@@ -66,9 +68,11 @@ public class AnatomySearchBean extends PaginationBean {
     private List<MorpholinoStatistics> allMorpholinos;
     private List<AntibodyStatistics> antibodyStatistics;
     private List<MorpholinoStatistics> nonWildtypeMorpholinos;
-    private GenericTerm aoTerm;
+    private Term aoTerm;
+    private String ontologyName = Ontology.ANATOMY.getOntologyName();
 
     private Map<String, String> stageListDisplay;
+    private List<TermDTO> terms;
 
     public Map<String, String> getDisplayStages() {
         if (stageListDisplay != null)
@@ -78,6 +82,23 @@ public class AnatomySearchBean extends PaginationBean {
         return stageListDisplay;
     }
 
+    static List<Ontology> ontologyBrowsingList = new ArrayList<Ontology>(5);
+
+    static {
+        ontologyBrowsingList.add(Ontology.ANATOMY);
+        ontologyBrowsingList.add(Ontology.GO_CC);
+        ontologyBrowsingList.add(Ontology.GO_BP);
+        ontologyBrowsingList.add(Ontology.GO_MF);
+    }
+
+    public Map<String, String> getOntologyList() {
+        LinkedHashMap<String, String> ontologyList = new LinkedHashMap<String, String>(5);
+        for (Ontology stage : ontologyBrowsingList) {
+            ontologyList.put(stage.getOntologyName(), stage.getCommonName());
+        }
+        return ontologyList;
+    }
+
     public DevelopmentStage getStage() {
         if (stage == null) {
             stage = new DevelopmentStage();
@@ -85,26 +106,18 @@ public class AnatomySearchBean extends PaginationBean {
         return stage;
     }
 
-    public GenericTerm getAoTerm() {
+    public Term getAoTerm() {
         if (aoTerm == null)
             aoTerm = new GenericTerm();
         return aoTerm;
     }
 
-    public void setAoTerm(GenericTerm aoTerm) {
+    public void setAoTerm(Term aoTerm) {
         this.aoTerm = aoTerm;
     }
 
     public void setStage(DevelopmentStage stage) {
         this.stage = stage;
-    }
-
-    public void setAnatomyItems(List<AnatomyItem> anatomyItems) {
-        this.anatomyItems = anatomyItems;
-    }
-
-    public List<AnatomyItem> getAnatomyItems() {
-        return anatomyItems;
     }
 
     public List<AnatomyStatistics> getStatisticItems() {
@@ -143,21 +156,6 @@ public class AnatomySearchBean extends PaginationBean {
 
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
-    }
-
-    public AnatomyItem getAnatomyItem() {
-        if (anatomyItem == null) {
-            anatomyItem = new AnatomyItem();
-        }
-        return anatomyItem;
-    }
-
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
-    }
-
-    public void setAnatomyNamesAndSynonyms(List<String> names) {
-        anatomyNamesAndSynonyms = names;
     }
 
     /**
@@ -207,7 +205,7 @@ public class AnatomySearchBean extends PaginationBean {
 
     public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(anatomyItem.getZdbID());
+        return alr.getLatestAuditLogItem(aoTerm.getZdbID());
     }
 
     public void setNumberOfHighQualityProbes(int numberOfHighQualityProbes) {
@@ -286,6 +284,14 @@ public class AnatomySearchBean extends PaginationBean {
         this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
     }
 
+    public String getOntologyName() {
+        return ontologyName;
+    }
+
+    public void setOntologyName(String ontologyName) {
+        this.ontologyName = ontologyName;
+    }
+
     public boolean isWildCard() {
         if (searchTerm == null)
             return false;
@@ -310,15 +316,15 @@ public class AnatomySearchBean extends PaginationBean {
 
     public List<RelationshipPresentation> getRelations() {
         Set<String> types = new HashSet<String>();
-        List<AnatomyRelationship> relatedItems = anatomyItem.getRelatedItems();
+        List<TermRelationship> relatedItems = aoTerm.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
-            for (AnatomyRelationship rel : relatedItems) {
-                types.add(rel.getRelationship());
+            for (TermRelationship rel : relatedItems) {
+                types.add(rel.getType());
             }
         }
         List<String> uniqueTypes = new ArrayList<String>(types);
         Collections.sort(uniqueTypes, new RelationshipSorting());
-        return AnatomyPresentation.createRelationshipPresentation(uniqueTypes, anatomyItem);
+        return AnatomyPresentation.createRelationshipPresentation(uniqueTypes, aoTerm);
 
     }
 
@@ -352,12 +358,12 @@ public class AnatomySearchBean extends PaginationBean {
 
     /**
      * Create a formatted (comma-delimited list) list for all synonyms
-     * for a given AnatomyItem.
+     * for a given term list.
      *
      * @return String
      */
     public String getFormattedSynonymList() {
-        return AnatomyPresentation.createFormattedSynonymList(anatomyItem);
+        return AnatomyPresentation.createFormattedSynonymList(aoTerm);
     }
 
     public String toString() {
@@ -373,16 +379,30 @@ public class AnatomySearchBean extends PaginationBean {
         sb.append(NEWLINE);
         sb.append("Anatomy Item: ");
         sb.append(TAB);
-        if (anatomyItem == null) {
+        if (aoTerm == null) {
             sb.append("No Anatomy item");
         } else {
-            sb.append(anatomyItem.getZdbID());
+            sb.append(aoTerm.getZdbID());
             sb.append(TAB);
-            sb.append(anatomyItem.getOboID());
+            sb.append(aoTerm.getOboID());
         }
 
 
         return sb.toString();
+    }
+
+    public List<TermDTO> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(List<TermDTO> terms) {
+        this.terms = terms;
+    }
+
+    public List<TermDTO> getOrderedTerms() {
+        List<TermDTO> termList = new ArrayList<TermDTO>(terms);
+        Collections.sort(termList);
+        return termList;
     }
 
     public String getWelcomeInputSubject() {
@@ -549,8 +569,8 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public static enum Section {
-        ANATOMY_EXPRESSION,
-        ANATOMY_PHENOTYPE;
+        EXPRESSION,
+        PHENOTYPE;
 
         public static String[] getValues() {
             String[] values = new String[values().length];

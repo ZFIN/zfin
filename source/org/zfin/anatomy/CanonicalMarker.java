@@ -1,6 +1,7 @@
 package org.zfin.anatomy;
 
 import org.zfin.marker.Marker;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import java.util.Set;
 public class CanonicalMarker {
 
     private String zdbID;
-    private AnatomyItem item;
+    private Term item;
     private Marker gene;
     private String aoZdbID;
     private String geneID;
@@ -26,11 +27,11 @@ public class CanonicalMarker {
         this.zdbID = zdbID;
     }
 
-    public AnatomyItem getItem() {
+    public Term getItem() {
         return item;
     }
 
-    public void setItem(AnatomyItem item) {
+    public void setItem(Term item) {
         this.item = item;
     }
 

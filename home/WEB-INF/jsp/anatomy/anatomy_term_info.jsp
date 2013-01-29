@@ -1,9 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.anatomy.AnatomyItem,
-                 org.zfin.anatomy.DevelopmentStage" %>
-<%@ page import="org.zfin.anatomy.presentation.StagePresentation" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
-<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 

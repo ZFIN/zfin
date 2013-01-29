@@ -16,14 +16,14 @@ GENE	/action/marker/view/ZDB-GENE
 GENEFAMILY	/action/marker/view/ZDB-GENEFAMILY
 GENEP	/action/marker/view/ZDB-GENEP
 GENO	/action/genotype/genotype-detail?zdbID=ZDB-GENO
-GO	/action/ontology/term-detail?termID=GO
+GO	/action/ontology/term-detail/GO
 GTCONSTRCT	/action/marker/view/ZDB-GTCONSTRCT
 IMAGE	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=ZDB-IMAGE
 LAB	/action/profile/view/ZDB-LAB
 MRPHLNO	/action/marker/view/ZDB-MRPHLNO
 PAC	/action/marker/view/ZDB-PAC
 PAC_END	/action/marker/view/ZDB-PAC_END
-PATO	/action/ontology/term-detail?termID=PATO
+PATO	/action/ontology/term-detail/PATO
 PERS	/action/profile/view/ZDB-PERS
 PGCONSTRCT	/action/marker/view/ZDB-PGCONSTRCT
 PTCONSTRCT	/action/marker/view/ZDB-PTCONSTRCT
@@ -37,4 +37,4 @@ STS	/action/marker/view/ZDB-STS
 TGCONSTRCT	/action/marker/view/ZDB-TGCONSTRCT
 TSCRIPT	/action/marker/view/ZDB-TSCRIPT
 XPAT   /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&xpatID=ZDB-XPAT
-ZFA     /action/anatomy/anatomy-view/ZFA
+ZFA     /action/ontology/term-detail/ZFA

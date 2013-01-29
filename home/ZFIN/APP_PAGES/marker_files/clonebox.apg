@@ -113,7 +113,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
         probelib_sex,  --4
         case when probelib_tissue_zdb_id is not null
         then 
-             '<a href=/action/ontology/term-detail?termID=' || probelib_term_zdb_id ||'>' ||
+             '<a href=/action/ontology/term-detail/' || probelib_term_zdb_id ||'>' ||
             (select term_name from term where term_zdb_id = probelib_term_zdb_id)
         else
             probelib_non_zfin_tissue_name

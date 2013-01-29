@@ -14,6 +14,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
@@ -56,15 +57,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getSNPPublicationIDs(Marker marker);
 
     /**
-     * retrieve the total number of publications for a given geneID and anatomical structure.
-     *
-     * @param geneID        gene zdbID
-     * @param anatomyItemID anatomy ID
-     * @return number
-     */
-    int getNumberOfExpressedGenePublications(String geneID, String anatomyItemID);
-
-    /**
      * Retrieve the total number of publications for a given geneID and anatomical structure
      * that contain figures.
      *
@@ -75,7 +67,7 @@ public interface PublicationRepository extends PaginationParameter {
     int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID);
 
     /**
-     * Retrieve all publication that are annoted to genes expressed in a given
+     * Retrieve all publication that are annotated to genes expressed in a given
      * anatomical structure.
      *
      * @param anatomyItemID
@@ -100,7 +92,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param maxRow max number of records
      * @return list of HighqQualityProbes
      */
-    PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term, int maxRow);
+    PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow);
 
     /**
      * Retrieve marker records that have a gene expression in the

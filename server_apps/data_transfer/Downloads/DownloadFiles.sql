@@ -712,7 +712,11 @@ select distinct geno_zdb_id, geno_display_name, geno_handle
 -- generate a file with zdb history data
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
- DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
+ DELIMITER "	"
+select zrepld_old_zdb_id, zrepld_new_zdb_id
+from zdb_replaced_data
+order by zrepld_old_zdb_id, zrepld_new_zdb_id
+;
 
 -- indirect sequence links for genes
 
@@ -747,10 +751,11 @@ select stg_zdb_id, stg_obo_id, stg_name, stg_hours_start, stg_hours_end
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'"
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
  DELIMITER "	"
-select term_ont_id, term_name, anatitem_start_stg_zdb_id, anatitem_end_stg_zdb_id
- from term, anatomy_item
- where term_ont_id = anatitem_obo_id
-;
+select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
+ from term, term_stage
+ where term_zdb_id = ts_term_zdb_id
+ order by term_name
+ ;
 
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'"
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'
@@ -783,14 +788,15 @@ select xpatres_zdb_id,
 ! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'"
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'
  DELIMITER "	"
-select dalias_data_zdb_id, anatitem_name, dalias_alias
- from data_alias, anatomy_item, alias_group
- where dalias_data_zdb_id = anatitem_zdb_id
-   and dalias_data_zdb_id[1,8] = 'ZDB-ANAT'
+select term_ont_id, term_name, dalias_alias
+ from data_alias, term, alias_group
+ where dalias_data_zdb_id = term_zdb_id
+   and dalias_data_zdb_id[1,8] = 'ZDB-TERM'
    and dalias_alias[1,4] != 'ZFA:'
    and dalias_group_id = aliasgrp_pk_id
+   and term_ontology = 'zebrafish_anatomy'
    and aliasgrp_name not in ('plural','secondary id')
- order by anatitem_name
+ order by term_name
 ;
 
 -- Morpholino data

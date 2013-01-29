@@ -89,6 +89,12 @@
         <echo message=":DB UNIT TESTS SUCCESSFUL:"/>
     </target>
 
+    <target name="runControllerTests" depends="compile,build-tests"
+            description="Tests controller access">
+        <runDBTest testclass="org.zfin.DbControllerTests" outfile="${controllerTestFile}" verbose="true"/>
+        <echo message=":DB CONTROLLER TESTS SUCCESSFUL:"/>
+    </target>
+
 
     <target name="runBlasttests" depends="compile,build-tests"
             description="Tests that involve access to the informix and blast databases.">
@@ -145,7 +151,12 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="plain"/>
             </test>
 
-            <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="${dbTestFile}">
+            <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="${dbUnitTest}">
+                <formatter type="plain"/>
+            </test>
+
+
+            <test name="org.zfin.DbControllerTests" todir="${test.reports.dir}" outfile="${controllerTestFile}">
                 <formatter type="plain"/>
             </test>
 

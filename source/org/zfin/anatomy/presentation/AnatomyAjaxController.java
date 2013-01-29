@@ -51,7 +51,7 @@ public class AnatomyAjaxController {
     private OntologyRepository ontologyRepository;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
-    private static final Logger LOG = Logger.getLogger(AnatomyTermDetailController.class);
+    private static final Logger LOG = Logger.getLogger(AnatomyAjaxController.class);
 
     @ModelAttribute("formBean")
     public AnatomySearchBean getDefaultFormBean() {

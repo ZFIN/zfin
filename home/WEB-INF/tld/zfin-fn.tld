@@ -99,6 +99,16 @@
       ${fn:getDistinctRelationshipTypes(ontology))}">
     </example>
   </function>
+
+<function>
+    <description>
+      Retrieve a sorted list of aliases
+    </description>
+    <name>getSortedSynonymList</name>
+    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+    <function-signature>java.lang.String getSortedSynonymList(org.zfin.gwt.root.dto.TermDTO))</function-signature>
+  </function>
+
     <function>
         <description>
             Remove key-value pairs that pertain to the sectionVisibility

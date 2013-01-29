@@ -5,11 +5,8 @@ import org.apache.log4j.Logger;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
-import org.zfin.ontology.presentation.MatchingTermComparator;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Service class to obtain a list of matching terms for a given search string and
@@ -26,15 +23,32 @@ public class MatchingTermService {
     public MatchingTermService() {
     }
 
+    // a negative number indicates all matches should be returned
     public MatchingTermService(int maxLimit) {
-        maximumNumberOfMatches = maxLimit;
+        if (maxLimit < 0)
+            maximumNumberOfMatches = Integer.MAX_VALUE;
+        else
+            maximumNumberOfMatches = maxLimit;
+    }
+
+    public List<TermDTO> getMatchingTermList(String query, Ontology ontology) {
+        List<TermDTO> termDTOList = new ArrayList<TermDTO>(0);
+
+        Set<MatchingTerm> matchingTerms = getMatchingTerms(query, ontology);
+        if (matchingTerms == null)
+            return termDTOList;
+
+        termDTOList = new ArrayList<TermDTO>(matchingTerms.size());
+        for (MatchingTerm matchingTerm : matchingTerms) {
+            termDTOList.add(matchingTerm.getTerm());
+        }
+        return termDTOList;
     }
 
 
     protected Set<MatchingTerm> getMatchingTerms(String query, PatriciaTrieMultiMap<TermDTO> termMap) {
         Set<MatchingTerm> matchingTermSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
-         String[] termsToMatch = query.toLowerCase().trim().split("\\s+");
-     //   String[] termsToMatch = query.trim().split("\\s+");
+        String[] termsToMatch = query.toLowerCase().trim().split("\\s+");
         for (String termToMatch : termsToMatch) {
             Set<TermDTO> matchedTerms = termMap.getSuggestedValues(termToMatch);
             for (TermDTO term : matchedTerms) {
@@ -47,9 +61,7 @@ public class MatchingTermService {
                     matchingTermSet.add(new MatchingTerm(term, query));
                 } else if (term.isAliasesExist()) {
                     // add the best matching alias (levenshtein distance)
-                    //
-                    // if no hits are found?!?? , then just add the last one I guess.
-
+                    // if no hits are found add the last one I guess.
 
                     String aliasToView = null;
                     int levenshteinDistance = 10000;
@@ -73,9 +85,6 @@ public class MatchingTermService {
                         matchingTermSet.add(new MatchingTerm(term, query, aliasToView));
                     }
                 }
-//                else{
-//                    throw new RuntimeException("should never get to this state["+query+"]") ;
-//                }
             }
         }
         return matchingTermSet;
@@ -86,20 +95,19 @@ public class MatchingTermService {
      *
      * @param matchTerm This is typically one or 2 when split.
      * @param hits      This is typically one or 2.
-     * @return
+     * @return boolean if it is a match
      */
     protected boolean containsAllTokens(String matchTerm, String[] hits) {
 
         Set<String> matchTokens = tokenizer.tokenize(matchTerm.toLowerCase().trim());
-        //Set<String> matchTokens = tokenizer.tokenize(matchTerm.trim());
         for (String hit : hits) {
             boolean matches = false;
-            for (Iterator<String> iter = matchTokens.iterator(); iter.hasNext() && false == matches; ) {
-                if (iter.next().toLowerCase().startsWith(hit.toLowerCase())) {
+            for (Iterator<String> iterator = matchTokens.iterator(); iterator.hasNext() && !matches; ) {
+                if (iterator.next().toLowerCase().startsWith(hit.toLowerCase())) {
                     matches = true;
                 }
             }
-            if (matches == false) {
+            if (!matches) {
                 return false;
             }
         }

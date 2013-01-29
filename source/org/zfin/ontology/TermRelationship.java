@@ -6,13 +6,24 @@ import java.io.Serializable;
 
 /**
  */
-public interface TermRelationship extends Serializable{
+public interface TermRelationship extends Serializable, Comparable<TermRelationship> {
 
     public String getZdbId();
-    public Term getTermOne();
+
+    public GenericTerm getTermOne();
+
+    public void setTermOne(GenericTerm term);
+
     public Term getTermTwo();
-    public Term getRelatedTerm(Term t);
+
+    public void setTermTwo(GenericTerm term);
+
+    public GenericTerm getRelatedTerm(GenericTerm t);
+
     public String getType();
+
+    public void setType(String type);
+
     public RelationshipType getRelationshipType();
 
 

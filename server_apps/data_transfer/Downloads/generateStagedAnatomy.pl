@@ -2,9 +2,9 @@
 #
 # This script queries anatomy_display table mainly to generate
 # staged anatomy terms with relationship structure. The output 
-# is writen to file at public download site. Two terms, unspecified 
+# is written to file at public download site. Two terms, unspecified
 # and cell division/proliferation are excluded on request. Before
-# there is a better solution like database definition, hardcode. 
+# there is a better solution like database definition, hard-code.
 #
 # INPUT:
 #     none
@@ -34,11 +34,11 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 $lastStgZdbId = "";
 
-my $sql = "select stg_zdb_id, stg_name, anatitem_name, anatdisp_indent
+my $sql = "select stg_zdb_id, stg_name, term_name, anatdisp_indent
              from anatomy_display
                   join stage on anatdisp_stg_zdb_id = stg_zdb_id
-                  join anatomy_item on anatdisp_item_zdb_id = anatitem_zdb_id
-            where anatitem_zdb_id not in ('ZDB-ANAT-041102-1', 'ZDB-ANAT-010921-520')
+                  join term on anatdisp_item_zdb_id = term_zdb_id
+            where term_zdb_id not in ('ZDB-TERM-100331-91', 'ZDB-TERM-100331-1055')
          order by stg_hours_start, anatdisp_seq_num;";
 
 my $sth = $dbh->prepare($sql);

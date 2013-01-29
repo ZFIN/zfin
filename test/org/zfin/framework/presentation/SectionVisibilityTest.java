@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.junit.Test;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.ontology.presentation.OntologyBean;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -15,11 +15,11 @@ import static junit.framework.Assert.*;
 public class SectionVisibilityTest {
 
     @Test
-    public void simpleSectionVisiblityDefaultFalse() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void simpleSectionVisibilityDefaultFalse() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         for (boolean show : sections.values()) {
             assertTrue(!show);
@@ -28,7 +28,7 @@ public class SectionVisibilityTest {
 
         sections = vis.getSectionDataExistence();
         assertTrue(sections != null);
-        numberOfSections = AnatomySearchBean.Section.values().length;
+        numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         for (boolean show : sections.values()) {
             assertTrue(!show);
@@ -36,11 +36,11 @@ public class SectionVisibilityTest {
     }
 
     @Test
-    public void simpleSectionVisiblityDefaultTrue() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class, true);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void simpleSectionVisibilityDefaultTrue() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, true);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         for (boolean show : sections.values()) {
             assertTrue(show);
@@ -49,7 +49,7 @@ public class SectionVisibilityTest {
 
         sections = vis.getSectionDataExistence();
         assertTrue(sections != null);
-        numberOfSections = AnatomySearchBean.Section.values().length;
+        numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         for (boolean show : sections.values()) {
             assertTrue(show);
@@ -57,28 +57,28 @@ public class SectionVisibilityTest {
     }
 
     /**
-     * Set default false visitilities all to true manually
+     * Set default false visibilities all to true manually
      */
     @Test
-    public void setVisbilityToTrueManually() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class, false);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void setVisibilityToTrueManually() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
         for (boolean show : sections.values()) {
             assertTrue(!show);
         }
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
+        vis.setVisibility(OntologyBean.Section.EXPRESSION, true);
+        vis.setVisibility(OntologyBean.Section.PHENOTYPE, true);
         sections = vis.getSectionVisibilityMap();
         for (boolean show : sections.values()) {
             assertTrue(show);
         }
 
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
+        vis.setSectionData(OntologyBean.Section.EXPRESSION, true);
+        vis.setSectionData(OntologyBean.Section.PHENOTYPE, true);
         sections = vis.getSectionVisibilityMap();
         for (boolean show : sections.values()) {
             assertTrue(show);
@@ -86,32 +86,32 @@ public class SectionVisibilityTest {
     }
 
     /**
-     * Set default false visitilities all to true manually
+     * Set default false visibilities all to true manually
      */
     @Test
-    public void setVisbilityToTrueManuallyIsVisible() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class, false);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void setVisibilityToTrueManuallyIsVisible() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         List<String> visibleSections = vis.getVisibleSections();
         assertTrue(visibleSections != null);
         assertTrue(visibleSections.size() == 0);
 
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
+        vis.setVisibility(OntologyBean.Section.EXPRESSION, true);
         visibleSections = vis.getVisibleSections();
         assertTrue(visibleSections.size() == 1);
-        assertEquals(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString(), visibleSections.get(0));
+        assertEquals(OntologyBean.Section.EXPRESSION.toString(), visibleSections.get(0));
     }
 
     /**
-     * Set default false visitilities all to true vial showAll()
+     * Set default false visibilities all to true vial showAll()
      */
     @Test
-    public void setVisbilityToTrueViaShowAll() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class, false);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void setVisibilityToTrueViaShowAll() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
         for (boolean show : sections.values()) {
@@ -133,53 +133,52 @@ public class SectionVisibilityTest {
      * Test isVisible(Enum) method
      */
     @Test
-    public void checkIsVisbileMethod() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void checkIsVisibleMethod() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
-        sections = vis.getSectionVisibilityMap();
-        assertTrue(vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
+        assertTrue(!vis.isVisible(OntologyBean.Section.EXPRESSION));
+        assertTrue(!vis.isVisible(OntologyBean.Section.PHENOTYPE));
+        vis.setVisibility(OntologyBean.Section.EXPRESSION, true);
+        vis.setVisibility(OntologyBean.Section.PHENOTYPE, true);
+        vis.getSectionVisibilityMap();
+        assertTrue(vis.isVisible(OntologyBean.Section.EXPRESSION));
+        assertTrue(vis.isVisible(OntologyBean.Section.PHENOTYPE));
 
-        assertTrue(!vis.hasData(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(!vis.hasData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
-        sections = vis.getSectionVisibilityMap();
-        assertTrue(vis.hasData(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(vis.hasData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
+        assertTrue(!vis.hasData(OntologyBean.Section.EXPRESSION));
+        assertTrue(!vis.hasData(OntologyBean.Section.PHENOTYPE));
+        vis.setSectionData(OntologyBean.Section.EXPRESSION, true);
+        vis.setSectionData(OntologyBean.Section.PHENOTYPE, true);
+        vis.getSectionVisibilityMap();
+        assertTrue(vis.hasData(OntologyBean.Section.EXPRESSION));
+        assertTrue(vis.hasData(OntologyBean.Section.PHENOTYPE));
     }
 
     /**
-     * Test setShowSection and setHidesection method
+     * Test setShowSection and setHideSection method
      */
     @Test
     public void checkSetHowSectionMethod() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString());
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString());
-        sections = vis.getSectionVisibilityMap();
-        assertTrue(vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
+        assertTrue(!vis.isVisible(OntologyBean.Section.EXPRESSION));
+        assertTrue(!vis.isVisible(OntologyBean.Section.PHENOTYPE));
+        vis.setSectionVisible(OntologyBean.Section.EXPRESSION.toString());
+        vis.setSectionVisible(OntologyBean.Section.PHENOTYPE.toString());
+        vis.getSectionVisibilityMap();
+        assertTrue(vis.isVisible(OntologyBean.Section.EXPRESSION));
+        assertTrue(vis.isVisible(OntologyBean.Section.PHENOTYPE));
 
-        vis.setSectionInvisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString());
-        sections = vis.getSectionVisibilityMap();
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION));
-        assertTrue(vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE));
+        vis.setSectionInvisible(OntologyBean.Section.EXPRESSION.toString());
+        assertTrue(!vis.isVisible(OntologyBean.Section.EXPRESSION));
+        assertTrue(vis.isVisible(OntologyBean.Section.PHENOTYPE));
 
     }
 
@@ -187,29 +186,29 @@ public class SectionVisibilityTest {
      * Test isVisible(string) method
      */
     @Test
-    public void checkIsVisbileMethodString() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+    public void checkIsVisibleMethodString() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
-        int numberOfSections = AnatomySearchBean.Section.values().length;
+        int numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString()));
-        assertTrue(!vis.isVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString()));
+        assertTrue(!vis.isVisible(OntologyBean.Section.EXPRESSION.toString()));
+        assertTrue(!vis.isVisible(OntologyBean.Section.PHENOTYPE.toString()));
 
         sections = vis.getSectionDataExistence();
         assertTrue(sections != null);
-        numberOfSections = AnatomySearchBean.Section.values().length;
+        numberOfSections = OntologyBean.Section.values().length;
         assertEquals(sections.size(), numberOfSections);
         // check that all values are false
-        assertTrue(!vis.hasData(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString()));
-        assertTrue(!vis.hasData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString()));
+        assertTrue(!vis.hasData(OntologyBean.Section.EXPRESSION.toString()));
+        assertTrue(!vis.hasData(OntologyBean.Section.PHENOTYPE.toString()));
     }
 
     @Test
     public void testNoClassEnumerationClassProvidedExceptions() {
         try {
-            SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(null);
+            new SectionVisibility<OntologyBean.Section>(null);
         } catch (Exception e) {
             assertTrue(e.getMessage() != null);
             return;
@@ -219,7 +218,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void testSetVisibilityNoClassEnumerationClassProvidedExceptions() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
         try {
             vis.setVisibility(null, true);
         } catch (Exception e) {
@@ -231,71 +230,71 @@ public class SectionVisibilityTest {
 
     @Test
     public void hasData() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         // no section data available
         assertTrue(!vis.isHasData());
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
+        vis.setSectionData(OntologyBean.Section.EXPRESSION, true);
         // at least one seciont has data.
         assertTrue(vis.isHasData());
     }
 
     @Test
     public void getVisibleSectionsWithData() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         String[] data = vis.getVisibleSectionsWithData();
         assertTrue(data != null);
         assertTrue(data.length == 0);
 
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString());
+        vis.setSectionVisible(OntologyBean.Section.PHENOTYPE.toString());
         data = vis.getVisibleSectionsWithData();
         assertTrue(data.length == 0);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
+        vis.setSectionData(OntologyBean.Section.PHENOTYPE, true);
         data = vis.getVisibleSectionsWithData();
         assertTrue(data.length == 1);
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString());
+        vis.setSectionVisible(OntologyBean.Section.EXPRESSION.toString());
         data = vis.getVisibleSectionsWithData();
         assertTrue(data.length == 1);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
+        vis.setSectionData(OntologyBean.Section.EXPRESSION, true);
         data = vis.getVisibleSectionsWithData();
         assertTrue(data.length == 2);
     }
 
     @Test
     public void getSectionsWithData() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         String[] data = vis.getSectionsWithData();
         assertTrue(data != null);
         assertTrue(data.length == 0);
 
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString());
+        vis.setSectionVisible(OntologyBean.Section.PHENOTYPE.toString());
         data = vis.getSectionsWithData();
         assertTrue(data.length == 0);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_PHENOTYPE, true);
+        vis.setSectionData(OntologyBean.Section.PHENOTYPE, true);
         data = vis.getSectionsWithData();
         assertTrue(data.length == 1);
-        vis.setSectionData(AnatomySearchBean.Section.ANATOMY_EXPRESSION, true);
+        vis.setSectionData(OntologyBean.Section.EXPRESSION, true);
         data = vis.getSectionsWithData();
         assertTrue(data.length == 2);
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString());
+        vis.setSectionVisible(OntologyBean.Section.EXPRESSION.toString());
         data = vis.getSectionsWithData();
         assertTrue(data.length == 2);
     }
 
     @Test
     public void atLeastOneSectionVisible() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        EnumMap<AnatomySearchBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         assertTrue(!vis.isAnySectionVisible());
-        vis.setSectionVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString());
+        vis.setSectionVisible(OntologyBean.Section.PHENOTYPE.toString());
         assertTrue(vis.isAnySectionVisible());
-        vis.setShowSection(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString());
+        vis.setShowSection(OntologyBean.Section.EXPRESSION.toString());
         assertTrue(vis.isAnySectionVisible());
 
     }

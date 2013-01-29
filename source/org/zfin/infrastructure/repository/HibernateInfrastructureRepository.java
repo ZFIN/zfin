@@ -284,15 +284,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.setBoolean("obsolete", false);
         List<GenericTerm> list = (List<GenericTerm>) query.list();
 
-        hql = "select term from GenericTerm term, TermAlias alias " +
-                "where alias member of term.aliases " +
-                " AND alias.aliasLowerCase like :name " +
-                " AND term.obsolete = :obsolete ";
+        hql = "select alias.term from TermAlias alias " +
+                "where  alias.aliasLowerCase like :name " +
+                " AND alias.term.obsolete = :obsolete ";
         if (ontologies.size() == 1)
-            hql += " AND term.ontology = :ontology ";
+            hql += " AND alias.term.ontology = :ontology ";
         else
-            hql += " AND term.ontology in  (:ontology) ";
-        hql += " order by term.termName";
+            hql += " AND alias.term.ontology in  (:ontology) ";
+        hql += " order by alias.term.termName";
         Query queryTwo = session.createQuery(hql);
         queryTwo.setString("name", "%" + termName.toLowerCase() + "%");
         if (ontologies.size() == 1)

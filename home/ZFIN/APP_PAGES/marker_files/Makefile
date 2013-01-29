@@ -33,7 +33,7 @@ STATICS =  dnote_new.apg do-oevdispupdate.apg showscores.apg make_map.apg \
 	sequence_disclaimer.apg markerview_placeholder_note.apg snp_note.apg snpids.apg \
 	snp_batch.apg marker_history_correction.apg attrib_check.apg sequence_tools.apg \
 	markerrelationship.apg  markerrel_onetype.apg markerview_transcript_details.apg \
-	mapframe.apg mrkrgenolist.apg wtanatlist.apg
+	mapframe.apg mrkrgenolist.apg
 
 
 # Use default rules for app page directories.

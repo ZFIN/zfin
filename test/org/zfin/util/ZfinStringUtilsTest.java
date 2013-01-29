@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ZfinStringUtilsTest {
 
-    public static Logger logger = Logger.getLogger(ZfinStringUtils.class);
+    public static final Logger logger = Logger.getLogger(ZfinStringUtils.class);
 
     @Test
     public void splitStringMethod() {

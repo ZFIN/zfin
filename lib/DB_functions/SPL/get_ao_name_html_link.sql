@@ -20,19 +20,19 @@ create function get_ao_name_html_link( aoZdbId varchar(50) )
   --   None
   -- --------------------------------------------------------------------- 
 
-  define aoName	like anatomy_item.anatitem_name;
+  define aoName	like term.term_name;
   define aoNameHTML	lvarchar;
 
-  select anatitem_name
+  select term_name
     into aoName
-    from anatomy_item
-   where anatitem_zdb_id = aoZdbId;
+    from term
+   where term_zdb_id = aoZdbId;
 
   let aoNameHTML = 
 	'<span class="mutant">' || aoName || '</span>';
 
   return 
-    '<a href="/action/anatomy/anatomy-view/' ||
+    '<a href="/action/ontology/term-detail/' ||
       aoZdbId || '">' ||aoNameHTML || '</a>';
 
 end function;

@@ -2,9 +2,7 @@ package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
@@ -35,8 +33,6 @@ import org.zfin.ontology.presentation.TermDTOPresentation;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
-import org.zfin.profile.Company;
-import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
 import org.zfin.profile.presentation.ProfilePresentation;
@@ -113,8 +109,6 @@ public class CreateLinkTag extends BodyTagSupport {
             link = AccessionPresentation.getLink((Accession) o);
         else if (o instanceof PostComposedPresentationBean)
             link = TermPresentation.getLink((PostComposedPresentationBean) o,suppressPopupLink);
-        else if (o instanceof AnatomyItem)
-            link = AnatomyItemPresentation.getLink((AnatomyItem) o, name,suppressPopupLink);
         else if (o instanceof Publication)
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
@@ -139,8 +133,13 @@ public class CreateLinkTag extends BodyTagSupport {
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Organization)
             link = SourcePresentation.getLink((Organization) o);
-        else if (o instanceof Term)
+        else if (o instanceof Term){
+            if(StringUtils.isEmpty(name))
             link = TermPresentation.getLink((Term) o, suppressPopupLink);
+            else
+            link = TermPresentation.getLink((Term) o, suppressPopupLink, name);
+
+        }
         else if (o instanceof PostComposedEntity)
             link = TermPresentation.getLink((PostComposedEntity) o, suppressPopupLink);
         else if (o instanceof TermDTO)

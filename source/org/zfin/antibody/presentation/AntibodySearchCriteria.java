@@ -167,7 +167,7 @@ public class AntibodySearchCriteria extends Antibody {
     }
 
     public boolean isAnatomyDefined() {
-        return !StringUtils.isEmpty(anatomyTermNames);
+        return !StringUtils.isEmpty(anatomyTermIDs);
     }
 
     public boolean isHostSpeciesDefined() {

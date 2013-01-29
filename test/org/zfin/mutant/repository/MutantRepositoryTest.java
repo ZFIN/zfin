@@ -7,9 +7,7 @@ import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
@@ -20,8 +18,9 @@ import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MorpholinoSequence;
@@ -30,7 +29,6 @@ import org.zfin.util.DateUtil;
 import java.util.*;
 
 import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -74,10 +72,10 @@ public class MutantRepositoryTest {
 
         //  ao term: optic placode
         String name = "neural plate";
-        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem ai = ar.getAnatomyItem(name);
+        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
+        GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
         List<Morpholino> morphs =
-                getMutantRepository().getPhenotypeMorpholinos(ai.createGenericTerm(), AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                getMutantRepository().getPhenotypeMorpholinos(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         assertNotNull("morphs exist", morphs);
 
     }
@@ -99,12 +97,11 @@ public class MutantRepositoryTest {
 
     @Test
     public void checkPhenotypeDescriptions() {
-        //  ao term: optic placode
         String name = "otic placode";
-        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem ai = ar.getAnatomyItem(name);
+        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
+        GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
         PaginationResult<GenotypeExperiment> morphs =
-                getMutantRepository().getGenotypeExperimentMorpholinos(ai.createGenericTerm(), true, null);
+                getMutantRepository().getGenotypeExperimentMorpholinos(ai, true, null);
         assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }

@@ -104,9 +104,10 @@
                     hiddenIds:"anatomyTermIDs",
                     type:"<%= LookupComposite.GDAG_TERM_LOOKUP %>",
                     ontologyName:"<%= Ontology.AOGO %>",
-                    action:"<%= LookupComposite.ACTION_TERM_SEARCH %>",
+                    action:"<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
                     width:30,
                     wildcard:false,
+                    termsWithDataOnly:true,
                     useTermTable:true
                 }
             </script>

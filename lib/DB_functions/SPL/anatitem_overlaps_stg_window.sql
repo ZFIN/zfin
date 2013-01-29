@@ -1,6 +1,6 @@
 create function 
 anatitem_overlaps_stg_window (
-  anatItemZdbId   like anatomy_item.anatitem_zdb_id,
+  anatItemZdbId   like term.term_zdb_id,
   startStageZdbId like stage.stg_zdb_id,
   endStageZdbId   like stage.stg_zdb_id )
 
@@ -28,8 +28,8 @@ anatitem_overlaps_stg_window (
 
   select startStg.stg_hours_start, endStg.stg_hours_end
     into anatStart, anatEnd
-    from anatomy_item, stage startStg, stage endStg
-    where anatitem_zdb_id = anatItemZdbId
+    from term_stage, stage startStg, stage endStg
+    where ts_term_zdb_id = anatItemZdbId
       and startStg.stg_zdb_id = anatitem_start_stg_zdb_id
       and endStg.stg_zdb_id = anatitem_end_stg_zdb_id;
 

@@ -182,6 +182,54 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
+        <Download orderIndex="2">
+            <Name>
+                Assembly: Vega
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>vega_clone</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Chromosome sequence-region definitions: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>vega_chromosome</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
         <Download orderIndex="4">
             <Name>
                 Complete Assembly Clones: Ensembl
@@ -192,6 +240,54 @@
             <Description></Description>
             <WikiLink></WikiLink>
             <FileName>E_full_zfin_clone</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Complete Assembly Clones: Vega
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>full_length_clones</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="6">
+            <Name>
+                Transcript and Genes: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>drerio_vega_transcript</FileName>
             <FileExtension>gff3</FileExtension>
             <FileFormat>gff3</FileFormat>
             <Query>
@@ -254,6 +350,30 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
+        <Download orderIndex="9">
+            <Name>
+                ZFIN Genes with Antibodies: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibody</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
         <Download orderIndex="10">
             <Name>
                 ZFIN Genes with Expression: Ensembl
@@ -264,6 +384,30 @@
             <Description></Description>
             <WikiLink></WikiLink>
             <FileName>E_expression</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="11">
+            <Name>
+                ZFIN Genes with Expression: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>expression</FileName>
             <FileExtension>gff3</FileExtension>
             <FileFormat>gff3</FileFormat>
             <Query>
@@ -302,6 +446,30 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
+        <Download orderIndex="13">
+            <Name>
+                ZFIN Genes with Phenotype: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>phenotype</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
         <Download orderIndex="14">
             <Name>
                 ZFIN Genes: Ensembl
@@ -326,6 +494,30 @@
             <Column id="8">Phase</Column>
             <Column id="9">Attributes</Column>
         </Download>
+        <Download orderIndex="15">
+            <Name>
+                ZFIN Genes: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfin_gene</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
         <Download orderIndex="16">
             <Name>
                 ZFIN Morpholinos: Ensembl
@@ -336,6 +528,30 @@
             <Description></Description>
             <WikiLink></WikiLink>
             <FileName>E_zfin_morpholino</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="17">
+            <Name>
+                ZFIN Morpholinos: VEGA
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfin_morpholino</FileName>
             <FileExtension>gff3</FileExtension>
             <FileFormat>gff3</FileFormat>
             <Query>
@@ -1090,51 +1306,6 @@
             <Column id="9">Environment ID</Column>
             <Column id="10">Probe Quality (optiona 0 - 5 rating)</Column>
         </Download>
-        <Download orderIndex="100">
-            <Name>
-                Expression for Zebrafish genes with fin phenotype
-            </Name>
-            <Category>
-                Gene Expression
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>xpatGenes</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                     select gene_abbrev, gene_zdb_id, mo_id, a.term_ont_id, a.term_name, b.term_ont_id, b.term_name, geno_id, geno_display_name, stage_start_id, stage_end_id, xpatex_source_zdb_id
-                       from tmp_pheno_gene,  expression_result, expression_experiment, term a, term b, genotype
-                      where xpatex_zdb_id = xpatres_xpatex_zdb_id
-                        and id = xpatres_zdb_id
-                        and geno_Zdb_id = geno_id
-                        and xpatres_superterm_zdb_id = a.term_zdb_id
-                        and xpatres_subterm_zdb_id = b.term_zdb_id
-                        and xpatres_subterm_zdb_id is not null
-                        and whereFrom like 'xpat%'
-                    union
-                     select gene_abbrev, gene_zdb_id, mo_id, a.term_ont_id, a.term_name,"","", geno_id, geno_display_name, stage_start_id, stage_end_id, xpatex_source_zdb_id
-                       from tmp_pheno_gene,  expression_result, expression_experiment, term a, genotype
-                      where xpatex_zdb_id = xpatres_xpatex_zdb_id
-                        and id = xpatres_zdb_id
-                        and geno_id = geno_zdb_id
-                        and xpatres_superterm_zdb_id = a.term_zdb_id
-                        and xpatres_subterm_zdb_id is null
-                        and whereFrom like 'xpat%'
-                  ]]>
-            </Query>
-            <Column id="1">Gene name</Column>
-            <Column id="2">Gene ID</Column>
-            <Column id="3">ZFA ID Structure</Column>
-            <Column id="4">Anatomy Structure</Column>
-            <Column id="5">ZFA ID substructure</Column>
-            <Column id="6">Anatomy Structure</Column>
-            <Column id="7">Genotype</Column>
-            <Column id="8">Stage Start</Column>
-            <Column id="9">Stage End</Column>
-            <Column id="10">Publication</Column>
-        </Download>
         <Download orderIndex="4">
             <Name>
                 Genotype-Figure relation
@@ -1356,43 +1527,6 @@
             <Column id="13" unique="true">Phenotype Keyword OBO ID</Column>
             <Column id="14" unique="true">Phenotype Quality</Column>
             <Column id="15" unique="true">Phenotype Tag</Column>
-        </Download>
-        <Download orderIndex="100">
-            <Name>
-                Phenotype for Zebrafish genes with fin phenotype
-            </Name>
-            <Category>
-                Phenotype Data
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>phenoGene</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                     select * from tmp_dumpPheno
-  	                   order by gene_abbrev
-                          ]]>
-            </Query>
-            <Column id="1" unique="true">#</Column>
-            <Column id="2">Gene ID</Column>
-            <Column id="3">E1a ID</Column>
-            <Column id="4">E1a</Column>
-            <Column id="5">E1b ID</Column>
-            <Column id="6">E1b</Column>
-            <Column id="7">E2a ID</Column>
-            <Column id="8">E2a</Column>
-            <Column id="9">E2b ID</Column>
-            <Column id="10">E2b</Column>
-            <Column id="11">Genotype ID</Column>
-            <Column id="12">Genotype Name</Column>
-            <Column id="13">MO ID</Column>
-            <Column id="14">Stage Start</Column>
-            <Column id="15">Stage End</Column>
-            <Column id="16">Quality ID</Column>
-            <Column id="17">Quality</Column>
-            <Column id="18">MO and Background</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1816,11 +1950,11 @@
             <FileFormat>other</FileFormat>
             <Query>
                 <![CDATA[
-                     select stg_zdb_id, stg_name, anatitem_name, anatdisp_indent
+                     select stg_zdb_id, stg_name, term_name, anatdisp_indent
                      from anatomy_display
                           join stage on anatdisp_stg_zdb_id = stg_zdb_id
-                          join anatomy_item on anatdisp_item_zdb_id = anatitem_zdb_id
-                     where anatitem_zdb_id not in ('ZDB-ANAT-041102-1', 'ZDB-ANAT-010921-520')
+                          join term on anatdisp_item_zdb_id = term_zdb_id
+                     where term_zdb_id not in ('ZDB-TERM-100331-91', 'ZDB-TERM-100331-1055')
                      order by stg_hours_start, anatdisp_seq_num;
                          ]]>
             </Query>
@@ -1866,9 +2000,10 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select term_ont_id, term_name, anatitem_start_stg_zdb_id, anatitem_end_stg_zdb_id
-                     from term, anatomy_item
-                     where term_ont_id = anatitem_obo_id
+                select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
+                from term, term_stage
+                where term_zdb_id = ts_term_zdb_id
+                order by term_name
                           ]]>
             </Query>
             <Column id="1" unique="true">Anatomy ID</Column>
@@ -1890,17 +2025,18 @@
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select dalias_data_zdb_id, anatitem_name, dalias_alias
-                     from data_alias, anatomy_item, alias_group
-                     where dalias_data_zdb_id = anatitem_zdb_id
-                       and dalias_data_zdb_id[1,8] = 'ZDB-ANAT'
+                    select term_ont_id, term_name, dalias_alias
+                     from data_alias, term, alias_group
+                     where dalias_data_zdb_id = term_zdb_id
+                       and dalias_data_zdb_id[1,8] = 'ZDB-TERM'
                        and dalias_alias[1,4] != 'ZFA:'
                        and dalias_group_id = aliasgrp_pk_id
+                       and term_ontology = 'zebrafish_anatomy'
                        and aliasgrp_name not in ('plural','secondary id')
-                     order by anatitem_name
+                     order by term_name
                           ]]>
             </Query>
-            <Column id="1" unique="true">Anatomy ID</Column>
+            <Column id="1" unique="true">Anatomy OBO ID</Column>
             <Column id="2">Anatomy Name</Column>
             <Column id="3">Anatomy Synonym</Column>
         </Download>

@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
 
-<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+<jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
 <!-- Phenotype section -->
-<c:set var="phenotypeSection" value="<%=AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString()%>" scope="page"/>
+<c:set var="phenotypeSection" value="<%=OntologyBean.Section.PHENOTYPE.toString()%>" scope="page"/>
 <div class="summary">
     <zfin2:sectionVisibility sectionName="${phenotypeSection}"
                              sectionVisibility="${formBean.sectionVisibility}"
@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); } );
-            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-wildtype-morpholinos/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks(); } );
+            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
             showSection('${phenotypeSection}', true);
         }
     </script>

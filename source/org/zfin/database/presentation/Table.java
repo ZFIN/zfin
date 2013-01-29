@@ -14,7 +14,6 @@ public enum Table {
     ALL_NAME_ENDS("ANE", "all_name_ends", "allnmend_name_end_lower,allnmend_allmapnm_serial_id"),
     ALL_TERM_CONTAINS("ALLTERM", "all_term_contains", null, ""),
     ANATOMY_DISPLAY("MARKER", "anatomy_display", "anatdisp_stg_zdb_id,anatdisp_seq_num"),
-    ANATOMY_ITEM("ANAT", "anatomy_item", "anatitem_zdb_id", "anatitem_name", "anatitem_is_cell,anatitem_is_obsolete"),
     ANATOMY_STATS("ANATOMY_STATS", "anatomy_stats", "anatstat_term_zdb_id,anatstat_object_type"),
     ANTIBODY("MARKER", "antibody", "atb_zdb_id"),
     APATO_TAG("PATOTAG", "apato_tag", "apatotag_name"),

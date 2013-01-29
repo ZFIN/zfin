@@ -188,6 +188,24 @@
         <createEnv/>
     </target>
 
+    <macrodef name="createEnv-bash">
+        <sequential>
+            <exportProperties
+                    file="${commons.dir}/${INSTANCE}.properties"
+                    target="${commons.dir}/${INSTANCE}.bash"
+                    header="#!/local/bin/bash${line.separator}"
+                    keyPrefix="export "
+                    keySuffix=" "
+                    valuePrefix="&quot;"
+                    valueSuffix="&quot;"
+                    exportPropertyFile="${commons.dir}/env-exports.properties" />
+        </sequential>
+    </macrodef>
+
+    <target name="createBashEnvFile">
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
+        <createEnv-bash/>
+    </target>
 
     <macrodef name="createTT">
         <sequential>

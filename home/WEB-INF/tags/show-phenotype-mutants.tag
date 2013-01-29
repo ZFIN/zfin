@@ -37,17 +37,7 @@
                     </td>
                     <td>
                         <c:forEach var="statement" items="${genoStat.phenotypeStatements}" varStatus="loop">
-                            <c:choose>
-                                <c:when test="${includingSubstructures}">
-                                    <zfin:highlightSubstructure phenotypeStatement="${statement}"
-                                                                parentStructure="${zfn:getSubstructure(statement, formBean.aoTerm)}">
-                                    </zfin:highlightSubstructure>
-                                </c:when>
-                                <c:otherwise>
-                                    <zfin:link entity="${statement}"/>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:if test="${!loop.last}"><br/></c:if>
+                            <zfin:link entity="${statement}"/> <c:if test="${!loop.last}"><br/></c:if>
                         </c:forEach>
                     </td>
                     <td>

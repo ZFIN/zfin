@@ -10,6 +10,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -177,7 +178,7 @@ public interface AntibodyRepository {
     List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures);
 
 
-    int getAntibodyCount(GenericTerm anatomyItem, boolean includeSubstructure);
+    int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
 
     /**
      * Retrieve all antibodies sorted by name.

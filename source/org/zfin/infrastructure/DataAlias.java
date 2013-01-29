@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * Base class for alias records. You need to extend this class
- * to make use of the real function, e.g. MarkerAlias or AnatomySynonym.
+ * to make use of the real function, e.g. MarkerAlias.
  */
 public class DataAlias implements Comparable, EntityAttribution, Serializable {
 

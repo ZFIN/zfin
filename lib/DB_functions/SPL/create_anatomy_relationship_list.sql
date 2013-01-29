@@ -23,8 +23,8 @@ create procedure create_anatomy_relationship_list()
  --    transaction. This is the effect we want.
 -----------------------------------------------------
 
-    define anatomyItemId      like anatomy_item.anatitem_zdb_id;
-    define relationItemName   like anatomy_item.anatitem_name;
+    define anatomyItemId      like term.term_zdb_id;
+    define relationItemName   like term.term_name;
     define containedbyList    lvarchar;
     define containsList       lvarchar;
     define developedfromList  lvarchar;
@@ -41,7 +41,7 @@ create procedure create_anatomy_relationship_list()
       end exception with resume;
 	
      create temp table anatomy_relationship_list_temp (
-	arlt_anatitem_zdb_id	varchar(50),
+	arlt_term_zdb_id	varchar(50),
 	arlt_contained_by	varchar(255),
 	arlt_contains 		lvarchar,
 	arlt_develops_from	varchar(255),
@@ -66,10 +66,11 @@ create procedure create_anatomy_relationship_list()
     delete from anatomy_relationship_list_temp;   
 
     foreach 
-	select anatitem_zdb_id
+	select term_zdb_id
 	  into anatomyItemId
-          from anatomy_item 
-      order by anatitem_zdb_id
+          from term
+          where term_ont_id[1,3] = "ZFA"
+      order by term_zdb_id
 
        let containedbyList = "";
        let containsList = "";
@@ -81,13 +82,13 @@ create procedure create_anatomy_relationship_list()
        -----------------------------------------------
 
        foreach
-	  select anatitem_name
+	  select term_name
 	    into relationItemName
-            from anatomy_relationship join anatomy_item
-                 on anatrel_anatitem_1_zdb_id = anatitem_zdb_id
-           where anatrel_anatitem_2_zdb_id = anatomyItemId
-             and anatrel_dagedit_id in ("is_a", "part_of")
-	order by anatitem_name
+            from term_relationship join term
+                 on termrel_term_1_zdb_id = term_zdb_id
+           where termrel_term_2_zdb_id = anatomyItemId
+             and termrel_type in ("is_a", "part_of")
+	order by term_name
 
 	   if containedbyList <> "" then  
 		let containedbyList = containedbyList || ", ";
@@ -102,13 +103,13 @@ create procedure create_anatomy_relationship_list()
        -----------------------------------------------
 
        foreach
-	  select anatitem_name
+	  select term_name
 	    into relationItemName
-            from anatomy_relationship join anatomy_item
-                 on anatrel_anatitem_2_zdb_id = anatitem_zdb_id
-           where anatrel_anatitem_1_zdb_id = anatomyItemId
-             and anatrel_dagedit_id in ("is_a", "part_of")
-	order by anatitem_name
+            from term_relationship join term
+                 on termrel_term_2_zdb_id = term_zdb_id
+           where termrel_term_1_zdb_id = anatomyItemId
+             and termrel_type in ("is_a", "part_of")
+	order by term_name
 
 	   if  containsList <> "" then
 		let containsList = containsList || ", ";
@@ -123,13 +124,13 @@ create procedure create_anatomy_relationship_list()
        -----------------------------------------------
 
        foreach
-	  select anatitem_name
+	  select term_name
 	    into relationItemName
-            from anatomy_relationship join anatomy_item
-                 on anatrel_anatitem_1_zdb_id = anatitem_zdb_id
-           where anatrel_anatitem_2_zdb_id = anatomyItemId
-             and anatrel_dagedit_id = "develops_from"
-	order by anatitem_name
+            from term_relationship join term
+                 on termrel_term_1_zdb_id = term_zdb_id
+           where termrel_term_2_zdb_id = anatomyItemId
+             and termrel_type = "develops_from"
+	order by term_name
 
 	   if developedfromList <> "" then 
 		let developedfromList = developedfromList || ", ";
@@ -144,13 +145,13 @@ create procedure create_anatomy_relationship_list()
        -----------------------------------------------
 
        foreach
-	  select anatitem_name
+	  select term_name
 	    into relationItemName
-            from anatomy_relationship join anatomy_item
-                 on anatrel_anatitem_2_zdb_id = anatitem_zdb_id
-           where anatrel_anatitem_1_zdb_id = anatomyItemId
-             and anatrel_dagedit_id = "develops_from"
-	order by anatitem_name
+            from term_relationship join term
+                 on termrel_term_2_zdb_id = term_zdb_id
+           where termrel_term_1_zdb_id = anatomyItemId
+             and termrel_type = "develops_from"
+	order by term_name
 
 	   if developsintoList <> "" then
 		let developsintoList = developsintoList || ", ";

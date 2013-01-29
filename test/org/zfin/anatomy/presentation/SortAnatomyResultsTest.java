@@ -1,8 +1,9 @@
 package org.zfin.anatomy.presentation;
 
 import org.junit.Test;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,16 +19,16 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteBothSearchTerm() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        AnatomyItem itemOne = new AnatomyItem();
+        Term itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(false);
-        statOne.setAnatomyItem(itemOne);
+        statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        AnatomyItem itemTwo = new AnatomyItem();
+        Term itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
-        statTwo.setAnatomyItem(itemTwo);
+        statTwo.setTerm(itemTwo);
 
         List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
         list.add(statOne);
@@ -38,8 +39,8 @@ public class SortAnatomyResultsTest {
         AnatomyStatistics stOne = list.get(0);
         AnatomyStatistics stTwo = list.get(1);
 
-        String nameOne = stOne.getAnatomyItem().getTermName();
-        String nameTwo = stTwo.getAnatomyItem().getTermName();
+        String nameOne = stOne.getTerm().getTermName();
+        String nameTwo = stTwo.getTerm().getTermName();
 
         assertEquals("", "Flycatcher", nameOne);
         assertEquals("", "Flyaborigines", nameTwo);
@@ -47,22 +48,22 @@ public class SortAnatomyResultsTest {
 
     @Test
     public void oneObsoleteBothSearchTermAnatomy() {
-        AnatomyItem itemOne = new AnatomyItem();
+        Term itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(false);
 
-        AnatomyItem itemTwo = new AnatomyItem();
+        Term itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
 
-        List<AnatomyItem> list = new ArrayList<AnatomyItem>();
+        List<Term> list = new ArrayList<Term>();
         list.add(itemOne);
         list.add(itemTwo);
 
         Collections.sort(list, new SortAnatomySearchTerm("Fly"));
 
-        AnatomyItem stOne = list.get(0);
-        AnatomyItem stTwo = list.get(1);
+        Term stOne = list.get(0);
+        Term stTwo = list.get(1);
 
         String nameOne = stOne.getTermName();
         String nameTwo = stTwo.getTermName();
@@ -74,16 +75,16 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteOneSearchTerm() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        AnatomyItem itemOne = new AnatomyItem();
+        Term itemOne = new GenericTerm();
         itemOne.setTermName("MyFlycatcher");
         itemOne.setObsolete(false);
-        statOne.setAnatomyItem(itemOne);
+        statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        AnatomyItem itemTwo = new AnatomyItem();
+        Term itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
-        statTwo.setAnatomyItem(itemTwo);
+        statTwo.setTerm(itemTwo);
 
         List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
         list.add(statOne);
@@ -94,8 +95,8 @@ public class SortAnatomyResultsTest {
         AnatomyStatistics stOne = list.get(0);
         AnatomyStatistics stTwo = list.get(1);
 
-        String nameOne = stOne.getAnatomyItem().getTermName();
-        String nameTwo = stTwo.getAnatomyItem().getTermName();
+        String nameOne = stOne.getTerm().getTermName();
+        String nameTwo = stTwo.getTerm().getTermName();
 
         assertEquals("", "MyFlycatcher", nameOne);
         assertEquals("", "Flyaborigines", nameTwo);
@@ -104,16 +105,16 @@ public class SortAnatomyResultsTest {
     @Test
     public void oneObsoleteOneSearchTermOther() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        AnatomyItem itemOne = new AnatomyItem();
+        Term itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(false);
-        statOne.setAnatomyItem(itemOne);
+        statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        AnatomyItem itemTwo = new AnatomyItem();
+        Term itemTwo = new GenericTerm();
         itemTwo.setTermName("MyFlyaborigines");
         itemTwo.setObsolete(true);
-        statTwo.setAnatomyItem(itemTwo);
+        statTwo.setTerm(itemTwo);
 
         List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
         list.add(statOne);
@@ -124,8 +125,8 @@ public class SortAnatomyResultsTest {
         AnatomyStatistics stOne = list.get(0);
         AnatomyStatistics stTwo = list.get(1);
 
-        String nameOne = stOne.getAnatomyItem().getTermName();
-        String nameTwo = stTwo.getAnatomyItem().getTermName();
+        String nameOne = stOne.getTerm().getTermName();
+        String nameTwo = stTwo.getTerm().getTermName();
 
         assertEquals("", "Flycatcher", nameOne);
         assertEquals("", "MyFlyaborigines", nameTwo);
@@ -134,16 +135,16 @@ public class SortAnatomyResultsTest {
     @Test
     public void twoObsolete() {
         AnatomyStatistics statOne = new AnatomyStatistics();
-        AnatomyItem itemOne = new AnatomyItem();
+        Term itemOne = new GenericTerm();
         itemOne.setTermName("Flycatcher");
         itemOne.setObsolete(true);
-        statOne.setAnatomyItem(itemOne);
+        statOne.setTerm(itemOne);
 
         AnatomyStatistics statTwo = new AnatomyStatistics();
-        AnatomyItem itemTwo = new AnatomyItem();
+        Term itemTwo = new GenericTerm();
         itemTwo.setTermName("Flyaborigines");
         itemTwo.setObsolete(true);
-        statTwo.setAnatomyItem(itemTwo);
+        statTwo.setTerm(itemTwo);
 
         List<AnatomyStatistics> list = new ArrayList<AnatomyStatistics>();
         list.add(statOne);
@@ -154,8 +155,8 @@ public class SortAnatomyResultsTest {
         AnatomyStatistics stOne = list.get(0);
         AnatomyStatistics stTwo = list.get(1);
 
-        String nameOne = stOne.getAnatomyItem().getTermName();
-        String nameTwo = stTwo.getAnatomyItem().getTermName();
+        String nameOne = stOne.getTerm().getTermName();
+        String nameTwo = stTwo.getTerm().getTermName();
 
         assertEquals("", "Flyaborigines", nameOne);
         assertEquals("", "Flycatcher", nameTwo);

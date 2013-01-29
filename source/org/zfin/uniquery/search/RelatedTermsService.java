@@ -62,7 +62,7 @@ public class RelatedTermsService {
     }
 
     /**
-     * Search all_map_names and anatomy_item tables for exact name/symbol match
+     * Search all_map_names and term tables for exact name/symbol match
      * on markers/clones/genes/mutants/anatomy terms. We could only use base
      * tables, may update when Fish tables consolidated.
      * Return zdb id if match, otherwise empty string.

@@ -2,13 +2,13 @@ package org.zfin.mutant.presentation;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.Morpholino;
+import org.zfin.ontology.GenericTerm;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,11 +18,11 @@ import static junit.framework.Assert.assertEquals;
 public class MorpholinoStatisticsTest {
 
     private GenotypeExperiment genoxOne;
-    private AnatomyItem item;
+    private GenericTerm item;
 
     @Test
     public void orderWithinSingleMoStatistics() {
-        MorpholinoStatistics stat = new MorpholinoStatistics(genoxOne, item.createGenericTerm());
+        MorpholinoStatistics stat = new MorpholinoStatistics(genoxOne, item);
         String targetGeneOrdering = stat.getTargetGeneOrder();
         assertEquals("slit1a, slit1b", targetGeneOrdering);
     }
@@ -73,7 +73,7 @@ public class MorpholinoStatisticsTest {
     }
 
     private void createAnatomyTerm() {
-        item = new AnatomyItem();
+        item = new GenericTerm();
         item.setTermName("eye");
         item.setZdbID("ZDB-ANAT-010921-532");
     }

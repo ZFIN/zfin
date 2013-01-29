@@ -283,10 +283,7 @@ public class InspectDataHistory extends AbstractScriptWrapper {
             Query query = new TermQuery(new Term("row", entityId));
 
             // reformulate query into the fieldName-specific query, and rewrite the original query
-            Query fullQuery = addCategoryPrefixToQuery("tableName", "anatomy_item", query);
-            Hits hits = searcher.search(fullQuery);
-            createEntityTraceReport(hits, "anatomy_item");
-            LOG.info(hits.length() + " hits found");
+            LOG.info("STill needs to be implemented!!!!!!");
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);

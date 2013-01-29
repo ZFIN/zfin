@@ -3,7 +3,6 @@ package org.zfin.gwt.marker.server;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Image;
@@ -43,7 +42,6 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
 
 
         ArrayList<TermDTO> termDTOs = new ArrayList<TermDTO>();        
-        /* this will have to be refactored to use terms rather than anatomyitems */
         for(GenericTerm term : image.getTerms()) {
             termDTOs.add(DTOConversionService.convertToTermDTO(term));
         }
@@ -84,13 +82,11 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
 
-        /* will become Term eventually */
-        AnatomyItem anatomyTerm = anatomyRepository.getAnatomyItem(name);
         GenericTerm term = ontologyRepository.getTermByName(name, Ontology.ANATOMY);
         
         Image image = publicationRepository.getImageById(imageZdbID);
         TermDTO termDTO = new TermDTO();
-        termDTO.setName(anatomyTerm.getTermName());
+        termDTO.setName(term.getTermName());
 
 
         image.getTerms().add(term);
@@ -122,7 +118,7 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
      * This method is an exact duplicate of the getStages method in CurationExperimentRPCImpl,
      * if ever we can, we should refactor so that they can be shared rather than copied and
      * pasted
-     * @return
+     * @return list of stages
      */
     public List<StageDTO> getStages() {
         List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStages();

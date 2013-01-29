@@ -1,6 +1,7 @@
 package org.zfin.framework;
 
 import org.apache.log4j.Logger;
+import org.zfin.ontology.OntologyDataManager;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.properties.ZfinPropertiesEnum;
 
@@ -32,7 +33,7 @@ public class OntologyManagerServlet extends HttpServlet {
             servletName = "";
         if (servletName.startsWith("org.apache.catalina.INVOKER."))
             throw new UnavailableException("Called through Invoker Servlet");
-        if(true==Boolean.valueOf(ZfinPropertiesEnum.LOAD_ONTOLOGIES_AT_STARTUP.toString())){
+        if (true == Boolean.valueOf(ZfinPropertiesEnum.LOAD_ONTOLOGIES_AT_STARTUP.toString())) {
             ReadOntologiesThread thread = new ReadOntologiesThread();
             thread.start();
         }
@@ -67,9 +68,12 @@ public class OntologyManagerServlet extends HttpServlet {
             try {
                 OntologyManager.getInstance(OntologyManager.LoadingMode.SERIALIZED_FILE);
             } catch (Exception e) {
-                LOG.warn("Problem loading serialized file. Loading ontologies from database...",e);
+                LOG.warn("Problem loading serialized file. Loading ontologies from database...", e);
                 reLoadFormDatabase();
             }
+            // initialize ontology data manager
+            // has to happen after the ontology manager is fully loaded.
+            OntologyDataManager.getInstance();
         }
     }
 

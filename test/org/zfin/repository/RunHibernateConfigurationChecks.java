@@ -12,6 +12,9 @@ import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.GenericTermRelationship;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -80,20 +83,16 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
     public static void main(String[] arguments) {
         RunHibernateConfigurationChecks check = new RunHibernateConfigurationChecks("Hibernate Check");
         Session s = HibernateUtil.currentSession();
-        String zdbID = "ZDB-ANAT-051116-41";
-        zdbID = "ZDB-ANAT-010921-544";
-        zdbID = "ZDB-ANAT-050915-161";
-        // two synonyms
-        zdbID = "ZDB-ANAT-010921-433";
-        zdbID = "ZDB-ANAT-010921-455";
-        AnatomyItem anatomyItem = (AnatomyItem) s.load(AnatomyItem.class, zdbID);
+        // midbrain hindbrain boundary
+        String zdbID = "ZFA:0000042";
+        GenericTerm anatomyItem = (GenericTerm) s.load(GenericTerm.class, zdbID);
         System.out.println(anatomyItem.getTermName());
 
-        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
+        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
 //        List<AnatomyRelationshipType> types = ar.getAllAnatomyRelationshipTypes();
 //        System.out.println(types);
 
-        List<AnatomyRelationship> rels = ar.getAnatomyRelationships(anatomyItem);
+        List<GenericTermRelationship> rels = ar.getTermRelationships(anatomyItem);
         System.out.println(rels);
 
 //        List<AnatomyStatistics> stats = ar.getAnatomyItemStatistics("neural rod");
@@ -134,14 +133,14 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
         String zdbID = "ZDB-ANAT-010921-591";
-        AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
+        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
 /*
         List<CanonicalMarker> list = ar.getCanonicalMarker(zdbID);
         System.out.println("list");
 */
 
         CanonicalMarker canon = new CanonicalMarker();
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID("ZDB-ANAT-010921-591");
         canon.setItem(item);
         Publication pub = new Publication();

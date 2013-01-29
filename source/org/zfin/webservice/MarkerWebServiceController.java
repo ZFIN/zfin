@@ -2,9 +2,9 @@ package org.zfin.webservice;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.webservice.schema.Anatomy;
 import org.zfin.webservice.schema.Gene;
@@ -42,14 +42,14 @@ public class MarkerWebServiceController extends AbstractMarkerWebService{
     @RequestMapping(value="expression/anatomy/wildtype/{id}.xml", method=RequestMethod.GET )
     public @ResponseBody String getAnatomyExpressionForGeneAsXml(@PathVariable("id") String zdbID){
         Marker marker = getGeneForValue(zdbID);
-        List<AnatomyItem> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(marker.getZdbID());
+        List<GenericTerm> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(marker.getZdbID());
         return WebserviceXmlMarshaller.marshal(SchemaMapper.convertAnatomyListFromAnatomyItemList(anatomyItemList));
     }
 
     @RequestMapping(value={"expression/anatomy/wildtype/{id}","geneAnatomyExpression/{id}.json"}, method=RequestMethod.GET )
     public @ResponseBody List<Anatomy> getAnatomyExpressionForGene(@PathVariable("id") String zdbID){
         Marker marker = getGeneForValue(zdbID);
-        List<AnatomyItem> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(marker.getZdbID());
+        List<GenericTerm> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(marker.getZdbID());
         return SchemaMapper.convertAnatomyListFromAnatomyItemList(anatomyItemList);
     }
 

@@ -1,14 +1,8 @@
 package org.zfin.anatomy.service;
 
 import org.springframework.stereotype.Service;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.AnatomyPresentation;
-import org.zfin.anatomy.presentation.RelationshipPresentation;
-import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.anatomy.presentation.StagePresentation;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -16,7 +10,10 @@ import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
@@ -25,27 +22,6 @@ import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
  */
 @Service
 public class AnatomyService {
-
-    private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
-
-    public static List<RelationshipPresentation> getRelations(AnatomyItem term) {
-        Set<String> types = new HashSet<String>();
-        List<AnatomyRelationship> relatedItems = term.getRelatedItems();
-        if (relatedItems == null) {
-            relatedItems = anatomyRepository.getAnatomyRelationships(term);
-            term.setRelatedItems(relatedItems);
-        }
-        if (relatedItems != null) {
-            for (AnatomyRelationship rel : relatedItems) {
-                types.add(rel.getRelationship());
-            }
-        }
-        List<String> uniqueTypes = new ArrayList<String>(types);
-        Collections.sort(uniqueTypes, new RelationshipSorting());
-        return AnatomyPresentation.createRelationshipPresentation(uniqueTypes, term);
-
-    }
-
 
     public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm,
                                                                              PaginationBean pagination,

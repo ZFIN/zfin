@@ -1,8 +1,8 @@
 package org.zfin.publication.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
 public class PublicationSearchBean extends PaginationBean {
 
     private Marker marker;
-    private AnatomyItem anatomyItem;
+    private GenericTerm term;
     private List<Publication> publications;
 
-    public AnatomyItem getAnatomyItem() {
-        if (anatomyItem == null)
-            anatomyItem = new AnatomyItem();
-        return anatomyItem;
+    public GenericTerm getTerm() {
+        if (term == null)
+            term = new GenericTerm();
+        return term;
     }
 
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
+    public void setTerm(GenericTerm anatomyItem) {
+        this.term = anatomyItem;
     }
 
     public Marker getMarker() {

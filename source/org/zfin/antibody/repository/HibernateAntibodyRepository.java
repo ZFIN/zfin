@@ -25,6 +25,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -550,7 +551,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public int getAntibodyCount(GenericTerm aoTerm, boolean includeSubstructures) {
+    public int getAntibodyCount(Term aoTerm, boolean includeSubstructures) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +

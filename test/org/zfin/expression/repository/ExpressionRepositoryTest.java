@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
@@ -35,17 +34,12 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -366,27 +360,26 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getAnatomyForMarker() {
 
         String zdbID = "ZDB-GENE-980526-333";
-        String sql = "SELECT distinct anatitem_zdb_id, anatitem_name_order " +
+        String sql = "SELECT distinct term_zdb_id, term_name " +
                 "FROM " +
-                "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item " +
+                "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype " +
                 "WHERE " +
                 "xpatex_gene_zdb_id = :zdbID " +
                 "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "AND xpatres_expression_found= :expressionFound " +
                 "AND xpatres_superterm_zdb_id = term_zdb_id " +
-                "AND term_ont_id = anatitem_obo_id " +
                 "AND xpatex_genox_zdb_id = genox_zdb_id " +
                 "AND exp_zdb_id = genox_exp_zdb_id and exp_name = :experiment  " +
                 "AND geno_zdb_id  = genox_geno_zdb_id " +
                 "AND geno_is_wildtype = :wildType " +
-                "ORDER BY anatitem_name_order asc";
+                "ORDER BY term_name asc";
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("zdbID", zdbID)
                 .setParameter("experiment", "_Standard")
                 .setBoolean("expressionFound", true)
                 .setBoolean("wildType", true)
                 .list();
-        List<AnatomyItem> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID);
+        List<GenericTerm> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID);
         assertEquals(termZdbIds.size(), anatomyItems.size());
 
         for (int i = 0; i < termZdbIds.size(); i++) {
@@ -462,8 +455,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getWildTypeExpressionForMarker() {
         List<ExpressedStructurePresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
-        assertThat(wees.size(),greaterThan(30));
-        assertThat(wees.size(),lessThan(50));
+        assertThat(wees.size(), greaterThan(30));
+        assertThat(wees.size(), lessThan(50));
     }
 
     @Test
@@ -485,4 +478,19 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Fig. 4", figureLink.getLinkContent());
         assertEquals("<a href=\"/" + ZfinProperties.getWebDriver() + "?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-051013-9\">Fig. 4</a>", figureLink.getLink());
     }
+
+    @Test
+    public void getAllExpressedTerms() {
+        Set<String> expressedTerms = expRep.getAllDistinctExpressionTermIDs();
+        assertNotNull(expressedTerms);
+        assertTrue(expressedTerms.size() > 100);
+    }
+
+    @Test
+    public void getAllPhenotypeTerms() {
+        Set<String> expressedTerms = expRep.getAllDistinctPhenotypeTermIDs();
+        assertNotNull(expressedTerms);
+        assertTrue(expressedTerms.size() > 100);
+    }
+
 }

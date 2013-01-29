@@ -247,18 +247,6 @@
     </tag>
 
     <tag>
-        <name>collectionSize</name>
-        <tagclass>org.zfin.framework.presentation.tags.CollectionSizeTag</tagclass>
-        <bodycontent>empty</bodycontent>
-        <info>Outputs the size of the collection</info>
-        <attribute>
-            <name>collectionEntity</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-    <tag>
         <name>createDelimitedList</name>
         <tagclass>org.zfin.framework.presentation.tags.CreateDelimitedListTag</tagclass>
         <info>Outputs string value of each of the items in the provided collection, separated by the provided

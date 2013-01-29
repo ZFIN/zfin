@@ -57,12 +57,20 @@ public class LuceneQueryService {
     }
 
     private void createIndexFile() {
+        IndexWriter writer = null;
         try {
-            IndexWriter writer = new IndexWriter(indexDirectory, analyzer, true);
+            writer = new IndexWriter(indexDirectory, analyzer, true);
             reader = IndexReader.open(indexDirectory);
             isInitialized = true;
         } catch (IOException e) {
             LOG.error(e);
+        } finally {
+            try {
+                if (writer != null)
+                    writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -84,8 +92,9 @@ public class LuceneQueryService {
             Searcher searcher = new IndexSearcher(reader);
             Query query = null;
             int index = 0;
-            for (String fieldName : queryProperties.keySet()) {
-                String fieldValue = queryProperties.get(fieldName).trim();
+            for (Map.Entry<String, String> entry : queryProperties.entrySet()) {
+                String fieldName = entry.getKey();
+                String fieldValue = entry.getValue().trim();
                 if (index++ == 0)
                     query = new TermQuery(new Term(fieldName, fieldValue));
                 else
@@ -142,8 +151,9 @@ public class LuceneQueryService {
             Searcher searcher = new IndexSearcher(reader);
             Query query = null;
             int index = 0;
-            for (String fieldName : queryProperties.keySet()) {
-                String fieldValue = queryProperties.get(fieldName).trim();
+            for (Map.Entry<String, String> entry : queryProperties.entrySet()) {
+                String fieldName = entry.getKey();
+                String fieldValue = entry.getValue().trim();
                 if (index++ == 0)
                     query = getStartsWithQuery(fieldName, fieldValue);
                 else
@@ -181,19 +191,17 @@ public class LuceneQueryService {
         return indexDirectory;
     }
 
-    @Override
     // cleanup all handles to index files.
-    protected void finalize() throws Throwable {
+    protected void close() throws Throwable {
         reader.close();
-        super.finalize();
     }
 
     public void changeIndex(String fullPathMatchingIndexDirectory) {
 
         try {
-            finalize();
+            close();
         } catch (Throwable throwable) {
-            throwable.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throwable.printStackTrace();
         }
         this.indexDirectory = fullPathMatchingIndexDirectory;
         initSummary();

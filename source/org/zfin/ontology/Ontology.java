@@ -10,47 +10,50 @@ import java.util.*;
  */
 public enum Ontology implements Serializable {
 
-    ANATOMY("zebrafish_anatomy", "Anatomy Ontology", false),
+    ANATOMY("zebrafish_anatomy", "Anatomy Ontology", false, "ZFA:", true, true),
     ANATOMY_FULL("zebrafish_anatomical_ontology", "Anatomy Ontology including stage ontology", false),
     // stages
-    STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false),
+    STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false, "ZFS:"),
     GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true),
     // full GO ontology
-    GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true),
+    GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true, "GO:"),
     // Subset of GO: Cellular Components
-    GO_CC("cellular_component", "Gene Ontology: Cellular Component", false),
+    GO_CC("cellular_component", "GO: Cellular Component", false, "GO:", true, true),
     // Subset of GO: Molecular Function
-    GO_MF("molecular_function", "Gene Ontology: Molecular Function", false),
+    GO_MF("molecular_function", "GO: Molecular Function", false, "GO:", false, true),
     // Subset of GO: Biological Process
-    GO_BP("biological_process", "Gene Ontology: Biological Process", false),
+    GO_BP("biological_process", "GO: Biological Process", false, "GO:", false, true),
     // PATO
-    QUALITY("quality", "Phenotypic Quality Ontology", false),
+    QUALITY("quality", "Phenotypic Quality Ontology", false, "PATO:"),
     // PATO: Processes
     // this is "Process Quality"
-    QUALITY_PROCESSES("quality.process", "quality", "Phenotype and Trait Ontology: Quality of Process", false),
+    QUALITY_PROCESSES("quality.process", "quality", "Phenotype and Trait Ontology: Quality of Process", false, "PATO:"),
     // PATO: Processes
-    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "quality", "Phenotype and Trait Ontology: Relation of Process", false),
+    QUALITY_PROCESSES_RELATIONAL("pato.eq.quality.process.relational", "quality", "Phenotype and Trait Ontology: Relation of Process", false, "PATO:"),
     // PATO: Qualities
     // this is "physical object quality"
-    QUALITY_QUALITIES("quality.quality", "quality", "Phenotype and Trait Ontology: Quality of Qualities", false),
+    QUALITY_QUALITIES("quality.quality", "quality", "Phenotype and Trait Ontology: Quality of Qualities", false, "PATO:"),
     // PATO: Qualitative
     // This is "qualitative"
-    QUALITY_QUALITATIVE("pato.eq.quality.qualitative", "Phenotype and Trait Ontology: Quality of Qualities", false),
+    QUALITY_QUALITATIVE("pato.eq.quality.qualitative", "Phenotype and Trait Ontology: Quality of Qualities", false, "PATO:"),
     // BP and MF
     // PATO: Processes
     QUALITY_OBJECT_RELATIONAL("pato.eq.quality.object.relational", "Phenotype and Trait Ontology: Relation of Object", false),
-    GO_BP_MF(GO_BP.getOntologyName() + "," + GO_MF.getOntologyName(), "Gene Ontology: Biological Process and Molecular Function", true),
+    GO_BP_MF(GO_BP.getOntologyName() + "," + GO_MF.getOntologyName(), "Gene Ontology: Biological Process and Molecular Function", true, "GO:"),
     // Spatial
-    SPATIAL("spatial", "Spatial Ontology", false),
-    BEHAVIOR("behavior_ontology", "Behavior Ontology", false),
-    MPATH("mouse_pathology.ontology", "MPATH", false),
-    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false),
-    AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(),"AO and GO",true) ;
+    SPATIAL("spatial", "Spatial Ontology", false, "BSPO:", true, true),
+    BEHAVIOR("behavior_ontology", "Behavior Ontology", false, "NBO:"),
+    MPATH("mouse_pathology.ontology", "MPATH", false, "MPATH:"),
+    MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false, "MPATH:"),
+    AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true);
 
     private String ontologyName;
     private String commonName;
     private String dbOntologyName;
     private boolean composedOntologies;
+    private String oboIdPrefix;
+    private boolean expressionData;
+    private boolean phenotypeData;
 
     private Ontology(String name, String commonName, boolean composed) {
         this.ontologyName = name;
@@ -59,11 +62,37 @@ public enum Ontology implements Serializable {
         this.dbOntologyName = ontologyName;
     }
 
+    private Ontology(String name, String commonName, boolean composed, String oboIdPrefix) {
+        this.ontologyName = name;
+        this.commonName = commonName;
+        this.composedOntologies = composed;
+        this.dbOntologyName = ontologyName;
+        this.oboIdPrefix = oboIdPrefix;
+    }
+
+    private Ontology(String name, String commonName, boolean composed, String oboIdPrefix, boolean expressionData, boolean phenotypeData) {
+        this.ontologyName = name;
+        this.commonName = commonName;
+        this.composedOntologies = composed;
+        this.dbOntologyName = ontologyName;
+        this.oboIdPrefix = oboIdPrefix;
+        this.expressionData = expressionData;
+        this.phenotypeData = phenotypeData;
+    }
+
     private Ontology(String name, String dbOntologyName, String commonName, boolean composed) {
         this.ontologyName = name;
         this.commonName = commonName;
         this.composedOntologies = composed;
         this.dbOntologyName = dbOntologyName;
+    }
+
+    private Ontology(String name, String dbOntologyName, String commonName, boolean composed, String oboIdPrefix) {
+        this.ontologyName = name;
+        this.commonName = commonName;
+        this.composedOntologies = composed;
+        this.dbOntologyName = dbOntologyName;
+        this.oboIdPrefix = oboIdPrefix;
     }
 
     public String getOntologyName() {
@@ -86,6 +115,22 @@ public enum Ontology implements Serializable {
         return dbOntologyName;
     }
 
+
+    public boolean isExpressionData() {
+        return expressionData;
+    }
+
+    public boolean isPhenotypeData() {
+        return phenotypeData;
+    }
+
+    public String getOboIdPrefix() {
+        return oboIdPrefix;
+    }
+
+    public void setOboIdPrefix(String oboIdPrefix) {
+        this.oboIdPrefix = oboIdPrefix;
+    }
 
     public static Ontology getOntology(String name) {
         if (name == null)
@@ -222,5 +267,18 @@ public enum Ontology implements Serializable {
 
     public boolean shouldNotBeIndexed() {
         return doNotIndexOntologyList.contains(this);
+    }
+
+    public static boolean isOboID(String termID) {
+        for (Ontology ontology : values())
+            if (isOboID(termID, ontology))
+                return true;
+        return false;
+    }
+
+    public static boolean isOboID(String termID, Ontology ontology) {
+        if (ontology.getOboIdPrefix() == null)
+            return false;
+        return termID.toLowerCase().startsWith(ontology.getOboIdPrefix().toLowerCase());
     }
 }

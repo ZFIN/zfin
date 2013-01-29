@@ -5,7 +5,7 @@
 
 <c:forEach var="geneProductBean" items="${formBean}">
 
-    <table border=0 width=100% bgcolor=@HIGHLIGHT_COLOR@>
+    <table border=0 width=100% bgcolor=#EEEEEE>
         <tr>
             <td>UniProt ID: ${geneProductBean.accession}</td>
         </tr>

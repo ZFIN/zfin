@@ -143,6 +143,9 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
         if (keySet.contains(JSREF_USE_TERM_TABLE)) {
             setUseTermTable(Boolean.valueOf(lookupProperties.get(JSREF_USE_TERM_TABLE)));
         }
+        if (keySet.contains(JSREF_TERMS_WITH_DATA_ONLY)) {
+            lookup.setUseTermsWithDataOnly(Boolean.valueOf(lookupProperties.get(JSREF_TERMS_WITH_DATA_ONLY)));
+        }
 
     }
 

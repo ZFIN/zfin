@@ -18,8 +18,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/anatomy/anatomy-search");
-                assertEquals("ZFIN Anatomy Search", page.getTitleText());
-                assertNotNull(page.getByXPath("//label[. = 'Anatomical Term']").get(0));
+                assertEquals("ZFIN AO / GO Search", page.getTitleText());
+                assertNotNull(page.getByXPath("//label[. = 'Term:']").get(0));
                 HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
                 assertEquals("", htmlInput.getValueAttribute());
                 htmlInput.setValueAttribute("pelv");
@@ -37,9 +37,26 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/anatomy/anatomy-do-search?searchTerm=emb*");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/emb*");
                 assertEquals("ZFIN", page.getTitleText());
-                List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//caption[@id = 'Results for emb search']");
+                // check that embryonic structure is listed
+                List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
+                assertNotNull(caption);
+                assertEquals(1, caption.size());
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    public void testAllAnatomyTerms() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-anatomy-terms");
+                assertEquals("ZFIN", page.getTitleText());
+                // check that embryonic structure is listed
+                List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
                 assertNotNull(caption);
                 assertEquals(1, caption.size());
             } catch (Exception e) {
@@ -49,12 +66,63 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     }
 
 
-    public void testAnatomyDetailPage() {
+    public void testAnatomyDetailPageByAnatId() {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/anatomy/anatomy-view/ZDB-ANAT-010921-415");
-                assertEquals("ZFIN Anatomy: brain", page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-ANAT-010921-415");
+                assertEquals("ZFIN Anatomy Ontology: brain", page.getTitleText());
+                assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
+                List<?> byXPath = page.getByXPath("//a[. = 'PHENOTYPE']");
+                assertNotNull("Phenotype section is not displayed", byXPath);
+                assertTrue("Phenotype section is not displayed", byXPath.size() > 0);
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    // liver page
+    public void testAnatomyDetailPageByTermId() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-TERM-100331-116");
+                assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
+                assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
+                List<?> byXPath = page.getByXPath("//a[. = 'PHENOTYPE']");
+                assertNotNull("Phenotype section is not displayed", byXPath);
+                assertTrue("Phenotype section is not displayed", byXPath.size() > 0);
+                assertNotNull(byXPath.get(0));
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    // liver page
+    public void testAnatomyDetailPageByOboId() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZFA:0000123");
+                assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
+                assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
+                assertNotNull(page.getByXPath("//a[. = 'PHENOTYPE']").get(0));
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    // liver page
+    public void testAnatomyDetailPageByName() {
+        for (WebClient webClient : publicWebClients) {
+            try {
+                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/liver ");
+                assertNotNull(page);
+                assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
                 assertNotNull(page.getByXPath("//a[. = 'PHENOTYPE']").get(0));
             } catch (Exception e) {
@@ -101,9 +169,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/anatomy/show-all-phenotype-mutants/ZDB-TERM-100331-21");
                 assertTrue(page.getTitleText().startsWith("ZFIN"));
-                assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENO-050110-1']"));
-                assertTrue(page.getByXPath("//a[@id = 'ZDB-GENO-050110-1']").size() > 0);
-                assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENO-050110-1']").get(0));
+                assertNotNull(page.getByXPath("//a[@id = '" + genoID + "']"));
+                assertTrue(page.getByXPath("//a[@id = '" + genoID + "']").size() > 0);
+                assertNotNull(page.getByXPath("//a[@id = '" + genoID + "']").get(0));
             } catch (Exception e) {
                 fail(e.toString());
             }
@@ -161,7 +229,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         }
     }
 
-   /**
+    /**
      * Check that a list of genotypes for a given structure is rendered.
      */
     public void testShowGenotypesPerAOSubstructures() {
@@ -177,7 +245,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
             }
         }
     }
-
 
 
 }

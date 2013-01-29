@@ -8,10 +8,10 @@
     <tr>
         <td class="titlebar">
             <span style="font-size:larger; margin-left:0.5em; font-weight:bold;">
-            Anatomical Ontology Browser
+            Ontology Search
             </span>
         </td>
-        <td class="titlebar" align="right">
+        <td style="background-color: #efefef; text-align: right">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Anatomical Ontology Browser"/>
                 <tiles:putAttribute name="subjectID" value=""/>
@@ -20,37 +20,29 @@
     </tr>
 </table>
 
-
 <TABLE width=100%>
     <TR>
         <TD>
             <TABLE border=0 width=100% cellspacing=0 cellpadding=5>
                 <TR bgcolor="">
+                    <TD width="50">
+                    </TD>
                     <TD>
-                        <A HREF="/action/anatomy/show-all-anatomy-terms">
-                            All Anatomical Terms
-                        </A>
                     </TD>
-                    <TD colspan=2>
+                    <TD rowspan="4">
                         <A HREF="/action/anatomy/request-new-anatomy-term" target="_new">
-                            Request new Anatomical Term
+                            Request a new Anatomical Term
                         </A>
-                    </TD>
-                </TR>
-                <TR bgcolor="">
-                    <TD width=45%>
-                            <label class="indented-label">Anatomical Term</label><br>
-                            <zfin2:lookup ontology="<%=Ontology.ANATOMY%>"
-                                          action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
-                                          wildcard="true" useIdAsTerm="false"/>
-                    </TD>
-                    <TD width=10%>
-                        <span class="bold">or</span>
-                    </TD>
-                    <TD width=45%>
-                        <label class="namesearchLabel">
-                            <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
-                        </label><BR>
+
+                        <p/>
+                        <A HREF="/action/ontology/show-all-anatomy-terms">
+                            Display all Anatomical Terms
+                        </A>
+
+                        <p/>
+                        Browse Anatomy Terms by
+                        <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
+                        <BR>
                         <form:form method="GET" action="/action/anatomy/show-terms-by-stage" commandName="formBean"
                                    name="formBean">
                             <form:select path="stage.zdbID" onchange="document.formBean.submit();" id="stages"
@@ -59,6 +51,27 @@
                                 <form:options items="${formBean.displayStages}"/>
                             </form:select>
                         </form:form>
+                    </TD>
+                </TR>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <TR>
+                    <TD width="40" valign="top" align="right">
+                        <label class="indented-label">Term:</label><br>
+                    </TD>
+                    <TD valign="top">
+                        <span id="aogo">
+                        <zfin2:lookup ontology="<%=Ontology.AOGO%>"
+                                      action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
+                                      wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"/>
+                            </span>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD valign="top" align="right" style="font-size: 12px">
+                    <TD valign="top" style="font-size: 12px">
+                        <span id="ontologyChecker"></span> Anatomy terms only <p/>
                     </TD>
                 </TR>
             </TABLE>

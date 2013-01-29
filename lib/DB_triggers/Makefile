@@ -26,8 +26,6 @@ TRIGGERS = \
 	anatomy_items_insert_trigger.sql \
 	anatomy_items_name_update_trigger.sql \
 	anatomy_items_end_stage_update_trigger.sql \
-	anatomy_relationship_insert_trigger.sql \
-	anatomy_relationship_update_trigger.sql \
 	clone_problem_type_insert_trigger.sql \
 	clone_problem_type_update_trigger.sql \
 	data_alias_insert_trigger.sql \
@@ -96,6 +94,12 @@ TRIGGERS = \
 	run_candidate_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
+	term_insert_trigger.sql \
+	term_update_trigger.sql \
+	term_relationship_insert_trigger.sql \
+	term_relationship_update_trigger.sql \
+	term_stage_insert_trigger.sql \
+	term_stage_update_trigger.sql \
 	transcript_insert_trigger.sql \
 	transcript_update_trigger.sql \
 	updates_insert_trigger.sql \

@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 import org.zfin.util.NumberAwareStringComparator;
 
@@ -8,14 +8,13 @@ import java.util.*;
 
 /**
  * Basic implementation of the Term interface.
- * This is just a convenience class as AnatomyItem and GenericTerm do not share table data.
+ * This is just a convenience class as GenericTerm do not share table data.
  */
 public abstract class AbstractTerm implements Term {
 
-    private transient final Logger logger = Logger.getLogger(AbstractTerm.class);
-
     protected String zdbID;
     protected String termName;
+    protected String termNameOrder;
     protected String oboID;
     protected Ontology ontology;
     protected boolean obsolete;
@@ -144,30 +143,42 @@ public abstract class AbstractTerm implements Term {
         this.parentTermRelationships = parentTermRelationships;
     }
 
+    public String getTermNameOrder() {
+        return termNameOrder;
+    }
+
+    public void setTermNameOrder(String termNameOrder) {
+        this.termNameOrder = termNameOrder;
+    }
+
     @Override
     public Set<Term> getChildTerms() {
-        Set<Term> terms = new HashSet<Term>() ;
-        for(TermRelationship termRelationship: getChildTermRelationships()){
+        Set<Term> terms = new HashSet<Term>();
+        for (TermRelationship termRelationship : getChildTermRelationships()) {
             terms.add(termRelationship.getTermTwo());
         }
-        return terms ;
+        return terms;
     }
 
     @Override
     public Set<Term> getParentTerms() {
-        Set<Term> terms = new HashSet<Term>() ;
-        for(TermRelationship termRelationship: getParentTermRelationships()){
+        Set<Term> terms = new HashSet<Term>();
+        for (TermRelationship termRelationship : getParentTermRelationships()) {
             terms.add(termRelationship.getTermOne());
         }
-        return terms ;
+        return terms;
     }
 
     public List<TermRelationship> getAllDirectlyRelatedTerms() {
-        List<TermRelationship> terms = new ArrayList<TermRelationship>() ;
-        terms.addAll(getChildTermRelationships());
-        terms.addAll(getParentTermRelationships());
+        List<TermRelationship> terms = new ArrayList<TermRelationship>();
+        Set<TermRelationship> childTermRelationships = getChildTermRelationships();
+        if (childTermRelationships != null)
+            terms.addAll(childTermRelationships);
+        Set<TermRelationship> parentTermRelationships = getParentTermRelationships();
+        if (parentTermRelationships != null)
+            terms.addAll(parentTermRelationships);
 
-        return terms ;
+        return terms;
 //        if (relationships != null){
 //            return relationships;
 //        }
@@ -242,6 +253,50 @@ public abstract class AbstractTerm implements Term {
                 return true;
         }
         return false;
+    }
+
+
+    private DevelopmentStage start;
+    private DevelopmentStage end;
+
+    private String startZdbID;
+    private String endZdbID;
+
+    @Override
+    public DevelopmentStage getStart() {
+        return start;
+    }
+
+    @Override
+    public void setStart(DevelopmentStage stage) {
+        this.start = stage;
+    }
+
+    @Override
+    public DevelopmentStage getEnd() {
+        return end;
+    }
+
+    @Override
+    public void setEnd(DevelopmentStage stage) {
+        this.end = stage;
+    }
+
+
+    public String getStartZdbID() {
+        return startZdbID;
+    }
+
+    public void setStartZdbID(String startZdbID) {
+        this.startZdbID = startZdbID;
+    }
+
+    public String getEndZdbID() {
+        return endZdbID;
+    }
+
+    public void setEndZdbID(String endZdbID) {
+        this.endZdbID = endZdbID;
     }
 
     @Override

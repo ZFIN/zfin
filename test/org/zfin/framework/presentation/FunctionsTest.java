@@ -4,11 +4,13 @@ import com.opensymphony.clickstream.Clickstream;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.ontology.presentation.OntologyBean;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -31,69 +33,66 @@ public class FunctionsTest {
     }
 
     @Test
-    public void removeQueryStringnotFound() {
+    public void removeQueryStringNotFound() {
         String queryString = "term=11&termOne=2213&termTwo=4463&termThree=harry";
         String returnString = ZfinJSPFunctions.removeQueryParameter(queryString, "term", "3325");
         assertEquals(returnString, queryString);
     }
 
     @Test
-    public void sectionVisiblityDefaultFalse() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
-        boolean isSectionVisible = ZfinJSPFunctions.isSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString(), vis);
+    public void sectionVisibilityDefaultFalse() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        boolean isSectionVisible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
         assertTrue(!isSectionVisible);
     }
 
     @Test
-    public void sectionVisiblityDefaultTrue() {
-        SectionVisibility vis = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class, true);
-        boolean visible = ZfinJSPFunctions.isSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString(), vis);
+    public void sectionVisibilityDefaultTrue() {
+        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, true);
+        boolean visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
         assertTrue(visible);
-        vis.setVisibility(AnatomySearchBean.Section.ANATOMY_EXPRESSION, false);
-        visible = ZfinJSPFunctions.isSectionVisible(AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString(), vis);
+        vis.setVisibility(OntologyBean.Section.EXPRESSION, false);
+        visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
         assertTrue(!visible);
-        visible = ZfinJSPFunctions.isSectionVisible(AnatomySearchBean.Section.ANATOMY_PHENOTYPE.toString(), vis);
+        visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.PHENOTYPE.toString(), vis);
         assertTrue(visible);
     }
 
     @Test
     public void removeAllParametersFromQueryString() {
-        String queryString = "anatomyItem.zdbID=ZDB-ANAT-050915-94&sectionVisibility.showAll=true";
+        String queryString = "ID=ZDB-TERM-050915-94&sectionVisibility.showAll=true";
         String modifiedQueryString = ZfinJSPFunctions.removeAllVisibleQueryParameters(queryString, "sectionVisibility.");
-        assertEquals("anatomyItem.zdbID=ZDB-ANAT-050915-94", modifiedQueryString);
+        assertEquals("ID=ZDB-TERM-050915-94", modifiedQueryString);
 
 
-        queryString = "anatomyItem.zdbID=ZDB-ANAT-050915-94&sectionVisibility.showAll=true&sectionVisibility.showAll=false&sectionVisibility.hideAll=true";
+        queryString = "ID=ZDB-TERM-050915-94&sectionVisibility.showAll=true&sectionVisibility.showAll=false&sectionVisibility.hideAll=true";
         modifiedQueryString = ZfinJSPFunctions.removeAllVisibleQueryParameters(queryString, "sectionVisibility.");
-        assertEquals("anatomyItem.zdbID=ZDB-ANAT-050915-94", modifiedQueryString);
+        assertEquals("ID=ZDB-TERM-050915-94", modifiedQueryString);
 
 
     }
 
     @Test
     public void removeAllParametersFromQueryStringEnumeration() {
-        String queryString = "anatomyItem.zdbID=ZDB-ANAT-050915-94&showSection=ANATOMY_EXPRESSION&showSection=ANATOMY_PHENOTYPE";
+        String queryString = "ID=ZDB-TERM-050915-94&showSection=EXPRESSION&showSection=PHENOTYPE";
         String modifiedQueryString = ZfinJSPFunctions.removeAllVisibilityQueryParameters(queryString, "", AnatomySearchBean.Section.getValues());
-        assertEquals("anatomyItem.zdbID=ZDB-ANAT-050915-94", modifiedQueryString);
+        assertEquals("ID=ZDB-TERM-050915-94", modifiedQueryString);
 
 
-        queryString = "anatomyItem.zdbID=ZDB-ANAT-050915-94&showSection=ANATOMY_EXPRESSION&showSection=ANATOMY_PHENOTYPE&hideSection=ANATOMY_EXPRESSION";
+        queryString = "ID=ZDB-TERM-050915-94&showSection=EXPRESSION&showSection=PHENOTYPE&hideSection=EXPRESSION";
         modifiedQueryString = ZfinJSPFunctions.removeAllVisibilityQueryParameters(queryString, "", AnatomySearchBean.Section.getValues());
-        assertEquals("anatomyItem.zdbID=ZDB-ANAT-050915-94", modifiedQueryString);
+        assertEquals("ID=ZDB-TERM-050915-94", modifiedQueryString);
 
 
     }
 
     @Test
     public void getTimeDurationToNextElement() {
-/*
-        ClickstreamRequest streamTwo = new ClickstreamRequest(new MockHttpServletRequest("GET", "action"), new Date());
-        ClickstreamRequest streamOne = new ClickstreamRequest(new MockHttpServletRequest("GET", "action"), new Date());
-*/
         Clickstream stream = new Clickstream();
         stream.addRequest(new MockHttpServletRequest("GET", "action"));
         stream.addRequest(new MockHttpServletRequest("GET", "action zwei"));
         String durationString = ZfinJSPFunctions.getTimeBetweenRequests(stream.getStream(), 0);
+        assertNotNull(durationString);
     }
 
     @Test

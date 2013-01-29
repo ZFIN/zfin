@@ -3,8 +3,8 @@ create procedure p_check_fx_postcomposed_terms (vSuperTermZdbId varchar(50),
 
         define vSubTermType like term.term_ontology ;
         define vSuperTermType like term.term_ontology ;
-	define vIsSuperTermAOCell      like anatomy_item.anatitem_is_cell;
-	define vIsSubTermAOCell	       like anatomy_item.anatitem_is_cell;
+	define vIsSuperTermAOCell      boolean ;
+	define vIsSubTermAOCell	       boolean;
 
 
         let vSuperTermType = (select term_ontology
@@ -23,7 +23,7 @@ create procedure p_check_fx_postcomposed_terms (vSuperTermZdbId varchar(50),
                   if (vSubTermType = 'biological_process' or vSubTermType='molecular_function')
 
                         then
-                           raise exception -746,0,"FAIL!: no post-coordination with BP or MF terms.";
+                           raise exception -746,0,"FAIL!: no post-composition with BP or MF terms.";
 
                   end if ;
 
@@ -31,26 +31,54 @@ create procedure p_check_fx_postcomposed_terms (vSuperTermZdbId varchar(50),
 		     		  and (vSuperTermType != 'zebrafish_anatomy'
                                        or vSuperTermZdbId is null))
                       then
-                         raise exception -746,0,"FAIL!: AO post-coordination with GO CC terms required.";
+                         raise exception -746,0,"FAIL!: AO post-composition with GO CC terms required.";
 
                   end if;
 		  
            if ((vSuperTermType = 'zebrafish_anatomy') and (vSubTermType = 'zebrafish_anatomy'))
             then 
            
-              let vIsSuperTermAOCell = (select anatitem_is_cell 
-	      	  	                  from anatomy_item, term
-				          where vSuperTermZdbId = term_zdb_id
-				          and anatitem_obo_id = term_ont_id);
+              let vIsSuperTermAOCell = (
+select 
+case
+ when ( 
+  select count(*)
+  from term, ontology_subset, ontology, term_subset
+  where
+    ont_pk_id = osubset_ont_id AND
+    ont_ontology_name = 'zebrafish_anatomical_ontology' AND
+    osubset_subset_name = 'cell_slim' AND
+    term_zdb_id = vSuperTermZdbId AND
+    termsub_term_zdb_id = term_zdb_id AND
+    termsub_subset_id = osubset_pk_id
+  ) > 0 
+    then 't'
+  else
+         'f'
+end
+from single);
 
 	      if (vIsSuperTermAOCell = 't') 
-
 	        then
-		
-		let vIsSubTermAOCell = (select anatitem_is_cell 
-	      	  	               	  from anatomy_item, term
-				 	  where vSubTermZdbId = term_zdb_id
-				 	  and anatitem_obo_id = term_ont_id);
+		let vIsSubTermAOCell = (
+select 
+case
+ when ( 
+  select count(*)
+  from term, ontology_subset, ontology, term_subset
+  where
+    ont_pk_id = osubset_ont_id AND
+    ont_ontology_name = 'zebrafish_anatomical_ontology' AND
+    osubset_subset_name = 'cell_slim' AND
+    term_zdb_id = vSubTermZdbId AND
+    termsub_term_zdb_id = term_zdb_id AND
+    termsub_subset_id = osubset_pk_id
+  ) > 0 
+    then 't'
+  else
+         'f'
+end
+from single);
 
                 if (vIsSubTermAOCell = 'f')
 

@@ -2,7 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
-<zfin2:lookup ontologyName="${formBean.ontologyName}" wildcard="false" useIdAsTerm="true"/>
+<zfin2:lookup ontologyName="${formBean.ontologyName}" wildcard="false" useIdAsTerm="true" termsWithDataOnly="false"/>
 
 <iframe src="javascript:''" id='__gwt_historyFrame'
         style='position:absolute;width:0;height:0;border:0'></iframe>

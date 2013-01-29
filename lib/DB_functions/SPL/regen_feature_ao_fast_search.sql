@@ -45,8 +45,8 @@ Create dba function regen_feature_ao_fast_search()
 
    -- routine specific variables
    define featureZdbId    like feature.feature_zdb_id;
-   define supertermZdbId  like anatomy_item.anatitem_zdb_id;
-   define subtermZdbId    like anatomy_item.anatitem_zdb_id;
+   define supertermZdbId  like term.term_zdb_id;
+   define subtermZdbId    like term.term_zdb_id;
    define geneZdbId       like marker.mrkr_zdb_id;
    define figureZdbId     like figure.fig_zdb_id;
    define pubZdbId        like publication.zdb_id;

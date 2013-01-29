@@ -12,8 +12,8 @@
             <span class="name-label">Name:</span>
         </th>
         <td>
-            <span class="name-value">${formBean.anatomyItem.termName}</span>
-            <c:if test="${formBean.anatomyItem.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
+            <span class="name-value">${formBean.aoTerm.termName}</span>
+            <c:if test="${formBean.aoTerm.obsolete}"><span style="color:red">(obsolete)</span> </c:if>
         </td>
         <c:if test="${showSearchBox}">
             <td valign="top" align="right" width="5%">
@@ -22,11 +22,11 @@
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontology="<%= Ontology.ANATOMY%>"
                               action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"
-                              wildcard="true" useIdAsTerm="false"/>
+                              wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"/>
             </td>
         </c:if>
     </tr>
-    <c:if test="${not empty formBean.anatomyItem.synonyms}">
+    <c:if test="${not empty formBean.aoTerm.aliases}">
         <tr>
             <th>
                 Synonyms:
@@ -37,13 +37,13 @@
         </tr>
     </c:if>
 
-    <c:if test="${formBean.anatomyItem.definition != null  }">
+    <c:if test="${formBean.aoTerm.definition != null  }">
         <tr>
             <th valign="top">
                 Definition:
             </th>
             <td>
-                    ${formBean.anatomyItem.definition}
+                    ${formBean.aoTerm.definition}
             </td>
         </tr>
     </c:if>
@@ -52,10 +52,10 @@
         <td>
             <c:choose>
                 <c:when test="${linkStageTerms}">
-                    <zfin:link entity="${formBean.anatomyItem.start}" longVersion="true"/>
+                    <zfin:link entity="${formBean.aoTerm.start}" longVersion="true"/>
                 </c:when>
                 <c:otherwise>
-                    <zfin:name entity="${formBean.anatomyItem.start}" longVersion="true"/>
+                    <zfin:name entity="${formBean.aoTerm.start}" longVersion="true"/>
                 </c:otherwise>
             </c:choose>
         </td>
@@ -65,10 +65,10 @@
         <td>
             <c:choose>
                 <c:when test="${linkStageTerms}">
-                    <zfin:link entity="${formBean.anatomyItem.end}" longVersion="true"/>
+                    <zfin:link entity="${formBean.aoTerm.end}" longVersion="true"/>
                 </c:when>
                 <c:otherwise>
-                    <zfin:name entity="${formBean.anatomyItem.end}" longVersion="true"/>
+                    <zfin:name entity="${formBean.aoTerm.end}" longVersion="true"/>
                 </c:otherwise>
             </c:choose>
         </td>

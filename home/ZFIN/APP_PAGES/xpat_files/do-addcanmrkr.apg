@@ -5,7 +5,7 @@ PREFIX:        anatcmrkr_
 
 This page is the page caled when a curator wants to add a canonical (recommendea) marker to an anatomy item.
 
-INPUT VARS:    anatomy_item_zdb_id
+INPUT VARS:    term_zdb_id (?) not sure if this is still true.
                source_zdb_id
                mrkr_zdb_id
 

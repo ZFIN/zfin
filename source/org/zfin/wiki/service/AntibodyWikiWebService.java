@@ -3,7 +3,6 @@ package org.zfin.wiki.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -15,6 +14,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
+import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
@@ -266,8 +266,8 @@ public class AntibodyWikiWebService extends WikiWebService {
             }
         });
         for (AnatomyLabel anatomyLabel : antibodyService.getAntibodyLabelings()) {
-            if (anatomyLabel.getSuperterm() != null && AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()) != null) {
-                antibodyLinks.add(AnatomyItemPresentation.getWikiLink(anatomyLabel.getSuperterm()));
+            if (anatomyLabel.getSuperterm() != null && TermPresentation.getWikiLink(anatomyLabel.getSuperterm()) != null) {
+                antibodyLinks.add(TermPresentation.getWikiLink(anatomyLabel.getSuperterm()));
             }
         }
         for (String antibodyLink : antibodyLinks) {
@@ -384,7 +384,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         } catch (FileNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Couldnot synchronoize the Antibody with the wiki for antibody: " + antibody, e);
+            logger.error("Could not synchronoize the Antibody with the wiki for antibody: " + antibody, e);
             return ReturnStatus.ERROR;
         }
     }
@@ -417,8 +417,8 @@ public class AntibodyWikiWebService extends WikiWebService {
      * 2. Loads template file.
      * 3. From each antibody, renders the wiki page and evaluates if there are any changes (new or update) and
      * updates/creates if necessary.
-     * 4. Counts the file set of antibodies and deterimines if any pages need to be removed
-     * (will need to be manually remoevd if comments).
+     * 4. Counts the file set of antibodies and determines if any pages need to be removed
+     * (will need to be manually removed if comments).
      *
      * @throws FileNotFoundException Thrown if unable to find the template file.
      */
@@ -616,10 +616,10 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     /**
      * This method validates that we have the same number of antibodies in zfin than pages labeled zfin_antibody.
-     * If we have more wiki pages than antibodes then we drop wiki pages.
+     * If we have more wiki pages than antibodies then we drop wiki pages.
      * If we have more antibodies then wiki pages, there must have been a problem creating wiki pages and we report that error.
      *
-     * @param zfinAntibodyHashMap       The cached list of antiboidies processed.
+     * @param zfinAntibodyHashMap       The cached list of antibodies processed.
      * @param wikiSynchronizationReport The Page report statistics.
      * @return number of dropped antibodies.
      */

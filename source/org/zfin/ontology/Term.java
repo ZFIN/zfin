@@ -1,5 +1,6 @@
 package org.zfin.ontology;
 
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 
 import java.io.Serializable;
@@ -72,7 +73,8 @@ public interface Term extends Comparable<Term>, Serializable {
      */
     Set<TermRelationship> getChildTermRelationships();
 
-    void setChildTermRelationships(Set<TermRelationship> childTerms) ;
+    void setChildTermRelationships(Set<TermRelationship> childTerms);
+
     /**
      * Retrieves all terms that are immediate children of this term
      * via a given relationship type
@@ -85,21 +87,22 @@ public interface Term extends Comparable<Term>, Serializable {
 
     Set<TermRelationship> getParentTermRelationships();
 
-    void setParentTermRelationships(Set<TermRelationship> childTerms) ;
+    void setParentTermRelationships(Set<TermRelationship> childTerms);
 
     Set<Term> getParentTerms();
 
-//    DevelopmentStage getStart();
-//
-//    void setStart(DevelopmentStage stage);
-//
-//    DevelopmentStage getEnd();
-//
-//    void setEnd(DevelopmentStage stage);
+    DevelopmentStage getStart();
+
+    void setStart(DevelopmentStage stage);
+
+    DevelopmentStage getEnd();
+
+    void setEnd(DevelopmentStage stage);
 
     Set<Image> getImages();
 
     void setImages(Set<Image> images);
+
     Set<Subset> getSubsets();
 
     void setSubsets(Set<Subset> subsets);
@@ -123,5 +126,9 @@ public interface Term extends Comparable<Term>, Serializable {
     public boolean equals(Object o);
 
     public int hashCode();
+
+    String getTermNameOrder();
+
+    void setTermNameOrder(String nameOrder);
 
 }

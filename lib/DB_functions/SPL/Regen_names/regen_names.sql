@@ -40,9 +40,9 @@ create dba function "informix".regen_names() returning integer
   --   Error:
   --     If -1 is returned then /tmp/regen_names_exception_<!--|DB_NAME|--> 
   --       will have been written and any staging tables used by this routine 
-  --       will exist in whatever state they were in whenthe error occurred.
+  --       will exist in whatever state they were in when the error occurred.
   --     Any changes made to permanent tables will have been rolled back.  That
-  --       is, an error returns means thatthe permanent tables were not changed.
+  --       is, an error returns means that the permanent tables were not changed.
   --
   -- DEBUGGING:
   --
@@ -55,7 +55,7 @@ create dba function "informix".regen_names() returning integer
   --
   --    This is a great place to start.  The associated text is often the
   --    name of a violated constraint, for example "u279_351".  The first
-  --    number in the contraint name (in this case "279") is the table ID
+  --    number in the constraint name (in this case "279") is the table ID
   --    of the table with the violated constraint.  You can find the table
   --    name by looking in the systables table.
   --

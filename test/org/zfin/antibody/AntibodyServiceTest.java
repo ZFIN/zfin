@@ -3,7 +3,6 @@ package org.zfin.antibody;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
@@ -36,30 +35,30 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void distinctAOTermList() {
-        AnatomyItem termOne = new AnatomyItem();
+        GenericTerm termOne = new GenericTerm();
         termOne.setZdbID("ZDB-ANAT-011113-512");
-        termOne.setNameOrder("Halle");
-        AnatomyItem termTwo = new AnatomyItem();
+        termOne.setTermName("Halle");
+        GenericTerm termTwo = new GenericTerm();
         termTwo.setZdbID("ZDB-ANAT-011113-223");
-        termTwo.setNameOrder("Zwitter");
-        AnatomyItem termThree = new AnatomyItem();
+        termTwo.setTermName("Zwitter");
+        GenericTerm termThree = new GenericTerm();
         termThree.setZdbID("ZDB-ANAT-010921-572");
-        termThree.setNameOrder("Engel");
+        termThree.setTermName("Engel");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperTerm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperTerm(termTwo.createGenericTerm());
+        resultTwo.setSuperTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperTerm(termThree.createGenericTerm());
+        resultThree.setSuperTerm(termThree);
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperTerm(termThree.createGenericTerm());
+        resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
@@ -84,30 +83,30 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void distinctAOTermListWithDuplicate() {
-        AnatomyItem termOne = new AnatomyItem();
+        GenericTerm termOne = new GenericTerm();
         termOne.setZdbID("ZDB-ANAT-011113-512");
-        termOne.setNameOrder("Halle");
-        AnatomyItem termTwo = new AnatomyItem();
+        termOne.setTermName("Halle");
+        GenericTerm termTwo = new GenericTerm();
         termTwo.setZdbID("ZDB-ANAT-011113-223");
-        termTwo.setNameOrder("Zwitter");
-        AnatomyItem termThree = new AnatomyItem();
+        termTwo.setTermName("Zwitter");
+        GenericTerm termThree = new GenericTerm();
         termThree.setZdbID("ZDB-ANAT-011113-512");
-        termThree.setNameOrder("Halle");
+        termThree.setTermName("Halle");
 
         ExpressionResult resultOne = new ExpressionResult();
-        resultOne.setSuperTerm(termOne.createGenericTerm());
+        resultOne.setSuperTerm(termOne);
         resultOne.setExpressionFound(true);
 
         ExpressionResult resultTwo = new ExpressionResult();
-        resultTwo.setSuperTerm(termTwo.createGenericTerm());
+        resultTwo.setSuperTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
         ExpressionResult resultThree = new ExpressionResult();
-        resultThree.setSuperTerm(termThree.createGenericTerm());
+        resultThree.setSuperTerm(termThree);
         resultThree.setExpressionFound(true);
 
         ExpressionResult resultFour = new ExpressionResult();
-        resultFour.setSuperTerm(termThree.createGenericTerm());
+        resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
         HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();

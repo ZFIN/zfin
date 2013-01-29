@@ -25,6 +25,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -72,17 +73,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res, Marker marker   " +
-                "WHERE res.anatomyTerm.zdbID = :aoZdbID " +
-                "AND publication.zdbID = exp.publicationID " +
+        String hql = "SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res   " +
+                "WHERE (res.entity.superterm.zdbID = :aoZdbID OR" +
+                "       res.entity.subterm.zdbID = :aoZdbID) " +
+                "AND publication = exp.publication " +
                 "AND res.expressionExperiment = exp " +
-                "AND marker.zdbID = exp.geneID " +
-                "AND marker.zdbID = :zdbID ";
+                "AND exp.gene.zdbID = :zdbID " +
+                "AND res.expressionFound = :expressionFound ";
         String sql = addOrderByParameters(hql);
         Query query = session.createQuery(sql);
         addPaginationParameters(query);
         query.setString("zdbID", geneID);
         query.setString("aoZdbID", anatomyItemID);
+        query.setBoolean("expressionFound", true);
         List<Publication> list = query.list();
         return list;
     }
@@ -122,20 +125,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         StringBuilder sb = new StringBuilder(hql);
         sb.append(getOrderByClause());
         return sb.toString();
-    }
-
-    public int getNumberOfExpressedGenePublications(String geneID, String anatomyItemID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "SELECT count(distinct pub) FROM Publication pub, ExpressionExperiment exp, ExpressionResult res, Marker marker   " +
-                "WHERE res.entity.superterm.zdbID = :aoZdbID " +
-                "AND pub.zdbID = exp.publication.zdbID " +
-                "AND res.expressionExperiment = exp " +
-                "AND marker.zdbID = exp.gene.zdbID " +
-                "AND marker.zdbID = :zdbID ";
-        Query query = session.createQuery(hql);
-        query.setString("zdbID", geneID);
-        query.setString("aoZdbID", anatomyItemID);
-        return ((Number) query.uniqueResult()).intValue();
     }
 
     public int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID) {
@@ -185,7 +174,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term, int maxRow) {
+    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
 
         String hql = "select distinct exp.probe, marker " +
                 "FROM ExpressionExperiment exp, ExpressionResult res, Marker marker " +
@@ -472,7 +461,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return figures;
     }
 
-    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, GenericTerm aoTerm) {
+    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
         List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
         if (list != null) {
             for (Object[] array : list) {
@@ -620,7 +609,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      */
     @Override
     public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term) {
-        return getFiguresByGenoAndAnatomy(geno, term,false);
+        return getFiguresByGenoAndAnatomy(geno, term, false);
     }
 
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
@@ -732,6 +721,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     /**
      * Retrieve publications that have phenotype data for a given term and genotype including
      * substructures
+     *
      * @param genotype Genotype
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy
@@ -1102,7 +1092,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         expresssion.add(Restrictions.eq("gene", marker));
         Criteria result = expresssion.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
-        result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm),Restrictions.eq("entity.subterm", anatomyTerm)));
+        result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm), Restrictions.eq("entity.subterm", anatomyTerm)));
         result.add(Restrictions.eq("expressionFound", true));
         Criteria genox = expresssion.createCriteria("genotypeExperiment");
         genox.add(Restrictions.eq("standardOrGenericControl", true));

@@ -1,5 +1,5 @@
 create procedure p_check_anatitem_overlaps_stg_Window (
-	vAnatItemZdbId like anatomy_item.anatitem_zdb_id,
+	vAnatItemZdbId like term.term_zdb_id,
 	vStartStgZdbId like stage.stg_zdb_id,
 	vEndStgZdbId   like stage.stg_zdb_id)
 

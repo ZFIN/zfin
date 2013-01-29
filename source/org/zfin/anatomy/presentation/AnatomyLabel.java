@@ -44,7 +44,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     }
 
      public static final ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");
-    static public ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
+     public static final ChoiceFormat publicationChoice = new ChoiceFormat("0#publications|1#publication|2#publications");
 
     public ExpressionResult getExpressionResult() {
         return expressionResult;

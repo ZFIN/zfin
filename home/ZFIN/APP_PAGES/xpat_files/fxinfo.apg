@@ -58,7 +58,7 @@ EFFECTS
                       xpatassay_abbrev,
                       superterm.term_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
                       xpatres_expression_found, 
-                      get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anat.anatitem_zdb_id, 
+                      get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev,  
                       xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, 
                       get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , 
                       st1.stg_hours_start sh1, st1.stg_hours_end sh2, 
@@ -66,7 +66,7 @@ EFFECTS
                       subterm.term_zdb_id, subterm.term_name,
                       get_postcomposed_term_html(xpatres_superterm_zdb_id, xpatres_subterm_zdb_id)
               from
-                     figure,expression_experiment, anatomy_item anat, term superterm, 
+                     figure,expression_experiment, term superterm, 
                      OUTER term subterm, 
                      experiment, expression_result,
                      expression_pattern_figure,marker m,genotype_experiment,
@@ -84,7 +84,6 @@ EFFECTS
                      and xpatres_start_stg_zdb_id=st1.stg_zdb_id
                      and xpatres_end_stg_zdb_id=st2.stg_zdb_id
                      and xpatres_superterm_zdb_id=superterm.term_zdb_id
-                     and anat.anatitem_obo_id = superterm.term_ont_id
                      and xpatex_assay_name = xpatassay_name 
                      and xpatex_atb_zdb_id=m1.mrkr_zdb_id
                      and xpatres_subterm_zdb_id= subterm.term_zdb_id		     
@@ -96,16 +95,15 @@ EFFECTS
                     <?MIVAR NAME=$fxinfo_anat_item>$3<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_start_stage>$4<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_end_stage>$5<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_anatzdbid>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_genox>$10<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_stage1>$11<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_stage2>$12<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_atb>$15<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_goterm>$16<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_gotermid>$17<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_aoid>$18<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_aoname>$19<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_anat_link>$20<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_genox>$9<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_stage1>$10<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_stage2>$11<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_atb>$14<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_goterm>$15<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_gotermid>$16<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_aoid>$17<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_aoname>$18<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_anat_link>$19<?/MIVAR>
                     
                     <?MIBLOCK COND=$(EQ,$fxinfo_start_stage,$fxinfo_end_stage)>
                       <?MIVAR NAME=$fxinfo_stage>$fxinfo_stage1<?/MIVAR>
@@ -229,11 +227,5 @@ EFFECTS
 <?/MISQL>
        
        <?MIVAR NAME=$fxinfo_rowcount>$MI_ROWCOUNT<?/MIVAR>
-       
-       <?MICOMMENT>The color of the last row is reported back to fxfigureview.apg so that the the first data row  
-                   for the next gene can be displayed in a color not equal to last color
-       <?/MICOMMENT>            
-       <?MIVAR NAME=$fxinfo_lastcolor>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
-
 
 

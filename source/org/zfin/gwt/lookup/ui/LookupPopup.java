@@ -9,7 +9,6 @@ import org.zfin.repository.RepositoryFactory;
  */
 public class LookupPopup extends PopupPanel {
 
-   // private final String ANATOMY_BASE_URL = "/action/anatomy/anatomy-preview/";
     private final String MARKER_BASE_URL = "/action/marker/mini-gene?zdbID=";
     private final String ANATOMY_BASE_URL = "/action/ontology/term-detail-popup-button?termID=";
     private Frame frame;

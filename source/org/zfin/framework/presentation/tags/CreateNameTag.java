@@ -1,8 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
@@ -54,8 +52,6 @@ public class CreateNameTag extends TagSupport {
             link = PhenotypePresentation.getName((PhenotypeStatement) o);
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getName((RunCandidate) o);
-        else if (o instanceof AnatomyItem)
-            link = AnatomyItemPresentation.getName((AnatomyItem) o);
         else if (o instanceof ExpressionResult)
             link = ExpressionResultPresentation.getName((ExpressionResult) o);
         else if (o instanceof ExpressionStatement)

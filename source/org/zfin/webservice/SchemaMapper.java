@@ -1,11 +1,11 @@
 package org.zfin.webservice;
 
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.presentation.AnatomyItemPresentation;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.webservice.schema.*;
 
@@ -37,16 +37,16 @@ public class SchemaMapper {
         return gene;
     }
 
-    public static List<Anatomy> convertAnatomyListFromAnatomyItemList(List<AnatomyItem> anatomyItems) {
+    public static List<Anatomy> convertAnatomyListFromAnatomyItemList(List<GenericTerm> anatomyItems) {
         List<Anatomy> anatomyList = new ArrayList<Anatomy>();
         if (anatomyItems == null) return anatomyList;
-        for (AnatomyItem anatomyItem : anatomyItems) {
+        for (GenericTerm anatomyItem : anatomyItems) {
             anatomyList.add(convertAnatomyFromAnatomyItem(anatomyItem));
         }
         return anatomyList;
     }
 
-    private static Anatomy convertAnatomyFromAnatomyItem(AnatomyItem anatomyItem) {
+    private static Anatomy convertAnatomyFromAnatomyItem(GenericTerm anatomyItem) {
         Anatomy anatomy = new Anatomy();
         if (anatomyItem == null) return anatomy;
 
@@ -54,10 +54,10 @@ public class SchemaMapper {
         anatomy.setOboId(anatomyItem.getOboID());
         anatomy.setName(anatomyItem.getTermName());
         anatomy.setDefinition(anatomyItem.getDefinition());
-        anatomy.setDescription(anatomyItem.getDescription());
+        //anatomy.setDescription(anatomyItem.getDescription());
         anatomy.setStageStart(anatomyItem.getStart().getAbbreviation());
         anatomy.setStageEnd(anatomyItem.getEnd().getAbbreviation());
-        anatomy.setLink(AnatomyItemPresentation.getJumpToLink(anatomyItem.getZdbID()));
+        anatomy.setLink(EntityPresentation.getJumpToLink(anatomyItem.getZdbID()));
         return anatomy;
     }
 

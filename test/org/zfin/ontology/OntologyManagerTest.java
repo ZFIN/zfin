@@ -7,6 +7,7 @@ import org.zfin.gwt.root.dto.SubsetDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -184,7 +185,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void testRelationalTerm() {
         // fused with
         String termID = "ZDB-TERM-070117-643";
-        TermDTO term = ontologyManager.getTermByID(termID,OntologyDTO.QUALITY);
+        TermDTO term = ontologyManager.getTermByID(termID, OntologyDTO.QUALITY);
         assertNotNull(term);
         assertTrue(term.isPartOfSubset(SubsetDTO.RELATIONAL_SLIM));
     }
@@ -196,13 +197,13 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     @Test
     public void noNormalTermInQualityOntology() {
         // 'normal' term should be excluded in the process and object slim of PATO
-        TermDTO term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL,OntologyDTO.QUALITY_PROCESSES);
+        TermDTO term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL, OntologyDTO.QUALITY_PROCESSES);
         assertNull(term);
-        term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL,OntologyDTO.QUALITY_QUALITIES);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_TERM_NORMAL, OntologyDTO.QUALITY_QUALITIES);
         assertNull(term);
-        term = ontologyManager.getTermByID(OntologyManager.QUALITY_QUALITIES_ROOT,OntologyDTO.QUALITY_QUALITIES);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_QUALITIES_ROOT, OntologyDTO.QUALITY_QUALITIES);
         assertNotNull(term);
-        term = ontologyManager.getTermByID(OntologyManager.QUALITY_PROCESSES_ROOT,OntologyDTO.QUALITY_PROCESSES);
+        term = ontologyManager.getTermByID(OntologyManager.QUALITY_PROCESSES_ROOT, OntologyDTO.QUALITY_PROCESSES);
         assertNotNull(term);
     }
 
@@ -210,16 +211,16 @@ public class OntologyManagerTest extends AbstractOntologyTest {
      * 'decreased age' should not be part of the process slim, ensuring that children from the
      * 'normal' term and relationship type 'decreased_in_magnitude_relative_to' are not included
      * int the slim built.
-     *
+     * <p/>
      * The same pertains to 'decreased rate' which should not be part of the object slim.
      * Just two examples.
      */
     @Test
     public void noRelativeRelationshipBelowNormalTermInQualityProcessOntology() {
         // 'normal' term should be excluded in the process and object slim of PATO
-        TermDTO term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_AGE,OntologyDTO.QUALITY_PROCESSES);
+        TermDTO term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_AGE, OntologyDTO.QUALITY_PROCESSES);
         assertNull("'decreased age' should not be part of the process slim", term);
-        term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_RATE,OntologyDTO.QUALITY_QUALITIES);
+        term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_RATE, OntologyDTO.QUALITY_QUALITIES);
         assertNull("'decreased rate' should not be part of the object slim", term);
     }
 
@@ -257,10 +258,16 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     }
 
     @Test
-    public void shouldGetExactTerm(){
+    public void shouldGetExactTerm() {
         String query = "epithelium";
         TermDTO termDTO = ontologyManager.getTermByID(query);
-        assertEquals(query,termDTO.getName());
+        assertEquals(query, termDTO.getName());
+    }
+
+    @Test
+    public void allAnatomyTerms() {
+        List<TermDTO> set = ontologyManager.getAllTerms(Ontology.ANATOMY);
+        assertNotNull(set);
     }
 
 

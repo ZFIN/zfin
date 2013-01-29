@@ -2,15 +2,10 @@ package org.zfin.anatomy.presentation;
 
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
-import org.zfin.anatomy.AnatomySynonym;
 import org.zfin.infrastructure.DataAliasGroup;
+import org.zfin.ontology.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -37,39 +32,48 @@ public class AnatomyPresentationTest {
         types.add(typeFive);
         types.add(typeSix);
 
-        AnatomyItem item = new AnatomyItem();
-        String zdbID = "ZDB-ANAT-051116-41";
+        GenericTerm item = new GenericTerm();
+        String zdbID = "ZDB-TERM-051116-41";
         item.setZdbID(zdbID);
         item.setTermName("amacrine cell");
-        AnatomyRelationship arOne = new AnatomyRelationship();
-        arOne.setRelationship("is a");
 
-        AnatomyItem relatedItemOne = new AnatomyItem();
-        relatedItemOne.setZdbID("ZDB-ANAT-010921-544");
+        GenericTerm relatedItemOne = new GenericTerm();
+        relatedItemOne.setZdbID("ZDB-TERM-010921-544");
         relatedItemOne.setTermName("inner nuclear layer");
-        arOne.setAnatomyItem(relatedItemOne);
 
-        AnatomyRelationship arTwo = new AnatomyRelationship();
-        arTwo.setRelationship("is a");
+        GenericTermRelationship arOne = new GenericTermRelationship();
+        arOne.setType("is a");
+        arOne.setTermOne(item);
+        arOne.setTermTwo(relatedItemOne);
+        // add inverse relationship
+        GenericTermRelationship arOneInverse = getInverseRelationship(arOne, typeThree);
+        Set<TermRelationship> arOneInverseRels = getSetFromItem(arOneInverse);
+        relatedItemOne.setParentTermRelationships(arOneInverseRels);
 
-        AnatomyItem relatedItemTwo = new AnatomyItem();
-        relatedItemTwo.setZdbID("ZDB-ANAT-010921-8897");
+        GenericTerm relatedItemTwo = new GenericTerm();
+        relatedItemTwo.setZdbID("ZDB-TERM-010921-8897");
         relatedItemTwo.setTermName("yolk");
-        arTwo.setAnatomyItem(relatedItemTwo);
 
-        AnatomyRelationship arThree = new AnatomyRelationship();
-        arThree.setRelationship("part of");
+        TermRelationship arTwo = new GenericTermRelationship();
+        arTwo.setType("is a");
+        arTwo.setTermOne(item);
+        arTwo.setTermTwo(relatedItemTwo);
 
-        AnatomyItem relatedItemThree = new AnatomyItem();
-        relatedItemThree.setZdbID("ZDB-ANAT-010921-8897");
+
+        GenericTerm relatedItemThree = new GenericTerm();
+        relatedItemThree.setZdbID("ZDB-Term-010921-8897");
         relatedItemThree.setTermName("yolk");
-        arThree.setAnatomyItem(relatedItemThree);
 
-        List<AnatomyRelationship> relatedItems = new ArrayList<AnatomyRelationship>(3);
+        TermRelationship arThree = new GenericTermRelationship();
+        arThree.setType("part of");
+        arThree.setTermOne(item);
+        arThree.setTermTwo(relatedItemThree);
+
+        Set<TermRelationship> relatedItems = new TreeSet<TermRelationship>();
         relatedItems.add(arOne);
         relatedItems.add(arTwo);
         relatedItems.add(arThree);
-        item.setRelatedItems(relatedItems);
+        item.setChildTermRelationships(relatedItems);
 
 
         List<RelationshipPresentation> presentations = AnatomyPresentation.createRelationshipPresentation(types, item);
@@ -78,18 +82,32 @@ public class AnatomyPresentationTest {
         RelationshipPresentation presentation = presentations.get(0);
         assertEquals("Relation Ship", "is a", presentation.getType());
 
-        List<AnatomyItem> relItems = presentation.getItems();
-        assertEquals("Number of Items for 'is a'", 2, relItems.size());
+        List<Term> relItems = presentation.getTerms();
+        assertEquals("Number of Items for 'is a'",2, relItems.size());
 
-        AnatomyItem relItem = relItems.get(0);
+        Term relItem = relItems.get(0);
         assertEquals("Name of First Anatomy Item", "inner nuclear layer", relItem.getTermName());
 
-        AnatomyItem relItemTwo = relItems.get(1);
+        Term relItemTwo = relItems.get(1);
         assertEquals("Name of Second Anatomy Item", "yolk", relItemTwo.getTermName());
 
         RelationshipPresentation presentationTwo = presentations.get(1);
         assertEquals("Relation Ship", "part of", presentationTwo.getType());
 
+    }
+
+    private Set<TermRelationship> getSetFromItem(GenericTermRelationship relationship) {
+        Set<TermRelationship> relationshipSet = new HashSet<TermRelationship>(1);
+        relationshipSet.add(relationship);
+        return relationshipSet;
+    }
+
+    private GenericTermRelationship getInverseRelationship(GenericTermRelationship arOne, String type) {
+        GenericTermRelationship relationship = new GenericTermRelationship();
+        relationship.setTermOne(arOne.getTermTwo());
+        relationship.setTermTwo(arOne.getTermOne());
+        relationship.setType(type);
+        return relationship;
     }
 
     /**
@@ -99,38 +117,38 @@ public class AnatomyPresentationTest {
      */
     @Test
     public void multipleSynonymList() {
-        AnatomyItem item = new AnatomyItem();
+        Term item = new GenericTerm();
         DataAliasGroup dag1 = new DataAliasGroup();
         dag1.setName("exact alias");
         dag1.setSignificance(1);
-        AnatomySynonym syn1 = new AnatomySynonym();
-        syn1.setName("first");
+        TermAlias syn1 = new TermAlias();
+        syn1.setAlias("first");
 
         syn1.setAliasGroup(dag1);
-        AnatomySynonym syn2 = new AnatomySynonym();
+        TermAlias syn2 = new TermAlias();
         DataAliasGroup dag2 = new DataAliasGroup();
         dag2.setName("related alias");
         dag2.setSignificance(3);
-        syn2.setName("second");
+        syn2.setAlias("second");
         syn2.setAliasGroup(dag2);
-        AnatomySynonym syn3 = new AnatomySynonym();
+        TermAlias syn3 = new TermAlias();
         DataAliasGroup dag3 = new DataAliasGroup();
         dag3.setName("exact plural");
         dag3.setSignificance(2);
-        syn3.setName("third");
+        syn3.setAlias("third");
         syn3.setAliasGroup(dag3);
-        AnatomySynonym syn4 = new AnatomySynonym();
+        TermAlias syn4 = new TermAlias();
         DataAliasGroup dag4 = new DataAliasGroup();
         dag4.setName("related plural");
         dag4.setSignificance(4);
-        syn4.setName("fourth");
+        syn4.setAlias("fourth");
         syn4.setAliasGroup(dag4);
-        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(4);
+        Set<TermAlias> synonyms = new HashSet<TermAlias>(4);
         synonyms.add(syn1);
         synonyms.add(syn2);
         synonyms.add(syn3);
         synonyms.add(syn4);
-        item.setSynonyms(synonyms);
+        item.setAliases(synonyms);
 
         String list = AnatomyPresentation.createFormattedSynonymList(item);
         assertEquals("Four elements, three commas", "first, third, second, fourth", list);
@@ -142,15 +160,15 @@ public class AnatomyPresentationTest {
      */
     @Test
     public void singleSynonymList() {
-        AnatomyItem item = new AnatomyItem();
-        AnatomySynonym syn1 = new AnatomySynonym();
-        syn1.setName("first");
-        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
+        Term item = new GenericTerm();
+        TermAlias syn1 = new TermAlias();
+        syn1.setAlias("first");
+        Set<TermAlias> synonyms = new HashSet<TermAlias>(1);
         synonyms.add(syn1);
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn1.setAliasGroup(group);
-        item.setSynonyms(synonyms);
+        item.setAliases(synonyms);
 
         String list = AnatomyPresentation.createFormattedSynonymList(item);
         assertEquals("One element, no commas", "first", list);
@@ -161,7 +179,7 @@ public class AnatomyPresentationTest {
      */
     @Test
     public void emptySynonymList() {
-        AnatomyItem item = new AnatomyItem();
+        Term item = new GenericTerm();
 
         String list = AnatomyPresentation.createFormattedSynonymList(item);
         assertEquals("No elements, no commas", "", list);
@@ -187,8 +205,8 @@ public class AnatomyPresentationTest {
     @Test
     public void aoAutoCompleteTermListNoQuery() {
 
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(1);
-        AnatomyItem term = new AnatomyItem();
+        List<Term> terms = new ArrayList<Term>(1);
+        Term term = new GenericTerm();
         term.setTermName("neural rod");
         terms.add(term);
 
@@ -197,7 +215,7 @@ public class AnatomyPresentationTest {
         for (AnatomyAutoCompleteTerm autoTerm : list)
             assertEquals(true, autoTerm.isMatchOnTermName());
 
-        AnatomyItem termTwo = new AnatomyItem();
+        GenericTerm termTwo = new GenericTerm();
         termTwo.setTermName("retina");
         terms.add(termTwo);
 
@@ -216,11 +234,11 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteTermListWithQuery() {
 
         String query = "neur";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
-        AnatomyItem term = new AnatomyItem();
+        List<Term> terms = new ArrayList<Term>(2);
+        Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
-        AnatomyItem termTwo = new AnatomyItem();
+        Term termTwo = new GenericTerm();
         termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
@@ -231,14 +249,14 @@ public class AnatomyPresentationTest {
         for (AnatomyAutoCompleteTerm autoTerm : list)
             assertEquals(true, autoTerm.isMatchOnTermName());
 
-        AnatomySynonym syn = new AnatomySynonym();
-        syn.setName("neuron");
+        TermAlias syn = new TermAlias();
+        syn.setAlias("neuron");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
+        Set<TermAlias> syns = new HashSet<TermAlias>(1);
         syns.add(syn);
-        termTwo.setSynonyms(syns);
+        termTwo.setAliases(syns);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -261,11 +279,11 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteWithQueryCaseInsensitive() {
 
         String query = "Neur";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
-        AnatomyItem term = new AnatomyItem();
+        List<Term> terms = new ArrayList<Term>(2);
+        Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
-        AnatomyItem termTwo = new AnatomyItem();
+        Term termTwo = new GenericTerm();
         termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
@@ -276,14 +294,14 @@ public class AnatomyPresentationTest {
         for (AnatomyAutoCompleteTerm autoTerm : list)
             assertEquals(true, autoTerm.isMatchOnTermName());
 
-        AnatomySynonym syn = new AnatomySynonym();
-        syn.setName("neuron");
-        Set<AnatomySynonym> synonyms = new HashSet<AnatomySynonym>(1);
+        TermAlias syn = new TermAlias();
+        syn.setAlias("neuron");
+        Set<TermAlias> synonyms = new HashSet<TermAlias>(1);
         synonyms.add(syn);
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        termTwo.setSynonyms(synonyms);
+        termTwo.setAliases(synonyms) ;
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -296,12 +314,12 @@ public class AnatomyPresentationTest {
 
         }
 
-        syn = new AnatomySynonym();
-        syn.setName("Neuron");
+        syn = new TermAlias() ;
+        syn.setAlias("Neuron") ;
         syn.setAliasGroup(group);
         synonyms.clear();
         synonyms.add(syn);
-        termTwo.setSynonyms(synonyms);
+        termTwo.setAliases(synonyms) ;
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -324,11 +342,11 @@ public class AnatomyPresentationTest {
     public void aoAutoCompleteWithQueryWhiteSpaceIgnore() {
 
         String query = "Neur  ";
-        List<AnatomyItem> terms = new ArrayList<AnatomyItem>(2);
-        AnatomyItem term = new AnatomyItem();
+        List<Term> terms = new ArrayList<Term>(2);
+        Term term = new GenericTerm();
         String firstTermName = "neural rod";
         term.setTermName(firstTermName);
-        AnatomyItem termTwo = new AnatomyItem();
+        Term termTwo = new GenericTerm();
         termTwo.setTermName("retina");
         terms.add(term);
         terms.add(termTwo);
@@ -339,14 +357,14 @@ public class AnatomyPresentationTest {
         for (AnatomyAutoCompleteTerm autoTerm : list)
             assertEquals(true, autoTerm.isMatchOnTermName());
 
-        AnatomySynonym syn = new AnatomySynonym();
-        syn.setName("neuron  ");
+        TermAlias syn = new TermAlias();
+        syn.setAlias("neuron  ");
         DataAliasGroup group = new DataAliasGroup();
         group.setSignificance(1);
         syn.setAliasGroup(group);
-        Set<AnatomySynonym> syns = new HashSet<AnatomySynonym>(1);
+        Set<TermAlias> syns = new HashSet<TermAlias>(1);
         syns.add(syn);
-        termTwo.setSynonyms(syns);
+        termTwo.setAliases(syns);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);
@@ -359,12 +377,12 @@ public class AnatomyPresentationTest {
 
         }
 
-        syn = new AnatomySynonym();
-        syn.setName("Neuron");
+        syn = new TermAlias();
+        syn.setAlias("Neuron");
         syn.setAliasGroup(group);
         syns.clear();
         syns.add(syn);
-        termTwo.setSynonyms(syns);
+        termTwo.setAliases(syns);
 
         // match on first term and second terms synonym
         list = AnatomyPresentation.getAnatomyTermList(terms, query);

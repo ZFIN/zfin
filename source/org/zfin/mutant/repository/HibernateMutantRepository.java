@@ -9,13 +9,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.expression.Figure;
-import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
@@ -336,32 +333,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype) {
-        Session session = HibernateUtil.currentSession();
-
-        StringBuilder hql = new StringBuilder("SELECT distinct marker ");
-        hql.append("FROM  Marker marker, Experiment exp, Genotype geno, ");
-        hql.append("      Phenotype pheno, ExperimentCondition con, GenotypeExperiment genox ");
-        hql.append("WHERE   ");
-        hql.append("       genox.experiment = exp AND ");
-        hql.append("       genox member of geno.genotypeExperiments AND ");
-        hql.append("       pheno.genotypeExperiment = genox AND ");
-        hql.append("       pheno.patoSuperTermzdbID = :aoZdbID AND ");
-        hql.append("       geno = :genotype AND ");
-        hql.append("       con.experiment = exp AND ");
-        hql.append("       geno.wildtype = :isWildtype AND ");
-        hql.append("       marker = con.morpholino ");
-        hql.append(" order by marker.name ");
-        Query query = session.createQuery(hql.toString());
-        query.setBoolean("isWildtype", isWildtype);
-        query.setString("aoZdbID", item.getZdbID());
-        query.setParameter("genotype", genotype);
-
-        return (List<Morpholino>) query.list();
-    }
-
-
-    @SuppressWarnings("unchecked")
     /**
      * @param name go term name
      * @return A unique Go Term.
@@ -424,17 +395,6 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       geno.genotype = genotype AND" +
                 "       genotype.wildtype = :isWildtype";
         return hql;
-    }
-
-    public int getMorhpolinoCountByAnatomy(AnatomyItem item, int numberOfRecords) {
-        Session session = HibernateUtil.currentSession();
-        StringBuilder hql = new StringBuilder("SELECT marker ");
-        hql.append(getMorpholinosByAnatomyTermQueryBlock());
-        hql.append(" order by marker.abbreviation ");
-        Query query = session.createQuery(hql.toString());
-        query.setMaxResults(numberOfRecords);
-        query.setString("aoZdbID", item.getZdbID());
-        return ((Number) query.uniqueResult()).intValue();
     }
 
     /**

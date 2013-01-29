@@ -30,10 +30,10 @@ public class TermSearchController {
         }
 
         //Ontology ontology = Ontology.getOntology(ontologyName);
-        ///Set<Term> terms = RepositoryFactory.getOntologyRepository().getTerm(termName);
+        ///Set<Term> terms = RepositoryFactory.getOntologyRepository().getTerms(termName);
         Set<Term> terms = null;
         if (terms != null && terms.size() == 1) {
-            return "redirect:/action/ontology/term-detail?termID=" + terms.iterator().next().getOboID();
+            return "redirect:/action/ontology/term-detail/" + terms.iterator().next().getOboID();
         }
         OntologyBean form = new OntologyBean();
         return null;

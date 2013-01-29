@@ -218,11 +218,5 @@ EFFECTS
 <?/MISQL>
        
        <?MIVAR NAME=$fxinfo_rowcount>$MI_ROWCOUNT<?/MIVAR>
-       
-       <?MICOMMENT>The color of the last row is reported back to fxfigureview.apg so that the the first data row  
-                   for the next gene can be displayed in a color not equal to last color
-       <?/MICOMMENT>            
-       <?MIVAR NAME=$fxinfo_lastcolor>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
-
 
 

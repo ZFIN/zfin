@@ -12,7 +12,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
@@ -31,6 +30,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.Person;
@@ -407,12 +407,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public ExpressionExperiment getExpressionExperiment(String experimentID) {
         Session session = HibernateUtil.currentSession();
         return (ExpressionExperiment) session.get(ExpressionExperiment.class, experimentID);
-    }
-
-    @Override
-    public ExpressionResult getExpressionResult(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (ExpressionResult) session.get(ExpressionResult.class, zdbID);
     }
 
     /**
@@ -1306,19 +1300,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
-//        String sql = " select distinct  " +
-//                "super_term.term_name as super_name,  super_term.term_ont_id as super_id,  " +
-//                "sub_term.term_name as sub_name,sub_term.term_ont_id as sub_id  " +
-////                "ai.anatitem_name_order  " +
-//                "from wildtype_expression_experiment wee " +
-//                "join term super_term on wee.wee_super_term_zdb_id=super_term.term_zdb_id " +
-//                "left outer join term sub_term on wee.wee_sub_term_zdb_id = sub_term.term_zdb_id " +
-////                "join anatomy_item ai on ai.anatitem_obo_id=super_term.term_ont_id " +
-//                "where  " +
-//                "wee.wee_marker_zdb_id= :markerZdbID " +
-////                "order by  " +
-////                "ai.anatitem_name_order";
-//                " ";
 
         String sql2 = "select " +
                 "distinct super_term.term_name as super_name " +
@@ -1355,46 +1336,54 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 .list();
     }
 
+    /**
+     * Retrieve all terms that are used in an expression statement.
+     *
+     * @return set of expressed Terms.
+     */
+    @Override
+    public Set<String> getAllDistinctExpressionTermIDs() {
+        String hql = "select distinct result.entity.superterm.id from ExpressionResult as result";
+        List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
+        Set<String> expressedTerms = new HashSet<String>(2000);
+        expressedTerms.addAll(results);
+        // sub terms
+        hql = "select distinct result.entity.subterm.id from ExpressionResult as result";
+        results = HibernateUtil.currentSession().createQuery(hql).list();
+        expressedTerms.addAll(results);
+        return expressedTerms;
+    }
+
+    /**
+     * Retrieve all terms that are used in a phenotype statement except pato terms.
+     *
+     * @return set of expressed Terms.
+     */
+    @Override
+    public Set<String> getAllDistinctPhenotypeTermIDs() {
+        String hql = "select distinct pheno.entity.superterm.id from PhenotypeStatement as pheno";
+        List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
+        Set<String> expressedTerms = new HashSet<String>(2000);
+        expressedTerms.addAll(results);
+        // sub terms
+        hql = "select distinct pheno.entity.subterm.id from PhenotypeStatement as pheno";
+        results = HibernateUtil.currentSession().createQuery(hql).list();
+        expressedTerms.addAll(results);
+        // super terms related
+        hql = "select distinct pheno.relatedEntity.superterm.id from PhenotypeStatement as pheno";
+        results = HibernateUtil.currentSession().createQuery(hql).list();
+        expressedTerms.addAll(results);
+        hql = "select distinct pheno.relatedEntity.subterm.id from PhenotypeStatement as pheno";
+        results = HibernateUtil.currentSession().createQuery(hql).list();
+        expressedTerms.addAll(results);
+        return expressedTerms;
+    }
+
     @SuppressWarnings("unchecked")
-    public List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID) {
-//       String sql = "SELECT distinct term_zdb_id" +
-//               "FROM " +
-//               "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item" +
-//               "WHERE" +
-//               "xpatex_gene_zdb_id = :zdbID " +
-//               "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-//               "AND xpatres_expression_found='t'" +
-//               "AND xpatres_superterm_zdb_id = term_zdb_id" +
-//               "AND term_ont_id = anatitem_obo_id" +
-//               "AND xpatex_genox_zdb_id = genox_zdb_id " +
-//               "AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  " +
-//               "AND geno_zdb_id  = genox_geno_zdb_id " +
-//               "AND geno_is_wildtype = 't' " +
-//               "ORDER BY anatitem_name_order asc;"  ;
-//        String hql = "SELECT distinct ai " +
-//                "FROM " +
-//                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
-//                " WHERE " +
-//                "ee.gene.zdbID = :zdbID " +
-//                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
-//                "AND er.expressionFound = :expressionFound " +
-//                "AND er.entity.superterm.zdbID = t.zdbID " +
-//                "AND t.oboID = ai.oboID " +
-//                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
-//                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
-//                "AND g.zdbID = ge.genotype.zdbID " +
-//                "AND g.wildtype = :wildType  " +
-//                "ORDER BY ai.nameOrder asc"  ;
-//        String hql = "SELECT distinct ai " +
-//                "FROM " +
-//                "WildtypeExpressionExperiment  wee , AnatomyItem ai " +
-//                " WHERE " +
-//                "wee.gene.zdbID = :zdbID " +
-//                "AND wee.superTerm.oboID = ai.oboID " +
-//                "ORDER BY ai.nameOrder asc"  ;
+    public List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID) {
         String hql = "SELECT distinct ai " +
                 "FROM " +
-                "ExpressionResult er, AnatomyItem ai " +
+                "ExpressionResult er, GenericTerm ai " +
                 " join er.expressionExperiment ee " +
                 " join ee.genotypeExperiment ge " +
                 " join ge.genotype g " +
@@ -1404,47 +1393,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND er.expressionFound = 't' " +
                 "AND ge.standard = 't' " +
                 "AND g.wildtype= 't' " +
-                "ORDER BY ai.nameOrder asc";
-        return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
+                "ORDER BY ai.termName asc";
+        return (List<GenericTerm>) HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("zdbID", zdbID)
                 .list();
     }
-
-    @SuppressWarnings("unchecked")
-    public List<AnatomyItem> getAnatomyForMarker(String zdbID) {
-//       String sql = "SELECT distinct term_zdb_id" +
-//               "FROM " +
-//               "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype, anatomy_item" +
-//               "WHERE" +
-//               "xpatex_gene_zdb_id = :zdbID " +
-//               "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-//               "AND xpatres_expression_found='t'" +
-//               "AND xpatres_superterm_zdb_id = term_zdb_id" +
-//               "AND term_ont_id = anatitem_obo_id" +
-//               "AND xpatex_genox_zdb_id = genox_zdb_id " +
-//               "AND exp_zdb_id = genox_exp_zdb_id and exp_name = '_Standard'  " +
-//               "AND geno_zdb_id  = genox_geno_zdb_id " +
-//               "AND geno_is_wildtype = 't' " +
-//               "ORDER BY anatitem_name_order asc;"  ;
-        String hql = "SELECT distinct ai " +
-                "FROM " +
-                "ExpressionResult er, ExpressionExperiment ee, GenericTerm t, GenotypeExperiment ge, Experiment e, Genotype g, AnatomyItem ai " +
-                " WHERE " +
-                "ee.gene.zdbID = :zdbID " +
-                "AND  er.expressionExperiment.zdbID = ee.zdbID " +
-                "AND er.expressionFound = :expressionFound " +
-                "AND er.entity.superterm.id = t.id " +
-                "AND t.oboID = ai.oboID " +
-                "AND ee.genotypeExperiment.zdbID = ge.zdbID " +
-                "AND e.zdbID = ge.experiment.zdbID and e.name = :experiment  " +
-                "AND g.zdbID = ge.genotype.zdbID " +
-                "AND g.wildtype = :wildType  " +
-                "ORDER BY ai.nameOrder asc";
-        return (List<AnatomyItem>) HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("zdbID", zdbID)
-                .list();
-    }
-
 
     public List<Figure> getFigures(ExpressionSummaryCriteria expressionCriteria) {
         List<Figure> figures = new ArrayList<Figure>();

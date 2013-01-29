@@ -39,9 +39,9 @@
 
 
 create procedure p_check_anatrel_stg_consistent (
-		parentAnatZdbId    like anatomy_item.anatitem_zdb_id,
-	   	childAnatZdbId	   like anatomy_item.anatitem_zdb_id,
-		relDageditId	   like anatomy_relationship_type.areltype_dagedit_id,	
+		parentAnatZdbId    like term.term_zdb_id,
+	   	childAnatZdbId	   like term.term_zdb_id,
+		relDageditId	   like term_relationship.termrel_type,	
 		parentStartHour	   like stage.stg_hours_start default NULL,
 		parentEndHour	   like stage.stg_hours_end default NULL,
 		childStartHour	   like stage.stg_hours_start default NULL,
@@ -59,20 +59,18 @@ create procedure p_check_anatrel_stg_consistent (
 
   if ( parentStartHour is NULL ) then
 
-      select stg_hours_start
+      select ts_start_stg_zdb_id
         into parentStartHour
-        from anatomy_item, stage 
-       where anatitem_zdb_id = parentAnatZdbId
-         and anatitem_start_stg_zdb_id = stg_zdb_id;
+        from term_stage 
+       where ts_term_zdb_id = parentAnatZdbId;
   end if 
 
   if ( parentEndHour is NULL ) then
 
-      select stg_hours_end
+      select ts_end_stg_zdb_id
         into parentEndHour
-        from anatomy_item, stage
-       where anatitem_zdb_id = parentAnatZdbId
-         and anatitem_end_stg_zdb_id = stg_zdb_id;
+        from term_stage
+       where ts_term_zdb_id = parentAnatZdbId;
   end if 
 
 
@@ -80,18 +78,18 @@ create procedure p_check_anatrel_stg_consistent (
 
       select stg_hours_start, stg_name
         into childStartHour, childStartStgName
-        from anatomy_item, stage 
-       where anatitem_zdb_id = childAnatZdbId
-         and anatitem_start_stg_zdb_id = stg_zdb_id;
+        from term_stage, stage 
+       where ts_term_zdb_id = childAnatZdbId
+         and ts_start_stg_zdb_id = stg_zdb_id;
   end if 
 
   if ( childEndHour is NULL ) then
 
       select stg_hours_end, stg_name
         into childEndHour, childEndStgName
-        from anatomy_item, stage
-       where anatitem_zdb_id = childAnatZdbId
-         and anatitem_end_stg_zdb_id = stg_zdb_id;
+        from term_stage, stage
+       where ts_term_zdb_id = childAnatZdbId
+         and ts_end_stg_zdb_id = stg_zdb_id;
   end if 
 
   -- if child's start stage is Unknown, set it to be the parent's start

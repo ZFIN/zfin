@@ -2,8 +2,7 @@
 
 <%@ attribute name="term" type="org.zfin.ontology.Term" required="true" %>
 
-
-<c:if test="${!empty term && fn:contains(term.ontology.commonName,'Gene Ontology')}">
+<c:if test="${!empty term && fn:startsWith(term.ontology.commonName,'GO')}">
  &nbsp;&nbsp;<a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${term.oboID}">QuickGO</a>
  &nbsp;&nbsp;<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=${term.oboID}">AmiGO</a>
 </c:if>

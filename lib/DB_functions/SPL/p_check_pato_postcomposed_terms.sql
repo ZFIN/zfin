@@ -3,8 +3,8 @@ create procedure p_check_pato_postcomposed_terms (vSuperTermZdbId varchar(50),
 
         define vSubTermType like term.term_ontology ;
         define vSuperTermType like term.term_ontology ;
-	define vIsSuperTermAOCell      like anatomy_item.anatitem_is_cell;
-	define vIsSubTermAOCell	       like anatomy_item.anatitem_is_cell;
+	define vIsSuperTermAOCell      boolean;
+	define vIsSubTermAOCell	       boolean;
 
         let vSuperTermType = (select term_ontology
                               from term
@@ -50,19 +50,49 @@ create procedure p_check_pato_postcomposed_terms (vSuperTermZdbId varchar(50),
              if ((vSuperTermType = 'zebrafish_anatomy') and (vSubTermType = 'zebrafish_anatomy') )
              then 
            
-              let vIsSuperTermAOCell = (select anatitem_is_cell 
-	      	  	                  from anatomy_item, term
-				          where vSuperTermZdbId = term_zdb_id
-					  	and term_ont_id =  anatitem_obo_id);
+              let vIsSuperTermAOCell = (
+select
+case
+ when (
+  select count(*)
+  from term, ontology_subset, ontology, term_subset
+  where
+    ont_pk_id = osubset_ont_id AND
+    ont_ontology_name = 'zebrafish_anatomical_ontology' AND
+    osubset_subset_name = 'cell_slim' AND
+    term_zdb_id = vSuperTermZdbId AND
+    termsub_term_zdb_id = term_zdb_id AND
+    termsub_subset_id = osubset_pk_id
+  ) > 0
+    then 't'
+  else
+         'f'
+end
+from single);
 
 	      if (vIsSuperTermAOCell = 't') 
 
 	        then
 		
-		let vIsSubTermAOCell = (select anatitem_is_cell 
-	      	  	               	  from anatomy_item, term
-				          where vSubTermZdbId = term_zdb_id
-					  	and term_ont_id =  anatitem_obo_id);		
+		let vIsSubTermAOCell = (
+select
+case
+ when (
+  select count(*)
+  from term, ontology_subset, ontology, term_subset
+  where
+    ont_pk_id = osubset_ont_id AND
+    ont_ontology_name = 'zebrafish_anatomical_ontology' AND
+    osubset_subset_name = 'cell_slim' AND
+    term_zdb_id = vSubTermZdbId AND
+    termsub_term_zdb_id = term_zdb_id AND
+    termsub_subset_id = osubset_pk_id
+  ) > 0
+    then 't'
+  else
+         'f'
+end
+from single);
                 if vIsSubTermAOCell = 'f'
 
 		   then 		  

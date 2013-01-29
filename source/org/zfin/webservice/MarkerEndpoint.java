@@ -5,9 +5,9 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.webservice.schema.*;
 
@@ -63,7 +63,7 @@ public class MarkerEndpoint extends AbstractMarkerWebService {
         List<Anatomy> anatomyReturnList;
         GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = objectFactory.createGeneExpressionAnatomyWildTypeResponse();
         if (returnGene != null) {
-            List<AnatomyItem> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(returnGene.getZdbID());
+            List<GenericTerm> anatomyItemList = expressionRepository.getWildTypeAnatomyExpressionForMarker(returnGene.getZdbID());
             anatomyReturnList = SchemaMapper.convertAnatomyListFromAnatomyItemList(anatomyItemList);
             anatomyExpressionRetrieveResponse.getAnatomy().addAll(anatomyReturnList);
         }

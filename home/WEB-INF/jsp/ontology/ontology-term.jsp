@@ -1,4 +1,6 @@
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
@@ -15,22 +17,19 @@
         </tiles:insertTemplate>
     </div>
 
-
     <table class="primary-entity-attributes">
 
         <tr>
             <th width="5%"><span class="name-label">Term&nbsp;Name:</span></th>
             <td><span class="name-value">${formBean.term.termName}</span></td>
-            <authz:authorize ifAnyGranted="root">
-                <td valign="top" align="right" width="5%">
-                    Search:
-                </td>
-                <td rowspan="3" valign="top" align="right" width="5%">
-                    <zfin2:lookup ontology="${formBean.term.ontology}"
-                                  action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
-                                  wildcard="true" useIdAsTerm="true"/>
-                </td>
-            </authz:authorize>
+            <td valign="top" align="right" width="5%">
+            </td>
+            <td rowspan="3" valign="top" align="right" width="5%">
+                <span
+                Search: <zfin2:lookup ontology="<%=Ontology.AOGO%>"
+                              action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
+                              wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
+            </td>
         </tr>
         <tr>
 
@@ -47,10 +46,23 @@
             <th>Definition:</th>
             <td id="term-definition">${formBean.term.definition}</td>
         </tr>
-
+        <c:if test="${formBean.term.ontology.ontologyName == 'zebrafish_anatomy'}">
+            <tr>
+                <th>Appears&nbsp;at:</th>
+                <td>
+                    <zfin:link entity="${formBean.term.start}" longVersion="true"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Evident&nbsp;until:</th>
+                <td>
+                    <zfin:link entity="${formBean.term.end}" longVersion="true"/>
+                </td>
+            </tr>
+        </c:if>
         <tr>
             <th>Ontology:</th>
-            <td id="ontology-name">${formBean.term.ontology.commonName} [${formBean.term.oboID}]
+            <td id="ontology-name">${formBean.term.ontology.commonName}
                 <zfin2:ontologyTermLinks term="${formBean.term}"/></td>
         </tr>
 
@@ -62,25 +74,53 @@
         </c:if>
     </table>
 
- <p>
+    <p>
+
+        <c:if test="${!empty formBean.term.images}">
+
+    <div class="summary">
+        <c:forEach var="image" items="${formBean.term.images}">
+            <zfin:link entity="${image}"/>
+        </c:forEach>
+    </div>
+    </c:if>
+
     <div class="summary">
         <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
         <table class="summary horizontal-solidblock">
-            <c:forEach var="relationshipPresentation" items="${formBean.termRelationships}">
+            <c:forEach var="relationshipPresentation" items="${formBean.termRelationships}" varStatus="index">
                 <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
                     <th>
                             <%-- keep the relationship types from wrapping --%>
                             ${fn:replace(relationshipPresentation.type," ","&nbsp;")}:
                     </th>
                     <td>
-                        <c:forEach var="term" items="${relationshipPresentation.items}">
-                            <span class="related-ontology-term" id="${term.termName}"><zfin:link
-                                    entity="${term}"/></span>
-                        </c:forEach>
+                        <zfin2:createExpandCollapseList items="${relationshipPresentation.items}" id="${index.count}"/>
                     </td>
                 </tr>
             </c:forEach>
         </table>
     </div>
 
+    <script type="text/javascript">
+        function toggle(shortVal, longVal) {
+            document.getElementById(shortVal).style.display = 'none';
+            document.getElementById(longVal).style.display = 'inline';
+        }
+    </script>
+
+
+    <c:if test="${formBean.term.ontology.expressionData}">
+        <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
+    </c:if>
+
+    <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
+
+    <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
+
+    <div class="summary">
+        <%// Number of Publications with an abstract that contains the anatomical structure %>
+        <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&anon1textAllOneWord=1&query_results=exists'>Search
+            for publications with '${formBean.term.termName}' in abstract</A>
+    </div>
 </div>

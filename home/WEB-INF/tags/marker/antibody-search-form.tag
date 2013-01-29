@@ -74,7 +74,8 @@
                         ontologyName: "<%= Ontology.ANATOMY %>",
                         width: 40,
                         wildcard: false,
-                        useTermTable: true
+                        useTermTable: true,
+                        termsWithDataOnly: true
                     }
                 </script>
                 <style type="text/css">

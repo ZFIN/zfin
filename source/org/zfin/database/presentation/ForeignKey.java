@@ -7,12 +7,9 @@ import java.util.Map;
 
 public enum ForeignKey {
 
-    ANATOMY_AO_DISPLAY(Table.ANATOMY_ITEM, Table.ANATOMY_DISPLAY, "anatdisp_item_zdb_id"),
     APATO_TAG_PHENOS(Table.APATO_TAG, Table.PHENOTYPE_STATEMENT, "phenos_tag"),
     TERM_AO_STATS(Table.ANATOMY_STATS, Table.TERM, "anatstat_term_zdb_id"),
     STAGE_AO_DISPLAY(Table.STAGE, Table.ANATOMY_DISPLAY, "anatdisp_stg_zdb_id"),
-    START_STAGE_ANATOMY_ITEM(Table.STAGE, Table.ANATOMY_ITEM, "anatitem_start_stg_zdb_id"),
-    END_STAGE_ANATOMY_ITEM(Table.STAGE, Table.ANATOMY_ITEM, "anatitem_end_stg_zdb_id"),
     GENOX_GENO(Table.GENOTYPE, Table.GENOTYPE_EXPERIMENT, "genox_geno_zdb_id"),
     GENOX_EXP(Table.EXPERIMENT, Table.GENOTYPE_EXPERIMENT, "genox_exp_zdb_id"),
     EXPCOND_EXP(Table.EXPERIMENT, Table.EXPERIMENT_CONDITION, "expcond_exp_zdb_id"),

@@ -81,7 +81,7 @@ PER_STATS    = get_person_full_name.sql
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql regen_feature_ao_fast_search.sql regen_anatomy.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
-REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql create_all_terms_contains.sql
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \

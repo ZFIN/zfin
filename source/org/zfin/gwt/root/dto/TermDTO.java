@@ -326,7 +326,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
             return 1;
         TermDTO term = (TermDTO) o;
 //        return comparator.compare(getName(),term.getName());
-        return getName().compareTo(term.getName());
+        return getName().compareToIgnoreCase(term.getName());
 
     }
 

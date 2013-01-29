@@ -15,9 +15,8 @@ public class TermSearchSubmitAction implements SubmitAction {
     }
 
     public void doSubmit(String value) {
-        if (value!= null) {
-            Window.open("/action/ontology/term-detail?termID=" + value.replaceAll(" ", "%20")+"&ontologyName="+ontology.getOntologyName(), "_self",
-                    "");
+        if (value != null) {
+            Window.open("/action/ontology/term-detail/" + value.replaceAll(" ", "%20"), "_self", "");
         }
     }
 }

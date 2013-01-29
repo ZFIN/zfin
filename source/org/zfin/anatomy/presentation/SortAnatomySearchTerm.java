@@ -1,6 +1,6 @@
 package org.zfin.anatomy.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
+import org.zfin.ontology.Term;
 
 import java.util.Comparator;
 
@@ -9,7 +9,7 @@ import java.util.Comparator;
  * 1) By Non-obsolete - Obsolete
  * 2) By name
  */
-public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
+public class SortAnatomySearchTerm implements Comparator<Term> {
 
     private String searchTerm;
 
@@ -17,7 +17,7 @@ public class SortAnatomySearchTerm implements Comparator<AnatomyItem> {
         this.searchTerm = searchTerm;
     }
 
-    public int compare(AnatomyItem termOne, AnatomyItem termTwo) {
+    public int compare(Term termOne, Term termTwo) {
 
         String nameOne = termOne.getTermName();
         String nameTwo = termTwo.getTermName();

@@ -10,7 +10,7 @@
             <arg value="-unloadDirectory"/>
             <arg value="/research/zunloads/databases/trunkdb"/>
             <arg value="-tableNames"/>
-            <arg value="anatomy_item"/>
+            <arg value="term"/>
             <arg value="-entityId"/>
             <arg value="ZDB-ANAT-081013-35"/>
             <arg value="-action"/>
@@ -45,7 +45,7 @@
             <arg value="-indexLastUnloads"/>
             <arg value="14"/>
             <arg value="-tables"/>
-            <arg value="anatomy_item,person"/>
+            <arg value="term,person"/>
         </java>
     </target>
 

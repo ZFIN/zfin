@@ -32,20 +32,22 @@
         </TD>
         <td>
             Highlight terms containing: <BR>
-            <form:form method="GET" action="/action/anatomy/show-terms-by-stage" commandName="formBean" id="termsByStage">
+            <form:form method="GET" action="/action/anatomy/show-terms-by-stage" commandName="formBean"
+                       id="termsByStage">
                 <form:input path="highlightText" size="20" onchange="submit();"/>
-                <form:hidden path="stage.zdbID" />
+                <form:hidden path="stage.zdbID"/>
             </form:form>
         </TD>
+        <td></td>
     </TR>
     </tbody>
     <tr>
-        <td colspan="2">
+        <td colspan="3">
             <HR width=100% size=1 noshade align=left>
         </td>
     </tr>
     <TR>
-        <TD>
+        <TD colspan="2">
             <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false"/>
         </TD>
     </TR>

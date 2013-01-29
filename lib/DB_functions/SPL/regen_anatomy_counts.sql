@@ -137,8 +137,7 @@ create dba function regen_anatomy_counts()
 		 0,
 		 0,
 		 0
-	   from anatomy_item, term
-	   where anatitem_obo_id = term_ont_id;
+	   from term;
 
       let errorHint = "update stats for anatomy_stats_new";
 
@@ -270,8 +269,7 @@ create dba function regen_anatomy_counts()
 
      insert into anatomy_stats_new (anatstat_term_zdb_id, anatstat_object_type,anatstat_synonym_count,anatstat_object_count,anatstat_contains_object_count,anatstat_total_distinct_count)
         select term_Zdb_id, 'GENO',0,0,0,0
-           from anatomy_item, term
-	   where anatitem_obo_id = term_ont_id;
+           from term;
 
     let errorhint = "update stats for anatomy_stats_new";
 

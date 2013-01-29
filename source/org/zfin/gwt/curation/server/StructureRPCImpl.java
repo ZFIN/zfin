@@ -5,7 +5,6 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.InvalidPhenotypeException;
@@ -291,9 +290,8 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
 
         GenericTerm genericTerm = structure.getSuperterm();
         if (genericTerm.getOntology() == Ontology.ANATOMY) {
-            AnatomyItem anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyItem(genericTerm.getTermName());
-            dto.setStart(DTOConversionService.convertToStageDTO(anatomyItem.getStart()));
-            dto.setEnd(DTOConversionService.convertToStageDTO(anatomyItem.getEnd()));
+            dto.setStart(DTOConversionService.convertToStageDTO(genericTerm.getStart()));
+            dto.setEnd(DTOConversionService.convertToStageDTO(genericTerm.getEnd()));
         }
         return dto;
 

@@ -1,3 +1,4 @@
+<%@ tag trimDirectiveWhitespaces="true" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="anatomyStatistics" type="org.zfin.anatomy.AnatomyStatistics" required="true" %>
@@ -74,7 +75,7 @@
                                 <c:if test="${displayImages}">,
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${imageCount}"
-                                                 includeNumber="true"/></c:if></a> &nbsp;
+                                                 includeNumber="true"/></c:if></a>
                             <c:if test="${anatomyStatistics.numberOfTotalDistinctObjects > totalRecordCount }">
                                 (including substructures
                                 <c:choose>
@@ -83,8 +84,7 @@
                                             <zfin:choice choicePattern="${choicePattern}"
                                                          integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
                                                          includeNumber="true"/>
-                                        </a>
-                                    </c:when>
+                                        </a></c:when>
                                     <c:otherwise>
                                         <zfin:choice choicePattern="${choicePattern}"
                                                      integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"

@@ -604,7 +604,7 @@ public class OntologyManager {
 //        PatriciaTrieMultiMap<TermDTO> termMap = getTermOntologyMapCopy(ontology);
         Set<TermDTO> terms = new HashSet<TermDTO>();
         String lookupValue = termName.trim().toLowerCase();
-       // String lookupValue = termName.trim();
+        // String lookupValue = termName.trim();
 
         if (ontology.isComposedOntologies()) {
             // now we construct a map
@@ -874,6 +874,18 @@ public class OntologyManager {
             initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
             serializeOntology(Ontology.MPATH_NEOPLASM);
         }
+    }
+
+    public List<TermDTO> getAllTerms(Ontology ontology) {
+        getTermByID("ZFA:0009277");
+        List<TermDTO> set = ontologyTermDTOMap.get(DTOConversionService.convertToOntologyDTO(ontology)).getListOfValues();
+        List<TermDTO> finalList = new ArrayList<TermDTO>();
+        for (TermDTO term : set)
+            if (term.getStartStage() != null)
+                if (!finalList.contains(term))
+                    finalList.add(term);
+        Collections.sort(finalList);
+        return finalList;
     }
 
     public enum LoadingMode {

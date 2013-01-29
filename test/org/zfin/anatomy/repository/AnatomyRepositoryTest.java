@@ -7,8 +7,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
+import org.zfin.ontology.*;
 
 import java.util.List;
 import java.util.Set;
@@ -26,12 +25,12 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         // optic primordium
         String termName = "optic primordium";
 
-        AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
+        Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
         assertTrue(item != null);
-        Set<AnatomySynonym> synonyms = item.getSynonyms();
+        Set<TermAlias> synonyms = item.getAliases();
         assertNotNull(synonyms);
         // check that none of the synonyms are secondary ids
-        for (AnatomySynonym syn : synonyms) {
+        for (TermAlias syn : synonyms) {
             assertEquals(" Not a secondary id", true, syn.getGroup() != DataAliasGroup.Group.SECONDARY_ID);
         }
     }
@@ -50,19 +49,11 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAnatomyRelationships() {
         String termName = "neural rod";
-        AnatomyItem item = getAnatomyRepository().getAnatomyItem(termName);
-        List<AnatomyRelationship> anatomyRelationships = getAnatomyRepository().getAnatomyRelationships(item);
+        Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
+        List<GenericTermRelationship> anatomyRelationships = getOntologyRepository().getTermRelationships(item);
         assertNotNull(anatomyRelationships);
         assertTrue(anatomyRelationships.size() > 0);
 
-    }
-
-    @Test
-    public void getAnatomyTermsSearchResult() {
-        String searchTerm = "bra";
-
-        List<AnatomyItem> terms = getAnatomyRepository().getAnatomyItemsByName(searchTerm, true);
-        assertNotNull(terms);
     }
 
     @Test
@@ -102,70 +93,27 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     public void getAnatomyItemsWithoutDataAlias() {
         // 1 - get by name
         // extrascapula
-        String zdbID = "ZDB-ANAT-011113-588";
-        List<AnatomyItem> terms;
-        AnatomyItem term = getAnatomyRepository().getAnatomyTermByID(zdbID);
+        String zdbID = "ZFA:0000663";
+        Term term = getOntologyRepository().getTermByOboID(zdbID);
         assertNotNull(term);
 
-        Set<AnatomySynonym> synonyms = term.getSynonyms();
+        Set<TermAlias> synonyms = term.getAliases();
         assertTrue("Should be 1 or more synonym because filtered secondary", synonyms.size() >= 1);
 
-        // 2- get by synonym
-        terms = getAnatomyRepository().getAnatomyItemsByName("supratemporal", false);
-        assertNotNull(terms);
-        assertTrue(terms.size() > 2);
-
-        // 3- get by data alias
-        terms = getAnatomyRepository().getAnatomyItemsByName("413", false);
-        assertNotNull(terms);
-        assertTrue("Should be no terms for '413'", terms.isEmpty());
     }
 
     @Test
     public void stageOverlapTermsDevelopsInto() {
         // adaxial cell
-        String zdbID = "ZDB-ANAT-010921-408";
-        double startHours = 36;
+        String oboID = "ZFA:0000003";
+        String termID = "ZDB-TERM-100331-3";
+        double startHours = 10;
         double endHours = 144;
-        List<AnatomyItem> terms = getAnatomyRepository().getTermsDevelopingFromWithOverlap(zdbID, startHours, endHours);
+        List<GenericTerm> terms = getAnatomyRepository().getTermsDevelopingFromWithOverlap(termID, startHours, endHours);
         assertTrue(terms != null);
         assertEquals(1, terms.size());
         // adaxial cell develops from
         assertEquals("migratory slow muscle precursor cell", terms.get(0).getTermName());
-    }
-
-    @Test
-    public void stageOverlapTermsDevelopsFrom() {
-        // slow muscle develops from myotome,
-        // range: 11.66-14
-        String zdbID = "ZDB-ANAT-031211-15";
-        double startHours = 0;
-        double endHours = 10.5;
-        List<AnatomyItem> terms = getAnatomyRepository().getTermsDevelopingIntoWithOverlap(zdbID, startHours, endHours);
-        assertTrue(terms != null);
-        assertEquals(3, terms.size());
-        // adaxial cell develops from
-        assertEquals("migratory slow muscle precursor cell", terms.get(0).getTermName());
-        assertEquals("myotome", terms.get(1).getTermName());
-        assertEquals("slow muscle myoblast", terms.get(2).getTermName());
-    }
-
-    @Test
-    public void getStartStageByOboId() {
-        // brain
-        String aoOboID = "ZFA:0000008";
-        DevelopmentStage stage = getAnatomyRepository().getStartStage(aoOboID);
-        assertNotNull(stage);
-        assertEquals("ZDB-STAGE-020626-1", stage.getZdbID());
-    }
-
-    @Test
-    public void getEndStageByOboId() {
-        // brain
-        String aoOboID = "ZFA:0000008";
-        DevelopmentStage stage = getAnatomyRepository().getEndStage(aoOboID);
-        assertNotNull(stage);
-        assertEquals("ZDB-STAGE-010723-39", stage.getZdbID());
     }
 
     @Test

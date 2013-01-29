@@ -1,9 +1,9 @@
-<%@ page import="org.zfin.anatomy.presentation.AnatomySearchBean" %>
+<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
+<jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
-<c:set var="expressionSection" value="<%=AnatomySearchBean.Section.ANATOMY_EXPRESSION.toString()%>"
+<c:set var="expressionSection" value="<%=OntologyBean.Section.EXPRESSION.toString()%>"
        scope="request"/>
 <div class="summary">
     <zfin2:sectionVisibility sectionName="${expressionSection}"
@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
-            jQuery('#${expressionSection}-genes').load('/action/anatomy/show-expressed-genes/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${expressionSection}-inSituProbes').load('/action/anatomy/show-expressed-insitu-probes/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${expressionSection}-antibodies').load('/action/anatomy/show-labeled-antibodies/${formBean.aoTerm.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-genes').load('/action/anatomy/show-expressed-genes/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-inSituProbes').load('/action/anatomy/show-expressed-insitu-probes/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-antibodies').load('/action/anatomy/show-labeled-antibodies/${formBean.term.zdbID}', function() { processPopupLinks(); });
             showSection('${expressionSection}', true);
         }
     </script>

@@ -1,19 +1,29 @@
 package org.zfin.ontology.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.SectionVisibility;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Generic entry point for viewing a term detail page.
@@ -22,73 +32,96 @@ import java.util.Set;
 public class OntologyTermDetailController {
 
 
-    @RequestMapping("/term-detail")
-    protected String termDetailPage(@RequestParam String termID,
+    @RequestMapping("/term-detail/{termID}")
+    protected String termDetailPage(@PathVariable String termID,
                                     @RequestParam(required = false) String ontologyName,
+                                    @ModelAttribute("formBean") OntologyBean form,
                                     Model model) throws Exception {
 
         if (termID == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No term ID provided");
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        //redirect to anatomy detail page for ANAT zdbIDs
-        if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT))
-            return "redirect:/action/anatomy/anatomy-view/" + termID;
+        // if ZDB-ANAT id obtain ZDB-TERM ID and re-direct
+        if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT)) {
+            String newTermID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
+            if (newTermID == null) {
+                model.addAttribute(LookupStrings.ZDB_ID, "No replacement term ID found for " + termID);
+                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            }
+            return "redirect:/action/ontology/term-detail/" + newTermID;
+        }
 
-        OntologyBean form = new OntologyBean();
         GenericTerm term = null;
-        if (termID.contains(ActiveData.Type.TERM.name())) {
+        // check if TERM id
+        if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
             term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
         } else {
-            //try an obo id
-            term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
+            // check if it is an OBO ID
+            if (Ontology.isOboID(termID))
+                term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
         }
 
-        //if an anatomy term was linked by obo id, we still want to view it as an anatomy page
-        //  (for now)
-        if (term != null && term.getOntology().equals(Ontology.ANATOMY)) {
-            return "redirect:/action/anatomy/anatomy-view/" + termID;
-        }
-
-        // check if the term name contains an asterisk at the end of the string, indicating that
-        // we are looking for a list of terms matching the name
-        if (termID.endsWith("*")) {
-            String queryString = termID.substring(0, termID.indexOf("*"));
-            Ontology ontology = null;
-            try {
-                ontology = Ontology.getOntology(ontologyName);
-            } catch (Exception e) {
-                // ignore
-            }
-            MatchingTermService matcher = new MatchingTermService();
-            Set<MatchingTerm> terms = matcher.getMatchingTerms(queryString, ontology);
-            if (terms == null)
-                terms = new HashSet<MatchingTerm>(0);
-            model.addAttribute("terms", terms);
-            model.addAttribute("query", queryString);
-            model.addAttribute("ontology", ontology);
-            return "ontology/term-list.page";
-        }
-
-        // try by name
-        if (term == null && ontologyName != null) {
-            Ontology ontology = Ontology.getOntology(ontologyName);
-            term = RepositoryFactory.getOntologyRepository().getTermByName(termID, ontology);
-        }
-
-        //after all of that, we really just don't have it.
+        // if term is not found assume a term name is provided
         if (term == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            // set default ontology
+            Ontology ontology = Ontology.ANATOMY;
+            // use ontology if provided
+            if (StringUtils.isNotEmpty(ontologyName)) {
+                ontology = Ontology.getOntology(ontologyName);
+            }
+
+            // has a wild card
+            // check if the term name contains an asterisk at the end of the string, indicating that
+            // we are looking for a list of terms matching the name
+            if (termID.endsWith("*")) {
+                String queryString = termID.substring(0, termID.indexOf("*"));
+                MatchingTermService matcher = new MatchingTermService(-1);
+                List<TermDTO> terms = matcher.getMatchingTermList(queryString, ontology);
+                Collections.sort(terms);
+                model.addAttribute("terms", terms);
+                model.addAttribute("query", queryString);
+                model.addAttribute("ontology", ontology);
+                AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
+                anatomySearchBean.setQueryString(termID);
+                model.addAttribute("formBean", anatomySearchBean);
+                return "anatomy/show-all-terms.page";
+            } else {
+                term = RepositoryFactory.getOntologyRepository().getTermByName(termID, ontology);
+                // could not find a term at all
+                if (term == null) {
+                    model.addAttribute(LookupStrings.ZDB_ID, termID);
+                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                }
+                return "redirect:/action/ontology/term-detail/" + term.getOboID();
+            }
+
         }
 
-        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTerms(term);
+        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
         Collections.sort(termRelationships);
+
+        SectionVisibility sectionVisibility = form.getSectionVisibility();
+        if (sectionVisibility.isVisible(OntologyBean.Section.EXPRESSION)) {
+            sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, true);
+        } else {
+            // check if there are any data in this section.
+            if (term.getOntology().isExpressionData()) {
+                sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, hasExpressionData(term));
+            }
+        }
+        if (sectionVisibility.isVisible(OntologyBean.Section.PHENOTYPE)) {
+            sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, true);
+        } else {
+            if (term.getOntology().isPhenotypeData()) {
+                sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, hasPhenotypeData(term));
+            }
+        }
 
         form.setTermRelationships(termRelationships);
         form.setTerm(term);
-        model.addAttribute("formBean", form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getTermName());
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
 
         return "ontology/ontology-term.page";
 
@@ -103,11 +136,10 @@ public class OntologyTermDetailController {
 
     @RequestMapping(value = {("/term-detail-popup")})
     public String getTermDetailPopup(@RequestParam String termID, Model model) {
-        OntologyBean form = new OntologyBean();
-        if (termID.contains("ZDB-TERM")){
-            GenericTerm term=RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
-            termID=term.getOboID();
-    }
+        if (termID.contains("ZDB-TERM")) {
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
+            termID = term.getOboID();
+        }
 
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
 
@@ -125,7 +157,7 @@ public class OntologyTermDetailController {
         //model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getTermName());
 
 
-         model.addAttribute("term", term);
+        model.addAttribute("term", term);
         model.addAttribute("termRelationships", termRelationships);
         return "ontology/ontology-term-popup.popup";
     }
@@ -140,11 +172,11 @@ public class OntologyTermDetailController {
 
         if (entity.getSuperterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, superTermID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         if (entity.getSubterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, subTermID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         model.addAttribute("entity", entity);
@@ -173,5 +205,37 @@ public class OntologyTermDetailController {
         model.addAttribute("entity", entity);
         return "ontology/post-composed-term-detail-popup.popup";
     }
+
+    private boolean hasExpressionData(Term anatomyTerm) {
+        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
+        if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
+            return true;
+        // check for antibody records including substructures
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(1);
+        int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true);
+        if (numOfAntibodies > 0)
+            return true;
+
+        // check for in situ-probes
+        PaginationResult<HighQualityProbe> hqp = getPublicationRepository().getHighQualityProbeNames(anatomyTerm, 1);
+        if (hqp != null && hqp.getTotalCount() > 0)
+            return true;
+
+        return false;
+    }
+
+    private boolean hasPhenotypeData(Term anatomyTerm) {
+        GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
+        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatisticsForMutants(term.getZdbID());
+        if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
+            return true;
+
+        // check for MOs
+        List<GenotypeExperiment> morphs =
+                getMutantRepository().getGenotypeExperimentMorpholinos(term, null);
+        return morphs != null && morphs.size() > 0;
+    }
+
 
 }

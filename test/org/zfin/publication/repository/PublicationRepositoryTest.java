@@ -3,7 +3,6 @@ package org.zfin.publication.repository;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -42,50 +41,15 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
 
-    //    @Test
+    @Test
     public void retrieveSinglePublication() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
+        String pubZdbId = "ZDB-PUB-050607-10";
+        Publication testPublication = publicationRepository.getPublication(pubZdbId);
 
-            String pubZdbId = insertTestData();
-            Publication testPublication = publicationRepository.getPublication(pubZdbId);
-
-            assertNotNull("Test publication is retrieved", testPublication);
-            assertEquals("Test publication has the right title", "test publication", testPublication.getTitle());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
-
-
+        assertNotNull("Test publication is retrieved", testPublication);
+        assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
     }
 
-
-    public String insertTestData() {
-        Session session = HibernateUtil.currentSession();
-
-        // form test data
-        Publication testPublication = new Publication();
-        testPublication.setTitle("test publication");
-        testPublication.setAuthors("Westerfield, M.");
-        testPublication.setType("Journal");
-        testPublication.setShortAuthorList("Short Authors");
-        testPublication.setPublicationDate(new GregorianCalendar(1, 1, 2000));
-
-        Journal testJournal = new Journal();
-        testJournal.setName("testJournal");
-
-        testPublication.setJournal(testJournal);
-
-        session.save(testPublication);
-
-        return testPublication.getZdbID();
-
-    }
 
     /**
      * Get all expressed genes for a given anatomy structure
@@ -174,6 +138,19 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getAllGoExpressedMutants() {
+        // cilium movement involved in cell motility
+        String goZdbID = "ZDB-TERM-091209-27755";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(goZdbID);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertTrue(genotypeResult.getTotalCount() > 1);
+    }
+
+    @Test
     public void getAllExpressedMutantsForAoIncludingSubstructures() {
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";
@@ -184,6 +161,19 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(item, false, bean);
         assertNotNull(genotypeResult.getPopulatedResults());
         assertTrue(genotypeResult.getTotalCount() > 2);
+    }
+
+    @Test
+    public void getAllExpressedMutantsForGoIncludingSubstructures() {
+        // cilium movement involved in cell motility
+        String goZdbID = "ZDB-TERM-091209-27755";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(goZdbID);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(4);
+        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(item, false, bean);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertTrue(genotypeResult.getTotalCount() > 0);
     }
 
     @Test
@@ -205,9 +195,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getMorpholinos() {
         //  locus coeruleus
         String aoZdbID = "ZDB-ANAT-011113-460";
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Morpholino> morphs = mutantRepository.getPhenotypeMorpholinos(item.createGenericTerm(), 4);
+        List<Morpholino> morphs = mutantRepository.getPhenotypeMorpholinos(item, 4);
         assertTrue(morphs != null);
 //        assertEquals("13 figures", 3, morphs.size());
 
@@ -237,9 +227,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         gene.setZdbID(geneZdbID);
         // neural rod
         String aoZdbID = "ZDB-ANAT-010921-561";
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresPerProbeAndAnatomy(gene, probe, item.createGenericTerm());
+        List<Figure> figs = publicationRepository.getFiguresPerProbeAndAnatomy(gene, probe, item);
         assertTrue(figs != null);
 //        assertEquals("1 figures", 1, figs.size());
 
@@ -257,9 +247,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         gene.setZdbID(geneZdbID);
         // neural rod
         String aoZdbID = "ZDB-ANAT-010921-561";
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Publication> pubs = publicationRepository.getPublicationsWithFiguresPerProbeAndAnatomy(gene, probe, item.createGenericTerm());
+        List<Publication> pubs = publicationRepository.getPublicationsWithFiguresPerProbeAndAnatomy(gene, probe, item);
         assertTrue(pubs != null);
 //        assertEquals("1 publication", 1, pubs.size());
 
@@ -294,9 +284,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         geno.setZdbID(genoZdbID);
         // brain
         String aoZdbID = "ZDB-ANAT-010921-415";
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item.createGenericTerm());
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item);
         assertNotNull(figs.getPopulatedResults());
 
 /*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
@@ -454,9 +444,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         marker.setZdbID(markerZdbID);
         //   presumptive ectoderm
         String aoZdbID = "ZDB-ANAT-060131-50";
-        AnatomyItem item = new AnatomyItem();
+        GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item.createGenericTerm());
+        List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
         assertTrue(figs != null);
 //        assertEquals("1 figure", 1, figs.size());
 
@@ -465,9 +455,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getHighQualityProbePublicationsForBrain() {
         String termName = "neural rod";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
-        List<Publication> qualityPubs = publicationRepository.getHighQualityProbePublications(item.createGenericTerm());
+        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
+        List<Publication> qualityPubs = publicationRepository.getHighQualityProbePublications(item);
         assertTrue(qualityPubs != null);
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
@@ -488,11 +478,11 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getNumberOfPublicationForPax2aAndMHB() {
         String termName = "midbrain hindbrain boundary";
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem item = aoRepository.getAnatomyItem(termName);
+        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
         Marker pax2a = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax2a");
 
-        PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item.createGenericTerm());
+        PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
         assertTrue(qualityPubs != null);
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
@@ -729,6 +719,13 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         int numDirectPubs = publicationRepository.getNumberDirectPublications("ZDB-ATB-081002-19");
         assertThat(numDirectPubs, greaterThan(100));
         assertThat(numDirectPubs, lessThan(200));
+    }
+
+    @Test
+    public void getExpressedGenePublications() {
+
+        List<Publication> pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-001103-4 ", "ZDB-TERM-100331-8");
+        assertNotNull(pubs);
     }
 }
 

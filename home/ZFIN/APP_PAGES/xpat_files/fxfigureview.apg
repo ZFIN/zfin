@@ -9,7 +9,6 @@ It is called from the xpatselects query results page and fxallfigures.apg and im
 INPUT VARS:    OID (fig_zdb_id)
 
 OUTPUT VARS:   figview_pub_zdb_id (calls the fxallfigures.apg page)
-               fxinfo_lastcolor (to determine last rowcolor in table ; obtained from fxinfo.apg)
 
 fxinfo.apg
 fxpubdisplay.apg
@@ -451,7 +450,6 @@ and display them one after the other horizontally
             <?/MIBLOCK>
            <?/MIBLOCK>
            <?MISQL SQL="select WebExplode(object,'OID=$fxinfo_geneoid&fxinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxinfo_is_geli=$fxfigview_is_geli&fxinfo_is_qual=$fxfigview_is_qual&fxinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxinfo.apg';">$1<?/MISQL>
-           <?MIVAR NAME=$fxfigview_rowcolor>$fxinfo_lastcolor<?/MIVAR>
       <?/MISQL>
     </table>
 <?/MIBLOCK> <?MICOMMENT>End gene expression details block<?/MICOMMENT>
@@ -515,7 +513,6 @@ and display them one after the other horizontally
             <?/MIBLOCK>
            <?/MIBLOCK>
            <?MISQL SQL="select WebExplode(object,'OID=$fxinfo_atboid&fxinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxinfo_is_geli=$fxfigview_is_geli&fxinfo_is_qual=$fxfigview_is_qual&fxinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxlabelinfo.apg';">$1<?/MISQL>
-           <?MIVAR NAME=$fxfigview_rowcolor>$fxinfo_lastcolor<?/MIVAR>
       <?/MISQL>
     </table>
 <?/MIBLOCK> <?MICOMMENT>End antibody labeling block<?/MICOMMENT>

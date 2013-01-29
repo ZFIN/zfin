@@ -3,9 +3,7 @@ package org.zfin.gwt.root.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
-//import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
@@ -37,6 +35,8 @@ import org.zfin.sequence.presentation.DBLinkPresentation;
 
 import java.util.*;
 
+//import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  */
 public class DTOConversionService {
@@ -46,12 +46,12 @@ public class DTOConversionService {
 
     public static String escapeString(String uncleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
-    //    uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
-      //  uncleansedCharacter=StringEscapeUtils.escapeHtml4(uncleansedCharacter);
-        uncleansedCharacter=StringEscapeUtils.escapeXml(uncleansedCharacter);
-        uncleansedCharacter=StringEscapeUtils.escapeHtml4(uncleansedCharacter);
-        uncleansedCharacter=StringEscapeUtils.escapeJava(uncleansedCharacter);
-       // uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
+        //    uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
+        //  uncleansedCharacter=StringEscapeUtils.escapeHtml4(uncleansedCharacter);
+        uncleansedCharacter = StringEscapeUtils.escapeXml(uncleansedCharacter);
+        uncleansedCharacter = StringEscapeUtils.escapeHtml4(uncleansedCharacter);
+        uncleansedCharacter = StringEscapeUtils.escapeJava(uncleansedCharacter);
+        // uncleansedCharacter=StringEscapeUtils.escapeHtml3(uncleansedCharacter);
         //uncleansedCharacter=StringEscapeUtils.escapeXml(uncleansedCharacter);
         //uncleansedCharacter=StringEscapeUtils.escapeEcmaScript(uncleansedCharacter);
 
@@ -60,11 +60,11 @@ public class DTOConversionService {
 
     public static String unescapeString(String cleansedCharacter) {
 //        return StringEscapeUtils.escapeJavaScript(uncleansedCharacter);
-  //      cleansedCharacter= StringEscapeUtils.unescapeJava(cleansedCharacter);
-        cleansedCharacter=StringEscapeUtils.unescapeXml(cleansedCharacter);
-         cleansedCharacter=StringEscapeUtils.unescapeHtml4(cleansedCharacter);
-        cleansedCharacter=StringEscapeUtils.unescapeJava(cleansedCharacter);
-    //     cleansedCharacter=StringEscapeUtils.unescapeHtml3(cleansedCharacter);
+        //      cleansedCharacter= StringEscapeUtils.unescapeJava(cleansedCharacter);
+        cleansedCharacter = StringEscapeUtils.unescapeXml(cleansedCharacter);
+        cleansedCharacter = StringEscapeUtils.unescapeHtml4(cleansedCharacter);
+        cleansedCharacter = StringEscapeUtils.unescapeJava(cleansedCharacter);
+        //     cleansedCharacter=StringEscapeUtils.unescapeHtml3(cleansedCharacter);
         return cleansedCharacter;
     }
 
@@ -342,8 +342,6 @@ public class DTOConversionService {
         return (dbLinkDTO.isTranscriptDBLink() ? createToTranscriptDBLink(dbLinkDTO) : convertToMarkerDBLink(dbLinkDTO));
     }
 
-    //todo: do these need to get the dataZdbID set?
-
     public static MarkerDTO convertToMarkerDTO(Marker marker) {
         MarkerDTO markerDTO = new MarkerDTO();
         markerDTO.setName(marker.getName());
@@ -490,7 +488,7 @@ public class DTOConversionService {
 
 
         featureDTO.setFeatureAliases(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
-       featureDTO.setFeatureSequences(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
+        featureDTO.setFeatureSequences(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
         return featureDTO;
     }
 
@@ -624,31 +622,31 @@ public class DTOConversionService {
 
     private static Set<String> convertToAliasDTO(Set<TermAlias> aliases) {
         Set<String> aliasDTOs = new HashSet<String>();
-        for(TermAlias termAlias : aliases){
-            aliasDTOs.add(termAlias.getAlias()) ;
+        for (TermAlias termAlias : aliases) {
+            aliasDTOs.add(termAlias.getAlias());
         }
-        return aliasDTOs ;
+        return aliasDTOs;
     }
 
     public static TermDTO convertToTermDTOWithDirectRelationships(Term term) {
-        if (term == null){
+        if (term == null) {
             return null;
         }
         TermDTO dto = convertToTermDTO(term);
 
         Set<TermDTO> childTerms = new HashSet<TermDTO>();
-        for(TermRelationship termRelationship : term.getChildTermRelationships()){
-            TermDTO childTerm = convertToTermDTO(termRelationship.getTermTwo()) ;
+        for (TermRelationship termRelationship : term.getChildTermRelationships()) {
+            TermDTO childTerm = convertToTermDTO(termRelationship.getTermTwo());
             childTerm.setRelationshipType(termRelationship.getType());
-            childTerms.add(childTerm) ;
+            childTerms.add(childTerm);
         }
         dto.setChildrenTerms(childTerms);
 
         Set<TermDTO> parentTerms = new HashSet<TermDTO>();
-        for(TermRelationship termRelationship : term.getParentTermRelationships()){
-            TermDTO parentTerm = convertToTermDTO(termRelationship.getTermOne()) ;
+        for (TermRelationship termRelationship : term.getParentTermRelationships()) {
+            TermDTO parentTerm = convertToTermDTO(termRelationship.getTermOne());
             parentTerm.setRelationshipType(termRelationship.getType());
-            parentTerms.add(parentTerm) ;
+            parentTerms.add(parentTerm);
         }
         dto.setParentTerms(parentTerms);
 
@@ -669,7 +667,12 @@ public class DTOConversionService {
         if (termDTO.getOntology() == null || StringUtils.isEmpty(termDTO.getTermName()))
             return null;
         Ontology ontology = convertToOntology(termDTO.getOntology());
-        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByName(termDTO.getTermName(),ontology);
+        // first search by
+        GenericTerm term = null;
+        if (!StringUtils.isEmpty(termDTO.getOboID()))
+            term = RepositoryFactory.getOntologyRepository().getTermByOboID(termDTO.getOboID());
+        if (term == null)
+            term = RepositoryFactory.getOntologyRepository().getTermByName(termDTO.getTermName(), ontology);
         // if no term found throw exception
         if (term == null)
             throw new TermNotFoundException("Could not find valid term for: " + ontology.getCommonName() + ":" + termDTO.getTermName());
@@ -677,7 +680,7 @@ public class DTOConversionService {
     }
 
     public static TermDTO convertToTermDTO(Term term) {
-        if (term == null){
+        if (term == null) {
             return null;
         }
 
@@ -690,10 +693,10 @@ public class DTOConversionService {
         dto.setComment(term.getComment());
         dto.setAliases(convertToAliasDTO(term.getAliases()));
 
-        if(term.getOntology()==Ontology.ANATOMY){
-            DevelopmentStage startStage = OntologyService.getStartStageForTerm(term) ;
+        if (term.getOntology() == Ontology.ANATOMY) {
+            DevelopmentStage startStage = OntologyService.getStartStageForTerm(term);
             dto.setStartStage(convertToStageDTO(startStage));
-            DevelopmentStage endStage = OntologyService.getEndStageForTerm(term) ;
+            DevelopmentStage endStage = OntologyService.getEndStageForTerm(term);
             dto.setEndStage(convertToStageDTO(endStage));
         }
 
@@ -709,7 +712,7 @@ public class DTOConversionService {
         if (ontology == Ontology.QUALITY) {
             ontology = RepositoryFactory.getOntologyRepository().getProcessOrPhysicalObjectQualitySubOntologyForTerm(term);
         }
-        if (ontology == Ontology.MPATH){
+        if (ontology == Ontology.MPATH) {
             ontology = Ontology.MPATH_NEOPLASM;
         }
         dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
@@ -774,7 +777,7 @@ public class DTOConversionService {
     }
 
     public static StageDTO convertToStageDTO(DevelopmentStage stage) {
-        if(stage == null ) return null ;
+        if (stage == null) return null;
         StageDTO dto = new StageDTO();
         dto.setZdbID(stage.getZdbID());
         dto.setNameLong(stage.getNameLong());
@@ -918,11 +921,9 @@ public class DTOConversionService {
         ExpressedTermDTO expressionTerm = convertToExpressedTermDTO(es);
         dto.setExpressedTerm(expressionTerm);
         if (es.getSuperterm().getOntology().equals(Ontology.ANATOMY)) {
-            // awkward but needs to be done until we have a better way to join in the stage info for a term.
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(es.getSuperterm().getZdbID());
-            AnatomyItem anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyItem(term.getTermName());
-	                StageDTO start = convertToStageDTO(anatomyItem.getStart());
-            StageDTO end = convertToStageDTO(anatomyItem.getEnd());
+            StageDTO start = convertToStageDTO(term.getStart());
+            StageDTO end = convertToStageDTO(term.getEnd());
             dto.setStart(start);
             dto.setEnd(end);
         }
@@ -1002,7 +1003,7 @@ public class DTOConversionService {
                 return Ontology.SPATIAL;
             case MPATH:
                 return Ontology.MPATH;
-             case MPATH_NEOPLASM:
+            case MPATH_NEOPLASM:
                 return Ontology.MPATH_NEOPLASM;
             case BEHAVIOR:
                 return Ontology.BEHAVIOR;
@@ -1033,7 +1034,7 @@ public class DTOConversionService {
 //    }
 //        info.setSubsets(convertToSubsetDTO(term.getSubsets()));
 //        // try to use the provided ontology first as it may be more specific than
-        // the ontology from the term itself.
+    // the ontology from the term itself.
     //        if (ontologyDTO != null) {
     //            info.setOntology(ontologyDTO);/
     //       } else if (term.getOntology() != null) {
@@ -1071,7 +1072,7 @@ public class DTOConversionService {
         return labDTO;
     }
 
-     public static OrganizationDTO convertToOrganizationDTO(Organization lab) {
+    public static OrganizationDTO convertToOrganizationDTO(Organization lab) {
         OrganizationDTO organizationDTO = new OrganizationDTO();
         organizationDTO.setZdbID(lab.getZdbID());
         organizationDTO.setName(lab.getName());
@@ -1109,70 +1110,10 @@ public class DTOConversionService {
         featureDTO.setName(escapeString(featureDTO.getName()));
         featureDTO.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
         featureDTO.setAlias(escapeString(featureDTO.getAlias()));
-       featureDTO.setFeatureSequence(escapeString(featureDTO.getFeatureSequence()));
+        featureDTO.setFeatureSequence(escapeString(featureDTO.getFeatureSequence()));
         featureDTO.setOptionalName(escapeString(featureDTO.getOptionalName()));
 
     }
-
-    public static void unescapeFeatureDTO(FeatureDTO featureDTO) {
-        featureDTO.setName(unescapeString(featureDTO.getName()));
-        featureDTO.setAbbreviation(unescapeString(featureDTO.getAbbreviation()));
-        featureDTO.setAlias(unescapeString(featureDTO.getAlias()));
-        featureDTO.setFeatureSequence(unescapeString(featureDTO.getFeatureSequence()));
-        featureDTO.setOptionalName(unescapeString(featureDTO.getOptionalName()));
-    }
-
-//    public static List<String> createSortedSynonymsFromTerm(TermDTO term) {
-//        List<AliasDTO> synonyms = sortSynonyms(term);
-//        if (synonyms == null) {
-//            return null;
-//        }
-//        List<String> list = new ArrayList<String>();
-//        for (AliasDTO synonym : synonyms) {
-//            list.add(synonym.getAlias());
-//        }
-//        return list;
-//    }
-
-
-    /**
-     * @param anatomyItem anatomy term
-     * @return set of synonyms
-     */
-//    public static List<AliasDTO> sortSynonyms(TermDTO anatomyItem) {
-//        if (anatomyItem.getAliases() == null)
-//            return null;
-//        List<AliasDTO> aliases = anatomyItem.getAliases();
-//        Collections.sort(aliases,synonymSorting);
-//        return aliases ;
-//    }
-
-
-    /**
-     * Inner class: Comparator that compares the alias names of the AnatomySynonym
-     * and orders them alphabetically.
-     */
-//    public static class SynonymSorting implements Comparator<AliasDTO> {
-//
-//        public int compare(AliasDTO synOne, AliasDTO synTwo) {
-//
-//            int aliassig1 = synOne.getSignificance();
-//
-//            int aliassig2 = synTwo.getSignificance();
-//            String alias = synOne.getAlias();
-//            String alias1 = synTwo.getAlias();
-//
-//            if (aliassig1 < aliassig2)
-//                return -1;
-//            else if (aliassig1 > aliassig2)
-//                return 1;
-//            else if (aliassig1 == aliassig2)
-//                return alias.compareToIgnoreCase(alias1);
-//            else
-//                return 0;
-//        }
-//    }
-
 
     public static EntityDTO convertToEntityDTO(PostComposedEntity entity) {
         if (entity == null)

@@ -1,9 +1,12 @@
 package org.zfin.ontology.presentation;
 
+import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -13,10 +16,13 @@ import org.zfin.ontology.Term;
 public class TermPresentation extends EntityPresentation {
 
     private static final String POSTCOMPOSED_TERM_SEPARATOR = "&nbsp;";
-    public static final String uri = "ontology/term-detail?termID=";
+    public static final String uri = "ontology/term-detail/";
     private static final String popupUri = "ontology/term-detail-popup?termID=";
     private static final String postComposedUri = "ontology/post-composed-term-detail?";
     private static final String postComposedPopupUri = "ontology/post-composed-term-detail-popup?";
+    public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
+
+    private final static Logger logger = Logger.getLogger(TermPresentation.class);
 
 
     /**
@@ -26,11 +32,14 @@ public class TermPresentation extends EntityPresentation {
      * @param suppressPopupLink suppress popup link (true/false)
      * @return hyperlink hyperlink string
      */
-    public static String getLink(Term term, boolean suppressPopupLink) {
+    public static String getLink(Term term, boolean suppressPopupLink, String hyperlinkAttributeName) {
         if (term == null)
             return null;
         StringBuilder sb = new StringBuilder(50);
-        sb.append(getLink(term, term.getTermName()));
+        if (StringUtils.isEmpty(hyperlinkAttributeName))
+            sb.append(getLink(term, term.getTermName()));
+        else
+            sb.append(getLink(term, hyperlinkAttributeName));
 
         if (!suppressPopupLink)
             sb.append(getPopupLink(term));
@@ -79,7 +88,7 @@ public class TermPresentation extends EntityPresentation {
 
         if (entity == null) return null;
 
-        StringBuffer sb = new StringBuffer(50);
+        StringBuilder sb = new StringBuilder(50);
 
         if (entity.getSubTermZdbId() == null) {
 
@@ -124,7 +133,7 @@ public class TermPresentation extends EntityPresentation {
         if (entity.getSubterm() == null)
             return getLink(entity.getSuperterm(), suppressPopupLink);
 
-        StringBuffer sb = new StringBuffer(50);
+        StringBuilder sb = new StringBuilder(50);
         sb.append("<span class=\"post-composed-term-link\">");
 
         StringBuilder uriSuffix = new StringBuilder(50);
@@ -146,7 +155,7 @@ public class TermPresentation extends EntityPresentation {
             return null;
         if (entity.getSuperTermName() == null)
             return null;
-        StringBuffer postComposedTermName = new StringBuffer(50);
+        StringBuilder postComposedTermName = new StringBuilder(50);
         postComposedTermName.append("<span class=\"post-composed-term-name\">");
         postComposedTermName.append(entity.getSuperTermName());
         if (entity.getSubTermZdbId() != null) {
@@ -163,7 +172,7 @@ public class TermPresentation extends EntityPresentation {
             return null;
         if (entity.getSuperterm() == null)
             return null;
-        StringBuffer postComposedTermName = new StringBuffer(50);
+        StringBuilder postComposedTermName = new StringBuilder(50);
         postComposedTermName.append("<span class=\"post-composed-term-name\">");
         postComposedTermName.append(getName(entity.getSuperterm()));
         if (entity.getSubterm() != null) {
@@ -196,4 +205,20 @@ public class TermPresentation extends EntityPresentation {
         term.setTermName(entity.getName());
         return getLink(term, entity.getName());
     }
+
+    public static String getLink(Term term, boolean suppressPopupLink) {
+        return getLink(term, suppressPopupLink, null);
+    }
+
+    public static String getWikiLink(Term term) {
+        if (term.getOntology().equals(Ontology.ANATOMY))
+            return getWikiLink("/action/" + uri, term.getOboID(), term.getTermName());
+        else if (Ontology.isGoOntology(term.getOntology()))
+            return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
+        else {
+            logger.error("unable to process term: " + term + " while generating wiki link");
+            return null;
+        }
+    }
+
 }

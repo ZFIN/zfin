@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
--- This procedure checks that every anatomy relationship pair
--- involving the input anatomy item still follows the stage rule 
+-- This procedure checks that every term relationship pair
+-- involving the input term (Anatomy only) still follows the stage rule 
 -- with the new stage range definition of that anatomy item
 -- If the child's start stage is the "Unknown" stage, assign the 
 -- parent's start hour for this check, if the child's end stage is the 
@@ -22,14 +22,14 @@
 -------------------------------------------------------------
 
 create procedure p_check_anat_anatrel_stg_consistent (
-		anatZdbId 	like anatomy_item.anatitem_zdb_id,
-		startStgZdbId	like anatomy_item.anatitem_start_stg_zdb_id,
-		endStgZdbId	like anatomy_item.anatitem_end_stg_zdb_id
+		anatZdbId 	like term.term_zdb_id,
+		startStgZdbId	like term_stage.ts_start_stg_zdb_id,
+		endStgZdbId	like term_stage.ts_end_stg_zdb_id
 	)
 
-    define childAnatZdbId 	like anatomy_item.anatitem_zdb_id;
-    define parentAnatZdbId 	like anatomy_item.anatitem_zdb_id;
-    define dageditId		like anatomy_relationship.anatrel_dagedit_id;
+    define childAnatZdbId 	like term.term_zdb_id;
+    define parentAnatZdbId 	like term.term_zdb_id;
+    define dageditId		like term_relationship.termrel_type;
     define startHour		like stage.stg_hours_start;
     define endHour       	like stage.stg_hours_end;
     define parentStartHour	like stage.stg_hours_start;
@@ -55,10 +55,10 @@ create procedure p_check_anat_anatrel_stg_consistent (
 
     -- as a parent
     foreach 
-	select anatrel_anatitem_2_zdb_id, anatrel_dagedit_id
+	select termrel_term_2_zdb_id, termrel_type
 	  into childAnatZdbId, dageditId
-	  from anatomy_relationship
-	 where anatrel_anatitem_1_zdb_id = anatZdbId
+	  from term_relationship
+	 where termrel_term_1_zdb_id = anatZdbId
 
 	execute procedure p_check_anatrel_stg_consistent
 		(anatZdbId, childAnatZdbId, dageditId, startHour, endHour);
@@ -67,17 +67,17 @@ create procedure p_check_anat_anatrel_stg_consistent (
 
     -- as a child
     foreach 
-	select anatrel_anatitem_1_zdb_id, anatrel_dagedit_id
+	select termrel_term_1_zdb_id, term_type
 	  into parentAnatZdbId, dageditId
-	  from anatomy_relationship
-	 where anatrel_anatitem_2_zdb_id = anatZdbId
+	  from term_relationship
+	 where termrel_term_2_zdb_id = anatZdbId
 
 	select sstart.stg_hours_start, send.stg_hours_end
           into parentStartHour, parentEndHour
           from anatomy_item, stage sstart, stage send
-         where anatitem_zdb_id = parentAnatZdbId
-           and anatitem_start_stg_zdb_id = sstart.stg_zdb_id
-           and anatitem_end_stg_zdb_id = send.stg_zdb_id;
+         where term_stage = parentAnatZdbId
+           and ts_start_stg_zdb_id = sstart.stg_zdb_id
+           and ts_end_stg_zdb_id = send.stg_zdb_id;
 
 	 -- if child's start stage is Unknown, set it to be the parent's start
  	 -- if child's end stage is Unknown, set it to the parent's end

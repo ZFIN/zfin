@@ -6,9 +6,6 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.framework.HibernateUtil;
@@ -21,7 +18,9 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.repository.ProfileRepository;
@@ -612,19 +611,19 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String aoTermName = "brain";
         HibernateUtil.createTransaction();
         Session session = HibernateUtil.currentSession();
-        AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
-        AnatomyItem aoTerm = anatomyRep.getAnatomyItem(aoTermName);
+        OntologyRepository anatomyRep = RepositoryFactory.getOntologyRepository();
+        GenericTerm aoTerm = anatomyRep.getTermByName(aoTermName, Ontology.ANATOMY);
         String hql = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
                 "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
-                "           and fstat_superterm_zdb_id = :aoterm " +
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
         SQLQuery query = session.createSQLQuery(hql);
-        query.setString("aoterm", "ZDB-ANAT-010921-587");
+        // organism subdivision
+        query.setString("aoterm", "ZDB-TERM-100331-1266");
         query.setString("type", "High-Quality-Probe");
         query.setFirstResult(0);
         query.setMaxResults(5);
@@ -638,7 +637,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Marker gene = new Marker();
             gene.setZdbID((String) objects[2]);
             gene.setAbbreviation((String) objects[3]);
-            HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm.createGenericTerm());
+            HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm);
             hqp.addGene(gene);
             probes.add(hqp);
         }
@@ -660,16 +659,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         results.last();
         assertTrue(true);
         session.getTransaction().rollback();
-    }
-
-    @Test
-    public void lazyLoadAnatomy() {
-        String aoTermName = "brain";
-        AnatomyItem aoTerm = RepositoryFactory.getAnatomyRepository().getAnatomyItem(aoTermName);
-        aoTerm.getZdbID();
-        aoTerm.getTermName();
-        DevelopmentStage start = aoTerm.getStart();
-        start.getName();
     }
 
     @Test
@@ -732,7 +721,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
-	Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
+        Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
         List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
@@ -745,11 +734,11 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
-	Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
+        Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
         List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
-        Iterator<Marker> iter = targetGenes.iterator() ;
+        Iterator<Marker> iter = targetGenes.iterator();
 //        assertEquals("rbpja", iter.next().getAbbreviation());
 //        assertEquals("rbpjb", iter.next().getAbbreviation());
         assertEquals("ZDB-GENE-031117-1", iter.next().getZdbID());
@@ -785,12 +774,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertTrue(previousNames.size() >= 3);
     }
 
-    @Test public void getPreviousNamesLightMultipleAttributionTest() {
+    @Test
+    public void getPreviousNamesLightMultipleAttributionTest() {
         Marker m = markerRepository.getGeneByID("ZDB-GENE-010504-1");
         List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
         int name1Count = 0;
         int name2Count = 0;
-        for (PreviousNameLight name: previousNames) {
+        for (PreviousNameLight name : previousNames) {
             if (name.getAlias().equals("ff1b"))
                 name1Count++;
             if (name.getAlias().equals("nr5a4"))
@@ -862,7 +852,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         linkDisplayList = markerRepository.getMarkerDBLinksFast(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(linkDisplayList);
-        assertEquals(2,linkDisplayList.size());
+        assertEquals(2, linkDisplayList.size());
     }
 
     @Test
@@ -880,7 +870,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         List<GeneProductsBean> geneProductsBean3 = markerRepository.getGeneProducts("ZDB-GENE-030131-2333");
         assertNotNull(geneProductsBean3);
-        assertTrue( geneProductsBean3.size() >= 0 );
+        assertTrue(geneProductsBean3.size() >= 0);
     }
 
     @Test
@@ -973,35 +963,34 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Tuebingen", g.getName());
     }
 
-//    @Test
+    //    @Test
     public void getVegaGeneDBLinksTranscript() {
         Marker m = markerRepository.getMarkerByID("ZDB-GENE-980528-2060");
-        List<LinkDisplay> links = markerRepository.getVegaGeneDBLinksTranscript(m,DisplayGroup.GroupName.SUMMARY_PAGE);
+        List<LinkDisplay> links = markerRepository.getVegaGeneDBLinksTranscript(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(links);
-        assertEquals(1,links.size());
+        assertEquals(1, links.size());
         assertTrue(links.get(0).getAccession().startsWith("OTTDARG0000"));
     }
 
     @Test
-    public void getAllEngineeredRegions(){
+    public void getAllEngineeredRegions() {
         List<Marker> engineeredRegions = markerRepository.getAllEngineeredRegions();
         assertNotNull(engineeredRegions);
         assertThat(engineeredRegions.size(), greaterThan(10));
     }
 
 
-
     @Test
-    public void getWeakReferenceMarker(){
+    public void getWeakReferenceMarker() {
         List<MarkerRelationshipPresentation> markerRelationshipPresentationList = markerRepository.getWeakReferenceMarker("ZDB-GENE-010606-1"
-                ,MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
-                ,MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+                , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
         );
         Collections.sort(markerRelationshipPresentationList, new MarkerRelationshipSupplierComparator());
-        assertEquals(3,markerRelationshipPresentationList.size());
-        assertEquals("BAC",markerRelationshipPresentationList.get(0).getMarkerType());
-        assertEquals("BAC",markerRelationshipPresentationList.get(1).getMarkerType());
-        assertEquals("Fosmid",markerRelationshipPresentationList.get(2).getMarkerType());
+        assertEquals(3, markerRelationshipPresentationList.size());
+        assertEquals("BAC", markerRelationshipPresentationList.get(0).getMarkerType());
+        assertEquals("BAC", markerRelationshipPresentationList.get(1).getMarkerType());
+        assertEquals("Fosmid", markerRelationshipPresentationList.get(2).getMarkerType());
 //        for(MarkerRelationshipPresentation mrp : markerRelationshipPresentationList){
 //            System.out.println(mrp.getLinkWithAttributionAndOrderThis());
 //        }

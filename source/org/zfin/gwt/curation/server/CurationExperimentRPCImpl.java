@@ -7,7 +7,6 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -947,7 +946,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             }
 
             relatedTerm = ontologyRepository.getTermByZdbID(relatedTerm.getZdbID());
-            AnatomyItem anatomyItem = anatomyRep.getAnatomyTermByOboID(relatedTerm.getOboID());
+            Term anatomyItem = ontologyRepository.getTermByOboID(relatedTerm.getOboID());
             StageDTO start = DTOConversionService.convertToStageDTO(anatomyItem.getStart());
             StageDTO end = DTOConversionService.convertToStageDTO(anatomyItem.getEnd());
             if (intersection.isFullOverlap(start, end)) {

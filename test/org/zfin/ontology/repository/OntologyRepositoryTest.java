@@ -5,6 +5,7 @@ import org.hibernate.NonUniqueResultException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -20,6 +21,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 
 /**
@@ -48,11 +50,24 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-
     public void getAnatomyRootTermInfo() {
         String anatomyRootID = "ZFA:0000037";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
         Assert.assertNotNull(term);
+    }
+
+    @Test
+    public void getGenericTermBrain() {
+        // unfertilized egg"
+        String oboID = "ZFA:0001570";
+        Term term = ontologyRepository.getTermByOboID(oboID);
+        DevelopmentStage endStage = getAnatomyRepository().getStageByName("Zygote:1-cell");
+        DevelopmentStage startStage = getAnatomyRepository().getStageByName("Unknown");
+        assertNotNull(startStage);
+        assertNotNull(endStage);
+        assertNotNull(term);
+        assertEquals(endStage, term.getEnd());
+        assertEquals(startStage, term.getStart());
     }
 
     @Test
@@ -93,49 +108,49 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-	/**
-	 * Not that the child terms include themselves.
-	 */
+    /**
+     * Not that the child terms include themselves.
+     */
     @Test
     public void getChildrenTransitiveClosuresLineage() {
-        GenericTerm term ; 
-        List<TransitiveClosure> transitiveClosures ; 
+        GenericTerm term;
+        List<TransitiveClosure> transitiveClosures;
 
-	 // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0000108?  // fin
-		//  should be 200
+        // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0000108?  // fin
+        //  should be 200
         term = ontologyRepository.getTermByOboID("ZFA:0000108");
         transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
 
-        assertThat(transitiveClosures.size() , greaterThan(180));
+        assertThat(transitiveClosures.size(), greaterThan(180));
 //        assertThat(transitiveClosures.size() , lessThan(201)); // was 200
-        assertThat(transitiveClosures.size() , lessThan(400)); 
+        assertThat(transitiveClosures.size(), lessThan(400));
 
-	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005299? // fin blood vessel . .. parent of perctoral fin blood vessel
-		// should be 8
-		term = ontologyRepository.getTermByOboID("ZFA:0005299");
-		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+        // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005299? // fin blood vessel . .. parent of perctoral fin blood vessel
+        // should be 8
+        term = ontologyRepository.getTermByOboID("ZFA:0005299");
+        transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
 
-        assertThat(transitiveClosures.size() , greaterThan(8));
+        assertThat(transitiveClosures.size(), greaterThan(8));
 //        assertThat(transitiveClosures.size() , lessThan(10)); // was 9, which I agree with 
-		assertThat(transitiveClosures.size() , lessThan(20));
+        assertThat(transitiveClosures.size(), lessThan(20));
 
-	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005096? // perctoral fin vaculature
-		// should be 4
-		term = ontologyRepository.getTermByOboID("ZFA:0005096");
-		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+        // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005096? // perctoral fin vaculature
+        // should be 4
+        term = ontologyRepository.getTermByOboID("ZFA:0005096");
+        transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
 
-        assertThat(transitiveClosures.size() , greaterThan(2));
+        assertThat(transitiveClosures.size(), greaterThan(2));
 //        assertThat(transitiveClosures.size() , lessThan(4)); // was 5
-        assertThat(transitiveClosures.size() , lessThan(7));
+        assertThat(transitiveClosures.size(), lessThan(7));
 
-	   // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005301? // pectoral fin blood vessel 
-		// should be 2 
-		term = ontologyRepository.getTermByOboID("ZFA:0005301");
-		transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
+        // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005301? // pectoral fin blood vessel
+        // should be 2
+        term = ontologyRepository.getTermByOboID("ZFA:0005301");
+        transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
 
-        assertThat(transitiveClosures.size() , greaterThan(2));
+        assertThat(transitiveClosures.size(), greaterThan(2));
 //        assertThat(transitiveClosures.size() , lessThan(4)); // was 3, which is correct
-        assertThat(transitiveClosures.size() , lessThan(7));
+        assertThat(transitiveClosures.size(), lessThan(7));
 
 
     }
@@ -203,15 +218,15 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         // choose a term that has both children and parents
         // size
         Term t = ontologyRepository.getTermByZdbID("ZDB-TERM-070117-118");
-        assertThat(t.getChildTermRelationships().size(),greaterThan(4));
-        assertThat(t.getChildTermRelationships().size(),lessThan(10));
-        assertThat(t.getChildTerms().size(),greaterThan(4));
-        assertThat(t.getChildTerms().size(),lessThan(10));
-        assertEquals(t.getChildTermRelationships().size(),t.getChildTerms().size());
+        assertThat(t.getChildTermRelationships().size(), greaterThan(4));
+        assertThat(t.getChildTermRelationships().size(), lessThan(10));
+        assertThat(t.getChildTerms().size(), greaterThan(4));
+        assertThat(t.getChildTerms().size(), lessThan(10));
+        assertEquals(t.getChildTermRelationships().size(), t.getChildTerms().size());
         assertEquals(1, t.getParentTerms().size());
         assertEquals(1, t.getParentTermRelationships().size());
-        assertThat(t.getAllDirectlyRelatedTerms().size(),greaterThan(6));
-        assertThat(t.getAllDirectlyRelatedTerms().size(),lessThan(10));
+        assertThat(t.getAllDirectlyRelatedTerms().size(), greaterThan(6));
+        assertThat(t.getAllDirectlyRelatedTerms().size(), lessThan(10));
 
         for (TermRelationship tr : t.getChildTermRelationships()) {
             assertEquals(t.getZdbID(), tr.getTermOne().getZdbID());
@@ -366,19 +381,19 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 //    @Test
     public void getGoEvidenceOnSecondaryTerms() {
         List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
-        assertEquals(0,term.size());
+        assertEquals(0, term.size());
     }
 
     @Test
     public void getExpressionsOnSecondaryTerms() {
         List<ExpressionResult> term = ontologyRepository.getExpressionsOnSecondaryTerms();
-        assertEquals(0,term.size());
+        assertEquals(0, term.size());
     }
 
     @Test
     public void getPhenotypesOnSecondaryTerms() {
         List<PhenotypeStatement> term = ontologyRepository.getPhenotypesOnSecondaryTerms();
-        assertEquals(0,term.size());
+        assertEquals(0, term.size());
     }
 
     /**

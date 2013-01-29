@@ -19,7 +19,7 @@ public class SortAnatomyResults implements Comparator<AnatomyStatistics> {
 
     public int compare(AnatomyStatistics termOne, AnatomyStatistics termTwo) {
         SortAnatomySearchTerm sort = new SortAnatomySearchTerm(searchTerm);
-        return sort.compare(termOne.getAnatomyItem(), termTwo.getAnatomyItem());
+        return sort.compare(termOne.getTerm(), termTwo.getTerm());
     }
 
     public void setSearchTerm(String searchTerm) {

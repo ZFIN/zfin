@@ -5,6 +5,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 //import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.zfin.anatomy.presentation.AnatomyPresentation;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
+
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -296,7 +300,7 @@ public class ZfinJSPFunctions {
     public static String generateRandomDomID() {
         return UUID.randomUUID().toString();
     }
-    
+
     public static Integer generateSmallRandomNumber() {
         Double number = Math.random() * 9999;
         return number.intValue();
@@ -341,6 +345,10 @@ public class ZfinJSPFunctions {
             return null;
 
         return PhenotypeService.getSubstructureName(statement, parentTerm);
+    }
+
+    public static String getSortedSynonymList(TermDTO termDto) throws TermNotFoundException {
+        return AnatomyPresentation.createFormattedSynonymList(DTOConversionService.convertToTerm(termDto));
     }
 
     public static Mutagen getMutagen(String name){

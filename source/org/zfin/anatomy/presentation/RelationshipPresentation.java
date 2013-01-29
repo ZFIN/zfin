@@ -1,7 +1,8 @@
 package org.zfin.anatomy.presentation;
 
-import org.zfin.anatomy.AnatomyItem;
+import org.zfin.ontology.Term;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
 public class RelationshipPresentation {
 
     String type;
-    List<AnatomyItem> items;
+    List<Term> terms;
 
     public String getType() {
         return type;
@@ -21,11 +22,13 @@ public class RelationshipPresentation {
         //this.type = type.replaceAll(" ", "&nbsp;");
     }
 
-    public List<AnatomyItem> getItems() {
-        return items;
+    public List<Term> getTerms() {
+        return terms;
     }
 
-    public void setItems(List<AnatomyItem> items) {
-        this.items = items;
+    public void setTerms(List<Term> terms) {
+        this.terms = terms;
+        Collections.sort(terms);
+
     }
 }

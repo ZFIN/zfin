@@ -3,10 +3,10 @@ package org.zfin.util;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.BufferedReader;
@@ -21,7 +21,7 @@ import java.util.*;
 public class LogStats {
 
     private static final String LOG_FILE_DIRECTORY = "log-file-directory";
-    private static final String ACTION_ANATOMY_TERM_DETAIL_ANATOMY_ITEM_ZDB_ID = "/action/anatomy/term-detail?anatomyItem.zdbID=";
+    private static final String ACTION_ANATOMY_TERM_DETAIL_ANATOMY_ITEM_ZDB_ID = "/action/anatomy/term-detail/";
     private static final String ANATOMY = "ANAT";
     private static final String RESOLVE_ZDB_IDS = "resolveZdbIDs";
     private static boolean resolveIDs;
@@ -136,8 +136,8 @@ public class LogStats {
         }
         for (ZdbIDHistogram hist : set) {
             if (resolveIDs) {
-                AnatomyRepository ar = RepositoryFactory.getAnatomyRepository();
-                AnatomyItem term = ar.getAnatomyTermByID(hist.getAoID());
+                OntologyRepository ar = RepositoryFactory.getOntologyRepository();
+                GenericTerm term = ar.getTermByOboID(hist.getAoID());
                 if (term != null) {
                     String termName = term.getTermName();
                     System.out.print(termName);

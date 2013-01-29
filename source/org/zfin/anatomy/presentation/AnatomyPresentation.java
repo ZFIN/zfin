@@ -1,9 +1,9 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.anatomy.AnatomyItem;
-import org.zfin.anatomy.AnatomyRelationship;
-import org.zfin.anatomy.AnatomySynonym;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.TermAlias;
+import org.zfin.ontology.TermRelationship;
 import org.zfin.util.ListFormatter;
 
 import java.util.*;
@@ -16,31 +16,31 @@ public final class AnatomyPresentation {
 
 
     /**
-     * Group all relationships that
+     * Group all relationships by type
      *
      * @param relationshipTypes relationship types
-     * @param anatomyItem       anatomy term
+     * @param term              term
      * @return list of Presentation objects
      */
     public static List<RelationshipPresentation> createRelationshipPresentation(List<String> relationshipTypes,
-                                                                                AnatomyItem anatomyItem) {
+                                                                                Term term) {
         if (relationshipTypes == null)
             return null;
-        if (anatomyItem == null)
+        if (term == null)
             return null;
 
         List<RelationshipPresentation> relList = new ArrayList<RelationshipPresentation>();
         for (String type : relationshipTypes) {
             RelationshipPresentation rel = new RelationshipPresentation();
-            List<AnatomyItem> items = new ArrayList<AnatomyItem>();
+            List<Term> items = new ArrayList<Term>();
             rel.setType(type);
-            for (AnatomyRelationship relatedItem : anatomyItem.getRelatedItems()) {
-                if (relatedItem.getRelationship().equals(type)) {
-                    items.add(relatedItem.getAnatomyItem());
+            for (TermRelationship relatedItem : term.getAllDirectlyRelatedTerms()) {
+                if (relatedItem.getType().equals(type)) {
+                    items.add(relatedItem.getTermTwo());
                 }
             }
             if (!items.isEmpty()) {
-                rel.setItems(items);
+                rel.setTerms(items);
                 relList.add(rel);
             }
         }
@@ -48,21 +48,21 @@ public final class AnatomyPresentation {
     }
 
     /**
-     * Generate a comma (including a white space) delimited list of synomys of an anatomy item.
+     * Generate a comma (including a white space) delimited list of synonyms  of an anatomy item.
      * If no item found return empty string.
      * It sorts the names alphabetically.
      *
-     * @param anatomyItem anatomy term
+     * @param term anatomy term
      * @return string
      */
-    public static String createFormattedSynonymList(AnatomyItem anatomyItem) {
-        Set<AnatomySynonym> synonyms = sortSynonyms(anatomyItem);
+    public static String createFormattedSynonymList(Term term) {
+        Set<TermAlias> synonyms = sortSynonyms(term);
         if (synonyms == null) {
             return "";
         }
         ListFormatter list = new ListFormatter();
-        for (AnatomySynonym synonym : synonyms) {
-            list.addItem(synonym.getName());
+        for (TermAlias synonym : synonyms) {
+            list.addItem(synonym.getAlias());
         }
         return list.getFormattedString();
     }
@@ -81,16 +81,16 @@ public final class AnatomyPresentation {
     }
 
     /**
-     * @param anatomyItem anatomy term
+     * @param term anatomy term
      * @return set of synonyms
      */
-    private static Set<AnatomySynonym> sortSynonyms(AnatomyItem anatomyItem) {
-        Set<AnatomySynonym> unsortedSynonyms = anatomyItem.getSynonyms();
-        if (CollectionUtils.isEmpty(unsortedSynonyms)){
-            return null ;
+    private static Set<TermAlias> sortSynonyms(Term term) {
+        Set<TermAlias> unsortedSynonyms = term.getAliases();
+        if (CollectionUtils.isEmpty(unsortedSynonyms)) {
+            return null;
         }
-        Set<AnatomySynonym> synonyms = new TreeSet<AnatomySynonym>(new AnatomySynonymSorting());
-        for (AnatomySynonym synonym : unsortedSynonyms) {
+        Set<TermAlias> synonyms = new TreeSet<TermAlias>(new AnatomySynonymSorting());
+        for (TermAlias synonym : unsortedSynonyms) {
             synonyms.add(synonym);
         }
         return synonyms;
@@ -104,12 +104,12 @@ public final class AnatomyPresentation {
      *
      * @param terms       list of ao terms
      * @param queryString string
-     * @return list of autocomplete terms
+     * @return list of auto-complete terms
      *         empty collection if
      *         1) terms == null
      *         `             2) terms.size() = 0
      */
-    public static List<AnatomyAutoCompleteTerm> getAnatomyTermList(List<AnatomyItem> terms, String queryString) {
+    public static List<AnatomyAutoCompleteTerm> getAnatomyTermList(List<Term> terms, String queryString) {
         List<AnatomyAutoCompleteTerm> list = new ArrayList<AnatomyAutoCompleteTerm>();
 
         if (terms == null || terms.size() == 0)
@@ -121,7 +121,7 @@ public final class AnatomyPresentation {
         // to make the matching case insensitive
         queryString = queryString.toLowerCase().trim();
 
-        for (AnatomyItem anatomyItem : terms) {
+        for (Term anatomyItem : terms) {
             String term = anatomyItem.getTermName();
             AnatomyAutoCompleteTerm autoCompleteTerm = new AnatomyAutoCompleteTerm(term);
             autoCompleteTerm.setID(anatomyItem.getZdbID());
@@ -133,11 +133,11 @@ public final class AnatomyPresentation {
 
             // try to fins a match on a synonym
             // stop on the first match found
-            Set<AnatomySynonym> synonyms = sortSynonyms(anatomyItem);
+            Set<TermAlias> synonyms = sortSynonyms(anatomyItem);
 
             if (synonyms != null) {
-                for (AnatomySynonym synonym : synonyms) {
-                    String synonymName = synonym.getName();
+                for (TermAlias synonym : synonyms) {
+                    String synonymName = synonym.getAlias();
                     if (synonymName.toLowerCase().contains(queryString)) {
                         autoCompleteTerm.setSynonymName(synonymName);
                         list.add(autoCompleteTerm);
@@ -150,18 +150,18 @@ public final class AnatomyPresentation {
     }
 
     /**
-     * Inner class: Comparator that compares the alias names of the AnatomySynonym
+     * Inner class: Comparator that compares the alias names of the
      * and orders them alphabetically.
      */
-    public static class AnatomySynonymSorting implements Comparator<AnatomySynonym> {
+    public static class AnatomySynonymSorting implements Comparator<TermAlias> {
 
-        public int compare(AnatomySynonym synOne, AnatomySynonym synTwo) {
+        public int compare(TermAlias synOne, TermAlias synTwo) {
 
             int aliassig1 = synOne.getAliasGroup().getSignificance();
 
             int aliassig2 = synTwo.getAliasGroup().getSignificance();
-            String alias = synOne.getName();
-            String alias1 = synTwo.getName();
+            String alias = synOne.getAlias();
+            String alias1 = synTwo.getAlias();
 
             if (aliassig1 < aliassig2)
                 return -1;

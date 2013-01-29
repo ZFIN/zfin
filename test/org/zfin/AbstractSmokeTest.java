@@ -59,6 +59,8 @@ public class AbstractSmokeTest extends WebTestCase {
         domain = ZfinPropertiesEnum.DOMAIN_NAME.toString();
         mutant = ZfinPropertiesEnum.MUTANT_NAME.toString();
         nonSecureUrlDomain = ZfinPropertiesEnum.NON_SECURE_HTTP + domain;
+        if (ZfinPropertiesEnum.USE_APACHE.value().equals("false"))
+            nonSecureUrlDomain += ":" + ZfinPropertiesEnum.NON_SECUREPORT;
         secureUrlDomain = ZfinPropertiesEnum.SECURE_HTTP + domain;
         if (!initDatabase) {
             initDatabase();

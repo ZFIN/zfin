@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 

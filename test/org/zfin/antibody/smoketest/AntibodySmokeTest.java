@@ -90,6 +90,29 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     }
 
     /**
+     * search for 'ab-2':
+     * result page displays AB-2F11 and other antibodies capitalized.
+     */
+/*
+    public void testSearchCellularComponent() {
+        // nucleus
+        String termID = "ZDB-TERM-091209-4086";
+        for (WebClient webClient : publicWebClients) {
+            try {
+                String uri = "/action/antibody/antibody-do-search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=nuclear%20body&antibodyCriteria.anatomyTermIDs="+termID+"&action=SEARCH";
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+                List<?> relatedTerms = page.getByXPath("//a[@id='Ab-Pax7']");
+                assertEquals(1, relatedTerms.size());
+                HtmlAnchor link = (HtmlAnchor) relatedTerms.get(0);
+                assertEquals("Upper case indicates usage of the antibody name", "Ab-2F11", link.getTextContent());
+            } catch (IOException e) {
+                fail(e.toString());
+            }
+        }
+    }
+*/
+
+    /**
      * search for 'zn5':
      * Check that the result page is the detail page of zn-5 as it is the only antibody with this name.
      * See FB case

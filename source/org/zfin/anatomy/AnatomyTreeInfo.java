@@ -1,5 +1,6 @@
 package org.zfin.anatomy;
 
+import org.zfin.ontology.Term;
 import org.zfin.util.EqualsUtil;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class AnatomyTreeInfo implements Serializable {
     private String zdbID;
     private int sequenceNumber;
     private int indent;
-    private AnatomyItem item;
+    private Term item;
     private AnatomyStatistics statistics;
 
     public String getZdbID() {
@@ -42,11 +43,11 @@ public class AnatomyTreeInfo implements Serializable {
         this.indent = indent;
     }
 
-    public AnatomyItem getItem() {
+    public Term getItem() {
         return item;
     }
 
-    public void setItem(AnatomyItem item) {
+    public void setItem(Term item) {
         this.item = item;
     }
 

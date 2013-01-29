@@ -1,4 +1,4 @@
-package org.zfin.ontology.presentation;
+package org.zfin.ontology;
 
 import org.zfin.ontology.MatchingTerm;
 import org.zfin.util.NumberAwareStringComparator;

@@ -1,8 +1,8 @@
 create function xpat_annot_adjust (
-		oldAnatitemZdbId	like anatomy_item.anatitem_zdb_id,
+		oldAnatitemZdbId	like term.term_zdb_id,
 		startStgZdbId		like stage.stg_zdb_id,
 		endStgZdbId		like stage.stg_zdb_id,
-		newAnatitemZdbId	like anatomy_item.anatitem_zdb_id
+		newAnatitemZdbId	like term.term_zdb_id
 	) returning integer
 
  -- ----------------------------------------------------------
@@ -39,8 +39,8 @@ create function xpat_annot_adjust (
     define errorText varchar(255);
     define errorHint varchar(255);
  
-    define oldAnatName like anatomy_item.anatitem_name;
-    define newAnatName like anatomy_item.anatitem_name;
+    define oldAnatName like term.term_name;
+    define newAnatName like term.term_name;
     define startStgAbbrev like stage.stg_abbrev;
     define endStgAbbrev   like stage.stg_abbrev;
     define xpatResZdbId      like expression_result.xpatres_zdb_id;

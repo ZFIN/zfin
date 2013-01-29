@@ -1,8 +1,7 @@
 package org.zfin.anatomy;
 
 import org.zfin.anatomy.presentation.AnatomyPresentation;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.ontology.Term;
 
 import java.io.Serializable;
 import java.text.ChoiceFormat;
@@ -14,20 +13,26 @@ import java.util.Set;
 public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Serializable {
 
     private String zdbID;
-    private AnatomyItem anatomyItem;
     private Type type;
     private int numberOfObjects;
     private int numberOfTotalDistinctObjects;
     private int numberOfSynonyms;
     private AnatomyTreeInfo treeInfo;
     private Set<AnatomyTreeInfo> treeInfos;
-    private GenericTerm term;
+    private Term term;
 
     // ToDo: move into a formatting class for presentation layer
     private static final ChoiceFormat geneChoice = new ChoiceFormat("0#genes| 1#gene| 2#genes");
     private static final ChoiceFormat synonymChoice = new ChoiceFormat("0#synonyms| 1#synonym| 2#synonyms");
     private static final String NEWLINE = System.getProperty("line.separator");
     private static final String TAB = "\t";
+
+    public AnatomyStatistics() {
+    }
+
+    public AnatomyStatistics(Term term) {
+        this.term = term;
+    }
 
     public String getZdbID() {
         return zdbID;
@@ -37,22 +42,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         this.zdbID = zdbID;
     }
 
-    public AnatomyItem getAnatomyItem() {
-        if (anatomyItem == null) {
-            anatomyItem = RepositoryFactory.getAnatomyRepository().getAnatomyTermByOboID(term.getOboID());
-        }
-        return anatomyItem;
-    }
-
-    public void setAnatomyItem(AnatomyItem anatomyItem) {
-        this.anatomyItem = anatomyItem;
-    }
-
-    public GenericTerm getTerm() {
+    public Term getTerm() {
         return term;
     }
 
-    public void setTerm(GenericTerm term) {
+    public void setTerm(Term term) {
         this.term = term;
     }
 
@@ -111,7 +105,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     //ToDo: Move comma delimited list into utility class.
 
     public String getFormattedSynonymList() {
-        return AnatomyPresentation.createFormattedSynonymList(getAnatomyItem());
+        return AnatomyPresentation.createFormattedSynonymList(getTerm());
     }
 
     public String getIndentationLevel() {
@@ -129,8 +123,8 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
      * @return integer that indicates comparison.
      */
     public int compareTo(AnatomyStatistics anatCompare) {
-        String compName = anatCompare.getAnatomyItem().getTermName();
-        String name = getAnatomyItem().getTermName();
+        String compName = anatCompare.getTerm().getTermName();
+        String name = getTerm().getTermName();
         return name.compareToIgnoreCase(compName);
     }
 
@@ -152,7 +146,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
         sb.append(TAB);
         sb.append(zdbID);
         sb.append(NEWLINE);
-        sb.append(getAnatomyItem());
+        sb.append(getTerm());
         sb.append(NEWLINE);
         sb.append("type");
         sb.append(TAB);
@@ -176,11 +170,11 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     public boolean equals(Object o) {
         if (!(o instanceof AnatomyStatistics))
             return false;
-        return getAnatomyItem().equals(o);
+        return getTerm().equals(o);
     }
 
     public int hashCode() {
-        return getAnatomyItem().hashCode();
+        return getTerm().hashCode();
     }
 
 }

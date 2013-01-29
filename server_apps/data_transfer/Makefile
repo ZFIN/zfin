@@ -65,6 +65,5 @@ $(LOCAL_DATA_CACHE_DIR) :
 push : $(SUBDIRS)
 	$(MAKE) -C Downloads run
 	$(MAKE) -C GO run
-	$(MAKE) -C Sanger run
 	$(MAKE) -C ZIRC push
 	$(MAKE) -C BLAST run

@@ -14,23 +14,23 @@ public class OntologySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                String termName = "liver development";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail?termID=" + termName + "&ontologyName=biological_process");
-                assertEquals("ZFIN " + termName, page.getTitleText());
+                String termName = "mitochondrion";
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/" + termName + "?ontologyName=cellular_component");
+                assertEquals("ZFIN GO: Cellular Component: " + termName, page.getTitleText());
                 HtmlTableDataCell tdElement = (HtmlTableDataCell) page.getByXPath("//td[@id = 'ontology-name']").get(0);
-                assertTrue(tdElement.getTextContent().startsWith("Gene Ontology: Biological Process [GO:0001889]"));
+                assertTrue(tdElement.getTextContent().startsWith("GO: Cellular Component"));
                 List<HtmlAnchor> hyperlinks = (List<HtmlAnchor>) tdElement.getByXPath("a");
                 // check that there are two links
                 assertEquals(2, hyperlinks.size());
                 assertEquals("QuickGO", hyperlinks.get(0).getTextContent());
                 assertEquals("AmiGO", hyperlinks.get(1).getTextContent());
                 tdElement = (HtmlTableDataCell) page.getByXPath("//td[@id = 'term-definition']").get(0);
-                assertTrue(tdElement.getTextContent().startsWith("The process whose specific outcome"));
+                assertTrue(tdElement.getTextContent().startsWith("A semiautonomous"));
                 // check relationships
-                List<HtmlTableRow> relationshipRows = (List<HtmlTableRow>) page.getByXPath("//tr[@id = 'is-part-of']");
+                List<HtmlTableRow> relationshipRows = (List<HtmlTableRow>) page.getByXPath("//tr[@id = 'is-a-type-of']");
                 // one is part of row
                 assertEquals(1, relationshipRows.size());
-                assertEquals(1, relationshipRows.get(0).getByXPath("td/span[@id = 'hepaticobiliary system development']").size());
+                assertTrue( relationshipRows.get(0).getByXPath("td/div/span[@id = 'cytoplasmic part']").size() > 0);
             } catch (Exception e) {
                 fail(e.toString());
             }
@@ -43,10 +43,10 @@ public class OntologySmokeTest extends AbstractSmokeTest {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 String termName = "developmental process";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail?termID=GO:0032502");
-                assertEquals("ZFIN " + termName, page.getTitleText());
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/GO:0032502");
+                assertEquals("ZFIN GO: Biological Process: " + termName, page.getTitleText());
                 HtmlTableDataCell tdElement = (HtmlTableDataCell) page.getByXPath("//td[@id = 'ontology-name']").get(0);
-                assertTrue(tdElement.getTextContent().startsWith("Gene Ontology: Biological Process [GO:0032502]"));
+                assertTrue(tdElement.getTextContent().startsWith("GO: Biological Process"));
                 // check the synonym
                 assertNotNull(page.getByXPath("//td[@id = 'term-synonyms']"));
                 tdElement = (HtmlTableDataCell) page.getByXPath("//td[@id = 'term-synonyms']").get(0);

@@ -53,7 +53,6 @@ public class TableTest {
 
     @Test
     public void hasZdbIdPk() {
-        assertTrue(Table.ANATOMY_ITEM.hasZdbPk());
         assertTrue(Table.PUBLICATION.hasZdbPk());
         assertTrue(!Table.PHENOTYPE_EXPERIMENT.hasZdbPk());
 

@@ -10,6 +10,7 @@
 <%@attribute name="action" type="java.lang.String" required="false" %>
 <%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="Allow to enter a query string with a wildcard added." %>
 <%@attribute name="useIdAsTerm" type="java.lang.Boolean" required="true" %>
+<%@attribute name="termsWithDataOnly" type="java.lang.Boolean" required="false" %>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
@@ -34,6 +35,7 @@
     <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
     <%= LookupTable.JSREF_USE_TERM_TABLE%>: false,
     <%= LookupTable.JSREF_USE_ID_AS_TERM%>: ${useIdAsTerm},
+    <%= Lookup.JSREF_TERMS_WITH_DATA_ONLY%>: ${termsWithDataOnly},
     <%= Lookup.JSREF_LIMIT%>: 25
     }
 

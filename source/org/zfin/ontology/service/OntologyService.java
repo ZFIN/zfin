@@ -3,10 +3,7 @@ package org.zfin.ontology.service;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.RelationshipType;
-import org.zfin.ontology.RelationshipDisplayNames;
-import org.zfin.ontology.RelationshipPresentation;
-import org.zfin.ontology.Term;
-import org.zfin.ontology.TermRelationship;
+import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -20,31 +17,43 @@ public class OntologyService {
     private final static Logger logger = Logger.getLogger(OntologyService.class);
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+
     /**
      * Get the parent term that has the start stage and return
-     * @return
+     *
+     * @return stage
      */
     public static DevelopmentStage getStartStageForTerm(Term term) {
-        return getStageForRelationshipType(term,RelationshipType.START_STAGE);
+        return getStageForRelationshipType(term, RelationshipType.START_STAGE);
     }
 
     /**
      * Get the parent term that has the end stage and return
      */
     public static DevelopmentStage getEndStageForTerm(Term term) {
-        return getStageForRelationshipType(term,RelationshipType.END_STAGE);
+        return getStageForRelationshipType(term, RelationshipType.END_STAGE);
     }
 
-    public static DevelopmentStage getStageForRelationshipType(Term term,RelationshipType relationshipType){
-        for(TermRelationship parentTerm : term.getParentTermRelationships()){
-            if(parentTerm.getRelationshipType().equals(relationshipType)){
+    public static DevelopmentStage getStageForRelationshipType(Term term, RelationshipType relationshipType) {
+        for (TermRelationship parentTerm : term.getParentTermRelationships()) {
+            if (parentTerm.getRelationshipType().equals(relationshipType)) {
                 return ontologyRepository.getDevelopmentStageFromTerm(parentTerm.getTermOne());
             }
         }
         return null;
     }
 
-    public static List<RelationshipPresentation> getRelatedTerms(Term term) {
+    public static List<RelationshipPresentation> getRelatedTermsWithoutStages(GenericTerm term) {
+        List<RelationshipPresentation> list = getRelatedTerms(term);
+        List<RelationshipPresentation> newList = new ArrayList<RelationshipPresentation>(list.size());
+        for (RelationshipPresentation presentation : list) {
+            if (!presentation.getType().equalsIgnoreCase("start stage") && !presentation.getType().equalsIgnoreCase("end stage"))
+                newList.add(presentation);
+        }
+        return newList;
+    }
+
+    public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
         logger.debug("get related terms for " + term.getTermName());
         Map<String, RelationshipPresentation> types = new HashMap<String, RelationshipPresentation>(5);
         List<TermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();

@@ -1,16 +1,18 @@
 package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.anatomy.service.AnatomyService;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.ontology.*;
 
 import java.util.*;
 
 /**
- *
  * Bean used to view cached ontologies.
  */
-public class OntologyBean {
+public class OntologyBean extends PaginationBean {
 
     private String action;
     private boolean ontologiesLoaded = true;
@@ -19,12 +21,15 @@ public class OntologyBean {
     private Set<TermDTO> terms;
     private String termID;
     private GenericTerm term;
-    private Map<TermDTO, List<String>> valueMap ;
-    private TreeMap<String,Set<TermDTO>> keys ;
-    private List<TransitiveClosure> childrenTransitiveClosureSet ;
-    private OntologyManager ontologyManager ;
+    private Map<TermDTO, List<String>> valueMap;
+    private TreeMap<String, Set<TermDTO>> keys;
+    private List<TransitiveClosure> childrenTransitiveClosureSet;
+    private OntologyManager ontologyManager;
     private List<RelationshipPresentation> termRelationships;
     private List<OntologyMetadata> metadataList;
+    private Map<String, String> stageListDisplay;
+
+    private SectionVisibility sectionVisibility = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
 
     public String getAction() {
         return action;
@@ -84,7 +89,7 @@ public class OntologyBean {
         this.ontologiesLoaded = ontologiesLoaded;
     }
 
-    public List<TermDTO> getOrderedTerms(){
+    public List<TermDTO> getOrderedTerms() {
         List<TermDTO> termList = new ArrayList<TermDTO>(terms);
         Collections.sort(termList);
         return termList;
@@ -106,11 +111,11 @@ public class OntologyBean {
         this.keys = keys;
     }
 
-    public List<TransitiveClosure> getAllChildren(){
-        return childrenTransitiveClosureSet ;
+    public List<TransitiveClosure> getAllChildren() {
+        return childrenTransitiveClosureSet;
     }
 
-    public void setAllChildren(List<TransitiveClosure> transitiveClosures){
+    public void setAllChildren(List<TransitiveClosure> transitiveClosures) {
         this.childrenTransitiveClosureSet = transitiveClosures;
     }
 
@@ -154,6 +159,36 @@ public class OntologyBean {
         this.termRelationships = termRelationships;
     }
 
+    public Map<String, String> getDisplayStages() {
+        if (stageListDisplay != null)
+            return stageListDisplay;
+
+        stageListDisplay = AnatomyService.getDisplayStages();
+        return stageListDisplay;
+    }
+
+    public SectionVisibility getSectionVisibility() {
+        return sectionVisibility;
+    }
+
+    public void setSectionVisibility(SectionVisibility sectionVisibility) {
+        this.sectionVisibility = sectionVisibility;
+    }
+
+    public static enum Section {
+        EXPRESSION,
+        PHENOTYPE;
+
+        public static String[] getValues() {
+            String[] values = new String[values().length];
+            int index = 0;
+            for (Section section : values()) {
+                values[index++] = section.toString();
+            }
+            return values;
+        }
+    }
+
     public static enum ActionType {
         SERIALIZE_ONTOLOGIES,
         LOAD_FROM_DATABASE,
@@ -175,7 +210,7 @@ public class OntologyBean {
             throw new RuntimeException("No action type of string " + type + " found.");
         }
 
-        public String getName(){
+        public String getName() {
             return name();
         }
     }

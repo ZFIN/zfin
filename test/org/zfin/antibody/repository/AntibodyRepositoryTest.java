@@ -159,7 +159,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyByAnatomyTerm() {
 
         // cranial nerve
-        String aoTermCN = "ZDB-ANAT-011113-81";
+        String aoTermCN = "ZDB-TERM-100331-666";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermCN);
@@ -230,7 +230,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyByTwoAnatomyTermAndConnectedIncludingSubstructures() {
 
         // brain,rhombomere
-        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
+        String aoTermIds = "ZDB-TERM-100331-8,ZDB-TERM-100331-1031,";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermIds);
@@ -245,18 +245,19 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
-    // Test search by two ao terms ORed
+    // Test search by two ao terms ANDed (no OR supported as this time)
 
     @Test
-    public void getAntibodyByTwoAnatomyTermsOr() {
+    public void getAntibodyByTwoAnatomyTermsAnd() {
 
         // brain,rhombomere
-        String aoTermIds = "ZDB-ANAT-010921-415,ZDB-ANAT-020702-3";
+        String aoTermIds = "ZDB-TERM-100331-8,ZDB-TERM-100331-1031,";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermIds);
+        searchCriteria.setAnatomyTermNames("brain|rhombomere");
         searchCriteria.setIncludeSubstructures(false);
-        searchCriteria.setAnatomyEveryTerm(false);
+        searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertTrue(abs != null);
@@ -264,6 +265,31 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
 
+    }
+
+    @Test
+    public void getAntibodyByCellularComponent() {
+
+        // neurofilament
+        // GO:0005883
+        String termID = "ZDB-TERM-091209-4305";
+
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAnatomyTermIDs(termID);
+        searchCriteria.setAnatomyTermNames("neurofilament|");
+        searchCriteria.setIncludeSubstructures(true);
+        searchCriteria.setAnatomyEveryTerm(true);
+
+        PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
+        assertTrue(abs != null);
+
+        int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(numberOfAb > 0);
+
+        searchCriteria.setAnatomyTermIDs("ZDB-TERM-091209-16699");
+        searchCriteria.setAnatomyTermNames("axon part");
+        abs = getAntibodyRepository().getAntibodies(searchCriteria);
+        assertTrue(abs != null);
     }
 
     // Test search by immunogen species only
@@ -523,7 +549,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyByAnatomyTermAndABName() {
 
         //cranial nerve V
-        String termID = "ZDB-ANAT-011113-81";
+        String termID = "ZDB-TERM-100331-666";
+        // znp-1
         String name = "z";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
@@ -640,6 +667,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertThat(count, greaterThan(-1));
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
+        assertNotNull(abs);
     }
 
     @Test
@@ -975,6 +1003,18 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
         int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
         assertTrue(numberOfAntibodiesPerAOTerm > 50);
+        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
+        assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
+    }
+
+    @Test
+    public void antibodyGoStatistics() {
+        // check if there are any antibodies for a given GO
+        // axon part
+        String termID = "ZDB-TERM-091209-16699";
+        GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
+        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
+        assertTrue(numberOfAntibodiesPerAOTerm > 0);
         int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
         assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
     }

@@ -5,11 +5,11 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * This class can be used to store the visbility and data existence of a set of sections.
+ * This class can be used to store the visibility and data existence of a set of sections.
  * <p/>
- * Visbility: (Expand/Collapse)
+ * Visibility: (Expand/Collapse)
  * A visible section can mean that a section is expanded while a non-visible section could mean to collapse
- * the section info. It faciliates the logic to create a hyperlink 'show' / 'hide'.
+ * the section info. It facilitates the logic to create a hyperlink 'show' / 'hide'.
  * <p/>
  * Data Existence:
  * Expansion and collapse of section data is defined by the visibility attribute while the data existence

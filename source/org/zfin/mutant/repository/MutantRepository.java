@@ -1,10 +1,9 @@
 package org.zfin.mutant.repository;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.feature.Feature;
 import org.zfin.expression.Figure;
+import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -69,15 +68,6 @@ public interface MutantRepository {
     List<Morpholino> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords);
 
     /**
-     * Retrieve number of morpholinos that show a gene expression in a given structure.
-     *
-     * @param item            anatomical structure
-     * @param numberOfRecords number
-     * @return int number of morpholinos
-     */
-    int getMorhpolinoCountByAnatomy(AnatomyItem item, int numberOfRecords);
-
-    /**
      * Retrieve a genotype,feature and marker object by PK.
      *
      * @param genotypeZbID pk
@@ -138,17 +128,6 @@ public interface MutantRepository {
      * @return list of genotype object
      */
     PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, PaginationBean bean);
-
-    /**
-     * Retrieve the list of morpholinos for a given genotype.
-     *
-     * @param genotype   Genotype
-     * @param item       Anatomy Structure
-     * @param isWildtype genotype is wild type or not
-     * @return list of morpholinos
-     */
-    List<Morpholino> getMorpholinosByGenotype(Genotype genotype, AnatomyItem item, boolean isWildtype);
-
 
     /**
      * @param name name of quality term

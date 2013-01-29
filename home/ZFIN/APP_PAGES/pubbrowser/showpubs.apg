@@ -147,12 +147,6 @@ OUTPUT VARS:
                <?MIVAR NAME=$feature_name>$1<?/MIVAR>
     <?/MISQL>
 <?/MIBLOCK>
-<?MIBLOCK COND="$(>,$(POSITION,$OID,ANAT),0)">
-   <?MISQL SQL="select get_ao_name_html_link('$OID') from anatomy_item
-               where anatitem_zdb_id='$OID'">
-               <?MIVAR NAME=$ao_name>$1<?/MIVAR>
-    <?/MISQL>
-<?/MIBLOCK>
 <?MIVAR>
 $(IF,$(>,$(POSITION,$rtype,marker),0),
       $(SETVAR,$return_page1,aa-markerupdate.apg)

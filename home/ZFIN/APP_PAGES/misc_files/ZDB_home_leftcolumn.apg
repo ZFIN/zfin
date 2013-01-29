@@ -53,9 +53,9 @@
                            
   <ul>
       <li><a href="/action/anatomy/anatomy-search"
-                    title="Search the zebrafish anatomical ontology"><strong>Anatomy</strong></a></li>
+                    title="Search anatomy and gene ontology"><strong>Anatomy / GO</strong></a></li>
       <ul>
-        <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Atlases and Resources</a></li>
+        <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>
       </ul>
   </ul>
    

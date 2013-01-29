@@ -4,7 +4,6 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
 import org.zfin.gwt.curation.ui.AttributionModule;
@@ -28,8 +27,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
-
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 
 
 /**
@@ -65,20 +62,6 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         return publicationAbstractDTO;
     }
 
-
-    private String createListItem(String displayName, Term term) {
-        OntologyDTO ontologyDTO = DTOConversionService.convertToOntologyDTO(term.getOntology());
-        String termID = term.getZdbID();
-        StringBuilder builder = new StringBuilder(60);
-        builder.append("<span onmouseover=showTermInfoString('");
-        builder.append(ontologyDTO.getOntologyName());
-        builder.append("','");
-        builder.append(termID);
-        builder.append("')  class='autocomplete-plain'>");
-        builder.append(displayName);
-        builder.append("</span>");
-        return builder.toString();
-    }
 
     public SuggestOracle.Response getSupplierSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
@@ -119,7 +102,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
         if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
             //TermDTO termObject = OntologyManager.getInstance().getTermByID(term);
-            TermDTO termObject = OntologyManager.getInstance().getTermByID(term,ontologyDto);
+            TermDTO termObject = OntologyManager.getInstance().getTermByID(term, ontologyDto);
             if (termObject != null)
                 return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getName(), termObject.getZdbID());
             else
@@ -155,6 +138,11 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         return getOntologySuggestions(request, DTOConversionService.convertToOntology(ontology), useIDAsValue);
     }
 
+    @Override
+    public SuggestOracle.Response getTermCompletionWithData(SuggestOracle.Request request, OntologyDTO ontology, boolean useIdAsValue) {
+        return getOntologySuggestions(request, DTOConversionService.convertToOntology(ontology), useIdAsValue, true);
+    }
+
     /**
      * Retrieve terms from a given ontology (via the gDAG ontology table)
      *
@@ -163,6 +151,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return suggestions
      */
     private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology, boolean useIDAsValue) {
+        return getOntologySuggestions(request, ontology, useIDAsValue, false);
+    }
+
+    private SuggestOracle.Response getOntologySuggestions(SuggestOracle.Request request, Ontology ontology, boolean useIDAsValue, boolean termsWithDataOnly) {
 //        HibernateUtil.currentSession();
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = request.getQuery().trim();
@@ -186,6 +178,8 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
             highlighter.setMatch(query);
             for (MatchingTerm term : matcher.getMatchingTerms(query, ontology)) {
+                if (termsWithDataOnly && !OntologyDataManager.getInstance().hasExpressionOrPhenotypeData(term.getTerm()))
+                    continue;
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion);
                 String termValue = (useIDAsValue ? term.getTerm().getZdbID() : term.getTerm().getName());
@@ -320,7 +314,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
     }
 
     /**
-     * Retrieve the terminfo for a given term id and ontology.
+     * Retrieve the term info for a given term id and ontology.
      * This can either be the zdb ID or the obo id.
      *
      * @param ontology ontology
@@ -347,16 +341,15 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return Term Info
      */
     private TermDTO getTermInfo(String termID, OntologyDTO ontology) {
-        TermDTO term;
-        if (termID.indexOf(ActiveData.Type.ANAT.toString()) > -1) {
-            AnatomyItem anatomyItem = getAnatomyRepository().getAnatomyTermByID(termID);
-            term = OntologyManager.getInstance().getTermByID(anatomyItem.getOboID());
-        } else {
-            term = OntologyManager.getInstance().getTermByID(termID,ontology);
-            if (term.getOntology()==OntologyDTO.MPATH)   {
-                term.setOntology(OntologyDTO.MPATH_NEOPLASM);
-            }
+
+        if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT))
+            logger.error("Encountered an obsoleted anatomy term id: " + termID);
+
+        TermDTO term = OntologyManager.getInstance().getTermByID(termID, ontology);
+        if (term.getOntology() == OntologyDTO.MPATH) {
+            term.setOntology(OntologyDTO.MPATH_NEOPLASM);
         }
+
 
         if (term == null) {
             logger.warn("No term " + termID + " found!");
@@ -459,7 +452,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         }
 
         for (Iterator<Ontology> iterator = ontology.getIndividualOntologies().iterator();
-             iterator.hasNext() && term == null;) {
+             iterator.hasNext() && term == null; ) {
             ontology = iterator.next();
             term = OntologyManager.getInstance().getTermByName(value, ontology, true);
         }
@@ -480,9 +473,6 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
     /**
      * Check if a given term name is a quality relational term
-     *
-     *
-     *
      *
      * @param termName term name
      */

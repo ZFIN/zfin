@@ -78,4 +78,14 @@ public interface LookupRPCServiceAsync {
      * @param callBack callback
      */
     void getOntology(String termID, AsyncCallback<OntologyDTO> callBack);
+
+    /**
+     * Retrieve terms from a given ontology (via the gDAG ontology table) that match a request query string
+     * and has data associated.
+     *
+     * @param request  request
+     * @param ontology ontology name
+     * @return suggestions
+     */
+    void getTermCompletionWithData(SuggestOracle.Request request, OntologyDTO ontology, boolean useIdAsValue, AsyncCallback<SuggestOracle.Response> async);
 }

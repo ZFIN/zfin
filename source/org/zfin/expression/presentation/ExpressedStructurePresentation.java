@@ -52,7 +52,7 @@ public class ExpressedStructurePresentation implements ProvidesLink, Comparable<
     }
 
     private String getSuperTermLink(){
-        return "<a href='/action/ontology/term-detail?termID="+ superTermOntId + "'>" +
+        return "<a href='/action/ontology/term-detail/"+ superTermOntId + "'>" +
                 superTermName +"</a>" +
                 "<a class='popup-link data-popup-link' "+
                 " href='/action/ontology/term-detail-popup?termID="+ superTermOntId+ "'></a>";

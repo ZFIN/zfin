@@ -28,16 +28,8 @@ then
 
 	end if ;
 elif objtype = "ANAT"
-then 
-	let ok = (select anatitem_is_obsolete 
-        	   from anatomy_item
-          	   where vTerm = anatitem_zdb_id);
-
-	if ok then
-
-  	raise exception -746,0,'FAIL!: AO Term is OBSOLETE!';
-
-	end if ;
+then
+  	raise exception -746,0,'FAIL!: ZDB-ANAT values are not in use any longer. Use TERM table records instead.';
 elif objtype = "TERM"
 then 
 	let ok = (select term_is_obsolete 

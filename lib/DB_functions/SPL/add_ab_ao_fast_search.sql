@@ -1,8 +1,8 @@
 ----------------------------------------------------------------
 -- This function adds new records to the antibody_stats table
 -- this function is called when a new expression_result record is created
--- Need to store the xpates_zdb_id in the table as well in order to be able
--- to remove specific records. It could be that two xpatres_zdb_id recoreds refer to
+-- Need to store the xpatres_zdb_id in the table as well in order to be able
+-- to remove specific records. It could be that two xpatres_zdb_id records refer to
 -- the same structure and fig.
 -- Do not include
 --

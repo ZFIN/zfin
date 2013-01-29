@@ -20,7 +20,7 @@ public abstract class AbstractOntologyTest {
     protected static OntologyManager ontologyManager ;
     private static final Logger logger = Logger.getLogger(AbstractOntologyTest.class);
     private static String oldTempDirectory ;
-    private static String testTempDirectory = "test/ontologies";
+    public static String testTempDirectory = "test/ontologies";
     protected final static String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final static String ALPHABET_WITH_SPACES = "ABCDEFGH IJKLMN OPQ RSTUVWXYZ";
 

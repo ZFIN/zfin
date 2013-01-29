@@ -3,7 +3,6 @@
 --test
 -- Drop all out-of-date functions.
 --drop function regen_anatomy;
-drop function populate_all_anatomy_contains;
 drop function populate_anat_display_stage_children;
 
 
@@ -36,13 +35,13 @@ create function populate_anat_display_stage_children(stageId varchar(80),
   returning int;
 
   -- It is initiated by regen_anatomy, and it calls itself recursively
-  -- to populate anatomy_display_new table by using the intermedia table 
+  -- to populate anatomy_display_new table by using the intermediate table
   -- stage_item_contained and stage_item_child_list.
 
   define childIndent int;
-  define childId like anatomy_item.anatitem_zdb_id;
-  define childName like anatomy_item.anatitem_name;
-  define childNameOrder like anatomy_item.anatitem_name_order;
+  define childId like term.term_zdb_id;
+  define childName like term.term_name;
+  define childNameOrder like term.term_name;
 
   -- insert record into anatomy_display from passed in values
   insert into anatomy_display_new 
@@ -59,14 +58,14 @@ create function populate_anat_display_stage_children(stageId varchar(80),
 
   -- Save the direct descendant in stage_item_child_list table, and 
   -- delete it from stage_item_contained table. Thus, each anatomy item
-  -- would only have one display with it highest leve at a particular stage. 
+  -- would only have one display with it highest level at a particular stage.
   foreach
-     select sic_anatitem_zdb_id, anatitem_name, anatitem_name_order
+     select sic_anatitem_zdb_id, term_name, term_name
        into childId, childName, childNameOrder
-       from anatomy_relationship, stage_items_contained, anatomy_item
-      where parentId = anatrel_anatitem_1_zdb_id
-        and sic_anatitem_zdb_id = anatrel_anatitem_2_zdb_id
-	and sic_anatitem_zdb_id = anatitem_zdb_id
+       from term_relationship, stage_items_contained, term
+      where parentId = termrel_term_1_zdb_id
+        and sic_anatitem_zdb_id = termrel_term_2_zdb_id
+	and sic_anatitem_zdb_id = term_zdb_id
 
     insert into stage_item_child_list 
          values(parentId,childId,childName, childNameOrder);
@@ -76,7 +75,7 @@ create function populate_anat_display_stage_children(stageId varchar(80),
    end foreach 
   
    -- For each direct descendant saved in stage_item_child_list, recursively
-   -- call the function to populate furthur descendant.
+   -- call the function to populate further descendant.
    foreach 
      select stimchilis_child_zdb_id, stimchilis_child_name, stimchilis_child_name_order
        into childId, childName, childNameOrder
@@ -95,100 +94,6 @@ end function;
 
 update statistics for function populate_anat_display_stage_children;
 
-
--- ---------------------------------------------------------------------
--- POPULATE_ALL_ANATOMY_CONTAINS
--- ---------------------------------------------------------------------
-
-create function populate_all_anatomy_contains()
-  returning integer
-
-  -- find the transitive closure of anatomy contains, 
-  -- keeping only the closest ancestor
-
-  -- called from regen_anatomy
-
-  define dist int;
-  define delta int;
-
-  let dist = 1;
-  let delta = -1;
-
-  -- the first level is a gimmie from anatomy_relationship
-  -- also _all_ child nodes are explicitly listed
-  -- so we only need to find ancestors of these child nodes
-  insert into all_anatomy_contains_new (allanatcon_container_zdb_id, 
-  					allanatcon_contained_zdb_id,
-  					allanatcon_min_contain_distance)
-    select anatrel_anatitem_1_zdb_id,
-	   anatrel_anatitem_2_zdb_id, 
-	   dist
-    from anatomy_relationship
-    where anatrel_dagedit_id in ('is_a','part_of');
-
-  -- continue as long as progress is made 
-  -- there may be more elegant ways to do this so please do tell. 
-  while (delta  <  (select count(*) from all_anatomy_contains_new) )
-    let dist = dist + 1;
-    -- set the baseline for determining is progress is made
-    select count(*) 
-      into delta 
-      from all_anatomy_contains_new; 
-		
-    -- try adding new ancestors 
-    insert into all_anatomy_contains_new
-      select distinct a.anatrel_anatitem_1_zdb_id,     -- A.ancestor
-		      b.allanatcon_containeD_zdb_id,  -- B.child
-		      dist                             -- min depth
-	from anatomy_relationship a,            -- source of all ancestors
-             all_anatomy_contains_new b     -- source of all childs 
-
-	where b.allanatcon_min_contain_distance = (dist - 1) 
-	      -- limit the search to the previous level          
-          and b.allanatcon_containeR_zdb_id = a.anatrel_anatitem_2_zdb_id
-	      -- B.ancestor == A.child
-	      -- checking for duplicates here is where the time gets absurd  
-	      -- (2:30 vs 0:06), so 
-	      --   "kill em all and let god sort them out later"
-	  and a.anatrel_dagedit_id in ('is_a', 'part_of')
-	      -- all_anatomy_contains doesn't want develops_from relationships,
-	      -- and it's better to explicitly include rather than exclude,
-	      -- since we want the behavior to stay the same the next time
-	      -- a new type is added
-	  ;
-
-  end while
-
-    
-  -- split out the keepers in one step usings the dbs strength with set 
-  -- operations instead of n-1 peicemeal steps 
-  select allanatcon_container_zdb_id,
-	 allanatcon_contained_zdb_id,
-	 min(allanatcon_min_contain_distance) as allanatcon_min_contain_distance
-    from all_anatomy_contains_new
-    group by allanatcon_container_zdb_id, allanatcon_contained_zdb_id
-    into temp all_anatomy_contains_new_tmp with no log
-    ;
-
-  -- move the keepers to where they will live
-  delete from all_anatomy_contains_new;
-  insert into all_anatomy_contains_new 
-    select distinct * 
-      from all_anatomy_contains_new_tmp
-      ;
-
-  -- return the number of rows kept as an hint of correctness
-  select count(*) 
-    into delta 
-    from all_anatomy_contains_new; 
-
-  return delta;				  
-
-end function;
-
-update statistics for function populate_all_anatomy_contains;
-
-
 -- ---------------------------------------------------------------------
 -- REGEN_ANATOMY
 -- ---------------------------------------------------------------------
@@ -203,8 +108,8 @@ create dba function "informix".regen_anatomy()
 
   -- see regen_names.sql for details on how to debug SPL routines.
 
-  set debug file to "/tmp/debug_regen_anatomy.<!--|DB_NAME|-->";
-  --trace on;
+  set debug file to "/tmp/debug_regen_anatomy.ogodb";
+-- trace on;
 
   begin	-- global exception handler
 
@@ -218,8 +123,8 @@ create dba function "informix".regen_anatomy()
     define stageId 	like stage.stg_zdb_id;
     define seqNum int;
     define indent int;
-    define anatomyId like anatomy_item.anatitem_zdb_id;
-    define anatomyName like anatomy_item.anatitem_name;
+    define anatomyId like term.term_zdb_id;
+    define anatomyName like term.term_name;
     define stgHoursStart like stage.stg_hours_start;
 
     define nRows int;	
@@ -361,7 +266,7 @@ create dba function "informix".regen_anatomy()
 
       alter table stage_items_contained add constraint
 	foreign key (sic_anatitem_zdb_id)
-	references anatomy_item
+	references term
 	constraint sic_anatitem_zdb_id_foreign_key;
   
 
@@ -411,7 +316,7 @@ create dba function "informix".regen_anatomy()
 	in idxdbs1;
       alter table stage_item_child_list add constraint
         foreign key (stimchilis_item_zdb_id)
-	references anatomy_item
+	references term
 	constraint stimchilis_item_zdb_id_foreign_key;
 
       create index stimchilis_child_zdb_id_index
@@ -419,7 +324,7 @@ create dba function "informix".regen_anatomy()
 	in idxdbs1;
       alter table stage_item_child_list add constraint
         foreign key (stimchilis_child_zdb_id)
-	references anatomy_item
+	references term
 	constraint stimchilis_child_zdb_id_foreign_key;
 
 
@@ -457,41 +362,6 @@ create dba function "informix".regen_anatomy()
 	extent size 256 next size 256 
 	lock mode page;
 
-      -- ---- ALL_ANATOMY_CONTAINS ----
-      let errorHint = "Creating all_anatomy_contains_new";
-      -- this table stores every anatomy term with every ancestor 
-      -- that has a contains relationship and the shortest distance 
-      -- between each pair.  In this case, a contains relationship
-      -- is being defined as dagedit_id's "is_a" and "part_of", which
-      -- leaves out "develops_from".  Unfortunately, the only place
-      -- where that is defined is in this file, when we have a generic
-      -- DAG, we will probably need relationship type groups so that
-      -- nothing has to be hardcoded.
-
-      let errorHint = "Creating all_anatomy_contains_new";
-      if (exists (select *
-		   from systables
-		   where tabname = "all_anatomy_contains_new")) then
-        drop table all_anatomy_contains_new;
-      end if
-
-      create table all_anatomy_contains_new
-        (
-	  allanatcon_container_zdb_id		varchar(50),
-	  allanatcon_contained_zdb_id		varchar(50),
-	  allanatcon_min_contain_distance	integer not null
-        )
-	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 256 next size 256 
-	lock mode page;
-
-      -- create temp index.  dropped when table renamed
-      create index all_anatomy_contains_new_primary_key_index
-        on all_anatomy_contains_new (allanatcon_container_zdb_id,     
-				     allanatcon_contained_zdb_id)
-	in idxdbs2;
-
-
       -- =================   POPULATE TABLES   ===============================
 
       -- ---------------------------------------------------
@@ -499,34 +369,35 @@ create dba function "informix".regen_anatomy()
       -- ---------------------------------------------------
       let errorhint = "Populating all_anatomy_stage";
 
-      -- For each anatomy_item_zdb_id, find all stages this item occurs in.
+      -- For each term_zdb_id, find all stages this item occurs in.
 
       -- if the start stage of an anatomy item is Unknown, only 
       -- insert then end stage, and vice verse.
       insert into all_anatomy_stage
-    	select anatitem_end_stg_zdb_id, anatitem_zdb_id
-	  from anatomy_item, stage
-	 where anatitem_start_stg_zdb_id = stg_zdb_id
+    	select ts_end_stg_zdb_id, ts_term_zdb_id
+	  from term_stage, stage
+	 where ts_start_stg_zdb_id = stg_zdb_id
            and stg_name = "Unknown";
   
       insert into all_anatomy_stage
-    	select anatitem_start_stg_zdb_id, anatitem_zdb_id
-	  from anatomy_item, stage
-	 where anatitem_end_stg_zdb_id = stg_zdb_id
+    	select ts_start_stg_zdb_id, ts_term_zdb_id
+	  from term_stage, stage
+	 where ts_end_stg_zdb_id = stg_zdb_id
            and stg_name = "Unknown";
 
       -- for all other anatitems find stages it is contained in
       insert into all_anatomy_stage
-    	select s1.stg_zdb_id, anatitem_zdb_id
-	  from stage s1, anatomy_item
-	  where anatitem_name_lower <> 'not specified'
+    	select s1.stg_zdb_id, term_zdb_id
+	  from stage s1, term_stage, term
+	  where term_name <> 'not specified'
 	    and s1.stg_name <> 'Unknown'
+	    and term_zdb_id = ts_term_zdb_id
 	    and exists 
 		(  select *
 		     from stage ss, stage se
-		    where anatitem_start_stg_zdb_id = ss.stg_zdb_id
+		    where ts_start_stg_zdb_id = ss.stg_zdb_id
 		      and ss.stg_name <> "Unknown"
-		      and anatitem_end_stg_zdb_id = se.stg_zdb_id      
+		      and ts_end_stg_zdb_id = se.stg_zdb_id
 		      and se.stg_name <> "Unknown"       
 		      and s1.stg_hours_start >= ss.stg_hours_start
 		      and s1.stg_hours_end <= se.stg_hours_end        
@@ -534,14 +405,13 @@ create dba function "informix".regen_anatomy()
 		
       update statistics high for table all_anatomy_stage;	
       
- 
       -- -----------------------------------------------------------------------
       --    ANATOMY_DISPLAY_NEW
       -- -----------------------------------------------------------------------
 	let errorhint = "Populating anatomy_display_new";
 
       -- Anatomy_display has variables that are stage based, so use each
-      -- stage_id to insert associated anatomy_items. 
+      -- stage_id to insert associated term.
 
       foreach
 	select stg_zdb_id 
@@ -560,20 +430,21 @@ create dba function "informix".regen_anatomy()
 
         -- find out the highest level term in this stage, call
         -- populate_anat_display_stage_children to recursively retrieve children
-
+trace on;
 	foreach 
-      	     select crt.sic_anatitem_zdb_id, anatitem_name, stg_hours_start 
+      	     select crt.sic_anatitem_zdb_id, term_name, stg_hours_start 
                into anatomyId, anatomyName, stgHoursStart
-               from stage_items_contained crt, anatomy_item, stage
-      	      where crt.sic_anatitem_zdb_id = anatitem_zdb_id
-	        and anatitem_start_stg_zdb_id = stg_zdb_id
+               from stage_items_contained crt, term_stage, term , stage
+      	      where crt.sic_anatitem_zdb_id = term_zdb_id
+	        and ts_start_stg_zdb_id = stg_zdb_id
+		and term_zdb_Id = ts_term_zdb_id
  	        and not exists
 		  ( select * 
-	    	      from anatomy_relationship, stage_items_contained prt
-	             where prt.sic_anatitem_zdb_id = anatrel_anatitem_1_zdb_id
-	     	       and crt.sic_anatitem_zdb_id = anatrel_anatitem_2_zdb_id    
+	    	      from term_relationship, stage_items_contained prt
+	             where prt.sic_anatitem_zdb_id = termrel_term_1_zdb_id
+	     	       and crt.sic_anatitem_zdb_id = termrel_term_2_zdb_id
 		   )
-            order by stg_hours_start, anatitem_name 
+            order by stg_hours_start, term_name
 
       	    execute function populate_anat_display_stage_children(
         		stageId, anatomyId, anatomyName, indent, seqNum) 
@@ -588,19 +459,7 @@ create dba function "informix".regen_anatomy()
       end foreach
 
 
-      -- -----------------------------------------------------------------------
-      --     ALL_ANATOMY_CONTAINS_NEW
-      -- -----------------------------------------------------------------------
 
-      let errorHint = "Populating all_anatomy_contains_new";
-
-      execute function populate_all_anatomy_contains()
-        into nRows;
-
-      update statistics high for table all_anatomy_contains_new;
-
-      
- 
     -- -------------------------------------------------------------------------
     -- RENAME the new tables to REPLACE the old
     -- -------------------------------------------------------------------------
@@ -623,7 +482,6 @@ create dba function "informix".regen_anatomy()
       drop table stage_item_child_list;
       drop table all_anatomy_stage;
       drop table anatomy_display;
-      drop table all_anatomy_contains;
 
     end -- local exception handler for dropping of original tables
 
@@ -684,7 +542,7 @@ create dba function "informix".regen_anatomy()
 	in idxdbs1;
       alter table anatomy_display add constraint
         foreign key (anatdisp_item_zdb_id)
-	references anatomy_item 
+	references term
 	  on delete cascade
 	constraint anatdisp_item_zdb_id_foreign_key;
 
@@ -695,50 +553,6 @@ create dba function "informix".regen_anatomy()
 	in idxdbs1;
 
 
-     
-      -- ---- ALL_ANATOMY_CONTAINS ----
-
-      rename table all_anatomy_contains_new to all_anatomy_contains;
-
-      -- primary key
-
-      let errorHint = "all_anatomy_contains_primary_key_index";
-      drop index all_anatomy_contains_new_primary_key_index;
-      create unique index all_anatomy_contains_primary_key_index
-        on all_anatomy_contains (allanatcon_container_zdb_id,     
-				 allanatcon_contained_zdb_id)
-	
-	in idxdbs2;
-      alter table all_anatomy_contains add constraint
-        primary key (allanatcon_container_zdb_id,     
-		     allanatcon_contained_zdb_id)
-	constraint all_anatomy_contains_primary_key;
-
-      -- foreign keys
-
-      let errorHint = "allanatcon_container_zdb_id_index";
-      create index allanatcon_container_zdb_id_index
-        on all_anatomy_contains (allanatcon_container_zdb_id)
-	
-	in idxdbs2;
-      alter table all_anatomy_contains add constraint
-        foreign key (allanatcon_container_zdb_id)
-	references anatomy_item
-	  on delete cascade
-	constraint allantcon_container_zdb_id_foreign_key;
-
-      let errorHint = "allanatcon_contained_zdb_id_index";
-      create index allanatcon_contained_zdb_id_index
-        on all_anatomy_contains (allanatcon_contained_zdb_id)
-	
-	in idxdbs2;
-      alter table all_anatomy_contains add constraint
-        foreign key (allanatcon_contained_zdb_id)
-	references anatomy_item
-	  on delete cascade
-	constraint allantcon_contained_zdb_id_foreign_key;
-
-            
     end -- Local exception handler
     commit work;
     
@@ -748,7 +562,6 @@ create dba function "informix".regen_anatomy()
 
   begin work;
   update statistics high for table anatomy_display;
-  update statistics high for table all_anatomy_contains;
   commit work;
 
   --   RELEASE ZDB_FLAG
@@ -756,11 +569,6 @@ create dba function "informix".regen_anatomy()
   if release_zdb_flag("regen_anatomy") <> 0 then
     return 1;
   end if
-
-  -- re-create self-records in all_anatomy_contains
-  insert into all_anatomy_contains
-              select anatitem_zdb_id,anatitem_zdb_id,0
-              from anatomy_item;
 
   return 0;
 

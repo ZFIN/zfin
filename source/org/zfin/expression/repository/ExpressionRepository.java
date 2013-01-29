@@ -1,17 +1,16 @@
 package org.zfin.expression.repository;
 
-import org.zfin.anatomy.AnatomyItem;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
-import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
@@ -23,7 +22,6 @@ import java.util.Set;
  * ToDo: ADD DOCUMENTATION!
  */
 public interface ExpressionRepository {
-    ExpressionStageAnatomyContainer getExpressionStages(Gene gene);
 
     int getExpressionPubCountForGene(Marker marker);
 
@@ -43,7 +41,7 @@ public interface ExpressionRepository {
 
     /**
      *
-     * @param marker
+     * @param marker marker
      * @return List of Object[int figureCount,String pubZdbID,String cloneZdbID)
      */
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForGene(Marker marker);
@@ -52,8 +50,6 @@ public interface ExpressionRepository {
 
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForClone(Clone clone) ;
 
-    int getImagesFromPubAndClone(Publication publication, Clone clone);
-
     /**
      * Retrieve an expression experiment by ID.
      *
@@ -61,13 +57,6 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
-
-    /**
-     * Get a single expression result record by id
-     * @param zdbID id
-     * @return expression result
-     */
-    ExpressionResult getExpressionResult(String zdbID);
 
     /**
      * Retrieve an assay by name.
@@ -314,14 +303,11 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
 
-    List<AnatomyItem> getWildTypeAnatomyExpressionForMarker(String zdbID);
-
-    List<AnatomyItem> getAnatomyForMarker(String zdbID);
-
+    List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID);
 
     /**
-     * Query to popuplate the figure/pub list for an expression summary page
-     * @param expressionCriteria entities / booleans that should be in the matching
+     * Query to populate the figure/pub list for an expression summary page
+     * @param expressionCriteria entities / boolean that should be in the matching
      * xpatex records
      * @return a list of figures matching the criteria
      */
@@ -337,13 +323,13 @@ public interface ExpressionRepository {
 
     /**
      * Retrieve all expression result objects that annotate with a secondary term.
-     * @return
+     * @return list of expression result objects
      */
     public List<ExpressionResult> getExpressionOnSecondaryTerms();
 
     /**
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
-     * @return
+     * @return list of expression results records
      */
     List<ExpressionResult> getExpressionOnObsoletedTerms();
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
@@ -352,4 +338,16 @@ public interface ExpressionRepository {
     StageExpressionPresentation getStageExpressionForMarker(String zdbID);
 
     List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID);
+
+    /**
+     * Retrieve all terms that are used in an expression statement.
+     * @return set of expressed Terms.
+     */
+    Set<String> getAllDistinctExpressionTermIDs();
+
+    /**
+     * Retrieve all terms that are used in a phenotype statement except pato terms.
+     * @return set of expressed Terms.
+     */
+    Set<String> getAllDistinctPhenotypeTermIDs();
 }
