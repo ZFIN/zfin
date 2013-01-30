@@ -38,6 +38,11 @@
 <%--// PHENOTYPE --%>
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
+<%--Human Ortholog Phenotype Data--%>
+<c:if test="${formBean.marker.omimPhenotypes != null && !empty formBean.marker.omimPhenotypes}">
+    <zfin2:humanOrthologPhenotypeData marker="${formBean.marker}" />
+</c:if>
+  
 <%-- gene ontology--%>
 <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
