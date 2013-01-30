@@ -49,7 +49,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
-<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu bjruef\@uoneuro.uoregon.edu xshao\@cs.uoregon.edu
+<!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu ksf\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|ROOT_PATH|-->	/research/zprod/www_homes/zfin.org
