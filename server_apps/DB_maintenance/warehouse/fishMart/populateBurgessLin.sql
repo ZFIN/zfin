@@ -126,9 +126,6 @@ delete from tmp_tg1 where tg_name is null;
 create index tmp_fishB on tmp_tg1(f_id) 
   using btree in idxdbs1;
 
-create index tmp_featB on tmp_tg1(namer) 
-  using btree in idxdbs1;
-
 update statistics high for table tmp_tg1;
 update statistics high for table fish_annotation_Search_temp;
 
@@ -191,9 +188,6 @@ delete from tmp_tg2 where tg_name is null;
 create index tmp_fishB on tmp_tg2(f_id) 
   using btree in idxdbs1;
 
-
-create index tmp_tg2_namer on tmp_tg2(namer) 
-  using btree in idxdbs2;
 
 update statistics high for table tmp_tg2;
 update statistics high for table fish_annotation_Search_temp;
