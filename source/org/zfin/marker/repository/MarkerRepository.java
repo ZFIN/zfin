@@ -10,6 +10,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
@@ -371,4 +372,6 @@ public interface MarkerRepository {
     List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2, String resultType);
 
     List<Marker> getCodingSequence(Marker construct);
+
+    public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
 }

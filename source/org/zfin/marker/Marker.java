@@ -9,6 +9,7 @@ import org.zfin.infrastructure.EntityAlias;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedMarker;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -56,6 +57,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
 
+    private List<OmimPhenotype> omimPhenotypes;
 
     public String getZdbID() {
         return zdbID;
@@ -361,7 +363,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     public boolean hasSupplier(MarkerSupplier markerSupplier) {
         for(MarkerSupplier aMarkerSupplier: getSuppliers()){
            if(aMarkerSupplier.getOrganization().getZdbID().equals(markerSupplier.getOrganization().getZdbID())) {
-               return true ; 
+               return true ;
            }
         }
         return false;
@@ -378,13 +380,21 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     public MarkerAlias getAlias(String aliasString) {
         if(CollectionUtils.isEmpty(getAliases())) return null ;
-        
+
         for(MarkerAlias aMarkerAlias: getAliases()){
             if(aMarkerAlias.getAlias().equalsIgnoreCase(aliasString)){
                 return aMarkerAlias ;
             }
         }
         return null ;
+    }
+
+    public List<OmimPhenotype> getOmimPhenotypes() {
+        return omimPhenotypes;
+    }
+
+    public void setOmimPhenotypes(List<OmimPhenotype> omimPhenotypes) {
+        this.omimPhenotypes = omimPhenotypes;
     }
 
     public static enum Type {

@@ -34,6 +34,11 @@ public class MarkerNotesController {
         return "marker/phenotype-note.insert";
     }
 
+    @RequestMapping("/note/omim-phenotype-id")
+    public String getOmimPhenotypeIdNote() {
+        return "marker/omim-phenotype-id-note.insert";
+    }
+
     @RequestMapping("/note/external/{zdbID}")
     public String getExternalNote(
             @PathVariable String zdbID

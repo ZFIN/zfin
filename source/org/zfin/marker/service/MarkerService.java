@@ -14,6 +14,7 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -715,6 +716,11 @@ public class MarkerService {
 
         Marker marker = markerBean.getMarker();
         String zdbID = marker.getZdbID();
+        if(Marker.Type.GENE == marker.getType()) {
+            List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotypesByGene(marker);
+            Collections.sort(omimPhenotypes);
+            marker.setOmimPhenotypes(omimPhenotypes);
+        }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
 
@@ -726,6 +732,8 @@ public class MarkerService {
 
         // OTHER GENE / MARKER PAGES:
         markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+
+
 
         // sequence info page
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(marker));

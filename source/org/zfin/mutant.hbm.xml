@@ -266,6 +266,16 @@
         <property name="tag" column="phenos_tag"/>
     </class>
 
+    <class name="org.zfin.mutant.OmimPhenotype" table="omim_phenotype">
+        <id name="id" type="long">
+            <column name="omimp_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="name" column="omimp_name"/>
+        <property name="omimNum" column="omimp_omim_id"/>
+        <many-to-one name="zfGene" column="omimp_gene_zdb_id"/>
+    </class>
+
     <class name="org.zfin.feature.Feature" table="feature" dynamic-update="true">
        <id name="zdbID" type="string">
             <column name="feature_zdb_id" not-null="true"/>

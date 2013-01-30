@@ -33,6 +33,7 @@ import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -2358,4 +2359,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return (List<Genotype>) query.list();
     }
+
+    @Override
+    public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene) {
+        return HibernateUtil.currentSession().createCriteria(OmimPhenotype.class)
+                .add((Restrictions.eq("zfGene", zebrafishGene)))
+                .list();
+    }
+
 }
