@@ -9,10 +9,12 @@
 
     <style type="text/css">
 
+/*
         body {
+            font-family: arial, sans-serif;
             background: white;
-            margin: 1px;
         }
+*/
 
         a.external {
             background: transparent url(/images/external.png) no-repeat scroll right center;
@@ -25,10 +27,6 @@
             font-weight: bold;
             text-decoration: none;
             font-size: large;
-        }
-
-        body {
-            font-family: arial, sans-serif;
         }
     </style>
 </head>
