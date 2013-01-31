@@ -496,7 +496,7 @@ sub xpatObjectNotGeneOrEFG ($) {
 # After curation is done, each feature record should be associated
 # with a genotype as an entry in genotype_feature table. Since a 
 # feature is created first and then associated with a genotype, we
-# couldn't make this a database constraint. 
+# couldn't make this a database constraint.  We are excluding Burges Lin features from this requirement.
 #
 # Parameter
 # $ Email Address for recipients
@@ -512,6 +512,8 @@ sub featureAssociatedWithGenotype($$$) {
                       where genofeat_feature_zdb_id = feature_zdb_id)
               and rec_id=feature_zdb_id
               and feature_zdb_id=recattrib_data_zdb_id
+              and recattrib_source_zdb_id!='ZDB-PUB-121121-1'
+              and feature_lab_prefix_id!=85
               and submitter_id='$_[1]'";
 
   my @colDesc = ("Feature name         ",
