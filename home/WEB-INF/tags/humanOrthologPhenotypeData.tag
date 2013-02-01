@@ -6,8 +6,8 @@
     <br/>
     <table class="summary rowstripes">
         <tr>
-            <th width="70%">Human Ortholog Phenotype Data</th>
-            <th width="30%">OMIM Phenotype ID <a class='popup-link info-popup-link' href='/action/marker/note/omim-phenotype-id'></a></th>
+            <th width="70%">Phenotype of Human Orthologue <a class='popup-link info-popup-link' href='/action/marker/note/omim-phenotype'></a></th>
+            <th width="30%">OMIM Phenotype ID</th>
         </tr>
 
         <c:forEach var="omimPhenotype" items="${marker.omimPhenotypes}" varStatus="loop">

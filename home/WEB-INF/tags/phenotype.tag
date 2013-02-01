@@ -13,9 +13,19 @@
     <c:set var="title" value="PHENOTYPE <a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a>"/>
 </c:if>
 
+<%--
 <zfin2:subsection title="${title}" anchor="phenotype"
                         test="${!empty phenotypeOnMarkerBean and phenotypeOnMarkerBean.numPublications>0}" showNoData="true">
+    --%>
 
+<a name="phenotype"></a>
+<div class="summary">
+    <span class="summaryTitle">${title} 
+                    <c:if test="${(empty phenotypeOnMarkerBean || phenotypeOnMarkerBean.numPublications == 0) && empty marker.omimPhenotypes}">
+                        <span class="no-data-tag">No data available</span>
+                    </c:if>
+                </span>
+    <c:if test="${!empty phenotypeOnMarkerBean and phenotypeOnMarkerBean.numPublications>0}">
     <table class="summary horizontal-solidblock">
         <tr>
             <td class="data-label"><b>Data:</b> </td>
@@ -53,6 +63,10 @@
             </td>
         </tr>
     </table>
-
-</zfin2:subsection>
+    </c:if>
+   <%--Human Ortholog Phenotype Data--%>
+   <c:if test="${formBean.marker.omimPhenotypes != null && !empty formBean.marker.omimPhenotypes}">
+     <zfin2:humanOrthologPhenotypeData marker="${formBean.marker}" />
+   </c:if>   
+</div>
 
