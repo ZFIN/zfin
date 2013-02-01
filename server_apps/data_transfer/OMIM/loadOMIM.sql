@@ -57,8 +57,8 @@ unload to whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt
                 where omimp_name = phenotype
                   and omimp_gene_zdb_id = gene_zdb_id
                   and (omimp_omim_id <> phenotype_omim_id
-                    or omimp_omim_id is null and phenotype_omim_id is not null
-                    or phenotype_omim_id is null and omimp_omim_id is not null)
+                    or (omimp_omim_id is null and phenotype_omim_id is not null)
+                    or (phenotype_omim_id is null and omimp_omim_id is not null))
               )
    order by gene_zdb_id;
 
