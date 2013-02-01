@@ -256,17 +256,17 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertThat(accessionNumbers.size(),greaterThan(2));
         assertThat(accessionNumbers.size(),lessThan(7));
 
-        marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-1815");
+        marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-050208-103");
         accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
-        assertThat(accessionNumbers.size(),equalTo(0));
+        assertThat(accessionNumbers.size(),greaterThan(0));
     }
 
     @Test
     public void getDBLinkAccessionsForMarkerAndEncoding(){
-        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030131-1815");
+        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-050208-103");
         Set<String> accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
         assertThat(accessionNumbers.size(),greaterThan(1));
-        assertThat(accessionNumbers.size(),lessThan(3));
+        assertThat(accessionNumbers.size(),lessThan(30));
 
         marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
         accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
