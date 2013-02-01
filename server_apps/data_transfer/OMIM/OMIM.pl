@@ -233,7 +233,7 @@ foreach $line (@lines) {
            $hasPhenotype = 1 if ($phenotype ne "");
          }
        
-         ### assuming all OMIM numbers for phenotype are 6 digits
+         ### assuming all OMIM numbers for phenotype are 6 digits, which is the fact as have been confirmed
          ### but there are phenotypes (disorders) lacking OMIM number
          if ($phenotype =~ m/\s+([0-9]{6})\s+\([0-9]\)$/) {
              $phenotypeOMIMnum = $1;    
@@ -246,7 +246,8 @@ foreach $line (@lines) {
              if ($matchedGeneOrGenesFound == 1) {
                foreach $key (keys %ZDBgeneIdOMIMnums) {
                  ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
-                 if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
+                 ### if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
+                 if ($disorder ne "") {  
                    print OMIM "$key|$mimNumGene|$disorder|$phenotypeOMIMnum|\n";
                    $ctInput++;
                  }
@@ -261,7 +262,8 @@ foreach $line (@lines) {
              if ($matchedGeneOrGenesFound == 1) {
                foreach $key (keys %ZDBgeneIdOMIMnums) {
                  ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication               
-                 if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
+                 ### if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
+                 if ($disorder ne "") {
                    print OMIM "$key|$mimNumGene|$disorder||\n";
                    $ctInput++;
                  }
@@ -361,7 +363,11 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3 2> 
 
 &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","log2","log2");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what have been loaded","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
+&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what new records have been added","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
+
+&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what records have been deleted","whatHaveBeenDeletedFromOmimPhenotypeTable.txt");
+
+&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what records have been updated with new phenotype OMIM Id","whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt");
 
 ### &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","genes With MIM not Found On omim_phenotype table","genesWithMIMnotFoundOnOMIMPtable.txt");
 
