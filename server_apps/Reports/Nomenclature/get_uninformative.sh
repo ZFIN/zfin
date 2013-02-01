@@ -1,4 +1,4 @@
-#! /local/bin/bash
+#!/bin/bash
 
 # for testing just till the "collapse.awk" propagates to /private...
 #COMMONS_BIN=/research/zusers/tomc/Projects/TRUNK/ZFIN_WWW/commons/bin
