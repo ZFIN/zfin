@@ -23,9 +23,6 @@ TARGETDIR = $(TARGETROOT)/lib/DB_triggers
 TRIGGERS = \
 	anatomy_display_insert_trigger.sql \
 	anatomy_display_update_trigger.sql \
-	anatomy_items_insert_trigger.sql \
-	anatomy_items_name_update_trigger.sql \
-	anatomy_items_end_stage_update_trigger.sql \
 	clone_problem_type_insert_trigger.sql \
 	clone_problem_type_update_trigger.sql \
 	data_alias_insert_trigger.sql \
