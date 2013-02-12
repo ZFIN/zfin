@@ -13,7 +13,7 @@
                 </c:when>
                 <c:otherwise>
                     <zfin:collectionSize collectionEntity="${terms}"/>
-                    <zfin:choice collectionEntity="${terms}" choicePattern="0# Structures| 1# Structure| 2# Structures"
+                    <zfin:choice collectionEntity="${terms}" choicePattern="0# Terms| 1# Term| 2# Terms"
                                  scope="Request"/>
 
                     for:
@@ -25,7 +25,7 @@
             <HR width=500 size=1 noshade align=left>
             <table class="searchresults rowstripes">
                 <tr>
-                    <th width="30%">Structure Name</th>
+                    <th width="30%">Term Name</th>
                     <th>Synonyms</th>
                 </tr>
                 <c:forEach var="term" items="${terms}" varStatus="rowCounter">
