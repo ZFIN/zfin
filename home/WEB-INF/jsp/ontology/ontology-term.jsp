@@ -25,10 +25,11 @@
             <td valign="top" align="right" width="5%">
             </td>
             <td rowspan="3" valign="top" align="right" width="5%">
-                <span
-                Search: <zfin2:lookup ontology="<%=Ontology.AOGO%>"
-                              action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
-                              wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
+                <span>
+                Search Ontology: <zfin2:lookup ontology="<%=Ontology.AOGO%>"
+                                      action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
+                                      wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
+                    </span>
             </td>
         </tr>
         <tr>
