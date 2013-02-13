@@ -5,11 +5,11 @@
 <table border="0" width="100%">
     <tbody>
     <tr align="left">
-        <td><b>All ${formBean.genotypeCount} Genotypes
+        <td><b>${formBean.genotypeCount} Genotypes
             affecting</b>
             <zfin:link entity="${formBean.aoTerm}"/>
             <c:if test="${includingSubstructures}">
-                <b>or Substructures</b>
+                or subterms
             </c:if>
         </td>
     </tr>
