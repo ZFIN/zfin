@@ -104,7 +104,7 @@ public enum MatchType {
             return matchString.toLowerCase().contains(query.toLowerCase());
         }
     },
-    SUBSTRUCTURE("Substructure") {
+    SUBSTRUCTURE("Subterm") {
         @Override
         public boolean isMatch(String matchString, String query) {
             if (matchString == null || query == null)

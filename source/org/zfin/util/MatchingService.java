@@ -97,7 +97,7 @@ public class MatchingService {
     public void addMatchingSubstructureOntologyTerm(String termName, String parentTermName, MatchingTextType type) {
         MatchingText match = new MatchingText(type);
         match.addMatchingTermPair(termName, parentTermName);
-        match.setMatchingQuality(MatchType.SUBSTRUCTURE);
+        match.setMatchingQuality(MatchType.SUBTERM);
         match.setRelatedEntity(parentTermName);
         matchingTextList.add(match);
 
