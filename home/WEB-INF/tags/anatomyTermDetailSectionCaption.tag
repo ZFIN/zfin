@@ -107,7 +107,7 @@
                     href='${substructureSearchLink}'>
                 <zfin:choice choicePattern="${choicePattern}"
                              integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
-                             includeNumber="true"/></a> in substructures.
+                             includeNumber="true"/></a> affecting children of '${anatomyItem.termName}'.
             </c:when>
             <c:otherwise>
                 </br>No data available.
