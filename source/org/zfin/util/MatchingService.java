@@ -116,7 +116,10 @@ public class MatchingService {
         if (terms != null) {
             for (Term term : terms) {
                 if (term.getZdbID().equals(termID)) {
-                    addMatchingOntologyTerm(term.getTermName(), MatchingTextType.AO_TERM);
+                    if (term.getOntology().equals(Ontology.ANATOMY))
+                        addMatchingOntologyTerm(term.getTermName(), MatchingTextType.AO_TERM);
+                    else if (Ontology.isGoOntology(term.getOntology()))
+                        addMatchingSubstructureOntologyTerm(term.getTermName(), term.getTermName(), MatchingTextType.GO_TERM);
                     return true;
                 }
             }
