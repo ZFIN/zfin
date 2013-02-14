@@ -3,6 +3,7 @@ package org.zfin.util;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 
 import java.util.*;
@@ -136,7 +137,10 @@ public class MatchingService {
             GenericTerm queryTerm = getOntologyRepository().getTermByZdbID(queryTermID);
             for (Term term : terms) {
                 if (getOntologyRepository().isParentChildRelationshipExist(queryTerm, term)) {
-                    addMatchingSubstructureOntologyTerm(term.getTermName(), queryTerm.getTermName(), MatchingTextType.AO_TERM);
+                    if (queryTerm.getOntology().equals(Ontology.ANATOMY))
+                        addMatchingSubstructureOntologyTerm(term.getTermName(), queryTerm.getTermName(), MatchingTextType.AO_TERM);
+                    else if (Ontology.isGoOntology(queryTerm.getOntology()))
+                        addMatchingSubstructureOntologyTerm(term.getTermName(), queryTerm.getTermName(), MatchingTextType.GO_TERM);
                     return true;
                 }
             }
