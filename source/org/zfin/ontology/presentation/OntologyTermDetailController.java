@@ -32,6 +32,48 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class OntologyTermDetailController {
 
 
+    @RequestMapping("/term-detail/term")
+    protected String termDetailPageByName(@RequestParam(required = true) String name,
+                                          @RequestParam(required = false) String ontologyName,
+                                          @ModelAttribute("formBean") OntologyBean form,
+                                          Model model) throws Exception {
+        if (name == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No term name provided");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+
+        }
+        // set default ontology
+        Ontology ontology = Ontology.ANATOMY;
+        // use ontology if provided
+        if (StringUtils.isNotEmpty(ontologyName)) {
+            ontology = Ontology.getOntology(ontologyName);
+        }
+
+        GenericTerm term = null;
+        // has a wild card
+        // check if the term name contains an asterisk at the end of the string, indicating that
+        // we are looking for a list of terms matching the name
+        if (name.endsWith("*")) {
+            String queryString = name.substring(0, name.indexOf("*"));
+            MatchingTermService matcher = new MatchingTermService(-1);
+            List<TermDTO> terms = matcher.getMatchingTermList(queryString, ontology);
+            Collections.sort(terms);
+            model.addAttribute("terms", terms);
+            model.addAttribute("query", queryString);
+            model.addAttribute("ontology", ontology);
+            AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
+            anatomySearchBean.setQueryString(name);
+            model.addAttribute("formBean", anatomySearchBean);
+            return "anatomy/show-all-terms.page";
+        } else {
+            term = RepositoryFactory.getOntologyRepository().getTermByName(name, ontology);
+            if (term != null)
+                return "redirect:/action/ontology/term-detail/" + term.getOboID();
+        }
+        model.addAttribute(LookupStrings.ZDB_ID, name);
+        return LookupStrings.RECORD_NOT_FOUND_PAGE;
+    }
+
     @RequestMapping("/term-detail/{termID}")
     protected String termDetailPage(@PathVariable String termID,
                                     @RequestParam(required = false) String ontologyName,
@@ -60,42 +102,6 @@ public class OntologyTermDetailController {
             // check if it is an OBO ID
             if (Ontology.isOboID(termID))
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
-        }
-
-        // if term is not found assume a term name is provided
-        if (term == null) {
-            // set default ontology
-            Ontology ontology = Ontology.ANATOMY;
-            // use ontology if provided
-            if (StringUtils.isNotEmpty(ontologyName)) {
-                ontology = Ontology.getOntology(ontologyName);
-            }
-
-            // has a wild card
-            // check if the term name contains an asterisk at the end of the string, indicating that
-            // we are looking for a list of terms matching the name
-            if (termID.endsWith("*")) {
-                String queryString = termID.substring(0, termID.indexOf("*"));
-                MatchingTermService matcher = new MatchingTermService(-1);
-                List<TermDTO> terms = matcher.getMatchingTermList(queryString, ontology);
-                Collections.sort(terms);
-                model.addAttribute("terms", terms);
-                model.addAttribute("query", queryString);
-                model.addAttribute("ontology", ontology);
-                AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
-                anatomySearchBean.setQueryString(termID);
-                model.addAttribute("formBean", anatomySearchBean);
-                return "anatomy/show-all-terms.page";
-            } else {
-                term = RepositoryFactory.getOntologyRepository().getTermByName(termID, ontology);
-                // could not find a term at all
-                if (term == null) {
-                    model.addAttribute(LookupStrings.ZDB_ID, termID);
-                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
-                }
-                return "redirect:/action/ontology/term-detail/" + term.getOboID();
-            }
-
         }
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
