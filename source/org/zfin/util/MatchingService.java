@@ -119,7 +119,7 @@ public class MatchingService {
                     if (term.getOntology().equals(Ontology.ANATOMY))
                         addMatchingOntologyTerm(term.getTermName(), MatchingTextType.AO_TERM);
                     else if (Ontology.isGoOntology(term.getOntology()))
-                        addMatchingSubstructureOntologyTerm(term.getTermName(), term.getTermName(), MatchingTextType.GO_TERM);
+                        addMatchingOntologyTerm(term.getTermName(), MatchingTextType.GO_TERM);
                     return true;
                 }
             }
