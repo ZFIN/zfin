@@ -43,7 +43,7 @@
                     <td>
                         <c:if test="${genoStat.numberOfFigures > 0}">
                             <c:if test="${genoStat.numberOfFigures > 1}">
-                                <a href="/action/anatomy/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.genotype.zdbID}">
+                                <a href="/action/ontology/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.genotype.zdbID}">
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>

@@ -7,7 +7,7 @@
 <div class="summary">
 <div>
     <span class="summaryTitle">In Situ Probes</span>: <a href="/zf_info/stars.html"> Recommended </a> by
-    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+    <a href='/ZDB-LAB-980204-15'>
         Thisse lab</a>
 </div>
     <TABLE class="summary rowstripes">
@@ -64,7 +64,7 @@
     <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                            recordsExist="${formBean.inSituProbesExist}"
                                            anatomyStatistics="${formBean.anatomyStatisticsProbe}"
-                                           structureSearchLink="/action/anatomy/show-high-quality-probes/${formBean.aoTerm.zdbID}"
+                                           structureSearchLink="/action/ontology/show-high-quality-probes/${formBean.aoTerm.zdbID}"
                                            choicePattern="0# Probes| 1# probe| 2# probes"
                                            allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
                                            totalRecordCount="${formBean.numberOfHighQualityProbes}"/>

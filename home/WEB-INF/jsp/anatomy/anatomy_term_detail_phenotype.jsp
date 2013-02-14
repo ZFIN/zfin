@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-mutants').load('/action/anatomy/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks(); } );
-            jQuery('#${phenotypeSection}-morpholinos').load('/action/anatomy/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/anatomy/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks(); } );
+            jQuery('#${phenotypeSection}-morpholinos').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
             showSection('${phenotypeSection}', true);
         }
     </script>

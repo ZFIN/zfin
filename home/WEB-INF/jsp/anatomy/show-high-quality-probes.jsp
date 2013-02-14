@@ -21,7 +21,7 @@
             </i></STRONG>: &nbsp; <a
                 href="/zf_info/stars.html">Recommended</a>
             by
-            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-labview.apg&OID=ZDB-LAB-980204-15'>
+            <a href='/ZDB-LAB-980204-15'>
                 Thisse lab</a></TD>
     </TR>
 </table>

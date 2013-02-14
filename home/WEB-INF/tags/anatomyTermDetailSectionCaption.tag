@@ -77,7 +77,7 @@
                                                  integerEntity="${imageCount}"
                                                  includeNumber="true"/></c:if></a>
                             <c:if test="${anatomyStatistics.numberOfTotalDistinctObjects > totalRecordCount }">
-                                (including substructures
+                                (including children
                                 <c:choose>
                                     <c:when test="${substructureSearchLink ne null}">
                                         <a href='${substructureSearchLink}'>

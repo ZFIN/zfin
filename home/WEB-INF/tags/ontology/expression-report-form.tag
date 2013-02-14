@@ -18,7 +18,7 @@
         <tr>
             <td width="30%" colspan="2">
                 Select all the anatomy structure for which you would like to find expression annotations.
-                (Note: including substructures currently includes the develops_from relationship as well.)
+                (Note: including children currently includes the develops_from relationship as well.)
             </td>
             <td width="70%">
             </td>
