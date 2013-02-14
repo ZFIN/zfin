@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.TermDTO;

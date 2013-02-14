@@ -7,9 +7,9 @@
 <zfin2:anatomyTermDetailSectionCaption anatomyItem="${formBean.aoTerm}"
                                        recordsExist="${formBean.mutantsExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsMutant}"
-                                       structureSearchLink="/action/anatomy/show-all-phenotype-mutants/${formBean.aoTerm.zdbID}"
+                                       structureSearchLink="/action/ontology/show-all-phenotype-mutants/${formBean.aoTerm.zdbID}"
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
                                        totalRecordCount="${formBean.genotypeCount}"
                                        useWebdriverURL="false"
-                                       substructureSearchLink="/action/anatomy/show-all-phenotype-mutants-substructures/${formBean.aoTerm.zdbID}"/>
+                                       substructureSearchLink="/action/ontology/show-all-phenotype-mutants-substructures/${formBean.aoTerm.zdbID}"/>
