@@ -21,7 +21,7 @@ import java.util.*;
 public class LogStats {
 
     private static final String LOG_FILE_DIRECTORY = "log-file-directory";
-    private static final String ACTION_ANATOMY_TERM_DETAIL_ANATOMY_ITEM_ZDB_ID = "/action/anatomy/term-detail/";
+    private static final String ACTION_ANATOMY_TERM_DETAIL_ANATOMY_ITEM_ZDB_ID = "/action/ontology/term-detail/";
     private static final String ANATOMY = "ANAT";
     private static final String RESOLVE_ZDB_IDS = "resolveZdbIDs";
     private static boolean resolveIDs;
