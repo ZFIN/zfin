@@ -15,7 +15,7 @@ public class OntologySmokeTest extends AbstractSmokeTest {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 String termName = "mitochondrion";
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/" + termName + "?ontologyName=cellular_component");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=" + termName + "&ontologyName=cellular_component");
                 assertEquals("ZFIN GO: Cellular Component: " + termName, page.getTitleText());
                 HtmlTableDataCell tdElement = (HtmlTableDataCell) page.getByXPath("//td[@id = 'ontology-name']").get(0);
                 assertTrue(tdElement.getTextContent().startsWith("GO: Cellular Component"));

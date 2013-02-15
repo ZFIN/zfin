@@ -37,7 +37,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/emb*");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
                 assertEquals("ZFIN", page.getTitleText());
                 // check that embryonic structure is listed
                 List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
@@ -120,7 +120,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/liver ");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=liver ");
                 assertNotNull(page);
                 assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
