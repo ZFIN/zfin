@@ -186,8 +186,11 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion);
                 String termValue = term.getTerm().getZdbID();
-                if (!useIDAsValue)
-                    termValue = term.getTerm().getTermName() + "&ontologName=" + term.getTerm().getOntology().getDBName();
+                if (!useIDAsValue) {
+                    termValue = term.getTerm().getTermName();
+                    if (!ontology.equals(Ontology.ANATOMY))
+                        termValue += "&ontologName=" + term.getTerm().getOntology().getDBName();
+                }
                 String fullDisplayName = displayName + " [" + term.getTerm().getOntology().getDisplayName() + "]";
                 ItemSuggestion fullItemSuggestion = new ItemSuggestion(fullDisplayName, termValue);
                 if (previousSuggestionString.equals(suggestion)) {
