@@ -76,7 +76,6 @@ public class OntologyTermDetailController {
 
     @RequestMapping("/term-detail/{termID}")
     protected String termDetailPage(@PathVariable String termID,
-                                    @RequestParam(required = false) String ontologyName,
                                     @ModelAttribute("formBean") OntologyBean form,
                                     Model model) throws Exception {
 
