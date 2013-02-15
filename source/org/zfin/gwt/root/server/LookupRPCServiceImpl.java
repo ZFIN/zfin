@@ -170,20 +170,36 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             }
         }
 
-        Collection<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
             // We add one in order to add an additional term that is not displayed.
             // When it comes back we can add the '...' implying that there are more.
             // Unfortunately, Response does not have an easy fix for this other than exceeding the Response. 
             MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
             highlighter.setMatch(query);
+            String previousSuggestionString = "";
+            int index = 0;
+            ItemSuggestion previousSuggestion = null;
             for (MatchingTerm term : matcher.getMatchingTerms(query, ontology)) {
                 if (termsWithDataOnly && !OntologyDataManager.getInstance().hasExpressionOrPhenotypeData(term.getTerm()))
                     continue;
                 String suggestion = term.getMatchingTermDisplay();
                 String displayName = highlighter.highlight(suggestion);
-                String termValue = (useIDAsValue ? term.getTerm().getZdbID() : term.getTerm().getName());
-                suggestions.add(new ItemSuggestion(displayName, termValue));
+                String termValue = term.getTerm().getZdbID();
+                if (!useIDAsValue)
+                    termValue = term.getTerm().getTermName() + "&ontologName=" + term.getTerm().getOntology().getDBName();
+                String fullDisplayName = displayName + " [" + term.getTerm().getOntology().getDisplayName() + "]";
+                ItemSuggestion fullItemSuggestion = new ItemSuggestion(fullDisplayName, termValue);
+                if (previousSuggestionString.equals(suggestion)) {
+                    suggestions.remove(index - 1);
+                    suggestions.add(previousSuggestion);
+                    suggestions.add(fullItemSuggestion);
+                } else {
+                    suggestions.add(new ItemSuggestion(displayName, termValue));
+                }
+                previousSuggestionString = suggestion;
+                previousSuggestion = fullItemSuggestion;
+                index++;
             }
         }
         resp.setSuggestions(suggestions);

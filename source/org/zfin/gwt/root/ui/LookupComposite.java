@@ -277,12 +277,6 @@ public class LookupComposite extends Composite implements Revertible {
                         );
                     } else {
                         String termQuery = suggestion.getReplacementString();
-                        // if the term is an id do not add ontology information
-                        // need to make more generic in case we start using obo ids instead.
-                        //Window.alert("query: "+termQuery);
-
-                        if (!termQuery.startsWith("ZDB-TERM"))
-                            termQuery += "?ontologyName=" + ontology.getOntologyName();
                         doSubmit(termQuery);
                     }
                 }
