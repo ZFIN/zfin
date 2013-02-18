@@ -16,7 +16,7 @@
 
     <p>A question mark, "?", before the disease name indicates an unconfirmed or possibly spurious mapping</p>
 
-    <p>The number in parentheses after the name of each disorder indicates the following: (1) the disorder was positioned by mapping of the wildtype gene; (2) the disease phenotype itself was mapped; (3) the molecular basis of the disorder is known; (4) the disorder is a chromosome deletion or duplication syndrome. Move the cursor over the number to display this information.</p>
+    <p>The number after the name of each disorder indicates the following: 1 the disorder was positioned by mapping of the wildtype gene; 2 the disease phenotype itself was mapped; 3 the molecular basis of the disorder is known; 4 the disorder is a chromosome deletion or duplication syndrome.</p>
 
     <p>For more information on OMIM, please visit their FAQ at:&nbsp;&nbsp; <a href="http://omim.org/help/faq">omim.org/help/faq</a></p>
 </div>
