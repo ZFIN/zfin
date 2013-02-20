@@ -110,11 +110,11 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void replacementZDB() {
-        String replacedZdbID = "ZDB-ANAT-010921-497";
+	String replacedZdbID = "ZDB-ANAT-010921-532";
         ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(replacedZdbID);
         assertNotNull(replacementZdbID);
 
-        assertEquals("ZDB-ANAT-011113-37", replacementZdbID.getReplacementZdbID());
+        assertEquals("ZDB-TERM-100331-100", replacementZdbID.getReplacementZdbID());
     }
 
     @Test
