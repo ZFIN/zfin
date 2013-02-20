@@ -27,7 +27,7 @@ select
 order by 1,4,3
 ;
 
-! cat /research/zprodmore/gff3/E_drerio_constant.gff3  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_transcript.gff3 > <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_backbone.gff3 
+! cat /research/zprodmore/gff3/E_drerio_constant.gff3  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_transcript.gff3 >! <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_backbone.gff3 
 
 -- gets its header fron the constant file
 -- to be valid the gff3 requires a header
