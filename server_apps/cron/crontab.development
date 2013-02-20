@@ -48,8 +48,8 @@
 #15,30,45,59 21,22,23 * * 4 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/performance.pl
 #  Sat     1:00am   Reload almdb, remake web site, generate quick search
 #                    index, and copy it to production.          
-# disabled until Indexer is fixed.
-#00 01 * * 6 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/load_and_index_almost.pl -i
+#
+00 01 * * 6 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/load_and_index_almost.pl -i
 #  Sat     2:00am   Reload almdb, remake web site, generate quick search
 #                    index, and copy it to production.          
 00 02 * * 6 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
