@@ -108,21 +108,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             else
                 foundInexactMatch = 0;
         } else {
-            MatchingTermService service = new MatchingTermService();
             Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
-            Set<MatchingTerm> terms = service.getMatchingTerms(term, ontology);
-
-            for (MatchingTerm anatomyItem : terms) {
-                String name = anatomyItem.getTerm().getName();
-                if (name.equals(term)) {
-                    return new TermStatus(TermStatus.Status.FOUND_EXACT, term, anatomyItem.getTerm().getZdbID());
-                } else if (foundInexactMatch < 1 || name.contains(term)) {
-                    ++foundInexactMatch;
-                }
-            }
-        }
-        if (foundInexactMatch > 1) {
-            return new TermStatus(TermStatus.Status.FOUND_MANY, term);
+            TermDTO termObject = OntologyManager.getInstance().getTermByName(term.trim(), ontology);
+            if (termObject != null)
+                return new TermStatus(TermStatus.Status.FOUND_EXACT, term, termObject.getZdbID());
         }
         return new TermStatus(TermStatus.Status.FOUND_NONE, term);
     }
@@ -184,21 +173,22 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
                 if (termsWithDataOnly && !OntologyDataManager.getInstance().hasExpressionOrPhenotypeData(term.getTerm()))
                     continue;
                 String suggestion = term.getMatchingTermDisplay();
+                // add comment field with pure term name for display
+                StringBuilder builder = highlighter.hidePureTermNameHtml(suggestion);
                 String displayName = highlighter.highlight(suggestion);
+                builder.append(displayName);
                 String termValue = term.getTerm().getZdbID();
-                if (!useIDAsValue) {
-                    termValue = term.getTerm().getTermName();
-                    if (!ontology.equals(Ontology.ANATOMY))
-                        termValue += "&ontologName=" + term.getTerm().getOntology().getDBName();
-                }
-                String fullDisplayName = displayName + " [" + term.getTerm().getOntology().getDisplayName() + "]";
-                ItemSuggestion fullItemSuggestion = new ItemSuggestion(fullDisplayName, termValue);
+                StringBuilder fillBuilder = new StringBuilder(builder);
+                fillBuilder.append(" [");
+                fillBuilder.append(term.getTerm().getOntology().getDisplayName());
+                fillBuilder.append("]");
+                ItemSuggestion fullItemSuggestion = new ItemSuggestion(fillBuilder.toString(), termValue);
                 if (previousSuggestionString.equals(suggestion)) {
                     suggestions.remove(index - 1);
                     suggestions.add(previousSuggestion);
                     suggestions.add(fullItemSuggestion);
                 } else {
-                    suggestions.add(new ItemSuggestion(displayName, termValue));
+                    suggestions.add(new ItemSuggestion(builder.toString(), termValue));
                 }
                 previousSuggestionString = suggestion;
                 previousSuggestion = fullItemSuggestion;
@@ -209,6 +199,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         logger.info("found " + suggestions.size() + " suggestions for " + request);
         return resp;
     }
+
 
     @Override
     public SuggestOracle.Response getAntibodySuggestions(SuggestOracle.Request req) {

@@ -83,6 +83,9 @@ public class OntologyTermDetailController {
             model.addAttribute(LookupStrings.ZDB_ID, "No term ID provided");
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
+        if (termID.contains("*"))
+            return termDetailPageByName(termID, null, form, model);
+
         // if ZDB-ANAT id obtain ZDB-TERM ID and re-direct
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT)) {
             String newTermID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);

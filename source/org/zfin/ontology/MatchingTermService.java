@@ -34,7 +34,7 @@ public class MatchingTermService {
     public List<TermDTO> getMatchingTermList(String query, Ontology ontology) {
         List<TermDTO> termDTOList = new ArrayList<TermDTO>(0);
 
-        Set<MatchingTerm> matchingTerms = getMatchingTerms(query, ontology);
+        List<MatchingTerm> matchingTerms = getMatchingTerms(query, ontology);
         if (matchingTerms == null)
             return termDTOList;
 
@@ -133,8 +133,8 @@ public class MatchingTermService {
      * @param ontology Ontology
      * @return list of terms
      */
-    public Set<MatchingTerm> getMatchingTerms(String query, Ontology ontology) {
-        Set<MatchingTerm> matchingTermsForSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
+    public List<MatchingTerm> getMatchingTerms(String query, Ontology ontology) {
+        List<MatchingTerm> matchingTermsForSet = new ArrayList<MatchingTerm>();
         if (StringUtils.isEmpty(query.trim())) {
             return matchingTermsForSet;
         }
@@ -143,15 +143,14 @@ public class MatchingTermService {
             for (Ontology subOntology : ontology.getIndividualOntologies()) {
                 matchingTermsForSet.addAll(getMatchingTerms(query, subOntology));
             }
-            return matchingTermsForSet;
+        } else {
+            for (OntologyDTO ontologyDTO : OntologyManager.getInstance().getOntologies(ontology)) {
+                matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO)));
+            }
         }
-
-        for (OntologyDTO ontologyDTO : OntologyManager.getInstance().getOntologies(ontology)) {
-            matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO)));
-        }
-
+        Collections.sort(matchingTermsForSet, new MatchingTermComparator(query));
         if (maximumNumberOfMatches > 0 && matchingTermsForSet.size() > maximumNumberOfMatches) {
-            Set<MatchingTerm> matchingTerms = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
+            List<MatchingTerm> matchingTerms = new ArrayList<MatchingTerm>();
             int i = 0;
             for (Iterator<MatchingTerm> iterator = matchingTermsForSet.iterator();
                  iterator.hasNext() && i < maximumNumberOfMatches; ) {

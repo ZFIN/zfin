@@ -111,7 +111,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         String query = "mel";
         long startTime = System.currentTimeMillis();
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
         long endTime = System.currentTimeMillis();
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
@@ -125,7 +125,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         String query = "nucleus of a";
         long startTime = System.currentTimeMillis();
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
         long endTime = System.currentTimeMillis();
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
@@ -141,7 +141,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         // 'taenia marginalis posterior'
         String query = "orbital cartilage";
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
         assertNotNull(anatomyList);
         assertTrue(anatomyList.size() == 2);
     }
@@ -151,7 +151,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void suggestionsShouldNotRepeat() throws Exception {
         String query = "retina";
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
         Iterator<MatchingTerm> iter = anatomyList.iterator();
         assertEquals("retina", iter.next().getTerm().getName());
         assertEquals("retinal bipolar neuron", iter.next().getTerm().getName());
@@ -163,7 +163,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void testBadSearches() {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
-        Set<MatchingTerm> matches = service.getMatchingTerms("decreased p", Ontology.QUALITY);
+        List<MatchingTerm> matches = service.getMatchingTerms("decreased p", Ontology.QUALITY);
         assertTrue(matches.size() > 10);
 
         // can not find decreased
@@ -235,7 +235,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void getMatchingQualityTerms() {
         String query = "red";
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> qualities = matcher.getMatchingTerms(query, Ontology.QUALITY);
+        List<MatchingTerm> qualities = matcher.getMatchingTerms(query, Ontology.QUALITY);
         assertNotNull(qualities);
         assertEquals(14, qualities.size());
 
@@ -252,7 +252,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void getMatchingAnatomyTerms() {
         String query = "mel";
         MatchingTermService matcher = new MatchingTermService();
-        Set<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
         assertNotNull(anatomyList);
         assertEquals(21, anatomyList.size());
     }

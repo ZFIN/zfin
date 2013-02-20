@@ -11,6 +11,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
+import org.zfin.gwt.root.server.Highlighter;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -259,15 +260,20 @@ public class LookupComposite extends Composite implements Revertible {
     void addSuggestBoxHandlers() {
         suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
             public void onSelection(SelectionEvent event) {
+                //Window.alert("onSelection Event useIdAsValue: "+useIdAsValue);
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
-                //Window.alert(ontology.getOntologyName() + ":" + suggestion.getReplacementString());
-                if (suggestion.getReplacementString() == null) {
-                    suggestBox.setText(currentText);
-                    doSubmit(currentText);
-                } else if (suggestion.getReplacementString() != null) {
+                final String termID = suggestion.getReplacementString();
+                //Window.alert("onSelection Event termID: " + termID);
+                String displayString = suggestion.getDisplayString();
+                //Window.alert("onSelection Event display: " + displayString);
+                if (displayString == null) {
+                    suggestBox.setText(extractPureTermNameHtml(displayString));
+                    doSubmit(termID);
+                } else if (termID != null) {
                     if (useIdAsValue && termInfoTable != null) {
-                        lookupRPC.getTermInfo(ontology, suggestion.getReplacementString(),
-                                new TermInfoCallBack(termInfoTable, suggestion.getReplacementString()) {
+                        //Window.alert("Term name: " + termID);
+                        lookupRPC.getTermInfo(ontology, termID,
+                                new TermInfoCallBack(termInfoTable, termID) {
                                     @Override
                                     public void onSuccess(TermDTO termInfoDTO) {
                                         super.onSuccess(termInfoDTO);
@@ -276,8 +282,16 @@ public class LookupComposite extends Composite implements Revertible {
                                 }
                         );
                     } else {
-                        String termQuery = suggestion.getReplacementString();
-                        doSubmit(termQuery);
+                        String text = extractPureTermNameHtml(displayString).trim();
+                        suggestBox.setText(text);
+                        //Window.alert("Term name: " +text);
+                        // handle wildcard cases
+                        if (displayString.contains("*")) {
+                            String queryString = "term?name=" + termID + "&ontologyName=" + ontology.getDBName();
+                            //Window.alert("Wild card string: " + queryString);
+                            doSubmit(queryString);
+                        } else
+                            doSubmit(termID);
                     }
                 }
             }
@@ -358,6 +372,15 @@ public class LookupComposite extends Composite implements Revertible {
             suggestBox.setFocus(true);
             highlightAction.onHighlight(text);
         }
+    }
+
+    public static String extractPureTermNameHtml(String suggestion) {
+        if (suggestion == null)
+            return "";
+        suggestion = suggestion.substring(0, suggestion.indexOf("-->"));
+        suggestion = suggestion.replace("<!--", "");
+        suggestion = suggestion.replace("-->", "");
+        return suggestion;
     }
 
     protected void doSubmit(final String text) {

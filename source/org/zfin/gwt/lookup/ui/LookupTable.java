@@ -214,7 +214,8 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
      */
     public String validateLookup() {
         final String term = lookup.getTextBox().getText();
-//        Window.alert("term status: "+ termStatus.getStatus());
+        //Window.alert("term: "+ term);
+        //Window.alert("term status: "+ termStatus.getStatus());
         if (term != null && term.length() >= lookup.getMinLookupLength() && false == termStatus.isLooking()) {
 //            Window.alert("term status making call: "+ termStatus.getStatus());
             termStatus.setStatus(TermStatus.Status.LOOKING);

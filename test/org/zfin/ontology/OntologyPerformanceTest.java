@@ -266,8 +266,8 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
         long startTime, finishTime;
         long patTrieSearchTime = 0, patTrieAccessTime = 0;
         long patTrieComposedSearchTime = 0, patTrieComposedAccessTime = 0;
-        Set<MatchingTerm> termsGO_MF = null;
-        Set<MatchingTerm> termsGO = null;
+        List<MatchingTerm> termsGO_MF = null;
+        List<MatchingTerm> termsGO = null;
         for (int i = 0; i < numWords; i++) {
             // prepare word
             String testWord = getRandomWordFromSet(ontologyManager.getOntologyMap().get(Ontology.GO_MF).keySet());
@@ -336,7 +336,7 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
             for (int j = 0; j < numIterations; j++) {
                 MatchingTermService matcher = new MatchingTermService();
                 startTime = System.currentTimeMillis();
-                Set<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.GO);
+                List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.GO);
                 endTime = System.currentTimeMillis();
                 wordTimeToSearch += endTime - startTime;
             }

@@ -13,7 +13,7 @@
         </td>
         <td style="background-color: #efefef; text-align: right">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Anatomical Ontology Browser"/>
+                <tiles:putAttribute name="subjectName" value="Ontology Search"/>
                 <tiles:putAttribute name="subjectID" value=""/>
             </tiles:insertTemplate>
         </td>
