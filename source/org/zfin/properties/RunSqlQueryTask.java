@@ -50,7 +50,7 @@ public class RunSqlQueryTask {
         List<String> errorMessages = null;
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile);
-            HibernateUtil.flushAndCommitCurrentSessionWithLowPdq();
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             LOG.error(e);

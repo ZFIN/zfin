@@ -64,14 +64,6 @@ public class HibernateUtil {
         return currentSession().beginTransaction();
     }
 
-    public static Transaction createTransactionWithLowPDQ() {
-        Transaction transaction = currentSession().beginTransaction();
-        String pdqQuery = "SET PDQPRIORITY 20 ";
-        RepositoryFactory.getInfrastructureRepository().executeJdbcQuery(pdqQuery);
-        currentSession().flush();
-        return transaction;
-    }
-
     public static void rollbackTransaction() {
         try {
             Transaction t = currentSession().getTransaction();
@@ -82,16 +74,6 @@ public class HibernateUtil {
     }
 
     public static void flushAndCommitCurrentSession() {
-        currentSession().flush();
-        currentSession().getTransaction().commit();
-    }
-
-    /**
-     * Need to set the PDQPRIORITY back to a high value.
-     */
-    public static void flushAndCommitCurrentSessionWithLowPdq() {
-        String pdqQuery = "SET PDQPRIORITY 50 ";
-        RepositoryFactory.getInfrastructureRepository().executeJdbcQuery(pdqQuery);
         currentSession().flush();
         currentSession().getTransaction().commit();
     }
