@@ -13,6 +13,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.presentation.SectionVisibility;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -61,6 +62,8 @@ public class OntologyTermDetailController {
             model.addAttribute("terms", terms);
             model.addAttribute("query", queryString);
             model.addAttribute("ontology", ontology);
+            Map<OntologyDTO, Integer> histogram = OntologyService.getHistogramOfTerms(terms);
+            model.addAttribute("histogram", histogram);
             AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
             anatomySearchBean.setQueryString(name);
             model.addAttribute("formBean", anatomySearchBean);

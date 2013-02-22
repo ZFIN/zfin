@@ -2,7 +2,10 @@ package org.zfin.ontology.service;
 
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -87,4 +90,22 @@ public class OntologyService {
         return relPresentations;
     }
 
+    /**
+     * Create a map that contains the number of terms for a given ontology from a list of terms.
+     *
+     * @param terms list of terms
+     * @return map
+     */
+    public static Map<OntologyDTO, Integer> getHistogramOfTerms(List<TermDTO> terms) {
+        if (terms == null)
+            return null;
+        Map<OntologyDTO, Integer> map = new HashMap<OntologyDTO, Integer>(5);
+        for (TermDTO term : terms) {
+            Integer count = map.get(term.getOntology());
+            if (count == null)
+                map.put(term.getOntology(), 0);
+            map.put(term.getOntology(), map.get(term.getOntology()) + 1);
+        }
+        return map;
+    }
 }

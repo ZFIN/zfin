@@ -6,7 +6,6 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
-import org.zfin.database.BtsContainsServiceTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
@@ -43,6 +42,7 @@ import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
+import org.zfin.ontology.service.OntologyServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
 import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
@@ -56,8 +56,8 @@ import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
-import org.zfin.uniquery.SiteSearchTest;
 import org.zfin.uniquery.IndexerUtilTest;
+import org.zfin.uniquery.SiteSearchTest;
 import org.zfin.util.*;
 
 
@@ -106,6 +106,7 @@ import org.zfin.util.*;
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
         MorpholinoStatisticsTest.class,
+        OntologyServiceTest.class,
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,
