@@ -13,6 +13,19 @@
 
 }
 
+#hdr-tabs b.spiffy { display: none; }
+#hdr-tabs b.selectedspiffy { display: none; }
+
+
+.selectedTabContent, .tabContent { 
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+   
+}
 
 #logo-img, #logo-text {
   border: 0px;
@@ -74,11 +87,11 @@
 
 #hdr-tabs {
         float: left;
-	clear: both;
+	/* clear: both; */
 	margin-top: 33px;   /* this lowers and raises the green tabs and linkbar */
         margin-left: 190px;  /* set smaller for ie in header javascript */
         z-index: 5;
-        width: 30em;
+        width: 40em;
 	}
 #hdr-tabs #researchtab {
 	float: left;
@@ -102,7 +115,10 @@
 
 #hdr-tabs .tabContent { 
 	height: 1.4em;  /* this controls the height of the tab above the linkbar */
-	padding: 0px 5px;
+	padding-top: 5px;
+        padding-bottom: 1px; 
+        padding-left: 5px;
+        padding-right: 5px;
 	background: #e0e7e0;  /* has to match spiffy code in main css */
 	text-align: center;
         font-size: .8em;
@@ -111,7 +127,10 @@
 
 #hdr-tabs .selectedTabContent {
         height: 1.4em; /* this controls the height of the tab above the linkbar */
-        padding: 0px 5px;
+        padding-top: 5px;
+        padding-bottom: 1px;
+        padding-left: 5px;
+        padding-right: 5px;
         background: #006666;  /* has to match spiffy code in main css */
         text-align: center;
         font-size: .8em;
