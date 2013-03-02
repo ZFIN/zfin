@@ -9,8 +9,6 @@ RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
 RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 
 
 
-
-
 #zirc "order this" redirects, I'm not sure if there are CDNAs or just ESTs...
 RedirectMatch /zirc-order/ZDB-EST-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-EST-$1
 RedirectMatch /zirc-order/ZDB-CDNA-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-CDNA-$1
@@ -78,6 +76,9 @@ RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
+RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
 
 RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
 

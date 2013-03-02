@@ -34,6 +34,7 @@ REGION	/action/marker/view/ZDB-REGION
 SNP	/action/marker/view/ZDB-SNP
 SSLP	/action/marker/view/ZDB-SSLP
 STS	/action/marker/view/ZDB-STS
+TERM	/action/ontology/term-detail/ZDB-TERM
 TGCONSTRCT	/action/marker/view/ZDB-TGCONSTRCT
 TSCRIPT	/action/marker/view/ZDB-TSCRIPT
 XPAT   /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&xpatID=ZDB-XPAT
