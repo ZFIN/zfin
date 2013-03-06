@@ -1,8 +1,7 @@
 package org.zfin.gwt.root.util;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.zfin.gwt.root.dto.ExpressionFigureStageDTO;
-import org.zfin.gwt.root.dto.StageDTO;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -173,5 +172,29 @@ public class StageRangeIntersection implements IsSerializable {
 
     public StageDTO getEnd() {
         return end;
+    }
+
+    public boolean isOverlap(EntityDTO entity) {
+        if(entity == null)
+            return false;
+        TermDTO superTerm = entity.getSuperTerm();
+        if(superTerm == null)
+            return false;
+        if(!isOverlap(superTerm))
+            return false;
+        TermDTO subTerm = entity.getSubTerm();
+        return subTerm == null || isOverlap(subTerm);
+    }
+
+    private boolean isOverlap(TermDTO term) {
+        if(term == null)
+            return true;
+        if(term.getStartStage() == null && term.getEndStage() == null)
+            return true;
+        return isOverlap(term.getStartStage(), term.getEndStage());
+    }
+
+    public boolean isOverlap(ExpressedTermDTO expressedTerm) {
+        return isOverlap(expressedTerm.getEntity());
     }
 }

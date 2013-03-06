@@ -15,7 +15,7 @@ public class UpdateExpressionDTO<T extends AbstractPileStructureDTO, W extends A
 
     private String publicationID;
     private List<T> structures = new ArrayList<T>(5);
-    private List<W> figureAnnotations;
+    private List<W> figureAnnotations = new ArrayList<W>(5);
 
     public String getPublicationID() {
         return publicationID;
@@ -39,6 +39,10 @@ public class UpdateExpressionDTO<T extends AbstractPileStructureDTO, W extends A
 
     public void setFigureAnnotations(List<W> figureAnnotations) {
         this.figureAnnotations = figureAnnotations;
+    }
+
+    public void addFigureAnnotation(W figureAnnotation){
+        figureAnnotations.add(figureAnnotation);
     }
 
     public void addPileStructureAnnotationDTO(T psa) {

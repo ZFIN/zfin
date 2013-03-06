@@ -7,7 +7,7 @@ import java.util.*;
 
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.
- *
+ * <p/>
  * http://java.sun.com/developer/technicalArticles/ALT/serialization/
  */
 public class TermDTO extends RelatedEntityDTO implements Serializable {
@@ -23,14 +23,14 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     private Set<TermDTO> parentTerms; // should be a unique set
     //    private List<AliasDTO> aliases;
     private Set<String> aliases; // should be a unique set
-    private StageDTO startStage ;
-    private StageDTO endStage ;
+    private StageDTO startStage;
+    private StageDTO endStage;
     private Set<String> subsets;
 
-    private String relationshipType ; // in the case that this is just a Term in a relationship
+    private String relationshipType; // in the case that this is just a Term in a relationship
     private int significance; // when used as an alias
     //    private Map<String, List<TermInfoDTO>> relatedTermInfos = new TreeMap<String, List<TermInfoDTO>>(new RelationshipComparatorDTO());
-    private Map<String,List<TermDTO>> relatedTermMap = null ;
+    private Map<String, List<TermDTO>> relatedTermMap = null;
 
     public String getTermName() {
         return name;
@@ -99,7 +99,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     public boolean equalsByName(TermDTO term) {
         if (term == null)
             return false;
-        if(!ontology.equals(term.getOntology()))
+        if (!ontology.equals(term.getOntology()))
             return false;
         return StringUtils.equalsWithNullString(name, term.getTermName());
     }
@@ -127,7 +127,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     @Override
     public int hashCode() {
         int result = zdbID != null ? zdbID.hashCode() : 0;
-        result = 31 * result + (getName()!= null ? getName().hashCode() : 0);
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
 //        result = 31 * result + (comment != null ? comment.hashCode() : 0);
 //        result = 31 * result + (obsolete ? 1 : 0);
 //        result = 31 * result + (ontology != null ? ontology.hashCode() : 0);
@@ -236,44 +236,44 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     }
 
     public Map<String, Set<TermDTO>> getAllRelatedTerms() {
-        Map<String,Set<TermDTO>> relatedTermMap = new TreeMap<String,Set<TermDTO>>() ;
+        Map<String, Set<TermDTO>> relatedTermMap = new TreeMap<String, Set<TermDTO>>();
 
-        if(childrenTerms!=null){
-            for(TermDTO term  : childrenTerms){
+        if (childrenTerms != null) {
+            for (TermDTO term : childrenTerms) {
                 String display = RelationshipType.getInverseRelationshipByName(term.getRelationshipType()).getDisplay();
                 Set<TermDTO> termDTOs = relatedTermMap.get(display);
-                if(termDTOs==null){
-                    termDTOs = new TreeSet<TermDTO>() ;
-                    relatedTermMap.put(display,termDTOs);
-                }
-                termDTOs.add(term) ;
-            }
-        }
-        if(parentTerms!=null){
-            for(TermDTO term  : parentTerms){
-                String display = RelationshipType.getRelationshipTypeByDbName(term.getRelationshipType()).getDisplay();
-                Set<TermDTO> termDTOs = relatedTermMap.get(display);
-                if(termDTOs==null){
-                    termDTOs = new TreeSet<TermDTO>() ;
+                if (termDTOs == null) {
+                    termDTOs = new TreeSet<TermDTO>();
                     relatedTermMap.put(display, termDTOs);
                 }
-                termDTOs.add(term) ;
+                termDTOs.add(term);
+            }
+        }
+        if (parentTerms != null) {
+            for (TermDTO term : parentTerms) {
+                String display = RelationshipType.getRelationshipTypeByDbName(term.getRelationshipType()).getDisplay();
+                Set<TermDTO> termDTOs = relatedTermMap.get(display);
+                if (termDTOs == null) {
+                    termDTOs = new TreeSet<TermDTO>();
+                    relatedTermMap.put(display, termDTOs);
+                }
+                termDTOs.add(term);
             }
         }
 
-        return relatedTermMap ;
+        return relatedTermMap;
     }
 
     public boolean isAliasesExist() {
-        return aliases!=null && aliases.size()>0 ;
+        return aliases != null && aliases.size() > 0;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("TermDTO");
-        sb.append(super.toString()).append("\n");
-        sb.append("{oboID='").append(oboID).append('\'');
+        sb.append("TermDTO{ ");
+        sb.append("name= '" + super.getName() + "'");
+        sb.append(", oboID = '").append(oboID).append("\'");
         sb.append(", definition='").append(definition).append('\'');
         sb.append(", comment='").append(comment).append('\'');
         sb.append(", obsolete=").append(obsolete);
@@ -288,7 +288,6 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
         sb.append('}');
         return sb.toString();
     }
-
 
 
     public void shallowCopyFrom(TermDTO termDTO) {
@@ -347,7 +346,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     }
 
     public List<TermDTO> getChildrenTerms(String relationshipType) {
-       return null;
+        return null;
     }
 
     public static final String RELATIONAL__SLIM = "relational_slim";

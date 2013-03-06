@@ -1070,14 +1070,14 @@ public class DTOConversionService {
     /**
      * Note that this conversion does not populate the expression found attribute.
      *
-     * @param expressionStructure ExpressionStructure
+     * @param postComposedEntity ExpressionStructure
      * @return ExpressedTermDTO
      */
-    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionStructure expressionStructure) {
+    public static ExpressedTermDTO convertToExpressedTermDTO(PostComposedEntity postComposedEntity) {
         ExpressedTermDTO expressedDTO = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
-        entity.setSuperTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSuperterm()));
-        entity.setSubTerm(DTOConversionService.convertToTermDTO(expressionStructure.getSubterm()));
+        entity.setSuperTerm(DTOConversionService.convertToTermDTO(postComposedEntity.getSuperterm()));
+        entity.setSubTerm(DTOConversionService.convertToTermDTO(postComposedEntity.getSubterm()));
         expressedDTO.setEntity(entity);
         return expressedDTO;
     }
@@ -1097,4 +1097,35 @@ public class DTOConversionService {
         return expressedDTO;
     }
 
+    public static List<PileStructureAnnotationDTO> getPileStructureDTO(ExpressionFigureStageDTO expressionFigureStageDTO, PileStructureAnnotationDTO.Action action) {
+        if (expressionFigureStageDTO == null)
+            return null;
+
+        List<PileStructureAnnotationDTO> list = new ArrayList<PileStructureAnnotationDTO>();
+        for (ExpressedTermDTO termDto : expressionFigureStageDTO.getExpressedTerms()) {
+            PileStructureAnnotationDTO annotation = new PileStructureAnnotationDTO();
+            annotation.setAction(action);
+            annotation.setExpressed(termDto.isExpressionFound());
+            annotation.setStart(expressionFigureStageDTO.getStart());
+            annotation.setEnd(expressionFigureStageDTO.getEnd());
+            annotation.setExpressedTerm(termDto);
+            list.add(annotation);
+        }
+        return list;
+    }
+
+    public static PostComposedEntity getPostComposedEntityFromDTO(ExpressedTermDTO expressedTerm) {
+        if (expressedTerm == null)
+            return null;
+        PostComposedEntity entity = new PostComposedEntity();
+        try {
+            EntityDTO entityDTO = expressedTerm.getEntity();
+            entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
+            if (entityDTO.getSubTerm() != null)
+                entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
+        } catch (TermNotFoundException e) {
+            return null;
+        }
+        return entity;
+    }
 }

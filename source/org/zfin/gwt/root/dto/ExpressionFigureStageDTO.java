@@ -86,4 +86,10 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
             return (int) (end.getStartHours() * 10 - efs.getEnd().getStartHours() * 10);
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "ExpressionFigureStageDTO: " +
+                getUniqueID();
+    }
 }

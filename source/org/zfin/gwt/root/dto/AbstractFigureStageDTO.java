@@ -88,4 +88,5 @@ public abstract class AbstractFigureStageDTO<T extends ExpressedTermDTO> impleme
         this.publicationID = publicationID;
     }
 
+
 }

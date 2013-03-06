@@ -14,6 +14,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.zfin.ontology.Ontology.*;
+
 
 /**
  * Test the OntologyManager class.
@@ -27,14 +29,13 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Override
     protected Ontology[] getOntologiesToLoad() {
-        Ontology[] ontologies = new Ontology[6];
-        ontologies[0] = Ontology.ANATOMY;
-        ontologies[1] = Ontology.QUALITY;
-        ontologies[2] = Ontology.STAGE;
-        ontologies[3] = Ontology.SPATIAL;
-        ontologies[4] = Ontology.QUALITY_PROCESSES;
-        ontologies[5] = Ontology.QUALITY_QUALITIES;
-        return ontologies;
+        return new Ontology[]{
+                ANATOMY,
+                QUALITY,
+                STAGE,
+                SPATIAL,
+                QUALITY_PROCESSES,
+                QUALITY_QUALITIES};
     }
 
 
@@ -67,13 +68,13 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void testTermByName() {
-        assertNotNull(ontologyManager.getTermByName("B cell", Ontology.ANATOMY));
-        assertNull(ontologyManager.getTermByName("bad bad term", Ontology.ANATOMY));
-        assertNotNull(ontologyManager.getTermByName("pelvic fin bud", Ontology.ANATOMY));
-        assertNotNull(ontologyManager.getTermByName("Brachet's cleft", Ontology.ANATOMY));
-        assertNotNull(ontologyManager.getTermByName("Cajal-Retzius cell", Ontology.ANATOMY));
-        assertNotNull(ontologyManager.getTermByName("nucleus of the medial longitudinal fasciculus medulla oblongata", Ontology.ANATOMY));
-        assertNotNull(ontologyManager.getTermByName("dorsal region", Ontology.SPATIAL));
+        assertNotNull(ontologyManager.getTermByName("B cell", ANATOMY));
+        assertNull(ontologyManager.getTermByName("bad bad term", ANATOMY));
+        assertNotNull(ontologyManager.getTermByName("pelvic fin bud", ANATOMY));
+        assertNotNull(ontologyManager.getTermByName("Brachet's cleft", ANATOMY));
+        assertNotNull(ontologyManager.getTermByName("Cajal-Retzius cell", ANATOMY));
+        assertNotNull(ontologyManager.getTermByName("nucleus of the medial longitudinal fasciculus medulla oblongata", ANATOMY));
+        assertNotNull(ontologyManager.getTermByName("dorsal region", SPATIAL));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void testAliases() {
-        TermDTO term = ontologyManager.getTermByName("B cell", Ontology.ANATOMY);
+        TermDTO term = ontologyManager.getTermByName("B cell", ANATOMY);
         assertTrue(term.isAliasesExist());
 //        List<AliasDTO> relatedTerms = term.getAliases();
         Set<String> relatedTerms = term.getAliases();
@@ -111,7 +112,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         String query = "mel";
         long startTime = System.currentTimeMillis();
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, ANATOMY);
         long endTime = System.currentTimeMillis();
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
@@ -125,7 +126,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         String query = "nucleus of a";
         long startTime = System.currentTimeMillis();
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> qualityList = matcher.getMatchingTerms(query, ANATOMY);
         long endTime = System.currentTimeMillis();
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
@@ -141,7 +142,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         // 'taenia marginalis posterior'
         String query = "orbital cartilage";
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, ANATOMY);
         assertNotNull(anatomyList);
         assertTrue(anatomyList.size() == 2);
     }
@@ -151,7 +152,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void suggestionsShouldNotRepeat() throws Exception {
         String query = "retina";
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, ANATOMY);
         Iterator<MatchingTerm> iter = anatomyList.iterator();
         assertEquals("retina", iter.next().getTerm().getName());
         assertEquals("retinal bipolar neuron", iter.next().getTerm().getName());
@@ -163,11 +164,11 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void testBadSearches() {
         // can find decreased p
         MatchingTermService service = new MatchingTermService();
-        List<MatchingTerm> matches = service.getMatchingTerms("decreased p", Ontology.QUALITY);
+        List<MatchingTerm> matches = service.getMatchingTerms("decreased p", QUALITY);
         assertTrue(matches.size() > 10);
 
         // can not find decreased
-        matches = service.getMatchingTerms("decreased", Ontology.QUALITY);
+        matches = service.getMatchingTerms("decreased", QUALITY);
         assertEquals(service.getMaximumNumberOfMatches(), matches.size());
     }
 
@@ -175,7 +176,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void testObsoleteTerm() {
         String termName = "stomach";
         String termID = "ZDB-TERM-100331-416";
-        TermDTO term = ontologyManager.getTermByName(termName, Ontology.ANATOMY);
+        TermDTO term = ontologyManager.getTermByName(termName, ANATOMY);
         assertNull(term);
         term = ontologyManager.getTermByID(termID, OntologyDTO.ANATOMY);
         assertNotNull(term);
@@ -235,7 +236,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void getMatchingQualityTerms() {
         String query = "red";
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> qualities = matcher.getMatchingTerms(query, Ontology.QUALITY);
+        List<MatchingTerm> qualities = matcher.getMatchingTerms(query, QUALITY);
         assertNotNull(qualities);
         assertEquals(14, qualities.size());
 
@@ -252,7 +253,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     public void getMatchingAnatomyTerms() {
         String query = "mel";
         MatchingTermService matcher = new MatchingTermService();
-        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, Ontology.ANATOMY);
+        List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, ANATOMY);
         assertNotNull(anatomyList);
         assertEquals(21, anatomyList.size());
     }
@@ -266,7 +267,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     @Test
     public void allAnatomyTerms() {
-        List<TermDTO> set = ontologyManager.getAllTerms(Ontology.ANATOMY);
+        List<TermDTO> set = ontologyManager.getAllTerms(ANATOMY);
         assertNotNull(set);
     }
 

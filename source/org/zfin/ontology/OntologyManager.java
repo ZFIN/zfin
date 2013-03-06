@@ -162,7 +162,7 @@ public class OntologyManager {
         logger.info("Finished loading all ontologies: took " + DateUtil.getTimeDuration(startTime));
     }
 
-    public static Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap) {
+    public Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap) {
 
         // pass two fills in the rest of the child / parent type info
         for (TermDTO termDTO : termDTOMap.values()) {
@@ -199,18 +199,11 @@ public class OntologyManager {
                         parentTerm.shallowCopyFrom(cachedTerm);
 
                         // handle anatomy here
+                        // requires that stages are loaded first.
                         if (parentTerm.getRelationshipType().equals(RelationshipType.START_STAGE.getDbMappedName())) {
-                            StageDTO stageDTO = new StageDTO();
-                            stageDTO.setZdbID(parentTerm.getZdbID());
-                            stageDTO.setOboID(parentTerm.getOboID());
-                            stageDTO.setName(parentTerm.getName());
-                            termDTO.setStartStage(stageDTO);
+                            termDTO.setStartStage(getTermByID(parentTerm.getZdbID()).getStartStage());
                         } else if (parentTerm.getRelationshipType().equals(RelationshipType.END_STAGE.getDbMappedName())) {
-                            StageDTO stageDTO = new StageDTO();
-                            stageDTO.setZdbID(parentTerm.getZdbID());
-                            stageDTO.setOboID(parentTerm.getOboID());
-                            stageDTO.setName(parentTerm.getName());
-                            termDTO.setEndStage(stageDTO);
+                            termDTO.setEndStage(getTermByID(parentTerm.getZdbID()).getStartStage());
                         }
                     }
                 }

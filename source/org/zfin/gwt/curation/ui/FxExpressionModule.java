@@ -233,8 +233,30 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         }
     }
 
+    private Widget createTermList(List<ExpressionFigureStageDTO> expressionList) {
+        ExpressionFigureStageDTO aggregated = new ExpressionFigureStageDTO();
+        List<ExpressedTermDTO> expressedTermDTOs = new ArrayList<ExpressedTermDTO>(5);
+        Set<ExpressedTermDTO> expressedTermSet = new HashSet<ExpressedTermDTO>(5);
+        for (ExpressionFigureStageDTO dto : expressionList) {
+            removeUnspecifiedTerm(dto.getExpressedTerms());
+            expressedTermSet.addAll(dto.getExpressedTerms());
+        }
+        expressedTermDTOs.addAll(expressedTermSet);
+        aggregated.setExpressedTerms(expressedTermDTOs);
+        return createTermList(aggregated);
+    }
+
+    private void removeUnspecifiedTerm(List<ExpressedTermDTO> expressedTerms) {
+        if (expressedTerms == null)
+            return;
+        for (Iterator<ExpressedTermDTO> it = expressedTerms.iterator(); it.hasNext(); )
+            if (it.next().getEntity().isUnspecified())
+                it.remove();
+    }
+
     private Widget createTermList(ExpressionFigureStageDTO expression) {
         // create comma-delimited list
+        //Window.alert("Buffer DTO: " + expression.getUniqueID());
         List<ExpressedTermDTO> terms = expression.getExpressedTerms();
         StringBuilder text = new StringBuilder();
         int index = 1;
@@ -242,7 +264,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
             String classSpan;
             if (!term.isExpressionFound()) {
                 classSpan = createSpanElement(term, WidgetUtil.RED);
-            } else if (term.getEntity().getSuperTerm().getTermName().equals("unspecified")) {
+            } else if (term.getEntity().isUnspecified()) {
                 classSpan = createSpanElement(term, "term-unspecified");
             } else {
                 classSpan = createSpanElement(term, null);
@@ -516,6 +538,26 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         }
     }
 
+    private class ExpressionSelectCopyStructureButtonClickHandler implements ClickHandler {
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            if (hasExpressedTerms(selectedExpressions))
+                displayTable.copyStructures.setEnabled(true);
+            else
+                displayTable.copyStructures.setEnabled(false);
+        }
+    }
+
+    private class ExpressionSelectPasteStructureButtonClickHandler implements ClickHandler {
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            if (expressionFigureStageDTOBuffer != null && expressionFigureStageDTOBuffer.size() > 0 && selectedExpressions.size() > 0)
+                displayTable.pasteStructures.setEnabled(true);
+            else
+                displayTable.pasteStructures.setEnabled(false);
+        }
+    }
+
     private class DeleteFigureAnnotationClickHandler implements ClickHandler {
 
         private ExpressionFigureStageDTO expressionFigureStage;
@@ -597,6 +639,23 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
             Label pushed = new Label(PUSHED);
             displayTable.setWidget(row, HeaderName.PUSH.getIndex(), pushed);
             clearErrorMessages();
+        }
+
+        public void onFailureCleanup() {
+            loadingImage.setVisible(true);
+        }
+    }
+
+    public class CopyExpressionsCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
+
+        CopyExpressionsCallback() {
+            super("Error while deleting Figure Annotation", errorElement);
+        }
+
+        public void onSuccess(List<ExpressionFigureStageDTO> exp) {
+            //Window.alert("Success copied");
+            clearErrorMessages();
+            postUpdateStructuresOnExpression();
         }
 
         public void onFailureCleanup() {
@@ -686,6 +745,88 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         public void onClick(ClickEvent event) {
             DOM.eventCancelBubble(Event.getCurrentEvent(), true);
             curationRPCAsync.createPatoRecord(efs, new CreatePatoRecordCallback(row));
+        }
+
+    }
+
+    private List<ExpressionFigureStageDTO> expressionFigureStageDTOBuffer = new ArrayList<ExpressionFigureStageDTO>(3);
+
+    /**
+     * Copy selected Expression/Figure/Stage records into buffer
+     */
+    private class CopyStructuresButtonHandler implements ClickHandler {
+
+        public void onClick(ClickEvent event) {
+            expressionFigureStageDTOBuffer.clear();
+            expressionFigureStageDTOBuffer.addAll(selectedExpressions);
+            displayTable.clearBuffer.setEnabled(true);
+/*
+            if (hasExpressedTerms(selectedExpressions)) {
+                displayTable.copyStructures.setEnabled(true);
+            }
+*/
+            displayTable.showBufferLastRow(1, createTermList(selectedExpressions));
+            // un-select all records to have a clean slate for selecting the
+            // records to paste into
+            displayTable.uncheckAllRecords();
+        }
+
+
+    }
+
+    private boolean hasExpressedTerms(List<ExpressionFigureStageDTO> selectedExpressions) {
+        if (selectedExpressions == null)
+            return false;
+        for (ExpressionFigureStageDTO dto : selectedExpressions) {
+            if (hasSpecifiedTerm(dto.getExpressedTerms()))
+                if (dto.getExpressedTerms().size() > 0)
+                    return true;
+        }
+        return false;
+    }
+
+    private boolean hasSpecifiedTerm(List<ExpressedTermDTO> expressedTerms) {
+        if (expressedTerms == null)
+            return false;
+        for (ExpressedTermDTO dto : expressedTerms) {
+            if (!dto.getEntity().isUnspecified())
+                return true;
+        }
+        return false;
+    }
+
+    private class PasteStructuresButtonHandler implements ClickHandler {
+
+        public void onClick(ClickEvent event) {
+            List<ExpressionFigureStageDTO> copyFromExpressions = expressionFigureStageDTOBuffer;
+            List<ExpressionFigureStageDTO> copyToExpressions = selectedExpressions;
+            curationRPCAsync.copyExpressions(copyFromExpressions, copyToExpressions, new CopyExpressionsCallback());
+            displayTable.uncheckAllRecords();
+        }
+
+        private List<ExpressionFigureStageDTO> getEfsFromMap(List<Integer> copyFromCheckBoxNumber) {
+            if (copyFromCheckBoxNumber == null)
+                return null;
+            List<ExpressionFigureStageDTO> efsList = new ArrayList<ExpressionFigureStageDTO>(copyFromCheckBoxNumber.size());
+            for (Integer rowIndex : copyFromCheckBoxNumber) {
+                efsList.add(displayTableMap.get(rowIndex));
+            }
+            return efsList;
+        }
+
+    }
+
+    private class ClearExpressionBufferHandler implements ClickHandler {
+
+        public void onClick(ClickEvent event) {
+            // clear copy/paste buffer
+            expressionFigureStageDTOBuffer.clear();
+            // override display buffer with empty widget
+            displayTable.showBufferLastRow(1, new Label());
+            // disable button as there is nothing left to be cleared.
+            displayTable.clearBuffer.setEnabled(false);
+            // disable paste button as well
+            displayTable.pasteStructures.setEnabled(false);
         }
 
     }
@@ -823,12 +964,16 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
     class ExpressionFlexTable extends ZfinFlexTable {
 
         private HeaderName[] headerNames;
+        // copy paste panel
+        private HorizontalPanel copyPastePanel = new HorizontalPanel();
+
 
         ExpressionFlexTable(HeaderName[] headerNames) {
-            super(headerNames.length, HeaderName.SELECT.index);
+            super(headerNames.length, new int[]{HeaderName.SELECT.index});
             this.headerNames = headerNames;
             setToggleHyperlink(ToggleLink.SHOW_SELECTED_EXPRESSIONS_ONLY.getText(), ToggleLink.SHOW_ALL_EXPRESSIONS.getText());
             addToggleHyperlinkClickHandler(new ShowSelectedExpressionClickHandler(showSelectedRecords));
+            initCopyExpressionPanel();
         }
 
         protected void createExpressionTable() {
@@ -854,16 +999,18 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
 
                 // rowindex minus the header row
                 displayTableMap.put(rowIndex, expression);
-                CheckBox checkbbox = new CheckBox(null);
-                checkbbox.setTitle(expression.getUniqueID());
+                CheckBox checkBox = new CheckBox(null);
+                checkBox.setTitle(expression.getUniqueID());
                 // if any figure annotations are already selected make sure they stay checked
                 if (selectedExpressions.contains(expression)) {
-                    checkbbox.setValue(true);
+                    checkBox.setValue(true);
                     //Window.alert("Checkbox");
                     //showClearAllLink();
                 }
-                checkbbox.addClickHandler(new ExpressionSelectClickHandler(expression, checkbbox));
-                setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkbbox);
+                checkBox.addClickHandler(new ExpressionSelectClickHandler(expression, checkBox));
+                checkBox.addClickHandler(new ExpressionSelectPasteStructureButtonClickHandler());
+                checkBox.addClickHandler(new ExpressionSelectCopyStructureButtonClickHandler());
+                setWidget(rowIndex, HeaderName.SELECT.getIndex(), checkBox);
 
                 ExperimentDTO experiment = expression.getExperiment();
                 setWidgetWithNameAndIdLabel(rowIndex, HeaderName.FIGURE.getIndex(), expression.getFigure().getLabel(), expression.getFigure().getZdbID());
@@ -907,10 +1054,37 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
                 rowIndex++;
                 previousExpression = expression;
             }
+
             createBottomClearAllLinkRow(rowIndex);
             //Window.alert("HIO");
             showHideClearAllLink();
+            handleCopyStructureBuffer();
             //Window.alert("HIO II");
+        }
+
+        private void handleCopyStructureBuffer() {
+            if (expressionFigureStageDTOBuffer != null) {
+                displayTable.showBufferLastRow(1, createTermList(expressionFigureStageDTOBuffer));
+            }
+        }
+
+        public void createBottomClearAllLinkRow(int rowIndex) {
+            super.createBottomClearAllLinkRow(rowIndex, headerNames.length - 3);
+            //Window.alert("create bottom row: " + copyPastePanel.getWidgetCount());
+            setWidget(rowIndex, 1, copyPastePanel);
+        }
+
+        Button copyStructures = new Button("Copy Structures", new CopyStructuresButtonHandler());
+        Button pasteStructures = new Button("Paste Structures", new PasteStructuresButtonHandler());
+        Button clearBuffer = new Button("Clear Buffer", new ClearExpressionBufferHandler());
+
+        private void initCopyExpressionPanel() {
+            copyStructures.setEnabled(false);
+            pasteStructures.setEnabled(false);
+            clearBuffer.setEnabled(false);
+            copyPastePanel.add(copyStructures);
+            copyPastePanel.add(pasteStructures);
+            copyPastePanel.add(clearBuffer);
         }
 
         /**
@@ -933,6 +1107,8 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         public void uncheckAllRecords() {
             super.uncheckAllRecords();
             unceckAllCheckStatusInSession();
+            displayTable.copyStructures.setEnabled(false);
+            displayTable.pasteStructures.setEnabled(false);
         }
 
 
@@ -953,9 +1129,31 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         protected void createTableHeader() {
             super.createTableHeader();
             for (HeaderName name : headerNames) {
-                if (name.index != 0)
+                if (name.index != 0) {
                     setText(0, name.index, name.getName());
+                    String alignment = "bold";
+                    getCellFormatter().setStyleName(0, name.index, alignment);
+                }
             }
+        }
+
+        public List<Integer> getCheckBox(int column) {
+            List<Integer> numbers = new ArrayList<Integer>(5);
+            int rowCount = getRowCount();
+            for (Integer rowIndex = 1; rowIndex < rowCount; rowIndex++) {
+                Widget widget;
+                try {
+                    widget = getWidget(rowIndex, column);
+                } catch (IndexOutOfBoundsException e) {
+                    continue;
+                }
+                if (widget == null || !(widget instanceof CheckBox))
+                    continue;
+                CheckBox checkBox = (CheckBox) widget;
+                if (checkBox.getValue())
+                    numbers.add(rowIndex);
+            }
+            return numbers;
         }
 
         /**
@@ -1170,24 +1368,26 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
     }
 
     private enum HeaderName {
-        SELECT(0, ""),
-        FIGURE(1, "Figure"),
-        GENE(2, "Gene"),
-        FISH(3, "Fish"),
-        ENVIRONMENT(4, "Environment"),
-        ASSAY(5, "Assay"),
-        ANTIBODY(6, "Ab"),
-        STAGE_RANGE(7, "Stage Range"),
-        EXPRESSED_IN(8, "Expressed in"),
-        DELETE(9, "Delete"),
-        PUSH(10, "Push");
+        SELECT(0, "", Alignment.CENTER),
+        FIGURE(1, "Figure", Alignment.LEFT),
+        GENE(2, "Gene", Alignment.LEFT),
+        FISH(3, "Fish", Alignment.LEFT),
+        ENVIRONMENT(4, "Env ", Alignment.LEFT),
+        ASSAY(5, "Assay", Alignment.LEFT),
+        ANTIBODY(6, "Ab", Alignment.LEFT),
+        STAGE_RANGE(7, "Stage Range", Alignment.LEFT),
+        EXPRESSED_IN(8, "Expressed in", Alignment.LEFT),
+        DELETE(9, "Del", Alignment.CENTER),
+        PUSH(10, "Push", Alignment.LEFT);
 
         private int index;
         private String value;
+        Alignment alignment;
 
-        private HeaderName(int index, String value) {
+        private HeaderName(int index, String value, Alignment alignment) {
             this.index = index;
             this.value = value;
+            this.alignment = alignment;
         }
 
         public String getName() {
@@ -1198,10 +1398,17 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
             return index;
         }
 
+        public Alignment getAlignment() {
+            return alignment;
+        }
+
         public static HeaderName[] getHeaderNames() {
             return FxExpressionModule.HeaderName.values();
         }
     }
 
+    private enum Alignment {
+        LEFT, RIGHT, CENTER;
+    }
 
 }

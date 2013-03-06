@@ -2,10 +2,8 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.*;
 
 /**
  * Base zfin flex table. It has the following features:
@@ -17,18 +15,29 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
 
     public static final String CLEAR_ALL = "Clear";
 
-    protected Hyperlink uncheckExperimentsTop = new Hyperlink(CLEAR_ALL, CLEAR_ALL + " Top");
+    protected Hyperlink uncheckExperimentsTop = new Hyperlink("C", CLEAR_ALL + " Top");
     protected Hyperlink uncheckExperimentsBottom = new Hyperlink(CLEAR_ALL, CLEAR_ALL + " Bottom");
     protected ToggleHyperlink showSelectedRecords;
 
     protected int numberOfColumns;
     protected int selectionCheckBoxColumn;
+    protected int[] selectionCheckBoxColumns;
+
     private UncheckAllExperimentsHandler uncheckAllExperimentsHandler = null;
 
     public ZfinFlexTable(int numberOfColumns, int selectionCheckBoxColumn) {
         super();
         this.numberOfColumns = numberOfColumns;
         this.selectionCheckBoxColumn = selectionCheckBoxColumn;
+        if (selectionCheckBoxColumn >= 0)
+            uncheckAllExperimentsHandler = new UncheckAllExperimentsHandler();
+        addClickHandler(this);
+    }
+
+    public ZfinFlexTable(int numberOfColumns, int[] selectionCheckBoxColumns) {
+        super();
+        this.numberOfColumns = numberOfColumns;
+        this.selectionCheckBoxColumns = selectionCheckBoxColumns;
         if (selectionCheckBoxColumn >= 0)
             uncheckAllExperimentsHandler = new UncheckAllExperimentsHandler();
         addClickHandler(this);
@@ -90,13 +99,13 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
     protected int setRowStyle(int rowIndex, int groupIndex) {
         StringBuilder sb = new StringBuilder(50);
         // check even/odd row
-        if (rowIndex % 2 == 0){
+        if (rowIndex % 2 == 0) {
             sb.append(CssStyles.EVEN.toString());
             sb.append(" ");
             sb.append(CssStyles.NEWGROUP.toString());
             sb.append(" ");
             sb.append(CssStyles.EVENGROUP.toString());
-        }else{
+        } else {
             sb.append(CssStyles.ODD.toString());
             sb.append(" ");
             sb.append(CssStyles.NEWGROUP.toString());
@@ -151,15 +160,29 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
     public void uncheckAllRecords() {
         int rowCount = getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            Widget widget = getWidget(rowIndex, selectionCheckBoxColumn);
-            //Window.alert("Clicker");
-            if (!(widget instanceof CheckBox))
-                continue;
-            CheckBox checkBox = (CheckBox) widget;
-            checkBox.setValue(false);
+            if (selectionCheckBoxColumns != null) {
+                for (int checkBoxColumn : selectionCheckBoxColumns) {
+                    //Window.alert("CheckBox: " + checkBoxColumn);
+                    if (!uncheckCheckBox(rowIndex, checkBoxColumn))
+                        break;
+                }
+            } else
+                uncheckCheckBox(rowIndex, selectionCheckBoxColumn);
         }
         hideClearAllLink();
         showSelectedRecords.uncheckAllRecords();
+    }
+
+    private boolean uncheckCheckBox(int rowIndex, int column) {
+        Widget widget = getWidget(rowIndex, column);
+        if (widget == null)
+            return false;
+        //Window.alert("Clicker");
+        if (!(widget instanceof CheckBox))
+            return false;
+        CheckBox checkBox = (CheckBox) widget;
+        checkBox.setValue(false);
+        return true;
     }
 
     /**
@@ -210,7 +233,6 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
         int rowIndex = 0;
         uncheckExperimentsTop.addClickHandler(uncheckAllExperimentsHandler);
         setWidget(rowIndex, selectionCheckBoxColumn, uncheckExperimentsTop);
-        getCellFormatter().setWidth(rowIndex, selectionCheckBoxColumn, "50");
     }
 
     public void createBottomClearAllLinkRow(int rowIndex) {
@@ -225,6 +247,29 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
             getFlexCellFormatter().setColSpan(rowIndex, 0, numberOfColumns);
             getFlexCellFormatter().setHeight(rowIndex, 0, "25");
         }
+    }
+
+    public void createBottomClearAllLinkRow(int rowIndex, int columnSpan) {
+        uncheckExperimentsBottom.addClickHandler(uncheckAllExperimentsHandler);
+        setWidget(rowIndex, 0, uncheckExperimentsBottom);
+        getFlexCellFormatter().setColSpan(rowIndex, 0, columnSpan);
+        getFlexCellFormatter().setHeight(rowIndex, 0, "25");
+        //Window.alert("Toggle link exists: " + showSelectedRecords);
+        if (showSelectedRecords != null) {
+            rowIndex++;
+            setWidget(rowIndex, 0, showSelectedRecords);
+            getFlexCellFormatter().setColSpan(rowIndex, 0, columnSpan);
+            getFlexCellFormatter().setHeight(rowIndex, 0, "25");
+        }
+    }
+
+    public void showBuffer(int rowIndex, int columnIndex, Widget widget) {
+        setWidget(rowIndex, columnIndex, widget);
+    }
+
+    public void showBufferLastRow(int columnIndex, Widget widget) {
+        int numberOfRows = getRowCount();
+        setWidget(numberOfRows - 1, columnIndex, widget);
     }
 
     public void showClearAllLink() {

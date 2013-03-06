@@ -585,6 +585,46 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return figureAnnotations;
     }
 
+    @Override
+    public List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions) {
+        if (copyFromExpressions == null || copyToExpressions == null)
+            return null;
+
+        List<PileStructureAnnotationDTO> pileStructureAnnotationDTOList = new ArrayList<PileStructureAnnotationDTO>(copyFromExpressions.size());
+        for (ExpressionFigureStageDTO copyFromAnnotation : copyFromExpressions) {
+            pileStructureAnnotationDTOList.addAll(DTOConversionService.getPileStructureDTO(copyFromAnnotation, PileStructureAnnotationDTO.Action.ADD));
+        }
+        for (ExpressionFigureStageDTO expressionFigureStageDTO : copyToExpressions) {
+            UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateExpressionDTO = new UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO>();
+            updateExpressionDTO.addFigureAnnotation(expressionFigureStageDTO);
+            updateExpressionDTO.setStructures(pileStructureAnnotationDTOList);
+            // remove expressions outside the valid stage range from the new structures to be added
+            removeInvalidExpressionsFromAnnotation(updateExpressionDTO);
+
+            //updateExpressionDTO.
+            updateStructuresForExpression(updateExpressionDTO);
+        }
+        return copyToExpressions;
+    }
+
+    protected void removeInvalidExpressionsFromAnnotation(UpdateExpressionDTO<PileStructureAnnotationDTO, ExpressionFigureStageDTO> updateExpressionDTO) {
+        List<ExpressionFigureStageDTO> figureAnnotations = updateExpressionDTO.getFigureAnnotations();
+        if (figureAnnotations == null)
+            return;
+        if (figureAnnotations.size() > 1)
+            throw new RuntimeException("Can only handle single figure annotation");
+
+        ExpressionFigureStageDTO expressionFigureStageDTO = figureAnnotations.get(0);
+        List<PileStructureAnnotationDTO> newStructureList = new ArrayList<PileStructureAnnotationDTO>(updateExpressionDTO.getStructures().size());
+        StageRangeIntersection intersection = new StageRangeIntersection(expressionFigureStageDTO.getStart(), expressionFigureStageDTO.getEnd());
+        for (PileStructureAnnotationDTO pileStructure : updateExpressionDTO.getStructures()) {
+            ExpressedTermDTO expressedTerm = pileStructure.getExpressedTerm();
+            if (intersection.isOverlap(expressedTerm))
+                newStructureList.add(pileStructure);
+        }
+        updateExpressionDTO.setStructures(newStructureList);
+    }
+
     private void createFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
         if (figureAnnotation == null)
             return;
@@ -892,7 +932,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                         dto.getStart().getZdbID(),
                         dto.getEnd().getZdbID());
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
-                    ExpressionStructure expressionStructure = expRepository.getExpressionStructure(pileStructure.getZdbID());
+                    PostComposedEntity expressionStructure = null;
+                    if (pileStructure.getExpressedTerm() != null)
+                        expressionStructure = DTOConversionService.getPostComposedEntityFromDTO(pileStructure.getExpressedTerm());
+                    else
+                        expressionStructure = expRepository.getExpressionStructure(pileStructure.getZdbID());
                     if (expressionStructure == null)
                         LOG.error("Could not find pile structure " + pileStructure.getZdbID());
                     // add expression if marked as such
@@ -986,79 +1030,81 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * the expressed-modifier. We allow to add the same composed term twice, once with
      * 'not'  modifier and once without it.
      *
-     * @param experiment          ExpressionExperiment
-     * @param expressed           structure is expressed or not [true/false]
-     * @param expressionStructure structure selected from the pile
+     * @param experiment         ExpressionExperiment
+     * @param expressed          structure is expressed or not [true/false]
+     * @param postComposedEntity structure selected from the pile
      * @return expressedTermDTO used to return to RPC caller
      */
     private ExpressedTermDTO addExpressionToAnnotation(ExperimentFigureStage experiment,
-                                                       ExpressionStructure expressionStructure,
+                                                       PostComposedEntity postComposedEntity,
                                                        boolean expressed) {
-        boolean termBeingUsed = false;
-        for (ExpressionResult result : experiment.getExpressionResults()) {
-            if (result.getSuperTerm().equals(expressionStructure.getSuperterm())) {
-                String subtermID = null;
-                Term term = result.getSubTerm();
-                if (term != null)
-                    subtermID = term.getZdbID();
-                // check if subterms are equal or both null
-                if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
-                    termBeingUsed = true;
-                    break;
-                }
-                if (subtermID != null && expressionStructure.getSubterm() != null &&
-                        subtermID.equals(expressionStructure.getSubterm().getZdbID()) &&
-                        expressed == result.isExpressionFound()) {
-                    termBeingUsed = true;
-                    break;
-                }
-            }
-        }
+        boolean termBeingUsed = experimentHasExpression(experiment, postComposedEntity, expressed);
         // do nothing term already exists.
         if (termBeingUsed)
             return null;
 
         // create a new ExpressionResult record
         // create a new ExpressedTermDTO object that is passed back to the RPC caller
-        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(expressionStructure);
+        ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(postComposedEntity);
         ExpressionResult newExpression = new ExpressionResult();
-        newExpression.setSubTerm(expressionStructure.getSubterm());
-        setMainAttributes(experiment, expressionStructure, expressed, newExpression);
+        newExpression.setSubTerm(postComposedEntity.getSubterm());
+        setMainAttributes(experiment, postComposedEntity, expressed, newExpression);
         expRepository.createExpressionResult(newExpression, experiment.getFigure());
         TermDTO subtermDto = new TermDTO();
-        subtermDto.setZdbID(expressionStructure.getSuperterm().getZdbID());
-        subtermDto.setName(expressionStructure.getSuperterm().getZdbID());
+        subtermDto.setZdbID(postComposedEntity.getSuperterm().getZdbID());
+        subtermDto.setName(postComposedEntity.getSuperterm().getZdbID());
         expressedTerm.setExpressionFound(expressed);
         return expressedTerm;
     }
 
-    private void setMainAttributes(ExperimentFigureStage experiment, ExpressionStructure expressionStructure, boolean expressed, ExpressionResult newExpression) {
+    private boolean experimentHasExpression(ExperimentFigureStage experiment, PostComposedEntity postComposedEntity, boolean expressed) {
+        for (ExpressionResult result : experiment.getExpressionResults()) {
+            if (result.getSuperTerm().equals(postComposedEntity.getSuperterm())) {
+                String subtermID = null;
+                Term term = result.getSubTerm();
+                if (term != null)
+                    subtermID = term.getZdbID();
+                // check if subterms are equal or both null
+                if (subtermID == null && postComposedEntity.getSubterm() == null && expressed == result.isExpressionFound()) {
+                    return true;
+                }
+                if (subtermID != null && postComposedEntity.getSubterm() != null &&
+                        subtermID.equals(postComposedEntity.getSubterm().getZdbID()) &&
+                        expressed == result.isExpressionFound()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void setMainAttributes(ExperimentFigureStage experiment, PostComposedEntity postComposedEntity, boolean expressed, ExpressionResult newExpression) {
         newExpression.setExpressionExperiment(experiment.getExpressionExperiment());
-        newExpression.setSuperTerm(expressionStructure.getSuperterm());
+        newExpression.setSuperTerm(postComposedEntity.getSuperterm());
         newExpression.setExpressionFound(expressed);
         newExpression.setStartStage(experiment.getStart());
         newExpression.setEndStage(experiment.getEnd());
         newExpression.addFigure(experiment.getFigure());
     }
 
-    private void removeExpressionToAnnotation(ExperimentFigureStage experiment, boolean expressed, ExpressionStructure expressionStructure) {
+    private void removeExpressionToAnnotation(ExperimentFigureStage experiment, boolean expressed, PostComposedEntity postComposedEntity) {
         for (ExpressionResult result : experiment.getExpressionResults()) {
             if (result.getEntity() == null || result.getEntity().getSuperterm() == null)
                 LOG.error("No entity or super term found for " + result.getZdbID());
             Term superTerm = result.getEntity().getSuperterm();
-            if (superTerm.equals(expressionStructure.getSuperterm())) {
+            if (superTerm.equals(postComposedEntity.getSuperterm())) {
                 String subtermID = null;
                 Term term = result.getEntity().getSubterm();
                 if (term != null)
                     subtermID = term.getZdbID();
                 // check if subterms are equal or both null
-                if (subtermID == null && expressionStructure.getSubterm() == null && expressed == result.isExpressionFound()) {
+                if (subtermID == null && postComposedEntity.getSubterm() == null && expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
                     LOG.info("Removed Expression_Result:  " + superTerm.getTermName());
                     break;
                 }
-                if (subtermID != null && expressionStructure.getSubterm() != null && expressionStructure.getSubterm().getZdbID() != null &&
-                        subtermID.equals(expressionStructure.getSubterm().getZdbID()) &&
+                if (subtermID != null && postComposedEntity.getSubterm() != null && postComposedEntity.getSubterm().getZdbID() != null &&
+                        subtermID.equals(postComposedEntity.getSubterm().getZdbID()) &&
                         expressed == result.isExpressionFound()) {
                     expRepository.deleteExpressionResultPerFigure(result, experiment.getFigure());
                     Term subterm = result.getSubTerm();

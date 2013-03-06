@@ -1,6 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
@@ -10,10 +11,8 @@ import java.util.Date;
  * This holds a single expression structure, consisting of a superterm (AO), a subterm, a stage in which
  * the superterm is defined and a boolean
  */
-public class ExpressionStructure implements Comparable<ExpressionStructure> {
+public class ExpressionStructure extends PostComposedEntity {
 
-    private GenericTerm superterm;
-    private GenericTerm subterm;
     private String zdbID;
     private Person person;
     private Publication publication;
@@ -51,22 +50,7 @@ public class ExpressionStructure implements Comparable<ExpressionStructure> {
         this.date = date;
     }
 
-    public GenericTerm getSuperterm() {
-        return superterm;
-    }
-
-    public void setSuperterm(GenericTerm superterm) {
-        this.superterm = superterm;
-    }
-
-    public GenericTerm getSubterm() {
-        return subterm;
-    }
-
-    public void setSubterm(GenericTerm subterm) {
-        this.subterm = subterm;
-    }
-
+/*
     public int compareTo(ExpressionStructure o) {
         if (!(o instanceof ExpressionStructure))
             throw new RuntimeException("Comparable class not of type PhenotypeStructure");
@@ -96,7 +80,6 @@ public class ExpressionStructure implements Comparable<ExpressionStructure> {
 
         return true;
     }
-
     @Override
     public int hashCode() {
         int result = superterm != null ? superterm.hashCode() : 0;
@@ -104,4 +87,6 @@ public class ExpressionStructure implements Comparable<ExpressionStructure> {
         result = 31 * result + (publication != null ? publication.hashCode() : 0);
         return result;
     }
+*/
+
 }

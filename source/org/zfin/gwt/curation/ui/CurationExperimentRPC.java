@@ -183,6 +183,8 @@ public interface CurationExperimentRPC extends RemoteService {
      */
     List<ExpressionFigureStageDTO> createFigureAnnotations(List<ExpressionFigureStageDTO> figureAnnotations);
 
+    List<ExpressionFigureStageDTO> copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions);
+
     /**
      * Delete a figure annotation.
      *

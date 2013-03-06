@@ -156,5 +156,7 @@ public interface CurationExperimentRPCAsync {
     void saveSessionVisibility(SessionVariable sessionVariable, AsyncCallback<Void> callback);
 
     void isReCreatePhenotypePileLinkNeeded(String publicationID, AsyncCallback callback);
+
+    void copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 }
 

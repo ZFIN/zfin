@@ -61,7 +61,7 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
             return false;
         if (subTerm != null && entityDTO.getSubTerm() != null)
             return subTerm.equals(entityDTO.getSubTerm());
-        else if(subTerm == null && entityDTO.getSubTerm() == null)
+        else if (subTerm == null && entityDTO.getSubTerm() == null)
             return true;
         else
             return false;
@@ -111,5 +111,17 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
             if (!subTerm.equalsByName(comparisonEntity.getSubTerm()))
                 return false;
         return superTerm.equalsByName(comparisonEntity.getSuperTerm());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(superTerm.getTermName());
+        if (subTerm != null)
+            builder.append(":" + subTerm.getTermName());
+        return builder.toString();
+    }
+
+    public boolean isUnspecified() {
+        return superTerm != null && superTerm.getTermName().equalsIgnoreCase("unspecified");
     }
 }

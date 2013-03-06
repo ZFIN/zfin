@@ -261,7 +261,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             }
         }
         setVisibilityForRelatedEntityPanel(false);
-        tagList.selectEntryByDisplayName(TAG_ABNORMAL);
+        if (tagList != null)
+            tagList.selectEntryByDisplayName(TAG_ABNORMAL);
     }
 
     private void populateSingleTermEntry(ExpressedTermDTO term, EntityPart entityPart) {
@@ -420,11 +421,11 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                         "Failed to find term: " + termName + " for ontology: " + ontology.getDisplayName(), null) {
                     @Override
                     public void onFailure(Throwable throwable) {
-                        if (throwable instanceof TermNotFoundException){
+                        if (throwable instanceof TermNotFoundException) {
                             TermNotFoundException exception = (TermNotFoundException) throwable;
                             errorElement.setError(exception.getMessage());
                             termEntryUnit.getTermTextBox().setValidationStyle(false);
-                        }else
+                        } else
                             super.onFailure(throwable);
                     }
 
@@ -594,13 +595,13 @@ public class PileConstructionZoneModule extends Composite implements Constructio
                 setVisibilityForRelatedEntityPanel(termInfoTable.getCurrentTermInfoDTO().isRelatedTerm());
             }
             // check if the new term name is valid
-            if(termInfo.getOntology() == OntologyDTO.QUALITY){
+            if (termInfo.getOntology() == OntologyDTO.QUALITY) {
                 lookupRPC.getTermByName(termEntry.getSelectedOntology(), termInfo.getTermName(),
                         new ZfinAsyncCallback<TermDTO>(
                                 "Failed to find term: " + termInfo.getTermName() + " for ontology: " + termEntry.getSelectedOntology(), null) {
                             @Override
                             public void onFailure(Throwable throwable) {
-                                 termEntry.getTermTextBox().setValidationStyle(false);
+                                termEntry.getTermTextBox().setValidationStyle(false);
                             }
                         });
             }
