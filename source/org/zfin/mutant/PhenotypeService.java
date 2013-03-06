@@ -269,33 +269,6 @@ public class PhenotypeService {
 
     }
 
-
-    /**
-     * Return the default phenotype if it exists:
-     * check:
-     * 1) entity superterm = unspecified [AO]
-     * 2) entity subterm = null
-     * 3) Quality = quality
-     * 4) related superterm = null
-     * 5) related subterm = null
-     * 6) Tag = abnormal
-     *
-     * @param phenoExperiment PhenotypeExperiment
-     * @return PhenotypeStatement
-     */
-/*
-    public static PhenotypeStatement getDefaultPhenotypeStatement(PhenotypeExperiment phenoExperiment) {
-        PhenotypeStatement defaultStatement = new PhenotypeStatement();
-        defaultStatement.setPhenotypeExperiment(phenoExperiment);
-        defaultStatement.setTag(PhenotypeStatement.Tag.TAG_ABNORMAL.toString());
-        defaultStatement.setQuality(OntologyManager.getInstance().getTermByName(Ontology.QUALITY, "quality"));
-        PostComposedEntity entity = new PostComposedEntity();
-        entity.setSuperterm(OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED));
-        defaultStatement.setEntity(entity);
-        return defaultStatement;
-    }
-*/
-
     /**
      * retrieve all distinct Anatomy terms that are referenced in the entity or related entity for a given
      * phenotype statement.
