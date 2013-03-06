@@ -106,11 +106,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/servlet_context_info.jsp"/>
     </definition>
 
-    <definition name="application-context-info" extends="dev_layout">
-        <put-attribute name="staticTitle" value="Application Context Info"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/application_context_info.jsp"/>
-    </definition>
-
     <definition name="user-request-tracking" extends="dev_layout">
         <put-attribute name="staticTitle" value="User Request Tracking"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/user_request_tracking.jsp"/>

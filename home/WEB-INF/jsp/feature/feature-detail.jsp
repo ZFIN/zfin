@@ -263,14 +263,18 @@
 <zfin2:notesInDiv hasNotes="${formBean.feature}"/>
 
 </table>
+<c:forEach var="featureDblink" items="${formBean.feature.dbLinks}">
+
     <c:choose>
-        <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">
+        <c:when test="${featureDblink.referenceDatabase.foreignDB.zfishbook||featureDblink.referenceDatabase.foreignDB.zmp}">
+    <%--<c:choose>
+        <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
           <div class="summary">
             <table class="summary">
                 <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
                 <tr>
-                    <c:forEach var="featureDblink" items="${formBean.feature.dbLinks}">
-                        <td>
+                    <td>
+
                 <zfin:link entity="${featureDblink}"/>
                 <c:if test="${featureDblink.publicationCount > 0}">
                     <c:choose>
@@ -282,8 +286,9 @@
                         </c:otherwise>
                     </c:choose>
                 </c:if>
-                        </td>
-                    </c:forEach>
+                                </td>
+
+
                 </tr>
             </table>
           </div>
@@ -292,7 +297,7 @@
             <p><strong>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</strong> <span class="no-data-tag">No links to external sites available</span></p>
         </c:otherwise>
     </c:choose>
-
+</c:forEach>
 
 <c:choose>
     <c:when test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">

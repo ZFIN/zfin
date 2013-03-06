@@ -47,6 +47,7 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$abbrev><?/MIVAR>
 <?/MIBLOCK>
 
+       <?MIVAR NAME=$page_name>Publication<?/MIVAR>
 <?MIBLOCK COND="$(NXST,$fdbname)">
    <?MIVAR NAME=$fdbname><?/MIVAR>
 <?/MIBLOCK>
@@ -135,7 +136,7 @@ displays a publication record, or many publication records if > 1 returned.
      <?MIVAR>
        <TITLE>ZFIN: Publication: $(REPLACE,$pubview2_pub_miniref,"<i>et al.</i>","et al."). $title </TITLE>
      <?/MIVAR>
-
+       <?MIVAR NAME=$page_name>Publication<?/MIVAR>
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
      <?MICOMMENT> 
@@ -165,7 +166,7 @@ displays a publication record, or many publication records if > 1 returned.
 </center>
 <p>
 
-<TABLE width=90%>
+<TABLE width=100%>
   <TR>
    <TD>
       <B>DATE:</B> $year  
@@ -176,6 +177,13 @@ displays a publication record, or many publication records if > 1 returned.
       <TD><B>STATUS:</B> $pubview2_pub_status 
       </TD>
    <?/MIVAR>
+<TD width=20></TD>
+<TD width=20% ALIGN=right>
+
+      <!-- Insert a form with one button. Label button Your Input Welcome -->
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+    </TD>
+
  </TR>
 </TABLE>
 
@@ -185,11 +193,8 @@ displays a publication record, or many publication records if > 1 returned.
    <TD>
      <B>REGISTERED AUTHORS:</B>
        <?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
-	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
-        <?MICOMMENT>
-		<A HREF="/action/profile/lab/edit/$2">$1</A>
-        <?/MICOMMENT>
-<A HREF="/action/profile/view/$2">$1</A>
+	<?MISQL SQL="select name, zdb_id from lab where name = 'ZFIN Database Team'">
+          <A HREF="/action/profile/view/$2">$1</A>
 	<?/MISQL>
        <?MIELSE>
 	<?MISQL SQL="select get_person_full_name(a.zdb_id),a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.last_name, a.first_name ;">

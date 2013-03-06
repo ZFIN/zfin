@@ -1,7 +1,6 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
-import org.zfin.mutant.presentation.PhenotypeStatementSubstructure;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -288,7 +287,7 @@ public class PhenotypeService {
     public static PhenotypeStatement getDefaultPhenotypeStatement(PhenotypeExperiment phenoExperiment) {
         PhenotypeStatement defaultStatement = new PhenotypeStatement();
         defaultStatement.setPhenotypeExperiment(phenoExperiment);
-        defaultStatement.setTag(PhenotypeStatement.Tag.ABNORMAL.toString());
+        defaultStatement.setTag(PhenotypeStatement.Tag.TAG_ABNORMAL.toString());
         defaultStatement.setQuality(OntologyManager.getInstance().getTermByName(Ontology.QUALITY, "quality"));
         PostComposedEntity entity = new PostComposedEntity();
         entity.setSuperterm(OntologyManager.getInstance().getTermByName(Ontology.ANATOMY, Term.UNSPECIFIED));

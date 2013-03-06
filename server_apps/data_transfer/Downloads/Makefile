@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
 SUBDIRS = GFF3
 
-GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl runNumbersFBcase8787.sql
+GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl runNumbersFBcase8787.sql patoNumbers.pl
 
 STATICS = build.xml set_download_timestamp.sql 
 
@@ -51,7 +51,7 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Run the download script.  This extracts data from ZFIN and places it in 
 # the public http directory
 
-run : $(TARGETDIR)/DownloadFiles.pl
+run : 
 	$(TARGETDIR)/DownloadFiles.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*
 	rm -f $(HTTP_DATA_TRANSFER_DIR)/swissprot.txt

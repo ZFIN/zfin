@@ -48,4 +48,3 @@ else
     echo "unloaddb.pl completed successfully."
   endif
 endif
-

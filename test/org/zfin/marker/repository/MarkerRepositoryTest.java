@@ -133,7 +133,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testGetLG() {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
-        // than using the exisitng genes which might be merged
+        // than using the existing genes which might be merged
         try {
             MarkerRepository mr = markerRepository;
             Marker marker1 = mr.getMarkerByID("ZDB-EST-000426-1181");

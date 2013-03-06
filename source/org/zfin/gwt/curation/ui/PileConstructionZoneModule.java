@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -42,6 +43,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
     public static final String TERMINFO = STRUCTURE_PILE_CONSTRUCTION_ZONE + "-terminfo";
     public static final String TAG = "tag";
     public static final String RELATED_TERMS_PANEL = "related-terms-panel";
+    public static final String TAG_ABNORMAL = "abnormal";
+    public static final String TAG_NORMAL = "normal";
 
     // GUI elements
     private Map<EntityPart, TermEntry> termEntryUnitsMap = new HashMap<EntityPart, TermEntry>(5);
@@ -128,8 +131,8 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             TermEntry subTerm = getTermEntry(EntityPart.ENTITY_SUBTERM);
             subTerm.addOnOntologyChangeHandler(new OntologyDependencyHandler(subTerm, termEntryUnitsMap));
             tagList = new ZfinListBox(false);
-            tagList.addItem("abnormal");
-            tagList.addItem("normal");
+            tagList.addItem(TAG_ABNORMAL);
+            tagList.addItem(TAG_NORMAL);
             HorizontalPanel tagPanel = new HorizontalPanel();
             HTML tagHtml = new HTML("Tag: ");
             tagHtml.setStyleName(WidgetUtil.BOLD);
@@ -258,6 +261,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             }
         }
         setVisibilityForRelatedEntityPanel(false);
+        tagList.selectEntryByDisplayName(TAG_ABNORMAL);
     }
 
     private void populateSingleTermEntry(ExpressedTermDTO term, EntityPart entityPart) {
@@ -567,6 +571,7 @@ public class PileConstructionZoneModule extends Composite implements Constructio
             termInfoTable.setToDefault();
             errorElement.clearAllErrors();
             setVisibilityForRelatedEntityPanel(false);
+            tagList.selectEntryByDisplayName(TAG_ABNORMAL);
         }
 
     }

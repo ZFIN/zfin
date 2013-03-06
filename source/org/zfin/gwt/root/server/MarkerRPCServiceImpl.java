@@ -133,6 +133,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         HibernateUtil.createTransaction();
         infrastructureRepository.deleteRecordAttribution(markerZdbID, pubZdbID);
+        MarkerAlias mrkrAlias=infrastructureRepository.getMarkerAliasByID(markerZdbID);
+        if (mrkrAlias!=null)  {
+            infrastructureRepository.deleteRecordAttribution(mrkrAlias.getZdbID(), pubZdbID);
+        }
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
         HibernateUtil.flushAndCommitCurrentSession();
         return null;

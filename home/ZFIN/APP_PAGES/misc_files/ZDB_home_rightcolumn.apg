@@ -98,7 +98,7 @@
             <a href="/action/profile/lab/create"><em>lab</em></a>,
             <a href="/action/profile/company/create"><em>company</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,
+          <!--<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><em>image</em></a>,-->
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><em>pub</em></a>,
 	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>,
            <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
@@ -114,7 +114,7 @@
 
       <h3> Development </h3>
         <ul>
-        <li><a href="/action/dev-tools/home"><em>Developer Tools</em></a> &bull; <a href="/gmake-deploy-version.html"><em>Deployed Version</em></a></li>
+        <li><a href="/action/devtool/home"><em>Developer Tools</em></a> &bull; <a href="/gmake-deploy-version.html"><em>Deployed Version</em></a></li>
         </ul>
 
  <?/MIBLOCK> <?MICOMMENT> ** end if (root) ** <?/MICOMMENT>
@@ -147,7 +147,7 @@
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
-      <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a href="http://fishmap.igib.res.in">FishMap</a>
+      <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a href="http://genome.igib.res.in/">FishMap</a>
     </li>
     <li>
       View <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" 
@@ -195,7 +195,10 @@
 
 
 
-   <h3> News </h3>
+   <h3> 
+      News 
+      <a href="feed:https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120"><img src="/images/feed-icon-green-12x12.png"></a>
+   </h3>
    <ul>
        <?MICOMMENT> template:
        

@@ -37,6 +37,9 @@ given ($ARGV[0]) {
     when ("test") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start test";
     }
+    when ("mirror") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start mirror";
+    }
     when ("watson_test") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start watson_test";
     }

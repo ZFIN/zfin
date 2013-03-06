@@ -14,6 +14,7 @@ create trigger expression_experiment_update_trigger update of
                         new_xpatex.xpatex_source_zdb_id),
         execute procedure p_insert_into_record_attribution_tablezdbids (
                         new_xpatex.xpatex_zdb_id,
-                        new_xpatex.xpatex_source_zdb_id)
+                        new_xpatex.xpatex_source_zdb_id),	
+	execute procedure p_check_EFG_WT_expression (new_xpatex.xpatex_genox_zdb_id, new_xpatex.xpatex_gene_zdb_id)
 
      );	

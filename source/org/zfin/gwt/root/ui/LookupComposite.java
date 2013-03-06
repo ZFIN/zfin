@@ -286,6 +286,8 @@ public class LookupComposite extends Composite implements Revertible {
                         suggestBox.setText(text);
                         //Window.alert("Term name: " +text);
                         // handle wildcard cases
+                        // ToDo: This only works for ontology term auto-completes. Not for other entity lookups that
+                        // are used with this logic.
                         if (displayString.contains("*")) {
                             String queryString = "term?name=" + termID + "&ontologyName=" + ontology.getDBName();
                             //Window.alert("Wild card string: " + queryString);

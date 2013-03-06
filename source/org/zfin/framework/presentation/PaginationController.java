@@ -20,6 +20,9 @@ public class PaginationController extends AbstractCommandController {
         ApgPaginationBean bean = (ApgPaginationBean) command;
         // apg call
         if (bean.getFirstPageRecord() > 0)
+            if (bean.getPage() == null)
+                bean.setPage("1");
+
             if (bean.getMaxDisplayRecordsInteger() > 1)
                 bean.setPageInteger(bean.getFirstPageRecord() / bean.getMaxDisplayRecordsInteger() + 1);
             else

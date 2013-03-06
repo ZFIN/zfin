@@ -673,6 +673,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "      genox.genotype = geno AND " +
                 "   res.expressionExperiment = exp AND " +
                 "   figure member of res.figures AND " +
+                "   exp.antibody is null AND " +
                 "   exp.genotypeExperiment = genox AND " +
                 "   genox.experiment = experiment AND " +
                 "   genox.genotype = geno  " +

@@ -28,5 +28,5 @@ chmod u+s starthappytomcat.pl stophappytomcat.pl restarthappytomcat.pl
 chmod u+s starttrunktomcat.pl stoptrunktomcat.pl restarttrunktomcat.pl
 chmod u+s starttesttomcat.pl stoptesttomcat.pl restarttesttomcat.pl
 
-chown informix:fishadmin ../env/bionix.env ../env/helix.env ../env/embryonix.env ../env/frost.env ../env/mirror.env
+chown informix:fishadmin ../env/bionix.env ../env/embryonix.env ../env/frost.env ../env/mirror.env
 chmod u+s enableLogging.pl

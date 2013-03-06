@@ -1,7 +1,5 @@
 package org.zfin.ontology;
 
-import org.obo.test.GOAnnotationFilePlusOntologyTest;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -45,6 +43,7 @@ public enum Ontology implements Serializable {
     BEHAVIOR("behavior_ontology", "Behavior Ontology", false, "NBO:"),
     MPATH("mouse_pathology.ontology", "MPATH", false, "MPATH:"),
     MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false, "MPATH:"),
+    SO("sequence", "Sequence Ontology", "Sequence Ontology", false, "SO:"),
     AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true);
 
     private String ontologyName;
@@ -143,22 +142,20 @@ public enum Ontology implements Serializable {
     }
 
     public static Ontology[] getSerializableOntologies() {
-        Ontology[] ontologies = new Ontology[12];
-        int i = 0;
-        ontologies[i++] = Ontology.STAGE;
-        ontologies[i++] = Ontology.ANATOMY;
-        ontologies[i++] = Ontology.QUALITY;
-        ontologies[i++] = Ontology.QUALITY_PROCESSES;
-        ontologies[i++] = Ontology.QUALITY_QUALITIES;
-        ontologies[i++] = Ontology.GO_CC;
-        ontologies[i++] = Ontology.GO_MF;
-        ontologies[i++] = Ontology.GO_BP;
-        ontologies[i++] = Ontology.BEHAVIOR;
-        ontologies[i++] = Ontology.MPATH;
-        ontologies[i++] = Ontology.MPATH_NEOPLASM;
-        ontologies[i] = Ontology.SPATIAL;
-
-        return ontologies;
+        return new Ontology[]{
+                Ontology.STAGE,
+                Ontology.ANATOMY,
+                Ontology.QUALITY,
+                Ontology.QUALITY_PROCESSES,
+                Ontology.QUALITY_QUALITIES,
+                Ontology.GO_CC,
+                Ontology.GO_MF,
+                Ontology.GO_BP,
+                Ontology.BEHAVIOR,
+                Ontology.MPATH,
+                Ontology.MPATH_NEOPLASM,
+                Ontology.SPATIAL,
+                Ontology.SO};
     }
 
     public static List<Ontology> getOntologies(String name) {
@@ -263,6 +260,7 @@ public enum Ontology implements Serializable {
         doNotIndexOntologyList.add(Ontology.ANATOMY_FULL);
         doNotIndexOntologyList.add(Ontology.QUALITY_QUALITIES);
         doNotIndexOntologyList.add(Ontology.AOGO);
+        doNotIndexOntologyList.add(Ontology.SO);
     }
 
     public boolean shouldNotBeIndexed() {

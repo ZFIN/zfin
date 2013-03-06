@@ -45,6 +45,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -241,6 +242,23 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "         ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult();
+        return Integer.parseInt(result.toString());
+    }
+
+    public int getExpressionFigureCountForGenotype(Genotype genotype) {
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join genotype_experiment " +
+                "           on xpatex_genox_zdb_id = genox_zdb_id " +
+                "          where genox_geno_zdb_id = :genotypeZdbID " +
+                "         and xpatex_atb_zdb_id is null ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
@@ -797,7 +815,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             if (unspecifiedResult != null) {
                 Set<Figure> figures = unspecifiedResult.getFigures();
                 if (figures == null || figures.size() < 2) {
-                    session.delete(unspecifiedResult);
+                    getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                 } else {
                     // has more than one figure associated
                     unspecifiedResult.removeFigure(singleFigure);
@@ -810,7 +828,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 Set<Figure> figures = unspecifiedResult.getFigures();
                 // has no figures associated
                 if (figures == null || figures.isEmpty()) {
-                    session.delete(unspecifiedResult);
+                    getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                     session.save(result);
                     result.getExpressionExperiment().addExpressionResult(result);
                 } else if (unspecifiedResult.getFigures().size() == 1) {
@@ -818,7 +836,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                     // check if it is associated to the figure in question.
                     // if yes, remove it.
                     if (figures.contains(singleFigure)) {
-                        session.delete(unspecifiedResult);
+                        getInfrastructureRepository().deleteActiveDataByZdbID(unspecifiedResult.getZdbID());
                         session.flush();
                     }
                     session.save(result);
@@ -911,9 +929,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             return;
 
         // delete all expression result records.
-        Session session = HibernateUtil.currentSession();
         for (ExpressionResult result : expressionResults) {
-            session.delete(result);
+            // if only a single figure is associated to it just remove the record
+            Set<Figure> figures = result.getFigures();
+            if (figures.size() == 1)
+                getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
+            // if more than one is associated we cannot remove the expression_result (shared among figures)
+            // but need to remove just the association to the figure.
+            for (Figure figure : figures) {
+                if (figure.equals(figureAnnotation.getFigure())) {
+                    // remove figure from result and get out of the loop.
+                    figures.remove(figure);
+                    break;
+                }
+            }
         }
     }
 
@@ -1055,16 +1084,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
         } else if ((figures.size() == 1 && figures.iterator().next().equals(figure))) {
             if (!lastResultOnExpression) {
-                session.delete(result);
+                getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
                 session.flush();
             } else {
+                getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
+                session.flush();
                 if (unspecifiedResult != null) {
-                    session.delete(result);
-                    session.flush();
                     unspecifiedResult.addFigure(figure);
                 } else {
-                    session.delete(result);
-                    session.flush();
                     // add unspecified
                     createUnspecifiedExpressionResult(result, figure);
                 }

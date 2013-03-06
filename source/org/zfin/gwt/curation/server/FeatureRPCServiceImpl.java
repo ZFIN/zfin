@@ -113,6 +113,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureDTO.getZdbID());
         FeatureTypeEnum oldFeatureType = feature.getType();
+        String oldFtrName=feature.getName();
+        String newFtrName=featureDTO.getName();
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
         if (featureDTO.getPublicNote() != null) {
@@ -153,8 +155,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (existingFeature == null){
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
-
         feature.setName(featureDTO.getName());
+
+
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
         if (featureDTO.getKnownInsertionSite()) {
@@ -187,9 +190,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         }
         HibernateUtil.currentSession().update(feature);
-       //currentSession().flush();
+        if (oldFtrName!=newFtrName) {
+
+            FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
+            infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+        }
+            //currentSession().flush();
         //currentSession().refresh(feature);
         HibernateUtil.flushAndCommitCurrentSession();
+
         return getFeature(featureDTO.getZdbID());
     }
 

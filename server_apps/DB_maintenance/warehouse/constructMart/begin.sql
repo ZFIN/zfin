@@ -6,5 +6,5 @@ set isolation to dirty read;
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ('t',current year to second)
- where zflag_name = "regen_fishmart";
+ where zflag_name = "regen_constructmart";
 

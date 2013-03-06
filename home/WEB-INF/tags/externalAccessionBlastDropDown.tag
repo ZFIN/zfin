@@ -3,10 +3,10 @@
 <%@ attribute name="dbLink" type="org.zfin.sequence.DBLink" rtexprvalue="true" required="true" %>
 
 <c:choose>
-    <c:when test="${fn:length(dbLink.blastableDatabases)==1}">
+    <c:when test="${dbLink.blastableDatabases.size()==1}">
         <zfin2:blastAccessionURL dbLink="${dbLink}" blastDB="${dbLink.blastableDatabases[0]}"/>
     </c:when>
-    <c:when test="${fn:length(dbLink.blastableDatabases)>1}">
+    <c:when test="${dbLink.blastableDatabases.size()>1}">
         <c:set var="blastLink" value="blast-popup${zfn:generateRandomDomID()}"/>
         <c:set var="blastLinkPopup" value="blast-links${zfn:generateRandomDomID()}"/>
         <div class="analysis_tools_box">

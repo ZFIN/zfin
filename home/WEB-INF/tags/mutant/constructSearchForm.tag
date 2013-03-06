@@ -249,69 +249,30 @@ jQuery(document).ready(function () {
 
         submitForm(1)
     });
-    jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', 'silver');
+    jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
     jQuery('#max-display-records-top, #max-display-records-bottom').val(jQuery('#max-display-records-hidden').val());
     decorateTermList();
     setTimeout(function () {
-        jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', '#C0C0C0');
-
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
+        jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
         decorateTermList();
-
     }, 10);
-    jQuery('#searchTerm').focus(function () {
-
-        jQuery('#searchTerm').css('color', '#000000').val('');
-    });
     setTimeout(function () {
-        jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', '#C0C0C0');
-
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
+        jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
         decorateTermList();
     }, 50);
 
     setTimeout(function () {
-        jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', 'silver');
-
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
-
-
+        jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
         decorateTermList();
     }, 200);
     setTimeout(function () {
-        jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', 'silver');
-
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
-
-
+        jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
         decorateTermList();
     }, 500);
     setTimeout(function () {
-        jQuery('#searchTerm').val('heart, kidney, otic vesicle').css('color', 'silver');
-
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
-
-
+        jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
         decorateTermList();
     }, 1000);
-
-
-
 
 });
 
@@ -380,12 +341,10 @@ function decorateTermList() {
     } else if (termCount == 1) {
         jQuery('#anatomyTermList').show();
         jQuery('#term-list-remove-all-link').hide();
-        jQuery('#searchTerm').css('color', '#000000').val('');
 
     } else {
         jQuery('#anatomyTermList').show();
         jQuery('#term-list-remove-all-link').show();
-        jQuery('#searchTerm').css('color', '#000000').val('');
     }
 
 }
@@ -405,13 +364,8 @@ function call_reset() {
     jQuery('input[name=allTg]').attr('checked', false);
     clearTable();
     decorateTermList();
-
+    jQuery('#searchTerm').attr('class','');
     jQuery('#max-display-records-hidden').val('20');
-    var inputElement = document.getElementById(LookupProperties.inputName);
-
-    inputElement.style.color = '#C0C0C0';
-    inputElement.value = "heart, kidney, otic vesicle ";
-
 
 }
 

@@ -15,6 +15,7 @@ import org.zfin.util.DateUtil;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
@@ -264,6 +265,9 @@ public class OntologyManager {
         serializeOntology(Ontology.QUALITY_QUALITIES);
         initRootOntologyFast(Ontology.MPATH_NEOPLASM, MPATH_NEOPLASM_ROOT);
         serializeOntology(Ontology.MPATH_NEOPLASM);
+        initOntologyMapFast(Ontology.SO);
+        serializeOntology(Ontology.SO);
+
 
         // GO ontologies
         initOntologyMapFast(Ontology.GO_CC);
@@ -372,12 +376,25 @@ public class OntologyManager {
 
 
     /**
-     * @param ontology
+     * @param ontology Ontology
      */
     public void initOntologyMapFastNoRelations(Ontology ontology) {
         resetCounter();
         Collection<TermDTO> termDTOs = getOntologyRepository().getTermDTOsFromOntologyNoRelation(ontology);
+        if (ontology.equals(Ontology.STAGE))
+            addFullStageInfo(termDTOs);
         createMapForTerms(termDTOs, ontology);
+    }
+
+    private void addFullStageInfo(Collection<TermDTO> termDTOs) {
+        if (termDTOs == null)
+            return;
+        Collection<TermDTO> newCollection = new ArrayList<TermDTO>(termDTOs.size());
+        for (TermDTO dto : termDTOs) {
+            DevelopmentStage stage = getAnatomyRepository().getStageByOboID(dto.getOboID());
+            dto.setStartStage(DTOConversionService.convertToStageDTO(stage));
+            dto.setEndStage(DTOConversionService.convertToStageDTO(stage));
+        }
     }
 
     private PatriciaTrieMultiMap<TermDTO> createMapForTerms(Collection<TermDTO> termDTOs, Ontology ontology) {

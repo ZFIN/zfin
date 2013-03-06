@@ -16,9 +16,9 @@ use DBI;
 # No parameter
 #
 
-sub sendReport1 {
+sub sendReport1($) {
 		
-  my $SUBJECT="Auto: publications that have been updated";
+  my $SUBJECT="Auto from " . $_[0] . " : publications that have been updated";
   my $MAILTO="<!--|COUNT_PATO_OUT|-->";
   my $TXTFILE="./report.txt";
  
@@ -41,9 +41,9 @@ sub sendReport1 {
   close(SENDMAIL);
 }
 
-sub sendReport2 {
+sub sendReport2($) {
 
-  my $SUBJECT="Auto: publications not updated";
+  my $SUBJECT="Auto from " . $_[0] . " : publications not updated";
   my $MAILTO="<!--|COUNT_PATO_OUT|-->";
   my $TXTFILE="./notupdated.txt";
  
@@ -65,9 +65,9 @@ sub sendReport2 {
   close(SENDMAIL);
 }
 
-sub sendReport3 {
+sub sendReport3($) {
 
-  my $SUBJECT="Auto: publications with bad DOI that have been updated";
+  my $SUBJECT="Auto from " . $_[0] . " : publications with bad DOI that have been updated";
   my $MAILTO="<!--|COUNT_PATO_OUT|-->";
   my $TXTFILE="./doi.txt";
   # Create a new multipart message:
@@ -102,6 +102,15 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 print "processing the publication checking and would add missing vol and page numbers ... \n";
+
+my $dir = "<!--|ROOT_PATH|-->";
+
+my @dirPieces = split(/www_homes/,$dir);
+
+my $databasename = $dirPieces[1];
+$databasename =~ s/\///;
+
+print "$databasename\n\n";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
@@ -242,19 +251,21 @@ foreach $key (sort keys %pmids) {
         undef (@fields);  
         @fields = split(/</, $rightPart);
         $xmlTitle = $fields[0];
+        undef @xmlTitleWords;
         @xmlTitleWords = split(/\s+/, $xmlTitle);
+        
         $titleStoredAtZfin = $titles{$key};
+        undef @wordsInTitleStoredAtZfin;
+        @wordsInTitleStoredAtZfin = split(/\s+/, $titleStoredAtZfin);
         
         $ctMatch = 0;
-        foreach $w (@xmlTitleWords) {
+        foreach $w (@wordsInTitleStoredAtZfin) {
           $w =~ s/^\W+//;
           $w =~ s/\W+$//;          
           $w = lc($w);
-          $ctMatch++ if index($titleStoredAtZfin, $w) > 0;
+          $ctMatch++ if index($xmlTitle, $w) > 0;
         }
- 
-        @wordsInTitleStoredAtZfin = split(/\s+/, $titleStoredAtZfin);
-        $titlePercentageSimilar = $ctMatch / scalar(@wordsInTitleStoredAtZfin) * 100;
+        $titlePercentageSimilar = $ctMatch / scalar(@xmlTitleWords) * 100;
     } 
   }
   
@@ -284,7 +295,7 @@ foreach $key (sort keys %pmids) {
   }  else {  
         $notupdated++;
         print NOTUPDATED "\n\nThe following publication(s) missing volume and/or page numbers are not processed because the similarities between the paper titles are below 40%. Could be due to wrong pubmed ID?\n\n" if $notupdated == 1;
-        print NOTUPDATED "$titlePercentageSimilar\t$key\t$pmids{$key}\nTitle stored in ZFIN: $titleStoredAtZfin\nTitle stored in pubmed: $xmlTitle\n\n";
+        print NOTUPDATED "$key\npubmid: $pmids{$key}\nTitle stored in ZFIN: $titleStoredAtZfin\nTitle stored in pubmed: $xmlTitle\n\n";
   }  
 }
 
@@ -293,14 +304,9 @@ close (NOTUPDATED);
 
 print "$updated pubs fixed with vol and/or page numbers\n\n\n";
 
-if ($updated > 0) {
-  sendReport1();
-}
+sendReport1("$databasename") if $updated > 0;
 
-
-if ($ctNoPubmedId > 0 || $notupdated > 0) {
-  sendReport2();
-}
+sendReport2("$databasename") if $ctNoPubmedId > 0 || $notupdated > 0;
 
 ############################################################################
 # This part deals with bad pub_doi field
@@ -352,8 +358,7 @@ close (DOI);
 
 print "$ctTotalBadDOIs bad dois found and fixed\n";
 
-if ($ctTotalBadDOIs > 0) {
-  sendReport3();
-}
+sendReport3("$databasename") if $ctTotalBadDOIs > 0;
+
   
 exit;

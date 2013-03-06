@@ -237,128 +237,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         TreeSet<String> lgList = new TreeSet<String>();
 
-        // a) add self panel mapping
-        for (MappedMarker mm : marker.getDirectPanelMappings()) {
-            if (mm != null) {
-                lgList.add(mm.getLg());
-            }
-        }
-
-        // b) add related(second) marker panel mapping
-        Query query = session.createQuery(
-                "select mm.lg " +
-                        "from MappedMarker mm, AbstractMarkerRelationshipInterface mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where fm.zdbID = :zdbId " +
-                        "   and sm.zdbID = mm.marker.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship, :thirdRelationship)");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-        query.setParameter("thirdRelationship", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        Query query = session.createSQLQuery("select chms_chromosome from chromosome_search where chms_mrkr_zdb_id = :mrkrZdbId order by 1");
+        query.setParameter("mrkrZdbId", marker.getZdbID());
 
         lgList.addAll(query.list());
-
-        // c) add related(first) marker panel mapping
-        query = session.createQuery(
-                "select mm.lg " +
-                        "from MappedMarker mm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where sm.zdbID = :zdbId " +
-                        "   and fm.zdbID = mm.marker.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship) ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // d) add allele panel mapping
-        query = session.createQuery(
-                "select mm.lg" +
-                        "  from MappedMarker mm, FeatureMarkerRelationship fmr " +
-                        " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.feature.zdbID = mm.marker.zdbID " +
-                        "   and fmr.type = :relationship ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        lgList.addAll(query.list());
-
-        // e) add self linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as m " +
-                        " where m.zdbID = :zdbId ");
-        query.setParameter("zdbId", marker.getZdbID());
-        lgList.addAll(query.list());
-
-        // f) add related(second) marker linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as lm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where fm.zdbID = :zdbId " +
-                        "   and sm.zdbID = lm.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship, :thirdRelationship)");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-        query.setParameter("thirdRelationship", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // g) add related(first) marker linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as lm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where sm.zdbID = :zdbId " +
-                        "   and fm.zdbID = lm.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship) ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // h) add allele linkage mapping
-        query = session.createQuery(
-                "select l.lg" +
-                        "  from Linkage l join l.linkageMemberFeatures as lf, FeatureMarkerRelationship fmr " +
-                        " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.feature.zdbID = lf.zdbID " +
-                        "   and fmr.type in (:firstRelationship, :secondRelationship, :thirdRelationship) ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        query.setParameter("secondRelationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT);
-        query.setParameter("thirdRelationship", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING);
-        lgList.addAll(query.list());
-
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-            query = session.createQuery(
-                    "select l.lg " +
-                            "from MarkerRelationship gt , MarkerRelationship ct, Linkage l join l.linkageMemberMarkers lm " +
-                            " where gt.type = :firstRelationship " +
-                            " and ct.type = :secondRelationship" +
-                            " and gt.secondMarker.zdbID = ct.secondMarker.zdbID  " +
-                            " and ct.firstMarker.zdbID = lm.zdbID  " +
-                            " and gt.firstMarker.zdbID = :zdbID  " +
-                            " ");
-
-            query.setParameter("zdbID", marker.getZdbID());
-            query.setParameter("firstRelationship", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
-            query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
-
-            lgList.addAll(query.list());
-        }
 
         return lgList;
+
     }
 
 

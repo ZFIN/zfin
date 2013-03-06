@@ -14,6 +14,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.uniquery.SiteSearchIndexService;
 import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.search.RelatedTermsService;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,6 +50,7 @@ public class QuicksearchController {
     public String getIndexSummary(Model model,
                                   @ModelAttribute("formBean") SearchBean searchBean) throws Exception {
 
+        searchBean.setQuery(ZfinStringUtils.escapeHighUnicode(searchBean.getQuery()));
         String query = searchBean.getQuery();
         SiteSearchHelper siteSearchHelper = new SiteSearchHelper(searchBean);
         siteSearchHelper.setRelatedTermsService(relatedTermsService);

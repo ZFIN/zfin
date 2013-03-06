@@ -88,7 +88,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     public void loadOntologyMetatdataForAll() throws Exception {
         List<OntologyMetadata> metadata = ontologyRepository.getAllOntologyMetadata();
         assertNotNull(metadata);
-        assertEquals("ontology name", "sequence ontology", metadata.get(0).getName());
+        assertEquals("ontology name", "sequence", metadata.get(0).getName());
         assertEquals("ontology name", "quality", metadata.get(1).getName());
         assertEquals("ontology name", "spatial", metadata.get(2).getName());
         assertEquals("ontology name", "zebrafish_anatomical_ontology", metadata.get(3).getName());

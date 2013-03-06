@@ -366,33 +366,46 @@ var ENTER_KEY = 13;
         <input type=hidden name=marker_type value="$marker_type">
 	<input type=hidden name=marker_type_display value="$marker_type_display">
 
-        <p><B>$marker_type_display name</b> (required):
-        <input type=text onkeypress="return noenter(event)" name=mname size=80>
+        <div>
+           <label for="marker type" class="namesearchLabel">$marker_type_display name</label> (required):
+           <input type=text onkeypress="return noenter(event)" name=mname size=80>
+        </div>
+
+        <p/>
 
         <?MIBLOCK COND=$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,GENEP))>
-          <p><b>Abbreviation</b> (required):
-          <input type=text onkeypress="return noenter(event)" name=abbrev size=15>
+          <div>
+            <label for="marker abbreviation" class="namesearchLabel">Abbreviation</label> (required):
+            <input type=text onkeypress="return noenter(event)" name=abbrev size=15>
+          </div>
         <?/MIBLOCK>
 
+        <p/>
+
         <?MIBLOCK COND="$(OR,$(EC,$marker_type_display,Morpholino),$(EC,$marker_type_display,Engineered Foreign Gene))">
-          <?MIVAR><p><b>$marker_type_display</b> alias:<?/MIVAR>
-          <input type=text onkeypress="return noenter(event)" name="alias" size=30>
+          <?MIVAR><div>
+                    <label for="marker alias" class="namesearchLabel">$marker_type_display alias:</label>
+                    <input type=text onkeypress="return noenter(event)" name="alias" size=30>
+          </div><?/MIVAR>
         <?/MIBLOCK>
 
         
-        <p>
-        <b>Note:</b><br>
-        <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
+        <div>
+          <label for="marker alias" class="namesearchLabel">Note:</label><br>
+          <textarea rows=5 cols=50 name=comments></textarea>
+        </div>
 
+        <p/>
+
+        <div>
         <?MIBLOCK COND="$(>,$(POSITION,$marker_type,GENE),0)">
-        <p><b>Is this a reservation?</b>:
+             <label for="reservation" class="namesearchLabel">Is this a reservation?:</label>
         Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
         <br>Reservation Comments: <input type=text onkeypress="return noenter(event)" name=rsrvComment size=50>
         <?MIELSE>
           <input type=hidden name=reserve value="no">
 	<?/MIBLOCK>
-        <p>
-        <p>
+        </div>
 
       <?MICOMMENT>
       Hide sequence entry if marker in marker_type in genedom.
@@ -437,7 +450,7 @@ var ENTER_KEY = 13;
           <tr>
           <?MIBLOCK COND="$(NXST,$hide_sequence)">
             <td valign=top>
-              <b>Sequence:</b>           
+              <label for="sequence" class="namesearchLabel">Sequence:</label>           
               <input type=button value="Reverse" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){reverseSequence(document.newdata.newmrkrReportedSequence.value, 'reversed')};"> 
               <input type=button value="Complement" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){complementSequence(document.newdata.newmrkrReportedSequence.value, 'complemented')};"> 
               <input type=button value="mRNA-->MO" onClick="reverseComplementSequence();"> 
@@ -445,7 +458,7 @@ var ENTER_KEY = 13;
             <td width=20></td><!-- spacer column -->
             <?/MIBLOCK>
             <td>
-              <b>Curator Note:</b>
+              <label for="curator note" class="namesearchLabel">Curator Note:</label>
             </td>
           </tr>
           <tr>
@@ -468,7 +481,7 @@ var ENTER_KEY = 13;
           </tr>
         </table>
         <br>
-        <b>publication:</b> <input type=text onkeypress="return noenter(event)" name=newmrkrSource $(IF,$(XST,$newmrkrSource),value=$newmrkrSource)>
+        <label for="publication" class="namesearchLabel">publication:</label> <input type=text onkeypress="return noenter(event)" name=newmrkrSource $(IF,$(XST,$newmrkrSource),value=$newmrkrSource)>
 <p>        
        <?MIVAR>
          <input type=submit name=s_new value="Submit new $marker_type_display">

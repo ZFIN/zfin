@@ -51,9 +51,9 @@ if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
 
     cd $TO_ALMOST_DIRECTORY
 
-    /local/bin/svn commit -m "updated the curated databases." published*
-    /local/bin/svn commit -m "updated the curated databases." unreleased*
-    /local/bin/svn commit -m "updated the curated databases." Curated*
+    /private/bin/svn commit -m "updated the curated databases." published*
+    /private/bin/svn commit -m "updated the curated databases." unreleased*
+    /private/bin/svn commit -m "updated the curated databases." Curated*
 
 fi
 

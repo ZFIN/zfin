@@ -25,7 +25,7 @@ public class TermIdList extends AbstractEntityIdList {
     public List<String> convertIdsIntoUrls(List<String> allTermIds) {
         List<String> urlList = new ArrayList<String>(allTermIds.size());
         for (String id : allTermIds) {
-            String individualUrl = getIndividualUrl(id, "TERM");
+            String individualUrl = getIndividualViewUrl(id, "TERM");
             if (individualUrl != null)
                 urlList.add(individualUrl);
         }

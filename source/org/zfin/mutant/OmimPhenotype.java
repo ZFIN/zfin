@@ -46,7 +46,19 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
 
     @Override
     public int compareTo(OmimPhenotype OmimPhenotype) {
-            return getName().compareToIgnoreCase(OmimPhenotype.getName());
+        String bracket = "[";
+        String brace = "{";
+        String questionMark = "?";
+
+        String anotherName = OmimPhenotype.getName();
+
+        if ( (getName().startsWith(bracket) || getName().startsWith(brace) || getName().startsWith(questionMark) ) && !(anotherName.startsWith(bracket) || anotherName.startsWith(brace) || anotherName.startsWith(questionMark) ) ) {
+            return 1;
+        } else if ( !(getName().startsWith(bracket) || getName().startsWith(brace) || getName().startsWith(questionMark) ) && (anotherName.startsWith(bracket) || anotherName.startsWith(brace) || anotherName.startsWith(questionMark) ) ) {
+            return -1;
+        } else {
+            return getName().compareToIgnoreCase(anotherName);
+        }
     }
 
 }

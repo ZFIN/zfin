@@ -11,6 +11,7 @@ import org.zfin.publication.Publication;
 public class PublicationPresentation extends EntityPresentation {
 
     private static final String uri = "?MIval=aa-pubview2.apg&OID=";
+    private static final String person_uri = "profile/view/";
 
     /**
      * Generates a Publication link using the name.
@@ -25,9 +26,17 @@ public class PublicationPresentation extends EntityPresentation {
     public static String getLink(Publication publication, String linkContent) {
         return getLink(publication.getZdbID(), linkContent);
     }
-        
+    /**
+     * Per case 8749, an EST could be attributed to a person. So adding this clause to redirect to person page and not pubview
+     * in case that happens. Apparently there are more than 6k such cases.
+     */
     public static String getLink(String publicationZdbID, String linkContent) {
-        return getWebdriverLink(uri, publicationZdbID, linkContent);
+        if (publicationZdbID.contains("PERS")){
+          return getTomcatLink(person_uri,publicationZdbID,"1");
+        }
+        else{
+            return getWebdriverLink(uri, publicationZdbID, linkContent);
+        }
     }
 
     public static String getWikiLink(Publication publication) {

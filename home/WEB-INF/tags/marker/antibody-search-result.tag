@@ -43,7 +43,6 @@
         </c:forEach>
     </table>
 
-    <input name="page" type="hidden" value="1" id="page"/>
     <zfin2:pagination paginationBean="${formBean}"/>
 </c:if>
 

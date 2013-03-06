@@ -180,15 +180,19 @@ public abstract class ArchiveService {
     public String getMatchingIndexDirectory(Date mostRecentEventDate) {
         checkCacheStatus();
         List<Date> allUnloadDates = getAllArchiveDates();
-        if (CollectionUtils.isEmpty(archiveDirectories))
+        if (CollectionUtils.isEmpty(archiveDirectories)){
             LOG.error("No archive files found");
+            return null;
+        }
 
         for (Date date : allUnloadDates) {
             if (mostRecentEventDate.after(date)) {
                 return getDateString(date);
             }
         }
-        throw new DownloadFilesException("No archive directory found for " + mostRecentEventDate.toString() + " or earlier");
+        String message = "No archive directory found for " + mostRecentEventDate.toString() + " or earlier";
+        LOG.error(message);
+        return null;
     }
 
     /**

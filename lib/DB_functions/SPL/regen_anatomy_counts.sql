@@ -1,4 +1,4 @@
-create dba function regen_anatomy_counts()
+create function regen_anatomy_counts()
   returning integer
 
   -- populates anatomy fast search tables:

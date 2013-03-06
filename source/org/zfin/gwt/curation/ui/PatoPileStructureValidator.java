@@ -42,7 +42,6 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
             errorMessages.add("Not a valid combination of post-composed entity term and quality.");
             return false;
         }
-
         // Check for valid post-compositions
         if (!PostComposedOntologyPair.isValidCombination(phenotypeTerm.getEntity())) {
             errorMessages.add("Not a valid combination of post-composed terms for the entity portion.");
@@ -182,6 +181,12 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
 
     // valid entity-related entity combinations
     public enum EntityRelatedEntityOntologyPair {
+        AO_MPATH_AO_x(ANATOMY, MPATH_NEOPLASM, ANATOMY, null),
+        AO_MPATH_AO_AO(ANATOMY, MPATH_NEOPLASM, ANATOMY, ANATOMY),
+        AO_MPATH_AO_SP(ANATOMY, MPATH_NEOPLASM, ANATOMY, SPATIAL),
+        AO_MPATH_AO_MPATH(ANATOMY, MPATH_NEOPLASM, ANATOMY, MPATH_NEOPLASM),
+        AO_MPATH_AO_CC(ANATOMY, MPATH_NEOPLASM, ANATOMY, GO_CC),
+
         AO_x_AO_x(ANATOMY, null, ANATOMY, null),
         AO_x_AO_AO(ANATOMY, null, ANATOMY, ANATOMY),
         AO_x_AO_CC(ANATOMY, null, ANATOMY, GO_CC),
@@ -269,8 +274,9 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
                     continue;
                 if (!isEqualsNullSafe(pair.getRelatedEntitySuper(), relEntitySuperO))
                     continue;
-                if (!isEqualsNullSafe(pair.getRelatedEntitySub(), relEntitySubO))
+                if (!isEqualsNullSafe(pair.getRelatedEntitySub(), relEntitySubO)) {
                     continue;
+                }
                 return true;
             }
             return false;

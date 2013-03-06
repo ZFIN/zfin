@@ -76,7 +76,7 @@
 <!--|VALIDATION_EMAIL_OTHER|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	mochla\@zfin.org holly\@zfin.org knight\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	sramacha\@uoneuro.uoregon.edu informix\@cs.uoregon.edu
-<!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@cs.uoregon.edu kevin\@zfin.org
+<!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@zfin.org kevin\@zfin.org
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu kschaper\@cs.uoregon.edu cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

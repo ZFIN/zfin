@@ -46,7 +46,7 @@
 <div class="summary">
     <c:choose>
         <c:when test="${!empty relatedTranscriptDisplay.transcripts}">
-            <table class="summary largestripes relatedtranscripts">
+            <table class="summary rowstripes">
 
                 <c:set var="lastType" value=""/>
                 <c:set var="groupIndex" value="0"/>
@@ -80,7 +80,7 @@
 
                         </c:if>
 
-                        <tr>
+                        <tr class=${loop.index%2==0 ? "even" : "odd"}>
                             <td width="18%"> <%-- only show if different from the last row--%>
                                 <zfin:groupByDisplay loopName="loop" groupBeanCollection="${relatedTranscriptDisplay.nonWithdrawnList}" groupByBean="marker.transcriptType.display">
                              <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">
@@ -131,7 +131,7 @@
                                         <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"/>
                                     </c:if>
                                 </td>
-                              </c:when>   
+                              </c:when>
                               <c:otherwise>
                                   <td width="20%"></td>
                               </c:otherwise>
@@ -142,7 +142,7 @@
                 </c:forEach>
 
        <c:if test="${relatedTranscriptDisplay.withdrawnTranscripts != null && fn:length(relatedTranscriptDisplay.withdrawnTranscripts) > 0}">
-                <tr>
+                <tr class=${loop.index%2==0 ? "even" : "odd"}>
                     <td width="18%"><strong><a id="withdrawnTranscriptsLink" href="javascript:;" onclick="showWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/plus-13.png" style="border:none;" title="show withdrawn transcripts"></a><a id="hideWithdrawnTranscriptsLink" style="display: none;" href="javascript:;" onclick="hideWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/minus-13.png" style="border:none;" title="hide withdrawn transcripts"></a>&nbsp;Withdrawn Transcripts<img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20"></strong></td>
                     <td width="22%"></td>
                     <td width="15%"></td>
@@ -152,7 +152,7 @@
 
                 <c:forEach var="withdrawnTranscript" items="${relatedTranscriptDisplay.withdrawnTranscripts}" varStatus="withdrawnloop">
 
-                        <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;">
+                        <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;" class=${withdrawnloop.index%2==0 ? "even" : "odd"}>
                             <td width="18%">
                              <zfin:groupByDisplay loopName="withdrawnloop" groupBeanCollection="${relatedTranscriptDisplay.withdrawnList}" groupByBean="marker.transcriptType.display">
 			       <span title="${withdrawnTranscript.marker.transcriptType.definition}">${withdrawnTranscript.marker.transcriptType.display}</span>

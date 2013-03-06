@@ -190,6 +190,7 @@
             <td class="submitbar" bgcolor="#cccccc">
                 <input value="Search" onclick="submitForm(1)" type="button">
                 <input value="Reset" type="button" onclick="call_reset()">
+                <input type="hidden" name="page" id="page"/>
             </td>
         </tr>
     </table>

@@ -60,7 +60,7 @@ FISH_STATS   = get_image_stats.sql \
 	       populate_feature_tracking.sql \
 	       p_update_BurgessLinn_genotype_names.sql
 LOAD_STATS   = p_zgc_load.sql 
-XPAT_STATS   = populate_direct_submission_date.sql
+XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \

@@ -62,7 +62,18 @@
         <font size=3><b>Orthology List ( $num items )</b></font>
       <?/MIVAR>
     </td>
-  </tr>
+<TD align="right">
+    <?MIVAR>
+      <FORM method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" target="comments">
+        <input type=hidden name="subject" value="Orthology List">
+        <input type=hidden name="marker_id" value="">
+        <input type=hidden name="MIval" value="aa-your_input_welcome.apg">
+        <input type=hidden name="page_id" value="$pubId">
+        <input type=submit value="Your Input Welcome">
+      </FORM>
+    <?/MIVAR>
+    </TD>
+</tr>
 </table>
 
 <?MIVAR NAME=$OIDLIST><?/MIVAR>

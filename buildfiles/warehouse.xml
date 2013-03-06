@@ -98,6 +98,7 @@
 -->
     </target>
 
+    <target name="run-mart-tests" depends="run-fishmart-unittests,run-constructmart-unittests,run-chromosomemart-unittests"/>
 
     <target name="run-fishmart-unittests">
         <echo message="Run unit tests for fishmart"/>
@@ -108,6 +109,12 @@
         <echo message="Run unit tests for constructmart"/>
 	<run-sql-query-tests sql-query-file="constructmart-integrity-tests.sql" directory="${warehouseDir}/constructMart"/>
     </target>
+
+   <target name="run-chromosomemart-unittests">
+        <echo message="Run unit tests for chromosomemart"/>
+	<run-sql-query-tests sql-query-file="chromosome-integrity-tests.sql" directory="${warehouseDir}/chromosomeMart"/>
+    </target>
+
 
     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>

@@ -35,6 +35,8 @@ public interface ExpressionRepository {
 
     int getExpressionFigureCountForGene(Marker marker);
 
+    int getExpressionFigureCountForGenotype(Genotype genotype);
+
     FigureLink getExpressionSingleFigure(Marker marker);
 
     int getExpressionFigureCountForClone(Clone clone);

@@ -97,7 +97,12 @@ public class SiteSearchIndexService extends ArchiveService {
 
     @Override
     public String getFullPathMatchingIndexDirectory() {
-        return getFullPath(getMatchingIndexDirectory());
+        String matchingIndexDirectory = getMatchingIndexDirectory();
+        if (matchingIndexDirectory == null) {
+            LOG.error("Could not find matching index directories: ");
+            return null;
+        }
+        return getFullPath(matchingIndexDirectory);
     }
 
     public String getLatestUnloadDate() {

@@ -23,18 +23,28 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
   else
     if exists (select 'x'
 		from marker_Type_group_member
-		where mtgrpmem_mrkr_type_group ='CONSTRUCT'
+		where mtgrpmem_mrkr_type_group in ('CONSTRUCT')
 		and mtgrpmem_mrkr_Type = vMrkrType)
 	 then 
 		let vOK = 't' ;
-    else if
+    elif
 	(vMrkrAbbrev != lower(vMrkrAbbrev)  AND
-		     vMrkrAbbrev[1,10] <> 'WITHDRAWN:' )
+		     vMrkrAbbrev[1,10] <> 'WITHDRAWN:'  AND
+		     vMrkrType not in ('EFG','REGION','ATB'))
      then
 
       raise exception -746, 0,
 	'FAIL!! abbreviation must be lower case for marker type ' || vMrkrType ;
-     end if ;
+    elif
+	(vMrkrAbbrev != upper(vMrkrAbbrev)  AND
+	 vMrkrName != upper(vMrkrName) AND
+		     vMrkrType = 'REGION')
+     then
+      
+      raise exception -746, 0,
+	'FAIL!! name and symbol must be upper case for marker type ' || vMrkrType ;
+    else 
+		let vOK = 't' ; 
     end if;
   end if;
 

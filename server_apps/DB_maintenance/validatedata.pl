@@ -230,7 +230,7 @@ sub sendMail(@) {
      open MAIL, "|/usr/lib/sendmail -t";
 
      print MAIL "To: $sendToAddress\n";
-     print MAIL "Subject: validatedata: $subject\n";
+     print MAIL "Subject: validatedata on <!--|DB_NAME|-->: $subject\n";
 
      print MAIL "$msg\n";
 
@@ -534,6 +534,34 @@ sub featureAssociatedWithGenotype($$$) {
 
 }
 
+sub tgFeatureMissingConstruct($) {
+  my $routineName = "tgFeatureMissingConstruct";
+	
+  my $sql = "select feature_zdb_id, feature_name
+ from feature
+ where exists (Select 'x' from genotype_feature
+                where genofeat_feature_zdb_id = feature_zdb_id)
+and not exists (Select 'x' from feature_marker_relationship
+ where fmrel_ftr_zdb_id = feature_zdb_id
+and fmrel_type like 'contains%')
+and feature_Type = 'TRANSGENIC_INSERTION' ";
+
+  my @colDesc = ("Feature zdb id         ",
+		 "Feature name       ");
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $curatorFirstName = $_[2];
+    my $subject = "Tg features in genotypes without construct associations";
+    my $errMsg = "There are $nRecords tg feature record(s) without construct relationships";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, "void", $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
 
 
 #========================  Features  ================================
@@ -682,9 +710,54 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
   my $routineName = "morpholinoAbbrevContainsGeneAbbrev";
 	
   my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
-               from marker a, marker b, marker_relationship
-               where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-               and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+               from marker a, marker b, marker_relationship c
+               where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
+               and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
+               and b.mrkr_abbrev not like 'mir%'
+               and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
+               and not exists (select 'x' from marker_relationship d
+                                 where d.mrel_mrkr_1_zdb_id = c.mrel_mrkr_1_zdb_id
+                                 and d.mrel_mrkr_2_zdb_id != c.mrel_mrkr_2_zdb_id)
+                and b.mrkr_abbrev !=
+               (substring(a.mrkr_abbrev 
+                            from
+                             (length(a.mrkr_abbrev)-length(b.mrkr_abbrev)+1)
+                            for
+                             (length(b.mrkr_abbrev))
+                          )
+                )
+              order by b.mrkr_abbrev";
+
+  my @colDesc = ("Morpholino abbrev         ",
+		 "Gene abbrev       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Morpholino abbrev not like gene_abbrev";
+    my $errMsg = "There are $nRecords morpholinos without corresponding gene abbrevs. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
+#---------------------------------------------------------------
+# morpholinoAbbrevContainsGeneAbbrev
+#
+# Parameter
+# $ Email Address for recipients
+
+sub morpholinoAbbrevContainsGeneAbbrevBasic($) {
+  my $routineName = "morpholinoAbbrevContainsGeneAbbrevBasic";
+	
+  my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
+               from marker a, marker b, marker_relationship c
+               where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
+               and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
                and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
                 and b.mrkr_abbrev !=
                (substring(a.mrkr_abbrev 
@@ -712,6 +785,10 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
   &recordResult($routineName, $nRecords);
 
 }
+
+
+#----
+
 
 #---------------------------------------------------------------
 # constructNameNotSubstringOfFeatureName
@@ -2415,50 +2492,7 @@ sub refSeqAccessionInWrongFormat ($) {
     &recordResult($routineName, $nRecords);
 } 
 
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
-sub vegaAccessionInWrongFormat ($) {
-    my $routineName = "vegaAccessionInWrongFormat";
-    my $sql = '
-               select dblink_linked_recid, "Vega_Trans", dblink_acc_num
-                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
-                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdb_db_name in("Vega_Trans","PREVEGA","VEGAPROT")
-                  and fdbdt_super_type = "sequence"
-                  and fdbcont_fdbdt_id = fdbdt_pk_id
-                  and fdbcont_fdb_db_id = fdb_db_pk_id
-                  and dblink_acc_num[1,6] <> "OTTDAR"
-               UNION 
-               select dblink_linked_recid, fdb_db_name, dblink_acc_num
-                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
-                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdb_db_name not in ("Vega_Trans","PREVEGA","VEGAPROT")
-                  and fdbdt_super_type = "sequence"
-                  and fdbcont_fdbdt_id = fdbdt_pk_id
-                  and fdbcont_fdb_db_id = fdb_db_pk_id
-                  and dblink_acc_num[1,6] = "OTTDAR"
-                   ';
 
-    my @colDesc =("Data zdb id",
-		  "Db name    ",
-                  "Acc number ");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "Vega Transcript accession number in wrong format";
-	my $errMsg = "In db_link, $nRecords Vega accession numbers are in wrong format";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
 #----------------------------------------------
 # Parameter
 # $      Email Address for recipients
@@ -2896,7 +2930,8 @@ sub foreigndbNotInFdbcontains ($) {
   my $sql = " select fdb_db_name
                 from foreign_db
                where fdb_db_pk_id not in (
-                        select fdbcont_fdb_db_id from foreign_db_contains) ";
+                        select fdbcont_fdb_db_id from foreign_db_contains)
+               and fdb_db_name not in ('HAMAP','UniProtKB-SubCell','SP_SL','PANTHER')";
   my @colDesc = ("Db Name    ");
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
@@ -3381,6 +3416,7 @@ Command line parameters:
   -d       Excute the checks supposed to run daily.  
   -w       Excute the checks supposed to run weekly.
   -m       Excute the checks supposed to run monthly.
+  -y       Execute the checks supposed to run yearly.
 
 ENDDOC
 
@@ -3392,6 +3428,7 @@ GetOptions (
 	    "d"    => \$daily,
 	    "w"    => \$weekly,
 	    "m"    => \$monthly,
+            "y"    => \$yearly
 	    );
 
 #
@@ -3534,45 +3571,48 @@ if($weekly) {
 	# daily.
 
 	refSeqAccessionInWrongFormat($geneEmail);
-	vegaAccessionInWrongFormat($dbaEmail);
 	# changed to monthly morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
 
 }
 if($monthly) {
-  orthologyOrganismMatchesForeignDBContains($geneEmail);
-  orthologueHasDblink($geneEmail);
-  morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
-  orthologyHasEvidence($geneEmail);
-  mouseOrthologyHasValidMGIAccession($geneEmail);
-  mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
-  containedInRelationshipsInEST($geneEmail);
-  encodesRelationshipsInBACorPAC($geneEmail);
-  mrkrgoevInfgrpDuplicatesFound($goEmail);
-  printTop40PostcomposedTerms($aoEmail);
-  linkageHasMembers($linkageEmail);
-  linkagePairHas2Members($linkageEmail);
-  # for each zfin curator, run phenotypeAnnotationUnspecified() check
-  my $sql = " select email, full_name
+    tgFeatureMissingConstruct($aoEmail);
+    orthologyOrganismMatchesForeignDBContains($geneEmail);
+    orthologueHasDblink($geneEmail);
+    morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
+    orthologyHasEvidence($geneEmail);
+    mouseOrthologyHasValidMGIAccession($geneEmail);
+    mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
+    containedInRelationshipsInEST($geneEmail);
+    encodesRelationshipsInBACorPAC($geneEmail);
+    mrkrgoevInfgrpDuplicatesFound($goEmail);
+    printTop40PostcomposedTerms($aoEmail);
+    linkageHasMembers($linkageEmail);
+    linkagePairHas2Members($linkageEmail);
+    # for each zfin curator, run phenotypeAnnotationUnspecified() check
+    my $sql = " select email, full_name
                 from int_person_lab 
                      join person on source_id = zdb_id
                      join lab_position on position_id =  labpos_pk_id
                where target_id = 'ZDB-LAB-000914-1'
                  and labpos_position = 'Research Staff'";
-  my $sth = $dbh->prepare ($sql) or die "Prepare fails";
-  $sth->execute();
-
-  while (my ($curatorEmail, $curatorName) = $sth->fetchrow_array()) {
-
-      if (!$curatorEmail){
-	  $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
-      }
-      my @curatorName = split(/,/,$curatorName);
-      my $curatorFirstName = $curatorName[$#curatorName];
-      $curatorFirstName =~ s/^\s+//;
-      phenotypeAnnotationUnspecified ($curatorEmail, $curatorFirstName);
-  }
+    my $sth = $dbh->prepare ($sql) or die "Prepare fails";
+    $sth->execute();
+    
+    while (my ($curatorEmail, $curatorName) = $sth->fetchrow_array()) {
+	
+	if (!$curatorEmail){
+	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
+	}
+	my @curatorName = split(/,/,$curatorName);
+	my $curatorFirstName = $curatorName[$#curatorName];
+	$curatorFirstName =~ s/^\s+//;
+	phenotypeAnnotationUnspecified ($curatorEmail, $curatorFirstName);
+    }
 }
-
+if ($yearly) {
+    
+    morpholinoAbbrevContainsGeneAbbrevBasic($morpholinoEmail);
+}
 	   
 
 #rmdir($globalWorkingDir);

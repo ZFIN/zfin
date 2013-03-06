@@ -14,7 +14,6 @@ import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniquery.categories.SiteSearchCategories;
-import org.zfin.uniquery.presentation.SearchBean;
 import org.zfin.util.DateUtil;
 import org.zfin.util.FileUtil;
 import org.zfin.wiki.WikiLoginException;

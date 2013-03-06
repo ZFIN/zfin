@@ -86,66 +86,10 @@ FILE: mappingdetail.apg
 
   <?MIVAR NAME=$last><?/MIVAR>
   <?MISQL SQL="
-	SELECT or_lg
-	FROM mapped_marker
-	WHERE marker_id = '$FID'
-           OR marker_id = '$GNID'
-
-      UNION
-	SELECT or_lg
-	FROM mapped_marker, marker_relationship
-	WHERE marker_id = mrel_mrkr_2_zdb_id
-	  and mrel_mrkr_1_zdb_id = '$GNID'
-          and mrel_type in ('clone contains gene',
-			    'clone contains small segment',
-			    'gene encodes small segment')
-
-      UNION
-	SELECT or_lg
-	FROM mapped_marker, marker_relationship
-	WHERE marker_id = mrel_mrkr_1_zdb_id
-	  and mrel_mrkr_2_zdb_id = '$GNID'
-          and mrel_type in ('clone contains gene',
-			    'clone contains small segment')
-
-      UNION
-	SELECT lnkg_or_lg
-	FROM linkage, linkage_member
-	WHERE (lnkgmem_member_zdb_id = '$GNID'
-           or lnkgmem_member_zdb_id = '$FID')
-	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
-
-      UNION
-	SELECT lnkg_or_lg
-	FROM linkage, linkage_member, marker_relationship
-	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
-	  and mrel_mrkr_1_zdb_id = '$GNID'
-	  and mrel_type in ('gene encodes small segment',
-			    'clone contains gene',
-			    'clone contains small segment')
-	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-
-      UNION
-	SELECT lnkg_or_lg
-	FROM linkage, linkage_member, marker_relationship
-	WHERE lnkgmem_member_zdb_id = mrel_mrkr_1_zdb_id
-	  and mrel_mrkr_2_zdb_id = '$GNID'
-	  and mrel_type in ('clone contains gene',
-			    'clone contains small segment')
-	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-
-    UNION
-	SELECT lnkg_or_lg
-	from marker_relationship gt
-	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
-	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
-	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
-	 where gt.mrel_type == 'gene produces transcript'
-	   and ct.mrel_type == 'clone contains transcript'
-	   and gt.mrel_mrkr_1_zdb_id = '$GNID'
-
-
-	order by 1
+    select chms_chromosome
+    from chromosome_search
+    where chms_mrkr_zdb_id in ('$FID','$GNID')
+    order by 1
       ;">
      <?MICOMMENT>
        07/28/03 we decided to show LG Unknown when LG is 0. If we have

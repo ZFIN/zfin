@@ -394,6 +394,11 @@
         <url-pattern>/action/database/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/devtool/*</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>

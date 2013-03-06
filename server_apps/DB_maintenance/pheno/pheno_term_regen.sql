@@ -1,15 +1,10 @@
 begin work;
 
-create temp table pheno_term_fast_search_tmp(
-	ptfs_pk_id serial8 not null ,
-	ptfs_phenos_pk_id int8,
-	ptfs_term_zdb_id varchar(50) not null ,
-	ptfs_tag varchar(25) ,
-	ptfs_is_direct_annotation boolean default 'f' , 
-	ptfs_phenos_created_date datetime year to second not null ,
-	ptfs_created_date datetime year to second default current year to second
-	
-);
+delete from pheno_term_fast_search_tmp;
+
+commit work ;
+
+begin work ;
 
 insert into pheno_term_fast_search_tmp
 (
@@ -189,6 +184,7 @@ select
 	ptfs_phenos_created_date ,
 	ptfs_created_date 
 from pheno_term_fast_search_tmp;	
+
 
 commit work;
 

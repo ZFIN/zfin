@@ -21,6 +21,7 @@ GTCONSTRCT	/action/marker/view/ZDB-GTCONSTRCT
 IMAGE	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=ZDB-IMAGE
 LAB	/action/profile/view/ZDB-LAB
 MRPHLNO	/action/marker/view/ZDB-MRPHLNO
+NBO	/action/ontology/term-detail/NBO
 PAC	/action/marker/view/ZDB-PAC
 PAC_END	/action/marker/view/ZDB-PAC_END
 PATO	/action/ontology/term-detail/PATO
@@ -39,3 +40,5 @@ TGCONSTRCT	/action/marker/view/ZDB-TGCONSTRCT
 TSCRIPT	/action/marker/view/ZDB-TSCRIPT
 XPAT   /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&xpatID=ZDB-XPAT
 ZFA     /action/ontology/term-detail/ZFA
+TERM    /action/ontology/term-detail/ZDB-TERM
+ZFS     /action/ontology/term-detail/ZFS

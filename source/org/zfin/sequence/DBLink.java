@@ -57,9 +57,7 @@ public abstract class DBLink implements EntityAttribution {
 
         List<Database> blastableDatabases = referenceDatabase.getOrderedRelatedBlastDB();
 
-        for (Iterator<Database> iterator = blastableDatabases.iterator() ;
-             iterator.hasNext() ;
-                ) {
+        for (Iterator<Database> iterator = blastableDatabases.iterator(); iterator.hasNext(); ) {
             Database database = iterator.next();
             if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.RNA) {
                 // only ensembl and megablast allowed for large values

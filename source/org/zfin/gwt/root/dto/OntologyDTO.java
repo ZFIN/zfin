@@ -16,8 +16,21 @@ public enum OntologyDTO implements IsSerializable {
             return QUALITY_QUALITIES;
         }
     },
+    ANATOMY_FULL(10000, "AO + Stages", "zebrafish_anatomical_ontology", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return QUALITY_QUALITIES;
+        }
+    },
     // full GO ontology
     GO(1, "GO", "cellular_component,molecular_function,biological_process", true) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return QUALITY;
+        }
+    },
+    // full GO ontology
+    GO_ONTOLOGY(1, "GO Ontology", "cellular_component,molecular_function,biological_process", true) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY;
@@ -69,7 +82,7 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-    QUALITY_QUALITIES_RELATIONAL(8, "Quality - Relational Objects", "quality", "quality.object.relational", false) {
+    QUALITY_OBJECT_RELATIONAL(8, "Quality - Relational Objects", "quality", "quality.object.relational", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
@@ -85,12 +98,6 @@ public enum OntologyDTO implements IsSerializable {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
-        }
-    },
-    GO_MF_CC(11, "GO-MF / GO-CC", "molecular_function,cellular_component", true) {
-        @Override
-        public OntologyDTO getAssociatedQualityOntology() {
-            return QUALITY;
         }
     },
     GO_BP_MF(12, "GO-BP / GO-MF", "biological_process,molecular_function", true) {
@@ -124,7 +131,14 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-    BEHAVIOR(17, "BEHAVIOR", "behavior_ontology", false) {
+     SO(17, "SO","sequence_ontology", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
+
+    BEHAVIOR(18, "BEHAVIOR", "behavior_ontology", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;

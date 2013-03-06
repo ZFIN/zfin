@@ -230,7 +230,7 @@
 }
 
 .fig-popup-link:after {
-    content: url(/images/zoom_in.gif);
+    /*content: url(/images/zoom_in.gif);*/
     padding-top: 2px;        
     margin-left: 3px;
     margin-right: 5px;

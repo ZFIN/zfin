@@ -88,19 +88,6 @@ IF (new_value != old_value or event = "assigned") THEN
                    VALUES(data_zdb_id,active_feature,old_value,(select aliasgrp_pk_id from alias_group where aliasgrp_name='alias'),
 				lower(old_value));
 	 	
-	    if not exists (select 'x'
-				from record_attribution
-				where recattrib_data_zdb_id = 
-					data_zdb_id
-				and recattrib_source_zdb_id = 
-					'ZDB-PUB-030508-1'
-				and recattrib_source_type = 'standard')
-	    then 
-	      insert into record_attribution (recattrib_data_zdb_id,
-						recattrib_source_zdb_id,
-						recattrib_source_type)
-                 values (data_zdb_id,'ZDB-PUB-030508-1','standard');
-	    end if ;
           ELSE
             SELECT dalias_zdb_id
             INTO data_zdb_id
@@ -108,19 +95,6 @@ IF (new_value != old_value or event = "assigned") THEN
             WHERE dalias_data_zdb_id = active_feature
               AND dalias_alias = old_value;
 
-	    if not exists (select 'x'
-				from record_attribution
-				where recattrib_data_zdb_id = 
-					data_zdb_id
-				and recattrib_source_zdb_id = 
-					'ZDB-PUB-030508-1'
-				and recattrib_source_type = 'standard')
-	    then 
-	      insert into record_attribution (recattrib_data_zdb_id,
-						recattrib_source_zdb_id,
-						recattrib_source_type)
-                 values (data_zdb_id,'ZDB-PUB-030508-1','standard');
-	    end if ;
 	   
           END IF
           -------------------------------------------

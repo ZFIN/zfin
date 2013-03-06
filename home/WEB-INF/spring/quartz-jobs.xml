@@ -24,6 +24,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
                 <ref bean="loadMPATHOntology"/>
+                <ref bean="loadSequenceOntology"/>
                 <!--<ref bean="loadBehaviorOntology"/>-->
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
@@ -326,6 +327,30 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
                         <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
                         <entry key="useExistingFile" value="false"/>
                         <entry key="jobName" value="Load Behavior Ontology"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
+        <!--goes off every day at 4.10 am-->
+        <property name="cronExpression" value="5 0 17 ? * MON-FRI"/>
+    </bean>
+
+     <bean id="loadSequenceOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
+                <property name="name" value="Sequence Ontology"/>
+                <property name="group" value="Load Ontology"/>
+                <property name="jobClass" value="org.zfin.ontology.quartz.LoadOntologiesJob"/>
+                <property name="jobDataAsMap">
+                    <map>
+                        <entry key="oboFileName" value="so.obo"/>
+                        <entry key="oboFileUrl"
+                               value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/genomic-proteomic/so.obo"/>
+                        <entry key="scriptDirectory" value="../server_apps/data_transfer/LoadOntology"/>
+                        <entry key="scriptFileName" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+                        <entry key="useExistingFile" value="false"/>
+                        <entry key="jobName" value="Load Sequence Ontology"/>
                     </map>
                 </property>
             </bean>

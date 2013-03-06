@@ -9,30 +9,43 @@
 <h1>Describe new Engineered Region</h1>
 
 <form:form action="region-do-submit" commandName="formBean" method="post">
-    <p><strong>Engineered Region name</strong>:
-    <form:input path="<%= RegionAddBean.NEW_REGION_NAME%>" size="80"
+    <div>
+       <form:label path="<%= RegionAddBean.NEW_REGION_NAME%>" class="curation-form-label">Engineered Region name:</form:label>
+       <form:input path="<%= RegionAddBean.NEW_REGION_NAME%>" size="80"
                 onkeypress="return noenter(event)"></form:input>
-    <form:errors path="<%= RegionAddBean.NEW_REGION_NAME%>" cssClass="error indented-error"/>
-    <p><strong>Engineered Region alias:</strong>
-    <form:input onkeypress="return noenter(event)" path="<%= RegionAddBean.NEW_REGION_ALIAS%>" size="50"></form:input>
-    <form:errors path="<%= RegionAddBean.NEW_REGION_ALIAS%>" cssClass="error indented-error"/>
+       <form:errors path="<%= RegionAddBean.NEW_REGION_NAME%>" cssClass="error indented-error"/>
+    </div>
+    <p/>
+    <div>
+       <form:label path="<%= RegionAddBean.NEW_REGION_NAME%>" class="curation-form-label">Engineered Region alias:</form:label>
+       <form:input onkeypress="return noenter(event)" path="<%= RegionAddBean.NEW_REGION_ALIAS%>" size="50"></form:input>
+       <form:errors path="<%= RegionAddBean.NEW_REGION_ALIAS%>" cssClass="error indented-error"/>
+    </div>
+    <p/>
+    <div>
+       <form:label path="<%= RegionAddBean.NEW_REGION_NAME%>" class="curation-form-label">Note:</form:label>
+    </div>
+    <div>
+       <form:textarea path="<%= RegionAddBean.NEW_REGION_COMMENT%>" rows="5" cols="50" />
+       <form:errors path="<%= RegionAddBean.NEW_REGION_COMMENT%>" cssClass="error indented-error"/>
+    </div>
     <p>
-    <strong>Note:</strong><br>
-    <form:textarea path="<%= RegionAddBean.NEW_REGION_COMMENT%>" rows="5" cols="50" />
-    <form:errors path="<%= RegionAddBean.NEW_REGION_COMMENT%>" cssClass="error indented-error"/>
-    <p>
-    <strong>Curator Note:</strong><br>
-    <form:textarea path="<%= RegionAddBean.NEW_REGION_CURNOTE%>" rows="5" cols="60" />
-    <form:errors path="<%= RegionAddBean.NEW_REGION_CURNOTE%>" cssClass="error indented-error"/>
-    <p>
-        <strong>Publication:</strong>
-            <form:input path="<%= RegionAddBean.REGION_PUBLICATION_ZDB_ID%>" size="25"
+    <div>
+       <form:label path="<%= RegionAddBean.NEW_REGION_NAME%>" class="curation-form-label">Curator Note:</form:label>
+    </div>
+    <div>
+      <form:textarea path="<%= RegionAddBean.NEW_REGION_CURNOTE%>" rows="5" cols="60" />
+      <form:errors path="<%= RegionAddBean.NEW_REGION_CURNOTE%>" cssClass="error indented-error"/>
+    </div>
+    <p/>
+    <div>
+      <form:label path="<%= RegionAddBean.NEW_REGION_NAME%>" class="curation-form-label">Publication:</form:label>
+      <form:input path="<%= RegionAddBean.REGION_PUBLICATION_ZDB_ID%>" size="25"
                         onkeypress="return noenter(event)" value="${formBean.regionPublicationZdbID}"></form:input>
-            <form:errors path="<%= RegionAddBean.REGION_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
-
-    <p>
-        <input type=submit name=s_new value="Submit new Engineered region">
-    </p>
+      <form:errors path="<%= RegionAddBean.REGION_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
+    </div>
+    <p/>
+      <input type=submit name=s_new value="Submit new Engineered region">
 
 </form:form>
 

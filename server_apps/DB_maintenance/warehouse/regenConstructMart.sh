@@ -24,12 +24,12 @@ echo "done with file delete" ;
 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt
 
 if ($? != 0) then
- echo "trying to send notification runConstructMart";
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt -s "regen construct mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+ echo "trying to send notification runConstructMart on <!--|DB_NAME|-->";
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt -s "regen construct mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
 exit 1;
 endif
 
-echo "done with runconstructmart";
+echo "done with runconstructmart on <!--|DB_NAME|-->";
 # run the validation tests via ant.
 
 cd <!--|SOURCEROOT|-->
@@ -38,8 +38,8 @@ echo "cd'd to <!--|SOURCEROOT|-->" ;
 /private/bin/ant run-constructmart-unittests >&! reports/tests/constructMartUnitTests.txt
 
 if ($? != 0) then
-   echo "trying to send notification unit tests";  
- /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt -s "regen construct mart (the building tables, not the public tables) failed" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+   echo "trying to send notification unit tests on <!--|DB_NAME|-->";  
+ /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt -s "regen construct mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 exit 1;
 endif
 
@@ -50,13 +50,13 @@ endif
 <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/constructMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt
 
 if ($? != 0) then
-   echo "trying to send notification regenConstructMartReport";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "refresh construct mart (the public tables) failed and was rolled back" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+   echo "trying to send notification regenConstructMartReport on <!--|DB_NAME|-->";  
+ /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "refresh construct mart (the public tables) failed and was rolled back on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
 exit 1;
 endif
 
-echo "sending success email." ;
+echo "sending success email on <!--|DB_NAME|-->. " ;
 
-/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "regen constructmart successful." -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "regen constructmart successful on <!--|DB_NAME|-->." -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 exit 0;

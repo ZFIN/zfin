@@ -24,9 +24,6 @@ content-type: text/HTML\n\n
 <script language="JavaScript" src="/javascript/header.js"></script>
 Thank you for submitting comments. Your input has been emailed to ZFIN curators who may contact you if additional information is required. 
 <p>
-<form>
-<input type=button value="Close Window" onClick="window.close()">
-</form>
 <script language="JavaScript" src="/javascript/footer.js"></script>
 EOA
 }

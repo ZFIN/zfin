@@ -124,6 +124,8 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
 
 #download page
+# redirect to fix trailing slash problem
+RewriteRule ^/downloads/$ /downloads [NC,R=301]
 # archive pages
 RewriteRule ^/downloads/archive/(.+)/file/(.+) /action/unload/downloads/archive/$1/file/$2 [NC]
 RewriteRule ^/downloads/archive/(.+)/(.+) /data-transfer/$1/$2 [NC,L]

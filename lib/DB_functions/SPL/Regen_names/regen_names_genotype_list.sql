@@ -191,7 +191,7 @@ create procedure regen_names_genotype_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
-    select dalias_alias, rgnz_zdb_id, nameSignificance, namePrecedence, 
+    select distinct dalias_alias, rgnz_zdb_id, nameSignificance, namePrecedence, 
            lower(dalias_alias)
       from data_alias, regen_zdb_id_temp, regen_geno_related_gene_zdb_id_distinct_temp
       where rgnrgzd_geno_zdb_id = rgnz_zdb_id

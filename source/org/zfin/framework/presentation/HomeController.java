@@ -1,19 +1,16 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Simple controller that serves the developers home page.
+ * Simple controller that serves the developer tools home page.
  */
-public class HomeController implements Controller {
+@org.springframework.stereotype.Controller
+public class HomeController {
 
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        return new ModelAndView("home");
+    @RequestMapping("/home")
+    public String homePage() throws Exception {
+        return "dev-tools/home.page";
     }
 
 }

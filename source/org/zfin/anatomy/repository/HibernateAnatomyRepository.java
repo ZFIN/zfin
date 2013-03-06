@@ -218,6 +218,14 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         session.save(structure);
     }
 
+    @Override
+    public DevelopmentStage getStageByOboID(String oboID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(DevelopmentStage.class);
+        criteria.add(Restrictions.eq("oboID", oboID));
+        return (DevelopmentStage) criteria.uniqueResult();
+    }
+
     /*
      * ToDO: Convenience method as long as anatomy_display contains multiple records for a single stage.
      */

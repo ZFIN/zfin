@@ -242,23 +242,23 @@ sub geno_load($) {
 
     my $to_recattrib=$dbh->prepare(
 	"insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-             select distinct(epfz_geno_zdb_id), 'ZDB-PUB-080110-2'
+             select distinct(epfz_geno_zdb_id), 'ZDB-PUB-130115-1'
                from geno_pulled_from_zirc
                where not exists (select 'x'
     	      	     	           from record_attribution 
 			           where recattrib_data_zdb_id = epfz_geno_zdb_id
-			           and recattrib_source_zdb_id = 'ZDB-PUB-080110-2'
+			           and recattrib_source_zdb_id = 'ZDB-PUB-130115-1'
 			           and recattrib_source_type = 'standard')
               and epfz_geno_zdb_id is not null;");
 
     my $to_recattrib_genofeat=$dbh->prepare(
 	"insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-             select distinct(epfz_genofeat_zdb_id), 'ZDB-PUB-080110-2'
+             select distinct(epfz_genofeat_zdb_id), 'ZDB-PUB-130115-1'
                from geno_pulled_from_zirc
                where not exists (select 'x'
     	      	     	           from record_attribution 
 			           where recattrib_data_zdb_id = epfz_genofeat_zdb_id
-			           and recattrib_source_zdb_id = 'ZDB-PUB-080110-2'
+			           and recattrib_source_zdb_id = 'ZDB-PUB-130115-1'
 			           and recattrib_source_type = 'standard')
                and epfz_geno_zdb_id is not null;");
 

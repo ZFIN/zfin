@@ -125,6 +125,8 @@ public enum Table {
     SUBSET_TERM("SUBSET_TERM", "term_subset", "termsub_subset_id,termsub_term_zdb_id", ONTOLOGY_SUBSET, TERM),
     FIGURE_XPATRES("FIGURE_EXPRESSION", "expression_pattern_figure", "xpatfig_fig_zdb_id,xpatfig_xpatres_zdb_id", FIGURE, EXPRESSION_RESULT),
     XPATRES_FIGURE("EXPRESSION_FIGURE", "expression_pattern_figure", "xpatfig_xpatres_zdb_id,xpatfig_fig_zdb_id", EXPRESSION_RESULT, FIGURE),
+    FDBCONT_BLAST_DB("FDBCONT_BLAST_DB","int_fdbcont_analysis_tool","ifat_fdbcont_zdb_id,ifat_blastdb_zdb_id",FDBCONT,BLAST_DB),
+    BLAST_DB_FDBCONT("BLAST_DB_FDBCONT","int_fdbcont_analysis_tool","ifat_blastdb_zdb_id,ifat_fdbcont_zdb_id",BLAST_DB,FDBCONT),
     PERSON_LAB("PERSON_LAB", "int_person_lab", "source_id,target_id", PERSON, LAB),
     LAB_PERSON("LAB_PERSON", "int_person_lab", "target_id,source_id", LAB, PERSON),
     PERSON_PUB("PERSON_PUB", "int_person_pub", "source_id,target_id", PERSON, PUBLICATION),

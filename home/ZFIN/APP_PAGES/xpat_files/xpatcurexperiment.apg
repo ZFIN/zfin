@@ -58,7 +58,7 @@ EFFECTS
        or exp_name = '$pubcur_G_exp_standard_name'
        or exp_name = '_Generic-control'
     order by 3;">
-
+    <?MIVAR NAME=$expZdbId>$1<?/MIVAR>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env >
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
@@ -72,7 +72,15 @@ EFFECTS
       <td> <input name="xpcur_G_exp_name" type=textbox size=15 value="$2">
       </td>
       <td>
-        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$1','environment')"><?/MIVAR>
+<?MICOMMENT>
+For bugz 9328, do not display delete button is experiment is used in experiment_condition
+<?/MICOMMENT>
+      <?MISQL SQL="select count(phenox_genox_zdb_id)  from phenotype_experiment, genotype_experiment where genox_exp_zdb_id=<?MIVAR>'$expZdbId'<?/MIVAR> and genox_zdb_id=phenox_genox_zdb_id;">
+        <?MIVAR NAME=expCount>$1<?/MIVAR>
+      <?MIBLOCK COND="$(=,$expCount,0)">
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$expZdbId','environment')"><?/MIVAR>
+       <?/MIBLOCK>
+<?/MISQL>
       </td> 
       <?/MIVAR>
     <?MIELSE>

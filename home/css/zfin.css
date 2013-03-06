@@ -628,3 +628,5 @@ table.searchform th { text-align: left ; width: 5%; white-space: nowrap}
     padding: 1em;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+
+label.curation-form-label { font-weight: bold; }

@@ -248,6 +248,8 @@ public class Database {
         VEGA_ZFIN("vega_zfin"),
         VEGA_BLAST("VEGA BLAST"),
         VEGA_BLAST_POST("VEGA BLAST post"),
+        VEGAP("VEGAP"),
+        ENSEMBL_P("Ensembl_P"),
         VEGA_WITHDRAWN("vega_withdrawn"),
         WGS_ZF("wgs_zf"),
         ZFIN_ALL_AA("zfin_all_aa"),

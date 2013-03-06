@@ -35,12 +35,15 @@
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
 00 03 * * 6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -d -w mirrordb 
 #
+# S         5:00am report labs with changed addresses.   
+00 05 * * 6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/reportLabAddressChanges.sh
+#
 #
 #
 00 06 * * 1-5 /research/zusers/trunk/reload_trunk.sh
 20 07 * * 1-5 /research/zusers/test/reload_test.sh
 00 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/queryMonitoring/dailyQueryCostCheck.sh
-
+30 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/extentMonitoring/dailyExtentCheck.sh
 #
 #
 # ========================================================================

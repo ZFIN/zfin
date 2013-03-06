@@ -75,11 +75,15 @@ Input:
 	  <?MIVAR>
 	  <option $(IF,$(OR,$(EC,$marker_type,),$(EC,$marker_type,all)),SELECTED) value="all">All 
 	  <?/MIVAR>
+     <?MICOMMENT> *********** exclude CONSTRUCT markers, then show them only for logged in below ****** <?/MICOMMENT>
  	<?MISQL SQL="
 	     select marker_type, mrkrtype_type_display, mrkrtype_significance
 	       from marker_types
 	      where marker_type in (select mtgrpmem_mrkr_type from marker_type_group_member 
 				     where mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG')
+                and marker_type not in (
+                                    select mtgrpmem_mrkr_type from marker_type_group_member
+                                     where mtgrpmem_mrkr_type_group = 'CONSTRUCT')
 	      order by mrkrtype_significance;
 	   ">
 	  <?MIBLOCK COND="$(EC,$page,newmrkrselect)">
@@ -98,6 +102,38 @@ Input:
 	    <?/MIVAR>
 	  <?/MIBLOCK>
 	<?/MISQL>
+
+
+        <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+ 	<?MISQL SQL="
+	     select marker_type, mrkrtype_type_display, mrkrtype_significance
+	       from marker_types
+	      where marker_type in (select mtgrpmem_mrkr_type from marker_type_group_member 
+				     where mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG')
+                and marker_type in (
+                                    select mtgrpmem_mrkr_type from marker_type_group_member
+                                     where mtgrpmem_mrkr_type_group = 'CONSTRUCT')
+	      order by mrkrtype_significance;
+	   ">
+	  <?MIBLOCK COND="$(EC,$page,newmrkrselect)">
+	    <?MIBLOCK COND="$(XST,$marker_type)">
+              <?MIVAR>
+	       <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $2
+              <?/MIVAR>
+	    <?MIELSE COND="$(XST,$mlist)">
+              <?MIVAR>
+	       <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $2
+              <?/MIVAR>            
+            <?/MIBLOCK> 
+	  <?MIELSE>
+	    <?MIVAR>
+	     <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $2
+	    <?/MIVAR>
+	  <?/MIBLOCK>
+	<?/MISQL>
+        <?/MIBLOCK>
+
         </select>
 	</td></tr></table>
       </TD>

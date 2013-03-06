@@ -68,11 +68,10 @@ public class FeatGenoStatistics implements Comparable {
     }
 
     public int getNumberOfExpFigures() {
-        if (expfigureResults == null) {
-            expfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
+        if (genotype != null) {
+            return RepositoryFactory.getExpressionRepository().getExpressionFigureCountForGenotype(genotype);
         }
-        numberOfExpFigures = expfigureResults.getTotalCount();
-        return numberOfExpFigures;
+        return 0;
     }
 
     public Boolean getIsMorpholino() {

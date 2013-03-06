@@ -58,7 +58,7 @@ $ENV{"JAVA_HOME"}="/private/apps/java";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
+system("./patoNumbers.pl");
 
 system("./generateStagedAnatomy.pl");
 
@@ -92,12 +92,14 @@ foreach $line (@lines) {
     @fields = split(/\|/, $line);
 
     $geneId = $fields[0];
-    $gene = $fields[1];
-    $MoId = $fields[2];
-    $Mo = $fields[3];
-    $MoSeq = $fields[4];
+    $a_szm_term_ont_id = $fields[1];
+    $gene = $fields[2];
+    $MoId = $fields[3];
+    $b_szm_term_ont_id = $fields[4];
+    $Mo = $fields[5];
+    $MoSeq = $fields[6];
     $note = " ";
-    $note = $fields[5];
+    $note = $fields[7];
 
     # remove HTML tags and back slash from the public note column of the download file of Morpholino data
     if ($note) {
@@ -121,7 +123,7 @@ foreach $line (@lines) {
 
     $cur->finish();
 
-    print MOWITHPUBS "$geneId\t$gene\t$MoId\t$Mo\t$MoSeq\t";
+    print MOWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$MoId\t$b_szm_term_ont_id\t$Mo\t$MoSeq\t";
 
     if ($numOfPubs > 0) {
         $numOfPubsCt = $numOfPubs;

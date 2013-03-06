@@ -158,7 +158,7 @@
         &nbsp;
     </td>
     <td>
-        <a href="/action/dev-tools/application-context">Application Context Info</a>
+        <a href="/action/devtool/application-context">Application Context Info</a>
     </td>
 </tr>
 

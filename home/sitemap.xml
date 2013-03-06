@@ -7,59 +7,31 @@
     </url>
     <url>
         <loc>
-            http://zfin.org/zf_info/news/jobs.html
+            https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements
         </loc>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>
-            http://zfin.org/zf_info/news/siteNews.html
+            https://wiki.zfin.org/display/news/Zebrafish+News
         </loc>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>
-            http://zfin.org/zf_info/news/mtgs.html
+            https://wiki.zfin.org/display/meetings/Zebrafish-Related+Meeting+Announcements
         </loc>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>
-            http://zfin.org/zf_info/zfbook/zfbk.html
-        </loc>
-        <changefreq>yearly</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>
-            http://zfin.org/zf_info/downloads.html
+            http://zfin.org/downloads
         </loc>
         <changefreq>weekly</changefreq>
         <priority>0.4</priority>
-    </url>
-    <url>
-        <loc>
-            http://zfin.org/zf_info/markers.html
-        </loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>
-            http://zfin.org/zf_info/anatomy.html
-        </loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-    <url>
-        <loc>
-            http://zfin.org/zf_info/zfbook/stages/stages.html
-        </loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
     </url>
     <url>
         <loc>

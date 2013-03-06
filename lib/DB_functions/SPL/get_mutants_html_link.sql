@@ -65,6 +65,10 @@ create function get_mutants_html_link
 		let genoSuffix = 's';
 	end if 
 
+	if (genoCount == 0) then 
+		return '';
+	end if 
+
 	if (ftrCount == 0) then 
 		return '';
 

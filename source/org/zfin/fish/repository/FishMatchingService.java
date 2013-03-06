@@ -18,6 +18,7 @@ import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.Term;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
@@ -55,7 +56,15 @@ public class FishMatchingService {
         service = new MatchingService(honoredMatchTypes);
         if (criteria.getGeneOrFeatureNameCriteria().hasValues()) {
             checkGeneFeatureMatches(criteria);
-            addMatchingConstruct(criteria.getGeneOrFeatureNameCriteria().getValue());
+            String genoID = fish.getGenotype().getID();
+            if (genoID!=null){
+            addMatchingConstruct(criteria.getGeneOrFeatureNameCriteria().getValue(),genoID);
+            }
+            else{
+                if (genoID==null){
+                    addMatchingConstructNoFish(criteria.getGeneOrFeatureNameCriteria().getValue());
+                }
+        }
         }
         if (criteria.getPhenotypeAnatomyCriteria().hasValues())
             checkAllTermMatches(criteria.getPhenotypeAnatomyCriteria());
@@ -69,8 +78,8 @@ public class FishMatchingService {
         return service.getMatchingTextList();
     }
 
-    private void addMatchingConstruct(String value) {
-        String genoID = fish.getGenotype().getID();
+    private void addMatchingConstruct(String value,String genoID) {
+
         List<GenotypeFeature> genotypeFeatures = getMutantRepository().getGenotypeFeaturesByGenotype(genoID);
         for (GenotypeFeature genoFeature : genotypeFeatures) {
             Feature feature = genoFeature.getFeature();
@@ -99,23 +108,57 @@ public class FishMatchingService {
                     }
 
                 }
-/*
-                Set<MarkerRelationship> secondRelatedMarker = construct.getSecondMarkerRelationships();
-                for(MarkerRelationship relatedMarker: secondRelatedMarker){
-                    int i = 0;
-                }
-*/
             }
+
+
+
         }
         service.removeMatchingType(MatchType.CONTAINS);
     }
 
-    /**
-     * Checks for matches of multiple query term matches against a fish's
-     * phenotype.
-     *
-     * @param criterion term criterion
-     */
+
+    private void addMatchingConstructNoFish(String value) {
+     String fishID=fish.getID();
+        Fish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(fishID).longValue());
+List<ZfinEntity> ftrEntities=fish.getFeatures();
+for (ZfinEntity ftrEntity : ftrEntities) {
+        Feature ftr = getFeatureRepository().getFeatureByID(ftrEntity.getID());
+Set<FeatureMarkerRelationship> fMarkerRelationships = ftr.getConstructs();
+if (fMarkerRelationships == null)
+        continue;
+for (FeatureMarkerRelationship rel : fMarkerRelationships) {
+        Marker construct = rel.getMarker();
+service.addMatchingType(MatchType.CONTAINS);
+if (checkMarkerMatch(value, construct, MatchingTextType.CONSTRUCT_ABBREVIATION, MatchingTextType.CONSTRUCT_NAME, MatchingTextType.CONSTRUCT_ALIAS))
+        break;
+// ensure to remove Contains for anything else but constructs
+service.removeMatchingType(MatchType.CONTAINS);
+Set<MarkerRelationship> firstRelatedMarker = construct.getFirstMarkerRelationships();
+for (MarkerRelationship relatedMarkerRel : firstRelatedMarker) {
+        Marker firstMarker = relatedMarkerRel.getFirstMarker();
+if (firstMarker.equals(construct)) {
+        Marker relatedMarker = relatedMarkerRel.getSecondMarker();
+if (checkMarkerMatch(value, relatedMarker, MatchingTextType.RELATED_MARKER_ABBREVIATION, MatchingTextType.RELATED_MARKER_NAME, MatchingTextType.RELATED_MARKER_ALIAS)) {
+        String appendix = "[";
+appendix += relatedMarkerRel.getMarkerRelationshipType().getSecondToFirstLabel();
+appendix += " " + construct.getAbbreviation() + "]";
+service.addAppendixToLastMatch(appendix);
+break;
+}
+        }
+
+        }
+        }
+
+}
+        service.removeMatchingType(MatchType.CONTAINS);
+    }
+/**
+* Checks for matches of multiple query term matches against a fish's
+* phenotype.
+*
+* @param criterion term criterion
+*/
     private void checkAllTermMatches(SearchCriterion criterion) {
         if (criterion == null || criterion.getValues() == null)
             return;

@@ -932,84 +932,17 @@ public class DTOConversionService {
 
 
     public static OntologyDTO convertToOntologyDTO(Ontology ontology) {
-        switch (ontology) {
-            case QUALITY:
-                return OntologyDTO.QUALITY;
-            case QUALITY_PROCESSES:
-                return OntologyDTO.QUALITY_PROCESSES;
-            case QUALITY_QUALITIES:
-                return OntologyDTO.QUALITY_QUALITIES;
-            case QUALITY_QUALITATIVE:
-                return OntologyDTO.QUALITY_QUALITATIVE;
-            case QUALITY_PROCESSES_RELATIONAL:
-                return OntologyDTO.QUALITY_PROCESSES_RELATIONAL;
-            case QUALITY_OBJECT_RELATIONAL:
-                return OntologyDTO.QUALITY_QUALITIES_RELATIONAL;
-            case ANATOMY:
-                return OntologyDTO.ANATOMY;
-            case GO_MF:
-                return OntologyDTO.GO_MF;
-            case GO_CC:
-                return OntologyDTO.GO_CC;
-            case GO_BP:
-                return OntologyDTO.GO_BP;
-            case GO:
-                return OntologyDTO.GO;
-            case STAGE:
-                return OntologyDTO.STAGE;
-            case SPATIAL:
-                return OntologyDTO.SPATIAL;
-            case MPATH:
-                return OntologyDTO.MPATH;
-            case MPATH_NEOPLASM:
-                return OntologyDTO.MPATH_NEOPLASM;
-            case BEHAVIOR:
-                return OntologyDTO.BEHAVIOR;
-        }
-        return null;
+        if (ontology == null)
+            return null;
+
+        return OntologyDTO.valueOf(ontology.name());
     }
 
     public static Ontology convertToOntology(OntologyDTO ontology) {
-        switch (ontology) {
-            case QUALITY:
-                return Ontology.QUALITY;
-            case QUALITY_PROCESSES:
-                return Ontology.QUALITY_PROCESSES;
-            case QUALITY_QUALITIES:
-                return Ontology.QUALITY_QUALITIES;
-            case QUALITY_QUALITATIVE:
-                return Ontology.QUALITY_QUALITATIVE;
-            case QUALITY_QUALITIES_RELATIONAL:
-                return Ontology.QUALITY_OBJECT_RELATIONAL;
-            case QUALITY_PROCESSES_RELATIONAL:
-                return Ontology.QUALITY_PROCESSES_RELATIONAL;
-            case ANATOMY:
-                return Ontology.ANATOMY;
-            case GO_MF:
-                return Ontology.GO_MF;
-            case GO_CC:
-                return Ontology.GO_CC;
-            case GO_BP:
-                return Ontology.GO_BP;
-            case GO_BP_MF:
-                return Ontology.GO_BP_MF;
-            case GO:
-                return Ontology.GO;
-            case AOGO:
-                return Ontology.AOGO;
-            case STAGE:
-                return Ontology.STAGE;
-            case SPATIAL:
-                return Ontology.SPATIAL;
-            case MPATH:
-                return Ontology.MPATH;
-            case MPATH_NEOPLASM:
-                return Ontology.MPATH_NEOPLASM;
-            case BEHAVIOR:
-                return Ontology.BEHAVIOR;
+        if (ontology == null)
+            return null;
 
-        }
-        return null;
+        return Ontology.valueOf(ontology.name());
     }
 
 //    public static TermInfoDTO convertToTermInfoFromTermInfoDTO(TermDTO term, OntologyDTO ontologyDTO, boolean includeSynonyms) {

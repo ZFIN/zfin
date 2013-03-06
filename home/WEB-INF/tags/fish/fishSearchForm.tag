@@ -68,7 +68,7 @@
            <%-- <form:input id="geneOrFeatureName" path="geneOrFeatureName" size="30" value="ti282,  ntl tbx,  tnnt EGFP" style="color:#C0C0C0"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}"/>--%>
-            <form:input id="geneOrFeatureName" path="geneOrFeatureName" size="30" cssClass="default-input"
+            <form:input placeholder="ti282,  ntl tbx,  tnnt EGFP" id="geneOrFeatureName" path="geneOrFeatureName" size="30" cssClass="default-input"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}"/>
         </td>
@@ -189,35 +189,7 @@
     //experimental, submit form on any form element change
 
     jQuery(document).ready(function () {
-        var default_Value="ti282,  ntl tbx,  tnnt EGFP"    ;
-        var Input =  jQuery('input[name=geneOrFeatureName]');
-        if (Input.val().length == 0){
-            Input.val(default_Value).css('color','silver');
-        }
 
-        //alert(default_Value);
-        Input.focus(function(){
-
-            if(Input.val() == default_Value) Input.val("").css('color','black');
-        }).blur(function(){
-
-                    if(Input.val().length == 0) {
-
-                        Input.val(default_Value).css('color','silver');
-                    }
-                    else
-                    {
-
-                        Input.css('color','black');
-                    }
-
-                });
-      /*  jQuery('#fish-search-form').submit(function(){
-            var Input =  jQuery('input[name=geneOrFeatureName]');
-            var default_Value=Input.val();
-            alert(default_Value);
-            if(Input.val() == default_Value) Input.val("");
-                });*/
         jQuery('#fish-search-form .auto-submit').change(function () {
 
             submitForm(1)
@@ -226,55 +198,34 @@
 
         //set the results per page pulldowns on top and bottom
         jQuery('#max-display-records-top, #max-display-records-bottom').val(jQuery('#max-display-records-hidden').val());
-        jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
-        /*jQuery('input[name=geneOrFeatureName]').val('ti282,  ntl tbx,  tnnt EGFP');
-        jQuery('input[name=geneOrFeatureName]').css('color', '#C0C0C0');*/
-        jQuery('#searchTerm').focus(function () {
-            jQuery('#searchTerm').css('color', '#000000').val('');
-
-        });
+        jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
         //handle display details of the term list
         //this is hacky - delay a tad so that it'll be after GWT has loaded.  yuck.
         setTimeout(function () {
-             jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
-
-             jQuery('#searchTerm').focus(function () {
-             jQuery('#searchTerm').css('color', '#000000').val('');
-
-             });
-
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
         }, 50);
 
         setTimeout(function () {
-            jQuery('#searchTerm').val('kidney, mitosis, nucleus').css('color', '#C0C0C0');
-
-            jQuery('#searchTerm').focus(function () {
-                jQuery('#searchTerm').css('color', '#000000').val('');
-
-            });
-
-
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
             decorateTermList();
         }, 200);
         //try again at longer intervals... just in case.  nothing bad happens if we run this more than once
         setTimeout(function () {
-
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
             decorateTermList();
 
         }, 500);
         setTimeout(function () {
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
             decorateTermList();
-//
         }, 1000);
         setTimeout(function () {
-
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
             decorateTermList();
-
         }, 3000);
         setTimeout(function () {
-
+            jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
             decorateTermList();
-
         }, 5000);
 
 
@@ -291,7 +242,6 @@
     jQuery('input[name=anatomyTermIDs]').change(function () {
 
         decorateTermList();
-        jQuery('#searchTerm').css('color', '#000000').val('');
 
     });
 
@@ -307,12 +257,10 @@
         } else if (termCount == 1) {
             jQuery('#searchTermList').show();
             jQuery('#term-list-remove-all-link').hide();
-            jQuery('#searchTerm').css('color', '#000000');
 
         } else {
             jQuery('#searchTermList').show();
             jQuery('#term-list-remove-all-link').show();
-            jQuery('#searchTerm').css('color', '#000000');
         }
 
 
@@ -329,11 +277,6 @@
         jQuery('#sort-by-pulldown').val('0');
         clearTable();
         decorateTermList();
-        var inputElement = document.getElementById(LookupProperties.inputName);
-        inputElement.style.color = '#C0C0C0';
-        inputElement.value = "kidney, mitosis, nucleus ";
-        jQuery('input[name=geneOrFeatureName]').val('ti282,  ntl tbx,  tnnt EGFP');
-        jQuery('input[name=geneOrFeatureName]').css('color', '#C0C0C0');
     }
 
 
@@ -354,30 +297,6 @@
         if (pageField != null)
             pageField.value = page;
 
-        var Input =  jQuery('input[name=geneOrFeatureName]');
-        var default_Value='ti282,  ntl tbx,  tnnt EGFP';
-
-        var defaultSearch=false;
-
-        if(Input.val() == default_Value){
-
-            Input.val("").css('color','black');
-            var defaultSearch=true
-        }  else{
-            var defaultSearch=false;
-        }
-       // alert(defaultSearch);
-/*
-        var params = jQuery("#fish-search-form").serialize();
-
-        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
-        if (defaultSearch==true){
-            Input.val("ti282,  ntl tbx,  tnnt EGFP").css('color','silver');
-        }
-*/
-       /* var inputElement = document.getElementById(LookupProperties.inputName);
-        inputElement.style.color = '#000000';
-        inputElement.value="" ;*/
         form.submit();
     }
 

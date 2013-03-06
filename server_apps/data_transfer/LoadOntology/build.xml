@@ -5,6 +5,7 @@
     <property name="anatomyOboURL" value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
     <property name="qualityOboURL" value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
     <property name="geneOboURL" value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+    <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
@@ -63,8 +64,19 @@
         <antcall target="download-ontology" />
     </target>
 
+    <target name="download-sequence-ontology" >
+        <property name="localOboFile" value="sequence-ontology.obo"/>
+        <property name="oboFileURL" value="${sequenceOboURL}"/>
+        <antcall target="download-ontology" />
+    </target>
+
     <target name="load-quality-ontology"  depends="init">
         <property name="localOboFile" value="${run-directory}/quality.obo"/>
+        <antcall target="load-ontology" />
+    </target>
+
+    <target name="load-sequence-ontology"  depends="init">
+        <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
         <antcall target="load-ontology" />
     </target>
 
@@ -124,7 +136,10 @@
     <target name="init">
         <echo message="Launching Ontology Loader"/>
         <tstamp/>
+<!--
         <property name="run-directory" value="./run-${DSTAMP}"/>
+-->
+        <property name="run-directory" value="./obo-files"/>
         <mkdir dir="${run-directory}" />
     </target>
 

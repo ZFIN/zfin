@@ -108,6 +108,10 @@ public class OntologyTermDetailController {
             if (Ontology.isOboID(termID))
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
         }
+        if (term == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, termID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
         Collections.sort(termRelationships);

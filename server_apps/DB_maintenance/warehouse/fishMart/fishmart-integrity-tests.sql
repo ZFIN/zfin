@@ -100,3 +100,44 @@ unload to fasFeatureGroupCharLengthExceeded
 
 TEST (fasFeatureGroupCharLengthExceeded > 0)'there are fish with fas_feature_group longer than the lvarchar field restriction of 5000 = $x > 0';
 
+
+-- 12 -------------------------------------------------------------------------------------------------------------------
+
+unload to F1PoolGenoNameIsNotNull
+    select count(*) as counter 
+    	   from fish_annotation_search_temp 
+	   where fas_line_handle like 'ZDB-ALT%' 
+    	   and (fas_geno_name is not null and fas_geno_name not like '');
+
+TEST (F1PoolGenoNameIsNotNull > 0)'there are fish with ZDB-ALTs for fas_line_handle where geno_name is not null.  These are F1 pools with genotypes.';
+
+-- 13 -------------------------------------------------------------------------------------------------------------------
+
+unload to F1PoolGenotypeGroupIsNotNull
+    select count(*) as counter 
+    	   from fish_annotation_search_temp 
+	   where fas_line_handle like 'ZDB-ALT%' 
+    	   and fas_genotype_group is not null;
+
+TEST (F1PoolGenotypeGroupIsNotNull > 0)'there are fish with ZDB-ALTs for fas_line_handle where fas_genotype_group is not null.  These are F1 pools with genotypes.';
+
+-- 14 -------------------------------------------------------------------------------------------------------------------
+
+unload to NonF1PoolGenoNameNull
+    select count(*) as counter 
+    	   from fish_annotation_search_temp 
+	   where fas_line_handle not like 'ZDB-ALT%' 
+    	   and fas_geno_name is null;
+
+TEST (NonF1PoolGenoNameNull > 0)'there are non-F1 pool fish with no names.';
+
+-- 14 -------------------------------------------------------------------------------------------------------------------
+
+unload to F1PoolMoreThan1Feature
+    select count(*) as counter 
+    	   from fish_annotation_search_temp 
+	   where fas_line_handle like 'ZDB-ALT%' 
+    	   and fas_feature_group like '%|%|%';
+
+TEST (NonF1PoolGenoNameNull > 0)'there are F1 pool fish with more than one feature.';
+
