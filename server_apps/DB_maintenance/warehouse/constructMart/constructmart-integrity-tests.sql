@@ -56,13 +56,13 @@ unload to btsContainsshsp70Count
   select
        count(*)
    from
-       construct_search
+       construct_search_temp
    where
        exists(
            select
                'c'
            from
-               construct_component_search
+               construct_component_search_temp
            where
                ccs_cons_id = cons_pk_id
                and ccs_relationship_type = 'promoter of'
