@@ -128,7 +128,7 @@ foreach $key (sort keys %pubIds) {
    while ($cur->fetch()) {
       $ct++;
       $curatorEmail =~ s/\s+//;
-      &sendEnv("Undefined environment, which may be curated by you, is found: $expimentName {$key} with $publicationId", "$curatorEmail");      
+      &sendEnv("Undefined environment, which may be curated by you, is found: $expimentName {$key} with $publicationId on <!--|DB_NAME|-->", "$curatorEmail");      
       $curatorNames{$curatorId} = $curatorName;
       $curatorEmails{$curatorId} = $curatorEmail;
       last if $ct > 100;
