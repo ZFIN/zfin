@@ -116,6 +116,8 @@ public interface InfrastructureRepository {
 
     MarkerAlias getMarkerAliasByID(String zdbID);
 
+    DataAlias getDataAliasByID(String zdbID);
+
     int deleteRecordAttributionForPub(String zdbID);
 
     int removeRecordAttributionForData(String datazdbID, String pubZdbID);

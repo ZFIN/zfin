@@ -166,6 +166,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (MarkerAlias) criteria.uniqueResult();
     }
 
+    public DataAlias getDataAliasByID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(DataAlias.class);
+        criteria.add(Restrictions.eq("zdbID", zdbID));
+        return (DataAlias) criteria.uniqueResult();
+    }
+
     public RecordAttribution getRecordAttribution(String dataZdbID, String sourceZdbId, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RecordAttribution.class);
