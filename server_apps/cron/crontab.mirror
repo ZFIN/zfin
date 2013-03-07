@@ -44,6 +44,15 @@
 20 07 * * 1-5 /research/zusers/test/reload_test.sh
 00 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/queryMonitoring/dailyQueryCostCheck.sh
 30 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/extentMonitoring/dailyExtentCheck.sh
+
+# these are temporary for maintenance
+#00 10 * * 1-5 /research/zusers/trunk/rebuild_trunk.sh
+00 12 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/data_transfer/Downloads/DownloadFiles.pl
+#00 13 * * 1-5 /research/zusers/trunk/rebuild_trunk.sh
+#00 16 * * 1-5 /research/zusers/trunk/rebuild_trunk.sh
+
+
+
 #
 #
 # ========================================================================
