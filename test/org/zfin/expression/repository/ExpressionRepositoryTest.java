@@ -405,6 +405,14 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getExpressionFigureCountForGivenGenotype() {
+        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID("ZDB-GENO-111128-1");
+        int count = expRep.getExpressionFigureCountForGenotype(genotype);
+        Assert.assertTrue(count < 50);
+        Assert.assertTrue(count > 1);
+    }
+
+    @Test
     public void getDirectlySubmittedExpression() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         List pubList = expRep.getDirectlySubmittedExpressionForGene(m);
