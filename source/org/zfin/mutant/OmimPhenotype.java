@@ -45,13 +45,14 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
 
 
     @Override
-    public int compareTo(OmimPhenotype OmimPhenotype) {
+    public int compareTo(OmimPhenotype anotherOmimPhenotype ) {
         String bracket = "[";
         String brace = "{";
         String questionMark = "?";
 
-        String anotherName = OmimPhenotype.getName();
+        String anotherName = anotherOmimPhenotype.getName();
 
+        // those without any brackets [ ], braces { }, or question markers are listed alphabetically first
         if ( (getName().startsWith(bracket) || getName().startsWith(brace) || getName().startsWith(questionMark) ) && !(anotherName.startsWith(bracket) || anotherName.startsWith(brace) || anotherName.startsWith(questionMark) ) ) {
             return 1;
         } else if ( !(getName().startsWith(bracket) || getName().startsWith(brace) || getName().startsWith(questionMark) ) && (anotherName.startsWith(bracket) || anotherName.startsWith(brace) || anotherName.startsWith(questionMark) ) ) {
