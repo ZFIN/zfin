@@ -457,7 +457,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,ALT),0))">
-   <b> Please use the individual  <?MIVAR><A HREF='/action/feature/feature-detail?zdbID=$OID'>allele</A><?/MIVAR> record to enter allele-specific publications.</b>
+   <b> Please use the individual  <?MIVAR><A HREF='/$OID'>allele</A><?/MIVAR> record to enter allele-specific publications.</b>
    <br>
   <?/MIBLOCK>
 <?/MIVAR> 
