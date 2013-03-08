@@ -570,6 +570,12 @@ PREFIX:   featcurup_
         <?MISQL SQL="insert into zdb_active_data values('$featcurup_mkrmkr_reln_zdb_id')"><?/MISQL>
         <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$featcurup_mkrmkr_reln_zdb_id', '$OID')"><?/MISQL>
         <?MISQL SQL="insert into marker_relationship  values('$featcurup_mkrmkr_reln_zdb_id', '$featcur_reln_add_relation', '$featcur_reln_feat_zdb_id', '$featcur_reln_add_marker','')"><?/MISQL>
+<?MIVAR>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$featcur_reln_feat_zdb_id&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=mrel_zdb_id&recweb_new_value=$featcurup_mkrmkr_reln_zdb_id&recweb_comments=create+new+relationship+record') 
+                 from webPages where ID='aa-record_web_update.apg';">
+<?/MISQL>
+<?/MIVAR>
    <?MIELSE>
           <?MISQL SQL="select feature_type from feature
                        where
