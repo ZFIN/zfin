@@ -207,9 +207,11 @@
     </th>
     <td>
         <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
+
             <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
                 <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zmp}">
                     <%--${featureGenbank.accessionNumber}--%>
+
                     <zfin:link entity="${featureGenbank}"/>
                     <c:if test="${featureGenbank.publicationCount > 0}">
                         <c:choose>
@@ -265,8 +267,12 @@
 </table>
 <c:forEach var="featureDblink" items="${formBean.feature.dbLinks}">
 
+
     <c:choose>
-        <c:when test="${featureDblink.referenceDatabase.foreignDB.zfishbook||featureDblink.referenceDatabase.foreignDB.zmp}">
+        <%--<c:when test="${featureDblink.referenceDatabase.foreignDB.zfishbook||featureDblink.referenceDatabase.foreignDB.zmp}">--%>
+        <c:when test="${featureDblink.referenceDatabase.foreignDBDataType.dataType.toString()!='Genomic'}">
+
+        <%--<c:when test="${!featureDblink.referenceDatabase.foreignDB.isGenBank}">--%>
     <%--<c:choose>
         <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
           <div class="summary">
