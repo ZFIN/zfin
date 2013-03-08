@@ -232,18 +232,25 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void blastDatabases() {
-        List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("CU651595");
-        assertThat(dbLinkList.size(), greaterThan(1));
+
+        List<DBLink> dbLinkGenBank = RepositoryFactory.getSequenceRepository().getDBLinks(ForeignDB.AvailableName.UNIPROTKB, 5);
+        assertNotNull(dbLinkGenBank);
+        List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(dbLinkGenBank.get(0).getAccessionNumber());
+        assertThat(dbLinkList.size(), greaterThan(0));
         assertThat(dbLinkList.size(), lessThan(10));
         for (DBLink dbLink : dbLinkList) {
-            if (dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.GENBANK)) {
+            if (dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.UNIPROTKB)) {
                 List<Database> blastDatabases = dbLink.getBlastableDatabases();
-                assertEquals(2, blastDatabases.size());
+                assertEquals(4, blastDatabases.size());
                 for (Database database : blastDatabases) {
                     assertTrue(
-                            database.getAbbrev() == Database.AvailableAbbrev.ENSEMBL
+                            database.getAbbrev() == Database.AvailableAbbrev.SPTR_ZF
                                     ||
-                                    database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST
+                                    database.getAbbrev() == Database.AvailableAbbrev.PBLAST
+                                    ||
+                                    database.getAbbrev() == Database.AvailableAbbrev.ENSEMBL_P
+                                    ||
+                                    database.getAbbrev() == Database.AvailableAbbrev.VEGAP
                     );
                 }
 

@@ -117,6 +117,20 @@ public interface SequenceRepository {
 
     List<MarkerDBLink> getWeakReferenceDBLinks(Marker m,MarkerRelationship.Type type1, MarkerRelationship.Type type2);
 
+    /**
+     * Retrieve a list of all accessions for a given database.
+     * @param name foreign database
+     * @return list of DBLink records.
+     */
+    List<DBLink> getDBLinks(ForeignDB.AvailableName name);
+
+    /**
+     * Retrieve the first numberOfRecords of all accessions for a given database.
+     * @param name foreign database
+     * @param numberOfRecords numberOfRecords
+     * @return list of DBLink records.
+     */
+    List<DBLink> getDBLinks(ForeignDB.AvailableName name, int numberOfRecords);
 }
 
 

@@ -921,7 +921,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
-    public Collection<String> getDBLinkAccessionsForEncodedMarkers(Marker marker, ForeignDBDataType.DataType dataType){
+    public Collection<String> getDBLinkAccessionsForEncodedMarkers(Marker marker, ForeignDBDataType.DataType dataType) {
         String hql = "  select dbl.accessionNumber from MarkerRelationship mr join mr.firstMarker m , MarkerDBLink dbl " +
                 "  where mr.firstMarker.zdbID = :markerZdbID   " +
                 "  and mr.secondMarker.zdbID = dbl.dataZdbID  " +
@@ -931,24 +931,25 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("markerZdbID", marker.getZdbID())
                 .setString("dataType", dataType.toString())
-                .setString("markerType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString() )
+                .setString("markerType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString())
                 .list();
     }
 
     /**
      * select dbl.dblink_acc_num,m.mrkr_zdb_id
-from db_link dbl
-join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
-join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id
-join foreign_db_data_type dt on fdbc.fdbcont_fdbdt_id=dt.fdbdt_pk_id
-join marker m on dbl.dblink_linked_recid=m.mrkr_zdb_id
-where
-dt.fdbdt_data_type='RNA'
-and
-dt.fdbdt_super_type='sequence'
---and  fdb.fdb_db_name='GenBank'
-and
-m.mrkr_type in ('GENE','GENEP','EST','CDNA')
+     * from db_link dbl
+     * join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+     * join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id
+     * join foreign_db_data_type dt on fdbc.fdbcont_fdbdt_id=dt.fdbdt_pk_id
+     * join marker m on dbl.dblink_linked_recid=m.mrkr_zdb_id
+     * where
+     * dt.fdbdt_data_type='RNA'
+     * and
+     * dt.fdbdt_super_type='sequence'
+     * --and  fdb.fdb_db_name='GenBank'
+     * and
+     * m.mrkr_type in ('GENE','GENEP','EST','CDNA')
+     *
      * @return Map&lt;accession,ZdbID&gt;
      */
     @Override
@@ -958,7 +959,7 @@ m.mrkr_type in ('GENE','GENEP','EST','CDNA')
                 "  where dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
                 "  and dbl.referenceDatabase.foreignDBDataType.superType = :superType " +
                 "  and dbl.marker.markerType.name in (:types) " +
-                "" ;
+                "";
         List<String> types = new ArrayList<String>();
         types.add(Marker.Type.CDNA.name());
         types.add(Marker.Type.EST.name());
@@ -966,28 +967,28 @@ m.mrkr_type in ('GENE','GENEP','EST','CDNA')
         types.add(Marker.Type.GENEP.name());
         List<DBLink> dblinks = HibernateUtil.currentSession().createQuery(hql)
                 .setParameterList("types", types)
-                .setParameter("dataType", ForeignDBDataType.DataType.RNA )
+                .setParameter("dataType", ForeignDBDataType.DataType.RNA)
                 .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
-                       MarkerDBLink dbLink = new MarkerDBLink();
+                        MarkerDBLink dbLink = new MarkerDBLink();
                         dbLink.setAccessionNumber(tuple[0].toString());
                         dbLink.setDataZdbID(tuple[1].toString());
                         return dbLink;
                     }
                 })
                 .list();
-        Map<String,String>  accessionCandidates = new HashMap<String,String>();
-        for(DBLink dbLink : dblinks){
-            accessionCandidates.put(dbLink.getAccessionNumber(),dbLink.getDataZdbID());
+        Map<String, String> accessionCandidates = new HashMap<String, String>();
+        for (DBLink dbLink : dblinks) {
+            accessionCandidates.put(dbLink.getAccessionNumber(), dbLink.getDataZdbID());
         }
 
         return accessionCandidates;
     }
 
     @Override
-    public List<MarkerDBLink> getWeakReferenceDBLinks(Marker gene,MarkerRelationship.Type type1,MarkerRelationship.Type type2) {
+    public List<MarkerDBLink> getWeakReferenceDBLinks(Marker gene, MarkerRelationship.Type type1, MarkerRelationship.Type type2) {
         String hql = " select distinct dbl " +
                 " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  MarkerRelationship  ctmr, MarkerRelationship gtmr   " +
                 " where ctmr.firstMarker.zdbID=dbl.dataZdbID " +
@@ -1007,8 +1008,38 @@ m.mrkr_type in ('GENE','GENEP','EST','CDNA')
                 .setParameter("markerZdbId", gene.getZdbID())
                 .setParameter("type1", type1.toString())
                 .setParameter("type2", type2.toString())
-                .setParameter("displayGroup", DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE.toString()) ;
+                .setParameter("displayGroup", DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE.toString());
         return query.list();
+    }
+
+    /**
+     * Retrieve a list of all accessions for a given database.
+     *
+     * @param name foreign database
+     * @return list of DBLink records.
+     */
+    @Override
+    public List<DBLink> getDBLinks(ForeignDB.AvailableName name) {
+        return getDBLinks(name, -1);
+    }
+
+    /**
+     * Retrieve the first numberOfRecords of all accessions for a given database.
+     *
+     * @param name            foreign database
+     * @param numberOfRecords numberOfRecords
+     * @return list of DBLink records.
+     */
+    @Override
+    public List<DBLink> getDBLinks(ForeignDB.AvailableName name, int numberOfRecords) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from DBLink where " +
+                " referenceDatabase.foreignDB.dbName = :dbName";
+        Query query = session.createQuery(hql);
+        query.setParameter("dbName", name);
+        if (numberOfRecords > 0)
+            query.setMaxResults(numberOfRecords);
+        return (List<DBLink>) query.list();
     }
 }
 

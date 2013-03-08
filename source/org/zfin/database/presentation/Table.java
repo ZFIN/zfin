@@ -98,7 +98,7 @@ public enum Table {
     OBSOLETE_TERM_SUGGESTION("OBSOLETE_TERM_SUGGESTION", "obsolete_term_suggestion", "obstermsug_pk_id"),
     ONTOLOGY("ONTOLOGY", "ontology", "ont_pk_id", "ont_ontology_name"),
     ONTOLOGY_SUBSET("ONT_SUBSET", "ontology_subset", "osubset_pk_id", "osubset_subset_name"),
-    ORGANISM("ORGANISM", "organism", "organism_common_name"),
+    ORGANISM("ORGANISM", "organism", "organism_common_name", "organism_common_name"),
     ORTHOLOGUE("ORTHO", "orthologue", "zdb_id"),
     ORTHOLOGUE_EVIDENCE("ORTHOEV", "orthologue_evidence", "oev_ortho_zdb_id"),
     PANEL("REFCROSS", "panels", "zdb_id", "name"),

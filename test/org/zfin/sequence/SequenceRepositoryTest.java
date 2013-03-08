@@ -169,6 +169,13 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getUnitProtDbLinks(){
+        List<DBLink> links = sequenceRepository.getDBLinks(ForeignDB.AvailableName.UNIPROTKB);
+        assertNotNull(links);
+        assertThat(links.size(), greaterThan(100));
+    }
+
+    @Test
     public void getFirst10Sequences() {
         List<String> markerTypes = sequenceRepository.getAllNSequences(10);
         assertNotNull(markerTypes);
