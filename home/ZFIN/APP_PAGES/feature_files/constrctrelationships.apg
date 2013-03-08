@@ -74,7 +74,7 @@ EFFECTS
                  and m1.mrkr_type like '%CONST%'
               ;">
 
-              <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation >
+              <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation>
               <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
               <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
               <INPUT TYPE=HIDDEN NAME=featcur_featcurupdate VALUE="update">
@@ -86,13 +86,15 @@ EFFECTS
               <?MIVAR NAME="featrel_rel_type">$3<?/MIVAR>
               <?MIVAR NAME="featrel_feat_type">$6<?/MIVAR>
               <?MIVAR NAME="featrel_relation_zdb_id">$7<?/MIVAR>
+<?MIVAR NAME="featrel_constrct_html"><a href=/$featrel_feat_zdb_id>$featrel_feature_name</a><?/MIVAR>
+
               <?MIBLOCK COND=$(NE,$featrel_prev_feature_name,$featrel_feature_name)>
                    <?MIVAR NAME=featrel_row_color>$(IF,$(EC,$featrel_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
              <?MIELSE>
                 <?MIVAR NAME=featrel_row_color>$featrel_row_color<?/MIVAR> 
               <?/MIBLOCK>
               <tr bgcolor=$featrel_row_color>
-              <td> $(IF,$(NE,$featrel_prev_feature_name,$featrel_feature_name),$featrel_feature_name,&nbsp;)
+              <td>$(IF,$(NE,$featrel_prev_feature_name,$featrel_feature_name),$featrel_constrct_html,&nbsp;)
               </td>
               <td> $featrel_feat_type </td>
               <td> $featrel_rel_type
