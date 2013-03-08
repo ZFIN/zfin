@@ -667,7 +667,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public FeatureAlias getSpecificDataAlias(Feature feature, String alias) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(DataAlias.class);
+        Criteria criteria = session.createCriteria(FeatureAlias.class);
         criteria.add(Restrictions.eq("feature", feature));
         criteria.add(Restrictions.eq("alias", alias));
         return (FeatureAlias) criteria.uniqueResult();
