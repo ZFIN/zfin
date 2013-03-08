@@ -21,7 +21,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
     private static Logger logger = Logger.getLogger(IntegratedJavaMailSender.class);
 
-    private final String DEFAULT_MAILHOST = "smtp.uoregon.edu";
+    private final String DEFAULT_MAILHOST = "localhost";
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private String mailHost = DEFAULT_MAILHOST;
 
@@ -149,11 +149,14 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
         String messageText = null;
         String subjectText = null;
-        String[] emailAddresses = ZfinProperties.getAdminEmailAddresses();
+
+//        String[] emailAddresses = ZfinProperties.getAdminEmailAddresses();
+	String[] emailAddresses = {"pich@anatinus.com","cmpich@zfin.org"};
         StringBuilder stringBuilder = new StringBuilder();
         for (String arg : args) {
             stringBuilder.append(arg).append(" ");
         }
+//	stringBuilder.append(" cmpich@uoregon.edu cmpich@cs.uoregon.edu");
         System.out.println("Sending mail with arguments: " + stringBuilder.toString() + " to " + emailAddresses[0]);
         if (args.length < 2) {
             subjectText = "test email from IntegratedJavaMailSender: " + new Date();
