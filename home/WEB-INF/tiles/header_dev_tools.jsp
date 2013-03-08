@@ -39,7 +39,7 @@
                             <A class="devtools" HREF="/">Home</a>
                     </td>
                     <td align=center>
-                            <A class="devtools" HREF="/action/dev-tools/home">Dev Tools</a>
+                            <A class="devtools" HREF="/action/devtool/home">Dev Tools</a>
                     </td>
 
                     <td align=center>
