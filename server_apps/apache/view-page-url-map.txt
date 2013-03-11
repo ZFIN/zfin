@@ -42,3 +42,6 @@ XPAT   /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&xpatID=ZDB-X
 ZFA     /action/ontology/term-detail/ZFA
 TERM    /action/ontology/term-detail/ZDB-TERM
 ZFS     /action/ontology/term-detail/ZFS
+NBO     /action/ontology/term-detail/NBO
+MPATH     /action/ontology/term-detail/MPATH
+BSPO     /action/ontology/term-detail/BSPO
