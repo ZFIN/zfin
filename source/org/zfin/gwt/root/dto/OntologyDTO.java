@@ -131,7 +131,7 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-     SO(17, "SO","sequence_ontology", false) {
+     SO(17, "SO","sequence", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
