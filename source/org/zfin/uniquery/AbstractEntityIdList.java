@@ -63,10 +63,6 @@ abstract public class AbstractEntityIdList implements EntityIdList {
             LOG.warn("No url mapping found for id " + id);
             return null;
         }
-        if (!url.endsWith("="))
-            url += "=";
-        if (!url.startsWith("/"))
-            url += "/";
         return ZfinPropertiesEnum.NON_SECURE_HTTP.toString() + ZfinPropertiesEnum.DOMAIN_NAME + url + id;
     }
 
