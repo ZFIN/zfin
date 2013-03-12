@@ -188,17 +188,17 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     @SuppressWarnings({"unchecked"})
-    public List<GenericTermRelationship> getAllRelationships(Ontology ontology) {
+    public List<String> getAllRelationships(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
-        String hql = " select distinct relationships from GenericTermRelationship as relationships";
+        String hql = " select distinct relationship.type from GenericTermRelationship as relationship";
         if (ontology != null) {
-            hql += " where   termOne.ontology = :ontology OR termTwo.ontology = :ontology";
+            hql += " where   relationship.termOne.ontology = :ontology OR relationship.termTwo.ontology = :ontology";
         }
         Query query = session.createQuery(hql);
         if (ontology != null) {
             query.setParameter("ontology", ontology);
         }
-        return (List<GenericTermRelationship>) query.list();
+        return (List<String>) query.list();
     }
 
     /**
@@ -208,11 +208,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @SuppressWarnings({"unchecked"})
     @Override
-    public List<GenericTermRelationship> getAllRelationships() {
+    public List<String> getAllRelationships() {
         Session session = HibernateUtil.currentSession();
-        String hql = " select distinct relationships from GenericTermRelationship as relationships";
+        String hql = " select distinct relationships.type from GenericTermRelationship as relationships";
         Query query = session.createQuery(hql);
-        return (List<GenericTermRelationship>) query.list();
+        return (List<String>) query.list();
     }
 
     /**

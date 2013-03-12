@@ -73,7 +73,7 @@ public class FishMatchingService {
                         Feature ftr = getFeatureRepository().getFeatureByID(ftrEntity.getID());
                         addMatchingConstruct(criteria.getGeneOrFeatureNameCriteria().getValue(),ftr);
                     }
-        }
+            }
         }
         }
         if (criteria.getPhenotypeAnatomyCriteria().hasValues())
@@ -120,18 +120,18 @@ public class FishMatchingService {
 
 
 
-
         service.removeMatchingType(MatchType.CONTAINS);
     }
 
 
 
-/**
-* Checks for matches of multiple query term matches against a fish's
-* phenotype.
-*
-* @param criterion term criterion
-*/
+
+    /**
+     * Checks for matches of multiple query term matches against a fish's
+     * phenotype.
+     *
+     * @param criterion term criterion
+     */
     private void checkAllTermMatches(SearchCriterion criterion) {
         if (criterion == null || criterion.getValues() == null)
             return;

@@ -223,21 +223,6 @@ public class ZfinJSPFunctions {
         return manager.isOntologyLoaded(ontology);
     }
 
-    public static Set<String> getDistinctRelationshipTypes(Ontology ontology) {
-        List<GenericTermRelationship> termRelationships;
-        if (ontology != null) {
-            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships(ontology);
-        } else {
-            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships();
-        }
-        Set<String> relationships = new TreeSet<String>();
-        for (GenericTermRelationship genericTermRelationship : termRelationships) {
-            relationships.add(genericTermRelationship.getType());
-        }
-
-        return relationships;
-    }
-
     public static String getTimeDuration(Date start, Date end) {
         return DateUtil.getTimeDuration(start, end);
     }
@@ -351,15 +336,15 @@ public class ZfinJSPFunctions {
         return AnatomyPresentation.createFormattedSynonymList(DTOConversionService.convertToTerm(termDto));
     }
 
-    public static Mutagen getMutagen(String name){
+    public static Mutagen getMutagen(String name) {
         return Mutagen.getType(name);
     }
 
-    public static Mutagee getMutagee(String name){
+    public static Mutagee getMutagee(String name) {
         return Mutagee.getType(name);
     }
 
-    public static Database.AvailableAbbrev getAvailableAbbrev(String name){
+    public static Database.AvailableAbbrev getAvailableAbbrev(String name) {
         return Database.AvailableAbbrev.getType(name);
     }
 

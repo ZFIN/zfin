@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.ontology.presentation.OntologyBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.ontology.presentation.OntologyBean" required="true" %>
@@ -6,7 +5,8 @@
 
 <h2>List of Relationship Types for [${formBean.ontologyName}] ontology</h2>
 
-Total of: ${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontology))}
+
+Total of: ${formBean.distinctRelationshipTypes.size()}
 
 <table width="90%">
     <tr class="search-result-table-header left-top-aligned">
@@ -14,14 +14,14 @@ Total of: ${fn:length(zfn:getDistinctRelationshipTypes(formBean.ontology))}
         <td width="300" class="sectionTitle">Relationship Name</td>
     </tr>
 
-    <c:forEach var="relation" items="${zfn:getDistinctRelationshipTypes(formBean.ontology)}" varStatus="loop">
-            <zfin:alternating-tr loopName="loop">
-                <td>
-                        ${loop.index+1}
-                </td>
-                <td>
-                        ${relation}
-                </td>
-            </zfin:alternating-tr>
+    <c:forEach var="relation" items="${formBean.distinctRelationshipTypes}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop">
+            <td>
+                    ${loop.index+1}
+            </td>
+            <td>
+                    ${relation}
+            </td>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>

@@ -44,14 +44,14 @@ public interface OntologyRepository {
      * @param ontology ontology
      * @return list of relationships
      */
-    List<GenericTermRelationship> getAllRelationships(Ontology ontology);
+    List<String> getAllRelationships(Ontology ontology);
 
     /**
      * Retrieve all Relationships.
      *
      * @return list of relationships
      */
-    List<GenericTermRelationship> getAllRelationships();
+    List<String> getAllRelationships();
 
     /**
      * Retrieve Term by OBO ID.

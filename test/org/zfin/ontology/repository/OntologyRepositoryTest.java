@@ -406,4 +406,10 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         boolean isParentChildRelation = ontologyRepository.isParentChildRelationshipExist(brainNucleus, subTerm);
         assertTrue(isParentChildRelation);
     }
+
+    @Test
+    public void getDistinctRelationshipTypes() {
+        List<String> relationshipTypes = ontologyRepository.getAllRelationships(Ontology.SO);
+        assertNotNull(relationshipTypes);
+    }
 }

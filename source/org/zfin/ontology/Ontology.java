@@ -43,7 +43,7 @@ public enum Ontology implements Serializable {
     BEHAVIOR("behavior_ontology", "Behavior Ontology", false, "NBO:"),
     MPATH("mouse_pathology.ontology", "MPATH", false, "MPATH:"),
     MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false, "MPATH:"),
-    SO("sequence", "Sequence Ontology", "Sequence Ontology", false, "SO:"),
+    SO("sequence", "sequence", "Sequence Ontology", false, "SO:"),
     AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true);
 
     private String ontologyName;

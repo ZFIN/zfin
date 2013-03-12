@@ -6,6 +6,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.ontology.*;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -166,6 +167,20 @@ public class OntologyBean extends PaginationBean {
         stageListDisplay = AnatomyService.getDisplayStages();
         return stageListDisplay;
     }
+
+    public Set<String> getDistinctRelationshipTypes() {
+        List<String> termRelationships;
+        if (ontology != null) {
+            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships(ontology);
+        } else {
+            termRelationships = RepositoryFactory.getOntologyRepository().getAllRelationships();
+        }
+        Set<String> relationships = new TreeSet<String>();
+        relationships.addAll(termRelationships);
+        return relationships;
+    }
+
+
 
     public SectionVisibility getSectionVisibility() {
         return sectionVisibility;

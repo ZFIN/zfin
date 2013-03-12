@@ -90,18 +90,6 @@
 
 <function>
     <description>
-      Retrieve a set of Relationship Types
-    </description>
-    <name>getDistinctRelationshipTypes</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.util.Set getDistinctRelationshipTypes(org.zfin.ontology.Ontology)</function-signature>
-    <example>
-      ${fn:getDistinctRelationshipTypes(ontology))}">
-    </example>
-  </function>
-
-<function>
-    <description>
       Retrieve a sorted list of aliases
     </description>
     <name>getSortedSynonymList</name>

@@ -47,7 +47,7 @@ Total of: ${fn:length(formBean.terms)}
                 </td>
                 <td class="listContentBold">
                     <zfin:link entity="${term}"/>
-                    <%--${term.name}--%>
+                        <%--${term.name}--%>
                 </td>
                 <td>
                         ${term.oboID}
