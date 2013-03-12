@@ -204,8 +204,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 // 	brain [ZDB-TERM-100331-8]
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-labeled-antibodies/ZDB-TERM-100331-8");
-                // antibody ab1-aqp1a.1
-                assertNotNull(page.getByXPath("//a[@id='ab1-aqp1a.1']").get(0));
+                // antibody Ab1-5-hmC
+                assertNotNull("Could not find antibody Ab1-5-hmC", page.getByXPath("//a[@id='Ab1-5-hmC']").get(0));
             } catch (Exception e) {
                 fail(e.toString());
             }
