@@ -30,12 +30,12 @@ public class PublicationPresentation extends EntityPresentation {
      * Per case 8749, an EST could be attributed to a person. So adding this clause to redirect to person page and not pubview
      * in case that happens. Apparently there are more than 6k such cases.
      */
-    public static String getLink(String publicationZdbID, String linkContent) {
-        if (publicationZdbID.contains("PERS")){
-          return getTomcatLink(person_uri,publicationZdbID,"1");
+    public static String getLink(String attributionZdbID, String linkContent) {
+        if (attributionZdbID.contains("PERS")){
+          return getTomcatLink(person_uri,attributionZdbID,"1");
         }
         else{
-            return getWebdriverLink(uri, publicationZdbID, linkContent);
+            return getWebdriverLink(uri, attributionZdbID, linkContent);
         }
     }
 
