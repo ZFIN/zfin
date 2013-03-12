@@ -51,5 +51,4 @@ delete from zdb_active_data where exists (
 drop table tmp_dup_alias;
 drop table tmp_dup_mhist;
 
-rollback work;
---commit work;
+commit work;
