@@ -36,6 +36,9 @@ RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
 RewriteCond <!--|MUTANT_NAME|--> =zfin.org
 RewriteRule ^/$ /cgi-bin/webdriver?MIval=aa-ZDB_home.apg [PT]
 
+# short link to programmer job
+RewriteRule ^/SoftwareEngineer http://jobs.uoregon.edu/unclassified.php?id=4196 [NC]
+
 #lab designation page
 RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
 
