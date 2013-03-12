@@ -333,7 +333,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="5 0 17 ? * MON-FRI"/>
+        <property name="cronExpression" value="6 0 17 ? * MON-FRI"/>
     </bean>
 
      <bean id="loadSequenceOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
