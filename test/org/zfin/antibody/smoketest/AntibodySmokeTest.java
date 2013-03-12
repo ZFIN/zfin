@@ -79,7 +79,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
             try {
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=ab-2&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
-                List<?> relatedTerms = page.getByXPath("//a[@id='ab-2f11']");
+                List<?> relatedTerms = page.getByXPath("//a[@id='ab-2F11']");
                 assertEquals(1, relatedTerms.size());
                 HtmlAnchor link = (HtmlAnchor) relatedTerms.get(0);
                 assertEquals("Upper case indicates usage of the antibody name", "Ab-2F11", link.getTextContent());
