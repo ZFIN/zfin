@@ -19,8 +19,13 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/anatomy-search");
                 assertEquals("ZFIN AO / GO Search", page.getTitleText());
-                assertNotNull(page.getByXPath("//label[. = 'Term:']").get(0));
-                HtmlInput htmlInput = (HtmlInput) page.getByXPath("//input[@id = 'searchTerm']").get(0);
+                List<?> byXPath = page.getByXPath("//label[. = 'Term:']");
+                assertNotNull(byXPath);
+                assertNotNull(byXPath.get(0));
+                List<?> byXPath1 = page.getByXPath("//input[@id = 'searchTerm']");
+                assertNotNull(byXPath1);
+                HtmlInput htmlInput = (HtmlInput) byXPath1.get(0);
+                assertNotNull(htmlInput);
                 assertEquals("", htmlInput.getValueAttribute());
                 htmlInput.setValueAttribute("pelv");
                 assertEquals("pelv", htmlInput.getValueAttribute());
