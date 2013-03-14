@@ -16,3 +16,7 @@ create index construct_gene_feature_result_view_all_allele_gene_names_bts_index
 
 create index figure_term_construct_search_bts_index
   on figure_term_construct_search (ftcs_term_group bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+
+update zdb_flag
+  set (zflag_is_on,zflag_last_modified) = ('f',current year to second)
+ where zflag_name = "regen_constructmart";
