@@ -145,6 +145,19 @@ displays a publication record, or many publication records if > 1 returned.
 
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
+<table>
+<tr>
+<td colspan=10 width=80%>&nbsp;           </td>
+<td width=20>&nbsp;
+<td width=20>&nbsp;
+<td width=20>&nbsp;
+<TD width=20% ALIGN=right>
+
+      <!-- Insert a form with one button. Label button Your Input Welcome -->
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+    </TD>
+</tr>
+</table>
 
 
 <?MICOMMENT>
@@ -177,12 +190,6 @@ displays a publication record, or many publication records if > 1 returned.
       <TD><B>STATUS:</B> $pubview2_pub_status 
       </TD>
    <?/MIVAR>
-<TD width=20></TD>
-<TD width=20% ALIGN=right>
-
-      <!-- Insert a form with one button. Label button Your Input Welcome -->
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-    </TD>
 
  </TR>
 </TABLE>
