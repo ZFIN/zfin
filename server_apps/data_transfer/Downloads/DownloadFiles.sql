@@ -1585,6 +1585,7 @@ update tmp_dumpPheno
 				  where geno_zdb_id = geno_id);
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenoGeneClean.txt'
+DELIMITER "	"
   select * From tmp_dumpPheno
   	 order by gene_abbrev
 ;
