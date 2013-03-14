@@ -1620,7 +1620,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
        <Download orderIndex="1">
             <Name>
-                Fish
+                Fish Components
             </Name>
             <Category>
                 Fish
@@ -1650,7 +1650,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
        <Download orderIndex="4">
             <Name>   
-	      Genetic Marker
+	      SNP Data
             </Name>
             <Category>
                 Genetic Markers
