@@ -1308,7 +1308,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
 	<Download orderIndex="1">
             <Name>
-                Genes with Phenotypes
+                Phenotype of Zebrafish Genes
             </Name>
             <Category>
                 Phenotype Data
@@ -1620,10 +1620,10 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
        <Download orderIndex="1">
             <Name>
-                Fish Components
+                Fish
             </Name>
             <Category>
-                Fish Data
+                Fish
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
@@ -1650,7 +1650,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
        <Download orderIndex="4">
             <Name>   
-	      SNP Data
+	      Genetic Marker
             </Name>
             <Category>
                 Genetic Markers
