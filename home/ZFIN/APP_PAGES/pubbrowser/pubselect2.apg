@@ -351,6 +351,7 @@ function list_all(user_access) {
 
 <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
 <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+<?MIVAR NAME=page DEFAULT=1>$page<?/MIVAR>
 
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 <?MIVAR name=$selector>MIval=aa-pubselect2.apg&query_results=exists&WINSIZE=$WINSIZE<?/MIVAR>
@@ -534,7 +535,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
                <?MIVAR>
 		<div id="pagination"></div>
 		<script type="text/javascript">
-		    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
+		    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs&page=$page');
 		</script>
 	 	<?/MIVAR>
 		<div id="pagination"></div>

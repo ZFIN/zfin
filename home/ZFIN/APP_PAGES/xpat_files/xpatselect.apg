@@ -525,6 +525,7 @@ function openChild(childWinUrl,childWinName) {
 
   <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
   <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+  <?MIVAR NAME=page DEFAULT=1>$page<?/MIVAR>
 
   <?MICOMMENT> DEFINITION OF RANGES <?/MICOMMENT>
   <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
@@ -711,7 +712,7 @@ function openChild(childWinUrl,childWinName) {
        <p/>
 	<div id="pagination"></div>
 	<script type="text/javascript">
-	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$totalRecords');
+	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$totalRecords&page=$page');
 	</script>
  	<?/MIVAR>
 	<div id="pagination"></div>

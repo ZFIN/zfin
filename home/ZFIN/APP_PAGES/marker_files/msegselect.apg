@@ -553,7 +553,7 @@ PREFIX: msegsel_
     <?MIVAR NAME=WINSIZE DEFAULT=20>$WINSIZE<?/MIVAR>
     <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
-
+    <?MIVAR NAME=page DEFAULT=1>$page<?/MIVAR>
     <!--- DEFINITION OF RANGES --->
     <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
     <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
@@ -703,7 +703,7 @@ PREFIX: msegsel_
        <?MIVAR>
 	<div id="pagination"></div>
 	<script type="text/javascript">
-	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs');
+	    jQuery('#pagination').load('/action/pagination?maxDisplayRecords=$WINSIZE&actionUrl=$(URLENCODE,$selector)$(URLENCODE,$UserInput)&firstPageRecord=$BEGIN&totalRecords=$num_recs&page=$page');
 	</script>
  	<?/MIVAR>
 	<div id="pagination"></div>
