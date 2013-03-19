@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertTrue;
@@ -257,6 +258,12 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // genotype: apchu745/hu745
         String fishID = "ZDB-GENO-090916-1,ZDB-GENOX-090916-4,ZDB-GENOX-120518-12,ZDB-GENOX-120518-13,ZDB-GENOX-120518-16,ZDB-GENOX-120518-17,ZDB-GENOX-120518-7,ZDB-GENOX-120518-8,ZDB-GENOX-120518-9";
         Fish fish = FishService.getFish(fishID);
+        // should not exist. It used to and then got deleted after 2013.3.15
+        assertNull(fish);
+
+        // genotype: apchu745/hu745> no MOs just generic and std-control genox ids
+        fishID = "ZDB-GENO-090916-1,ZDB-GENOX-090916-4,ZDB-GENOX-120518-7";
+
         List<FigureExpressionSummary> summaryList = FishService.getExpressionSummary(fishID, null);
         assertNotNull(summaryList);
 
@@ -267,7 +274,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
             if (figureExpressionSummary.getFigure().getZdbID().equals(figID)) {
                 for (ExpressedGene expressedGene : figureExpressionSummary.getExpressedGenes())
                     if (expressedGene.getGene().getAbbreviation().equals(geneAbbreviation))
-                        assertTrue("There are at least one expression statements on gene " + expressedGene.getGene().getAbbreviation(), expressedGene.getExpressionStatements().size() > 0);
+                        assertTrue("There should be at least one expression statement on gene " + expressedGene.getGene().getAbbreviation(), expressedGene.getExpressionStatements().size() > 0);
             }
         }
 
@@ -276,7 +283,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         for (FigureExpressionSummaryDisplay display : list) {
             if (display.getFigure().getZdbID().equals(figID)) {
                 if (display.getExpressedGene().getGene().getAbbreviation().equals(geneAbbreviation))
-                    assertTrue("More than one expression statement: ", display.getExpressedGene().getExpressionStatements().size() > 1);
+                        assertTrue("No expression statement found: ", display.getExpressedGene().getExpressionStatements().size() > 0);
             }
         }
     }
