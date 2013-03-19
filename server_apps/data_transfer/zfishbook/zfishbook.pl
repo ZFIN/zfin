@@ -14,7 +14,7 @@ use MIME::Lite;
 #
 sub sendLoadOutput($) {
 
-  my $SUBJECT="Auto: zfishbook data new genotypes on ".$_[0];
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new genotypes";
   my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./pre_geno.unl";
  
@@ -34,7 +34,7 @@ sub sendLoadOutput($) {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg3->print(\*SENDMAIL);
 
-  my $SUBJECT="Auto: zfishbook data new features on ".$_[0];
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new features";
   my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./pre_feature.unl";
  
@@ -63,7 +63,7 @@ sub sendLoadOutput($) {
 #
 sub sendLoadLogs($) {
 
-  my $SUBJECT="Auto: zfishbook data load log1 on ".$_[0];
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook data load - log1";
   my $MAILTO="xshao\@cs.uoregon.edu";
   my $TXTFILE="./log1";
 
@@ -83,7 +83,7 @@ sub sendLoadLogs($) {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg1->print(\*SENDMAIL);
 
-  my $SUBJECT="Auto: zfishbook data load log2 on ".$_[0];
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook data load - log2";
   my $MAILTO="xshao\@cs.uoregon.edu";
   my $TXTFILE="./log2";
 
@@ -129,17 +129,7 @@ system("rm -f report");
 system("rm -f log1");
 system("rm -f log2");
 
-$dir = "<!--|ROOT_PATH|-->";
-
-@dirPieces = split(/www_homes/,$dir);
-
-$dbname = $dirPieces[1];
-$dbname =~ s/\///;
-
-print $dbname;
-
-print "\n\n";
-
+$dbname = "<!--|DB_NAME|-->";
 
 print "\nRunning zfishbook pre-process script ...\n\n";
 

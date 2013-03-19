@@ -11,9 +11,9 @@ use DBI;
 #
 #
 
-sub sendReport {
+sub sendReport($) {
 		
-  my $SUBJECT="Auto: zfishbook sanity checking result";
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook sanity checking result";
   my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./report";
  
@@ -33,7 +33,7 @@ sub sendReport {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg1->print(\*SENDMAIL);
 
-  my $SUBJECT="Auto: zfishbook pre_load_input";
+  my $SUBJECT="Auto from ".$_[0]." : zfishbook pre_load_input";
   my $MAILTO="xshao\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
   my $TXTFILE="./pre_load_input.txt";
  
@@ -89,6 +89,9 @@ $gtCnstructIds{"RP8"} = "ZDB-GTCONSTRCT-121023-1";
 $gtCnstructIds{"RP8 pr. 18"} = "ZDB-GTCONSTRCT-121023-1";
 $gtCnstructIds{"R14.5"} = "ZDB-GTCONSTRCT-100624-1";
 $gtCnstructIds{"RP15"} = "ZDB-GTCONSTRCT-100121-2";
+$gtCnstructIds{"RP1"} = "ZDB-GTCONSTRCT-130315-3";
+$gtCnstructIds{"RP4"} = "ZDB-GTCONSTRCT-130315-2";
+$gtCnstructIds{"RP7"} = "ZDB-GTCONSTRCT-130315-1";
 
 
 open (ZFISHBOOKDATA, "zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
@@ -351,6 +354,7 @@ undef @lines;
 
 $dbh->disconnect(); 
 
+print "\nnumber of crucial errors:  $numOfCrucialErrors\n\n";
 print  "\nnumber of non-crucial error of pre_load checking:  $numErr\n";
 
 print REPORT "\nnumber of non-crucial errors:  $numErr\n\n";
@@ -360,7 +364,7 @@ print REPORT "\nThe loading is not done due to crucial error(s).\n\n" if $numOfC
 
 close (REPORT);
 
-sendReport();
+sendReport("$dbname");
 
 exit;
 
