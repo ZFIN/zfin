@@ -41,7 +41,7 @@ GBT0319|Gt(GBT-RP2)mn0319|RP2|||
 GBT0320|Gt(GBT-RP2)mn0320|RP2|||
 GBT0321|Gt(GBT-RP2)mn0321|RP2|||
 GBT0322|Gt(GBT-RP2)mn0322|RP2|||
-GBT0325|mn0325Gt|RP2||LOC557764|multiple epidermal growth factor-like domains protein 6-like
+GBT0325|mn0325Gt|RP2|ZDB-GENE-101112-3|megf6b|multiple EGF-like-domains 6b
 GBT0326|Gt(GBT-RP2)mn0326|RP2|||
 GBT0336|Gt(GBT-RP2)mn0336|RP2|||
 GBT0337|Gt(GBT-RP2)mn0337|RP2|||

@@ -128,7 +128,16 @@ foreach $line (@lines) {
     
     $lineNum = substr($prev, 3);
     
-    $allele = "mn" . $lineNum . "Gt";
+    $alleleOnZfishbookFile = $fields[1];
+    if ($alleleOnZfishbookFile =~ m/xu/) {
+        $lab = "ZDB-LAB-040114-1";
+        $allele = "xu" . $lineNum . "Gt";
+        $prefix = "xu";
+    } else {
+        $lab = "ZDB-LAB-970908-70";
+        $allele = "mn" . $lineNum . "Gt";
+        $prefix = "mn";
+    }
     
     $allele =~ s/^\s+//; 
     $allele =~ s/\s+$//;
@@ -228,7 +237,7 @@ foreach $line (@lines) {
     }
 
     ### look up ZFIN feature zdbIds        
-    if ($allele =~ m/mn/)  {
+    if ($allele =~ m/mn/ || $allele =~ m/xu/)  {
       $cur = $dbh->prepare('select feature_zdb_id from feature where feature_name = ?;');
       $cur->execute($allele);
       my ($ZFINfeatureId);
@@ -345,7 +354,7 @@ foreach $line (@lines) {
 
     } 
     
-    print ZFISHBOOK "$ct|$prev|$lineNum|$allele|$geneId|$featNamePart|$featureId|$cnstrtId|\n";
+    print ZFISHBOOK "$ct|$prev|$lineNum|$allele|$geneId|$featNamePart|$featureId|$cnstrtId|$lab|$prefix|\n";
 
 
   }
@@ -362,6 +371,7 @@ print REPORT "\nnumber of crucial errors:  $numOfCrucialErrors\n\n";
 
 print REPORT "\nThe loading is not done due to crucial error(s).\n\n" if $numOfCrucialErrors > 0;
 
+close (ZFISHBOOK);
 close (REPORT);
 
 sendReport("$dbname");
