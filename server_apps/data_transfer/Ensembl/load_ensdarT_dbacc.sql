@@ -22,7 +22,21 @@ create unique index ensdarT_dbacc_ensacc_ensdarT_idx
 
 update statistics medium for table ensdarT_dbacc;
 
-! echo "drop existing ensdarT that are not continued"
+! echo "check if any moved?"
+select ens.dblink_zdb_id as id
+ from db_link ens, db_link ott, ensdarT_dbacc
+ where ens.dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
+   and ott.dblink_acc_num == ensacc_dbacc
+   and ott.dblink_linked_recid == ens.dblink_linked_recid
+   and ens.dblink_acc_num != ensacc_ensdart
+into temp tmp_movedENSDARTs;
+
+! echo "how many deleted b/c of move?"
+delete from db_link
+  where exists (Select 'x' from tmp_movedENSDARTs 
+  	       	       where id = dblink_Zdb_id);
+
+! echo "drop existing ensdarT that are not absent from the file"
 delete from zdb_active_data where exists (
 	select 't' from db_link
 	 where dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
@@ -33,14 +47,6 @@ delete from zdb_active_data where exists (
 	   )
 );
 
-! echo "check if any moved?"
-select count(*) moved
- from db_link ens, db_link ott, ensdarT_dbacc
- where ens.dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
-   and ott.dblink_acc_num == ensacc_dbacc
-   and ott.dblink_linked_recid == ens.dblink_linked_recid
-   and ens.dblink_acc_num != ensacc_ensdart
-;
 
 ! echo "drop new ensdarT that already exist"
 delete from ensdarT_dbacc where exists (

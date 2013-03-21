@@ -3,6 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	pm\@cs.uoregon.edu
 <!--|AO_EMAIL_ERR|-->	pm\@cs.uoregon.edu
 <!--|BACKGROUND_COLOR|-->	#FFFFCC
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/devBlastRegeneration
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	pm\@cs.uoregon.edu
 <!--|COUNT_PATO_OUT|-->	pm\@cs.uoregon.edu
@@ -80,6 +81,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/devBlastRegeneration
 <!--|WEB_ADMIN_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	devwiki.zfin.org
 <!--|ZFIN_ADMIN|-->	pm\@cs.uoregon.edu

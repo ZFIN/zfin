@@ -46,6 +46,9 @@ set fishMartScripts=(begin.sql \
 	     populateBurgessLin.sql \
 	     commit.sql \
 	     begin.sql \
+	     populateSanger.sql \
+	     commit.sql \
+	     begin.sql \
 	     populateFishAnnotationSearch.sql \
 	     commit.sql \
 	     begin.sql \
@@ -56,6 +59,9 @@ set fishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateBurgessLinGFRV.sql \
+	     commit.sql \
+	     begin.sql \
+	     populateSangerGFRV.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateFigureTermFishSearch.sql \

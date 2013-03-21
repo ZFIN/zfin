@@ -8,12 +8,12 @@
 
 set bin_pth="/private/apps/wublast";
 # path from $WEBHOST_BLAST_DATABASE_PATH/Current
-set current="/research/zprodmore/blastdb/Current";
+set current="<!--|WEBHOST_BLAST_DATABASE_PATH|-->/Current/";
 set timestamp="`date +%Y%m%d`"
 set here="`pwd`"
 
 
-dbaccess -a $DBNAME select_nomemclature_candidates.sql
+#dbaccess -a $DBNAME select_nomemclature_candidates.sql
 
 
 cat nomenclature_candidate_pp.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
@@ -24,6 +24,10 @@ cat /dev/null >! accession.pp
 foreach key (`cat keys.txt`)
 	echo $key
 	switch ($key)
+		case "Polypeptide|Ensembl":
+			${bin_pth}/xdget -p  ${current}/ensemblProt_zf `grep $key nomenclature_candidate_pp.unl | \
+			cut -f3 -d \|` >> accession.pp
+		breaksw
 		case "Polypeptide|GenPept":
 			${bin_pth}/xdget -p  ${current}/refseq_zf_aa `grep $key nomenclature_candidate_pp.unl | \
 			cut -f3 -d \|` >> accession.pp
@@ -51,7 +55,7 @@ end # foreach
 
 echo "On $HOST blast the nomenclature set against Human & mouse & zebrafish proteins"
 echo ""
-nice +10 ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf" accession.pp -E e-50 >! UniProt_${timestamp}.out
+nice +10 ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 >! Protein_${timestamp}.out
 
 sleep 3
 echo ""
@@ -60,4 +64,4 @@ echo ""
 
 # $SOURCEROOT is the right thing to use here but we are too lame for that 
 
-../../../../../commons/bin/parse-blast-reno.r UniProt_${timestamp}.out "UniProt_${timestamp}"
+../../../../../commons/bin/parse-blast-reno.r Protein_${timestamp}.out "Protein_${timestamp}"

@@ -56,13 +56,14 @@ public class BlastHeuristicsEvaluator {
         databaseList.add(RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION)) ; // ~40K
         databaseList.add(RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.GBK_ZF_DNA)) ; // ~200K
         databaseList.add(RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.GBK_EST_ZF)) ; // ~2000K
-        databaseList.add(RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.WGS_ZF)) ; // ~6000K
+//         ; // ~6000K
     }
 
     @After
     public void closeSession() {
         HibernateUtil.closeSession();
     }
+
 
     @Test
     public void testGetAverageTime(){

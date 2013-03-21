@@ -164,6 +164,14 @@ public class RunCandidate {
                             else{
                                 LOG.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
                             }
+                            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
+                                    MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)){
+                                LOG.debug("ADDING encoding gene: "+ gene.getAbbreviation());
+                                genesToAdd.add(gene) ;
+                            }
+                            else{
+                                LOG.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                            }
                         }
                         // only add if a single encoded relationship
                     }

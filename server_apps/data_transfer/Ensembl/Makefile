@@ -16,13 +16,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensembl_agp.sh
+GENERICS = fetch_ensembl_agp.sh fetch_sangerMutantInfo.sh
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql \
 	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
 	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
-	  rollback.sql commit.sql readme readme.ensembl_mysql
+	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql  loadSangerMutantData.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -70,10 +70,11 @@ load_ensdarT_commit: $(TARGETDIR)/load_ensdarT_dbacc.sql \
  $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarT_dbacc.unl
 	cd $(TARGETDIR)/ && cat $< commit.sql | dbaccess -a $$DBNAME
 
-
 # 		fetch  Ensembl GTF and convert to gff3
 run_gff: $(TARGETDIR)/fetch_ensembl_gff.sh
 	cd $(TARGETDIR) && fetch_ensembl_gff.sh
+
+run_sanger_mutant_data: $(TARGETDIR)/fetch_sangerMutantInfo.sh
 
 # pre delete any versions of the file to be downloaded
 run_gff_force: $(TARGETDIR)/fetch_ensembl_gff.sh
@@ -89,7 +90,9 @@ run:        load_ensdarG        load_ensdarT        run_gff run_agp
 
 run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp
 
+run_gff3:  run_gff run_agp
 
+run_ensembl_load: load_ensdarG_commit load_ensdarT_commit
 
 clean_ensembl:
 	rm -f $(TARGETDIR)/load_ensdarG.sql $(TARGETDIR)/ensdarT_dbacc.unl

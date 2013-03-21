@@ -3,6 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	ryanm\@cs.uoregon.edu
 <!--|AO_EMAIL_ERR|-->	ryanm\@cs.uoregon.edu
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zprod/blast/watsondb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	ryanm\@cs.uoregon.edu
 <!--|COUNT_PATO_OUT|-->	ryanm\@cs.uoregon.edu
@@ -80,6 +81,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	ryanm\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zprod/blast/watsondb
 <!--|WEB_ADMIN_EMAIL|-->	ryanm\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	ryanm\@cs.uoregon.edu

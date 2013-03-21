@@ -7,7 +7,7 @@ load from 'ensdarG.unl' insert into ens_zdb;
 create index ez_zdb_idx on ens_zdb( ez_zdb );
 update statistics high for table ens_zdb;
 
-! echo "if a gene has been merged, fix it's zdbid"
+! echo "if a gene has been merged, fix its zdbid"
 update ens_zdb set ez_zdb = (
 	select zrepld_new_zdb_id
 	 from zdb_replaced_data
@@ -26,10 +26,14 @@ delete from ens_zdb;
 insert into ens_zdb select * from tmp_ens_zdb;
 drop table tmp_ens_zdb;
 
+
 ! echo "confirm a zdb_id still only exists once. (we do merges ...)"
 select ez_zdb from ens_zdb
  group by 1 having count(*) > 1
  into temp tmp_dup_zdb with no log;
+
+select * from tmp_dup_zdb;
+
 delete from ens_zdb
  where ens_zdb.ez_zdb in (select * from tmp_dup_zdb)
 ;
@@ -37,21 +41,54 @@ drop table tmp_dup_zdb;
 
 update statistics for table ens_zdb;
 
+!echo "SIERRA" ;
 
-! echo "delete existing links that are no longer represented by Ensembl 1:1"
-delete from zdb_active_data where zactvd_zdb_id in (
-	select dblink_zdb_id from db_link
-	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
-	   and not exists(
-	 	select 1 from ens_zdb
+!echo "delete existing links that are no longer represented by Ensembl 1:1" ;
+
+select dblink_zdb_id as id
+ from db_link
+ where not exists(
+	 	select 'x' from ens_zdb
 	 	 where dblink_linked_recid = ez_zdb
 	 	   and dblink_acc_num = ez_ens
-	   )
-	   and not exists (Select 'x' from record_attribution, ens_zdb
-                 where recattrib_data_zdb_id = ez_zdb
-                   and recattrib_source_zdb_id = 'ZDB-PUB-120207-1' 
-           )
-);
+)
+ and dblink_acc_num like 'ENSDARG%'
+ and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+ and dblink_linked_recid like 'ZDB-GENE%'
+into temp tmp_drop;
+
+!echo "unloading ENSDARGs that have changed but can not be updated because they are associated with Sanger Load Pub";
+
+unload to changedSangerEnsdargs.txt
+ select id, dblink_acc_num, dblink_linked_recid 
+   from tmp_drop, record_Attribution, db_link
+     where recattrib_data_zdb_id = id
+     and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1')
+     and dblink_zdb_id = id;
+
+delete from tmp_drop
+ where exists (Select 'x' from record_attribution
+       	      	      where recattrib_data_zdb_id = id
+		      and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1'));
+
+select * From tmp_drop
+ where id = 'ZDB-DBLINK-120813-30916';
+
+delete from db_link
+ where exists (Select 'x' from tmp_drop where dblink_zdb_id = id);
+
+
+delete from zdb_active_data 
+  where exists (select 'x' from tmp_drop where zactvd_zdb_id = id);
+
+select * from db_link
+ where dblink_zdb_id = 'ZDB-DBLINK-120813-30916';
+
+select * from ens_zdb
+ where ez_ens = 'ENSDARG00000094606';
+
+select * from db_link
+ where dblink_acc_num = 'ENSDARG00000094606';
 
 ! echo "remove incomming Ensembl links that already exist in ZFIN"
 delete from ens_zdb
