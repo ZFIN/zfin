@@ -1204,11 +1204,11 @@ if ((-e $sharedTmpFile) && ($dbName ne "mirrordb")) {
     logMsg("load already running, please check back later.");
     exit 1;
 }
-else {
+else  {
     logMsg("creating lock file for this load");
     system("/bin/touch $sharedTmpFile");
+    system("/bin/chmod g+w $sharedTmpFile");
 }
-
 
 if ($ENV{HOST} =~ /kinetix/){
     $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
