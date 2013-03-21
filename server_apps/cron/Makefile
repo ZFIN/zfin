@@ -70,7 +70,7 @@ start : $(TARGETS)
   endif
 
 startdevl : $(TARGETS)
-	/bin/cat $(TARGETDIR)/crontab.development $(TARGETDIR)/crontab.mirror | /bin/crontab 
+	/bin/cat $(TARGETDIR)/crontab.development $(TARGETDIR)/crontab.mirror /research/zusers/blast/cron/crontab.zygotix | /bin/crontab 
 
 # as informix src'd test.env, you can combine crons for production and development (keeping those
 # for almost pointing to almost, and the rest pointing to test.
