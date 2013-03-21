@@ -9,6 +9,7 @@ import org.zfin.datatransfer.DownloadSmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
+import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.gwt.MorpholinoAddSmokeTest;
 import org.zfin.gwt.SimpleSmokeTest;
@@ -38,6 +39,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         ExpressionSmokeTest.class,
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,
+        ConstructSmokeTest.class,
         GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
         LookupSmokeTest.class,
