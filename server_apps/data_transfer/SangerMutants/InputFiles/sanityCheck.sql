@@ -51,6 +51,6 @@ delete from allelenomap where allelenomap in (select distinct newallelemap from 
 unload to 'correctedsangerEnsdarg.unl' select * from allelenomap;
 
 !echo 'prepare final input file for Reno'
-unload to uniqueEnsdargs.txt select distinct ensdargid from allelenomap; 
+unload to uniqueEnsdargs.txt DELIMITER " " select distinct ensdargid from allelenomap; 
 
 rollback work;
