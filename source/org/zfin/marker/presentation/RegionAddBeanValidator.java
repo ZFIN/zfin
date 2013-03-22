@@ -26,6 +26,11 @@ public class RegionAddBeanValidator implements Validator {
         if (StringUtils.isEmpty(regionName)) {
             errors.rejectValue("regionName", "code", "Engineered region name cannot be null.");
         }
+
+        if (!regionName.equals(StringUtils.upperCase(regionName))) {
+            errors.rejectValue("regionName", "code", "Engineered region name must be all upper case.");
+        }
+
         if (!StringUtils.isEmpty(regionName)) {
             if (mr.isMarkerExists(regionName)) {
                 errors.rejectValue("regionName", "code", "The marker abbreviation [" + regionName + "] is already taken by another marker");
