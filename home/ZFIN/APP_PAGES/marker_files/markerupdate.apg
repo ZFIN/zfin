@@ -30,6 +30,21 @@ function make_correction(mrkr_id,old_v,attr) {
   var new_v = document.updater.new_value.value;
   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
 }
+
+function validate(theform) {
+   <?MIBLOCK COND="$(>,$(POSITION,$OID,REGION),0)">       
+       // if the marker type is REGION, only allow upper case
+       var newName = theform.new_value.value;
+       if (newName.toUpperCase() == newName) {
+            return true;
+       }  else {
+            alert("Engineered region name should be all upper case.");
+            return false;
+       }
+   <?MIELSE>
+       return true;
+   <?/MIBLOCK>
+}
 </SCRIPT>
 
 <?MIVAR NAME=$target_table>marker<?/MIVAR>
@@ -85,7 +100,7 @@ function make_correction(mrkr_id,old_v,attr) {
       </font></center>
     <?/MIVAR>
     <p>
-    <FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD="post">
+    <FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD="post" onSubmit="return validate(this);">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
 	<INPUT TYPE=hidden name=OID Value=$OID>
