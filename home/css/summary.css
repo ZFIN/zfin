@@ -94,6 +94,10 @@ table.rowstripes tr.odd { background-color: #eee; }
 table.rowstripes tr.even { background-color: #fff; }
 table.summary.rowstripes { border: 1px solid #ccc; }
 
+table.rowstripes_withdrawn tr.odd { background-color: #eee; }
+table.rowstripes_withdrawn tr.even { background-color: #fff; }
+table.summary.rowstripes_withdrawn { border: none; }
+
 /* large striped (one per group) summary table styling */
 table.groupstripes { border: 1px solid #ccc; }
 table.groupstripes tr.newgroup { border-top: 1px solid #ccc; }
