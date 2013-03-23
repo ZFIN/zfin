@@ -46,8 +46,7 @@
 <div class="summary">
     <c:choose>
         <c:when test="${!empty relatedTranscriptDisplay.transcripts}">
-            <table class="summary rowstripes">
-
+            <table class="summary rowstripes_withdrawn">
                 <c:set var="lastType" value=""/>
                 <c:set var="groupIndex" value="0"/>
                 <c:forEach var="nonWithdrawnTranscript" items="${relatedTranscriptDisplay.nonWithdrawnTranscripts}" varStatus="loop">
@@ -133,7 +132,6 @@
                                 </td>
                               </c:when>
                               <c:otherwise>
-                                  <td width="20%"></td>
                               </c:otherwise>
                             </c:choose>
 
@@ -142,6 +140,7 @@
                 </c:forEach>
 
        <c:if test="${relatedTranscriptDisplay.withdrawnTranscripts != null && fn:length(relatedTranscriptDisplay.withdrawnTranscripts) > 0}">
+       <table class="summary rowstripes_withdrawn">
                 <tr class=${loop.index%2==0 ? "even" : "odd"}>
                     <td width="18%"><strong><a id="withdrawnTranscriptsLink" href="javascript:;" onclick="showWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/plus-13.png" style="border:none;" title="show withdrawn transcripts"></a><a id="hideWithdrawnTranscriptsLink" style="display: none;" href="javascript:;" onclick="hideWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/minus-13.png" style="border:none;" title="hide withdrawn transcripts"></a>&nbsp;Withdrawn Transcripts<img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20"></strong></td>
                     <td width="22%"></td>
@@ -182,7 +181,7 @@
                                     </c:choose>
                             </td>
 
-                            <td width="20%"></td>
+                            <td width="20%">&nbsp;</td>
                         </tr>
                 </c:forEach>
        </c:if>
