@@ -15,11 +15,16 @@ create procedure p_insert_into_record_attribution_datazdbids
 
 	define vOk_dataId integer ;
 	define vCuratorPub integer ;
+	define vOk_sourceId integer ;
 
 	let vOk_dataId = 0 ;
 	let vCuratorPub = 0 ;	
+	
+	let vOk_sourceId = ( select count(*) 
+	                     from zdb_active_source
+	                     where zactvs_zdb_id = vSourceZdbId );
 
-	if vDataZdbId is not null 
+	if ( vDataZdbId is not null and vOk_sourceId == 1)
 	
 	then
 
