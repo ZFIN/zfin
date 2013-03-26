@@ -163,6 +163,10 @@
         <tr>
             <td nowrap="nowrap"><label class="namesearchLabel">Reporter Expression In</label></td>
             <td>
+                <style>
+                    /* overriding, see case 9050 */
+                    input#searchTerm.error { color: black; }
+                </style>
                 <form:hidden path="anatomyTermIDs"/>
                 <form:hidden path="anatomyTermNames"/>
                 <script type="text/javascript">
@@ -239,6 +243,9 @@
 
 
 jQuery(document).ready(function () {
+
+    jQuery('#construct').focus();
+
     if ((jQuery('input[name=allTg]').attr('checked')==true)||(jQuery('input[name=allGt]').attr('checked')==true)||(jQuery('input[name=allPt]').attr('checked')==true)||(jQuery('input[name=allEt]').attr('checked')==true))       {
 
         jQuery('input[name=allTypes]').attr('checked', false);

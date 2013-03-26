@@ -89,6 +89,10 @@
             </label>
         </th>
         <td>
+            <style>
+                /* overriding, see case 9050 */
+                input#searchTerm.error { color: black; }
+            </style>
             <form:hidden path="anatomyTermIDs"/>
             <form:hidden path="anatomyTermNames"/>
             <script type="text/javascript">
@@ -189,6 +193,8 @@
     //experimental, submit form on any form element change
 
     jQuery(document).ready(function () {
+
+        jQuery('#geneOrFeatureName').focus();
 
         jQuery('#fish-search-form .auto-submit').change(function () {
 

@@ -137,12 +137,14 @@ public class LookupComposite extends Composite implements Revertible {
         if (RootPanel.get("useAllTerms") != null) {
             initializeAllTermsCheckbox();
         }
+/*
         DeferredCommand.addCommand(new Command() {
             @Override
             public void execute() {
                 textBox.setFocus(true);
             }
         });
+*/
 
         ontologySelector.addChangeHandler(new ChangeHandler() {
             @Override
@@ -200,7 +202,7 @@ public class LookupComposite extends Composite implements Revertible {
         if (showError) {
             initNoteGui();
         }
-        textBox.setFocus(true);
+        //textBox.setFocus(true);
         initWidget(rootPanel);
         RootPanel panel = RootPanel.get(TERM_INFO);
         if (panel != null && termInfoTable == null) {
