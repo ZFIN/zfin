@@ -15,7 +15,9 @@
         <DisplayName>Genes/Marker/Clones</DisplayName>
         <UrlMapping>
             <urlPattern type="GeneView" boostValue="256">marker/view/ZDB-GENE-\p{ASCII}*</urlPattern>
-            <urlPattern type="MarkerView" boostValue="8">marker/view/ZDB-(?!(GENE|ATB))</urlPattern>
+            <urlPattern type="GeneView" boostValue="256">/ZDB-GENE-\p{ASCII}*</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">marker/view/ZDB-(BAC|BAC_END|CDNA|EFG|EST|ETCONSTRCT|FOSMID|GENEP|GTCONSTRCT|MRPHLNO|PAC|PAC_END|RAPD|REGION|SNP|SSLP|STS|TGCONSTRCT|TSCRIPT)-\p{ASCII}*</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">/ZDB-(BAC|BAC_END|CDNA|EFG|EST|ETCONSTRCT|FOSMID|GENEP|GTCONSTRCT|MRPHLNO|PAC|PAC_END|RAPD|REGION|SNP|SSLP|STS|TGCONSTRCT|TSCRIPT)-\p{ASCII}*</urlPattern>
             <!--<urlPattern type="MarkerView" boostValue="8">marker/view</urlPattern>-->
         </UrlMapping>
     </Category>
@@ -23,12 +25,14 @@
         <DisplayName>Features</DisplayName>
         <UrlMapping>
             <urlPattern type="FeatureView">feature/feature-detail</urlPattern>
+            <urlPattern type="FeatureView">/ZDB-ALT-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="MUTANTS" order="20">
         <DisplayName>Mutants/Transgenics</DisplayName>
         <UrlMapping>
             <urlPattern type="MutantGenoView">genotype/genotype-detail</urlPattern>
+            <urlPattern type="MutantGenoView">/ZDB-GENO-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="Expression" order="30">
@@ -47,6 +51,7 @@
         <DisplayName>Anatomy / Other Ontology Terms</DisplayName>
         <UrlMapping>
             <urlPattern type="AnatomyView" boostValue="256">ontology/term-detail</urlPattern>
+            <urlPattern type="AnatomyView" boostValue="256">/(GO:|ZFA:|ZFS:|BSPO:|PATO:|SO:|NBO:|MPATH:)\p{ASCII}*</urlPattern>
             <urlPattern type="AnatomyImages" boostValue="8">zf_info/anatomy</urlPattern>
         </UrlMapping>
     </Category>
@@ -54,6 +59,7 @@
         <DisplayName>Antibody</DisplayName>
         <UrlMapping>
             <urlPattern type="AntibodyView" boostValue="256">\p{ASCII}*marker/view\p{ASCII}*ZDB-ATB-\p{ASCII}*</urlPattern>
+            <urlPattern type="AntibodyView" boostValue="256">/ZDB-ATB-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="PRODUCT"  order="70">
@@ -92,8 +98,9 @@
     <Category ID="PEOPLE" order="120">
         <DisplayName>People</DisplayName>
         <UrlMapping>
-            <urlPattern type="PeopleView" boostValue="256">persview.apg</urlPattern>
-            <urlPattern type="LabView" boostValue="8">labview.apg</urlPattern>
+            <urlPattern type="PeopleView" boostValue="256">/ZDB-PERS-*</urlPattern>
+            <urlPattern type="LabView" boostValue="8">/ZDB-LAB-*</urlPattern>
+            <urlPattern type="LabView" boostValue="8">/ZDB-COMPANY-*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="WIKI_PROTOCOLS" order="130">

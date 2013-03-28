@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -7,6 +8,8 @@ import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
@@ -155,6 +158,22 @@ public class ZfinStringUtilsTest {
 
         assertTrue(StringUtils.equals(after,"&#2012;"));
 
+    }
+
+    @Test
+    public void testRegExp(){
+
+        String pattern = "/ZDB-GENE-\\p{ASCII}*";
+        String url = "http://eselsohr.zfin.org/ZDB-GENE-030616-10";
+        Pattern regExpPattern = Pattern.compile(pattern);
+        Matcher matcher = regExpPattern.matcher(url);
+        assertTrue(matcher.find());
+
+        pattern = "/ZDB-(GENE|ATB|BAC)-\\p{ASCII}*";
+        url = "http://eselsohr.zfin.org/ZDB-ATB-030616-10";
+        regExpPattern = Pattern.compile(pattern);
+        matcher = regExpPattern.matcher(url);
+        assertTrue(matcher.find());
     }
 
 }
