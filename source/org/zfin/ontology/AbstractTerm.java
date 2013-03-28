@@ -1,7 +1,10 @@
 package org.zfin.ontology;
 
+import com.zerog.ia.installer.InstallSet;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;
@@ -25,6 +28,7 @@ public abstract class AbstractTerm implements Term {
     protected String definition;
     protected Set<Image> images;
     private Set<Subset> subsets;
+    private Set<TermDefinitionReference> definitionReferences;
 
     protected Set<TermRelationship> childTermRelationships;
     protected Set<TermRelationship> parentTermRelationships;
@@ -255,6 +259,47 @@ public abstract class AbstractTerm implements Term {
         return false;
     }
 
+
+    public Set<TermDefinitionReference> getDefinitionReferences() {
+        return definitionReferences;
+    }
+
+    public void setDefinitionReferences(Set<TermDefinitionReference> definitionReferences) {
+        this.definitionReferences = definitionReferences;
+    }
+
+    public String getReferenceLink() {
+        if (checkIfSingleReference()) return null;
+        return getReferenceLink(definitionReferences.iterator().next());
+    }
+
+    public static String getReferenceLink(TermDefinitionReference reference) {
+        return reference.getForeignDB().getDbUrlPrefix() + reference.getReference();
+    }
+
+    private boolean checkIfSingleReference() {
+        if (definitionReferences == null)
+            return true;
+        if (definitionReferences.size() != 1)
+            throw new RuntimeException("Only one reference is supported for this method.");
+        return false;
+    }
+
+    public String getDefinitionDisplay() {
+        if (checkIfSingleReference()) return null;
+        TermDefinitionReference reference = definitionReferences.iterator().next();
+        if (reference.getForeignDB().getDbName() == ForeignDB.AvailableName.HTTP)
+            return getReferenceLink();
+        else
+            return reference.getForeignDB().getDbName() + ":" + reference.getReference();
+    }
+
+    public static String getDefinitionDisplay(TermDefinitionReference reference) {
+        if (reference.getForeignDB().getDbName() == ForeignDB.AvailableName.HTTP)
+            return getReferenceLink(reference);
+        else
+            return reference.getForeignDB().getDbName() + ":" + reference.getReference();
+    }
 
     private DevelopmentStage start;
     private DevelopmentStage end;

@@ -16,6 +16,8 @@ import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.infrastructure.ActiveSource;
+import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
@@ -68,7 +70,7 @@ import java.util.Collection;
  */
 public class CreateLinkTag extends BodyTagSupport {
 
-    private final Logger logger = Logger.getLogger(CreateLinkTag.class) ;
+    private final Logger logger = Logger.getLogger(CreateLinkTag.class);
 
     private Object entity;
     private String name;
@@ -83,14 +85,19 @@ public class CreateLinkTag extends BodyTagSupport {
 
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
 
-        if(o == null){
-            logger.error("Tying to create a link with a null object:\n"+getBodyContent().getString());
-            return "" ;
+        if (o == null) {
+            logger.error("Tying to create a link with a null object:\n" + getBodyContent().getString());
+            return "";
         }
 
         String link;
-        if (o instanceof String) // assumes that the link is being passed in
-            link = (String) o;
+        if (o instanceof String) {
+            Object entity = InfrastructureService.getEntityById((String) o);
+            if (entity != null)
+                o = entity;
+            else
+                link = (String) o;
+        }
         if (o instanceof ProvidesLink) // provides a generic link interface
             link = ((ProvidesLink) o).getLink();
         else if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
@@ -108,7 +115,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof Accession)
             link = AccessionPresentation.getLink((Accession) o);
         else if (o instanceof PostComposedPresentationBean)
-            link = TermPresentation.getLink((PostComposedPresentationBean) o,suppressPopupLink);
+            link = TermPresentation.getLink((PostComposedPresentationBean) o, suppressPopupLink);
         else if (o instanceof Publication)
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
@@ -133,14 +140,13 @@ public class CreateLinkTag extends BodyTagSupport {
             link = DevelopmentStagePresentation.getLink((DevelopmentStage) o, longVersion);
         else if (o instanceof Organization)
             link = SourcePresentation.getLink((Organization) o);
-        else if (o instanceof Term){
-            if(StringUtils.isEmpty(name))
-            link = TermPresentation.getLink((Term) o, suppressPopupLink);
+        else if (o instanceof Term) {
+            if (StringUtils.isEmpty(name))
+                link = TermPresentation.getLink((Term) o, suppressPopupLink);
             else
-            link = TermPresentation.getLink((Term) o, suppressPopupLink, name);
+                link = TermPresentation.getLink((Term) o, suppressPopupLink, name);
 
-        }
-        else if (o instanceof PostComposedEntity)
+        } else if (o instanceof PostComposedEntity)
             link = TermPresentation.getLink((PostComposedEntity) o, suppressPopupLink);
         else if (o instanceof TermDTO)
             link = TermDTOPresentation.getLink((TermDTO) o);

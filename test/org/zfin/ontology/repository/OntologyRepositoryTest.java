@@ -12,6 +12,7 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,22 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         String anatomyRootID = "ZFA:0000037";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
         Assert.assertNotNull(term);
+    }
+
+    //@Test
+    public void getTermWithDefinitionReference() {
+        String anatomyRootID = "ZFA:0000089";
+        Term term = ontologyRepository.getTermByOboID(anatomyRootID);
+        assertNotNull(term);
+        assertNotNull(term.getDefinitionReferences());
+        assertTrue(term.getDefinitionReferences().size() > 0);
+        assertNotNull(term.getDefinitionReferences().iterator().next().getForeignDB());
+        boolean hasHttpExternalReference = false;
+        for (TermDefinitionReference reference : term.getDefinitionReferences()) {
+            if (reference.getForeignDB().getDbName() == ForeignDB.AvailableName.HTTP)
+                hasHttpExternalReference = true;
+        }
+        assertTrue("Found HTTP external reference", hasHttpExternalReference);
     }
 
     @Test

@@ -66,6 +66,9 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @Size(max = 100, message = "Must not be empty and less than 100 characters.")
     private String fax;
 
+    @Size(max = 19, message = "16 numerals with 3 dashed separating the four-by-four groups")
+    private String orcidID;
+
     private String phone;
 
     private String address;
@@ -151,6 +154,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             strOut.append(aux);
         }
         return strOut.toString();
+    }
+
+    public String getOrcidID() {
+        return orcidID;
+    }
+
+    public void setOrcidID(String orcidID) {
+        this.orcidID = orcidID;
     }
 
     public void setSnapshot(Blob snapshot) {

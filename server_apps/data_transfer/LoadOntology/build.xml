@@ -50,7 +50,7 @@
 
     <target name="load-anatomy-ontology"  depends="init">
         <property name="localOboFile" value="${run-directory}/zebrafish_anatomy.obo"/>
-        <antcall target="load-ontology" />
+        <antcall target="load-ontology-with-stages" />
     </target>
 
     <target name="load-gene-ontology"  depends="init">
@@ -88,6 +88,24 @@
 
     <target name="load-ontology" description="Run the ontology loader">
         <property name="scriptFiles" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
+              classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="${localOboFile}"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-dbScriptFileNames"/>
+            <arg value="${scriptFiles}"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+        </java>
+
+    </target>
+
+    <target name="load-ontology-with-stages" description="Run the ontology loader">
+        <property name="scriptFiles" 
+value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
               classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>

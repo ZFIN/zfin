@@ -12,6 +12,8 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ActiveSource;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTermRelationship;
@@ -19,6 +21,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.profile.Person;
 import org.zfin.ontology.Term;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
@@ -28,6 +31,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Class that is called from JSP through a function call.
@@ -346,6 +351,10 @@ public class ZfinJSPFunctions {
 
     public static Database.AvailableAbbrev getAvailableAbbrev(String name) {
         return Database.AvailableAbbrev.getType(name);
+    }
+
+    public static boolean isZfinData(String id) {
+        return ActiveSource.validateActiveData(id);
     }
 
 }

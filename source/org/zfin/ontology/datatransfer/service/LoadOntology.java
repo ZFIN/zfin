@@ -14,6 +14,7 @@ import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -64,6 +65,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         options.addOption(log4jFileOption);
         options.addOption(dbScriptFileOption);
         options.addOption(webrootDirectory);
+        options.addOption(productionModeOption);
     }
 
     private OBOSession oboSession;
@@ -81,6 +83,10 @@ public class LoadOntology extends AbstractScriptWrapper {
     private OntologyMetadata oboMetadata;
     private static final ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
     private static final ChoiceFormat aliasChoice = new ChoiceFormat("0#aliases| 1#alias| 2#aliases");
+
+    // if true then only import if a new file is encountered
+    // if false always load the obo file.
+    private boolean productionMode = true;
 
     /**
      * Used from within the web app. No initialization needed.
@@ -136,6 +142,9 @@ public class LoadOntology extends AbstractScriptWrapper {
             LOG.error(e.getMessage());
             System.exit(-1);
         }
+        String optionValue = commandLine.getOptionValue(productionModeOption.getOpt());
+        if (StringUtils.isNotEmpty(optionValue))
+            loader.productionMode = Boolean.parseBoolean(optionValue);
         LOG.info("Property: " + ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
         if (loader.initialize(oboFile, cronJobUtil))
@@ -217,10 +226,10 @@ public class LoadOntology extends AbstractScriptWrapper {
                 StringBuilder hyperlink = new StringBuilder();
                 StringBuilder replaceLinks = new StringBuilder();
                 StringBuilder considerLinks = new StringBuilder();
-                for (GenericTerm obsoletedTerm : obsoletedTerms){
+                for (GenericTerm obsoletedTerm : obsoletedTerms) {
                     hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
                     replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
-                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm))  ;
+                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm));
                 }
                 row.add(hyperlink.toString());
                 row.add(replaceLinks.toString());
@@ -252,10 +261,10 @@ public class LoadOntology extends AbstractScriptWrapper {
                 StringBuilder hyperlink = new StringBuilder();
                 StringBuilder replaceLinks = new StringBuilder();
                 StringBuilder considerLinks = new StringBuilder();
-                for (GenericTerm obsoletedTerm : obsoletedTerms){
+                for (GenericTerm obsoletedTerm : obsoletedTerms) {
                     hyperlink.append(TermPresentation.getLink(obsoletedTerm, true));
                     replaceLinks.append(getListOfHyperlinksOfReplacedByTerms(obsoletedTerm));
-                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm))  ;
+                    considerLinks.append(getListOfHyperlinksOfConsiderTerms(obsoletedTerm));
                 }
                 row.add(hyperlink.toString());
                 row.add(replaceLinks.toString());
@@ -472,6 +481,8 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
     }
 
+    private InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
+
     private void runDbScriptFile(String dbScriptFile) {
         File file = new File(dbScriptFile);
         if (!file.exists()) {
@@ -480,7 +491,6 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
         if (!LOG.isDebugEnabled())
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
         for (DatabaseJdbcStatement statement : queries) {
@@ -540,7 +550,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private boolean processOboFile() {
-        if (!newerVersionFound()) {
+        if (!newerVersionFound() && productionMode) {
             String message = ontology.getOntologyName() + " ontology in the database is up-to-date. \n";
             message += oboMetadata.toString();
             LOG.info(message);
@@ -647,6 +657,11 @@ public class LoadOntology extends AbstractScriptWrapper {
             obsolete = "t";
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),
                 term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
+        if (term.getDefDbxrefs() != null) {
+            for (Dbxref xref : term.getDefDbxrefs()) {
+                appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), xref.getDatabaseID());
+            }
+        }
     }
 
     private void createOboSession() throws OBOParseException, IOException {
@@ -766,6 +781,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         TERMS_UN_OBSOLETED_ID("terms_un_obsoleted.txt"),
         NEW_TERMS("new_terms.unl"),
         UPDATED_TERMS("updated_terms.unl"),
+        TERM_REFERENCES("term_references.unl"),
         EXPRESSION_SUPERTERM_UPDATES("expression-superterm-updates.unl"),
         EXPRESSION_SUBTERM_UPDATES("expression-subterm-updates.unl"),
         PHENOTYPE_SUPERTERM_UPDATES("phenotype-superterm-updates.unl"),
@@ -801,6 +817,19 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
         List<String> individualRecord = new ArrayList<String>(record.length);
         individualRecord.addAll(Arrays.asList(record));
+        data.add(individualRecord);
+        dataMap.put(unloadFile.getValue(), data);
+    }
+
+    private void appendSpecialFormattedRecord(UnloadFile unloadFile, String firstString, String secondString, String thir) {
+        //appendRecord(unloadFile, InformixUtil.getUnloadRecord(record));
+        List<List<String>> data = dataMap.get(unloadFile.getValue());
+        if (data == null) {
+            data = new ArrayList<List<String>>();
+        }
+        List<String> individualRecord = new ArrayList<String>(2);
+        individualRecord.add(firstString);
+        individualRecord.add(secondString);
         data.add(individualRecord);
         dataMap.put(unloadFile.getValue(), data);
     }

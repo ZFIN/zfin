@@ -26,6 +26,7 @@
         <property name="email"/>
         <property name="fax"/>
         <property name="phone"/>
+        <property name="orcidID" column="orcid_id"/>
         <property name="address" column="address"/>
         <property name="shortName" column="name"/>
         <property name="fullName" column="full_name"/>

@@ -33,7 +33,9 @@
                             - ${person.shortName}
                             <br> Access - ${person.accountInfo.role}
                             <br> Last Login - ${person.accountInfo.previousLoginDate}
-                            <c:if test="${person.emailList==true}"><div>Is on email distribution list</div></c:if>
+                            <c:if test="${person.emailList==true}">
+                                <div>Is on email distribution list</div>
+                            </c:if>
                         </td>
                     </tr>
                 </authz:authorize>
@@ -76,6 +78,10 @@
                 <tr>
                     <th>Fax:</th>
                     <td>${person.fax}</td>
+                </tr>
+                <tr>
+                    <th>Orcid ID:</th>
+                    <td><a href="http://orcid.org/${person.orcidID}">${person.orcidID}</a></td>
                 </tr>
             </table>
         </td>

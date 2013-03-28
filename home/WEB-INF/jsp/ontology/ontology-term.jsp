@@ -27,8 +27,8 @@
             <td rowspan="3" valign="top" align="right" width="5%">
                 <span style="font-size: 12px">
                 Search Ontology: <zfin2:lookup ontology="<%=Ontology.AOGO%>"
-                                      action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
-                                      wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
+                                               action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
+                                               wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
                     </span>
             </td>
         </tr>
@@ -45,7 +45,9 @@
 
         <tr>
             <th>Definition:</th>
-            <td id="term-definition">${formBean.term.definition}</td>
+            <c:set var="term" value="${formBean.term}"/>
+            <td id="term-definition">${term.definition}
+            <zfin2:termDefinitionReferences term="${term}"/> </td>
         </tr>
         <c:if test="${formBean.term.ontology.ontologyName == 'zebrafish_anatomy'}">
             <tr>

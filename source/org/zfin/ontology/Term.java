@@ -129,6 +129,7 @@ public interface Term extends Comparable<Term>, Serializable {
 
     String getTermNameOrder();
 
-    void setTermNameOrder(String nameOrder);
+    Set<TermDefinitionReference> getDefinitionReferences();
 
+    void setDefinitionReferences(Set<TermDefinitionReference> references);
 }

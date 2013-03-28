@@ -39,6 +39,10 @@ create index rtermrels_term_2_id_index
   on tmp_rels_zdb (ttermrel_term_2_zdb_id)
   using btree in idxdbs2 ;
 
+create index rtermrels_type_id_index
+  on tmp_rels_zdb (ttermrel_type)
+  using btree in idxdbs2 ;
+
 update tmp_rels_zdb
   set ttermrel_term_1_zdb_id = (Select term_Zdb_id from term
       			      	      where term_ont_id = ttermrel_ont_id_1);
@@ -50,6 +54,109 @@ update tmp_rels_zdb
 --update statistics high for table tmp_rels ;
 --update statistics high for table term ;
 
+
+select * from  tmp_rels_zdb;
+
+create temp table  term_stage_temp  (
+	term_zdb_id_temp varchar(50),
+	start_zdb_id_temp varchar(50),
+	end_zdb_id_temp varchar(50)
+) with no log ;
+
+create index term_stage_term_id_index
+  on term_stage_temp (term_zdb_id_temp)
+  using btree in idxdbs1 ;
+
+create index term_stage_start_id_index
+  on term_stage_temp (start_zdb_id_temp)
+  using btree in idxdbs1 ;
+
+create index term_stage_end_id_index
+  on term_stage_temp (end_zdb_id_temp)
+  using btree in idxdbs1 ;
+
+
+ select ttermrel_term_2_zdb_id, stage.stg_zdb_id,  '' from tmp_rels_zdb, stage as stage, term as term
+  where ttermrel_type = 'start stage' AND
+   stage.stg_obo_id = term.term_ont_id AND
+   term.term_zdb_Id = ttermrel_term_1_zdb_id
+  AND exists (
+    select 'x' from stage, term
+    where
+    term_zdb_id = ttermrel_term_1_zdb_id AND
+    stg_obo_id = term_ont_id
+    );
+
+-- insert start stage info
+insert into term_stage_temp
+ select ttermrel_term_2_zdb_id, stage.stg_zdb_id,  '' from tmp_rels_zdb, stage as stage, term as term
+  where ttermrel_type = 'start stage' AND
+   stage.stg_obo_id = term.term_ont_id AND
+   term.term_zdb_Id = ttermrel_term_1_zdb_id
+  AND exists (
+    select 'x' from stage, term
+    where
+    term_zdb_id = ttermrel_term_1_zdb_id AND
+    stg_obo_id = term_ont_id
+    );
+
+select * From term_stage_Temp;
+
+-- update end stage info
+update term_stage_temp
+ set end_zdb_id_temp = (
+ select stage.stg_zdb_id from tmp_rels_zdb, stage as stage, term as term
+  where ttermrel_type = 'end stage' AND
+   stage.stg_obo_id = term.term_ont_id AND
+   term.term_zdb_Id = ttermrel_term_1_zdb_id AND
+    term_zdb_id_temp = ttermrel_term_2_zdb_id  );
+
+-- remove records in TERM_STAGE that do not match a record in the temp table
+-- they are either removed from the obo file or have been changed
+
+select * from term_stage_temp;
+
+select * from term_stage
+ where not exists (
+   select 'x' from term_stage_temp
+   where
+     term_zdb_id_temp = ts_term_zdb_id AND
+     start_zdb_id_temp = ts_start_stg_zdb_id AND
+     end_zdb_id_temp = ts_end_stg_zdb_id
+ );
+
+delete from term_stage
+ where not exists (
+   select 'x' from term_stage_temp
+   where
+     term_zdb_id_temp = ts_term_zdb_id AND
+     start_zdb_id_temp = ts_start_stg_zdb_id AND
+     end_zdb_id_temp = ts_end_stg_zdb_id
+ );
+
+select * From term_stage_Temp;
+
+--insert into term_stage
+ select term_zdb_id_temp, start_zdb_id_temp,end_zdb_id_temp
+ from term_stage_temp
+ where not exists (
+  select 'x' from term_stage as tt
+  where tt.ts_term_zdb_id = term_zdb_id_temp
+  );
+
+insert into term_stage
+ select term_zdb_id_temp, start_zdb_id_temp,end_zdb_id_temp
+ from term_stage_temp
+ where not exists (
+  select 'x' from term_stage as tt
+  where tt.ts_term_zdb_id = term_zdb_id_temp AND
+  tt.ts_start_stg_zdb_id = start_zdb_id_temp AND
+  tt.ts_end_stg_zdb_id = end_zdb_id_temp
+  );
+
+select * from term_stage;
+
+-------------------------------------------------------
 delete from tmp_rels_zdb
  where exists (Select 'x' from term_relationship a
        	      	      where ttermrel_term_1_zdb_id = a.termrel_term_1_zdb_id
@@ -131,6 +238,29 @@ insert into zdb_active_data
 				from zdb_active_data
 				where zactvd_zdb_id = termrel_zdb_id);
 
+
+!echo "populate the TERM_STAGE table with new start/end stages";
+
+select * from  tmp_zfin_rels;
+
+
+select * from term_stage
+ where not exists (
+   select 'x' from term_stage_temp
+   where
+    term_zdb_id_temp = ts_term_zdb_id AND
+    start_zdb_id_temp = ts_start_stg_zdb_id AND
+    end_zdb_id_temp = ts_end_stg_zdb_id
+ );
+
+--delete from term_stage
+-- where not exists (
+--   select 'x' from term_stage_temp
+--   where
+--    term_zdb_id_temp = ts_term_zdb_id AND
+--    start_zdb_id_temp = ts_start_stg_zdb_id AND
+--    end_zdb_id_temp = ts_end_stg_zdb_id
+-- );
 
 insert into term_relationship (termrel_zdb_id,
     				termrel_term_1_zdb_id,

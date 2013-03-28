@@ -42,43 +42,89 @@
             ${person.emailList and empty person.email ? '<div style="color: red;">Please provide a valid email if on distribution list.</div>' : '' }
             <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
                        action="/action/profile/person/edit/${person.zdbID}" enctype="multipart/form-data"
-                       cssClass="edit-box mark-dirty" id="person-edit-information"
-                    >
+                       cssClass="edit-box mark-dirty" id="person-edit-information">
 
-                <form:label cssClass="information-first-field" path="firstName">First Name:</form:label>
-                <form:input size="50" path="firstName"/>
-                <zfin2:errors errorResult="${errors}" path="firstName"/>
-                <br>
-                <form:label path="lastName">Last Name:</form:label>
-                <form:input size="50" path="lastName"/>
-                <zfin2:errors errorResult="${errors}" path="lastName"/>
-                <br>
-                <form:label path="phone">Phone:</form:label>
-                <form:input path="phone"/>
-                <zfin2:errors errorResult="${errors}" path="phone"/>
-                <br>
-                <form:label path="fax">Fax:</form:label>
-                <form:input path="fax"/>
-                <zfin2:errors errorResult="${errors}" path="fax"/>
-                <br>
-                <form:label path="email">Email:</form:label>
-                <form:input size="50" path="email"/>
-                <zfin2:errors errorResult="${errors}" path="email"/>
-                <br>
-                <form:label path="url">URL:</form:label>
-                <form:input size="50" path="url"/>
-                <zfin2:errors errorResult="${errors}" path="url"/>
-                <br>
-                <form:label cssStyle="vertical-align: top;" path="address">Address:</form:label>
-                <form:textarea path="address" rows="5" cols="80"/>
-                <br>
-                <form:label path="emailList">Email List:</form:label>
-                <form:checkbox size="50" path="emailList"/>
-                <br/>
-                <%--</div>--%>
-
-
-                <%--<div align="left">--%>
+                <table>
+                    <tr>
+                        <td>
+                            <form:label cssClass="information-first-field" path="firstName">First Name:</form:label>
+                        </td>
+                        <td>
+                            <form:input size="50" path="firstName"/>
+                            <zfin2:errors errorResult="${errors}" path="firstName"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="lastName">Last Name:</form:label>
+                        </td>
+                        <td>
+                            <form:input size="50" path="lastName"/>
+                            <zfin2:errors errorResult="${errors}" path="lastName"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="phone">Phone:</form:label>
+                        </td>
+                        <td>
+                            <form:input path="phone"/>
+                            <zfin2:errors errorResult="${errors}" path="phone"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="phone">Phone:</form:label>
+                        </td>
+                        <td>
+                            <form:input path="fax"/>
+                            <zfin2:errors errorResult="${errors}" path="fax"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="email">Email:</form:label>
+                        </td>
+                        <td>
+                            <form:input size="50" path="email"/>
+                            <zfin2:errors errorResult="${errors}" path="email"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="url">URL:</form:label>
+                        </td>
+                        <td>
+                            <form:input size="50" path="url"/>
+                            <zfin2:errors errorResult="${errors}" path="url"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="orcidID">Orcid Id:</form:label>
+                        </td>
+                        <td>
+                            <form:input size="19" path="orcidID"/>
+                            <zfin2:errors errorResult="${errors}" path="orcidID"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label cssStyle="vertical-align: top;" path="address">Address:</form:label>
+                        </td>
+                        <td>
+                            <form:textarea path="address" rows="5" cols="80"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="emailList">Email List:</form:label>
+                        </td>
+                        <td>
+                            <form:checkbox size="50" path="emailList"/>
+                        </td>
+                    </tr>
+                </table>
                 <br>
 
 
@@ -146,22 +192,24 @@
                 <zfin2:errors errorResult="${errors}" path="accountInfo.login"/>
 
                 <div>
-                <form:label path="accountInfo.pass1">Password:</form:label>
-                <form:password size="50" path="accountInfo.pass1" cssClass="fill-with-generated-password"
-                               onkeyup="testPassword(document.getElementById('accountInfo.pass1').value,'passwordScore','passwordVerdict');"/>
-                <zfin2:errors errorResult="${errors}" path="accountInfo.pass1"/>
+                    <form:label path="accountInfo.pass1">Password:</form:label>
+                    <form:password size="50" path="accountInfo.pass1" cssClass="fill-with-generated-password"
+                                   onkeyup="testPassword(document.getElementById('accountInfo.pass1').value,'passwordScore','passwordVerdict');"/>
+                    <zfin2:errors errorResult="${errors}" path="accountInfo.pass1"/>
                 </div>
 
                 <div>
-                <form:label path="accountInfo.pass2">Repeat Password:</form:label>
-                <form:password size="50" path="accountInfo.pass2" cssClass="fill-with-generated-password" />
-                <zfin2:errors errorResult="${errors}" path="accountInfo.pass2"/>
+                    <form:label path="accountInfo.pass2">Repeat Password:</form:label>
+                    <form:password size="50" path="accountInfo.pass2" cssClass="fill-with-generated-password"/>
+                    <zfin2:errors errorResult="${errors}" path="accountInfo.pass2"/>
                 </div>
 
                 <input type="button" id="generate-password-button" value="generate password"/>
                 <span class="fill-with-generated-password"></span>
                 <script>
-                    jQuery('#generate-password-button').click( function() { generatePassword('fill-with-generated-password'); });
+                    jQuery('#generate-password-button').click(function () {
+                        generatePassword('fill-with-generated-password');
+                    });
                 </script>
 
                 <div>Password Strength: <strong><span id="passwordVerdict"></span></strong></div>

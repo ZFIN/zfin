@@ -17,6 +17,7 @@ public enum Table {
     ANATOMY_STATS("ANATOMY_STATS", "anatomy_stats", "anatstat_term_zdb_id,anatstat_object_type"),
     ANTIBODY("MARKER", "antibody", "atb_zdb_id"),
     APATO_TAG("PATOTAG", "apato_tag", "apatotag_name"),
+    ATTRIBUTION_TYPE("ATTRIBUTION-TYPE", "attribution_type", "attype_type"),
     CLONE("MARKER", "clone", "clone_mrkr_zdb_id"),
     BLAST_DB("BLASTDB", "blast_database", "blastdb_zdb_id", "blastdb_name"),
     BLAST_DB_ORIGINATION_TYPE("BLAST_DB_ORIGINATION_TYPE", "blast_database_origination_type", "bdot_pk_id"),
@@ -42,6 +43,7 @@ public enum Table {
     EXPRESSION_EXPERIMENT("XPAT", "expression_experiment", "xpatex_zdb_id", null, "xpatex_assay_name"),
     EXPRESSION_RESULT("XPATRES", "expression_result", "xpatres_zdb_id", null, "xpatres_expression_found"),
     EXTERNAL_NOTE("EXTNOTE", "external_note", "extnote_zdb_id"),
+    EXTERNAL_REFERENCE("EXREFF", "external_reference", "exref_pk_id"),
     FOREIGN_DB("FOREIGNDB", "foreign_db", "fdb_db_pk_id", "fdb_db_name"),
     FDBCONT("FDBCONT", "foreign_db_contains", "fdbcont_zdb_id", "fdbcont_organism_common_name"),
     FDBDT("FDBDT", "foreign_db_data_type", "fdbdt_pk_id", "fdbdt_data_type"),
@@ -162,7 +164,7 @@ public enum Table {
     WH_MORPHOLINO_GROUP_MEMBER("WHMORPHGM", "morpholino_group_member", "morphgm_pk_id"),
     WH_PHENOTYPE_FIGURE_GROUP("PFIGG", "phenotype_figure_group", "pfigg_group_pk_id"),
     WH_PHENOTYPE_FIGURE_GROUP_MEMBER("PFIGM", "phenotype_figure_group_member", "pfiggm_pk_id"),
-    WH_TERM_GROUP("TG", "term_group", "tg_group_name"),;
+    WH_TERM_GROUP("TG", "term_group", "tg_group_name");
 
     private String pkIdentifier;
     private String tableName;

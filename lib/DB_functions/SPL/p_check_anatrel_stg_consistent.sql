@@ -59,18 +59,20 @@ create procedure p_check_anatrel_stg_consistent (
 
   if ( parentStartHour is NULL ) then
 
-      select ts_start_stg_zdb_id
+      select stg_hours_start
         into parentStartHour
-        from term_stage 
-       where ts_term_zdb_id = parentAnatZdbId;
+        from term_stage, stage 
+       where ts_term_zdb_id = parentAnatZdbId
+        and ts_start_stg_zdb_id = stg_zdb_id;
   end if 
 
   if ( parentEndHour is NULL ) then
 
-      select ts_end_stg_zdb_id
+      select stg_hours_end
         into parentEndHour
-        from term_stage
-       where ts_term_zdb_id = parentAnatZdbId;
+        from term_stage, stage
+       where ts_term_zdb_id = parentAnatZdbId
+        and ts_end_stg_zdb_id = stg_zdb_id;
   end if 
 
 

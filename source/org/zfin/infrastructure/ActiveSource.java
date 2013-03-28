@@ -17,6 +17,24 @@ public class ActiveSource implements ZdbID, Serializable {
         this.zdbID = zdbID;
     }
 
+    public static boolean validateActiveData(String id) {
+        if (id == null) {
+            return false;
+        }
+
+        if (!id.startsWith(ActiveSource.ZDB))
+            return false;
+
+        Type type = null;
+        for (Type zdbType : Type.values()) {
+            if (id.contains(zdbType.name())) {
+                type = zdbType;
+            }
+        }
+        return type != null;
+    }
+
+
     public static Type validateID(String zdbID) {
         if (zdbID == null) {
             throw new InvalidZdbID();

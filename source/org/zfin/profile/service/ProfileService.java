@@ -139,6 +139,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("orcidID", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, Boolean.class));
 
 

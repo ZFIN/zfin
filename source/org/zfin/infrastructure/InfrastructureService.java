@@ -6,6 +6,9 @@ import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+
 /**
  * Service Class for Attribution, updates etc.
  */
@@ -30,6 +33,19 @@ public class InfrastructureService {
         logger.debug("Update " + fieldname + ": " + marker.getZdbID() + " old: " + oldValue + " new: " + newValue);
         Person currentUser = Person.getCurrentSecurityUser();
         infrastructureRepository.insertUpdatesTable(marker, fieldname, "", currentUser, newValue, oldValue);
+    }
+
+    public static Object getEntityById(String entityID) {
+        if (entityID == null)
+            return null;
+
+        // Todo: This could be done much more generically
+        if (ActiveSource.validateID(entityID) == ActiveSource.Type.PUB)
+            return getPublicationRepository().getPublication(entityID);
+        if (ActiveSource.validateID(entityID) == ActiveSource.Type.PERS)
+            return getProfileRepository().getPerson(entityID);
+
+        throw new RuntimeException("No implementation for this type of entity: " + entityID);
     }
 
 }

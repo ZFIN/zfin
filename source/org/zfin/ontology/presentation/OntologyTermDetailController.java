@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.framework.presentation.SectionVisibility;
+import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -83,8 +80,7 @@ public class OntologyTermDetailController {
                                     Model model) throws Exception {
 
         if (termID == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, "No term ID provided");
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            return getErrorPage(model);
         }
         if (termID.contains("*"))
             return termDetailPageByName(termID, null, form, model);
@@ -137,9 +133,22 @@ public class OntologyTermDetailController {
         form.setTerm(term);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
+        model.addAttribute("jspFunctions", new ZfinJSPFunctions());
 
         return "ontology/ontology-term.page";
 
+    }
+
+    private String getErrorPage(Model model) {
+        return getErrorPage(null, model);
+    }
+
+    private String getErrorPage(String id, Model model) {
+        if (id == null)
+            model.addAttribute(LookupStrings.ZDB_ID, "No term ID provided");
+        else
+            model.addAttribute(LookupStrings.ZDB_ID, id);
+        return LookupStrings.RECORD_NOT_FOUND_PAGE;
     }
 
     @RequestMapping(value = {("/term-detail-popup-button")})
@@ -175,6 +184,19 @@ public class OntologyTermDetailController {
         model.addAttribute("term", term);
         model.addAttribute("termRelationships", termRelationships);
         return "ontology/ontology-term-popup.popup";
+    }
+
+    @RequestMapping(value = {("/term-citations/{oboID}")})
+    public String getCitationList(@PathVariable String oboID,
+                                  Model model) {
+
+        Term term = getOntologyRepository().getTermByOboID(oboID);
+        if (term == null) {
+            return getErrorPage(oboID, model);
+        }
+        model.addAttribute("term", term);
+        model.addAttribute("jspFunctions", new ZfinJSPFunctions());
+        return "ontology/term-citations.page";
     }
 
     @RequestMapping(value = {("/post-composed-term-detail")})
