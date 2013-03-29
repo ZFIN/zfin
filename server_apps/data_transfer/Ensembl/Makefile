@@ -16,7 +16,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensembl_agp.sh fetch_sangerMutantInfo.sh
+GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql \
@@ -74,6 +74,8 @@ load_ensdarT_commit: $(TARGETDIR)/load_ensdarT_dbacc.sql \
 run_gff: $(TARGETDIR)/fetch_ensembl_gff.sh
 	cd $(TARGETDIR) && fetch_ensembl_gff.sh
 
+notify_stale: $(TARGETDIR)/notifyStaleIds.sh
+
 run_sanger_mutant_data: $(TARGETDIR)/fetch_sangerMutantInfo.sh
 
 # pre delete any versions of the file to be downloaded
@@ -88,11 +90,11 @@ run_agp: $(TARGETDIR)/fetch_ensembl_agp.sh $(TARGETDIR)/agp_to_gff3.awk \
 ########################################################################
 run:        load_ensdarG        load_ensdarT        run_gff run_agp
 
-run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp
+run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp notify_stale
 
 run_gff3:  run_gff run_agp
 
-run_ensembl_load: load_ensdarG_commit load_ensdarT_commit
+run_ensembl_load: load_ensdarG_commit load_ensdarT_commit notify_stale
 
 clean_ensembl:
 	rm -f $(TARGETDIR)/load_ensdarG.sql $(TARGETDIR)/ensdarT_dbacc.unl
