@@ -174,7 +174,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
                     continue;
                 String suggestion = term.getMatchingTermDisplay();
                 // add comment field with pure term name for display
-                StringBuilder builder = highlighter.hidePureTermNameHtml(suggestion);
+                StringBuilder builder = highlighter.hidePureTermNameHtml(term.getTerm().getTermName());
                 String displayName = highlighter.highlight(suggestion);
                 builder.append(displayName);
                 String termValue = term.getTerm().getZdbID();
