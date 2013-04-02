@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/EntrezGene
 
-GENERICS =  entrezGene.pl cleanUpSecondaryGeneAccessions.pl load_entrez.sql
+GENERICS =  entrezGene.pl cleanUpSecondaryGeneAccessions.pl load_entrez.sql processDanioRerioGeneInfo.pl
 
 STATICS = README.help commit.sql rollback.sql update_GenPept_len.sql deleteDiscountinuedGeneAccs.sql
 
@@ -57,21 +57,6 @@ ENTREZGENE = ftp://ftp.ncbi.nih.gov/gene/DATA
 ### Entrez is kind enough to produce a zebrafish specific file
 ### 1.4M instead of 135M and avoids needing to parse out the
 ### txid 7955 set  -> 1M load file
-
-$(TARGETDIR)/Danio_rerio.gene_info.gz: 
-	cd $(TARGETDIR) && \
-	wget --timestamping $(ENTREZGENE)/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz 
-
-# Mapping from Entrez ID to ZFIN ID
-
-# TODO: handle their pipe seperated multiple LG in 7th col? (or not)
-
-$(TARGETDIR)/entrezid_zdbid_lg_type.unl: $(TARGETDIR)/Danio_rerio.gene_info.gz
-	cd $(TARGETDIR) && \
-	zgrep "ZDB-" Danio_rerio.gene_info.gz | cut -f2,6,10 |\
-	nawk 'BEGIN{FS="\t";OFS="|"}{split($$2,z,":");i=index(z[2],"|");\
-	if(i){z[2]=substr(z[2],1,i-1)};$$2=z[2];print $$0"|"}' | sort -n > $@;\
-	wc -l $@
 
 # use a hash of the file to decide if further processing should happen?
 # md5sum entrezid_zdbid_lg_type.unl > entrezid_zdbid_lg_type_new.md5

@@ -224,17 +224,17 @@ select ez_zdbid mrkr ,ez_eid acc, get_id("DBLINK") zad
 
 
 select mrkr from tmp_dbl
-  where exists (Select 'x' from db_link, foreign_db_Contains
+  where exists (Select 'x' from db_link
   	       	       where mrkr = dblink_linked_recid
-		       and fdbcont_fdb_db_id = 10
+		       and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1"
+		       and dblink_acc_num is not null
 		       and dblink_acc_num != acc
 		       )
 into temp tmp_dup with no log;
 
   select dblink_linked_recid, count(*) as counter
-  	 from db_link, foreign_db_contains
-	 where dblink_fdbcont_Zdb_id = fdbcont_zdb_id
-	 and fdbcont_fdb_db_id = 10
+  	 from db_link
+	 where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1"
 group by dblink_linked_recid
  having count(*) > 1
 into temp tmp_dupExisting;

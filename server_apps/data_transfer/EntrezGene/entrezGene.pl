@@ -17,6 +17,8 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 ####system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/*.gz");
 
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/Danio_rerio.gene_info.gz");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/Danio_rerio.gene_info");
+
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/gene2accession.gz");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.protein.faa.gz");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/zebrafish.rna.fna.gz");
@@ -58,6 +60,23 @@ $refSeqGeneListLost = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/r
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListNewlyAdded");
 
 $refSeqGeneListNewlyAdded = "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/refSeqGeneListNewlyAdded";
+
+### cleaning up the secondary Gene Ids based on NCBI's gene_history file
+print "\ncleanUpSecondaryGeneAccessions.pl\n\n";
+
+chdir("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene") or &logError("cannot chdir to TARGETROOT/server_apps/data_transfer/EntrezGene");
+
+system("./cleanUpSecondaryGeneAccessions.pl");
+
+### process NCBI's Danio_rerio.gene_info.gz
+print "\processDanioRerioGeneInfo.pl\n\n";
+
+system("./processDanioRerioGeneInfo.pl");
+
+if (!-e "Danio_rerio.gene_info") {
+   print "\n processDanioRerioGeneInfo.pl failed.\nExit\n";
+   exit;
+}
 
 #--------------------------- record counts before loading starts ----------------------------
 $sql = 'select distinct dblink_zdb_id
@@ -508,14 +527,6 @@ close (NEWREFSEQGENES);
 
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|SWISSPROT_EMAIL_REPORT|-->","genes newly associated with RefSeq","$refSeqGeneListNewlyAdded");
 &sendMail("Auto from $dbname: entrezGene.pl : ","<!--|PATO_EMAIL_CURATOR|-->","genes with more than one accession number","$entrezGeneDupAccs") if (-e "$entrezGeneDupAccs");
-
-print "\nDone\n\n";
-
-print "\ncleanUpSecondaryGeneAccessions.pl\n\n";
-
-chdir("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene") or &logError("cannot chdir to TARGETROOT/server_apps/data_transfer/EntrezGene");
-
-system("./cleanUpSecondaryGeneAccessions.pl");
 
 print "\nAll done\n\n";
 
