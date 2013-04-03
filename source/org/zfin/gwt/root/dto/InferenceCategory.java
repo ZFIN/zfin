@@ -27,6 +27,7 @@ public enum InferenceCategory {
     HAMAP("HAMAP"),
     SP_SL("SP_SL"),
     UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
+    UNIPATHWAY("UniPathway"),
     ENSEMBL("Ensembl"),
     PANTHER("PANTHER",false),
     ;

@@ -25,7 +25,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case IDA:
                 return new InferenceCategory[]{};
             case IEA:
-                return new InferenceCategory[]{InferenceCategory.SP_KW, InferenceCategory.UNIPROTKB_KW, InferenceCategory.UNIPROTKB_SUBCELL, InferenceCategory.EC,
+                return new InferenceCategory[]{InferenceCategory.SP_KW, InferenceCategory.UNIPROTKB_KW, InferenceCategory.UNIPROTKB_SUBCELL, InferenceCategory.UNIPATHWAY, InferenceCategory.EC,
                         InferenceCategory.INTERPRO};
             case IEP:
                 return new InferenceCategory[]{};
@@ -94,6 +94,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
         } else if (pubZdbID.equals(GoDefaultPublication.UNIPROTKBKW.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
+     //   } else if (pubZdbID.equals(GoDefaultPublication.UNIPATHWAY.zdbID())) {
+     //       return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
         } else if (pubZdbID.equals(GoDefaultPublication.INTERPRO.zdbID())) {
             return new GoEvidenceCodeEnum[]{GoEvidenceCodeEnum.IEA};
         } else if (pubZdbID.equals(GoDefaultPublication.ROOT.zdbID())) {
