@@ -27,6 +27,7 @@ public class GoEvidenceValidator {
                 case INTERPRO:
                 case UNIPROTKBKW:
                 //case SPKW:
+                //case UNIPATHWAY:
                 case EC:
                 case ROOT:
                     pubName = pubEnum.title();

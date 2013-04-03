@@ -420,6 +420,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
                     case INTERPRO:
                     case UNIPROTKBKW:
                     //case SPKW:
+                    //case UNIPATHWAY:
                     case EC:
                         evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IEA.name());
                         break;
