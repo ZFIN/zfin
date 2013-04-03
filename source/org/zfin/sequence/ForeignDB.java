@@ -114,6 +114,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         UNIPROTKB_KW("UniProtKB-KW"),
         //SP_SL("SP_SL"),
         UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
+        UNIPATHWAY("UniPathway"),
         TAO("TAO"),
         UNIGENE("UniGene"),
         UNIPROTKB("UniProtKB"),
