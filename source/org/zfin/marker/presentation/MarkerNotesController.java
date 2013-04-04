@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.Set;
  */
 @Controller
 public class MarkerNotesController {
+    private Logger logger = Logger.getLogger(SequenceViewController.class);
 
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
@@ -45,6 +47,9 @@ public class MarkerNotesController {
             , Model model) {
 
         Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
+            marker = getReplacedMarker(zdbID);
+        }
         List<String> notes = RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(marker.getZdbID());
         model.addAttribute("marker", marker);
         model.addAttribute("notes", notes);
@@ -60,6 +65,11 @@ public class MarkerNotesController {
     ) {
         List<GeneProductsBean> geneProductsBeans = markerRepository.getGeneProducts(zdbID);
         Marker marker = markerRepository.getMarkerByID(zdbID);
+
+        if (marker == null) {
+            marker = getReplacedMarker(zdbID);
+            geneProductsBeans = markerRepository.getGeneProducts(marker.getZdbID());
+        }
 
         if (geneProductsBeans == null) {
             geneProductsBeans = new ArrayList<GeneProductsBean>();
@@ -81,6 +91,9 @@ public class MarkerNotesController {
     ) {
         SNPBean bean = new SNPBean();
         Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
+            marker = getReplacedMarker(zdbID);
+        }
         bean.setMarker(marker);
 
         // TODO: make this method suck less
@@ -98,5 +111,15 @@ public class MarkerNotesController {
         return "marker/snp-publication-list.page";
     }
 
+
+    private Marker getReplacedMarker(String markerZdbId) {
+        String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(markerZdbId);
+        Marker replacedMarker = new Marker();
+        if(replacedZdbID !=null){
+            logger.debug("found a replaced zdbID for: " + markerZdbId + "->" + replacedZdbID);
+            replacedMarker = markerRepository.getMarkerByID(replacedZdbID);
+        }
+        return replacedMarker;
+    }
 }
 
