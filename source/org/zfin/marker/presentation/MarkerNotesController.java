@@ -50,6 +50,12 @@ public class MarkerNotesController {
         if (marker == null) {
             marker = getReplacedMarker(zdbID);
         }
+
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return "record-not-found.popup";
+        }
+
         List<String> notes = RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(marker.getZdbID());
         model.addAttribute("marker", marker);
         model.addAttribute("notes", notes);
@@ -68,6 +74,12 @@ public class MarkerNotesController {
 
         if (marker == null) {
             marker = getReplacedMarker(zdbID);
+        }
+
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return "record-not-found.popup";
+        } else {
             geneProductsBeans = markerRepository.getGeneProducts(marker.getZdbID());
         }
 
@@ -94,6 +106,12 @@ public class MarkerNotesController {
         if (marker == null) {
             marker = getReplacedMarker(zdbID);
         }
+
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            return "record-not-found.page";
+        }
+
         bean.setMarker(marker);
 
         // TODO: make this method suck less
