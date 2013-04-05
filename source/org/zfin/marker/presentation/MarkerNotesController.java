@@ -132,7 +132,7 @@ public class MarkerNotesController {
 
     private Marker getReplacedMarker(String markerZdbId) {
         String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(markerZdbId);
-        Marker replacedMarker = new Marker();
+        Marker replacedMarker = null;
         if(replacedZdbID !=null){
             logger.debug("found a replaced zdbID for: " + markerZdbId + "->" + replacedZdbID);
             replacedMarker = markerRepository.getMarkerByID(replacedZdbID);
