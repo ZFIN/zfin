@@ -152,7 +152,7 @@
         <id name="zdbID" type="string">
             <column name="mrkrseq_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">DBLINK</param>
+                <param name="type">MRKRSEQ</param>
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
