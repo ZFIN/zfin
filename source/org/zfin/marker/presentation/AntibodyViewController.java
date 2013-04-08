@@ -62,7 +62,7 @@ public class AntibodyViewController {
         antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
 
         model.addAttribute(LookupStrings.FORM_BEAN, antibodyBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getName());
 
         return "marker/antibody-view.page";
     }
