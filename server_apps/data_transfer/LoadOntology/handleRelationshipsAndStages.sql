@@ -262,11 +262,17 @@ select * from term_stage
 --    end_zdb_id_temp = ts_end_stg_zdb_id
 -- );
 
+select termrel_zdb_id,
+	termrel_term_1_zdb_id,
+	termrel_term_2_zdb_id,
+	termrel_type
+    from tmp_zfin_rels ;
+
 insert into term_relationship (termrel_zdb_id,
     				termrel_term_1_zdb_id,
     				termrel_term_2_zdb_id,
     				termrel_type)
-  select first 1 termrel_zdb_id,
+  select termrel_zdb_id,
 	termrel_term_1_zdb_id,
 	termrel_term_2_zdb_id,
 	termrel_type
