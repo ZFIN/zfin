@@ -3,7 +3,7 @@
 
 set pdqpriority 50;
 
-delete from fish_annotation_search_temp;
+--delete from fish_annotation_search_temp;
 
 insert into fish_annotation_search_temp (fas_all,
 					fas_genotype_Group,
