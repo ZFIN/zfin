@@ -3,7 +3,6 @@
 
 set pdqpriority 50;
 
---delete from fish_annotation_search_temp;
 
 insert into fish_annotation_search_temp (fas_all,
 					fas_genotype_Group,
@@ -11,70 +10,32 @@ insert into fish_annotation_search_temp (fas_all,
        	    			   	fas_line_handle,
        	    			   	fas_feature_group, 
 					fas_gene_group,
-					fas_construct_group, 
 					fas_fish_parts_count, 
 					fas_affector_type_group,
 					fas_feature_order,
 					fas_gene_order,
 					fas_gene_count)
-select feature_name||"|"||feature_abbrev||","||a.mrkr_name||"|"||a.mrkr_abbrev||","||b.mrkr_name||"|"||b.mrkr_abbrev,
+select feature_name||"|"||feature_abbrev||","||a.mrkr_name||"|"||a.mrkr_abbrev,
        'ZDB-GENO-F1 Pool',
        '', 
        		feature_zdb_id,
        		feature_name||"|"||feature_abbrev, 
-		a.mrkr_name||"|"||a.mrkr_abbrev, 
-		b.mrkr_name||"|"||b.mrkr_name, 
+		a.mrkr_name||"|"||a.mrkr_abbrev,
 		"1", 
 		feature_type,
 		feature_Abbrev_order, 
 		a.mrkr_abbrev_order, 
 		"1"
-  from feature, feature_marker_relationship c, feature_marker_relationship d, marker a, marker b
+  from feature, feature_marker_relationship c, marker a
   where feature_zdb_id = c.fmrel_ftr_zdb_id
-  and feature_zdb_id = d.fmrel_ftr_zdb_id
   and a.mrkr_zdb_id = c.fmrel_mrkr_zdb_id
   and c.fmrel_type = 'is allele of'
-and d.fmrel_type like 'contains%'
 and not exists (Select 'x' from genotype_feature
  where genofeat_feature_zdb_id = feature_zdb_id)
 and (feature_abbrev like 'sa%' or feature_abbrev like 'hu%')
-and d.fmrel_mrkr_zdb_id = b.mrkr_Zdb_id
 ;
 
-insert into fish_annotation_search_temp (fas_all,
-					fas_genotype_Group,
-					fas_geno_name, 
-       	    			   	fas_line_handle,
-       	    			   	fas_feature_group, 
 
-					fas_construct_group, 
-					fas_fish_parts_count, 
-					fas_affector_type_group,
-					fas_feature_order,
-					fas_gene_order,
-					fas_gene_count)
-select feature_name||"|"||feature_abbrev||","||b.mrkr_name||"|"||b.mrkr_abbrev,
-       'ZDB-GENO-F1 Pool',
-       '', 
-       		feature_zdb_id,
-       		feature_name||"|"||feature_abbrev, 
-
-		b.mrkr_name||"|"||b.mrkr_name, 
-		"1", 
-		feature_type,
-		feature_Abbrev_order, 
-		b.mrkr_abbrev_order, 
-		"1"
-  from feature, feature_marker_relationship d, marker b
-  where feature_zdb_id = d.fmrel_ftr_zdb_id
-and d.fmrel_type like 'contains%'
-and not exists (Select 'x' from genotype_feature
- where genofeat_feature_zdb_id = feature_zdb_id)
-and (feature_abbrev like 'sa%' or feature_abbrev like 'hu%')
-and not exists (Select 'x' from feature_marker_relationship g
-    	       	       where g.fmrel_ftr_zdb_id = feature_zdb_id
-		       and fmrel_Type = 'is allele of')
-and d.fmrel_mrkr_zdb_id = b.mrkr_Zdb_id;
 
 select distinct dalias_alias, feature_zdb_id as f_id
  from data_alias, feature
@@ -100,6 +61,7 @@ select feature_zdb_id fe_id
  from feature
  where not exists (Select 'x' from genotype_feature
        	   	  	  where genofeat_feature_zdb_id = feature_zdb_id)
+ and (feature_abbrev like 'sa%' or feature_abbrev like 'hu%')
 into temp temp_features1;
 
 create index f_id_index
@@ -130,7 +92,9 @@ update statistics high for table fish_annotation_Search_temp;
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct tg_name 
       		       	 	 from tmp_tg1s
-				 where fas_line_handle = f_id);
+				 where fas_line_handle = f_id)
+  where exists (Select 'x' from tmp_tg1s
+      	     	     where fas_line_handle = f_id);
 
 drop table tmp_aliasBs;
 
@@ -163,6 +127,7 @@ select feature_zdb_id fe_id
  from feature
  where not exists (Select 'x' from genotype_feature
        	   	  	  where genofeat_feature_zdb_id = feature_zdb_id)
+ and (feature_abbrev like 'sa%' or feature_abbrev like 'hu%')
 into temp temp_features1;
 
 create index fe1_id_index on temp_features1 (fe_id)
@@ -193,6 +158,8 @@ update statistics high for table fish_annotation_Search_temp;
 update fish_annotation_search_temp
   set fas_all = fas_all||","||(select distinct tg_name 
       		       	 	 from tmp_tg2s 
-				 where fas_line_handle = f_id) 
+				 where fas_line_handle = f_id)
+  where (fas_feature_group like 'sa%' or  fas_feature_group like 'hu%')
+ and fas_line_handle like 'ZDB-ALT%'
+ and fas_line_handle in (select f_id from tmp_tg2s)
 ;
-
