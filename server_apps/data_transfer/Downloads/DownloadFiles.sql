@@ -118,7 +118,7 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, b
    and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
    and mrel_mrkr_2_zdb_id = seq.mrkr_zdb_id
    and a.szm_object_type = gene.mrkr_type
-   and b.szm_object_type = seq.mrkr_abbrev
+   and b.szm_object_type = seq.mrkr_type
 union
 select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  b.szm_term_ont_id, seq.mrkr_abbrev, mrel_type
  from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b
@@ -127,7 +127,7 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  
    and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
    and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id
    and a.szm_object_type = gene.mrkr_type
-   and b.szm_object_type = seq.mrkr_abbrev
+   and b.szm_object_type = seq.mrkr_type
 ;
 
 -- Create the orthologues files - mouse, human, fly and yeast
@@ -754,7 +754,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
 from marker gene, marker est, db_link, marker_relationship,foreign_db, foreign_db_contains, so_zfin_mapping
  where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
    and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
-   and gene.mrkr_abbrev = szm_object_type
+   and gene.mrkr_type = szm_object_type
    and  mrel_type = 'gene encodes small segment'
    and est.mrkr_zdb_id = dblink_linked_recid
    and est.mrkr_type  in ('EST','CDNA')
