@@ -2931,7 +2931,7 @@ sub foreigndbNotInFdbcontains ($) {
                 from foreign_db
                where fdb_db_pk_id not in (
                         select fdbcont_fdb_db_id from foreign_db_contains)
-               and fdb_db_name not in ('HAMAP','UniProtKB-SubCell','SP_SL','PANTHER')";
+               and fdb_db_name not in ('HAMAP','UniProtKB-SubCell','SP_SL','PANTHER','Ensembl','HTTP','MESH','ISBN','ZFIN')";
   my @colDesc = ("Db Name    ");
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
