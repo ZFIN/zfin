@@ -233,5 +233,40 @@ system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
 
 system("./FBcase8787.pl");
 
-system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+# This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
+
+system("rm /tmp/emptyFiles.txt");
+my $emptyFilesList = '/tmp/emptyFiles.txt';
+
+open (EMPTY, ">$emptyFilesList") || die "Can't open $emptyFilesList !\n";
+
+my $dir = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/';
+my $filesize = -s "/tmp/emptyFiles.txt";
+
+print $filesize."\n";
+
+if ($filesize eq "0"){
+    print "empty file"."\n";
+}
+
+opendir(DH, $dir) or die $!;
+
+while (my $file = readdir(DH)) {
+    
+    $filesize = -s $dir.$file;
+    #print $file." ".$filesize."\n";
+    next if ($filesize > 0);
+    #print "empty file! : $file"."\n"; 
+    print EMPTY $file." FILE IS EMPTY! \n";
+}
+close EMPTY;
+
+if (!(-z $emptyFilesList)) {
+    die "there are files with 0 data!";
+}
+
+
+# move files to production location -- assume all are good, as the file check above did not end the script.
+
+system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
