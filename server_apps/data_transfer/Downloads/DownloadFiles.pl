@@ -244,20 +244,13 @@ open (EMPTY, ">$emptyFilesList") || die "Can't open $emptyFilesList !\n";
 my $dir = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/';
 my $filesize = -s "/tmp/emptyFiles.txt";
 
-print $filesize."\n";
-
-if ($filesize eq "0"){
-    print "empty file"."\n";
-}
-
 opendir(DH, $dir) or die $!;
 
 while (my $file = readdir(DH)) {
     
     $filesize = -s $dir.$file;
-    #print $file." ".$filesize."\n";
     next if ($filesize > 0);
-    #print "empty file! : $file"."\n"; 
+    print "empty file! : $file"."\n"; 
     print EMPTY $file." FILE IS EMPTY! \n";
 }
 close EMPTY;
