@@ -706,10 +706,10 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPublicationList() {
-        assertEquals(12, publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size());
+        assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size() > 10);
         assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size() > 15);
         assertEquals(0, publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
-        assertEquals(12, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"));
+        assertThat(publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-040426-1855"), greaterThan(10));
         assertTrue(publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-GENE-051005-1") > 15);
         assertEquals(0, publicationRepository.getNumberAssociatedPublicationsForZdbID("ZDB-SSLP-000315-3"));
     }
