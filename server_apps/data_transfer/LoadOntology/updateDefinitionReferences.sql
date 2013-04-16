@@ -73,7 +73,13 @@ AND fdb_db_name = 'TAO'
   where exref_data_zdb_id = tdr_term_zdb_id_temp AND
         exref_foreign_db_id = tdr_foreign_db_id_temp AND
         exref_reference = tdr_reference_temp
-);
+  ) AND
+  exists (
+   select 'x' from term, ontology, tmp_header
+   	where ont_ontology_name = default_namespace AND
+          ont_pk_Id = term_ontology_id AND
+          term_zdb_id = exref_data_zdb_id
+  );
 
 
 -- select * from external_reference_temp;
