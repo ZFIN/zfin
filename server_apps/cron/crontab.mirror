@@ -47,6 +47,10 @@
 
 00 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/queryMonitoring/dailyQueryCostCheck.sh
 30 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/extentMonitoring/dailyExtentCheck.sh
+
+# build solr index on zfinlabs (builds from almost)
+00 10 * * 1-5 curl "http://zfinlabs.zfin.org/solr/prototype/dataimport?command=full-import&optimize=true&clean=true"
+
 #
 #
 # ========================================================================
