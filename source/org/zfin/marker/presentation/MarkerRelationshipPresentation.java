@@ -17,7 +17,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String abbreviation;
     private String abbreviationOrder;
     private String zdbId; // id of the thing you are on
-    private String markerRelationshipZdbId ; // primary key
+    private String markerRelationshipZdbId; // primary key
     private String markerType;
     private String markerRelationshipAttributionPubZdbId;
     private String supplierZdbId;
@@ -162,10 +162,10 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     }
 
     public int getNumAttributions() {
-        if(attributionZdbIDs!=null){
+        if (attributionZdbIDs != null) {
             return attributionZdbIDs.size();
         }
-        return  0 ;
+        return 0;
     }
 
     public String getSupplierZdbId() {
@@ -179,15 +179,14 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     @Override
     public String getLink() {
 
-        if(link == null){
+        if (link == null) {
             if (markerType != null && markerType.toLowerCase().contains("gene")) {
-                return "<i><a href=\"/action/marker/view/"+zdbId+"\">"+ abbreviation+"</a></i>";
+                return "<i><a href=\"/action/marker/view/" + zdbId + "\">" + abbreviation + "</a></i>";
             } else {
-                return "<a href=\"/action/marker/view/"+zdbId+"\">"+ name+"</a>";
+                return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>";
             }
-        }
-        else {
-            return link ;
+        } else {
+            return link;
         }
 
     }
@@ -197,8 +196,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     }
 
     public String getAttributionZdbID() {
-        if(attributionZdbIDs==null || attributionZdbIDs.size()==0){
-            return null ;
+        if (attributionZdbIDs == null || attributionZdbIDs.size() == 0) {
+            return null;
         }
         return attributionZdbIDs.iterator().next();
     }
@@ -212,7 +211,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     }
 
     public void addAttributionZdbID(String attributionZdbID) {
-        this.attributionZdbIDs.add(attributionZdbID);
+        if (attributionZdbID != null)
+            this.attributionZdbIDs.add(attributionZdbID);
     }
 
     public String getArbitraryOrder() {

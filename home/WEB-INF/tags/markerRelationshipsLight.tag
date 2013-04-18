@@ -7,8 +7,7 @@
 
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
 
-<%@ attribute name="title" required="false"%>
-
+<%@ attribute name="title" required="false" %>
 
 
 <c:if test="${empty title}">
@@ -16,7 +15,7 @@
 </c:if>
 
 <zfin2:subsection title="${title}"
-                        test="${!empty relationships}" showNoData="true">
+                  test="${!empty relationships}" showNoData="true">
 
     <table class="summary horizontal-solidblock">
         <c:set var="relationshipType" value="notthesame"/>
@@ -34,11 +33,12 @@
                     ${fn:startsWith(marker.zdbID,'ZDB-GENE') ||fn:startsWith(marker.zdbID,'ZDB-EFG')  ?"<span class=genedom>" : ""}
                     ${marker.abbreviation}
                     ${fn:startsWith(marker.zdbID,'ZDB-GENE') || fn:startsWith(marker.zdbID,'ZDB-EFG') ?"</span>" : ""}
-                    ${entry.relationshipType}:</td>
+                    ${entry.relationshipType}:
+            </td>
             <td>
                 </c:if>
 
-                    <c:set var="suppressComma"  value="false"/>
+                    <c:set var="suppressComma" value="false"/>
                 <c:if test="${!loop.last}">
                     <c:set var="suppressComma"
                            value="${
@@ -48,15 +48,12 @@
                 </c:if>
 
 
-                <c:if test="${
-                entry.markerType ne markerType or
-entry.relationshipType ne relationshipType
-                }">
+                <c:if test="${entry.markerType ne markerType or entry.relationshipType ne relationshipType }">
                     ${entry.relationshipType eq relationshipType ? "<br>" : ""}
                 [${entry.markerType}]
                 </c:if>
                     ${entry.linkWithAttributionAndOrderThis}${!loop.last
-                    and !suppressComma ? ", ": ""}
+                        and !suppressComma ? ", ": ""}
 
                     <c:set var="relationshipType" value="${entry.relationshipType}"/>
                     <c:set var="markerType" value="${entry.markerType}"/>
