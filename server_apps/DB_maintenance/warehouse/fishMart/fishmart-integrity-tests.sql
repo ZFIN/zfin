@@ -139,5 +139,5 @@ unload to F1PoolMoreThan1Feature
 	   where fas_line_handle like 'ZDB-ALT%' 
     	   and fas_feature_group like '%|%|%';
 
-TEST (NonF1PoolGenoNameNull < 1)'there are F1 pool fish with more than one feature.';
+TEST (NonF1PoolGenoNameNull > 1)'there are F1 pool fish with more than one feature.';
 
