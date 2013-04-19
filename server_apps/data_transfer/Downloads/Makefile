@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
-SUBDIRS = GFF3 downloadsStaging intermineData
+SUBDIRS = GFF3 intermineData
 
 GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl runNumbersFBcase8787.sql patoNumbers.pl
 
